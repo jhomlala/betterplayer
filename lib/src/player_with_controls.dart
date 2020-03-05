@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:better_player/src/better_player.dart';
+import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/cupertino_controls.dart';
 import 'package:better_player/src/material_controls.dart';
 import 'package:flutter/foundation.dart';

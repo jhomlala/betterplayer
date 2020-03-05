@@ -50,12 +50,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    VideoPlayerController videoPlayerController = VideoPlayerController.network(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-    betterPlayerController = BetterPlayerController(
-        videoPlayerController: videoPlayerController,
+    betterPlayerController = BetterPlayerController.network(
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         autoPlay: true,
-        autoInitialize: true);
+        autoInitialize: true,allowFullScreen: true);
     super.initState();
   }
 

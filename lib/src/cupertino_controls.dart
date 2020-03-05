@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:better_player/src/better_player.dart';
+import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
 import 'package:better_player/src/cupertino_progress_bar.dart';
 import 'package:better_player/src/utils.dart';
