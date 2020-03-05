@@ -164,6 +164,9 @@ class _MaterialControlsState extends State<MaterialControls> {
   }
 
   Expanded _buildHitArea() {
+    bool isFinished = _latestValue.position >= _latestValue.duration;
+    IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -199,7 +202,7 @@ class _MaterialControlsState extends State<MaterialControls> {
                   ),
                   child: Padding(
                     padding: EdgeInsets.all(12.0),
-                    child: Icon(Icons.play_arrow, size: 32.0),
+                    child: Icon(_hitAreaIconData, size: 32.0),
                   ),
                 ),
               ),

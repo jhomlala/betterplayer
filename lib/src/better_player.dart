@@ -126,6 +126,7 @@ class BetterPlayerState extends State<BetterPlayer> {
     final TransitionRoute<Null> route = PageRouteBuilder<Null>(
       settings: RouteSettings(),
       pageBuilder: _fullScreenRoutePageBuilder,
+      opaque: true,
     );
 
     SystemChrome.setEnabledSystemUIOverlays([]);

@@ -52,11 +52,14 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     betterPlayerController = BetterPlayerController.network(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        autoPlay: true,
+       // "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mdp4",
+        autoPlay: false,
         autoInitialize: true,
         allowFullScreen: true,
-        eventListener: _onPlayerEvent);
+        eventListener: _onPlayerEvent,errorBuilder: (BuildContext context, String text){
+          return Text("Error:"+text,style: TextStyle(color: Colors.white),);
+    });
     super.initState();
   }
 

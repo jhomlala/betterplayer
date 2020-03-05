@@ -78,6 +78,7 @@ class BetterPlayerController extends ChangeNotifier {
       Function(BetterPlayerEvent) eventListener}) {
     VideoPlayerController videoPlayerController =
         VideoPlayerController.network(videoUrl);
+
     return BetterPlayerController(
         videoPlayerController: videoPlayerController,
         aspectRatio: aspectRatio,
@@ -198,7 +199,11 @@ class BetterPlayerController extends ChangeNotifier {
 
     if ((autoInitialize || autoPlay) &&
         !videoPlayerController.value.initialized) {
-      await videoPlayerController.initialize();
+      try {
+        await videoPlayerController.initialize();
+      } catch (exception){
+        _handleInitializationException(exception);
+      }
     }
 
     if (autoPlay) {
@@ -272,17 +277,15 @@ class BetterPlayerController extends ChangeNotifier {
         parameters: {"volume": volume}));
   }
 
-  Future<bool> isPlaying() async{
+  Future<bool> isPlaying() async {
     return videoPlayerController.value.isPlaying;
   }
 
-  bool isBuffering(){
+  bool isBuffering() {
     return videoPlayerController.value.isBuffering;
   }
 
-
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
-    print("Post event: " + betterPlayerEvent.toString());
     if (eventListener != null) {
       eventListener(betterPlayerEvent);
     }
@@ -308,6 +311,12 @@ class BetterPlayerController extends ChangeNotifier {
           "duration": currentVideoPlayerValue.duration
         }));
       }
+    }
+  }
+
+  void _handleInitializationException(Exception exception){
+    if (exception is PlatformException){
+      print("Code: " + exception.code);
     }
   }
 }
