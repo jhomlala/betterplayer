@@ -272,6 +272,15 @@ class BetterPlayerController extends ChangeNotifier {
         parameters: {"volume": volume}));
   }
 
+  Future<bool> isPlaying() async{
+    return videoPlayerController.value.isPlaying;
+  }
+
+  bool isBuffering(){
+    return videoPlayerController.value.isBuffering;
+  }
+
+
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
     print("Post event: " + betterPlayerEvent.toString());
     if (eventListener != null) {
@@ -284,7 +293,6 @@ class BetterPlayerController extends ChangeNotifier {
     if (now - lastPositionSelection > 500) {
       lastPositionSelection = now;
       var currentVideoPlayerValue = videoPlayerController.value;
-      print("listener!" + videoPlayerController.value.duration.toString());
       Duration currentPositionShifted = Duration(
           milliseconds: currentVideoPlayerValue.position.inMilliseconds + 500);
       if (currentPositionShifted > currentVideoPlayerValue.duration) {
