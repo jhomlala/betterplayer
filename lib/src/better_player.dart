@@ -124,7 +124,7 @@ class BetterPlayerState extends State<BetterPlayer> {
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final TransitionRoute<Null> route = PageRouteBuilder<Null>(
-      settings: RouteSettings(isInitialRoute: false),
+      settings: RouteSettings(),
       pageBuilder: _fullScreenRoutePageBuilder,
     );
 

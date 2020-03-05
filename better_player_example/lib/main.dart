@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/better_player_event.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -53,7 +54,9 @@ class _MyHomePageState extends State<MyHomePage> {
     betterPlayerController = BetterPlayerController.network(
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         autoPlay: true,
-        autoInitialize: true,allowFullScreen: true);
+        autoInitialize: true,
+        allowFullScreen: true,
+        eventListener: _onPlayerEvent);
     super.initState();
   }
 
@@ -70,5 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           aspectRatio: 4 / 3,
         )));
+  }
+
+  void _onPlayerEvent(BetterPlayerEvent betterPlayerEvent) {
+    print(
+        "Player event: ${betterPlayerEvent.betterPlayerEventType} parameters: ${betterPlayerEvent.parameters}");
   }
 }

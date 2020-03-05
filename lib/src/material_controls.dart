@@ -31,15 +31,16 @@ class _MaterialControlsState extends State<MaterialControls> {
   final marginSize = 5.0;
 
   VideoPlayerController controller;
-  BetterPlayerController chewieController;
+  BetterPlayerController betterPlayerController;
 
   @override
   Widget build(BuildContext context) {
     if (_latestValue.hasError) {
-      return chewieController.errorBuilder != null
-          ? chewieController.errorBuilder(
+      return betterPlayerController.errorBuilder != null
+          ? betterPlayerController.errorBuilder(
               context,
-              chewieController.videoPlayerController.value.errorDescription,
+              betterPlayerController
+                  .videoPlayerController.value.errorDescription,
             )
           : Center(
               child: Icon(
@@ -93,11 +94,11 @@ class _MaterialControlsState extends State<MaterialControls> {
 
   @override
   void didChangeDependencies() {
-    final _oldController = chewieController;
-    chewieController = BetterPlayerController.of(context);
-    controller = chewieController.videoPlayerController;
+    final _oldController = betterPlayerController;
+    betterPlayerController = BetterPlayerController.of(context);
+    controller = betterPlayerController.videoPlayerController;
 
-    if (_oldController != chewieController) {
+    if (_oldController != betterPlayerController) {
       _dispose();
       _initialize();
     }
@@ -119,14 +120,16 @@ class _MaterialControlsState extends State<MaterialControls> {
         child: Row(
           children: <Widget>[
             _buildPlayPause(controller),
-            chewieController.isLive
+            betterPlayerController.isLive
                 ? Expanded(child: const Text('LIVE'))
                 : _buildPosition(iconColor),
-            chewieController.isLive ? const SizedBox() : _buildProgressBar(),
-            chewieController.allowMuting
+            betterPlayerController.isLive
+                ? const SizedBox()
+                : _buildProgressBar(),
+            betterPlayerController.allowMuting
                 ? _buildMuteButton(controller)
                 : Container(),
-            chewieController.allowFullScreen
+            betterPlayerController.allowFullScreen
                 ? _buildExpandButton()
                 : Container(),
           ],
@@ -150,7 +153,7 @@ class _MaterialControlsState extends State<MaterialControls> {
           ),
           child: Center(
             child: Icon(
-              chewieController.isFullScreen
+              betterPlayerController.isFullScreen
                   ? Icons.fullscreen_exit
                   : Icons.fullscreen,
             ),
@@ -215,10 +218,10 @@ class _MaterialControlsState extends State<MaterialControls> {
         _cancelAndRestartTimer();
 
         if (_latestValue.volume == 0) {
-          controller.setVolume(_latestVolume ?? 0.5);
+          betterPlayerController.setVolume(_latestVolume ?? 0.5);
         } else {
           _latestVolume = controller.value.volume;
-          controller.setVolume(0.0);
+          betterPlayerController.setVolume(0.0);
         }
       },
       child: AnimatedOpacity(
@@ -297,11 +300,11 @@ class _MaterialControlsState extends State<MaterialControls> {
     _updateState();
 
     if ((controller.value != null && controller.value.isPlaying) ||
-        chewieController.autoPlay) {
+        betterPlayerController.autoPlay) {
       _startHideTimer();
     }
 
-    if (chewieController.showControlsOnInitialize) {
+    if (betterPlayerController.showControlsOnInitialize) {
       _initTimer = Timer(Duration(milliseconds: 200), () {
         setState(() {
           _hideStuff = false;
@@ -314,7 +317,7 @@ class _MaterialControlsState extends State<MaterialControls> {
     setState(() {
       _hideStuff = true;
 
-      chewieController.toggleFullScreen();
+      betterPlayerController.toggleFullScreen();
       _showAfterExpandCollapseTimer = Timer(Duration(milliseconds: 300), () {
         setState(() {
           _cancelAndRestartTimer();
@@ -330,19 +333,19 @@ class _MaterialControlsState extends State<MaterialControls> {
       if (controller.value.isPlaying) {
         _hideStuff = false;
         _hideTimer?.cancel();
-        controller.pause();
+        betterPlayerController.pause();
       } else {
         _cancelAndRestartTimer();
 
         if (!controller.value.initialized) {
           controller.initialize().then((_) {
-            controller.play();
+            betterPlayerController.play();
           });
         } else {
           if (isFinished) {
-            controller.seekTo(Duration(seconds: 0));
+            betterPlayerController.seekTo(Duration(seconds: 0));
           }
-          controller.play();
+          betterPlayerController.play();
         }
       }
     });
@@ -368,6 +371,7 @@ class _MaterialControlsState extends State<MaterialControls> {
         padding: EdgeInsets.only(right: 20.0),
         child: MaterialVideoProgressBar(
           controller,
+          betterPlayerController,
           onDragStart: () {
             setState(() {
               _dragging = true;
@@ -382,7 +386,7 @@ class _MaterialControlsState extends State<MaterialControls> {
 
             _startHideTimer();
           },
-          colors: chewieController.materialProgressColors ??
+          colors: betterPlayerController.materialProgressColors ??
               BetterPlayerProgressColors(
                   playedColor: Theme.of(context).accentColor,
                   handleColor: Theme.of(context).accentColor,

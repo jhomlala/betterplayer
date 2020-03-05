@@ -1,3 +1,4 @@
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -5,7 +6,7 @@ import 'package:video_player/video_player.dart';
 
 class MaterialVideoProgressBar extends StatefulWidget {
   MaterialVideoProgressBar(
-    this.controller, {
+    this.controller,this.betterPlayerController, {
     BetterPlayerProgressColors colors,
     this.onDragEnd,
     this.onDragStart,
@@ -13,6 +14,7 @@ class MaterialVideoProgressBar extends StatefulWidget {
   }) : colors = colors ?? BetterPlayerProgressColors();
 
   final VideoPlayerController controller;
+  final BetterPlayerController betterPlayerController;
   final BetterPlayerProgressColors colors;
   final Function() onDragStart;
   final Function() onDragEnd;
@@ -35,7 +37,7 @@ class _VideoProgressBarState extends State<MaterialVideoProgressBar> {
   bool _controllerWasPlaying = false;
 
   VideoPlayerController get controller => widget.controller;
-
+  BetterPlayerController get betterPlayerController => widget.betterPlayerController;
   @override
   void initState() {
     super.initState();
@@ -55,7 +57,7 @@ class _VideoProgressBarState extends State<MaterialVideoProgressBar> {
       final Offset tapPos = box.globalToLocal(globalPosition);
       final double relative = tapPos.dx / box.size.width;
       final Duration position = controller.value.duration * relative;
-      controller.seekTo(position);
+      betterPlayerController.seekTo(position);
     }
 
     return GestureDetector(

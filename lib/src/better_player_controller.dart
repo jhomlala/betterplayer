@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
+import 'package:better_player/src/better_player_event.dart';
+import 'package:better_player/src/better_player_event_type.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -43,7 +45,8 @@ class BetterPlayerController extends ChangeNotifier {
         DeviceOrientation.landscapeLeft,
         DeviceOrientation.landscapeRight,
       ],
-      this.routePageBuilder})
+      this.routePageBuilder,
+      this.eventListener})
       : assert(videoPlayerController != null,
             'You must provide a controller to play a video') {
     _initialize();
@@ -71,7 +74,8 @@ class BetterPlayerController extends ChangeNotifier {
       List<SystemUiOverlay> systemOverlaysAfterFullScreen =
           SystemUiOverlay.values,
       List<DeviceOrientation> deviceOrientationsAfterFullScreen,
-      BetterPlayerRoutePageBuilder routePageBuilder}) {
+      BetterPlayerRoutePageBuilder routePageBuilder,
+      Function(BetterPlayerEvent) eventListener}) {
     VideoPlayerController videoPlayerController =
         VideoPlayerController.network(videoUrl);
     return BetterPlayerController(
@@ -94,7 +98,8 @@ class BetterPlayerController extends ChangeNotifier {
         allowFullScreen: allowFullScreen,
         allowMuting: allowMuting,
         systemOverlaysAfterFullScreen: systemOverlaysAfterFullScreen,
-        routePageBuilder: routePageBuilder);
+        routePageBuilder: routePageBuilder,
+        eventListener: eventListener);
   }
 
   /// The controller for the video you want to play
@@ -179,6 +184,9 @@ class BetterPlayerController extends ChangeNotifier {
     return chewieControllerProvider.controller;
   }
 
+  /// Defines a event listener where video player events will be send
+  final Function(BetterPlayerEvent) eventListener;
+
   bool _isFullScreen = false;
 
   bool get isFullScreen => _isFullScreen;
@@ -196,7 +204,7 @@ class BetterPlayerController extends ChangeNotifier {
         enterFullScreen();
       }
 
-      await videoPlayerController.play();
+      await play();
     }
 
     if (startAt != null) {
@@ -227,11 +235,15 @@ class BetterPlayerController extends ChangeNotifier {
 
   void toggleFullScreen() {
     _isFullScreen = !_isFullScreen;
+    _postEvent(_isFullScreen
+        ? BetterPlayerEvent(BetterPlayerEventType.OPEN_FULLSCREEN)
+        : BetterPlayerEvent(BetterPlayerEventType.HIDE_FULLSCREEN));
     notifyListeners();
   }
 
   Future<void> play() async {
     await videoPlayerController.play();
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
   }
 
   Future<void> setLooping(bool looping) async {
@@ -240,13 +252,25 @@ class BetterPlayerController extends ChangeNotifier {
 
   Future<void> pause() async {
     await videoPlayerController.pause();
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.PAUSE));
   }
 
   Future<void> seekTo(Duration moment) async {
     await videoPlayerController.seekTo(moment);
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.SEEK_TO,
+        parameters: {"duration": moment}));
   }
 
   Future<void> setVolume(double volume) async {
     await videoPlayerController.setVolume(volume);
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.SET_VOLUME,
+        parameters: {"volume": volume}));
+  }
+
+  void _postEvent(BetterPlayerEvent betterPlayerEvent) {
+    print("Post event: " + betterPlayerEvent.toString());
+    if (eventListener != null) {
+      eventListener(betterPlayerEvent);
+    }
   }
 }
