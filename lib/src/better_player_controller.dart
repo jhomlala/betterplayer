@@ -191,6 +191,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool get isFullScreen => _isFullScreen;
 
+  int lastPositionSelection = 0;
+
   Future _initialize() async {
     await videoPlayerController.setLooping(looping);
 
@@ -214,6 +216,9 @@ class BetterPlayerController extends ChangeNotifier {
     if (fullScreenByDefault) {
       videoPlayerController.addListener(_fullScreenListener);
     }
+
+    ///General purpose listener
+    videoPlayerController.addListener(_onVideoPlayerChanged);
   }
 
   void _fullScreenListener() async {
@@ -271,6 +276,30 @@ class BetterPlayerController extends ChangeNotifier {
     print("Post event: " + betterPlayerEvent.toString());
     if (eventListener != null) {
       eventListener(betterPlayerEvent);
+    }
+  }
+
+  void _onVideoPlayerChanged() async {
+    int now = DateTime.now().millisecondsSinceEpoch;
+    if (now - lastPositionSelection > 500) {
+      lastPositionSelection = now;
+      var currentVideoPlayerValue = videoPlayerController.value;
+      print("listener!" + videoPlayerController.value.duration.toString());
+      Duration currentPositionShifted = Duration(
+          milliseconds: currentVideoPlayerValue.position.inMilliseconds + 500);
+      if (currentPositionShifted > currentVideoPlayerValue.duration) {
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.FINISHED, parameters: {
+          "progress": currentVideoPlayerValue.position,
+          "duration": currentVideoPlayerValue.duration
+        }));
+      } else {
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.PROGRESS, parameters: {
+          "progress": currentVideoPlayerValue.position,
+          "duration": currentVideoPlayerValue.duration
+        }));
+      }
     }
   }
 }
