@@ -201,7 +201,7 @@ class BetterPlayerController extends ChangeNotifier {
         !videoPlayerController.value.initialized) {
       try {
         await videoPlayerController.initialize();
-      } catch (exception){
+      } catch (exception) {
         _handleInitializationException(exception);
       }
     }
@@ -314,9 +314,8 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
-  void _handleInitializationException(Exception exception){
-    if (exception is PlatformException){
-      print("Code: " + exception.code);
-    }
+  void _handleInitializationException(Exception exception) {
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.EXCEPTION,
+        parameters: {"exception": exception}));
   }
 }

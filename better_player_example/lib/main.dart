@@ -52,30 +52,30 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     betterPlayerController = BetterPlayerController.network(
-       // "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        //"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mdp4",
         autoPlay: false,
         autoInitialize: true,
         allowFullScreen: true,
-        eventListener: _onPlayerEvent,errorBuilder: (BuildContext context, String text){
-          return Text("Error:"+text,style: TextStyle(color: Colors.white),);
-    });
+        eventListener: _onPlayerEvent);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Better player example"),
-        ),
-        body: Container(
-            child: AspectRatio(
+      appBar: AppBar(
+        title: Text("Better player example"),
+      ),
+      body: Container(
+        child: AspectRatio(
           child: BetterPlayer(
             controller: betterPlayerController,
           ),
           aspectRatio: 4 / 3,
-        )));
+        ),
+      ),
+    );
   }
 
   void _onPlayerEvent(BetterPlayerEvent betterPlayerEvent) {

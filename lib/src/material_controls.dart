@@ -36,19 +36,7 @@ class _MaterialControlsState extends State<MaterialControls> {
   @override
   Widget build(BuildContext context) {
     if (_latestValue.hasError) {
-      return betterPlayerController.errorBuilder != null
-          ? betterPlayerController.errorBuilder(
-              context,
-              betterPlayerController
-                  .videoPlayerController.value.errorDescription,
-            )
-          : Center(
-              child: Icon(
-                Icons.error,
-                color: Colors.white,
-                size: 42,
-              ),
-            );
+      return _buildErrorWidget();
     }
 
     return MouseRegion(
@@ -104,6 +92,28 @@ class _MaterialControlsState extends State<MaterialControls> {
     }
 
     super.didChangeDependencies();
+  }
+
+  Widget _buildErrorWidget() {
+    if (betterPlayerController.errorBuilder != null) {
+      betterPlayerController.errorBuilder(
+        context,
+        betterPlayerController.videoPlayerController.value.errorDescription,
+      );
+    } else {
+      return Center(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Icon(
+          Icons.warning,
+          color: Colors.white,
+          size: 42,
+        ),
+        Text(
+          "Video can't be played",
+          style: TextStyle(color: Colors.white),
+        ),
+      ]));
+    }
   }
 
   AnimatedOpacity _buildBottomBar(

@@ -6,5 +6,6 @@ enum BetterPlayerEventType {
   HIDE_FULLSCREEN,
   SET_VOLUME,
   PROGRESS,
-  FINISHED
+  FINISHED,
+  EXCEPTION,
 }
