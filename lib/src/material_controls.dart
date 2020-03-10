@@ -74,7 +74,8 @@ class _MaterialControlsState extends State<MaterialControls> {
   }
 
   void _dispose() {
-    controller.removeListener(_updateState);
+    print("Dispose material controls $hashCode");
+    controller?.removeListener(_updateState);
     _hideTimer?.cancel();
     _initTimer?.cancel();
     _showAfterExpandCollapseTimer?.cancel();
@@ -96,7 +97,7 @@ class _MaterialControlsState extends State<MaterialControls> {
 
   Widget _buildErrorWidget() {
     if (betterPlayerController.errorBuilder != null) {
-      betterPlayerController.errorBuilder(
+      return betterPlayerController.errorBuilder(
         context,
         betterPlayerController.videoPlayerController.value.errorDescription,
       );
@@ -308,6 +309,7 @@ class _MaterialControlsState extends State<MaterialControls> {
   }
 
   Future<Null> _initialize() async {
+    print("Initalize in: $hashCode");
     controller.addListener(_updateState);
 
     _updateState();

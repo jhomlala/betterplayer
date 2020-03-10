@@ -31,15 +31,6 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
   final String title;
 
   @override
@@ -48,16 +39,41 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   BetterPlayerController betterPlayerController;
+  List dataSourceList = List<BetterPlayerDataSource>();
+
+  //https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4
 
   @override
   void initState() {
-    betterPlayerController = BetterPlayerController.network(
+    List<String> urls = List();
+    urls.add(
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4");
+    urls.add(
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+    urls.add(
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4");
+
+    dataSourceList.add(BetterPlayerDataSource(
+        BetterPlayerDataSourceType.NETWORK,
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+
+    dataSourceList.add(BetterPlayerDataSource(
+        BetterPlayerDataSourceType.NETWORK,
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
+
+    betterPlayerController = BetterPlayerController(
+        autoPlay: false,
+        autoInitialize: true,
+        allowFullScreen: true,
+        eventListener: _onPlayerEvent);
+
+    /*betterPlayerController = BetterPlayerController.network(
         //"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mdp4",
         autoPlay: false,
         autoInitialize: true,
         allowFullScreen: true,
-        eventListener: _onPlayerEvent);
+        eventListener: _onPlayerEvent);*/
     super.initState();
   }
 
@@ -69,8 +85,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Container(
         child: AspectRatio(
-          child: BetterPlayer(
+          child: BetterPlaylist(
             controller: betterPlayerController,
+            betterPlayerDataSource: dataSourceList,
           ),
           aspectRatio: 4 / 3,
         ),

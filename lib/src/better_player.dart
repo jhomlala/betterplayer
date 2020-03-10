@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
+import 'package:better_player/src/better_player_data_source.dart';
+import 'package:better_player/src/better_player_data_source_type.dart';
+import 'package:better_player/src/better_player_event_type.dart';
 import 'package:better_player/src/player_with_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -23,11 +26,14 @@ class BetterPlayer extends StatefulWidget {
   BetterPlayer({
     Key key,
     this.controller,
+    this.betterPlayerDataSource,
   })  : assert(controller != null, 'You must provide a chewie controller'),
         super(key: key);
 
   /// The [BetterPlayerController]
   final BetterPlayerController controller;
+
+  final BetterPlayerDataSource betterPlayerDataSource;
 
   @override
   BetterPlayerState createState() {
@@ -37,16 +43,20 @@ class BetterPlayer extends StatefulWidget {
 
 class BetterPlayerState extends State<BetterPlayer> {
   bool _isFullScreen = false;
-
+  DateTime dateTime;
   @override
   void initState() {
     super.initState();
+    print(" >>> INIT <<< $hashCode");
+    widget.controller.setup(widget.betterPlayerDataSource);
     widget.controller.addListener(listener);
   }
 
   @override
   void dispose() {
+    print("Dispose $hashCode");
     widget.controller.removeListener(listener);
+    widget.controller.dispose();
     super.dispose();
   }
 
@@ -70,6 +80,7 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    print("Build!!");
     return BetterPlayerControllerProvider(
       controller: widget.controller,
       child: PlayerWithControls(),
@@ -154,4 +165,5 @@ class BetterPlayerState extends State<BetterPlayer> {
     SystemChrome.setPreferredOrientations(
         widget.controller.deviceOrientationsAfterFullScreen);
   }
+
 }

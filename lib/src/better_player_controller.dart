@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
+import 'package:better_player/src/better_player_data_source.dart';
 import 'package:better_player/src/better_player_event.dart';
 import 'package:better_player/src/better_player_event_type.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
@@ -18,69 +19,62 @@ import 'package:video_player/video_player.dart';
 /// player, please use the standard information provided by the
 /// `VideoPlayerController`.
 class BetterPlayerController extends ChangeNotifier {
-  BetterPlayerController(
-      {this.videoPlayerController,
-      this.aspectRatio,
-      this.autoInitialize = false,
-      this.autoPlay = false,
-      this.startAt,
-      this.looping = false,
-      this.fullScreenByDefault = false,
-      this.cupertinoProgressColors,
-      this.materialProgressColors,
-      this.placeholder,
-      this.overlay,
-      this.showControlsOnInitialize = true,
-      this.showControls = true,
-      this.customControls,
-      this.errorBuilder,
-      this.allowedScreenSleep = true,
-      this.isLive = false,
-      this.allowFullScreen = true,
-      this.allowMuting = true,
-      this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
-      this.deviceOrientationsAfterFullScreen = const [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ],
-      this.routePageBuilder,
-      this.eventListener})
-      : assert(videoPlayerController != null,
-            'You must provide a controller to play a video') {
-    _initialize();
+  BetterPlayerController({this.aspectRatio,
+    this.autoInitialize = false,
+    this.autoPlay = false,
+    this.startAt,
+    this.looping = false,
+    this.fullScreenByDefault = false,
+    this.cupertinoProgressColors,
+    this.materialProgressColors,
+    this.placeholder,
+    this.overlay,
+    this.showControlsOnInitialize = true,
+    this.showControls = true,
+    this.customControls,
+    this.errorBuilder,
+    this.allowedScreenSleep = true,
+    this.isLive = false,
+    this.allowFullScreen = true,
+    this.allowMuting = true,
+    this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
+    this.deviceOrientationsAfterFullScreen = const [
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ],
+    this.routePageBuilder,
+    this.eventListener}) {
+    _eventListeners.add(eventListener);
+    //_initialize();
   }
 
   factory BetterPlayerController.network(String videoUrl,
       {double aspectRatio,
-      bool autoInitialize = false,
-      bool autoPlay = false,
-      Duration startAt,
-      bool looping = false,
-      bool fullScreenByDefault = false,
-      BetterPlayerProgressColors cupertinoProgressColors,
-      BetterPlayerProgressColors materialProgressColors,
-      Widget placeholder,
-      Widget overlay,
-      bool showControlsOnInitialize = true,
-      bool showControls = true,
-      Widget customControls,
-      Function(BuildContext context, String errorMessage) errorBuilder,
-      bool allowedScreenSleep = false,
-      bool isLive = false,
-      bool allowFullScreen = true,
-      bool allowMuting = true,
-      List<SystemUiOverlay> systemOverlaysAfterFullScreen =
-          SystemUiOverlay.values,
-      List<DeviceOrientation> deviceOrientationsAfterFullScreen,
-      BetterPlayerRoutePageBuilder routePageBuilder,
-      Function(BetterPlayerEvent) eventListener}) {
-    VideoPlayerController videoPlayerController =
-        VideoPlayerController.network(videoUrl);
-
+        bool autoInitialize = false,
+        bool autoPlay = false,
+        Duration startAt,
+        bool looping = false,
+        bool fullScreenByDefault = false,
+        BetterPlayerProgressColors cupertinoProgressColors,
+        BetterPlayerProgressColors materialProgressColors,
+        Widget placeholder,
+        Widget overlay,
+        bool showControlsOnInitialize = true,
+        bool showControls = true,
+        Widget customControls,
+        Function(BuildContext context, String errorMessage) errorBuilder,
+        bool allowedScreenSleep = false,
+        bool isLive = false,
+        bool allowFullScreen = true,
+        bool allowMuting = true,
+        List<SystemUiOverlay> systemOverlaysAfterFullScreen =
+            SystemUiOverlay.values,
+        List<DeviceOrientation> deviceOrientationsAfterFullScreen,
+        BetterPlayerRoutePageBuilder routePageBuilder,
+        Function(BetterPlayerEvent) eventListener}) {
     return BetterPlayerController(
-        videoPlayerController: videoPlayerController,
         aspectRatio: aspectRatio,
         autoInitialize: autoInitialize,
         autoPlay: autoPlay,
@@ -104,7 +98,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   /// The controller for the video you want to play
-  final VideoPlayerController videoPlayerController;
+  VideoPlayerController videoPlayerController;
 
   /// Initialize the Video on Startup. This will prep the video for playback.
   final bool autoInitialize;
@@ -179,8 +173,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   static BetterPlayerController of(BuildContext context) {
     final chewieControllerProvider =
-        context.inheritFromWidgetOfExactType(BetterPlayerControllerProvider)
-            as BetterPlayerControllerProvider;
+    context.inheritFromWidgetOfExactType(BetterPlayerControllerProvider)
+    as BetterPlayerControllerProvider;
 
     return chewieControllerProvider.controller;
   }
@@ -194,15 +188,26 @@ class BetterPlayerController extends ChangeNotifier {
 
   int lastPositionSelection = 0;
 
+  final List<Function> _eventListeners = List();
+
+
+  Future setup(BetterPlayerDataSource dataSource) async {
+    videoPlayerController =
+        VideoPlayerController.network(dataSource.url);
+    return await _initialize();
+  }
+
   Future _initialize() async {
+    print("Initlize!!");
     await videoPlayerController.setLooping(looping);
 
     if ((autoInitialize || autoPlay) &&
         !videoPlayerController.value.initialized) {
       try {
         await videoPlayerController.initialize();
-      } catch (exception) {
-        _handleInitializationException(exception);
+      } catch (exception, stackTrace) {
+        print(exception);
+        print(stackTrace);
       }
     }
 
@@ -286,13 +291,17 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
-    if (eventListener != null) {
-      eventListener(betterPlayerEvent);
+    for (Function eventListener in _eventListeners) {
+      if (eventListener != null) {
+        eventListener(betterPlayerEvent);
+      }
     }
   }
 
   void _onVideoPlayerChanged() async {
-    int now = DateTime.now().millisecondsSinceEpoch;
+    int now = DateTime
+        .now()
+        .millisecondsSinceEpoch;
     if (now - lastPositionSelection > 500) {
       lastPositionSelection = now;
       var currentVideoPlayerValue = videoPlayerController.value;
@@ -301,15 +310,15 @@ class BetterPlayerController extends ChangeNotifier {
       if (currentPositionShifted > currentVideoPlayerValue.duration) {
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.FINISHED, parameters: {
-          "progress": currentVideoPlayerValue.position,
-          "duration": currentVideoPlayerValue.duration
-        }));
+              "progress": currentVideoPlayerValue.position,
+              "duration": currentVideoPlayerValue.duration
+            }));
       } else {
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.PROGRESS, parameters: {
-          "progress": currentVideoPlayerValue.position,
-          "duration": currentVideoPlayerValue.duration
-        }));
+              "progress": currentVideoPlayerValue.position,
+              "duration": currentVideoPlayerValue.duration
+            }));
       }
     }
   }
@@ -318,4 +327,10 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.EXCEPTION,
         parameters: {"exception": exception}));
   }
+
+  void addEventsListener(Function(BetterPlayerEvent) eventListener) {
+    _eventListeners.add(eventListener);
+  }
+
+
 }
