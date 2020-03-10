@@ -61,12 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
         BetterPlayerDataSourceType.NETWORK,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
 
-    betterPlayerController = BetterPlayerController(
-        autoPlay: false,
-        autoInitialize: true,
-        allowFullScreen: true,
-        eventListener: _onPlayerEvent);
-
     /*betterPlayerController = BetterPlayerController.network(
         //"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mdp4",
@@ -86,8 +80,9 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         child: AspectRatio(
           child: BetterPlaylist(
-            controller: betterPlayerController,
-            betterPlayerDataSource: dataSourceList,
+            betterPlayerSettings: const BetterPlayerSettings(
+                autoPlay: false, autoInitialize: true, allowFullScreen: true),
+            betterPlayerDataSourceList: dataSourceList,
           ),
           aspectRatio: 4 / 3,
         ),
