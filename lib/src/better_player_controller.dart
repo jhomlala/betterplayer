@@ -20,7 +20,7 @@ import 'package:video_player/video_player.dart';
 /// player, please use the standard information provided by the
 /// `VideoPlayerController`.
 class BetterPlayerController extends ChangeNotifier {
-  BetterPlayerController(this.betterPlayerSettings) {
+  BetterPlayerController(this.betterPlayerSettings, {this.betterPlayerPlaylistSettings}) {
     _eventListeners.add(eventListener);
     //_initialize();
   }
@@ -31,6 +31,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   final BetterPlayerSettings betterPlayerSettings;
+  final BetterPlayerPlaylistSettings betterPlayerPlaylistSettings;
 
   /// The controller for the video you want to play
   VideoPlayerController videoPlayerController;

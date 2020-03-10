@@ -82,6 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
           child: BetterPlaylist(
             betterPlayerSettings: const BetterPlayerSettings(
                 autoPlay: false, autoInitialize: true, allowFullScreen: true),
+            betterPlayerPlaylistSettings: const BetterPlayerPlaylistSettings(),
             betterPlayerDataSourceList: dataSourceList,
           ),
           aspectRatio: 4 / 3,

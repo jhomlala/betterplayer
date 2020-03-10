@@ -177,6 +177,7 @@ class _MaterialControlsState extends State<MaterialControls> {
   Expanded _buildHitArea() {
     bool isFinished = _latestValue.position >= _latestValue.duration;
     IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
+
     return Expanded(
       child: GestureDetector(
         onTap: () {
@@ -205,16 +206,29 @@ class _MaterialControlsState extends State<MaterialControls> {
                       : 0.0,
               duration: Duration(milliseconds: 300),
               child: GestureDetector(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).dialogBackgroundColor,
-                    borderRadius: BorderRadius.circular(48.0),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Icon(_hitAreaIconData, size: 32.0),
-                  ),
-                ),
+                child: Stack(children: [
+                  Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).dialogBackgroundColor,
+                          borderRadius: BorderRadius.circular(48.0),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Stack(
+                              children: [Icon(_hitAreaIconData, size: 32.0)]),
+                        ),
+                      )),
+                  isFinished
+                      ? Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                              height: 60,
+                              width: 60,
+                              child: CircularProgressIndicator()))
+                      : const SizedBox(),
+                ]),
               ),
             ),
           ),
