@@ -40,6 +40,9 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
     if (_changingToNextVideo) {
       return;
     }
+    if (_controller.isFullScreen) {
+      _controller.exitFullScreen();
+    }
     _controller.isDisposing = true;
     _changingToNextVideo = true;
     BetterPlayerDataSource _nextDataSource = _getNextDateSource();

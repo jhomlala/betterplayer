@@ -20,7 +20,8 @@ import 'package:video_player/video_player.dart';
 /// player, please use the standard information provided by the
 /// `VideoPlayerController`.
 class BetterPlayerController extends ChangeNotifier {
-  BetterPlayerController(this.betterPlayerSettings, {this.betterPlayerPlaylistSettings}) {
+  BetterPlayerController(this.betterPlayerSettings,
+      {this.betterPlayerPlaylistSettings}) {
     _eventListeners.add(eventListener);
     //_initialize();
   }
@@ -182,8 +183,10 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void enterFullScreen() {
-    _isFullScreen = true;
-    notifyListeners();
+    if (!isDisposing) {
+      _isFullScreen = true;
+      notifyListeners();
+    }
   }
 
   void exitFullScreen() {
@@ -200,8 +203,10 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> play() async {
-    await videoPlayerController.play();
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
+    if (!isDisposing) {
+      await videoPlayerController.play();
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
+    }
   }
 
   Future<void> setLooping(bool looping) async {
