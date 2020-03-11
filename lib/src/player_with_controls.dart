@@ -12,6 +12,7 @@ class PlayerWithControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("Build player with controls!");
     final BetterPlayerController chewieController =
         BetterPlayerController.of(context);
 

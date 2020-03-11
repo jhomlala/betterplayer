@@ -27,6 +27,8 @@ class _MaterialControlsState extends State<MaterialControls> {
   bool _dragging = false;
   bool _displayTapped = false;
 
+  double _progressValue = 0;
+
   final barHeight = 48.0;
   final marginSize = 5.0;
 
@@ -74,7 +76,8 @@ class _MaterialControlsState extends State<MaterialControls> {
   }
 
   void _dispose() {
-    controller.removeListener(_updateState);
+    print("Dispose material controls $hashCode");
+    controller?.removeListener(_updateState);
     _hideTimer?.cancel();
     _initTimer?.cancel();
     _showAfterExpandCollapseTimer?.cancel();
@@ -96,7 +99,7 @@ class _MaterialControlsState extends State<MaterialControls> {
 
   Widget _buildErrorWidget() {
     if (betterPlayerController.errorBuilder != null) {
-      betterPlayerController.errorBuilder(
+      return betterPlayerController.errorBuilder(
         context,
         betterPlayerController.videoPlayerController.value.errorDescription,
       );
@@ -173,7 +176,19 @@ class _MaterialControlsState extends State<MaterialControls> {
     );
   }
 
-  Expanded _buildHitArea() {
+  bool _isPlaylistChangingToNextVideo() =>
+      betterPlayerController.betterPlayerPlaylistSettings != null &&
+      betterPlayerController.isDisposing;
+
+  Widget _buildHitArea() {
+    if (_isPlaylistChangingToNextVideo()) {
+      return Expanded(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CircularProgressIndicator(),
+          Text("Loading next video")
+        ]),
+      );
+    }
     bool isFinished = _latestValue.position >= _latestValue.duration;
     IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
 
@@ -205,16 +220,31 @@ class _MaterialControlsState extends State<MaterialControls> {
                       : 0.0,
               duration: Duration(milliseconds: 300),
               child: GestureDetector(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).dialogBackgroundColor,
-                    borderRadius: BorderRadius.circular(48.0),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(12.0),
-                    child: Icon(_hitAreaIconData, size: 32.0),
-                  ),
-                ),
+                child: Stack(children: [
+                  Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).dialogBackgroundColor,
+                          borderRadius: BorderRadius.circular(48.0),
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Stack(
+                              children: [Icon(_hitAreaIconData, size: 32.0)]),
+                        ),
+                      )),
+                  isFinished
+                      ? Align(
+                          alignment: Alignment.center,
+                          child: Container(
+                              height: 60,
+                              width: 60,
+                              child: CircularProgressIndicator(
+                                value: _progressValue,
+                              )))
+                      : const SizedBox(),
+                ]),
               ),
             ),
           ),
@@ -308,6 +338,7 @@ class _MaterialControlsState extends State<MaterialControls> {
   }
 
   Future<Null> _initialize() async {
+    print("Initalize in: $hashCode");
     controller.addListener(_updateState);
 
     _updateState();

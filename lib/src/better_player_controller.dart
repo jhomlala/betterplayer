@@ -1,8 +1,10 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
+import 'package:better_player/src/better_player_data_source.dart';
 import 'package:better_player/src/better_player_event.dart';
 import 'package:better_player/src/better_player_event_type.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
+import 'package:better_player/src/better_player_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -18,164 +20,99 @@ import 'package:video_player/video_player.dart';
 /// player, please use the standard information provided by the
 /// `VideoPlayerController`.
 class BetterPlayerController extends ChangeNotifier {
-  BetterPlayerController(
-      {this.videoPlayerController,
-      this.aspectRatio,
-      this.autoInitialize = false,
-      this.autoPlay = false,
-      this.startAt,
-      this.looping = false,
-      this.fullScreenByDefault = false,
-      this.cupertinoProgressColors,
-      this.materialProgressColors,
-      this.placeholder,
-      this.overlay,
-      this.showControlsOnInitialize = true,
-      this.showControls = true,
-      this.customControls,
-      this.errorBuilder,
-      this.allowedScreenSleep = true,
-      this.isLive = false,
-      this.allowFullScreen = true,
-      this.allowMuting = true,
-      this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
-      this.deviceOrientationsAfterFullScreen = const [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ],
-      this.routePageBuilder,
-      this.eventListener})
-      : assert(videoPlayerController != null,
-            'You must provide a controller to play a video') {
-    _initialize();
+  BetterPlayerController(this.betterPlayerSettings,
+      {this.betterPlayerPlaylistSettings}) {
+    _eventListeners.add(eventListener);
+    //_initialize();
   }
 
-  factory BetterPlayerController.network(String videoUrl,
-      {double aspectRatio,
-      bool autoInitialize = false,
-      bool autoPlay = false,
-      Duration startAt,
-      bool looping = false,
-      bool fullScreenByDefault = false,
-      BetterPlayerProgressColors cupertinoProgressColors,
-      BetterPlayerProgressColors materialProgressColors,
-      Widget placeholder,
-      Widget overlay,
-      bool showControlsOnInitialize = true,
-      bool showControls = true,
-      Widget customControls,
-      Function(BuildContext context, String errorMessage) errorBuilder,
-      bool allowedScreenSleep = false,
-      bool isLive = false,
-      bool allowFullScreen = true,
-      bool allowMuting = true,
-      List<SystemUiOverlay> systemOverlaysAfterFullScreen =
-          SystemUiOverlay.values,
-      List<DeviceOrientation> deviceOrientationsAfterFullScreen,
-      BetterPlayerRoutePageBuilder routePageBuilder,
-      Function(BetterPlayerEvent) eventListener}) {
-    VideoPlayerController videoPlayerController =
-        VideoPlayerController.network(videoUrl);
-
-    return BetterPlayerController(
-        videoPlayerController: videoPlayerController,
-        aspectRatio: aspectRatio,
-        autoInitialize: autoInitialize,
-        autoPlay: autoPlay,
-        startAt: startAt,
-        looping: looping,
-        fullScreenByDefault: fullScreenByDefault,
-        cupertinoProgressColors: cupertinoProgressColors,
-        materialProgressColors: materialProgressColors,
-        placeholder: placeholder,
-        overlay: overlay,
-        showControlsOnInitialize: showControlsOnInitialize,
-        showControls: showControls,
-        errorBuilder: errorBuilder,
-        allowedScreenSleep: allowedScreenSleep,
-        isLive: isLive,
-        allowFullScreen: allowFullScreen,
-        allowMuting: allowMuting,
-        systemOverlaysAfterFullScreen: systemOverlaysAfterFullScreen,
-        routePageBuilder: routePageBuilder,
-        eventListener: eventListener);
+  factory BetterPlayerController.network(
+      String videoUrl, BetterPlayerSettings betterPlayerSettings) {
+    return BetterPlayerController(betterPlayerSettings);
   }
+
+  final BetterPlayerSettings betterPlayerSettings;
+  final BetterPlayerPlaylistSettings betterPlayerPlaylistSettings;
 
   /// The controller for the video you want to play
-  final VideoPlayerController videoPlayerController;
+  VideoPlayerController videoPlayerController;
 
   /// Initialize the Video on Startup. This will prep the video for playback.
-  final bool autoInitialize;
+  bool get autoInitialize => betterPlayerSettings.autoInitialize;
 
   /// Play the video as soon as it's displayed
-  final bool autoPlay;
+  bool get autoPlay => betterPlayerSettings.autoPlay;
 
   /// Start video at a certain position
-  final Duration startAt;
+  Duration get startAt => betterPlayerSettings.startAt;
 
   /// Whether or not the video should loop
-  final bool looping;
+  bool get looping => betterPlayerSettings.looping;
 
   /// Weather or not to show the controls when initializing the widget.
-  final bool showControlsOnInitialize;
+  bool get showControlsOnInitialize =>
+      betterPlayerSettings.showControlsOnInitialize;
 
   /// Whether or not to show the controls at all
-  final bool showControls;
+  bool get showControls => betterPlayerSettings.showControls;
 
   /// Defines customised controls. Check [MaterialControls] or
   /// [CupertinoControls] for reference.
-  final Widget customControls;
+  Widget get customControls => betterPlayerSettings.customControls;
 
   /// When the video playback runs  into an error, you can build a custom
   /// error message.
-  final Widget Function(BuildContext context, String errorMessage) errorBuilder;
+  Widget Function(BuildContext context, String errorMessage) get errorBuilder =>
+      null;
 
   /// The Aspect Ratio of the Video. Important to get the correct size of the
   /// video!
   ///
   /// Will fallback to fitting within the space allowed.
-  final double aspectRatio;
+  double get aspectRatio => betterPlayerSettings.aspectRatio;
 
   /// The colors to use for controls on iOS. By default, the iOS player uses
   /// colors sampled from the original iOS 11 designs.
-  final BetterPlayerProgressColors cupertinoProgressColors;
+  BetterPlayerProgressColors get cupertinoProgressColors =>
+      betterPlayerSettings.cupertinoProgressColors;
 
   /// The colors to use for the Material Progress Bar. By default, the Material
   /// player uses the colors from your Theme.
-  final BetterPlayerProgressColors materialProgressColors;
+  BetterPlayerProgressColors get materialProgressColors =>
+      betterPlayerSettings.materialProgressColors;
 
   /// The placeholder is displayed underneath the Video before it is initialized
   /// or played.
-  final Widget placeholder;
+  Widget get placeholder => betterPlayerSettings.placeholder;
 
   /// A widget which is placed between the video and the controls
-  final Widget overlay;
+  Widget get overlay => betterPlayerSettings.overlay;
 
   /// Defines if the player will start in fullscreen when play is pressed
-  final bool fullScreenByDefault;
+  bool get fullScreenByDefault => betterPlayerSettings.fullScreenByDefault;
 
   /// Defines if the player will sleep in fullscreen or not
-  final bool allowedScreenSleep;
+  bool get allowedScreenSleep => betterPlayerSettings.allowedScreenSleep;
 
   /// Defines if the controls should be for live stream video
-  final bool isLive;
+  bool get isLive => betterPlayerSettings.isLive;
 
   /// Defines if the fullscreen control should be shown
-  final bool allowFullScreen;
+  bool get allowFullScreen => betterPlayerSettings.allowFullScreen;
 
   /// Defines if the mute control should be shown
-  final bool allowMuting;
+  bool get allowMuting => betterPlayerSettings.allowMuting;
 
   /// Defines the system overlays visible after exiting fullscreen
-  final List<SystemUiOverlay> systemOverlaysAfterFullScreen;
+  List<SystemUiOverlay> get systemOverlaysAfterFullScreen =>
+      betterPlayerSettings.systemOverlaysAfterFullScreen;
 
   /// Defines the set of allowed device orientations after exiting fullscreen
-  final List<DeviceOrientation> deviceOrientationsAfterFullScreen;
+  List<DeviceOrientation> get deviceOrientationsAfterFullScreen =>
+      betterPlayerSettings.deviceOrientationsAfterFullScreen;
 
   /// Defines a custom RoutePageBuilder for the fullscreen
-  final BetterPlayerRoutePageBuilder routePageBuilder;
+  BetterPlayerRoutePageBuilder routePageBuilder;
 
   static BetterPlayerController of(BuildContext context) {
     final chewieControllerProvider =
@@ -186,7 +123,8 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   /// Defines a event listener where video player events will be send
-  final Function(BetterPlayerEvent) eventListener;
+  Function(BetterPlayerEvent) get eventListener =>
+      betterPlayerSettings.eventListener;
 
   bool _isFullScreen = false;
 
@@ -194,15 +132,26 @@ class BetterPlayerController extends ChangeNotifier {
 
   int lastPositionSelection = 0;
 
+  final List<Function> _eventListeners = List();
+
+  bool isDisposing = false;
+
+  Future setup(BetterPlayerDataSource dataSource) async {
+    videoPlayerController = VideoPlayerController.network(dataSource.url);
+    return await _initialize();
+  }
+
   Future _initialize() async {
+    print("Initlize!!");
     await videoPlayerController.setLooping(looping);
 
     if ((autoInitialize || autoPlay) &&
         !videoPlayerController.value.initialized) {
       try {
         await videoPlayerController.initialize();
-      } catch (exception) {
-        _handleInitializationException(exception);
+      } catch (exception, stackTrace) {
+        print(exception);
+        print(stackTrace);
       }
     }
 
@@ -234,8 +183,10 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void enterFullScreen() {
-    _isFullScreen = true;
-    notifyListeners();
+    if (!isDisposing) {
+      _isFullScreen = true;
+      notifyListeners();
+    }
   }
 
   void exitFullScreen() {
@@ -252,8 +203,10 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> play() async {
-    await videoPlayerController.play();
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
+    if (!isDisposing) {
+      await videoPlayerController.play();
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
+    }
   }
 
   Future<void> setLooping(bool looping) async {
@@ -286,8 +239,10 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
-    if (eventListener != null) {
-      eventListener(betterPlayerEvent);
+    for (Function eventListener in _eventListeners) {
+      if (eventListener != null) {
+        eventListener(betterPlayerEvent);
+      }
     }
   }
 
@@ -317,5 +272,9 @@ class BetterPlayerController extends ChangeNotifier {
   void _handleInitializationException(Exception exception) {
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.EXCEPTION,
         parameters: {"exception": exception}));
+  }
+
+  void addEventsListener(Function(BetterPlayerEvent) eventListener) {
+    _eventListeners.add(eventListener);
   }
 }

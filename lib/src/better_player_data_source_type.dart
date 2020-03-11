@@ -1,0 +1,3 @@
+enum BetterPlayerDataSourceType{
+  NETWORK,FILE
+}
