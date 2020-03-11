@@ -37,10 +37,10 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
 
   void _onVideoFinished() {
     print("Finished " + _controller.hashCode.toString());
-    if (_changingToNextVideo){
+    if (_changingToNextVideo) {
       return;
     }
-
+    _controller.isDisposing = true;
     _changingToNextVideo = true;
     BetterPlayerDataSource _nextDataSource = _getNextDateSource();
     if (_nextDataSource == null) {

@@ -133,6 +133,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   final List<Function> _eventListeners = List();
 
+  bool isDisposing = false;
+
   Future setup(BetterPlayerDataSource dataSource) async {
     videoPlayerController = VideoPlayerController.network(dataSource.url);
     return await _initialize();

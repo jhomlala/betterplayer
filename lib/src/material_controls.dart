@@ -27,6 +27,8 @@ class _MaterialControlsState extends State<MaterialControls> {
   bool _dragging = false;
   bool _displayTapped = false;
 
+  double _progressValue = 0;
+
   final barHeight = 48.0;
   final marginSize = 5.0;
 
@@ -174,7 +176,19 @@ class _MaterialControlsState extends State<MaterialControls> {
     );
   }
 
-  Expanded _buildHitArea() {
+  bool _isPlaylistChangingToNextVideo() =>
+      betterPlayerController.betterPlayerPlaylistSettings != null &&
+      betterPlayerController.isDisposing;
+
+  Widget _buildHitArea() {
+    if (_isPlaylistChangingToNextVideo()) {
+      return Expanded(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CircularProgressIndicator(),
+          Text("Loading next video")
+        ]),
+      );
+    }
     bool isFinished = _latestValue.position >= _latestValue.duration;
     IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
 
@@ -226,7 +240,9 @@ class _MaterialControlsState extends State<MaterialControls> {
                           child: Container(
                               height: 60,
                               width: 60,
-                              child: CircularProgressIndicator()))
+                              child: CircularProgressIndicator(
+                                value: _progressValue,
+                              )))
                       : const SizedBox(),
                 ]),
               ),
