@@ -3,12 +3,16 @@ import 'dart:ui';
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/cupertino_controls.dart';
 import 'package:better_player/src/material_controls.dart';
+import 'package:better_player/src/subtitles/better_player_subtitle.dart';
+import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayerWithControls extends StatelessWidget {
-  PlayerWithControls({Key key}) : super(key: key);
+  final List<BetterPlayerSubtitle> subtitles;
+
+  PlayerWithControls({Key key, this.subtitles}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +46,12 @@ class PlayerWithControls extends StatelessWidget {
             ),
           ),
           chewieController.overlay ?? Container(),
+          subtitles != null
+              ? BetterPlayerSubtitlesDrawer(
+                  betterPlayerController: chewieController,
+                  subtitles: subtitles,
+                )
+              : const SizedBox(),
           _buildControls(context, chewieController),
         ],
       ),

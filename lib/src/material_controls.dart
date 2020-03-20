@@ -119,6 +119,8 @@ class _MaterialControlsState extends State<MaterialControls> {
     }
   }
 
+
+
   AnimatedOpacity _buildBottomBar(
     BuildContext context,
   ) {

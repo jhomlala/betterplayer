@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
 import 'package:better_player/src/better_player_data_source.dart';
-import 'package:better_player/src/better_player_data_source_type.dart';
-import 'package:better_player/src/better_player_event_type.dart';
 import 'package:better_player/src/player_with_controls.dart';
+import 'package:better_player/src/subtitles/better_player_subtitle.dart';
+import 'package:better_player/src/subtitles/better_player_subtitles_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -44,12 +45,25 @@ class BetterPlayer extends StatefulWidget {
 class BetterPlayerState extends State<BetterPlayer> {
   bool _isFullScreen = false;
   DateTime dateTime;
+  List<BetterPlayerSubtitle> subtitles;
+
   @override
   void initState() {
     super.initState();
     print(" >>> INIT <<< $hashCode");
     widget.controller.setup(widget.betterPlayerDataSource);
     widget.controller.addListener(listener);
+    subtitles = null;
+    if (widget.betterPlayerDataSource.subtitlesFile != null) {
+      _parseSubtitles();
+    }
+  }
+
+  void _parseSubtitles() {
+    print("parse subtitles");
+    File file = widget.betterPlayerDataSource.subtitlesFile;
+    subtitles =
+        BetterPlayerSubtitlesParser.parseString(file.readAsStringSync());
   }
 
   @override
@@ -83,7 +97,9 @@ class BetterPlayerState extends State<BetterPlayer> {
     print("Build!!");
     return BetterPlayerControllerProvider(
       controller: widget.controller,
-      child: PlayerWithControls(),
+      child: PlayerWithControls(
+        subtitles: subtitles,
+      ),
     );
   }
 
@@ -165,5 +181,4 @@ class BetterPlayerState extends State<BetterPlayer> {
     SystemChrome.setPreferredOrientations(
         widget.controller.deviceOrientationsAfterFullScreen);
   }
-
 }
