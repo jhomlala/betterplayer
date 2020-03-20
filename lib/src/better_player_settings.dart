@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_event.dart';
+import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -78,6 +79,8 @@ class BetterPlayerSettings {
   /// Defines a event listener where video player events will be send
   final Function(BetterPlayerEvent) eventListener;
 
+  final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
+
   const BetterPlayerSettings(
       {this.aspectRatio,
       this.autoInitialize = false,
@@ -105,5 +108,6 @@ class BetterPlayerSettings {
         DeviceOrientation.landscapeRight,
       ],
       this.routePageBuilder,
-      this.eventListener});
+      this.eventListener,
+      this.subtitlesConfiguration});
 }

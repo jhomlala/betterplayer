@@ -137,7 +137,9 @@ class BetterPlayerState extends State<BetterPlayer> {
   ) {
     var controllerProvider = BetterPlayerControllerProvider(
       controller: widget.controller,
-      child: PlayerWithControls(),
+      child: PlayerWithControls(
+        subtitles: subtitles,
+      ),
     );
 
     if (widget.controller.routePageBuilder == null) {

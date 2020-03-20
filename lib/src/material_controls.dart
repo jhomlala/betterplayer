@@ -9,7 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class MaterialControls extends StatefulWidget {
-  const MaterialControls({Key key}) : super(key: key);
+  final Function(bool visbility) onControlsVisibilityChanged;
+
+  const MaterialControls({Key key, this.onControlsVisibilityChanged})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -119,8 +122,6 @@ class _MaterialControlsState extends State<MaterialControls> {
     }
   }
 
-
-
   AnimatedOpacity _buildBottomBar(
     BuildContext context,
   ) {
@@ -129,6 +130,7 @@ class _MaterialControlsState extends State<MaterialControls> {
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: Duration(milliseconds: 300),
+      onEnd: _onPlayerHide,
       child: Container(
         height: barHeight,
         color: Theme.of(context).dialogBackgroundColor,
@@ -441,5 +443,10 @@ class _MaterialControlsState extends State<MaterialControls> {
         ),
       ),
     );
+  }
+
+  void _onPlayerHide() {
+    print("Player hide $_hideStuff");
+    widget.onControlsVisibilityChanged(!_hideStuff);
   }
 }
