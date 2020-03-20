@@ -111,11 +111,7 @@ class BetterPlayerState extends State<BetterPlayer> {
   Widget build(BuildContext context) {
     print("Build!!");
     return BetterPlayerControllerProvider(
-      controller: widget.controller,
-      child: PlayerWithControls(
-        subtitles: subtitles,
-      ),
-    );
+        controller: widget.controller, child: _buildPlayer());
   }
 
   Widget _buildFullScreenVideo(
@@ -151,11 +147,7 @@ class BetterPlayerState extends State<BetterPlayer> {
     Animation<double> secondaryAnimation,
   ) {
     var controllerProvider = BetterPlayerControllerProvider(
-      controller: widget.controller,
-      child: PlayerWithControls(
-        subtitles: subtitles,
-      ),
-    );
+        controller: widget.controller, child: _buildPlayer());
 
     if (widget.controller.routePageBuilder == null) {
       return _defaultRoutePageBuilder(
@@ -197,5 +189,13 @@ class BetterPlayerState extends State<BetterPlayer> {
         widget.controller.systemOverlaysAfterFullScreen);
     SystemChrome.setPreferredOrientations(
         widget.controller.deviceOrientationsAfterFullScreen);
+  }
+
+  Widget _buildPlayer() {
+    return PlayerWithControls(
+      subtitles: subtitles,
+      subtitlesConfiguration:
+          widget.controller.betterPlayerSettings.subtitlesConfiguration,
+    );
   }
 }

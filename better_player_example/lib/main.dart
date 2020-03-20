@@ -87,9 +87,14 @@ class _MyHomePageState extends State<MyHomePage> {
           return AspectRatio(
             child: BetterPlaylist(
               betterPlayerSettings: const BetterPlayerSettings(
-                  autoPlay: false, autoInitialize: true, allowFullScreen: true),
+                autoPlay: false,
+                autoInitialize: true,
+                allowFullScreen: true,
+                subtitlesConfiguration:
+                    BetterPlayerSubtitlesConfiguration(fontSize: 10),
+              ),
               betterPlayerPlaylistSettings:
-              const BetterPlayerPlaylistSettings(),
+                  const BetterPlayerPlaylistSettings(),
               betterPlayerDataSourceList: snapshot.data,
             ),
             aspectRatio: 4 / 3,
@@ -101,14 +106,12 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _onPlayerEvent(BetterPlayerEvent betterPlayerEvent) {
     print(
-        "Player event: ${betterPlayerEvent
-            .betterPlayerEventType} parameters: ${betterPlayerEvent
-            .parameters}");
+        "Player event: ${betterPlayerEvent.betterPlayerEventType} parameters: ${betterPlayerEvent.parameters}");
   }
 
   Future _saveAssetToFile() async {
     String content =
-    await rootBundle.loadString("assets/example_subtitles.srt");
+        await rootBundle.loadString("assets/example_subtitles.srt");
     final directory = await getApplicationDocumentsDirectory();
     var file = File("${directory.path}/example_subtitles.srt");
     file.writeAsString(content);
