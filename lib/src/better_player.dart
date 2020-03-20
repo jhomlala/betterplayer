@@ -43,6 +43,9 @@ class BetterPlayer extends StatefulWidget {
 }
 
 class BetterPlayerState extends State<BetterPlayer> {
+  BetterPlayerDataSource get betterPlayerDataSource =>
+      widget.betterPlayerDataSource;
+
   bool _isFullScreen = false;
   DateTime dateTime;
   List<BetterPlayerSubtitle> subtitles;
@@ -50,20 +53,12 @@ class BetterPlayerState extends State<BetterPlayer> {
   @override
   void initState() {
     super.initState();
-    print(" >>> INIT <<< $hashCode");
-    widget.controller.setup(widget.betterPlayerDataSource);
+    widget.controller.setup(betterPlayerDataSource);
     widget.controller.addListener(listener);
     subtitles = null;
-    if (widget.betterPlayerDataSource.subtitlesFile != null) {
+    if (betterPlayerDataSource.subtitlesFile != null) {
       _parseSubtitles();
     }
-  }
-
-  void _parseSubtitles() {
-    print("parse subtitles");
-    File file = widget.betterPlayerDataSource.subtitlesFile;
-    subtitles =
-        BetterPlayerSubtitlesParser.parseString(file.readAsStringSync());
   }
 
   @override
@@ -80,6 +75,26 @@ class BetterPlayerState extends State<BetterPlayer> {
       widget.controller.addListener(listener);
     }
     super.didUpdateWidget(oldWidget);
+  }
+
+  void _parseSubtitles() {
+    try {
+      File file = betterPlayerDataSource.subtitlesFile;
+      if (file.existsSync()) {
+        String fileContent = file.readAsStringSync();
+        if (fileContent?.isNotEmpty == true) {
+          subtitles =
+              BetterPlayerSubtitlesParser.parseString(file.readAsStringSync());
+        } else {
+          subtitles = List();
+        }
+      } else {
+        print("${betterPlayerDataSource.subtitlesFile} doesn't exist!");
+      }
+    } catch (exception) {
+      print(
+          "Failed to read subtitles from file: ${betterPlayerDataSource.subtitlesFile}: $exception");
+    }
   }
 
   void listener() async {

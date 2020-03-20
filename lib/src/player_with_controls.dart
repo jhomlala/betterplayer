@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/cupertino_controls.dart';
@@ -7,20 +6,39 @@ import 'package:better_player/src/material_controls.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class PlayerWithControls extends StatelessWidget {
+class PlayerWithControls extends StatefulWidget {
   final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
   final List<BetterPlayerSubtitle> subtitles;
-  final StreamController<bool> playerVisibilityStreamController = StreamController();
 
   PlayerWithControls({Key key, this.subtitlesConfiguration, this.subtitles})
-      : super(key: key) {
+      : super(key: key);
+
+  @override
+  _PlayerWithControlsState createState() => _PlayerWithControlsState();
+}
+
+class _PlayerWithControlsState extends State<PlayerWithControls> {
+  BetterPlayerSubtitlesConfiguration get subtitlesConfiguration =>
+      widget.subtitlesConfiguration;
+
+  List<BetterPlayerSubtitle> get subtitles => widget.subtitles;
+  final StreamController<bool> playerVisibilityStreamController =
+      StreamController();
+
+  @override
+  void initState() {
     playerVisibilityStreamController.add(true);
+    super.initState();
   }
-  
+
+  @override
+  void dispose() {
+    playerVisibilityStreamController.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +50,8 @@ class PlayerWithControls extends StatelessWidget {
       child: Container(
         width: MediaQuery.of(context).size.width,
         child: AspectRatio(
-          aspectRatio:
-              betterPlayerController.aspectRatio ?? _calculateAspectRatio(context),
+          aspectRatio: betterPlayerController.aspectRatio ??
+              _calculateAspectRatio(context),
           child: _buildPlayerWithControls(betterPlayerController, context),
         ),
       ),

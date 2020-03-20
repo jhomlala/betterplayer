@@ -2,6 +2,8 @@ import 'better_player_subtitle.dart';
 
 class BetterPlayerSubtitlesParser {
   static List<BetterPlayerSubtitle> parseString(String value) {
+    assert(value != null);
+    print("parse!");
     List<String> components = value.split('\r\n\r\n');
     if (components.length == 1) {
       components = value.split('\n\n');
