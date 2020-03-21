@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
+import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_settings.dart';
 import 'package:better_player/src/controls/material_progress_bar.dart';
 import 'package:better_player/src/utils.dart';
@@ -122,7 +123,7 @@ class _MaterialControlsState extends State<MaterialControls> {
         ),
         Text(
           "Video can't be played",
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: controlsConfiguration.textColor),
         ),
       ]));
     }
@@ -135,7 +136,7 @@ class _MaterialControlsState extends State<MaterialControls> {
 
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
-      duration: Duration(milliseconds: 300),
+      duration: controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
       child: Container(
         height: barHeight,
@@ -145,28 +146,32 @@ class _MaterialControlsState extends State<MaterialControls> {
             _buildPlayPause(controller),
             betterPlayerController.isLive
                 ? Expanded(child: const Text('LIVE'))
-                : _buildPosition(iconColor),
+                : controlsConfiguration.enableProgressText
+                    ? _buildPosition(iconColor)
+                    : const SizedBox(),
             betterPlayerController.isLive
                 ? const SizedBox()
-                : _buildProgressBar(),
+                : controlsConfiguration.enableProgressBar
+                    ? _buildProgressBar()
+                    : const SizedBox(),
             controlsConfiguration.enableMute
                 ? _buildMuteButton(controller)
-                : Container(),
+                : const SizedBox(),
             controlsConfiguration.enableFullscreen
                 ? _buildExpandButton()
-                : Container(),
+                : const SizedBox(),
           ],
         ),
       ),
     );
   }
 
-  GestureDetector _buildExpandButton() {
-    return GestureDetector(
+  Widget _buildExpandButton() {
+    return BetterPlayerClickableWidget(
       onTap: _onExpandCollapse,
       child: AnimatedOpacity(
         opacity: _hideStuff ? 0.0 : 1.0,
-        duration: Duration(milliseconds: 300),
+        duration: controlsConfiguration.controlsHideTime,
         child: Container(
           height: barHeight,
           margin: EdgeInsets.only(right: 12.0),
@@ -195,8 +200,14 @@ class _MaterialControlsState extends State<MaterialControls> {
     if (_isPlaylistChangingToNextVideo()) {
       return Expanded(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CircularProgressIndicator(),
-          Text("Loading next video")
+          CircularProgressIndicator(
+            valueColor: new AlwaysStoppedAnimation<Color>(
+                controlsConfiguration.controlBarColor),
+          ),
+          Text(
+            "Loading next video",
+            style: TextStyle(color: controlsConfiguration.textColor),
+          )
         ]),
       );
     }
@@ -204,7 +215,7 @@ class _MaterialControlsState extends State<MaterialControls> {
     IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
 
     return Expanded(
-      child: GestureDetector(
+      child: BetterPlayerClickableWidget(
         onTap: () {
           if (_latestValue != null && _latestValue.isPlaying) {
             if (_displayTapped) {
@@ -229,20 +240,25 @@ class _MaterialControlsState extends State<MaterialControls> {
                   _latestValue != null && !_latestValue.isPlaying && !_dragging
                       ? 1.0
                       : 0.0,
-              duration: Duration(milliseconds: 300),
+              duration: controlsConfiguration.controlsHideTime,
               child: GestureDetector(
                 child: Stack(children: [
                   Align(
                       alignment: Alignment.center,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Theme.of(context).dialogBackgroundColor,
+                          color: controlsConfiguration.controlBarColor,
                           borderRadius: BorderRadius.circular(48.0),
                         ),
                         child: Padding(
                           padding: EdgeInsets.all(12.0),
-                          child: Stack(
-                              children: [Icon(_hitAreaIconData, size: 32.0)]),
+                          child: Stack(children: [
+                            Icon(
+                              _hitAreaIconData,
+                              size: 32.0,
+                              color: controlsConfiguration.iconsColor,
+                            )
+                          ]),
                         ),
                       )),
                   isFinished
@@ -264,10 +280,10 @@ class _MaterialControlsState extends State<MaterialControls> {
     );
   }
 
-  GestureDetector _buildMuteButton(
+  Widget _buildMuteButton(
     VideoPlayerController controller,
   ) {
-    return GestureDetector(
+    return BetterPlayerClickableWidget(
       onTap: () {
         _cancelAndRestartTimer();
 
@@ -280,19 +296,16 @@ class _MaterialControlsState extends State<MaterialControls> {
       },
       child: AnimatedOpacity(
         opacity: _hideStuff ? 0.0 : 1.0,
-        duration: Duration(milliseconds: 300),
+        duration: controlsConfiguration.controlsHideTime,
         child: ClipRect(
           child: Container(
             child: Container(
               height: barHeight,
-              padding: EdgeInsets.only(
-                left: 8.0,
-                right: 8.0,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 8),
               child: Icon(
                 (_latestValue != null && _latestValue.volume > 0)
-                    ? Icons.volume_up
-                    : Icons.volume_off,
+                    ? controlsConfiguration.muteIcon
+                    : controlsConfiguration.unMuteIcon,
                 color: controlsConfiguration.iconsColor,
               ),
             ),
@@ -302,19 +315,17 @@ class _MaterialControlsState extends State<MaterialControls> {
     );
   }
 
-  GestureDetector _buildPlayPause(VideoPlayerController controller) {
-    return GestureDetector(
+  Widget _buildPlayPause(VideoPlayerController controller) {
+    return BetterPlayerClickableWidget(
       onTap: _playPause,
       child: Container(
         height: barHeight,
-        color: Colors.transparent,
-        margin: EdgeInsets.only(left: 8.0, right: 4.0),
-        padding: EdgeInsets.only(
-          left: 12.0,
-          right: 12.0,
-        ),
+        margin: const EdgeInsets.symmetric(horizontal: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Icon(
-          controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+          controller.value.isPlaying
+              ? controlsConfiguration.pauseIcon
+              : controlsConfiguration.playIcon,
           color: controlsConfiguration.iconsColor,
         ),
       ),
@@ -376,7 +387,8 @@ class _MaterialControlsState extends State<MaterialControls> {
       _hideStuff = true;
 
       betterPlayerController.toggleFullScreen();
-      _showAfterExpandCollapseTimer = Timer(Duration(milliseconds: 300), () {
+      _showAfterExpandCollapseTimer =
+          Timer(controlsConfiguration.controlsHideTime, () {
         setState(() {
           _cancelAndRestartTimer();
         });
@@ -431,11 +443,9 @@ class _MaterialControlsState extends State<MaterialControls> {
           controller,
           betterPlayerController,
           onDragStart: () {
-            setState(
-              () {
-                _dragging = true;
-              },
-            );
+            setState(() {
+              _dragging = true;
+            });
             _hideTimer?.cancel();
           },
           onDragEnd: () {
