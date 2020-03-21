@@ -24,6 +24,11 @@ class BetterPlayerControlsConfiguration {
   final Widget customControls;
   final bool showControls;
   final bool showControlsOnInitialize;
+  final double controlBarHeight;
+  final String defaultErrorText;
+  final String loadingNextVideoText;
+  final String liveText;
+  final Color liveColor;
 
   const BetterPlayerControlsConfiguration(
       {this.controlBarColor = Colors.black87,
@@ -46,9 +51,14 @@ class BetterPlayerControlsConfiguration {
       this.controlsHideTime = const Duration(milliseconds: 300),
       this.customControls,
       this.showControls = true,
-      this.showControlsOnInitialize = true});
+      this.showControlsOnInitialize = true,
+      this.controlBarHeight = 48.0,
+      this.defaultErrorText = "Video can't be played",
+      this.loadingNextVideoText = "Loading next video",
+      this.liveText = "LIVE",
+      this.liveColor = Colors.red});
 
- factory BetterPlayerControlsConfiguration.white() {
+  factory BetterPlayerControlsConfiguration.white() {
     return BetterPlayerControlsConfiguration(
         controlBarColor: Colors.white,
         textColor: Colors.black,

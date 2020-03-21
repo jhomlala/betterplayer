@@ -6,6 +6,8 @@ class BetterPlayerDataSource {
   final BetterPlayerDataSourceType type;
   final String url;
   final File subtitlesFile;
+  final bool liveStream;
 
-  BetterPlayerDataSource(this.type, this.url, {this.subtitlesFile});
+  BetterPlayerDataSource(this.type, this.url,
+      {this.subtitlesFile, this.liveStream = false});
 }

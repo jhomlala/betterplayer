@@ -83,9 +83,6 @@ class BetterPlayerController extends ChangeNotifier {
   /// Defines if the player will sleep in fullscreen or not
   bool get allowedScreenSleep => betterPlayerSettings.allowedScreenSleep;
 
-  /// Defines if the controls should be for live stream video
-  bool get isLive => betterPlayerSettings.isLive;
-
   /// Defines the system overlays visible after exiting fullscreen
   List<SystemUiOverlay> get systemOverlaysAfterFullScreen =>
       betterPlayerSettings.systemOverlaysAfterFullScreen;
@@ -118,7 +115,10 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool isDisposing = false;
 
+  BetterPlayerDataSource _betterPlayerDataSource;
+
   Future setup(BetterPlayerDataSource dataSource) async {
+    _betterPlayerDataSource = dataSource;
     videoPlayerController = VideoPlayerController.network(dataSource.url);
     return await _initialize();
   }
@@ -258,5 +258,9 @@ class BetterPlayerController extends ChangeNotifier {
 
   void addEventsListener(Function(BetterPlayerEvent) eventListener) {
     _eventListeners.add(eventListener);
+  }
+
+  bool isLiveStream(){
+    return _betterPlayerDataSource?.liveStream;
   }
 }

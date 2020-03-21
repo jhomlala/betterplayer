@@ -151,7 +151,7 @@ class _BetterPlayerCupertinoControlsState
             child: Container(
               height: barHeight,
               color: backgroundColor,
-              child: betterPlayerController.isLive
+              child: betterPlayerController.isLiveStream()
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
