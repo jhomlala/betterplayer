@@ -1,8 +1,9 @@
 import 'dart:async';
 
 import 'package:better_player/src/better_player_controller.dart';
-import 'package:better_player/src/cupertino_controls.dart';
-import 'package:better_player/src/material_controls.dart';
+import 'package:better_player/src/controls/better_player_controls_settings.dart';
+import 'package:better_player/src/controls/cupertino_controls.dart';
+import 'package:better_player/src/controls/material_controls.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
@@ -11,9 +12,14 @@ import 'package:video_player/video_player.dart';
 
 class PlayerWithControls extends StatefulWidget {
   final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
   final List<BetterPlayerSubtitle> subtitles;
 
-  PlayerWithControls({Key key, this.subtitlesConfiguration, this.subtitles})
+  PlayerWithControls(
+      {Key key,
+      this.subtitlesConfiguration,
+      this.controlsConfiguration,
+      this.subtitles})
       : super(key: key);
 
   @override
@@ -96,11 +102,14 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
             ? betterPlayerController.customControls
             : Theme.of(context).platform == TargetPlatform.android
                 ? MaterialControls(
-                    onControlsVisibilityChanged: onControlsVisibilityChanged)
+                    onControlsVisibilityChanged: onControlsVisibilityChanged,
+                    controlsConfiguration: widget.controlsConfiguration,
+                  )
                 : CupertinoControls(
                     backgroundColor: Color.fromRGBO(41, 41, 41, 0.7),
                     iconColor: Color.fromARGB(255, 200, 200, 200),
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
+                    controlsConfiguration: widget.controlsConfiguration,
                   )
         : Container();
   }

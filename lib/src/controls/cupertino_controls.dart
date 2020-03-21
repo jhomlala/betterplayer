@@ -2,10 +2,10 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:better_player/src/better_player.dart';
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
-import 'package:better_player/src/cupertino_progress_bar.dart';
+import 'package:better_player/src/controls/better_player_controls_settings.dart';
+import 'package:better_player/src/controls/cupertino_progress_bar.dart';
 import 'package:better_player/src/utils.dart';
 
 import 'package:flutter/foundation.dart';
@@ -15,12 +15,14 @@ import 'package:video_player/video_player.dart';
 
 class CupertinoControls extends StatefulWidget {
   final Function(bool visbility) onControlsVisibilityChanged;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   const CupertinoControls({
     @required this.backgroundColor,
     @required this.iconColor,
     @required this.onControlsVisibilityChanged,
-  });
+    @required this.controlsConfiguration,
+  }) : assert(controlsConfiguration != null);
 
   final Color backgroundColor;
   final Color iconColor;
@@ -41,17 +43,21 @@ class _CupertinoControlsState extends State<CupertinoControls> {
   Timer _initTimer;
 
   VideoPlayerController controller;
-  BetterPlayerController chewieController;
+  BetterPlayerController betterPlayerController;
+
+  BetterPlayerControlsConfiguration get controlsConfiguration =>
+      widget.controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
-    chewieController = BetterPlayerController.of(context);
+    betterPlayerController = BetterPlayerController.of(context);
 
     if (_latestValue.hasError) {
-      return chewieController.errorBuilder != null
-          ? chewieController.errorBuilder(
+      return betterPlayerController.errorBuilder != null
+          ? betterPlayerController.errorBuilder(
               context,
-              chewieController.videoPlayerController.value.errorDescription,
+              betterPlayerController
+                  .videoPlayerController.value.errorDescription,
             )
           : Center(
               child: Icon(
@@ -64,8 +70,8 @@ class _CupertinoControlsState extends State<CupertinoControls> {
 
     final backgroundColor = widget.backgroundColor;
     final iconColor = widget.iconColor;
-    chewieController = BetterPlayerController.of(context);
-    controller = chewieController.videoPlayerController;
+    betterPlayerController = BetterPlayerController.of(context);
+    controller = betterPlayerController.videoPlayerController;
     final orientation = MediaQuery.of(context).orientation;
     final barHeight = orientation == Orientation.portrait ? 30.0 : 47.0;
     final buttonPadding = orientation == Orientation.portrait ? 16.0 : 24.0;
@@ -108,11 +114,11 @@ class _CupertinoControlsState extends State<CupertinoControls> {
 
   @override
   void didChangeDependencies() {
-    final _oldController = chewieController;
-    chewieController = BetterPlayerController.of(context);
-    controller = chewieController.videoPlayerController;
+    final _oldController = betterPlayerController;
+    betterPlayerController = BetterPlayerController.of(context);
+    controller = betterPlayerController.videoPlayerController;
 
-    if (_oldController != chewieController) {
+    if (_oldController != betterPlayerController) {
       _dispose();
       _initialize();
     }
@@ -143,7 +149,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
             child: Container(
               height: barHeight,
               color: backgroundColor,
-              child: chewieController.isLive
+              child: betterPlayerController.isLive
                   ? Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -202,7 +208,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
               color: backgroundColor,
               child: Center(
                 child: Icon(
-                  chewieController.isFullScreen
+                  betterPlayerController.isFullScreen
                       ? OpenIconicIcons.fullscreenExit
                       : OpenIconicIcons.fullscreenEnter,
                   color: iconColor,
@@ -401,12 +407,12 @@ class _CupertinoControlsState extends State<CupertinoControls> {
       ),
       child: Row(
         children: <Widget>[
-          chewieController.allowFullScreen
+          controlsConfiguration.enableFullscreen
               ? _buildExpandButton(
                   backgroundColor, iconColor, barHeight, buttonPadding)
               : Container(),
           Expanded(child: Container()),
-          chewieController.allowMuting
+          controlsConfiguration.enableMute
               ? _buildMuteButton(controller, backgroundColor, iconColor,
                   barHeight, buttonPadding)
               : Container(),
@@ -431,11 +437,11 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     _updateState();
 
     if ((controller.value != null && controller.value.isPlaying) ||
-        chewieController.autoPlay) {
+        betterPlayerController.autoPlay) {
       _startHideTimer();
     }
 
-    if (chewieController.showControlsOnInitialize) {
+    if (betterPlayerController.showControlsOnInitialize) {
       _initTimer = Timer(Duration(milliseconds: 200), () {
         setState(() {
           _hideStuff = false;
@@ -448,7 +454,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     setState(() {
       _hideStuff = true;
 
-      chewieController.toggleFullScreen();
+      betterPlayerController.toggleFullScreen();
       _expandCollapseTimer = Timer(Duration(milliseconds: 300), () {
         setState(() {
           _cancelAndRestartTimer();
@@ -469,7 +475,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
           onDragEnd: () {
             _startHideTimer();
           },
-          colors: chewieController.cupertinoProgressColors ??
+          colors: betterPlayerController.cupertinoProgressColors ??
               BetterPlayerProgressColors(
                 playedColor: Color.fromARGB(
                   120,

@@ -2,16 +2,20 @@ import 'dart:async';
 
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
-import 'package:better_player/src/material_progress_bar.dart';
+import 'package:better_player/src/controls/better_player_controls_settings.dart';
+import 'package:better_player/src/controls/material_progress_bar.dart';
 import 'package:better_player/src/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class MaterialControls extends StatefulWidget {
   final Function(bool visbility) onControlsVisibilityChanged;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  const MaterialControls({Key key, this.onControlsVisibilityChanged})
-      : super(key: key);
+  const MaterialControls(
+      {Key key, this.onControlsVisibilityChanged, this.controlsConfiguration})
+      : assert(controlsConfiguration != null),
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -36,6 +40,9 @@ class _MaterialControlsState extends State<MaterialControls> {
 
   VideoPlayerController controller;
   BetterPlayerController betterPlayerController;
+
+  BetterPlayerControlsConfiguration get controlsConfiguration =>
+      widget.controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +117,7 @@ class _MaterialControlsState extends State<MaterialControls> {
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(
           Icons.warning,
-          color: Colors.white,
+          color: controlsConfiguration.iconsColor,
           size: 42,
         ),
         Text(
@@ -132,7 +139,7 @@ class _MaterialControlsState extends State<MaterialControls> {
       onEnd: _onPlayerHide,
       child: Container(
         height: barHeight,
-        color: Theme.of(context).dialogBackgroundColor,
+        color: controlsConfiguration.controlBarColor,
         child: Row(
           children: <Widget>[
             _buildPlayPause(controller),
@@ -142,10 +149,10 @@ class _MaterialControlsState extends State<MaterialControls> {
             betterPlayerController.isLive
                 ? const SizedBox()
                 : _buildProgressBar(),
-            betterPlayerController.allowMuting
+            controlsConfiguration.enableMute
                 ? _buildMuteButton(controller)
                 : Container(),
-            betterPlayerController.allowFullScreen
+            controlsConfiguration.enableFullscreen
                 ? _buildExpandButton()
                 : Container(),
           ],
@@ -172,6 +179,7 @@ class _MaterialControlsState extends State<MaterialControls> {
               betterPlayerController.isFullScreen
                   ? Icons.fullscreen_exit
                   : Icons.fullscreen,
+              color: controlsConfiguration.iconsColor,
             ),
           ),
         ),
@@ -285,6 +293,7 @@ class _MaterialControlsState extends State<MaterialControls> {
                 (_latestValue != null && _latestValue.volume > 0)
                     ? Icons.volume_up
                     : Icons.volume_off,
+                color: controlsConfiguration.iconsColor,
               ),
             ),
           ),
@@ -306,6 +315,7 @@ class _MaterialControlsState extends State<MaterialControls> {
         ),
         child: Icon(
           controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+          color: controlsConfiguration.iconsColor,
         ),
       ),
     );
@@ -325,6 +335,7 @@ class _MaterialControlsState extends State<MaterialControls> {
         '${formatDuration(position)} / ${formatDuration(duration)}',
         style: TextStyle(
           fontSize: 14.0,
+          color: controlsConfiguration.textColor,
         ),
       ),
     );
@@ -420,25 +431,26 @@ class _MaterialControlsState extends State<MaterialControls> {
           controller,
           betterPlayerController,
           onDragStart: () {
-            setState(() {
-              _dragging = true;
-            });
-
+            setState(
+              () {
+                _dragging = true;
+              },
+            );
             _hideTimer?.cancel();
           },
           onDragEnd: () {
             setState(() {
               _dragging = false;
             });
-
             _startHideTimer();
           },
           colors: betterPlayerController.materialProgressColors ??
               BetterPlayerProgressColors(
-                  playedColor: Theme.of(context).accentColor,
-                  handleColor: Theme.of(context).accentColor,
-                  bufferedColor: Theme.of(context).backgroundColor,
-                  backgroundColor: Theme.of(context).disabledColor),
+                  playedColor: controlsConfiguration.progressBarPlayedColor,
+                  handleColor: controlsConfiguration.progressBarHandleColor,
+                  bufferedColor: controlsConfiguration.progressBarBufferedColor,
+                  backgroundColor:
+                      controlsConfiguration.progressBarBackgroundColor),
         ),
       ),
     );
