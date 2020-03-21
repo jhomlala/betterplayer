@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:better_player/src/better_player.dart';
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
 import 'package:better_player/src/material_progress_bar.dart';

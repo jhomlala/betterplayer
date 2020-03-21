@@ -14,9 +14,12 @@ import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 import 'package:video_player/video_player.dart';
 
 class CupertinoControls extends StatefulWidget {
+  final Function(bool visbility) onControlsVisibilityChanged;
+
   const CupertinoControls({
     @required this.backgroundColor,
     @required this.iconColor,
+    @required this.onControlsVisibilityChanged,
   });
 
   final Color backgroundColor;
@@ -125,6 +128,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: Duration(milliseconds: 300),
+      onEnd: _onPlayerHide,
       child: Container(
         color: Colors.transparent,
         alignment: Alignment.bottomCenter,
@@ -548,5 +552,10 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     setState(() {
       _latestValue = controller.value;
     });
+  }
+
+  void _onPlayerHide() {
+    print("Player hide $_hideStuff");
+    widget.onControlsVisibilityChanged(!_hideStuff);
   }
 }
