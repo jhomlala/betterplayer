@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   const BetterPlayerPlaylistSettings(),
               betterPlayerDataSourceList: snapshot.data,
             ),
-            aspectRatio: 4 / 3,
+            aspectRatio: 16/9,
           );
         }
       },

@@ -258,7 +258,7 @@ class _BetterPlayerMaterialControlsState
                             borderRadius: BorderRadius.circular(48.0),
                           ),
                           child: Padding(
-                            padding: EdgeInsets.all(12.0),
+                            padding: const EdgeInsets.all(12.0),
                             child: Stack(children: [
                               Icon(
                                 _hitAreaIconData,
