@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_event.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
 void main() => runApp(MyApp());
@@ -41,34 +45,26 @@ class _MyHomePageState extends State<MyHomePage> {
   BetterPlayerController betterPlayerController;
   List dataSourceList = List<BetterPlayerDataSource>();
 
-  //https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4
-
   @override
   void initState() {
-    List<String> urls = List();
-    urls.add(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4");
-    urls.add(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-    urls.add(
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4");
+    super.initState();
+  }
+
+  Future<List<BetterPlayerDataSource>> setupData() async {
+    await _saveAssetToFile();
+
+    final directory = await getApplicationDocumentsDirectory();
 
     dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        subtitlesFile: File("${directory.path}/example_subtitles.srt")));
 
     dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
 
-    /*betterPlayerController = BetterPlayerController.network(
-        //"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mdp4",
-        autoPlay: false,
-        autoInitialize: true,
-        allowFullScreen: true,
-        eventListener: _onPlayerEvent);*/
-    super.initState();
+    return dataSourceList;
   }
 
   @override
@@ -77,22 +73,48 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text("Better player example"),
       ),
-      body: Container(
-        child: AspectRatio(
-          child: BetterPlaylist(
-            betterPlayerSettings: const BetterPlayerSettings(
-                autoPlay: false, autoInitialize: true, allowFullScreen: true),
-            betterPlayerPlaylistSettings: const BetterPlayerPlaylistSettings(),
-            betterPlayerDataSourceList: dataSourceList,
-          ),
-          aspectRatio: 4 / 3,
-        ),
-      ),
+      body: Container(child: _buildVideoPlayer()),
+    );
+  }
+
+  Widget _buildVideoPlayer() {
+    return FutureBuilder<List<BetterPlayerDataSource>>(
+      future: setupData(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Text("Building!");
+        } else {
+          return AspectRatio(
+            child: BetterPlaylist(
+              betterPlayerSettings: const BetterPlayerSettings(
+                autoPlay: false,
+                autoInitialize: true,
+                allowFullScreen: true,
+                subtitlesConfiguration:
+                    BetterPlayerSubtitlesConfiguration(fontSize: 10),
+              ),
+              betterPlayerPlaylistSettings:
+                  const BetterPlayerPlaylistSettings(),
+              betterPlayerDataSourceList: snapshot.data,
+            ),
+            aspectRatio: 4 / 3,
+          );
+        }
+      },
     );
   }
 
   void _onPlayerEvent(BetterPlayerEvent betterPlayerEvent) {
     print(
         "Player event: ${betterPlayerEvent.betterPlayerEventType} parameters: ${betterPlayerEvent.parameters}");
+  }
+
+  Future _saveAssetToFile() async {
+    String content =
+        await rootBundle.loadString("assets/example_subtitles.srt");
+    final directory = await getApplicationDocumentsDirectory();
+    var file = File("${directory.path}/example_subtitles.srt");
+    file.writeAsString(content);
+    print("File created $file");
   }
 }

@@ -8,3 +8,4 @@ export 'src/better_player_data_source_type.dart';
 export 'src/better_playlist.dart';
 export 'src/better_player_settings.dart';
 export 'src/better_player_playlist_settings.dart';
+export 'src/subtitles/better_player_subtitles_configuration.dart';

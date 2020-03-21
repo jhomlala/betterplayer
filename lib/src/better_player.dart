@@ -1,11 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
 import 'package:better_player/src/better_player_data_source.dart';
-import 'package:better_player/src/better_player_data_source_type.dart';
-import 'package:better_player/src/better_player_event_type.dart';
 import 'package:better_player/src/player_with_controls.dart';
+import 'package:better_player/src/subtitles/better_player_subtitle.dart';
+import 'package:better_player/src/subtitles/better_player_subtitles_parser.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -42,14 +43,22 @@ class BetterPlayer extends StatefulWidget {
 }
 
 class BetterPlayerState extends State<BetterPlayer> {
+  BetterPlayerDataSource get betterPlayerDataSource =>
+      widget.betterPlayerDataSource;
+
   bool _isFullScreen = false;
   DateTime dateTime;
+  List<BetterPlayerSubtitle> subtitles;
+
   @override
   void initState() {
     super.initState();
-    print(" >>> INIT <<< $hashCode");
-    widget.controller.setup(widget.betterPlayerDataSource);
+    widget.controller.setup(betterPlayerDataSource);
     widget.controller.addListener(listener);
+    subtitles = null;
+    if (betterPlayerDataSource.subtitlesFile != null) {
+      _parseSubtitles();
+    }
   }
 
   @override
@@ -68,6 +77,26 @@ class BetterPlayerState extends State<BetterPlayer> {
     super.didUpdateWidget(oldWidget);
   }
 
+  void _parseSubtitles() {
+    try {
+      File file = betterPlayerDataSource.subtitlesFile;
+      if (file.existsSync()) {
+        String fileContent = file.readAsStringSync();
+        if (fileContent?.isNotEmpty == true) {
+          subtitles =
+              BetterPlayerSubtitlesParser.parseString(file.readAsStringSync());
+        } else {
+          subtitles = List();
+        }
+      } else {
+        print("${betterPlayerDataSource.subtitlesFile} doesn't exist!");
+      }
+    } catch (exception) {
+      print(
+          "Failed to read subtitles from file: ${betterPlayerDataSource.subtitlesFile}: $exception");
+    }
+  }
+
   void listener() async {
     if (widget.controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
@@ -80,11 +109,8 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    print("Build!!");
     return BetterPlayerControllerProvider(
-      controller: widget.controller,
-      child: PlayerWithControls(),
-    );
+        controller: widget.controller, child: _buildPlayer());
   }
 
   Widget _buildFullScreenVideo(
@@ -120,9 +146,7 @@ class BetterPlayerState extends State<BetterPlayer> {
     Animation<double> secondaryAnimation,
   ) {
     var controllerProvider = BetterPlayerControllerProvider(
-      controller: widget.controller,
-      child: PlayerWithControls(),
-    );
+        controller: widget.controller, child: _buildPlayer());
 
     if (widget.controller.routePageBuilder == null) {
       return _defaultRoutePageBuilder(
@@ -166,4 +190,11 @@ class BetterPlayerState extends State<BetterPlayer> {
         widget.controller.deviceOrientationsAfterFullScreen);
   }
 
+  Widget _buildPlayer() {
+    return PlayerWithControls(
+      subtitles: subtitles,
+      subtitlesConfiguration:
+          widget.controller.betterPlayerSettings.subtitlesConfiguration,
+    );
+  }
 }
