@@ -109,7 +109,6 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    print("Build!!");
     return BetterPlayerControllerProvider(
         controller: widget.controller, child: _buildPlayer());
   }
