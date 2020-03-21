@@ -3,28 +3,28 @@ import 'dart:async';
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
-import 'package:better_player/src/controls/better_player_controls_settings.dart';
-import 'package:better_player/src/controls/material_progress_bar.dart';
+import 'package:better_player/src/controls/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
 import 'package:better_player/src/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class MaterialControls extends StatefulWidget {
+class BetterPlayerMaterialControls extends StatefulWidget {
   final Function(bool visbility) onControlsVisibilityChanged;
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  const MaterialControls(
+  const BetterPlayerMaterialControls(
       {Key key, this.onControlsVisibilityChanged, this.controlsConfiguration})
       : assert(controlsConfiguration != null),
         super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _MaterialControlsState();
+    return _BetterPlayerMaterialControlsState();
   }
 }
 
-class _MaterialControlsState extends State<MaterialControls> {
+class _BetterPlayerMaterialControlsState extends State<BetterPlayerMaterialControls> {
   VideoPlayerValue _latestValue;
   double _latestVolume;
   bool _hideStuff = true;
@@ -439,7 +439,7 @@ class _MaterialControlsState extends State<MaterialControls> {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.only(right: 20.0),
-        child: MaterialVideoProgressBar(
+        child: BetterPlayerMaterialVideoProgressBar(
           controller,
           betterPlayerController,
           onDragStart: () {

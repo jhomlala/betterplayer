@@ -4,8 +4,9 @@ import 'dart:ui' as ui;
 
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
-import 'package:better_player/src/controls/better_player_controls_settings.dart';
-import 'package:better_player/src/controls/cupertino_progress_bar.dart';
+import 'package:better_player/src/controls/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
+
 import 'package:better_player/src/utils.dart';
 
 import 'package:flutter/foundation.dart';
@@ -13,11 +14,11 @@ import 'package:flutter/material.dart';
 import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 import 'package:video_player/video_player.dart';
 
-class CupertinoControls extends StatefulWidget {
+class BetterPlayerCupertinoControls extends StatefulWidget {
   final Function(bool visbility) onControlsVisibilityChanged;
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  const CupertinoControls({
+  const BetterPlayerCupertinoControls({
     @required this.backgroundColor,
     @required this.iconColor,
     @required this.onControlsVisibilityChanged,
@@ -29,11 +30,12 @@ class CupertinoControls extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _CupertinoControlsState();
+    return _BetterPlayerCupertinoControlsState();
   }
 }
 
-class _CupertinoControlsState extends State<CupertinoControls> {
+class _BetterPlayerCupertinoControlsState
+    extends State<BetterPlayerCupertinoControls> {
   VideoPlayerValue _latestValue;
   double _latestVolume;
   bool _hideStuff = true;
@@ -467,7 +469,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
     return Expanded(
       child: Padding(
         padding: EdgeInsets.only(right: 12.0),
-        child: CupertinoVideoProgressBar(
+        child: BetterPlayerCupertinoVideoProgressBar(
           controller,
           onDragStart: () {
             _hideTimer?.cancel();

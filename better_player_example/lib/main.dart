@@ -86,12 +86,12 @@ class _MyHomePageState extends State<MyHomePage> {
         } else {
           return AspectRatio(
             child: BetterPlaylist(
-              betterPlayerSettings: const BetterPlayerSettings(
-                autoPlay: false,
-                autoInitialize: true,
-                subtitlesConfiguration:
-                    BetterPlayerSubtitlesConfiguration(fontSize: 10),
-              ),
+              betterPlayerSettings: BetterPlayerSettings(
+                  autoPlay: false,
+                  autoInitialize: true,
+                  subtitlesConfiguration:
+                      BetterPlayerSubtitlesConfiguration(fontSize: 10),
+                  controlsConfiguration: BetterPlayerControlsConfiguration()),
               betterPlayerPlaylistSettings:
                   const BetterPlayerPlaylistSettings(),
               betterPlayerDataSourceList: snapshot.data,

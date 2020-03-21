@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 
-class MaterialVideoProgressBar extends StatefulWidget {
-  MaterialVideoProgressBar(
+class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
+  BetterPlayerMaterialVideoProgressBar(
     this.controller,this.betterPlayerController, {
     BetterPlayerProgressColors colors,
     this.onDragEnd,
@@ -26,7 +26,7 @@ class MaterialVideoProgressBar extends StatefulWidget {
   }
 }
 
-class _VideoProgressBarState extends State<MaterialVideoProgressBar> {
+class _VideoProgressBarState extends State<BetterPlayerMaterialVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
       setState(() {});

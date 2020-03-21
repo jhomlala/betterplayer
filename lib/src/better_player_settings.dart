@@ -1,6 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_event.dart';
-import 'package:better_player/src/controls/better_player_controls_settings.dart';
+import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

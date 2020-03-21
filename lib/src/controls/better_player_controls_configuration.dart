@@ -47,4 +47,15 @@ class BetterPlayerControlsConfiguration {
       this.customControls,
       this.showControls = true,
       this.showControlsOnInitialize = true});
+
+ factory BetterPlayerControlsConfiguration.white() {
+    return BetterPlayerControlsConfiguration(
+        controlBarColor: Colors.white,
+        textColor: Colors.black,
+        iconsColor: Colors.black,
+        progressBarPlayedColor: Colors.black,
+        progressBarHandleColor: Colors.black,
+        progressBarBufferedColor: Colors.black54,
+        progressBarBackgroundColor: Colors.white70);
+  }
 }

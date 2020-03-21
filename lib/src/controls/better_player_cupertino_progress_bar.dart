@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 
-class CupertinoVideoProgressBar extends StatefulWidget {
-  CupertinoVideoProgressBar(
+class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
+  BetterPlayerCupertinoVideoProgressBar(
     this.controller, {
     BetterPlayerProgressColors colors,
     this.onDragEnd,
@@ -25,7 +25,7 @@ class CupertinoVideoProgressBar extends StatefulWidget {
   }
 }
 
-class _VideoProgressBarState extends State<CupertinoVideoProgressBar> {
+class _VideoProgressBarState extends State<BetterPlayerCupertinoVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
       setState(() {});
