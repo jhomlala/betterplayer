@@ -30,6 +30,9 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
   BetterPlayerSubtitlesConfiguration get subtitlesConfiguration =>
       widget.subtitlesConfiguration;
 
+  BetterPlayerControlsConfiguration get controlsConfiguration =>
+      widget.controlsConfiguration;
+
   List<BetterPlayerSubtitle> get subtitles => widget.subtitles;
   final StreamController<bool> playerVisibilityStreamController =
       StreamController();
@@ -97,9 +100,9 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
     BuildContext context,
     BetterPlayerController betterPlayerController,
   ) {
-    return betterPlayerController.showControls
-        ? betterPlayerController.customControls != null
-            ? betterPlayerController.customControls
+    return controlsConfiguration.showControls
+        ? controlsConfiguration.customControls != null
+            ? controlsConfiguration.customControls
             : Theme.of(context).platform == TargetPlatform.android
                 ? MaterialControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
@@ -111,7 +114,7 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
                     controlsConfiguration: widget.controlsConfiguration,
                   )
-        : Container();
+        : const SizedBox();
   }
 
   double _calculateAspectRatio(BuildContext context) {

@@ -167,7 +167,7 @@ class _MaterialControlsState extends State<MaterialControls> {
   }
 
   Widget _buildExpandButton() {
-    return BetterPlayerClickableWidget(
+    return BetterPlayerMaterialClickableWidget(
       onTap: _onExpandCollapse,
       child: AnimatedOpacity(
         opacity: _hideStuff ? 0.0 : 1.0,
@@ -215,7 +215,7 @@ class _MaterialControlsState extends State<MaterialControls> {
     IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
 
     return Expanded(
-      child: BetterPlayerClickableWidget(
+      child: BetterPlayerMaterialClickableWidget(
         onTap: () {
           if (_latestValue != null && _latestValue.isPlaying) {
             if (_displayTapped) {
@@ -283,7 +283,7 @@ class _MaterialControlsState extends State<MaterialControls> {
   Widget _buildMuteButton(
     VideoPlayerController controller,
   ) {
-    return BetterPlayerClickableWidget(
+    return BetterPlayerMaterialClickableWidget(
       onTap: () {
         _cancelAndRestartTimer();
 
@@ -316,7 +316,7 @@ class _MaterialControlsState extends State<MaterialControls> {
   }
 
   Widget _buildPlayPause(VideoPlayerController controller) {
-    return BetterPlayerClickableWidget(
+    return BetterPlayerMaterialClickableWidget(
       onTap: _playPause,
       child: Container(
         height: barHeight,
@@ -373,7 +373,7 @@ class _MaterialControlsState extends State<MaterialControls> {
       _startHideTimer();
     }
 
-    if (betterPlayerController.showControlsOnInitialize) {
+    if (controlsConfiguration.showControlsOnInitialize) {
       _initTimer = Timer(Duration(milliseconds: 200), () {
         setState(() {
           _hideStuff = false;

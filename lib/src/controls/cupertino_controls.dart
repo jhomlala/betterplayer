@@ -441,7 +441,7 @@ class _CupertinoControlsState extends State<CupertinoControls> {
       _startHideTimer();
     }
 
-    if (betterPlayerController.showControlsOnInitialize) {
+    if (controlsConfiguration.showControlsOnInitialize) {
       _initTimer = Timer(Duration(milliseconds: 200), () {
         setState(() {
           _hideStuff = false;
