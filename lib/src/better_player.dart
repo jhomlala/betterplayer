@@ -195,6 +195,8 @@ class BetterPlayerState extends State<BetterPlayer> {
       subtitles: subtitles,
       subtitlesConfiguration:
           widget.controller.betterPlayerSettings.subtitlesConfiguration,
+      controlsConfiguration:
+          widget.controller.betterPlayerSettings.controlsConfiguration,
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_event.dart';
+import 'package:better_player/src/controls/better_player_controls_settings.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -20,12 +21,6 @@ class BetterPlayerSettings {
   /// Weather or not to show the controls when initializing the widget.
   final bool showControlsOnInitialize;
 
-  /// Whether or not to show the controls at all
-  final bool showControls;
-
-  /// Defines customised controls. Check [MaterialControls] or
-  /// [CupertinoControls] for reference.
-  final Widget customControls;
 
   /// When the video playback runs  into an error, you can build a custom
   /// error message.
@@ -61,12 +56,6 @@ class BetterPlayerSettings {
   /// Defines if the controls should be for live stream video
   final bool isLive;
 
-  /// Defines if the fullscreen control should be shown
-  final bool allowFullScreen;
-
-  /// Defines if the mute control should be shown
-  final bool allowMuting;
-
   /// Defines the system overlays visible after exiting fullscreen
   final List<SystemUiOverlay> systemOverlaysAfterFullScreen;
 
@@ -81,6 +70,8 @@ class BetterPlayerSettings {
 
   final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
 
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+
   const BetterPlayerSettings(
       {this.aspectRatio,
       this.autoInitialize = false,
@@ -93,13 +84,9 @@ class BetterPlayerSettings {
       this.placeholder,
       this.overlay,
       this.showControlsOnInitialize = true,
-      this.showControls = true,
-      this.customControls,
       this.errorBuilder,
       this.allowedScreenSleep = true,
       this.isLive = false,
-      this.allowFullScreen = true,
-      this.allowMuting = true,
       this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
       this.deviceOrientationsAfterFullScreen = const [
         DeviceOrientation.portraitUp,
@@ -109,5 +96,6 @@ class BetterPlayerSettings {
       ],
       this.routePageBuilder,
       this.eventListener,
-      this.subtitlesConfiguration});
+      this.subtitlesConfiguration = const  BetterPlayerSubtitlesConfiguration(),
+      this.controlsConfiguration = const BetterPlayerControlsConfiguration()});
 }

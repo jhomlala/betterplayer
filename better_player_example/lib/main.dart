@@ -89,7 +89,6 @@ class _MyHomePageState extends State<MyHomePage> {
               betterPlayerSettings: const BetterPlayerSettings(
                 autoPlay: false,
                 autoInitialize: true,
-                allowFullScreen: true,
                 subtitlesConfiguration:
                     BetterPlayerSubtitlesConfiguration(fontSize: 10),
               ),
