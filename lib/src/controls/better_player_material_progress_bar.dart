@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 
-class MaterialVideoProgressBar extends StatefulWidget {
-  MaterialVideoProgressBar(
-    this.controller,this.betterPlayerController, {
-    BetterPlayerProgressColors colors,
-    this.onDragEnd,
-    this.onDragStart,
-    this.onDragUpdate,
-  }) : colors = colors ?? BetterPlayerProgressColors();
+class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
+  BetterPlayerMaterialVideoProgressBar(
+      this.controller, this.betterPlayerController,
+      {BetterPlayerProgressColors colors,
+      this.onDragEnd,
+      this.onDragStart,
+      this.onDragUpdate,
+      this.isChangeAllowed})
+      : colors = colors ?? BetterPlayerProgressColors();
 
   final VideoPlayerController controller;
   final BetterPlayerController betterPlayerController;
@@ -19,6 +20,7 @@ class MaterialVideoProgressBar extends StatefulWidget {
   final Function() onDragStart;
   final Function() onDragEnd;
   final Function() onDragUpdate;
+  final bool Function() isChangeAllowed;
 
   @override
   _VideoProgressBarState createState() {
@@ -26,7 +28,8 @@ class MaterialVideoProgressBar extends StatefulWidget {
   }
 }
 
-class _VideoProgressBarState extends State<MaterialVideoProgressBar> {
+class _VideoProgressBarState
+    extends State<BetterPlayerMaterialVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
       setState(() {});
@@ -37,7 +40,10 @@ class _VideoProgressBarState extends State<MaterialVideoProgressBar> {
   bool _controllerWasPlaying = false;
 
   VideoPlayerController get controller => widget.controller;
-  BetterPlayerController get betterPlayerController => widget.betterPlayerController;
+
+  BetterPlayerController get betterPlayerController =>
+      widget.betterPlayerController;
+
   @override
   void initState() {
     super.initState();
@@ -78,6 +84,9 @@ class _VideoProgressBarState extends State<MaterialVideoProgressBar> {
         if (!controller.value.initialized) {
           return;
         }
+        if (!widget.isChangeAllowed()) {
+          return;
+        }
         _controllerWasPlaying = controller.value.isPlaying;
         if (_controllerWasPlaying) {
           controller.pause();
@@ -91,6 +100,9 @@ class _VideoProgressBarState extends State<MaterialVideoProgressBar> {
         if (!controller.value.initialized) {
           return;
         }
+        if (!widget.isChangeAllowed()) {
+          return;
+        }
         seekToRelativePosition(details.globalPosition);
 
         if (widget.onDragUpdate != null) {
@@ -98,6 +110,9 @@ class _VideoProgressBarState extends State<MaterialVideoProgressBar> {
         }
       },
       onHorizontalDragEnd: (DragEndDetails details) {
+        if (!widget.isChangeAllowed()) {
+          return;
+        }
         if (_controllerWasPlaying) {
           controller.play();
         }

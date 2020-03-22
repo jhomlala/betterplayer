@@ -1,28 +1,37 @@
 import 'dart:async';
 
 import 'package:better_player/src/better_player_controller.dart';
-import 'package:better_player/src/cupertino_controls.dart';
-import 'package:better_player/src/material_controls.dart';
+import 'package:better_player/src/controls/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
+import 'package:better_player/src/controls/better_player_material_controls.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class PlayerWithControls extends StatefulWidget {
+class BetterPlayerWithControls extends StatefulWidget {
   final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
   final List<BetterPlayerSubtitle> subtitles;
 
-  PlayerWithControls({Key key, this.subtitlesConfiguration, this.subtitles})
+  BetterPlayerWithControls(
+      {Key key,
+      this.subtitlesConfiguration,
+      this.controlsConfiguration,
+      this.subtitles})
       : super(key: key);
 
   @override
-  _PlayerWithControlsState createState() => _PlayerWithControlsState();
+  _BetterPlayerWithControlsState createState() => _BetterPlayerWithControlsState();
 }
 
-class _PlayerWithControlsState extends State<PlayerWithControls> {
+class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   BetterPlayerSubtitlesConfiguration get subtitlesConfiguration =>
       widget.subtitlesConfiguration;
+
+  BetterPlayerControlsConfiguration get controlsConfiguration =>
+      widget.controlsConfiguration;
 
   List<BetterPlayerSubtitle> get subtitles => widget.subtitles;
   final StreamController<bool> playerVisibilityStreamController =
@@ -91,18 +100,19 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
     BuildContext context,
     BetterPlayerController betterPlayerController,
   ) {
-    return betterPlayerController.showControls
-        ? betterPlayerController.customControls != null
-            ? betterPlayerController.customControls
+    return controlsConfiguration.showControls
+        ? controlsConfiguration.customControls != null
+            ? controlsConfiguration.customControls
             : Theme.of(context).platform == TargetPlatform.android
-                ? MaterialControls(
-                    onControlsVisibilityChanged: onControlsVisibilityChanged)
-                : CupertinoControls(
-                    backgroundColor: Color.fromRGBO(41, 41, 41, 0.7),
-                    iconColor: Color.fromARGB(255, 200, 200, 200),
+                ? BetterPlayerMaterialControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
+                    controlsConfiguration: widget.controlsConfiguration,
                   )
-        : Container();
+                : BetterPlayerCupertinoControls(
+                    onControlsVisibilityChanged: onControlsVisibilityChanged,
+                    controlsConfiguration: widget.controlsConfiguration,
+                  )
+        : const SizedBox();
   }
 
   double _calculateAspectRatio(BuildContext context) {

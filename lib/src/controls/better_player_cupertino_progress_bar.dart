@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player/video_player.dart';
 
-class CupertinoVideoProgressBar extends StatefulWidget {
-  CupertinoVideoProgressBar(
+class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
+  BetterPlayerCupertinoVideoProgressBar(
     this.controller, {
     BetterPlayerProgressColors colors,
     this.onDragEnd,
     this.onDragStart,
-    this.onDragUpdate,
+    this.onDragUpdate, this.isChangeAllowed,
   }) : colors = colors ?? BetterPlayerProgressColors();
 
   final VideoPlayerController controller;
@@ -18,6 +18,7 @@ class CupertinoVideoProgressBar extends StatefulWidget {
   final Function() onDragStart;
   final Function() onDragEnd;
   final Function() onDragUpdate;
+  final bool Function() isChangeAllowed;
 
   @override
   _VideoProgressBarState createState() {
@@ -25,7 +26,7 @@ class CupertinoVideoProgressBar extends StatefulWidget {
   }
 }
 
-class _VideoProgressBarState extends State<CupertinoVideoProgressBar> {
+class _VideoProgressBarState extends State<BetterPlayerCupertinoVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
       setState(() {});
@@ -77,6 +78,9 @@ class _VideoProgressBarState extends State<CupertinoVideoProgressBar> {
         if (!controller.value.initialized) {
           return;
         }
+        if (!widget.isChangeAllowed()){
+          return;
+        }
         _controllerWasPlaying = controller.value.isPlaying;
         if (_controllerWasPlaying) {
           controller.pause();
@@ -90,6 +94,9 @@ class _VideoProgressBarState extends State<CupertinoVideoProgressBar> {
         if (!controller.value.initialized) {
           return;
         }
+        if (!widget.isChangeAllowed()){
+          return;
+        }
         seekToRelativePosition(details.globalPosition);
 
         if (widget.onDragUpdate != null) {
@@ -97,16 +104,21 @@ class _VideoProgressBarState extends State<CupertinoVideoProgressBar> {
         }
       },
       onHorizontalDragEnd: (DragEndDetails details) {
+        if (!widget.isChangeAllowed()){
+          return;
+        }
         if (_controllerWasPlaying) {
           controller.play();
         }
-
         if (widget.onDragEnd != null) {
           widget.onDragEnd();
         }
       },
       onTapDown: (TapDownDetails details) {
         if (!controller.value.initialized) {
+          return;
+        }
+        if (!widget.isChangeAllowed()){
           return;
         }
         seekToRelativePosition(details.globalPosition);

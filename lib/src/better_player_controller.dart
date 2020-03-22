@@ -49,17 +49,6 @@ class BetterPlayerController extends ChangeNotifier {
   /// Whether or not the video should loop
   bool get looping => betterPlayerSettings.looping;
 
-  /// Weather or not to show the controls when initializing the widget.
-  bool get showControlsOnInitialize =>
-      betterPlayerSettings.showControlsOnInitialize;
-
-  /// Whether or not to show the controls at all
-  bool get showControls => betterPlayerSettings.showControls;
-
-  /// Defines customised controls. Check [MaterialControls] or
-  /// [CupertinoControls] for reference.
-  Widget get customControls => betterPlayerSettings.customControls;
-
   /// When the video playback runs  into an error, you can build a custom
   /// error message.
   Widget Function(BuildContext context, String errorMessage) get errorBuilder =>
@@ -70,16 +59,6 @@ class BetterPlayerController extends ChangeNotifier {
   ///
   /// Will fallback to fitting within the space allowed.
   double get aspectRatio => betterPlayerSettings.aspectRatio;
-
-  /// The colors to use for controls on iOS. By default, the iOS player uses
-  /// colors sampled from the original iOS 11 designs.
-  BetterPlayerProgressColors get cupertinoProgressColors =>
-      betterPlayerSettings.cupertinoProgressColors;
-
-  /// The colors to use for the Material Progress Bar. By default, the Material
-  /// player uses the colors from your Theme.
-  BetterPlayerProgressColors get materialProgressColors =>
-      betterPlayerSettings.materialProgressColors;
 
   /// The placeholder is displayed underneath the Video before it is initialized
   /// or played.
@@ -94,15 +73,6 @@ class BetterPlayerController extends ChangeNotifier {
   /// Defines if the player will sleep in fullscreen or not
   bool get allowedScreenSleep => betterPlayerSettings.allowedScreenSleep;
 
-  /// Defines if the controls should be for live stream video
-  bool get isLive => betterPlayerSettings.isLive;
-
-  /// Defines if the fullscreen control should be shown
-  bool get allowFullScreen => betterPlayerSettings.allowFullScreen;
-
-  /// Defines if the mute control should be shown
-  bool get allowMuting => betterPlayerSettings.allowMuting;
-
   /// Defines the system overlays visible after exiting fullscreen
   List<SystemUiOverlay> get systemOverlaysAfterFullScreen =>
       betterPlayerSettings.systemOverlaysAfterFullScreen;
@@ -115,11 +85,10 @@ class BetterPlayerController extends ChangeNotifier {
   BetterPlayerRoutePageBuilder routePageBuilder;
 
   static BetterPlayerController of(BuildContext context) {
-    final chewieControllerProvider =
-        context.inheritFromWidgetOfExactType(BetterPlayerControllerProvider)
-            as BetterPlayerControllerProvider;
+    final betterPLayerControllerProvider = context
+        .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>();
 
-    return chewieControllerProvider.controller;
+    return betterPLayerControllerProvider.controller;
   }
 
   /// Defines a event listener where video player events will be send
@@ -136,7 +105,10 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool isDisposing = false;
 
+  BetterPlayerDataSource _betterPlayerDataSource;
+
   Future setup(BetterPlayerDataSource dataSource) async {
+    _betterPlayerDataSource = dataSource;
     videoPlayerController = VideoPlayerController.network(dataSource.url);
     return await _initialize();
   }
@@ -276,5 +248,9 @@ class BetterPlayerController extends ChangeNotifier {
 
   void addEventsListener(Function(BetterPlayerEvent) eventListener) {
     _eventListeners.add(eventListener);
+  }
+
+  bool isLiveStream(){
+    return _betterPlayerDataSource?.liveStream;
   }
 }

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
 import 'package:better_player/src/better_player_data_source.dart';
-import 'package:better_player/src/player_with_controls.dart';
+import 'package:better_player/src/better_player_with_controls.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_parser.dart';
 import 'package:flutter/material.dart';
@@ -191,10 +191,12 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   Widget _buildPlayer() {
-    return PlayerWithControls(
+    return BetterPlayerWithControls(
       subtitles: subtitles,
       subtitlesConfiguration:
           widget.controller.betterPlayerSettings.subtitlesConfiguration,
+      controlsConfiguration:
+          widget.controller.betterPlayerSettings.controlsConfiguration,
     );
   }
 }
