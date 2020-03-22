@@ -59,15 +59,13 @@ class _MyHomePageState extends State<MyHomePage> {
         BetterPlayerDataSourceType.NETWORK,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
         subtitlesFile: File("${directory.path}/example_subtitles.srt")));
-
+    dataSourceList.add(BetterPlayerDataSource(
+        BetterPlayerDataSourceType.NETWORK,
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
     dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
         "http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8",
         liveStream: true));
-
-    dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
 
     return dataSourceList;
   }
@@ -96,7 +94,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   autoInitialize: true,
                   subtitlesConfiguration:
                       BetterPlayerSubtitlesConfiguration(fontSize: 10),
-                  controlsConfiguration: BetterPlayerControlsConfiguration()),
+                  controlsConfiguration:
+                      BetterPlayerControlsConfiguration.cupertino()),
               betterPlayerPlaylistSettings:
                   const BetterPlayerPlaylistSettings(),
               betterPlayerDataSourceList: snapshot.data,

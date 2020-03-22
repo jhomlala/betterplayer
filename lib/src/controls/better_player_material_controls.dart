@@ -246,13 +246,15 @@ class _BetterPlayerMaterialControlsState
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(12),
-                          child: Stack(children: [
-                            Icon(
-                              _hitAreaIconData,
-                              size: 32.0,
-                              color: _controlsConfiguration.iconsColor,
-                            )
-                          ],),
+                          child: Stack(
+                            children: [
+                              Icon(
+                                _hitAreaIconData,
+                                size: 32.0,
+                                color: _controlsConfiguration.iconsColor,
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -413,6 +415,10 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _onPlayPause() {
+    if (_isPlaylistChangingToNextVideo()) {
+      return;
+    }
+
     bool isFinished = _latestValue.position >= _latestValue.duration;
 
     setState(() {
@@ -470,14 +476,15 @@ class _BetterPlayerMaterialControlsState
             });
             _startHideTimer();
           },
-          colors: _betterPlayerController.materialProgressColors ??
-              BetterPlayerProgressColors(
-                  playedColor: _controlsConfiguration.progressBarPlayedColor,
-                  handleColor: _controlsConfiguration.progressBarHandleColor,
-                  bufferedColor:
-                      _controlsConfiguration.progressBarBufferedColor,
-                  backgroundColor:
-                      _controlsConfiguration.progressBarBackgroundColor),
+          colors: BetterPlayerProgressColors(
+              playedColor: _controlsConfiguration.progressBarPlayedColor,
+              handleColor: _controlsConfiguration.progressBarHandleColor,
+              bufferedColor: _controlsConfiguration.progressBarBufferedColor,
+              backgroundColor:
+                  _controlsConfiguration.progressBarBackgroundColor),
+          isChangeAllowed: () {
+            return !_isPlaylistChangingToNextVideo();
+          },
         ),
       ),
     );

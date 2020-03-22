@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 
 class BetterPlayerControlsConfiguration {
   final Color controlBarColor;
@@ -12,6 +13,12 @@ class BetterPlayerControlsConfiguration {
   final IconData unMuteIcon;
   final IconData fullscreenEnableIcon;
   final IconData fullscreenDisableIcon;
+
+  ///Cupertino only icon
+  final IconData skipBackIcon;
+
+  ///Cupertino only icon
+  final IconData skipForwardIcon;
   final bool enableFullscreen;
   final bool enableMute;
   final bool enableProgressText;
@@ -41,6 +48,8 @@ class BetterPlayerControlsConfiguration {
       this.unMuteIcon = Icons.volume_mute,
       this.fullscreenEnableIcon = Icons.fullscreen,
       this.fullscreenDisableIcon = Icons.fullscreen_exit,
+      this.skipBackIcon = OpenIconicIcons.reload,
+      this.skipForwardIcon = OpenIconicIcons.reload,
       this.enableFullscreen = true,
       this.enableMute = true,
       this.enableProgressText = false,
@@ -69,5 +78,14 @@ class BetterPlayerControlsConfiguration {
         progressBarHandleColor: Colors.black,
         progressBarBufferedColor: Colors.black54,
         progressBarBackgroundColor: Colors.white70);
+  }
+
+  factory BetterPlayerControlsConfiguration.cupertino() {
+    return BetterPlayerControlsConfiguration(
+        fullscreenEnableIcon: OpenIconicIcons.fullscreenEnter,
+        fullscreenDisableIcon: OpenIconicIcons.fullscreenExit,
+        playIcon: OpenIconicIcons.mediaPlay,
+        pauseIcon: OpenIconicIcons.mediaPause,
+        enableProgressText: true);
   }
 }

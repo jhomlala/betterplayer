@@ -60,16 +60,6 @@ class BetterPlayerController extends ChangeNotifier {
   /// Will fallback to fitting within the space allowed.
   double get aspectRatio => betterPlayerSettings.aspectRatio;
 
-  /// The colors to use for controls on iOS. By default, the iOS player uses
-  /// colors sampled from the original iOS 11 designs.
-  BetterPlayerProgressColors get cupertinoProgressColors =>
-      betterPlayerSettings.cupertinoProgressColors;
-
-  /// The colors to use for the Material Progress Bar. By default, the Material
-  /// player uses the colors from your Theme.
-  BetterPlayerProgressColors get materialProgressColors =>
-      betterPlayerSettings.materialProgressColors;
-
   /// The placeholder is displayed underneath the Video before it is initialized
   /// or played.
   Widget get placeholder => betterPlayerSettings.placeholder;
