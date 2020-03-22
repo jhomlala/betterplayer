@@ -57,13 +57,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
     dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
-        "http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8",
-        liveStream: true));
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        subtitlesFile: File("${directory.path}/example_subtitles.srt")));
 
     dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        subtitlesFile: File("${directory.path}/example_subtitles.srt")));
+        "http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8",
+        liveStream: true));
 
     dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
@@ -101,7 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   const BetterPlayerPlaylistSettings(),
               betterPlayerDataSourceList: snapshot.data,
             ),
-            aspectRatio: 16/9,
+            aspectRatio: 16 / 9,
           );
         }
       },

@@ -16,6 +16,7 @@ class BetterPlayerControlsConfiguration {
   final bool enableMute;
   final bool enableProgressText;
   final bool enableProgressBar;
+  final bool enablePlayPause;
   final Color progressBarPlayedColor;
   final Color progressBarHandleColor;
   final Color progressBarBufferedColor;
@@ -44,10 +45,11 @@ class BetterPlayerControlsConfiguration {
       this.enableMute = true,
       this.enableProgressText = false,
       this.enableProgressBar = true,
+      this.enablePlayPause = true,
       this.progressBarPlayedColor = Colors.white,
       this.progressBarHandleColor = Colors.white,
-      this.progressBarBufferedColor = Colors.white60,
-      this.progressBarBackgroundColor = Colors.black87,
+      this.progressBarBufferedColor = Colors.white70,
+      this.progressBarBackgroundColor = Colors.white60,
       this.controlsHideTime = const Duration(milliseconds: 300),
       this.customControls,
       this.showControls = true,

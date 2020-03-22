@@ -10,10 +10,13 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class BetterPlayerMaterialControls extends StatefulWidget {
+  ///Callback used to send information if player bar is hidden or not
   final Function(bool visbility) onControlsVisibilityChanged;
+
+  ///Controls config
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  const BetterPlayerMaterialControls(
+  BetterPlayerMaterialControls(
       {Key key, this.onControlsVisibilityChanged, this.controlsConfiguration})
       : assert(onControlsVisibilityChanged != null),
         assert(controlsConfiguration != null),
@@ -56,11 +59,9 @@ class _BetterPlayerMaterialControlsState
         child: AbsorbPointer(
           absorbing: _hideStuff,
           child: Column(
-            children: <Widget>[
+            children: [
               _isLoading()
-                  ? Expanded(
-                      child: Center(child: _buildLoadingWidget()),
-                    )
+                  ? Expanded(child: Center(child: _buildLoadingWidget()))
                   : _buildHitArea(),
               _buildBottomBar(context),
             ],
@@ -107,10 +108,8 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildErrorWidget() {
     if (_betterPlayerController.errorBuilder != null) {
-      return _betterPlayerController.errorBuilder(
-        context,
-        _betterPlayerController.videoPlayerController.value.errorDescription,
-      );
+      return _betterPlayerController.errorBuilder(context,
+          _betterPlayerController.videoPlayerController.value.errorDescription);
     } else {
       return Center(
         child: Column(
@@ -141,7 +140,9 @@ class _BetterPlayerMaterialControlsState
         color: _controlsConfiguration.controlBarColor,
         child: Row(
           children: [
-            _buildPlayPause(_controller),
+            _controlsConfiguration.enablePlayPause
+                ? _buildPlayPause(_controller)
+                : const SizedBox(),
             _betterPlayerController.isLiveStream()
                 ? _buildLiveWidget()
                 : _controlsConfiguration.enableProgressText
@@ -198,25 +199,11 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-  bool _isPlaylistChangingToNextVideo() =>
-      _betterPlayerController.betterPlayerPlaylistSettings != null &&
-      _betterPlayerController.isDisposing;
-
   Widget _buildHitArea() {
     if (_isPlaylistChangingToNextVideo()) {
-      return Expanded(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildLoadingWidget(),
-            Text(
-              _controlsConfiguration.loadingNextVideoText,
-              style: TextStyle(color: _controlsConfiguration.textColor),
-            )
-          ],
-        ),
-      );
+      return _buildPlaylistChangingWidget();
     }
+
     bool isFinished = _latestValue.position >= _latestValue.duration;
     IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
 
@@ -231,7 +218,7 @@ class _BetterPlayerMaterialControlsState
             } else
               _cancelAndRestartTimer();
           } else {
-            _playPause();
+            _onPlayPause();
 
             setState(() {
               _hideStuff = true;
@@ -251,23 +238,24 @@ class _BetterPlayerMaterialControlsState
                 child: Stack(
                   children: [
                     Align(
-                        alignment: Alignment.center,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: _controlsConfiguration.controlBarColor,
-                            borderRadius: BorderRadius.circular(48.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Stack(children: [
-                              Icon(
-                                _hitAreaIconData,
-                                size: 32.0,
-                                color: _controlsConfiguration.iconsColor,
-                              )
-                            ]),
-                          ),
-                        )),
+                      alignment: Alignment.center,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: _controlsConfiguration.controlBarColor,
+                          borderRadius: BorderRadius.circular(48),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Stack(children: [
+                            Icon(
+                              _hitAreaIconData,
+                              size: 32.0,
+                              color: _controlsConfiguration.iconsColor,
+                            )
+                          ],),
+                        ),
+                      ),
+                    ),
                     isFinished
                         ? Align(
                             alignment: Alignment.center,
@@ -290,13 +278,31 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
+  bool _isPlaylistChangingToNextVideo() =>
+      _betterPlayerController.betterPlayerPlaylistSettings != null &&
+      _betterPlayerController.isDisposing;
+
+  Widget _buildPlaylistChangingWidget() {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildLoadingWidget(),
+          Text(
+            _controlsConfiguration.loadingNextVideoText,
+            style: TextStyle(color: _controlsConfiguration.textColor),
+          )
+        ],
+      ),
+    );
+  }
+
   Widget _buildMuteButton(
     VideoPlayerController controller,
   ) {
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         _cancelAndRestartTimer();
-
         if (_latestValue.volume == 0) {
           _betterPlayerController.setVolume(_latestVolume ?? 0.5);
         } else {
@@ -327,7 +333,7 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildPlayPause(VideoPlayerController controller) {
     return BetterPlayerMaterialClickableWidget(
-      onTap: _playPause,
+      onTap: _onPlayPause,
       child: Container(
         height: _controlsConfiguration.controlBarHeight,
         margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -406,7 +412,7 @@ class _BetterPlayerMaterialControlsState
     });
   }
 
-  void _playPause() {
+  void _onPlayPause() {
     bool isFinished = _latestValue.position >= _latestValue.duration;
 
     setState(() {
@@ -448,7 +454,7 @@ class _BetterPlayerMaterialControlsState
   Widget _buildProgressBar() {
     return Expanded(
       child: Padding(
-        padding: EdgeInsets.only(right: 20.0),
+        padding: EdgeInsets.only(right: 20),
         child: BetterPlayerMaterialVideoProgressBar(
           _controller,
           _betterPlayerController,
