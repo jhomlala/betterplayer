@@ -10,12 +10,12 @@ import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart'
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
-class PlayerWithControls extends StatefulWidget {
+class BetterPlayerWithControls extends StatefulWidget {
   final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
   final BetterPlayerControlsConfiguration controlsConfiguration;
   final List<BetterPlayerSubtitle> subtitles;
 
-  PlayerWithControls(
+  BetterPlayerWithControls(
       {Key key,
       this.subtitlesConfiguration,
       this.controlsConfiguration,
@@ -23,10 +23,10 @@ class PlayerWithControls extends StatefulWidget {
       : super(key: key);
 
   @override
-  _PlayerWithControlsState createState() => _PlayerWithControlsState();
+  _BetterPlayerWithControlsState createState() => _BetterPlayerWithControlsState();
 }
 
-class _PlayerWithControlsState extends State<PlayerWithControls> {
+class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   BetterPlayerSubtitlesConfiguration get subtitlesConfiguration =>
       widget.subtitlesConfiguration;
 
@@ -103,7 +103,7 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
     return controlsConfiguration.showControls
         ? controlsConfiguration.customControls != null
             ? controlsConfiguration.customControls
-            : Theme.of(context).platform != TargetPlatform.android
+            : Theme.of(context).platform == TargetPlatform.android
                 ? BetterPlayerMaterialControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
                     controlsConfiguration: widget.controlsConfiguration,

@@ -170,7 +170,7 @@ class _BetterPlayerMaterialControlsState
       child: Text(
         _controlsConfiguration.liveText,
         style: TextStyle(
-            color: _controlsConfiguration.liveColor,
+            color: _controlsConfiguration.liveTextColor,
             fontWeight: FontWeight.bold),
       ),
     );

@@ -4,39 +4,92 @@ import 'package:flutter/material.dart';
 import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 
 class BetterPlayerControlsConfiguration {
+  ///Color of the control bars
   final Color controlBarColor;
+
+  ///Color of texts
   final Color textColor;
+
+  ///Color of icons
   final Color iconsColor;
+
+  ///Icon of play
   final IconData playIcon;
+
+  ///Icon of pause
   final IconData pauseIcon;
+
+  ///Icon of mute
   final IconData muteIcon;
+
+  ///Icon of unmute
   final IconData unMuteIcon;
+
+  ///Icon of fullscreen mode enable
   final IconData fullscreenEnableIcon;
+
+  ///Icon of fullscreen mode disable
   final IconData fullscreenDisableIcon;
 
-  ///Cupertino only icon
+  ///Cupertino only icon, icon of skip
   final IconData skipBackIcon;
 
-  ///Cupertino only icon
+  ///Cupertino only icon, icon of forward
   final IconData skipForwardIcon;
+
+  ///Flag used to enable/disable fullscreen
   final bool enableFullscreen;
+
+  ///Flag used to enable/disable mute
   final bool enableMute;
+
+  ///Flag used to enable/disable progress texts
   final bool enableProgressText;
+
+  ///Flag used to enable/disable progress bar
   final bool enableProgressBar;
+
+  ///Flag used to enable/disable play-pause
   final bool enablePlayPause;
+
+  ///Progress bar played color
   final Color progressBarPlayedColor;
+
+  ///Progress bar circle color
   final Color progressBarHandleColor;
+
+  ///Progress bar buffered video color
   final Color progressBarBufferedColor;
+
+  ///Progress bar background color
   final Color progressBarBackgroundColor;
+
+  ///Time to hide controls
   final Duration controlsHideTime;
+
+  ///Custom controls, it will override Material/Cupertino controls
   final Widget customControls;
+
+  ///Flag used to show/hide controls
   final bool showControls;
+
+  ///Flag used to show controls on init
   final bool showControlsOnInitialize;
+
+  ///Control bar height
   final double controlBarHeight;
+
+  ///Default error widget text
   final String defaultErrorText;
+
+  ///Default loading next video text
   final String loadingNextVideoText;
+
+  ///Text displayed when asset displayed in player is live stream
   final String liveText;
-  final Color liveColor;
+
+  ///Live text color;
+  final Color liveTextColor;
 
   const BetterPlayerControlsConfiguration(
       {this.controlBarColor = Colors.black87,
@@ -67,7 +120,7 @@ class BetterPlayerControlsConfiguration {
       this.defaultErrorText = "Video can't be played",
       this.loadingNextVideoText = "Loading next video",
       this.liveText = "LIVE",
-      this.liveColor = Colors.red});
+      this.liveTextColor = Colors.red});
 
   factory BetterPlayerControlsConfiguration.white() {
     return BetterPlayerControlsConfiguration(
