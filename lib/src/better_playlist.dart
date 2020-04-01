@@ -51,10 +51,10 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
     }
 
     Future.delayed(widget.betterPlayerPlaylistSettings.nextVideoDelay, () {
-      _setupPlayer();
       setState(() {
         _currentSource = _nextDataSource;
       });
+      _setupPlayer();
       print("Playing: $_currentSource");
       _changingToNextVideo = false;
     });
@@ -62,7 +62,7 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
 
   void _setupPlayer() {
     _controller = BetterPlayerController(widget.betterPlayerSettings,
-        betterPlayerPlaylistSettings: widget.betterPlayerPlaylistSettings);
+        betterPlayerPlaylistSettings: widget.betterPlayerPlaylistSettings, betterPlayerDataSource: _currentSource);
     _controller.addEventsListener((event) async {
       if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
         _onVideoFinished();

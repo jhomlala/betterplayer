@@ -123,6 +123,7 @@ class BetterPlayerController extends ChangeNotifier {
       try {
         await videoPlayerController.initialize();
       } catch (exception, stackTrace) {
+        print("GOT EXCEPTION!!");
         print(exception);
         print(stackTrace);
       }
