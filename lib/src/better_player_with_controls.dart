@@ -69,6 +69,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   Container _buildPlayerWithControls(
       BetterPlayerController betterPlayerController, BuildContext context) {
+    print("[CONTROLLER]: " + betterPlayerController.videoPlayerController.toString());
+
     return Container(
       child: Stack(
         children: <Widget>[

@@ -10,4 +10,11 @@ class BetterPlayerDataSource {
 
   BetterPlayerDataSource(this.type, this.url,
       {this.subtitlesFile, this.liveStream = false});
+
+  @override
+  String toString() {
+    return 'BetterPlayerDataSource{type: $type, url: $url, subtitlesFile: $subtitlesFile, liveStream: $liveStream}';
+  }
+
+
 }

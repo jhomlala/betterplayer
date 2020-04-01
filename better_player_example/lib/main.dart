@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/better_player_event.dart';
+
+import 'package:better_player_example/empty_page.dart';
+
+import 'package:better_player_example/video_list/video_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:video_player/video_player.dart';
 
 void main() => runApp(MyApp());
 
@@ -44,6 +46,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   BetterPlayerController betterPlayerController;
   List dataSourceList = List<BetterPlayerDataSource>();
+  int _selectedIndex = 0;
 
   @override
   void initState() {
@@ -74,10 +77,31 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Better player example"),
+        title: Text("Better player showcase"),
       ),
-      body: Container(child: _buildVideoPlayer()),
+      body: _getSelectedPage(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            title: Text('List'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
+            title: Text('Empty'),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.black,
+        onTap: _onItemTapped,
+      ),
     );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   Widget _buildVideoPlayer() {
@@ -107,10 +131,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _onPlayerEvent(BetterPlayerEvent betterPlayerEvent) {
+  /*void _onPlayerEvent(BetterPlayerEvent betterPlayerEvent) {
     print(
         "Player event: ${betterPlayerEvent.betterPlayerEventType} parameters: ${betterPlayerEvent.parameters}");
-  }
+  }*/
 
   Future _saveAssetToFile() async {
     String content =
@@ -119,5 +143,13 @@ class _MyHomePageState extends State<MyHomePage> {
     var file = File("${directory.path}/example_subtitles.srt");
     file.writeAsString(content);
     print("File created $file");
+  }
+
+  Widget _getSelectedPage() {
+    if (_selectedIndex == 0) {
+      return VideoListPage();
+    } else {
+      return EmptyPage();
+    }
   }
 }

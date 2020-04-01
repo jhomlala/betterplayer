@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
 import 'package:better_player/src/better_player_data_source.dart';
@@ -21,24 +23,19 @@ import 'package:video_player/video_player.dart';
 /// `VideoPlayerController`.
 class BetterPlayerController extends ChangeNotifier {
   BetterPlayerController(this.betterPlayerSettings,
-      {this.betterPlayerPlaylistSettings}) {
+      {this.betterPlayerPlaylistSettings, this.betterPlayerDataSource}) {
     _eventListeners.add(eventListener);
-    //_initialize();
-  }
-
-  factory BetterPlayerController.network(
-      String videoUrl, BetterPlayerSettings betterPlayerSettings) {
-    return BetterPlayerController(betterPlayerSettings);
+    if (betterPlayerDataSource != null) {
+      setup(betterPlayerDataSource);
+    }
   }
 
   final BetterPlayerSettings betterPlayerSettings;
   final BetterPlayerPlaylistSettings betterPlayerPlaylistSettings;
+  final BetterPlayerDataSource betterPlayerDataSource;
 
   /// The controller for the video you want to play
   VideoPlayerController videoPlayerController;
-
-  /// Initialize the Video on Startup. This will prep the video for playback.
-  bool get autoInitialize => betterPlayerSettings.autoInitialize;
 
   /// Play the video as soon as it's displayed
   bool get autoPlay => betterPlayerSettings.autoPlay;
@@ -107,18 +104,22 @@ class BetterPlayerController extends ChangeNotifier {
 
   BetterPlayerDataSource _betterPlayerDataSource;
 
+  StreamController<bool> initStreamController = StreamController.broadcast();
+
   Future setup(BetterPlayerDataSource dataSource) async {
+    print("Initalize BPC!!!!");
     _betterPlayerDataSource = dataSource;
     videoPlayerController = VideoPlayerController.network(dataSource.url);
-    return await _initialize();
+    await _initialize();
+    initStreamController.add(true);
+    print("Initalize BPC finished!!!!");
   }
 
   Future _initialize() async {
     print("Initlize!!");
     await videoPlayerController.setLooping(looping);
 
-    if ((autoInitialize || autoPlay) &&
-        !videoPlayerController.value.initialized) {
+    if (!videoPlayerController.value.initialized) {
       try {
         await videoPlayerController.initialize();
       } catch (exception, stackTrace) {
@@ -145,6 +146,8 @@ class BetterPlayerController extends ChangeNotifier {
 
     ///General purpose listener
     videoPlayerController.addListener(_onVideoPlayerChanged);
+    print("INITALIZE COMPLETED!!! BETTERPLAYER: $hashCode  VIDEOPLAYER: " +
+        videoPlayerController.hashCode.toString());
   }
 
   void _fullScreenListener() async {
@@ -250,7 +253,11 @@ class BetterPlayerController extends ChangeNotifier {
     _eventListeners.add(eventListener);
   }
 
-  bool isLiveStream(){
+  bool isLiveStream() {
     return _betterPlayerDataSource?.liveStream;
+  }
+
+  bool isVideoInitialized() {
+    return videoPlayerController.value.initialized;
   }
 }
