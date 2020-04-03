@@ -44,13 +44,6 @@ class _BetterPlayerListVideoPlayerState
   }
 
   @override
-  void dispose() {
-    print("DISPOSE VIDEOO!!");
-    _betterPlayerController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     super.build(context);
     return VisibilityDetector(

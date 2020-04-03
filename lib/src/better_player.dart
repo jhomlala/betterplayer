@@ -53,23 +53,13 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   void initState() {
-    _setup();
+    print("Better player init state");
     super.initState();
+    widget.controller.addListener(listener);
   }
 
   void _setup() async {
-    print("[BETTER_PLAYER] Setup ${widget.controller.hashCode} dataSource: ${widget.betterPlayerDataSource}");
-    //widget.controller.addListener((){
-    //  print("LISTEN  TO!");
-    //});
-    //await widget.controller.setup(betterPlayerDataSource);
-    /*subtitles = null;
-    if (betterPlayerDataSource.subtitlesFile != null) {
-      _parseSubtitles();
-    }*/
-    //setState(() {
-    //  _setupComplete = true;
-    //});
+    widget.controller.addListener(listener);
   }
 
   @override
@@ -83,9 +73,12 @@ class BetterPlayerState extends State<BetterPlayer> {
   @override
   void didUpdateWidget(BetterPlayer oldWidget) {
     if (oldWidget.controller != widget.controller) {
-      oldWidget.controller.dispose();
-      print("Widget has changed!");
-      _setup();
+      print("Did update add listener");
+      widget.controller.addListener(listener);
+      //oldWidget.controller.removeListener(listener);
+      //oldWidget.controller.dispose();
+      //print("Widget has changed!");
+      // _setup();
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -170,6 +163,7 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
+    print("Push full screen");
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final TransitionRoute<Null> route = PageRouteBuilder<Null>(
       settings: RouteSettings(),
@@ -204,30 +198,13 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   Widget _buildPlayer() {
-    print("Setup complete: $_setupComplete  ||| " +
-        " better PLAYER HASHCODE: " +
-        widget.controller.hashCode.toString() +
-        " Build player: " +
-        widget.controller.videoPlayerController.toString());
-
-    return StreamBuilder<bool>(stream: widget.controller.initStreamController.stream, builder: (context,snapshot){
-      //print("SNAPSHOT DATA: " + snapshot.data.toString());
-
-
-      if (!snapshot.hasData || snapshot.data == false)
-      {
-        return Text("loading...");
-      } else {
-        return BetterPlayerWithControls(
-          subtitles: subtitles,
-          subtitlesConfiguration:
-          widget.controller.betterPlayerSettings.subtitlesConfiguration,
-          controlsConfiguration:
-          widget.controller.betterPlayerSettings.controlsConfiguration,
-        );
-      }
-
-    },);
-
+    return BetterPlayerWithControls(
+      subtitles: subtitles,
+      subtitlesConfiguration:
+      widget.controller.betterPlayerSettings.subtitlesConfiguration,
+      controlsConfiguration:
+      widget.controller.betterPlayerSettings.controlsConfiguration,
+    );
   }
+
 }

@@ -34,7 +34,7 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
     _currentSource = _getNextDateSource();
     _setupPlayer();
   }
-  
+
   void _onVideoFinished() {
     print("Finished " + _controller.hashCode.toString());
     if (_changingToNextVideo) {

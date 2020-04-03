@@ -104,14 +104,12 @@ class BetterPlayerController extends ChangeNotifier {
 
   BetterPlayerDataSource _betterPlayerDataSource;
 
-  StreamController<bool> initStreamController = StreamController.broadcast();
 
   Future setup(BetterPlayerDataSource dataSource) async {
     print("Initalize BPC!!!!");
     _betterPlayerDataSource = dataSource;
     videoPlayerController = VideoPlayerController.network(dataSource.url);
     await _initialize();
-    initStreamController.add(true);
     print("Initalize BPC finished!!!!");
   }
 
@@ -147,8 +145,6 @@ class BetterPlayerController extends ChangeNotifier {
 
     ///General purpose listener
     videoPlayerController.addListener(_onVideoPlayerChanged);
-    print("INITALIZE COMPLETED!!! BETTERPLAYER: $hashCode  VIDEOPLAYER: " +
-        videoPlayerController.hashCode.toString());
   }
 
   void _fullScreenListener() async {
@@ -171,6 +167,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void toggleFullScreen() {
+    print("Toggle full screen");
     _isFullScreen = !_isFullScreen;
     _postEvent(_isFullScreen
         ? BetterPlayerEvent(BetterPlayerEventType.OPEN_FULLSCREEN)
@@ -268,7 +265,7 @@ class BetterPlayerController extends ChangeNotifier {
     _eventListeners.clear();
     videoPlayerController.removeListener(_fullScreenListener);
     videoPlayerController.removeListener(_onVideoPlayerChanged);
-    videoPlayerController?.dispose();
+
     super.dispose();
   }
 }

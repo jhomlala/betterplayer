@@ -37,6 +37,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   final StreamController<bool> playerVisibilityStreamController =
       StreamController();
 
+
+
   @override
   void initState() {
     playerVisibilityStreamController.add(true);

@@ -150,7 +150,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (_selectedIndex == 0) {
       return PlaylistPage();
     } else {
-      return EmptyPage();
+      return VideoListPage();
     }
   }
 }
