@@ -29,14 +29,22 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: AspectRatio(
-        aspectRatio: 4 / 3,
-        child: BetterPlaylist(
-          betterPlayerDataSourceList: playlistDataSource,
-          betterPlayerSettings: BetterPlayerSettings(),
-          betterPlayerPlaylistSettings: BetterPlayerPlaylistSettings(),
+      child: Column(children: [
+        Padding(
+          padding: EdgeInsets.all(8),
+          child: Text(
+              "Playlist widget will load automatically next video once current "
+              "finishes. User can't use player controls when video is changing."),
         ),
-      ),
+        AspectRatio(
+          aspectRatio: 16 / 9,
+          child: BetterPlaylist(
+            betterPlayerDataSourceList: playlistDataSource,
+            betterPlayerSettings: BetterPlayerSettings(),
+            betterPlayerPlaylistSettings: BetterPlayerPlaylistSettings(),
+          ),
+        )
+      ]),
     );
   }
 }

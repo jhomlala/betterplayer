@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'general_page/general_page.dart';
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -84,6 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
+            icon: Icon(Icons.business_center),
+            title: Text("General"),
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.business),
             title: Text("Playlist"),
           ),
@@ -148,6 +154,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _getSelectedPage() {
     if (_selectedIndex == 0) {
+      return GeneralPage();
+    } else if (_selectedIndex == 1) {
       return PlaylistPage();
     } else {
       return VideoListPage();

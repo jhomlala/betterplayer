@@ -3,10 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 
 class BetterPlayerListVideoPlayer extends StatefulWidget {
+  ///Video to show
   final BetterPlayerDataSource dataSource;
+
+  ///Video player settings
   final BetterPlayerSettings settings;
+
+  ///Fraction of the screen height that will trigger play/pause. For example
+  ///if playFraction is 0.6 video will be played if 60% of player height is
+  ///visible.
   final double playFraction;
+
+  ///Flag to determine if video should be auto played
   final bool autoPlay;
+
+  ///Flag to determine if video should be auto paused
   final bool autoPause;
 
   const BetterPlayerListVideoPlayer(this.dataSource,

@@ -22,11 +22,17 @@ class _VideoListWidgetState extends State<VideoListWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.all(8),
+      margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(videoListData.videoTitle, style: TextStyle(fontSize: 50),),
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Text(
+              videoListData.videoTitle,
+              style: TextStyle(fontSize: 50),
+            ),
+          ),
           AspectRatio(
               child: BetterPlayerListVideoPlayer(
                 BetterPlayerDataSource(
@@ -34,10 +40,15 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                 settings:
                     BetterPlayerSettings(autoInitialize: true, autoPlay: false),
                 key: Key(videoListData.hashCode.toString()),
+                playFraction: 0.8,
               ),
               aspectRatio: 16/9),
-          Text(
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras vitae semper lorem. Integer vitae porttitor lectus. Duis dignissim velit leo, id imperdiet ante ornare in. Suspendisse sed rhoncus orci. Phasellus facilisis ante eu eros consequat, a volutpat orci sagittis. Morbi vulputate interdum sapien, sit amet iaculis turpis lobortis sed. ")
+          Padding(padding: EdgeInsets.all(8),child: Text("Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
+              "town. Plainspoken sheriff Roy Scheider, hippie shark "
+              "researcher Richard Dreyfuss, and a squirrely boat captain "
+              "set out to find the beast, but will they escape with their "
+              "lives? 70's special effects, legendary score, and trademark "
+              "humor set this classic apart."),),
         ],
       ),
     );

@@ -55,11 +55,12 @@ class BetterPlayerState extends State<BetterPlayer> {
   void initState() {
     print("Better player init state");
     super.initState();
-    widget.controller.addListener(listener);
+    _setup();
   }
 
   void _setup() async {
     widget.controller.addListener(listener);
+    _parseSubtitles();
   }
 
   @override
@@ -201,10 +202,9 @@ class BetterPlayerState extends State<BetterPlayer> {
     return BetterPlayerWithControls(
       subtitles: subtitles,
       subtitlesConfiguration:
-      widget.controller.betterPlayerSettings.subtitlesConfiguration,
+          widget.controller.betterPlayerSettings.subtitlesConfiguration,
       controlsConfiguration:
-      widget.controller.betterPlayerSettings.controlsConfiguration,
+          widget.controller.betterPlayerSettings.controlsConfiguration,
     );
   }
-
 }

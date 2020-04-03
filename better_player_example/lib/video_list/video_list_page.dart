@@ -16,7 +16,7 @@ class _VideoListPageState extends State<VideoListPage> {
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
     //"http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
-   // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
+    // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
   ];
   List<VideoListData> dataList = List();
 
@@ -35,15 +35,18 @@ class _VideoListPageState extends State<VideoListPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: dataList.length,
-      itemBuilder: (context, index) {
-        VideoListData videoListData = dataList[index];
-        print("Video url: ${videoListData.videoUrl}");
-        return VideoListWidget(videoListData: videoListData,);
-      },
+    return Container(
+      color: Colors.grey,
+      child: ListView.builder(
+        itemCount: dataList.length,
+        itemBuilder: (context, index) {
+          VideoListData videoListData = dataList[index];
+          print("Video url: ${videoListData.videoUrl}");
+          return VideoListWidget(
+            videoListData: videoListData,
+          );
+        },
+      ),
     );
   }
-
-
 }
