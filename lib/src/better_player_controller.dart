@@ -261,4 +261,14 @@ class BetterPlayerController extends ChangeNotifier {
   bool isVideoInitialized() {
     return videoPlayerController.value.initialized;
   }
+
+  @override
+  void dispose() {
+    print("BetterPlayerController dispose");
+    _eventListeners.clear();
+    videoPlayerController.removeListener(_fullScreenListener);
+    videoPlayerController.removeListener(_onVideoPlayerChanged);
+    videoPlayerController?.dispose();
+    super.dispose();
+  }
 }

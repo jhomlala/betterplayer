@@ -22,6 +22,11 @@ class _PlaylistPageState extends State<PlaylistPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       child: AspectRatio(

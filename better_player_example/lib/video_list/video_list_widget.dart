@@ -26,7 +26,7 @@ class _VideoListWidgetState extends State<VideoListWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(videoListData.videoTitle),
+          Text(videoListData.videoTitle, style: TextStyle(fontSize: 50),),
           AspectRatio(
               child: BetterPlayerListVideoPlayer(
                 BetterPlayerDataSource(

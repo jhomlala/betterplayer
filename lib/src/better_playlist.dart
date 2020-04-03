@@ -34,7 +34,7 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
     _currentSource = _getNextDateSource();
     _setupPlayer();
   }
-
+  
   void _onVideoFinished() {
     print("Finished " + _controller.hashCode.toString());
     if (_changingToNextVideo) {
@@ -61,8 +61,10 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
   }
 
   void _setupPlayer() {
+    print("Setup player...");
     _controller = BetterPlayerController(widget.betterPlayerSettings,
-        betterPlayerPlaylistSettings: widget.betterPlayerPlaylistSettings, betterPlayerDataSource: _currentSource);
+        betterPlayerPlaylistSettings: widget.betterPlayerPlaylistSettings,
+        betterPlayerDataSource: _currentSource);
     _controller.addEventsListener((event) async {
       if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
         _onVideoFinished();
@@ -73,6 +75,7 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
   String _getKey() => _currentSource.hashCode.toString();
 
   BetterPlayerDataSource _getNextDateSource() {
+    print("Get next data source");
     if (_currentSource == null) {
       return _betterPlayerDataSourceList.first;
     } else {
