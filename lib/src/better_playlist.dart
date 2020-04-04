@@ -51,18 +51,20 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
     }
 
     Future.delayed(widget.betterPlayerPlaylistSettings.nextVideoDelay, () {
-      _setupPlayer();
       setState(() {
         _currentSource = _nextDataSource;
       });
+      _setupPlayer();
       print("Playing: $_currentSource");
       _changingToNextVideo = false;
     });
   }
 
   void _setupPlayer() {
+    print("Setup player...");
     _controller = BetterPlayerController(widget.betterPlayerSettings,
-        betterPlayerPlaylistSettings: widget.betterPlayerPlaylistSettings);
+        betterPlayerPlaylistSettings: widget.betterPlayerPlaylistSettings,
+        betterPlayerDataSource: _currentSource);
     _controller.addEventsListener((event) async {
       if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
         _onVideoFinished();
@@ -73,6 +75,7 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
   String _getKey() => _currentSource.hashCode.toString();
 
   BetterPlayerDataSource _getNextDateSource() {
+    print("Get next data source");
     if (_currentSource == null) {
       return _betterPlayerDataSourceList.first;
     } else {
@@ -91,9 +94,6 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
 
   @override
   Widget build(BuildContext context) {
-    return BetterPlayer(
-        key: Key(_getKey()),
-        controller: _controller,
-        betterPlayerDataSource: _currentSource);
+    return BetterPlayer(key: Key(_getKey()), controller: _controller);
   }
 }

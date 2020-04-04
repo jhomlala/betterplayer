@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
 import 'package:better_player/src/better_player_data_source.dart';
@@ -5,6 +8,8 @@ import 'package:better_player/src/better_player_event.dart';
 import 'package:better_player/src/better_player_event_type.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
 import 'package:better_player/src/better_player_settings.dart';
+import 'package:better_player/src/subtitles/better_player_subtitle.dart';
+import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -21,24 +26,20 @@ import 'package:video_player/video_player.dart';
 /// `VideoPlayerController`.
 class BetterPlayerController extends ChangeNotifier {
   BetterPlayerController(this.betterPlayerSettings,
-      {this.betterPlayerPlaylistSettings}) {
+      {this.betterPlayerPlaylistSettings, this.betterPlayerDataSource}) {
+    print("Building controller");
     _eventListeners.add(eventListener);
-    //_initialize();
-  }
-
-  factory BetterPlayerController.network(
-      String videoUrl, BetterPlayerSettings betterPlayerSettings) {
-    return BetterPlayerController(betterPlayerSettings);
+    if (betterPlayerDataSource != null) {
+      setup(betterPlayerDataSource);
+    }
   }
 
   final BetterPlayerSettings betterPlayerSettings;
   final BetterPlayerPlaylistSettings betterPlayerPlaylistSettings;
+  final BetterPlayerDataSource betterPlayerDataSource;
 
   /// The controller for the video you want to play
   VideoPlayerController videoPlayerController;
-
-  /// Initialize the Video on Startup. This will prep the video for playback.
-  bool get autoInitialize => betterPlayerSettings.autoInitialize;
 
   /// Play the video as soon as it's displayed
   bool get autoPlay => betterPlayerSettings.autoPlay;
@@ -107,21 +108,47 @@ class BetterPlayerController extends ChangeNotifier {
 
   BetterPlayerDataSource _betterPlayerDataSource;
 
+  List<BetterPlayerSubtitle> subtitles = List();
+
   Future setup(BetterPlayerDataSource dataSource) async {
+    print("Initalize BPC!!!!");
     _betterPlayerDataSource = dataSource;
-    videoPlayerController = VideoPlayerController.network(dataSource.url);
-    return await _initialize();
+    if (dataSource.subtitles != null) {
+      subtitles.clear();
+      BetterPlayerSubtitlesFactory.parseSubtitles(dataSource.subtitles)
+          .then((data) {
+        print("Subtitles loaded!");
+        subtitles.addAll(data);
+      });
+    }
+    videoPlayerController =
+        _createVideoPlayerController(betterPlayerDataSource);
+    await _initialize();
+    print("Initalize BPC finished!!!!");
+  }
+
+  VideoPlayerController _createVideoPlayerController(
+      BetterPlayerDataSource betterPlayerDataSource) {
+    switch (betterPlayerDataSource.type) {
+      case BetterPlayerDataSourceType.NETWORK:
+        return VideoPlayerController.network(betterPlayerDataSource.url);
+      case BetterPlayerDataSourceType.FILE:
+        return VideoPlayerController.file(File(betterPlayerDataSource.url));
+      default:
+        throw UnimplementedError(
+            "${betterPlayerDataSource.type} is not implemented");
+    }
   }
 
   Future _initialize() async {
     print("Initlize!!");
     await videoPlayerController.setLooping(looping);
 
-    if ((autoInitialize || autoPlay) &&
-        !videoPlayerController.value.initialized) {
+    if (!videoPlayerController.value.initialized) {
       try {
         await videoPlayerController.initialize();
       } catch (exception, stackTrace) {
+        print("GOT EXCEPTION!!");
         print(exception);
         print(stackTrace);
       }
@@ -167,6 +194,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void toggleFullScreen() {
+    print("Toggle full screen");
     _isFullScreen = !_isFullScreen;
     _postEvent(_isFullScreen
         ? BetterPlayerEvent(BetterPlayerEventType.OPEN_FULLSCREEN)
@@ -250,7 +278,25 @@ class BetterPlayerController extends ChangeNotifier {
     _eventListeners.add(eventListener);
   }
 
-  bool isLiveStream(){
+  bool isLiveStream() {
     return _betterPlayerDataSource?.liveStream;
+  }
+
+  bool isVideoInitialized() {
+    return videoPlayerController.value.initialized;
+  }
+
+  @override
+  void dispose() {
+    print("BetterPlayerController dispose");
+    _eventListeners.clear();
+    videoPlayerController.removeListener(_fullScreenListener);
+    videoPlayerController.removeListener(_onVideoPlayerChanged);
+
+    super.dispose();
+  }
+
+  List<BetterPlayerSubtitle> provideSubtitles() {
+    return subtitles;
   }
 }

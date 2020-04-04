@@ -1,12 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
 import 'package:better_player/src/better_player_data_source.dart';
 import 'package:better_player/src/better_player_with_controls.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
-import 'package:better_player/src/subtitles/better_player_subtitles_parser.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -27,14 +26,11 @@ class BetterPlayer extends StatefulWidget {
   BetterPlayer({
     Key key,
     this.controller,
-    this.betterPlayerDataSource,
   })  : assert(controller != null, 'You must provide a chewie controller'),
         super(key: key);
 
   /// The [BetterPlayerController]
   final BetterPlayerController controller;
-
-  final BetterPlayerDataSource betterPlayerDataSource;
 
   @override
   BetterPlayerState createState() {
@@ -44,21 +40,22 @@ class BetterPlayer extends StatefulWidget {
 
 class BetterPlayerState extends State<BetterPlayer> {
   BetterPlayerDataSource get betterPlayerDataSource =>
-      widget.betterPlayerDataSource;
+      widget.controller.betterPlayerDataSource;
 
   bool _isFullScreen = false;
   DateTime dateTime;
   List<BetterPlayerSubtitle> subtitles;
+  bool subtitlesLoading = false;
 
   @override
   void initState() {
+    print("Better player init state");
     super.initState();
-    widget.controller.setup(betterPlayerDataSource);
+    _setup();
+  }
+
+  void _setup() async {
     widget.controller.addListener(listener);
-    subtitles = null;
-    if (betterPlayerDataSource.subtitlesFile != null) {
-      _parseSubtitles();
-    }
   }
 
   @override
@@ -72,29 +69,10 @@ class BetterPlayerState extends State<BetterPlayer> {
   @override
   void didUpdateWidget(BetterPlayer oldWidget) {
     if (oldWidget.controller != widget.controller) {
+      print("Did update add listener");
       widget.controller.addListener(listener);
     }
     super.didUpdateWidget(oldWidget);
-  }
-
-  void _parseSubtitles() {
-    try {
-      File file = betterPlayerDataSource.subtitlesFile;
-      if (file.existsSync()) {
-        String fileContent = file.readAsStringSync();
-        if (fileContent?.isNotEmpty == true) {
-          subtitles =
-              BetterPlayerSubtitlesParser.parseString(file.readAsStringSync());
-        } else {
-          subtitles = List();
-        }
-      } else {
-        print("${betterPlayerDataSource.subtitlesFile} doesn't exist!");
-      }
-    } catch (exception) {
-      print(
-          "Failed to read subtitles from file: ${betterPlayerDataSource.subtitlesFile}: $exception");
-    }
   }
 
   void listener() async {
@@ -157,6 +135,7 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
+    print("Push full screen");
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final TransitionRoute<Null> route = PageRouteBuilder<Null>(
       settings: RouteSettings(),
@@ -191,12 +170,9 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   Widget _buildPlayer() {
+    print("Build player with subtitles: ${subtitles.toString()}");
     return BetterPlayerWithControls(
-      subtitles: subtitles,
-      subtitlesConfiguration:
-          widget.controller.betterPlayerSettings.subtitlesConfiguration,
-      controlsConfiguration:
-          widget.controller.betterPlayerSettings.controlsConfiguration,
+      controller: widget.controller,
     );
   }
 }

@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/better_player_event.dart';
+
+import 'package:better_player_example/playlist_page/playlist_page.dart';
+
+import 'package:better_player_example/video_list/video_list_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:video_player/video_player.dart';
+
+import 'general_page/general_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,110 +16,71 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Better player demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MainPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+class MainPage extends StatefulWidget {
+  MainPage({Key key}) : super(key: key);
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MainPageState createState() => _MainPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MainPageState extends State<MainPage> {
+  static const List<String> pageTitles = ["General", "Playlist", "Video list"];
+
   BetterPlayerController betterPlayerController;
   List dataSourceList = List<BetterPlayerDataSource>();
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  Future<List<BetterPlayerDataSource>> setupData() async {
-    await _saveAssetToFile();
-
-    final directory = await getApplicationDocumentsDirectory();
-
-    dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        subtitlesFile: File("${directory.path}/example_subtitles.srt")));
-    dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
-    dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
-        "http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8",
-        liveStream: true));
-
-    return dataSourceList;
-  }
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Better player example"),
+        title: Text("Better Player - ${pageTitles[_selectedIndex]}"),
       ),
-      body: Container(child: _buildVideoPlayer()),
+      body: _getSelectedPage(),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business_center),
+            title: Text(pageTitles[0]),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
+            title: Text(pageTitles[1]),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            title: Text(pageTitles[2]),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.black,
+        onTap: _onItemTapped,
+      ),
     );
   }
 
-  Widget _buildVideoPlayer() {
-    return FutureBuilder<List<BetterPlayerDataSource>>(
-      future: setupData(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Text("Building!");
-        } else {
-          return AspectRatio(
-            child: BetterPlaylist(
-              betterPlayerSettings: BetterPlayerSettings(
-                  autoPlay: false,
-                  autoInitialize: true,
-                  subtitlesConfiguration:
-                      BetterPlayerSubtitlesConfiguration(fontSize: 10),
-                  controlsConfiguration:
-                      BetterPlayerControlsConfiguration.cupertino()),
-              betterPlayerPlaylistSettings:
-                  const BetterPlayerPlaylistSettings(),
-              betterPlayerDataSourceList: snapshot.data,
-            ),
-            aspectRatio: 16 / 9,
-          );
-        }
-      },
-    );
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
-  void _onPlayerEvent(BetterPlayerEvent betterPlayerEvent) {
-    print(
-        "Player event: ${betterPlayerEvent.betterPlayerEventType} parameters: ${betterPlayerEvent.parameters}");
-  }
-
-  Future _saveAssetToFile() async {
-    String content =
-        await rootBundle.loadString("assets/example_subtitles.srt");
-    final directory = await getApplicationDocumentsDirectory();
-    var file = File("${directory.path}/example_subtitles.srt");
-    file.writeAsString(content);
-    print("File created $file");
+  Widget _getSelectedPage() {
+    if (_selectedIndex == 0) {
+      return GeneralPage();
+    } else if (_selectedIndex == 1) {
+      return PlaylistPage();
+    } else {
+      return VideoListPage();
+    }
   }
 }

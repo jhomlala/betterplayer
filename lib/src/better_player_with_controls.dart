@@ -11,29 +11,23 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
-  final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final List<BetterPlayerSubtitle> subtitles;
+  final BetterPlayerController controller;
 
-  BetterPlayerWithControls(
-      {Key key,
-      this.subtitlesConfiguration,
-      this.controlsConfiguration,
-      this.subtitles})
-      : super(key: key);
+  BetterPlayerWithControls({Key key, this.controller}) : super(key: key);
 
   @override
-  _BetterPlayerWithControlsState createState() => _BetterPlayerWithControlsState();
+  _BetterPlayerWithControlsState createState() =>
+      _BetterPlayerWithControlsState();
 }
 
 class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   BetterPlayerSubtitlesConfiguration get subtitlesConfiguration =>
-      widget.subtitlesConfiguration;
+      widget.controller.betterPlayerSettings.subtitlesConfiguration;
 
   BetterPlayerControlsConfiguration get controlsConfiguration =>
-      widget.controlsConfiguration;
+      widget.controller.betterPlayerSettings.controlsConfiguration;
 
-  List<BetterPlayerSubtitle> get subtitles => widget.subtitles;
+
   final StreamController<bool> playerVisibilityStreamController =
       StreamController();
 
@@ -69,6 +63,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   Container _buildPlayerWithControls(
       BetterPlayerController betterPlayerController, BuildContext context) {
+    print("[CONTROLLER]: " +
+        betterPlayerController.videoPlayerController.toString());
+
     return Container(
       child: Stack(
         children: <Widget>[
@@ -81,11 +78,11 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             ),
           ),
           betterPlayerController.overlay ?? Container(),
-          subtitles != null
+          betterPlayerController.betterPlayerDataSource.subtitles != null
               ? BetterPlayerSubtitlesDrawer(
                   betterPlayerController: betterPlayerController,
                   betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
-                  subtitles: subtitles,
+                  subtitles: betterPlayerController.subtitles,
                   playerVisibilityStream:
                       playerVisibilityStreamController.stream,
                 )
@@ -106,11 +103,11 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             : Theme.of(context).platform == TargetPlatform.android
                 ? BetterPlayerMaterialControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
-                    controlsConfiguration: widget.controlsConfiguration,
+                    controlsConfiguration: controlsConfiguration,
                   )
                 : BetterPlayerCupertinoControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
-                    controlsConfiguration: widget.controlsConfiguration,
+                    controlsConfiguration: controlsConfiguration,
                   )
         : const SizedBox();
   }
