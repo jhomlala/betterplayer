@@ -41,7 +41,7 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   void initState() {
-    print("Better player init state");
+
     super.initState();
     _setup();
   }
@@ -52,7 +52,6 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   void dispose() {
-    print("Dispose $hashCode");
     widget.controller.removeListener(listener);
     widget.controller.dispose();
     super.dispose();
@@ -126,7 +125,6 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
-    print("Push full screen");
     final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final TransitionRoute<Null> route = PageRouteBuilder<Null>(
       settings: RouteSettings(),

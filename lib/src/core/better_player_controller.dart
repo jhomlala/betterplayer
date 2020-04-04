@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
-
 class BetterPlayerController extends ChangeNotifier {
   BetterPlayerController(this.betterPlayerSettings,
       {this.betterPlayerPlaylistSettings, this.betterPlayerDataSource}) {
@@ -105,14 +104,12 @@ class BetterPlayerController extends ChangeNotifier {
       subtitles.clear();
       BetterPlayerSubtitlesFactory.parseSubtitles(dataSource.subtitles)
           .then((data) {
-        print("Subtitles loaded!");
         subtitles.addAll(data);
       });
     }
     videoPlayerController =
         _createVideoPlayerController(betterPlayerDataSource);
     await _initialize();
-    print("Initalize BPC finished!!!!");
   }
 
   VideoPlayerController _createVideoPlayerController(
@@ -129,14 +126,12 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future _initialize() async {
-    print("Initlize!!");
     await videoPlayerController.setLooping(looping);
 
     if (!videoPlayerController.value.initialized) {
       try {
         await videoPlayerController.initialize();
       } catch (exception, stackTrace) {
-        print("GOT EXCEPTION!!");
         print(exception);
         print(stackTrace);
       }

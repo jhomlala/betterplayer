@@ -43,7 +43,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   @override
   Widget build(BuildContext context) {
-    print("Build player with controls!");
     final BetterPlayerController betterPlayerController =
         BetterPlayerController.of(context);
 
@@ -61,8 +60,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   Container _buildPlayerWithControls(
       BetterPlayerController betterPlayerController, BuildContext context) {
-    print("[CONTROLLER]: " +
-        betterPlayerController.videoPlayerController.toString());
 
     return Container(
       child: Stack(

@@ -41,7 +41,6 @@ class _VideoListPageState extends State<VideoListPage> {
         itemCount: dataList.length,
         itemBuilder: (context, index) {
           VideoListData videoListData = dataList[index];
-          print("Video url: ${videoListData.videoUrl}");
           return VideoListWidget(
             videoListData: videoListData,
           );

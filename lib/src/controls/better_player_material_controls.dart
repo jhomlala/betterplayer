@@ -85,7 +85,6 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _dispose() {
-    print("Dispose material controls $hashCode");
     _controller?.removeListener(_updateState);
     _hideTimer?.cancel();
     _initTimer?.cancel();
@@ -381,7 +380,6 @@ class _BetterPlayerMaterialControlsState
   }
 
   Future<Null> _initialize() async {
-    print("Initalize in: $hashCode");
     _controller.addListener(_updateState);
 
     _updateState();
@@ -491,7 +489,6 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _onPlayerHide() {
-    print("Player hide $_hideStuff");
     widget.onControlsVisibilityChanged(!_hideStuff);
   }
 

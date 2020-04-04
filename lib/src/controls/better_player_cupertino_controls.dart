@@ -576,7 +576,6 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _onPlayerHide() {
-    print("Player hide $_hideStuff");
     widget.onControlsVisibilityChanged(!_hideStuff);
   }
 

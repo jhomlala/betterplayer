@@ -18,22 +18,14 @@ class _GeneralPageState extends State<GeneralPage> {
   bool _fileVideoShown = false;
 
   Future<BetterPlayerController> _setupDefaultVideoData() async {
-    await _saveAssetSubtitleToFile();
-    print("File created");
-
-    //final directory = await getApplicationDocumentsDirectory();
-    print("Building data source");
     var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        //subtitlesUrl: "${directory.path}/example_subtitles.srt");
         subtitles: BetterPlayerSubtitlesSource(
             type: BetterPlayerSubtitlesSourceType.NETWORK,
             url:
                 "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"));
-    print("building controller");
     _betterPlayerController = BetterPlayerController(BetterPlayerSettings(),
         betterPlayerDataSource: dataSource);
-    print("Created controller");
     return _betterPlayerController;
   }
 
@@ -54,7 +46,6 @@ class _GeneralPageState extends State<GeneralPage> {
     final directory = await getApplicationDocumentsDirectory();
     var file = File("${directory.path}/example_subtitles.srt");
     file.writeAsString(content);
-    print("File created $file");
   }
 
   Future _saveAssetVideoToFile() async {
@@ -62,7 +53,6 @@ class _GeneralPageState extends State<GeneralPage> {
     final directory = await getApplicationDocumentsDirectory();
     var file = File("${directory.path}/textvideo.mp4");
     file.writeAsString(content);
-    print("File created $file");
   }
 
   @override
@@ -85,7 +75,6 @@ class _GeneralPageState extends State<GeneralPage> {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         } else {
-          print("Go!");
           return AspectRatio(
             aspectRatio: 16 / 9,
             child: BetterPlayer(

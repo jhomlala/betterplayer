@@ -37,7 +37,6 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
   }
 
   void _onVideoFinished() {
-    print("Finished " + _controller.hashCode.toString());
     if (_changingToNextVideo) {
       return;
     }
@@ -56,13 +55,11 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
         _currentSource = _nextDataSource;
       });
       _setupPlayer();
-      print("Playing: $_currentSource");
       _changingToNextVideo = false;
     });
   }
 
   void _setupPlayer() {
-    print("Setup player...");
     _controller = BetterPlayerController(widget.betterPlayerSettings,
         betterPlayerPlaylistSettings: widget.betterPlayerPlaylistSettings,
         betterPlayerDataSource: _currentSource);
@@ -76,7 +73,6 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
   String _getKey() => _currentSource.hashCode.toString();
 
   BetterPlayerDataSource _getNextDateSource() {
-    print("Get next data source");
     if (_currentSource == null) {
       return _betterPlayerDataSourceList.first;
     } else {

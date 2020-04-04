@@ -42,7 +42,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
     final directory = await getApplicationDocumentsDirectory();
     var file = File("${directory.path}/example_subtitles.srt");
     file.writeAsString(content);
-    print("File created $file");
   }
 
   @override
