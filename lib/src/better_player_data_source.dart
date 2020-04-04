@@ -15,6 +15,4 @@ class BetterPlayerDataSource {
   String toString() {
     return 'BetterPlayerDataSource{type: $type, url: $url, subtitlesFile: $subtitlesFile, liveStream: $liveStream}';
   }
-
-
 }

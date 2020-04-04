@@ -1,3 +1,1 @@
-enum BetterPlayerDataSourceType{
-  NETWORK,FILE
-}
+enum BetterPlayerDataSourceType { NETWORK, FILE }

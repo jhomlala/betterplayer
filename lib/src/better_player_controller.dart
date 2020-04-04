@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/better_player_controller_provider.dart';
@@ -104,13 +105,25 @@ class BetterPlayerController extends ChangeNotifier {
 
   BetterPlayerDataSource _betterPlayerDataSource;
 
-
   Future setup(BetterPlayerDataSource dataSource) async {
     print("Initalize BPC!!!!");
     _betterPlayerDataSource = dataSource;
-    videoPlayerController = VideoPlayerController.network(dataSource.url);
+    videoPlayerController = _createVideoPlayerController(betterPlayerDataSource);
     await _initialize();
     print("Initalize BPC finished!!!!");
+  }
+
+  VideoPlayerController _createVideoPlayerController(
+      BetterPlayerDataSource betterPlayerDataSource) {
+    switch (betterPlayerDataSource.type) {
+      case BetterPlayerDataSourceType.NETWORK:
+        return VideoPlayerController.network(betterPlayerDataSource.url);
+      case BetterPlayerDataSourceType.FILE:
+        return VideoPlayerController.file(File(betterPlayerDataSource.url));
+      default:
+        throw UnimplementedError(
+            "${betterPlayerDataSource.type} is not implemented");
+    }
   }
 
   Future _initialize() async {
