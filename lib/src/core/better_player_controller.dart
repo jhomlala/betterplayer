@@ -2,10 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_event.dart';
-
 import 'package:better_player/src/configuration/better_player_event_type.dart';
-import 'package:better_player/src/configuration/better_player_settings.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
@@ -22,7 +21,7 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
-  final BetterPlayerSettings betterPlayerSettings;
+  final BetterPlayerConfiguration betterPlayerSettings;
   final BetterPlayerPlaylistSettings betterPlayerPlaylistSettings;
   final BetterPlayerDataSource betterPlayerDataSource;
 

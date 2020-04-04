@@ -1,3 +1,4 @@
+///Supported event types
 enum BetterPlayerEventType {
   PLAY,
   PAUSE,

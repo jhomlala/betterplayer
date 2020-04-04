@@ -52,7 +52,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         if (!snapshot.hasData) {
           return Text("Building!");
         } else {
-          return Column(children: [
+          return ListView(children: [
             Padding(
               padding: EdgeInsets.all(8),
               child: Text(
@@ -61,7 +61,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
             ),
             AspectRatio(
               child: BetterPlaylist(
-                betterPlayerSettings: BetterPlayerSettings(
+                betterPlayerSettings: BetterPlayerConfiguration(
                     autoPlay: false,
                     autoInitialize: true,
                     subtitlesConfiguration:

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 
 import 'better_player_event.dart';
 
-class BetterPlayerSettings {
+class BetterPlayerConfiguration {
   /// Initialize the Video on Startup. This will prep the video for playback.
   final bool autoInitialize;
 
@@ -72,7 +72,7 @@ class BetterPlayerSettings {
 
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  const BetterPlayerSettings(
+  const BetterPlayerConfiguration(
       {this.aspectRatio,
       this.autoInitialize = false,
       this.autoPlay = false,

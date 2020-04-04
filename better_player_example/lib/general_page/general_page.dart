@@ -24,19 +24,30 @@ class _GeneralPageState extends State<GeneralPage> {
             type: BetterPlayerSubtitlesSourceType.NETWORK,
             url:
                 "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"));
-    _betterPlayerController = BetterPlayerController(BetterPlayerSettings(),
+    _betterPlayerController = BetterPlayerController(BetterPlayerConfiguration(),
         betterPlayerDataSource: dataSource);
+    _betterPlayerController.addEventsListener((event){
+      print("Better player event: ${event.betterPlayerEventType}");
+    });
     return _betterPlayerController;
   }
 
   Future<BetterPlayerController> setupFileVideoData() async {
     await _saveAssetVideoToFile();
+    await _saveAssetSubtitleToFile();
     final directory = await getApplicationDocumentsDirectory();
 
     var dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.FILE, "${directory.path}/testvideo.mp4");
-    _betterPlayerController = BetterPlayerController(BetterPlayerSettings(),
-        betterPlayerDataSource: dataSource);
+        BetterPlayerDataSourceType.FILE, "${directory.path}/testvideo.mp4",
+        subtitles: BetterPlayerSubtitlesSource(
+          type: BetterPlayerSubtitlesSourceType.FILE,
+          url: "${directory.path}/example_subtitles.srt",
+        ));
+    _betterPlayerController = BetterPlayerController(
+      BetterPlayerConfiguration(),
+      betterPlayerDataSource: dataSource,
+    );
+
     return _betterPlayerController;
   }
 
@@ -89,7 +100,7 @@ class _GeneralPageState extends State<GeneralPage> {
   Widget _buildShowFileVideoButton() {
     return Column(children: [
       RaisedButton(
-        child: Text("Show file video"),
+        child: Text("Show video from file"),
         onPressed: () {
           _fileVideoShown = !_fileVideoShown;
           _fileVideoStreamController.add(_fileVideoShown);
