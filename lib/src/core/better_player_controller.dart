@@ -272,8 +272,9 @@ class BetterPlayerController extends ChangeNotifier {
   @override
   void dispose() {
     _eventListeners.clear();
-    videoPlayerController.removeListener(_fullScreenListener);
-    videoPlayerController.removeListener(_onVideoPlayerChanged);
+    videoPlayerController?.removeListener(_fullScreenListener);
+    videoPlayerController?.removeListener(_onVideoPlayerChanged);
+    videoPlayerController?.dispose();
     super.dispose();
   }
 }

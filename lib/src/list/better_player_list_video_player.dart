@@ -45,6 +45,7 @@ class _BetterPlayerListVideoPlayerState
     extends State<BetterPlayerListVideoPlayer>
     with AutomaticKeepAliveClientMixin<BetterPlayerListVideoPlayer> {
   BetterPlayerController _betterPlayerController;
+  bool _isDisposing = false;
 
   @override
   void initState() {
@@ -53,6 +54,12 @@ class _BetterPlayerListVideoPlayerState
       betterPlayerDataSource: widget.dataSource,
     );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _isDisposing = true;
+    super.dispose();
   }
 
   @override
@@ -67,11 +74,11 @@ class _BetterPlayerListVideoPlayerState
         bool isPlaying = await _betterPlayerController.isPlaying();
         bool initialized = _betterPlayerController.isVideoInitialized();
         if (visibilityInfo.visibleFraction >= widget.playFraction) {
-          if (widget.autoPlay && initialized && !isPlaying) {
+          if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
             _betterPlayerController.play();
           }
         } else {
-          if (widget.autoPause && initialized && isPlaying) {
+          if (widget.autoPause && initialized && isPlaying && !_isDisposing) {
             _betterPlayerController.pause();
           }
         }
