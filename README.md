@@ -9,3 +9,71 @@
 [![pub package](https://img.shields.io/badge/platform-flutter-blue.svg)](https://github.com/jhomlala/betterplayer)
 
 Advanced video player based on video_player and Chewie. It's solves many typical use cases and it's easy to run.
+
+## Introduction
+This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is awesome plugin and works well in many cases. Better Player is a continuation of ideas introduced in Chewie. Better player fix common bugs, adds more configuration options and solves typical use cases. 
+
+**Features:**  
+✔️ Fixed common bugs  
+✔️ Added advanced configuration options  
+✔️ Refacored player controls  
+✔️ Playlist support  
+✔️ Video in ListView support  
+✔️ Subtitles support  
+
+**Known bugs:**  
+- Can't run many video instances in app (this will be fixed in next video_player iteration)  
+
+## Install
+
+1. Add this to your **pubspec.yaml** file:
+
+```yaml
+dependencies:
+  better_player: ^0.0.2
+```
+
+2. Install it
+
+```bash
+$ flutter packages get
+```
+
+3. Import it
+
+```dart
+import 'package:better_player/better_player.dart';
+```
+
+## Usage
+### Basic usage
+
+Create BetterPlayerDataSource and BetterPlayerController. You should do it in initState:
+```dart
+@override
+void initState() {
+	super.initState();
+	BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
+       BetterPlayerDataSourceType.NETWORK,
+       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+	_betterPlayerController = BetterPlayerController(
+        BetterPlayerConfiguration(),
+        betterPlayerDataSource: betterPlayerDataSource);
+	}
+````
+
+Create BetterPlayer widget wrapped in AspectRatio widget:
+```dart
+@override
+Widget build(BuildContext context) {
+	return AspectRatio(
+		aspectRatio: 16 / 9,
+		child: BetterPlayer(
+			controller: _betterPlayerController,
+		),
+	);
+}
+```
+
+
+
