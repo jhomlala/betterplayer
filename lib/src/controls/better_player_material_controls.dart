@@ -175,6 +175,7 @@ class _BetterPlayerMaterialControlsState
       ),
     );
   }
+  
 
   Widget _buildExpandButton() {
     return BetterPlayerMaterialClickableWidget(
