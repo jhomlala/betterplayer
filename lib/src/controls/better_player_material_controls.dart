@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:better_player/src/better_player_controller.dart';
-import 'package:better_player/src/better_player_progress_colors.dart';
+import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
-import 'package:better_player/src/utils.dart';
+import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:better_player/src/core/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -175,7 +175,6 @@ class _BetterPlayerMaterialControlsState
       ),
     );
   }
-  
 
   Widget _buildExpandButton() {
     return BetterPlayerMaterialClickableWidget(

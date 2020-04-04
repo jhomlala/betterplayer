@@ -1,7 +1,8 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/better_player_event_type.dart';
-import 'package:better_player/src/better_player_playlist_settings.dart';
-import 'package:better_player/src/better_player_settings.dart';
+import 'package:better_player/src/configuration/better_player_data_source.dart';
+import 'package:better_player/src/configuration/better_player_event_type.dart';
+import 'package:better_player/src/playlist/better_player_playlist_settings.dart';
+import 'package:better_player/src/configuration/better_player_settings.dart';
 import 'package:flutter/material.dart';
 
 class BetterPlaylist extends StatefulWidget {

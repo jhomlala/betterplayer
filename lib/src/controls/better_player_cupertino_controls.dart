@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:better_player/src/better_player_controller.dart';
-import 'package:better_player/src/better_player_progress_colors.dart';
+import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
-
-import 'package:better_player/src/utils.dart';
+import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:better_player/src/core/utils.dart';
 
 import 'package:flutter/material.dart';
 
@@ -23,8 +22,7 @@ class BetterPlayerCupertinoControls extends StatefulWidget {
   const BetterPlayerCupertinoControls({
     this.onControlsVisibilityChanged,
     this.controlsConfiguration,
-  })
-      : assert(onControlsVisibilityChanged != null),
+  })  : assert(onControlsVisibilityChanged != null),
         assert(controlsConfiguration != null);
 
   @override
@@ -61,9 +59,7 @@ class _BetterPlayerCupertinoControlsState
     final iconColor = _controlsConfiguration.iconsColor;
     _betterPlayerController = BetterPlayerController.of(context);
     _controller = _betterPlayerController.videoPlayerController;
-    final orientation = MediaQuery
-        .of(context)
-        .orientation;
+    final orientation = MediaQuery.of(context).orientation;
     final barHeight = orientation == Orientation.portrait
         ? _controlsConfiguration.controlBarHeight
         : _controlsConfiguration.controlBarHeight + 17;
@@ -119,9 +115,11 @@ class _BetterPlayerCupertinoControlsState
     super.didChangeDependencies();
   }
 
-  AnimatedOpacity _buildBottomBar(Color backgroundColor,
-      Color iconColor,
-      double barHeight,) {
+  AnimatedOpacity _buildBottomBar(
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+  ) {
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
@@ -142,38 +140,38 @@ class _BetterPlayerCupertinoControlsState
               color: backgroundColor,
               child: _betterPlayerController.isLiveStream()
                   ? Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  const SizedBox(width: 8),
-                  _controlsConfiguration.enablePlayPause
-                      ? _buildPlayPause(_controller, iconColor, barHeight)
-                      : const SizedBox(),
-                  const SizedBox(width: 8),
-                  _buildLiveWidget(),
-                ],
-              )
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        const SizedBox(width: 8),
+                        _controlsConfiguration.enablePlayPause
+                            ? _buildPlayPause(_controller, iconColor, barHeight)
+                            : const SizedBox(),
+                        const SizedBox(width: 8),
+                        _buildLiveWidget(),
+                      ],
+                    )
                   : Row(
-                children: <Widget>[
-                  _controlsConfiguration.enablePlayPause
-                      ? _buildSkipBack(iconColor, barHeight)
-                      : const SizedBox(),
-                  _controlsConfiguration.enablePlayPause
-                      ? _buildPlayPause(_controller, iconColor, barHeight)
-                      : const SizedBox(),
-                  _controlsConfiguration.enablePlayPause
-                      ? _buildSkipForward(iconColor, barHeight)
-                      : const SizedBox(),
-                  _controlsConfiguration.enableProgressText
-                      ? _buildPosition()
-                      : const SizedBox(),
-                  _controlsConfiguration.enableProgressBar
-                      ? _buildProgressBar()
-                      : const SizedBox(),
-                  _controlsConfiguration.enableProgressText
-                      ? _buildRemaining()
-                      : const SizedBox()
-                ],
-              ),
+                      children: <Widget>[
+                        _controlsConfiguration.enablePlayPause
+                            ? _buildSkipBack(iconColor, barHeight)
+                            : const SizedBox(),
+                        _controlsConfiguration.enablePlayPause
+                            ? _buildPlayPause(_controller, iconColor, barHeight)
+                            : const SizedBox(),
+                        _controlsConfiguration.enablePlayPause
+                            ? _buildSkipForward(iconColor, barHeight)
+                            : const SizedBox(),
+                        _controlsConfiguration.enableProgressText
+                            ? _buildPosition()
+                            : const SizedBox(),
+                        _controlsConfiguration.enableProgressBar
+                            ? _buildProgressBar()
+                            : const SizedBox(),
+                        _controlsConfiguration.enableProgressText
+                            ? _buildRemaining()
+                            : const SizedBox()
+                      ],
+                    ),
             ),
           ),
         ),
@@ -192,10 +190,12 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  GestureDetector _buildExpandButton(Color backgroundColor,
-      Color iconColor,
-      double barHeight,
-      double buttonPadding,) {
+  GestureDetector _buildExpandButton(
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double buttonPadding,
+  ) {
     return GestureDetector(
       onTap: _onExpandCollapse,
       child: AnimatedOpacity(
@@ -237,12 +237,12 @@ class _BetterPlayerCupertinoControlsState
         onTap: _latestValue != null && _latestValue.isPlaying
             ? _cancelAndRestartTimer
             : () {
-          _hideTimer?.cancel();
+                _hideTimer?.cancel();
 
-          setState(() {
-            _hideStuff = false;
-          });
-        },
+                setState(() {
+                  _hideStuff = false;
+                });
+              },
         child: Container(
           color: Colors.transparent,
         ),
@@ -252,7 +252,7 @@ class _BetterPlayerCupertinoControlsState
 
   bool _isPlaylistChangingToNextVideo() =>
       _betterPlayerController.betterPlayerPlaylistSettings != null &&
-          _betterPlayerController.isDisposing;
+      _betterPlayerController.isDisposing;
 
   Widget _buildPlaylistChangingWidget() {
     return Expanded(
@@ -272,15 +272,17 @@ class _BetterPlayerCupertinoControlsState
   Widget _buildLoadingWidget() {
     return CircularProgressIndicator(
       valueColor:
-      AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
+          AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
     );
   }
 
-  GestureDetector _buildMuteButton(VideoPlayerController controller,
-      Color backgroundColor,
-      Color iconColor,
-      double barHeight,
-      double buttonPadding,) {
+  GestureDetector _buildMuteButton(
+    VideoPlayerController controller,
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double buttonPadding,
+  ) {
     return GestureDetector(
       onTap: () {
         _cancelAndRestartTimer();
@@ -321,9 +323,11 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  GestureDetector _buildPlayPause(VideoPlayerController controller,
-      Color iconColor,
-      double barHeight,) {
+  GestureDetector _buildPlayPause(
+    VideoPlayerController controller,
+    Color iconColor,
+    double barHeight,
+  ) {
     return GestureDetector(
       onTap: _playPause,
       child: Container(
@@ -343,7 +347,7 @@ class _BetterPlayerCupertinoControlsState
 
   Widget _buildPosition() {
     final position =
-    _latestValue != null ? _latestValue.position : Duration(seconds: 0);
+        _latestValue != null ? _latestValue.position : Duration(seconds: 0);
 
     return Padding(
       padding: const EdgeInsets.only(right: 12.0),
@@ -367,7 +371,7 @@ class _BetterPlayerCupertinoControlsState
       child: Text(
         '-${formatDuration(position)}',
         style:
-        TextStyle(color: _controlsConfiguration.textColor, fontSize: 12.0),
+            TextStyle(color: _controlsConfiguration.textColor, fontSize: 12.0),
       ),
     );
   }
@@ -412,10 +416,12 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  Widget _buildTopBar(Color backgroundColor,
-      Color iconColor,
-      double barHeight,
-      double buttonPadding,) {
+  Widget _buildTopBar(
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double buttonPadding,
+  ) {
     return Container(
       height: barHeight,
       margin: EdgeInsets.only(
@@ -427,12 +433,12 @@ class _BetterPlayerCupertinoControlsState
         children: <Widget>[
           _controlsConfiguration.enableFullscreen
               ? _buildExpandButton(
-              backgroundColor, iconColor, barHeight, buttonPadding)
+                  backgroundColor, iconColor, barHeight, buttonPadding)
               : Container(),
           Expanded(child: Container()),
           _controlsConfiguration.enableMute
               ? _buildMuteButton(_controller, backgroundColor, iconColor,
-              barHeight, buttonPadding)
+                  barHeight, buttonPadding)
               : Container(),
         ],
       ),
@@ -498,7 +504,7 @@ class _BetterPlayerCupertinoControlsState
               handleColor: _controlsConfiguration.progressBarHandleColor,
               bufferedColor: _controlsConfiguration.progressBarBufferedColor,
               backgroundColor:
-              _controlsConfiguration.progressBarBackgroundColor),
+                  _controlsConfiguration.progressBarBackgroundColor),
           isChangeAllowed: () {
             return !_isPlaylistChangingToNextVideo();
           },

@@ -1,4 +1,4 @@
-import 'package:better_player/src/better_player_event_type.dart';
+import 'package:better_player/src/configuration/better_player_event_type.dart';
 
 class BetterPlayerEvent {
   final BetterPlayerEventType betterPlayerEventType;

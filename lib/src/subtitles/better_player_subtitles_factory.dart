@@ -18,6 +18,8 @@ class BetterPlayerSubtitlesFactory {
         return await _parseSubtitlesFromNetwork(source);
       case BetterPlayerSubtitlesSourceType.MEMORY:
         return _parseSubtitlesFromMemory(source);
+      default:
+        return List();
     }
   }
 

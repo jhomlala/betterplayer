@@ -1,6 +1,5 @@
-import 'dart:io';
 
-import 'package:better_player/src/better_player_data_source_type.dart';
+import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 
 class BetterPlayerDataSource {

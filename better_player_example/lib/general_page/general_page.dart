@@ -21,7 +21,7 @@ class _GeneralPageState extends State<GeneralPage> {
     await _saveAssetSubtitleToFile();
     print("File created");
 
-    final directory = await getApplicationDocumentsDirectory();
+    //final directory = await getApplicationDocumentsDirectory();
     print("Building data source");
     var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",

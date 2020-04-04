@@ -1,10 +1,7 @@
 import 'dart:async';
 
-import 'package:better_player/src/better_player_controller.dart';
-import 'package:better_player/src/better_player_controller_provider.dart';
-import 'package:better_player/src/better_player_data_source.dart';
-import 'package:better_player/src/better_player_with_controls.dart';
-import 'package:better_player/src/subtitles/better_player_subtitle.dart';
+import 'package:better_player/better_player.dart';
+import 'package:better_player/src/core/better_player_with_controls.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,21 +9,19 @@ import 'package:flutter/widgets.dart';
 
 import 'package:wakelock/wakelock.dart';
 
+import '../configuration/better_player_data_source.dart';
+import 'better_player_controller_provider.dart';
+
 typedef Widget BetterPlayerRoutePageBuilder(
     BuildContext context,
     Animation<double> animation,
     Animation<double> secondaryAnimation,
     BetterPlayerControllerProvider controllerProvider);
 
-/// A Video Player with Material and Cupertino skins.
-///
-/// `video_player` is pretty low level. Chewie wraps it in a friendly skin to
-/// make it easy to use!
 class BetterPlayer extends StatefulWidget {
-  BetterPlayer({
-    Key key,
-    this.controller,
-  })  : assert(controller != null, 'You must provide a chewie controller'),
+  BetterPlayer({Key key, this.controller})
+      : assert(
+            controller != null, 'You must provide a better player controller'),
         super(key: key);
 
   /// The [BetterPlayerController]
@@ -43,9 +38,6 @@ class BetterPlayerState extends State<BetterPlayer> {
       widget.controller.betterPlayerDataSource;
 
   bool _isFullScreen = false;
-  DateTime dateTime;
-  List<BetterPlayerSubtitle> subtitles;
-  bool subtitlesLoading = false;
 
   @override
   void initState() {
@@ -69,7 +61,6 @@ class BetterPlayerState extends State<BetterPlayer> {
   @override
   void didUpdateWidget(BetterPlayer oldWidget) {
     if (oldWidget.controller != widget.controller) {
-      print("Did update add listener");
       widget.controller.addListener(listener);
     }
     super.didUpdateWidget(oldWidget);
@@ -170,7 +161,6 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   Widget _buildPlayer() {
-    print("Build player with subtitles: ${subtitles.toString()}");
     return BetterPlayerWithControls(
       controller: widget.controller,
     );

@@ -2,35 +2,24 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/better_player_controller_provider.dart';
-import 'package:better_player/src/better_player_data_source.dart';
-import 'package:better_player/src/better_player_event.dart';
-import 'package:better_player/src/better_player_event_type.dart';
-import 'package:better_player/src/better_player_progress_colors.dart';
-import 'package:better_player/src/better_player_settings.dart';
+import 'package:better_player/src/configuration/better_player_event.dart';
+
+import 'package:better_player/src/configuration/better_player_event_type.dart';
+import 'package:better_player/src/configuration/better_player_settings.dart';
+import 'package:better_player/src/core/better_player_controller_provider.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
-/// The ChewieController is used to configure and drive the Chewie Player
-/// Widgets. It provides methods to control playback, such as [pause] and
-/// [play], as well as methods that control the visual appearance of the player,
-/// such as [enterFullScreen] or [exitFullScreen].
-///
-/// In addition, you can listen to the ChewieController for presentational
-/// changes, such as entering and exiting full screen mode. To listen for
-/// changes to the playback, such as a change to the seek position of the
-/// player, please use the standard information provided by the
-/// `VideoPlayerController`.
+
 class BetterPlayerController extends ChangeNotifier {
   BetterPlayerController(this.betterPlayerSettings,
       {this.betterPlayerPlaylistSettings, this.betterPlayerDataSource}) {
-    print("Building controller");
     _eventListeners.add(eventListener);
     if (betterPlayerDataSource != null) {
-      setup(betterPlayerDataSource);
+      _setup(betterPlayerDataSource);
     }
   }
 
@@ -100,7 +89,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool get isFullScreen => _isFullScreen;
 
-  int lastPositionSelection = 0;
+  int _lastPositionSelection = 0;
 
   final List<Function> _eventListeners = List();
 
@@ -110,8 +99,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   List<BetterPlayerSubtitle> subtitles = List();
 
-  Future setup(BetterPlayerDataSource dataSource) async {
-    print("Initalize BPC!!!!");
+  Future _setup(BetterPlayerDataSource dataSource) async {
     _betterPlayerDataSource = dataSource;
     if (dataSource.subtitles != null) {
       subtitles.clear();
@@ -248,8 +236,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   void _onVideoPlayerChanged() async {
     int now = DateTime.now().millisecondsSinceEpoch;
-    if (now - lastPositionSelection > 500) {
-      lastPositionSelection = now;
+    if (now - _lastPositionSelection > 500) {
+      _lastPositionSelection = now;
       var currentVideoPlayerValue = videoPlayerController.value;
       Duration currentPositionShifted = Duration(
           milliseconds: currentVideoPlayerValue.position.inMilliseconds + 500);
@@ -269,11 +257,6 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
-  void _handleInitializationException(Exception exception) {
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.EXCEPTION,
-        parameters: {"exception": exception}));
-  }
-
   void addEventsListener(Function(BetterPlayerEvent) eventListener) {
     _eventListeners.add(eventListener);
   }
@@ -288,15 +271,9 @@ class BetterPlayerController extends ChangeNotifier {
 
   @override
   void dispose() {
-    print("BetterPlayerController dispose");
     _eventListeners.clear();
     videoPlayerController.removeListener(_fullScreenListener);
     videoPlayerController.removeListener(_onVideoPlayerChanged);
-
     super.dispose();
-  }
-
-  List<BetterPlayerSubtitle> provideSubtitles() {
-    return subtitles;
   }
 }

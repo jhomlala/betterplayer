@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:better_player/better_player.dart';
 
 import 'package:better_player_example/playlist_page/playlist_page.dart';

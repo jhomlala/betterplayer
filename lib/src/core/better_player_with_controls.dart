@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:better_player/src/better_player_controller.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
-import 'package:better_player/src/subtitles/better_player_subtitle.dart';
+import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +25,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   BetterPlayerControlsConfiguration get controlsConfiguration =>
       widget.controller.betterPlayerSettings.controlsConfiguration;
-
 
   final StreamController<bool> playerVisibilityStreamController =
       StreamController();
