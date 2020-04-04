@@ -21,7 +21,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
     dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        subtitlesFile: File("${directory.path}/example_subtitles.srt")));
+        subtitles: BetterPlayerSubtitlesSource(
+            type: BetterPlayerSubtitlesSourceType.FILE,
+            url: "${directory.path}/example_subtitles.srt")));
+
     dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));

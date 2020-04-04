@@ -8,6 +8,8 @@ import 'package:better_player/src/better_player_event.dart';
 import 'package:better_player/src/better_player_event_type.dart';
 import 'package:better_player/src/better_player_progress_colors.dart';
 import 'package:better_player/src/better_player_settings.dart';
+import 'package:better_player/src/subtitles/better_player_subtitle.dart';
+import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
@@ -25,6 +27,7 @@ import 'package:video_player/video_player.dart';
 class BetterPlayerController extends ChangeNotifier {
   BetterPlayerController(this.betterPlayerSettings,
       {this.betterPlayerPlaylistSettings, this.betterPlayerDataSource}) {
+    print("Building controller");
     _eventListeners.add(eventListener);
     if (betterPlayerDataSource != null) {
       setup(betterPlayerDataSource);
@@ -105,10 +108,21 @@ class BetterPlayerController extends ChangeNotifier {
 
   BetterPlayerDataSource _betterPlayerDataSource;
 
+  List<BetterPlayerSubtitle> subtitles = List();
+
   Future setup(BetterPlayerDataSource dataSource) async {
     print("Initalize BPC!!!!");
     _betterPlayerDataSource = dataSource;
-    videoPlayerController = _createVideoPlayerController(betterPlayerDataSource);
+    if (dataSource.subtitles != null) {
+      subtitles.clear();
+      BetterPlayerSubtitlesFactory.parseSubtitles(dataSource.subtitles)
+          .then((data) {
+        print("Subtitles loaded!");
+        subtitles.addAll(data);
+      });
+    }
+    videoPlayerController =
+        _createVideoPlayerController(betterPlayerDataSource);
     await _initialize();
     print("Initalize BPC finished!!!!");
   }
@@ -280,5 +294,9 @@ class BetterPlayerController extends ChangeNotifier {
     videoPlayerController.removeListener(_onVideoPlayerChanged);
 
     super.dispose();
+  }
+
+  List<BetterPlayerSubtitle> provideSubtitles() {
+    return subtitles;
   }
 }

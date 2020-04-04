@@ -11,3 +11,5 @@ export 'src/better_player_playlist_settings.dart';
 export 'src/subtitles/better_player_subtitles_configuration.dart';
 export 'src/controls/better_player_controls_configuration.dart';
 export 'src/list/better_player_list_video_player.dart';
+export 'src/subtitles/better_player_subtitles_source.dart';
+export 'src/subtitles/better_player_subtitles_source_type.dart';
