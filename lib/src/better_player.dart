@@ -27,14 +27,11 @@ class BetterPlayer extends StatefulWidget {
   BetterPlayer({
     Key key,
     this.controller,
-    this.betterPlayerDataSource,
   })  : assert(controller != null, 'You must provide a chewie controller'),
         super(key: key);
 
   /// The [BetterPlayerController]
   final BetterPlayerController controller;
-
-  final BetterPlayerDataSource betterPlayerDataSource;
 
   @override
   BetterPlayerState createState() {
@@ -44,7 +41,7 @@ class BetterPlayer extends StatefulWidget {
 
 class BetterPlayerState extends State<BetterPlayer> {
   BetterPlayerDataSource get betterPlayerDataSource =>
-      widget.betterPlayerDataSource;
+      widget.controller.betterPlayerDataSource;
 
   bool _isFullScreen = false;
   DateTime dateTime;

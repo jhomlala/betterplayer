@@ -11,26 +11,19 @@ class GeneralPage extends StatefulWidget {
 }
 
 class _GeneralPageState extends State<GeneralPage> {
-  List dataSourceList = List<BetterPlayerDataSource>();
+  BetterPlayerController _betterPlayerController;
 
-  Future<List<BetterPlayerDataSource>> setupData() async {
+  Future<BetterPlayerController> setupData() async {
     await _saveAssetToFile();
 
     final directory = await getApplicationDocumentsDirectory();
 
-    dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
+    var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        subtitlesFile: File("${directory.path}/example_subtitles.srt")));
-    dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
-    dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
-        "http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8",
-        liveStream: true));
-
-    return dataSourceList;
+        subtitlesFile: File("${directory.path}/example_subtitles.srt"));
+    _betterPlayerController = BetterPlayerController(BetterPlayerSettings(),
+        betterPlayerDataSource: dataSource);
+    return _betterPlayerController;
   }
 
   Future _saveAssetToFile() async {
@@ -44,26 +37,30 @@ class _GeneralPageState extends State<GeneralPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<BetterPlayerDataSource>>(
+    return ListView(children: [
+      Padding(
+        padding: EdgeInsets.all(8),
+        child: Text("This is example default video. This video is loaded from"
+            " URL. Subtitles are loaded from file."),
+      ),
+      _buildDefaultVideo()
+    ]);
+  }
+
+  Widget _buildDefaultVideo() {
+    return FutureBuilder<BetterPlayerController>(
       future: setupData(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
+          print("Building!");
           return Text("Building!");
         } else {
+          print("Go!");
           return AspectRatio(
-            child: BetterPlaylist(
-              betterPlayerSettings: BetterPlayerSettings(
-                  autoPlay: false,
-                  autoInitialize: true,
-                  subtitlesConfiguration:
-                      BetterPlayerSubtitlesConfiguration(fontSize: 10),
-                  controlsConfiguration:
-                      BetterPlayerControlsConfiguration.cupertino()),
-              betterPlayerPlaylistSettings:
-                  const BetterPlayerPlaylistSettings(),
-              betterPlayerDataSourceList: snapshot.data,
-            ),
             aspectRatio: 16 / 9,
+            child: BetterPlayer(
+              controller: snapshot.data,
+            ),
           );
         }
       },

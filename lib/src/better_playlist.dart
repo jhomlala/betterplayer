@@ -94,9 +94,6 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
 
   @override
   Widget build(BuildContext context) {
-    return BetterPlayer(
-        key: Key(_getKey()),
-        controller: _controller,
-        betterPlayerDataSource: _currentSource);
+    return BetterPlayer(key: Key(_getKey()), controller: _controller);
   }
 }

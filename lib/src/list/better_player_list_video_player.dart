@@ -61,7 +61,6 @@ class _BetterPlayerListVideoPlayerState
       child: BetterPlayer(
         key: Key(widget.dataSource.hashCode.toString() + "_player"),
         controller: _betterPlayerController,
-        betterPlayerDataSource: widget.dataSource,
       ),
       onVisibilityChanged: (visibilityInfo) async {
         bool isPlaying = await _betterPlayerController.isPlaying();
