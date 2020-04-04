@@ -46,6 +46,8 @@ import 'package:better_player/better_player.dart';
 ```
 
 ## Usage
+Check [Example project](https://github.com/jhomlala/betterplayer/tree/master/example).
+
 ### Basic usage
 
 Create BetterPlayerDataSource and BetterPlayerController. You should do it in initState:
@@ -76,6 +78,47 @@ Create BetterPlayer widget wrapped in AspectRatio widget:
     );
   }
 ```
+
+### Playlist
+To use playlist, you need to create dataset with multiple videos:
+```dart
+  List<BetterPlayerDataSource> createDataSet() {
+    List dataSourceList = List<BetterPlayerDataSource>();
+    dataSourceList.add(
+      BetterPlayerDataSource(
+        BetterPlayerDataSourceType.NETWORK,
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      ),
+    );
+    dataSourceList.add(
+      BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
+    );
+    dataSourceList.add(
+      BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
+          "http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8"),
+    );
+    return dataSourceList;
+  }
+```
+
+Then create BetterPlaylist:
+```dart
+@override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: BetterPlaylist(
+          betterPlayerSettings: BetterPlayerConfiguration(),
+          betterPlayerPlaylistSettings: const BetterPlayerPlaylistSettings(),
+          betterPlayerDataSourceList: dataSourceList),
+    );
+  }
+```
+
+
+
+
 
 
 
