@@ -50,29 +50,31 @@ import 'package:better_player/better_player.dart';
 
 Create BetterPlayerDataSource and BetterPlayerController. You should do it in initState:
 ```dart
-@override
-void initState() {
-	super.initState();
-	BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-       BetterPlayerDataSourceType.NETWORK,
-       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-	_betterPlayerController = BetterPlayerController(
+BetterPlayerController _betterPlayerController;
+
+  @override
+  void initState() {
+    super.initState();
+    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.NETWORK,
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+    _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(),
         betterPlayerDataSource: betterPlayerDataSource);
-	}
+  }
 ````
 
 Create BetterPlayer widget wrapped in AspectRatio widget:
 ```dart
-@override
-Widget build(BuildContext context) {
-	return AspectRatio(
-		aspectRatio: 16 / 9,
-		child: BetterPlayer(
-			controller: _betterPlayerController,
-		),
-	);
-}
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: BetterPlayer(
+        controller: _betterPlayerController,
+      ),
+    );
+  }
 ```
 
 
