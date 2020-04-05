@@ -60,16 +60,16 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   "finishes. User can't use player controls when video is changing."),
             ),
             AspectRatio(
-              child: BetterPlaylist(
-                betterPlayerSettings: BetterPlayerConfiguration(
+              child: BetterPlayerPlaylist(
+                betterPlayerConfiguration: BetterPlayerConfiguration(
                     autoPlay: false,
                     autoInitialize: true,
                     subtitlesConfiguration:
                         BetterPlayerSubtitlesConfiguration(fontSize: 10),
                     controlsConfiguration:
                         BetterPlayerControlsConfiguration.cupertino()),
-                betterPlayerPlaylistSettings:
-                    const BetterPlayerPlaylistSettings(),
+                betterPlayerPlaylistConfiguration:
+                    const BetterPlayerPlaylistConfiguration(),
                 betterPlayerDataSourceList: snapshot.data,
               ),
               aspectRatio: 16 / 9,

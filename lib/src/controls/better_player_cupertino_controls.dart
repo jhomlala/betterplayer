@@ -251,7 +251,7 @@ class _BetterPlayerCupertinoControlsState
   }
 
   bool _isPlaylistChangingToNextVideo() =>
-      _betterPlayerController.betterPlayerPlaylistSettings != null &&
+      _betterPlayerController.betterPlayerPlaylistConfiguration != null &&
       _betterPlayerController.isDisposing;
 
   Widget _buildPlaylistChangingWidget() {

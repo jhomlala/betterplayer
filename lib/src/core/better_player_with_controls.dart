@@ -21,10 +21,10 @@ class BetterPlayerWithControls extends StatefulWidget {
 
 class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   BetterPlayerSubtitlesConfiguration get subtitlesConfiguration =>
-      widget.controller.betterPlayerSettings.subtitlesConfiguration;
+      widget.controller.betterPlayerConfiguration.subtitlesConfiguration;
 
   BetterPlayerControlsConfiguration get controlsConfiguration =>
-      widget.controller.betterPlayerSettings.controlsConfiguration;
+      widget.controller.betterPlayerConfiguration.controlsConfiguration;
 
   final StreamController<bool> playerVisibilityStreamController =
       StreamController();

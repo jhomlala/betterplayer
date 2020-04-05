@@ -2,26 +2,27 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_data_source.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
-import 'package:better_player/src/playlist/better_player_playlist_settings.dart';
+import 'package:better_player/src/playlist/better_player_playlist_configuration.dart';
+
 import 'package:flutter/material.dart';
 
-class BetterPlaylist extends StatefulWidget {
+class BetterPlayerPlaylist extends StatefulWidget {
   final List<BetterPlayerDataSource> betterPlayerDataSourceList;
-  final BetterPlayerConfiguration betterPlayerSettings;
-  final BetterPlayerPlaylistSettings betterPlayerPlaylistSettings;
+  final BetterPlayerConfiguration betterPlayerConfiguration;
+  final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
 
-  BetterPlaylist(
+  BetterPlayerPlaylist(
       {Key key,
       this.betterPlayerDataSourceList,
-      this.betterPlayerSettings,
-      this.betterPlayerPlaylistSettings})
+      this.betterPlayerConfiguration,
+      this.betterPlayerPlaylistConfiguration})
       : super(key: key);
 
   @override
-  _BetterPlaylistState createState() => _BetterPlaylistState();
+  _BetterPlayerPlaylistState createState() => _BetterPlayerPlaylistState();
 }
 
-class _BetterPlaylistState extends State<BetterPlaylist> {
+class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   BetterPlayerDataSource _currentSource;
   BetterPlayerController _controller;
   bool _changingToNextVideo = false;
@@ -50,7 +51,7 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
       return;
     }
 
-    Future.delayed(widget.betterPlayerPlaylistSettings.nextVideoDelay, () {
+    Future.delayed(widget.betterPlayerPlaylistConfiguration.nextVideoDelay, () {
       setState(() {
         _currentSource = _nextDataSource;
       });
@@ -60,8 +61,8 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
   }
 
   void _setupPlayer() {
-    _controller = BetterPlayerController(widget.betterPlayerSettings,
-        betterPlayerPlaylistSettings: widget.betterPlayerPlaylistSettings,
+    _controller = BetterPlayerController(widget.betterPlayerConfiguration,
+        betterPlayerPlaylistConfiguration: widget.betterPlayerPlaylistConfiguration,
         betterPlayerDataSource: _currentSource);
     _controller.addEventsListener((event) async {
       if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
@@ -80,7 +81,7 @@ class _BetterPlaylistState extends State<BetterPlaylist> {
       if (index + 1 < _betterPlayerDataSourceList.length) {
         return _betterPlayerDataSourceList[index + 1];
       } else {
-        if (widget.betterPlayerPlaylistSettings.loopVideos) {
+        if (widget.betterPlayerPlaylistConfiguration.loopVideos) {
           return _betterPlayerDataSourceList.first;
         } else {
           return null;

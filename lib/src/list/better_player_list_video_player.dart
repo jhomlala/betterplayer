@@ -8,8 +8,8 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
   ///Video to show
   final BetterPlayerDataSource dataSource;
 
-  ///Video player settings
-  final BetterPlayerConfiguration settings;
+  ///Video player configuration
+  final BetterPlayerConfiguration configuration;
 
   ///Fraction of the screen height that will trigger play/pause. For example
   ///if playFraction is 0.6 video will be played if 60% of player height is
@@ -23,13 +23,13 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
   final bool autoPause;
 
   const BetterPlayerListVideoPlayer(this.dataSource,
-      {this.settings = const BetterPlayerConfiguration(),
+      {this.configuration = const BetterPlayerConfiguration(),
       this.playFraction = 0.6,
       this.autoPlay = true,
       this.autoPause = true,
       Key key})
       : assert(dataSource != null, "Data source can't be null"),
-        assert(settings != null, "Settings can't be null"),
+        assert(configuration != null, "Configuration can't be null"),
         assert(
             playFraction != null && playFraction >= 0.0 && playFraction <= 1.0,
             "Play fraction can't be null and must be between 0.0 and 1.0"),
@@ -51,7 +51,7 @@ class _BetterPlayerListVideoPlayerState
   @override
   void initState() {
     _betterPlayerController = BetterPlayerController(
-      widget.settings,
+      widget.configuration,
       betterPlayerDataSource: widget.dataSource,
     );
     super.initState();

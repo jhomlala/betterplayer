@@ -37,7 +37,7 @@ class _VideoListWidgetState extends State<VideoListWidget> {
               child: BetterPlayerListVideoPlayer(
                 BetterPlayerDataSource(
                     BetterPlayerDataSourceType.NETWORK, videoListData.videoUrl),
-                settings:
+                configuration:
                     BetterPlayerConfiguration(autoInitialize: true, autoPlay: false),
                 key: Key(videoListData.hashCode.toString()),
                 playFraction: 0.8,

@@ -108,9 +108,9 @@ Then create BetterPlaylist:
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 16 / 9,
-      child: BetterPlaylist(
-          betterPlayerSettings: BetterPlayerConfiguration(),
-          betterPlayerPlaylistSettings: const BetterPlayerPlaylistSettings(),
+      child: BetterPlayerPlaylist(
+          betterPlayerConfiguration: BetterPlayerConfiguration(),
+          betterPlayerPlaylistConfiguration: const BetterPlayerPlaylistConfiguration(),
           betterPlayerDataSourceList: dataSourceList),
     );
   }

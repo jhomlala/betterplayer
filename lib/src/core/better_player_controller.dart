@@ -13,29 +13,29 @@ import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class BetterPlayerController extends ChangeNotifier {
-  BetterPlayerController(this.betterPlayerSettings,
-      {this.betterPlayerPlaylistSettings, this.betterPlayerDataSource}) {
+  BetterPlayerController(this.betterPlayerConfiguration,
+      {this.betterPlayerPlaylistConfiguration, this.betterPlayerDataSource}) {
     _eventListeners.add(eventListener);
     if (betterPlayerDataSource != null) {
       _setup(betterPlayerDataSource);
     }
   }
 
-  final BetterPlayerConfiguration betterPlayerSettings;
-  final BetterPlayerPlaylistSettings betterPlayerPlaylistSettings;
+  final BetterPlayerConfiguration betterPlayerConfiguration;
+  final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
   final BetterPlayerDataSource betterPlayerDataSource;
 
   /// The controller for the video you want to play
   VideoPlayerController videoPlayerController;
 
   /// Play the video as soon as it's displayed
-  bool get autoPlay => betterPlayerSettings.autoPlay;
+  bool get autoPlay => betterPlayerConfiguration.autoPlay;
 
   /// Start video at a certain position
-  Duration get startAt => betterPlayerSettings.startAt;
+  Duration get startAt => betterPlayerConfiguration.startAt;
 
   /// Whether or not the video should loop
-  bool get looping => betterPlayerSettings.looping;
+  bool get looping => betterPlayerConfiguration.looping;
 
   /// When the video playback runs  into an error, you can build a custom
   /// error message.
@@ -46,28 +46,28 @@ class BetterPlayerController extends ChangeNotifier {
   /// video!
   ///
   /// Will fallback to fitting within the space allowed.
-  double get aspectRatio => betterPlayerSettings.aspectRatio;
+  double get aspectRatio => betterPlayerConfiguration.aspectRatio;
 
   /// The placeholder is displayed underneath the Video before it is initialized
   /// or played.
-  Widget get placeholder => betterPlayerSettings.placeholder;
+  Widget get placeholder => betterPlayerConfiguration.placeholder;
 
   /// A widget which is placed between the video and the controls
-  Widget get overlay => betterPlayerSettings.overlay;
+  Widget get overlay => betterPlayerConfiguration.overlay;
 
   /// Defines if the player will start in fullscreen when play is pressed
-  bool get fullScreenByDefault => betterPlayerSettings.fullScreenByDefault;
+  bool get fullScreenByDefault => betterPlayerConfiguration.fullScreenByDefault;
 
   /// Defines if the player will sleep in fullscreen or not
-  bool get allowedScreenSleep => betterPlayerSettings.allowedScreenSleep;
+  bool get allowedScreenSleep => betterPlayerConfiguration.allowedScreenSleep;
 
   /// Defines the system overlays visible after exiting fullscreen
   List<SystemUiOverlay> get systemOverlaysAfterFullScreen =>
-      betterPlayerSettings.systemOverlaysAfterFullScreen;
+      betterPlayerConfiguration.systemOverlaysAfterFullScreen;
 
   /// Defines the set of allowed device orientations after exiting fullscreen
   List<DeviceOrientation> get deviceOrientationsAfterFullScreen =>
-      betterPlayerSettings.deviceOrientationsAfterFullScreen;
+      betterPlayerConfiguration.deviceOrientationsAfterFullScreen;
 
   /// Defines a custom RoutePageBuilder for the fullscreen
   BetterPlayerRoutePageBuilder routePageBuilder;
@@ -81,7 +81,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   /// Defines a event listener where video player events will be send
   Function(BetterPlayerEvent) get eventListener =>
-      betterPlayerSettings.eventListener;
+      betterPlayerConfiguration.eventListener;
 
   bool _isFullScreen = false;
 
