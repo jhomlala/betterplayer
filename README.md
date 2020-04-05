@@ -14,12 +14,12 @@ Advanced video player based on video_player and Chewie. It's solves many typical
 This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is awesome plugin and works well in many cases. Better Player is a continuation of ideas introduced in Chewie. Better player fix common bugs, adds more configuration options and solves typical use cases. 
 
 **Features:**  
-✔️ Fixed common bugs  
-✔️ Added advanced configuration options  
-✔️ Refactored player controls  
+✔️ Fixed common bugs
+✔️ Added advanced configuration options
+✔️ Refactored player controls
 ✔️ Playlist support
-✔️ Video in ListView support  
-✔️ Subtitles support  
+✔️ Video in ListView support
+✔️ Subtitles support     
 
 **Known bugs:**  
 - Can't run many video instances in app (issue with video_player, going to be patched soon)
