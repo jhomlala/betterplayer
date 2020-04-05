@@ -420,7 +420,7 @@ Possible configuration options:
 ```
 
 
-###BetterPlayerSubtitlesSource
+### BetterPlayerSubtitlesSource
 Define source of subtitles in your video:
 ```dart
  var subtitles = BetterPlayerSubtitlesSource(
@@ -461,7 +461,7 @@ After creating BetterPlayerController you can add event listener this way:
       print("Better player event: ${event.betterPlayerEventType}");
     });
 ```
-
+Your event listener will ne auto-disposed on dispose time :)
 
 
 ### More documentation
