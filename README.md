@@ -372,7 +372,7 @@ Possible configuration options:
 
 ```
 
-###BetterPlayerPlaylistConfiguration
+### BetterPlayerPlaylistConfiguration
 Configure your playlist. Pass this object to BetterPlayerPlaylist
 
 ```dart
