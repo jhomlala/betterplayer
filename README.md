@@ -22,7 +22,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Subtitles support  
 
 **Known bugs:**  
-- Can't run many video instances in app (this will be fixed in next video_player iteration)  
+- Can't run many video instances in app (issue with video_player, going to be patched soon)
 
 ## Install
 
@@ -30,7 +30,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.3
+  better_player: ^0.0.4
 ```
 
 2. Install it

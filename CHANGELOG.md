@@ -1,3 +1,8 @@
+## 0.0.4
+* Changed 'settings' to 'configuration'
+* Removed unused parameters from configuration
+* Documentation update
+
 ## 0.0.3
 * Updated documentation
 
