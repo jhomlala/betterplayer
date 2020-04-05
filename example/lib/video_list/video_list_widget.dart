@@ -37,18 +37,21 @@ class _VideoListWidgetState extends State<VideoListWidget> {
               child: BetterPlayerListVideoPlayer(
                 BetterPlayerDataSource(
                     BetterPlayerDataSourceType.NETWORK, videoListData.videoUrl),
-                configuration:
-                    BetterPlayerConfiguration(autoInitialize: true, autoPlay: false),
+                configuration: BetterPlayerConfiguration(autoPlay: false),
                 key: Key(videoListData.hashCode.toString()),
                 playFraction: 0.8,
               ),
-              aspectRatio: 16/9),
-          Padding(padding: EdgeInsets.all(8),child: Text("Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
-              "town. Plainspoken sheriff Roy Scheider, hippie shark "
-              "researcher Richard Dreyfuss, and a squirrely boat captain "
-              "set out to find the beast, but will they escape with their "
-              "lives? 70's special effects, legendary score, and trademark "
-              "humor set this classic apart."),),
+              aspectRatio: 16 / 9),
+          Padding(
+            padding: EdgeInsets.all(8),
+            child: Text(
+                "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
+                "town. Plainspoken sheriff Roy Scheider, hippie shark "
+                "researcher Richard Dreyfuss, and a squirrely boat captain "
+                "set out to find the beast, but will they escape with their "
+                "lives? 70's special effects, legendary score, and trademark "
+                "humor set this classic apart."),
+          ),
         ],
       ),
     );

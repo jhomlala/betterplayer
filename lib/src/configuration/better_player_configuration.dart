@@ -7,8 +7,6 @@ import 'package:flutter/services.dart';
 import 'better_player_event.dart';
 
 class BetterPlayerConfiguration {
-  /// Initialize the Video on Startup. This will prep the video for playback.
-  final bool autoInitialize;
 
   /// Play the video as soon as it's displayed
   final bool autoPlay;
@@ -32,14 +30,6 @@ class BetterPlayerConfiguration {
   /// Will fallback to fitting within the space allowed.
   final double aspectRatio;
 
-  /// The colors to use for controls on iOS. By default, the iOS player uses
-  /// colors sampled from the original iOS 11 designs.
-  final BetterPlayerProgressColors cupertinoProgressColors;
-
-  /// The colors to use for the Material Progress Bar. By default, the Material
-  /// player uses the colors from your Theme.
-  final BetterPlayerProgressColors materialProgressColors;
-
   /// The placeholder is displayed underneath the Video before it is initialized
   /// or played.
   final Widget placeholder;
@@ -53,8 +43,6 @@ class BetterPlayerConfiguration {
   /// Defines if the player will sleep in fullscreen or not
   final bool allowedScreenSleep;
 
-  /// Defines if the controls should be for live stream video
-  final bool isLive;
 
   /// Defines the system overlays visible after exiting fullscreen
   final List<SystemUiOverlay> systemOverlaysAfterFullScreen;
@@ -68,25 +56,23 @@ class BetterPlayerConfiguration {
   /// Defines a event listener where video player events will be send
   final Function(BetterPlayerEvent) eventListener;
 
+  ///Defines subtitles configuration
   final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
 
+  ///Defines controls configuration
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
   const BetterPlayerConfiguration(
       {this.aspectRatio,
-      this.autoInitialize = false,
       this.autoPlay = false,
       this.startAt,
       this.looping = false,
       this.fullScreenByDefault = false,
-      this.cupertinoProgressColors,
-      this.materialProgressColors,
       this.placeholder,
       this.overlay,
       this.showControlsOnInitialize = true,
       this.errorBuilder,
       this.allowedScreenSleep = true,
-      this.isLive = false,
       this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
       this.deviceOrientationsAfterFullScreen = const [
         DeviceOrientation.portraitUp,

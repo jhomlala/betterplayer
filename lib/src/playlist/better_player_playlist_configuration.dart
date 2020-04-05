@@ -1,5 +1,9 @@
 class BetterPlayerPlaylistConfiguration {
+
+  ///How long user should wait for next video
   final Duration nextVideoDelay;
+
+  ///Should videos be looped
   final bool loopVideos;
 
   const BetterPlayerPlaylistConfiguration(
