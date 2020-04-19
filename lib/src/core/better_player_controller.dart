@@ -97,6 +97,11 @@ class BetterPlayerController extends ChangeNotifier {
 
   List<BetterPlayerSubtitle> subtitles = List();
 
+  Timer _nextVideoTimer;
+  int _nextVideoTime;
+  StreamController<int> nextVideoTimeStreamController =
+      StreamController.broadcast();
+
   Future _setup(BetterPlayerDataSource dataSource) async {
     _betterPlayerDataSource = dataSource;
     if (dataSource.subtitles != null) {
@@ -107,8 +112,8 @@ class BetterPlayerController extends ChangeNotifier {
       });
     }
     videoPlayerController = VideoPlayerController();
-    setupDataSource(betterPlayerDataSource);
 
+    setupDataSource(betterPlayerDataSource);
   }
 
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
@@ -194,8 +199,8 @@ class BetterPlayerController extends ChangeNotifier {
   Future<void> play() async {
     print("PLAY!!!!");
     //if (!isDisposing) {
-      await videoPlayerController.play();
-      _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
+    await videoPlayerController.play();
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
     //}
   }
 
@@ -212,6 +217,11 @@ class BetterPlayerController extends ChangeNotifier {
     await videoPlayerController.seekTo(moment);
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.SEEK_TO,
         parameters: {"duration": moment}));
+    if (moment > videoPlayerController.value.duration) {
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.FINISHED));
+    } else {
+      cancelNextVideoTimer();
+    }
   }
 
   Future<void> setVolume(double volume) async {
@@ -247,7 +257,10 @@ class BetterPlayerController extends ChangeNotifier {
           currentVideoPlayerValue.duration == null) {
         return;
       }
+      print("Current position shifted: " + currentPositionShifted.toString());
+
       if (currentPositionShifted > currentVideoPlayerValue.duration) {
+        print("FINISHED!");
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.FINISHED, parameters: {
           "progress": currentVideoPlayerValue.position,
@@ -273,6 +286,32 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool isVideoInitialized() {
     return videoPlayerController.value.initialized;
+  }
+
+  void startNextVideoTimer() {
+    print("Start next video timer");
+    if (_nextVideoTimer == null) {
+      _nextVideoTime = 6;
+      _nextVideoTimer =
+          Timer.periodic(Duration(milliseconds: 1000), (_timer) async {
+        print("Run timer!");
+        if (_nextVideoTime == 1) {
+          _timer.cancel();
+          print("STOP!!!");
+        }
+        _nextVideoTime -= 1;
+        nextVideoTimeStreamController.add(_nextVideoTime);
+        print("Last value: $_nextVideoTime");
+      });
+    }
+  }
+
+  void cancelNextVideoTimer() {
+    print("CANCEL NEXT VIDEO TIMER!");
+    _nextVideoTime = null;
+    nextVideoTimeStreamController.add(_nextVideoTime);
+    _nextVideoTimer?.cancel();
+    _nextVideoTimer = null;
   }
 
   @override

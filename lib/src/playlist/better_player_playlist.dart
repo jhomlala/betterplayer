@@ -35,9 +35,19 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
     super.initState();
     _currentSource = _getNextDateSource();
     _setupPlayer();
+    _registerListeners();
   }
 
-  void _onVideoFinished() {
+  void _registerListeners() {
+    _controller.nextVideoTimeStreamController.stream.listen((data) {
+      print("TIMER listener => $data");
+      if (data == 0) {
+        _onVideoChange();
+      }
+    });
+  }
+
+  void _onVideoChange() {
     if (_changingToNextVideo) {
       return;
     }
@@ -51,43 +61,43 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
       return;
     }
 
-    Future.delayed(widget.betterPlayerPlaylistConfiguration.nextVideoDelay, () {
+    /*Future.delayed(widget.betterPlayerPlaylistConfiguration.nextVideoDelay, () {
       setState(() {
         _currentSource = _nextDataSource;
-      });
-      if (_controller == null) {
-        _setupPlayer();
-      } else {
-        print("SET NEXT DATA SOURCE!");
-        _setupNextDataSource();
-      }
-      _changingToNextVideo = false;
+      });*/
+
+    print("SET NEXT DATA SOURCE!");
+    setState(() {
+      _currentSource = _nextDataSource;
     });
+    _setupNextDataSource();
+    //}
+
+// });
   }
 
   void _setupPlayer() {
     _controller = BetterPlayerController(widget.betterPlayerConfiguration,
-        betterPlayerPlaylistConfiguration: widget.betterPlayerPlaylistConfiguration,
+        betterPlayerPlaylistConfiguration:
+            widget.betterPlayerPlaylistConfiguration,
         betterPlayerDataSource: _currentSource);
     _controller.addEventsListener((event) async {
       if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
-        _onVideoFinished();
+        print("GOT FINISHED");
+        _controller.startNextVideoTimer();
+        //_onVideoFinished();
       }
     });
-    _controller.addListener((){
-      setState(() {
-
-      });
+    _controller.addListener(() {
+      setState(() {});
     });
   }
 
-  void _setupNextDataSource() async{
+  void _setupNextDataSource() async {
     print("Setup next data source");
     print("Source:" + _currentSource.toString());
-     _controller.setupDataSource(_currentSource);
-
+    _controller.setupDataSource(_currentSource);
   }
-
 
   String _getKey() => "12345";
 

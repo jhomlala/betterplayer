@@ -201,6 +201,98 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildHitArea() {
+    return Expanded(
+      child: Container(
+        color: Colors.transparent,
+        child: Center(
+          child: AnimatedOpacity(
+            opacity:
+                _latestValue != null && !_latestValue.isPlaying && !_dragging
+                    ? 1.0
+                    : 0.0,
+            duration: _controlsConfiguration.controlsHideTime,
+            child: Stack(
+              children: [
+                _buildPlayReplayButton(),
+                _buildNextVideoWidget(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlayReplayButton() {
+    bool isFinished = _latestValue.position >= _latestValue.duration;
+    IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
+    return BetterPlayerMaterialClickableWidget(
+      child: Align(
+        alignment: Alignment.center,
+        child: Container(
+          decoration: BoxDecoration(
+            color: _controlsConfiguration.controlBarColor,
+            borderRadius: BorderRadius.circular(48),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Stack(
+              children: [
+                Icon(
+                  _hitAreaIconData,
+                  size: 32.0,
+                  color: _controlsConfiguration.iconsColor,
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+      onTap: () {
+        if (_latestValue != null && _latestValue.isPlaying) {
+          if (_displayTapped) {
+            setState(() {
+              _hideStuff = true;
+            });
+          } else
+            _cancelAndRestartTimer();
+        } else {
+          _onPlayPause();
+
+          setState(() {
+            _hideStuff = true;
+          });
+        }
+      },
+    );
+  }
+
+  Widget _buildNextVideoWidget() {
+    return StreamBuilder<int>(stream: _betterPlayerController.nextVideoTimeStreamController.stream, builder: (context,snapshot){
+      if (snapshot.data != null){
+        return Align(
+          alignment: Alignment.bottomRight,
+          child: Container(
+            decoration: BoxDecoration(
+              color: _controlsConfiguration.controlBarColor,
+              borderRadius: BorderRadius.circular(48),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                "Next video in ${snapshot.data}...",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+        );
+      } else {
+        return const SizedBox();
+      }
+    },);
+  }
+
+  Widget _buildHitAreaOld() {
     /*if (_isPlaylistChangingToNextVideo()) {
       return _buildPlaylistChangingWidget();
     }*/
@@ -438,6 +530,7 @@ class _BetterPlayerMaterialControlsState
             _betterPlayerController.seekTo(Duration(seconds: 0));
           }
           _betterPlayerController.play();
+          _betterPlayerController.cancelNextVideoTimer();
         }
       }
     });
