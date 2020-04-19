@@ -52,6 +52,7 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   void dispose() {
+    print("DISPOSE HERE!");
     widget.controller.removeListener(listener);
     widget.controller.dispose();
     super.dispose();

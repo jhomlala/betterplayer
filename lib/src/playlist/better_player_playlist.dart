@@ -55,7 +55,12 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
       setState(() {
         _currentSource = _nextDataSource;
       });
-      _setupPlayer();
+      if (_controller == null) {
+        _setupPlayer();
+      } else {
+        print("SET NEXT DATA SOURCE!");
+        _setupNextDataSource();
+      }
       _changingToNextVideo = false;
     });
   }
@@ -69,9 +74,22 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
         _onVideoFinished();
       }
     });
+    _controller.addListener((){
+      setState(() {
+
+      });
+    });
   }
 
-  String _getKey() => _currentSource.hashCode.toString();
+  void _setupNextDataSource() async{
+    print("Setup next data source");
+    print("Source:" + _currentSource.toString());
+     _controller.setupDataSource(_currentSource);
+
+  }
+
+
+  String _getKey() => "12345";
 
   BetterPlayerDataSource _getNextDateSource() {
     if (_currentSource == null) {
@@ -92,6 +110,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
 
   @override
   Widget build(BuildContext context) {
+    print("BUILD PLAYER! " + _controller.hashCode.toString());
     return BetterPlayer(key: Key(_getKey()), controller: _controller);
   }
 }

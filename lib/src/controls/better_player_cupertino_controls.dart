@@ -528,9 +528,9 @@ class _BetterPlayerCupertinoControlsState
         _cancelAndRestartTimer();
 
         if (!_controller.value.initialized) {
-          _controller.initialize().then((_) {
+          /*_controller.initialize().then((_) {
             _controller.play();
-          });
+          });*/
         } else {
           if (isFinished) {
             _controller.seekTo(Duration(seconds: 0));

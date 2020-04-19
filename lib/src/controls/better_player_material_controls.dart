@@ -72,6 +72,8 @@ class _BetterPlayerMaterialControlsState
   }
 
   bool _isLoading() {
+    //print("LATEST VALUE " + _latestValue.toString());
+
     return _latestValue != null &&
             !_latestValue.isPlaying &&
             _latestValue.duration == null ||
@@ -199,9 +201,9 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildHitArea() {
-    if (_isPlaylistChangingToNextVideo()) {
+    /*if (_isPlaylistChangingToNextVideo()) {
       return _buildPlaylistChangingWidget();
-    }
+    }*/
 
     bool isFinished = _latestValue.position >= _latestValue.duration;
     IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
@@ -413,9 +415,9 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _onPlayPause() {
-    if (_isPlaylistChangingToNextVideo()) {
+    /*if (_isPlaylistChangingToNextVideo()) {
       return;
-    }
+    }*/
 
     bool isFinished = _latestValue.position >= _latestValue.duration;
 
@@ -428,9 +430,9 @@ class _BetterPlayerMaterialControlsState
         _cancelAndRestartTimer();
 
         if (!_controller.value.initialized) {
-          _controller.initialize().then((_) {
+          /*_controller.initialize().then((_) {
             _betterPlayerController.play();
-          });
+          });*/
         } else {
           if (isFinished) {
             _betterPlayerController.seekTo(Duration(seconds: 0));

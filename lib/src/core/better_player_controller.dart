@@ -106,30 +106,37 @@ class BetterPlayerController extends ChangeNotifier {
         subtitles.addAll(data);
       });
     }
-    videoPlayerController =
-        _createVideoPlayerController(betterPlayerDataSource);
-    await _initialize();
+    videoPlayerController = VideoPlayerController();
+    setupDataSource(betterPlayerDataSource);
+
   }
 
-  VideoPlayerController _createVideoPlayerController(
-      BetterPlayerDataSource betterPlayerDataSource) {
+  void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
-        return VideoPlayerController.network(betterPlayerDataSource.url);
+        print("Setup network data source");
+        videoPlayerController.setNetworkDataSource(betterPlayerDataSource.url);
+
+        break;
       case BetterPlayerDataSourceType.FILE:
-        return VideoPlayerController.file(File(betterPlayerDataSource.url));
+        videoPlayerController
+            .setFileDataSource(File(betterPlayerDataSource.url));
+        break;
       default:
         throw UnimplementedError(
             "${betterPlayerDataSource.type} is not implemented");
     }
+    await _initialize();
   }
 
   Future _initialize() async {
+    print("INITALIZE");
     await videoPlayerController.setLooping(looping);
 
     if (!videoPlayerController.value.initialized) {
       try {
-        await videoPlayerController.initialize();
+        print("NOT INITALIZED");
+        //await videoPlayerController.initialize();
       } catch (exception, stackTrace) {
         print(exception);
         print(stackTrace);
@@ -185,10 +192,11 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> play() async {
-    if (!isDisposing) {
+    print("PLAY!!!!");
+    //if (!isDisposing) {
       await videoPlayerController.play();
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
-    }
+    //}
   }
 
   Future<void> setLooping(bool looping) async {
@@ -235,6 +243,10 @@ class BetterPlayerController extends ChangeNotifier {
       var currentVideoPlayerValue = videoPlayerController.value;
       Duration currentPositionShifted = Duration(
           milliseconds: currentVideoPlayerValue.position.inMilliseconds + 500);
+      if (currentPositionShifted == null ||
+          currentVideoPlayerValue.duration == null) {
+        return;
+      }
       if (currentPositionShifted > currentVideoPlayerValue.duration) {
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.FINISHED, parameters: {
@@ -265,6 +277,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   @override
   void dispose() {
+    print("DISPOSED!");
     _eventListeners.clear();
     videoPlayerController?.removeListener(_fullScreenListener);
     videoPlayerController?.removeListener(_onVideoPlayerChanged);
