@@ -48,32 +48,25 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   }
 
   void _onVideoChange() {
+    print("on video change!" + _changingToNextVideo.toString());
     if (_changingToNextVideo) {
       return;
     }
     if (_controller.isFullScreen) {
       _controller.exitFullScreen();
     }
-    _controller.isDisposing = true;
     _changingToNextVideo = true;
     BetterPlayerDataSource _nextDataSource = _getNextDateSource();
+    print("next data source: " + _nextDataSource.toString());
     if (_nextDataSource == null) {
       return;
     }
 
-    /*Future.delayed(widget.betterPlayerPlaylistConfiguration.nextVideoDelay, () {
-      setState(() {
-        _currentSource = _nextDataSource;
-      });*/
-
-    print("SET NEXT DATA SOURCE!");
     setState(() {
       _currentSource = _nextDataSource;
     });
     _setupNextDataSource();
-    //}
-
-// });
+    _changingToNextVideo = false;
   }
 
   void _setupPlayer() {
@@ -99,7 +92,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
     _controller.setupDataSource(_currentSource);
   }
 
-  String _getKey() => "12345";
+  String _getKey() => _controller.hashCode.toString();
 
   BetterPlayerDataSource _getNextDateSource() {
     if (_currentSource == null) {
