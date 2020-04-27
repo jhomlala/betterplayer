@@ -40,7 +40,6 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
 
   void _registerListeners() {
     _controller.nextVideoTimeStreamController.stream.listen((data) {
-      print("TIMER listener => $data");
       if (data == 0) {
         _onVideoChange();
       }
@@ -48,7 +47,6 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   }
 
   void _onVideoChange() {
-    print("on video change!" + _changingToNextVideo.toString());
     if (_changingToNextVideo) {
       return;
     }
@@ -76,9 +74,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
         betterPlayerDataSource: _currentSource);
     _controller.addEventsListener((event) async {
       if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
-        print("GOT FINISHED");
         _controller.startNextVideoTimer();
-        //_onVideoFinished();
       }
     });
     _controller.addListener(() {
@@ -87,8 +83,6 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   }
 
   void _setupNextDataSource() async {
-    print("Setup next data source");
-    print("Source:" + _currentSource.toString());
     _controller.setupDataSource(_currentSource);
   }
 
@@ -113,7 +107,9 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
 
   @override
   Widget build(BuildContext context) {
-    print("BUILD PLAYER! " + _controller.hashCode.toString());
-    return BetterPlayer(key: Key(_getKey()), controller: _controller);
+    return BetterPlayer(
+      key: Key(_getKey()),
+      controller: _controller,
+    );
   }
 }
