@@ -135,7 +135,6 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future _initialize() async {
-    print("INITALIZE");
     await videoPlayerController.setLooping(looping);
 
     if (!videoPlayerController.value.initialized) {
@@ -289,29 +288,31 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void startNextVideoTimer() {
-    print("Start next video timer");
     if (_nextVideoTimer == null) {
-      _nextVideoTime = 6;
+      _nextVideoTime =
+          betterPlayerPlaylistConfiguration.nextVideoDelay.inSeconds;
       _nextVideoTimer =
           Timer.periodic(Duration(milliseconds: 1000), (_timer) async {
-        print("Run timer!");
         if (_nextVideoTime == 1) {
           _timer.cancel();
-          print("STOP!!!");
         }
         _nextVideoTime -= 1;
         nextVideoTimeStreamController.add(_nextVideoTime);
-        print("Last value: $_nextVideoTime");
       });
     }
   }
 
   void cancelNextVideoTimer() {
-    print("CANCEL NEXT VIDEO TIMER!");
     _nextVideoTime = null;
     nextVideoTimeStreamController.add(_nextVideoTime);
     _nextVideoTimer?.cancel();
     _nextVideoTimer = null;
+  }
+
+  void playNextVideo() {
+    _nextVideoTime = 0;
+    nextVideoTimeStreamController.add(_nextVideoTime);
+    cancelNextVideoTimer();
   }
 
   @override
