@@ -223,7 +223,9 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildPlayReplayButton() {
-    bool isFinished = _latestValue.position >= _latestValue.duration;
+    bool isFinished = _latestValue?.position != null &&
+        _latestValue?.duration != null &&
+        _latestValue.position >= _latestValue.duration;
     IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
     return BetterPlayerMaterialClickableWidget(
       child: Align(
