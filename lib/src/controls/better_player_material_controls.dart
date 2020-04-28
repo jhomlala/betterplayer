@@ -245,6 +245,7 @@ class _BetterPlayerMaterialControlsState
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
+            // left hand side fast rewind gesture on double tap
             InkWell(
               child: Container(
                 width: 70, //@todo _controlsConfiguration for this
@@ -252,9 +253,14 @@ class _BetterPlayerMaterialControlsState
               onDoubleTap: () {
                 _betterPlayerController.seekTo(
                   Duration(
-                      seconds: _latestValue.position.inSeconds -
-                          _fastForwardTime.inSeconds),
+                    seconds: _latestValue.position.inSeconds -
+                        _fastForwardTime.inSeconds,
+                  ),
                 );
+
+                if (isFinished) {
+                  _betterPlayerController.play();
+                }
               },
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
@@ -292,6 +298,7 @@ class _BetterPlayerMaterialControlsState
                 ),
               ),
             ),
+            // right hand side fast forward gesture on double tap
             InkWell(
               child: Container(
                 width: 70, //@todo _controlsConfiguration for this
@@ -299,8 +306,9 @@ class _BetterPlayerMaterialControlsState
               onDoubleTap: () {
                 _betterPlayerController.seekTo(
                   Duration(
-                      seconds: _latestValue.position.inSeconds +
-                          _fastForwardTime.inSeconds),
+                    seconds: _latestValue.position.inSeconds +
+                        _fastForwardTime.inSeconds,
+                  ),
                 );
               },
               splashColor: Colors.transparent,
@@ -312,7 +320,7 @@ class _BetterPlayerMaterialControlsState
       onTap: () {
         if (_displayTapped) {
           setState(() {
-            // _hideStuff = true;
+            _hideStuff = true;
           });
         } else {
           _cancelAndRestartTimer();
