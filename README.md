@@ -21,8 +21,6 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Video in ListView support  
 ✔️ Subtitles support     
 
-**Known bugs:**  
-- Can't run many video instances in app (issue with video_player, going to be patched soon)
 
 ## Install
 
@@ -30,7 +28,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.4
+  better_player: ^0.0.5
 ```
 
 2. Install it
