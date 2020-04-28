@@ -224,6 +224,9 @@ Possible configuration options:
 
     ///Defines controls configuration
     final BetterPlayerControlsConfiguration controlsConfiguration;
+
+    ///Defines overlay controls configuration
+    final BetterPlayerOverlayControlsConfiguration overlayControlsConfiguration;
 ```
 
 ### BetterPlayerSubtitlesConfiguration
@@ -271,7 +274,7 @@ Possible configuration options:
 Configuration for player GUI. You should pass this configuration to BetterPlayerConfiguration.
 
 ```dart
-ar betterPlayerConfiguration = BetterPlayerConfiguration(
+final betterPlayerConfiguration = BetterPlayerConfiguration(
       controlsConfiguration: BetterPlayerControlsConfiguration(
         textColor: Colors.black,
         iconsColor: Colors.black,
@@ -370,6 +373,63 @@ Possible configuration options:
 
 ```
 
+### BetterPlayerOverlayControlsConfiguration
+Configuration for player GUI. You should pass this configuration to BetterPlayerConfiguration.
+
+```dart
+	final betterPlayerConfiguration = BetterPlayerConfiguration(
+		overlayControlsConfiguration:
+		 const BetterPlayerOverlayControlsConfiguration(
+				enablePlayPause: true,
+				enableSkipBackOnDoubleTap: true,
+				enableSkipForwardOnDoubleTap: true,
+		  ),
+    );
+```
+
+Possible configuration options:
+```dart
+  ///Flag used to enable/disable play/pause button in overlay control
+  final bool enablePlayPause;
+
+  ///Flag used to enable/disable fast forward on double tap
+  final bool enableSkipForwardOnDoubleTap;
+
+  ///Flag used to enable/disable fast rewind on double tap
+  final bool enableSkipBackOnDoubleTap;
+
+  /// Fast forward area width
+  final double skipForwardAreaWidth;
+
+  /// Fast rewind area width
+  final double skipBackAreaWidth;
+
+  ///Time duration for fast forward and rewind
+  final Duration skipTime;
+
+  ///Icon for play in overlay control
+  final IconData playIcon;
+
+  ///Icon for pause in overlay control
+  final IconData pauseIcon;
+
+  ///Icon for replay in overlay control
+  final IconData replayIcon;
+
+  /// Background color of play, pause and replay action buttons
+  final Color actionButtonBgColor;
+
+  /// Border radius of action button background color
+  final double actionButtonRadius;
+
+  /// Padding of action button background color
+  final double actionButtonPadding;
+
+  /// Size of action buttons
+  final double actionButtonIconSize;
+
+```
+
 ### BetterPlayerPlaylistConfiguration
 Configure your playlist. Pass this object to BetterPlayerPlaylist
 
@@ -451,6 +511,8 @@ You can listen to video player events like:
   PROGRESS,
   FINISHED,
   EXCEPTION,
+  CONTROLS_VISIBLE,
+  CONTROLS_HIDDEN,
 ```
 
 After creating BetterPlayerController you can add event listener this way:
