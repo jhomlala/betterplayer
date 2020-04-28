@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/better_player_overlay_controls_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'better_player_event.dart';
 
 class BetterPlayerConfiguration {
-
   /// Play the video as soon as it's displayed
   final bool autoPlay;
 
@@ -43,7 +43,6 @@ class BetterPlayerConfiguration {
   /// Defines if the player will sleep in fullscreen or not
   final bool allowedScreenSleep;
 
-
   /// Defines the system overlays visible after exiting fullscreen
   final List<SystemUiOverlay> systemOverlaysAfterFullScreen;
 
@@ -62,26 +61,31 @@ class BetterPlayerConfiguration {
   ///Defines controls configuration
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  const BetterPlayerConfiguration(
-      {this.aspectRatio,
-      this.autoPlay = false,
-      this.startAt,
-      this.looping = false,
-      this.fullScreenByDefault = false,
-      this.placeholder,
-      this.overlay,
-      this.showControlsOnInitialize = true,
-      this.errorBuilder,
-      this.allowedScreenSleep = true,
-      this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
-      this.deviceOrientationsAfterFullScreen = const [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ],
-      this.routePageBuilder,
-      this.eventListener,
-      this.subtitlesConfiguration = const BetterPlayerSubtitlesConfiguration(),
-      this.controlsConfiguration = const BetterPlayerControlsConfiguration()});
+  ///Defines overlay controls configuration
+  final BetterPlayerOverlayControlsConfiguration overlayControlsConfiguration;
+
+  const BetterPlayerConfiguration({
+    this.aspectRatio,
+    this.autoPlay = false,
+    this.startAt,
+    this.looping = false,
+    this.fullScreenByDefault = false,
+    this.placeholder,
+    this.overlay,
+    this.showControlsOnInitialize = true,
+    this.errorBuilder,
+    this.allowedScreenSleep = true,
+    this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
+    this.deviceOrientationsAfterFullScreen = const [
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ],
+    this.routePageBuilder,
+    this.eventListener,
+    this.subtitlesConfiguration = const BetterPlayerSubtitlesConfiguration(),
+    this.controlsConfiguration = const BetterPlayerControlsConfiguration(),
+    this.overlayControlsConfiguration = const BetterPlayerOverlayControlsConfiguration(),
+  });
 }

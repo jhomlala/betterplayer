@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
+import 'package:better_player/src/controls/better_player_overlay_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/utils.dart';
@@ -18,10 +19,17 @@ class BetterPlayerMaterialControls extends StatefulWidget {
   ///Controls config
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  BetterPlayerMaterialControls(
-      {Key key, this.onControlsVisibilityChanged, this.controlsConfiguration})
-      : assert(onControlsVisibilityChanged != null),
+  ///Controls config
+  final BetterPlayerOverlayControlsConfiguration overlayControlsConfiguration;
+
+  BetterPlayerMaterialControls({
+    Key key,
+    this.onControlsVisibilityChanged,
+    this.controlsConfiguration,
+    this.overlayControlsConfiguration,
+  })  : assert(onControlsVisibilityChanged != null),
         assert(controlsConfiguration != null),
+        assert(overlayControlsConfiguration != null),
         super(key: key);
 
   @override
@@ -45,6 +53,9 @@ class _BetterPlayerMaterialControlsState
 
   BetterPlayerControlsConfiguration get _controlsConfiguration =>
       widget.controlsConfiguration;
+
+  BetterPlayerOverlayControlsConfiguration get _overlayControlsConfiguration =>
+      widget.overlayControlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
@@ -71,6 +82,11 @@ class _BetterPlayerMaterialControlsState
       ),
     );
   }
+
+  bool isVideoPlaybackFinished() =>
+      _latestValue?.position != null &&
+      _latestValue?.duration != null &&
+      _latestValue.position >= _latestValue.duration;
 
   bool _isLoading() {
     return _latestValue != null &&
@@ -200,14 +216,23 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildHitArea() {
+    bool isFinished = isVideoPlaybackFinished();
+    double _opacity = 1.0;
+
+    if (_latestValue == null ||
+        _hideStuff ||
+        _dragging ||
+        (!_overlayControlsConfiguration.enablePlayPause && !isFinished)) {
+      _opacity = 0.0;
+    }
+
     return Expanded(
       child: Container(
         color: Colors.transparent,
         child: Center(
           child: AnimatedOpacity(
-            opacity:
-                // hide when not initialized, controls are hidden or while dragging is true
-                _latestValue != null && !_hideStuff && !_dragging ? 1.0 : 0.0,
+            // hide when not initialized, controls are hidden or while dragging is true
+            opacity: _opacity,
             duration: _controlsConfiguration.controlsHideTime,
             child: Stack(
               children: [
@@ -222,22 +247,19 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildPlayReplayButton() {
-    bool isFinished = _latestValue?.position != null &&
-        _latestValue?.duration != null &&
-        _latestValue.position >= _latestValue.duration;
+    print("=====_overlayControlsConfiguration");
+    print(_overlayControlsConfiguration.skipTime.inSeconds);
 
+    bool isFinished = isVideoPlaybackFinished();
     final _isPlaying = _latestValue.isPlaying;
 
     IconData _hitAreaIconData = isFinished
-        ? Icons.replay //@todo _controlsConfiguration for this
+        ? _overlayControlsConfiguration.replayIcon
         : _isPlaying
-            ? _controlsConfiguration
-                .pauseIcon //@todo _controlsConfiguration for this
-            : _controlsConfiguration
-                .playIcon; //@todo _controlsConfiguration for this
+            ? _overlayControlsConfiguration.pauseIcon
+            : _overlayControlsConfiguration.playIcon;
 
-    final _fastForwardTime =
-        Duration(seconds: 3); //@todo _controlsConfiguration for this
+    final _skipTime = _overlayControlsConfiguration.skipTime;
 
     return BetterPlayerMaterialClickableWidget(
       child: Container(
@@ -246,38 +268,43 @@ class _BetterPlayerMaterialControlsState
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             // left hand side fast rewind gesture on double tap
-            InkWell(
-              child: Container(
-                width: 70, //@todo _controlsConfiguration for this
-              ),
-              onDoubleTap: () {
-                _betterPlayerController.seekTo(
-                  Duration(
-                    seconds: _latestValue.position.inSeconds -
-                        _fastForwardTime.inSeconds,
-                  ),
-                );
+            _overlayControlsConfiguration.enableSkipBackOnDoubleTap
+                ? InkWell(
+                    child: Container(
+                      width:
+                          widget.overlayControlsConfiguration.skipBackAreaWidth,
+                    ),
+                    onDoubleTap: () {
+                      _cancelAndRestartTimer();
+                      _betterPlayerController.seekTo(
+                        Duration(
+                          seconds: _latestValue.position.inSeconds -
+                              _skipTime.inSeconds,
+                        ),
+                      );
 
-                if (isFinished) {
-                  _betterPlayerController.play();
-                }
-              },
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-            ),
+                      if (isFinished) {
+                        _betterPlayerController.play();
+                      }
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  )
+                : SizedBox(),
             Expanded(
               child: Align(
                 alignment: Alignment.center,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: _controlsConfiguration.controlBarColor,
-                    //@todo _controlsConfiguration for this
+                    color: _overlayControlsConfiguration.actionButtonBgColor,
                     borderRadius: BorderRadius.circular(
-                        48), //@todo _controlsConfiguration for this
+                      _overlayControlsConfiguration.actionButtonRadius,
+                    ),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(12),
-                    //@todo _controlsConfiguration for this
+                    padding: EdgeInsets.all(
+                      _overlayControlsConfiguration.actionButtonPadding,
+                    ),
                     child: Stack(
                       children: [
                         IconButton(
@@ -290,7 +317,8 @@ class _BetterPlayerMaterialControlsState
                               _onPlayPause();
                             }
                           },
-                          iconSize: 32, //@todo _controlsConfiguration for this
+                          iconSize: _overlayControlsConfiguration
+                              .actionButtonIconSize,
                         )
                       ],
                     ),
@@ -299,21 +327,25 @@ class _BetterPlayerMaterialControlsState
               ),
             ),
             // right hand side fast forward gesture on double tap
-            InkWell(
-              child: Container(
-                width: 70, //@todo _controlsConfiguration for this
-              ),
-              onDoubleTap: () {
-                _betterPlayerController.seekTo(
-                  Duration(
-                    seconds: _latestValue.position.inSeconds +
-                        _fastForwardTime.inSeconds,
-                  ),
-                );
-              },
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-            ),
+            _overlayControlsConfiguration.enableSkipForwardOnDoubleTap
+                ? InkWell(
+                    child: Container(
+                      width: widget
+                          .overlayControlsConfiguration.skipForwardAreaWidth,
+                    ),
+                    onDoubleTap: () {
+                      _cancelAndRestartTimer();
+                      _betterPlayerController.seekTo(
+                        Duration(
+                          seconds: _latestValue.position.inSeconds +
+                              _skipTime.inSeconds,
+                        ),
+                      );
+                    },
+                    splashColor: Colors.transparent,
+                    highlightColor: Colors.transparent,
+                  )
+                : SizedBox(),
           ],
         ),
       ),
@@ -478,7 +510,7 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _onPlayPause() {
-    bool isFinished = _latestValue.position >= _latestValue.duration;
+    bool isFinished = isVideoPlaybackFinished();
 
     setState(() {
       if (_controller.value.isPlaying) {

@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
@@ -25,6 +26,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   BetterPlayerControlsConfiguration get controlsConfiguration =>
       widget.controller.betterPlayerConfiguration.controlsConfiguration;
+
+  BetterPlayerOverlayControlsConfiguration get overlayControlsConfiguration =>
+      widget.controller.betterPlayerConfiguration.overlayControlsConfiguration;
 
   final StreamController<bool> playerVisibilityStreamController =
       StreamController();
@@ -60,7 +64,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   Container _buildPlayerWithControls(
       BetterPlayerController betterPlayerController, BuildContext context) {
-
     return Container(
       child: Stack(
         children: <Widget>[
@@ -99,6 +102,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
                 ? BetterPlayerMaterialControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
                     controlsConfiguration: controlsConfiguration,
+                    overlayControlsConfiguration: overlayControlsConfiguration,
                   )
                 : BetterPlayerCupertinoControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
