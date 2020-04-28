@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_data_source.dart';
@@ -34,6 +36,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
 
   List<BetterPlayerDataSource> get _betterPlayerDataSourceList =>
       widget.betterPlayerDataSourceList;
+  StreamSubscription _nextVideoTimeStreamSubscription;
 
   @override
   void initState() {
@@ -44,7 +47,8 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   }
 
   void _registerListeners() {
-    _controller.nextVideoTimeStreamController.stream.listen((data) {
+    _nextVideoTimeStreamSubscription =
+        _controller.nextVideoTimeStreamController.stream.listen((data) {
       if (data == 0) {
         _onVideoChange();
       }
@@ -123,6 +127,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
 
   @override
   void dispose() {
+    _nextVideoTimeStreamSubscription.cancel();
     _controller.removeListener(_onStateChanged);
     _controller.dispose();
     super.dispose();

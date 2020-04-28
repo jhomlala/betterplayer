@@ -13,15 +13,9 @@ import 'package:flutter/services.dart';
 import 'package:video_player/video_player.dart';
 
 class BetterPlayerController extends ChangeNotifier {
-  BetterPlayerController(this.betterPlayerConfiguration,
-      {this.betterPlayerPlaylistConfiguration, this.betterPlayerDataSource})
-      : assert(betterPlayerConfiguration != null,
-            "BetterPlayerConfiguration can't be null") {
-    _eventListeners.add(eventListener);
-    if (betterPlayerDataSource != null) {
-      _setup(betterPlayerDataSource);
-    }
-  }
+  static const _durationParameter = "duration";
+  static const _progressParameter = "progress";
+  static const _volumeParameter = "volume";
 
   final BetterPlayerConfiguration betterPlayerConfiguration;
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
@@ -77,6 +71,16 @@ class BetterPlayerController extends ChangeNotifier {
   int _nextVideoTime;
   StreamController<int> nextVideoTimeStreamController =
       StreamController.broadcast();
+
+  BetterPlayerController(this.betterPlayerConfiguration,
+      {this.betterPlayerPlaylistConfiguration, this.betterPlayerDataSource})
+      : assert(betterPlayerConfiguration != null,
+            "BetterPlayerConfiguration can't be null") {
+    _eventListeners.add(eventListener);
+    if (betterPlayerDataSource != null) {
+      _setup(betterPlayerDataSource);
+    }
+  }
 
   static BetterPlayerController of(BuildContext context) {
     final betterPLayerControllerProvider = context
@@ -181,7 +185,7 @@ class BetterPlayerController extends ChangeNotifier {
   Future<void> seekTo(Duration moment) async {
     await videoPlayerController.seekTo(moment);
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.SEEK_TO,
-        parameters: {"duration": moment}));
+        parameters: {_durationParameter: moment}));
     if (moment > videoPlayerController.value.duration) {
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.FINISHED));
     } else {
@@ -192,7 +196,7 @@ class BetterPlayerController extends ChangeNotifier {
   Future<void> setVolume(double volume) async {
     await videoPlayerController.setVolume(volume);
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.SET_VOLUME,
-        parameters: {"volume": volume}));
+        parameters: {_volumeParameter: volume}));
   }
 
   Future<bool> isPlaying() async {
@@ -226,14 +230,14 @@ class BetterPlayerController extends ChangeNotifier {
       if (currentPositionShifted > currentVideoPlayerValue.duration) {
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.FINISHED, parameters: {
-          "progress": currentVideoPlayerValue.position,
-          "duration": currentVideoPlayerValue.duration
+          _progressParameter: currentVideoPlayerValue.position,
+          _durationParameter: currentVideoPlayerValue.duration
         }));
       } else {
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.PROGRESS, parameters: {
-          "progress": currentVideoPlayerValue.position,
-          "duration": currentVideoPlayerValue.duration
+          _progressParameter: currentVideoPlayerValue.position,
+          _durationParameter: currentVideoPlayerValue.duration
         }));
       }
     }
