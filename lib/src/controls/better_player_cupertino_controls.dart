@@ -2,14 +2,12 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
+import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/utils.dart';
-
 import 'package:flutter/material.dart';
-
 import 'package:video_player/video_player.dart';
 
 class BetterPlayerCupertinoControls extends StatefulWidget {
@@ -230,9 +228,6 @@ class _BetterPlayerCupertinoControlsState
   }
 
   Expanded _buildHitArea() {
-    if (_isPlaylistChangingToNextVideo()) {
-      return _buildPlaylistChangingWidget();
-    }
     return Expanded(
       child: GestureDetector(
         onTap: _latestValue != null && _latestValue.isPlaying
@@ -251,31 +246,6 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  bool _isPlaylistChangingToNextVideo() =>
-      _betterPlayerController.betterPlayerPlaylistConfiguration != null &&
-      _betterPlayerController.isDisposing;
-
-  Widget _buildPlaylistChangingWidget() {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          _buildLoadingWidget(),
-          Text(
-            _controlsConfiguration.loadingNextVideoText,
-            style: TextStyle(color: _controlsConfiguration.textColor),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLoadingWidget() {
-    return CircularProgressIndicator(
-      valueColor:
-          AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
-    );
-  }
 
   GestureDetector _buildMuteButton(
     VideoPlayerController controller,
@@ -446,7 +416,6 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-
   Widget _buildNextVideoWidget() {
     return StreamBuilder<int>(
       stream: _betterPlayerController.nextVideoTimeStreamController.stream,
@@ -480,8 +449,6 @@ class _BetterPlayerCupertinoControlsState
       },
     );
   }
-
-
 
   void _cancelAndRestartTimer() {
     _hideTimer?.cancel();
@@ -543,18 +510,12 @@ class _BetterPlayerCupertinoControlsState
               bufferedColor: _controlsConfiguration.progressBarBufferedColor,
               backgroundColor:
                   _controlsConfiguration.progressBarBackgroundColor),
-          isChangeAllowed: () {
-            return !_isPlaylistChangingToNextVideo();
-          },
         ),
       ),
     );
   }
 
   void _playPause() {
-    if (_isPlaylistChangingToNextVideo()) {
-      return;
-    }
     bool isFinished = _latestValue.position >= _latestValue.duration;
 
     setState(() {
@@ -580,9 +541,6 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _skipBack() {
-    if (_isPlaylistChangingToNextVideo()) {
-      return;
-    }
     _cancelAndRestartTimer();
     final beginning = Duration(seconds: 0).inMilliseconds;
     final skip = (_latestValue.position - Duration(seconds: 15)).inMilliseconds;
@@ -590,9 +548,6 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _skipForward() {
-    if (_isPlaylistChangingToNextVideo()) {
-      return;
-    }
     _cancelAndRestartTimer();
     final end = _latestValue.duration.inMilliseconds;
     final skip = (_latestValue.position + Duration(seconds: 15)).inMilliseconds;

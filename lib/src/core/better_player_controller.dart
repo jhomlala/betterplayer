@@ -14,7 +14,9 @@ import 'package:video_player/video_player.dart';
 
 class BetterPlayerController extends ChangeNotifier {
   BetterPlayerController(this.betterPlayerConfiguration,
-      {this.betterPlayerPlaylistConfiguration, this.betterPlayerDataSource}) {
+      {this.betterPlayerPlaylistConfiguration, this.betterPlayerDataSource})
+      : assert(betterPlayerConfiguration != null,
+            "BetterPlayerConfiguration can't be null") {
     _eventListeners.add(eventListener);
     if (betterPlayerDataSource != null) {
       _setup(betterPlayerDataSource);
@@ -25,59 +27,34 @@ class BetterPlayerController extends ChangeNotifier {
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
   final BetterPlayerDataSource betterPlayerDataSource;
 
-  /// The controller for the video you want to play
   VideoPlayerController videoPlayerController;
 
-  /// Play the video as soon as it's displayed
   bool get autoPlay => betterPlayerConfiguration.autoPlay;
 
-  /// Start video at a certain position
   Duration get startAt => betterPlayerConfiguration.startAt;
 
-  /// Whether or not the video should loop
   bool get looping => betterPlayerConfiguration.looping;
 
-  /// When the video playback runs  into an error, you can build a custom
-  /// error message.
   Widget Function(BuildContext context, String errorMessage) get errorBuilder =>
       null;
 
-  /// The Aspect Ratio of the Video. Important to get the correct size of the
-  /// video!
-  ///
-  /// Will fallback to fitting within the space allowed.
   double get aspectRatio => betterPlayerConfiguration.aspectRatio;
 
-  /// The placeholder is displayed underneath the Video before it is initialized
-  /// or played.
   Widget get placeholder => betterPlayerConfiguration.placeholder;
 
-  /// A widget which is placed between the video and the controls
   Widget get overlay => betterPlayerConfiguration.overlay;
 
-  /// Defines if the player will start in fullscreen when play is pressed
   bool get fullScreenByDefault => betterPlayerConfiguration.fullScreenByDefault;
 
-  /// Defines if the player will sleep in fullscreen or not
   bool get allowedScreenSleep => betterPlayerConfiguration.allowedScreenSleep;
 
-  /// Defines the system overlays visible after exiting fullscreen
   List<SystemUiOverlay> get systemOverlaysAfterFullScreen =>
       betterPlayerConfiguration.systemOverlaysAfterFullScreen;
 
-  /// Defines the set of allowed device orientations after exiting fullscreen
   List<DeviceOrientation> get deviceOrientationsAfterFullScreen =>
       betterPlayerConfiguration.deviceOrientationsAfterFullScreen;
 
-  /// Defines a custom RoutePageBuilder for the fullscreen
   BetterPlayerRoutePageBuilder routePageBuilder;
-
-  static BetterPlayerController of(BuildContext context) {
-    final betterPLayerControllerProvider = context
-        .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>();
-
-    return betterPLayerControllerProvider.controller;
-  }
 
   /// Defines a event listener where video player events will be send
   Function(BetterPlayerEvent) get eventListener =>
@@ -91,16 +68,22 @@ class BetterPlayerController extends ChangeNotifier {
 
   final List<Function> _eventListeners = List();
 
-  bool isDisposing = false;
-
   BetterPlayerDataSource _betterPlayerDataSource;
 
   List<BetterPlayerSubtitle> subtitles = List();
 
   Timer _nextVideoTimer;
+
   int _nextVideoTime;
   StreamController<int> nextVideoTimeStreamController =
       StreamController.broadcast();
+
+  static BetterPlayerController of(BuildContext context) {
+    final betterPLayerControllerProvider = context
+        .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>();
+
+    return betterPLayerControllerProvider.controller;
+  }
 
   Future _setup(BetterPlayerDataSource dataSource) async {
     _betterPlayerDataSource = dataSource;
@@ -119,7 +102,6 @@ class BetterPlayerController extends ChangeNotifier {
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
-        print("Setup network data source");
         videoPlayerController.setNetworkDataSource(betterPlayerDataSource.url);
 
         break;
@@ -136,16 +118,6 @@ class BetterPlayerController extends ChangeNotifier {
 
   Future _initialize() async {
     await videoPlayerController.setLooping(looping);
-
-    if (!videoPlayerController.value.initialized) {
-      try {
-        print("NOT INITALIZED");
-        //await videoPlayerController.initialize();
-      } catch (exception, stackTrace) {
-        print(exception);
-        print(stackTrace);
-      }
-    }
 
     if (autoPlay) {
       if (fullScreenByDefault) {
@@ -175,10 +147,8 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void enterFullScreen() {
-    if (!isDisposing) {
-      _isFullScreen = true;
-      notifyListeners();
-    }
+    _isFullScreen = true;
+    notifyListeners();
   }
 
   void exitFullScreen() {
@@ -187,7 +157,6 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void toggleFullScreen() {
-    print("Toggle full screen");
     _isFullScreen = !_isFullScreen;
     _postEvent(_isFullScreen
         ? BetterPlayerEvent(BetterPlayerEventType.OPEN_FULLSCREEN)
@@ -196,11 +165,8 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> play() async {
-    print("PLAY!!!!");
-    //if (!isDisposing) {
     await videoPlayerController.play();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
-    //}
   }
 
   Future<void> setLooping(bool looping) async {
@@ -256,10 +222,8 @@ class BetterPlayerController extends ChangeNotifier {
           currentVideoPlayerValue.duration == null) {
         return;
       }
-      print("Current position shifted: " + currentPositionShifted.toString());
 
       if (currentPositionShifted > currentVideoPlayerValue.duration) {
-        print("FINISHED!");
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.FINISHED, parameters: {
           "progress": currentVideoPlayerValue.position,
@@ -291,6 +255,7 @@ class BetterPlayerController extends ChangeNotifier {
     if (_nextVideoTimer == null) {
       _nextVideoTime =
           betterPlayerPlaylistConfiguration.nextVideoDelay.inSeconds;
+      nextVideoTimeStreamController.add(_nextVideoTime);
       _nextVideoTimer =
           Timer.periodic(Duration(milliseconds: 1000), (_timer) async {
         if (_nextVideoTime == 1) {
@@ -317,11 +282,12 @@ class BetterPlayerController extends ChangeNotifier {
 
   @override
   void dispose() {
-    print("DISPOSED!");
     _eventListeners.clear();
     videoPlayerController?.removeListener(_fullScreenListener);
     videoPlayerController?.removeListener(_onVideoPlayerChanged);
     videoPlayerController?.dispose();
+    _nextVideoTimer?.cancel();
+    nextVideoTimeStreamController.close();
     super.dispose();
   }
 }

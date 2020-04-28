@@ -300,10 +300,6 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-  bool _isPlaylistChangingToNextVideo() =>
-      _betterPlayerController.betterPlayerPlaylistConfiguration != null &&
-      _betterPlayerController.isDisposing;
-
   Widget _buildMuteButton(
     VideoPlayerController controller,
   ) {
@@ -480,9 +476,6 @@ class _BetterPlayerMaterialControlsState
               bufferedColor: _controlsConfiguration.progressBarBufferedColor,
               backgroundColor:
                   _controlsConfiguration.progressBarBackgroundColor),
-          isChangeAllowed: () {
-            return !_isPlaylistChangingToNextVideo();
-          },
         ),
       ),
     );
