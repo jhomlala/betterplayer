@@ -9,8 +9,6 @@ import 'package:wakelock/wakelock.dart';
 
 import 'better_player_controller_provider.dart';
 
-
-
 typedef Widget BetterPlayerRoutePageBuilder(
     BuildContext context,
     Animation<double> animation,
@@ -23,7 +21,6 @@ class BetterPlayer extends StatefulWidget {
             controller != null, 'You must provide a better player controller'),
         super(key: key);
 
-  /// The [BetterPlayerController]
   final BetterPlayerController controller;
 
   @override
@@ -129,6 +126,7 @@ class BetterPlayerState extends State<BetterPlayer> {
       pageBuilder: _fullScreenRoutePageBuilder,
       opaque: true,
     );
+
 
     SystemChrome.setEnabledSystemUIOverlays([]);
     if (isAndroid) {

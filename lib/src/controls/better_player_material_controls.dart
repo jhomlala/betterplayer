@@ -40,7 +40,6 @@ class _BetterPlayerMaterialControlsState
   Timer _showAfterExpandCollapseTimer;
   bool _dragging = false;
   bool _displayTapped = false;
-  double _progressValue = 0;
   VideoPlayerController _controller;
   BetterPlayerController _betterPlayerController;
 
@@ -74,8 +73,6 @@ class _BetterPlayerMaterialControlsState
   }
 
   bool _isLoading() {
-    //print("LATEST VALUE " + _latestValue.toString());
-
     return _latestValue != null &&
             !_latestValue.isPlaying &&
             _latestValue.duration == null ||
@@ -242,7 +239,7 @@ class _BetterPlayerMaterialControlsState
               children: [
                 Icon(
                   _hitAreaIconData,
-                  size: 32.0,
+                  size: 32,
                   color: _controlsConfiguration.iconsColor,
                 )
               ],
@@ -274,24 +271,28 @@ class _BetterPlayerMaterialControlsState
       stream: _betterPlayerController.nextVideoTimeStreamController.stream,
       builder: (context, snapshot) {
         if (snapshot.data != null) {
-          return BetterPlayerMaterialClickableWidget(onTap: (){
-            _betterPlayerController.playNextVideo();
-          }, child: Align(
-            alignment: Alignment.bottomRight,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _controlsConfiguration.controlBarColor,
-                borderRadius: BorderRadius.circular(48),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Text(
-                  "Next video in ${snapshot.data}...",
-                  style: TextStyle(color: Colors.white),
+          return BetterPlayerMaterialClickableWidget(
+            onTap: () {
+              _betterPlayerController.playNextVideo();
+            },
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 4, right: 4),
+                decoration: BoxDecoration(
+                  color: _controlsConfiguration.controlBarColor,
+                  borderRadius: BorderRadius.circular(48),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    "Next video in ${snapshot.data} ...",
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
               ),
             ),
-          ));
+          );
         } else {
           return const SizedBox();
         }

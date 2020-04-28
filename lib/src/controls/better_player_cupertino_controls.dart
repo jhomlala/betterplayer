@@ -80,6 +80,7 @@ class _BetterPlayerCupertinoControlsState
               _buildTopBar(
                   backgroundColor, iconColor, barHeight, buttonPadding),
               _buildHitArea(),
+              _buildNextVideoWidget(),
               _buildBottomBar(backgroundColor, iconColor, barHeight),
             ],
           ),
@@ -444,6 +445,43 @@ class _BetterPlayerCupertinoControlsState
       ),
     );
   }
+
+
+  Widget _buildNextVideoWidget() {
+    return StreamBuilder<int>(
+      stream: _betterPlayerController.nextVideoTimeStreamController.stream,
+      builder: (context, snapshot) {
+        if (snapshot.data != null) {
+          return InkWell(
+            onTap: () {
+              _betterPlayerController.playNextVideo();
+            },
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 4, right: 8),
+                decoration: BoxDecoration(
+                  color: _controlsConfiguration.controlBarColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    "Next video in ${snapshot.data} ...",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
+
 
   void _cancelAndRestartTimer() {
     _hideTimer?.cancel();
