@@ -214,7 +214,7 @@ class BetterPlayerController extends ChangeNotifier {
     notifyListeners();
   }
 
-  VideoPlayerValue videoPlayervalue() {
+  VideoPlayerValue videoPlayerValue() {
     return videoPlayerController.value;
   }
 
