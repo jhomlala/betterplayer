@@ -2,14 +2,11 @@ import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
 import 'package:wakelock/wakelock.dart';
 
-import '../configuration/better_player_data_source.dart';
 import 'better_player_controller_provider.dart';
 
 typedef Widget BetterPlayerRoutePageBuilder(
@@ -24,7 +21,6 @@ class BetterPlayer extends StatefulWidget {
             controller != null, 'You must provide a better player controller'),
         super(key: key);
 
-  /// The [BetterPlayerController]
   final BetterPlayerController controller;
 
   @override
@@ -41,7 +37,6 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   void initState() {
-
     super.initState();
     _setup();
   }
@@ -131,6 +126,7 @@ class BetterPlayerState extends State<BetterPlayer> {
       pageBuilder: _fullScreenRoutePageBuilder,
       opaque: true,
     );
+
 
     SystemChrome.setEnabledSystemUIOverlays([]);
     if (isAndroid) {

@@ -1,3 +1,7 @@
+## 0.0.5
+* Added reusable video player
+* Bug fixes
+
 ## 0.0.4
 * Changed 'settings' to 'configuration'
 * Removed unused parameters from configuration

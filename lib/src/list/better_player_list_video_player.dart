@@ -68,7 +68,7 @@ class _BetterPlayerListVideoPlayerState
     super.build(context);
     return VisibilityDetector(
       child: BetterPlayer(
-        key: Key(widget.dataSource.hashCode.toString() + "_player"),
+        key: Key("${_getUniqueKey()}_player"),
         controller: _betterPlayerController,
       ),
       onVisibilityChanged: (visibilityInfo) async {
@@ -84,9 +84,11 @@ class _BetterPlayerListVideoPlayerState
           }
         }
       },
-      key: Key(widget.dataSource.hashCode.toString()),
+      key: Key(_getUniqueKey()),
     );
   }
+
+  String _getUniqueKey() => widget.dataSource.hashCode.toString();
 
   @override
   bool get wantKeepAlive => true;
