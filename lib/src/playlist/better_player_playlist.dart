@@ -3,7 +3,6 @@ import 'package:better_player/src/configuration/better_player_configuration.dart
 import 'package:better_player/src/configuration/better_player_data_source.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/playlist/better_player_playlist_configuration.dart';
-
 import 'package:flutter/material.dart';
 
 class BetterPlayerPlaylist extends StatefulWidget {
@@ -16,7 +15,13 @@ class BetterPlayerPlaylist extends StatefulWidget {
       this.betterPlayerDataSourceList,
       this.betterPlayerConfiguration,
       this.betterPlayerPlaylistConfiguration})
-      : super(key: key);
+      : assert(betterPlayerDataSourceList != null,
+            "BetterPlayerDataSourceList can't be null or empty"),
+        assert(betterPlayerConfiguration != null,
+            "BetterPlayerConfiguration can't be null"),
+        assert(betterPlayerPlaylistConfiguration != null,
+            "BetterPlayerPlaylistConfiguration can't be null"),
+        super(key: key);
 
   @override
   _BetterPlayerPlaylistState createState() => _BetterPlayerPlaylistState();
@@ -55,7 +60,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
     }
     _changingToNextVideo = true;
     BetterPlayerDataSource _nextDataSource = _getNextDateSource();
-    print("next data source: " + _nextDataSource.toString());
+
     if (_nextDataSource == null) {
       return;
     }
@@ -72,14 +77,13 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
         betterPlayerPlaylistConfiguration:
             widget.betterPlayerPlaylistConfiguration,
         betterPlayerDataSource: _currentSource);
+
     _controller.addEventsListener((event) async {
       if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
         _controller.startNextVideoTimer();
       }
     });
-    _controller.addListener(() {
-      setState(() {});
-    });
+    _controller.addListener(_onStateChanged);
   }
 
   void _setupNextDataSource() async {
@@ -105,11 +109,22 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
     }
   }
 
+  void _onStateChanged() {
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return BetterPlayer(
       key: Key(_getKey()),
       controller: _controller,
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.removeListener(_onStateChanged);
+    _controller.dispose();
+    super.dispose();
   }
 }

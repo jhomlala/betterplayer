@@ -2,15 +2,14 @@ import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
 import 'package:wakelock/wakelock.dart';
 
-import '../configuration/better_player_data_source.dart';
 import 'better_player_controller_provider.dart';
+
+
 
 typedef Widget BetterPlayerRoutePageBuilder(
     BuildContext context,
@@ -41,7 +40,6 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   void initState() {
-
     super.initState();
     _setup();
   }
@@ -52,7 +50,6 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   void dispose() {
-    print("DISPOSE HERE!");
     widget.controller.removeListener(listener);
     widget.controller.dispose();
     super.dispose();
