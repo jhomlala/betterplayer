@@ -132,4 +132,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
     _controller.dispose();
     super.dispose();
   }
+
+  ///Get currently used source in playlist
+  BetterPlayerDataSource get currentSource => _currentSource;
 }
