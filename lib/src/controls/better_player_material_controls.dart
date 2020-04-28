@@ -231,42 +231,88 @@ class _BetterPlayerMaterialControlsState
     IconData _hitAreaIconData = isFinished
         ? Icons.replay //@todo _controlsConfiguration for this
         : _isPlaying
-            ? _controlsConfiguration.pauseIcon //@todo _controlsConfiguration for this
-            : _controlsConfiguration.playIcon; //@todo _controlsConfiguration for this
+            ? _controlsConfiguration
+                .pauseIcon //@todo _controlsConfiguration for this
+            : _controlsConfiguration
+                .playIcon; //@todo _controlsConfiguration for this
+
+    final _fastForwardTime =
+        Duration(seconds: 3); //@todo _controlsConfiguration for this
 
     return BetterPlayerMaterialClickableWidget(
-      child: Align(
-        alignment: Alignment.center,
-        child: Container(
-          decoration: BoxDecoration(
-            color: _controlsConfiguration.controlBarColor,  //@todo _controlsConfiguration for this
-            borderRadius: BorderRadius.circular(48), //@todo _controlsConfiguration for this
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(12),  //@todo _controlsConfiguration for this
-            child: Stack(
-              children: [
-                IconButton(
-                  icon: Icon(
-                    _hitAreaIconData,
-                  ),
-                  color: _controlsConfiguration.iconsColor,
-                  onPressed: () {
-                    if (_latestValue != null) {
-                      _onPlayPause();
-                    }
-                  },
-                  iconSize: 32, //@todo _controlsConfiguration for this
-                )
-              ],
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            InkWell(
+              child: Container(
+                width: 70, //@todo _controlsConfiguration for this
+              ),
+              onDoubleTap: () {
+                _betterPlayerController.seekTo(
+                  Duration(
+                      seconds: _latestValue.position.inSeconds -
+                          _fastForwardTime.inSeconds),
+                );
+              },
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
             ),
-          ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: _controlsConfiguration.controlBarColor,
+                    //@todo _controlsConfiguration for this
+                    borderRadius: BorderRadius.circular(
+                        48), //@todo _controlsConfiguration for this
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    //@todo _controlsConfiguration for this
+                    child: Stack(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            _hitAreaIconData,
+                          ),
+                          color: _controlsConfiguration.iconsColor,
+                          onPressed: () {
+                            if (_latestValue != null) {
+                              _onPlayPause();
+                            }
+                          },
+                          iconSize: 32, //@todo _controlsConfiguration for this
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            InkWell(
+              child: Container(
+                width: 70, //@todo _controlsConfiguration for this
+              ),
+              onDoubleTap: () {
+                _betterPlayerController.seekTo(
+                  Duration(
+                      seconds: _latestValue.position.inSeconds +
+                          _fastForwardTime.inSeconds),
+                );
+              },
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+            ),
+          ],
         ),
       ),
       onTap: () {
         if (_displayTapped) {
           setState(() {
-            _hideStuff = true;
+            // _hideStuff = true;
           });
         } else {
           _cancelAndRestartTimer();
