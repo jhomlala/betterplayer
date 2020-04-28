@@ -24,9 +24,10 @@ class _GeneralPageState extends State<GeneralPage> {
             type: BetterPlayerSubtitlesSourceType.NETWORK,
             url:
                 "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"));
-    _betterPlayerController = BetterPlayerController(BetterPlayerConfiguration(),
+    _betterPlayerController = BetterPlayerController(
+        BetterPlayerConfiguration(),
         betterPlayerDataSource: dataSource);
-    _betterPlayerController.addEventsListener((event){
+    _betterPlayerController.addEventsListener((event) {
       print("Better player event: ${event.betterPlayerEventType}");
     });
     return _betterPlayerController;
@@ -38,13 +39,27 @@ class _GeneralPageState extends State<GeneralPage> {
     final directory = await getApplicationDocumentsDirectory();
 
     var dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.FILE, "${directory.path}/testvideo.mp4",
-        subtitles: BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.FILE,
-          url: "${directory.path}/example_subtitles.srt",
-        ));
+      BetterPlayerDataSourceType.FILE,
+      "${directory.path}/testvideo.mp4",
+      subtitles: BetterPlayerSubtitlesSource(
+        type: BetterPlayerSubtitlesSourceType.FILE,
+        url: "${directory.path}/example_subtitles.srt",
+      ),
+    );
     _betterPlayerController = BetterPlayerController(
-      BetterPlayerConfiguration(),
+      BetterPlayerConfiguration(
+        controlsConfiguration: BetterPlayerControlsConfiguration(
+          textColor: Colors.white,
+          iconsColor: Colors.white,
+          progressBarHandleColor: Colors.black,
+        ),
+        overlayControlsConfiguration:
+            const BetterPlayerOverlayControlsConfiguration(
+          enablePlayPause: true,
+          enableSkipBackOnDoubleTap: true,
+          enableSkipForwardOnDoubleTap: true,
+        ),
+      ),
       betterPlayerDataSource: dataSource,
     );
 
