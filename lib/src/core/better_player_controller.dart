@@ -211,7 +211,6 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(isVisible
         ? BetterPlayerEvent(BetterPlayerEventType.CONTROLS_VISIBLE)
         : BetterPlayerEvent(BetterPlayerEventType.CONTROLS_HIDDEN));
-    notifyListeners();
   }
 
   VideoPlayerValue videoPlayerValue() {
