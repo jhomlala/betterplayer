@@ -247,9 +247,6 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildPlayReplayButton() {
-    print("=====_overlayControlsConfiguration");
-    print(_overlayControlsConfiguration.skipTime.inSeconds);
-
     bool isFinished = isVideoPlaybackFinished();
     final _isPlaying = _latestValue.isPlaying;
 
