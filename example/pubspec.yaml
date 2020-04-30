@@ -21,8 +21,6 @@ dependencies:
     path: ../
   flutter:
     sdk: flutter
-  video_player:
-    path: ../video_player
   path_provider: ^1.6.5
   flutter_widgets: ^0.1.12
 

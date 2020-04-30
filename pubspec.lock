@@ -205,20 +205,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.8"
-  video_player:
-    dependency: "direct main"
-    description:
-      path: video_player
-      relative: true
-    source: path
-    version: "0.10.7"
-  video_player_platform_interface:
-    dependency: transitive
-    description:
-      path: video_player_platform_interface
-      relative: true
-    source: path
-    version: "1.0.4"
   wakelock:
     dependency: "direct main"
     description:

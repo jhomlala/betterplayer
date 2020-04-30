@@ -12,9 +12,6 @@ dependencies:
   flutter:
     sdk: flutter
   open_iconic_flutter: ">=0.3.0 <0.4.0"
-  video_player:
-    path: video_player
-
   wakelock: ">=0.1.2 <0.2.0"
   flutter_widgets: ^0.1.12
 
@@ -23,3 +20,10 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.jhomlala.better_player
+        pluginClass: VideoPlayerPlugin
+      ios:
+        pluginClass: FLTVideoPlayerPlugin
