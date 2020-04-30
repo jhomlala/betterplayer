@@ -68,7 +68,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     controlsConfiguration:
                         BetterPlayerControlsConfiguration.cupertino()),
                 betterPlayerPlaylistConfiguration:
-                    const BetterPlayerPlaylistConfiguration(),
+                    BetterPlayerPlaylistConfiguration(nextVideoDelay: Duration(seconds: 30)),
                 betterPlayerDataSourceList: snapshot.data,
               ),
               aspectRatio: 16 / 9,

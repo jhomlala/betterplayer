@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
+import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 
 class BetterPlayerSubtitlesDrawer extends StatefulWidget {
   final List<BetterPlayerSubtitle> subtitles;
@@ -98,7 +98,6 @@ class _BetterPlayerSubtitlesDrawerState
   }
 
   List<String> _getSubtitlesAtCurrentPosition() {
-
     if (_latestValue == null) {
       return List();
     }

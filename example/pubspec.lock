@@ -28,7 +28,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.3"
+    version: "0.0.5"
   boolean_selector:
     dependency: transitive
     description:
@@ -85,11 +85,6 @@ packages:
     version: "0.0.0"
   flutter_test:
     dependency: "direct dev"
-    description: flutter
-    source: sdk
-    version: "0.0.0"
-  flutter_web_plugins:
-    dependency: transitive
     description: flutter
     source: sdk
     version: "0.0.0"
@@ -259,27 +254,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.8"
-  video_player:
-    dependency: "direct main"
-    description:
-      name: video_player
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.10.8+1"
-  video_player_platform_interface:
-    dependency: transitive
-    description:
-      name: video_player_platform_interface
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.5"
-  video_player_web:
-    dependency: transitive
-    description:
-      name: video_player_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.1.2+1"
   wakelock:
     dependency: transitive
     description:
