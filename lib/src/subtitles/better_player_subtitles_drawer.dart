@@ -30,6 +30,9 @@ class BetterPlayerSubtitlesDrawer extends StatefulWidget {
 
 class _BetterPlayerSubtitlesDrawerState
     extends State<BetterPlayerSubtitlesDrawer> {
+  final RegExp htmlRegExp =
+      RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+
   VideoPlayerValue _latestValue;
   BetterPlayerSubtitlesConfiguration _configuration;
   bool _playerVisible = false;
@@ -122,6 +125,7 @@ class _BetterPlayerSubtitlesDrawerState
   }
 
   Widget _getTextWithStroke(String subtitleText) {
+    subtitleText = subtitleText.replaceAll(htmlRegExp, '');
     return Stack(children: [
       _configuration.outlineEnabled
           ? Text(
