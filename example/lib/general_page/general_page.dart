@@ -25,7 +25,10 @@ class _GeneralPageState extends State<GeneralPage> {
             url:
                 "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"));
     _betterPlayerController = BetterPlayerController(
-        BetterPlayerConfiguration(),
+        BetterPlayerConfiguration(
+          controlsConfiguration:
+              BetterPlayerControlsConfiguration(enableProgressText: true),
+        ),
         betterPlayerDataSource: dataSource);
     _betterPlayerController.addEventsListener((event) {
       print("Better player event: ${event.betterPlayerEventType}");

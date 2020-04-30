@@ -74,11 +74,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_web_plugins:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   flutter_widgets:
     dependency: "direct main"
     description:
@@ -108,7 +103,7 @@ packages:
     source: hosted
     version: "0.12.6"
   meta:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: meta
       url: "https://pub.dartlang.org"
@@ -128,6 +123,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.6.4"
+  pedantic:
+    dependency: "direct main"
+    description:
+      name: pedantic
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.9.0"
   petitparser:
     dependency: transitive
     description:
@@ -203,40 +205,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.8"
-  video_player:
-    dependency: "direct main"
-    description:
-      path: "packages/video_player/video_player"
-      ref: reusable_video_controller
-      resolved-ref: c547346408dc2d251dee0e2f79b8d13a73bfeee5
-      url: "https://github.com/jhomlala/plugins"
-    source: git
-    version: "0.11.0"
-  video_player_platform_interface:
-    dependency: transitive
-    description:
-      path: "packages/video_player/video_player_platform_interface"
-      ref: reusable_video_controller
-      resolved-ref: c547346408dc2d251dee0e2f79b8d13a73bfeee5
-      url: "git://github.com/sanekyy/plugins.git"
-    source: git
-    version: "2.0.0"
-  video_player_web:
-    dependency: transitive
-    description:
-      path: "packages/video_player/video_player_web"
-      ref: reusable_video_controller
-      resolved-ref: c547346408dc2d251dee0e2f79b8d13a73bfeee5
-      url: "git://github.com/sanekyy/plugins.git"
-    source: git
-    version: "0.2.0"
   wakelock:
     dependency: "direct main"
     description:
       name: wakelock
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.3+4"
+    version: "0.1.4+1"
   xml:
     dependency: transitive
     description:
@@ -245,5 +220,5 @@ packages:
     source: hosted
     version: "3.6.1"
 sdks:
-  dart: ">=2.6.0 <3.0.0"
+  dart: ">=2.7.0 <3.0.0"
   flutter: ">=1.12.13+hotfix.5 <2.0.0"
