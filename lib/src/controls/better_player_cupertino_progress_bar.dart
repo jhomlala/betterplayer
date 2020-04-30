@@ -1,8 +1,9 @@
-
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
+import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:video_player/video_player.dart';
+
 
 class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
   BetterPlayerCupertinoVideoProgressBar(
@@ -10,7 +11,8 @@ class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
     BetterPlayerProgressColors colors,
     this.onDragEnd,
     this.onDragStart,
-    this.onDragUpdate, this.isChangeAllowed,
+    this.onDragUpdate,
+    this.isChangeAllowed,
   }) : colors = colors ?? BetterPlayerProgressColors();
 
   final VideoPlayerController controller;
@@ -26,7 +28,8 @@ class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
   }
 }
 
-class _VideoProgressBarState extends State<BetterPlayerCupertinoVideoProgressBar> {
+class _VideoProgressBarState
+    extends State<BetterPlayerCupertinoVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
       setState(() {});
@@ -78,7 +81,7 @@ class _VideoProgressBarState extends State<BetterPlayerCupertinoVideoProgressBar
         if (!controller.value.initialized) {
           return;
         }
-        if (!widget.isChangeAllowed()){
+        if (!widget.isChangeAllowed()) {
           return;
         }
         _controllerWasPlaying = controller.value.isPlaying;
@@ -94,7 +97,7 @@ class _VideoProgressBarState extends State<BetterPlayerCupertinoVideoProgressBar
         if (!controller.value.initialized) {
           return;
         }
-        if (!widget.isChangeAllowed()){
+        if (!widget.isChangeAllowed()) {
           return;
         }
         seekToRelativePosition(details.globalPosition);
@@ -104,7 +107,7 @@ class _VideoProgressBarState extends State<BetterPlayerCupertinoVideoProgressBar
         }
       },
       onHorizontalDragEnd: (DragEndDetails details) {
-        if (!widget.isChangeAllowed()){
+        if (!widget.isChangeAllowed()) {
           return;
         }
         if (_controllerWasPlaying) {
@@ -118,7 +121,7 @@ class _VideoProgressBarState extends State<BetterPlayerCupertinoVideoProgressBar
         if (!controller.value.initialized) {
           return;
         }
-        if (!widget.isChangeAllowed()){
+        if (!widget.isChangeAllowed()) {
           return;
         }
         seekToRelativePosition(details.globalPosition);
