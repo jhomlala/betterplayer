@@ -249,11 +249,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }) {
     return _setDataSource(
       DataSource(
-        sourceType: DataSourceType.asset,
-        asset: dataSource,
-        package: package,
-        closedCaptionFile: closedCaptionFile,
-      ),
+          sourceType: DataSourceType.asset,
+          asset: dataSource,
+          package: package,
+          closedCaptionFile: closedCaptionFile,
+          headers: {}),
     );
   }
 
@@ -264,18 +264,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// null.
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
-  Future<void> setNetworkDataSource(
-    String dataSource, {
-    VideoFormat formatHint,
-    Future<ClosedCaptionFile> closedCaptionFile,
-  }) {
+  Future<void> setNetworkDataSource(String dataSource,
+      {VideoFormat formatHint,
+      Future<ClosedCaptionFile> closedCaptionFile,
+      Map<String, String> headers}) {
     return _setDataSource(
       DataSource(
-        sourceType: DataSourceType.network,
-        uri: dataSource,
-        formatHint: formatHint,
-        closedCaptionFile: closedCaptionFile,
-      ),
+          sourceType: DataSourceType.network,
+          uri: dataSource,
+          formatHint: formatHint,
+          closedCaptionFile: closedCaptionFile,
+          headers: headers),
     );
   }
 
@@ -289,10 +288,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }) {
     return _setDataSource(
       DataSource(
-        sourceType: DataSourceType.file,
-        uri: 'file://${file.path}',
-        closedCaptionFile: closedCaptionFile,
-      ),
+          sourceType: DataSourceType.file,
+          uri: 'file://${file.path}',
+          closedCaptionFile: closedCaptionFile,
+          headers: {}),
     );
   }
 

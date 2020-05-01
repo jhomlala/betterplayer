@@ -151,6 +151,7 @@ class DataSource {
     this.asset,
     this.package,
     this.closedCaptionFile,
+    this.headers,
   }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -201,6 +202,8 @@ class DataSource {
   /// This future will be awaited and the file will be loaded when
   /// [initialize()] is called.
   final Future<ClosedCaptionFile> closedCaptionFile;
+
+  final Map<String, String> headers;
 
   /// Key to compare DataSource
   String get key {
