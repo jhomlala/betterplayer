@@ -142,7 +142,10 @@ class _BetterPlayerSubtitlesDrawerState
   }
 
   Widget _getTextWithStroke(String subtitleText) {
-    String subtitleCenteredText = "<center>${subtitleText}</center>";
+    if (subtitleText == null){
+      subtitleText = "";
+    }
+    String subtitleCenteredText = "<center>$subtitleText</center>";
     return Stack(children: [
       _configuration.outlineEnabled
           ? _buildHtmlWidget(subtitleCenteredText, _outerTextStyle)
