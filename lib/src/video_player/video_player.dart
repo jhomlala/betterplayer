@@ -12,7 +12,6 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 
-
 import 'closed_caption_file.dart';
 
 final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance

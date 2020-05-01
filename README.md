@@ -19,7 +19,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Refactored player controls  
 ✔️ Playlist support  
 ✔️ Video in ListView support  
-✔️ Subtitles support     
+✔️ Subtitles support (HTML tags support)
 
 
 ## Install
@@ -28,7 +28,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.5
+  better_player: ^0.0.6
 ```
 
 2. Install it

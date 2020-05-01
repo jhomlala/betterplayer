@@ -127,7 +127,6 @@ class BetterPlayerState extends State<BetterPlayer> {
       opaque: true,
     );
 
-
     SystemChrome.setEnabledSystemUIOverlays([]);
     if (isAndroid) {
       SystemChrome.setPreferredOrientations([

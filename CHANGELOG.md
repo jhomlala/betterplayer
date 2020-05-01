@@ -1,3 +1,7 @@
+## 0.0.6
+* Fixed video duration issue
+* Added HTML subtitles
+
 ## 0.0.5
 * Added reusable video player
 * Bug fixes

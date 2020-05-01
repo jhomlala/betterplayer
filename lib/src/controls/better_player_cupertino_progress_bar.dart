@@ -4,7 +4,6 @@ import 'package:better_player/src/video_player/video_player_platform_interface.d
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-
 class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
   BetterPlayerCupertinoVideoProgressBar(
     this.controller, {

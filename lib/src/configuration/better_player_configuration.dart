@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'better_player_event.dart';
 
 class BetterPlayerConfiguration {
-
   /// Play the video as soon as it's displayed
   final bool autoPlay;
 
@@ -42,7 +41,6 @@ class BetterPlayerConfiguration {
 
   /// Defines if the player will sleep in fullscreen or not
   final bool allowedScreenSleep;
-
 
   /// Defines the system overlays visible after exiting fullscreen
   final List<SystemUiOverlay> systemOverlaysAfterFullScreen;
