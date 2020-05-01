@@ -19,7 +19,8 @@ class _GeneralPageState extends State<GeneralPage> {
 
   Future<BetterPlayerController> _setupDefaultVideoData() async {
     var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "https://httpbin.org/bearer",
+        headers: {"Authorization": "Bearer asdfgh"},
         subtitles: BetterPlayerSubtitlesSource(
             type: BetterPlayerSubtitlesSourceType.NETWORK,
             url:

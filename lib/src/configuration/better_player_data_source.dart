@@ -14,11 +14,13 @@ class BetterPlayerDataSource {
   ///Flag to determine if current data source is live stream
   final bool liveStream;
 
+  final Map<String, String> headers;
+
   BetterPlayerDataSource(this.type, this.url,
-      {this.subtitles, this.liveStream = false});
+      {this.subtitles, this.liveStream = false, this.headers});
 
   @override
   String toString() {
-    return 'BetterPlayerDataSource{type: $type, url: $url, subtitles: $subtitles, liveStream: $liveStream}';
+    return 'BetterPlayerDataSource{type: $type, url: $url, subtitles: $subtitles, liveStream: $liveStream, headers: $headers}';
   }
 }

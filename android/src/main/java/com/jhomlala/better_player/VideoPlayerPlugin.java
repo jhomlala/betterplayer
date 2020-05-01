@@ -138,9 +138,11 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private void onMethodCall(MethodCall call, Result result, long textureId, VideoPlayer player) {
         switch (call.method) {
             case "setDataSource": {
-                Map<String, String> dataSource = call.argument("dataSource");
-                String key = dataSource.get("key");
-                Map<String, String> headers = call.argument("headers");
+                Map<String, Object> dataSource = call.argument("dataSource");
+                String key = (String) dataSource.get("key");
+                Map<String, String> headers = (Map<String,String>) dataSource.get("headers");
+
+
                 if (headers == null) {
                     headers = new HashMap<>();
                 }
@@ -149,9 +151,9 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     if (dataSource.get("package") != null) {
                         assetLookupKey =
                                 flutterState.keyForAssetAndPackageName.get(
-                                        dataSource.get("asset"), dataSource.get("package"));
+                                        (String) dataSource.get("asset"), (String) dataSource.get("package"));
                     } else {
-                        assetLookupKey = flutterState.keyForAsset.get(dataSource.get("asset"));
+                        assetLookupKey = flutterState.keyForAsset.get((String) dataSource.get("asset"));
                     }
 
                     player.setDataSource(
@@ -160,8 +162,8 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     player.setDataSource(
                             flutterState.applicationContext,
                             key,
-                            dataSource.get("uri"),
-                            dataSource.get("formatHint"),
+                            (String) dataSource.get("uri"),
+                            (String) dataSource.get("formatHint"),
                             result, headers);
                 }
                 break;

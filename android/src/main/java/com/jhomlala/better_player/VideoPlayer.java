@@ -6,6 +6,7 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.C;
@@ -79,6 +80,7 @@ final class VideoPlayer {
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
             Map<String, String> headers) {
+        Log.i("BETTER_PLAYER","Using headers: " + headers.toString());
         this.key = key;
 
         isInitialized = false;

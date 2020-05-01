@@ -104,9 +104,11 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
+    print("!!!Using headers: " + betterPlayerDataSource.headers.toString());
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
-        videoPlayerController.setNetworkDataSource(betterPlayerDataSource.url);
+        videoPlayerController.setNetworkDataSource(betterPlayerDataSource.url,
+            headers: betterPlayerDataSource.headers);
 
         break;
       case BetterPlayerDataSourceType.FILE:

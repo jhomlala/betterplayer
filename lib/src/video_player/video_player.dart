@@ -268,6 +268,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       {VideoFormat formatHint,
       Future<ClosedCaptionFile> closedCaptionFile,
       Map<String, String> headers}) {
+    print("Using headers: " + headers.toString());
     return _setDataSource(
       DataSource(
           sourceType: DataSourceType.network,

@@ -37,6 +37,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> setDataSource(int textureId, DataSource dataSource) async {
     Map<String, dynamic> dataSourceDescription;
+    print(" CCC Using headers: " + dataSource.headers.toString());
 
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
@@ -44,6 +45,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'key': dataSource.key,
           'asset': dataSource.asset,
           'package': dataSource.package,
+
         };
         break;
       case DataSourceType.network:
@@ -51,6 +53,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'key': dataSource.key,
           'uri': dataSource.uri,
           'formatHint': dataSource.rawFormalHint,
+          'headers':dataSource.headers,
         };
         break;
       case DataSourceType.file:
@@ -60,6 +63,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         };
         break;
     }
+
+    print("Invoke description: " + dataSourceDescription.toString());
 
     return _channel.invokeMethod<void>(
       'setDataSource',

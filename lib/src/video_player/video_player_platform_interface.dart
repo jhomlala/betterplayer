@@ -72,7 +72,7 @@ abstract class VideoPlayerPlatform {
   }
 
   /// Set data source of video.
-  Future<void> setDataSource(int textureId, DataSource dataSource) {
+  Future<void> setDataSource(int textureId, DataSource dataSource, ) {
     throw UnimplementedError('setDataSource() has not been implemented.');
   }
 
