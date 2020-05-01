@@ -5,6 +5,7 @@ import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
 class BetterPlayerSubtitlesDrawer extends StatefulWidget {
   final List<BetterPlayerSubtitle> subtitles;
@@ -32,6 +33,8 @@ class _BetterPlayerSubtitlesDrawerState
     extends State<BetterPlayerSubtitlesDrawer> {
   final RegExp htmlRegExp =
       RegExp(r"<[^>]*>", multiLine: true, caseSensitive: true);
+  TextStyle _innerTextStyle;
+  TextStyle _outerTextStyle;
 
   VideoPlayerValue _latestValue;
   BetterPlayerSubtitlesConfiguration _configuration;
@@ -57,6 +60,20 @@ class _BetterPlayerSubtitlesDrawerState
 
     widget.betterPlayerController.videoPlayerController
         .addListener(_updateState);
+
+    _outerTextStyle = TextStyle(
+        fontSize: _configuration.fontSize,
+        fontFamily: _configuration.fontFamily,
+        foreground: Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = _configuration.outlineSize
+          ..color = _configuration.outlineColor);
+
+    _innerTextStyle = TextStyle(
+        fontFamily: _configuration.fontFamily,
+        color: _configuration.fontColor,
+        fontSize: _configuration.fontSize);
+
     super.initState();
   }
 
@@ -125,32 +142,22 @@ class _BetterPlayerSubtitlesDrawerState
   }
 
   Widget _getTextWithStroke(String subtitleText) {
-    subtitleText = subtitleText.replaceAll(htmlRegExp, '');
+    String subtitleCenteredText = "<center>${subtitleText}</center>";
     return Stack(children: [
       _configuration.outlineEnabled
-          ? Text(
-              subtitleText,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                  fontSize: _configuration.fontSize,
-                  fontFamily: _configuration.fontFamily,
-                  foreground: Paint()
-                    ..style = PaintingStyle.stroke
-                    ..strokeWidth = _configuration.outlineSize
-                    ..color = _configuration.outlineColor),
-            )
+          ? _buildHtmlWidget(subtitleCenteredText, _outerTextStyle)
           : const SizedBox(),
-      Text(
-        subtitleText,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-            fontFamily: _configuration.fontFamily,
-            color: _configuration.fontColor,
-            fontSize: _configuration.fontSize),
-      ),
+      _buildHtmlWidget(subtitleCenteredText, _innerTextStyle)
     ]);
+  }
+
+  Widget _buildHtmlWidget(String text, TextStyle textStyle) {
+    assert(text != null);
+    assert(textStyle != null);
+    return HtmlWidget(text,
+        textStyle: textStyle,
+        bodyPadding: const EdgeInsets.all(0),
+        tableCellPadding: const EdgeInsets.all(0));
   }
 
   BetterPlayerSubtitlesConfiguration setupDefaultConfiguration() {

@@ -1,7 +1,7 @@
 1
 00:00:01,000 --> 00:00:5,916
 <b>DYWERGENCJA: BEIHAI, CHINY<b>
-<font color='red'>Long subtitle long subtitle long subtitle long subtitle</font>
+<h1>Long subtitle long subtitle long subtitle long subtitle</h1>
 
 2
 00:00:06,000 --> 00:00:10,916
