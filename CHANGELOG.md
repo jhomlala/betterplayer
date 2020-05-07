@@ -1,3 +1,6 @@
+## 0.0.7
+* Fixed progress bar scroll lag
+
 ## 0.0.6
 * Fixed video duration issue
 * Added HTML subtitles
