@@ -28,7 +28,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.5+1"
+    version: "0.0.6"
   boolean_selector:
     dependency: transitive
     description:
@@ -88,6 +88,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_widget_from_html_core:
+    dependency: transitive
+    description:
+      name: flutter_widget_from_html_core
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.3.3+3"
   flutter_widgets:
     dependency: "direct main"
     description:

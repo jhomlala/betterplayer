@@ -11,7 +11,6 @@ class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
     this.onDragEnd,
     this.onDragStart,
     this.onDragUpdate,
-    this.isChangeAllowed,
   }) : colors = colors ?? BetterPlayerProgressColors();
 
   final VideoPlayerController controller;
@@ -19,7 +18,6 @@ class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
   final Function() onDragStart;
   final Function() onDragEnd;
   final Function() onDragUpdate;
-  final bool Function() isChangeAllowed;
 
   @override
   _VideoProgressBarState createState() {
@@ -80,9 +78,6 @@ class _VideoProgressBarState
         if (!controller.value.initialized) {
           return;
         }
-        if (!widget.isChangeAllowed()) {
-          return;
-        }
         _controllerWasPlaying = controller.value.isPlaying;
         if (_controllerWasPlaying) {
           controller.pause();
@@ -96,9 +91,6 @@ class _VideoProgressBarState
         if (!controller.value.initialized) {
           return;
         }
-        if (!widget.isChangeAllowed()) {
-          return;
-        }
         seekToRelativePosition(details.globalPosition);
 
         if (widget.onDragUpdate != null) {
@@ -106,9 +98,7 @@ class _VideoProgressBarState
         }
       },
       onHorizontalDragEnd: (DragEndDetails details) {
-        if (!widget.isChangeAllowed()) {
-          return;
-        }
+
         if (_controllerWasPlaying) {
           controller.play();
         }
@@ -120,9 +110,7 @@ class _VideoProgressBarState
         if (!controller.value.initialized) {
           return;
         }
-        if (!widget.isChangeAllowed()) {
-          return;
-        }
+
         seekToRelativePosition(details.globalPosition);
       },
     );
