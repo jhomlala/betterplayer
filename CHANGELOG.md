@@ -1,3 +1,6 @@
+## 0.0.8
+* Fixed buffering indicator issue on Android
+
 ## 0.0.7
 * Fixed progress bar scroll lag
 

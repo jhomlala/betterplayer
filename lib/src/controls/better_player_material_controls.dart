@@ -73,10 +73,15 @@ class _BetterPlayerMaterialControlsState
   }
 
   bool _isLoading() {
-    return _latestValue != null &&
-            !_latestValue.isPlaying &&
-            _latestValue.duration == null ||
-        _latestValue.isBuffering;
+    if (_latestValue != null) {
+      if (!_latestValue.isPlaying && _latestValue.duration == null) {
+        return true;
+      }
+      if (_latestValue.isPlaying && _latestValue.isBuffering) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @override

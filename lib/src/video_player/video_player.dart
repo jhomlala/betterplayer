@@ -192,7 +192,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     unawaited(_applyVolume());
 
     void eventListener(VideoEvent event) {
-      if (_isDisposed || event.key != _dataSource.key) {
+      if (_isDisposed) {
         return;
       }
 

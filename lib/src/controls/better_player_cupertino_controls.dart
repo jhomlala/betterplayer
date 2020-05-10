@@ -77,7 +77,9 @@ class _BetterPlayerCupertinoControlsState
             children: <Widget>[
               _buildTopBar(
                   backgroundColor, iconColor, barHeight, buttonPadding),
-              _buildHitArea(),
+              _isLoading()
+                  ? Expanded(child: Center(child: _buildLoadingWidget()))
+                  : _buildHitArea(),
               _buildNextVideoWidget(),
               _buildBottomBar(backgroundColor, iconColor, barHeight),
             ],
@@ -85,6 +87,18 @@ class _BetterPlayerCupertinoControlsState
         ),
       ),
     );
+  }
+
+  bool _isLoading() {
+    if (_latestValue != null) {
+      if (!_latestValue.isPlaying && _latestValue.duration == null) {
+        return true;
+      }
+      if (_latestValue.isPlaying && _latestValue.isBuffering) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @override
@@ -593,5 +607,12 @@ class _BetterPlayerCupertinoControlsState
         ),
       );
     }
+  }
+
+  Widget _buildLoadingWidget() {
+    return CircularProgressIndicator(
+      valueColor:
+          AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
+    );
   }
 }
