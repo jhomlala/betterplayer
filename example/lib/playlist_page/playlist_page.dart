@@ -66,9 +66,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     subtitlesConfiguration:
                         BetterPlayerSubtitlesConfiguration(fontSize: 10),
                     controlsConfiguration:
-                        BetterPlayerControlsConfiguration.cupertino()),
+                        BetterPlayerControlsConfiguration.cupertino(),
+                    deviceOrientationsAfterFullScreen: [
+                      DeviceOrientation.portraitUp,
+                      DeviceOrientation.portraitDown,
+                    ]),
                 betterPlayerPlaylistConfiguration:
-                    BetterPlayerPlaylistConfiguration(nextVideoDelay: Duration(seconds: 30)),
+                    BetterPlayerPlaylistConfiguration(
+                        nextVideoDelay: Duration(seconds: 30)),
                 betterPlayerDataSourceList: snapshot.data,
               ),
               aspectRatio: 16 / 9,
