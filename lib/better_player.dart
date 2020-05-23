@@ -6,6 +6,7 @@ export 'src/core/better_player_controller.dart';
 export 'src/configuration/better_player_data_source.dart';
 export 'src/configuration/better_player_data_source_type.dart';
 export 'src/configuration/better_player_configuration.dart';
+export 'src/configuration/better_player_event_type.dart';
 export 'src/playlist/better_player_playlist.dart';
 export 'src/playlist/better_player_playlist_configuration.dart';
 export 'src/subtitles/better_player_subtitles_configuration.dart';
