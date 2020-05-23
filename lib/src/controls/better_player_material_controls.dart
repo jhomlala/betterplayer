@@ -453,9 +453,11 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _updateState() {
-    setState(() {
-      _latestValue = _controller.value;
-    });
+    if (this.mounted) {
+      setState(() {
+        _latestValue = _controller.value;
+      });
+    }
   }
 
   Widget _buildProgressBar() {
