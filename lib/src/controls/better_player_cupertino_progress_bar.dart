@@ -98,7 +98,6 @@ class _VideoProgressBarState
         }
       },
       onHorizontalDragEnd: (DragEndDetails details) {
-
         if (_controllerWasPlaying) {
           controller.play();
         }

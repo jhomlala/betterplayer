@@ -142,7 +142,7 @@ class _BetterPlayerSubtitlesDrawerState
   }
 
   Widget _getTextWithStroke(String subtitleText) {
-    if (subtitleText == null){
+    if (subtitleText == null) {
       subtitleText = "";
     }
     String subtitleCenteredText = "<center>$subtitleText</center>";

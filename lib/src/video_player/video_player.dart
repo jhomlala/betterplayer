@@ -166,8 +166,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   int _textureId;
 
-  DataSource _dataSource;
-
   ClosedCaptionFile _closedCaptionFile;
   Timer _timer;
   bool _isDisposed = false;
@@ -300,8 +298,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposed) {
       return;
     }
-
-    this._dataSource = dataSourceDescription;
 
     value = VideoPlayerValue(
       duration: null,

@@ -1,3 +1,7 @@
+## 0.0.9
+* Fixed setState called after dispose
+* General bugfixes
+
 ## 0.0.8
 * Fixed buffering indicator issue on Android
 
