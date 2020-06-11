@@ -23,14 +23,15 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
   ///Flag to determine if video should be auto paused
   final bool autoPause;
 
-  final BetterPlayerListVideoPlayerController controller;
+  final BetterPlayerListVideoPlayerController
+      betterPlayerListVideoPlayerController;
 
   const BetterPlayerListVideoPlayer(this.dataSource,
       {this.configuration = const BetterPlayerConfiguration(),
       this.playFraction = 0.6,
       this.autoPlay = true,
       this.autoPause = true,
-      this.controller,
+      this.betterPlayerListVideoPlayerController,
       Key key})
       : assert(dataSource != null, "Data source can't be null"),
         assert(configuration != null, "Configuration can't be null"),
@@ -58,8 +59,9 @@ class _BetterPlayerListVideoPlayerState
       widget.configuration,
       betterPlayerDataSource: widget.dataSource,
     );
-    if (widget.controller != null) {
-      widget.controller.setBetterPlayerController(_betterPlayerController);
+    if (widget.betterPlayerListVideoPlayerController != null) {
+      widget.betterPlayerListVideoPlayerController
+          .setBetterPlayerController(_betterPlayerController);
     }
 
     super.initState();

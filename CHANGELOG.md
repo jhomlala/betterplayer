@@ -1,3 +1,6 @@
+## 0.0.10
+* Added BetterPlayerListVideoPlayerController to control list video player
+
 ## 0.0.9
 * Fixed setState called after dispose
 * General bugfixes
