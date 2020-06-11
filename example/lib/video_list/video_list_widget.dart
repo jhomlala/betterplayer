@@ -13,10 +13,14 @@ class VideoListWidget extends StatefulWidget {
 
 class _VideoListWidgetState extends State<VideoListWidget> {
   VideoListData get videoListData => widget.videoListData;
+  BetterPlayerConfiguration betterPlayerConfiguration;
+  BetterPlayerListVideoPlayerController controller;
 
   @override
   void initState() {
     super.initState();
+    controller = BetterPlayerListVideoPlayerController();
+    betterPlayerConfiguration = BetterPlayerConfiguration(autoPlay: false);
   }
 
   @override
@@ -40,6 +44,7 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                 configuration: BetterPlayerConfiguration(autoPlay: false),
                 key: Key(videoListData.hashCode.toString()),
                 playFraction: 0.8,
+                controller: controller,
               ),
               aspectRatio: 16 / 9),
           Padding(
@@ -52,6 +57,28 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                 "lives? 70's special effects, legendary score, and trademark "
                 "humor set this classic apart."),
           ),
+          Row(children: [
+            RaisedButton(
+              child: Text("Play"),
+              onPressed: () {
+                controller.play();
+              },
+            ),
+            const SizedBox(width: 8),
+            RaisedButton(
+              child: Text("Pause"),
+              onPressed: () {
+                controller.pause();
+              },
+            ),
+            const SizedBox(width: 8),
+            RaisedButton(
+              child: Text("Set max volume"),
+              onPressed: () {
+                controller.setVolume(100);
+              },
+            ),
+          ])
         ],
       ),
     );
