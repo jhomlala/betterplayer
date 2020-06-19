@@ -242,6 +242,7 @@ class _BetterPlayerMaterialControlsState
                 .playIcon; //@todo _controlsConfiguration for this
 
     return BetterPlayerMaterialClickableWidget(
+      disableSplashColor: true,
       child: Align(
         alignment: Alignment.center,
         child: Container(
