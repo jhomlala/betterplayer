@@ -209,7 +209,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   void toggleControlsVisibility(bool isVisible) {
     _postEvent(isVisible
-        ? BetterPlayerEvent(BetterPlayerEventType.CONTROLS_VISIBLE)
+        ? BetterPlayerEvent(BetterPlayerEventType. )
         : BetterPlayerEvent(BetterPlayerEventType.CONTROLS_HIDDEN));
     notifyListeners();
   }
