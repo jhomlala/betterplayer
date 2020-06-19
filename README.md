@@ -275,7 +275,7 @@ Possible configuration options:
 Configuration for player GUI. You should pass this configuration to BetterPlayerConfiguration.
 
 ```dart
-ar betterPlayerConfiguration = BetterPlayerConfiguration(
+final betterPlayerConfiguration = BetterPlayerConfiguration(
       controlsConfiguration: BetterPlayerControlsConfiguration(
         textColor: Colors.black,
         iconsColor: Colors.black,
@@ -372,6 +372,30 @@ Possible configuration options:
   ///Live text color;
   final Color liveTextColor;
 
+  ///Flag used to enable/disable play/pause button in overlay control
+  final bool enableOverlayPlayPause;
+
+  ///Icon for play in overlay control
+  final IconData overlayPlayIcon;
+
+  ///Icon for pause in overlay control
+  final IconData overlayPauseIcon;
+
+  ///Icon for replay in overlay control
+  final IconData overlayReplayIcon;
+
+  /// Background color of play, pause and replay action buttons
+  final Color overlayActionButtonBgColor;
+
+  /// Border radius of action button background color
+  final double overlayActionButtonRadius;
+
+  /// Padding of action button background color
+  final double overlayActionButtonPadding;
+
+  /// Size of action buttons
+  final double overlayActionButtonIconSize;
+
 ```
 
 ### BetterPlayerPlaylistConfiguration
@@ -407,7 +431,7 @@ Define source for one video in your app.
 ```
 
 Possible configuration options:
-```
+```dart
   ///Type of source of video
   final BetterPlayerDataSourceType type;
 
