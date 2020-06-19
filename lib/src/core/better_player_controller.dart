@@ -207,6 +207,10 @@ class BetterPlayerController extends ChangeNotifier {
     return videoPlayerController.value.isBuffering;
   }
 
+  VideoPlayerValue videoPlayerValue() {
+    return videoPlayerController.value;
+  }
+
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
     for (Function eventListener in _eventListeners) {
       if (eventListener != null) {
