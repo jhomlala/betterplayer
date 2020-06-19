@@ -211,9 +211,8 @@ class _BetterPlayerMaterialControlsState
         child: Center(
           child: AnimatedOpacity(
             opacity:
-                _latestValue != null && !_latestValue.isPlaying && !_dragging
-                    ? 1.0
-                    : 0.0,
+                // hide the buttons on the hit area when the video is being initialized; controls are hidden on drag;
+                _latestValue != null && !_hideStuff && !_dragging ? 1.0 : 0.0,
             duration: _controlsConfiguration.controlsHideTime,
             child: Stack(
               children: [
@@ -231,23 +230,43 @@ class _BetterPlayerMaterialControlsState
     bool isFinished = _latestValue?.position != null &&
         _latestValue?.duration != null &&
         _latestValue.position >= _latestValue.duration;
-    IconData _hitAreaIconData = isFinished ? Icons.replay : Icons.play_arrow;
+
+    final _isPlaying = _latestValue.isPlaying;
+
+    IconData _hitAreaIconData = isFinished
+        ? Icons.replay //@todo _controlsConfiguration for this
+        : _isPlaying
+            ? _controlsConfiguration
+                .pauseIcon //@todo _controlsConfiguration for this
+            : _controlsConfiguration
+                .playIcon; //@todo _controlsConfiguration for this
+
     return BetterPlayerMaterialClickableWidget(
       child: Align(
         alignment: Alignment.center,
         child: Container(
           decoration: BoxDecoration(
             color: _controlsConfiguration.controlBarColor,
-            borderRadius: BorderRadius.circular(48),
+            //@todo _controlsConfiguration for this
+            borderRadius: BorderRadius.circular(
+                48), //@todo _controlsConfiguration for this
           ),
           child: Padding(
             padding: const EdgeInsets.all(12),
+            //@todo _controlsConfiguration for this
             child: Stack(
               children: [
-                Icon(
-                  _hitAreaIconData,
-                  size: 32,
+                IconButton(
+                  icon: Icon(
+                    _hitAreaIconData,
+                  ),
                   color: _controlsConfiguration.iconsColor,
+                  onPressed: () {
+                    if (_latestValue != null) {
+                      _onPlayPause();
+                    }
+                  },
+                  iconSize: 32, //@todo _controlsConfiguration for this
                 )
               ],
             ),
@@ -255,19 +274,12 @@ class _BetterPlayerMaterialControlsState
         ),
       ),
       onTap: () {
-        if (_latestValue != null && _latestValue.isPlaying) {
-          if (_displayTapped) {
-            setState(() {
-              _hideStuff = true;
-            });
-          } else
-            _cancelAndRestartTimer();
-        } else {
-          _onPlayPause();
-
+        if (_displayTapped) {
           setState(() {
             _hideStuff = true;
           });
+        } else {
+          _cancelAndRestartTimer();
         }
       },
     );
