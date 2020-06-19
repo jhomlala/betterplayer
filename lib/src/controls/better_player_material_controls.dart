@@ -72,6 +72,11 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
+  bool isVideoPlaybackFinished() =>
+      _latestValue?.position != null &&
+      _latestValue?.duration != null &&
+      _latestValue.position >= _latestValue.duration;
+
   bool _isLoading() {
     if (_latestValue != null) {
       if (!_latestValue.isPlaying && _latestValue.duration == null) {
@@ -205,14 +210,23 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildHitArea() {
+    bool isFinished = isVideoPlaybackFinished();
+    double _opacity = 1.0;
+
+    // hide the buttons on the hit area when the video is being initialized; controls are hidden on drag;
+    if (_latestValue == null ||
+        _hideStuff ||
+        _dragging ||
+        (!_controlsConfiguration.enableOverlayPlayPause && !isFinished)) {
+      _opacity = 0.0;
+    }
+
     return Expanded(
       child: Container(
         color: Colors.transparent,
         child: Center(
           child: AnimatedOpacity(
-            opacity:
-                // hide the buttons on the hit area when the video is being initialized; controls are hidden on drag;
-                _latestValue != null && !_hideStuff && !_dragging ? 1.0 : 0.0,
+            opacity: _opacity,
             duration: _controlsConfiguration.controlsHideTime,
             child: Stack(
               children: [
@@ -227,19 +241,14 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildPlayReplayButton() {
-    bool isFinished = _latestValue?.position != null &&
-        _latestValue?.duration != null &&
-        _latestValue.position >= _latestValue.duration;
-
+    bool isFinished = isVideoPlaybackFinished();
     final _isPlaying = _latestValue.isPlaying;
 
     IconData _hitAreaIconData = isFinished
-        ? Icons.replay //@todo _controlsConfiguration for this
+        ? _controlsConfiguration.overlayReplayIcon
         : _isPlaying
-            ? _controlsConfiguration
-                .pauseIcon //@todo _controlsConfiguration for this
-            : _controlsConfiguration
-                .playIcon; //@todo _controlsConfiguration for this
+            ? _controlsConfiguration.overlayPauseIcon
+            : _controlsConfiguration.overlayPlayIcon;
 
     return BetterPlayerMaterialClickableWidget(
       disableSplashColor: true,
@@ -247,14 +256,15 @@ class _BetterPlayerMaterialControlsState
         alignment: Alignment.center,
         child: Container(
           decoration: BoxDecoration(
-            color: _controlsConfiguration.controlBarColor,
-            //@todo _controlsConfiguration for this
+            color: _controlsConfiguration.overlayActionButtonBgColor,
             borderRadius: BorderRadius.circular(
-                48), //@todo _controlsConfiguration for this
+              _controlsConfiguration.overlayActionButtonRadius,
+            ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(12),
-            //@todo _controlsConfiguration for this
+            padding: EdgeInsets.all(
+              _controlsConfiguration.overlayActionButtonPadding,
+            ),
             child: Stack(
               children: [
                 IconButton(
@@ -267,7 +277,7 @@ class _BetterPlayerMaterialControlsState
                       _onPlayPause();
                     }
                   },
-                  iconSize: 32, //@todo _controlsConfiguration for this
+                  iconSize: _controlsConfiguration.overlayActionButtonIconSize,
                 )
               ],
             ),

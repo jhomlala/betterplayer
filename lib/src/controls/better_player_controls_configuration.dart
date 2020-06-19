@@ -91,36 +91,69 @@ class BetterPlayerControlsConfiguration {
   ///Live text color;
   final Color liveTextColor;
 
-  const BetterPlayerControlsConfiguration(
-      {this.controlBarColor = Colors.black87,
-      this.textColor = Colors.white,
-      this.iconsColor = Colors.white,
-      this.playIcon = Icons.play_arrow,
-      this.pauseIcon = Icons.pause,
-      this.muteIcon = Icons.volume_up,
-      this.unMuteIcon = Icons.volume_mute,
-      this.fullscreenEnableIcon = Icons.fullscreen,
-      this.fullscreenDisableIcon = Icons.fullscreen_exit,
-      this.skipBackIcon = OpenIconicIcons.reload,
-      this.skipForwardIcon = OpenIconicIcons.reload,
-      this.enableFullscreen = true,
-      this.enableMute = true,
-      this.enableProgressText = false,
-      this.enableProgressBar = true,
-      this.enablePlayPause = true,
-      this.progressBarPlayedColor = Colors.white,
-      this.progressBarHandleColor = Colors.white,
-      this.progressBarBufferedColor = Colors.white70,
-      this.progressBarBackgroundColor = Colors.white60,
-      this.controlsHideTime = const Duration(milliseconds: 300),
-      this.customControls,
-      this.showControls = true,
-      this.showControlsOnInitialize = true,
-      this.controlBarHeight = 48.0,
-      this.defaultErrorText = "Video can't be played",
-      this.loadingNextVideoText = "Loading next video",
-      this.liveText = "LIVE",
-      this.liveTextColor = Colors.red});
+  ///Flag used to enable/disable play/pause button in overlay control
+  final bool enableOverlayPlayPause;
+
+  ///Icon for play in overlay control
+  final IconData overlayPlayIcon;
+
+  ///Icon for pause in overlay control
+  final IconData overlayPauseIcon;
+
+  ///Icon for replay in overlay control
+  final IconData overlayReplayIcon;
+
+  /// Background color of play, pause and replay action buttons
+  final Color overlayActionButtonBgColor;
+
+  /// Border radius of action button background color
+  final double overlayActionButtonRadius;
+
+  /// Padding of action button background color
+  final double overlayActionButtonPadding;
+
+  /// Size of action buttons
+  final double overlayActionButtonIconSize;
+
+  const BetterPlayerControlsConfiguration({
+    this.controlBarColor = Colors.black87,
+    this.textColor = Colors.white,
+    this.iconsColor = Colors.white,
+    this.playIcon = Icons.play_arrow,
+    this.pauseIcon = Icons.pause,
+    this.muteIcon = Icons.volume_up,
+    this.unMuteIcon = Icons.volume_mute,
+    this.fullscreenEnableIcon = Icons.fullscreen,
+    this.fullscreenDisableIcon = Icons.fullscreen_exit,
+    this.skipBackIcon = OpenIconicIcons.reload,
+    this.skipForwardIcon = OpenIconicIcons.reload,
+    this.enableFullscreen = true,
+    this.enableMute = true,
+    this.enableProgressText = false,
+    this.enableProgressBar = true,
+    this.enablePlayPause = true,
+    this.progressBarPlayedColor = Colors.white,
+    this.progressBarHandleColor = Colors.white,
+    this.progressBarBufferedColor = Colors.white70,
+    this.progressBarBackgroundColor = Colors.white60,
+    this.controlsHideTime = const Duration(milliseconds: 300),
+    this.customControls,
+    this.showControls = true,
+    this.showControlsOnInitialize = true,
+    this.controlBarHeight = 48.0,
+    this.defaultErrorText = "Video can't be played",
+    this.loadingNextVideoText = "Loading next video",
+    this.liveText = "LIVE",
+    this.liveTextColor = Colors.red,
+    this.enableOverlayPlayPause = true,
+    this.overlayPlayIcon = Icons.play_arrow,
+    this.overlayPauseIcon = Icons.pause,
+    this.overlayReplayIcon = Icons.replay,
+    this.overlayActionButtonBgColor = const Color.fromRGBO(0, 0, 0, 0.10),
+    this.overlayActionButtonRadius = 48,
+    this.overlayActionButtonPadding = 12,
+    this.overlayActionButtonIconSize = 32,
+  });
 
   factory BetterPlayerControlsConfiguration.white() {
     return BetterPlayerControlsConfiguration(
