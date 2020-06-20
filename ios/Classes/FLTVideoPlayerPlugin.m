@@ -500,19 +500,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)disposeSansEventChannel {
   [self clear];
   [_displayLink invalidate];
-  [[_player currentItem] removeObserver:self forKeyPath:@"status" context:statusContext];
-  [[_player currentItem] removeObserver:self
-                             forKeyPath:@"loadedTimeRanges"
-                                context:timeRangeContext];
-  [[_player currentItem] removeObserver:self
-                             forKeyPath:@"playbackLikelyToKeepUp"
-                                context:playbackLikelyToKeepUpContext];
-  [[_player currentItem] removeObserver:self
-                             forKeyPath:@"playbackBufferEmpty"
-                                context:playbackBufferEmptyContext];
-  [[_player currentItem] removeObserver:self
-                             forKeyPath:@"playbackBufferFull"
-                                context:playbackBufferFullContext];
   [_player replaceCurrentItemWithPlayerItem:nil];
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
