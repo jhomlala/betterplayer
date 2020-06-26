@@ -252,6 +252,7 @@ class _BetterPlayerMaterialControlsState
 
     return BetterPlayerMaterialClickableWidget(
       disableSplashColor: true,
+      disableHighlightColor: true,
       child: Align(
         alignment: Alignment.center,
         child: Container(

@@ -32,6 +32,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   @override
   void initState() {
     playerVisibilityStreamController.add(true);
+
     super.initState();
   }
 
@@ -58,6 +59,17 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     );
   }
 
+  Widget _buildOverlay(
+    BuildContext context,
+    BetterPlayerController betterPlayerController,
+  ) {
+    if (betterPlayerController.overlay == null) {
+      return Container();
+    }
+
+    return betterPlayerController.overlay;
+  }
+
   Container _buildPlayerWithControls(
       BetterPlayerController betterPlayerController, BuildContext context) {
     return Container(
@@ -71,7 +83,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
               child: VideoPlayer(betterPlayerController.videoPlayerController),
             ),
           ),
-          betterPlayerController.overlay ?? Container(),
           betterPlayerController.betterPlayerDataSource.subtitles != null
               ? BetterPlayerSubtitlesDrawer(
                   betterPlayerController: betterPlayerController,
@@ -82,6 +93,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
                 )
               : const SizedBox(),
           _buildControls(context, betterPlayerController),
+          _buildOverlay(context, betterPlayerController),
         ],
       ),
     );
