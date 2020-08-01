@@ -495,6 +495,7 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _onPlayerHide() {
+    _betterPlayerController.toggleControlsVisibility(!_hideStuff);
     widget.onControlsVisibilityChanged(!_hideStuff);
   }
 

@@ -210,6 +210,12 @@ class BetterPlayerController extends ChangeNotifier {
     return videoPlayerController.value.isBuffering;
   }
 
+  void toggleControlsVisibility(bool isVisible) {
+    _postEvent(isVisible
+        ? BetterPlayerEvent(BetterPlayerEventType.CONTROLS_VISIBLE)
+        : BetterPlayerEvent(BetterPlayerEventType.CONTROLS_HIDDEN));
+  }
+
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
     for (Function eventListener in _eventListeners) {
       if (eventListener != null) {
