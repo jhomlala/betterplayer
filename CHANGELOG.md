@@ -1,3 +1,7 @@
+## 0.0.12
+* Fixed duration called on null
+* Added new control events
+
 ## 0.0.11
 * Fixed iOS crash on dispose
 * Added player headers support

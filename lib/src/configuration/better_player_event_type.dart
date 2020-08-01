@@ -9,4 +9,6 @@ enum BetterPlayerEventType {
   PROGRESS,
   FINISHED,
   EXCEPTION,
+  CONTROLS_VISIBLE,
+  CONTROLS_HIDDEN,
 }
