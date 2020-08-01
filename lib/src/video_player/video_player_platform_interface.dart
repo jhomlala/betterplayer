@@ -151,6 +151,7 @@ class DataSource {
     this.asset,
     this.package,
     this.closedCaptionFile,
+    this.headers
   }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -202,6 +203,9 @@ class DataSource {
   /// [initialize()] is called.
   final Future<ClosedCaptionFile> closedCaptionFile;
 
+
+  final Map<String,String> headers;
+
   /// Key to compare DataSource
   String get key {
     uri ?? ((package ?? "") + ":" + asset) + ":" + (formatHint ?? "");
@@ -220,6 +224,13 @@ class DataSource {
     }
 
     return result;
+  }
+
+  @override
+  String toString() {
+    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint: '
+        '$formatHint, asset: $asset, package: $package, closedCaptionFile:'
+        ' $closedCaptionFile, headers: $headers}';
   }
 }
 

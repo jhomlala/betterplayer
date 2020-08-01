@@ -248,17 +248,24 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   return transform;
 }
 
-- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key {
+- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key{
   NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-  return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key];
+    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{}];
 }
 
-- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key {
-  AVPlayerItem* item = [AVPlayerItem playerItemWithURL:url];
-  return [self setDataSourcePlayerItem:item withKey:key];
+- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers{
+    AVPlayerItem* item;
+    if (headers == nil){
+        item = [AVPlayerItem playerItemWithURL:url];
+    } else{
+        AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
+                                                options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
+        item = [AVPlayerItem playerItemWithAsset:asset];
+    }
+    return [self setDataSourcePlayerItem:item withKey:key];
 }
 
-- (void)setDataSourcePlayerItem:(AVPlayerItem*)item withKey:(NSString*)key {
+- (void)setDataSourcePlayerItem:(AVPlayerItem*)item withKey:(NSString*)key{
   _key = key;
   [_player replaceCurrentItemWithPlayerItem:item];
 
@@ -598,6 +605,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
       NSString* assetArg = dataSource[@"asset"];
       NSString* uriArg = dataSource[@"uri"];
       NSString* key = dataSource[@"key"];
+      NSDictionary* headers = dataSource[@"headers"];
+      if (headers == nil){
+          headers = @{};
+      }
       if (assetArg) {
         NSString* assetPath;
         NSString* package = dataSource[@"package"];
@@ -608,7 +619,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         }
         [player setDataSourceAsset:assetPath withKey:key];
       } else if (uriArg) {
-        [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key];
+          [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withHeaders:headers];
       } else {
         result(FlutterMethodNotImplemented);
       }

@@ -51,6 +51,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'key': dataSource.key,
           'uri': dataSource.uri,
           'formatHint': dataSource.rawFormalHint,
+          'headers': dataSource.headers,
         };
         break;
       case DataSourceType.file:
