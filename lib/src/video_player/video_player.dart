@@ -266,6 +266,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String dataSource, {
     VideoFormat formatHint,
     Future<ClosedCaptionFile> closedCaptionFile,
+    Map<String, String> headers,
   }) {
     return _setDataSource(
       DataSource(
@@ -273,6 +274,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         uri: dataSource,
         formatHint: formatHint,
         closedCaptionFile: closedCaptionFile,
+        headers: headers,
       ),
     );
   }
@@ -321,6 +323,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
 
     _initializingCompleter = Completer<void>();
+    print("Add data source:" + dataSourceDescription.toString());
+
     await VideoPlayerPlatform.instance
         .setDataSource(_textureId, dataSourceDescription);
     return _initializingCompleter.future;

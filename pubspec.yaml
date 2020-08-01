@@ -17,7 +17,7 @@ dependencies:
   flutter_widgets: ^0.1.12
   pedantic: ^1.8.0
   meta: ^1.0.5
-  flutter_widget_from_html_core: ^0.3.3+2
+
 
 dev_dependencies:
   flutter_test:

@@ -20,6 +20,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Playlist support  
 ✔️ Video in ListView support  
 ✔️ Subtitles support (HTML tags support)
+✔️ Headers support
 
 
 ## Install
@@ -28,7 +29,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.10
+  better_player: ^0.0.11
 ```
 
 2. Install it
@@ -403,6 +404,7 @@ Define source for one video in your app.
         type: BetterPlayerSubtitlesSourceType.FILE,
         url: "${directory.path}/example_subtitles.srt",
       ),
+      headers: {"header":"my_custom_header"}
     );
 ```
 
@@ -419,6 +421,9 @@ Possible configuration options:
 
   ///Flag to determine if current data source is live stream
   final bool liveStream;
+
+  /// Custom headers for player
+  final Map<String, String> headers;
 ```
 
 

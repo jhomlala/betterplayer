@@ -144,14 +144,15 @@ class DataSource {
   ///
   /// The [closedCaptionFile] argument is optional field to specify a file
   /// containing the closed captioning.
-  DataSource({
-    @required this.sourceType,
-    this.uri,
-    this.formatHint,
-    this.asset,
-    this.package,
-    this.closedCaptionFile,
-  }) : assert(uri == null || asset == null);
+  DataSource(
+      {@required this.sourceType,
+      this.uri,
+      this.formatHint,
+      this.asset,
+      this.package,
+      this.closedCaptionFile,
+      this.headers})
+      : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
@@ -202,9 +203,10 @@ class DataSource {
   /// [initialize()] is called.
   final Future<ClosedCaptionFile> closedCaptionFile;
 
+  final Map<String, String> headers;
+
   /// Key to compare DataSource
   String get key {
-    uri ?? ((package ?? "") + ":" + asset) + ":" + (formatHint ?? "");
     String result = "";
 
     if (uri != null && uri.isNotEmpty) {
@@ -216,10 +218,17 @@ class DataSource {
     }
 
     if (formatHint != null) {
-      result = "$result:${rawFormalHint}";
+      result = "$result:$rawFormalHint";
     }
 
     return result;
+  }
+
+  @override
+  String toString() {
+    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint: '
+        '$formatHint, asset: $asset, package: $package, closedCaptionFile:'
+        ' $closedCaptionFile, headers: $headers}';
   }
 }
 

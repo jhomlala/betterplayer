@@ -1,3 +1,9 @@
+## 0.0.11
+* Fixed iOS crash on dispose
+* Added player headers support
+* Removed unused dependency
+* Dart Analysis refactor
+
 ## 0.0.10
 * Added BetterPlayerListVideoPlayerController to control list video player
 
