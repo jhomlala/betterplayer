@@ -128,8 +128,6 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   @override
   void dispose() {
     _nextVideoTimeStreamSubscription.cancel();
-    _controller.removeListener(_onStateChanged);
-    _controller.dispose();
     super.dispose();
   }
 
