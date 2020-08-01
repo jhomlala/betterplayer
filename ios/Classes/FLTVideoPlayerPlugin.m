@@ -254,8 +254,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers{
+
     AVPlayerItem* item;
-    if (headers == nil){
+    if (headers == [NSNull null]){
         item = [AVPlayerItem playerItemWithURL:url];
     } else{
         AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
@@ -520,7 +521,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)dispose {
-    NSLog(@"Dispose!!!");
   [self disposeSansEventChannel];
   [_eventChannel setStreamHandler:nil];
   _disposed = true;
