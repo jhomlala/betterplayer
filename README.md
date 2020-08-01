@@ -17,7 +17,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Fixed common bugs  
 ✔️ Added advanced configuration options  
 ✔️ Refactored player controls  
-✔️ Playlist support  
+✔️ Playlist support  ``
 ✔️ Video in ListView support  
 ✔️ Subtitles support (HTML tags support)  
 ✔️ Headers support  
