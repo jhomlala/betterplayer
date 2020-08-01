@@ -1,7 +1,7 @@
 ## 0.0.11
 * Fixed iOS crash on dispose
 * Added player headers support
-* Removed unused dependency
+* Updated dependencies
 * Dart Analysis refactor
 
 ## 0.0.10
