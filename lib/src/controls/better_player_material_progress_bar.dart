@@ -31,7 +31,9 @@ class _VideoProgressBarState
     extends State<BetterPlayerMaterialVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     };
   }
 
@@ -50,9 +52,9 @@ class _VideoProgressBarState
   }
 
   @override
-  void deactivate() {
+  void dispose() {
     controller.removeListener(listener);
-    super.deactivate();
+    super.dispose();
   }
 
   @override

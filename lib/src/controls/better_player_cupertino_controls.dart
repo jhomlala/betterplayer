@@ -110,6 +110,7 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _dispose() {
+    print("Dispose called!");
     _controller.removeListener(_updateState);
     _hideTimer?.cancel();
     _expandCollapseTimer?.cancel();
@@ -584,9 +585,11 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _updateState() {
-    setState(() {
-      _latestValue = _controller.value;
-    });
+    if (mounted) {
+      setState(() {
+        _latestValue = _controller.value;
+      });
+    }
   }
 
   void _onPlayerHide() {

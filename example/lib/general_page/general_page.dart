@@ -20,8 +20,7 @@ class _GeneralPageState extends State<GeneralPage> {
   Future<BetterPlayerController> _setupDefaultVideoData() async {
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
-      "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8",
-      liveStream: true,
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
       subtitles: BetterPlayerSubtitlesSource(
         type: BetterPlayerSubtitlesSourceType.NETWORK,
         url:
@@ -30,6 +29,7 @@ class _GeneralPageState extends State<GeneralPage> {
     );
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
+          autoPlay: true,
           controlsConfiguration:
               BetterPlayerControlsConfiguration(enableProgressText: true),
         ),
