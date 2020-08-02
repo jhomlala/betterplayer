@@ -323,7 +323,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
 
     _initializingCompleter = Completer<void>();
-    print("Add data source:" + dataSourceDescription.toString());
 
     await VideoPlayerPlatform.instance
         .setDataSource(_textureId, dataSourceDescription);
