@@ -1,6 +1,7 @@
 ## 0.0.12
-* Fixed duration called on null
-* Added new control events
+* Fixed duration called on null (fixed by https://github.com/ganeshrvel)
+* Added new control events (fixed by https://github.com/ganeshrvel)
+* Fixed .m3u8 live stream issues in iOS
 
 ## 0.0.11
 * Fixed iOS crash on dispose
