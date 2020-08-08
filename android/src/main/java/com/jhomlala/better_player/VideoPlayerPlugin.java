@@ -110,7 +110,7 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                         flutterState.textureRegistry.createSurfaceTexture();
                 EventChannel eventChannel =
                         new EventChannel(
-                                flutterState.binaryMessenger, "flutter.io/videoPlayer/videoEvents" + handle.id());
+                                flutterState.binaryMessenger, "better_player_channel/videoEvents" + handle.id());
 
                 VideoPlayer player =
                         new VideoPlayer(flutterState.applicationContext, eventChannel, handle, result);
@@ -227,7 +227,7 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             this.keyForAsset = keyForAsset;
             this.keyForAssetAndPackageName = keyForAssetAndPackageName;
             this.textureRegistry = textureRegistry;
-            methodChannel = new MethodChannel(messenger, "flutter.io/videoPlayer");
+            methodChannel = new MethodChannel(messenger, "better_player_channel");
         }
 
         void startListening(VideoPlayerPlugin methodCallHandler) {

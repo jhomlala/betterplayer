@@ -547,7 +547,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 @implementation FLTVideoPlayerPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel =
-      [FlutterMethodChannel methodChannelWithName:@"flutter.io/videoPlayer"
+      [FlutterMethodChannel methodChannelWithName:@"better_player_channel"
                                   binaryMessenger:[registrar messenger]];
   FLTVideoPlayerPlugin* instance = [[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
   [registrar addMethodCallDelegate:instance channel:channel];
@@ -578,7 +578,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   int64_t textureId = [_registry registerTexture:player];
   frameUpdater.textureId = textureId;
   FlutterEventChannel* eventChannel = [FlutterEventChannel
-      eventChannelWithName:[NSString stringWithFormat:@"flutter.io/videoPlayer/videoEvents%lld",
+      eventChannelWithName:[NSString stringWithFormat:@"better_player_channel/videoEvents%lld",
                                                       textureId]
            binaryMessenger:_messenger];
   [eventChannel setStreamHandler:player];
