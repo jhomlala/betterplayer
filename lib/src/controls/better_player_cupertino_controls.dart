@@ -584,9 +584,11 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _updateState() {
-    setState(() {
-      _latestValue = _controller.value;
-    });
+    if (mounted) {
+      setState(() {
+        _latestValue = _controller.value;
+      });
+    }
   }
 
   void _onPlayerHide() {

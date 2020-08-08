@@ -1,3 +1,7 @@
+## 0.0.13
+* Changed channel name of video player plugin
+* Fixed dispose issue in cupertino player
+
 ## 0.0.12
 * Fixed duration called on null (fixed by https://github.com/ganeshrvel)
 * Added new control events (fixed by https://github.com/ganeshrvel)
