@@ -1,3 +1,6 @@
+## 0.0.14
+* Better player list video player state is preserved on state changed
+
 ## 0.0.13
 * Changed channel name of video player plugin
 * Fixed dispose issue in cupertino player

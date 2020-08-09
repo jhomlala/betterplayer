@@ -55,20 +55,22 @@ class _BetterPlayerListVideoPlayerState
 
   @override
   void initState() {
+    super.initState();
     _betterPlayerController = BetterPlayerController(
       widget.configuration,
       betterPlayerDataSource: widget.dataSource,
+      betterPlayerPlaylistConfiguration: BetterPlayerPlaylistConfiguration(),
     );
+
     if (widget.betterPlayerListVideoPlayerController != null) {
       widget.betterPlayerListVideoPlayerController
           .setBetterPlayerController(_betterPlayerController);
     }
-
-    super.initState();
   }
 
   @override
   void dispose() {
+    _betterPlayerController.dispose();
     _isDisposing = true;
     super.dispose();
   }

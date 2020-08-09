@@ -48,7 +48,12 @@ class BetterPlayerState extends State<BetterPlayer> {
   @override
   void dispose() {
     widget.controller.removeListener(listener);
-    widget.controller.dispose();
+
+    ///Controller from list widget must be dismissed manually
+    if (widget.controller.betterPlayerPlaylistConfiguration == null) {
+      widget.controller.dispose();
+    }
+
     super.dispose();
   }
 

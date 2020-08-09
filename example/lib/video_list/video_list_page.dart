@@ -1,6 +1,5 @@
 import 'dart:math';
 
-
 import 'package:better_player_example/video_list/video_list_data.dart';
 import 'package:better_player_example/video_list/video_list_widget.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +18,7 @@ class _VideoListPageState extends State<VideoListPage> {
     // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
   ];
   List<VideoListData> dataList = List();
-
+var value = 0;
   @override
   void initState() {
     _setupData();
@@ -37,15 +36,25 @@ class _VideoListPageState extends State<VideoListPage> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey,
-      child: ListView.builder(
-        itemCount: dataList.length,
-        itemBuilder: (context, index) {
-          VideoListData videoListData = dataList[index];
-          return VideoListWidget(
-            videoListData: videoListData,
-          );
-        },
-      ),
+      child: Column(children: [
+        FlatButton(child: Text("Update page state"),onPressed: (){
+          setState(() {
+            value++;
+          });
+
+        },),
+        Expanded(
+          child: ListView.builder(
+            itemCount: dataList.length,
+            itemBuilder: (context, index) {
+              VideoListData videoListData = dataList[index];
+              return VideoListWidget(
+                videoListData: videoListData,
+              );
+            },
+          ),
+        )
+      ]),
     );
   }
 }
