@@ -592,6 +592,7 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _onPlayerHide() {
+    _betterPlayerController.toggleControlsVisibility(!_hideStuff);
     widget.onControlsVisibilityChanged(!_hideStuff);
   }
 
