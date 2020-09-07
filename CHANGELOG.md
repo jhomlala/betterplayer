@@ -1,5 +1,6 @@
 ## 0.0.14
 * Better player list video player state is preserved on state changed
+* Fixed manual dispose issue
 
 ## 0.0.13
 * Changed channel name of video player plugin
