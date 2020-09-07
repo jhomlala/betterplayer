@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
+import 'package:better_player_example/other_page/other_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -83,7 +84,8 @@ class _GeneralPageState extends State<GeneralPage> {
             " URL. Subtitles are loaded from file."),
       ),
       _buildDefaultVideo(),
-      _buildShowFileVideoButton()
+      _buildShowFileVideoButton(),
+      _buildOtherPageButton(),
     ]);
   }
 
@@ -112,6 +114,21 @@ class _GeneralPageState extends State<GeneralPage> {
         onPressed: () {
           _fileVideoShown = !_fileVideoShown;
           _fileVideoStreamController.add(_fileVideoShown);
+        },
+      ),
+      _buildFileVideo()
+    ]);
+  }
+
+  Widget _buildOtherPageButton() {
+    return Column(children: [
+      RaisedButton(
+        child: Text("Show video in other page"),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => OtherPage()),
+          );
         },
       ),
       _buildFileVideo()

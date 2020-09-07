@@ -72,6 +72,8 @@ class BetterPlayerController extends ChangeNotifier {
   StreamController<int> nextVideoTimeStreamController =
       StreamController.broadcast();
 
+  bool _disposed = false;
+
   BetterPlayerController(this.betterPlayerConfiguration,
       {this.betterPlayerPlaylistConfiguration, this.betterPlayerDataSource})
       : assert(betterPlayerConfiguration != null,
@@ -295,12 +297,15 @@ class BetterPlayerController extends ChangeNotifier {
 
   @override
   void dispose() {
-    _eventListeners.clear();
-    videoPlayerController?.removeListener(_fullScreenListener);
-    videoPlayerController?.removeListener(_onVideoPlayerChanged);
-    videoPlayerController?.dispose();
-    _nextVideoTimer?.cancel();
-    nextVideoTimeStreamController.close();
-    super.dispose();
+    if (!_disposed) {
+      _eventListeners.clear();
+      videoPlayerController?.removeListener(_fullScreenListener);
+      videoPlayerController?.removeListener(_onVideoPlayerChanged);
+      videoPlayerController?.dispose();
+      _nextVideoTimer?.cancel();
+      nextVideoTimeStreamController.close();
+      _disposed = true;
+      super.dispose();
+    }
   }
 }
