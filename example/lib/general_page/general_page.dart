@@ -68,10 +68,10 @@ class _GeneralPageState extends State<GeneralPage> {
   }
 
   Future _saveAssetVideoToFile() async {
-    String content = await rootBundle.loadString("assets/testvideo.mp4");
+    var content = await rootBundle.load("assets/testvideo.mp4");
     final directory = await getApplicationDocumentsDirectory();
-    var file = File("${directory.path}/textvideo.mp4");
-    file.writeAsString(content);
+    var file = File("${directory.path}/testvideo.mp4");
+    file.writeAsBytesSync(content.buffer.asUint8List());
   }
 
   @override
