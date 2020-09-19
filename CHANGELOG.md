@@ -1,3 +1,6 @@
+## 0.0.15
+* Fixed playlists video changing issue (fixed by https://github.com/sokolovstas)
+
 ## 0.0.14
 * Better player list video player state is preserved on state changed
 * Fixed manual dispose issue
