@@ -275,6 +275,7 @@ class BetterPlayerController extends ChangeNotifier {
           Timer.periodic(Duration(milliseconds: 1000), (_timer) async {
         if (_nextVideoTime == 1) {
           _timer.cancel();
+          _nextVideoTimer = null;
         }
         _nextVideoTime -= 1;
         nextVideoTimeStreamController.add(_nextVideoTime);
