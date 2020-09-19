@@ -16,8 +16,13 @@ class BetterPlayerListVideoPlayerController {
     _betterPlayerController?.play();
   }
 
+  void seekTo(Duration duration){
+    _betterPlayerController?.seekTo(duration);
+  }
+
   void setBetterPlayerController(
       BetterPlayerController betterPlayerController) {
     _betterPlayerController = betterPlayerController;
   }
+
 }
