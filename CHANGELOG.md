@@ -1,3 +1,6 @@
+## 0.0.15
+* Added fit configuration option (based on https://github.com/shiyiya solution).
+
 ## 0.0.14
 * Better player list video player state is preserved on state changed
 * Fixed manual dispose issue

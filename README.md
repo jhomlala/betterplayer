@@ -20,7 +20,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Playlist support  
 ✔️ Video in ListView support  
 ✔️ Subtitles support (HTML tags support)  
-✔️ Headers support  
+✔️ Headers support
 
 
 ## Install
@@ -29,7 +29,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.14
+  better_player: ^0.0.15
 ```
 
 2. Install it
@@ -229,6 +229,10 @@ Possible configuration options:
 
     ///Defines controls configuration
     final BetterPlayerControlsConfiguration controlsConfiguration;
+
+    ///Defines fit of the video, allows to fix video stretching, see possible
+    ///values here: https://api.flutter.dev/flutter/painting/BoxFit-class.html
+    final BoxFit fit;
 ```
 
 ### BetterPlayerSubtitlesConfiguration

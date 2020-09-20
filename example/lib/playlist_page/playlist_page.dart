@@ -63,6 +63,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
               child: BetterPlayerPlaylist(
                 betterPlayerConfiguration: BetterPlayerConfiguration(
                     autoPlay: false,
+                    aspectRatio: 1,
+                    fit: BoxFit.cover,
                     subtitlesConfiguration:
                         BetterPlayerSubtitlesConfiguration(fontSize: 10),
                     controlsConfiguration:
@@ -76,7 +78,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         nextVideoDelay: Duration(seconds: 30)),
                 betterPlayerDataSourceList: snapshot.data,
               ),
-              aspectRatio: 16 / 9,
+              aspectRatio: 1,
             )
           ]);
         }
