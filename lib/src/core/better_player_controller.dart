@@ -16,6 +16,7 @@ class BetterPlayerController extends ChangeNotifier {
   static const _durationParameter = "duration";
   static const _progressParameter = "progress";
   static const _volumeParameter = "volume";
+  static const _speedParameter = "speed";
 
   final BetterPlayerConfiguration betterPlayerConfiguration;
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
@@ -203,6 +204,13 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.SET_VOLUME,
         parameters: {_volumeParameter: volume}));
   }
+
+  Future<void> setSpeed(double speed) async {
+    await videoPlayerController.setSpeed(speed);
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.SET_VOLUME,
+        parameters: {_speedParameter: speed}));
+  }
+
 
   Future<bool> isPlaying() async {
     return videoPlayerController.value.isPlaying;

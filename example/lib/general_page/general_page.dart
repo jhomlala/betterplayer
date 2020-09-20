@@ -113,8 +113,9 @@ class _GeneralPageState extends State<GeneralPage> {
       RaisedButton(
         child: Text("Show video from file"),
         onPressed: () {
-          _fileVideoShown = !_fileVideoShown;
-          _fileVideoStreamController.add(_fileVideoShown);
+          _betterPlayerController.setSpeed(2.0);
+          //_fileVideoShown = !_fileVideoShown;
+         // _fileVideoStreamController.add(_fileVideoShown);
         },
       ),
       _buildFileVideo()
