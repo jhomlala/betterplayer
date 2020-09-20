@@ -4,6 +4,7 @@ import 'package:better_player/src/controls/better_player_controls_configuration.
 import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -52,7 +53,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         color: Colors.black,
         child: AspectRatio(
           aspectRatio: betterPlayerController.aspectRatio ??
-              _calculateAspectRatio(context),
+              BetterPlayerUtils.calculateAspectRatio(context),
           child: _buildPlayerWithControls(betterPlayerController, context),
         ),
       ),
@@ -102,14 +103,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
                     controlsConfiguration: controlsConfiguration,
                   )
         : const SizedBox();
-  }
-
-  double _calculateAspectRatio(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
-
-    return width > height ? width / height : height / width;
   }
 
   void onControlsVisibilityChanged(bool state) {

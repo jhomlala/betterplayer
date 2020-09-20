@@ -46,12 +46,16 @@ class _VideoListWidgetState extends State<VideoListWidget> {
               child: BetterPlayerListVideoPlayer(
                 BetterPlayerDataSource(
                     BetterPlayerDataSourceType.NETWORK, videoListData.videoUrl),
-                configuration: BetterPlayerConfiguration(autoPlay: false),
+                configuration: BetterPlayerConfiguration(
+                  autoPlay: false,
+                  aspectRatio: 1,
+                  fit: BoxFit.cover,
+                ),
                 //key: Key(videoListData.hashCode.toString()),
                 playFraction: 0.8,
                 betterPlayerListVideoPlayerController: controller,
               ),
-              aspectRatio: 16 / 9),
+              aspectRatio: 1),
           Padding(
             padding: EdgeInsets.all(8),
             child: Text(
