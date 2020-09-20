@@ -31,8 +31,7 @@ class _GeneralPageState extends State<GeneralPage> {
     );
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
-          aspectRatio: 1.0,
-          fit: BoxFit.cover,
+
           controlsConfiguration:
               BetterPlayerControlsConfiguration(enableProgressText: true),
         ),
@@ -99,7 +98,7 @@ class _GeneralPageState extends State<GeneralPage> {
           return Center(child: CircularProgressIndicator());
         } else {
           return AspectRatio(
-            aspectRatio: 1.0,
+            aspectRatio: 16/9,
             child: BetterPlayer(
               controller: snapshot.data,
             ),

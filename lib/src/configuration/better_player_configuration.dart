@@ -60,7 +60,8 @@ class BetterPlayerConfiguration {
   ///Defines controls configuration
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  ///Defines fit of the video, allows to fix video stretching
+  ///Defines fit of the video, allows to fix video stretching, see possible
+  ///values here: https://api.flutter.dev/flutter/painting/BoxFit-class.html
   final BoxFit fit;
 
   const BetterPlayerConfiguration({
