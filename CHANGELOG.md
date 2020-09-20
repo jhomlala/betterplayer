@@ -1,3 +1,6 @@
+## 0.0.16
+* Added playback speed feature (based on https://github.com/shiyiya solution)
+
 ## 0.0.15
 * Added fit configuration option (based on https://github.com/shiyiya solution).
 
