@@ -20,9 +20,9 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Playlist support  
 ✔️ Video in ListView support  
 ✔️ Subtitles support (HTML tags support)  
-✔️ HTTP Headers support. 
-✔️ BoxFit of video support. 
-✔️ Playback speed speed. 
+✔️ HTTP Headers support  
+✔️ BoxFit of video support  
+✔️ Playback speed speed  
 
 ## Install
 
