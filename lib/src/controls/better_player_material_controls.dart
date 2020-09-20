@@ -61,10 +61,11 @@ class _BetterPlayerMaterialControlsState
           absorbing: _hideStuff,
           child: Column(
             children: [
+              _buildTopBar(),
               _isLoading()
                   ? Expanded(child: Center(child: _buildLoadingWidget()))
                   : _buildHitArea(),
-              _buildBottomBar(context),
+              _buildBottomBar(),
             ],
           ),
         ),
@@ -135,7 +136,108 @@ class _BetterPlayerMaterialControlsState
     }
   }
 
-  AnimatedOpacity _buildBottomBar(BuildContext context) {
+  AnimatedOpacity _buildTopBar() {
+    return AnimatedOpacity(
+      opacity: _hideStuff ? 0.0 : 1.0,
+      duration: _controlsConfiguration.controlsHideTime,
+      onEnd: _onPlayerHide,
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _buildMoreButton(context),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMoreButton(BuildContext context) {
+    return BetterPlayerMaterialClickableWidget(
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(Icons.more_vert, color: Colors.white),
+      ),
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (context) {
+            return _buildMoreOptionsList();
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildMoreOptionsList() {
+    return SingleChildScrollView(
+      child: Container(
+        child: Column(
+          children: [
+            _buildMoreOptionsListRow(Icons.shutter_speed, "Playback speed", () {
+              Navigator.of(context).pop();
+              _showSpeedChooserWidget();
+            })
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMoreOptionsListRow(IconData icon, String name, Function onTap) {
+    return BetterPlayerMaterialClickableWidget(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        child: Row(
+          children: [
+            Icon(icon),
+            const SizedBox(width: 16),
+            Text(name),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showSpeedChooserWidget() {
+    showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildSpeedRow(0.25),
+                _buildSpeedRow(0.5),
+                _buildSpeedRow(0.75),
+                _buildSpeedRow(1.0),
+                _buildSpeedRow(1.25),
+                _buildSpeedRow(1.5),
+                _buildSpeedRow(1.75),
+                _buildSpeedRow(2.0),
+              ],
+            ),
+          );
+        });
+  }
+
+  Widget _buildSpeedRow(double value) {
+    assert(value != null, "Value can't be null");
+    return BetterPlayerMaterialClickableWidget(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Row(
+          children: [Text("$value x")],
+        ),
+      ),
+      onTap: () {
+        Navigator.of(context).pop();
+        _betterPlayerController.setSpeed(value);
+      },
+    );
+  }
+
+  AnimatedOpacity _buildBottomBar() {
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
