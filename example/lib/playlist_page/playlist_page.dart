@@ -76,7 +76,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                         nextVideoDelay: Duration(seconds: 30)),
                 betterPlayerDataSourceList: snapshot.data,
               ),
-              aspectRatio: 16 / 9,
+              aspectRatio: 1,
             )
           ]);
         }

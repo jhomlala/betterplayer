@@ -21,8 +21,8 @@ class _GeneralPageState extends State<GeneralPage> {
   Future<BetterPlayerController> _setupDefaultVideoData() async {
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
-      "https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8",
-      liveStream: true,
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      liveStream: false,
       subtitles: BetterPlayerSubtitlesSource(
         type: BetterPlayerSubtitlesSourceType.NETWORK,
         url:
@@ -31,6 +31,8 @@ class _GeneralPageState extends State<GeneralPage> {
     );
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
+          aspectRatio: 1.0,
+          fit: BoxFit.cover,
           controlsConfiguration:
               BetterPlayerControlsConfiguration(enableProgressText: true),
         ),
@@ -97,7 +99,7 @@ class _GeneralPageState extends State<GeneralPage> {
           return Center(child: CircularProgressIndicator());
         } else {
           return AspectRatio(
-            aspectRatio: 16 / 9,
+            aspectRatio: 1.0,
             child: BetterPlayer(
               controller: snapshot.data,
             ),
