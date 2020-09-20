@@ -36,6 +36,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildMoreOptionsListRow(IconData icon, String name, Function onTap) {
+    assert(icon != null, "Icon can't be null");
+    assert(name != null, "Name can't be null");
+    assert(onTap != null, "OnTap can't be null");
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,
       child: Padding(
