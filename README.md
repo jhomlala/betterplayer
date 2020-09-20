@@ -377,7 +377,7 @@ Possible configuration options:
 
   ///Live text color;
   final Color liveTextColor;
-  
+
   ///Flag used to show/hide playback speed
   final bool enablePlaybackSpeed;
 ```
@@ -467,6 +467,7 @@ You can listen to video player events like:
   PROGRESS,
   FINISHED,
   EXCEPTION,
+  SET_SPEED
 ```
 
 After creating BetterPlayerController you can add event listener this way:
