@@ -91,36 +91,41 @@ class BetterPlayerControlsConfiguration {
   ///Live text color;
   final Color liveTextColor;
 
-  const BetterPlayerControlsConfiguration(
-      {this.controlBarColor = Colors.black87,
-      this.textColor = Colors.white,
-      this.iconsColor = Colors.white,
-      this.playIcon = Icons.play_arrow,
-      this.pauseIcon = Icons.pause,
-      this.muteIcon = Icons.volume_up,
-      this.unMuteIcon = Icons.volume_mute,
-      this.fullscreenEnableIcon = Icons.fullscreen,
-      this.fullscreenDisableIcon = Icons.fullscreen_exit,
-      this.skipBackIcon = OpenIconicIcons.reload,
-      this.skipForwardIcon = OpenIconicIcons.reload,
-      this.enableFullscreen = true,
-      this.enableMute = true,
-      this.enableProgressText = false,
-      this.enableProgressBar = true,
-      this.enablePlayPause = true,
-      this.progressBarPlayedColor = Colors.white,
-      this.progressBarHandleColor = Colors.white,
-      this.progressBarBufferedColor = Colors.white70,
-      this.progressBarBackgroundColor = Colors.white60,
-      this.controlsHideTime = const Duration(milliseconds: 300),
-      this.customControls,
-      this.showControls = true,
-      this.showControlsOnInitialize = true,
-      this.controlBarHeight = 48.0,
-      this.defaultErrorText = "Video can't be played",
-      this.loadingNextVideoText = "Loading next video",
-      this.liveText = "LIVE",
-      this.liveTextColor = Colors.red});
+  ///Flag used to show/hide playback speed
+  final bool enablePlaybackSpeed;
+
+  const BetterPlayerControlsConfiguration({
+    this.controlBarColor = Colors.black87,
+    this.textColor = Colors.white,
+    this.iconsColor = Colors.white,
+    this.playIcon = Icons.play_arrow,
+    this.pauseIcon = Icons.pause,
+    this.muteIcon = Icons.volume_up,
+    this.unMuteIcon = Icons.volume_mute,
+    this.fullscreenEnableIcon = Icons.fullscreen,
+    this.fullscreenDisableIcon = Icons.fullscreen_exit,
+    this.skipBackIcon = OpenIconicIcons.reload,
+    this.skipForwardIcon = OpenIconicIcons.reload,
+    this.enableFullscreen = true,
+    this.enableMute = true,
+    this.enableProgressText = false,
+    this.enableProgressBar = true,
+    this.enablePlayPause = true,
+    this.progressBarPlayedColor = Colors.white,
+    this.progressBarHandleColor = Colors.white,
+    this.progressBarBufferedColor = Colors.white70,
+    this.progressBarBackgroundColor = Colors.white60,
+    this.controlsHideTime = const Duration(milliseconds: 300),
+    this.customControls,
+    this.showControls = true,
+    this.showControlsOnInitialize = true,
+    this.controlBarHeight = 48.0,
+    this.defaultErrorText = "Video can't be played",
+    this.loadingNextVideoText = "Loading next video",
+    this.liveText = "LIVE",
+    this.liveTextColor = Colors.red,
+    this.enablePlaybackSpeed = true,
+  });
 
   factory BetterPlayerControlsConfiguration.white() {
     return BetterPlayerControlsConfiguration(

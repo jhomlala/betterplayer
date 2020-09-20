@@ -61,7 +61,9 @@ class _BetterPlayerMaterialControlsState
           absorbing: _hideStuff,
           child: Column(
             children: [
-              _buildTopBar(),
+              _controlsConfiguration.enablePlaybackSpeed
+                  ? _buildTopBar()
+                  : const SizedBox(),
               _isLoading()
                   ? Expanded(child: Center(child: _buildLoadingWidget()))
                   : _buildHitArea(),
@@ -227,7 +229,18 @@ class _BetterPlayerMaterialControlsState
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
-          children: [Text("$value x")],
+          children: [
+            const SizedBox(width: 16),
+            Text(
+              "$value x",
+              style: TextStyle(
+                  fontWeight: _betterPlayerController
+                              .videoPlayerController.value.speed ==
+                          value
+                      ? FontWeight.bold
+                      : FontWeight.normal),
+            )
+          ],
         ),
       ),
       onTap: () {
