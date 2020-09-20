@@ -22,7 +22,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Subtitles support (HTML tags support)  
 ✔️ HTTP Headers support  
 ✔️ BoxFit of video support  
-✔️ Playback speed speed  
+✔️ Playback speed support  
 
 ## Install
 
