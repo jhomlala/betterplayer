@@ -11,4 +11,5 @@ enum BetterPlayerEventType {
   EXCEPTION,
   CONTROLS_VISIBLE,
   CONTROLS_HIDDEN,
+  SET_SPEED,
 }

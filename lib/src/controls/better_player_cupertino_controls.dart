@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
@@ -30,7 +31,7 @@ class BetterPlayerCupertinoControls extends StatefulWidget {
 }
 
 class _BetterPlayerCupertinoControlsState
-    extends State<BetterPlayerCupertinoControls> {
+    extends BetterPlayerControlsState<BetterPlayerCupertinoControls> {
   VideoPlayerValue _latestValue;
   double _latestVolume;
   bool _hideStuff = true;
@@ -272,6 +273,46 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
+
+  GestureDetector _buildMoreButton(
+      VideoPlayerController controller,
+      Color backgroundColor,
+      Color iconColor,
+      double barHeight,
+      double buttonPadding,
+      ) {
+    return GestureDetector(
+      onTap: () {
+       onShowMoreClicked();
+      },
+      child: AnimatedOpacity(
+        opacity: _hideStuff ? 0.0 : 1.0,
+        duration: _controlsConfiguration.controlsHideTime,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: BackdropFilter(
+            filter: ui.ImageFilter.blur(sigmaX: 10.0),
+            child: Container(
+              color: backgroundColor,
+              child: Container(
+                height: barHeight,
+                padding: EdgeInsets.symmetric(
+                  horizontal: buttonPadding,
+                ),
+                child: Icon(
+                 Icons.more_vert,
+                  color: iconColor,
+                  size: 16.0,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
   GestureDetector _buildMuteButton(
     VideoPlayerController controller,
     Color backgroundColor,
@@ -430,12 +471,16 @@ class _BetterPlayerCupertinoControlsState
           _controlsConfiguration.enableFullscreen
               ? _buildExpandButton(
                   backgroundColor, iconColor, barHeight, buttonPadding)
-              : Container(),
+              : const SizedBox(),
           Expanded(child: Container()),
           _controlsConfiguration.enableMute
               ? _buildMuteButton(_controller, backgroundColor, iconColor,
                   barHeight, buttonPadding)
-              : Container(),
+              : const SizedBox(),
+          _controlsConfiguration.enablePlaybackSpeed
+              ? _buildMoreButton(_controller, backgroundColor, iconColor,
+              barHeight, buttonPadding,)
+              : const SizedBox(),
         ],
       ),
     );
@@ -636,4 +681,7 @@ class _BetterPlayerCupertinoControlsState
           AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
     );
   }
+
+  @override
+  BetterPlayerController getBetterPlayerController() => _betterPlayerController;
 }

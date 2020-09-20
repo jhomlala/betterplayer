@@ -31,10 +31,10 @@ class _GeneralPageState extends State<GeneralPage> {
     );
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
-
-          controlsConfiguration:
-              BetterPlayerControlsConfiguration(enableProgressText: true),
-        ),
+            controlsConfiguration: BetterPlayerControlsConfiguration(
+          enableProgressText: true,
+          enablePlaybackSpeed: true,
+        )),
         betterPlayerDataSource: dataSource);
     _betterPlayerController.addEventsListener((event) {
       print("Better player event: ${event.betterPlayerEventType}");
@@ -95,10 +95,12 @@ class _GeneralPageState extends State<GeneralPage> {
       future: _setupDefaultVideoData(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         } else {
           return AspectRatio(
-            aspectRatio: 16/9,
+            aspectRatio: 16 / 9,
             child: BetterPlayer(
               controller: snapshot.data,
             ),

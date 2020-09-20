@@ -189,6 +189,10 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                 result.success(player.getPosition());
                 player.sendBufferingUpdate();
                 break;
+            case "setSpeed":
+                player.setSpeed((Double) call.argument("speed"));
+                result.success(null);
+                break;
             case "dispose":
                 player.dispose();
                 videoPlayers.remove(textureId);

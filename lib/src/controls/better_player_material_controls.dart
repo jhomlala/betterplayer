@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
@@ -31,7 +32,7 @@ class BetterPlayerMaterialControls extends StatefulWidget {
 }
 
 class _BetterPlayerMaterialControlsState
-    extends State<BetterPlayerMaterialControls> {
+    extends BetterPlayerControlsState<BetterPlayerMaterialControls> {
   VideoPlayerValue _latestValue;
   double _latestVolume;
   bool _hideStuff = true;
@@ -61,10 +62,13 @@ class _BetterPlayerMaterialControlsState
           absorbing: _hideStuff,
           child: Column(
             children: [
+              _controlsConfiguration.enablePlaybackSpeed
+                  ? _buildTopBar()
+                  : const SizedBox(),
               _isLoading()
                   ? Expanded(child: Center(child: _buildLoadingWidget()))
                   : _buildHitArea(),
-              _buildBottomBar(context),
+              _buildBottomBar(),
             ],
           ),
         ),
@@ -135,7 +139,39 @@ class _BetterPlayerMaterialControlsState
     }
   }
 
-  AnimatedOpacity _buildBottomBar(BuildContext context) {
+  AnimatedOpacity _buildTopBar() {
+    return AnimatedOpacity(
+      opacity: _hideStuff ? 0.0 : 1.0,
+      duration: _controlsConfiguration.controlsHideTime,
+      onEnd: _onPlayerHide,
+      child: Container(
+        height: _controlsConfiguration.controlBarHeight,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            _buildMoreButton(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMoreButton() {
+    return BetterPlayerMaterialClickableWidget(
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          Icons.more_vert,
+          color: Colors.white,
+        ),
+      ),
+      onTap: () {
+        onShowMoreClicked();
+      },
+    );
+  }
+
+  AnimatedOpacity _buildBottomBar() {
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
@@ -505,4 +541,7 @@ class _BetterPlayerMaterialControlsState
           AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
     );
   }
+
+  @override
+  BetterPlayerController getBetterPlayerController() => _betterPlayerController;
 }

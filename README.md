@@ -20,8 +20,9 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Playlist support  
 ✔️ Video in ListView support  
 ✔️ Subtitles support (HTML tags support)  
-✔️ Headers support
-
+✔️ HTTP Headers support
+✔️ BoxFit of video support
+✔️ Playback speed speed
 
 ## Install
 
@@ -29,7 +30,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.15
+  better_player: ^0.0.16
 ```
 
 2. Install it
@@ -377,6 +378,8 @@ Possible configuration options:
   ///Live text color;
   final Color liveTextColor;
 
+  ///Flag used to show/hide playback speed
+  final bool enablePlaybackSpeed;
 ```
 
 ### BetterPlayerPlaylistConfiguration
@@ -464,6 +467,7 @@ You can listen to video player events like:
   PROGRESS,
   FINISHED,
   EXCEPTION,
+  SET_SPEED
 ```
 
 After creating BetterPlayerController you can add event listener this way:
