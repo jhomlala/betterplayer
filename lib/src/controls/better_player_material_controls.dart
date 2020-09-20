@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
@@ -31,7 +32,7 @@ class BetterPlayerMaterialControls extends StatefulWidget {
 }
 
 class _BetterPlayerMaterialControlsState
-    extends State<BetterPlayerMaterialControls> {
+    extends BetterPlayerControlsState<BetterPlayerMaterialControls> {
   VideoPlayerValue _latestValue;
   double _latestVolume;
   bool _hideStuff = true;
@@ -144,108 +145,28 @@ class _BetterPlayerMaterialControlsState
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
       child: Container(
+        height: _controlsConfiguration.controlBarHeight,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            _buildMoreButton(context),
+            _buildMoreButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildMoreButton(BuildContext context) {
+  Widget _buildMoreButton() {
     return BetterPlayerMaterialClickableWidget(
       child: Padding(
         padding: const EdgeInsets.all(8),
-        child: Icon(Icons.more_vert, color: Colors.white),
-      ),
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return _buildMoreOptionsList();
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildMoreOptionsList() {
-    return SingleChildScrollView(
-      child: Container(
-        child: Column(
-          children: [
-            _buildMoreOptionsListRow(Icons.shutter_speed, "Playback speed", () {
-              Navigator.of(context).pop();
-              _showSpeedChooserWidget();
-            })
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMoreOptionsListRow(IconData icon, String name, Function onTap) {
-    return BetterPlayerMaterialClickableWidget(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-        child: Row(
-          children: [
-            Icon(icon),
-            const SizedBox(width: 16),
-            Text(name),
-          ],
-        ),
-      ),
-    );
-  }
-
-  void _showSpeedChooserWidget() {
-    showModalBottomSheet(
-        context: context,
-        builder: (context) {
-          return SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildSpeedRow(0.25),
-                _buildSpeedRow(0.5),
-                _buildSpeedRow(0.75),
-                _buildSpeedRow(1.0),
-                _buildSpeedRow(1.25),
-                _buildSpeedRow(1.5),
-                _buildSpeedRow(1.75),
-                _buildSpeedRow(2.0),
-              ],
-            ),
-          );
-        });
-  }
-
-  Widget _buildSpeedRow(double value) {
-    assert(value != null, "Value can't be null");
-    return BetterPlayerMaterialClickableWidget(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Row(
-          children: [
-            const SizedBox(width: 16),
-            Text(
-              "$value x",
-              style: TextStyle(
-                  fontWeight: _betterPlayerController
-                              .videoPlayerController.value.speed ==
-                          value
-                      ? FontWeight.bold
-                      : FontWeight.normal),
-            )
-          ],
+        child: Icon(
+          Icons.more_vert,
+          color: Colors.white,
         ),
       ),
       onTap: () {
-        Navigator.of(context).pop();
-        _betterPlayerController.setSpeed(value);
+        onShowMoreClicked();
       },
     );
   }
@@ -620,4 +541,7 @@ class _BetterPlayerMaterialControlsState
           AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
     );
   }
+
+  @override
+  BetterPlayerController getBetterPlayerController() => _betterPlayerController;
 }
