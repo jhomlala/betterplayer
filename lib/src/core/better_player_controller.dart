@@ -69,8 +69,12 @@ class BetterPlayerController extends ChangeNotifier {
 
   List<BetterPlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
       _betterPlayerSubtitlesSourceList;
+  BetterPlayerSubtitlesSource _betterPlayerSubtitlesSource;
 
-  List<BetterPlayerSubtitle> subtitles = List();
+  BetterPlayerSubtitlesSource get betterPlayerSubtitlesSource =>
+      _betterPlayerSubtitlesSource;
+
+  List<BetterPlayerSubtitle> subtitlesLines = List();
 
   Timer _nextVideoTimer;
 
@@ -123,12 +127,13 @@ class BetterPlayerController extends ChangeNotifier {
 
   void setupSubtitleSource(BetterPlayerSubtitlesSource subtitlesSource) async {
     assert(subtitlesSource != null, "SubtitlesSource can't be null");
-    print("URL: " + subtitlesSource.url);
+    _betterPlayerSubtitlesSource = subtitlesSource;
     var subtitlesParsed =
         await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
-    subtitles.clear();
-    subtitles.addAll(subtitlesParsed);
-    print("Setup subtitles with parsed count: " + subtitlesParsed.toString());
+    subtitlesLines.clear();
+    subtitlesLines.addAll(subtitlesParsed);
+    notifyListeners();
+    print("Subtitles lines: " + subtitlesLines.length.toString());
   }
 
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {

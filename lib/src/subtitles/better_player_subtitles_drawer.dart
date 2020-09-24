@@ -13,13 +13,13 @@ class BetterPlayerSubtitlesDrawer extends StatefulWidget {
   final BetterPlayerSubtitlesConfiguration betterPlayerSubtitlesConfiguration;
   final Stream<bool> playerVisibilityStream;
 
-  const BetterPlayerSubtitlesDrawer(
-      {Key key,
-      this.subtitles,
-      this.betterPlayerController,
-      this.betterPlayerSubtitlesConfiguration,
-      this.playerVisibilityStream})
-      : assert(subtitles != null),
+  const BetterPlayerSubtitlesDrawer({
+    Key key,
+    this.subtitles,
+    this.betterPlayerController,
+    this.betterPlayerSubtitlesConfiguration,
+    this.playerVisibilityStream,
+  })  : assert(subtitles != null),
         assert(betterPlayerController != null),
         assert(playerVisibilityStream != null),
         super(key: key);
@@ -97,6 +97,7 @@ class _BetterPlayerSubtitlesDrawerState
 
   @override
   Widget build(BuildContext context) {
+    print("BUILD DRAWER!!");
     List<String> subtitles = _getSubtitlesAtCurrentPosition();
     List<Widget> textWidgets =
         subtitles.map((text) => _buildSubtitleTextWidget(text)).toList();
@@ -123,6 +124,7 @@ class _BetterPlayerSubtitlesDrawerState
     }
     Duration position = _latestValue.position;
     for (BetterPlayerSubtitle subtitle in widget.subtitles) {
+      print("SUBTITLE: " + subtitle.texts.toString() + " time: " + subtitle.start.toString() + " end: " + subtitle.end.toString());
       if (subtitle.start <= position && subtitle.end >= position) {
         return subtitle.texts;
       }

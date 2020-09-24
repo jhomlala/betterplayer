@@ -33,13 +33,19 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   @override
   void initState() {
     playerVisibilityStreamController.add(true);
+    widget.controller.addListener(_onControllerChanged);
     super.initState();
   }
 
   @override
   void dispose() {
     playerVisibilityStreamController.close();
+    widget.controller.removeListener(_onControllerChanged);
     super.dispose();
+  }
+
+  void _onControllerChanged() {
+    setState(() {});
   }
 
   @override
@@ -72,11 +78,11 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             betterPlayerController.betterPlayerConfiguration.fit,
           ),
           betterPlayerController.overlay ?? Container(),
-          betterPlayerController.betterPlayerDataSource.subtitles != null
+          betterPlayerController.betterPlayerSubtitlesSource != null
               ? BetterPlayerSubtitlesDrawer(
                   betterPlayerController: betterPlayerController,
                   betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
-                  subtitles: betterPlayerController.subtitles,
+                  subtitles: betterPlayerController.subtitlesLines,
                   playerVisibilityStream:
                       playerVisibilityStreamController.stream,
                 )

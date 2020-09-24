@@ -166,7 +166,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         child: Row(
           children: [
             const SizedBox(width: 16),
-            Text(subtitlesSource.name),
+            Text(
+              subtitlesSource.name ?? "Default subtitles",
+              style: TextStyle(
+                fontWeight: subtitlesSource ==
+                        getBetterPlayerController().betterPlayerSubtitlesSource
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+              ),
+            ),
           ],
         ),
       ),
