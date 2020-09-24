@@ -128,12 +128,13 @@ class BetterPlayerController extends ChangeNotifier {
   void setupSubtitleSource(BetterPlayerSubtitlesSource subtitlesSource) async {
     assert(subtitlesSource != null, "SubtitlesSource can't be null");
     _betterPlayerSubtitlesSource = subtitlesSource;
-    var subtitlesParsed =
-        await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
     subtitlesLines.clear();
-    subtitlesLines.addAll(subtitlesParsed);
+    if (subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE) {
+      var subtitlesParsed =
+      await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
+      subtitlesLines.addAll(subtitlesParsed);
+    }
     notifyListeners();
-    print("Subtitles lines: " + subtitlesLines.length.toString());
   }
 
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {

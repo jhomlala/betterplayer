@@ -33,10 +33,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               Navigator.of(context).pop();
               _showSpeedChooserWidget();
             }),
-            _buildMoreOptionsListRow(Icons.text_fields, "Subtitles", () {
-              Navigator.of(context).pop();
-              _showSubtitlesSelectionWidget();
-            })
+            if (getBetterPlayerController()
+                .betterPlayerSubtitlesSourceList
+                .isNotEmpty)
+              _buildMoreOptionsListRow(Icons.text_fields, "Subtitles", () {
+                Navigator.of(context).pop();
+                _showSubtitlesSelectionWidget();
+              })
           ],
         ),
       ),
@@ -167,7 +170,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           children: [
             const SizedBox(width: 16),
             Text(
-              subtitlesSource.name ?? "Default subtitles",
+              subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE
+                  ? "None"
+                  : subtitlesSource.name ?? "Default subtitles",
               style: TextStyle(
                 fontWeight: subtitlesSource ==
                         getBetterPlayerController().betterPlayerSubtitlesSource
