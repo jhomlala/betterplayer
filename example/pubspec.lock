@@ -14,7 +14,7 @@ packages:
       path: ".."
       relative: true
     source: path
-    version: "0.0.16"
+    version: "0.0.18"
   boolean_selector:
     dependency: transitive
     description:
@@ -90,6 +90,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_hls_parser:
+    dependency: transitive
+    description:
+      name: flutter_hls_parser
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter

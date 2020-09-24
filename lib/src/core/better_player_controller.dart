@@ -6,6 +6,7 @@ import 'package:better_player/src/configuration/better_player_configuration.dart
 import 'package:better_player/src/configuration/better_player_event.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
+import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -107,6 +108,13 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
+    if (betterPlayerDataSource.url.endsWith("m3u8")){
+      print("Processing m3u8 (HLS)...");
+      var subtitles = await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
+      
+    }
+
+
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
         videoPlayerController.setNetworkDataSource(
