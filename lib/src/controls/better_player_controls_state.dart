@@ -32,6 +32,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             _buildMoreOptionsListRow(Icons.shutter_speed, "Playback speed", () {
               Navigator.of(context).pop();
               _showSpeedChooserWidget();
+            }),
+            _buildMoreOptionsListRow(Icons.text_fields, "Subtitles", () {
+              Navigator.of(context).pop();
+              _showSubtitlesSelectionWidget();
             })
           ],
         ),
@@ -132,5 +136,44 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       }
     }
     return false;
+  }
+
+  void _showSubtitlesSelectionWidget() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          top: false,
+          bottom: true,
+          child: SingleChildScrollView(
+            child: Column(
+              children: getBetterPlayerController()
+                  .betterPlayerSubtitlesSourceList
+                  .map((source) => _buildSubtitlesSourceRow(source))
+                  .toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSubtitlesSourceRow(BetterPlayerSubtitlesSource subtitlesSource) {
+    assert(subtitlesSource != null, "SubtitleSource can't be null");
+    return BetterPlayerMaterialClickableWidget(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Row(
+          children: [
+            const SizedBox(width: 16),
+            Text(subtitlesSource.name),
+          ],
+        ),
+      ),
+      onTap: () {
+        Navigator.of(context).pop();
+        getBetterPlayerController().setupSubtitleSource(subtitlesSource);
+      },
+    );
   }
 }
