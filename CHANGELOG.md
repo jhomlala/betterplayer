@@ -1,3 +1,6 @@
+## 0.0.18:
+* Fixed loading issue when auto play video feature is enabled in playlist
+
 ## 0.0.17
 * Fixed placeholder not following video fit options (fixed by https://github.com/nicholascioli)
 * Updated dependencies
