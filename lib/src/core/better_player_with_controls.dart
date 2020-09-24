@@ -64,6 +64,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       BetterPlayerController betterPlayerController, BuildContext context) {
     return Container(
       child: Stack(
+        fit: StackFit.passthrough,
         children: <Widget>[
           betterPlayerController.placeholder ?? Container(),
           _BetterPlayerVideoFitWidget(
