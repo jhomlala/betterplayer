@@ -273,17 +273,16 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-
   GestureDetector _buildMoreButton(
-      VideoPlayerController controller,
-      Color backgroundColor,
-      Color iconColor,
-      double barHeight,
-      double buttonPadding,
-      ) {
+    VideoPlayerController controller,
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double buttonPadding,
+  ) {
     return GestureDetector(
       onTap: () {
-       onShowMoreClicked();
+        onShowMoreClicked();
       },
       child: AnimatedOpacity(
         opacity: _hideStuff ? 0.0 : 1.0,
@@ -300,7 +299,7 @@ class _BetterPlayerCupertinoControlsState
                   horizontal: buttonPadding,
                 ),
                 child: Icon(
-                 Icons.more_vert,
+                  Icons.more_vert,
                   color: iconColor,
                   size: 16.0,
                 ),
@@ -311,7 +310,6 @@ class _BetterPlayerCupertinoControlsState
       ),
     );
   }
-
 
   GestureDetector _buildMuteButton(
     VideoPlayerController controller,
@@ -478,8 +476,13 @@ class _BetterPlayerCupertinoControlsState
                   barHeight, buttonPadding)
               : const SizedBox(),
           _controlsConfiguration.enablePlaybackSpeed
-              ? _buildMoreButton(_controller, backgroundColor, iconColor,
-              barHeight, buttonPadding,)
+              ? _buildMoreButton(
+                  _controller,
+                  backgroundColor,
+                  iconColor,
+                  barHeight,
+                  buttonPadding,
+                )
               : const SizedBox(),
         ],
       ),

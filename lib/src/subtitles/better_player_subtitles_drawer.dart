@@ -160,7 +160,6 @@ class _BetterPlayerSubtitlesDrawerState
     return HtmlWidget(
       text,
       textStyle: textStyle,
-      tableCellPadding: const EdgeInsets.all(0),
     );
   }
 

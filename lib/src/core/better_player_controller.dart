@@ -206,14 +206,13 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> setSpeed(double speed) async {
-    if (speed < 0 || speed > 2){
+    if (speed < 0 || speed > 2) {
       throw ArgumentError("Speed must be between 0 and 2");
     }
     await videoPlayerController.setSpeed(speed);
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.SET_SPEED,
         parameters: {_speedParameter: speed}));
   }
-
 
   Future<bool> isPlaying() async {
     return videoPlayerController.value.isPlaying;

@@ -1,3 +1,7 @@
+## 0.0.17
+* Fixed placeholder not following video fit options (fixed by https://github.com/nicholascioli)
+* Updated dependencies
+
 ## 0.0.16
 * Added playback speed feature (based on https://github.com/shiyiya solution)
 
