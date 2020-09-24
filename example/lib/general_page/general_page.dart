@@ -19,14 +19,16 @@ class _GeneralPageState extends State<GeneralPage> {
   bool _fileVideoShown = false;
 
   Future<BetterPlayerController> _setupDefaultVideoData() async {
+    await _saveAssetVideoToFile();
+    await _saveAssetSubtitleToFile();
+    final directory = await getApplicationDocumentsDirectory();
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
       "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-      liveStream: true,
+      liveStream: false,
       subtitles: BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.NETWORK,
-        url:
-            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",
+        type: BetterPlayerSubtitlesSourceType.FILE,
+        url: "${directory.path}/example_subtitles.srt",
       ),
     );
     _betterPlayerController = BetterPlayerController(

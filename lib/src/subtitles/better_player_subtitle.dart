@@ -39,7 +39,8 @@ class BetterPlayerSubtitle {
         return Duration();
       }
 
-      var secsAndMillsSplit = component[2].split(',');
+      var secsAndMillisSplitChar = component[2].contains(',') ? ',' : '.';
+      var secsAndMillsSplit = component[2].split(secsAndMillisSplitChar);
       if (secsAndMillsSplit.length != 2) {
         return Duration();
       }

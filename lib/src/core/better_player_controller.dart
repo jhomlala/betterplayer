@@ -65,6 +65,7 @@ class BetterPlayerController extends ChangeNotifier {
   final List<Function> _eventListeners = List();
 
   BetterPlayerDataSource _betterPlayerDataSource;
+  List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = List();
 
   List<BetterPlayerSubtitle> subtitles = List();
 
@@ -94,27 +95,38 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future _setup(BetterPlayerDataSource dataSource) async {
+    assert(dataSource != null, "DataSource can't be null");
     _betterPlayerDataSource = dataSource;
-    if (dataSource.subtitles != null) {
-      subtitles.clear();
-      BetterPlayerSubtitlesFactory.parseSubtitles(dataSource.subtitles)
-          .then((data) {
-        subtitles.addAll(data);
-      });
-    }
     videoPlayerController = VideoPlayerController();
-
+    if (dataSource.subtitles != null) {
+      _betterPlayerSubtitlesSourceList.clear();
+      _betterPlayerSubtitlesSourceList.add(dataSource.subtitles);
+      if (dataSource.useHlsSubtitles && dataSource.url.contains("m3u8")) {
+        var hlsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
+            betterPlayerDataSource.url);
+        hlsSubtitles?.forEach((hlsSubtitle) {
+          _betterPlayerSubtitlesSourceList.add(
+            BetterPlayerSubtitlesSource(
+                type: BetterPlayerSubtitlesSourceType.NETWORK,
+                name: hlsSubtitle.name,
+                url: hlsSubtitle.url),
+          );
+        });
+      }
+    }
+    setupSubtitleSource(betterPlayerDataSource.subtitles);
     setupDataSource(betterPlayerDataSource);
   }
 
+  void setupSubtitleSource(BetterPlayerSubtitlesSource subtitlesSource) async {
+    assert(subtitlesSource != null, "SubtitlesSource can't be null");
+    var subtitlesParsed =
+        await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
+    subtitles.clear();
+    subtitles.addAll(subtitlesParsed);
+  }
+
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
-    if (betterPlayerDataSource.url.endsWith("m3u8")){
-      print("Processing m3u8 (HLS)...");
-      var subtitles = await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
-      
-    }
-
-
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
         videoPlayerController.setNetworkDataSource(

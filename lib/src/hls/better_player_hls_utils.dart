@@ -21,7 +21,7 @@ class BetterPlayerHlsUtils {
         var parsedPlaylist = await HlsPlaylistParser.create()
             .parseString(Uri.parse(masterPlaylistUrl), data);
         if (parsedPlaylist is HlsMasterPlaylist) {
-          parsedPlaylist?.subtitles?.forEach((element) async {
+          for (Rendition element in parsedPlaylist.subtitles) {
             var subtitleData = await _getDataFromUrl(element.url.toString());
             var parsedSubtitle =
                 await _hlsPlaylistParser.parseString(element.url, subtitleData);
@@ -40,12 +40,13 @@ class BetterPlayerHlsUtils {
                   url: element.url.toString(),
                   realUrl: realUrl),
             );
-          });
+          }
         }
       }
     } catch (exception) {
       print("Exception on parseSubtitles: " + exception);
     }
+
     return subtitles;
   }
 
