@@ -129,7 +129,7 @@ class BetterPlayerController extends ChangeNotifier {
     assert(subtitlesSource != null, "SubtitlesSource can't be null");
     _betterPlayerSubtitlesSource = subtitlesSource;
     subtitlesLines.clear();
-    if (subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE) {
+    if (subtitlesSource.type != BetterPlayerSubtitlesSourceType.NONE) {
       var subtitlesParsed =
       await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
       subtitlesLines.addAll(subtitlesParsed);

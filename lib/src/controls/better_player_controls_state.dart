@@ -142,6 +142,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showSubtitlesSelectionWidget() {
+    var subtitles =
+        List.of(getBetterPlayerController().betterPlayerSubtitlesSourceList);
+    subtitles?.add(BetterPlayerSubtitlesSource(
+        type: BetterPlayerSubtitlesSourceType.NONE));
+
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -150,8 +155,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           bottom: true,
           child: SingleChildScrollView(
             child: Column(
-              children: getBetterPlayerController()
-                  .betterPlayerSubtitlesSourceList
+              children: subtitles
                   .map((source) => _buildSubtitlesSourceRow(source))
                   .toList(),
             ),
@@ -163,6 +167,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   Widget _buildSubtitlesSourceRow(BetterPlayerSubtitlesSource subtitlesSource) {
     assert(subtitlesSource != null, "SubtitleSource can't be null");
+
+    var selectedSourceType =
+        getBetterPlayerController().betterPlayerSubtitlesSource;
     return BetterPlayerMaterialClickableWidget(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -174,8 +181,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   ? "None"
                   : subtitlesSource.name ?? "Default subtitles",
               style: TextStyle(
-                fontWeight: subtitlesSource ==
-                        getBetterPlayerController().betterPlayerSubtitlesSource
+                fontWeight: (subtitlesSource == selectedSourceType) ||
+                        (subtitlesSource.type ==
+                                BetterPlayerSubtitlesSourceType.NONE &&
+                            subtitlesSource.type == selectedSourceType.type)
                     ? FontWeight.bold
                     : FontWeight.normal,
               ),

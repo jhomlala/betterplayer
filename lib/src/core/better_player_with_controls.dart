@@ -68,6 +68,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   Container _buildPlayerWithControls(
       BetterPlayerController betterPlayerController, BuildContext context) {
+    print("SUBTITLES SOURCE: " + betterPlayerController.betterPlayerSubtitlesSource.toString());
+    print("ITEMS: " + betterPlayerController.betterPlayerSubtitlesSourceList.length.toString());
     return Container(
       child: Stack(
         fit: StackFit.passthrough,
