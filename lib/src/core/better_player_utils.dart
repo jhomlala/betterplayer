@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 class BetterPlayerUtils {
   static String formatDuration(Duration position) {
     final ms = position.inMilliseconds;
@@ -12,22 +13,19 @@ class BetterPlayerUtils {
     final hoursString = hours >= 10 ? '$hours' : hours == 0 ? '00' : '0$hours';
 
     final minutesString =
-    minutes >= 10 ? '$minutes' : minutes == 0 ? '00' : '0$minutes';
+        minutes >= 10 ? '$minutes' : minutes == 0 ? '00' : '0$minutes';
 
     final secondsString =
-    seconds >= 10 ? '$seconds' : seconds == 0 ? '00' : '0$seconds';
+        seconds >= 10 ? '$seconds' : seconds == 0 ? '00' : '0$seconds';
 
     final formattedTime =
-        '${hoursString == '00' ? '' : hoursString +
-        ':'}$minutesString:$secondsString';
+        '${hoursString == '00' ? '' : hoursString + ':'}$minutesString:$secondsString';
 
     return formattedTime;
   }
 
   static double calculateAspectRatio(BuildContext context) {
-    final size = MediaQuery
-        .of(context)
-        .size;
+    final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;
 
