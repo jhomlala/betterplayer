@@ -78,7 +78,7 @@ class _BetterPlayerCupertinoControlsState
             children: <Widget>[
               _buildTopBar(
                   backgroundColor, iconColor, barHeight, buttonPadding),
-              _isLoading()
+              isLoading(_latestValue)
                   ? Expanded(child: Center(child: _buildLoadingWidget()))
                   : _buildHitArea(),
               _buildNextVideoWidget(),
@@ -88,20 +88,6 @@ class _BetterPlayerCupertinoControlsState
         ),
       ),
     );
-  }
-
-  bool _isLoading() {
-    if (_latestValue != null) {
-      if (!_latestValue.isPlaying &&
-          _latestValue.duration == null &&
-          !_betterPlayerController.betterPlayerDataSource.liveStream) {
-        return true;
-      }
-      if (_latestValue.isPlaying && _latestValue.isBuffering) {
-        return true;
-      }
-    }
-    return false;
   }
 
   @override

@@ -33,8 +33,6 @@ class BetterPlayerMaterialControls extends StatefulWidget {
 
 class _BetterPlayerMaterialControlsState
     extends BetterPlayerControlsState<BetterPlayerMaterialControls> {
-  ///Min. time of buffered video to hide loading timer (in milliseconds)
-  static const int _bufferingInterval = 20000;
   VideoPlayerValue _latestValue;
   double _latestVolume;
   bool _hideStuff = true;
@@ -67,7 +65,7 @@ class _BetterPlayerMaterialControlsState
               _controlsConfiguration.enablePlaybackSpeed
                   ? _buildTopBar()
                   : const SizedBox(),
-              _isLoading()
+              isLoading(_latestValue)
                   ? Expanded(child: Center(child: _buildLoadingWidget()))
                   : _buildHitArea(),
               _buildBottomBar(),
@@ -76,26 +74,6 @@ class _BetterPlayerMaterialControlsState
         ),
       ),
     );
-  }
-
-  bool _isLoading() {
-    if (_latestValue != null) {
-      if (!_latestValue.isPlaying && _latestValue.duration == null) {
-        return true;
-      }
-
-      var position = _latestValue.position;
-      var bufferedEndPosition = _latestValue.buffered.last.end;
-      if (position != null && bufferedEndPosition != null) {
-        var difference = bufferedEndPosition - position;
-
-        if (_latestValue.isBuffering &&
-            difference.inMilliseconds < _bufferingInterval) {
-          return true;
-        }
-      }
-    }
-    return false;
   }
 
   @override

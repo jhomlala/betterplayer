@@ -1,10 +1,14 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
+import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/material.dart';
 
 ///Base class for both material and cupertino controls
 abstract class BetterPlayerControlsState<T extends StatefulWidget>
     extends State<T> {
+  ///Min. time of buffered video to hide loading timer (in milliseconds)
+  static const int _bufferingInterval = 20000;
+
   BetterPlayerController getBetterPlayerController();
 
   void onShowMoreClicked() {
@@ -106,5 +110,27 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         getBetterPlayerController().setSpeed(value);
       },
     );
+  }
+
+  bool isLoading(VideoPlayerValue latestValue) {
+    assert(latestValue != null, "Latest value can't be null");
+    if (latestValue != null) {
+      if (!latestValue.isPlaying && latestValue.duration == null) {
+        return true;
+      }
+
+      var position = latestValue.position;
+      var bufferedEndPosition = latestValue.buffered.last.end;
+      if (position != null && bufferedEndPosition != null) {
+        var difference = bufferedEndPosition - position;
+
+        if (latestValue.isPlaying &&
+            latestValue.isBuffering &&
+            difference.inMilliseconds < _bufferingInterval) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }
