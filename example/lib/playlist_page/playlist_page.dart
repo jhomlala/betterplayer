@@ -18,13 +18,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
     final directory = await getApplicationDocumentsDirectory();
 
-    dataSourceList.add(BetterPlayerDataSource(
+    dataSourceList.add(
+      BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        subtitles: BetterPlayerSubtitlesSource(
-            //type: BetterPlayerSubtitlesSourceType.FILE,
-            //url: "${directory.path}/example_subtitles.srt"))
-        )));
+        subtitles: BetterPlayerSubtitlesSource.single(
+            type: BetterPlayerSubtitlesSourceType.FILE,
+            url: "${directory.path}/example_subtitles.srt"),
+      ),
+    );
 
     dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.NETWORK,
@@ -76,8 +78,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                     ]),
                 betterPlayerPlaylistConfiguration:
                     BetterPlayerPlaylistConfiguration(
-                      loopVideos: true,
-                        nextVideoDelay: Duration(seconds:5)),
+                        loopVideos: true, nextVideoDelay: Duration(seconds: 5)),
                 betterPlayerDataSourceList: snapshot.data,
               ),
               aspectRatio: 1,

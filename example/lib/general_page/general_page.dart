@@ -12,6 +12,10 @@ class GeneralPage extends StatefulWidget {
   _GeneralPageState createState() => _GeneralPageState();
 }
 
+/// Stream urls which can be used to test features:
+///"https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+// "https://mtoczko.github.io/hls-test-streams/test-group/playlist.m3u8",
+
 class _GeneralPageState extends State<GeneralPage> {
   BetterPlayerController _betterPlayerController;
   StreamController<bool> _fileVideoStreamController =
@@ -19,26 +23,25 @@ class _GeneralPageState extends State<GeneralPage> {
   bool _fileVideoShown = false;
 
   Future<BetterPlayerController> _setupDefaultVideoData() async {
-    await _saveAssetVideoToFile();
-    await _saveAssetSubtitleToFile();
-    final directory = await getApplicationDocumentsDirectory();
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
       "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-      //"https://mtoczko.github.io/hls-test-streams/test-group/playlist.m3u8",
       liveStream: false,
+      useHlsSubtitles: true,
       subtitles: BetterPlayerSubtitlesSource.single(
         type: BetterPlayerSubtitlesSourceType.FILE,
-        name: "Some example subtitles...",
-        url: "${directory.path}/example_subtitles.srt",
+        name: "Some subtitles from file",
+        url:
+            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",
       ),
     );
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
-            controlsConfiguration: BetterPlayerControlsConfiguration(
-          enableProgressText: true,
-          enablePlaybackSpeed: true,
-        )),
+          controlsConfiguration: BetterPlayerControlsConfiguration(
+            enableProgressText: true,
+            enablePlaybackSpeed: true,
+          ),
+        ),
         betterPlayerDataSource: dataSource);
     _betterPlayerController.addEventsListener((event) {
       print("Better player event: ${event.betterPlayerEventType}");
@@ -46,17 +49,19 @@ class _GeneralPageState extends State<GeneralPage> {
     return _betterPlayerController;
   }
 
-  Future<BetterPlayerController> setupFileVideoData() async {
+  Future<BetterPlayerController> _setupFileVideoData() async {
     await _saveAssetVideoToFile();
     await _saveAssetSubtitleToFile();
     final directory = await getApplicationDocumentsDirectory();
 
     var dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.FILE, "${directory.path}/testvideo.mp4",
-        subtitles: BetterPlayerSubtitlesSource(
-            //type: BetterPlayerSubtitlesSourceType.FILE,
-            //url: "${directory.path}/example_subtitles.srt",
-            ));
+      BetterPlayerDataSourceType.FILE,
+      "${directory.path}/testvideo.mp4",
+      subtitles: BetterPlayerSubtitlesSource.single(
+        type: BetterPlayerSubtitlesSourceType.FILE,
+        url: "${directory.path}/example_subtitles.srt",
+      ),
+    );
     _betterPlayerController = BetterPlayerController(
       BetterPlayerConfiguration(),
       betterPlayerDataSource: dataSource,
@@ -138,7 +143,6 @@ class _GeneralPageState extends State<GeneralPage> {
           );
         },
       ),
-      _buildFileVideo()
     ]);
   }
 
@@ -148,7 +152,7 @@ class _GeneralPageState extends State<GeneralPage> {
       builder: (context, snapshot) {
         if (snapshot?.data == true) {
           return FutureBuilder<BetterPlayerController>(
-            future: _setupDefaultVideoData(),
+            future: _setupFileVideoData(),
             builder: (context, snapshot) {
               if (!snapshot.hasData) {
                 return Center(child: CircularProgressIndicator());

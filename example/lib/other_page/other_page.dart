@@ -14,10 +14,10 @@ class _OtherPageState extends State<OtherPage> {
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      subtitles: BetterPlayerSubtitlesSource(
+      subtitles: BetterPlayerSubtitlesSource.single(
         type: BetterPlayerSubtitlesSourceType.NETWORK,
-        //url:
-        //    "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",
+        url:
+            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",
       ),
     );
 
@@ -50,5 +50,4 @@ class _OtherPageState extends State<OtherPage> {
     _betterPlayerController.dispose();
     super.dispose();
   }
-
 }

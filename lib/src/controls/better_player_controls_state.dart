@@ -150,8 +150,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           type: BetterPlayerSubtitlesSourceType.NONE));
     }
 
-    print("list of subtitles: " + subtitles.toString());
-
     showModalBottomSheet(
       context: context,
       builder: (context) {

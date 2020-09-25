@@ -53,9 +53,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   }
 
   void _onControllerChanged() {
-    print("ON CONTROLLER CHANGED??");
     setState(() {
-      print("CONTROLLER CHANGED!");
     });
   }
 
