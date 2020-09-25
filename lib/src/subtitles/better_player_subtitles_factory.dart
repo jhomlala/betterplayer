@@ -26,19 +26,18 @@ class BetterPlayerSubtitlesFactory {
   static Future<List<BetterPlayerSubtitle>> _parseSubtitlesFromFile(
       BetterPlayerSubtitlesSource source) async {
     try {
-      String content = "";
+      List<BetterPlayerSubtitle> subtitles = List();
       for (String url in source.urls) {
         var file = File(url);
         if (file.existsSync()) {
           String fileContent = await file.readAsString();
-          content += fileContent;
+          var subtitlesCache = _parseString(fileContent);
+          subtitles.addAll(subtitlesCache);
         } else {
           print("$url doesn't exist!");
         }
       }
-      if (content?.isNotEmpty == true) {
-        return _parseString(content);
-      }
+      return subtitles;
     } catch (exception) {
       print("Failed to read subtitles from file: $exception");
     }
@@ -57,6 +56,7 @@ class BetterPlayerSubtitlesFactory {
         var cacheList = _parseString(data);
         subtitles.addAll(cacheList);
       }
+      client.close();
 
       print("Parsed total subtitles: " + subtitles.length.toString());
       return subtitles;

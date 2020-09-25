@@ -19,10 +19,12 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Refactored player controls  
 ✔️ Playlist support  
 ✔️ Video in ListView support  
-✔️ Subtitles support (HTML tags support)  
+✔️ Subtitles support: (formats: SRT, WEBVTT with HTML tags support; subtitles from HLS)
 ✔️ HTTP Headers support  
 ✔️ BoxFit of video support  
-✔️ Playback speed support  
+✔️ Playback speed support
+
+
 
 ## Install
 
@@ -30,7 +32,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.18
+  better_player: ^0.0.19
 ```
 
 2. Install it
@@ -146,7 +148,7 @@ Network subtitles:
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      subtitles: BetterPlayerSubtitlesSource(
+      subtitles: BetterPlayerSubtitlesSource.single(
           type: BetterPlayerSubtitlesSourceType.NETWORK,
           url:
               "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"),
@@ -158,7 +160,7 @@ File subtitles:
  var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.FILE,
       "${directory.path}/testvideo.mp4",
-      subtitles: BetterPlayerSubtitlesSource(
+      subtitles: BetterPlayerSubtitlesSource.single(
         type: BetterPlayerSubtitlesSourceType.FILE,
         url: "${directory.path}/example_subtitles.srt",
       ),
@@ -431,6 +433,9 @@ Possible configuration options:
 
   /// Custom headers for player
   final Map<String, String> headers;
+
+  ///Should player use hls subtitles. Default is true.
+  final bool useHlsSubtitles;
 ```
 
 
@@ -467,7 +472,8 @@ You can listen to video player events like:
   PROGRESS,
   FINISHED,
   EXCEPTION,
-  SET_SPEED
+  SET_SPEED,
+  CHANGE_SUBTITLES
 ```
 
 After creating BetterPlayerController you can add event listener this way:

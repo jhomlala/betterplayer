@@ -1,3 +1,10 @@
+## 0.0.19
+* Added support for hls subtitles (BetterPlayer will handle them automatically)
+* [BREAKING_CHANGE]: changed API in BetterPlayerSubtitlesSource. To use old API, please use factory: BetterPlayerSubtitlesSource.single.
+* Added useHlsSubtitles parameter for BetterPlayerDataSource
+* Added CHANGED_SUBTITLES event
+* User can choose subtitles from overflow menu
+
 ## 0.0.18:
 * Fixed loading issue when auto play video feature is enabled in playlist
 
@@ -6,7 +13,10 @@
 * Updated dependencies
 
 ## 0.0.16
+* Added overflow menu
 * Added playback speed feature (based on https://github.com/shiyiya solution)
+* User can choose playback speed from overflow menu
+* Added SET_SPEED event
 
 ## 0.0.15
 * Added fit configuration option (based on https://github.com/shiyiya solution).

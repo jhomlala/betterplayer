@@ -12,4 +12,5 @@ enum BetterPlayerEventType {
   CONTROLS_VISIBLE,
   CONTROLS_HIDDEN,
   SET_SPEED,
+  CHANGED_SUBTITLES
 }

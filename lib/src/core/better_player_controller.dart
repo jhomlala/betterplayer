@@ -141,6 +141,7 @@ class BetterPlayerController extends ChangeNotifier {
           await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
       subtitlesLines.addAll(subtitlesParsed);
     }
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_SUBTITLES));
     notifyListeners();
   }
 
