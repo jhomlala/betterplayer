@@ -105,34 +105,48 @@ class BetterPlayerController extends ChangeNotifier {
     assert(dataSource != null, "DataSource can't be null");
     _betterPlayerDataSource = dataSource;
     videoPlayerController = VideoPlayerController();
-    if (dataSource.subtitles != null) {
+
+
+
+    if (dataSource.useHlsSubtitles && dataSource.url.contains("m3u8")) {
+      print("Selecting hls subtitles...");
+      var hlsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
+          betterPlayerDataSource.url);
+      hlsSubtitles?.forEach((hlsSubtitle) {
+        _betterPlayerSubtitlesSourceList.add(
+          BetterPlayerSubtitlesSource(
+              type: BetterPlayerSubtitlesSourceType.NETWORK,
+              name: hlsSubtitle.name,
+              url: hlsSubtitle.realUrl),
+        );
+      });
+    }
+
+    var betterPlayerSubtitlesSource = dataSource.subtitles;
+    if (betterPlayerSubtitlesSource != null) {
       _betterPlayerSubtitlesSourceList.clear();
       _betterPlayerSubtitlesSourceList.add(dataSource.subtitles);
-      if (dataSource.useHlsSubtitles && dataSource.url.contains("m3u8")) {
-        var hlsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
-            betterPlayerDataSource.url);
-        hlsSubtitles?.forEach((hlsSubtitle) {
-          _betterPlayerSubtitlesSourceList.add(
-            BetterPlayerSubtitlesSource(
-                type: BetterPlayerSubtitlesSourceType.NETWORK,
-                name: hlsSubtitle.name,
-                url: hlsSubtitle.realUrl),
-          );
-        });
-      }
+    } else {
+      betterPlayerSubtitlesSource = BetterPlayerSubtitlesSource(
+          type: BetterPlayerSubtitlesSourceType.NONE);
     }
-    setupSubtitleSource(betterPlayerDataSource.subtitles);
+
+
+
+    setupSubtitleSource(betterPlayerSubtitlesSource);
     setupDataSource(betterPlayerDataSource);
   }
 
+  ///Setup subtitles to be displayed from given subtitle source
   void setupSubtitleSource(BetterPlayerSubtitlesSource subtitlesSource) async {
     assert(subtitlesSource != null, "SubtitlesSource can't be null");
     _betterPlayerSubtitlesSource = subtitlesSource;
     subtitlesLines.clear();
     if (subtitlesSource.type != BetterPlayerSubtitlesSourceType.NONE) {
       var subtitlesParsed =
-      await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
+          await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
       subtitlesLines.addAll(subtitlesParsed);
+      print("ADDED SUBTITLES!!");
     }
     notifyListeners();
   }

@@ -33,13 +33,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               Navigator.of(context).pop();
               _showSpeedChooserWidget();
             }),
-            if (getBetterPlayerController()
-                .betterPlayerSubtitlesSourceList
-                .isNotEmpty)
-              _buildMoreOptionsListRow(Icons.text_fields, "Subtitles", () {
-                Navigator.of(context).pop();
-                _showSubtitlesSelectionWidget();
-              })
+            _buildMoreOptionsListRow(Icons.text_fields, "Subtitles", () {
+              Navigator.of(context).pop();
+              _showSubtitlesSelectionWidget();
+            })
           ],
         ),
       ),
@@ -144,8 +141,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   void _showSubtitlesSelectionWidget() {
     var subtitles =
         List.of(getBetterPlayerController().betterPlayerSubtitlesSourceList);
-    subtitles?.add(BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.NONE));
+    var noneSubtitlesElementExists = subtitles?.firstWhere(
+            (source) => source.type == BetterPlayerSubtitlesSourceType.NONE,
+            orElse: () => null) !=
+        null;
+    if (!noneSubtitlesElementExists) {
+      subtitles?.add(BetterPlayerSubtitlesSource(
+          type: BetterPlayerSubtitlesSourceType.NONE));
+    }
+
+    print("list of subtitles: " + subtitles.toString());
 
     showModalBottomSheet(
       context: context,
@@ -170,6 +175,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     var selectedSourceType =
         getBetterPlayerController().betterPlayerSubtitlesSource;
+    bool isSelected = (subtitlesSource == selectedSourceType) ||
+        (subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE &&
+            subtitlesSource?.type == selectedSourceType.type);
+
     return BetterPlayerMaterialClickableWidget(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -181,12 +190,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   ? "None"
                   : subtitlesSource.name ?? "Default subtitles",
               style: TextStyle(
-                fontWeight: (subtitlesSource == selectedSourceType) ||
-                        (subtitlesSource.type ==
-                                BetterPlayerSubtitlesSourceType.NONE &&
-                            subtitlesSource.type == selectedSourceType.type)
-                    ? FontWeight.bold
-                    : FontWeight.normal,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
           ],

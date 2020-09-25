@@ -27,6 +27,7 @@ class BetterPlayerHlsUtils {
                 await _hlsPlaylistParser.parseString(element.url, subtitleData);
             var segmentUrl =
                 (parsedSubtitle as HlsMediaPlaylist).segments.first.url;
+            print("Segment url: " + segmentUrl.toString());
             var split = element.url.toString().split("/");
             var realUrl = "";
             for (var index = 0; index < split.length - 1; index++) {

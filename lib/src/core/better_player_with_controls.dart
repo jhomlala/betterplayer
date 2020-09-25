@@ -45,7 +45,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   }
 
   void _onControllerChanged() {
-    setState(() {});
+    setState(() {
+      print("CONTROLLER CHANGED!");
+    });
   }
 
   @override
@@ -68,8 +70,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   Container _buildPlayerWithControls(
       BetterPlayerController betterPlayerController, BuildContext context) {
-    print("SUBTITLES SOURCE: " + betterPlayerController.betterPlayerSubtitlesSource.toString());
-    print("ITEMS: " + betterPlayerController.betterPlayerSubtitlesSourceList.length.toString());
     return Container(
       child: Stack(
         fit: StackFit.passthrough,
@@ -80,15 +80,12 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             betterPlayerController.betterPlayerConfiguration.fit,
           ),
           betterPlayerController.overlay ?? Container(),
-          betterPlayerController.betterPlayerSubtitlesSource != null
-              ? BetterPlayerSubtitlesDrawer(
-                  betterPlayerController: betterPlayerController,
-                  betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
-                  subtitles: betterPlayerController.subtitlesLines,
-                  playerVisibilityStream:
-                      playerVisibilityStreamController.stream,
-                )
-              : const SizedBox(),
+          BetterPlayerSubtitlesDrawer(
+            betterPlayerController: betterPlayerController,
+            betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
+            subtitles: betterPlayerController.subtitlesLines,
+            playerVisibilityStream: playerVisibilityStreamController.stream,
+          ),
           _buildControls(context, betterPlayerController),
         ],
       ),

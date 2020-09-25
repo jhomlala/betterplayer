@@ -24,12 +24,13 @@ class _GeneralPageState extends State<GeneralPage> {
     final directory = await getApplicationDocumentsDirectory();
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
-      "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+      //"https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+      "https://mtoczko.github.io/hls-test-streams/test-group/playlist.m3u8",
       liveStream: false,
-      subtitles: BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.FILE,
-        url: "${directory.path}/example_subtitles.srt",
-      ),
+      ///subtitles: BetterPlayerSubtitlesSource(
+      ///  type: BetterPlayerSubtitlesSourceType.FILE,
+      ///  url: "${directory.path}/example_subtitles.srt",
+      ///),
     );
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
