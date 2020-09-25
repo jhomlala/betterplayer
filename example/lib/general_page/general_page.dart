@@ -29,7 +29,7 @@ class _GeneralPageState extends State<GeneralPage> {
       liveStream: false,
       useHlsSubtitles: true,
       subtitles: BetterPlayerSubtitlesSource.single(
-        type: BetterPlayerSubtitlesSourceType.FILE,
+        type: BetterPlayerSubtitlesSourceType.NETWORK,
         name: "Some subtitles from file",
         url:
             "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",

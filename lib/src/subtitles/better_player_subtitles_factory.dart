@@ -58,7 +58,7 @@ class BetterPlayerSubtitlesFactory {
         subtitles.addAll(cacheList);
       }
 
-      print("Parsed total subtitles: " + subtitles.toString());
+      print("Parsed total subtitles: " + subtitles.length.toString());
       return subtitles;
     } catch (exception) {
       print("Failed to read subtitles from network: $exception");

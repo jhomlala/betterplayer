@@ -22,30 +22,10 @@ class BetterPlayerHlsUtils {
             .parseString(Uri.parse(masterPlaylistUrl), data);
         if (parsedPlaylist is HlsMasterPlaylist) {
           for (Rendition element in parsedPlaylist.subtitles) {
-            var subtitleData = await _getDataFromUrl(element.url.toString());
-            var parsedSubtitle =
-                await _hlsPlaylistParser.parseString(element.url, subtitleData);
-            var hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
-            var hlsSubtitlesUrls = List<String>();
-
-            for (Segment segment in hlsMediaPlaylist.segments) {
-              print("Segment url: " + segment.url.toString());
-              var split = element.url.toString().split("/");
-              var realUrl = "";
-              for (var index = 0; index < split.length - 1; index++) {
-                realUrl += split[index] + "/";
-              }
-              realUrl += segment.url;
-              hlsSubtitlesUrls.add(realUrl);
+            var hlsSubtitle = await _parseSubtitlesPlaylist(element);
+            if (hlsSubtitle != null) {
+              subtitles.add(hlsSubtitle);
             }
-            print("Real urls: " + hlsSubtitlesUrls.toString());
-            subtitles.add(
-              BetterPlayerHlsSubtitle(
-                  name: element.format.label,
-                  language: element.format.language,
-                  url: element.url.toString(),
-                  realUrls: hlsSubtitlesUrls),
-            );
           }
         }
       }
@@ -56,8 +36,39 @@ class BetterPlayerHlsUtils {
     return subtitles;
   }
 
+  static Future<BetterPlayerHlsSubtitle> _parseSubtitlesPlaylist(
+      Rendition rendition) async {
+    assert(rendition != null, "Rendition can't be null");
+    try {
+      var subtitleData = await _getDataFromUrl(rendition.url.toString());
+      var parsedSubtitle =
+          await _hlsPlaylistParser.parseString(rendition.url, subtitleData);
+      var hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
+      var hlsSubtitlesUrls = List<String>();
+
+      for (Segment segment in hlsMediaPlaylist.segments) {
+        var split = rendition.url.toString().split("/");
+        var realUrl = "";
+        for (var index = 0; index < split.length - 1; index++) {
+          realUrl += split[index] + "/";
+        }
+        realUrl += segment.url;
+        hlsSubtitlesUrls.add(realUrl);
+      }
+      return BetterPlayerHlsSubtitle(
+          name: rendition.format.label,
+          language: rendition.format.language,
+          url: rendition.url.toString(),
+          realUrls: hlsSubtitlesUrls);
+    } catch (exception) {
+      print("Failed to process subtitles playlist: " + exception);
+      return null;
+    }
+  }
+
   static Future<String> _getDataFromUrl(String url) async {
     try {
+      assert(url != null, "Url can't be null!");
       var request = await _httpClient.getUrl(Uri.parse(url));
       var response = await request.close();
       var data = "";

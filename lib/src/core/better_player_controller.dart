@@ -18,6 +18,7 @@ class BetterPlayerController extends ChangeNotifier {
   static const _progressParameter = "progress";
   static const _volumeParameter = "volume";
   static const _speedParameter = "speed";
+  static const _hlsExtension = "m3u8";
 
   final BetterPlayerConfiguration betterPlayerConfiguration;
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
@@ -113,8 +114,7 @@ class BetterPlayerController extends ChangeNotifier {
       betterPlayerSubtitlesSource = BetterPlayerSubtitlesSource(
           type: BetterPlayerSubtitlesSourceType.NONE);
     }
-    if (dataSource.useHlsSubtitles && dataSource.url.contains("m3u8")) {
-      print("Selecting hls subtitles...");
+    if (dataSource.useHlsSubtitles && dataSource.url.contains(_hlsExtension)) {
       var hlsSubtitles =
           await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
       hlsSubtitles?.forEach((hlsSubtitle) {

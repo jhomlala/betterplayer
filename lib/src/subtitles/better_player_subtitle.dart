@@ -22,8 +22,8 @@ class BetterPlayerSubtitle {
       if (scanner.length == 2) {
         return _handle2LinesSubtitles(scanner);
       }
-      if (scanner.length == 3) {
-        return _handle3LinesSubtitles(scanner);
+      if (scanner.length > 2) {
+        return _handle3LinesAndMoreSubtitles(scanner);
       }
       return BetterPlayerSubtitle._();
     } catch (exception) {
@@ -39,9 +39,6 @@ class BetterPlayerSubtitle {
       final end = _stringToDuration(timeSplit[1]);
       final texts = scanner.sublist(1, scanner.length);
 
-
-      print("Start: " + start.toString());
-      print("End: " + end.toString());
       return BetterPlayerSubtitle._(
           index: -1, start: start, end: end, texts: texts);
     } catch (exception) {
@@ -50,7 +47,8 @@ class BetterPlayerSubtitle {
     }
   }
 
-  static BetterPlayerSubtitle _handle3LinesSubtitles(List<String> scanner) {
+  static BetterPlayerSubtitle _handle3LinesAndMoreSubtitles(
+      List<String> scanner) {
     try {
       if (scanner[0].isEmpty) {
         scanner.removeAt(0);
