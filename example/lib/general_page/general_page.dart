@@ -24,13 +24,14 @@ class _GeneralPageState extends State<GeneralPage> {
     final directory = await getApplicationDocumentsDirectory();
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
-      //"https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-      "https://mtoczko.github.io/hls-test-streams/test-group/playlist.m3u8",
+      "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+      //"https://mtoczko.github.io/hls-test-streams/test-group/playlist.m3u8",
       liveStream: false,
-      ///subtitles: BetterPlayerSubtitlesSource(
-      ///  type: BetterPlayerSubtitlesSourceType.FILE,
-      ///  url: "${directory.path}/example_subtitles.srt",
-      ///),
+      subtitles: BetterPlayerSubtitlesSource.single(
+        type: BetterPlayerSubtitlesSourceType.FILE,
+        name: "Some example subtitles...",
+        url: "${directory.path}/example_subtitles.srt",
+      ),
     );
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
@@ -53,9 +54,9 @@ class _GeneralPageState extends State<GeneralPage> {
     var dataSource = BetterPlayerDataSource(
         BetterPlayerDataSourceType.FILE, "${directory.path}/testvideo.mp4",
         subtitles: BetterPlayerSubtitlesSource(
-          //type: BetterPlayerSubtitlesSourceType.FILE,
-          //url: "${directory.path}/example_subtitles.srt",
-        ));
+            //type: BetterPlayerSubtitlesSourceType.FILE,
+            //url: "${directory.path}/example_subtitles.srt",
+            ));
     _betterPlayerController = BetterPlayerController(
       BetterPlayerConfiguration(),
       betterPlayerDataSource: dataSource,

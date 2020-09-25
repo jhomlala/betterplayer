@@ -19,4 +19,17 @@ class BetterPlayerSubtitlesSource {
     this.urls,
     this.content,
   });
+
+  factory BetterPlayerSubtitlesSource.single({
+    BetterPlayerSubtitlesSourceType type,
+    String name = "Default subtitles",
+    String url,
+    String content,
+  }) =>
+      BetterPlayerSubtitlesSource(
+        type: type,
+        name: name,
+        urls: [url],
+        content: content,
+      );
 }

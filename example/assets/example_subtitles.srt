@@ -1,9 +1,8 @@
 WEBVTT
 
 1
-00:00:01,250 --> 00:01:50,500
-Diese Klinge birgt eine finstere
-Vergangenheit.
+00:00:00.000 --> 00:01:55.800
+THIS IS THE TEST!
 
 2
 00:01:51.800 --> 00:01:55.800
