@@ -64,6 +64,10 @@ class BetterPlayerConfiguration {
   ///values here: https://api.flutter.dev/flutter/painting/BoxFit-class.html
   final BoxFit fit;
 
+  ///Defines rotation of the video in degrees. Default value is 0. Can be 0, 90, 180, 270.
+  ///Angle will rotate only video box, controls will be in the same place.
+  final double rotation;
+
   const BetterPlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
@@ -87,5 +91,6 @@ class BetterPlayerConfiguration {
     this.subtitlesConfiguration = const BetterPlayerSubtitlesConfiguration(),
     this.controlsConfiguration = const BetterPlayerControlsConfiguration(),
     this.fit = BoxFit.fill,
+    this.rotation = 0,
   });
 }

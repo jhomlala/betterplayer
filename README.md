@@ -236,6 +236,10 @@ Possible configuration options:
     ///Defines fit of the video, allows to fix video stretching, see possible
     ///values here: https://api.flutter.dev/flutter/painting/BoxFit-class.html
     final BoxFit fit;
+
+    ///Defines rotation of the video in degrees. Default value is 0. Can be 0, 90, 180, 270.
+    ///Angle will rotate only video box, controls will be in the same place.
+    final double rotation;
 ```
 
 ### BetterPlayerSubtitlesConfiguration

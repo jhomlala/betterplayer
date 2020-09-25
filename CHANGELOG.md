@@ -1,7 +1,10 @@
+## 0.0.20
+* Added rotation parameter in BetterPlayerConfiguration
+
 ## 0.0.19
 * Added support for hls subtitles (BetterPlayer will handle them automatically)
 * [BREAKING_CHANGE]: changed API in BetterPlayerSubtitlesSource. To use old API, please use factory: BetterPlayerSubtitlesSource.single.
-* Added useHlsSubtitles parameter for BetterPlayerDataSource
+* Added useHlsSubtitles parameter in BetterPlayerDataSource
 * Added CHANGED_SUBTITLES event
 * User can choose subtitles from overflow menu, when there's no subtitles selected, "none" options will be chosen
 
