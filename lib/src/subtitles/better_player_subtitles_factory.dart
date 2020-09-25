@@ -26,17 +26,20 @@ class BetterPlayerSubtitlesFactory {
   static Future<List<BetterPlayerSubtitle>> _parseSubtitlesFromFile(
       BetterPlayerSubtitlesSource source) async {
     try {
-      var file = File(source.url);
-      if (file.existsSync()) {
-        String fileContent = await file.readAsString();
-        if (fileContent?.isNotEmpty == true) {
-          return _parseString(fileContent);
+      List<BetterPlayerSubtitle> subtitles = List();
+      for (String url in source.urls) {
+        var file = File(url);
+        if (file.existsSync()) {
+          String fileContent = await file.readAsString();
+          var subtitlesCache = _parseString(fileContent);
+          subtitles.addAll(subtitlesCache);
+        } else {
+          print("$url doesn't exist!");
         }
-      } else {
-        print("${source.url} doesn't exist!");
       }
+      return subtitles;
     } catch (exception) {
-      print("Failed to read subtitles from file: ${source.url}: $exception");
+      print("Failed to read subtitles from file: $exception");
     }
     return List();
   }
@@ -45,15 +48,20 @@ class BetterPlayerSubtitlesFactory {
       BetterPlayerSubtitlesSource source) async {
     try {
       var client = HttpClient();
-      var request = await client.getUrl(Uri.parse(source.url));
-      var response = await request.close();
-      var data = await response.transform(Utf8Decoder()).join();
-
-      if (data?.isNotEmpty == true) {
-        return _parseString(data);
+      List<BetterPlayerSubtitle> subtitles = List();
+      for (String url in source.urls) {
+        var request = await client.getUrl(Uri.parse(url));
+        var response = await request.close();
+        var data = await response.transform(Utf8Decoder()).join();
+        var cacheList = _parseString(data);
+        subtitles.addAll(cacheList);
       }
+      client.close();
+
+      print("Parsed total subtitles: " + subtitles.length.toString());
+      return subtitles;
     } catch (exception) {
-      print("Failed to read subtitles from network: ${source.url}: $exception");
+      print("Failed to read subtitles from network: $exception");
     }
     return List();
   }
@@ -82,9 +90,11 @@ class BetterPlayerSubtitlesFactory {
       if (component.isEmpty) {
         continue;
       }
-
       final subtitle = BetterPlayerSubtitle(component);
-      if (subtitle != null) {
+      if (subtitle != null &&
+          subtitle.start != null &&
+          subtitle.end != null &&
+          subtitle.texts != null) {
         subtitlesObj.add(subtitle);
       }
     }

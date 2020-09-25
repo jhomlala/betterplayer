@@ -17,17 +17,21 @@ class BetterPlayerDataSource {
   /// Custom headers for player
   final Map<String, String> headers;
 
+  ///Should player use hls subtitles
+  final bool useHlsSubtitles;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
     this.subtitles,
     this.liveStream = false,
     this.headers,
+    this.useHlsSubtitles = true,
   });
 
   @override
   String toString() {
-    return 'BetterPlayerDataSource{type: $type, url: $url, subtitles: '
-        '$subtitles, liveStream: $liveStream, headers: $headers}';
+    return 'BetterPlayerDataSource{type: $type, url: $url, subtitles: $subtitles,'
+        ' liveStream: $liveStream, headers: $headers, useHlsSubtitles: $useHlsSubtitles}';
   }
 }

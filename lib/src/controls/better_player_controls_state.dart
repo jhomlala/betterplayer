@@ -32,6 +32,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             _buildMoreOptionsListRow(Icons.shutter_speed, "Playback speed", () {
               Navigator.of(context).pop();
               _showSpeedChooserWidget();
+            }),
+            _buildMoreOptionsListRow(Icons.text_fields, "Subtitles", () {
+              Navigator.of(context).pop();
+              _showSubtitlesSelectionWidget();
             })
           ],
         ),
@@ -132,5 +136,68 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       }
     }
     return false;
+  }
+
+  void _showSubtitlesSelectionWidget() {
+    var subtitles =
+        List.of(getBetterPlayerController().betterPlayerSubtitlesSourceList);
+    var noneSubtitlesElementExists = subtitles?.firstWhere(
+            (source) => source.type == BetterPlayerSubtitlesSourceType.NONE,
+            orElse: () => null) !=
+        null;
+    if (!noneSubtitlesElementExists) {
+      subtitles?.add(BetterPlayerSubtitlesSource(
+          type: BetterPlayerSubtitlesSourceType.NONE));
+    }
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          top: false,
+          bottom: true,
+          child: SingleChildScrollView(
+            child: Column(
+              children: subtitles
+                  .map((source) => _buildSubtitlesSourceRow(source))
+                  .toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSubtitlesSourceRow(BetterPlayerSubtitlesSource subtitlesSource) {
+    assert(subtitlesSource != null, "SubtitleSource can't be null");
+
+    var selectedSourceType =
+        getBetterPlayerController().betterPlayerSubtitlesSource;
+    bool isSelected = (subtitlesSource == selectedSourceType) ||
+        (subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE &&
+            subtitlesSource?.type == selectedSourceType.type);
+
+    return BetterPlayerMaterialClickableWidget(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Row(
+          children: [
+            const SizedBox(width: 16),
+            Text(
+              subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE
+                  ? "None"
+                  : subtitlesSource.name ?? "Default subtitles",
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+      onTap: () {
+        Navigator.of(context).pop();
+        getBetterPlayerController().setupSubtitleSource(subtitlesSource);
+      },
+    );
   }
 }

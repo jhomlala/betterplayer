@@ -6,6 +6,7 @@ import 'package:better_player/src/configuration/better_player_configuration.dart
 import 'package:better_player/src/configuration/better_player_event.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
+import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -17,6 +18,7 @@ class BetterPlayerController extends ChangeNotifier {
   static const _progressParameter = "progress";
   static const _volumeParameter = "volume";
   static const _speedParameter = "speed";
+  static const _hlsExtension = "m3u8";
 
   final BetterPlayerConfiguration betterPlayerConfiguration;
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
@@ -64,8 +66,16 @@ class BetterPlayerController extends ChangeNotifier {
   final List<Function> _eventListeners = List();
 
   BetterPlayerDataSource _betterPlayerDataSource;
+  List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = List();
 
-  List<BetterPlayerSubtitle> subtitles = List();
+  List<BetterPlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
+      _betterPlayerSubtitlesSourceList;
+  BetterPlayerSubtitlesSource _betterPlayerSubtitlesSource;
+
+  BetterPlayerSubtitlesSource get betterPlayerSubtitlesSource =>
+      _betterPlayerSubtitlesSource;
+
+  List<BetterPlayerSubtitle> subtitlesLines = List();
 
   Timer _nextVideoTimer;
 
@@ -93,17 +103,46 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future _setup(BetterPlayerDataSource dataSource) async {
+    assert(dataSource != null, "DataSource can't be null");
     _betterPlayerDataSource = dataSource;
-    if (dataSource.subtitles != null) {
-      subtitles.clear();
-      BetterPlayerSubtitlesFactory.parseSubtitles(dataSource.subtitles)
-          .then((data) {
-        subtitles.addAll(data);
-      });
-    }
     videoPlayerController = VideoPlayerController();
 
+    var betterPlayerSubtitlesSource = dataSource.subtitles;
+    if (betterPlayerSubtitlesSource != null) {
+      _betterPlayerSubtitlesSourceList.add(dataSource.subtitles);
+    } else {
+      betterPlayerSubtitlesSource = BetterPlayerSubtitlesSource(
+          type: BetterPlayerSubtitlesSourceType.NONE);
+    }
+    if (dataSource.useHlsSubtitles && dataSource.url.contains(_hlsExtension)) {
+      var hlsSubtitles =
+          await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
+      hlsSubtitles?.forEach((hlsSubtitle) {
+        _betterPlayerSubtitlesSourceList.add(
+          BetterPlayerSubtitlesSource(
+              type: BetterPlayerSubtitlesSourceType.NETWORK,
+              name: hlsSubtitle.name,
+              urls: hlsSubtitle.realUrls),
+        );
+      });
+    }
+
+    setupSubtitleSource(betterPlayerSubtitlesSource);
     setupDataSource(betterPlayerDataSource);
+  }
+
+  ///Setup subtitles to be displayed from given subtitle source
+  void setupSubtitleSource(BetterPlayerSubtitlesSource subtitlesSource) async {
+    assert(subtitlesSource != null, "SubtitlesSource can't be null");
+    _betterPlayerSubtitlesSource = subtitlesSource;
+    subtitlesLines.clear();
+    if (subtitlesSource.type != BetterPlayerSubtitlesSourceType.NONE) {
+      var subtitlesParsed =
+          await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
+      subtitlesLines.addAll(subtitlesParsed);
+    }
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_SUBTITLES));
+    notifyListeners();
   }
 
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
