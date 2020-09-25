@@ -25,21 +25,26 @@ class BetterPlayerHlsUtils {
             var subtitleData = await _getDataFromUrl(element.url.toString());
             var parsedSubtitle =
                 await _hlsPlaylistParser.parseString(element.url, subtitleData);
-            var segmentUrl =
-                (parsedSubtitle as HlsMediaPlaylist).segments.first.url;
-            print("Segment url: " + segmentUrl.toString());
-            var split = element.url.toString().split("/");
-            var realUrl = "";
-            for (var index = 0; index < split.length - 1; index++) {
-              realUrl += split[index] + "/";
+            var hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
+            var hlsSubtitlesUrls = List<String>();
+
+            for (Segment segment in hlsMediaPlaylist.segments) {
+              print("Segment url: " + segment.url.toString());
+              var split = element.url.toString().split("/");
+              var realUrl = "";
+              for (var index = 0; index < split.length - 1; index++) {
+                realUrl += split[index] + "/";
+              }
+              realUrl += segment.url;
+              hlsSubtitlesUrls.add(realUrl);
             }
-            realUrl += segmentUrl;
+            print("Real urls: " + hlsSubtitlesUrls.toString());
             subtitles.add(
               BetterPlayerHlsSubtitle(
                   name: element.format.label,
                   language: element.format.language,
                   url: element.url.toString(),
-                  realUrl: realUrl),
+                  realUrls: hlsSubtitlesUrls),
             );
           }
         }

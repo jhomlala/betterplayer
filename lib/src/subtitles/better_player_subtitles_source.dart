@@ -8,7 +8,7 @@ class BetterPlayerSubtitlesSource {
   final String name;
 
   ///Url of the subtitles, used with file or network subtitles
-  final String url;
+  final List<String> urls;
 
   ///Content of subtitles, used when type is memory
   final String content;
@@ -16,7 +16,7 @@ class BetterPlayerSubtitlesSource {
   BetterPlayerSubtitlesSource({
     this.type,
     this.name = "Default subtitles",
-    this.url,
+    this.urls,
     this.content,
   });
 }

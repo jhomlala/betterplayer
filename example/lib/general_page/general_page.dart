@@ -53,8 +53,8 @@ class _GeneralPageState extends State<GeneralPage> {
     var dataSource = BetterPlayerDataSource(
         BetterPlayerDataSourceType.FILE, "${directory.path}/testvideo.mp4",
         subtitles: BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.FILE,
-          url: "${directory.path}/example_subtitles.srt",
+          //type: BetterPlayerSubtitlesSourceType.FILE,
+          //url: "${directory.path}/example_subtitles.srt",
         ));
     _betterPlayerController = BetterPlayerController(
       BetterPlayerConfiguration(),

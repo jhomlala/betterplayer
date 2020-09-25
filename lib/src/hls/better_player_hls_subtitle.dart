@@ -2,12 +2,12 @@ class BetterPlayerHlsSubtitle {
   final String language;
   final String name;
   final String url;
-  final String realUrl;
+  final List<String> realUrls;
 
   BetterPlayerHlsSubtitle({
     this.language,
     this.name,
     this.url,
-    this.realUrl,
+    this.realUrls,
   });
 }

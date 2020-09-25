@@ -97,7 +97,9 @@ class _BetterPlayerSubtitlesDrawerState
 
   @override
   Widget build(BuildContext context) {
-    print("BUILD DRAWER!!");
+    print("BUILD DRAWER!!" +
+        " WE HAVE TOTAL SUBTITLES: " +
+        widget.subtitles.length.toString() + "CONTROLLER HASHCODE: " + widget.betterPlayerController.hashCode.toString());
     List<String> subtitles = _getSubtitlesAtCurrentPosition();
     List<Widget> textWidgets =
         subtitles.map((text) => _buildSubtitleTextWidget(text)).toList();
@@ -123,8 +125,13 @@ class _BetterPlayerSubtitlesDrawerState
       return List();
     }
     Duration position = _latestValue.position;
-    for (BetterPlayerSubtitle subtitle in widget.subtitles) {
-      print("SUBTITLE: " + subtitle.texts.toString() + " time: " + subtitle.start.toString() + " end: " + subtitle.end.toString());
+    for (BetterPlayerSubtitle subtitle in widget.betterPlayerController.subtitlesLines) {
+      print("SUBTITLE: " +
+          subtitle.texts.toString() +
+          " time: " +
+          subtitle.start.toString() +
+          " end: " +
+          subtitle.end.toString());
       if (subtitle.start <= position && subtitle.end >= position) {
         return subtitle.texts;
       }

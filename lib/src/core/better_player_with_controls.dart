@@ -38,6 +38,14 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   }
 
   @override
+  void didUpdateWidget(BetterPlayerWithControls oldWidget) {
+    if (oldWidget.controller != widget.controller) {
+      widget.controller.addListener(_onControllerChanged);
+    }
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
   void dispose() {
     playerVisibilityStreamController.close();
     widget.controller.removeListener(_onControllerChanged);
@@ -45,6 +53,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   }
 
   void _onControllerChanged() {
+    print("ON CONTROLLER CHANGED??");
     setState(() {
       print("CONTROLLER CHANGED!");
     });

@@ -16,8 +16,8 @@ class _OtherPageState extends State<OtherPage> {
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
       subtitles: BetterPlayerSubtitlesSource(
         type: BetterPlayerSubtitlesSourceType.NETWORK,
-        url:
-            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",
+        //url:
+        //    "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",
       ),
     );
 

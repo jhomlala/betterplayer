@@ -106,18 +106,16 @@ class BetterPlayerController extends ChangeNotifier {
     _betterPlayerDataSource = dataSource;
     videoPlayerController = VideoPlayerController();
 
-
-
     if (dataSource.useHlsSubtitles && dataSource.url.contains("m3u8")) {
       print("Selecting hls subtitles...");
-      var hlsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
-          betterPlayerDataSource.url);
+      var hlsSubtitles =
+          await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
       hlsSubtitles?.forEach((hlsSubtitle) {
         _betterPlayerSubtitlesSourceList.add(
           BetterPlayerSubtitlesSource(
               type: BetterPlayerSubtitlesSourceType.NETWORK,
               name: hlsSubtitle.name,
-              url: hlsSubtitle.realUrl),
+              urls: hlsSubtitle.realUrls),
         );
       });
     }
@@ -130,8 +128,6 @@ class BetterPlayerController extends ChangeNotifier {
       betterPlayerSubtitlesSource = BetterPlayerSubtitlesSource(
           type: BetterPlayerSubtitlesSourceType.NONE);
     }
-
-
 
     setupSubtitleSource(betterPlayerSubtitlesSource);
     setupDataSource(betterPlayerDataSource);
@@ -146,7 +142,6 @@ class BetterPlayerController extends ChangeNotifier {
       var subtitlesParsed =
           await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
       subtitlesLines.addAll(subtitlesParsed);
-      print("ADDED SUBTITLES!!");
     }
     notifyListeners();
   }
