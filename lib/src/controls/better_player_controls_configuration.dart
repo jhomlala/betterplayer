@@ -94,6 +94,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to show/hide playback speed
   final bool enablePlaybackSpeed;
 
+  ///Flag used to show/hide subtitles
+  final bool enableSubtitles;
+
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -125,6 +128,7 @@ class BetterPlayerControlsConfiguration {
     this.liveText = "LIVE",
     this.liveTextColor = Colors.red,
     this.enablePlaybackSpeed = true,
+    this.enableSubtitles = true,
   });
 
   factory BetterPlayerControlsConfiguration.white() {

@@ -62,9 +62,7 @@ class _BetterPlayerMaterialControlsState
           absorbing: _hideStuff,
           child: Column(
             children: [
-              _controlsConfiguration.enablePlaybackSpeed
-                  ? _buildTopBar()
-                  : const SizedBox(),
+              _buildTopBar(),
               isLoading(_latestValue)
                   ? Expanded(child: Center(child: _buildLoadingWidget()))
                   : _buildHitArea(),

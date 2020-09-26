@@ -386,6 +386,9 @@ Possible configuration options:
 
   ///Flag used to show/hide playback speed
   final bool enablePlaybackSpeed;
+
+  ///Flag used to show/hide subtitles
+  final bool enableSubtitles;
 ```
 
 ### BetterPlayerPlaylistConfiguration

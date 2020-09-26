@@ -1,3 +1,6 @@
+## 0.0.21
+* Added enableSubtitles parameter
+
 ## 0.0.20
 * Added rotation parameter in BetterPlayerConfiguration
 

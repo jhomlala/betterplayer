@@ -25,18 +25,24 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildMoreOptionsList() {
+    var controlsConfiguration = getBetterPlayerController()
+        .betterPlayerConfiguration
+        .controlsConfiguration;
     return SingleChildScrollView(
       child: Container(
         child: Column(
           children: [
-            _buildMoreOptionsListRow(Icons.shutter_speed, "Playback speed", () {
-              Navigator.of(context).pop();
-              _showSpeedChooserWidget();
-            }),
-            _buildMoreOptionsListRow(Icons.text_fields, "Subtitles", () {
-              Navigator.of(context).pop();
-              _showSubtitlesSelectionWidget();
-            })
+            if (controlsConfiguration.enablePlaybackSpeed)
+              _buildMoreOptionsListRow(Icons.shutter_speed, "Playback speed",
+                  () {
+                Navigator.of(context).pop();
+                _showSpeedChooserWidget();
+              }),
+            if (controlsConfiguration.enableSubtitles)
+              _buildMoreOptionsListRow(Icons.text_fields, "Subtitles", () {
+                Navigator.of(context).pop();
+                _showSubtitlesSelectionWidget();
+              })
           ],
         ),
       ),

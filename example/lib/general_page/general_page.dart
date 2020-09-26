@@ -40,6 +40,7 @@ class _GeneralPageState extends State<GeneralPage> {
           controlsConfiguration: BetterPlayerControlsConfiguration(
             enableProgressText: true,
             enablePlaybackSpeed: true,
+            enableSubtitles: true,
           ),
         ),
         betterPlayerDataSource: dataSource);

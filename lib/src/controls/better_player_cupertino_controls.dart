@@ -461,15 +461,13 @@ class _BetterPlayerCupertinoControlsState
               ? _buildMuteButton(_controller, backgroundColor, iconColor,
                   barHeight, buttonPadding)
               : const SizedBox(),
-          _controlsConfiguration.enablePlaybackSpeed
-              ? _buildMoreButton(
-                  _controller,
-                  backgroundColor,
-                  iconColor,
-                  barHeight,
-                  buttonPadding,
-                )
-              : const SizedBox(),
+          _buildMoreButton(
+            _controller,
+            backgroundColor,
+            iconColor,
+            barHeight,
+            buttonPadding,
+          )
         ],
       ),
     );
