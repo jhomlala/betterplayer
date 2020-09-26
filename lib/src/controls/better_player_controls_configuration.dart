@@ -97,6 +97,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to show/hide subtitles
   final bool enableSubtitles;
 
+  ///Flag used to show/hide tracks
+  final bool enableTracks;
+
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -129,6 +132,7 @@ class BetterPlayerControlsConfiguration {
     this.liveTextColor = Colors.red,
     this.enablePlaybackSpeed = true,
     this.enableSubtitles = true,
+    this.enableTracks = true,
   });
 
   factory BetterPlayerControlsConfiguration.white() {

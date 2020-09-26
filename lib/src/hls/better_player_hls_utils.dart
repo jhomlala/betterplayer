@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:better_player/src/hls/better_player_hls_subtitle.dart';
+import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 
 ///HLS helper class
@@ -9,6 +10,28 @@ class BetterPlayerHlsUtils {
   static HttpClient _httpClient = HttpClient()
     ..connectionTimeout = Duration(seconds: 5);
   static HlsPlaylistParser _hlsPlaylistParser = HlsPlaylistParser.create();
+
+  static Future<List<BetterPlayerHlsTrack>> parseTracks(
+      String masterPlaylistUrl) async {
+    assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
+    List<BetterPlayerHlsTrack> tracks = List();
+    try {
+      String data = await _getDataFromUrl(masterPlaylistUrl);
+      var parsedPlaylist = await HlsPlaylistParser.create()
+          .parseString(Uri.parse(masterPlaylistUrl), data);
+      if (parsedPlaylist is HlsMasterPlaylist) {
+        parsedPlaylist.variants.forEach(
+          (variant) {
+            tracks.add(BetterPlayerHlsTrack(variant.format.width,
+                variant.format.height, variant.format.bitrate));
+          },
+        );
+      }
+    } catch (exception) {
+      print("Exception on parseSubtitles: " + exception);
+    }
+    return tracks;
+  }
 
   ///Parse subtitles from provided m3u8 url
   static Future<List<BetterPlayerHlsSubtitle>> parseSubtitles(

@@ -456,13 +456,23 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _applyVolume();
   }
 
-
   /// Sets the speed of [this].
   ///
   /// [speed] indicates a value between 0.0 and 2.0 on a linear scale.
   Future<void> setSpeed(double speed) async {
     value = value.copyWith(speed: speed);
     await _applySpeed();
+  }
+
+  /// Sets the video track parameters of [this]
+  ///
+  /// [width] specifies width of the selected track
+  /// [height] specifies height of the selected track
+  /// [bitrate] specifies bitrate of the selected track
+  Future<void> setTrackParameters(
+      int width, int height, int bitrate) async {
+    await _videoPlayerPlatform.setTrackParameters(
+        _textureId, width, height, bitrate);
   }
 
   /// The closed caption based on the current [position] in the video.

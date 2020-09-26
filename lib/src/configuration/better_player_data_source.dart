@@ -20,6 +20,13 @@ class BetterPlayerDataSource {
   ///Should player use hls subtitles
   final bool useHlsSubtitles;
 
+  ///Should player use hls tracks
+  final bool useHlsTracks;
+
+  ///List of strings that represents tracks names.
+  ///If empty, then better player will choose name based on track parameters
+  final List<String> hlsTrackNames;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -27,6 +34,8 @@ class BetterPlayerDataSource {
     this.liveStream = false,
     this.headers,
     this.useHlsSubtitles = true,
+    this.useHlsTracks = true,
+    this.hlsTrackNames,
   });
 
   @override

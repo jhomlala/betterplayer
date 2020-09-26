@@ -120,6 +120,18 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
+  Future<void> setTrackParameters(
+      int textureId, int width, int height, int bitrate) {
+    return _channel.invokeMethod<void>(
+      'setTrackParameters',
+      <String, dynamic>{
+        'textureId': textureId,
+        'width': width,
+        'height': height,
+        'bitrate': bitrate,
+      },
+    );
+  }
 
   @override
   Future<void> seekTo(int textureId, Duration position) {
