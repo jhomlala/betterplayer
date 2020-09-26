@@ -468,6 +468,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
+
+- (void)setTrackParameters:(int) width: (int) height: (int)bitrate {
+    _player.currentItem.preferredPeakBitRate = bitrate;
+    _player.currentItem.preferredMaximumResolution = CGSizeMake(width, height);
+  }
+
+
 // This workaround if you will change dataSource. Flutter engine caches CVPixelBufferRef and if you
 // return NULL from method copyPixelBuffer Flutter will use cached CVPixelBufferRef. If you will
 // change your datasource you can see frame from previeous video. Thats why we should return
@@ -698,6 +705,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     } else if ([@"setSpeed" isEqualToString:call.method]) {
           [player setSpeed:[[argsMap objectForKey:@"speed"] doubleValue] result:result];
           return;
+    }else if ([@"setTrackParameters" isEqualToString:call.method]) {
+        int width = argsMap[@"width"];
+        int height = argsMap[@"height"];
+        int bitrate = argsMap[@"bitrate"];
+        
+        [player setTrackParameters:width: height : bitrate];
+      result(nil);
     }else {
       result(FlutterMethodNotImplemented);
     }

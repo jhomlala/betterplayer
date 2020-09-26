@@ -264,6 +264,7 @@
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh",
 				"${PODS_ROOT}/../Flutter/Flutter.framework",
 				"${BUILT_PRODUCTS_DIR}/better_player/better_player.framework",
+				"${BUILT_PRODUCTS_DIR}/flutter_hls_parser/flutter_hls_parser.framework",
 				"${BUILT_PRODUCTS_DIR}/path_provider/path_provider.framework",
 				"${BUILT_PRODUCTS_DIR}/wakelock/wakelock.framework",
 			);
@@ -271,6 +272,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Flutter.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/better_player.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/flutter_hls_parser.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/path_provider.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/wakelock.framework",
 			);
