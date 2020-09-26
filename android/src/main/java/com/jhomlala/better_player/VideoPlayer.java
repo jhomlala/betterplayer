@@ -279,10 +279,7 @@ final class VideoPlayer {
         if (bitrate != 0) {
             parametersBuilder.setMaxVideoBitrate(bitrate);
         }
-
         trackSelector.setParameters(parametersBuilder);
-
-        Log.d("VIDEO_PLAYER_NATIVE", "SETUP QUALITY!");
     }
 
     void seekTo(int location) {
