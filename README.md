@@ -19,7 +19,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Refactored player controls  
 ✔️ Playlist support  
 ✔️ Video in ListView support  
-✔️ Subtitles support: (formats: SRT, WEBVTT with HTML tags support; subtitles from HLS)
+✔️ Subtitles support: (formats: SRT, WEBVTT with HTML tags support; subtitles from HLS)  
 ✔️ HTTP Headers support  
 ✔️ BoxFit of video support  
 ✔️ Playback speed support
