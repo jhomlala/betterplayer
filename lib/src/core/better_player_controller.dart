@@ -78,7 +78,13 @@ class BetterPlayerController extends ChangeNotifier {
 
   List<BetterPlayerSubtitle> subtitlesLines = List();
 
-  List<BetterPlayerHlsTrack> tracks = List();
+  List<BetterPlayerHlsTrack> _betterPlayerTracks = List();
+
+  List<BetterPlayerHlsTrack> get betterPlayerTracks => _betterPlayerTracks;
+
+  BetterPlayerHlsTrack _betterPlayerTrack;
+
+  BetterPlayerHlsTrack get betterPlayerTrack => _betterPlayerTrack;
 
   Timer _nextVideoTimer;
 
@@ -149,13 +155,12 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
-    tracks.clear();
+    betterPlayerTracks.clear();
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
         if (betterPlayerDataSource.url.contains(_hlsExtension)) {
-          tracks = await BetterPlayerHlsUtils.parseTracks(
+          _betterPlayerTracks = await BetterPlayerHlsUtils.parseTracks(
               betterPlayerDataSource.url);
-          print("Selected tracks: " + tracks.length.toString());
         }
 
         videoPlayerController.setNetworkDataSource(
@@ -359,7 +364,7 @@ class BetterPlayerController extends ChangeNotifier {
   void setTrack(BetterPlayerHlsTrack track) {
     videoPlayerController.setTrackParameters(
         track.width, track.height, track.bitrate);
-    print("Track set!");
+    _betterPlayerTrack = track;
   }
 
   @override

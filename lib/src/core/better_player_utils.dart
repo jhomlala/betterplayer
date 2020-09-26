@@ -1,6 +1,19 @@
 import 'package:flutter/material.dart';
 
 class BetterPlayerUtils {
+
+  static String formatBitrate(int bit){
+    if (bit < 1000){
+      return "$bit bit/s";
+    }
+    if (bit < 1000000){
+      var kbit = (bit/1000).floor();
+      return "~$kbit KBit/s";
+    }
+    var mbit = (bit / 1000000).floor();
+    return "~$mbit MBit/s";
+  }
+
   static String formatDuration(Duration position) {
     final ms = position.inMilliseconds;
 

@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
+import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/material.dart';
@@ -214,6 +215,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showTracksSelectionWidget() {
+    List<String> trackNames =
+        getBetterPlayerController().betterPlayerDataSource.hlsTrackNames;
+    List<BetterPlayerHlsTrack> tracks =
+        getBetterPlayerController().betterPlayerTracks;
+    var children = List<Widget>();
+    for (var index = 0; index < tracks.length; index++) {
+      var preferredName = trackNames.length > index ? trackNames[index] : null;
+      children.add(_buildTrackRow(tracks[index], preferredName));
+    }
+
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -222,10 +233,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           bottom: true,
           child: SingleChildScrollView(
             child: Column(
-              children: getBetterPlayerController()
-                  .tracks
-                  .map((track) => _buildTrackRow(track))
-                  .toList(),
+              children: children,
             ),
           ),
         );
@@ -233,22 +241,31 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     );
   }
 
-  Widget _buildTrackRow(BetterPlayerHlsTrack track) {
+  Widget _buildTrackRow(BetterPlayerHlsTrack track, String preferredName) {
     assert(track != null, "Track can't be null");
 
-    String trackName = track.width.toString() +
-        "x" +
-        track.height.toString() +
-        " " +
-        track.bitrate.toString() +
-        "bit";
+    String trackName = preferredName ??
+        track.width.toString() +
+            "x" +
+            track.height.toString() +
+            " " +
+            BetterPlayerUtils.formatBitrate(track.bitrate);
+
+    var selectedTrack = getBetterPlayerController().betterPlayerTrack;
+    bool isSelected = selectedTrack != null && selectedTrack == track;
+
     return BetterPlayerMaterialClickableWidget(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
           children: [
             const SizedBox(width: 16),
-            Text("$trackName"),
+            Text(
+              "$trackName",
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
           ],
         ),
       ),
