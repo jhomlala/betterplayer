@@ -28,7 +28,7 @@ class BetterPlayerHlsUtils {
         );
       }
     } catch (exception) {
-      print("Exception on parseSubtitles: " + exception);
+      print("Exception on parseSubtitles: " + exception.toString());
     }
     return tracks;
   }
@@ -53,7 +53,7 @@ class BetterPlayerHlsUtils {
         }
       }
     } catch (exception) {
-      print("Exception on parseSubtitles: " + exception);
+      print("Exception on parseSubtitles: " + exception.toString());
     }
 
     return subtitles;
@@ -84,7 +84,7 @@ class BetterPlayerHlsUtils {
           url: rendition.url.toString(),
           realUrls: hlsSubtitlesUrls);
     } catch (exception) {
-      print("Failed to process subtitles playlist: " + exception);
+      print("Failed to process subtitles playlist: " + exception.toString());
       return null;
     }
   }
@@ -100,7 +100,7 @@ class BetterPlayerHlsUtils {
       }).asFuture();
       return data;
     } catch (exception) {
-      print("GetDataFromUrl failed: " + exception);
+      print("GetDataFromUrl failed: " + exception.toString());
       return null;
     }
   }
