@@ -225,6 +225,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       children.add(_buildTrackRow(tracks[index], preferredName));
     }
 
+    if (children.isEmpty) {
+      children.add(_buildTrackRow(BetterPlayerHlsTrack(0, 0, 0), "Default"));
+    }
+
     showModalBottomSheet(
       context: context,
       builder: (context) {

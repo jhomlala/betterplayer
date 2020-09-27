@@ -362,6 +362,12 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Setup track parameters for currently played video
   void setTrack(BetterPlayerHlsTrack track) {
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_TRACK));
+
+    ///Default element clicked:
+    if (track.width == 0 && track.height == 0 && track.bitrate == 0) {
+      return;
+    }
     videoPlayerController.setTrackParameters(
         track.width, track.height, track.bitrate);
     _betterPlayerTrack = track;

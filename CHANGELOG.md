@@ -1,3 +1,9 @@
+## 0.0.22
+* Added support for hls tracks (quality of the videos)
+* Added useHlsTracks and hlsTrackName in BetterPlayerDataSource.
+* Added CHANGED_TRACK event.
+* You can choose track from overflow menu. When there's no tracks to select "Default" will be selected.
+
 ## 0.0.21
 * Added enableSubtitles parameter
 
