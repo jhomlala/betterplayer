@@ -68,6 +68,9 @@ class BetterPlayerConfiguration {
   ///Angle will rotate only video box, controls will be in the same place.
   final double rotation;
 
+  ///Defines function which will react on player visibility changed
+  final Function(double visibilityFraction) playerVisibilityChangedBehavior;
+
   const BetterPlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
@@ -92,5 +95,55 @@ class BetterPlayerConfiguration {
     this.controlsConfiguration = const BetterPlayerControlsConfiguration(),
     this.fit = BoxFit.fill,
     this.rotation = 0,
+    this.playerVisibilityChangedBehavior,
   });
+
+  BetterPlayerConfiguration copyWith({
+    double aspectRatio,
+    bool autoPlay,
+    Duration startAt,
+    bool looping,
+    bool fullScreenByDefault,
+    Widget placeholder,
+    Widget overlay,
+    bool showControlsOnInitialize,
+    Widget Function(BuildContext context, String errorMessage) errorBuilder,
+    bool allowedScreenSleep,
+    List<SystemUiOverlay> systemOverlaysAfterFullScreen,
+    List<DeviceOrientation> deviceOrientationsAfterFullScreen,
+    BetterPlayerRoutePageBuilder routePageBuilder,
+    Function(BetterPlayerEvent) eventListener,
+    BetterPlayerSubtitlesConfiguration subtitlesConfiguration,
+    BetterPlayerControlsConfiguration controlsConfiguration,
+    BoxFit fit,
+    double rotation,
+    Function(double visibilityFraction) playerVisibilityChangedBehavior,
+  }) {
+    return BetterPlayerConfiguration(
+        aspectRatio: aspectRatio ?? this.aspectRatio,
+        autoPlay: autoPlay ?? this.autoPlay,
+        startAt: startAt ?? this.startAt,
+        looping: looping ?? this.looping,
+        fullScreenByDefault: fullScreenByDefault ?? this.fullScreenByDefault,
+        placeholder: placeholder ?? this.placeholder,
+        overlay: overlay ?? this.overlay,
+        showControlsOnInitialize:
+            showControlsOnInitialize ?? this.showControlsOnInitialize,
+        errorBuilder: errorBuilder ?? this.errorBuilder,
+        allowedScreenSleep: allowedScreenSleep ?? this.allowedScreenSleep,
+        systemOverlaysAfterFullScreen:
+            systemOverlaysAfterFullScreen ?? this.systemOverlaysAfterFullScreen,
+        deviceOrientationsAfterFullScreen: deviceOrientationsAfterFullScreen ??
+            this.deviceOrientationsAfterFullScreen,
+        routePageBuilder: routePageBuilder ?? this.routePageBuilder,
+        eventListener: eventListener ?? this.eventListener,
+        subtitlesConfiguration:
+            subtitlesConfiguration ?? this.subtitlesConfiguration,
+        controlsConfiguration:
+            controlsConfiguration ?? this.controlsConfiguration,
+        fit: fit ?? this.fit,
+        rotation: rotation ?? this.rotation,
+        playerVisibilityChangedBehavior: playerVisibilityChangedBehavior ??
+            this.playerVisibilityChangedBehavior);
+  }
 }

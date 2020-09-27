@@ -27,14 +27,15 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
   final BetterPlayerListVideoPlayerController
       betterPlayerListVideoPlayerController;
 
-  const BetterPlayerListVideoPlayer(this.dataSource,
-      {this.configuration = const BetterPlayerConfiguration(),
-      this.playFraction = 0.6,
-      this.autoPlay = true,
-      this.autoPause = true,
-      this.betterPlayerListVideoPlayerController,
-      Key key})
-      : assert(dataSource != null, "Data source can't be null"),
+  const BetterPlayerListVideoPlayer(
+    this.dataSource, {
+    this.configuration = const BetterPlayerConfiguration(),
+    this.playFraction = 0.6,
+    this.autoPlay = true,
+    this.autoPause = true,
+    this.betterPlayerListVideoPlayerController,
+    Key key,
+  })  : assert(dataSource != null, "Data source can't be null"),
         assert(configuration != null, "Configuration can't be null"),
         assert(
             playFraction != null && playFraction >= 0.0 && playFraction <= 1.0,
@@ -58,7 +59,9 @@ class _BetterPlayerListVideoPlayerState
   void initState() {
     super.initState();
     _betterPlayerController = BetterPlayerController(
-      widget.configuration,
+      widget.configuration.copyWith(
+        playerVisibilityChangedBehavior: onVisibilityChanged,
+      ),
       betterPlayerDataSource: widget.dataSource,
       betterPlayerPlaylistConfiguration: BetterPlayerPlaylistConfiguration(),
     );
@@ -79,31 +82,29 @@ class _BetterPlayerListVideoPlayerState
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return VisibilityDetector(
-      child: AspectRatio(
-        aspectRatio:
-            _betterPlayerController.betterPlayerConfiguration.aspectRatio ??
-                BetterPlayerUtils.calculateAspectRatio(context),
-        child: BetterPlayer(
-          key: Key("${_getUniqueKey()}_player"),
-          controller: _betterPlayerController,
-        ),
+    return AspectRatio(
+      aspectRatio:
+          _betterPlayerController.betterPlayerConfiguration.aspectRatio ??
+              BetterPlayerUtils.calculateAspectRatio(context),
+      child: BetterPlayer(
+        key: Key("${_getUniqueKey()}_player"),
+        controller: _betterPlayerController,
       ),
-      onVisibilityChanged: (visibilityInfo) async {
-        bool isPlaying = await _betterPlayerController.isPlaying();
-        bool initialized = _betterPlayerController.isVideoInitialized();
-        if (visibilityInfo.visibleFraction >= widget.playFraction) {
-          if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
-            _betterPlayerController.play();
-          }
-        } else {
-          if (widget.autoPause && initialized && isPlaying && !_isDisposing) {
-            _betterPlayerController.pause();
-          }
-        }
-      },
-      key: Key(_getUniqueKey()),
     );
+  }
+
+  void onVisibilityChanged(double visibleFraction) async {
+    bool isPlaying = await _betterPlayerController.isPlaying();
+    bool initialized = _betterPlayerController.isVideoInitialized();
+    if (visibleFraction >= widget.playFraction) {
+      if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
+        _betterPlayerController.play();
+      }
+    } else {
+      if (widget.autoPause && initialized && isPlaying && !_isDisposing) {
+        _betterPlayerController.pause();
+      }
+    }
   }
 
   String _getUniqueKey() => widget.dataSource.hashCode.toString();

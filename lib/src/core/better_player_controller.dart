@@ -94,6 +94,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool _disposed = false;
 
+  bool _wasPlayingBeforePause = false;
+
   BetterPlayerController(this.betterPlayerConfiguration,
       {this.betterPlayerPlaylistConfiguration, this.betterPlayerDataSource})
       : assert(betterPlayerConfiguration != null,
@@ -151,7 +153,9 @@ class BetterPlayerController extends ChangeNotifier {
       subtitlesLines.addAll(subtitlesParsed);
     }
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_SUBTITLES));
-    notifyListeners();
+    if (!_disposed) {
+      notifyListeners();
+    }
   }
 
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
@@ -371,6 +375,26 @@ class BetterPlayerController extends ChangeNotifier {
     videoPlayerController.setTrackParameters(
         track.width, track.height, track.bitrate);
     _betterPlayerTrack = track;
+  }
+
+  void onPlayerVisibilityChanged(double visibilityFraction) async {
+    if (_disposed) {
+      return;
+    }
+    if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
+      betterPlayerConfiguration
+          .playerVisibilityChangedBehavior(visibilityFraction);
+      print("Passed value!");
+    } else {
+      if (visibilityFraction == 0) {
+        _wasPlayingBeforePause = await isPlaying();
+        pause();
+      } else {
+        if (_wasPlayingBeforePause && !(await isPlaying())) {
+          play();
+        }
+      }
+    }
   }
 
   @override
