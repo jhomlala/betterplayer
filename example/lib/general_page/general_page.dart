@@ -28,6 +28,7 @@ class _GeneralPageState extends State<GeneralPage> {
       "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
       liveStream: false,
       useHlsSubtitles: true,
+      hlsTrackNames: ["Low quality", "Not so low quality", "Medium quality"],
       subtitles: BetterPlayerSubtitlesSource.single(
         type: BetterPlayerSubtitlesSourceType.NETWORK,
         name: "Some subtitles from file",

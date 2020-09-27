@@ -6,6 +6,7 @@ import 'package:better_player/src/configuration/better_player_configuration.dart
 import 'package:better_player/src/configuration/better_player_event.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
+import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
@@ -77,6 +78,14 @@ class BetterPlayerController extends ChangeNotifier {
 
   List<BetterPlayerSubtitle> subtitlesLines = List();
 
+  List<BetterPlayerHlsTrack> _betterPlayerTracks = List();
+
+  List<BetterPlayerHlsTrack> get betterPlayerTracks => _betterPlayerTracks;
+
+  BetterPlayerHlsTrack _betterPlayerTrack;
+
+  BetterPlayerHlsTrack get betterPlayerTrack => _betterPlayerTrack;
+
   Timer _nextVideoTimer;
 
   int _nextVideoTime;
@@ -146,8 +155,14 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
+    betterPlayerTracks.clear();
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
+        if (betterPlayerDataSource.url.contains(_hlsExtension)) {
+          _betterPlayerTracks = await BetterPlayerHlsUtils.parseTracks(
+              betterPlayerDataSource.url);
+        }
+
         videoPlayerController.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: betterPlayerDataSource.headers,
@@ -343,6 +358,19 @@ class BetterPlayerController extends ChangeNotifier {
     _nextVideoTime = 0;
     nextVideoTimeStreamController.add(_nextVideoTime);
     cancelNextVideoTimer();
+  }
+
+  ///Setup track parameters for currently played video
+  void setTrack(BetterPlayerHlsTrack track) {
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_TRACK));
+
+    ///Default element clicked:
+    if (track.width == 0 && track.height == 0 && track.bitrate == 0) {
+      return;
+    }
+    videoPlayerController.setTrackParameters(
+        track.width, track.height, track.bitrate);
+    _betterPlayerTrack = track;
   }
 
   @override

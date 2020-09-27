@@ -23,7 +23,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ HTTP Headers support  
 ✔️ BoxFit of video support  
 ✔️ Playback speed support
-
+✔️ HLS support (track, subtitles selection)
 
 
 ## Install
@@ -32,7 +32,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.19
+  better_player: ^0.0.22
 ```
 
 2. Install it
@@ -443,6 +443,13 @@ Possible configuration options:
 
   ///Should player use hls subtitles. Default is true.
   final bool useHlsSubtitles;
+
+  ///Should player use hls tracks
+  final bool useHlsTracks;
+
+  ///List of strings that represents tracks names.
+  ///If empty, then better player will choose name based on track parameters
+  final List<String> hlsTrackNames;
 ```
 
 
@@ -480,7 +487,8 @@ You can listen to video player events like:
   FINISHED,
   EXCEPTION,
   SET_SPEED,
-  CHANGE_SUBTITLES
+  CHANGED_SUBTITLES
+  CHANGED_TRACK
 ```
 
 After creating BetterPlayerController you can add event listener this way:

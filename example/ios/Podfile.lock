@@ -2,6 +2,8 @@ PODS:
   - better_player (0.0.1):
     - Flutter
   - Flutter (1.0.0)
+  - flutter_hls_parser (0.0.1):
+    - Flutter
   - path_provider (0.0.1):
     - Flutter
   - wakelock (0.0.1):
@@ -10,6 +12,7 @@ PODS:
 DEPENDENCIES:
   - better_player (from `.symlinks/plugins/better_player/ios`)
   - Flutter (from `Flutter`)
+  - flutter_hls_parser (from `.symlinks/plugins/flutter_hls_parser/ios`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
 
@@ -18,6 +21,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/better_player/ios"
   Flutter:
     :path: Flutter
+  flutter_hls_parser:
+    :path: ".symlinks/plugins/flutter_hls_parser/ios"
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   wakelock:
@@ -26,6 +31,7 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   better_player: 2c49e8ac681166b15d062b7594a12902c7e05042
   Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  flutter_hls_parser: be41df963ec4f909fb5c318d483c4483556553e0
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
   wakelock: 0d4a70faf8950410735e3f61fb15d517c8a6efc4
 

@@ -42,7 +42,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import com.google.android.exoplayer2.PlaybackParameters;
+
 final class VideoPlayer {
     private static final String FORMAT_SS = "ss";
     private static final String FORMAT_DASH = "dash";
@@ -63,6 +65,8 @@ final class VideoPlayer {
 
     private String key;
 
+    private DefaultTrackSelector trackSelector;
+
     VideoPlayer(
             Context context,
             EventChannel eventChannel,
@@ -71,7 +75,7 @@ final class VideoPlayer {
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
 
-        TrackSelector trackSelector = new DefaultTrackSelector();
+        trackSelector = new DefaultTrackSelector();
         exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
 
         setupVideoPlayer(eventChannel, textureEntry, result);
@@ -265,6 +269,17 @@ final class VideoPlayer {
         PlaybackParameters newParameter =
                 new PlaybackParameters(bracketedValue, existingParam.pitch, existingParam.skipSilence);
         exoPlayer.setPlaybackParameters(newParameter);
+    }
+
+    void setTrackParameters(int width, int height, int bitrate) {
+        DefaultTrackSelector.ParametersBuilder parametersBuilder = trackSelector.buildUponParameters();
+        if (width != 0 && height != 0) {
+            parametersBuilder.setMaxVideoSize(width, height);
+        }
+        if (bitrate != 0) {
+            parametersBuilder.setMaxVideoBitrate(bitrate);
+        }
+        trackSelector.setParameters(parametersBuilder);
     }
 
     void seekTo(int location) {
