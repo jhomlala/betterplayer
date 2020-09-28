@@ -2,6 +2,7 @@
 * General bug fixes.
 * Added playerVisibilityChangedBehavior in BetterPlayerConfiguration.
 * Changed player behavior when player is not visible in viewport: if player was playing before leaving viewport it will be paused and if user views player again it will start playing automatically.
+* Added BetterPlayer.network and BetterPlayer.file methods
 
 ## 0.0.22
 * Added support for hls tracks (quality of the videos).
