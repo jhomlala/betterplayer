@@ -136,8 +136,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         return true;
       }
 
-      var position = latestValue.position;
-      var bufferedEndPosition = latestValue.buffered.last.end;
+      Duration position = latestValue.position;
+
+      Duration bufferedEndPosition;
+      if (latestValue.buffered?.isNotEmpty == true) {
+        bufferedEndPosition = latestValue.buffered.last.end;
+      }
+
       if (position != null && bufferedEndPosition != null) {
         var difference = bufferedEndPosition - position;
 
@@ -215,7 +220,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showTracksSelectionWidget() {
-    print("BETTER PLAYER DATA SOURCE: " + getBetterPlayerController().betterPlayerDataSource.toString());
+    print("BETTER PLAYER DATA SOURCE: " +
+        getBetterPlayerController().betterPlayerDataSource.toString());
 
     List<String> trackNames =
         getBetterPlayerController().betterPlayerDataSource.hlsTrackNames ??

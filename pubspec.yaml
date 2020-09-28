@@ -32,4 +32,4 @@ flutter:
         package: com.jhomlala.better_player
         pluginClass: VideoPlayerPlugin
       ios:
-        pluginClass: FLTVideoPlayerPlugin
+        pluginClass: FLTBetterPlayerPlugin

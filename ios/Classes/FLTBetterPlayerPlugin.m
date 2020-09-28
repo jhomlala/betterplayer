@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTVideoPlayerPlugin.h"
+#import "FLTBetterPlayerPlugin.h"
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
 
@@ -34,7 +34,7 @@ int64_t FLTCMTimeToMillis(CMTime time) {
 }
 @end
 
-@interface FLTVideoPlayer : NSObject <FlutterTexture, FlutterStreamHandler>
+@interface FLTBetterPlayer : NSObject <FlutterTexture, FlutterStreamHandler>
 @property(readonly, nonatomic) AVPlayer* player;
 @property(readonly, nonatomic) AVPlayerItemVideoOutput* videoOutput;
 @property(readonly, nonatomic) CADisplayLink* displayLink;
@@ -60,7 +60,7 @@ static void* playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void* playbackBufferEmptyContext = &playbackBufferEmptyContext;
 static void* playbackBufferFullContext = &playbackBufferFullContext;
 
-@implementation FLTVideoPlayer
+@implementation FLTBetterPlayer
 - (instancetype)initWithFrameUpdater:(FLTFrameUpdater*)frameUpdater {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
@@ -569,19 +569,19 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 @end
 
-@interface FLTVideoPlayerPlugin ()
+@interface FLTBetterPlayerPlugin ()
 @property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry>* registry;
 @property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger>* messenger;
 @property(readonly, strong, nonatomic) NSMutableDictionary* players;
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar>* registrar;
 @end
 
-@implementation FLTVideoPlayerPlugin
+@implementation FLTBetterPlayerPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel =
       [FlutterMethodChannel methodChannelWithName:@"better_player_channel"
                                   binaryMessenger:[registrar messenger]];
-  FLTVideoPlayerPlugin* instance = [[FLTVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  FLTBetterPlayerPlugin* instance = [[FLTBetterPlayerPlugin alloc] initWithRegistrar:registrar];
   [registrar addMethodCallDelegate:instance channel:channel];
   [registrar publish:instance];
 }
@@ -598,13 +598,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   for (NSNumber* textureId in _players.allKeys) {
-    FLTVideoPlayer* player = _players[textureId];
+    FLTBetterPlayer* player = _players[textureId];
     [player disposeSansEventChannel];
   }
   [_players removeAllObjects];
 }
 
-- (void)onPlayerSetup:(FLTVideoPlayer*)player
+- (void)onPlayerSetup:(FLTBetterPlayer*)player
          frameUpdater:(FLTFrameUpdater*)frameUpdater
                result:(FlutterResult)result {
   int64_t textureId = [_registry registerTexture:player];
@@ -632,12 +632,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     result(nil);
   } else if ([@"create" isEqualToString:call.method]) {
     FLTFrameUpdater* frameUpdater = [[FLTFrameUpdater alloc] initWithRegistry:_registry];
-    FLTVideoPlayer* player = [[FLTVideoPlayer alloc] initWithFrameUpdater:frameUpdater];
+    FLTBetterPlayer* player = [[FLTBetterPlayer alloc] initWithFrameUpdater:frameUpdater];
     [self onPlayerSetup:player frameUpdater:frameUpdater result:result];
   } else {
     NSDictionary* argsMap = call.arguments;
     int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
-    FLTVideoPlayer* player = _players[@(textureId)];
+    FLTBetterPlayer* player = _players[@(textureId)];
     if ([@"setDataSource" isEqualToString:call.method]) {
       [player clear];
       // This call will clear cached frame because we will return transparent frame
