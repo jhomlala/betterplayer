@@ -23,7 +23,6 @@ class BetterPlayerController extends ChangeNotifier {
 
   final BetterPlayerConfiguration betterPlayerConfiguration;
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
-  final BetterPlayerDataSource betterPlayerDataSource;
 
   VideoPlayerController videoPlayerController;
 
@@ -67,6 +66,9 @@ class BetterPlayerController extends ChangeNotifier {
   final List<Function> _eventListeners = List();
 
   BetterPlayerDataSource _betterPlayerDataSource;
+
+  BetterPlayerDataSource get betterPlayerDataSource => _betterPlayerDataSource;
+
   List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = List();
 
   List<BetterPlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
@@ -96,13 +98,15 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool _wasPlayingBeforePause = false;
 
-  BetterPlayerController(this.betterPlayerConfiguration,
-      {this.betterPlayerPlaylistConfiguration, this.betterPlayerDataSource})
-      : assert(betterPlayerConfiguration != null,
+  BetterPlayerController(
+    this.betterPlayerConfiguration, {
+    this.betterPlayerPlaylistConfiguration,
+    BetterPlayerDataSource betterPlayerDataSource,
+  }) : assert(betterPlayerConfiguration != null,
             "BetterPlayerConfiguration can't be null") {
     _eventListeners.add(eventListener);
     if (betterPlayerDataSource != null) {
-      _setup(betterPlayerDataSource);
+      setupDataSource(betterPlayerDataSource);
     }
   }
 
@@ -113,19 +117,38 @@ class BetterPlayerController extends ChangeNotifier {
     return betterPLayerControllerProvider.controller;
   }
 
-  Future _setup(BetterPlayerDataSource dataSource) async {
-    assert(dataSource != null, "DataSource can't be null");
-    _betterPlayerDataSource = dataSource;
-    videoPlayerController = VideoPlayerController();
+  Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
+    assert(
+        betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
 
-    var betterPlayerSubtitlesSource = dataSource.subtitles;
+    _betterPlayerDataSource = betterPlayerDataSource;
+
+    ///Build videoPlayerController if null
+    if (videoPlayerController == null) {
+      videoPlayerController = VideoPlayerController();
+    }
+
+    ///Clear hls tracks
+    betterPlayerTracks.clear();
+
+    ///Setup subtitles
+    var betterPlayerSubtitlesSource = betterPlayerDataSource.subtitles;
     if (betterPlayerSubtitlesSource != null) {
-      _betterPlayerSubtitlesSourceList.add(dataSource.subtitles);
+      _betterPlayerSubtitlesSourceList.add(betterPlayerDataSource.subtitles);
     } else {
       betterPlayerSubtitlesSource = BetterPlayerSubtitlesSource(
           type: BetterPlayerSubtitlesSourceType.NONE);
     }
-    if (dataSource.useHlsSubtitles && dataSource.url.contains(_hlsExtension)) {
+
+    /// Load hls tracks
+    if (betterPlayerDataSource.url.contains(_hlsExtension)) {
+      _betterPlayerTracks =
+          await BetterPlayerHlsUtils.parseTracks(betterPlayerDataSource.url);
+    }
+
+    /// Load hls subtitles
+    if (betterPlayerDataSource.useHlsSubtitles &&
+        betterPlayerDataSource.url.contains(_hlsExtension)) {
       var hlsSubtitles =
           await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
       hlsSubtitles?.forEach((hlsSubtitle) {
@@ -138,8 +161,11 @@ class BetterPlayerController extends ChangeNotifier {
       });
     }
 
+    ///Process data source
+    _setupDataSource(betterPlayerDataSource);
+
+    ///Setup subtitles (none is default)
     setupSubtitleSource(betterPlayerSubtitlesSource);
-    setupDataSource(betterPlayerDataSource);
   }
 
   ///Setup subtitles to be displayed from given subtitle source
@@ -158,15 +184,9 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
-  void setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
-    betterPlayerTracks.clear();
+  void _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
-        if (betterPlayerDataSource.url.contains(_hlsExtension)) {
-          _betterPlayerTracks = await BetterPlayerHlsUtils.parseTracks(
-              betterPlayerDataSource.url);
-        }
-
         videoPlayerController.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: betterPlayerDataSource.headers,

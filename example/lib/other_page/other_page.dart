@@ -22,14 +22,15 @@ class _OtherPageState extends State<OtherPage> {
     );
 
     _betterPlayerController = BetterPlayerController(
-        BetterPlayerConfiguration(
-          controlsConfiguration:
-              BetterPlayerControlsConfiguration(enableProgressText: true),
-        ),
-        betterPlayerDataSource: dataSource);
+      BetterPlayerConfiguration(
+        controlsConfiguration:
+            BetterPlayerControlsConfiguration(enableProgressText: true),
+      ),
+    );
     _betterPlayerController.addEventsListener((event) {
       print("Better player event: ${event.betterPlayerEventType}");
     });
+    _betterPlayerController.setupDataSource(dataSource);
     super.initState();
   }
 

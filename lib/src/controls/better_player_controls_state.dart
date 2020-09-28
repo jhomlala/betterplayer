@@ -215,8 +215,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showTracksSelectionWidget() {
+    print("BETTER PLAYER DATA SOURCE: " + getBetterPlayerController().betterPlayerDataSource.toString());
+
     List<String> trackNames =
-        getBetterPlayerController().betterPlayerDataSource.hlsTrackNames;
+        getBetterPlayerController().betterPlayerDataSource.hlsTrackNames ??
+            List();
     List<BetterPlayerHlsTrack> tracks =
         getBetterPlayerController().betterPlayerTracks;
     var children = List<Widget>();
