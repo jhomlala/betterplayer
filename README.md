@@ -22,7 +22,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Subtitles support: (formats: SRT, WEBVTT with HTML tags support; subtitles from HLS)  
 ✔️ HTTP Headers support  
 ✔️ BoxFit of video support  
-✔️ Playback speed support
+✔️ Playback speed support  
 ✔️ HLS support (track, subtitles selection)
 
 
@@ -57,13 +57,13 @@ BetterPlayer.network(url, configuration)
 BetterPlayer.file(url, configuration)
 ```
 There methods setup basic configuration for you and allows you to start using player in few seconds.
-Here is example:
+Here is an example:
 ```dart
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Example"),
+        title: Text("Example player"),
       ),
       body: AspectRatio(
         aspectRatio: 16 / 9,
@@ -532,6 +532,28 @@ After creating BetterPlayerController you can add event listener this way:
     });
 ```
 Your event listener will ne auto-disposed on dispose time :)
+
+
+### Change player behavior if player is not visible
+You can change player behavior if player is not visible by using playerVisibilityChangedBehavior option in BetterPlayerConfiguration.
+Here is an example for player used in list:
+```dart
+ void onVisibilityChanged(double visibleFraction) async {
+    bool isPlaying = await _betterPlayerController.isPlaying();
+    bool initialized = _betterPlayerController.isVideoInitialized();
+    if (visibleFraction >= widget.playFraction) {
+      if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
+        _betterPlayerController.play();
+      }
+    } else {
+      if (widget.autoPause && initialized && isPlaying && !_isDisposing) {
+        _betterPlayerController.pause();
+      }
+    }
+  }
+```
+Player behavior works in the basis of VisibilityDetector (it uses visibilityFraction, which is value from 0.0 to 1.0 that describes how much given widget is on the viewport). So if value 0.0, player is not visible, so we need to pause the video. If the visibilityFraction is 1.0, we need to play it again.
+
 
 
 ### More documentation
