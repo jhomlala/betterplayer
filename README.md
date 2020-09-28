@@ -47,10 +47,41 @@ $ flutter packages get
 import 'package:better_player/better_player.dart';
 ```
 
-## Usage
-Check [Example project](https://github.com/jhomlala/betterplayer/tree/master/example).
+## General Usage
+Check [Example project](https://github.com/jhomlala/betterplayer/tree/master/example) which shows how to use Better Player in different scenarios.
 
 ### Basic usage
+There are 2 basic methods which you can use to setup Better Player:
+```dart
+BetterPlayer.network(url, configuration)
+BetterPlayer.file(url, configuration)
+```
+There methods setup basic configuration for you and allows you to start using player in few seconds.
+Here is example:
+```dart
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Example"),
+      ),
+      body: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: BetterPlayer.network(
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          betterPlayerConfiguration: BetterPlayerConfiguration(
+            aspectRatio: 16 / 9,
+          ),
+        ),
+      ),
+    );
+  }
+```
+In this example, we're just showing video from url with aspect ratio = 16/9.
+Better Player has many more configuration options which are presented below.
+
+
+### Normal usage
 
 Create BetterPlayerDataSource and BetterPlayerController. You should do it in initState:
 ```dart
@@ -240,6 +271,9 @@ Possible configuration options:
     ///Defines rotation of the video in degrees. Default value is 0. Can be 0, 90, 180, 270.
     ///Angle will rotate only video box, controls will be in the same place.
     final double rotation;
+    
+    ///Defines function which will react on player visibility changed
+    final Function(double visibilityFraction) playerVisibilityChangedBehavior;
 ```
 
 ### BetterPlayerSubtitlesConfiguration
