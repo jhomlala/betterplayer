@@ -221,7 +221,6 @@ var dataSource = BetterPlayerDataSource(
             "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
           ],
         ),
-
       ],
     );
 ```
