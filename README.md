@@ -196,7 +196,7 @@ File subtitles:
         url: "${directory.path}/example_subtitles.srt",
       ),
     );
-
+```
 You can pass multiple subtitles for one video:
 ```dart
 var dataSource = BetterPlayerDataSource(
@@ -226,7 +226,6 @@ var dataSource = BetterPlayerDataSource(
     );
 ```
 
-```
 ### BetterPlayerConfiguration
 You can provide configuration to your player when creating BetterPlayerController.
 
