@@ -19,7 +19,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Refactored player controls  
 ✔️ Playlist support  
 ✔️ Video in ListView support  
-✔️ Subtitles support: (formats: SRT, WEBVTT with HTML tags support; subtitles from HLS)  
+✔️ Subtitles support: (formats: SRT, WEBVTT with HTML tags support; subtitles from HLS; multiple subtitles for video)
 ✔️ HTTP Headers support  
 ✔️ BoxFit of video support  
 ✔️ Playback speed support  
@@ -32,7 +32,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.23
+  better_player: ^0.0.24
 ```
 
 2. Install it
@@ -196,6 +196,36 @@ File subtitles:
         url: "${directory.path}/example_subtitles.srt",
       ),
     );
+
+You can pass multiple subtitles for one video:
+```dart
+var dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.NETWORK,
+      "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+      liveStream: false,
+      useHlsSubtitles: true,
+      hlsTrackNames: ["Low quality", "Not so low quality", "Medium quality"],
+      subtitles: [
+        BetterPlayerSubtitlesSource(
+          type: BetterPlayerSubtitlesSourceType.NETWORK,
+          name: "EN",
+          urls: [
+            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
+          ],
+        ),
+
+        BetterPlayerSubtitlesSource(
+          type: BetterPlayerSubtitlesSourceType.NETWORK,
+          name: "DE",
+          urls: [
+            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
+          ],
+        ),
+
+      ],
+    );
+```
+
 ```
 ### BetterPlayerConfiguration
 You can provide configuration to your player when creating BetterPlayerController.
@@ -467,7 +497,8 @@ Possible configuration options:
   final String url;
 
   ///Subtitles configuration
-  final BetterPlayerSubtitlesSource subtitles;
+  ///You can pass here multiple subtitles
+  final List<BetterPlayerSubtitlesSource> subtitles;
 
   ///Flag to determine if current data source is live stream
   final bool liveStream;

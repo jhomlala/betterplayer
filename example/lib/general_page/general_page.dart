@@ -29,12 +29,24 @@ class _GeneralPageState extends State<GeneralPage> {
       liveStream: false,
       useHlsSubtitles: true,
       hlsTrackNames: ["Low quality", "Not so low quality", "Medium quality"],
-      subtitles: BetterPlayerSubtitlesSource.single(
-        type: BetterPlayerSubtitlesSourceType.NETWORK,
-        name: "Some subtitles from file",
-        url:
-            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",
-      ),
+      subtitles: [
+        BetterPlayerSubtitlesSource(
+          type: BetterPlayerSubtitlesSourceType.NETWORK,
+          name: "EN",
+          urls: [
+            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
+          ],
+        ),
+
+        BetterPlayerSubtitlesSource(
+          type: BetterPlayerSubtitlesSourceType.NETWORK,
+          name: "DE",
+          urls: [
+            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
+          ],
+        ),
+
+      ],
     );
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(

@@ -132,12 +132,10 @@ class BetterPlayerController extends ChangeNotifier {
     betterPlayerTracks.clear();
 
     ///Setup subtitles
-    var betterPlayerSubtitlesSource = betterPlayerDataSource.subtitles;
-    if (betterPlayerSubtitlesSource != null) {
-      _betterPlayerSubtitlesSourceList.add(betterPlayerDataSource.subtitles);
-    } else {
-      betterPlayerSubtitlesSource = BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.NONE);
+    List<BetterPlayerSubtitlesSource> betterPlayerSubtitlesSourceList =
+        betterPlayerDataSource.subtitles;
+    if (betterPlayerSubtitlesSourceList != null) {
+      _betterPlayerSubtitlesSourceList.addAll(betterPlayerDataSource.subtitles);
     }
 
     /// Load hls tracks
@@ -161,11 +159,14 @@ class BetterPlayerController extends ChangeNotifier {
       });
     }
 
+    _betterPlayerSubtitlesSourceList.add(BetterPlayerSubtitlesSource(
+        type: BetterPlayerSubtitlesSourceType.NONE));
+
     ///Process data source
     _setupDataSource(betterPlayerDataSource);
 
     ///Setup subtitles (none is default)
-    setupSubtitleSource(betterPlayerSubtitlesSource);
+    setupSubtitleSource(_betterPlayerSubtitlesSourceList.last);
   }
 
   ///Setup subtitles to be displayed from given subtitle source

@@ -1,3 +1,7 @@
+## 0.0.24
+* Added possibility to set multiple subtitles to video
+* [BREAKING_CHANGE]: changed API in BetterPlayerDataSource. Instead of one subtitles object, list of subtitles is required.
+
 ## 0.0.23
 * General bug fixes.
 * Added playerVisibilityChangedBehavior in BetterPlayerConfiguration.

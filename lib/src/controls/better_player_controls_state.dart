@@ -220,9 +220,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showTracksSelectionWidget() {
-    print("BETTER PLAYER DATA SOURCE: " +
-        getBetterPlayerController().betterPlayerDataSource.toString());
-
     List<String> trackNames =
         getBetterPlayerController().betterPlayerDataSource.hlsTrackNames ??
             List();

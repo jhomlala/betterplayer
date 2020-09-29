@@ -20,16 +20,19 @@ class BetterPlayerSubtitlesSource {
     this.content,
   });
 
-  factory BetterPlayerSubtitlesSource.single({
+  ///Creates list with only one subtitles
+  static List<BetterPlayerSubtitlesSource> single({
     BetterPlayerSubtitlesSourceType type,
     String name = "Default subtitles",
     String url,
     String content,
   }) =>
-      BetterPlayerSubtitlesSource(
-        type: type,
-        name: name,
-        urls: [url],
-        content: content,
-      );
+      [
+        BetterPlayerSubtitlesSource(
+          type: type,
+          name: name,
+          urls: [url],
+          content: content,
+        )
+      ];
 }

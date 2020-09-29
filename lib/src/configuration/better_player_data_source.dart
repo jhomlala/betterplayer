@@ -9,7 +9,7 @@ class BetterPlayerDataSource {
   final String url;
 
   ///Subtitles configuration
-  final BetterPlayerSubtitlesSource subtitles;
+  final List<BetterPlayerSubtitlesSource> subtitles;
 
   ///Flag to determine if current data source is live stream
   final bool liveStream;
