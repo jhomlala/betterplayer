@@ -23,31 +23,14 @@ class _GeneralPageState extends State<GeneralPage> {
   bool _fileVideoShown = false;
 
   Future<BetterPlayerController> _setupDefaultVideoData() async {
-    var dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
-      "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-      liveStream: false,
-      useHlsSubtitles: true,
-      hlsTrackNames: ["Low quality", "Not so low quality", "Medium quality"],
-      subtitles: [
-        BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.NETWORK,
-          name: "EN",
-          urls: [
-            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
-          ],
-        ),
-
-        BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.NETWORK,
-          name: "DE",
-          urls: [
-            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
-          ],
-        ),
-
-      ],
-    );
+    var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
+        "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
+        qualities: {
+          "LOW":
+              "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
+          "MEDIUM":
+              "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4",
+        });
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(
           controlsConfiguration: BetterPlayerControlsConfiguration(

@@ -418,6 +418,17 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  void onQualityChanged(String url) async {
+    print("Changing quality to: " + url);
+    var position = await videoPlayerController.position;
+    videoPlayerController.pause();
+    await setupDataSource(betterPlayerDataSource.copyWith(url: url));
+    await Future.delayed(Duration(seconds: 1), () {
+      videoPlayerController.seekTo(position);
+      videoPlayerController.play();
+    });
+  }
+
   @override
   void dispose() {
     if (!_disposed) {

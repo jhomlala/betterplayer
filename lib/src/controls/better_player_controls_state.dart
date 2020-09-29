@@ -49,7 +49,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               _buildMoreOptionsListRow(Icons.hd, "Quality", () {
                 Navigator.of(context).pop();
                 _showTracksSelectionWidget();
-              })
+              }),
+            _buildMoreOptionsListRow(Icons.hd, "Quality2", () {
+              Navigator.of(context).pop();
+              _showQualitySelectionWidget();
+            })
           ],
         ),
       ),
@@ -282,6 +286,43 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       onTap: () {
         Navigator.of(context).pop();
         getBetterPlayerController().setTrack(track);
+      },
+    );
+  }
+
+  void _showQualitySelectionWidget() {
+    var qualities =
+        getBetterPlayerController().betterPlayerDataSource.qualities;
+    var children = List<Widget>();
+    qualities.forEach((key, value) {
+      children.add(_buildQualitySelectionRow(key, value));
+    });
+
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          top: false,
+          bottom: true,
+          child: SingleChildScrollView(
+            child: Column(
+              children: children,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildQualitySelectionRow(String name, String url) {
+    return BetterPlayerMaterialClickableWidget(
+      child: Padding(
+        child: Text(name),
+        padding: const EdgeInsets.all(10),
+      ),
+      onTap: () {
+        Navigator.of(context).pop();
+        getBetterPlayerController().onQualityChanged(url);
       },
     );
   }
