@@ -22,7 +22,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Subtitles support: (formats: SRT, WEBVTT with HTML tags support; subtitles from HLS)  
 ✔️ HTTP Headers support  
 ✔️ BoxFit of video support  
-✔️ Playback speed support
+✔️ Playback speed support  
 ✔️ HLS support (track, subtitles selection)
 
 
@@ -32,7 +32,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.22
+  better_player: ^0.0.23
 ```
 
 2. Install it
@@ -47,10 +47,41 @@ $ flutter packages get
 import 'package:better_player/better_player.dart';
 ```
 
-## Usage
-Check [Example project](https://github.com/jhomlala/betterplayer/tree/master/example).
+## General Usage
+Check [Example project](https://github.com/jhomlala/betterplayer/tree/master/example) which shows how to use Better Player in different scenarios.
 
 ### Basic usage
+There are 2 basic methods which you can use to setup Better Player:
+```dart
+BetterPlayer.network(url, configuration)
+BetterPlayer.file(url, configuration)
+```
+There methods setup basic configuration for you and allows you to start using player in few seconds.
+Here is an example:
+```dart
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Example player"),
+      ),
+      body: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: BetterPlayer.network(
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          betterPlayerConfiguration: BetterPlayerConfiguration(
+            aspectRatio: 16 / 9,
+          ),
+        ),
+      ),
+    );
+  }
+```
+In this example, we're just showing video from url with aspect ratio = 16/9.
+Better Player has many more configuration options which are presented below.
+
+
+### Normal usage
 
 Create BetterPlayerDataSource and BetterPlayerController. You should do it in initState:
 ```dart
@@ -240,6 +271,9 @@ Possible configuration options:
     ///Defines rotation of the video in degrees. Default value is 0. Can be 0, 90, 180, 270.
     ///Angle will rotate only video box, controls will be in the same place.
     final double rotation;
+    
+    ///Defines function which will react on player visibility changed
+    final Function(double visibilityFraction) playerVisibilityChangedBehavior;
 ```
 
 ### BetterPlayerSubtitlesConfiguration
@@ -498,6 +532,28 @@ After creating BetterPlayerController you can add event listener this way:
     });
 ```
 Your event listener will ne auto-disposed on dispose time :)
+
+
+### Change player behavior if player is not visible
+You can change player behavior if player is not visible by using playerVisibilityChangedBehavior option in BetterPlayerConfiguration.
+Here is an example for player used in list:
+```dart
+ void onVisibilityChanged(double visibleFraction) async {
+    bool isPlaying = await _betterPlayerController.isPlaying();
+    bool initialized = _betterPlayerController.isVideoInitialized();
+    if (visibleFraction >= widget.playFraction) {
+      if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
+        _betterPlayerController.play();
+      }
+    } else {
+      if (widget.autoPause && initialized && isPlaying && !_isDisposing) {
+        _betterPlayerController.pause();
+      }
+    }
+  }
+```
+Player behavior works in the basis of VisibilityDetector (it uses visibilityFraction, which is value from 0.0 to 1.0 that describes how much given widget is on the viewport). So if value 0.0, player is not visible, so we need to pause the video. If the visibilityFraction is 1.0, we need to play it again.
+
 
 
 ### More documentation

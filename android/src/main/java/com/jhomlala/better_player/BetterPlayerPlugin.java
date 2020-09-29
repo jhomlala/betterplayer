@@ -24,18 +24,18 @@ import java.util.Map;
 /**
  * Android platform implementation of the VideoPlayerPlugin.
  */
-public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
-    private static final String TAG = "VideoPlayerPlugin";
-    private final LongSparseArray<VideoPlayer> videoPlayers = new LongSparseArray<>();
+public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
+    private static final String TAG = "BetterPlayerPlugin";
+    private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
     private FlutterState flutterState;
 
     /**
      * Register this with the v2 embedding for the plugin to respond to lifecycle callbacks.
      */
-    public VideoPlayerPlugin() {
+    public BetterPlayerPlugin() {
     }
 
-    private VideoPlayerPlugin(Registrar registrar) {
+    private BetterPlayerPlugin(Registrar registrar) {
         this.flutterState =
                 new FlutterState(
                         registrar.context(),
@@ -50,7 +50,7 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
      * Registers this with the stable v1 embedding. Will not respond to lifecycle events.
      */
     public static void registerWith(Registrar registrar) {
-        final VideoPlayerPlugin plugin = new VideoPlayerPlugin(registrar);
+        final BetterPlayerPlugin plugin = new BetterPlayerPlugin(registrar);
         registrar.addViewDestroyListener(
                 view -> {
                     plugin.onDestroy();
@@ -98,7 +98,7 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         if (flutterState == null || flutterState.textureRegistry == null) {
-            result.error("no_activity", "video_player plugin requires a foreground activity", null);
+            result.error("no_activity", "better_player plugin requires a foreground activity", null);
             return;
         }
         switch (call.method) {
@@ -112,15 +112,15 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                         new EventChannel(
                                 flutterState.binaryMessenger, "better_player_channel/videoEvents" + handle.id());
 
-                VideoPlayer player =
-                        new VideoPlayer(flutterState.applicationContext, eventChannel, handle, result);
+                BetterPlayer player =
+                        new BetterPlayer(flutterState.applicationContext, eventChannel, handle, result);
 
                 videoPlayers.put(handle.id(), player);
                 break;
             }
             default: {
                 long textureId = ((Number) call.argument("textureId")).longValue();
-                VideoPlayer player = videoPlayers.get(textureId);
+                BetterPlayer player = videoPlayers.get(textureId);
                 if (player == null) {
                     result.error(
                             "Unknown textureId",
@@ -134,7 +134,7 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         }
     }
 
-    private void onMethodCall(MethodCall call, Result result, long textureId, VideoPlayer player) {
+    private void onMethodCall(MethodCall call, Result result, long textureId, BetterPlayer player) {
         switch (call.method) {
             case "setDataSource": {
                 Map<String, Object> dataSource = call.argument("dataSource");
@@ -241,7 +241,7 @@ public class VideoPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             methodChannel = new MethodChannel(messenger, "better_player_channel");
         }
 
-        void startListening(VideoPlayerPlugin methodCallHandler) {
+        void startListening(BetterPlayerPlugin methodCallHandler) {
             methodChannel.setMethodCallHandler(methodCallHandler);
         }
 

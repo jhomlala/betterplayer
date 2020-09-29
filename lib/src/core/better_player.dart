@@ -5,6 +5,7 @@ import 'package:better_player/src/core/better_player_with_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:wakelock/wakelock.dart';
 
 import 'better_player_controller_provider.dart';
@@ -20,6 +21,30 @@ class BetterPlayer extends StatefulWidget {
       : assert(
             controller != null, 'You must provide a better player controller'),
         super(key: key);
+
+  factory BetterPlayer.network(
+    String url, {
+    BetterPlayerConfiguration betterPlayerConfiguration,
+  }) =>
+      BetterPlayer(
+        controller: BetterPlayerController(
+          betterPlayerConfiguration ?? BetterPlayerConfiguration(),
+          betterPlayerDataSource:
+              BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK, url),
+        ),
+      );
+
+  factory BetterPlayer.file(
+    String url, {
+    BetterPlayerConfiguration betterPlayerConfiguration,
+  }) =>
+      BetterPlayer(
+        controller: BetterPlayerController(
+          betterPlayerConfiguration ?? BetterPlayerConfiguration(),
+          betterPlayerDataSource:
+              BetterPlayerDataSource(BetterPlayerDataSourceType.FILE, url),
+        ),
+      );
 
   final BetterPlayerController controller;
 
@@ -159,8 +184,13 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   Widget _buildPlayer() {
-    return BetterPlayerWithControls(
-      controller: widget.controller,
+    return VisibilityDetector(
+      key: Key("${widget.controller.hashCode}_key"),
+      onVisibilityChanged: (VisibilityInfo info) =>
+          widget.controller.onPlayerVisibilityChanged(info.visibleFraction),
+      child: BetterPlayerWithControls(
+        controller: widget.controller,
+      ),
     );
   }
 }

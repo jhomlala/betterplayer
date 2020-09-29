@@ -22,27 +22,34 @@ class _OtherPageState extends State<OtherPage> {
     );
 
     _betterPlayerController = BetterPlayerController(
-        BetterPlayerConfiguration(
-          controlsConfiguration:
-              BetterPlayerControlsConfiguration(enableProgressText: true),
-        ),
-        betterPlayerDataSource: dataSource);
+      BetterPlayerConfiguration(
+        controlsConfiguration:
+            BetterPlayerControlsConfiguration(enableProgressText: true),
+      ),
+    );
     _betterPlayerController.addEventsListener((event) {
       print("Better player event: ${event.betterPlayerEventType}");
     });
+    _betterPlayerController.setupDataSource(dataSource);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text("Other page"),
+      appBar: AppBar(
+        title: Text("Other page"),
+      ),
+      body: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: BetterPlayer.network(
+          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+          betterPlayerConfiguration: BetterPlayerConfiguration(
+            aspectRatio: 16 / 9,
+          ),
         ),
-        body: AspectRatio(
-          aspectRatio: 16 / 9,
-          child: BetterPlayer(controller: _betterPlayerController),
-        ));
+      ),
+    );
   }
 
   @override
