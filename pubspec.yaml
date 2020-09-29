@@ -30,6 +30,6 @@ flutter:
     platforms:
       android:
         package: com.jhomlala.better_player
-        pluginClass: VideoPlayerPlugin
+        pluginClass: BetterPlayerPlugin
       ios:
         pluginClass: FLTBetterPlayerPlugin

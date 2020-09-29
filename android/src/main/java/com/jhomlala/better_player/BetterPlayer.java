@@ -45,7 +45,7 @@ import java.util.Map;
 
 import com.google.android.exoplayer2.PlaybackParameters;
 
-final class VideoPlayer {
+final class BetterPlayer {
     private static final String FORMAT_SS = "ss";
     private static final String FORMAT_DASH = "dash";
     private static final String FORMAT_HLS = "hls";
@@ -67,7 +67,7 @@ final class VideoPlayer {
 
     private DefaultTrackSelector trackSelector;
 
-    VideoPlayer(
+    BetterPlayer(
             Context context,
             EventChannel eventChannel,
             TextureRegistry.SurfaceTextureEntry textureEntry,
