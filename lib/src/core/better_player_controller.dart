@@ -163,7 +163,7 @@ class BetterPlayerController extends ChangeNotifier {
         type: BetterPlayerSubtitlesSourceType.NONE));
 
     ///Process data source
-    _setupDataSource(betterPlayerDataSource);
+    await _setupDataSource(betterPlayerDataSource);
 
     ///Setup subtitles (none is default)
     setupSubtitleSource(_betterPlayerSubtitlesSourceList.last);
@@ -185,17 +185,17 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
-  void _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
+  Future _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
-        videoPlayerController.setNetworkDataSource(
+        await videoPlayerController.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: betterPlayerDataSource.headers,
         );
 
         break;
       case BetterPlayerDataSourceType.FILE:
-        videoPlayerController
+        await videoPlayerController
             .setFileDataSource(File(betterPlayerDataSource.url));
         break;
       default:
@@ -419,14 +419,14 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void onQualityChanged(String url) async {
-    print("Changing quality to: " + url);
     var position = await videoPlayerController.position;
+    var wasPlayingBeforeChange = await isPlaying();
     videoPlayerController.pause();
     await setupDataSource(betterPlayerDataSource.copyWith(url: url));
-    await Future.delayed(Duration(seconds: 1), () {
-      videoPlayerController.seekTo(position);
+    videoPlayerController.seekTo(position);
+    if (wasPlayingBeforeChange) {
       videoPlayerController.play();
-    });
+    }
   }
 
   @override

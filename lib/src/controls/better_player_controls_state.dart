@@ -50,10 +50,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                 Navigator.of(context).pop();
                 _showTracksSelectionWidget();
               }),
-            _buildMoreOptionsListRow(Icons.hd, "Quality2", () {
-              Navigator.of(context).pop();
-              _showQualitySelectionWidget();
-            })
           ],
         ),
       ),
@@ -235,6 +231,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       children.add(_buildTrackRow(tracks[index], preferredName));
     }
 
+    var qualities =
+        getBetterPlayerController().betterPlayerDataSource.resolutions;
+
+    qualities?.forEach((key, value) {
+      children.add(_buildQualitySelectionRow(key, value));
+    });
+
     if (children.isEmpty) {
       children.add(_buildTrackRow(BetterPlayerHlsTrack(0, 0, 0), "Default"));
     }
@@ -290,35 +293,23 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     );
   }
 
-  void _showQualitySelectionWidget() {
-    var qualities =
-        getBetterPlayerController().betterPlayerDataSource.qualities;
-    var children = List<Widget>();
-    qualities.forEach((key, value) {
-      children.add(_buildQualitySelectionRow(key, value));
-    });
-
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          top: false,
-          bottom: true,
-          child: SingleChildScrollView(
-            child: Column(
-              children: children,
-            ),
-          ),
-        );
-      },
-    );
-  }
-
   Widget _buildQualitySelectionRow(String name, String url) {
+    bool isSelected =
+        url == getBetterPlayerController().betterPlayerDataSource.url;
     return BetterPlayerMaterialClickableWidget(
       child: Padding(
-        child: Text(name),
-        padding: const EdgeInsets.all(10),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Row(
+          children: [
+            const SizedBox(width: 16),
+            Text(
+              "$name",
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
       ),
       onTap: () {
         Navigator.of(context).pop();
