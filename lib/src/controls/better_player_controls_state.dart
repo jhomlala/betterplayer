@@ -313,7 +313,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       ),
       onTap: () {
         Navigator.of(context).pop();
-        getBetterPlayerController().onQualityChanged(url);
+        getBetterPlayerController().setResolution(url);
       },
     );
   }

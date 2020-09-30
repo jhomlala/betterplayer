@@ -179,6 +179,7 @@ class BetterPlayerController extends ChangeNotifier {
           await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
       subtitlesLines.addAll(subtitlesParsed);
     }
+
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_SUBTITLES));
     if (!_disposed) {
       notifyListeners();
@@ -405,7 +406,6 @@ class BetterPlayerController extends ChangeNotifier {
     if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
       betterPlayerConfiguration
           .playerVisibilityChangedBehavior(visibilityFraction);
-      print("Passed value!");
     } else {
       if (visibilityFraction == 0) {
         _wasPlayingBeforePause = await isPlaying();
@@ -418,7 +418,9 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
-  void onQualityChanged(String url) async {
+  ///Set different resolution (quality) for video
+  void setResolution(String url) async {
+    assert(url != null, "Url can't be null");
     var position = await videoPlayerController.position;
     var wasPlayingBeforeChange = await isPlaying();
     videoPlayerController.pause();
