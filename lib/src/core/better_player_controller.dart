@@ -409,6 +409,8 @@ class BetterPlayerController extends ChangeNotifier {
     if (_disposed) {
       return;
     }
+    _postEvent(
+        BetterPlayerEvent(BetterPlayerEventType.CHANGED_PLAYER_VISIBILITY));
     if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
       betterPlayerConfiguration
           .playerVisibilityChangedBehavior(visibilityFraction);
@@ -436,6 +438,7 @@ class BetterPlayerController extends ChangeNotifier {
     if (wasPlayingBeforeChange) {
       videoPlayerController.play();
     }
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_RESOLUTION));
   }
 
   @override

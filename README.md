@@ -32,7 +32,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.24
+  better_player: ^0.0.25
 ```
 
 2. Install it
@@ -552,6 +552,8 @@ You can listen to video player events like:
   SET_SPEED,
   CHANGED_SUBTITLES
   CHANGED_TRACK
+  CHANGED_PLAYER_VISIBILITY,
+  CHANGED_RESOLUTION
 ```
 
 After creating BetterPlayerController you can add event listener this way:
@@ -583,7 +585,24 @@ Here is an example for player used in list:
 ```
 Player behavior works in the basis of VisibilityDetector (it uses visibilityFraction, which is value from 0.0 to 1.0 that describes how much given widget is on the viewport). So if value 0.0, player is not visible, so we need to pause the video. If the visibilityFraction is 1.0, we need to play it again.
 
+### Pass multiple resolutions of the video
+You can setup video with different resolutions. Use resolutions parameter in data source. This should be used
+only for normal videos (non-hls) to setup different qualities of the original video.
 
+```dart
+    var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
+        "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
+        resolutions: {
+          "LOW":
+              "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
+          "MEDIUM":
+              "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4",
+          "LARGE":
+              "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4",
+          "EXTRA_LARGE":
+              "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4"
+        });
+```
 
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html

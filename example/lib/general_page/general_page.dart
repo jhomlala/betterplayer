@@ -24,7 +24,7 @@ class _GeneralPageState extends State<GeneralPage> {
 
   Future<BetterPlayerController> _setupDefaultVideoData() async {
     var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
-        "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+        "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
         resolutions: {
           "LOW":
               "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
