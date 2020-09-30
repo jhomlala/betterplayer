@@ -91,12 +91,7 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   void onFullScreenChanged() async {
-
     var controller = widget.controller;
-    print("ON FULL SCREEN CHANGED: ");
-    print("CONTROLLER ISFULLSCREEN: " + controller.isFullScreen.toString());
-    print("INNER FULLSCREEN: " + _isFullScreen.toString());
-    print("CANCEL FULL SCREEN: " + controller.cancelFullScreenDismiss.toString());
     if (controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
       await _pushFullScreenWidget(context);

@@ -45,10 +45,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                 Navigator.of(context).pop();
                 _showSubtitlesSelectionWidget();
               }),
-            if (controlsConfiguration.enableTracks)
+            if (controlsConfiguration.enableQualities)
               _buildMoreOptionsListRow(Icons.hd, "Quality", () {
                 Navigator.of(context).pop();
-                _showTracksSelectionWidget();
+                _showQualitiesSelectionWidget();
               }),
           ],
         ),
@@ -219,7 +219,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     );
   }
 
-  void _showTracksSelectionWidget() {
+  ///Build both track and resolution selection
+  ///Track selection is used for HLS videos
+  ///Resolution selection is used for normal videos
+  void _showQualitiesSelectionWidget() {
     List<String> trackNames =
         getBetterPlayerController().betterPlayerDataSource.hlsTrackNames ??
             List();
@@ -230,12 +233,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       var preferredName = trackNames.length > index ? trackNames[index] : null;
       children.add(_buildTrackRow(tracks[index], preferredName));
     }
-
-    var qualities =
+    var resolutions =
         getBetterPlayerController().betterPlayerDataSource.resolutions;
-
-    qualities?.forEach((key, value) {
-      children.add(_buildQualitySelectionRow(key, value));
+    resolutions?.forEach((key, value) {
+      children.add(_buildResolutionSelectionRow(key, value));
     });
 
     if (children.isEmpty) {
@@ -293,7 +294,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     );
   }
 
-  Widget _buildQualitySelectionRow(String name, String url) {
+  Widget _buildResolutionSelectionRow(String name, String url) {
     bool isSelected =
         url == getBetterPlayerController().betterPlayerDataSource.url;
     return BetterPlayerMaterialClickableWidget(
