@@ -27,6 +27,12 @@ class BetterPlayerDataSource {
   ///If empty, then better player will choose name based on track parameters
   final List<String> hlsTrackNames;
 
+  ///Optional, alternative resolutions for non-hls video. Used to setup
+  ///different qualities for video.
+  ///Data should be in given format:
+  ///{"360p": "url", "540p": "url2" }
+  final Map<String, String> resolutions;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -36,11 +42,33 @@ class BetterPlayerDataSource {
     this.useHlsSubtitles = true,
     this.useHlsTracks = true,
     this.hlsTrackNames,
+    this.resolutions,
   });
 
   @override
   String toString() {
     return 'BetterPlayerDataSource{type: $type, url: $url, subtitles: $subtitles,'
         ' liveStream: $liveStream, headers: $headers, useHlsSubtitles: $useHlsSubtitles}';
+  }
+
+  BetterPlayerDataSource copyWith(
+      {BetterPlayerDataSourceType type,
+      String url,
+      List<BetterPlayerSubtitlesSource> subtitles,
+      bool liveStream,
+      Map<String, String> headers,
+      bool useHlsSubtitles,
+      bool useHlsTracks,
+      Map<String, String> qualities}) {
+    return BetterPlayerDataSource(
+      type ?? this.type,
+      url ?? this.url,
+      subtitles: subtitles ?? this.subtitles,
+      liveStream: liveStream ?? this.liveStream,
+      headers: headers ?? this.headers,
+      useHlsSubtitles: useHlsSubtitles ?? this.useHlsSubtitles,
+      useHlsTracks: useHlsTracks ?? this.useHlsTracks,
+      resolutions: qualities ?? this.resolutions,
+    );
   }
 }

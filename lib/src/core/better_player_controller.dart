@@ -98,6 +98,10 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool _wasPlayingBeforePause = false;
 
+  ///Internal flag used to cancel dismiss of the full screen. Used when user
+  ///switches quality (track or resolution) of the video. You should ignore it.
+  bool cancelFullScreenDismiss = true;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -163,7 +167,7 @@ class BetterPlayerController extends ChangeNotifier {
         type: BetterPlayerSubtitlesSourceType.NONE));
 
     ///Process data source
-    _setupDataSource(betterPlayerDataSource);
+    await _setupDataSource(betterPlayerDataSource);
 
     ///Setup subtitles (none is default)
     setupSubtitleSource(_betterPlayerSubtitlesSourceList.last);
@@ -179,23 +183,25 @@ class BetterPlayerController extends ChangeNotifier {
           await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
       subtitlesLines.addAll(subtitlesParsed);
     }
+
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_SUBTITLES));
     if (!_disposed) {
+      cancelFullScreenDismiss = true;
       notifyListeners();
     }
   }
 
-  void _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
+  Future _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
-        videoPlayerController.setNetworkDataSource(
+        await videoPlayerController.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: betterPlayerDataSource.headers,
         );
 
         break;
       case BetterPlayerDataSourceType.FILE:
-        videoPlayerController
+        await videoPlayerController
             .setFileDataSource(File(betterPlayerDataSource.url));
         break;
       default:
@@ -393,6 +399,7 @@ class BetterPlayerController extends ChangeNotifier {
     if (track.width == 0 && track.height == 0 && track.bitrate == 0) {
       return;
     }
+
     videoPlayerController.setTrackParameters(
         track.width, track.height, track.bitrate);
     _betterPlayerTrack = track;
@@ -402,10 +409,11 @@ class BetterPlayerController extends ChangeNotifier {
     if (_disposed) {
       return;
     }
+    _postEvent(
+        BetterPlayerEvent(BetterPlayerEventType.CHANGED_PLAYER_VISIBILITY));
     if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
       betterPlayerConfiguration
           .playerVisibilityChangedBehavior(visibilityFraction);
-      print("Passed value!");
     } else {
       if (visibilityFraction == 0) {
         _wasPlayingBeforePause = await isPlaying();
@@ -416,6 +424,21 @@ class BetterPlayerController extends ChangeNotifier {
         }
       }
     }
+  }
+
+  ///Set different resolution (quality) for video
+  void setResolution(String url) async {
+    assert(url != null, "Url can't be null");
+    var position = await videoPlayerController.position;
+    var wasPlayingBeforeChange = await isPlaying();
+    cancelFullScreenDismiss = true;
+    videoPlayerController.pause();
+    await setupDataSource(betterPlayerDataSource.copyWith(url: url));
+    videoPlayerController.seekTo(position);
+    if (wasPlayingBeforeChange) {
+      videoPlayerController.play();
+    }
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_RESOLUTION));
   }
 
   @override

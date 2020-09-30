@@ -45,11 +45,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                 Navigator.of(context).pop();
                 _showSubtitlesSelectionWidget();
               }),
-            if (controlsConfiguration.enableTracks)
+            if (controlsConfiguration.enableQualities)
               _buildMoreOptionsListRow(Icons.hd, "Quality", () {
                 Navigator.of(context).pop();
-                _showTracksSelectionWidget();
-              })
+                _showQualitiesSelectionWidget();
+              }),
           ],
         ),
       ),
@@ -219,7 +219,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     );
   }
 
-  void _showTracksSelectionWidget() {
+  ///Build both track and resolution selection
+  ///Track selection is used for HLS videos
+  ///Resolution selection is used for normal videos
+  void _showQualitiesSelectionWidget() {
     List<String> trackNames =
         getBetterPlayerController().betterPlayerDataSource.hlsTrackNames ??
             List();
@@ -230,6 +233,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       var preferredName = trackNames.length > index ? trackNames[index] : null;
       children.add(_buildTrackRow(tracks[index], preferredName));
     }
+    var resolutions =
+        getBetterPlayerController().betterPlayerDataSource.resolutions;
+    resolutions?.forEach((key, value) {
+      children.add(_buildResolutionSelectionRow(key, value));
+    });
 
     if (children.isEmpty) {
       children.add(_buildTrackRow(BetterPlayerHlsTrack(0, 0, 0), "Default"));
@@ -282,6 +290,31 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       onTap: () {
         Navigator.of(context).pop();
         getBetterPlayerController().setTrack(track);
+      },
+    );
+  }
+
+  Widget _buildResolutionSelectionRow(String name, String url) {
+    bool isSelected =
+        url == getBetterPlayerController().betterPlayerDataSource.url;
+    return BetterPlayerMaterialClickableWidget(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Row(
+          children: [
+            const SizedBox(width: 16),
+            Text(
+              "$name",
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+      onTap: () {
+        Navigator.of(context).pop();
+        getBetterPlayerController().setResolution(url);
       },
     );
   }
