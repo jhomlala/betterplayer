@@ -67,12 +67,12 @@ class BetterPlayerState extends State<BetterPlayer> {
   }
 
   void _setup() async {
-    widget.controller.addListener(listener);
+    widget.controller.addListener(onFullScreenChanged);
   }
 
   @override
   void dispose() {
-    widget.controller.removeListener(listener);
+    widget.controller.removeListener(onFullScreenChanged);
 
     ///Controller from list widget must be dismissed manually
     if (widget.controller.betterPlayerPlaylistConfiguration == null) {
@@ -85,25 +85,37 @@ class BetterPlayerState extends State<BetterPlayer> {
   @override
   void didUpdateWidget(BetterPlayer oldWidget) {
     if (oldWidget.controller != widget.controller) {
-      widget.controller.addListener(listener);
+      widget.controller.addListener(onFullScreenChanged);
     }
     super.didUpdateWidget(oldWidget);
   }
 
-  void listener() async {
-    if (widget.controller.isFullScreen && !_isFullScreen) {
+  void onFullScreenChanged() async {
+
+    var controller = widget.controller;
+    print("ON FULL SCREEN CHANGED: ");
+    print("CONTROLLER ISFULLSCREEN: " + controller.isFullScreen.toString());
+    print("INNER FULLSCREEN: " + _isFullScreen.toString());
+    print("CANCEL FULL SCREEN: " + controller.cancelFullScreenDismiss.toString());
+    if (controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
       await _pushFullScreenWidget(context);
-    } else if (_isFullScreen) {
+    } else if (_isFullScreen && !controller.cancelFullScreenDismiss) {
       Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
+    }
+
+    if (controller.cancelFullScreenDismiss) {
+      controller.cancelFullScreenDismiss = false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return BetterPlayerControllerProvider(
-        controller: widget.controller, child: _buildPlayer());
+      controller: widget.controller,
+      child: _buildPlayer(),
+    );
   }
 
   Widget _buildFullScreenVideo(

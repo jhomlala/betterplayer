@@ -98,6 +98,10 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool _wasPlayingBeforePause = false;
 
+  ///Internal flag used to cancel dismiss of the full screen. Used when user
+  ///switches quality (track or resolution) of the video. You should ignore it.
+  bool cancelFullScreenDismiss = true;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -182,6 +186,7 @@ class BetterPlayerController extends ChangeNotifier {
 
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_SUBTITLES));
     if (!_disposed) {
+      cancelFullScreenDismiss = true;
       notifyListeners();
     }
   }
@@ -394,6 +399,7 @@ class BetterPlayerController extends ChangeNotifier {
     if (track.width == 0 && track.height == 0 && track.bitrate == 0) {
       return;
     }
+
     videoPlayerController.setTrackParameters(
         track.width, track.height, track.bitrate);
     _betterPlayerTrack = track;
@@ -423,6 +429,7 @@ class BetterPlayerController extends ChangeNotifier {
     assert(url != null, "Url can't be null");
     var position = await videoPlayerController.position;
     var wasPlayingBeforeChange = await isPlaying();
+    cancelFullScreenDismiss = true;
     videoPlayerController.pause();
     await setupDataSource(betterPlayerDataSource.copyWith(url: url));
     videoPlayerController.seekTo(position);
