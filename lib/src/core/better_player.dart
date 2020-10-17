@@ -166,10 +166,10 @@ class BetterPlayerState extends State<BetterPlayer> {
 
     SystemChrome.setEnabledSystemUIOverlays([]);
     if (isAndroid) {
-      SystemChrome.setPreferredOrientations([
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ]);
+      SystemChrome.setPreferredOrientations(
+        widget.controller.betterPlayerConfiguration
+            .deviceOrientationsOnFullScreen,
+      );
     }
 
     if (!widget.controller.allowedScreenSleep) {

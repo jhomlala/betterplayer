@@ -42,6 +42,12 @@ class BetterPlayerConfiguration {
   /// Defines if the player will sleep in fullscreen or not
   final bool allowedScreenSleep;
 
+  /// Defines aspect ratio which will be used in fullscreen
+  final double fullScreenAspectRatio;
+
+  /// Defines the set of allowed device orientations on entering fullscreen
+  final List<DeviceOrientation> deviceOrientationsOnFullScreen;
+
   /// Defines the system overlays visible after exiting fullscreen
   final List<SystemUiOverlay> systemOverlaysAfterFullScreen;
 
@@ -82,6 +88,11 @@ class BetterPlayerConfiguration {
     this.showControlsOnInitialize = true,
     this.errorBuilder,
     this.allowedScreenSleep = true,
+    this.fullScreenAspectRatio,
+    this.deviceOrientationsOnFullScreen = const [
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ],
     this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
     this.deviceOrientationsAfterFullScreen = const [
       DeviceOrientation.portraitUp,
@@ -109,6 +120,8 @@ class BetterPlayerConfiguration {
     bool showControlsOnInitialize,
     Widget Function(BuildContext context, String errorMessage) errorBuilder,
     bool allowedScreenSleep,
+    double fullScreenAspectRatio,
+    List<DeviceOrientation> deviceOrientationsOnFullScreen,
     List<SystemUiOverlay> systemOverlaysAfterFullScreen,
     List<DeviceOrientation> deviceOrientationsAfterFullScreen,
     BetterPlayerRoutePageBuilder routePageBuilder,
@@ -131,6 +144,8 @@ class BetterPlayerConfiguration {
             showControlsOnInitialize ?? this.showControlsOnInitialize,
         errorBuilder: errorBuilder ?? this.errorBuilder,
         allowedScreenSleep: allowedScreenSleep ?? this.allowedScreenSleep,
+        deviceOrientationsOnFullScreen: deviceOrientationsOnFullScreen ??
+            this.deviceOrientationsOnFullScreen,
         systemOverlaysAfterFullScreen:
             systemOverlaysAfterFullScreen ?? this.systemOverlaysAfterFullScreen,
         deviceOrientationsAfterFullScreen: deviceOrientationsAfterFullScreen ??

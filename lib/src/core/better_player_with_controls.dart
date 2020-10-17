@@ -62,13 +62,23 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     final BetterPlayerController betterPlayerController =
         BetterPlayerController.of(context);
 
+    var aspectRatio;
+    if (betterPlayerController.isFullScreen) {
+      aspectRatio = betterPlayerController
+              .betterPlayerConfiguration.fullScreenAspectRatio ??
+          BetterPlayerUtils.calculateAspectRatio(context);
+    } else {
+      aspectRatio =
+          betterPlayerController.betterPlayerConfiguration.aspectRatio ??
+              BetterPlayerUtils.calculateAspectRatio(context);
+    }
+
     return Center(
       child: Container(
         width: double.infinity,
         color: Colors.black,
         child: AspectRatio(
-          aspectRatio: betterPlayerController.aspectRatio ??
-              BetterPlayerUtils.calculateAspectRatio(context),
+          aspectRatio: aspectRatio,
           child: _buildPlayerWithControls(betterPlayerController, context),
         ),
       ),
@@ -80,7 +90,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     var configuration = betterPlayerController.betterPlayerConfiguration;
     var rotation = configuration.rotation;
 
-    if (!(rotation <= 360 && rotation % 90 == 0)){
+    if (!(rotation <= 360 && rotation % 90 == 0)) {
       print("Invalid rotation provided. Using rotation = 0");
       rotation = 0;
     }
