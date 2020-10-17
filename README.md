@@ -465,6 +465,9 @@ Possible configuration options:
 
   ///Flag used to show/hide qualities
   final bool enableQualities;
+
+  ///Custom items of overflow menu
+  final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 ```
 
 ### BetterPlayerPlaylistConfiguration

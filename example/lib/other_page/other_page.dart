@@ -53,7 +53,17 @@ class _OtherPageState extends State<OtherPage> {
               DeviceOrientation.portraitUp,
               DeviceOrientation.portraitDown
             ],
-            controlsConfiguration: BetterPlayerControlsConfiguration(enableOverflowMenu: true)
+            controlsConfiguration: BetterPlayerControlsConfiguration(
+              overflowMenuCustomItems: [
+                BetterPlayerOverflowMenuItem(
+                  Icons.account_circle_rounded,
+                  "Custom element",
+                  () {
+                    print("Click!");
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),

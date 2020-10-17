@@ -1,5 +1,7 @@
 ## 0.0.27
-* Added enableOverflowMenu option in betterPlayerControlsConfiguration
+* Added enableOverflowMenu option in BetterPlayerControlsConfiguration (enable/disable overflow menu)
+* Added overflowMenuCustomItems in BetterPlayerControlsConfiguration (show custom menu items in overflow menu)
+
 
 ## 0.0.26
 * Added fullScreenAspectRatio and deviceOrientationsOnFullScreen to handle different full screen scenarios

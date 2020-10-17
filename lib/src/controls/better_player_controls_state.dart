@@ -50,6 +50,17 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                 Navigator.of(context).pop();
                 _showQualitiesSelectionWidget();
               }),
+            if (controlsConfiguration.overflowMenuCustomItems?.isNotEmpty)
+              ...controlsConfiguration.overflowMenuCustomItems.map(
+                (customItem) => _buildMoreOptionsListRow(
+                  customItem.icon,
+                  customItem.title,
+                  () {
+                    Navigator.of(context).pop();
+                    customItem.onClicked?.call();
+                  },
+                ),
+              )
           ],
         ),
       ),

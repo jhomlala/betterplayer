@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 
@@ -104,6 +105,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to show/hide qualities
   final bool enableQualities;
 
+  ///Custom items of overflow menu
+  final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
+
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -138,6 +142,7 @@ class BetterPlayerControlsConfiguration {
     this.enablePlaybackSpeed = true,
     this.enableSubtitles = true,
     this.enableQualities = true,
+    this.overflowMenuCustomItems = const [],
   });
 
   factory BetterPlayerControlsConfiguration.white() {
