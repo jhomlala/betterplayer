@@ -48,6 +48,7 @@ class _OtherPageState extends State<OtherPage> {
           betterPlayerConfiguration: BetterPlayerConfiguration(
             aspectRatio: 16 / 9,
             fullScreenAspectRatio: 9 / 16,
+            allowedScreenSleep: false,
             deviceOrientationsOnFullScreen: [
               DeviceOrientation.portraitUp,
               DeviceOrientation.portraitDown
