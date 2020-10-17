@@ -53,6 +53,7 @@ class _OtherPageState extends State<OtherPage> {
               DeviceOrientation.portraitUp,
               DeviceOrientation.portraitDown
             ],
+            controlsConfiguration: BetterPlayerControlsConfiguration(enableOverflowMenu: true)
           ),
         ),
       ),

@@ -91,6 +91,10 @@ class BetterPlayerControlsConfiguration {
   ///Live text color;
   final Color liveTextColor;
 
+  ///Flag used to show/hide overflow menu which contains playback, subtitles,
+  ///qualities options.
+  final bool enableOverflowMenu;
+
   ///Flag used to show/hide playback speed
   final bool enablePlaybackSpeed;
 
@@ -130,6 +134,7 @@ class BetterPlayerControlsConfiguration {
     this.loadingNextVideoText = "Loading next video",
     this.liveText = "LIVE",
     this.liveTextColor = Colors.red,
+    this.enableOverflowMenu = true,
     this.enablePlaybackSpeed = true,
     this.enableSubtitles = true,
     this.enableQualities = true,

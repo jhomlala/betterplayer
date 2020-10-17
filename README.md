@@ -453,6 +453,10 @@ Possible configuration options:
   ///Live text color;
   final Color liveTextColor;
 
+  ///Flag used to show/hide overflow menu which contains playback, subtitles,
+  ///qualities options.
+  final bool enableOverflowMenu;
+
   ///Flag used to show/hide playback speed
   final bool enablePlaybackSpeed;
 

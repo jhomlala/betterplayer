@@ -1,3 +1,6 @@
+## 0.0.27
+* Added enableOverflowMenu option in betterPlayerControlsConfiguration
+
 ## 0.0.26
 * Added fullScreenAspectRatio and deviceOrientationsOnFullScreen to handle different full screen scenarios
 * Updated wakelock version
