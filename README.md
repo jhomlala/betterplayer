@@ -34,7 +34,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.25
+  better_player: ^0.0.26
 ```
 
 2. Install it
@@ -275,6 +275,11 @@ Possible configuration options:
     /// Defines if the player will sleep in fullscreen or not
     final bool allowedScreenSleep;
 
+    /// Defines aspect ratio which will be used in fullscreen
+    final double fullScreenAspectRatio;
+
+    /// Defines the set of allowed device orientations on entering fullscreen
+    final List<DeviceOrientation> deviceOrientationsOnFullScreen;
 
     /// Defines the system overlays visible after exiting fullscreen
     final List<SystemUiOverlay> systemOverlaysAfterFullScreen;

@@ -1,6 +1,6 @@
 name: better_player
 description: Advanced video player based on video_player and Chewie. It's solves many typical use cases and it's easy to run.
-version: 0.0.25
+version: 0.0.26
 authors:
   - Jakub Homlala <jhomlala@gmail.com>
 homepage: https://github.com/jhomlala/betterplayer
@@ -13,10 +13,10 @@ dependencies:
   flutter:
     sdk: flutter
   open_iconic_flutter: ^0.3.0
-  wakelock: ^0.1.4+2
+  wakelock: ^0.2.0+1
   flutter_widgets: ^0.1.12
   pedantic: ^1.8.0
-  meta: ^1.0.5
+  meta: ^1.2.3
   flutter_widget_from_html_core: ^0.5.0+5
   flutter_hls_parser: ^1.0.0
 

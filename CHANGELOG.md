@@ -1,3 +1,7 @@
+## 0.0.26
+* Added fullScreenAspectRatio and deviceOrientationsOnFullScreen to handle different full screen scenarios
+* Updated wakelock version
+
 ## 0.0.25
 * [BREAKING_CHANGE]: changed API in BetterPlayerControlsConfiguration: enableQualities replaces enableTracks.
 * Added support for different video resolutions
