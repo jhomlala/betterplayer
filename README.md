@@ -354,6 +354,12 @@ Possible configuration options:
 
   ///Bottom padding of the subtitle
   final double bottomPadding;
+
+  ///Alignment of the subtitle
+  final Alignment alignment;
+
+  ///Background color of the subtitle
+  final Color backgroundColor;
 ```
 
 ### BetterPlayerControlsConfiguration
