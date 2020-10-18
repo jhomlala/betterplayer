@@ -9,6 +9,5 @@ class BetterPlayerHlsTrack {
   ///Bitrate in px of the track
   final int bitrate;
 
-
   BetterPlayerHlsTrack(this.width, this.height, this.bitrate);
 }

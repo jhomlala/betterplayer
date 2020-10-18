@@ -28,7 +28,6 @@ class BetterPlayerSubtitlesConfiguration {
   ///Bottom padding of the subtitle
   final double bottomPadding;
 
-
   const BetterPlayerSubtitlesConfiguration({
     this.fontSize = 14,
     this.fontColor = Colors.white,

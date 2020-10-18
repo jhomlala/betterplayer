@@ -1,3 +1,9 @@
+## 0.0.27
+* Added enableOverflowMenu option in BetterPlayerControlsConfiguration (enable/disable overflow menu)
+* Added overflowMenuCustomItems in BetterPlayerControlsConfiguration (show custom menu items in overflow menu)
+* [BREAKING_CHANGE] Removed defaultErrorText, loadingNextVideoText, liveText from BetterPlayerControlsConfiguration. To change these values, please use translations in BetterPlayerConfiguration.
+* Added BetterPlayerTranslations in BetterPlayerConfiguration. You can use it to setup translations of the player.
+
 ## 0.0.26
 * Added fullScreenAspectRatio and deviceOrientationsOnFullScreen to handle different full screen scenarios
 * Updated wakelock version

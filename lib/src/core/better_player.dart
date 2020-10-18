@@ -63,11 +63,15 @@ class BetterPlayerState extends State<BetterPlayer> {
   @override
   void initState() {
     super.initState();
-    _setup();
+    Future.delayed(Duration.zero, () {
+      _setup();
+    });
   }
 
   void _setup() async {
     widget.controller.addListener(onFullScreenChanged);
+    Locale locale = Localizations.localeOf(context) ?? Locale("en", "US");
+    widget.controller.setupTranslations(locale);
   }
 
   @override

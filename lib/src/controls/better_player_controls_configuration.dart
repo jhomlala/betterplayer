@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
 import 'package:flutter/material.dart';
 import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 
@@ -79,17 +80,12 @@ class BetterPlayerControlsConfiguration {
   ///Control bar height
   final double controlBarHeight;
 
-  ///Default error widget text
-  final String defaultErrorText;
-
-  ///Default loading next video text
-  final String loadingNextVideoText;
-
-  ///Text displayed when asset displayed in player is live stream
-  final String liveText;
-
   ///Live text color;
   final Color liveTextColor;
+
+  ///Flag used to show/hide overflow menu which contains playback, subtitles,
+  ///qualities options.
+  final bool enableOverflowMenu;
 
   ///Flag used to show/hide playback speed
   final bool enablePlaybackSpeed;
@@ -99,6 +95,9 @@ class BetterPlayerControlsConfiguration {
 
   ///Flag used to show/hide qualities
   final bool enableQualities;
+
+  ///Custom items of overflow menu
+  final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
@@ -126,13 +125,12 @@ class BetterPlayerControlsConfiguration {
     this.showControls = true,
     this.showControlsOnInitialize = true,
     this.controlBarHeight = 48.0,
-    this.defaultErrorText = "Video can't be played",
-    this.loadingNextVideoText = "Loading next video",
-    this.liveText = "LIVE",
     this.liveTextColor = Colors.red,
+    this.enableOverflowMenu = true,
     this.enablePlaybackSpeed = true,
     this.enableSubtitles = true,
     this.enableQualities = true,
+    this.overflowMenuCustomItems = const [],
   });
 
   factory BetterPlayerControlsConfiguration.white() {

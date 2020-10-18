@@ -184,7 +184,7 @@ class _BetterPlayerCupertinoControlsState
   Widget _buildLiveWidget() {
     return Expanded(
       child: Text(
-        _controlsConfiguration.liveText,
+        _betterPlayerController.translations.controlsLive,
         style: TextStyle(
             color: _controlsConfiguration.liveTextColor,
             fontWeight: FontWeight.bold),
@@ -461,13 +461,15 @@ class _BetterPlayerCupertinoControlsState
               ? _buildMuteButton(_controller, backgroundColor, iconColor,
                   barHeight, buttonPadding)
               : const SizedBox(),
-          _buildMoreButton(
-            _controller,
-            backgroundColor,
-            iconColor,
-            barHeight,
-            buttonPadding,
-          )
+          _controlsConfiguration.enableOverflowMenu
+              ? _buildMoreButton(
+                  _controller,
+                  backgroundColor,
+                  iconColor,
+                  barHeight,
+                  buttonPadding,
+                )
+              : const SizedBox(),
         ],
       ),
     );
@@ -493,7 +495,7 @@ class _BetterPlayerCupertinoControlsState
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    "Next video in ${snapshot.data} ...",
+                    "${_betterPlayerController.translations.controlsNextVideoIn} ${snapshot.data} ...",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -653,7 +655,7 @@ class _BetterPlayerCupertinoControlsState
               size: 42,
             ),
             Text(
-              _controlsConfiguration.defaultErrorText,
+              _betterPlayerController.translations.generalDefaultError,
               style: TextStyle(color: _controlsConfiguration.textColor),
             ),
           ],
@@ -664,8 +666,9 @@ class _BetterPlayerCupertinoControlsState
 
   Widget _buildLoadingWidget() {
     return CircularProgressIndicator(
-      valueColor:
-          AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
+      valueColor: AlwaysStoppedAnimation<Color>(
+        _controlsConfiguration.controlBarColor,
+      ),
     );
   }
 

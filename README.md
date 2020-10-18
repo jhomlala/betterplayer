@@ -34,7 +34,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.26
+  better_player: ^0.0.27
 ```
 
 2. Install it
@@ -309,6 +309,10 @@ Possible configuration options:
     
     ///Defines function which will react on player visibility changed
     final Function(double visibilityFraction) playerVisibilityChangedBehavior;
+
+    ///Defines translations used in player. If null, then default english translations
+    ///will be used.
+    final List<BetterPlayerTranslations> translations;
 ```
 
 ### BetterPlayerSubtitlesConfiguration
@@ -356,7 +360,7 @@ Possible configuration options:
 Configuration for player GUI. You should pass this configuration to BetterPlayerConfiguration.
 
 ```dart
-ar betterPlayerConfiguration = BetterPlayerConfiguration(
+var betterPlayerConfiguration = BetterPlayerConfiguration(
       controlsConfiguration: BetterPlayerControlsConfiguration(
         textColor: Colors.black,
         iconsColor: Colors.black,
@@ -441,17 +445,12 @@ Possible configuration options:
   ///Control bar height
   final double controlBarHeight;
 
-  ///Default error widget text
-  final String defaultErrorText;
-
-  ///Default loading next video text
-  final String loadingNextVideoText;
-
-  ///Text displayed when asset displayed in player is live stream
-  final String liveText;
-
   ///Live text color;
   final Color liveTextColor;
+
+  ///Flag used to show/hide overflow menu which contains playback, subtitles,
+  ///qualities options.
+  final bool enableOverflowMenu;
 
   ///Flag used to show/hide playback speed
   final bool enablePlaybackSpeed;
@@ -461,6 +460,9 @@ Possible configuration options:
 
   ///Flag used to show/hide qualities
   final bool enableQualities;
+
+  ///Custom items of overflow menu
+  final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 ```
 
 ### BetterPlayerPlaylistConfiguration
@@ -547,6 +549,45 @@ Possible configuration options:
   final String content;
 ```
 
+### BetterPlayerTranslations
+You can provide translations for different languages. You need to pass list of BetterPlayerTranslations to
+the BetterPlayerConfiguration. Here is an example:
+
+```dart
+ translations: [
+              BetterPlayerTranslations(
+                languageCode: "language_code for example pl",
+                generalDefaultError: "translated text",
+                generalNone: "translated text",
+                generalDefault: "translated text",
+                playlistLoadingNextVideo: "translated text",
+                controlsLive: "translated text",
+                controlsNextVideoIn: "translated text",
+                overflowMenuPlaybackSpeed: "translated text",
+                overflowMenuSubtitles: "translated text",
+                overflowMenuQuality: "translated text",
+              ),
+              BetterPlayerTranslations(
+                languageCode: "other language for example cz",
+                generalDefaultError: "translated text",
+                generalNone: "translated text",
+                generalDefault: "translated text",
+                playlistLoadingNextVideo: "translated text",
+                controlsLive: "translated text",
+                controlsNextVideoIn: "translated text",
+                overflowMenuPlaybackSpeed: "translated text",
+                overflowMenuSubtitles: "translated text",
+                overflowMenuQuality: "translated text",
+              ),
+            ],
+```
+There are 4 pre build in languages: EN, PL, ZH (chinese simplified), HI (hindi). If you didn't provide
+any translation then EN translations will be used or any of the pre build in translations, only if it's
+match current user locale.
+
+You need to setup localizations in your app first to make it work. Here's how you can do that:
+https://flutter.dev/docs/development/accessibility-and-localization/internationalization
+
 ### Listen to video events
 You can listen to video player events like:
 ```dart
@@ -612,6 +653,20 @@ only for normal videos (non-hls) to setup different qualities of the original vi
           "EXTRA_LARGE":
               "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4"
         });
+```
+
+### Add custom element to overflow menu
+You can use BetterPlayerControlsConfiguration to add custom element to the overflow menu:
+```dart
+  controlsConfiguration: BetterPlayerControlsConfiguration(
+              overflowMenuCustomItems: [
+                BetterPlayerOverflowMenuItem(
+                  Icons.account_circle_rounded,
+                  "Custom element",
+                  () => print("Click!"),
+                )
+              ],
+            ),
 ```
 
 ### More documentation

@@ -116,7 +116,7 @@ class _BetterPlayerMaterialControlsState
               size: 42,
             ),
             Text(
-              _controlsConfiguration.defaultErrorText,
+              _betterPlayerController.translations.generalDefaultError,
               style: TextStyle(color: _controlsConfiguration.textColor),
             ),
           ],
@@ -125,21 +125,23 @@ class _BetterPlayerMaterialControlsState
     }
   }
 
-  AnimatedOpacity _buildTopBar() {
-    return AnimatedOpacity(
-      opacity: _hideStuff ? 0.0 : 1.0,
-      duration: _controlsConfiguration.controlsHideTime,
-      onEnd: _onPlayerHide,
-      child: Container(
-        height: _controlsConfiguration.controlBarHeight,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            _buildMoreButton(),
-          ],
-        ),
-      ),
-    );
+  Widget _buildTopBar() {
+    return _controlsConfiguration.enableOverflowMenu
+        ? AnimatedOpacity(
+            opacity: _hideStuff ? 0.0 : 1.0,
+            duration: _controlsConfiguration.controlsHideTime,
+            onEnd: _onPlayerHide,
+            child: Container(
+              height: _controlsConfiguration.controlBarHeight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _buildMoreButton(),
+                ],
+              ),
+            ),
+          )
+        : const SizedBox();
   }
 
   Widget _buildMoreButton() {
@@ -195,7 +197,7 @@ class _BetterPlayerMaterialControlsState
   Widget _buildLiveWidget() {
     return Expanded(
       child: Text(
-        _controlsConfiguration.liveText,
+        _betterPlayerController.translations.controlsLive,
         style: TextStyle(
             color: _controlsConfiguration.liveTextColor,
             fontWeight: FontWeight.bold),
@@ -315,7 +317,7 @@ class _BetterPlayerMaterialControlsState
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    "Next video in ${snapshot.data} ...",
+                    "${_betterPlayerController.translations.controlsNextVideoIn} ${snapshot.data} ...",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

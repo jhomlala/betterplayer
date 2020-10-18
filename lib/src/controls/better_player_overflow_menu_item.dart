@@ -1,0 +1,16 @@
+import 'package:flutter/material.dart';
+
+class BetterPlayerOverflowMenuItem {
+  ///Icon of menu item
+  final IconData icon;
+
+  ///Title of menu item
+  final String title;
+
+  ///Callback when item is clicked
+  final Function onClicked;
+
+  BetterPlayerOverflowMenuItem(this.icon, this.title, this.onClicked)
+      : assert(icon != null, "Icon can't be null"),
+        assert(title != null, "Title can't be null");
+}

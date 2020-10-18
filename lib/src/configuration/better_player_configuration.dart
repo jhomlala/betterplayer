@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/configuration/better_player_translations.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +78,10 @@ class BetterPlayerConfiguration {
   ///Defines function which will react on player visibility changed
   final Function(double visibilityFraction) playerVisibilityChangedBehavior;
 
+  ///Defines translations used in player. If null, then default english translations
+  ///will be used.
+  final List<BetterPlayerTranslations> translations;
+
   const BetterPlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
@@ -107,6 +112,7 @@ class BetterPlayerConfiguration {
     this.fit = BoxFit.fill,
     this.rotation = 0,
     this.playerVisibilityChangedBehavior,
+    this.translations,
   });
 
   BetterPlayerConfiguration copyWith({
@@ -131,34 +137,37 @@ class BetterPlayerConfiguration {
     BoxFit fit,
     double rotation,
     Function(double visibilityFraction) playerVisibilityChangedBehavior,
+    BetterPlayerTranslations translations,
   }) {
     return BetterPlayerConfiguration(
-        aspectRatio: aspectRatio ?? this.aspectRatio,
-        autoPlay: autoPlay ?? this.autoPlay,
-        startAt: startAt ?? this.startAt,
-        looping: looping ?? this.looping,
-        fullScreenByDefault: fullScreenByDefault ?? this.fullScreenByDefault,
-        placeholder: placeholder ?? this.placeholder,
-        overlay: overlay ?? this.overlay,
-        showControlsOnInitialize:
-            showControlsOnInitialize ?? this.showControlsOnInitialize,
-        errorBuilder: errorBuilder ?? this.errorBuilder,
-        allowedScreenSleep: allowedScreenSleep ?? this.allowedScreenSleep,
-        deviceOrientationsOnFullScreen: deviceOrientationsOnFullScreen ??
-            this.deviceOrientationsOnFullScreen,
-        systemOverlaysAfterFullScreen:
-            systemOverlaysAfterFullScreen ?? this.systemOverlaysAfterFullScreen,
-        deviceOrientationsAfterFullScreen: deviceOrientationsAfterFullScreen ??
-            this.deviceOrientationsAfterFullScreen,
-        routePageBuilder: routePageBuilder ?? this.routePageBuilder,
-        eventListener: eventListener ?? this.eventListener,
-        subtitlesConfiguration:
-            subtitlesConfiguration ?? this.subtitlesConfiguration,
-        controlsConfiguration:
-            controlsConfiguration ?? this.controlsConfiguration,
-        fit: fit ?? this.fit,
-        rotation: rotation ?? this.rotation,
-        playerVisibilityChangedBehavior: playerVisibilityChangedBehavior ??
-            this.playerVisibilityChangedBehavior);
+      aspectRatio: aspectRatio ?? this.aspectRatio,
+      autoPlay: autoPlay ?? this.autoPlay,
+      startAt: startAt ?? this.startAt,
+      looping: looping ?? this.looping,
+      fullScreenByDefault: fullScreenByDefault ?? this.fullScreenByDefault,
+      placeholder: placeholder ?? this.placeholder,
+      overlay: overlay ?? this.overlay,
+      showControlsOnInitialize:
+          showControlsOnInitialize ?? this.showControlsOnInitialize,
+      errorBuilder: errorBuilder ?? this.errorBuilder,
+      allowedScreenSleep: allowedScreenSleep ?? this.allowedScreenSleep,
+      deviceOrientationsOnFullScreen:
+          deviceOrientationsOnFullScreen ?? this.deviceOrientationsOnFullScreen,
+      systemOverlaysAfterFullScreen:
+          systemOverlaysAfterFullScreen ?? this.systemOverlaysAfterFullScreen,
+      deviceOrientationsAfterFullScreen: deviceOrientationsAfterFullScreen ??
+          this.deviceOrientationsAfterFullScreen,
+      routePageBuilder: routePageBuilder ?? this.routePageBuilder,
+      eventListener: eventListener ?? this.eventListener,
+      subtitlesConfiguration:
+          subtitlesConfiguration ?? this.subtitlesConfiguration,
+      controlsConfiguration:
+          controlsConfiguration ?? this.controlsConfiguration,
+      fit: fit ?? this.fit,
+      rotation: rotation ?? this.rotation,
+      playerVisibilityChangedBehavior: playerVisibilityChangedBehavior ??
+          this.playerVisibilityChangedBehavior,
+      translations: translations ?? this.translations,
+    );
   }
 }

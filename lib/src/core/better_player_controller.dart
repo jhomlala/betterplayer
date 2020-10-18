@@ -5,6 +5,7 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_event.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
+import 'package:better_player/src/configuration/better_player_translations.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
@@ -101,6 +102,8 @@ class BetterPlayerController extends ChangeNotifier {
   ///Internal flag used to cancel dismiss of the full screen. Used when user
   ///switches quality (track or resolution) of the video. You should ignore it.
   bool cancelFullScreenDismiss = true;
+
+  BetterPlayerTranslations translations = BetterPlayerTranslations();
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -439,6 +442,39 @@ class BetterPlayerController extends ChangeNotifier {
       videoPlayerController.play();
     }
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_RESOLUTION));
+  }
+
+  ///Setup translations for given locale. In normal use cases it shouldn't be
+  ///called manually.
+  void setupTranslations(Locale locale) {
+    if (locale != null) {
+      String languageCode = locale.languageCode;
+      translations = betterPlayerConfiguration.translations?.firstWhere(
+              (translations) => translations.languageCode == languageCode,
+              orElse: () => null) ??
+          _getDefaultTranslations(locale);
+    } else {
+      print("Locale is null. Couldn't setup translations.");
+    }
+  }
+
+  ///Setup default translations for selected user locale. These translations
+  ///are pre-build in.
+  BetterPlayerTranslations _getDefaultTranslations(Locale locale) {
+    if (locale != null) {
+      String languageCode = locale.languageCode;
+      switch (languageCode) {
+        case "pl":
+          return BetterPlayerTranslations.polish();
+        case "zh":
+          return BetterPlayerTranslations.chinese();
+        case "hi":
+          return BetterPlayerTranslations.hindi();
+        default:
+          return BetterPlayerTranslations();
+      }
+    }
+    return BetterPlayerTranslations();
   }
 
   @override
