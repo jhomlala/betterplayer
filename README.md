@@ -581,7 +581,12 @@ the BetterPlayerConfiguration. Here is an example:
               ),
             ],
 ```
-There are 4 pre build in languages: EN, PL, ZH (chinese simplified), HI (hindi).
+There are 4 pre build in languages: EN, PL, ZH (chinese simplified), HI (hindi). If you didn't provide
+any translation then EN translations will be used or any of the pre build in translations, only if it's
+match current user locale.
+
+You need to setup localizations in your app first to make it work. Here's how you can do that:
+https://flutter.dev/docs/development/accessibility-and-localization/internationalization
 
 ### Listen to video events
 You can listen to video player events like:
@@ -658,7 +663,7 @@ You can use BetterPlayerControlsConfiguration to add custom element to the overf
                 BetterPlayerOverflowMenuItem(
                   Icons.account_circle_rounded,
                   "Custom element",
-                  () =>print("Click!"),
+                  () => print("Click!"),
                 )
               ],
             ),
