@@ -101,19 +101,19 @@ class _BetterPlayerSubtitlesDrawerState
     List<Widget> textWidgets =
         subtitles.map((text) => _buildSubtitleTextWidget(text)).toList();
 
-    return Column(
-      children: [
-        Expanded(child: Container()),
-        Padding(
-          padding: EdgeInsets.only(
-              bottom: _playerVisible
-                  ? _configuration.bottomPadding + 30
-                  : _configuration.bottomPadding,
-              left: _configuration.leftPadding,
-              right: _configuration.rightPadding),
-          child: Column(children: textWidgets),
-        )
-      ],
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      child: Padding(
+        padding: EdgeInsets.only(
+            bottom: _playerVisible
+                ? _configuration.bottomPadding + 30
+                : _configuration.bottomPadding,
+            left: _configuration.leftPadding,
+            right: _configuration.rightPadding),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.end, children: textWidgets),
+      ),
     );
   }
 
@@ -134,10 +134,11 @@ class _BetterPlayerSubtitlesDrawerState
   Widget _buildSubtitleTextWidget(String subtitleText) {
     return Row(children: [
       Expanded(
-        child: Center(
+        child: Align(
           child: _getTextWithStroke(subtitleText),
+          alignment: _configuration.alignment ?? Alignment.center,
         ),
-      )
+      ),
     ]);
   }
 
@@ -145,13 +146,17 @@ class _BetterPlayerSubtitlesDrawerState
     if (subtitleText == null) {
       subtitleText = "";
     }
-    String subtitleCenteredText = "<center>$subtitleText</center>";
-    return Stack(children: [
-      _configuration.outlineEnabled
-          ? _buildHtmlWidget(subtitleCenteredText, _outerTextStyle)
-          : const SizedBox(),
-      _buildHtmlWidget(subtitleCenteredText, _innerTextStyle)
-    ]);
+    return Container(
+      color: _configuration.backgroundColor ?? Colors.transparent,
+      child: Stack(
+        children: [
+          _configuration.outlineEnabled
+              ? _buildHtmlWidget(subtitleText, _outerTextStyle)
+              : const SizedBox(),
+          _buildHtmlWidget(subtitleText, _innerTextStyle)
+        ],
+      ),
+    );
   }
 
   Widget _buildHtmlWidget(String text, TextStyle textStyle) {

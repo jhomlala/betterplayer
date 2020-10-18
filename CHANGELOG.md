@@ -1,3 +1,7 @@
+## 0.0.28
+* Fixed subtitles overflow issue when transitioning between fullscreen and normal state
+* Added alignment and backgroundColor in BetterPlayerSubtitlesConfiguration
+
 ## 0.0.27
 * Added enableOverflowMenu option in BetterPlayerControlsConfiguration (enable/disable overflow menu)
 * Added overflowMenuCustomItems in BetterPlayerControlsConfiguration (show custom menu items in overflow menu)
