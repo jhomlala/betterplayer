@@ -360,7 +360,7 @@ Possible configuration options:
 Configuration for player GUI. You should pass this configuration to BetterPlayerConfiguration.
 
 ```dart
-ar betterPlayerConfiguration = BetterPlayerConfiguration(
+var betterPlayerConfiguration = BetterPlayerConfiguration(
       controlsConfiguration: BetterPlayerControlsConfiguration(
         textColor: Colors.black,
         iconsColor: Colors.black,
