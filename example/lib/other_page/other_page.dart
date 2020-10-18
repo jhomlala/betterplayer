@@ -53,17 +53,32 @@ class _OtherPageState extends State<OtherPage> {
               DeviceOrientation.portraitUp,
               DeviceOrientation.portraitDown
             ],
-            controlsConfiguration: BetterPlayerControlsConfiguration(
-              overflowMenuCustomItems: [
-                BetterPlayerOverflowMenuItem(
-                  Icons.account_circle_rounded,
-                  "Custom element",
-                  () {
-                    print("Click!");
-                  },
-                )
-              ],
-            ),
+            translations: [
+              BetterPlayerTranslations(
+                languageCode: "language_code for example pl",
+                generalDefaultError: "translated text",
+                generalNone: "translated text",
+                generalDefault: "translated text",
+                playlistLoadingNextVideo: "translated text",
+                controlsLive: "translated text",
+                controlsNextVideoIn: "translated text",
+                overflowMenuPlaybackSpeed: "translated text",
+                overflowMenuSubtitles: "translated text",
+                overflowMenuQuality: "translated text",
+              ),
+              BetterPlayerTranslations(
+                languageCode: "other language for example cz",
+                generalDefaultError: "translated text",
+                generalNone: "translated text",
+                generalDefault: "translated text",
+                playlistLoadingNextVideo: "translated text",
+                controlsLive: "translated text",
+                controlsNextVideoIn: "translated text",
+                overflowMenuPlaybackSpeed: "translated text",
+                overflowMenuSubtitles: "translated text",
+                overflowMenuQuality: "translated text",
+              ),
+            ],
           ),
         ),
       ),

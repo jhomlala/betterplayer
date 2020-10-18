@@ -444,7 +444,8 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.CHANGED_RESOLUTION));
   }
 
-  ///Method used to setup translations for given locale
+  ///Setup translations for given locale. In normal use cases it shouldn't be
+  ///called manually.
   void setupTranslations(Locale locale) {
     if (locale != null) {
       String languageCode = locale.languageCode;
@@ -457,6 +458,8 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Setup default translations for selected user locale. These translations
+  ///are pre-build in.
   BetterPlayerTranslations _getDefaultTranslations(Locale locale) {
     if (locale != null) {
       String languageCode = locale.languageCode;

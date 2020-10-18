@@ -78,7 +78,8 @@ class BetterPlayerConfiguration {
   ///Defines function which will react on player visibility changed
   final Function(double visibilityFraction) playerVisibilityChangedBehavior;
 
-  ///Defines translations used in player
+  ///Defines translations used in player. If null, then default english translations
+  ///will be used.
   final List<BetterPlayerTranslations> translations;
 
   const BetterPlayerConfiguration({

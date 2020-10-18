@@ -309,6 +309,10 @@ Possible configuration options:
     
     ///Defines function which will react on player visibility changed
     final Function(double visibilityFraction) playerVisibilityChangedBehavior;
+
+    ///Defines translations used in player. If null, then default english translations
+    ///will be used.
+    final List<BetterPlayerTranslations> translations;
 ```
 
 ### BetterPlayerSubtitlesConfiguration
@@ -441,15 +445,6 @@ Possible configuration options:
   ///Control bar height
   final double controlBarHeight;
 
-  ///Default error widget text
-  final String defaultErrorText;
-
-  ///Default loading next video text
-  final String loadingNextVideoText;
-
-  ///Text displayed when asset displayed in player is live stream
-  final String liveText;
-
   ///Live text color;
   final Color liveTextColor;
 
@@ -554,6 +549,20 @@ Possible configuration options:
   final String content;
 ```
 
+### BetterPlayerTranslations
+You can provide translations for different languages. You need to pass list of BetterPlayerTranslations to
+the BetterPlayerConfiguration. Here is an example:
+```dart
+ var betterPlayerConfiguration = BetterPlayerConfiguration(
+      subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
+        fontSize: 20,
+        fontColor: Colors.green,
+      ),
+    );
+
+
+
+
 ### Listen to video events
 You can listen to video player events like:
 ```dart
@@ -620,6 +629,38 @@ only for normal videos (non-hls) to setup different qualities of the original vi
               "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4"
         });
 ```
+
+### Add custom element to overflow menu
+You can use BetterPlayerControlsConfiguration to add custom element to the overflow menu:
+```dart
+ translations: [
+              BetterPlayerTranslations(
+                languageCode: "language_code for example pl",
+                generalDefaultError: "translated text",
+                generalNone: "translated text",
+                generalDefault: "translated text",
+                playlistLoadingNextVideo: "translated text",
+                controlsLive: "translated text",
+                controlsNextVideoIn: "translated text",
+                overflowMenuPlaybackSpeed: "translated text",
+                overflowMenuSubtitles: "translated text",
+                overflowMenuQuality: "translated text",
+              ),
+              BetterPlayerTranslations(
+                languageCode: "other language for example cz",
+                generalDefaultError: "translated text",
+                generalNone: "translated text",
+                generalDefault: "translated text",
+                playlistLoadingNextVideo: "translated text",
+                controlsLive: "translated text",
+                controlsNextVideoIn: "translated text",
+                overflowMenuPlaybackSpeed: "translated text",
+                overflowMenuSubtitles: "translated text",
+                overflowMenuQuality: "translated text",
+              ),
+            ],
+```
+There are 4 pre build in languages: EN, PL, ZH (chinese simplified), HI (hindi).
 
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html
