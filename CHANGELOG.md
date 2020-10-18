@@ -1,4 +1,5 @@
 ## 0.0.28
+* Fixed subtitles overflow issue when transitioning between fullscreen and normal state
 * Added alignment and backgroundColor in BetterPlayerSubtitlesConfiguration
 
 ## 0.0.27
