@@ -37,18 +37,19 @@ class BetterPlayerTranslations {
         overflowMenuQuality: "Jakość",
       );
 
-  factory BetterPlayerTranslations.chinese() => BetterPlayerTranslations(
-    languageCode: "zh",
-    generalDefaultError: "无法播放视频",
-    generalNone: "没有",
-    generalDefault: "默认",
-    playlistLoadingNextVideo: "正在加载下一个视频",
-    controlsLive: "生活",
-    controlsNextVideoIn : "下一部影片n",
-    overflowMenuPlaybackSpeed: "播放速度",
-    overflowMenuSubtitles: "字幕",
-    overflowMenuQuality: "质量",
-  );
+  factory BetterPlayerTranslations.chinese() =>
+      BetterPlayerTranslations(
+        languageCode: "zh",
+        generalDefaultError: "无法播放视频",
+        generalNone: "没有",
+        generalDefault: "默认",
+        playlistLoadingNextVideo: "正在加载下一个视频",
+        controlsLive: "生活",
+        controlsNextVideoIn: "下一部影片n",
+        overflowMenuPlaybackSpeed: "播放速度",
+        overflowMenuSubtitles: "字幕",
+        overflowMenuQuality: "质量",
+      );
 
   factory BetterPlayerTranslations.hindi() => BetterPlayerTranslations(
     languageCode: "hi",
