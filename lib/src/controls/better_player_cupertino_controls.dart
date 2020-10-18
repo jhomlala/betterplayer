@@ -495,7 +495,7 @@ class _BetterPlayerCupertinoControlsState
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    "Next video in ${snapshot.data} ...",
+                    "${_betterPlayerController.translations.controlsNextVideoIn} ${snapshot.data} ...",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -666,8 +666,9 @@ class _BetterPlayerCupertinoControlsState
 
   Widget _buildLoadingWidget() {
     return CircularProgressIndicator(
-      valueColor:
-          AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
+      valueColor: AlwaysStoppedAnimation<Color>(
+        _controlsConfiguration.controlBarColor,
+      ),
     );
   }
 

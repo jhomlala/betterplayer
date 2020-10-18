@@ -6,6 +6,7 @@ class BetterPlayerTranslations {
   final String generalDefault;
   final String playlistLoadingNextVideo;
   final String controlsLive;
+  final String controlsNextVideoIn;
   final String overflowMenuPlaybackSpeed;
   final String overflowMenuSubtitles;
   final String overflowMenuQuality;
@@ -17,6 +18,7 @@ class BetterPlayerTranslations {
     this.generalDefault = "Default",
     this.playlistLoadingNextVideo = "Loading next video",
     this.controlsLive = "LIVE",
+    this.controlsNextVideoIn = "Next video in",
     this.overflowMenuPlaybackSpeed = "Playback speed",
     this.overflowMenuSubtitles = "Subtitles",
     this.overflowMenuQuality = "Quality",
@@ -29,6 +31,7 @@ class BetterPlayerTranslations {
         generalDefault: "Domyślne",
         playlistLoadingNextVideo: "Ładowanie następnego filmu",
         controlsLive: "LIVE",
+        controlsNextVideoIn: "Następne video za",
         overflowMenuPlaybackSpeed: "Szybkość odtwarzania",
         overflowMenuSubtitles: "Napisy",
         overflowMenuQuality: "Jakość",
@@ -41,6 +44,7 @@ class BetterPlayerTranslations {
     generalDefault: "默认",
     playlistLoadingNextVideo: "正在加载下一个视频",
     controlsLive: "生活",
+    controlsNextVideoIn : "下一部影片n",
     overflowMenuPlaybackSpeed: "播放速度",
     overflowMenuSubtitles: "字幕",
     overflowMenuQuality: "质量",
@@ -53,6 +57,7 @@ class BetterPlayerTranslations {
     generalDefault: "चूक",
     playlistLoadingNextVideo: "अगला वीडियो लोड हो रहा है",
     controlsLive: "लाइव",
+    controlsNextVideoIn : "में अगला वीडियो",
     overflowMenuPlaybackSpeed: "प्लेबैक की गति",
     overflowMenuSubtitles: "उपशीर्षक",
     overflowMenuQuality: "गुणवत्ता",

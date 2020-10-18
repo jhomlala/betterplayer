@@ -317,7 +317,7 @@ class _BetterPlayerMaterialControlsState
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    "Next video in ${snapshot.data} ...",
+                    "${_betterPlayerController.translations.controlsNextVideoIn} ${snapshot.data} ...",
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
