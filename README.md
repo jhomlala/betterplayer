@@ -34,7 +34,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.26
+  better_player: ^0.0.27
 ```
 
 2. Install it
@@ -552,16 +552,36 @@ Possible configuration options:
 ### BetterPlayerTranslations
 You can provide translations for different languages. You need to pass list of BetterPlayerTranslations to
 the BetterPlayerConfiguration. Here is an example:
+
 ```dart
- var betterPlayerConfiguration = BetterPlayerConfiguration(
-      subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
-        fontSize: 20,
-        fontColor: Colors.green,
-      ),
-    );
-
-
-
+ translations: [
+              BetterPlayerTranslations(
+                languageCode: "language_code for example pl",
+                generalDefaultError: "translated text",
+                generalNone: "translated text",
+                generalDefault: "translated text",
+                playlistLoadingNextVideo: "translated text",
+                controlsLive: "translated text",
+                controlsNextVideoIn: "translated text",
+                overflowMenuPlaybackSpeed: "translated text",
+                overflowMenuSubtitles: "translated text",
+                overflowMenuQuality: "translated text",
+              ),
+              BetterPlayerTranslations(
+                languageCode: "other language for example cz",
+                generalDefaultError: "translated text",
+                generalNone: "translated text",
+                generalDefault: "translated text",
+                playlistLoadingNextVideo: "translated text",
+                controlsLive: "translated text",
+                controlsNextVideoIn: "translated text",
+                overflowMenuPlaybackSpeed: "translated text",
+                overflowMenuSubtitles: "translated text",
+                overflowMenuQuality: "translated text",
+              ),
+            ],
+```
+There are 4 pre build in languages: EN, PL, ZH (chinese simplified), HI (hindi).
 
 ### Listen to video events
 You can listen to video player events like:
@@ -633,34 +653,16 @@ only for normal videos (non-hls) to setup different qualities of the original vi
 ### Add custom element to overflow menu
 You can use BetterPlayerControlsConfiguration to add custom element to the overflow menu:
 ```dart
- translations: [
-              BetterPlayerTranslations(
-                languageCode: "language_code for example pl",
-                generalDefaultError: "translated text",
-                generalNone: "translated text",
-                generalDefault: "translated text",
-                playlistLoadingNextVideo: "translated text",
-                controlsLive: "translated text",
-                controlsNextVideoIn: "translated text",
-                overflowMenuPlaybackSpeed: "translated text",
-                overflowMenuSubtitles: "translated text",
-                overflowMenuQuality: "translated text",
-              ),
-              BetterPlayerTranslations(
-                languageCode: "other language for example cz",
-                generalDefaultError: "translated text",
-                generalNone: "translated text",
-                generalDefault: "translated text",
-                playlistLoadingNextVideo: "translated text",
-                controlsLive: "translated text",
-                controlsNextVideoIn: "translated text",
-                overflowMenuPlaybackSpeed: "translated text",
-                overflowMenuSubtitles: "translated text",
-                overflowMenuQuality: "translated text",
-              ),
-            ],
+  controlsConfiguration: BetterPlayerControlsConfiguration(
+              overflowMenuCustomItems: [
+                BetterPlayerOverflowMenuItem(
+                  Icons.account_circle_rounded,
+                  "Custom element",
+                  () =>print("Click!"),
+                )
+              ],
+            ),
 ```
-There are 4 pre build in languages: EN, PL, ZH (chinese simplified), HI (hindi).
 
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html
