@@ -152,11 +152,14 @@ class BetterPlayerState extends State<BetterPlayer> {
     var controllerProvider = BetterPlayerControllerProvider(
         controller: widget.controller, child: _buildPlayer());
 
-    if (widget.controller.routePageBuilder == null) {
+    var routePageBuilder =
+        widget.controller.betterPlayerConfiguration.routePageBuilder;
+    if (routePageBuilder == null) {
       return _defaultRoutePageBuilder(
           context, animation, secondaryAnimation, controllerProvider);
     }
-    return widget.controller.routePageBuilder(
+
+    return routePageBuilder(
         context, animation, secondaryAnimation, controllerProvider);
   }
 
