@@ -69,8 +69,10 @@ class _BetterPlayerCupertinoControlsState
         _cancelAndRestartTimer();
       },
       child: GestureDetector(
-        onTap: () {
+        onTap: _cancelAndRestartTimer,
+        onDoubleTap: () {
           _cancelAndRestartTimer();
+          _onPlayPause();
         },
         child: AbsorbPointer(
           absorbing: _hideStuff,
@@ -350,7 +352,7 @@ class _BetterPlayerCupertinoControlsState
     double barHeight,
   ) {
     return GestureDetector(
-      onTap: _playPause,
+      onTap: _onPlayPause,
       child: Container(
         height: barHeight,
         color: Colors.transparent,
@@ -574,7 +576,7 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  void _playPause() {
+  void _onPlayPause() {
     bool isFinished = false;
 
     if (_latestValue?.position != null && _latestValue?.duration != null) {

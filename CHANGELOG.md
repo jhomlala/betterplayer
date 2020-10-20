@@ -1,6 +1,7 @@
 ## 0.0.29
 * Fixed routePageBuilder usage from BetterPlayerConfiguration
 * Added overflowMenuIcon, playbackSpeedIcon, qualitiesIcon, subtitlesIcon, overflowMenuIconsColor to BetterPlayerControlsConfiguration
+* Added double tap to play/pause video (original idea by https://github.com/r6c)
 
 ## 0.0.28
 * Fixed subtitles overflow issue when transitioning between fullscreen and normal state
