@@ -1,3 +1,6 @@
+## 0.0.30
+* Updated readme
+
 ## 0.0.29
 * Fixed routePageBuilder usage from BetterPlayerConfiguration
 * Added overflowMenuIcon, playbackSpeedIcon, qualitiesIcon, subtitlesIcon, overflowMenuIconsColor to BetterPlayerControlsConfiguration
