@@ -18,7 +18,7 @@ class _VideoListPageState extends State<VideoListPage> {
     // "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4",
   ];
   List<VideoListData> dataList = List();
-var value = 0;
+  var value = 0;
   @override
   void initState() {
     _setupData();
@@ -37,12 +37,14 @@ var value = 0;
     return Container(
       color: Colors.grey,
       child: Column(children: [
-        FlatButton(child: Text("Update page state"),onPressed: (){
-          setState(() {
-            value++;
-          });
-
-        },),
+        FlatButton(
+          child: Text("Update page state"),
+          onPressed: () {
+            setState(() {
+              value++;
+            });
+          },
+        ),
         Expanded(
           child: ListView.builder(
             itemCount: dataList.length,

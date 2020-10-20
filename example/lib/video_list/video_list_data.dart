@@ -1,4 +1,4 @@
-class VideoListData{
+class VideoListData {
   final String videoTitle;
   final String videoUrl;
 
