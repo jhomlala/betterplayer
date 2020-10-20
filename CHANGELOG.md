@@ -1,3 +1,6 @@
+## 0.0.29
+* Fixed routePageBuilder usage from BetterPlayerConfiguration
+
 ## 0.0.28
 * Fixed subtitles overflow issue when transitioning between fullscreen and normal state
 * Added alignment and backgroundColor in BetterPlayerSubtitlesConfiguration
