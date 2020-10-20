@@ -52,8 +52,6 @@ class BetterPlayerController extends ChangeNotifier {
   List<DeviceOrientation> get deviceOrientationsAfterFullScreen =>
       betterPlayerConfiguration.deviceOrientationsAfterFullScreen;
 
-  BetterPlayerRoutePageBuilder routePageBuilder;
-
   /// Defines a event listener where video player events will be send
   Function(BetterPlayerEvent) get eventListener =>
       betterPlayerConfiguration.eventListener;

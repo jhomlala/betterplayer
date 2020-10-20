@@ -37,21 +37,20 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         child: Column(
           children: [
             if (controlsConfiguration.enablePlaybackSpeed)
-              _buildMoreOptionsListRow(
-                  Icons.shutter_speed, translations.overflowMenuPlaybackSpeed,
-                  () {
+              _buildMoreOptionsListRow(controlsConfiguration.playbackSpeedIcon,
+                  translations.overflowMenuPlaybackSpeed, () {
                 Navigator.of(context).pop();
                 _showSpeedChooserWidget();
               }),
             if (controlsConfiguration.enableSubtitles)
-              _buildMoreOptionsListRow(
-                  Icons.text_fields, translations.overflowMenuSubtitles, () {
+              _buildMoreOptionsListRow(controlsConfiguration.subtitlesIcon,
+                  translations.overflowMenuSubtitles, () {
                 Navigator.of(context).pop();
                 _showSubtitlesSelectionWidget();
               }),
             if (controlsConfiguration.enableQualities)
-              _buildMoreOptionsListRow(
-                  Icons.hd, translations.overflowMenuQuality, () {
+              _buildMoreOptionsListRow(controlsConfiguration.qualitiesIcon,
+                  translations.overflowMenuQuality, () {
                 Navigator.of(context).pop();
                 _showQualitiesSelectionWidget();
               }),
@@ -82,7 +81,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         child: Row(
           children: [
-            Icon(icon),
+            Icon(
+              icon,
+              color: getBetterPlayerController()
+                  .betterPlayerConfiguration
+                  .controlsConfiguration
+                  .overflowMenuIconsColor,
+            ),
             const SizedBox(width: 16),
             Text(name),
           ],

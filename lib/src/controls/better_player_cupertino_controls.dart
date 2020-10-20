@@ -285,7 +285,7 @@ class _BetterPlayerCupertinoControlsState
                   horizontal: buttonPadding,
                 ),
                 child: Icon(
-                  Icons.more_vert,
+                  _controlsConfiguration.overflowMenuIcon,
                   color: iconColor,
                   size: 16.0,
                 ),

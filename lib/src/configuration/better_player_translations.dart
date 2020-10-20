@@ -37,8 +37,7 @@ class BetterPlayerTranslations {
         overflowMenuQuality: "Jakość",
       );
 
-  factory BetterPlayerTranslations.chinese() =>
-      BetterPlayerTranslations(
+  factory BetterPlayerTranslations.chinese() => BetterPlayerTranslations(
         languageCode: "zh",
         generalDefaultError: "无法播放视频",
         generalNone: "没有",
@@ -52,16 +51,15 @@ class BetterPlayerTranslations {
       );
 
   factory BetterPlayerTranslations.hindi() => BetterPlayerTranslations(
-    languageCode: "hi",
-    generalDefaultError: "वीडियो नहीं चलाया जा सकता",
-    generalNone: "कोई नहीं",
-    generalDefault: "चूक",
-    playlistLoadingNextVideo: "अगला वीडियो लोड हो रहा है",
-    controlsLive: "लाइव",
-    controlsNextVideoIn : "में अगला वीडियो",
-    overflowMenuPlaybackSpeed: "प्लेबैक की गति",
-    overflowMenuSubtitles: "उपशीर्षक",
-    overflowMenuQuality: "गुणवत्ता",
-  );
-
+        languageCode: "hi",
+        generalDefaultError: "वीडियो नहीं चलाया जा सकता",
+        generalNone: "कोई नहीं",
+        generalDefault: "चूक",
+        playlistLoadingNextVideo: "अगला वीडियो लोड हो रहा है",
+        controlsLive: "लाइव",
+        controlsNextVideoIn: "में अगला वीडियो",
+        overflowMenuPlaybackSpeed: "प्लेबैक की गति",
+        overflowMenuSubtitles: "उपशीर्षक",
+        overflowMenuQuality: "गुणवत्ता",
+      );
 }

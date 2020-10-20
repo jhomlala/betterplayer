@@ -35,7 +35,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.28
+  better_player: ^0.0.29
 ```
 
 2. Install it
@@ -375,8 +375,6 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
     );
 ```
 
-Possible configuration options:
-```dart
   ///Color of the control bars
   final Color controlBarColor;
 
@@ -470,6 +468,21 @@ Possible configuration options:
 
   ///Custom items of overflow menu
   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
+
+  ///Icon of the overflow menu
+  final IconData overflowMenuIcon;
+
+  ///Icon of the playback speed menu item from overflow menu
+  final IconData playbackSpeedIcon;
+
+  ///Icon of the subtitles menu item from overflow menu
+  final IconData subtitlesIcon;
+
+  ///Icon of the qualities menu item from overflow menu
+  final IconData qualitiesIcon;
+
+  ///Color of overflow menu icons
+  final Color overflowMenuIconsColor;
 ```
 
 ### BetterPlayerPlaylistConfiguration

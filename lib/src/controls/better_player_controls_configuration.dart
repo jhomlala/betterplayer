@@ -99,6 +99,21 @@ class BetterPlayerControlsConfiguration {
   ///Custom items of overflow menu
   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
+  ///Icon of the overflow menu
+  final IconData overflowMenuIcon;
+
+  ///Icon of the playback speed menu item from overflow menu
+  final IconData playbackSpeedIcon;
+
+  ///Icon of the subtitles menu item from overflow menu
+  final IconData subtitlesIcon;
+
+  ///Icon of the qualities menu item from overflow menu
+  final IconData qualitiesIcon;
+
+  ///Color of overflow menu icons
+  final Color overflowMenuIconsColor;
+
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -131,6 +146,11 @@ class BetterPlayerControlsConfiguration {
     this.enableSubtitles = true,
     this.enableQualities = true,
     this.overflowMenuCustomItems = const [],
+    this.overflowMenuIcon = Icons.more_vert,
+    this.playbackSpeedIcon = Icons.shutter_speed,
+    this.qualitiesIcon = Icons.hd,
+    this.subtitlesIcon = Icons.text_fields,
+    this.overflowMenuIconsColor = Colors.black,
   });
 
   factory BetterPlayerControlsConfiguration.white() {
