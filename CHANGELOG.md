@@ -1,5 +1,6 @@
 ## 0.0.29
 * Fixed routePageBuilder usage from BetterPlayerConfiguration
+* Added overflowMenuIcon, playbackSpeedIcon, qualitiesIcon, subtitlesIcon, overflowMenuIconsColor to BetterPlayerControlsConfiguration
 
 ## 0.0.28
 * Fixed subtitles overflow issue when transitioning between fullscreen and normal state

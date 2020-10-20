@@ -149,8 +149,8 @@ class _BetterPlayerMaterialControlsState
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Icon(
-          Icons.more_vert,
-          color: Colors.white,
+          _controlsConfiguration.overflowMenuIcon,
+          color: _controlsConfiguration.iconsColor,
         ),
       ),
       onTap: () {
