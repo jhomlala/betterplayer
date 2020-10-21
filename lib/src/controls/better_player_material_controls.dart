@@ -43,6 +43,8 @@ class _BetterPlayerMaterialControlsState
   bool _displayTapped = false;
   VideoPlayerController _controller;
   BetterPlayerController _betterPlayerController;
+  Duration _currentPosition;
+  double _movePan = 0;
 
   BetterPlayerControlsConfiguration get _controlsConfiguration =>
       widget.controlsConfiguration;
@@ -61,6 +63,27 @@ class _BetterPlayerMaterialControlsState
         onDoubleTap: () {
           _cancelAndRestartTimer();
           _onPlayPause();
+        },
+        onHorizontalDragStart: (_) {
+          _currentPosition = _controller.value.position;
+          _hideTimer?.cancel();
+
+          setState(() {
+            _hideStuff = false;
+            _displayTapped = true;
+          });
+        },
+        onHorizontalDragUpdate: (details) {
+          _movePan += details.delta.dx;
+          final box = context.findRenderObject() as RenderBox;
+          final double percent =
+              _getHorizontalValuePercent(_movePan, box.size.width);
+          final Duration position = _controller.value.duration * percent;
+          _betterPlayerController.seekTo(position);
+        },
+        onHorizontalDragEnd: (details) {
+          _cancelAndRestartTimer();
+          _movePan = 0;
         },
         child: AbsorbPointer(
           absorbing: _hideStuff,
@@ -490,6 +513,17 @@ class _BetterPlayerMaterialControlsState
         _latestValue = _controller.value;
       });
     }
+  }
+
+  double _getHorizontalValuePercent(double movePan, double layoutWidth) {
+    double valueHorizontal =
+        double.parse((movePan / layoutWidth).toStringAsFixed(2));
+    double currentValue = _currentPosition.inMilliseconds /
+        _controller.value.duration.inMilliseconds;
+    double percent =
+        double.parse((currentValue + valueHorizontal).toStringAsFixed(2));
+
+    return percent;
   }
 
   Widget _buildProgressBar() {
