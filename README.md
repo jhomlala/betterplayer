@@ -372,7 +372,7 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
       ),
     );
 ```
-
+```dart
   ///Color of the control bars
   final Color controlBarColor;
 
@@ -609,7 +609,7 @@ https://flutter.dev/docs/development/accessibility-and-localization/internationa
 ### Listen to video events
 You can listen to video player events like:
 ```dart
-  PLAY,
+PLAY,
   PAUSE,
   SEEK_TO,
   OPEN_FULLSCREEN,
@@ -618,11 +618,13 @@ You can listen to video player events like:
   PROGRESS,
   FINISHED,
   EXCEPTION,
+  CONTROLS_VISIBLE,
+  CONTROLS_HIDDEN,
   SET_SPEED,
-  CHANGED_SUBTITLES
-  CHANGED_TRACK
+  CHANGED_SUBTITLES,
+  CHANGED_TRACK,
   CHANGED_PLAYER_VISIBILITY,
-  CHANGED_RESOLUTION
+  CHANGED_RESOLUTION,
 ```
 
 After creating BetterPlayerController you can add event listener this way:
