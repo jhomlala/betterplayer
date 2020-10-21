@@ -13,7 +13,7 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      child: InkWell(
+      child: GestureDetector(
         child: child,
         onTap: onTap,
       ),
