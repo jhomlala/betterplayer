@@ -34,7 +34,7 @@ class BetterPlayerController extends ChangeNotifier {
   bool get looping => betterPlayerConfiguration.looping;
 
   Widget Function(BuildContext context, String errorMessage) get errorBuilder =>
-      null;
+      betterPlayerConfiguration.errorBuilder;
 
   double get aspectRatio => betterPlayerConfiguration.aspectRatio;
 
