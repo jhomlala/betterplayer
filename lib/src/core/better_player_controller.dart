@@ -227,10 +227,6 @@ class BetterPlayerController extends ChangeNotifier {
       await videoPlayerController.seekTo(startAt);
     }
 
-    if (fullScreenByDefault) {
-      videoPlayerController.addListener(_fullScreenListener);
-    }
-
     ///General purpose listener
     videoPlayerController.addListener(_onVideoPlayerChanged);
   }
