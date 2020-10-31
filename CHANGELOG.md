@@ -1,6 +1,12 @@
 ## 0.0.30
 * Fixed issue when full screen was triggered twice if autoPlay and fullScreenByDefault were enabled
 * Removed flutter_widgets, since it's not maintained anymore. Added instead visibility_detector package (by https://github.com/espresso3389)
+* Added rewind and forward buttons for android player.
+* Fixed player UI's jank
+* Added enableSkips and skipsTimeInMilliseconds in BetterPlayerControlsConfiguration
+* Changed middle play button behavior (now it's only used for restart player).
+* Updated BetterPlayerControllerProvider visibility.
+* Override invalid dependency from wakelock library.
 
 ## 0.0.29+1
 * Updated readme

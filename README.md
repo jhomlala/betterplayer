@@ -33,7 +33,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.29+1
+  better_player: ^0.0.30
 ```
 
 2. Install it
@@ -373,114 +373,120 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
     );
 ```
 ```dart
-  ///Color of the control bars
-  final Color controlBarColor;
+   ///Color of the control bars
+   final Color controlBarColor;
 
-  ///Color of texts
-  final Color textColor;
+   ///Color of texts
+   final Color textColor;
 
-  ///Color of icons
-  final Color iconsColor;
+   ///Color of icons
+   final Color iconsColor;
 
-  ///Icon of play
-  final IconData playIcon;
+   ///Icon of play
+   final IconData playIcon;
 
-  ///Icon of pause
-  final IconData pauseIcon;
+   ///Icon of pause
+   final IconData pauseIcon;
 
-  ///Icon of mute
-  final IconData muteIcon;
+   ///Icon of mute
+   final IconData muteIcon;
 
-  ///Icon of unmute
-  final IconData unMuteIcon;
+   ///Icon of unmute
+   final IconData unMuteIcon;
 
-  ///Icon of fullscreen mode enable
-  final IconData fullscreenEnableIcon;
+   ///Icon of fullscreen mode enable
+   final IconData fullscreenEnableIcon;
 
-  ///Icon of fullscreen mode disable
-  final IconData fullscreenDisableIcon;
+   ///Icon of fullscreen mode disable
+   final IconData fullscreenDisableIcon;
 
-  ///Cupertino only icon, icon of skip
-  final IconData skipBackIcon;
+   ///Cupertino only icon, icon of skip
+   final IconData skipBackIcon;
 
-  ///Cupertino only icon, icon of forward
-  final IconData skipForwardIcon;
+   ///Cupertino only icon, icon of forward
+   final IconData skipForwardIcon;
 
-  ///Flag used to enable/disable fullscreen
-  final bool enableFullscreen;
+   ///Flag used to enable/disable fullscreen
+   final bool enableFullscreen;
 
-  ///Flag used to enable/disable mute
-  final bool enableMute;
+   ///Flag used to enable/disable mute
+   final bool enableMute;
 
-  ///Flag used to enable/disable progress texts
-  final bool enableProgressText;
+   ///Flag used to enable/disable progress texts
+   final bool enableProgressText;
 
-  ///Flag used to enable/disable progress bar
-  final bool enableProgressBar;
+   ///Flag used to enable/disable progress bar
+   final bool enableProgressBar;
 
-  ///Flag used to enable/disable play-pause
-  final bool enablePlayPause;
+   ///Flag used to enable/disable play-pause
+   final bool enablePlayPause;
 
-  ///Progress bar played color
-  final Color progressBarPlayedColor;
+   ///Flag used to enable skip forward and skip back
+   final bool enableSkips;
 
-  ///Progress bar circle color
-  final Color progressBarHandleColor;
+   ///Progress bar played color
+   final Color progressBarPlayedColor;
 
-  ///Progress bar buffered video color
-  final Color progressBarBufferedColor;
+   ///Progress bar circle color
+   final Color progressBarHandleColor;
 
-  ///Progress bar background color
-  final Color progressBarBackgroundColor;
+   ///Progress bar buffered video color
+   final Color progressBarBufferedColor;
 
-  ///Time to hide controls
-  final Duration controlsHideTime;
+   ///Progress bar background color
+   final Color progressBarBackgroundColor;
 
-  ///Custom controls, it will override Material/Cupertino controls
-  final Widget customControls;
+   ///Time to hide controls
+   final Duration controlsHideTime;
 
-  ///Flag used to show/hide controls
-  final bool showControls;
+   ///Custom controls, it will override Material/Cupertino controls
+   final Widget customControls;
 
-  ///Flag used to show controls on init
-  final bool showControlsOnInitialize;
+   ///Flag used to show/hide controls
+   final bool showControls;
 
-  ///Control bar height
-  final double controlBarHeight;
+   ///Flag used to show controls on init
+   final bool showControlsOnInitialize;
 
-  ///Live text color;
-  final Color liveTextColor;
+   ///Control bar height
+   final double controlBarHeight;
 
-  ///Flag used to show/hide overflow menu which contains playback, subtitles,
-  ///qualities options.
-  final bool enableOverflowMenu;
+   ///Live text color;
+   final Color liveTextColor;
 
-  ///Flag used to show/hide playback speed
-  final bool enablePlaybackSpeed;
+   ///Flag used to show/hide overflow menu which contains playback, subtitles,
+   ///qualities options.
+   final bool enableOverflowMenu;
 
-  ///Flag used to show/hide subtitles
-  final bool enableSubtitles;
+   ///Flag used to show/hide playback speed
+   final bool enablePlaybackSpeed;
 
-  ///Flag used to show/hide qualities
-  final bool enableQualities;
+   ///Flag used to show/hide subtitles
+   final bool enableSubtitles;
 
-  ///Custom items of overflow menu
-  final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
+   ///Flag used to show/hide qualities
+   final bool enableQualities;
 
-  ///Icon of the overflow menu
-  final IconData overflowMenuIcon;
+   ///Custom items of overflow menu
+   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
-  ///Icon of the playback speed menu item from overflow menu
-  final IconData playbackSpeedIcon;
+   ///Icon of the overflow menu
+   final IconData overflowMenuIcon;
 
-  ///Icon of the subtitles menu item from overflow menu
-  final IconData subtitlesIcon;
+   ///Icon of the playback speed menu item from overflow menu
+   final IconData playbackSpeedIcon;
 
-  ///Icon of the qualities menu item from overflow menu
-  final IconData qualitiesIcon;
+   ///Icon of the subtitles menu item from overflow menu
+   final IconData subtitlesIcon;
 
-  ///Color of overflow menu icons
-  final Color overflowMenuIconsColor;
+   ///Icon of the qualities menu item from overflow menu
+   final IconData qualitiesIcon;
+
+   ///Color of overflow menu icons
+   final Color overflowMenuIconsColor;
+
+   ///Time which will be used once user uses rewind and forward
+   final int skipsTimeInMilliseconds;
 ```
 
 ### BetterPlayerPlaylistConfiguration

@@ -1,6 +1,7 @@
 library better_player;
 
 export 'src/core/better_player.dart';
+export 'src/core/better_player_controller_provider.dart';
 export 'src/controls/better_player_progress_colors.dart';
 export 'src/core/better_player_controller.dart';
 export 'src/configuration/better_player_data_source.dart';

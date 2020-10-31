@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
@@ -53,9 +54,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     super.dispose();
   }
 
-  void _onControllerChanged() {
-    setState(() {});
-  }
+  void _onControllerChanged() {}
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +125,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     return controlsConfiguration.showControls
         ? controlsConfiguration.customControls != null
             ? controlsConfiguration.customControls
-            : Theme.of(context).platform == TargetPlatform.android
+            : Platform.isAndroid
                 ? BetterPlayerMaterialControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
                     controlsConfiguration: controlsConfiguration,
