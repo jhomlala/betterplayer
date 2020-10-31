@@ -50,10 +50,14 @@ class _BetterPlayerMaterialControlsState
       widget.controlsConfiguration;
 
   @override
-  BetterPlayerController getBetterPlayerController() => _betterPlayerController;
+  VideoPlayerValue get latestValue => _latestValue;
 
   @override
-  VideoPlayerValue get latestValue => _latestValue;
+  BetterPlayerController get betterPlayerController => _betterPlayerController;
+
+  @override
+  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
+      _controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {

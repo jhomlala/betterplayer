@@ -13,11 +13,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Min. time of buffered video to hide loading timer (in milliseconds)
   static const int _bufferingInterval = 20000;
 
-  BetterPlayerController getBetterPlayerController();
+  BetterPlayerController get betterPlayerController;
 
-  void cancelAndRestartTimer();
+  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration;
 
   VideoPlayerValue get latestValue;
+
+  void cancelAndRestartTimer();
 
   bool isVideoFinished(VideoPlayerValue videoPlayerValue) {
     return videoPlayerValue?.position != null &&
@@ -28,16 +30,23 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   void skipBack() {
     cancelAndRestartTimer();
     final beginning = Duration(seconds: 0).inMilliseconds;
-    final skip = (latestValue.position - Duration(seconds: 15)).inMilliseconds;
-    getBetterPlayerController()
-        .seekTo(Duration(milliseconds: max(skip, beginning)));
+    final skip = (latestValue.position -
+            Duration(
+                milliseconds:
+                    betterPlayerControlsConfiguration.skipsTimeInMilliseconds))
+        .inMilliseconds;
+    betterPlayerController.seekTo(Duration(milliseconds: max(skip, beginning)));
   }
 
   void skipForward() {
     cancelAndRestartTimer();
     final end = latestValue.duration.inMilliseconds;
-    final skip = (latestValue.position + Duration(seconds: 15)).inMilliseconds;
-    getBetterPlayerController().seekTo(Duration(milliseconds: min(skip, end)));
+    final skip = (latestValue.position +
+            Duration(
+                milliseconds:
+                    betterPlayerControlsConfiguration.skipsTimeInMilliseconds))
+        .inMilliseconds;
+    betterPlayerController.seekTo(Duration(milliseconds: min(skip, end)));
   }
 
   void onShowMoreClicked() {
@@ -54,35 +63,35 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildMoreOptionsList() {
-    var controlsConfiguration = getBetterPlayerController()
-        .betterPlayerConfiguration
-        .controlsConfiguration;
-
-    var translations = getBetterPlayerController().translations;
+    var translations = betterPlayerController.translations;
     return SingleChildScrollView(
       child: Container(
         child: Column(
           children: [
-            if (controlsConfiguration.enablePlaybackSpeed)
-              _buildMoreOptionsListRow(controlsConfiguration.playbackSpeedIcon,
+            if (betterPlayerControlsConfiguration.enablePlaybackSpeed)
+              _buildMoreOptionsListRow(
+                  betterPlayerControlsConfiguration.playbackSpeedIcon,
                   translations.overflowMenuPlaybackSpeed, () {
                 Navigator.of(context).pop();
                 _showSpeedChooserWidget();
               }),
-            if (controlsConfiguration.enableSubtitles)
-              _buildMoreOptionsListRow(controlsConfiguration.subtitlesIcon,
+            if (betterPlayerControlsConfiguration.enableSubtitles)
+              _buildMoreOptionsListRow(
+                  betterPlayerControlsConfiguration.subtitlesIcon,
                   translations.overflowMenuSubtitles, () {
                 Navigator.of(context).pop();
                 _showSubtitlesSelectionWidget();
               }),
-            if (controlsConfiguration.enableQualities)
-              _buildMoreOptionsListRow(controlsConfiguration.qualitiesIcon,
+            if (betterPlayerControlsConfiguration.enableQualities)
+              _buildMoreOptionsListRow(
+                  betterPlayerControlsConfiguration.qualitiesIcon,
                   translations.overflowMenuQuality, () {
                 Navigator.of(context).pop();
                 _showQualitiesSelectionWidget();
               }),
-            if (controlsConfiguration.overflowMenuCustomItems?.isNotEmpty)
-              ...controlsConfiguration.overflowMenuCustomItems.map(
+            if (betterPlayerControlsConfiguration
+                .overflowMenuCustomItems?.isNotEmpty)
+              ...betterPlayerControlsConfiguration.overflowMenuCustomItems.map(
                 (customItem) => _buildMoreOptionsListRow(
                   customItem.icon,
                   customItem.title,
@@ -110,10 +119,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           children: [
             Icon(
               icon,
-              color: getBetterPlayerController()
-                  .betterPlayerConfiguration
-                  .controlsConfiguration
-                  .overflowMenuIconsColor,
+              color: betterPlayerControlsConfiguration.overflowMenuIconsColor,
             ),
             const SizedBox(width: 16),
             Text(name),
@@ -159,10 +165,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             Text(
               "$value x",
               style: TextStyle(
-                  fontWeight: getBetterPlayerController()
-                              .videoPlayerController
-                              .value
-                              .speed ==
+                  fontWeight: betterPlayerController
+                              .videoPlayerController.value.speed ==
                           value
                       ? FontWeight.bold
                       : FontWeight.normal),
@@ -172,7 +176,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       ),
       onTap: () {
         Navigator.of(context).pop();
-        getBetterPlayerController().setSpeed(value);
+        betterPlayerController.setSpeed(value);
       },
     );
   }
@@ -206,7 +210,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   void _showSubtitlesSelectionWidget() {
     var subtitles =
-        List.of(getBetterPlayerController().betterPlayerSubtitlesSourceList);
+        List.of(betterPlayerController.betterPlayerSubtitlesSourceList);
     var noneSubtitlesElementExists = subtitles?.firstWhere(
             (source) => source.type == BetterPlayerSubtitlesSourceType.NONE,
             orElse: () => null) !=
@@ -237,8 +241,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   Widget _buildSubtitlesSourceRow(BetterPlayerSubtitlesSource subtitlesSource) {
     assert(subtitlesSource != null, "SubtitleSource can't be null");
 
-    var selectedSourceType =
-        getBetterPlayerController().betterPlayerSubtitlesSource;
+    var selectedSourceType = betterPlayerController.betterPlayerSubtitlesSource;
     bool isSelected = (subtitlesSource == selectedSourceType) ||
         (subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE &&
             subtitlesSource?.type == selectedSourceType.type);
@@ -251,9 +254,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             const SizedBox(width: 16),
             Text(
               subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE
-                  ? getBetterPlayerController().translations.generalNone
+                  ? betterPlayerController.translations.generalNone
                   : subtitlesSource.name ??
-                      getBetterPlayerController().translations.generalDefault,
+                      betterPlayerController.translations.generalDefault,
               style: TextStyle(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
@@ -263,7 +266,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       ),
       onTap: () {
         Navigator.of(context).pop();
-        getBetterPlayerController().setupSubtitleSource(subtitlesSource);
+        betterPlayerController.setupSubtitleSource(subtitlesSource);
       },
     );
   }
@@ -273,24 +276,22 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Resolution selection is used for normal videos
   void _showQualitiesSelectionWidget() {
     List<String> trackNames =
-        getBetterPlayerController().betterPlayerDataSource.hlsTrackNames ??
-            List();
+        betterPlayerController.betterPlayerDataSource.hlsTrackNames ?? List();
     List<BetterPlayerHlsTrack> tracks =
-        getBetterPlayerController().betterPlayerTracks;
+        betterPlayerController.betterPlayerTracks;
     var children = List<Widget>();
     for (var index = 0; index < tracks.length; index++) {
       var preferredName = trackNames.length > index ? trackNames[index] : null;
       children.add(_buildTrackRow(tracks[index], preferredName));
     }
-    var resolutions =
-        getBetterPlayerController().betterPlayerDataSource.resolutions;
+    var resolutions = betterPlayerController.betterPlayerDataSource.resolutions;
     resolutions?.forEach((key, value) {
       children.add(_buildResolutionSelectionRow(key, value));
     });
 
     if (children.isEmpty) {
       children.add(_buildTrackRow(BetterPlayerHlsTrack(0, 0, 0),
-          getBetterPlayerController().translations.generalDefault));
+          betterPlayerController.translations.generalDefault));
     }
 
     showModalBottomSheet(
@@ -319,7 +320,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             " " +
             BetterPlayerUtils.formatBitrate(track.bitrate);
 
-    var selectedTrack = getBetterPlayerController().betterPlayerTrack;
+    var selectedTrack = betterPlayerController.betterPlayerTrack;
     bool isSelected = selectedTrack != null && selectedTrack == track;
 
     return BetterPlayerMaterialClickableWidget(
@@ -339,14 +340,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       ),
       onTap: () {
         Navigator.of(context).pop();
-        getBetterPlayerController().setTrack(track);
+        betterPlayerController.setTrack(track);
       },
     );
   }
 
   Widget _buildResolutionSelectionRow(String name, String url) {
-    bool isSelected =
-        url == getBetterPlayerController().betterPlayerDataSource.url;
+    bool isSelected = url == betterPlayerController.betterPlayerDataSource.url;
     return BetterPlayerMaterialClickableWidget(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -364,7 +364,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       ),
       onTap: () {
         Navigator.of(context).pop();
-        getBetterPlayerController().setResolution(url);
+        betterPlayerController.setResolution(url);
       },
     );
   }

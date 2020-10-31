@@ -48,6 +48,16 @@ class _BetterPlayerCupertinoControlsState
       widget.controlsConfiguration;
 
   @override
+  VideoPlayerValue get latestValue => _latestValue;
+
+  @override
+  BetterPlayerController get betterPlayerController => _betterPlayerController;
+
+  @override
+  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
+      _controlsConfiguration;
+
+  @override
   Widget build(BuildContext context) {
     _betterPlayerController = BetterPlayerController.of(context);
 
@@ -409,9 +419,9 @@ class _BetterPlayerCupertinoControlsState
         margin: const EdgeInsets.only(left: 10.0),
         padding: const EdgeInsets.symmetric(horizontal: 8),
         child: Icon(
-            _controlsConfiguration.skipBackIcon,
-            color: iconColor,
-            size: 12.0,
+          _controlsConfiguration.skipBackIcon,
+          color: iconColor,
+          size: 12.0,
         ),
       ),
     );
@@ -660,10 +670,4 @@ class _BetterPlayerCupertinoControlsState
       ),
     );
   }
-
-  @override
-  BetterPlayerController getBetterPlayerController() => _betterPlayerController;
-
-  @override
-  VideoPlayerValue get latestValue => _latestValue;
 }

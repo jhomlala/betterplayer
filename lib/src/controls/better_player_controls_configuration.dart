@@ -117,6 +117,7 @@ class BetterPlayerControlsConfiguration {
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
 
+  ///Time which will be used once user uses rewind and forward
   final int skipsTimeInMilliseconds;
 
   const BetterPlayerControlsConfiguration({

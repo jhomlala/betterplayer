@@ -54,6 +54,7 @@ class _OtherPageState extends State<OtherPage> {
               DeviceOrientation.portraitDown
             ],
             controlsConfiguration: BetterPlayerControlsConfiguration(
+              enableSkips: false,
               overflowMenuCustomItems: [
                 BetterPlayerOverflowMenuItem(
                   Icons.account_circle_rounded,
@@ -61,7 +62,7 @@ class _OtherPageState extends State<OtherPage> {
                   () {
                     print("Click!");
                   },
-                )
+                ),
               ],
             ),
           ),
