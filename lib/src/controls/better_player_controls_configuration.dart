@@ -53,6 +53,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to enable/disable play-pause
   final bool enablePlayPause;
 
+  ///Flag used to enable skip forward and skip back
+  final bool enableSkips;
+
   ///Progress bar played color
   final Color progressBarPlayedColor;
 
@@ -114,6 +117,8 @@ class BetterPlayerControlsConfiguration {
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
 
+  final int skipsTimeInMilliseconds;
+
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -124,13 +129,14 @@ class BetterPlayerControlsConfiguration {
     this.unMuteIcon = Icons.volume_mute,
     this.fullscreenEnableIcon = Icons.fullscreen,
     this.fullscreenDisableIcon = Icons.fullscreen_exit,
-    this.skipBackIcon = OpenIconicIcons.reload,
-    this.skipForwardIcon = OpenIconicIcons.reload,
+    this.skipBackIcon = Icons.fast_rewind,
+    this.skipForwardIcon = Icons.fast_forward,
     this.enableFullscreen = true,
     this.enableMute = true,
     this.enableProgressText = false,
     this.enableProgressBar = true,
     this.enablePlayPause = true,
+    this.enableSkips = true,
     this.progressBarPlayedColor = Colors.white,
     this.progressBarHandleColor = Colors.white,
     this.progressBarBufferedColor = Colors.white70,
@@ -151,6 +157,7 @@ class BetterPlayerControlsConfiguration {
     this.qualitiesIcon = Icons.hd,
     this.subtitlesIcon = Icons.text_fields,
     this.overflowMenuIconsColor = Colors.black,
+    this.skipsTimeInMilliseconds = 15000
   });
 
   factory BetterPlayerControlsConfiguration.white() {

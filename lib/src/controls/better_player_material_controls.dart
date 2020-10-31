@@ -50,6 +50,12 @@ class _BetterPlayerMaterialControlsState
       widget.controlsConfiguration;
 
   @override
+  BetterPlayerController getBetterPlayerController() => _betterPlayerController;
+
+  @override
+  VideoPlayerValue get latestValue => _latestValue;
+
+  @override
   Widget build(BuildContext context) {
     _wasLoading = isLoading(_latestValue);
     if (_latestValue?.hasError == true) {
@@ -263,9 +269,13 @@ class _BetterPlayerMaterialControlsState
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildSkipButton(),
+          _controlsConfiguration.enableSkips
+              ? _buildSkipButton()
+              : const SizedBox(),
           _buildPlayReplayButton(),
-          _buildForwardButton(),
+          _controlsConfiguration.enableSkips
+              ? _buildForwardButton()
+              : const SizedBox(),
         ],
       ),
     );
@@ -294,13 +304,10 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildSkipButton() {
     return _buildHitAreaClickableButton(
-      icon: Transform.rotate(
-        angle: pi,
-        child: Icon(
-          Icons.fast_forward,
-          size: 32,
-          color: _controlsConfiguration.iconsColor,
-        ),
+      icon: Icon(
+        _controlsConfiguration.skipBackIcon,
+        size: 32,
+        color: _controlsConfiguration.iconsColor,
       ),
       onClicked: skipBack,
     );
@@ -309,7 +316,7 @@ class _BetterPlayerMaterialControlsState
   Widget _buildForwardButton() {
     return _buildHitAreaClickableButton(
       icon: Icon(
-        Icons.fast_forward,
+        _controlsConfiguration.skipForwardIcon,
         size: 32,
         color: _controlsConfiguration.iconsColor,
       ),
@@ -586,10 +593,4 @@ class _BetterPlayerMaterialControlsState
           AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
     );
   }
-
-  @override
-  BetterPlayerController getBetterPlayerController() => _betterPlayerController;
-
-  @override
-  VideoPlayerValue get latestValue => _latestValue;
 }

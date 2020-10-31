@@ -408,16 +408,10 @@ class _BetterPlayerCupertinoControlsState
         color: Colors.transparent,
         margin: const EdgeInsets.only(left: 10.0),
         padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.skewY(0.0)
-            ..rotateX(math.pi)
-            ..rotateZ(math.pi),
-          child: Icon(
+        child: Icon(
             _controlsConfiguration.skipBackIcon,
             color: iconColor,
             size: 12.0,
-          ),
         ),
       ),
     );

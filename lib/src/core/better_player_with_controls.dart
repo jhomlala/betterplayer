@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
@@ -126,7 +127,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     return controlsConfiguration.showControls
         ? controlsConfiguration.customControls != null
             ? controlsConfiguration.customControls
-            : Theme.of(context).platform == TargetPlatform.iOS
+            : Platform.isAndroid
                 ? BetterPlayerMaterialControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
                     controlsConfiguration: controlsConfiguration,
