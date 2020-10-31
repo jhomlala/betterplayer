@@ -276,7 +276,7 @@ class _BetterPlayerMaterialControlsState
           _controlsConfiguration.enableSkips
               ? _buildSkipButton()
               : const SizedBox(),
-          _buildPlayReplayButton(),
+          _buildReplayButton(),
           _controlsConfiguration.enableSkips
               ? _buildForwardButton()
               : const SizedBox(),
@@ -328,7 +328,7 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-  Widget _buildPlayReplayButton() {
+  Widget _buildReplayButton() {
     bool isFinished = isVideoFinished(_latestValue);
     if (!isFinished) {
       return const SizedBox();
@@ -348,12 +348,6 @@ class _BetterPlayerMaterialControlsState
             });
           } else
             cancelAndRestartTimer();
-        } else {
-          _onPlayPause();
-
-          setState(() {
-            _hideStuff = true;
-          });
         }
       },
     );
