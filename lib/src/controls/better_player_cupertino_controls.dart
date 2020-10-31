@@ -66,12 +66,12 @@ class _BetterPlayerCupertinoControlsState
 
     return MouseRegion(
       onHover: (_) {
-        _cancelAndRestartTimer();
+        cancelAndRestartTimer();
       },
       child: GestureDetector(
-        onTap: _cancelAndRestartTimer,
+        onTap: cancelAndRestartTimer,
         onDoubleTap: () {
-          _cancelAndRestartTimer();
+          cancelAndRestartTimer();
           _onPlayPause();
         },
         child: AbsorbPointer(
@@ -238,7 +238,7 @@ class _BetterPlayerCupertinoControlsState
         onTap: _latestValue != null && _latestValue.isPlaying
             ? () {
                 if (_hideStuff == true) {
-                  _cancelAndRestartTimer();
+                  cancelAndRestartTimer();
                 } else {
                   _hideTimer?.cancel();
 
@@ -308,7 +308,7 @@ class _BetterPlayerCupertinoControlsState
   ) {
     return GestureDetector(
       onTap: () {
-        _cancelAndRestartTimer();
+        cancelAndRestartTimer();
 
         if (_latestValue.volume == 0) {
           controller.setVolume(_latestVolume ?? 0.5);
@@ -401,7 +401,7 @@ class _BetterPlayerCupertinoControlsState
 
   GestureDetector _buildSkipBack(Color iconColor, double barHeight) {
     return GestureDetector(
-      onTap: _skipBack,
+      onTap: skipBack,
       child: Container(
         height: barHeight,
         color: Colors.transparent,
@@ -424,7 +424,7 @@ class _BetterPlayerCupertinoControlsState
 
   GestureDetector _buildSkipForward(Color iconColor, double barHeight) {
     return GestureDetector(
-      onTap: _skipForward,
+      onTap: skipForward,
       child: Container(
         height: barHeight,
         color: Colors.transparent,
@@ -511,7 +511,8 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  void _cancelAndRestartTimer() {
+  @override
+  void cancelAndRestartTimer() {
     _hideTimer?.cancel();
 
     setState(() {
@@ -547,7 +548,7 @@ class _BetterPlayerCupertinoControlsState
       _betterPlayerController.toggleFullScreen();
       _expandCollapseTimer = Timer(_controlsConfiguration.controlsHideTime, () {
         setState(() {
-          _cancelAndRestartTimer();
+          cancelAndRestartTimer();
         });
       });
     });
@@ -589,7 +590,7 @@ class _BetterPlayerCupertinoControlsState
         _hideTimer?.cancel();
         _betterPlayerController.pause();
       } else {
-        _cancelAndRestartTimer();
+        cancelAndRestartTimer();
 
         if (!_controller.value.initialized) {
           if (_betterPlayerController.betterPlayerDataSource.liveStream) {
@@ -605,20 +606,6 @@ class _BetterPlayerCupertinoControlsState
         }
       }
     });
-  }
-
-  void _skipBack() {
-    _cancelAndRestartTimer();
-    final beginning = Duration(seconds: 0).inMilliseconds;
-    final skip = (_latestValue.position - Duration(seconds: 15)).inMilliseconds;
-    _controller.seekTo(Duration(milliseconds: math.max(skip, beginning)));
-  }
-
-  void _skipForward() {
-    _cancelAndRestartTimer();
-    final end = _latestValue.duration.inMilliseconds;
-    final skip = (_latestValue.position + Duration(seconds: 15)).inMilliseconds;
-    _controller.seekTo(Duration(milliseconds: math.min(skip, end)));
   }
 
   void _startHideTimer() {
@@ -676,4 +663,7 @@ class _BetterPlayerCupertinoControlsState
 
   @override
   BetterPlayerController getBetterPlayerController() => _betterPlayerController;
+
+  @override
+  VideoPlayerValue get latestValue => _latestValue;
 }

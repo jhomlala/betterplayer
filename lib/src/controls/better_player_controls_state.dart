@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
@@ -12,6 +14,31 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   static const int _bufferingInterval = 20000;
 
   BetterPlayerController getBetterPlayerController();
+
+  void cancelAndRestartTimer();
+
+  VideoPlayerValue get latestValue;
+
+  bool isVideoFinished(VideoPlayerValue videoPlayerValue) {
+    return videoPlayerValue?.position != null &&
+        videoPlayerValue?.duration != null &&
+        videoPlayerValue.position >= videoPlayerValue.duration;
+  }
+
+  void skipBack() {
+    cancelAndRestartTimer();
+    final beginning = Duration(seconds: 0).inMilliseconds;
+    final skip = (latestValue.position - Duration(seconds: 15)).inMilliseconds;
+    getBetterPlayerController()
+        .seekTo(Duration(milliseconds: max(skip, beginning)));
+  }
+
+  void skipForward() {
+    cancelAndRestartTimer();
+    final end = latestValue.duration.inMilliseconds;
+    final skip = (latestValue.position + Duration(seconds: 15)).inMilliseconds;
+    getBetterPlayerController().seekTo(Duration(milliseconds: min(skip, end)));
+  }
 
   void onShowMoreClicked() {
     showModalBottomSheet(

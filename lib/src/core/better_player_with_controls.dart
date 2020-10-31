@@ -54,7 +54,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   }
 
   void _onControllerChanged() {
-    setState(() {});
+    print("REBUILD...");
   }
 
   @override

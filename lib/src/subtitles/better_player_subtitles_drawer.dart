@@ -112,7 +112,9 @@ class _BetterPlayerSubtitlesDrawerState
             left: _configuration.leftPadding,
             right: _configuration.rightPadding),
         child: Column(
-            mainAxisAlignment: MainAxisAlignment.end, children: textWidgets),
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: textWidgets,
+        ),
       ),
     );
   }
