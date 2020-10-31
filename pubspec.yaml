@@ -20,14 +20,6 @@ dependencies:
   flutter_hls_parser: ^1.0.0
   visibility_detector: ^0.1.5
 
-##Fixes wakelock issue: https://github.com/creativecreatorormaybenot/wakelock/issues/48
-dependency_overrides:
-  import_js_library:
-    git:
-      url: https://github.com/simpleclub-extended/flutter_web_import_js_library
-      ref: fix-android
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
