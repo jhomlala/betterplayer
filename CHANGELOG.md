@@ -6,6 +6,7 @@
 * Added enableSkips and skipsTimeInMilliseconds in BetterPlayerControlsConfiguration
 * Changed middle play button behavior (now it's only used for restart player).
 * Updated BetterPlayerControllerProvider visibility.
+* Override invalid dependency from wakelock library.
 
 ## 0.0.29+1
 * Updated readme
