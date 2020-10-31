@@ -5,6 +5,7 @@
 * Fixed player UI's jank
 * Added enableSkips and skipsTimeInMilliseconds in BetterPlayerControlsConfiguration
 * Changed middle play button behavior (now it's only used for restart player).
+* Updated BetterPlayerControllerProvider visibility.
 
 ## 0.0.29+1
 * Updated readme
