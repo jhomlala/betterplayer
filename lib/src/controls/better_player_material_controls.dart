@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
@@ -40,7 +39,6 @@ class _BetterPlayerMaterialControlsState
   Timer _hideTimer;
   Timer _initTimer;
   Timer _showAfterExpandCollapseTimer;
-  bool _dragging = false;
   bool _displayTapped = false;
   bool _wasLoading = false;
   VideoPlayerController _controller;
@@ -557,15 +555,9 @@ class _BetterPlayerMaterialControlsState
           _controller,
           _betterPlayerController,
           onDragStart: () {
-            setState(() {
-              _dragging = true;
-            });
             _hideTimer?.cancel();
           },
           onDragEnd: () {
-            setState(() {
-              _dragging = false;
-            });
             _startHideTimer();
           },
           colors: BetterPlayerProgressColors(
