@@ -1,5 +1,6 @@
 ## 0.0.30
 * Fixed issue when full screen was triggered twice if autoPlay and fullScreenByDefault were enabled
+* Removed flutter_widgets, since it's not maintained anymore. Added instead visibility_detector package (by https://github.com/espresso3389)
 
 ## 0.0.29+1
 * Updated readme
