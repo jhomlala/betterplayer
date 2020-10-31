@@ -54,9 +54,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     super.dispose();
   }
 
-  void _onControllerChanged() {
-    print("REBUILD...");
-  }
+  void _onControllerChanged() {}
 
   @override
   Widget build(BuildContext context) {
