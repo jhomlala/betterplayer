@@ -1,3 +1,6 @@
+## 0.0.30
+* Fixed issue when full screen was triggered twice if autoPlay and fullScreenByDefault were enabled
+
 ## 0.0.29+1
 * Updated readme
 

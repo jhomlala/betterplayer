@@ -221,14 +221,14 @@ class BetterPlayerController extends ChangeNotifier {
       }
 
       await play();
+    } else {
+      if (fullScreenByDefault) {
+        videoPlayerController.addListener(_fullScreenListener);
+      }
     }
 
     if (startAt != null) {
       await videoPlayerController.seekTo(startAt);
-    }
-
-    if (fullScreenByDefault) {
-      videoPlayerController.addListener(_fullScreenListener);
     }
 
     ///General purpose listener
