@@ -126,7 +126,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     return controlsConfiguration.showControls
         ? controlsConfiguration.customControls != null
             ? controlsConfiguration.customControls
-            : Theme.of(context).platform == TargetPlatform.android
+            : Theme.of(context).platform == TargetPlatform.iOS
                 ? BetterPlayerMaterialControls(
                     onControlsVisibilityChanged: onControlsVisibilityChanged,
                     controlsConfiguration: controlsConfiguration,

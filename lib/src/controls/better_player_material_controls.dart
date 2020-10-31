@@ -532,14 +532,12 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _updateState() {
-    print("UPDATE STATE");
     if (this.mounted) {
       if (!this._hideStuff ||
           isVideoFinished(_controller.value) ||
           _wasLoading ||
           isLoading(_controller.value)) {
         setState(() {
-          print("UPDATE");
           _latestValue = _controller.value;
         });
       }

@@ -32,13 +32,14 @@ class BetterPlayerCupertinoControls extends StatefulWidget {
 
 class _BetterPlayerCupertinoControlsState
     extends BetterPlayerControlsState<BetterPlayerCupertinoControls> {
+  final marginSize = 5.0;
   VideoPlayerValue _latestValue;
   double _latestVolume;
   bool _hideStuff = true;
   Timer _hideTimer;
-  final marginSize = 5.0;
   Timer _expandCollapseTimer;
   Timer _initTimer;
+  bool _wasLoading = false;
 
   VideoPlayerController _controller;
   BetterPlayerController _betterPlayerController;
@@ -63,7 +64,7 @@ class _BetterPlayerCupertinoControlsState
         ? _controlsConfiguration.controlBarHeight
         : _controlsConfiguration.controlBarHeight + 17;
     final buttonPadding = orientation == Orientation.portrait ? 16.0 : 24.0;
-
+    _wasLoading = isLoading(_latestValue);
     return MouseRegion(
       onHover: (_) {
         cancelAndRestartTimer();
@@ -80,7 +81,7 @@ class _BetterPlayerCupertinoControlsState
             children: <Widget>[
               _buildTopBar(
                   backgroundColor, iconColor, barHeight, buttonPadding),
-              isLoading(_latestValue)
+              _wasLoading
                   ? Expanded(child: Center(child: _buildLoadingWidget()))
                   : _buildHitArea(),
               _buildNextVideoWidget(),
@@ -617,10 +618,15 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _updateState() {
-    if (mounted) {
-      setState(() {
-        _latestValue = _controller.value;
-      });
+    if (this.mounted) {
+      if (!this._hideStuff ||
+          isVideoFinished(_controller.value) ||
+          _wasLoading ||
+          isLoading(_controller.value)) {
+        setState(() {
+          _latestValue = _controller.value;
+        });
+      }
     }
   }
 
