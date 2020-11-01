@@ -548,6 +548,9 @@ class _BetterPlayerMaterialControlsState
           isLoading(_controller.value)) {
         setState(() {
           _latestValue = _controller.value;
+          if (isVideoFinished(_latestValue)) {
+            _hideStuff = false;
+          }
         });
       }
     }

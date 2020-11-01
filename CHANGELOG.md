@@ -1,7 +1,7 @@
 ## 0.0.31
 * Added showPlaceholderUntilPlay in BetterPlayerConfiguration
 * Fixed exception event not being triggered
-
+* Fixed controls not displaying on video finished
 
 ## 0.0.30
 * Fixed issue when full screen was triggered twice if autoPlay and fullScreenByDefault were enabled
