@@ -174,14 +174,14 @@ class _BetterPlayerVideoFitWidgetState
   @override
   void initState() {
     super.initState();
-    if (widget.betterPlayerController.betterPlayerConfiguration.showPlaceholderUntilPlay) {
-      widget.betterPlayerController.addEventsListener((event) =>
-      {
+    if (widget.betterPlayerController.betterPlayerConfiguration
+        .showPlaceholderUntilPlay) {
+      widget.betterPlayerController.addEventsListener((event) {
         if (!_started &&
-            event.betterPlayerEventType == BetterPlayerEventType.PLAY){
+            event.betterPlayerEventType == BetterPlayerEventType.PLAY) {
           setState(() {
             _started = true;
-          })
+          });
         }
       });
     } else {
@@ -235,5 +235,12 @@ class _BetterPlayerVideoFitWidgetState
     } else {
       return Container();
     }
+  }
+
+  @override
+  void dispose() {
+    widget.betterPlayerController.videoPlayerController
+        .removeListener(_initializedListener);
+    super.dispose();
   }
 }

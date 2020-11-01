@@ -131,6 +131,7 @@ class BetterPlayerController extends ChangeNotifier {
     ///Build videoPlayerController if null
     if (videoPlayerController == null) {
       videoPlayerController = VideoPlayerController();
+      videoPlayerController.addListener(_onVideoPlayerChanged);
     }
 
     ///Clear hls tracks
@@ -230,9 +231,6 @@ class BetterPlayerController extends ChangeNotifier {
     if (startAt != null) {
       await videoPlayerController.seekTo(startAt);
     }
-
-    ///General purpose listener
-    videoPlayerController.addListener(_onVideoPlayerChanged);
   }
 
   void _fullScreenListener() async {
@@ -323,10 +321,19 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   void _onVideoPlayerChanged() async {
+    var currentVideoPlayerValue = videoPlayerController.value;
+    if (currentVideoPlayerValue.hasError) {
+      _postEvent(
+        BetterPlayerEvent(
+          BetterPlayerEventType.EXCEPTION,
+          parameters: {"exception": currentVideoPlayerValue.errorDescription},
+        ),
+      );
+    }
+
     int now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastPositionSelection > 500) {
       _lastPositionSelection = now;
-      var currentVideoPlayerValue = videoPlayerController.value;
       Duration currentPositionShifted = Duration(
           milliseconds: currentVideoPlayerValue.position.inMilliseconds + 500);
       if (currentPositionShifted == null ||

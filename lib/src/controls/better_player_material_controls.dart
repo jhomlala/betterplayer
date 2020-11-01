@@ -583,7 +583,6 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildLoadingWidget() {
-    print("Build loading widget");
     return CircularProgressIndicator(
       valueColor:
           AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
