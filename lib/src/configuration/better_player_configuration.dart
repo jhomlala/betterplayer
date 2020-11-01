@@ -34,6 +34,9 @@ class BetterPlayerConfiguration {
   /// or played.
   final Widget placeholder;
 
+  /// Should the placeholder be shown until play is pressed
+  final bool showPlaceholderUntilPlay;
+
   /// A widget which is placed between the video and the controls
   final Widget overlay;
 
@@ -89,6 +92,7 @@ class BetterPlayerConfiguration {
     this.looping = false,
     this.fullScreenByDefault = false,
     this.placeholder,
+    this.showPlaceholderUntilPlay = false,
     this.overlay,
     this.showControlsOnInitialize = true,
     this.errorBuilder,
