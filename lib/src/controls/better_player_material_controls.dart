@@ -346,6 +346,12 @@ class _BetterPlayerMaterialControlsState
             });
           } else
             cancelAndRestartTimer();
+        } else {
+          _onPlayPause();
+
+          setState(() {
+            _hideStuff = true;
+          });
         }
       },
     );
