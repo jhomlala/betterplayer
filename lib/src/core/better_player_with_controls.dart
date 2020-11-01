@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
@@ -168,9 +169,24 @@ class _BetterPlayerVideoFitWidgetState
 
   VoidCallback _initializedListener;
 
+  bool _started = false;
+
   @override
   void initState() {
     super.initState();
+    if (widget.betterPlayerController.betterPlayerConfiguration
+        .showPlaceholderUntilPlay) {
+      widget.betterPlayerController.addEventsListener((event) {
+        if (!_started &&
+            event.betterPlayerEventType == BetterPlayerEventType.PLAY) {
+          setState(() {
+            _started = true;
+          });
+        }
+      });
+    } else {
+      _started = true;
+    }
     _initialize();
   }
 
@@ -200,7 +216,7 @@ class _BetterPlayerVideoFitWidgetState
 
   @override
   Widget build(BuildContext context) {
-    if (_initialized) {
+    if (_initialized && _started) {
       return Center(
         child: Container(
           width: double.infinity,
@@ -219,5 +235,12 @@ class _BetterPlayerVideoFitWidgetState
     } else {
       return Container();
     }
+  }
+
+  @override
+  void dispose() {
+    widget.betterPlayerController.videoPlayerController
+        .removeListener(_initializedListener);
+    super.dispose();
   }
 }

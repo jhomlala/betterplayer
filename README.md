@@ -33,7 +33,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.30
+  better_player: ^0.0.31
 ```
 
 2. Install it
@@ -264,6 +264,9 @@ Possible configuration options:
     /// The placeholder is displayed underneath the Video before it is initialized
     /// or played.
     final Widget placeholder;
+
+    /// Should the placeholder be shown until play is pressed
+    final bool showPlaceholderUntilPlay;
 
     /// A widget which is placed between the video and the controls
     final Widget overlay;

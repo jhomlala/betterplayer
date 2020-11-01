@@ -346,6 +346,12 @@ class _BetterPlayerMaterialControlsState
             });
           } else
             cancelAndRestartTimer();
+        } else {
+          _onPlayPause();
+
+          setState(() {
+            _hideStuff = true;
+          });
         }
       },
     );
@@ -542,6 +548,9 @@ class _BetterPlayerMaterialControlsState
           isLoading(_controller.value)) {
         setState(() {
           _latestValue = _controller.value;
+          if (isVideoFinished(_latestValue)) {
+            _hideStuff = false;
+          }
         });
       }
     }
@@ -577,7 +586,6 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildLoadingWidget() {
-    print("Build loading widget");
     return CircularProgressIndicator(
       valueColor:
           AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
