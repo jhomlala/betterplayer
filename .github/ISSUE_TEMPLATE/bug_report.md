@@ -26,6 +26,9 @@ If applicable, add screenshots to help explain your problem.
 **Flutter doctor**
 Please add flutter doctor output here.
 
+**Better Player version**
+- Version:
+
 **Smartphone (please complete the following information):**
  - Device: [e.g. iPhone6]
  - OS: [e.g. iOS8.1]
