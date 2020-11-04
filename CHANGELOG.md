@@ -1,3 +1,6 @@
+## 0.0.32
+* Fixed locale picking when context is not mounted anymore
+
 ## 0.0.31
 * Added showPlaceholderUntilPlay in BetterPlayerConfiguration
 * Fixed exception event not being triggered

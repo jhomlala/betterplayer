@@ -70,7 +70,13 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   void _setup() async {
     widget.controller.addListener(onFullScreenChanged);
-    Locale locale = Localizations.localeOf(context) ?? Locale("en", "US");
+    var locale = Locale("en", "US");
+    if (mounted) {
+      var contextLocale = Localizations.localeOf(context);
+      if (contextLocale != null) {
+        locale = contextLocale;
+      }
+    }
     widget.controller.setupTranslations(locale);
   }
 
