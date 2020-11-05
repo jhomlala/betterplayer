@@ -139,6 +139,12 @@ abstract class VideoPlayerPlatform {
 /// Description of the data source used to create an instance of
 /// the video player.
 class DataSource {
+  /// The maximum cache size to keep on disk in bytes.
+  static const int _maxCacheSize = 100 * 1024 * 1024;
+
+  /// The maximum size of each individual file in bytes.
+  static const int _maxCacheFileSize = 10 * 1024 * 1024;
+
   /// Constructs an instance of [DataSource].
   ///
   /// The [sourceType] is always required.
@@ -155,15 +161,18 @@ class DataSource {
   ///
   /// The [closedCaptionFile] argument is optional field to specify a file
   /// containing the closed captioning.
-  DataSource(
-      {@required this.sourceType,
-      this.uri,
-      this.formatHint,
-      this.asset,
-      this.package,
-      this.closedCaptionFile,
-      this.headers})
-      : assert(uri == null || asset == null);
+  DataSource({
+    @required this.sourceType,
+    this.uri,
+    this.formatHint,
+    this.asset,
+    this.package,
+    this.closedCaptionFile,
+    this.headers,
+    this.useCache = false,
+    this.maxCacheSize = _maxCacheSize,
+    this.maxCacheFileSize = _maxCacheFileSize,
+  }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
@@ -216,6 +225,12 @@ class DataSource {
 
   final Map<String, String> headers;
 
+  final bool useCache;
+
+  final int maxCacheSize;
+
+  final int maxCacheFileSize;
+
   /// Key to compare DataSource
   String get key {
     String result = "";
@@ -237,9 +252,7 @@ class DataSource {
 
   @override
   String toString() {
-    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint: '
-        '$formatHint, asset: $asset, package: $package, closedCaptionFile:'
-        ' $closedCaptionFile, headers: $headers}';
+    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint: $formatHint, asset: $asset, package: $package, closedCaptionFile: $closedCaptionFile, headers: $headers, useCache: $useCache, maxCacheSize: $maxCacheSize, maxCacheFileSize: $maxCacheFileSize}';
   }
 }
 

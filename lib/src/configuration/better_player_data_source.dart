@@ -33,6 +33,11 @@ class BetterPlayerDataSource {
   ///{"360p": "url", "540p": "url2" }
   final Map<String, String> resolutions;
 
+  final bool useCache;
+
+  final int maxCacheSize;
+  final int maxCacheFileSize;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -43,6 +48,9 @@ class BetterPlayerDataSource {
     this.useHlsTracks = true,
     this.hlsTrackNames,
     this.resolutions,
+    this.useCache = false,
+    this.maxCacheSize,
+    this.maxCacheFileSize,
   });
 
   @override
@@ -51,15 +59,19 @@ class BetterPlayerDataSource {
         ' liveStream: $liveStream, headers: $headers, useHlsSubtitles: $useHlsSubtitles}';
   }
 
-  BetterPlayerDataSource copyWith(
-      {BetterPlayerDataSourceType type,
-      String url,
-      List<BetterPlayerSubtitlesSource> subtitles,
-      bool liveStream,
-      Map<String, String> headers,
-      bool useHlsSubtitles,
-      bool useHlsTracks,
-      Map<String, String> qualities}) {
+  BetterPlayerDataSource copyWith({
+    BetterPlayerDataSourceType type,
+    String url,
+    List<BetterPlayerSubtitlesSource> subtitles,
+    bool liveStream,
+    Map<String, String> headers,
+    bool useHlsSubtitles,
+    bool useHlsTracks,
+    Map<String, String> qualities,
+    bool useCache,
+    int maxCacheSize,
+    int maxCacheFileSize,
+  }) {
     return BetterPlayerDataSource(
       type ?? this.type,
       url ?? this.url,
@@ -69,6 +81,9 @@ class BetterPlayerDataSource {
       useHlsSubtitles: useHlsSubtitles ?? this.useHlsSubtitles,
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
       resolutions: qualities ?? this.resolutions,
+      useCache: useCache ?? this.useCache,
+      maxCacheSize: maxCacheSize ?? this.maxCacheSize,
+      maxCacheFileSize: maxCacheFileSize ?? this.maxCacheFileSize,
     );
   }
 }

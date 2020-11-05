@@ -138,8 +138,38 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         switch (call.method) {
             case "setDataSource": {
                 Map<String, Object> dataSource = call.argument("dataSource");
+                Log.d("VIDEO_PLAYER_ANDROID", "DATA SOURCE: " + dataSource);
+
                 String key = (String) dataSource.get("key");
                 Map<String, String> headers = (Map<String, String>) dataSource.get("headers");
+                Boolean useCache = false;
+                if (dataSource.containsKey("useCache")){
+                    Object useCacheObject = dataSource.get("useCache");
+                    if (useCacheObject != null){
+                        useCache = (boolean) useCacheObject;
+                    }
+                }
+                Long maxCacheSize = 0L;
+                if (dataSource.containsKey("maxCacheSize")){
+                    Object maxCacheSizeObject = dataSource.get("maxCacheSize");
+                    if (maxCacheSizeObject != null){
+                        maxCacheSize = ((Number) maxCacheSizeObject).longValue();
+                    }
+
+                }
+                Long maxCacheFileSize = 0L;
+                if (dataSource.containsKey("maxCacheFileSize")){
+                    Object maxCacheFileSizeObject = dataSource.get("maxCacheFileSize");
+                    if (maxCacheFileSizeObject != null){
+                        maxCacheFileSize = ((Number) maxCacheFileSizeObject).longValue();
+                    }
+                }
+
+                Log.d("VIDEO_PLAYER_ANDROID", "CACHE CONFIGURATION:");
+                Log.d("VIDEO_PLAYER_ANDROID", "useCache: " + useCache);
+                Log.d("VIDEO_PLAYER_ANDROID", "maxCacheSize: " + maxCacheSize);
+                Log.d("VIDEO_PLAYER_ANDROID", "maxCacheFileSize: " + maxCacheFileSize);
+
 
                 if (dataSource.get("asset") != null) {
                     String assetLookupKey;
@@ -152,15 +182,27 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     }
 
                     player.setDataSource(
-                            flutterState.applicationContext, key, "asset:///" + assetLookupKey, null, result, headers);
+                            flutterState.applicationContext,
+                            key,
+                            "asset:///" + assetLookupKey,
+                            null,
+                            result,
+                            headers,
+                            false,
+                            0L,
+                            0L);
                 } else {
+                    Log.d("VIDEO_PLAYER_ANDROID", "USE DATASOURCE WITH CACHE");
                     player.setDataSource(
                             flutterState.applicationContext,
                             key,
                             (String) dataSource.get("uri"),
                             (String) dataSource.get("formatHint"),
                             result,
-                            headers);
+                            headers,
+                            useCache,
+                            maxCacheSize,
+                            maxCacheFileSize);
                 }
                 break;
             }

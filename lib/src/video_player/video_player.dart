@@ -268,20 +268,24 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// null.
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
-  Future<void> setNetworkDataSource(
-    String dataSource, {
-    VideoFormat formatHint,
-    Future<ClosedCaptionFile> closedCaptionFile,
-    Map<String, String> headers,
-  }) {
+  Future<void> setNetworkDataSource(String dataSource,
+      {VideoFormat formatHint,
+      Future<ClosedCaptionFile> closedCaptionFile,
+      Map<String, String> headers,
+      bool useCache = false,
+      int maxCacheSize,
+      int maxCacheFileSize}) {
+    print("SET NETWORK DATA SOURCE");
     return _setDataSource(
       DataSource(
-        sourceType: DataSourceType.network,
-        uri: dataSource,
-        formatHint: formatHint,
-        closedCaptionFile: closedCaptionFile,
-        headers: headers,
-      ),
+          sourceType: DataSourceType.network,
+          uri: dataSource,
+          formatHint: formatHint,
+          closedCaptionFile: closedCaptionFile,
+          headers: headers,
+          useCache: useCache,
+          maxCacheSize: maxCacheSize,
+          maxCacheFileSize: maxCacheFileSize),
     );
   }
 
@@ -303,6 +307,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   Future<void> _setDataSource(DataSource dataSourceDescription) async {
+    print("Set data source: $dataSourceDescription");
     if (_isDisposed) {
       return;
     }
