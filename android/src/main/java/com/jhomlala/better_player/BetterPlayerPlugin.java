@@ -19,6 +19,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.view.FlutterMain;
 import io.flutter.view.TextureRegistry;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -137,73 +138,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private void onMethodCall(MethodCall call, Result result, long textureId, BetterPlayer player) {
         switch (call.method) {
             case "setDataSource": {
-                Map<String, Object> dataSource = call.argument("dataSource");
-                Log.d("VIDEO_PLAYER_ANDROID", "DATA SOURCE: " + dataSource);
-
-                String key = (String) dataSource.get("key");
-                Map<String, String> headers = (Map<String, String>) dataSource.get("headers");
-                Boolean useCache = false;
-                if (dataSource.containsKey("useCache")){
-                    Object useCacheObject = dataSource.get("useCache");
-                    if (useCacheObject != null){
-                        useCache = (boolean) useCacheObject;
-                    }
-                }
-                Long maxCacheSize = 0L;
-                if (dataSource.containsKey("maxCacheSize")){
-                    Object maxCacheSizeObject = dataSource.get("maxCacheSize");
-                    if (maxCacheSizeObject != null){
-                        maxCacheSize = ((Number) maxCacheSizeObject).longValue();
-                    }
-
-                }
-                Long maxCacheFileSize = 0L;
-                if (dataSource.containsKey("maxCacheFileSize")){
-                    Object maxCacheFileSizeObject = dataSource.get("maxCacheFileSize");
-                    if (maxCacheFileSizeObject != null){
-                        maxCacheFileSize = ((Number) maxCacheFileSizeObject).longValue();
-                    }
-                }
-
-                Log.d("VIDEO_PLAYER_ANDROID", "CACHE CONFIGURATION:");
-                Log.d("VIDEO_PLAYER_ANDROID", "useCache: " + useCache);
-                Log.d("VIDEO_PLAYER_ANDROID", "maxCacheSize: " + maxCacheSize);
-                Log.d("VIDEO_PLAYER_ANDROID", "maxCacheFileSize: " + maxCacheFileSize);
-
-
-                if (dataSource.get("asset") != null) {
-                    String assetLookupKey;
-                    if (dataSource.get("package") != null) {
-                        assetLookupKey =
-                                flutterState.keyForAssetAndPackageName.get(
-                                        (String) dataSource.get("asset"), (String) dataSource.get("package"));
-                    } else {
-                        assetLookupKey = flutterState.keyForAsset.get((String) dataSource.get("asset"));
-                    }
-
-                    player.setDataSource(
-                            flutterState.applicationContext,
-                            key,
-                            "asset:///" + assetLookupKey,
-                            null,
-                            result,
-                            headers,
-                            false,
-                            0L,
-                            0L);
-                } else {
-                    Log.d("VIDEO_PLAYER_ANDROID", "USE DATASOURCE WITH CACHE");
-                    player.setDataSource(
-                            flutterState.applicationContext,
-                            key,
-                            (String) dataSource.get("uri"),
-                            (String) dataSource.get("formatHint"),
-                            result,
-                            headers,
-                            useCache,
-                            maxCacheSize,
-                            maxCacheFileSize);
-                }
+                setDataSource(call,result,player);
                 break;
             }
             case "setLooping":
@@ -252,6 +187,91 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                 break;
         }
     }
+
+    private void setDataSource(MethodCall call, Result result, BetterPlayer player) {
+        Map<String, Object> dataSource = call.argument("dataSource");
+
+
+        String key = "";
+        if (dataSource.containsKey("key")) {
+            Object keyObject = dataSource.get("key");
+            if (keyObject != null) {
+                key = (String) keyObject;
+            }
+        }
+
+        Map<String, String> headers = new HashMap();
+        if (dataSource.containsKey("headers")) {
+            Object headersObject = dataSource.get("headers");
+            if (headersObject != null) {
+                headers = (Map<String, String>) headersObject;
+            }
+        }
+
+        Boolean useCache = false;
+        if (dataSource.containsKey("useCache")) {
+            Object useCacheObject = dataSource.get("useCache");
+            if (useCacheObject != null) {
+                useCache = (boolean) useCacheObject;
+            }
+        }
+        Long maxCacheSize = 0L;
+        if (dataSource.containsKey("maxCacheSize")) {
+            Object maxCacheSizeObject = dataSource.get("maxCacheSize");
+            if (maxCacheSizeObject != null) {
+                maxCacheSize = ((Number) maxCacheSizeObject).longValue();
+            }
+
+        }
+        Long maxCacheFileSize = 0L;
+        if (dataSource.containsKey("maxCacheFileSize")) {
+            Object maxCacheFileSizeObject = dataSource.get("maxCacheFileSize");
+            if (maxCacheFileSizeObject != null) {
+                maxCacheFileSize = ((Number) maxCacheFileSizeObject).longValue();
+            }
+        }
+
+        Log.d("VIDEO_PLAYER_ANDROID", "CACHE CONFIGURATION:");
+        Log.d("VIDEO_PLAYER_ANDROID", "useCache: " + useCache);
+        Log.d("VIDEO_PLAYER_ANDROID", "maxCacheSize: " + maxCacheSize);
+        Log.d("VIDEO_PLAYER_ANDROID", "maxCacheFileSize: " + maxCacheFileSize);
+
+
+        if (dataSource.get("asset") != null) {
+            String assetLookupKey;
+            if (dataSource.get("package") != null) {
+                assetLookupKey =
+                        flutterState.keyForAssetAndPackageName.get(
+                                (String) dataSource.get("asset"), (String) dataSource.get("package"));
+            } else {
+                assetLookupKey = flutterState.keyForAsset.get((String) dataSource.get("asset"));
+            }
+
+            player.setDataSource(
+                    flutterState.applicationContext,
+                    key,
+                    "asset:///" + assetLookupKey,
+                    null,
+                    result,
+                    headers,
+                    false,
+                    0L,
+                    0L);
+        } else {
+            Log.d("VIDEO_PLAYER_ANDROID", "USE DATASOURCE WITH CACHE");
+            player.setDataSource(
+                    flutterState.applicationContext,
+                    key,
+                    (String) dataSource.get("uri"),
+                    (String) dataSource.get("formatHint"),
+                    result,
+                    headers,
+                    useCache,
+                    maxCacheSize,
+                    maxCacheFileSize);
+        }
+    }
+
 
     private interface KeyForAssetFn {
         String get(String asset);
