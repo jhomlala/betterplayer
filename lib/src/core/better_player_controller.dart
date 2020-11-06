@@ -194,14 +194,18 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
+    assert(
+        betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
         await videoPlayerController.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: betterPlayerDataSource.headers,
-          useCache: _betterPlayerDataSource.useCache,
-          maxCacheSize: _betterPlayerDataSource.maxCacheSize,
-          maxCacheFileSize: _betterPlayerDataSource.maxCacheFileSize,
+          useCache: _betterPlayerDataSource.cacheConfiguration?.useCache,
+          maxCacheSize:
+              _betterPlayerDataSource.cacheConfiguration?.maxCacheSize,
+          maxCacheFileSize:
+              _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize,
         );
 
         break;

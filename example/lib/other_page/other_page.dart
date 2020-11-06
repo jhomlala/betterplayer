@@ -20,13 +20,17 @@ class _OtherPageState extends State<OtherPage> {
         url:
             "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",
       ),
-      useCache: true,
-      maxCacheSize: 100 * 1024 * 1024,
-      maxCacheFileSize: 10 * 1024 * 1024,
+      cacheConfiguration: BetterPlayerCacheConfiguration(
+        useCache: true,
+        maxCacheSize: 100 * 1024 * 1024,
+        maxCacheFileSize: 10 * 1024 * 1024,
+      ),
     );
 
     _betterPlayerController = BetterPlayerController(
       BetterPlayerConfiguration(
+        fit: BoxFit.cover,
+        aspectRatio: 16/9,
         controlsConfiguration:
             BetterPlayerControlsConfiguration(enableProgressText: true),
       ),

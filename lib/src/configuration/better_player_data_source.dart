@@ -1,6 +1,8 @@
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 
+import 'better_player_cache_configuration.dart';
+
 class BetterPlayerDataSource {
   ///Type of source of video
   final BetterPlayerDataSourceType type;
@@ -33,10 +35,8 @@ class BetterPlayerDataSource {
   ///{"360p": "url", "540p": "url2" }
   final Map<String, String> resolutions;
 
-  final bool useCache;
-
-  final int maxCacheSize;
-  final int maxCacheFileSize;
+  ///Optional cache configuration, used only for network data sources
+  final BetterPlayerCacheConfiguration cacheConfiguration;
 
   BetterPlayerDataSource(
     this.type,
@@ -48,16 +48,8 @@ class BetterPlayerDataSource {
     this.useHlsTracks = true,
     this.hlsTrackNames,
     this.resolutions,
-    this.useCache = false,
-    this.maxCacheSize,
-    this.maxCacheFileSize,
+    this.cacheConfiguration,
   });
-
-  @override
-  String toString() {
-    return 'BetterPlayerDataSource{type: $type, url: $url, subtitles: $subtitles,'
-        ' liveStream: $liveStream, headers: $headers, useHlsSubtitles: $useHlsSubtitles}';
-  }
 
   BetterPlayerDataSource copyWith({
     BetterPlayerDataSourceType type,
@@ -68,9 +60,7 @@ class BetterPlayerDataSource {
     bool useHlsSubtitles,
     bool useHlsTracks,
     Map<String, String> qualities,
-    bool useCache,
-    int maxCacheSize,
-    int maxCacheFileSize,
+    BetterPlayerCacheConfiguration cacheConfiguration,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -81,9 +71,7 @@ class BetterPlayerDataSource {
       useHlsSubtitles: useHlsSubtitles ?? this.useHlsSubtitles,
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
       resolutions: qualities ?? this.resolutions,
-      useCache: useCache ?? this.useCache,
-      maxCacheSize: maxCacheSize ?? this.maxCacheSize,
-      maxCacheFileSize: maxCacheFileSize ?? this.maxCacheFileSize,
+      cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
     );
   }
 }
