@@ -67,6 +67,9 @@ final class BetterPlayer {
 
     private DefaultTrackSelector trackSelector;
 
+    private long maxCacheSize;
+    private long maxCacheFileSize;
+
     BetterPlayer(
             Context context,
             EventChannel eventChannel,
@@ -83,13 +86,15 @@ final class BetterPlayer {
 
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
-            Map<String, String> headers) {
+            Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize) {
         this.key = key;
 
         isInitialized = false;
 
         Uri uri = Uri.parse(dataSource);
         DataSource.Factory dataSourceFactory;
+
+
         if (isHTTP(uri)) {
             DefaultHttpDataSourceFactory defaultHttpDataSourceFactory =
                     new DefaultHttpDataSourceFactory(
@@ -101,7 +106,13 @@ final class BetterPlayer {
             if (headers != null) {
                 defaultHttpDataSourceFactory.getDefaultRequestProperties().set(headers);
             }
-            dataSourceFactory = defaultHttpDataSourceFactory;
+
+            if (useCache && maxCacheSize > 0 && maxCacheFileSize > 0) {
+                dataSourceFactory =
+                        new CacheDataSourceFactory(context, maxCacheSize, maxCacheFileSize, defaultHttpDataSourceFactory);
+            } else {
+                dataSourceFactory = defaultHttpDataSourceFactory;
+            }
         } else {
             dataSourceFactory = new DefaultDataSourceFactory(context, "ExoPlayer");
         }
@@ -329,3 +340,5 @@ final class BetterPlayer {
         }
     }
 }
+
+

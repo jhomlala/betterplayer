@@ -19,6 +19,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.view.FlutterMain;
 import io.flutter.view.TextureRegistry;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,6 +27,40 @@ import java.util.Map;
  */
 public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String TAG = "BetterPlayerPlugin";
+    private static final String CHANNEL = "better_player_channel";
+    private static final String EVENTS_CHANNEL = "better_player_channel/videoEvents";
+    private static final String DATA_SOURCE_PARAMETER = "dataSource";
+    private static final String KEY_PARAMETER = "key";
+    private static final String HEADERS_PARAMETER = "headers";
+    private static final String USE_CACHE_PARAMETER = "useCache";
+    private static final String MAX_CACHE_SIZE_PARAMETER = "maxCacheSize";
+    private static final String MAX_CACHE_FILE_SIZE_PARAMETER = "maxCacheFileSize";
+    private static final String ASSET_PARAMETER = "asset";
+    private static final String PACKAGE_PARAMETER = "package";
+    private static final String URI_PARAMETER = "uri";
+    private static final String FORMAT_HINT_PARAMETER = "formatHint";
+    private static final String TEXTURE_ID_PARAMETER = "textureId";
+    private static final String LOOPING_PARAMETER = "looping";
+    private static final String VOLUME_PARAMETER = "volume";
+    private static final String LOCATION_PARAMETER = "location";
+    private static final String SPEED_PARAMETER = "speed";
+    private static final String WIDTH_PARAMETER = "width";
+    private static final String HEIGHT_PARAMETER = "height";
+    private static final String BITRATE_PARAMETER = "bitrate";
+
+    private static final String INIT_METHOD = "init";
+    private static final String CREATE_METHOD = "create";
+    private static final String SET_DATA_SOURCE_METHOD = "setDataSource";
+    private static final String SET_LOOPING_METHOD = "setLooping";
+    private static final String SET_VOLUME_METHOD = "setVolume";
+    private static final String PLAY_METHOD = "play";
+    private static final String PAUSE_METHOD = "pause";
+    private static final String SEEK_TO_METHOD = "seekTo";
+    private static final String POSITION_METHOD = "position";
+    private static final String SET_SPEED_METHOD = "setSpeed";
+    private static final String SET_TRACK_PARAMETERS_METHOD = "setTrackParameters";
+    private static final String DISPOSE_METHOD = "dispose";
+
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
     private FlutterState flutterState;
 
@@ -102,15 +137,15 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             return;
         }
         switch (call.method) {
-            case "init":
+            case INIT_METHOD:
                 disposeAllPlayers();
                 break;
-            case "create": {
+            case CREATE_METHOD: {
                 TextureRegistry.SurfaceTextureEntry handle =
                         flutterState.textureRegistry.createSurfaceTexture();
                 EventChannel eventChannel =
                         new EventChannel(
-                                flutterState.binaryMessenger, "better_player_channel/videoEvents" + handle.id());
+                                flutterState.binaryMessenger, EVENTS_CHANNEL + handle.id());
 
                 BetterPlayer player =
                         new BetterPlayer(flutterState.applicationContext, eventChannel, handle, result);
@@ -119,7 +154,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                 break;
             }
             default: {
-                long textureId = ((Number) call.argument("textureId")).longValue();
+                long textureId = ((Number) call.argument(TEXTURE_ID_PARAMETER)).longValue();
                 BetterPlayer player = videoPlayers.get(textureId);
                 if (player == null) {
                     result.error(
@@ -136,71 +171,47 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
 
     private void onMethodCall(MethodCall call, Result result, long textureId, BetterPlayer player) {
         switch (call.method) {
-            case "setDataSource": {
-                Map<String, Object> dataSource = call.argument("dataSource");
-                String key = (String) dataSource.get("key");
-                Map<String, String> headers = (Map<String, String>) dataSource.get("headers");
-
-                if (dataSource.get("asset") != null) {
-                    String assetLookupKey;
-                    if (dataSource.get("package") != null) {
-                        assetLookupKey =
-                                flutterState.keyForAssetAndPackageName.get(
-                                        (String) dataSource.get("asset"), (String) dataSource.get("package"));
-                    } else {
-                        assetLookupKey = flutterState.keyForAsset.get((String) dataSource.get("asset"));
-                    }
-
-                    player.setDataSource(
-                            flutterState.applicationContext, key, "asset:///" + assetLookupKey, null, result, headers);
-                } else {
-                    player.setDataSource(
-                            flutterState.applicationContext,
-                            key,
-                            (String) dataSource.get("uri"),
-                            (String) dataSource.get("formatHint"),
-                            result,
-                            headers);
-                }
+            case SET_DATA_SOURCE_METHOD: {
+                setDataSource(call, result, player);
                 break;
             }
-            case "setLooping":
-                player.setLooping(call.argument("looping"));
+            case SET_LOOPING_METHOD:
+                player.setLooping(call.argument(LOOPING_PARAMETER));
                 result.success(null);
                 break;
-            case "setVolume":
-                player.setVolume(call.argument("volume"));
+            case SET_VOLUME_METHOD:
+                player.setVolume(call.argument(VOLUME_PARAMETER));
                 result.success(null);
                 break;
-            case "play":
+            case PLAY_METHOD:
                 player.play();
                 result.success(null);
                 break;
-            case "pause":
+            case PAUSE_METHOD:
                 player.pause();
                 result.success(null);
                 break;
-            case "seekTo":
-                int location = ((Number) call.argument("location")).intValue();
+            case SEEK_TO_METHOD:
+                int location = ((Number) call.argument(LOCATION_PARAMETER)).intValue();
                 player.seekTo(location);
                 result.success(null);
                 break;
-            case "position":
+            case POSITION_METHOD:
                 result.success(player.getPosition());
                 player.sendBufferingUpdate();
                 break;
-            case "setSpeed":
-                player.setSpeed((Double) call.argument("speed"));
+            case SET_SPEED_METHOD:
+                player.setSpeed((Double) call.argument(SPEED_PARAMETER));
                 result.success(null);
                 break;
-            case "setTrackParameters":
+            case SET_TRACK_PARAMETERS_METHOD:
                 player.setTrackParameters(
-                        (Integer) call.argument("width"),
-                        (Integer) call.argument("height"),
-                        (Integer) call.argument("bitrate"));
+                        (Integer) call.argument(WIDTH_PARAMETER),
+                        (Integer) call.argument(HEADERS_PARAMETER),
+                        (Integer) call.argument(BITRATE_PARAMETER));
                 result.success(null);
                 break;
-            case "dispose":
+            case DISPOSE_METHOD:
                 player.dispose();
                 videoPlayers.remove(textureId);
                 result.success(null);
@@ -209,6 +220,64 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                 result.notImplemented();
                 break;
         }
+    }
+
+    private void setDataSource(MethodCall call, Result result, BetterPlayer player) {
+        Map<String, Object> dataSource = call.argument(DATA_SOURCE_PARAMETER);
+
+        String key = getParameter(dataSource, KEY_PARAMETER, "");
+        Map<String, String> headers = getParameter(dataSource, HEADERS_PARAMETER, new HashMap<>());
+
+        if (dataSource.get(ASSET_PARAMETER) != null) {
+            String asset = getParameter(dataSource, ASSET_PARAMETER, "");
+            String assetLookupKey;
+            if (dataSource.get(PACKAGE_PARAMETER) != null) {
+                String packageParameter = getParameter(dataSource, PACKAGE_PARAMETER, "");
+                assetLookupKey =
+                        flutterState.keyForAssetAndPackageName.get(asset, packageParameter);
+            } else {
+                assetLookupKey = flutterState.keyForAsset.get(asset);
+            }
+
+            player.setDataSource(
+                    flutterState.applicationContext,
+                    key,
+                    "asset:///" + assetLookupKey,
+                    null,
+                    result,
+                    headers,
+                    false,
+                    0L,
+                    0L);
+        } else {
+            boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
+            Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 0);
+            Number maxCacheFileSizeNumber = getParameter(dataSource, MAX_CACHE_FILE_SIZE_PARAMETER, 0);
+            long maxCacheSize = maxCacheSizeNumber.longValue();
+            long maxCacheFileSize = maxCacheFileSizeNumber.longValue();
+            String uri = getParameter(dataSource, URI_PARAMETER, "");
+            String formatHint = getParameter(dataSource, FORMAT_HINT_PARAMETER, null);
+            player.setDataSource(
+                    flutterState.applicationContext,
+                    key,
+                    uri,
+                    formatHint,
+                    result,
+                    headers,
+                    useCache,
+                    maxCacheSize,
+                    maxCacheFileSize);
+        }
+    }
+
+    private <T> T getParameter(Map<String, Object> parameters, Object key, T defaultValue) {
+        if (parameters.containsKey(key)) {
+            Object value = parameters.get(key);
+            if (value != null) {
+                return (T) value;
+            }
+        }
+        return defaultValue;
     }
 
     private interface KeyForAssetFn {
@@ -238,7 +307,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             this.keyForAsset = keyForAsset;
             this.keyForAssetAndPackageName = keyForAssetAndPackageName;
             this.textureRegistry = textureRegistry;
-            methodChannel = new MethodChannel(messenger, "better_player_channel");
+            methodChannel = new MethodChannel(messenger, CHANNEL);
         }
 
         void startListening(BetterPlayerPlugin methodCallHandler) {

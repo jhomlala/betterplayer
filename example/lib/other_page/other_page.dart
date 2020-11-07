@@ -1,6 +1,5 @@
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class OtherPage extends StatefulWidget {
   @override
@@ -20,10 +19,17 @@ class _OtherPageState extends State<OtherPage> {
         url:
             "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt",
       ),
+      cacheConfiguration: BetterPlayerCacheConfiguration(
+        useCache: true,
+        maxCacheSize: 100 * 1024 * 1024,
+        maxCacheFileSize: 10 * 1024 * 1024,
+      ),
     );
 
     _betterPlayerController = BetterPlayerController(
       BetterPlayerConfiguration(
+        fit: BoxFit.cover,
+        aspectRatio: 16 / 9,
         controlsConfiguration:
             BetterPlayerControlsConfiguration(enableProgressText: true),
       ),
@@ -42,32 +48,8 @@ class _OtherPageState extends State<OtherPage> {
         title: Text("Other page"),
       ),
       body: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: BetterPlayer.network(
-          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          betterPlayerConfiguration: BetterPlayerConfiguration(
-            aspectRatio: 16 / 9,
-            fullScreenAspectRatio: 9 / 16,
-            allowedScreenSleep: false,
-            deviceOrientationsOnFullScreen: [
-              DeviceOrientation.portraitUp,
-              DeviceOrientation.portraitDown
-            ],
-            controlsConfiguration: BetterPlayerControlsConfiguration(
-              enableSkips: false,
-              overflowMenuCustomItems: [
-                BetterPlayerOverflowMenuItem(
-                  Icons.account_circle_rounded,
-                  "Custom element",
-                  () {
-                    print("Click!");
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+          aspectRatio: 16 / 9,
+          child: BetterPlayer(controller: _betterPlayerController)),
     );
   }
 

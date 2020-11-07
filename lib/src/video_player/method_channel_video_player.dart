@@ -45,6 +45,9 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'key': dataSource.key,
           'asset': dataSource.asset,
           'package': dataSource.package,
+          'useCache': false,
+          'maxCacheSize': 0,
+          'maxCacheFileSize': 0
         };
         break;
       case DataSourceType.network:
@@ -53,12 +56,18 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'uri': dataSource.uri,
           'formatHint': dataSource.rawFormalHint,
           'headers': dataSource.headers,
+          'useCache': dataSource.useCache,
+          'maxCacheSize': dataSource.maxCacheSize,
+          'maxCacheFileSize': dataSource.maxCacheFileSize
         };
         break;
       case DataSourceType.file:
         dataSourceDescription = <String, dynamic>{
           'key': dataSource.key,
           'uri': dataSource.uri,
+          'useCache': false,
+          'maxCacheSize': 0,
+          'maxCacheFileSize': 0
         };
         break;
     }

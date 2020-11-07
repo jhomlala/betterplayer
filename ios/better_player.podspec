@@ -15,6 +15,8 @@ A new flutter plugin project.
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
+  # KTVHTTPCache
+  s.dependency 'KTVHTTPCache', '~> 2.0.0'
   
   s.platform = :ios, '8.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
