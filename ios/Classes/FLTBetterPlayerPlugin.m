@@ -5,7 +5,8 @@
 #import "FLTBetterPlayerPlugin.h"
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
-
+#import <KTVHTTPCache/KTVHTTPCache.h>
+ 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
 #endif
@@ -250,19 +251,22 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key{
   NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{}];
+    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{} withCache: false];
 }
 
-- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers{
-
-    AVPlayerItem* item;
+- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache{
     if (headers == [NSNull null]){
-        item = [AVPlayerItem playerItemWithURL:url];
-    } else{
-        AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
-                                                options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
-        item = [AVPlayerItem playerItemWithAsset:asset];
+        headers = @{};
     }
+    AVPlayerItem* item;
+    if (useCache){
+        [KTVHTTPCache downloadSetAdditionalHeaders:headers];
+        NSURL *proxyURL = [KTVHTTPCache proxyURLWithOriginalURL:url];
+        item = [AVPlayerItem playerItemWithURL:proxyURL];
+    } else {
+        item = [AVPlayerItem playerItemWithURL:url];
+    }
+    
     return [self setDataSourcePlayerItem:item withKey:key];
 }
 
@@ -383,7 +387,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
       return;
     }
 
-      NSLog(@"Here!111");
     CGSize size = [_player currentItem].presentationSize;
     CGFloat width = size.width;
     CGFloat height = size.height;
@@ -593,6 +596,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   _messenger = [registrar messenger];
   _registrar = registrar;
   _players = [NSMutableDictionary dictionaryWithCapacity:1];
+  [KTVHTTPCache proxyStart:nil];
   return self;
 }
 
@@ -647,6 +651,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
       NSString* uriArg = dataSource[@"uri"];
       NSString* key = dataSource[@"key"];
       NSDictionary* headers = dataSource[@"headers"];
+        BOOL useCache = false;
+        id useCacheObject = [dataSource objectForKey:@"useCache"];
+        if (useCacheObject != [NSNull null]) {
+            useCache = [[dataSource objectForKey:@"useCache"] boolValue];
+        }
+        
       if (headers == nil){
           headers = @{};
       }
@@ -660,7 +670,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         }
         [player setDataSourceAsset:assetPath withKey:key];
       } else if (uriArg) {
-          [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withHeaders:headers];
+          [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withHeaders:headers withCache: useCache];
       } else {
         result(FlutterMethodNotImplemented);
       }

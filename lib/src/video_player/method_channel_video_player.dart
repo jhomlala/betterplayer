@@ -37,8 +37,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> setDataSource(int textureId, DataSource dataSource) async {
-    print("SET DATA SOURCE!!!");
-
     Map<String, dynamic> dataSourceDescription;
 
     switch (dataSource.sourceType) {
@@ -47,6 +45,9 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'key': dataSource.key,
           'asset': dataSource.asset,
           'package': dataSource.package,
+          'useCache': false,
+          'maxCacheSize': 0,
+          'maxCacheFileSize': 0
         };
         break;
       case DataSourceType.network:
@@ -55,8 +56,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'uri': dataSource.uri,
           'formatHint': dataSource.rawFormalHint,
           'headers': dataSource.headers,
-          'useCache':dataSource.useCache,
-          'maxCacheSize':dataSource.maxCacheSize,
+          'useCache': dataSource.useCache,
+          'maxCacheSize': dataSource.maxCacheSize,
           'maxCacheFileSize': dataSource.maxCacheFileSize
         };
         break;
@@ -64,6 +65,9 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         dataSourceDescription = <String, dynamic>{
           'key': dataSource.key,
           'uri': dataSource.uri,
+          'useCache': false,
+          'maxCacheSize': 0,
+          'maxCacheFileSize': 0
         };
         break;
     }

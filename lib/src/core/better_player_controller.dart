@@ -201,11 +201,12 @@ class BetterPlayerController extends ChangeNotifier {
         await videoPlayerController.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: betterPlayerDataSource.headers,
-          useCache: _betterPlayerDataSource.cacheConfiguration?.useCache,
+          useCache:
+              _betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
           maxCacheSize:
-              _betterPlayerDataSource.cacheConfiguration?.maxCacheSize,
+              _betterPlayerDataSource.cacheConfiguration?.maxCacheSize ?? 0,
           maxCacheFileSize:
-              _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize,
+              _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
         );
 
         break;
