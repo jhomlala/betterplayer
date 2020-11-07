@@ -24,7 +24,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Playback speed support  
 ✔️ HLS support (track, subtitles selection)  
 ✔️ Alternative resolution support  
-✔️ Cache support
+✔️ Cache support  
 ✔️ ... and much more! 
 
 
