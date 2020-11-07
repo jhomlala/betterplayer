@@ -552,6 +552,31 @@ Possible configuration options:
   ///List of strings that represents tracks names.
   ///If empty, then better player will choose name based on track parameters
   final List<String> hlsTrackNames;
+
+  ///Optional, alternative resolutions for non-hls video. Used to setup
+  ///different qualities for video.
+  ///Data should be in given format:
+  ///{"360p": "url", "540p": "url2" }
+  final Map<String, String> resolutions;
+
+  ///Optional cache configuration, used only for network data sources
+  final BetterPlayerCacheConfiguration cacheConfiguration;
+```
+
+
+### BetterPlayerCacheConfiguration
+Define cache configuration for given data source. Cache works only for network data sources.
+```
+ ///Enable cache for network data source
+  final bool useCache;
+
+  /// The maximum cache size to keep on disk in bytes.
+  /// Android only option.
+  final int maxCacheSize;
+
+  /// The maximum size of each individual file in bytes.
+  /// Android only option.
+  final int maxCacheFileSize;
 ```
 
 

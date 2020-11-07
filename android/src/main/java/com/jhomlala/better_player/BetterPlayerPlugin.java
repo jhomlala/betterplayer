@@ -27,6 +27,7 @@ import java.util.Map;
  */
 public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String TAG = "BetterPlayerPlugin";
+    private static final String CHANNEL = "better_player_channel";
     private static final String EVENTS_CHANNEL = "better_player_channel/videoEvents";
     private static final String DATA_SOURCE_PARAMETER = "dataSource";
     private static final String KEY_PARAMETER = "key";
@@ -306,7 +307,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             this.keyForAsset = keyForAsset;
             this.keyForAssetAndPackageName = keyForAssetAndPackageName;
             this.textureRegistry = textureRegistry;
-            methodChannel = new MethodChannel(messenger, "better_player_channel");
+            methodChannel = new MethodChannel(messenger, CHANNEL);
         }
 
         void startListening(BetterPlayerPlugin methodCallHandler) {

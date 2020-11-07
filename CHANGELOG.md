@@ -1,5 +1,8 @@
 ## 0.0.32
 * Fixed locale picking when context is not mounted anymore
+* Added cache feature (based on https://github.com/sanekyy/plugins/tree/caching and https://github.com/vikram25897/flutter_cached_video_player solutions)
+* Added BetterPlayerCacheConfiguration to BetterPlayerDataSource
+* Refactored Android's native code
 
 ## 0.0.31
 * Added showPlaceholderUntilPlay in BetterPlayerConfiguration
