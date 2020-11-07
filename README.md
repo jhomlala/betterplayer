@@ -567,8 +567,8 @@ Possible configuration options:
 
 ### BetterPlayerCacheConfiguration
 Define cache configuration for given data source. Cache works only for network data sources.
-```
- ///Enable cache for network data source
+```dart
+  ///Enable cache for network data source
   final bool useCache;
 
   /// The maximum cache size to keep on disk in bytes.
