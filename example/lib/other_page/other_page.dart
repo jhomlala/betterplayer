@@ -30,7 +30,7 @@ class _OtherPageState extends State<OtherPage> {
     _betterPlayerController = BetterPlayerController(
       BetterPlayerConfiguration(
         fit: BoxFit.cover,
-        aspectRatio: 16/9,
+        aspectRatio: 16 / 9,
         controlsConfiguration:
             BetterPlayerControlsConfiguration(enableProgressText: true),
       ),

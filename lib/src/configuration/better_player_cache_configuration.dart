@@ -1,10 +1,8 @@
-
 ///Cache configuration for Better Player.
 ///To enable cache on Android, useCache must be true and maxCacheSize > 0 and
 ///maxCacheFileSize > 0. On iOS maxCacheSize and maxCacheFileSize take no effect,
 ///so useCache is used only.
 class BetterPlayerCacheConfiguration {
-
   ///Enable cache for network data source
   final bool useCache;
 
