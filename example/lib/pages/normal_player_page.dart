@@ -19,7 +19,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.FOR_BIGGER_BLAZES_URL);
+        BetterPlayerDataSourceType.NETWORK, Constants.forBiggerBlazesUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -50,14 +50,14 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             onPressed: () {
               BetterPlayerDataSource dataSource = BetterPlayerDataSource(
                   BetterPlayerDataSourceType.NETWORK,
-                  Constants.FOR_BIGGER_BLAZES_URL);
+                  Constants.forBiggerBlazesUrl);
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),
           RaisedButton(
             child: Text("Play file data source"),
             onPressed: () async {
-              String url = await Utils.getFileUrl(Constants.FILE_TEST_VIDEO);
+              String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
               BetterPlayerDataSource dataSource =
                   BetterPlayerDataSource(BetterPlayerDataSourceType.FILE, url);
               _betterPlayerController.setupDataSource(dataSource);

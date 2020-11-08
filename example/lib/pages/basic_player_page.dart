@@ -27,7 +27,7 @@ class _BasicPlayerPageState extends State<BasicPlayerPage> {
           ),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: BetterPlayer.network(Constants.BIG_BUCK_BUNNY_VIDEO_URL),
+            child: BetterPlayer.network(Constants.bugBuckBunnyVideoUrl),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -38,7 +38,7 @@ class _BasicPlayerPageState extends State<BasicPlayerPage> {
           ),
           const SizedBox(height: 8),
           FutureBuilder<String>(
-            future: Utils.getFileUrl(Constants.FILE_TEST_VIDEO),
+            future: Utils.getFileUrl(Constants.fileTestVideoUrl),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
               return BetterPlayer.file(snapshot.data);
             },

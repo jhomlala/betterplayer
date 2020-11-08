@@ -1,5 +1,8 @@
 ## 0.0.33
 * Fixed BetterPlayerEvent visibility
+* Fixed lazy initialization, when first data source is passed after player finishes first render
+* Added selectedByDefault to BetterPlayerSubtitlesConfiguration
+
 
 ## 0.0.32
 * Fixed locale picking when context is not mounted anymore

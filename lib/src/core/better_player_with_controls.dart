@@ -33,6 +33,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   final StreamController<bool> playerVisibilityStreamController =
       StreamController();
 
+  bool _initalized = false;
+
   @override
   void initState() {
     playerVisibilityStreamController.add(true);
@@ -55,7 +57,13 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     super.dispose();
   }
 
-  void _onControllerChanged() {}
+  void _onControllerChanged() {
+    if (!_initalized) {
+      setState(() {
+        _initalized = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,6 +102,11 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       print("Invalid rotation provided. Using rotation = 0");
       rotation = 0;
     }
+    if (betterPlayerController.betterPlayerDataSource == null) {
+      return Container();
+    }
+    _initalized = true;
+
     return Container(
       child: Stack(
         fit: StackFit.passthrough,

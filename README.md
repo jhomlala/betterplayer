@@ -362,6 +362,9 @@ Possible configuration options:
 
   ///Background color of the subtitle
   final Color backgroundColor;
+
+  ///Subtitles selected by default, without user interaction
+  final bool selectedByDefault;
 ```
 
 ### BetterPlayerControlsConfiguration

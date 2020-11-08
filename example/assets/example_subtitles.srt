@@ -1,13 +1,15 @@
 WEBVTT
 
 1
-00:00:00.000 --> 00:01:55.800
-THIS IS THE TEST!
+00:00:00.000 --> 00:00:02.000
+Welcome to Better Player
 
 2
-00:01:51.800 --> 00:01:55.800
-Durch sie wurde viel unschuldiges Blut
-vergossen.
+00:00:02.000 --> 00:00:06.000
+Hope you enjoy features in your new video player.
+
+00:00:06.000 --> 01:58:00.000
+Have fun!
 
 3
 00:01:58.000 --> 00:02:01.450

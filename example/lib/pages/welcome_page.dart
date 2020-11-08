@@ -4,6 +4,7 @@ import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/normal_player_page.dart';
+import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -57,6 +58,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Event listener", () {
         _navigateToPage(EventListenerPage());
+      }),
+      _buildExampleElementWidget("Subtitles page", () {
+        _navigateToPage(SubtitlesPage());
       })
     ];
   }

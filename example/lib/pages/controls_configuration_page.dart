@@ -31,7 +31,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
             fit: BoxFit.contain,
             controlsConfiguration: controlsConfiguration);
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.FOR_BIGGER_BLAZES_URL);
+        BetterPlayerDataSourceType.NETWORK, Constants.forBiggerBlazesUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();

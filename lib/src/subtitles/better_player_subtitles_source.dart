@@ -13,11 +13,15 @@ class BetterPlayerSubtitlesSource {
   ///Content of subtitles, used when type is memory
   final String content;
 
+  ///Subtitles selected by default, without user interaction
+  final bool selectedByDefault;
+
   BetterPlayerSubtitlesSource({
     this.type,
     this.name = "Default subtitles",
     this.urls,
     this.content,
+    this.selectedByDefault,
   });
 
   ///Creates list with only one subtitles
@@ -26,6 +30,7 @@ class BetterPlayerSubtitlesSource {
     String name = "Default subtitles",
     String url,
     String content,
+    bool selectedByDefault,
   }) =>
       [
         BetterPlayerSubtitlesSource(
@@ -33,6 +38,7 @@ class BetterPlayerSubtitlesSource {
           name: name,
           urls: [url],
           content: content,
+          selectedByDefault: selectedByDefault,
         )
       ];
 }
