@@ -13,7 +13,7 @@ class _OtherPageState extends State<OtherPage> {
   void initState() {
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "https://filesamples.com/samples/audio/ac3/sample1.ac3",
       subtitles: BetterPlayerSubtitlesSource.single(
         type: BetterPlayerSubtitlesSourceType.NETWORK,
         url:
@@ -38,6 +38,8 @@ class _OtherPageState extends State<OtherPage> {
       print("Better player event: ${event.betterPlayerEventType}");
     });
     _betterPlayerController.setupDataSource(dataSource);
+
+    _betterPlayerController.videoPlayerController.value;
     super.initState();
   }
 

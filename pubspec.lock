@@ -94,13 +94,11 @@ packages:
     source: hosted
     version: "0.14.0+3"
   import_js_library:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "."
-      ref: fix-android
-      resolved-ref: "3d717175fb62f83557c996a27dc3c90a2f196ac0"
-      url: "https://github.com/simpleclub-extended/flutter_web_import_js_library"
-    source: git
+      name: import_js_library
+      url: "https://pub.dartlang.org"
+    source: hosted
     version: "1.0.2"
   js:
     dependency: transitive
