@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
+import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/normal_player_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:flutter/material.dart';
@@ -61,6 +62,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Subtitles page", () {
         _navigateToPage(SubtitlesPage());
+      }),
+      _buildExampleElementWidget("HLS subtitles page", () {
+        _navigateToPage(HlsSubtitlesPage());
       })
     ];
   }
