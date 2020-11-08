@@ -177,7 +177,8 @@ class BetterPlayerController extends ChangeNotifier {
         orElse: () => null);
 
     ///Setup subtitles (none is default)
-    setupSubtitleSource(defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last);
+    setupSubtitleSource(
+        defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last);
   }
 
   ///Setup subtitles to be displayed from given subtitle source

@@ -39,7 +39,7 @@ class _ResolutionsPageState extends State<ResolutionsPage> {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             "Video with different resolutions to select. Click on overflow icon"
-                " (3 dots in right corner) and select different qualities.",
+            " (3 dots in right corner) and select different qualities.",
             style: TextStyle(fontSize: 16),
           ),
         ),

@@ -40,7 +40,11 @@ class _WelcomePageState extends State<WelcomePage> {
         child: ListView(
           children: [
             const SizedBox(height: 8),
-            Image.asset("assets/logo.png", height: 200,width: 200,),
+            Image.asset(
+              "assets/logo.png",
+              height: 200,
+              width: 200,
+            ),
             Text(
               "Welcome to Better Player example app. Click on any element below to see example.",
               style: TextStyle(fontSize: 16),

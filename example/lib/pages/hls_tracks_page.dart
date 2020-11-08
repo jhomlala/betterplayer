@@ -13,7 +13,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
   @override
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
-    BetterPlayerConfiguration(
+        BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -38,7 +38,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               "Player with HLS stream which loads tracks from HLS."
-                  " You can choose tracks by using overflow menu (3 dots in right corner).",
+              " You can choose tracks by using overflow menu (3 dots in right corner).",
               style: TextStyle(fontSize: 16),
             ),
           ),
