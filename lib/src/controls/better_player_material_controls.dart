@@ -369,10 +369,10 @@ class _BetterPlayerMaterialControlsState
             child: Align(
               alignment: Alignment.bottomRight,
               child: Container(
-                margin: const EdgeInsets.only(bottom: 4, right: 4),
+                margin: const EdgeInsets.only(bottom: 4, right: 24),
                 decoration: BoxDecoration(
                   color: _controlsConfiguration.controlBarColor,
-                  borderRadius: BorderRadius.circular(48),
+                  borderRadius: BorderRadius.circular(32),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(12),

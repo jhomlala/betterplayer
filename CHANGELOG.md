@@ -1,3 +1,10 @@
+## 0.0.33
+* Fixed BetterPlayerEvent visibility
+* Fixed lazy initialization, when first data source is passed after player finishes first render
+* Added selectedByDefault to BetterPlayerSubtitlesConfiguration
+* Fixed HLS tracks android native code
+* Updated example
+
 ## 0.0.32
 * Fixed locale picking when context is not mounted anymore
 * Added cache feature (based on https://github.com/sanekyy/plugins/tree/caching and https://github.com/vikram25897/flutter_cached_video_player solutions)

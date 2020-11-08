@@ -1,5 +1,5 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player_example/video_list/video_list_data.dart';
+import 'package:better_player_example/pages/video_list/video_list_data.dart';
 import 'package:flutter/material.dart';
 
 class VideoListWidget extends StatefulWidget {

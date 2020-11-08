@@ -34,7 +34,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.32
+  better_player: ^0.0.33
 ```
 
 2. Install it
@@ -170,8 +170,7 @@ BetterPlayerListViewPlayer will auto play/pause video once video is visible on s
 ```
 
 You can control BetterPlayerListViewPlayer with BetterPlayerListViewPlayerController. You need to pass
-BetterPlayerListViewPlayerController to BetterPlayerListVideoPlayer. See more here:
-https://github.com/jhomlala/betterplayer/blob/master/example/lib/video_list/video_list_widget.dart
+BetterPlayerListViewPlayerController to BetterPlayerListVideoPlayer. See more in example app.
 
 ### Subtitles
 Subtitles can be configured from 3 different sources: file, network and memory. Subtitles source is passed in BetterPlayerDataSource:
@@ -363,6 +362,9 @@ Possible configuration options:
 
   ///Background color of the subtitle
   final Color backgroundColor;
+
+  ///Subtitles selected by default, without user interaction
+  final bool selectedByDefault;
 ```
 
 ### BetterPlayerControlsConfiguration

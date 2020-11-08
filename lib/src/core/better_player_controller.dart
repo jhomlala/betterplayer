@@ -165,14 +165,20 @@ class BetterPlayerController extends ChangeNotifier {
       });
     }
 
-    _betterPlayerSubtitlesSourceList.add(BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.NONE));
+    _betterPlayerSubtitlesSourceList.add(
+      BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.NONE),
+    );
 
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
 
+    var defaultSubtitle = _betterPlayerSubtitlesSourceList.firstWhere(
+        (element) => element.selectedByDefault == true,
+        orElse: () => null);
+
     ///Setup subtitles (none is default)
-    setupSubtitleSource(_betterPlayerSubtitlesSourceList.last);
+    setupSubtitleSource(
+        defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last);
   }
 
   ///Setup subtitles to be displayed from given subtitle source
