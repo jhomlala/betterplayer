@@ -2,7 +2,7 @@
 * Fixed BetterPlayerEvent visibility
 * Fixed lazy initialization, when first data source is passed after player finishes first render
 * Added selectedByDefault to BetterPlayerSubtitlesConfiguration
-
+* Fixed HLS tracks android native code
 
 ## 0.0.32
 * Fixed locale picking when context is not mounted anymore

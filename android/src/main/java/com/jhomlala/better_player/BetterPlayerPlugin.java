@@ -207,7 +207,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             case SET_TRACK_PARAMETERS_METHOD:
                 player.setTrackParameters(
                         (Integer) call.argument(WIDTH_PARAMETER),
-                        (Integer) call.argument(HEADERS_PARAMETER),
+                        (Integer) call.argument(HEIGHT_PARAMETER),
                         (Integer) call.argument(BITRATE_PARAMETER));
                 result.success(null);
                 break;

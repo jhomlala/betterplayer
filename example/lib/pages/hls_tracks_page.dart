@@ -2,23 +2,23 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
 
-class HlsSubtitlesPage extends StatefulWidget {
+class HlsTracksPage extends StatefulWidget {
   @override
-  _HlsSubtitlesPageState createState() => _HlsSubtitlesPageState();
+  _HlsTracksPageState createState() => _HlsTracksPageState();
 }
 
-class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
+class _HlsTracksPageState extends State<HlsTracksPage> {
   BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.hlsPlaylistUrl,
+        BetterPlayerDataSourceType.NETWORK, Constants.hlsTestStreamUrl,
         useHlsSubtitles: true);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -29,7 +29,7 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("HLS subtitles"),
+        title: Text("HLS tracks"),
       ),
       body: Column(
         children: [
@@ -37,8 +37,8 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Player with HLS stream which loads subtitles from HLS."
-              " You can choose subtitles by using overflow menu (3 dots in right corner).",
+              "Player with HLS stream which loads tracks from HLS."
+                  " You can choose tracks by using overflow menu (3 dots in right corner).",
               style: TextStyle(fontSize: 16),
             ),
           ),
