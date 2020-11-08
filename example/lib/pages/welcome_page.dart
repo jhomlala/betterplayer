@@ -6,6 +6,7 @@ import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/hls_tracks_page.dart';
 import 'package:better_player_example/pages/normal_player_page.dart';
+import 'package:better_player_example/pages/resolutions_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,6 +64,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Subtitles", () {
         _navigateToPage(SubtitlesPage());
+      }),
+      _buildExampleElementWidget("Resolutions", () {
+        _navigateToPage(ResolutionsPage());
       }),
       _buildExampleElementWidget("HLS subtitles", () {
         _navigateToPage(HlsSubtitlesPage());
