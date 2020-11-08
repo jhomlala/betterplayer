@@ -7,8 +7,10 @@ import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/hls_tracks_page.dart';
 import 'package:better_player_example/pages/normal_player_page.dart';
+import 'package:better_player_example/pages/playlist_page.dart';
 import 'package:better_player_example/pages/resolutions_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
+import 'package:better_player_example/pages/video_list/video_list_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -77,6 +79,12 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Cache", () {
         _navigateToPage(CachePage());
+      }),
+      _buildExampleElementWidget("Playlist", () {
+        _navigateToPage(PlaylistPage());
+      }),
+      _buildExampleElementWidget("Video in list", () {
+        _navigateToPage(VideoListPage());
       }),
     ];
   }
