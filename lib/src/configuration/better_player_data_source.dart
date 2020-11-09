@@ -54,9 +54,67 @@ class BetterPlayerDataSource {
     this.bytes,
   });
 
+  factory BetterPlayerDataSource.network(
+      String url,
+      List<BetterPlayerSubtitlesSource> subtitles,
+      bool liveStream,
+      Map<String, String> headers,
+      bool useHlsSubtitles,
+      bool useHlsTracks,
+      Map<String, String> qualities,
+      BetterPlayerCacheConfiguration cacheConfiguration) {
+    return BetterPlayerDataSource(
+      BetterPlayerDataSourceType.NETWORK,
+      url,
+      subtitles: subtitles,
+      liveStream: liveStream,
+      headers: headers,
+      useHlsSubtitles: useHlsSubtitles,
+      useHlsTracks: useHlsTracks,
+      resolutions: qualities,
+      cacheConfiguration: cacheConfiguration,
+    );
+  }
+
+  factory BetterPlayerDataSource.file(
+      String url,
+      List<BetterPlayerSubtitlesSource> subtitles,
+      bool useHlsSubtitles,
+      bool useHlsTracks,
+      Map<String, String> qualities,
+      BetterPlayerCacheConfiguration cacheConfiguration) {
+    return BetterPlayerDataSource(
+      BetterPlayerDataSourceType.NETWORK,
+      url,
+      subtitles: subtitles,
+      useHlsSubtitles: useHlsSubtitles,
+      useHlsTracks: useHlsTracks,
+      resolutions: qualities,
+    );
+  }
+
+  factory BetterPlayerDataSource.memory(
+      List<int> bytes,
+      List<BetterPlayerSubtitlesSource> subtitles,
+      bool useHlsSubtitles,
+      bool useHlsTracks,
+      Map<String, String> qualities,
+      BetterPlayerCacheConfiguration cacheConfiguration) {
+    return BetterPlayerDataSource(
+      BetterPlayerDataSourceType.MEMORY,
+      "",
+      bytes: bytes,
+      subtitles: subtitles,
+      useHlsSubtitles: useHlsSubtitles,
+      useHlsTracks: useHlsTracks,
+      resolutions: qualities,
+    );
+  }
+
   BetterPlayerDataSource copyWith({
     BetterPlayerDataSourceType type,
     String url,
+    List<int> bytes,
     List<BetterPlayerSubtitlesSource> subtitles,
     bool liveStream,
     Map<String, String> headers,
@@ -68,6 +126,7 @@ class BetterPlayerDataSource {
     return BetterPlayerDataSource(
       type ?? this.type,
       url ?? this.url,
+      bytes: bytes ?? this.bytes,
       subtitles: subtitles ?? this.subtitles,
       liveStream: liveStream ?? this.liveStream,
       headers: headers ?? this.headers,
