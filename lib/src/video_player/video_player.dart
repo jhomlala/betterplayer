@@ -275,7 +275,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       bool useCache = false,
       int maxCacheSize,
       int maxCacheFileSize}) {
-    print("SET NETWORK DATA SOURCE");
     return _setDataSource(
       DataSource(
           sourceType: DataSourceType.network,

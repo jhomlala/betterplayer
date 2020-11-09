@@ -38,6 +38,8 @@ class BetterPlayerDataSource {
   ///Optional cache configuration, used only for network data sources
   final BetterPlayerCacheConfiguration cacheConfiguration;
 
+  final List<int> bytes;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -49,6 +51,7 @@ class BetterPlayerDataSource {
     this.hlsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
+    this.bytes,
   });
 
   BetterPlayerDataSource copyWith({

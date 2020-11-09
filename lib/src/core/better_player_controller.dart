@@ -14,6 +14,7 @@ import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BetterPlayerController extends ChangeNotifier {
   static const _durationParameter = "duration";
@@ -102,6 +103,8 @@ class BetterPlayerController extends ChangeNotifier {
   bool cancelFullScreenDismiss = true;
 
   BetterPlayerTranslations translations = BetterPlayerTranslations();
+
+  List<File> _tempFiles = List();
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -220,11 +223,29 @@ class BetterPlayerController extends ChangeNotifier {
         await videoPlayerController
             .setFileDataSource(File(betterPlayerDataSource.url));
         break;
+      case BetterPlayerDataSourceType.MEMORY:
+        var file = await _createFile(_betterPlayerDataSource.bytes);
+
+        if (file != null) {
+          await videoPlayerController.setFileDataSource(file);
+          _tempFiles.add(file);
+        } else {
+          throw ArgumentError("Couldn't create file from memory.");
+        }
+        break;
+
       default:
         throw UnimplementedError(
             "${betterPlayerDataSource.type} is not implemented");
     }
     await _initialize();
+  }
+
+  Future<File> _createFile(List<int> bytes) async {
+    String dir = (await getTemporaryDirectory()).path;
+    File temp = new File('$dir/better_player_${DateTime.now()}.temp');
+    await temp.writeAsBytes(bytes);
+    return temp;
   }
 
   Future _initialize() async {
@@ -506,6 +527,9 @@ class BetterPlayerController extends ChangeNotifier {
       _nextVideoTimer?.cancel();
       nextVideoTimeStreamController.close();
       _disposed = true;
+
+      ///Delete files async
+      _tempFiles?.forEach((file) => file.delete());
       super.dispose();
     }
   }
