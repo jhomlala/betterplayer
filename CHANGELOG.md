@@ -3,6 +3,7 @@
 * Added factories: network, file, memory for BetterPlayerDataSource
 * Fixed missing useHlsTracks implementation
 * Fixed placeholder showing after full screen when using showPlaceholderUntilPlay
+* Added setControlsVisibility to BetterPlayerController
 
 
 ## 0.0.33

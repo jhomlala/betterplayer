@@ -42,6 +42,7 @@ class _BetterPlayerCupertinoControlsState
 
   VideoPlayerController _controller;
   BetterPlayerController _betterPlayerController;
+  StreamSubscription _controlsVisibilityStreamSubscription;
 
   BetterPlayerControlsConfiguration get _controlsConfiguration =>
       widget.controlsConfiguration;
@@ -113,6 +114,7 @@ class _BetterPlayerCupertinoControlsState
     _hideTimer?.cancel();
     _expandCollapseTimer?.cancel();
     _initTimer?.cancel();
+    _controlsVisibilityStreamSubscription?.cancel();
   }
 
   @override
@@ -543,6 +545,15 @@ class _BetterPlayerCupertinoControlsState
         });
       });
     }
+    _controlsVisibilityStreamSubscription =
+        _betterPlayerController.controlsVisibilityStream.listen((state) {
+          setState(() {
+            _hideStuff = !state;
+          });
+          if (!_hideStuff) {
+            cancelAndRestartTimer();
+          }
+        });
   }
 
   void _onExpandCollapse() {

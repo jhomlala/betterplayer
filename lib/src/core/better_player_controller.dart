@@ -102,6 +102,7 @@ class BetterPlayerController extends ChangeNotifier {
   ///switches quality (track or resolution) of the video. You should ignore it.
   bool cancelFullScreenDismiss = true;
 
+  ///Currently used translations
   BetterPlayerTranslations translations = BetterPlayerTranslations();
 
   ///List of files to delete once player disposes.
@@ -109,6 +110,12 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Has current data source started
   bool _hasCurrentDataSourceStarted = false;
+
+  StreamController<bool> _controlsVisibilityStreamController =
+      StreamController.broadcast();
+
+  Stream<bool> get controlsVisibilityStream =>
+      _controlsVisibilityStreamController.stream;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -348,7 +355,16 @@ class BetterPlayerController extends ChangeNotifier {
     return videoPlayerController.value.isBuffering;
   }
 
+  ///Show or hide controls manually
+  void setControlsVisibility(bool isVisible) {
+    assert(isVisible != null, "IsVisible can't be null");
+    _controlsVisibilityStreamController.add(isVisible);
+  }
+
+  ///Internal method, used to trigger CONTROLS_VISIBLE or CONTROLS_HIDDEN event
+  ///once controls state changed.
   void toggleControlsVisibility(bool isVisible) {
+    assert(isVisible != null, "IsVisible can't be null");
     _postEvent(isVisible
         ? BetterPlayerEvent(BetterPlayerEventType.CONTROLS_VISIBLE)
         : BetterPlayerEvent(BetterPlayerEventType.CONTROLS_HIDDEN));
@@ -524,7 +540,6 @@ class BetterPlayerController extends ChangeNotifier {
     return BetterPlayerTranslations();
   }
 
-
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
   @override
@@ -536,6 +551,7 @@ class BetterPlayerController extends ChangeNotifier {
       videoPlayerController?.dispose();
       _nextVideoTimer?.cancel();
       nextVideoTimeStreamController.close();
+      _controlsVisibilityStreamController.close();
       _disposed = true;
 
       ///Delete files async

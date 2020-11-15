@@ -43,6 +43,7 @@ class _BetterPlayerMaterialControlsState
   bool _wasLoading = false;
   VideoPlayerController _controller;
   BetterPlayerController _betterPlayerController;
+  StreamSubscription _controlsVisibilityStreamSubscription;
 
   BetterPlayerControlsConfiguration get _controlsConfiguration =>
       widget.controlsConfiguration;
@@ -100,6 +101,7 @@ class _BetterPlayerMaterialControlsState
     _hideTimer?.cancel();
     _initTimer?.cancel();
     _showAfterExpandCollapseTimer?.cancel();
+    _controlsVisibilityStreamSubscription?.cancel();
   }
 
   @override
@@ -483,12 +485,22 @@ class _BetterPlayerMaterialControlsState
     }
 
     if (_controlsConfiguration.showControlsOnInitialize) {
-      _initTimer = Timer(Duration(milliseconds: 200), () {
+      _initTimer = Timer(const Duration(milliseconds: 200), () {
         setState(() {
           _hideStuff = false;
         });
       });
     }
+
+    _controlsVisibilityStreamSubscription =
+        _betterPlayerController.controlsVisibilityStream.listen((state) {
+      setState(() {
+        _hideStuff = !state;
+      });
+      if (!_hideStuff) {
+        cancelAndRestartTimer();
+      }
+    });
   }
 
   void _onExpandCollapse() {
