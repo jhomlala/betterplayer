@@ -597,7 +597,7 @@ class _BetterPlayerCupertinoControlsState
         cancelAndRestartTimer();
 
         if (!_controller.value.initialized) {
-          if (_betterPlayerController.betterPlayerDataSource.liveStream) {
+          if (_betterPlayerController.betterPlayerDataSource?.liveStream == true) {
             _betterPlayerController.play();
             _betterPlayerController.cancelNextVideoTimer();
           }

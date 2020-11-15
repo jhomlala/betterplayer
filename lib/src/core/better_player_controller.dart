@@ -104,6 +104,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   BetterPlayerTranslations translations = BetterPlayerTranslations();
 
+  ///List of files to delete once player disposes.
   List<File> _tempFiles = List();
 
   BetterPlayerController(
@@ -148,13 +149,14 @@ class BetterPlayerController extends ChangeNotifier {
     }
 
     /// Load hls tracks
-    if (betterPlayerDataSource.url.contains(_hlsExtension)) {
+    if (_betterPlayerDataSource?.useHlsTracks == true &&
+        betterPlayerDataSource.url.contains(_hlsExtension)) {
       _betterPlayerTracks =
           await BetterPlayerHlsUtils.parseTracks(betterPlayerDataSource.url);
     }
 
     /// Load hls subtitles
-    if (betterPlayerDataSource.useHlsSubtitles &&
+    if (betterPlayerDataSource?.useHlsSubtitles == true &&
         betterPlayerDataSource.url.contains(_hlsExtension)) {
       var hlsSubtitles =
           await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
@@ -397,7 +399,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   bool isLiveStream() {
-    return _betterPlayerDataSource?.liveStream;
+    return _betterPlayerDataSource?.liveStream == true;
   }
 
   bool isVideoInitialized() {

@@ -34,7 +34,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.33
+  better_player: ^0.0.34
 ```
 
 2. Install it
@@ -515,7 +515,10 @@ Possible configuration options:
 ```
 
 ### BetterPlayerDataSource
-Define source for one video in your app.
+Define source for one video in your app. There are 3 types of data sources:
+* Network - data source which uses url to play video from external resources
+* File - data source which uses url to play video from internal resources
+* Memory - data source which uses list of bytes to play video from memory
 ```dart
     var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
@@ -527,6 +530,10 @@ Define source for one video in your app.
       headers: {"header":"my_custom_header"}
     );
 ```
+
+You can use type specific factories to build your data source.
+Use BetterPlayerDataSource.network to build network data source, BetterPlayerDataSource.file to build file data source and BetterPlayerDataSource.memory
+to build memory data source.
 
 Possible configuration options:
 ```

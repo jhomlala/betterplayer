@@ -31,9 +31,7 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
     File file = File(filePath);
 
     List<int> bytes = file.readAsBytesSync().buffer.asUint8List();
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.MEMORY, "",
-        bytes: bytes);
+    BetterPlayerDataSource dataSource = BetterPlayerDataSource.memory(bytes);
     _betterPlayerController.setupDataSource(dataSource);
   }
 
@@ -41,7 +39,7 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player"),
+        title: Text("Memory player"),
       ),
       body: Column(
         children: [
@@ -49,7 +47,7 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Normal player with configuration managed by developer.",
+              "Memory player with plays video from bytes.",
               style: TextStyle(fontSize: 16),
             ),
           ),

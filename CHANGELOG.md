@@ -1,3 +1,8 @@
+## 0.0.34
+* Added memory data source
+* Added factories: network, file, memory for BetterPlayerDataSource
+* General bugfixes
+
 ## 0.0.33
 * Fixed BetterPlayerEvent visibility
 * Fixed lazy initialization, when first data source is passed after player finishes first render
