@@ -107,6 +107,9 @@ class BetterPlayerController extends ChangeNotifier {
   ///List of files to delete once player disposes.
   List<File> _tempFiles = List();
 
+  ///Has current data source started
+  bool _hasCurrentDataSourceStarted = false;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -129,7 +132,7 @@ class BetterPlayerController extends ChangeNotifier {
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
-
+    _hasCurrentDataSourceStarted = false;
     _betterPlayerDataSource = betterPlayerDataSource;
 
     ///Build videoPlayerController if null
@@ -297,6 +300,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   Future<void> play() async {
     await videoPlayerController.play();
+    _hasCurrentDataSourceStarted = true;
+    notifyListeners();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
   }
 
@@ -518,6 +523,9 @@ class BetterPlayerController extends ChangeNotifier {
     }
     return BetterPlayerTranslations();
   }
+
+
+  bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
   @override
   void dispose() {

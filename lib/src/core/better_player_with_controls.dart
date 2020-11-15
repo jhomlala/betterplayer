@@ -187,19 +187,13 @@ class _BetterPlayerVideoFitWidgetState
   @override
   void initState() {
     super.initState();
-    if (widget.betterPlayerController.betterPlayerConfiguration
+    if (!widget.betterPlayerController.betterPlayerConfiguration
         .showPlaceholderUntilPlay) {
-      widget.betterPlayerController.addEventsListener((event) {
-        if (!_started &&
-            event.betterPlayerEventType == BetterPlayerEventType.PLAY) {
-          setState(() {
-            _started = true;
-          });
-        }
-      });
-    } else {
       _started = true;
+    } else {
+      _started = widget.betterPlayerController.hasCurrentDataSourceStarted;
     }
+
     _initialize();
   }
 
@@ -223,6 +217,17 @@ class _BetterPlayerVideoFitWidgetState
         _initialized = controller.value.initialized;
         setState(() {});
       }
+      widget.betterPlayerController.addListener(() {
+        if (widget.betterPlayerController.betterPlayerConfiguration
+                .showPlaceholderUntilPlay &&
+            !_started) {
+          setState(() {
+            _started =
+                widget.betterPlayerController.hasCurrentDataSourceStarted;
+            print("STARTED:" + _started.toString());
+          });
+        }
+      });
     };
     controller.addListener(_initializedListener);
   }

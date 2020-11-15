@@ -1,7 +1,9 @@
 ## 0.0.34
 * Added memory data source
 * Added factories: network, file, memory for BetterPlayerDataSource
-* General bugfixes
+* Fixed missing useHlsTracks implementation
+* Fixed placeholder showing after full screen when using showPlaceholderUntilPlay
+
 
 ## 0.0.33
 * Fixed BetterPlayerEvent visibility
