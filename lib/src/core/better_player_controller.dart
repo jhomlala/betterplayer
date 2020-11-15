@@ -14,6 +14,7 @@ import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 class BetterPlayerController extends ChangeNotifier {
   static const _durationParameter = "duration";
@@ -101,7 +102,20 @@ class BetterPlayerController extends ChangeNotifier {
   ///switches quality (track or resolution) of the video. You should ignore it.
   bool cancelFullScreenDismiss = true;
 
+  ///Currently used translations
   BetterPlayerTranslations translations = BetterPlayerTranslations();
+
+  ///List of files to delete once player disposes.
+  List<File> _tempFiles = List();
+
+  ///Has current data source started
+  bool _hasCurrentDataSourceStarted = false;
+
+  StreamController<bool> _controlsVisibilityStreamController =
+      StreamController.broadcast();
+
+  Stream<bool> get controlsVisibilityStream =>
+      _controlsVisibilityStreamController.stream;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -125,7 +139,7 @@ class BetterPlayerController extends ChangeNotifier {
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
-
+    _hasCurrentDataSourceStarted = false;
     _betterPlayerDataSource = betterPlayerDataSource;
 
     ///Build videoPlayerController if null
@@ -145,13 +159,14 @@ class BetterPlayerController extends ChangeNotifier {
     }
 
     /// Load hls tracks
-    if (betterPlayerDataSource.url.contains(_hlsExtension)) {
+    if (_betterPlayerDataSource?.useHlsTracks == true &&
+        betterPlayerDataSource.url.contains(_hlsExtension)) {
       _betterPlayerTracks =
           await BetterPlayerHlsUtils.parseTracks(betterPlayerDataSource.url);
     }
 
     /// Load hls subtitles
-    if (betterPlayerDataSource.useHlsSubtitles &&
+    if (betterPlayerDataSource?.useHlsSubtitles == true &&
         betterPlayerDataSource.url.contains(_hlsExtension)) {
       var hlsSubtitles =
           await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
@@ -220,11 +235,29 @@ class BetterPlayerController extends ChangeNotifier {
         await videoPlayerController
             .setFileDataSource(File(betterPlayerDataSource.url));
         break;
+      case BetterPlayerDataSourceType.MEMORY:
+        var file = await _createFile(_betterPlayerDataSource.bytes);
+
+        if (file != null) {
+          await videoPlayerController.setFileDataSource(file);
+          _tempFiles.add(file);
+        } else {
+          throw ArgumentError("Couldn't create file from memory.");
+        }
+        break;
+
       default:
         throw UnimplementedError(
             "${betterPlayerDataSource.type} is not implemented");
     }
     await _initialize();
+  }
+
+  Future<File> _createFile(List<int> bytes) async {
+    String dir = (await getTemporaryDirectory()).path;
+    File temp = new File('$dir/better_player_${DateTime.now()}.temp');
+    await temp.writeAsBytes(bytes);
+    return temp;
   }
 
   Future _initialize() async {
@@ -274,6 +307,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   Future<void> play() async {
     await videoPlayerController.play();
+    _hasCurrentDataSourceStarted = true;
+    notifyListeners();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
   }
 
@@ -320,7 +355,16 @@ class BetterPlayerController extends ChangeNotifier {
     return videoPlayerController.value.isBuffering;
   }
 
+  ///Show or hide controls manually
+  void setControlsVisibility(bool isVisible) {
+    assert(isVisible != null, "IsVisible can't be null");
+    _controlsVisibilityStreamController.add(isVisible);
+  }
+
+  ///Internal method, used to trigger CONTROLS_VISIBLE or CONTROLS_HIDDEN event
+  ///once controls state changed.
   void toggleControlsVisibility(bool isVisible) {
+    assert(isVisible != null, "IsVisible can't be null");
     _postEvent(isVisible
         ? BetterPlayerEvent(BetterPlayerEventType.CONTROLS_VISIBLE)
         : BetterPlayerEvent(BetterPlayerEventType.CONTROLS_HIDDEN));
@@ -376,7 +420,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   bool isLiveStream() {
-    return _betterPlayerDataSource?.liveStream;
+    return _betterPlayerDataSource?.liveStream == true;
   }
 
   bool isVideoInitialized() {
@@ -496,6 +540,8 @@ class BetterPlayerController extends ChangeNotifier {
     return BetterPlayerTranslations();
   }
 
+  bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
+
   @override
   void dispose() {
     if (!_disposed) {
@@ -505,7 +551,11 @@ class BetterPlayerController extends ChangeNotifier {
       videoPlayerController?.dispose();
       _nextVideoTimer?.cancel();
       nextVideoTimeStreamController.close();
+      _controlsVisibilityStreamController.close();
       _disposed = true;
+
+      ///Delete files async
+      _tempFiles?.forEach((file) => file.delete());
       super.dispose();
     }
   }

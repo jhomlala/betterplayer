@@ -38,9 +38,13 @@ class BetterPlayerDataSource {
   ///Optional cache configuration, used only for network data sources
   final BetterPlayerCacheConfiguration cacheConfiguration;
 
+  ///List of bytes, used only in memory player
+  final List<int> bytes;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
+    this.bytes,
     this.subtitles,
     this.liveStream = false,
     this.headers,
@@ -49,11 +53,82 @@ class BetterPlayerDataSource {
     this.hlsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
-  });
+  }) : assert(
+            ((type == BetterPlayerDataSourceType.NETWORK ||
+                        type == BetterPlayerDataSourceType.FILE) &&
+                    url != null) ||
+                (type == BetterPlayerDataSourceType.MEMORY &&
+                    bytes?.isNotEmpty == true),
+            "Url can't be null in network or file data source | bytes can't be null when using memory data source");
+
+  ///Factory method to build network data source which uses url as data source
+  ///Bytes parameter is not used in this data source.
+  factory BetterPlayerDataSource.network(
+    String url, {
+    List<BetterPlayerSubtitlesSource> subtitles,
+    bool liveStream,
+    Map<String, String> headers,
+    bool useHlsSubtitles,
+    bool useHlsTracks,
+    Map<String, String> qualities,
+    BetterPlayerCacheConfiguration cacheConfiguration,
+  }) {
+    return BetterPlayerDataSource(
+      BetterPlayerDataSourceType.NETWORK,
+      url,
+      subtitles: subtitles,
+      liveStream: liveStream,
+      headers: headers,
+      useHlsSubtitles: useHlsSubtitles,
+      useHlsTracks: useHlsTracks,
+      resolutions: qualities,
+      cacheConfiguration: cacheConfiguration,
+    );
+  }
+
+  ///Factory method to build file data source which uses url as data source.
+  ///Bytes parameter is not used in this data source.
+  factory BetterPlayerDataSource.file(
+    String url, {
+    List<BetterPlayerSubtitlesSource> subtitles,
+    bool useHlsSubtitles,
+    bool useHlsTracks,
+    Map<String, String> qualities,
+    BetterPlayerCacheConfiguration cacheConfiguration,
+  }) {
+    return BetterPlayerDataSource(
+      BetterPlayerDataSourceType.NETWORK,
+      url,
+      subtitles: subtitles,
+      useHlsSubtitles: useHlsSubtitles,
+      useHlsTracks: useHlsTracks,
+      resolutions: qualities,
+    );
+  }
+
+  ///Factory method to build network data source which uses bytes as data source.
+  ///Url parameter is not used in this data source.
+  factory BetterPlayerDataSource.memory(List<int> bytes,
+      {List<BetterPlayerSubtitlesSource> subtitles,
+      bool useHlsSubtitles,
+      bool useHlsTracks,
+      Map<String, String> qualities,
+      BetterPlayerCacheConfiguration cacheConfiguration}) {
+    return BetterPlayerDataSource(
+      BetterPlayerDataSourceType.MEMORY,
+      "",
+      bytes: bytes,
+      subtitles: subtitles,
+      useHlsSubtitles: useHlsSubtitles,
+      useHlsTracks: useHlsTracks,
+      resolutions: qualities,
+    );
+  }
 
   BetterPlayerDataSource copyWith({
     BetterPlayerDataSourceType type,
     String url,
+    List<int> bytes,
     List<BetterPlayerSubtitlesSource> subtitles,
     bool liveStream,
     Map<String, String> headers,
@@ -65,6 +140,7 @@ class BetterPlayerDataSource {
     return BetterPlayerDataSource(
       type ?? this.type,
       url ?? this.url,
+      bytes: bytes ?? this.bytes,
       subtitles: subtitles ?? this.subtitles,
       liveStream: liveStream ?? this.liveStream,
       headers: headers ?? this.headers,

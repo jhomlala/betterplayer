@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/cache_page.dart';
+import 'package:better_player_example/pages/controller_controls_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/hls_tracks_page.dart';
+import 'package:better_player_example/pages/memory_player_page.dart';
 import 'package:better_player_example/pages/normal_player_page.dart';
 import 'package:better_player_example/pages/playlist_page.dart';
 import 'package:better_player_example/pages/resolutions_page.dart';
@@ -94,6 +96,12 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Rotation and fit", () {
         _navigateToPage(RotationAndFitPage());
+      }),
+      _buildExampleElementWidget("Memory player", () {
+        _navigateToPage(MemoryPlayerPage());
+      }),
+      _buildExampleElementWidget("Controller controls page", () {
+        _navigateToPage(ControllerControlsPage());
       }),
     ];
   }

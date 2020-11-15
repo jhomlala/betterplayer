@@ -1,3 +1,12 @@
+## 0.0.34
+* Added memory data source
+* Added factories: network, file, memory for BetterPlayerDataSource
+* Fixed missing useHlsTracks implementation
+* Fixed placeholder showing after full screen when using showPlaceholderUntilPlay
+* Added setControlsVisibility to BetterPlayerController
+* [BREAKING_CHANGE] Removed showControlsOnInitialize from BetterPlayerConfiguration. Use BetterPlayerControlsConfiguration to set showControlsOnInitialize parameter.
+* Fixed cupertino controls issue with hasError
+
 ## 0.0.33
 * Fixed BetterPlayerEvent visibility
 * Fixed lazy initialization, when first data source is passed after player finishes first render

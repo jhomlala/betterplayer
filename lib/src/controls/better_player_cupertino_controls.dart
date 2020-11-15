@@ -42,6 +42,7 @@ class _BetterPlayerCupertinoControlsState
 
   VideoPlayerController _controller;
   BetterPlayerController _betterPlayerController;
+  StreamSubscription _controlsVisibilityStreamSubscription;
 
   BetterPlayerControlsConfiguration get _controlsConfiguration =>
       widget.controlsConfiguration;
@@ -60,7 +61,7 @@ class _BetterPlayerCupertinoControlsState
   Widget build(BuildContext context) {
     _betterPlayerController = BetterPlayerController.of(context);
 
-    if (_latestValue.hasError) {
+    if (_latestValue?.hasError == true) {
       return _buildErrorWidget();
     }
 
@@ -113,6 +114,7 @@ class _BetterPlayerCupertinoControlsState
     _hideTimer?.cancel();
     _expandCollapseTimer?.cancel();
     _initTimer?.cancel();
+    _controlsVisibilityStreamSubscription?.cancel();
   }
 
   @override
@@ -543,6 +545,15 @@ class _BetterPlayerCupertinoControlsState
         });
       });
     }
+    _controlsVisibilityStreamSubscription =
+        _betterPlayerController.controlsVisibilityStream.listen((state) {
+      setState(() {
+        _hideStuff = !state;
+      });
+      if (!_hideStuff) {
+        cancelAndRestartTimer();
+      }
+    });
   }
 
   void _onExpandCollapse() {
@@ -597,7 +608,8 @@ class _BetterPlayerCupertinoControlsState
         cancelAndRestartTimer();
 
         if (!_controller.value.initialized) {
-          if (_betterPlayerController.betterPlayerDataSource.liveStream) {
+          if (_betterPlayerController.betterPlayerDataSource?.liveStream ==
+              true) {
             _betterPlayerController.play();
             _betterPlayerController.cancelNextVideoTimer();
           }
