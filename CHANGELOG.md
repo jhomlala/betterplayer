@@ -5,7 +5,7 @@
 * Fixed placeholder showing after full screen when using showPlaceholderUntilPlay
 * Added setControlsVisibility to BetterPlayerController
 * [BREAKING_CHANGE] Removed showControlsOnInitialize from BetterPlayerConfiguration. Use BetterPlayerControlsConfiguration to set showControlsOnInitialize parameter.
-
+* Fixed cupertino controls issue with hasError
 
 ## 0.0.33
 * Fixed BetterPlayerEvent visibility

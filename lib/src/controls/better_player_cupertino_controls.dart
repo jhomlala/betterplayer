@@ -61,7 +61,7 @@ class _BetterPlayerCupertinoControlsState
   Widget build(BuildContext context) {
     _betterPlayerController = BetterPlayerController.of(context);
 
-    if (_latestValue.hasError) {
+    if (_latestValue?.hasError == true) {
       return _buildErrorWidget();
     }
 

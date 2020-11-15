@@ -181,8 +181,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     );
   }
 
+  ///Latest value can be null
   bool isLoading(VideoPlayerValue latestValue) {
-    assert(latestValue != null, "Latest value can't be null");
     if (latestValue != null) {
       if (!latestValue.isPlaying && latestValue.duration == null) {
         return true;
