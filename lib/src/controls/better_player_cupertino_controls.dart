@@ -547,13 +547,13 @@ class _BetterPlayerCupertinoControlsState
     }
     _controlsVisibilityStreamSubscription =
         _betterPlayerController.controlsVisibilityStream.listen((state) {
-          setState(() {
-            _hideStuff = !state;
-          });
-          if (!_hideStuff) {
-            cancelAndRestartTimer();
-          }
-        });
+      setState(() {
+        _hideStuff = !state;
+      });
+      if (!_hideStuff) {
+        cancelAndRestartTimer();
+      }
+    });
   }
 
   void _onExpandCollapse() {
@@ -608,7 +608,8 @@ class _BetterPlayerCupertinoControlsState
         cancelAndRestartTimer();
 
         if (!_controller.value.initialized) {
-          if (_betterPlayerController.betterPlayerDataSource?.liveStream == true) {
+          if (_betterPlayerController.betterPlayerDataSource?.liveStream ==
+              true) {
             _betterPlayerController.play();
             _betterPlayerController.cancelNextVideoTimer();
           }

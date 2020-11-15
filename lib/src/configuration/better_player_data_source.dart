@@ -85,6 +85,7 @@ class BetterPlayerDataSource {
       cacheConfiguration: cacheConfiguration,
     );
   }
+
   ///Factory method to build file data source which uses url as data source.
   ///Bytes parameter is not used in this data source.
   factory BetterPlayerDataSource.file(
@@ -104,6 +105,7 @@ class BetterPlayerDataSource {
       resolutions: qualities,
     );
   }
+
   ///Factory method to build network data source which uses bytes as data source.
   ///Url parameter is not used in this data source.
   factory BetterPlayerDataSource.memory(List<int> bytes,
