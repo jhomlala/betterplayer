@@ -4,6 +4,7 @@
 * Fixed missing useHlsTracks implementation
 * Fixed placeholder showing after full screen when using showPlaceholderUntilPlay
 * Added setControlsVisibility to BetterPlayerController
+* [BREAKING_CHANGE] Removed showControlsOnInitialize from BetterPlayerConfiguration. Use BetterPlayerControlsConfiguration to set showControlsOnInitialize parameter.
 
 
 ## 0.0.33

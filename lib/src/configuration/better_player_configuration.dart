@@ -17,9 +17,6 @@ class BetterPlayerConfiguration {
   /// Whether or not the video should loop
   final bool looping;
 
-  /// Weather or not to show the controls when initializing the widget.
-  final bool showControlsOnInitialize;
-
   /// When the video playback runs  into an error, you can build a custom
   /// error message.
   final Widget Function(BuildContext context, String errorMessage) errorBuilder;
@@ -94,7 +91,6 @@ class BetterPlayerConfiguration {
     this.placeholder,
     this.showPlaceholderUntilPlay = false,
     this.overlay,
-    this.showControlsOnInitialize = true,
     this.errorBuilder,
     this.allowedScreenSleep = true,
     this.fullScreenAspectRatio,
@@ -151,8 +147,6 @@ class BetterPlayerConfiguration {
       fullScreenByDefault: fullScreenByDefault ?? this.fullScreenByDefault,
       placeholder: placeholder ?? this.placeholder,
       overlay: overlay ?? this.overlay,
-      showControlsOnInitialize:
-          showControlsOnInitialize ?? this.showControlsOnInitialize,
       errorBuilder: errorBuilder ?? this.errorBuilder,
       allowedScreenSleep: allowedScreenSleep ?? this.allowedScreenSleep,
       deviceOrientationsOnFullScreen:
