@@ -209,27 +209,33 @@ class _BetterPlayerVideoFitWidgetState
   }
 
   void _initialize() {
-    _initializedListener = () {
-      if (!mounted) {
-        return;
-      }
-      if (_initialized != controller.value.initialized) {
-        _initialized = controller.value.initialized;
-        setState(() {});
-      }
-      widget.betterPlayerController.addListener(() {
+    if (controller?.value?.initialized == false) {
+      _initializedListener = () {
+        if (!mounted) {
+          return;
+        }
+
+        if (_initialized != controller.value.initialized) {
+          _initialized = controller.value.initialized;
+          setState(() {});
+        }
+      };
+      controller.addListener(_initializedListener);
+    } else {
+      _initialized = true;
+    }
+    widget.betterPlayerController.addEventsListener((event) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.PLAY) {
         if (widget.betterPlayerController.betterPlayerConfiguration
                 .showPlaceholderUntilPlay &&
             !_started) {
           setState(() {
             _started =
                 widget.betterPlayerController.hasCurrentDataSourceStarted;
-            print("STARTED:" + _started.toString());
           });
         }
-      });
-    };
-    controller.addListener(_initializedListener);
+      }
+    });
   }
 
   @override

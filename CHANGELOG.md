@@ -1,3 +1,8 @@
+## 0.0.35
+* Fixed iOS black screen issue
+* Fixed full screen placeholder issue
+
+
 ## 0.0.34
 * Added memory data source
 * Added factories: network, file, memory for BetterPlayerDataSource

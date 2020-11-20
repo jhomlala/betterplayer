@@ -308,7 +308,6 @@ class BetterPlayerController extends ChangeNotifier {
   Future<void> play() async {
     await videoPlayerController.play();
     _hasCurrentDataSourceStarted = true;
-    notifyListeners();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
   }
 
