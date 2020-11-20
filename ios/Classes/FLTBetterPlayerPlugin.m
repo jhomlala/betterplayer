@@ -506,10 +506,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (CVPixelBufferRef)copyPixelBuffer {
-  if (!_videoOutput || !_isInitialized || !_isPlaying || !_key || ![_player currentItem] ||
+  //Disabled because of black frame issue
+  /*if (!_videoOutput || !_isInitialized || !_isPlaying || !_key || ![_player currentItem] ||
       ![[_player currentItem] isPlaybackLikelyToKeepUp]) {
     return [self prevTransparentBuffer];
-  }
+  }*/
 
   CMTime outputItemTime = [_videoOutput itemTimeForHostTime:CACurrentMediaTime()];
   if ([_videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
