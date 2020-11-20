@@ -1,6 +1,7 @@
 ## 0.0.35
 * Fixed iOS black screen issue
 * Fixed full screen placeholder issue
+* Fixed event not firing in enterFullScreen and exitFullScreen
 
 
 ## 0.0.34
