@@ -653,7 +653,8 @@ https://flutter.dev/docs/development/accessibility-and-localization/internationa
 ### Listen to video events
 You can listen to video player events like:
 ```dart
-PLAY,
+  INITIALIZED,
+  PLAY,
   PAUSE,
   SEEK_TO,
   OPEN_FULLSCREEN,
