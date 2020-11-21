@@ -111,9 +111,13 @@ class BetterPlayerController extends ChangeNotifier {
   ///Has current data source started
   bool _hasCurrentDataSourceStarted = false;
 
+  ///Has current data source initialized
+  bool _hasCurrentDataSourceInitialized = false;
+
   StreamController<bool> _controlsVisibilityStreamController =
       StreamController.broadcast();
 
+  ///Stream which sends flag whenever visibility of controls changes
   Stream<bool> get controlsVisibilityStream =>
       _controlsVisibilityStreamController.stream;
 
@@ -140,6 +144,7 @@ class BetterPlayerController extends ChangeNotifier {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
     _hasCurrentDataSourceStarted = false;
+    _hasCurrentDataSourceInitialized = false;
     _betterPlayerDataSource = betterPlayerDataSource;
 
     ///Build videoPlayerController if null
@@ -388,6 +393,11 @@ class BetterPlayerController extends ChangeNotifier {
           parameters: {"exception": currentVideoPlayerValue.errorDescription},
         ),
       );
+    }
+    if (currentVideoPlayerValue.initialized &&
+        !_hasCurrentDataSourceInitialized) {
+      _hasCurrentDataSourceInitialized = true;
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.INITIALIZED));
     }
 
     int now = DateTime.now().millisecondsSinceEpoch;

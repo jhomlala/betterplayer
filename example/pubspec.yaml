@@ -6,8 +6,7 @@ environment:
   sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
-  better_player:
-    path: ../
+  better_player: any
   flutter:
     sdk: flutter
   flutter_localizations:
