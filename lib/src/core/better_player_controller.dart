@@ -289,11 +289,13 @@ class BetterPlayerController extends ChangeNotifier {
 
   void enterFullScreen() {
     _isFullScreen = true;
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.OPEN_FULLSCREEN));
     notifyListeners();
   }
 
   void exitFullScreen() {
     _isFullScreen = false;
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.HIDE_FULLSCREEN));
     notifyListeners();
   }
 
@@ -308,7 +310,6 @@ class BetterPlayerController extends ChangeNotifier {
   Future<void> play() async {
     await videoPlayerController.play();
     _hasCurrentDataSourceStarted = true;
-    notifyListeners();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
   }
 

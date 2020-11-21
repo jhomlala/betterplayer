@@ -1,3 +1,10 @@
+## 0.0.35
+* Fixed iOS black screen issue
+* Fixed full screen placeholder issue
+* Fixed event not firing in enterFullScreen and exitFullScreen
+* Fixed subtitles parsing issues
+
+
 ## 0.0.34
 * Added memory data source
 * Added factories: network, file, memory for BetterPlayerDataSource
