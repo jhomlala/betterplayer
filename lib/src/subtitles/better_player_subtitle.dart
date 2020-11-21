@@ -53,7 +53,8 @@ class BetterPlayerSubtitle {
       if (scanner[0].isEmpty) {
         scanner.removeAt(0);
       }
-      final index = int.parse(scanner[0]);
+
+      final index = int.tryParse(scanner[0]);
 
       var timeSplit = scanner[1].split(timerSeparator);
       final start = _stringToDuration(timeSplit[0]);
@@ -71,7 +72,16 @@ class BetterPlayerSubtitle {
   static Duration _stringToDuration(String value) {
     assert(value != null);
     try {
-      final component = value.split(':');
+      final valueSplit = value.split(" ");
+      String componentValue;
+
+      if (valueSplit.length > 1) {
+        componentValue = valueSplit[0];
+      } else {
+        componentValue = value;
+      }
+
+      final component = componentValue.split(':');
       if (component.length != 3) {
         return Duration();
       }
@@ -81,11 +91,13 @@ class BetterPlayerSubtitle {
       if (secsAndMillsSplit.length != 2) {
         return Duration();
       }
-      return Duration(
-          hours: int.parse(component[0]),
-          minutes: int.parse(component[1]),
-          seconds: int.parse(secsAndMillsSplit[0]),
-          milliseconds: int.parse(secsAndMillsSplit[1]));
+
+      var result = Duration(
+          hours: int.tryParse(component[0]),
+          minutes: int.tryParse(component[1]),
+          seconds: int.tryParse(secsAndMillsSplit[0]),
+          milliseconds: int.tryParse(secsAndMillsSplit[1]));
+      return result;
     } catch (exception) {
       print("Failed to process value: $value");
       return Duration();
