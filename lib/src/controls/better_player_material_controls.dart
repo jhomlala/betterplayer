@@ -459,6 +459,7 @@ class _BetterPlayerMaterialControlsState
         style: TextStyle(
           fontSize: 14,
           color: _controlsConfiguration.textColor,
+          decoration: TextDecoration.none,
         ),
       ),
     );
