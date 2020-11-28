@@ -2,6 +2,9 @@
 * Added INITIALIZED event
 * Added autoDetectFullscreenDeviceOrientation in BetterPlayerConfiguration
 * Fixed autoPlay background issue
+* Removed open_iconic_flutter icons used in Cupertino controls.
+* Added cupertino_icons for icons used Cupertiono controls.
+
 
 ## 0.0.35
 * Fixed iOS black screen issue
