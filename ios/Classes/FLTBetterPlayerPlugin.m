@@ -429,7 +429,14 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (int64_t)duration {
-  return FLTCMTimeToMillis([[_player currentItem] duration]);
+    CMTime time;
+    if (@available(iOS 13, *)) {
+        time =  [[_player currentItem] duration];
+    } else {
+        time =  [[[_player currentItem] asset] duration];
+    }
+
+  return FLTCMTimeToMillis(time);
 }
 
 - (void)seekTo:(int)location {

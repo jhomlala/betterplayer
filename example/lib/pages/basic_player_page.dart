@@ -40,7 +40,11 @@ class _BasicPlayerPageState extends State<BasicPlayerPage> {
           FutureBuilder<String>(
             future: Utils.getFileUrl(Constants.fileTestVideoUrl),
             builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-              return BetterPlayer.file(snapshot.data);
+              if (snapshot.data != null) {
+                return BetterPlayer.file(snapshot.data);
+              } else {
+                return const SizedBox();
+              }
             },
           )
         ],
