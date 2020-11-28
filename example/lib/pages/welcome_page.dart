@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:better_player_example/pages/auto_fullscreen_orientation_page.dart';
 import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/cache_page.dart';
 import 'package:better_player_example/pages/controller_controls_page.dart';
@@ -102,6 +103,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Controller controls page", () {
         _navigateToPage(ControllerControlsPage());
+      }),
+      _buildExampleElementWidget("Auto fullscreen orientation page", () {
+        _navigateToPage(AutoFullscreenOrientationPage());
       }),
     ];
   }

@@ -55,8 +55,8 @@ class BetterPlayer extends StatefulWidget {
 }
 
 class BetterPlayerState extends State<BetterPlayer> {
-  BetterPlayerDataSource get betterPlayerDataSource =>
-      widget.controller.betterPlayerDataSource;
+  BetterPlayerConfiguration get _betterPlayerConfiguration =>
+      widget.controller.betterPlayerConfiguration;
 
   bool _isFullScreen = false;
 
@@ -158,8 +158,7 @@ class BetterPlayerState extends State<BetterPlayer> {
     var controllerProvider = BetterPlayerControllerProvider(
         controller: widget.controller, child: _buildPlayer());
 
-    var routePageBuilder =
-        widget.controller.betterPlayerConfiguration.routePageBuilder;
+    var routePageBuilder = _betterPlayerConfiguration.routePageBuilder;
     if (routePageBuilder == null) {
       return _defaultRoutePageBuilder(
           context, animation, secondaryAnimation, controllerProvider);
@@ -178,11 +177,32 @@ class BetterPlayerState extends State<BetterPlayer> {
     );
 
     SystemChrome.setEnabledSystemUIOverlays([]);
+
     if (isAndroid) {
-      SystemChrome.setPreferredOrientations(
-        widget.controller.betterPlayerConfiguration
-            .deviceOrientationsOnFullScreen,
-      );
+      if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
+          true) {
+        var aspectRatio =
+            widget?.controller?.videoPlayerController?.value?.aspectRatio ??
+                1.0;
+        List<DeviceOrientation> deviceOrientations;
+        if (aspectRatio < 1.0) {
+          deviceOrientations = [
+            DeviceOrientation.portraitUp,
+            DeviceOrientation.portraitDown
+          ];
+        } else {
+          deviceOrientations = [
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight
+          ];
+        }
+        SystemChrome.setPreferredOrientations(deviceOrientations);
+      } else {
+        SystemChrome.setPreferredOrientations(
+          widget.controller.betterPlayerConfiguration
+              .deviceOrientationsOnFullScreen,
+        );
+      }
     }
 
     if (!widget.controller.allowedScreenSleep) {

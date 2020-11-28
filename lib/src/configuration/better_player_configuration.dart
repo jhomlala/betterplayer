@@ -82,6 +82,14 @@ class BetterPlayerConfiguration {
   ///will be used.
   final List<BetterPlayerTranslations> translations;
 
+  ///Defines if player should auto detect full screen device orientation based
+  ///on aspect ratio of the video. If aspect ratio of the video is < 1 then
+  ///video will played in full screen in portrait mode. If aspect ratio is >= 1
+  ///then video will be played horizontally. If this parameter is true, then
+  ///[deviceOrientationsOnFullScreen] and [fullScreenAspectRatio] value will be
+  /// ignored.
+  final bool autoDetectFullscreenDeviceOrientation;
+
   const BetterPlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
@@ -113,6 +121,7 @@ class BetterPlayerConfiguration {
     this.rotation = 0,
     this.playerVisibilityChangedBehavior,
     this.translations,
+    this.autoDetectFullscreenDeviceOrientation = false,
   });
 
   BetterPlayerConfiguration copyWith({
@@ -138,6 +147,7 @@ class BetterPlayerConfiguration {
     double rotation,
     Function(double visibilityFraction) playerVisibilityChangedBehavior,
     BetterPlayerTranslations translations,
+    bool autoDetectFullscreenDeviceOrientation,
   }) {
     return BetterPlayerConfiguration(
       aspectRatio: aspectRatio ?? this.aspectRatio,
@@ -166,6 +176,9 @@ class BetterPlayerConfiguration {
       playerVisibilityChangedBehavior: playerVisibilityChangedBehavior ??
           this.playerVisibilityChangedBehavior,
       translations: translations ?? this.translations,
+      autoDetectFullscreenDeviceOrientation:
+          autoDetectFullscreenDeviceOrientation ??
+              this.autoDetectFullscreenDeviceOrientation,
     );
   }
 }

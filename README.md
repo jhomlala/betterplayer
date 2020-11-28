@@ -315,6 +315,14 @@ Possible configuration options:
     ///Defines translations used in player. If null, then default english translations
     ///will be used.
     final List<BetterPlayerTranslations> translations;
+
+    ///Defines if player should auto detect full screen device orientation based
+    ///on aspect ratio of the video. If aspect ratio of the video is < 1 then
+    ///video will played in full screen in portrait mode. If aspect ratio is >= 1
+    ///then video will be played horizontally. If this parameter is true, then
+    ///[deviceOrientationsOnFullScreen] and [fullScreenAspectRatio] value will be
+    /// ignored.
+    final bool autoDetectFullscreenDeviceOrientation;
 ```
 
 ### BetterPlayerSubtitlesConfiguration
