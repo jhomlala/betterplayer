@@ -54,7 +54,8 @@ class BetterPlayer extends StatefulWidget {
   }
 }
 
-class BetterPlayerState extends State<BetterPlayer> {
+class BetterPlayerState extends State<BetterPlayer>
+    with WidgetsBindingObserver {
   BetterPlayerConfiguration get _betterPlayerConfiguration =>
       widget.controller.betterPlayerConfiguration;
 
@@ -63,6 +64,7 @@ class BetterPlayerState extends State<BetterPlayer> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     Future.delayed(Duration.zero, () {
       _setup();
     });
@@ -82,6 +84,7 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     widget.controller.removeListener(onFullScreenChanged);
 
     ///Controller from list widget must be dismissed manually
@@ -232,5 +235,11 @@ class BetterPlayerState extends State<BetterPlayer> {
         controller: widget.controller,
       ),
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    widget.controller.setAppLifecycleState(state);
   }
 }

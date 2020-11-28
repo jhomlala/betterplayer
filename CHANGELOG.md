@@ -1,5 +1,7 @@
 ## 0.0.36
 * Added INITIALIZED event
+* Added autoDetectFullscreenDeviceOrientation in BetterPlayerConfiguration
+* Fixed autoPlay background issue
 
 ## 0.0.35
 * Fixed iOS black screen issue
