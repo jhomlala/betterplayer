@@ -1,6 +1,5 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
-import 'package:better_player_example/utils.dart';
 import 'package:flutter/material.dart';
 
 class AutoFullscreenOrientationPage extends StatefulWidget {

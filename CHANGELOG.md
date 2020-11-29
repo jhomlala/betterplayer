@@ -5,6 +5,7 @@
 * Removed open_iconic_flutter icons used in Cupertino controls
 * Added cupertino_icons for icons used Cupertiono controls
 * Fixed progress bar not working correctly for iOS 12 with file datasource
+* Removed yellow line below progress text (fixed by https://github.com/mtAlves)
 
 ## 0.0.35
 * Fixed iOS black screen issue
