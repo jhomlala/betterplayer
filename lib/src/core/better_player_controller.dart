@@ -111,11 +111,18 @@ class BetterPlayerController extends ChangeNotifier {
   ///Has current data source started
   bool _hasCurrentDataSourceStarted = false;
 
+  ///Has current data source initialized
+  bool _hasCurrentDataSourceInitialized = false;
+
   StreamController<bool> _controlsVisibilityStreamController =
       StreamController.broadcast();
 
+  ///Stream which sends flag whenever visibility of controls changes
   Stream<bool> get controlsVisibilityStream =>
       _controlsVisibilityStreamController.stream;
+
+  AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
+  BetterPlayerEventType _betterPlayerEventBeforePause;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -140,6 +147,7 @@ class BetterPlayerController extends ChangeNotifier {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
     _hasCurrentDataSourceStarted = false;
+    _hasCurrentDataSourceInitialized = false;
     _betterPlayerDataSource = betterPlayerDataSource;
 
     ///Build videoPlayerController if null
@@ -308,9 +316,12 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> play() async {
-    await videoPlayerController.play();
-    _hasCurrentDataSourceStarted = true;
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
+    _betterPlayerEventBeforePause = BetterPlayerEventType.PLAY;
+    if (_appLifecycleState == AppLifecycleState.resumed) {
+      await videoPlayerController.play();
+      _hasCurrentDataSourceStarted = true;
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.PLAY));
+    }
   }
 
   Future<void> setLooping(bool looping) async {
@@ -318,6 +329,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> pause() async {
+    _betterPlayerEventBeforePause = BetterPlayerEventType.PAUSE;
     await videoPlayerController.pause();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.PAUSE));
   }
@@ -388,6 +400,11 @@ class BetterPlayerController extends ChangeNotifier {
           parameters: {"exception": currentVideoPlayerValue.errorDescription},
         ),
       );
+    }
+    if (currentVideoPlayerValue.initialized &&
+        !_hasCurrentDataSourceInitialized) {
+      _hasCurrentDataSourceInitialized = true;
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.INITIALIZED));
     }
 
     int now = DateTime.now().millisecondsSinceEpoch;
@@ -542,6 +559,15 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
+
+  void setAppLifecycleState(AppLifecycleState appLifecycleState) {
+    _appLifecycleState = appLifecycleState;
+    if (appLifecycleState == AppLifecycleState.resumed) {
+      if (_betterPlayerEventBeforePause == BetterPlayerEventType.PLAY) {
+        play();
+      }
+    }
+  }
 
   @override
   void dispose() {

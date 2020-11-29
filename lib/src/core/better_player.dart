@@ -54,15 +54,17 @@ class BetterPlayer extends StatefulWidget {
   }
 }
 
-class BetterPlayerState extends State<BetterPlayer> {
-  BetterPlayerDataSource get betterPlayerDataSource =>
-      widget.controller.betterPlayerDataSource;
+class BetterPlayerState extends State<BetterPlayer>
+    with WidgetsBindingObserver {
+  BetterPlayerConfiguration get _betterPlayerConfiguration =>
+      widget.controller.betterPlayerConfiguration;
 
   bool _isFullScreen = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     Future.delayed(Duration.zero, () {
       _setup();
     });
@@ -82,6 +84,7 @@ class BetterPlayerState extends State<BetterPlayer> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     widget.controller.removeListener(onFullScreenChanged);
 
     ///Controller from list widget must be dismissed manually
@@ -158,8 +161,7 @@ class BetterPlayerState extends State<BetterPlayer> {
     var controllerProvider = BetterPlayerControllerProvider(
         controller: widget.controller, child: _buildPlayer());
 
-    var routePageBuilder =
-        widget.controller.betterPlayerConfiguration.routePageBuilder;
+    var routePageBuilder = _betterPlayerConfiguration.routePageBuilder;
     if (routePageBuilder == null) {
       return _defaultRoutePageBuilder(
           context, animation, secondaryAnimation, controllerProvider);
@@ -178,11 +180,32 @@ class BetterPlayerState extends State<BetterPlayer> {
     );
 
     SystemChrome.setEnabledSystemUIOverlays([]);
+
     if (isAndroid) {
-      SystemChrome.setPreferredOrientations(
-        widget.controller.betterPlayerConfiguration
-            .deviceOrientationsOnFullScreen,
-      );
+      if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
+          true) {
+        var aspectRatio =
+            widget?.controller?.videoPlayerController?.value?.aspectRatio ??
+                1.0;
+        List<DeviceOrientation> deviceOrientations;
+        if (aspectRatio < 1.0) {
+          deviceOrientations = [
+            DeviceOrientation.portraitUp,
+            DeviceOrientation.portraitDown
+          ];
+        } else {
+          deviceOrientations = [
+            DeviceOrientation.landscapeLeft,
+            DeviceOrientation.landscapeRight
+          ];
+        }
+        SystemChrome.setPreferredOrientations(deviceOrientations);
+      } else {
+        SystemChrome.setPreferredOrientations(
+          widget.controller.betterPlayerConfiguration
+              .deviceOrientationsOnFullScreen,
+        );
+      }
     }
 
     if (!widget.controller.allowedScreenSleep) {
@@ -212,5 +235,11 @@ class BetterPlayerState extends State<BetterPlayer> {
         controller: widget.controller,
       ),
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    widget.controller.setAppLifecycleState(state);
   }
 }

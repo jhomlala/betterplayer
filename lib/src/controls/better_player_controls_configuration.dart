@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:open_iconic_flutter/open_iconic_flutter.dart';
 
 class BetterPlayerControlsConfiguration {
   ///Color of the control bars
@@ -173,10 +173,10 @@ class BetterPlayerControlsConfiguration {
 
   factory BetterPlayerControlsConfiguration.cupertino() {
     return BetterPlayerControlsConfiguration(
-        fullscreenEnableIcon: OpenIconicIcons.fullscreenEnter,
-        fullscreenDisableIcon: OpenIconicIcons.fullscreenExit,
-        playIcon: OpenIconicIcons.mediaPlay,
-        pauseIcon: OpenIconicIcons.mediaPause,
+        fullscreenEnableIcon: CupertinoIcons.fullscreen,
+        fullscreenDisableIcon: CupertinoIcons.fullscreen_exit,
+        playIcon: CupertinoIcons.play_arrow_solid,
+        pauseIcon: CupertinoIcons.pause_solid,
         enableProgressText: true);
   }
 }

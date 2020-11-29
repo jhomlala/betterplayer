@@ -25,4 +25,6 @@ class Constants {
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
   static const String forBiggerJoyridesVideoUrl =
       "http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4";
+  static const String verticalVideoUrl =
+      "http://www.exit109.com/~dnn/clips/RW20seconds_1.mp4";
 }

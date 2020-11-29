@@ -1,0 +1,72 @@
+import 'package:better_player/better_player.dart';
+import 'package:better_player_example/constants.dart';
+import 'package:flutter/material.dart';
+
+class AutoFullscreenOrientationPage extends StatefulWidget {
+  @override
+  _AutoFullscreenOrientationPageState createState() =>
+      _AutoFullscreenOrientationPageState();
+}
+
+class _AutoFullscreenOrientationPageState
+    extends State<AutoFullscreenOrientationPage> {
+  BetterPlayerController _betterPlayerController;
+
+  @override
+  void initState() {
+    BetterPlayerConfiguration betterPlayerConfiguration =
+        BetterPlayerConfiguration(
+            aspectRatio: 16 / 9,
+            fit: BoxFit.contain,
+            autoDetectFullscreenDeviceOrientation: true);
+    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.NETWORK, Constants.forBiggerBlazesUrl);
+    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
+    _betterPlayerController.setupDataSource(dataSource);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Normal player"),
+      ),
+      body: Column(
+        children: [
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              "Aspect ratio and device orientation on full screen will be "
+              "managed by the BetterPlayer. Click on the fullscreen option.",
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: BetterPlayer(controller: _betterPlayerController),
+          ),
+          RaisedButton(
+            child: Text("Play horizontal video"),
+            onPressed: () {
+              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+                  BetterPlayerDataSourceType.NETWORK,
+                  Constants.forBiggerBlazesUrl);
+              _betterPlayerController.setupDataSource(dataSource);
+            },
+          ),
+          RaisedButton(
+            child: Text("Play vertical video"),
+            onPressed: () async {
+              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+                  BetterPlayerDataSourceType.NETWORK,
+                  Constants.verticalVideoUrl);
+              _betterPlayerController.setupDataSource(dataSource);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,5 +1,6 @@
 ///Supported event types
 enum BetterPlayerEventType {
+  INITIALIZED,
   PLAY,
   PAUSE,
   SEEK_TO,
