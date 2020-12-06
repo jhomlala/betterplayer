@@ -124,6 +124,10 @@ class BetterPlayerController extends ChangeNotifier {
   AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
   BetterPlayerEventType _betterPlayerEventBeforePause;
 
+  bool _controlsEnabled = true;
+
+  bool get controlsEnabled => _controlsEnabled;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -372,6 +376,15 @@ class BetterPlayerController extends ChangeNotifier {
   void setControlsVisibility(bool isVisible) {
     assert(isVisible != null, "IsVisible can't be null");
     _controlsVisibilityStreamController.add(isVisible);
+  }
+
+  ///Enable/disable controls (when enabled = false, controls will be always hidden)
+  void setControlsEnabled(bool enabled) {
+    assert(enabled != null, "Enabled can't be null");
+    if (!enabled) {
+      _controlsVisibilityStreamController.add(false);
+    }
+    _controlsEnabled = enabled;
   }
 
   ///Internal method, used to trigger CONTROLS_VISIBLE or CONTROLS_HIDDEN event
