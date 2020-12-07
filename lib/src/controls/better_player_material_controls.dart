@@ -69,7 +69,13 @@ class _BetterPlayerMaterialControlsState
         cancelAndRestartTimer();
       },
       child: GestureDetector(
-        onTap: cancelAndRestartTimer,
+        onTap: () {
+          _hideStuff
+              ? cancelAndRestartTimer()
+              : setState(() {
+                  _hideStuff = true;
+                });
+        },
         onDoubleTap: () {
           cancelAndRestartTimer();
           _onPlayPause();
