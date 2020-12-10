@@ -23,7 +23,7 @@ class BetterPlayerController extends ChangeNotifier {
   static const _speedParameter = "speed";
   static const _hlsExtension = "m3u8";
 
-  final BetterPlayerConfiguration betterPlayerConfiguration;
+  BetterPlayerConfiguration betterPlayerConfiguration;
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
 
   VideoPlayerController videoPlayerController;
