@@ -43,7 +43,7 @@ class BetterPlayerTranslations {
         generalNone: "没有",
         generalDefault: "默认",
         playlistLoadingNextVideo: "正在加载下一个视频",
-        controlsLive: "生活",
+        controlsLive: "直播",
         controlsNextVideoIn: "下一部影片n",
         overflowMenuPlaybackSpeed: "播放速度",
         overflowMenuSubtitles: "字幕",
