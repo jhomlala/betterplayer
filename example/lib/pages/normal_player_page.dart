@@ -23,14 +23,14 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
 
-
     super.initState();
-   // _betterPlayerController.setControlsEnabled(false);
+    // _betterPlayerController.setControlsEnabled(false);
     _betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == BetterPlayerEventType.INITIALIZED){
+      if (event.betterPlayerEventType == BetterPlayerEventType.INITIALIZED) {
         _betterPlayerController.setControlsEnabled(false);
       }
-      if (event.betterPlayerEventType == BetterPlayerEventType.OPEN_FULLSCREEN){
+      if (event.betterPlayerEventType ==
+          BetterPlayerEventType.OPEN_FULLSCREEN) {
         _betterPlayerController.setControlsEnabled(true);
       }
     });

@@ -4,6 +4,9 @@
 * Added setOverriddenAspectRatio to BetterPlayerController
 * Fixed crash connected with setSpeed in Android platform
 * Fixed deviceOrientationsOnFullScreen for iOS
+* Fixed CH translations (fixes by https://github.com/JarvanMo)
+* Click to show/hide controls (fixed by https://github.com/mtAlves)
+* [BREAKING_CHANGE] Removed future from isPlaying. Now it's sync method (https://github.com/hongfeiyang)
 
 ## 0.0.36
 * Added INITIALIZED event
