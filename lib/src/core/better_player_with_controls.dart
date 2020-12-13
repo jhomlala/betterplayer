@@ -86,6 +86,10 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       aspectRatio = betterPlayerController.getAspectRatio();
     }
 
+    if (aspectRatio == null) {
+      aspectRatio = 16 / 9;
+    }
+
     return Center(
       child: Container(
         width: double.infinity,
