@@ -364,7 +364,7 @@ class BetterPlayerController extends ChangeNotifier {
         parameters: {_speedParameter: speed}));
   }
 
-  Future<bool> isPlaying() async {
+  bool isPlaying() {
     return videoPlayerController.value.isPlaying;
   }
 
@@ -513,10 +513,10 @@ class BetterPlayerController extends ChangeNotifier {
           .playerVisibilityChangedBehavior(visibilityFraction);
     } else {
       if (visibilityFraction == 0) {
-        _wasPlayingBeforePause = await isPlaying();
+        _wasPlayingBeforePause = isPlaying();
         pause();
       } else {
-        if (_wasPlayingBeforePause && !(await isPlaying())) {
+        if (_wasPlayingBeforePause && !isPlaying()) {
           play();
         }
       }
@@ -527,7 +527,7 @@ class BetterPlayerController extends ChangeNotifier {
   void setResolution(String url) async {
     assert(url != null, "Url can't be null");
     var position = await videoPlayerController.position;
-    var wasPlayingBeforeChange = await isPlaying();
+    var wasPlayingBeforeChange = isPlaying();
     cancelFullScreenDismiss = true;
     videoPlayerController.pause();
     await setupDataSource(betterPlayerDataSource.copyWith(url: url));
