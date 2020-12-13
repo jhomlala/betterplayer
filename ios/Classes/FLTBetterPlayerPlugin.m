@@ -6,6 +6,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
 #import <KTVHTTPCache/KTVHTTPCache.h>
+#import <MediaPlayer/MediaPlayer.h>
  
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -53,6 +54,8 @@ int64_t FLTCMTimeToMillis(CMTime time) {
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
 - (void)updatePlayingState;
+- (int64_t) duration;
+- (int64_t) position;
 @end
 
 static void* timeRangeContext = &timeRangeContext;
@@ -78,7 +81,6 @@ static void* playbackBufferFullContext = &playbackBufferFullContext;
 }
 
 - (void)addObservers:(AVPlayerItem*)item {
-    NSLog(@"AddObservers!");
     
   [item addObserver:self forKeyPath:@"loadedTimeRanges" options:0 context:timeRangeContext];
   [item addObserver:self forKeyPath:@"status" options:0 context:statusContext];
@@ -631,11 +633,64 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   result(@{@"textureId" : @(textureId)});
 }
 
+
+- (void) setupRemoteCommands:(FLTBetterPlayer*)player  {
+    MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+    [commandCenter.togglePlayPauseCommand setEnabled:YES];
+    [commandCenter.playCommand setEnabled:YES];
+    [commandCenter.pauseCommand setEnabled:YES];
+    [commandCenter.nextTrackCommand setEnabled:NO];
+    [commandCenter.previousTrackCommand setEnabled:NO];
+    [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        if (player.isPlaying){
+            [player play];
+        } else {
+            [player pause];
+        }
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+
+    [commandCenter.playCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        [player play];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+
+    [commandCenter.pauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        [player pause];
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+}
+
+- (void) setupRemoteCommandNotification:(FLTBetterPlayer*)player {
+    float positionInSeconds = player.position /1000;
+    float durationInSeconds = player.duration/ 1000;
+    NSLog(@"POSITION: ");
+    NSLog(@"%f", positionInSeconds);
+    NSLog(@"Duration: %f", durationInSeconds);
+    
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = @{MPMediaItemPropertyArtist: @"asasdd",
+                                                              MPMediaItemPropertyTitle: @"asdfg",
+                                                              MPNowPlayingInfoPropertyElapsedPlaybackTime: [ NSNumber numberWithFloat : positionInSeconds],
+                                                              MPMediaItemPropertyPlaybackDuration: [NSNumber numberWithFloat:durationInSeconds],
+                                                              MPNowPlayingInfoPropertyPlaybackRate: @1
+                                                 
+    };
+}
+
+- (void) setupUpdateListener:(FLTBetterPlayer*)player {
+    [player.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time){
+     NSTimeInterval seconds = CMTimeGetSeconds(time);
+        NSLog(@"observer called");
+        [self setupRemoteCommandNotification:player];
+    
+    }];
+}
+
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
   if ([@"init" isEqualToString:call.method]) {
     // Allow audio playback when the Ring/Silent switch is set to silent
     [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-
     for (NSNumber* textureId in _players) {
       [_registry unregisterTexture:[textureId unsignedIntegerValue]];
       [_players[textureId] dispose];
@@ -651,6 +706,14 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
     FLTBetterPlayer* player = _players[@(textureId)];
     if ([@"setDataSource" isEqualToString:call.method]) {
+
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+        [self setupRemoteCommands: player];
+        [self setupRemoteCommandNotification: player];
+        [self setupUpdateListener: player];
+        
+        
       [player clear];
       // This call will clear cached frame because we will return transparent frame
       [_registry textureFrameAvailable:textureId];
@@ -735,5 +798,4 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
   }
 }
-
 @end

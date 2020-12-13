@@ -29,7 +29,7 @@ class _EventListenerPageState extends State<EventListenerPage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.forBiggerBlazesUrl);
+        BetterPlayerDataSourceType.NETWORK, Constants.elephantDreamVideoUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.addEventsListener((event) {
