@@ -1,7 +1,8 @@
 ## 0.0.37
 * Added setControlsEnabled to BetterPlayerController
 * Fixed example video list widget buttons not rendering correctly in small resolutions
-* Added setOverriddenAspectRatio to BetterPlayerController.
+* Added setOverriddenAspectRatio to BetterPlayerController
+* Fixed crash connected with setSpeed in Android platform
 
 ## 0.0.36
 * Added INITIALIZED event
