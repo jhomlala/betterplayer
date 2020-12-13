@@ -19,30 +19,30 @@ typedef Widget BetterPlayerRoutePageBuilder(
 class BetterPlayer extends StatefulWidget {
   BetterPlayer({Key key, this.controller})
       : assert(
-            controller != null, 'You must provide a better player controller'),
+  controller != null, 'You must provide a better player controller'),
         super(key: key);
 
   factory BetterPlayer.network(
-    String url, {
-    BetterPlayerConfiguration betterPlayerConfiguration,
-  }) =>
+      String url, {
+        BetterPlayerConfiguration betterPlayerConfiguration,
+      }) =>
       BetterPlayer(
         controller: BetterPlayerController(
           betterPlayerConfiguration ?? BetterPlayerConfiguration(),
           betterPlayerDataSource:
-              BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK, url),
+          BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK, url),
         ),
       );
 
   factory BetterPlayer.file(
-    String url, {
-    BetterPlayerConfiguration betterPlayerConfiguration,
-  }) =>
+      String url, {
+        BetterPlayerConfiguration betterPlayerConfiguration,
+      }) =>
       BetterPlayer(
         controller: BetterPlayerController(
           betterPlayerConfiguration ?? BetterPlayerConfiguration(),
           betterPlayerDataSource:
-              BetterPlayerDataSource(BetterPlayerDataSourceType.FILE, url),
+          BetterPlayerDataSource(BetterPlayerDataSourceType.FILE, url),
         ),
       );
 
@@ -154,10 +154,10 @@ class BetterPlayerState extends State<BetterPlayer>
   }
 
   Widget _fullScreenRoutePageBuilder(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      ) {
     var controllerProvider = BetterPlayerControllerProvider(
         controller: widget.controller, child: _buildPlayer());
 
@@ -179,7 +179,7 @@ class BetterPlayerState extends State<BetterPlayer>
       opaque: true,
     );
 
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    await SystemChrome.setEnabledSystemUIOverlays([]);
 
     if (isAndroid) {
       if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
@@ -199,13 +199,18 @@ class BetterPlayerState extends State<BetterPlayer>
             DeviceOrientation.landscapeRight
           ];
         }
-        SystemChrome.setPreferredOrientations(deviceOrientations);
+        await SystemChrome.setPreferredOrientations(deviceOrientations);
       } else {
-        SystemChrome.setPreferredOrientations(
+        await SystemChrome.setPreferredOrientations(
           widget.controller.betterPlayerConfiguration
               .deviceOrientationsOnFullScreen,
         );
       }
+    } else {
+      await SystemChrome.setPreferredOrientations(
+        widget.controller.betterPlayerConfiguration
+            .deviceOrientationsOnFullScreen,
+      );
     }
 
     if (!widget.controller.allowedScreenSleep) {
@@ -220,9 +225,9 @@ class BetterPlayerState extends State<BetterPlayer>
     // so we do not need to check Wakelock.isEnabled.
     Wakelock.disable();
 
-    SystemChrome.setEnabledSystemUIOverlays(
+    await SystemChrome.setEnabledSystemUIOverlays(
         widget.controller.systemOverlaysAfterFullScreen);
-    SystemChrome.setPreferredOrientations(
+    await SystemChrome.setPreferredOrientations(
         widget.controller.deviceOrientationsAfterFullScreen);
   }
 
