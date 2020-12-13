@@ -742,9 +742,15 @@ You can use BetterPlayerControlsConfiguration to add custom element to the overf
             ),
 ```
 
-### Enable/disable controls (always hidden)
+### Enable/disable controls (always hidden if false)
 ```dart
     betterPlayerController.setControlsEnabled(false);
+```
+
+### Set overridden aspect ratio. If passed overriddenAspectRatio will be used instead of aspectRatio.
+If null then aspectRatio from BetterPlayerConfiguration will be used.
+```dart
+   betterPlayerController.setOverriddenAspectRatio(1.0);
 ```
 
 ### More documentation

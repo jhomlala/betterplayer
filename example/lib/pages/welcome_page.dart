@@ -10,6 +10,7 @@ import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/hls_tracks_page.dart';
 import 'package:better_player_example/pages/memory_player_page.dart';
 import 'package:better_player_example/pages/normal_player_page.dart';
+import 'package:better_player_example/pages/overridden_aspect_ratio_page.dart';
 import 'package:better_player_example/pages/playlist_page.dart';
 import 'package:better_player_example/pages/resolutions_page.dart';
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
@@ -106,6 +107,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Auto fullscreen orientation page", () {
         _navigateToPage(AutoFullscreenOrientationPage());
+      }),
+      _buildExampleElementWidget("Overridden aspect ratio page", () {
+        _navigateToPage(OverriddenAspectRatioPage());
       }),
     ];
   }

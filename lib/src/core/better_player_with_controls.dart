@@ -83,9 +83,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             BetterPlayerUtils.calculateAspectRatio(context);
       }
     } else {
-      aspectRatio =
-          betterPlayerController.betterPlayerConfiguration.aspectRatio ??
-              BetterPlayerUtils.calculateAspectRatio(context);
+      aspectRatio = betterPlayerController.getAspectRatio();
     }
 
     return Center(

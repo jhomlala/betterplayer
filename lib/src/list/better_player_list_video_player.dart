@@ -83,7 +83,7 @@ class _BetterPlayerListVideoPlayerState
     super.build(context);
     return AspectRatio(
       aspectRatio:
-          _betterPlayerController.betterPlayerConfiguration.aspectRatio ??
+          _betterPlayerController.getAspectRatio() ??
               BetterPlayerUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         key: Key("${_getUniqueKey()}_player"),
