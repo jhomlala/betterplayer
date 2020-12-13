@@ -742,6 +742,11 @@ You can use BetterPlayerControlsConfiguration to add custom element to the overf
             ),
 ```
 
+### Enable/disable controls (always hidden)
+```dart
+    betterPlayerController.setControlsEnabled(false);
+```
+
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html
 
