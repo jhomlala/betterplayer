@@ -185,7 +185,8 @@ class _BetterPlayerMaterialControlsState
 
   AnimatedOpacity _buildBottomBar() {
     return AnimatedOpacity(
-      opacity: _hideStuff ? 0.0 : 1.0,
+      opacity:
+          !_betterPlayerController.controlsEnabled || _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
       child: Container(

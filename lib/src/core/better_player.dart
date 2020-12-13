@@ -179,7 +179,7 @@ class BetterPlayerState extends State<BetterPlayer>
       opaque: true,
     );
 
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    await SystemChrome.setEnabledSystemUIOverlays([]);
 
     if (isAndroid) {
       if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
@@ -199,13 +199,18 @@ class BetterPlayerState extends State<BetterPlayer>
             DeviceOrientation.landscapeRight
           ];
         }
-        SystemChrome.setPreferredOrientations(deviceOrientations);
+        await SystemChrome.setPreferredOrientations(deviceOrientations);
       } else {
-        SystemChrome.setPreferredOrientations(
+        await SystemChrome.setPreferredOrientations(
           widget.controller.betterPlayerConfiguration
               .deviceOrientationsOnFullScreen,
         );
       }
+    } else {
+      await SystemChrome.setPreferredOrientations(
+        widget.controller.betterPlayerConfiguration
+            .deviceOrientationsOnFullScreen,
+      );
     }
 
     if (!widget.controller.allowedScreenSleep) {
@@ -220,9 +225,9 @@ class BetterPlayerState extends State<BetterPlayer>
     // so we do not need to check Wakelock.isEnabled.
     Wakelock.disable();
 
-    SystemChrome.setEnabledSystemUIOverlays(
+    await SystemChrome.setEnabledSystemUIOverlays(
         widget.controller.systemOverlaysAfterFullScreen);
-    SystemChrome.setPreferredOrientations(
+    await SystemChrome.setPreferredOrientations(
         widget.controller.deviceOrientationsAfterFullScreen);
   }
 

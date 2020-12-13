@@ -66,28 +66,30 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                 "lives? 70's special effects, legendary score, and trademark "
                 "humor set this classic apart."),
           ),
-          Row(children: [
-            RaisedButton(
-              child: Text("Play"),
-              onPressed: () {
-                controller.play();
-              },
-            ),
-            const SizedBox(width: 8),
-            RaisedButton(
-              child: Text("Pause"),
-              onPressed: () {
-                controller.pause();
-              },
-            ),
-            const SizedBox(width: 8),
-            RaisedButton(
-              child: Text("Set max volume"),
-              onPressed: () {
-                controller.setVolume(100);
-              },
-            ),
-          ])
+          Center(
+            child: Wrap(children: [
+              RaisedButton(
+                child: Text("Play"),
+                onPressed: () {
+                  controller.play();
+                },
+              ),
+              const SizedBox(width: 8),
+              RaisedButton(
+                child: Text("Pause"),
+                onPressed: () {
+                  controller.pause();
+                },
+              ),
+              const SizedBox(width: 8),
+              RaisedButton(
+                child: Text("Set max volume"),
+                onPressed: () {
+                  controller.setVolume(100);
+                },
+              ),
+            ]),
+          ),
         ],
       ),
     );
