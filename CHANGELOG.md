@@ -1,5 +1,6 @@
 ## 0.0.37
 * Added setControlsEnabled to BetterPlayerController
+* Fixed example video list widget buttons not rendering correctly in small resolutions
 
 ## 0.0.36
 * Added INITIALIZED event
