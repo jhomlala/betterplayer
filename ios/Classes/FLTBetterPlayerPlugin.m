@@ -701,6 +701,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                        if (!player.disposed) {
                          [player dispose];
                        }
+                        [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
                      });
       result(nil);
     } else if ([@"setLooping" isEqualToString:call.method]) {
