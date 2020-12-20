@@ -3,13 +3,21 @@ package com.jhomlala.better_player;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Build;
+import android.support.v4.media.session.MediaSessionCompat;
 import android.util.Log;
 import android.view.Surface;
+import android.view.View;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -26,13 +34,14 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 
+import androidx.annotation.Nullable;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
@@ -70,6 +79,8 @@ final class BetterPlayer {
     private long maxCacheSize;
     private long maxCacheFileSize;
 
+    private PlayerNotificationManager playerNotificationManager;
+
     BetterPlayer(
             Context context,
             EventChannel eventChannel,
@@ -86,7 +97,8 @@ final class BetterPlayer {
 
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
-            Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize) {
+            Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
+            boolean showNotification, String title, String author) {
         this.key = key;
 
         isInitialized = false;
@@ -119,9 +131,108 @@ final class BetterPlayer {
 
         MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
         exoPlayer.prepare(mediaSource);
+        if (showNotification) {
+            setupPlayerNotification(context, title, author);
+        }
 
         result.success(null);
     }
+
+    private void setupPlayerNotification(Context context, String title, String author) {
+        PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter
+                = new PlayerNotificationManager.MediaDescriptionAdapter() {
+            @Override
+            public String getCurrentContentTitle(Player player) {
+                return title;
+            }
+
+            @Nullable
+            @Override
+            public PendingIntent createCurrentContentIntent(Player player) {
+                int window = player.getCurrentWindowIndex();
+                //return createPendingIntent(window);
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public String getCurrentContentText(Player player) {
+                return author;
+            }
+
+            @Nullable
+            @Override
+            public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
+                return null;
+            }
+        };
+
+        String channelId = "BETTER_PLAYER_CHANNEL";
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(channelId, channelId, importance);
+            channel.setDescription(channelId);
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+
+        playerNotificationManager = new PlayerNotificationManager(context,
+                channelId,
+                230011,
+                mediaDescriptionAdapter);
+        Log.d("PLAYER_ANDROID", "NOTIFICATION SHOWN");
+        playerNotificationManager.setPlayer(exoPlayer);
+        playerNotificationManager.setVisibility(View.VISIBLE);
+        playerNotificationManager.setUseNavigationActions(false);
+
+
+        MediaSessionCompat mediaSession = new MediaSessionCompat(context, "ExoPlayer");
+        mediaSession.setActive(true);
+        playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
+        
+
+        playerNotificationManager.setControlDispatcher(new ControlDispatcher() {
+            @Override
+            public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
+                Log.d("PLAYER_ANDROID", "DISPATCH PLAYER");
+                if (player.getPlayWhenReady()) {
+                    pause();
+                } else {
+                    play();
+                }
+                return true;
+            }
+
+            @Override
+            public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
+                Log.d("PLAYER_ANDROID", "DISPATCH SEEK");
+                player.seekTo(positionMs);
+                return true;
+            }
+
+            @Override
+            public boolean dispatchSetRepeatMode(Player player, int repeatMode) {
+                Log.d("PLAYER_ANDROID", "DISPATCH SET REPEAT");
+                return false;
+            }
+
+            @Override
+            public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) {
+                Log.d("PLAYER_ANDROID", "DISPATCH SHUFFLE");
+                return false;
+            }
+
+            @Override
+            public boolean dispatchStop(Player player, boolean reset) {
+                Log.d("PLAYER_ANDROID", "DISPATCH STOP");
+                pause();
+                return true;
+            }
+        });
+    }
+
 
     private static boolean isHTTP(Uri uri) {
         if (uri == null || uri.getScheme() == null) {

@@ -240,18 +240,30 @@ class BetterPlayerController extends ChangeNotifier {
               _betterPlayerDataSource.cacheConfiguration?.maxCacheSize ?? 0,
           maxCacheFileSize:
               _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
+          showNotification: _betterPlayerDataSource.showNotification,
+          title: _betterPlayerDataSource.title,
+          author: _betterPlayerDataSource.author,
         );
 
         break;
       case BetterPlayerDataSourceType.FILE:
-        await videoPlayerController
-            .setFileDataSource(File(betterPlayerDataSource.url));
+        await videoPlayerController.setFileDataSource(
+          File(betterPlayerDataSource.url),
+          showNotification: _betterPlayerDataSource.showNotification,
+          title: _betterPlayerDataSource.title,
+          author: _betterPlayerDataSource.author,
+        );
         break;
       case BetterPlayerDataSourceType.MEMORY:
         var file = await _createFile(_betterPlayerDataSource.bytes);
 
         if (file != null) {
-          await videoPlayerController.setFileDataSource(file);
+          await videoPlayerController.setFileDataSource(
+            file,
+            showNotification: _betterPlayerDataSource.showNotification,
+            title: _betterPlayerDataSource.title,
+            author: _betterPlayerDataSource.author,
+          );
           _tempFiles.add(file);
         } else {
           throw ArgumentError("Couldn't create file from memory.");

@@ -41,6 +41,15 @@ class BetterPlayerDataSource {
   ///List of bytes, used only in memory player
   final List<int> bytes;
 
+  ///Is player controls notification enabled
+  final bool showNotification;
+
+  ///Title of the given data source, used in controls notification
+  final String title;
+
+  ///Author of the given data source, used in controls notification
+  final String author;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -53,6 +62,9 @@ class BetterPlayerDataSource {
     this.hlsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
+    this.showNotification = false,
+    this.title,
+    this.author,
   }) : assert(
             ((type == BetterPlayerDataSourceType.NETWORK ||
                         type == BetterPlayerDataSourceType.FILE) &&
@@ -72,6 +84,9 @@ class BetterPlayerDataSource {
     bool useHlsTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
+    bool showNotification,
+    String title,
+    String author,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
@@ -83,6 +98,9 @@ class BetterPlayerDataSource {
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
+      showNotification: showNotification,
+      title: title,
+      author: author,
     );
   }
 
@@ -95,6 +113,9 @@ class BetterPlayerDataSource {
     bool useHlsTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
+    bool showNotification,
+    String title,
+    String author,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
@@ -103,17 +124,25 @@ class BetterPlayerDataSource {
       useHlsSubtitles: useHlsSubtitles,
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
+      showNotification: showNotification,
+      title: title,
+      author: author,
     );
   }
 
   ///Factory method to build network data source which uses bytes as data source.
   ///Url parameter is not used in this data source.
-  factory BetterPlayerDataSource.memory(List<int> bytes,
-      {List<BetterPlayerSubtitlesSource> subtitles,
-      bool useHlsSubtitles,
-      bool useHlsTracks,
-      Map<String, String> qualities,
-      BetterPlayerCacheConfiguration cacheConfiguration}) {
+  factory BetterPlayerDataSource.memory(
+    List<int> bytes, {
+    List<BetterPlayerSubtitlesSource> subtitles,
+    bool useHlsSubtitles,
+    bool useHlsTracks,
+    Map<String, String> qualities,
+    BetterPlayerCacheConfiguration cacheConfiguration,
+    bool showNotification,
+    String title,
+    String author,
+  }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.MEMORY,
       "",
@@ -122,6 +151,9 @@ class BetterPlayerDataSource {
       useHlsSubtitles: useHlsSubtitles,
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
+      showNotification: showNotification,
+      title: title,
+      author: author,
     );
   }
 
@@ -136,6 +168,9 @@ class BetterPlayerDataSource {
     bool useHlsTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
+    bool showNotification,
+    String title,
+    String author,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -148,6 +183,9 @@ class BetterPlayerDataSource {
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
       resolutions: qualities ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
+      showNotification: showNotification ?? this.showNotification,
+      title: title ?? this.title,
+      author: author ?? this.author,
     );
   }
 }

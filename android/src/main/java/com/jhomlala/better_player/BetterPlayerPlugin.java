@@ -47,6 +47,9 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String WIDTH_PARAMETER = "width";
     private static final String HEIGHT_PARAMETER = "height";
     private static final String BITRATE_PARAMETER = "bitrate";
+    private static final String SHOW_NOTIFICATION_PARAMETER = "showNotification";
+    private static final String TITLE_PARAMETER = "title";
+    private static final String AUTHOR_PARAMETER = "author";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -227,6 +230,9 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
 
         String key = getParameter(dataSource, KEY_PARAMETER, "");
         Map<String, String> headers = getParameter(dataSource, HEADERS_PARAMETER, new HashMap<>());
+        boolean showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false);
+        String title = getParameter(dataSource, TITLE_PARAMETER, "");
+        String author = getParameter(dataSource, AUTHOR_PARAMETER, "");
 
         if (dataSource.get(ASSET_PARAMETER) != null) {
             String asset = getParameter(dataSource, ASSET_PARAMETER, "");
@@ -248,7 +254,10 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     headers,
                     false,
                     0L,
-                    0L);
+                    0L,
+                    showNotification,
+                    title,
+                    author);
         } else {
             boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
             Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 0);
@@ -266,7 +275,10 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     headers,
                     useCache,
                     maxCacheSize,
-                    maxCacheFileSize);
+                    maxCacheFileSize,
+                    showNotification,
+                    title,
+                    author);
         }
     }
 

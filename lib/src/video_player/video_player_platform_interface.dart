@@ -172,6 +172,9 @@ class DataSource {
     this.useCache = false,
     this.maxCacheSize = _maxCacheSize,
     this.maxCacheFileSize = _maxCacheFileSize,
+    this.showNotification = false,
+    this.title,
+    this.author,
   }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -231,6 +234,12 @@ class DataSource {
 
   final int maxCacheFileSize;
 
+  final bool showNotification;
+
+  final String title;
+
+  final String author;
+
   /// Key to compare DataSource
   String get key {
     String result = "";
@@ -252,7 +261,11 @@ class DataSource {
 
   @override
   String toString() {
-    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint: $formatHint, asset: $asset, package: $package, closedCaptionFile: $closedCaptionFile, headers: $headers, useCache: $useCache, maxCacheSize: $maxCacheSize, maxCacheFileSize: $maxCacheFileSize}';
+    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint:'
+        ' $formatHint, asset: $asset, package: $package, closedCaptionFile: '
+        '$closedCaptionFile, headers: $headers, useCache: $useCache, '
+        'maxCacheSize: $maxCacheSize, maxCacheFileSize: $maxCacheFileSize, '
+        'showNotification: $showNotification, title: $title, author: $author}';
   }
 }
 
