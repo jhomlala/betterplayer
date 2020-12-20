@@ -199,7 +199,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
-
+      print("GOT EVENT: " + event.eventType.toString());
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(
@@ -221,6 +221,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
+          break;
+
+        case VideoEventType.play:
+          play();
+          break;
+        case VideoEventType.pause:
+          pause();
+          break;
+        case VideoEventType.seek:
+          seekTo(event.position);
           break;
         case VideoEventType.unknown:
           break;

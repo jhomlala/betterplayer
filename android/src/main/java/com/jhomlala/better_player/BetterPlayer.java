@@ -190,25 +190,36 @@ final class BetterPlayer {
 
         MediaSessionCompat mediaSession = new MediaSessionCompat(context, "ExoPlayer");
         mediaSession.setActive(true);
+        mediaSession.
         playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
-        
+
 
         playerNotificationManager.setControlDispatcher(new ControlDispatcher() {
             @Override
             public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
                 Log.d("PLAYER_ANDROID", "DISPATCH PLAYER");
+                String eventType = "";
                 if (player.getPlayWhenReady()) {
-                    pause();
+                    eventType = "pause";
                 } else {
-                    play();
+                    eventType = "play";
                 }
+
+
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", eventType);
+                eventSink.success(event);
+
                 return true;
             }
 
             @Override
             public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
                 Log.d("PLAYER_ANDROID", "DISPATCH SEEK");
-                player.seekTo(positionMs);
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "seek");
+                event.put("position", positionMs);
+                eventSink.success(event);
                 return true;
             }
 

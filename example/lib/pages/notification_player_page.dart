@@ -20,9 +20,9 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
-      Constants.forBiggerBlazesUrl,
+      Constants.elephantDreamVideoUrl,
       showNotification: true,
-      title: "For bigger blazes",
+      title: "Elephant dream",
       author: "Some author",
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

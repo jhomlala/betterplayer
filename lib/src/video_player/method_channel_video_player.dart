@@ -211,6 +211,20 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             eventType: VideoEventType.bufferingEnd,
             key: map['key'],
           );
+
+        case 'play':
+          return VideoEvent(
+            eventType: VideoEventType.play,
+            key: map['key'],
+          );
+
+        case 'seek':
+          return VideoEvent(
+            eventType: VideoEventType.seek,
+            key: map['key'],
+            position: Duration(milliseconds: map['position']),
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,
