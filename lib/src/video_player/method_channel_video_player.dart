@@ -179,6 +179,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event;
+
+
+      print("MAP EVENT: " + map['event']);
+      print("MAP:" + map.toString());
+
       switch (map['event']) {
         case 'initialized':
           return VideoEvent(
@@ -218,7 +223,15 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: map['key'],
           );
 
+        case 'pause':
+          return VideoEvent(
+            eventType: VideoEventType.pause,
+            key: map['key'],
+          );
+
         case 'seek':
+
+          print("HERE");
           return VideoEvent(
             eventType: VideoEventType.seek,
             key: map['key'],
