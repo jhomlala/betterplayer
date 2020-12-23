@@ -90,6 +90,10 @@ class BetterPlayerConfiguration {
   /// ignored.
   final bool autoDetectFullscreenDeviceOrientation;
 
+  ///Defines flag which enables/disables lifecycle handling (pause on app closed,
+  ///play on app resumed). Default value is true.
+  final bool handleLifecycle;
+
   const BetterPlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
@@ -122,6 +126,7 @@ class BetterPlayerConfiguration {
     this.playerVisibilityChangedBehavior,
     this.translations,
     this.autoDetectFullscreenDeviceOrientation = false,
+    this.handleLifecycle = true
   });
 
   BetterPlayerConfiguration copyWith({

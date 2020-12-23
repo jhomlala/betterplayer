@@ -17,10 +17,11 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
         BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
+      handleLifecycle: false,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
-      Constants.forBiggerBlazesUrl,
+      Constants.elephantDreamVideoUrl,
       showNotification: true,
       title: "Elephant dream",
       author: "Some author",

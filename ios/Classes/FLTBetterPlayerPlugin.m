@@ -672,24 +672,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
             CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
             int64_t millis = FLTCMTimeToMillis(time);
-            player.eventSink(@{@"event" : @"seek", @"position": @(millis),@"position1":@(time.value) ,@"position2":@(playbackEvent.positionTime)});
-            return MPRemoteCommandHandlerStatusSuccess;
+            player.eventSink(@{@"event" : @"seek", @"position": @(millis)});
+
             return MPRemoteCommandHandlerStatusSuccess;
         }];
         
     }
 }
-
-- (MPRemoteCommandHandlerStatus) onChangePlaybackPositionCommand:
-                                     (MPChangePlaybackPositionCommandEvent *) event, FLTBetterPlayer* player
-{
-    CMTime time = CMTimeMake(event.positionTime, player.player.currentItem.currentTime.timescale);
-    int64_t millis = FLTCMTimeToMillis(time);
-    player.eventSink(@{@"event" : @"seek", @"position": @(millis), @"position2":@(event.positionTime)});
-    return MPRemoteCommandHandlerStatusSuccess;
-   
-}
-
 
 - (void) setupRemoteCommandNotification:(FLTBetterPlayer*)player, NSString* title, NSString* author {
     float positionInSeconds = player.position /1000;
