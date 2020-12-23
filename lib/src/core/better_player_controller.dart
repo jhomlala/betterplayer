@@ -120,7 +120,6 @@ class BetterPlayerController extends ChangeNotifier {
       _controlsVisibilityStreamController.stream;
 
   AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
-  BetterPlayerEventType _betterPlayerEventBeforePause;
 
   bool _controlsEnabled = true;
 
@@ -332,7 +331,6 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> play() async {
-    _betterPlayerEventBeforePause = BetterPlayerEventType.PLAY;
     if (_appLifecycleState == AppLifecycleState.resumed) {
       await videoPlayerController.play();
       _hasCurrentDataSourceStarted = true;
@@ -345,7 +343,6 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> pause() async {
-    _betterPlayerEventBeforePause = BetterPlayerEventType.PAUSE;
     await videoPlayerController.pause();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.PAUSE));
   }
@@ -520,16 +517,19 @@ class BetterPlayerController extends ChangeNotifier {
     }
     _postEvent(
         BetterPlayerEvent(BetterPlayerEventType.CHANGED_PLAYER_VISIBILITY));
-    if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
-      betterPlayerConfiguration
-          .playerVisibilityChangedBehavior(visibilityFraction);
-    } else {
-      if (visibilityFraction == 0) {
-        _wasPlayingBeforePause = await isPlaying();
-        pause();
+
+    if (betterPlayerConfiguration.handleLifecycle) {
+      if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
+        betterPlayerConfiguration
+            .playerVisibilityChangedBehavior(visibilityFraction);
       } else {
-        if (_wasPlayingBeforePause && !(await isPlaying())) {
-          play();
+        if (visibilityFraction == 0) {
+          _wasPlayingBeforePause = await isPlaying();
+          pause();
+        } else {
+          if (_wasPlayingBeforePause && !(await isPlaying())) {
+            play();
+          }
         }
       }
     }
@@ -586,13 +586,17 @@ class BetterPlayerController extends ChangeNotifier {
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
 
-  void setAppLifecycleState(AppLifecycleState appLifecycleState) {
+  void setAppLifecycleState(AppLifecycleState appLifecycleState) async {
     if (betterPlayerConfiguration.handleLifecycle) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
-        if (_betterPlayerEventBeforePause == BetterPlayerEventType.PLAY) {
-          play();
-        }
+          if (_wasPlayingBeforePause) {
+            play();
+          }
+      }
+      if (appLifecycleState == AppLifecycleState.paused){
+        _wasPlayingBeforePause = await isPlaying();
+        pause();
       }
     }
   }

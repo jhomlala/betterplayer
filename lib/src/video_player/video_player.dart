@@ -178,7 +178,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   final Completer<void> _creatingCompleter = Completer<void>();
   Completer<void> _initializingCompleter;
   StreamSubscription<dynamic> _eventSubscription;
-  _VideoAppLifeCycleObserver _lifeCycleObserver;
 
   bool get _created => _creatingCompleter.isCompleted;
 
@@ -358,11 +357,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       value = value.copyWith(caption: _getCaptionAt(value.position));
     }
 
-    if (_lifeCycleObserver == null) {
-      _lifeCycleObserver = _VideoAppLifeCycleObserver(this);
-      _lifeCycleObserver.initialize();
-    }
-
     _initializingCompleter = Completer<void>();
 
     await VideoPlayerPlatform.instance
@@ -381,7 +375,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         await _eventSubscription?.cancel();
         await _videoPlayerPlatform.dispose(_textureId);
       }
-      _lifeCycleObserver?.dispose();
     }
     _isDisposed = true;
     super.dispose();
@@ -534,37 +527,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   void _updatePosition(Duration position) {
     value = value.copyWith(position: position);
     value = value.copyWith(caption: _getCaptionAt(position));
-  }
-}
-
-class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
-  _VideoAppLifeCycleObserver(this._controller);
-
-  bool _wasPlayingBeforePause = false;
-  final VideoPlayerController _controller;
-
-  void initialize() {
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.paused:
-        _wasPlayingBeforePause = _controller.value.isPlaying;
-        _controller.pause();
-        break;
-      case AppLifecycleState.resumed:
-        if (_wasPlayingBeforePause) {
-          _controller.play();
-        }
-        break;
-      default:
-    }
-  }
-
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
   }
 }
 

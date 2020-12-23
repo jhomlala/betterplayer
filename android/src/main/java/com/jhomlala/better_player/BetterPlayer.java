@@ -186,7 +186,7 @@ final class BetterPlayer {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL,
                     DEFAULT_NOTIFICATION_CHANNEL, importance);
-            channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL;
+            channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL);
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }

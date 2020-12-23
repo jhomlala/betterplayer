@@ -17,7 +17,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
         BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-      handleLifecycle: false,
+      handleLifecycle: true,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
