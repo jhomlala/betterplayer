@@ -50,6 +50,9 @@ class BetterPlayerDataSource {
   ///Author of the given data source, used in controls notification
   final String author;
 
+  ///Image of the video, used in controls notification
+  final String imageUrl;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -65,6 +68,7 @@ class BetterPlayerDataSource {
     this.showNotification = false,
     this.title,
     this.author,
+    this.imageUrl,
   }) : assert(
             ((type == BetterPlayerDataSourceType.NETWORK ||
                         type == BetterPlayerDataSourceType.FILE) &&
@@ -87,6 +91,7 @@ class BetterPlayerDataSource {
     bool showNotification,
     String title,
     String author,
+    String imageUrl,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
@@ -101,6 +106,7 @@ class BetterPlayerDataSource {
       showNotification: showNotification,
       title: title,
       author: author,
+      imageUrl: imageUrl,
     );
   }
 
@@ -116,6 +122,7 @@ class BetterPlayerDataSource {
     bool showNotification,
     String title,
     String author,
+    String imageUrl,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
@@ -127,6 +134,7 @@ class BetterPlayerDataSource {
       showNotification: showNotification,
       title: title,
       author: author,
+      imageUrl: imageUrl,
     );
   }
 
@@ -142,6 +150,7 @@ class BetterPlayerDataSource {
     bool showNotification,
     String title,
     String author,
+    String imageUrl,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.MEMORY,
@@ -154,24 +163,25 @@ class BetterPlayerDataSource {
       showNotification: showNotification,
       title: title,
       author: author,
+      imageUrl: imageUrl,
     );
   }
 
-  BetterPlayerDataSource copyWith({
-    BetterPlayerDataSourceType type,
-    String url,
-    List<int> bytes,
-    List<BetterPlayerSubtitlesSource> subtitles,
-    bool liveStream,
-    Map<String, String> headers,
-    bool useHlsSubtitles,
-    bool useHlsTracks,
-    Map<String, String> qualities,
-    BetterPlayerCacheConfiguration cacheConfiguration,
-    bool showNotification,
-    String title,
-    String author,
-  }) {
+  BetterPlayerDataSource copyWith(
+      {BetterPlayerDataSourceType type,
+      String url,
+      List<int> bytes,
+      List<BetterPlayerSubtitlesSource> subtitles,
+      bool liveStream,
+      Map<String, String> headers,
+      bool useHlsSubtitles,
+      bool useHlsTracks,
+      Map<String, String> qualities,
+      BetterPlayerCacheConfiguration cacheConfiguration,
+      bool showNotification,
+      String title,
+      String author,
+      String imageUrl}) {
     return BetterPlayerDataSource(
       type ?? this.type,
       url ?? this.url,
@@ -186,6 +196,7 @@ class BetterPlayerDataSource {
       showNotification: showNotification ?? this.showNotification,
       title: title ?? this.title,
       author: author ?? this.author,
+      imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 }

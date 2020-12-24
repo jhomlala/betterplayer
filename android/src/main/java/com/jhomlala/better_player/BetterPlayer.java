@@ -8,6 +8,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.PlaybackParams;
 import android.media.session.MediaSession;
 import android.media.session.PlaybackState;
@@ -15,6 +16,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.ResultReceiver;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -55,6 +57,11 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -111,7 +118,7 @@ final class BetterPlayer {
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
-            boolean showNotification, String title, String author) {
+            boolean showNotification, String title, String author, String imageUrl) {
         this.key = key;
 
         isInitialized = false;
@@ -145,13 +152,13 @@ final class BetterPlayer {
         MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
         exoPlayer.prepare(mediaSource);
         if (showNotification) {
-            setupPlayerNotification(context, title, author);
+            setupPlayerNotification(context, title, author, imageUrl);
         }
 
         result.success(null);
     }
 
-    private void setupPlayerNotification(Context context, String title, String author) {
+    private void setupPlayerNotification(Context context, String title, String author, String imageUrl) {
 
         PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter
                 = new PlayerNotificationManager.MediaDescriptionAdapter() {
@@ -163,8 +170,6 @@ final class BetterPlayer {
             @Nullable
             @Override
             public PendingIntent createCurrentContentIntent(Player player) {
-                int window = player.getCurrentWindowIndex();
-                //return createPendingIntent(window);
                 return null;
             }
 
@@ -177,6 +182,24 @@ final class BetterPlayer {
             @Nullable
             @Override
             public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
+                Log.d("PLAYER_ANDROID", "ICON IS: " + imageUrl);
+                if (imageUrl == null){
+                    return null;
+                }
+                new Thread(() -> {
+                    Bitmap bitmap = null;
+                    if (imageUrl.contains("http")){
+                        bitmap = getBitmapFromExternalURL(imageUrl);
+                    } else {
+                        bitmap = getBitmapFromInternalURL(imageUrl);
+                    }
+
+                    Bitmap finalBitmap = bitmap;
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        callback.onBitmap(finalBitmap);
+                    });
+
+                }).start();
                 return null;
             }
         };
@@ -295,6 +318,31 @@ final class BetterPlayer {
             }
         });
         exoPlayer.seekTo(0);
+    }
+
+
+    private static Bitmap getBitmapFromInternalURL(String src){
+        try {
+            Log.d("PLAYER_ANDROID", "INTERNAL URL: " + src);
+            File file = new File(src);
+            return BitmapFactory.decodeFile(src);
+        } catch (Exception exception){
+            return null;
+        }
+    }
+    private static Bitmap getBitmapFromExternalURL(String src) {
+        try {
+            Log.d("PLAYER_ANDROID", "EXTERNAL URL: " + src);
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException exception) {
+            return null;
+        }
     }
 
 

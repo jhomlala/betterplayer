@@ -51,6 +51,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'showNotification': dataSource.showNotification,
           'title': dataSource.title,
           'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
         };
         break;
       case DataSourceType.network:
@@ -65,6 +66,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'showNotification': dataSource.showNotification,
           'title': dataSource.title,
           'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
         };
         break;
       case DataSourceType.file:
@@ -77,6 +79,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'showNotification': dataSource.showNotification,
           'title': dataSource.title,
           'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
         };
         break;
     }

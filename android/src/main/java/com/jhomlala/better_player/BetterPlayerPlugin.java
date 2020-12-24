@@ -50,6 +50,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String SHOW_NOTIFICATION_PARAMETER = "showNotification";
     private static final String TITLE_PARAMETER = "title";
     private static final String AUTHOR_PARAMETER = "author";
+    private static final String IMAGE_URL_PARAMETER = "imageUrl";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -233,6 +234,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         boolean showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false);
         String title = getParameter(dataSource, TITLE_PARAMETER, "");
         String author = getParameter(dataSource, AUTHOR_PARAMETER, "");
+        String imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "");
 
         if (dataSource.get(ASSET_PARAMETER) != null) {
             String asset = getParameter(dataSource, ASSET_PARAMETER, "");
@@ -257,7 +259,8 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     0L,
                     showNotification,
                     title,
-                    author);
+                    author,
+                    imageUrl);
         } else {
             boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
             Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 0);
@@ -278,7 +281,8 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     maxCacheFileSize,
                     showNotification,
                     title,
-                    author);
+                    author,
+                    imageUrl);
         }
     }
 

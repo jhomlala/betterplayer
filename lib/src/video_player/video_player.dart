@@ -262,17 +262,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     bool showNotification,
     String title,
     String author,
+    String imageUrl,
   }) {
     return _setDataSource(
       DataSource(
-        sourceType: DataSourceType.asset,
-        asset: dataSource,
-        package: package,
-        closedCaptionFile: closedCaptionFile,
-        showNotification: showNotification,
-        title: title,
-        author: author,
-      ),
+          sourceType: DataSourceType.asset,
+          asset: dataSource,
+          package: package,
+          closedCaptionFile: closedCaptionFile,
+          showNotification: showNotification,
+          title: title,
+          author: author,
+          imageUrl: imageUrl),
     );
   }
 
@@ -294,6 +295,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     bool showNotification,
     String title,
     String author,
+    String imageUrl,
   }) {
     return _setDataSource(
       DataSource(
@@ -308,6 +310,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         showNotification: showNotification,
         title: title,
         author: author,
+        imageUrl: imageUrl,
       ),
     );
   }
@@ -322,6 +325,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     bool showNotification,
     String title,
     String author,
+    String imageUrl,
   }) {
     return _setDataSource(
       DataSource(
@@ -331,6 +335,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         showNotification: showNotification,
         title: title,
         author: author,
+        imageUrl: imageUrl,
       ),
     );
   }

@@ -242,6 +242,7 @@ class BetterPlayerController extends ChangeNotifier {
           showNotification: _betterPlayerDataSource.showNotification,
           title: _betterPlayerDataSource.title,
           author: _betterPlayerDataSource.author,
+          imageUrl:  _betterPlayerDataSource.imageUrl,
         );
 
         break;
@@ -251,6 +252,7 @@ class BetterPlayerController extends ChangeNotifier {
           showNotification: _betterPlayerDataSource.showNotification,
           title: _betterPlayerDataSource.title,
           author: _betterPlayerDataSource.author,
+          imageUrl:  _betterPlayerDataSource.imageUrl,
         );
         break;
       case BetterPlayerDataSourceType.MEMORY:
@@ -262,6 +264,7 @@ class BetterPlayerController extends ChangeNotifier {
             showNotification: _betterPlayerDataSource.showNotification,
             title: _betterPlayerDataSource.title,
             author: _betterPlayerDataSource.author,
+            imageUrl:  _betterPlayerDataSource.imageUrl,
           );
           _tempFiles.add(file);
         } else {
