@@ -38,7 +38,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> setDataSource(int textureId, DataSource dataSource) async {
     Map<String, dynamic> dataSourceDescription;
-
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         dataSourceDescription = <String, dynamic>{

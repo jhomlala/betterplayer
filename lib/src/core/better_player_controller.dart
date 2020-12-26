@@ -334,6 +334,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> play() async {
+    print("PLAY!");
     if (_appLifecycleState == AppLifecycleState.resumed) {
       await videoPlayerController.play();
       _hasCurrentDataSourceStarted = true;

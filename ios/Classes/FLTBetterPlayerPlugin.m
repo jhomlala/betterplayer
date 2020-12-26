@@ -590,6 +590,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 @end
 
 @implementation FLTBetterPlayerPlugin
+NSMutableDictionary*  _timeObserverIdDict;
+NSMutableDictionary*  _artworkImageDict;
+
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel =
     [FlutterMethodChannel methodChannelWithName:@"better_player_channel"
@@ -606,6 +610,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _messenger = [registrar messenger];
     _registrar = registrar;
     _players = [NSMutableDictionary dictionaryWithCapacity:1];
+    _timeObserverIdDict = [NSMutableDictionary dictionary];
+    _artworkImageDict = [NSMutableDictionary dictionary];
     [KTVHTTPCache proxyStart:nil];
     return self;
 }
@@ -644,13 +650,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand setEnabled:YES];
     }
-
+    
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
         if (player.isPlaying){
             player.eventSink(@{@"event" : @"play"});
         } else {
             player.eventSink(@{@"event" : @"pause"});
-
+            
         }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
@@ -665,51 +671,111 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         return MPRemoteCommandHandlerStatusSuccess;
     }];
     
-   
+    
     
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+            
             MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
             CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
             int64_t millis = FLTCMTimeToMillis(time);
+            [player seekTo: millis];
             player.eventSink(@{@"event" : @"seek", @"position": @(millis)});
-
+            
             return MPRemoteCommandHandlerStatusSuccess;
         }];
         
     }
 }
 
-- (void) setupRemoteCommandNotification:(FLTBetterPlayer*)player, NSString* title, NSString* author {
+- (void) setupRemoteCommandNotification:(FLTBetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl{
     float positionInSeconds = player.position /1000;
     float durationInSeconds = player.duration/ 1000;
     
-    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = @{MPMediaItemPropertyArtist: author,
-                                                              MPMediaItemPropertyTitle: title,
-                                                              MPNowPlayingInfoPropertyElapsedPlaybackTime: [ NSNumber numberWithFloat : positionInSeconds],
-                                                              MPMediaItemPropertyPlaybackDuration: [NSNumber numberWithFloat:durationInSeconds],
-                                                              MPNowPlayingInfoPropertyPlaybackRate: @1
-                                                              
-    };
-}
-
-- (void) setupUpdateListener:(FLTBetterPlayer*)player,NSString* title, NSString* author  {
-    [player.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time){
-        NSTimeInterval seconds = CMTimeGetSeconds(time);
-        [self setupRemoteCommandNotification:player, title, author];
+    
+    NSMutableDictionary * nowPlayingInfoDict = [@{MPMediaItemPropertyArtist: author,
+                                                  MPMediaItemPropertyTitle: title,
+                                                  MPNowPlayingInfoPropertyElapsedPlaybackTime: [ NSNumber numberWithFloat : positionInSeconds],
+                                                  MPMediaItemPropertyPlaybackDuration: [NSNumber numberWithFloat:durationInSeconds],
+                                                  MPNowPlayingInfoPropertyPlaybackRate: @1,
+    } mutableCopy];
+    
+    if (imageUrl != [NSNull null]){
+        NSLog(@"Setup image...");
+        NSString* key =  [self getTextureId:player];
+        MPMediaItemArtwork* artworkImage = [_artworkImageDict objectForKey:key];
         
-    }];
+        if (artworkImage){
+            [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
+            [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
+            
+        } else {
+            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+            dispatch_async(queue, ^{
+                NSURL *nsImageUrl =[NSURL URLWithString:imageUrl];
+                UIImage * tempArtworkImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:nsImageUrl]];
+                if(tempArtworkImage)
+                {
+                    MPMediaItemArtwork* artworkImage = [[MPMediaItemArtwork alloc] initWithImage: tempArtworkImage];
+                    [_artworkImageDict setObject:artworkImage forKey:key];
+                    [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
+                }
+                [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
+            });
+        }
+    }
 }
 
+
+- (NSString*) getTextureId: (FLTBetterPlayer*) player{
+    NSArray* temp = [_players allKeysForObject: player];
+    NSString* key = [temp lastObject];
+    return key;
+}
+
+- (void) setupUpdateListener:(FLTBetterPlayer*)player,NSString* title, NSString* author,NSString* imageUrl  {
+    id _timeObserverId = [player.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time){
+        [self setupRemoteCommandNotification:player, title, author, imageUrl];
+    }];
+    
+    NSString* key =  [self getTextureId:player];
+    [ _timeObserverIdDict setObject:_timeObserverId forKey: key];
+}
+
+- (void) setNotificationActive{
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [[AVAudioSession sharedInstance] setActive:true error:nil];
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+}
+
+- (void) setNotificationNotActive{
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [[AVAudioSession sharedInstance] setActive:false error:nil];
+    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
+}
+
+- (void) disposeNotificationData: (FLTBetterPlayer*)player{
+    NSString* key =  [self getTextureId:player];
+    id _timeObserverId = _timeObserverIdDict[key];
+    [_timeObserverIdDict removeObjectForKey: key];
+    [_artworkImageDict removeObjectForKey:key];
+    if (_timeObserverId){
+        [player.player removeTimeObserver:_timeObserverId];
+        _timeObserverId = nil;
+    }
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo =  @{};
+}
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"init" isEqualToString:call.method]) {
         // Allow audio playback when the Ring/Silent switch is set to silent
+        NSLog(@"!!!INIT");
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         for (NSNumber* textureId in _players) {
             [_registry unregisterTexture:[textureId unsignedIntegerValue]];
             [_players[textureId] dispose];
         }
+        
         [_players removeAllObjects];
         result(nil);
     } else if ([@"create" isEqualToString:call.method]) {
@@ -721,11 +787,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
         FLTBetterPlayer* player = _players[@(textureId)];
         if ([@"setDataSource" isEqualToString:call.method]) {
-            
-            [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-            [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-            
-            
             [player clear];
             // This call will clear cached frame because we will return transparent frame
             [_registry textureFrameAvailable:textureId];
@@ -741,10 +802,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             }
             NSString* title = dataSource[@"title"];
             NSString* author = dataSource[@"author"];
+            NSString* imageUrl = dataSource[@"imageUrl"];
+            
             if (showNotification){
+                [self setNotificationActive];
                 [self setupRemoteCommands: player];
-                [self setupRemoteCommandNotification: player, title, author];
-                [self setupUpdateListener: player, title, author];
+                [self setupRemoteCommandNotification: player, title, author, imageUrl];
+                [self setupUpdateListener: player, title, author, imageUrl];
             }
             
             BOOL useCache = false;
@@ -772,6 +836,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             }
             result(nil);
         } else if ([@"dispose" isEqualToString:call.method]) {
+            [self disposeNotificationData:player];
+            [self setNotificationNotActive];
             [_registry unregisterTexture:textureId];
             [_players removeObjectForKey:@(textureId)];
             // If the Flutter contains https://github.com/flutter/engine/pull/12695,
