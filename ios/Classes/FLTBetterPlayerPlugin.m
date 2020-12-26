@@ -590,6 +590,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 @end
 
 @implementation FLTBetterPlayerPlugin
+NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
 
@@ -612,6 +613,7 @@ NSMutableDictionary*  _artworkImageDict;
     _players = [NSMutableDictionary dictionaryWithCapacity:1];
     _timeObserverIdDict = [NSMutableDictionary dictionary];
     _artworkImageDict = [NSMutableDictionary dictionary];
+    _dataSourceDict = [NSMutableDictionary dictionary];
     [KTVHTTPCache proxyStart:nil];
     return self;
 }
@@ -723,6 +725,8 @@ NSMutableDictionary*  _artworkImageDict;
                 [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
             });
         }
+    } else {
+        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
     }
 }
 
@@ -766,6 +770,46 @@ NSMutableDictionary*  _artworkImageDict;
     [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo =  @{};
 }
 
+- (void) stopOtherListener: (FLTBetterPlayer*) player{
+    
+    NSString* currentPlayerTextureId = [self getTextureId:player];
+    NSLog(@"Stop other listenrs: %@", _timeObserverIdDict.allKeys);
+    NSLog(@"Current player textureID %@", currentPlayerTextureId);
+    
+    for (NSString* textureId in _timeObserverIdDict.allKeys) {
+        if (currentPlayerTextureId == textureId){
+            continue;
+        }
+        
+        id timeObserverId = [_timeObserverIdDict objectForKey:textureId];
+        FLTBetterPlayer* playerToRemoveListener = [_players objectForKey:textureId];
+        [playerToRemoveListener.player removeTimeObserver: timeObserverId];
+    }
+    [_timeObserverIdDict removeAllObjects];
+  
+}
+
+- (void) setupNotification :(FLTBetterPlayer*) player{
+    NSLog(@"SETUP NOTIFICATION");
+    [self stopOtherListener:player];
+    NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
+    BOOL showNotification = false;
+    id showNotificationObject = [dataSource objectForKey:@"showNotification"];
+    if (showNotificationObject != [NSNull null]) {
+        showNotification = [[dataSource objectForKey:@"showNotification"] boolValue];
+    }
+    NSString* title = dataSource[@"title"];
+    NSString* author = dataSource[@"author"];
+    NSString* imageUrl = dataSource[@"imageUrl"];
+    
+    if (showNotification){
+        [self setNotificationActive];
+        [self setupRemoteCommands: player];
+        [self setupRemoteCommandNotification: player, title, author, imageUrl];
+        [self setupUpdateListener: player, title, author, imageUrl];
+    }
+}
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"init" isEqualToString:call.method]) {
         // Allow audio playback when the Ring/Silent switch is set to silent
@@ -790,26 +834,14 @@ NSMutableDictionary*  _artworkImageDict;
             [player clear];
             // This call will clear cached frame because we will return transparent frame
             [_registry textureFrameAvailable:textureId];
+            
             NSDictionary* dataSource = argsMap[@"dataSource"];
+            [_dataSourceDict setObject:dataSource forKey:[self getTextureId:player]];
             NSString* assetArg = dataSource[@"asset"];
             NSString* uriArg = dataSource[@"uri"];
             NSString* key = dataSource[@"key"];
             NSDictionary* headers = dataSource[@"headers"];
-            BOOL showNotification = false;
-            id showNotificationObject = [dataSource objectForKey:@"showNotification"];
-            if (showNotificationObject != [NSNull null]) {
-                showNotification = [[dataSource objectForKey:@"showNotification"] boolValue];
-            }
-            NSString* title = dataSource[@"title"];
-            NSString* author = dataSource[@"author"];
-            NSString* imageUrl = dataSource[@"imageUrl"];
             
-            if (showNotification){
-                [self setNotificationActive];
-                [self setupRemoteCommands: player];
-                [self setupRemoteCommandNotification: player, title, author, imageUrl];
-                [self setupUpdateListener: player, title, author, imageUrl];
-            }
             
             BOOL useCache = false;
             id useCacheObject = [dataSource objectForKey:@"useCache"];
@@ -864,6 +896,7 @@ NSMutableDictionary*  _artworkImageDict;
             [player setVolume:[argsMap[@"volume"] doubleValue]];
             result(nil);
         } else if ([@"play" isEqualToString:call.method]) {
+            [self setupNotification:player];
             [player play];
             result(nil);
         } else if ([@"position" isEqualToString:call.method]) {
