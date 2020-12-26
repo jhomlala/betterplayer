@@ -641,6 +641,37 @@ NSMutableDictionary*  _artworkImageDict;
     result(@{@"textureId" : @(textureId)});
 }
 
+- (void) setupRemoteNotification :(FLTBetterPlayer*) player{
+    [self stopOtherUpdateListener:player];
+    NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
+    BOOL showNotification = false;
+    id showNotificationObject = [dataSource objectForKey:@"showNotification"];
+    if (showNotificationObject != [NSNull null]) {
+        showNotification = [[dataSource objectForKey:@"showNotification"] boolValue];
+    }
+    NSString* title = dataSource[@"title"];
+    NSString* author = dataSource[@"author"];
+    NSString* imageUrl = dataSource[@"imageUrl"];
+    
+    if (showNotification){
+        [self setRemoteCommandsNotificationActive];
+        [self setupRemoteCommands: player];
+        [self setupRemoteCommandNotification: player, title, author, imageUrl];
+        [self setupUpdateListener: player, title, author, imageUrl];
+    }
+}
+
+- (void) setRemoteCommandsNotificationActive{
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [[AVAudioSession sharedInstance] setActive:true error:nil];
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+}
+
+- (void) setRemoteCommandsNotificationNotActive{
+    [[AVAudioSession sharedInstance] setActive:false error:nil];
+    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
+}
+
 
 - (void) setupRemoteCommands:(FLTBetterPlayer*)player  {
     MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
@@ -683,7 +714,6 @@ NSMutableDictionary*  _artworkImageDict;
             int64_t millis = FLTCMTimeToMillis(time);
             [player seekTo: millis];
             player.eventSink(@{@"event" : @"seek", @"position": @(millis)});
-            
             return MPRemoteCommandHandlerStatusSuccess;
         }];
         
@@ -703,7 +733,6 @@ NSMutableDictionary*  _artworkImageDict;
     } mutableCopy];
     
     if (imageUrl != [NSNull null]){
-        NSLog(@"Setup image...");
         NSString* key =  [self getTextureId:player];
         MPMediaItemArtwork* artworkImage = [_artworkImageDict objectForKey:key];
         
@@ -746,17 +775,6 @@ NSMutableDictionary*  _artworkImageDict;
     [ _timeObserverIdDict setObject:_timeObserverId forKey: key];
 }
 
-- (void) setNotificationActive{
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-    [[AVAudioSession sharedInstance] setActive:true error:nil];
-    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-}
-
-- (void) setNotificationNotActive{
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
-    [[AVAudioSession sharedInstance] setActive:false error:nil];
-    [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
-}
 
 - (void) disposeNotificationData: (FLTBetterPlayer*)player{
     NSString* key =  [self getTextureId:player];
@@ -770,12 +788,8 @@ NSMutableDictionary*  _artworkImageDict;
     [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo =  @{};
 }
 
-- (void) stopOtherListener: (FLTBetterPlayer*) player{
-    
+- (void) stopOtherUpdateListener: (FLTBetterPlayer*) player{
     NSString* currentPlayerTextureId = [self getTextureId:player];
-    NSLog(@"Stop other listenrs: %@", _timeObserverIdDict.allKeys);
-    NSLog(@"Current player textureID %@", currentPlayerTextureId);
-    
     for (NSString* textureId in _timeObserverIdDict.allKeys) {
         if (currentPlayerTextureId == textureId){
             continue;
@@ -789,31 +803,10 @@ NSMutableDictionary*  _artworkImageDict;
   
 }
 
-- (void) setupNotification :(FLTBetterPlayer*) player{
-    NSLog(@"SETUP NOTIFICATION");
-    [self stopOtherListener:player];
-    NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
-    BOOL showNotification = false;
-    id showNotificationObject = [dataSource objectForKey:@"showNotification"];
-    if (showNotificationObject != [NSNull null]) {
-        showNotification = [[dataSource objectForKey:@"showNotification"] boolValue];
-    }
-    NSString* title = dataSource[@"title"];
-    NSString* author = dataSource[@"author"];
-    NSString* imageUrl = dataSource[@"imageUrl"];
-    
-    if (showNotification){
-        [self setNotificationActive];
-        [self setupRemoteCommands: player];
-        [self setupRemoteCommandNotification: player, title, author, imageUrl];
-        [self setupUpdateListener: player, title, author, imageUrl];
-    }
-}
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([@"init" isEqualToString:call.method]) {
         // Allow audio playback when the Ring/Silent switch is set to silent
-        NSLog(@"!!!INIT");
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         for (NSNumber* textureId in _players) {
             [_registry unregisterTexture:[textureId unsignedIntegerValue]];
@@ -869,7 +862,7 @@ NSMutableDictionary*  _artworkImageDict;
             result(nil);
         } else if ([@"dispose" isEqualToString:call.method]) {
             [self disposeNotificationData:player];
-            [self setNotificationNotActive];
+            [self setRemoteCommandsNotificationNotActive];
             [_registry unregisterTexture:textureId];
             [_players removeObjectForKey:@(textureId)];
             // If the Flutter contains https://github.com/flutter/engine/pull/12695,
@@ -896,7 +889,7 @@ NSMutableDictionary*  _artworkImageDict;
             [player setVolume:[argsMap[@"volume"] doubleValue]];
             result(nil);
         } else if ([@"play" isEqualToString:call.method]) {
-            [self setupNotification:player];
+            [self setupRemoteNotification:player];
             [player play];
             result(nil);
         } else if ([@"position" isEqualToString:call.method]) {
