@@ -66,7 +66,9 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String DISPOSE_METHOD = "dispose";
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
+    private final LongSparseArray<Map<String, Object>> dataSources = new LongSparseArray<>();
     private FlutterState flutterState;
+    private long currentNotificationTextureId = -1;
 
     /**
      * Register this with the v2 embedding for the plugin to respond to lifecycle callbacks.
@@ -123,6 +125,8 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             videoPlayers.valueAt(i).dispose();
         }
         videoPlayers.clear();
+        dataSources.clear();
+        ;
     }
 
     private void onDestroy() {
@@ -188,6 +192,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                 result.success(null);
                 break;
             case PLAY_METHOD:
+                setupNotification(player);
                 player.play();
                 result.success(null);
                 break;
@@ -218,6 +223,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             case DISPOSE_METHOD:
                 player.dispose();
                 videoPlayers.remove(textureId);
+                dataSources.remove(textureId);
                 result.success(null);
                 break;
             default:
@@ -229,12 +235,12 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private void setDataSource(MethodCall call, Result result, BetterPlayer player) {
         Map<String, Object> dataSource = call.argument(DATA_SOURCE_PARAMETER);
 
+        Log.d(TAG,"TEXTUREID: " + getTextureId(player));
+        Log.d(TAG,"DATA SOURCES: " + dataSource.toString());
+
+        dataSources.put(getTextureId(player), dataSource);
         String key = getParameter(dataSource, KEY_PARAMETER, "");
         Map<String, String> headers = getParameter(dataSource, HEADERS_PARAMETER, new HashMap<>());
-        boolean showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false);
-        String title = getParameter(dataSource, TITLE_PARAMETER, "");
-        String author = getParameter(dataSource, AUTHOR_PARAMETER, "");
-        String imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "");
 
         if (dataSource.get(ASSET_PARAMETER) != null) {
             String asset = getParameter(dataSource, ASSET_PARAMETER, "");
@@ -256,11 +262,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     headers,
                     false,
                     0L,
-                    0L,
-                    showNotification,
-                    title,
-                    author,
-                    imageUrl);
+                    0L);
         } else {
             boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
             Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 0);
@@ -278,13 +280,48 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     headers,
                     useCache,
                     maxCacheSize,
-                    maxCacheFileSize,
-                    showNotification,
-                    title,
-                    author,
-                    imageUrl);
+                    maxCacheFileSize);
         }
     }
+
+    private Long getTextureId(BetterPlayer betterPlayer) {
+        for (int index = 0; index < videoPlayers.size(); index++) {
+            if (betterPlayer == videoPlayers.valueAt(index)) {
+                return videoPlayers.keyAt(index);
+            }
+        }
+        return null;
+    }
+
+    private void setupNotification(BetterPlayer betterPlayer) {
+        try {
+            Long textureId = getTextureId(betterPlayer);
+            if (textureId != null) {
+                if (textureId == currentNotificationTextureId){
+                    return;
+                }
+                currentNotificationTextureId = textureId;
+                removeOtherNotificationListeners();
+                Map<String, Object> dataSource = dataSources.get(textureId);
+                boolean showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false);
+                if (showNotification) {
+                    String title = getParameter(dataSource, TITLE_PARAMETER, "");
+                    String author = getParameter(dataSource, AUTHOR_PARAMETER, "");
+                    String imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "");
+                    betterPlayer.setupPlayerNotification(flutterState.applicationContext, title, author, imageUrl);
+                }
+            }
+        } catch (Exception exception) {
+            Log.e(TAG, "SetupNotification failed", exception);
+        }
+    }
+
+    private void removeOtherNotificationListeners(){
+        for (int index = 0; index < videoPlayers.size(); index++) {
+            videoPlayers.valueAt(index).removeNotificationData();
+        }
+    }
+
 
     private <T> T getParameter(Map<String, Object> parameters, Object key, T defaultValue) {
         if (parameters.containsKey(key)) {

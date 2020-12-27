@@ -9,9 +9,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.PlaybackParams;
-import android.media.session.MediaSession;
-import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,9 +18,7 @@ import android.os.ResultReceiver;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.Surface;
-import android.view.View;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
@@ -33,7 +28,6 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -100,6 +94,8 @@ final class BetterPlayer {
     private PlayerNotificationManager playerNotificationManager;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
+    private EventListener exoPlayerEventListener;
+    private Bitmap bitmap;
 
     BetterPlayer(
             Context context,
@@ -117,8 +113,7 @@ final class BetterPlayer {
 
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
-            Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
-            boolean showNotification, String title, String author, String imageUrl) {
+            Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize) {
         this.key = key;
 
         isInitialized = false;
@@ -151,14 +146,11 @@ final class BetterPlayer {
 
         MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
         exoPlayer.prepare(mediaSource);
-        if (showNotification) {
-            setupPlayerNotification(context, title, author, imageUrl);
-        }
 
         result.success(null);
     }
 
-    private void setupPlayerNotification(Context context, String title, String author, String imageUrl) {
+    public void setupPlayerNotification(Context context, String title, String author, String imageUrl) {
 
         PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter
                 = new PlayerNotificationManager.MediaDescriptionAdapter() {
@@ -182,12 +174,14 @@ final class BetterPlayer {
             @Nullable
             @Override
             public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
-                Log.d("PLAYER_ANDROID", "ICON IS: " + imageUrl);
                 if (imageUrl == null){
                     return null;
                 }
+                if (bitmap != null){
+                    return bitmap;
+                }
                 new Thread(() -> {
-                    Bitmap bitmap = null;
+                    bitmap = null;
                     if (imageUrl.contains("http")){
                         bitmap = getBitmapFromExternalURL(imageUrl);
                     } else {
@@ -311,19 +305,35 @@ final class BetterPlayer {
             };
             refreshHandler.postDelayed(refreshRunnable, 0);
         }
-        exoPlayer.addListener(new EventListener() {
+
+        exoPlayerEventListener = new EventListener() {
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                mediaSession.setMetadata(new MediaMetadataCompat.Builder().putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.getDuration()).build());
+                mediaSession.setMetadata(new MediaMetadataCompat.Builder()
+                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.getDuration())
+                        .build());
             }
-        });
+        };
+
+        exoPlayer.addListener(exoPlayerEventListener);
         exoPlayer.seekTo(0);
     }
 
+    public void removeNotificationData(){
+        exoPlayer.removeListener(exoPlayerEventListener);
+        if (refreshHandler != null) {
+            refreshHandler.removeCallbacksAndMessages(null);
+            refreshHandler = null;
+            refreshRunnable = null;
+        }
+        if (playerNotificationManager != null){
+            playerNotificationManager.setPlayer(null);
+        }
+        bitmap = null;
+    }
 
     private static Bitmap getBitmapFromInternalURL(String src){
         try {
-            Log.d("PLAYER_ANDROID", "INTERNAL URL: " + src);
             File file = new File(src);
             return BitmapFactory.decodeFile(src);
         } catch (Exception exception){
@@ -332,7 +342,6 @@ final class BetterPlayer {
     }
     private static Bitmap getBitmapFromExternalURL(String src) {
         try {
-            Log.d("PLAYER_ANDROID", "EXTERNAL URL: " + src);
             URL url = new URL(src);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
@@ -550,14 +559,7 @@ final class BetterPlayer {
     }
 
     void dispose() {
-        if (refreshHandler != null) {
-            refreshHandler.removeCallbacksAndMessages(null);
-            refreshHandler = null;
-            refreshRunnable = null;
-        }
-        if (playerNotificationManager != null){
-            playerNotificationManager.setPlayer(null);
-        }
+        removeNotificationData();
         if (isInitialized) {
             exoPlayer.stop();
         }
@@ -569,6 +571,25 @@ final class BetterPlayer {
         if (exoPlayer != null) {
             exoPlayer.release();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BetterPlayer that = (BetterPlayer) o;
+
+        if (exoPlayer != null ? !exoPlayer.equals(that.exoPlayer) : that.exoPlayer != null)
+            return false;
+        return surface != null ? surface.equals(that.surface) : that.surface == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = exoPlayer != null ? exoPlayer.hashCode() : 0;
+        result = 31 * result + (surface != null ? surface.hashCode() : 0);
+        return result;
     }
 }
 
