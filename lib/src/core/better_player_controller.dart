@@ -252,7 +252,7 @@ class BetterPlayerController extends ChangeNotifier {
           title: _betterPlayerDataSource?.notificationConfiguration?.title,
           author: _betterPlayerDataSource?.notificationConfiguration?.author,
           imageUrl:
-          _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+              _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
           notificationChannelName: _betterPlayerDataSource
               ?.notificationConfiguration?.notificationChannelName,
         );

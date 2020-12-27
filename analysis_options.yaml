@@ -1,4 +1,4 @@
-include: package:lint/analysis_options_package.yaml
+#include: package:lint/analysis_options_package.yaml
 
 analyzer:
   strong-mode:
@@ -16,6 +16,5 @@ linter:
     sort_unnamed_constructors_first: false
     sized_box_for_whitespace: false
     invalid_dependency: false
-    include_file_not_found: false,
     sort_pub_dependencies: false
 
