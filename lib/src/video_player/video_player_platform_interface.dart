@@ -50,7 +50,7 @@ abstract class VideoPlayerPlatform {
     if (!instance.isMock) {
       try {
         instance._verifyProvidesDefaultImplementations();
-      } on NoSuchMethodError catch (_) {
+      } catch (_) {
         throw AssertionError(
             'Platform interfaces must not be implemented with `implements`');
       }
@@ -260,7 +260,7 @@ class DataSource {
     } else if (package != null && package.isNotEmpty) {
       result = "$package:$asset";
     } else {
-      result = "$asset";
+      result = asset;
     }
 
     if (formatHint != null) {
@@ -451,6 +451,7 @@ class DurationRange {
   }
 
   @override
+  // ignore: no_runtimetype_tostring
   String toString() => '$runtimeType(start: $start, end: $end)';
 
   @override

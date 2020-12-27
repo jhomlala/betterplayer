@@ -18,7 +18,7 @@ class _CachePageState extends State<CachePage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       Constants.forBiggerBlazesUrl,
       cacheConfiguration: BetterPlayerCacheConfiguration(useCache: true),
     );

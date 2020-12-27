@@ -59,10 +59,10 @@ class BetterPlayerDataSource {
     this.notificationConfiguration =
         const BetterPlayerNotificationConfiguration(showNotification: false),
   }) : assert(
-            ((type == BetterPlayerDataSourceType.NETWORK ||
-                        type == BetterPlayerDataSourceType.FILE) &&
+            ((type == BetterPlayerDataSourceType.network ||
+                        type == BetterPlayerDataSourceType.file) &&
                     url != null) ||
-                (type == BetterPlayerDataSourceType.MEMORY &&
+                (type == BetterPlayerDataSourceType.memory &&
                     bytes?.isNotEmpty == true),
             "Url can't be null in network or file data source | bytes can't be null when using memory data source");
 
@@ -80,7 +80,7 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration notificationConfiguration,
   }) {
     return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       url,
       subtitles: subtitles,
       liveStream: liveStream,
@@ -105,7 +105,7 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration notificationConfiguration,
   }) {
     return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       url,
       subtitles: subtitles,
       useHlsSubtitles: useHlsSubtitles,
@@ -128,13 +128,14 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration notificationConfiguration,
   }) {
     return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.MEMORY,
+      BetterPlayerDataSourceType.memory,
       "",
       bytes: bytes,
       subtitles: subtitles,
       useHlsSubtitles: useHlsSubtitles,
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
+      cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration,
     );
   }
@@ -148,7 +149,7 @@ class BetterPlayerDataSource {
     Map<String, String> headers,
     bool useHlsSubtitles,
     bool useHlsTracks,
-    Map<String, String> qualities,
+    Map<String, String> resolutions,
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
   }) {
@@ -161,7 +162,7 @@ class BetterPlayerDataSource {
       headers: headers ?? this.headers,
       useHlsSubtitles: useHlsSubtitles ?? this.useHlsSubtitles,
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
-      resolutions: qualities ?? this.resolutions,
+      resolutions: resolutions ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
       notificationConfiguration:
           notificationConfiguration ?? this.notificationConfiguration,

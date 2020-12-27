@@ -19,18 +19,17 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.forBiggerBlazesUrl);
+        BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
 
     super.initState();
     // _betterPlayerController.setControlsEnabled(false);
     _betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == BetterPlayerEventType.INITIALIZED) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
         _betterPlayerController.setControlsEnabled(false);
       }
-      if (event.betterPlayerEventType ==
-          BetterPlayerEventType.OPEN_FULLSCREEN) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.openFullscreen) {
         _betterPlayerController.setControlsEnabled(true);
       }
     });
@@ -60,7 +59,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             child: Text("Play network data source"),
             onPressed: () {
               BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.NETWORK,
+                  BetterPlayerDataSourceType.network,
                   Constants.forBiggerBlazesUrl);
               _betterPlayerController.setupDataSource(dataSource);
             },
@@ -70,7 +69,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             onPressed: () async {
               String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
               BetterPlayerDataSource dataSource =
-                  BetterPlayerDataSource(BetterPlayerDataSourceType.FILE, url);
+                  BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),

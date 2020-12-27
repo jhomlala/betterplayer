@@ -17,12 +17,12 @@ class BetterPlayerPlaylist extends StatefulWidget {
   final BetterPlayerConfiguration betterPlayerConfiguration;
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
 
-  BetterPlayerPlaylist(
-      {Key key,
-      this.betterPlayerDataSourceList,
-      this.betterPlayerConfiguration,
-      this.betterPlayerPlaylistConfiguration})
-      : assert(betterPlayerDataSourceList != null,
+  const BetterPlayerPlaylist({
+    Key key,
+    @required this.betterPlayerDataSourceList,
+    @required this.betterPlayerConfiguration,
+    @required this.betterPlayerPlaylistConfiguration,
+  })  : assert(betterPlayerDataSourceList != null,
             "BetterPlayerDataSourceList can't be null or empty"),
         assert(betterPlayerConfiguration != null,
             "BetterPlayerConfiguration can't be null"),
@@ -68,7 +68,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
       _controller.exitFullScreen();
     }
     _changingToNextVideo = true;
-    BetterPlayerDataSource _nextDataSource = _getNextDateSource();
+    final BetterPlayerDataSource _nextDataSource = _getNextDateSource();
 
     if (_nextDataSource == null) {
       return;
@@ -88,7 +88,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
         betterPlayerDataSource: _currentSource);
 
     _controller.addEventsListener((event) async {
-      if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.finished) {
         _controller.startNextVideoTimer();
       }
     });
@@ -105,7 +105,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
     if (_currentSource == null) {
       return _betterPlayerDataSourceList.first;
     } else {
-      int index = _betterPlayerDataSourceList.indexOf(_currentSource);
+      final int index = _betterPlayerDataSourceList.indexOf(_currentSource);
       if (index + 1 < _betterPlayerDataSourceList.length) {
         return _betterPlayerDataSourceList[index + 1];
       } else {

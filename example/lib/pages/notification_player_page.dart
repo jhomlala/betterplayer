@@ -1,6 +1,5 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
-import 'package:better_player_example/utils.dart';
 import 'package:flutter/material.dart';
 
 class NotificationPlayerPage extends StatefulWidget {
@@ -25,9 +24,9 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
   }
 
   void _setupDataSource() async {
-    String imageUrl = await Utils.getFileUrl(Constants.logo);
+    // String imageUrl = await Utils.getFileUrl(Constants.logo);
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
       notificationConfiguration: BetterPlayerNotificationConfiguration(
         showNotification: true,

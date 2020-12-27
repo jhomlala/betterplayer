@@ -21,6 +21,7 @@ class BetterPlayerListVideoPlayerController {
     _betterPlayerController?.seekTo(duration);
   }
 
+  // ignore: use_setters_to_change_properties
   void setBetterPlayerController(
       BetterPlayerController betterPlayerController) {
     _betterPlayerController = betterPlayerController;

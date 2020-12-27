@@ -176,6 +176,9 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildMoreButton() {
     return BetterPlayerMaterialClickableWidget(
+      onTap: () {
+        onShowMoreClicked();
+      },
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Icon(
@@ -183,9 +186,6 @@ class _BetterPlayerMaterialControlsState
           color: _controlsConfiguration.iconsColor,
         ),
       ),
-      onTap: () {
-        onShowMoreClicked();
-      },
     );
   }
 
@@ -200,25 +200,30 @@ class _BetterPlayerMaterialControlsState
         color: _controlsConfiguration.controlBarColor,
         child: Row(
           children: [
-            _controlsConfiguration.enablePlayPause
-                ? _buildPlayPause(_controller)
-                : const SizedBox(),
-            _betterPlayerController.isLiveStream()
-                ? _buildLiveWidget()
-                : _controlsConfiguration.enableProgressText
-                    ? _buildPosition()
-                    : const SizedBox(),
-            _betterPlayerController.isLiveStream()
-                ? const SizedBox()
-                : _controlsConfiguration.enableProgressBar
-                    ? _buildProgressBar()
-                    : const SizedBox(),
-            _controlsConfiguration.enableMute
-                ? _buildMuteButton(_controller)
-                : const SizedBox(),
-            _controlsConfiguration.enableFullscreen
-                ? _buildExpandButton()
-                : const SizedBox(),
+            if (_controlsConfiguration.enablePlayPause)
+              _buildPlayPause(_controller)
+            else
+              const SizedBox(),
+            if (_betterPlayerController.isLiveStream())
+              _buildLiveWidget()
+            else
+              _controlsConfiguration.enableProgressText
+                  ? _buildPosition()
+                  : const SizedBox(),
+            if (_betterPlayerController.isLiveStream())
+              const SizedBox()
+            else
+              _controlsConfiguration.enableProgressBar
+                  ? _buildProgressBar()
+                  : const SizedBox(),
+            if (_controlsConfiguration.enableMute)
+              _buildMuteButton(_controller)
+            else
+              const SizedBox(),
+            if (_controlsConfiguration.enableFullscreen)
+              _buildExpandButton()
+            else
+              const SizedBox(),
           ],
         ),
       ),
@@ -244,8 +249,8 @@ class _BetterPlayerMaterialControlsState
         duration: _controlsConfiguration.controlsHideTime,
         child: Container(
           height: _controlsConfiguration.controlBarHeight,
-          margin: EdgeInsets.only(right: 12.0),
-          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          margin: const EdgeInsets.only(right: 12.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Center(
             child: Icon(
               _betterPlayerController.isFullScreen
@@ -283,16 +288,17 @@ class _BetterPlayerMaterialControlsState
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
-        mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _controlsConfiguration.enableSkips
-              ? _buildSkipButton()
-              : const SizedBox(),
+          if (_controlsConfiguration.enableSkips)
+            _buildSkipButton()
+          else
+            const SizedBox(),
           _buildReplayButton(),
-          _controlsConfiguration.enableSkips
-              ? _buildForwardButton()
-              : const SizedBox(),
+          if (_controlsConfiguration.enableSkips)
+            _buildForwardButton()
+          else
+            const SizedBox(),
         ],
       ),
     );
@@ -342,7 +348,7 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildReplayButton() {
-    bool isFinished = isVideoFinished(_latestValue);
+    final bool isFinished = isVideoFinished(_latestValue);
     if (!isFinished) {
       return const SizedBox();
     }
@@ -359,8 +365,9 @@ class _BetterPlayerMaterialControlsState
             setState(() {
               _hideStuff = true;
             });
-          } else
+          } else {
             cancelAndRestartTimer();
+          }
         } else {
           _onPlayPause();
 
@@ -393,7 +400,7 @@ class _BetterPlayerMaterialControlsState
                   padding: const EdgeInsets.all(12),
                   child: Text(
                     "${_betterPlayerController.translations.controlsNextVideoIn} ${snapshot.data} ...",
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
@@ -424,15 +431,13 @@ class _BetterPlayerMaterialControlsState
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRect(
           child: Container(
-            child: Container(
-              height: _controlsConfiguration.controlBarHeight,
-              padding: EdgeInsets.symmetric(horizontal: 8),
-              child: Icon(
-                (_latestValue != null && _latestValue.volume > 0)
-                    ? _controlsConfiguration.muteIcon
-                    : _controlsConfiguration.unMuteIcon,
-                color: _controlsConfiguration.iconsColor,
-              ),
+            height: _controlsConfiguration.controlBarHeight,
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Icon(
+              (_latestValue != null && _latestValue.volume > 0)
+                  ? _controlsConfiguration.muteIcon
+                  : _controlsConfiguration.unMuteIcon,
+              color: _controlsConfiguration.iconsColor,
             ),
           ),
         ),
@@ -466,7 +471,7 @@ class _BetterPlayerMaterialControlsState
         : Duration.zero;
 
     return Padding(
-      padding: EdgeInsets.only(right: 24),
+      padding: const EdgeInsets.only(right: 24),
       child: Text(
         '${BetterPlayerUtils.formatDuration(position)} / ${BetterPlayerUtils.formatDuration(duration)}',
         style: TextStyle(
@@ -478,6 +483,7 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
+  @override
   void cancelAndRestartTimer() {
     _hideTimer?.cancel();
     _startHideTimer();
@@ -488,7 +494,7 @@ class _BetterPlayerMaterialControlsState
     });
   }
 
-  Future<Null> _initialize() async {
+  Future<void> _initialize() async {
     _controller.addListener(_updateState);
 
     _updateState();
@@ -549,7 +555,7 @@ class _BetterPlayerMaterialControlsState
         if (!_controller.value.initialized) {
         } else {
           if (isFinished) {
-            _betterPlayerController.seekTo(Duration(seconds: 0));
+            _betterPlayerController.seekTo(const Duration());
           }
           _betterPlayerController.play();
           _betterPlayerController.cancelNextVideoTimer();
@@ -567,8 +573,8 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _updateState() {
-    if (this.mounted) {
-      if (!this._hideStuff ||
+    if (mounted) {
+      if (!_hideStuff ||
           isVideoFinished(_controller.value) ||
           _wasLoading ||
           isLoading(_controller.value)) {
@@ -585,7 +591,7 @@ class _BetterPlayerMaterialControlsState
   Widget _buildProgressBar() {
     return Expanded(
       child: Padding(
-        padding: EdgeInsets.only(right: 20),
+        padding: const EdgeInsets.only(right: 20),
         child: BetterPlayerMaterialVideoProgressBar(
           _controller,
           _betterPlayerController,

@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class BetterPlayerUtils {
@@ -8,10 +9,10 @@ class BetterPlayerUtils {
       return "$bitrate bit/s";
     }
     if (bitrate < 1000000) {
-      var kbit = (bitrate / 1000).floor();
+      final kbit = (bitrate / 1000).floor();
       return "~$kbit KBit/s";
     }
-    var mbit = (bitrate / 1000000).floor();
+    final mbit = (bitrate / 1000000).floor();
     return "~$mbit MBit/s";
   }
 
@@ -22,7 +23,7 @@ class BetterPlayerUtils {
     int seconds = ms ~/ 1000;
     final int hours = seconds ~/ 3600;
     seconds = seconds % 3600;
-    var minutes = seconds ~/ 60;
+    final minutes = seconds ~/ 60;
     seconds = seconds % 60;
 
     final hoursString = hours >= 10
@@ -44,7 +45,7 @@ class BetterPlayerUtils {
             : '0$seconds';
 
     final formattedTime =
-        '${hoursString == '00' ? '' : hoursString + ':'}$minutesString:$secondsString';
+        '${hoursString == '00' ? '' : '$hoursString:'}$minutesString:$secondsString';
 
     return formattedTime;
   }
@@ -56,5 +57,11 @@ class BetterPlayerUtils {
     final height = size.height;
 
     return width > height ? width / height : height / width;
+  }
+
+  static void print(String logMessage) {
+    if (!kReleaseMode) {
+      print(logMessage);
+    }
   }
 }

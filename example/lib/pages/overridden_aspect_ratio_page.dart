@@ -19,7 +19,7 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
       fit: BoxFit.fill,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.forBiggerBlazesUrl);
+        BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.setOverriddenAspectRatio(1.0);

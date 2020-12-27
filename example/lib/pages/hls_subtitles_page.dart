@@ -18,7 +18,7 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.hlsPlaylistUrl,
+        BetterPlayerDataSourceType.network, Constants.hlsPlaylistUrl,
         useHlsSubtitles: true);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);

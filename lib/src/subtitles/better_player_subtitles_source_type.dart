@@ -1,1 +1,1 @@
-enum BetterPlayerSubtitlesSourceType { FILE, NETWORK, MEMORY, NONE }
+enum BetterPlayerSubtitlesSourceType { file, network, memory, none }

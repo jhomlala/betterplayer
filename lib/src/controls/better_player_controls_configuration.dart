@@ -165,7 +165,7 @@ class BetterPlayerControlsConfiguration {
       this.skipsTimeInMilliseconds = 15000});
 
   factory BetterPlayerControlsConfiguration.white() {
-    return BetterPlayerControlsConfiguration(
+    return const BetterPlayerControlsConfiguration(
         controlBarColor: Colors.white,
         textColor: Colors.black,
         iconsColor: Colors.black,
@@ -176,7 +176,7 @@ class BetterPlayerControlsConfiguration {
   }
 
   factory BetterPlayerControlsConfiguration.cupertino() {
-    return BetterPlayerControlsConfiguration(
+    return const BetterPlayerControlsConfiguration(
         fullscreenEnableIcon: CupertinoIcons.fullscreen,
         fullscreenDisableIcon: CupertinoIcons.fullscreen_exit,
         playIcon: CupertinoIcons.play_arrow_solid,

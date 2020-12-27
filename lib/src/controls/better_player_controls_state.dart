@@ -216,12 +216,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final subtitles =
         List.of(betterPlayerController.betterPlayerSubtitlesSourceList);
     final noneSubtitlesElementExists = subtitles?.firstWhere(
-            (source) => source.type == BetterPlayerSubtitlesSourceType.NONE,
+            (source) => source.type == BetterPlayerSubtitlesSourceType.none,
             orElse: () => null) !=
         null;
     if (!noneSubtitlesElementExists) {
       subtitles?.add(BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.NONE));
+          type: BetterPlayerSubtitlesSourceType.none));
     }
 
     showModalBottomSheet<void>(
@@ -247,7 +247,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final selectedSourceType =
         betterPlayerController.betterPlayerSubtitlesSource;
     final bool isSelected = (subtitlesSource == selectedSourceType) ||
-        (subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE &&
+        (subtitlesSource.type == BetterPlayerSubtitlesSourceType.none &&
             subtitlesSource?.type == selectedSourceType.type);
 
     return BetterPlayerMaterialClickableWidget(
@@ -261,7 +261,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           children: [
             const SizedBox(width: 16),
             Text(
-              subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE
+              subtitlesSource.type == BetterPlayerSubtitlesSourceType.none
                   ? betterPlayerController.translations.generalNone
                   : subtitlesSource.name ??
                       betterPlayerController.translations.generalDefault,

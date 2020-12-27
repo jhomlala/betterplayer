@@ -147,6 +147,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
+  @override
   Future<void> setTrackParameters(
       int textureId, int width, int height, int bitrate) {
     return _channel.invokeMethod<void>(

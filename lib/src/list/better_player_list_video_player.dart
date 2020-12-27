@@ -95,8 +95,8 @@ class _BetterPlayerListVideoPlayerState
   }
 
   void onVisibilityChanged(double visibleFraction) async {
-    bool isPlaying = _betterPlayerController.isPlaying();
-    bool initialized = _betterPlayerController.isVideoInitialized();
+    final bool isPlaying = _betterPlayerController.isPlaying();
+    final bool initialized = _betterPlayerController.isVideoInitialized();
     if (visibleFraction >= widget.playFraction) {
       if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
         _betterPlayerController.play();
