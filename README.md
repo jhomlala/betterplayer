@@ -732,7 +732,7 @@ only for normal videos (non-hls) to setup different qualities of the original vi
 <table>
   <tr>
     <td>
-		<img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/feature/player_notifications/media/android_notification.png>
+	    <img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/feature/player_notifications/media/android_notification.png">
     </td>
     <td>
        <img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/feature/player_notifications/media/ios_notification.png">
