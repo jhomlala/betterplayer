@@ -1,4 +1,5 @@
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
+import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 
 import 'better_player_cache_configuration.dart';
@@ -41,17 +42,7 @@ class BetterPlayerDataSource {
   ///List of bytes, used only in memory player
   final List<int> bytes;
 
-  ///Is player controls notification enabled
-  final bool showNotification;
-
-  ///Title of the given data source, used in controls notification
-  final String title;
-
-  ///Author of the given data source, used in controls notification
-  final String author;
-
-  ///Image of the video, used in controls notification
-  final String imageUrl;
+  final BetterPlayerNotificationConfiguration notificationConfiguration;
 
   BetterPlayerDataSource(
     this.type,
@@ -65,10 +56,8 @@ class BetterPlayerDataSource {
     this.hlsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
-    this.showNotification = false,
-    this.title,
-    this.author,
-    this.imageUrl,
+    this.notificationConfiguration =
+        const BetterPlayerNotificationConfiguration(showNotification: false),
   }) : assert(
             ((type == BetterPlayerDataSourceType.NETWORK ||
                         type == BetterPlayerDataSourceType.FILE) &&
@@ -88,10 +77,7 @@ class BetterPlayerDataSource {
     bool useHlsTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
-    bool showNotification,
-    String title,
-    String author,
-    String imageUrl,
+    BetterPlayerNotificationConfiguration notificationConfiguration,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
@@ -103,10 +89,7 @@ class BetterPlayerDataSource {
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
-      showNotification: showNotification,
-      title: title,
-      author: author,
-      imageUrl: imageUrl,
+      notificationConfiguration: notificationConfiguration,
     );
   }
 
@@ -119,10 +102,7 @@ class BetterPlayerDataSource {
     bool useHlsTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
-    bool showNotification,
-    String title,
-    String author,
-    String imageUrl,
+    BetterPlayerNotificationConfiguration notificationConfiguration,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
@@ -131,10 +111,7 @@ class BetterPlayerDataSource {
       useHlsSubtitles: useHlsSubtitles,
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
-      showNotification: showNotification,
-      title: title,
-      author: author,
-      imageUrl: imageUrl,
+      notificationConfiguration: notificationConfiguration,
     );
   }
 
@@ -147,10 +124,7 @@ class BetterPlayerDataSource {
     bool useHlsTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
-    bool showNotification,
-    String title,
-    String author,
-    String imageUrl,
+    BetterPlayerNotificationConfiguration notificationConfiguration,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.MEMORY,
@@ -160,28 +134,23 @@ class BetterPlayerDataSource {
       useHlsSubtitles: useHlsSubtitles,
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
-      showNotification: showNotification,
-      title: title,
-      author: author,
-      imageUrl: imageUrl,
+      notificationConfiguration: notificationConfiguration,
     );
   }
 
-  BetterPlayerDataSource copyWith(
-      {BetterPlayerDataSourceType type,
-      String url,
-      List<int> bytes,
-      List<BetterPlayerSubtitlesSource> subtitles,
-      bool liveStream,
-      Map<String, String> headers,
-      bool useHlsSubtitles,
-      bool useHlsTracks,
-      Map<String, String> qualities,
-      BetterPlayerCacheConfiguration cacheConfiguration,
-      bool showNotification,
-      String title,
-      String author,
-      String imageUrl}) {
+  BetterPlayerDataSource copyWith({
+    BetterPlayerDataSourceType type,
+    String url,
+    List<int> bytes,
+    List<BetterPlayerSubtitlesSource> subtitles,
+    bool liveStream,
+    Map<String, String> headers,
+    bool useHlsSubtitles,
+    bool useHlsTracks,
+    Map<String, String> qualities,
+    BetterPlayerCacheConfiguration cacheConfiguration,
+    BetterPlayerNotificationConfiguration notificationConfiguration,
+  }) {
     return BetterPlayerDataSource(
       type ?? this.type,
       url ?? this.url,
@@ -193,10 +162,8 @@ class BetterPlayerDataSource {
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
       resolutions: qualities ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
-      showNotification: showNotification ?? this.showNotification,
-      title: title ?? this.title,
-      author: author ?? this.author,
-      imageUrl: imageUrl ?? this.imageUrl,
+      notificationConfiguration:
+          notificationConfiguration ?? this.notificationConfiguration,
     );
   }
 }

@@ -231,41 +231,50 @@ class BetterPlayerController extends ChangeNotifier {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
         await videoPlayerController.setNetworkDataSource(
-          betterPlayerDataSource.url,
-          headers: betterPlayerDataSource.headers,
-          useCache:
-              _betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
-          maxCacheSize:
-              _betterPlayerDataSource.cacheConfiguration?.maxCacheSize ?? 0,
-          maxCacheFileSize:
-              _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
-          showNotification: _betterPlayerDataSource.showNotification,
-          title: _betterPlayerDataSource.title,
-          author: _betterPlayerDataSource.author,
-          imageUrl:  _betterPlayerDataSource.imageUrl,
-        );
+            betterPlayerDataSource.url,
+            headers: betterPlayerDataSource.headers,
+            useCache:
+                _betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
+            maxCacheSize:
+                _betterPlayerDataSource.cacheConfiguration?.maxCacheSize ?? 0,
+            maxCacheFileSize:
+                _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ??
+                    0,
+            showNotification: _betterPlayerDataSource
+                .notificationConfiguration.showNotification,
+            title: _betterPlayerDataSource.notificationConfiguration.title,
+            author: _betterPlayerDataSource.notificationConfiguration.author,
+            imageUrl:
+                _betterPlayerDataSource.notificationConfiguration.imageUrl,
+            notificationChannelName: _betterPlayerDataSource
+                .notificationConfiguration.notificationChannelName);
 
         break;
       case BetterPlayerDataSourceType.FILE:
         await videoPlayerController.setFileDataSource(
-          File(betterPlayerDataSource.url),
-          showNotification: _betterPlayerDataSource.showNotification,
-          title: _betterPlayerDataSource.title,
-          author: _betterPlayerDataSource.author,
-          imageUrl:  _betterPlayerDataSource.imageUrl,
-        );
+            File(betterPlayerDataSource.url),
+            showNotification: _betterPlayerDataSource
+                .notificationConfiguration.showNotification,
+            title: _betterPlayerDataSource.notificationConfiguration.title,
+            author: _betterPlayerDataSource.notificationConfiguration.author,
+            imageUrl:
+                _betterPlayerDataSource.notificationConfiguration.imageUrl,
+            notificationChannelName: _betterPlayerDataSource
+                .notificationConfiguration.notificationChannelName);
         break;
       case BetterPlayerDataSourceType.MEMORY:
         var file = await _createFile(_betterPlayerDataSource.bytes);
 
         if (file != null) {
-          await videoPlayerController.setFileDataSource(
-            file,
-            showNotification: _betterPlayerDataSource.showNotification,
-            title: _betterPlayerDataSource.title,
-            author: _betterPlayerDataSource.author,
-            imageUrl:  _betterPlayerDataSource.imageUrl,
-          );
+          await videoPlayerController.setFileDataSource(file,
+              showNotification: _betterPlayerDataSource
+                  .notificationConfiguration.showNotification,
+              title: _betterPlayerDataSource.notificationConfiguration.title,
+              author: _betterPlayerDataSource.notificationConfiguration.author,
+              imageUrl:
+                  _betterPlayerDataSource.notificationConfiguration.imageUrl,
+              notificationChannelName: _betterPlayerDataSource
+                  .notificationConfiguration.notificationChannelName);
           _tempFiles.add(file);
         } else {
           throw ArgumentError("Couldn't create file from memory.");
@@ -589,16 +598,15 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
-
   void setAppLifecycleState(AppLifecycleState appLifecycleState) async {
     if (betterPlayerConfiguration.handleLifecycle) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
-          if (_wasPlayingBeforePause) {
-            play();
-          }
+        if (_wasPlayingBeforePause) {
+          play();
+        }
       }
-      if (appLifecycleState == AppLifecycleState.paused){
+      if (appLifecycleState == AppLifecycleState.paused) {
         _wasPlayingBeforePause = await isPlaying();
         pause();
       }

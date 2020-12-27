@@ -45,7 +45,14 @@ class _VideoListWidgetState extends State<VideoListWidget> {
           AspectRatio(
               child: BetterPlayerListVideoPlayer(
                 BetterPlayerDataSource(
-                    BetterPlayerDataSourceType.NETWORK, videoListData.videoUrl, showNotification: true, title: videoListData.videoTitle, author: "Cokolwiek"),
+                  BetterPlayerDataSourceType.NETWORK,
+                  videoListData.videoUrl,
+                  notificationConfiguration:
+                      BetterPlayerNotificationConfiguration(
+                          showNotification: true,
+                          title: videoListData.videoTitle,
+                          author: "Test"),
+                ),
                 configuration: BetterPlayerConfiguration(
                   autoPlay: false,
                   aspectRatio: 1,

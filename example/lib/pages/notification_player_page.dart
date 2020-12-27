@@ -22,10 +22,12 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
       Constants.elephantDreamVideoUrl,
-      showNotification: true,
-      title: "Elephant dream",
-      author: "Some author",
-      imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg"
+      notificationConfiguration: BetterPlayerNotificationConfiguration(
+          showNotification: true,
+          title: "Elephant dream",
+          author: "Some author",
+          imageUrl:
+              "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg"),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
