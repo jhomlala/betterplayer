@@ -82,9 +82,8 @@ class _BetterPlayerListVideoPlayerState
   Widget build(BuildContext context) {
     super.build(context);
     return AspectRatio(
-      aspectRatio:
-          _betterPlayerController.getAspectRatio() ??
-              BetterPlayerUtils.calculateAspectRatio(context),
+      aspectRatio: _betterPlayerController.getAspectRatio() ??
+          BetterPlayerUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         key: Key("${_getUniqueKey()}_player"),
         controller: _betterPlayerController,
@@ -93,7 +92,7 @@ class _BetterPlayerListVideoPlayerState
   }
 
   void onVisibilityChanged(double visibleFraction) async {
-    bool isPlaying = await _betterPlayerController.isPlaying();
+    bool isPlaying = _betterPlayerController.isPlaying();
     bool initialized = _betterPlayerController.isVideoInitialized();
     if (visibleFraction >= widget.playFraction) {
       if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {

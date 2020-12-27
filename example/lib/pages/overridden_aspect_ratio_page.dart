@@ -13,7 +13,7 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
   @override
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
-    BetterPlayerConfiguration(
+        BetterPlayerConfiguration(
       aspectRatio: 16/9,
       fit: BoxFit.fill,
     );

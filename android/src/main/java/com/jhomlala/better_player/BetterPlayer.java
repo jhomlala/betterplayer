@@ -513,10 +513,8 @@ final class BetterPlayer {
 
     void setSpeed(double value) {
         float bracketedValue = (float) value;
-        PlaybackParameters existingParam = exoPlayer.getPlaybackParameters();
-        PlaybackParameters newParameter =
-                new PlaybackParameters(bracketedValue, existingParam.pitch, existingParam.skipSilence);
-        exoPlayer.setPlaybackParameters(newParameter);
+        PlaybackParameters playbackParameters = new PlaybackParameters(bracketedValue);
+        exoPlayer.setPlaybackParameters(playbackParameters);
     }
 
     void setTrackParameters(int width, int height, int bitrate) {

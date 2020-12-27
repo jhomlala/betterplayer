@@ -127,6 +127,12 @@ class BetterPlayerController extends ChangeNotifier {
 
   double _overriddenAspectRatio;
 
+  bool _controlsEnabled = true;
+
+  bool get controlsEnabled => _controlsEnabled;
+
+  double _overriddenAspectRatio;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -386,7 +392,7 @@ class BetterPlayerController extends ChangeNotifier {
         parameters: {_speedParameter: speed}));
   }
 
-  Future<bool> isPlaying() async {
+  bool isPlaying() {
     return videoPlayerController.value.isPlaying;
   }
 
@@ -537,10 +543,10 @@ class BetterPlayerController extends ChangeNotifier {
             .playerVisibilityChangedBehavior(visibilityFraction);
       } else {
         if (visibilityFraction == 0) {
-          _wasPlayingBeforePause = await isPlaying();
+          _wasPlayingBeforePause = isPlaying();
           pause();
         } else {
-          if (_wasPlayingBeforePause && !(await isPlaying())) {
+          if (_wasPlayingBeforePause && !isPlaying()) {
             play();
           }
         }
@@ -552,7 +558,7 @@ class BetterPlayerController extends ChangeNotifier {
   void setResolution(String url) async {
     assert(url != null, "Url can't be null");
     var position = await videoPlayerController.position;
-    var wasPlayingBeforeChange = await isPlaying();
+    var wasPlayingBeforeChange = isPlaying();
     cancelFullScreenDismiss = true;
     videoPlayerController.pause();
     await setupDataSource(betterPlayerDataSource.copyWith(url: url));
@@ -611,6 +617,20 @@ class BetterPlayerController extends ChangeNotifier {
         pause();
       }
     }
+  }
+
+  ///Setup overridden aspect ratio.
+  void setOverriddenAspectRatio(double aspectRatio) {
+    _overriddenAspectRatio = aspectRatio;
+  }
+
+  ///Get aspect ratio used in current video. If aspect ratio is null, then
+  ///aspect ratio from BetterPlayerConfiguration will be used. Otherwise
+  ///[_overriddenAspectRatio] will be used.
+  double getAspectRatio() {
+    return _overriddenAspectRatio != null
+        ? _overriddenAspectRatio
+        : betterPlayerConfiguration.aspectRatio;
   }
 
   ///Setup overridden aspect ratio.
