@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/auto_fullscreen_orientation_page.dart';
 import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/cache_page.dart';
@@ -31,6 +32,7 @@ class _WelcomePageState extends State<WelcomePage> {
   void initState() {
     _saveAssetSubtitleToFile();
     _saveAssetVideoToFile();
+    _saveLogoToFile();
     super.initState();
   }
 
@@ -160,6 +162,14 @@ class _WelcomePageState extends State<WelcomePage> {
     var content = await rootBundle.load("assets/testvideo.mp4");
     final directory = await getApplicationDocumentsDirectory();
     var file = File("${directory.path}/testvideo.mp4");
+    file.writeAsBytesSync(content.buffer.asUint8List());
+  }
+
+  ///Save logo to file, so we can use it later
+  Future _saveLogoToFile() async{
+    var content = await rootBundle.load("assets/${Constants.logo}");
+    final directory = await getApplicationDocumentsDirectory();
+    var file = File("${directory.path}/${Constants.logo}");
     file.writeAsBytesSync(content.buffer.asUint8List());
   }
 }

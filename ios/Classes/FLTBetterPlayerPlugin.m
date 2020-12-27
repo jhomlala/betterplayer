@@ -743,8 +743,15 @@ NSMutableDictionary*  _artworkImageDict;
         } else {
             dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
             dispatch_async(queue, ^{
-                NSURL *nsImageUrl =[NSURL URLWithString:imageUrl];
-                UIImage * tempArtworkImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:nsImageUrl]];
+                
+                NSLog(@"IMAGE URL %@", imageUrl);
+                UIImage * tempArtworkImage = nil;
+                if ([imageUrl rangeOfString:@"http"].location == NSNotFound){
+                    tempArtworkImage = [UIImage imageWithContentsOfFile:imageUrl];
+                } else {
+                    NSURL *nsImageUrl =[NSURL URLWithString:imageUrl];
+                    tempArtworkImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:nsImageUrl]];
+                }
                 if(tempArtworkImage)
                 {
                     MPMediaItemArtwork* artworkImage = [[MPMediaItemArtwork alloc] initWithImage: tempArtworkImage];

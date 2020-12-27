@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/utils.dart';
@@ -19,20 +21,26 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
       fit: BoxFit.contain,
       handleLifecycle: true,
     );
+    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
+    _setupDataSource();
+    super.initState();
+  }
+
+  void _setupDataSource() async {
+    String imageUrl = await Utils.getFileUrl(Constants.logo);
+    print("IMage url: "+ imageUrl);
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
       Constants.elephantDreamVideoUrl,
       notificationConfiguration: BetterPlayerNotificationConfiguration(
-          showNotification: true,
-          title: "Elephant dream",
-          author: "Some author",
-          imageUrl:
-              "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg"),
+        showNotification: true,
+        title: "Elephant dream",
+        author: "Some author",
+        //imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg",
+        imageUrl: imageUrl
+      ),
     );
-    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
-
-    super.initState();
   }
 
   @override
