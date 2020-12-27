@@ -20,3 +20,4 @@ export 'src/controls/better_player_overflow_menu_item.dart';
 export 'src/configuration/better_player_translations.dart';
 export 'src/configuration/better_player_cache_configuration.dart';
 export 'src/configuration/better_player_event.dart';
+export 'src/configuration/better_player_notification_configuration.dart';

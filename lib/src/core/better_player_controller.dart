@@ -120,7 +120,6 @@ class BetterPlayerController extends ChangeNotifier {
       _controlsVisibilityStreamController.stream;
 
   AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
-  BetterPlayerEventType _betterPlayerEventBeforePause;
 
   bool _controlsEnabled = true;
 
@@ -232,26 +231,50 @@ class BetterPlayerController extends ChangeNotifier {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.NETWORK:
         await videoPlayerController.setNetworkDataSource(
-          betterPlayerDataSource.url,
-          headers: betterPlayerDataSource.headers,
-          useCache:
-              _betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
-          maxCacheSize:
-              _betterPlayerDataSource.cacheConfiguration?.maxCacheSize ?? 0,
-          maxCacheFileSize:
-              _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
-        );
+            betterPlayerDataSource.url,
+            headers: betterPlayerDataSource.headers,
+            useCache:
+                _betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
+            maxCacheSize:
+                _betterPlayerDataSource.cacheConfiguration?.maxCacheSize ?? 0,
+            maxCacheFileSize:
+                _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ??
+                    0,
+            showNotification: _betterPlayerDataSource
+                .notificationConfiguration.showNotification,
+            title: _betterPlayerDataSource.notificationConfiguration.title,
+            author: _betterPlayerDataSource.notificationConfiguration.author,
+            imageUrl:
+                _betterPlayerDataSource.notificationConfiguration.imageUrl,
+            notificationChannelName: _betterPlayerDataSource
+                .notificationConfiguration.notificationChannelName);
 
         break;
       case BetterPlayerDataSourceType.FILE:
-        await videoPlayerController
-            .setFileDataSource(File(betterPlayerDataSource.url));
+        await videoPlayerController.setFileDataSource(
+            File(betterPlayerDataSource.url),
+            showNotification: _betterPlayerDataSource
+                .notificationConfiguration.showNotification,
+            title: _betterPlayerDataSource.notificationConfiguration.title,
+            author: _betterPlayerDataSource.notificationConfiguration.author,
+            imageUrl:
+                _betterPlayerDataSource.notificationConfiguration.imageUrl,
+            notificationChannelName: _betterPlayerDataSource
+                .notificationConfiguration.notificationChannelName);
         break;
       case BetterPlayerDataSourceType.MEMORY:
         var file = await _createFile(_betterPlayerDataSource.bytes);
 
         if (file != null) {
-          await videoPlayerController.setFileDataSource(file);
+          await videoPlayerController.setFileDataSource(file,
+              showNotification: _betterPlayerDataSource
+                  .notificationConfiguration.showNotification,
+              title: _betterPlayerDataSource.notificationConfiguration.title,
+              author: _betterPlayerDataSource.notificationConfiguration.author,
+              imageUrl:
+                  _betterPlayerDataSource.notificationConfiguration.imageUrl,
+              notificationChannelName: _betterPlayerDataSource
+                  .notificationConfiguration.notificationChannelName);
           _tempFiles.add(file);
         } else {
           throw ArgumentError("Couldn't create file from memory.");
@@ -320,7 +343,6 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> play() async {
-    _betterPlayerEventBeforePause = BetterPlayerEventType.PLAY;
     if (_appLifecycleState == AppLifecycleState.resumed) {
       await videoPlayerController.play();
       _hasCurrentDataSourceStarted = true;
@@ -333,7 +355,6 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> pause() async {
-    _betterPlayerEventBeforePause = BetterPlayerEventType.PAUSE;
     await videoPlayerController.pause();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.PAUSE));
   }
@@ -508,16 +529,19 @@ class BetterPlayerController extends ChangeNotifier {
     }
     _postEvent(
         BetterPlayerEvent(BetterPlayerEventType.CHANGED_PLAYER_VISIBILITY));
-    if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
-      betterPlayerConfiguration
-          .playerVisibilityChangedBehavior(visibilityFraction);
-    } else {
-      if (visibilityFraction == 0) {
-        _wasPlayingBeforePause = isPlaying();
-        pause();
+
+    if (betterPlayerConfiguration.handleLifecycle) {
+      if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
+        betterPlayerConfiguration
+            .playerVisibilityChangedBehavior(visibilityFraction);
       } else {
-        if (_wasPlayingBeforePause && !isPlaying()) {
-          play();
+        if (visibilityFraction == 0) {
+          _wasPlayingBeforePause = isPlaying();
+          pause();
+        } else {
+          if (_wasPlayingBeforePause && !isPlaying()) {
+            play();
+          }
         }
       }
     }
@@ -574,10 +598,16 @@ class BetterPlayerController extends ChangeNotifier {
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
   void setAppLifecycleState(AppLifecycleState appLifecycleState) {
-    _appLifecycleState = appLifecycleState;
-    if (appLifecycleState == AppLifecycleState.resumed) {
-      if (_betterPlayerEventBeforePause == BetterPlayerEventType.PLAY) {
-        play();
+    if (betterPlayerConfiguration.handleLifecycle) {
+      _appLifecycleState = appLifecycleState;
+      if (appLifecycleState == AppLifecycleState.resumed) {
+        if (_wasPlayingBeforePause) {
+          play();
+        }
+      }
+      if (appLifecycleState == AppLifecycleState.paused) {
+        _wasPlayingBeforePause = isPlaying();
+        pause();
       }
     }
   }

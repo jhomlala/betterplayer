@@ -38,7 +38,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> setDataSource(int textureId, DataSource dataSource) async {
     Map<String, dynamic> dataSourceDescription;
-
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
         dataSourceDescription = <String, dynamic>{
@@ -47,7 +46,12 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'package': dataSource.package,
           'useCache': false,
           'maxCacheSize': 0,
-          'maxCacheFileSize': 0
+          'maxCacheFileSize': 0,
+          'showNotification': dataSource.showNotification,
+          'title': dataSource.title,
+          'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
         };
         break;
       case DataSourceType.network:
@@ -58,7 +62,12 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'headers': dataSource.headers,
           'useCache': dataSource.useCache,
           'maxCacheSize': dataSource.maxCacheSize,
-          'maxCacheFileSize': dataSource.maxCacheFileSize
+          'maxCacheFileSize': dataSource.maxCacheFileSize,
+          'showNotification': dataSource.showNotification,
+          'title': dataSource.title,
+          'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
         };
         break;
       case DataSourceType.file:
@@ -67,7 +76,12 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'uri': dataSource.uri,
           'useCache': false,
           'maxCacheSize': 0,
-          'maxCacheFileSize': 0
+          'maxCacheFileSize': 0,
+          'showNotification': dataSource.showNotification,
+          'title': dataSource.title,
+          'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
         };
         break;
     }
@@ -170,6 +184,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event;
+
       switch (map['event']) {
         case 'initialized':
           return VideoEvent(
@@ -202,6 +217,26 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             eventType: VideoEventType.bufferingEnd,
             key: map['key'],
           );
+
+        case 'play':
+          return VideoEvent(
+            eventType: VideoEventType.play,
+            key: map['key'],
+          );
+
+        case 'pause':
+          return VideoEvent(
+            eventType: VideoEventType.pause,
+            key: map['key'],
+          );
+
+        case 'seek':
+          return VideoEvent(
+            eventType: VideoEventType.seek,
+            key: map['key'],
+            position: Duration(milliseconds: map['position']),
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,

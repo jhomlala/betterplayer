@@ -178,7 +178,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   final Completer<void> _creatingCompleter = Completer<void>();
   Completer<void> _initializingCompleter;
   StreamSubscription<dynamic> _eventSubscription;
-  _VideoAppLifeCycleObserver _lifeCycleObserver;
 
   bool get _created => _creatingCompleter.isCompleted;
 
@@ -199,7 +198,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
-
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(
@@ -221,6 +219,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
+          break;
+
+        case VideoEventType.play:
+          play();
+          break;
+        case VideoEventType.pause:
+          pause();
+          break;
+        case VideoEventType.seek:
+          seekTo(event.position);
           break;
         case VideoEventType.unknown:
           break;
@@ -246,17 +254,25 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  Future<void> setAssetDataSource(
-    String dataSource, {
-    String package,
-    Future<ClosedCaptionFile> closedCaptionFile,
-  }) {
+  Future<void> setAssetDataSource(String dataSource,
+      {String package,
+      Future<ClosedCaptionFile> closedCaptionFile,
+      bool showNotification,
+      String title,
+      String author,
+      String imageUrl,
+      String notificationChannelName}) {
     return _setDataSource(
       DataSource(
         sourceType: DataSourceType.asset,
         asset: dataSource,
         package: package,
         closedCaptionFile: closedCaptionFile,
+        showNotification: showNotification,
+        title: title,
+        author: author,
+        imageUrl: imageUrl,
+        notificationChannelName: notificationChannelName,
       ),
     );
   }
@@ -268,23 +284,36 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// null.
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
-  Future<void> setNetworkDataSource(String dataSource,
-      {VideoFormat formatHint,
-      Future<ClosedCaptionFile> closedCaptionFile,
-      Map<String, String> headers,
-      bool useCache = false,
-      int maxCacheSize,
-      int maxCacheFileSize}) {
+  Future<void> setNetworkDataSource(
+    String dataSource, {
+    VideoFormat formatHint,
+    Future<ClosedCaptionFile> closedCaptionFile,
+    Map<String, String> headers,
+    bool useCache = false,
+    int maxCacheSize,
+    int maxCacheFileSize,
+    bool showNotification,
+    String title,
+    String author,
+    String imageUrl,
+    String notificationChannelName,
+  }) {
     return _setDataSource(
       DataSource(
-          sourceType: DataSourceType.network,
-          uri: dataSource,
-          formatHint: formatHint,
-          closedCaptionFile: closedCaptionFile,
-          headers: headers,
-          useCache: useCache,
-          maxCacheSize: maxCacheSize,
-          maxCacheFileSize: maxCacheFileSize),
+        sourceType: DataSourceType.network,
+        uri: dataSource,
+        formatHint: formatHint,
+        closedCaptionFile: closedCaptionFile,
+        headers: headers,
+        useCache: useCache,
+        maxCacheSize: maxCacheSize,
+        maxCacheFileSize: maxCacheFileSize,
+        showNotification: showNotification,
+        title: title,
+        author: author,
+        imageUrl: imageUrl,
+        notificationChannelName: notificationChannelName,
+      ),
     );
   }
 
@@ -295,18 +324,27 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> setFileDataSource(
     File file, {
     Future<ClosedCaptionFile> closedCaptionFile,
+    bool showNotification,
+    String title,
+    String author,
+    String imageUrl,
+    String notificationChannelName,
   }) {
     return _setDataSource(
       DataSource(
         sourceType: DataSourceType.file,
         uri: 'file://${file.path}',
         closedCaptionFile: closedCaptionFile,
+        showNotification: showNotification,
+        title: title,
+        author: author,
+        imageUrl: imageUrl,
+        notificationChannelName: notificationChannelName,
       ),
     );
   }
 
   Future<void> _setDataSource(DataSource dataSourceDescription) async {
-    print("Set data source: $dataSourceDescription");
     if (_isDisposed) {
       return;
     }
@@ -327,11 +365,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       value = value.copyWith(caption: _getCaptionAt(value.position));
     }
 
-    if (_lifeCycleObserver == null) {
-      _lifeCycleObserver = _VideoAppLifeCycleObserver(this);
-      _lifeCycleObserver.initialize();
-    }
-
     _initializingCompleter = Completer<void>();
 
     await VideoPlayerPlatform.instance
@@ -350,7 +383,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         await _eventSubscription?.cancel();
         await _videoPlayerPlatform.dispose(_textureId);
       }
-      _lifeCycleObserver?.dispose();
     }
     _isDisposed = true;
     super.dispose();
@@ -503,37 +535,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   void _updatePosition(Duration position) {
     value = value.copyWith(position: position);
     value = value.copyWith(caption: _getCaptionAt(position));
-  }
-}
-
-class _VideoAppLifeCycleObserver extends Object with WidgetsBindingObserver {
-  _VideoAppLifeCycleObserver(this._controller);
-
-  bool _wasPlayingBeforePause = false;
-  final VideoPlayerController _controller;
-
-  void initialize() {
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    switch (state) {
-      case AppLifecycleState.paused:
-        _wasPlayingBeforePause = _controller.value.isPlaying;
-        _controller.pause();
-        break;
-      case AppLifecycleState.resumed:
-        if (_wasPlayingBeforePause) {
-          _controller.play();
-        }
-        break;
-      default:
-    }
-  }
-
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
   }
 }
 

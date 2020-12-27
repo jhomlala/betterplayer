@@ -172,6 +172,11 @@ class DataSource {
     this.useCache = false,
     this.maxCacheSize = _maxCacheSize,
     this.maxCacheFileSize = _maxCacheFileSize,
+    this.showNotification = false,
+    this.title,
+    this.author,
+    this.imageUrl,
+    this.notificationChannelName,
   }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -231,6 +236,16 @@ class DataSource {
 
   final int maxCacheFileSize;
 
+  final bool showNotification;
+
+  final String title;
+
+  final String author;
+
+  final String imageUrl;
+
+  final String notificationChannelName;
+
   /// Key to compare DataSource
   String get key {
     String result = "";
@@ -252,7 +267,11 @@ class DataSource {
 
   @override
   String toString() {
-    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint: $formatHint, asset: $asset, package: $package, closedCaptionFile: $closedCaptionFile, headers: $headers, useCache: $useCache, maxCacheSize: $maxCacheSize, maxCacheFileSize: $maxCacheFileSize}';
+    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint:'
+        ' $formatHint, asset: $asset, package: $package, closedCaptionFile: '
+        '$closedCaptionFile, headers: $headers, useCache: $useCache, '
+        'maxCacheSize: $maxCacheSize, maxCacheFileSize: $maxCacheFileSize, '
+        'showNotification: $showNotification, title: $title, author: $author}';
   }
 }
 
@@ -300,6 +319,7 @@ class VideoEvent {
     this.duration,
     this.size,
     this.buffered,
+    this.position,
   });
 
   /// The type of the event.
@@ -324,6 +344,9 @@ class VideoEvent {
   ///
   /// Only used if [eventType] is [VideoEventType.bufferingUpdate].
   final List<DurationRange> buffered;
+
+  ///Seek position
+  final Duration position;
 
   @override
   bool operator ==(Object other) {
@@ -364,6 +387,15 @@ enum VideoEventType {
 
   /// The video stopped to buffer.
   bufferingEnd,
+
+  /// The video is set to play
+  play,
+
+  /// The video is set to pause
+  pause,
+
+  /// The video is set to given to position
+  seek,
 
   /// An unknown event has been received.
   unknown,

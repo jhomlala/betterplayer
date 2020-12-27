@@ -3,13 +3,26 @@ package com.jhomlala.better_player;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.ResultReceiver;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -26,17 +39,24 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager;
+
+import androidx.annotation.Nullable;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -50,6 +70,8 @@ final class BetterPlayer {
     private static final String FORMAT_DASH = "dash";
     private static final String FORMAT_HLS = "hls";
     private static final String FORMAT_OTHER = "other";
+    private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
+    private static final int NOTIFICATION_ID = 20772077;
 
     private SimpleExoPlayer exoPlayer;
 
@@ -69,6 +91,12 @@ final class BetterPlayer {
 
     private long maxCacheSize;
     private long maxCacheFileSize;
+
+    private PlayerNotificationManager playerNotificationManager;
+    private Handler refreshHandler;
+    private Runnable refreshRunnable;
+    private EventListener exoPlayerEventListener;
+    private Bitmap bitmap;
 
     BetterPlayer(
             Context context,
@@ -122,6 +150,214 @@ final class BetterPlayer {
 
         result.success(null);
     }
+
+    public void setupPlayerNotification(Context context, String title, String author, String imageUrl, String notificationChannelName) {
+
+        PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter
+                = new PlayerNotificationManager.MediaDescriptionAdapter() {
+            @Override
+            public String getCurrentContentTitle(Player player) {
+                return title;
+            }
+
+            @Nullable
+            @Override
+            public PendingIntent createCurrentContentIntent(Player player) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public String getCurrentContentText(Player player) {
+                return author;
+            }
+
+            @Nullable
+            @Override
+            public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
+                if (imageUrl == null){
+                    return null;
+                }
+                if (bitmap != null){
+                    return bitmap;
+                }
+                new Thread(() -> {
+                    bitmap = null;
+                    if (imageUrl.contains("http")){
+                        bitmap = getBitmapFromExternalURL(imageUrl);
+                    } else {
+                        bitmap = getBitmapFromInternalURL(imageUrl);
+                    }
+
+                    Bitmap finalBitmap = bitmap;
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        callback.onBitmap(finalBitmap);
+                    });
+
+                }).start();
+                return null;
+            }
+        };
+
+        String playerNotificationChannelName = notificationChannelName;
+        if (notificationChannelName == null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL,
+                        DEFAULT_NOTIFICATION_CHANNEL, importance);
+                channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL);
+                NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+                notificationManager.createNotificationChannel(channel);
+                playerNotificationChannelName = DEFAULT_NOTIFICATION_CHANNEL;
+            }
+        }
+
+
+        playerNotificationManager = new PlayerNotificationManager(context,
+                playerNotificationChannelName,
+                NOTIFICATION_ID,
+                mediaDescriptionAdapter);
+        playerNotificationManager.setPlayer(exoPlayer);
+        playerNotificationManager.setUseNavigationActions(false);
+        playerNotificationManager.setStopAction(null);
+
+        MediaSessionCompat mediaSession = new MediaSessionCompat(context, "ExoPlayer");
+
+        mediaSession.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public void onSeekTo(long pos) {
+                exoPlayer.seekTo(pos);
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "seek");
+                event.put("position", pos);
+                eventSink.success(event);
+                super.onSeekTo(pos);
+            }
+
+            @Override
+            public void onCommand(String command, Bundle extras, ResultReceiver cb) {
+                super.onCommand(command, extras, cb);
+            }
+        });
+        mediaSession.setActive(true);
+        playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
+
+
+        playerNotificationManager.setControlDispatcher(new ControlDispatcher() {
+            @Override
+            public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
+                String eventType = "";
+                if (player.getPlayWhenReady()) {
+                    eventType = "pause";
+                } else {
+                    eventType = "play";
+                }
+
+
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", eventType);
+                eventSink.success(event);
+
+                return true;
+            }
+
+            @Override
+            public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "seek");
+                event.put("position", positionMs);
+                eventSink.success(event);
+                return true;
+            }
+
+            @Override
+            public boolean dispatchSetRepeatMode(Player player, int repeatMode) {
+                return false;
+            }
+
+            @Override
+            public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) {
+                return false;
+            }
+
+            @Override
+            public boolean dispatchStop(Player player, boolean reset) {
+                return false;
+            }
+        });
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            refreshHandler = new Handler();
+            refreshRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    PlaybackStateCompat playbackState = null;
+                    if (exoPlayer.getPlayWhenReady()) {
+                        playbackState = new PlaybackStateCompat.Builder()
+                                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                                .setState(PlaybackStateCompat.STATE_PAUSED, getPosition(), 1.0f)
+                                .build();
+                    } else {
+                        playbackState = new PlaybackStateCompat.Builder()
+                                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                                .setState(PlaybackStateCompat.STATE_PLAYING, getPosition(), 1.0f)
+                                .build();
+                    }
+
+                    mediaSession.setPlaybackState(playbackState);
+                    refreshHandler.postDelayed(refreshRunnable, 1000);
+                }
+            };
+            refreshHandler.postDelayed(refreshRunnable, 0);
+        }
+
+        exoPlayerEventListener = new EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                mediaSession.setMetadata(new MediaMetadataCompat.Builder()
+                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.getDuration())
+                        .build());
+            }
+        };
+
+        exoPlayer.addListener(exoPlayerEventListener);
+        exoPlayer.seekTo(0);
+    }
+
+    public void removeNotificationData(){
+        exoPlayer.removeListener(exoPlayerEventListener);
+        if (refreshHandler != null) {
+            refreshHandler.removeCallbacksAndMessages(null);
+            refreshHandler = null;
+            refreshRunnable = null;
+        }
+        if (playerNotificationManager != null){
+            playerNotificationManager.setPlayer(null);
+        }
+        bitmap = null;
+    }
+
+    private static Bitmap getBitmapFromInternalURL(String src){
+        try {
+            File file = new File(src);
+            return BitmapFactory.decodeFile(src);
+        } catch (Exception exception){
+            return null;
+        }
+    }
+    private static Bitmap getBitmapFromExternalURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException exception) {
+            return null;
+        }
+    }
+
 
     private static boolean isHTTP(Uri uri) {
         if (uri == null || uri.getScheme() == null) {
@@ -325,6 +561,7 @@ final class BetterPlayer {
     }
 
     void dispose() {
+        removeNotificationData();
         if (isInitialized) {
             exoPlayer.stop();
         }
@@ -336,6 +573,25 @@ final class BetterPlayer {
         if (exoPlayer != null) {
             exoPlayer.release();
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BetterPlayer that = (BetterPlayer) o;
+
+        if (exoPlayer != null ? !exoPlayer.equals(that.exoPlayer) : that.exoPlayer != null)
+            return false;
+        return surface != null ? surface.equals(that.surface) : that.surface == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = exoPlayer != null ? exoPlayer.hashCode() : 0;
+        result = 31 * result + (surface != null ? surface.hashCode() : 0);
+        return result;
     }
 }
 

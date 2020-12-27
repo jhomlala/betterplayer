@@ -90,39 +90,43 @@ class BetterPlayerConfiguration {
   /// ignored.
   final bool autoDetectFullscreenDeviceOrientation;
 
-  const BetterPlayerConfiguration({
-    this.aspectRatio,
-    this.autoPlay = false,
-    this.startAt,
-    this.looping = false,
-    this.fullScreenByDefault = false,
-    this.placeholder,
-    this.showPlaceholderUntilPlay = false,
-    this.overlay,
-    this.errorBuilder,
-    this.allowedScreenSleep = true,
-    this.fullScreenAspectRatio,
-    this.deviceOrientationsOnFullScreen = const [
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ],
-    this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
-    this.deviceOrientationsAfterFullScreen = const [
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight,
-    ],
-    this.routePageBuilder,
-    this.eventListener,
-    this.subtitlesConfiguration = const BetterPlayerSubtitlesConfiguration(),
-    this.controlsConfiguration = const BetterPlayerControlsConfiguration(),
-    this.fit = BoxFit.fill,
-    this.rotation = 0,
-    this.playerVisibilityChangedBehavior,
-    this.translations,
-    this.autoDetectFullscreenDeviceOrientation = false,
-  });
+  ///Defines flag which enables/disables lifecycle handling (pause on app closed,
+  ///play on app resumed). Default value is true.
+  final bool handleLifecycle;
+
+  const BetterPlayerConfiguration(
+      {this.aspectRatio,
+      this.autoPlay = false,
+      this.startAt,
+      this.looping = false,
+      this.fullScreenByDefault = false,
+      this.placeholder,
+      this.showPlaceholderUntilPlay = false,
+      this.overlay,
+      this.errorBuilder,
+      this.allowedScreenSleep = true,
+      this.fullScreenAspectRatio,
+      this.deviceOrientationsOnFullScreen = const [
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ],
+      this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
+      this.deviceOrientationsAfterFullScreen = const [
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight,
+      ],
+      this.routePageBuilder,
+      this.eventListener,
+      this.subtitlesConfiguration = const BetterPlayerSubtitlesConfiguration(),
+      this.controlsConfiguration = const BetterPlayerControlsConfiguration(),
+      this.fit = BoxFit.fill,
+      this.rotation = 0,
+      this.playerVisibilityChangedBehavior,
+      this.translations,
+      this.autoDetectFullscreenDeviceOrientation = false,
+      this.handleLifecycle = true});
 
   BetterPlayerConfiguration copyWith({
     double aspectRatio,
