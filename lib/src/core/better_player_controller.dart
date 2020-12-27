@@ -598,7 +598,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
-  void setAppLifecycleState(AppLifecycleState appLifecycleState) async {
+  void setAppLifecycleState(AppLifecycleState appLifecycleState) {
     if (betterPlayerConfiguration.handleLifecycle) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
@@ -607,7 +607,7 @@ class BetterPlayerController extends ChangeNotifier {
         }
       }
       if (appLifecycleState == AppLifecycleState.paused) {
-        _wasPlayingBeforePause = await isPlaying();
+        _wasPlayingBeforePause = isPlaying();
         pause();
       }
     }

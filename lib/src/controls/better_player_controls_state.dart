@@ -276,10 +276,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Resolution selection is used for normal videos
   void _showQualitiesSelectionWidget() {
     List<String> trackNames =
-        betterPlayerController.betterPlayerDataSource.hlsTrackNames ?? List();
+        betterPlayerController.betterPlayerDataSource.hlsTrackNames ?? [];
     List<BetterPlayerHlsTrack> tracks =
         betterPlayerController.betterPlayerTracks;
-    var children = List<Widget>();
+    var children = [];
     for (var index = 0; index < tracks.length; index++) {
       var preferredName = trackNames.length > index ? trackNames[index] : null;
       children.add(_buildTrackRow(tracks[index], preferredName));
