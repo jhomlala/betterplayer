@@ -28,7 +28,6 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
 
   void _setupDataSource() async {
     String imageUrl = await Utils.getFileUrl(Constants.logo);
-    print("IMage url: "+ imageUrl);
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.NETWORK,
       Constants.elephantDreamVideoUrl,
@@ -36,8 +35,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
         showNotification: true,
         title: "Elephant dream",
         author: "Some author",
-        //imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg",
-        imageUrl: imageUrl
+        imageUrl:"https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg",
       ),
     );
     _betterPlayerController.setupDataSource(dataSource);

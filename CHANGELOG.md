@@ -1,3 +1,8 @@
+## 0.0.38
+* Added support for player notifications
+* Added handleLifecycle to BetterPlayerConfiguration
+* Added notificationConfiguration to BetterPlayerDataSource
+
 ## 0.0.37
 * Added setControlsEnabled to BetterPlayerController
 * Fixed example video list widget buttons not rendering correctly in small resolutions

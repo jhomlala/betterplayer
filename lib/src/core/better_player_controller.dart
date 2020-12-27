@@ -127,12 +127,6 @@ class BetterPlayerController extends ChangeNotifier {
 
   double _overriddenAspectRatio;
 
-  bool _controlsEnabled = true;
-
-  bool get controlsEnabled => _controlsEnabled;
-
-  double _overriddenAspectRatio;
-
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -617,20 +611,6 @@ class BetterPlayerController extends ChangeNotifier {
         pause();
       }
     }
-  }
-
-  ///Setup overridden aspect ratio.
-  void setOverriddenAspectRatio(double aspectRatio) {
-    _overriddenAspectRatio = aspectRatio;
-  }
-
-  ///Get aspect ratio used in current video. If aspect ratio is null, then
-  ///aspect ratio from BetterPlayerConfiguration will be used. Otherwise
-  ///[_overriddenAspectRatio] will be used.
-  double getAspectRatio() {
-    return _overriddenAspectRatio != null
-        ? _overriddenAspectRatio
-        : betterPlayerConfiguration.aspectRatio;
   }
 
   ///Setup overridden aspect ratio.
