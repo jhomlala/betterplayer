@@ -239,50 +239,53 @@ class BetterPlayerController extends ChangeNotifier {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.network:
         await videoPlayerController.setNetworkDataSource(
-            betterPlayerDataSource.url,
-            headers: betterPlayerDataSource.headers,
-            useCache:
-                _betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
-            maxCacheSize:
-                _betterPlayerDataSource.cacheConfiguration?.maxCacheSize ?? 0,
-            maxCacheFileSize:
-                _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ??
-                    0,
-            showNotification: _betterPlayerDataSource
-                .notificationConfiguration.showNotification,
-            title: _betterPlayerDataSource.notificationConfiguration.title,
-            author: _betterPlayerDataSource.notificationConfiguration.author,
-            imageUrl:
-                _betterPlayerDataSource.notificationConfiguration.imageUrl,
-            notificationChannelName: _betterPlayerDataSource
-                .notificationConfiguration.notificationChannelName);
+          betterPlayerDataSource.url,
+          headers: betterPlayerDataSource.headers,
+          useCache:
+              _betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
+          maxCacheSize:
+              _betterPlayerDataSource.cacheConfiguration?.maxCacheSize ?? 0,
+          maxCacheFileSize:
+              _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
+          showNotification: _betterPlayerDataSource
+              .notificationConfiguration?.showNotification,
+          title: _betterPlayerDataSource?.notificationConfiguration?.title,
+          author: _betterPlayerDataSource?.notificationConfiguration?.author,
+          imageUrl:
+          _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+          notificationChannelName: _betterPlayerDataSource
+              ?.notificationConfiguration?.notificationChannelName,
+        );
 
         break;
       case BetterPlayerDataSourceType.file:
         await videoPlayerController.setFileDataSource(
-            File(betterPlayerDataSource.url),
-            showNotification: _betterPlayerDataSource
-                .notificationConfiguration.showNotification,
-            title: _betterPlayerDataSource.notificationConfiguration.title,
-            author: _betterPlayerDataSource.notificationConfiguration.author,
-            imageUrl:
-                _betterPlayerDataSource.notificationConfiguration.imageUrl,
-            notificationChannelName: _betterPlayerDataSource
-                .notificationConfiguration.notificationChannelName);
+          File(betterPlayerDataSource.url),
+          showNotification: _betterPlayerDataSource
+              .notificationConfiguration?.showNotification,
+          title: _betterPlayerDataSource?.notificationConfiguration?.title,
+          author: _betterPlayerDataSource?.notificationConfiguration?.author,
+          imageUrl:
+              _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+          notificationChannelName: _betterPlayerDataSource
+              ?.notificationConfiguration?.notificationChannelName,
+        );
         break;
       case BetterPlayerDataSourceType.memory:
         final file = await _createFile(_betterPlayerDataSource.bytes);
 
         if (file != null) {
-          await videoPlayerController.setFileDataSource(file,
-              showNotification: _betterPlayerDataSource
-                  .notificationConfiguration.showNotification,
-              title: _betterPlayerDataSource.notificationConfiguration.title,
-              author: _betterPlayerDataSource.notificationConfiguration.author,
-              imageUrl:
-                  _betterPlayerDataSource.notificationConfiguration.imageUrl,
-              notificationChannelName: _betterPlayerDataSource
-                  .notificationConfiguration.notificationChannelName);
+          await videoPlayerController.setFileDataSource(
+            file,
+            showNotification: _betterPlayerDataSource
+                .notificationConfiguration?.showNotification,
+            title: _betterPlayerDataSource?.notificationConfiguration?.title,
+            author: _betterPlayerDataSource?.notificationConfiguration?.author,
+            imageUrl:
+                _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+            notificationChannelName: _betterPlayerDataSource
+                ?.notificationConfiguration?.notificationChannelName,
+          );
           _tempFiles.add(file);
         } else {
           throw ArgumentError("Couldn't create file from memory.");

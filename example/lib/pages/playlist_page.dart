@@ -10,7 +10,7 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
-  List dataSourceList = List<BetterPlayerDataSource>();
+  List<BetterPlayerDataSource> dataSourceList = [];
 
   Future<List<BetterPlayerDataSource>> setupData() async {
     dataSourceList.add(

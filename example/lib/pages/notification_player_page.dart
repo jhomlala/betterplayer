@@ -43,7 +43,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player"),
+        title: Text("Notification player"),
       ),
       body: Column(
         children: [
@@ -51,7 +51,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Normal player with configuration managed by developer.",
+              "Click play on player to show notification in status bar.",
               style: TextStyle(fontSize: 16),
             ),
           ),
