@@ -51,6 +51,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String TITLE_PARAMETER = "title";
     private static final String AUTHOR_PARAMETER = "author";
     private static final String IMAGE_URL_PARAMETER = "imageUrl";
+    private static final String NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -235,9 +236,6 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private void setDataSource(MethodCall call, Result result, BetterPlayer player) {
         Map<String, Object> dataSource = call.argument(DATA_SOURCE_PARAMETER);
 
-        Log.d(TAG,"TEXTUREID: " + getTextureId(player));
-        Log.d(TAG,"DATA SOURCES: " + dataSource.toString());
-
         dataSources.put(getTextureId(player), dataSource);
         String key = getParameter(dataSource, KEY_PARAMETER, "");
         Map<String, String> headers = getParameter(dataSource, HEADERS_PARAMETER, new HashMap<>());
@@ -297,7 +295,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         try {
             Long textureId = getTextureId(betterPlayer);
             if (textureId != null) {
-                if (textureId == currentNotificationTextureId){
+                if (textureId == currentNotificationTextureId) {
                     return;
                 }
                 currentNotificationTextureId = textureId;
@@ -308,7 +306,8 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     String title = getParameter(dataSource, TITLE_PARAMETER, "");
                     String author = getParameter(dataSource, AUTHOR_PARAMETER, "");
                     String imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "");
-                    betterPlayer.setupPlayerNotification(flutterState.applicationContext, title, author, imageUrl);
+                    String notificationChannelName = getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null);
+                    betterPlayer.setupPlayerNotification(flutterState.applicationContext, title, author, imageUrl, notificationChannelName);
                 }
             }
         } catch (Exception exception) {
@@ -316,7 +315,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         }
     }
 
-    private void removeOtherNotificationListeners(){
+    private void removeOtherNotificationListeners() {
         for (int index = 0; index < videoPlayers.size(); index++) {
             videoPlayers.valueAt(index).removeNotificationData();
         }

@@ -51,6 +51,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
         };
         break;
       case DataSourceType.network:
@@ -66,6 +67,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
         };
         break;
       case DataSourceType.file:
@@ -79,6 +81,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
         };
         break;
     }
@@ -181,7 +184,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         .receiveBroadcastStream()
         .map((dynamic event) {
       final Map<dynamic, dynamic> map = event;
-      
+
       switch (map['event']) {
         case 'initialized':
           return VideoEvent(

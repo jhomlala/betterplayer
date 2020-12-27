@@ -18,6 +18,7 @@ import android.os.ResultReceiver;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.C;
@@ -150,7 +151,7 @@ final class BetterPlayer {
         result.success(null);
     }
 
-    public void setupPlayerNotification(Context context, String title, String author, String imageUrl) {
+    public void setupPlayerNotification(Context context, String title, String author, String imageUrl, String notificationChannelName) {
 
         PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter
                 = new PlayerNotificationManager.MediaDescriptionAdapter() {
@@ -198,19 +199,23 @@ final class BetterPlayer {
             }
         };
 
-
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL,
-                    DEFAULT_NOTIFICATION_CHANNEL, importance);
-            channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL);
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+        String playerNotificationChannelName = notificationChannelName;
+        if (notificationChannelName == null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL,
+                        DEFAULT_NOTIFICATION_CHANNEL, importance);
+                channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL);
+                NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+                notificationManager.createNotificationChannel(channel);
+                playerNotificationChannelName = DEFAULT_NOTIFICATION_CHANNEL;
+            }
         }
 
+        Log.d("PLAYER_ANDROID", "Using channel: " + playerNotificationChannelName);
 
         playerNotificationManager = new PlayerNotificationManager(context,
-                DEFAULT_NOTIFICATION_CHANNEL,
+                playerNotificationChannelName,
                 NOTIFICATION_ID,
                 mediaDescriptionAdapter);
         playerNotificationManager.setPlayer(exoPlayer);

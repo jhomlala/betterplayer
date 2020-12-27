@@ -255,25 +255,26 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  Future<void> setAssetDataSource(
-    String dataSource, {
-    String package,
-    Future<ClosedCaptionFile> closedCaptionFile,
-    bool showNotification,
-    String title,
-    String author,
-    String imageUrl,
-  }) {
+  Future<void> setAssetDataSource(String dataSource,
+      {String package,
+      Future<ClosedCaptionFile> closedCaptionFile,
+      bool showNotification,
+      String title,
+      String author,
+      String imageUrl,
+      String notificationChannelName}) {
     return _setDataSource(
       DataSource(
-          sourceType: DataSourceType.asset,
-          asset: dataSource,
-          package: package,
-          closedCaptionFile: closedCaptionFile,
-          showNotification: showNotification,
-          title: title,
-          author: author,
-          imageUrl: imageUrl),
+        sourceType: DataSourceType.asset,
+        asset: dataSource,
+        package: package,
+        closedCaptionFile: closedCaptionFile,
+        showNotification: showNotification,
+        title: title,
+        author: author,
+        imageUrl: imageUrl,
+        notificationChannelName: notificationChannelName,
+      ),
     );
   }
 
@@ -296,6 +297,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String title,
     String author,
     String imageUrl,
+    String notificationChannelName,
   }) {
     return _setDataSource(
       DataSource(
@@ -311,6 +313,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         title: title,
         author: author,
         imageUrl: imageUrl,
+        notificationChannelName: notificationChannelName,
       ),
     );
   }
@@ -326,6 +329,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String title,
     String author,
     String imageUrl,
+    String notificationChannelName,
   }) {
     return _setDataSource(
       DataSource(
@@ -336,12 +340,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         title: title,
         author: author,
         imageUrl: imageUrl,
+        notificationChannelName: notificationChannelName,
       ),
     );
   }
 
   Future<void> _setDataSource(DataSource dataSourceDescription) async {
-    print("Set data source: $dataSourceDescription");
     if (_isDisposed) {
       return;
     }
