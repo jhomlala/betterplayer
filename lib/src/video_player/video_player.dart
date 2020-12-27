@@ -198,7 +198,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
-      print("GOT EVENT: " + event.eventType.toString());
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(

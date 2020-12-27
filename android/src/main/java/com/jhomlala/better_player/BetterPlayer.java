@@ -212,7 +212,6 @@ final class BetterPlayer {
             }
         }
 
-        Log.d("PLAYER_ANDROID", "Using channel: " + playerNotificationChannelName);
 
         playerNotificationManager = new PlayerNotificationManager(context,
                 playerNotificationChannelName,
