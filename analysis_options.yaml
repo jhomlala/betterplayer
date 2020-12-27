@@ -1,0 +1,20 @@
+#include: package:lint/analysis_options_package.yaml
+
+analyzer:
+  strong-mode:
+    implicit-dynamic: false
+
+linter:
+  rules:
+    close_sinks: true
+    sort_constructors_first: false
+    avoid_classes_with_only_static_members: false
+    avoid_void_async: false
+    avoid_positional_boolean_parameters: false
+    avoid_function_literals_in_foreach_calls: false
+    prefer_constructors_over_static_methods: false
+    sort_unnamed_constructors_first: false
+    sized_box_for_whitespace: false
+    invalid_dependency: false
+    sort_pub_dependencies: false
+

@@ -2,16 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Dart imports:
 import 'dart:async';
 import 'dart:io';
 
-import 'package:better_player/src/video_player/video_player_platform_interface.dart';
+// Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+// Package imports:
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 
+// Project imports:
+import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'closed_caption_file.dart';
 
 final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
@@ -140,6 +145,7 @@ class VideoPlayerValue {
 
   @override
   String toString() {
+    // ignore: no_runtimetype_tostring
     return '$runtimeType('
         'duration: $duration, '
         'size: $size, '
@@ -148,7 +154,7 @@ class VideoPlayerValue {
         'buffered: [${buffered.join(', ')}], '
         'isPlaying: $isPlaying, '
         'isLooping: $isLooping, '
-        'isBuffering: $isBuffering'
+        'isBuffering: $isBuffering, '
         'volume: $volume, '
         'errorDescription: $errorDescription)';
   }
@@ -235,12 +241,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       }
     }
 
-    void errorListener(Object obj) {
-      final PlatformException e = obj;
-      value = VideoPlayerValue.erroneous(e.message);
+    void errorListener(Object object) {
+      if (object is PlatformException) {
+        final PlatformException e = object;
+        value = VideoPlayerValue.erroneous(e.message);
+      } else {
+        value = VideoPlayerValue.erroneous(object.toString());
+      }
       _timer?.cancel();
       if (!_initializingCompleter.isCompleted) {
-        _initializingCompleter.completeError(obj);
+        _initializingCompleter.completeError(object);
       }
     }
 
@@ -351,7 +361,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     value = VideoPlayerValue(
       duration: null,
-      size: null,
       isLooping: value.isLooping,
       volume: value.volume,
     );
@@ -359,9 +368,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!_creatingCompleter.isCompleted) await _creatingCompleter.future;
 
     if (dataSourceDescription.closedCaptionFile != null) {
-      if (_closedCaptionFile == null) {
-        _closedCaptionFile = await dataSourceDescription.closedCaptionFile;
-      }
+      _closedCaptionFile ??= await dataSourceDescription.closedCaptionFile;
       value = value.copyWith(caption: _getCaptionAt(value.position));
     }
 
@@ -432,6 +439,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             return;
           }
           final Duration newPosition = await position;
+          // ignore: invariant_booleans
           if (_isDisposed) {
             return;
           }
@@ -462,7 +470,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!value.initialized && _isDisposed) {
       return null;
     }
-    return await _videoPlayerPlatform.getPosition(_textureId);
+    return _videoPlayerPlatform.getPosition(_textureId);
   }
 
   /// Sets the video's current timestamp to be at [moment]. The next
@@ -474,12 +482,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposed) {
       return;
     }
+
+    Duration positionToSeek = position;
     if (position > value.duration) {
-      position = value.duration;
+      positionToSeek = value.duration;
     } else if (position < const Duration()) {
-      position = const Duration();
+      positionToSeek = const Duration();
     }
-    await _videoPlayerPlatform.seekTo(_textureId, position);
+    await _videoPlayerPlatform.seekTo(_textureId, positionToSeek);
     _updatePosition(position);
   }
 
@@ -488,7 +498,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [volume] indicates a value between 0.0 (silent) and 1.0 (full volume) on a
   /// linear scale.
   Future<void> setVolume(double volume) async {
-    value = value.copyWith(volume: volume.clamp(0.0, 1.0));
+    value = value.copyWith(volume: volume.clamp(0.0, 1.0) as double);
     await _applyVolume();
   }
 
@@ -519,7 +529,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [Caption].
   Caption _getCaptionAt(Duration position) {
     if (_closedCaptionFile == null) {
-      return Caption();
+      return const Caption();
     }
 
     // TODO: This would be more efficient as a binary search.
@@ -529,7 +539,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       }
     }
 
-    return Caption();
+    return const Caption();
   }
 
   void _updatePosition(Duration position) {
@@ -541,7 +551,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 /// Widget that displays the video controlled by [controller].
 class VideoPlayer extends StatefulWidget {
   /// Uses the given [controller] for all video rendered in this widget.
-  VideoPlayer(this.controller);
+  const VideoPlayer(this.controller, {Key key}) : super(key: key);
 
   /// The [VideoPlayerController] responsible for the video being rendered in
   /// this widget.
@@ -638,7 +648,7 @@ class VideoProgressColors {
 }
 
 class _VideoScrubber extends StatefulWidget {
-  _VideoScrubber({
+  const _VideoScrubber({
     @required this.child,
     @required this.controller,
   });
@@ -658,7 +668,7 @@ class _VideoScrubberState extends State<_VideoScrubber> {
   @override
   Widget build(BuildContext context) {
     void seekToRelativePosition(Offset globalPosition) {
-      final RenderBox box = context.findRenderObject();
+      final RenderBox box = context.findRenderObject() as RenderBox;
       final Offset tapPos = box.globalToLocal(globalPosition);
       final double relative = tapPos.dx / box.size.width;
       final Duration position = controller.value.duration * relative;
@@ -667,7 +677,6 @@ class _VideoScrubberState extends State<_VideoScrubber> {
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      child: widget.child,
       onHorizontalDragStart: (DragStartDetails details) {
         if (!controller.value.initialized) {
           return;
@@ -694,6 +703,7 @@ class _VideoScrubberState extends State<_VideoScrubber> {
         }
         seekToRelativePosition(details.globalPosition);
       },
+      child: widget.child,
     );
   }
 }
@@ -717,7 +727,9 @@ class VideoProgressIndicator extends StatefulWidget {
     VideoProgressColors colors,
     this.allowScrubbing,
     this.padding = const EdgeInsets.only(top: 5.0),
-  }) : colors = colors ?? VideoProgressColors();
+    Key key,
+  })  : colors = colors ?? VideoProgressColors(),
+        super(key: key);
 
   /// The [VideoPlayerController] that actually associates a video with this
   /// widget.
@@ -780,7 +792,7 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       final int position = controller.value.position.inMilliseconds;
 
       int maxBuffering = 0;
-      for (DurationRange range in controller.value.buffered) {
+      for (final DurationRange range in controller.value.buffered) {
         final int end = range.end.inMilliseconds;
         if (end > maxBuffering) {
           maxBuffering = end;
@@ -804,7 +816,6 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       );
     } else {
       progressIndicator = LinearProgressIndicator(
-        value: null,
         valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
         backgroundColor: colors.backgroundColor,
       );
@@ -815,8 +826,8 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
     );
     if (widget.allowScrubbing) {
       return _VideoScrubber(
-        child: paddedProgressIndicator,
         controller: controller,
+        child: paddedProgressIndicator,
       );
     } else {
       return paddedProgressIndicator;
@@ -868,20 +879,20 @@ class ClosedCaption extends StatelessWidget {
             );
 
     if (text == null) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
 
     return Align(
       alignment: Alignment.bottomCenter,
       child: Padding(
-        padding: EdgeInsets.only(bottom: 24.0),
+        padding: const EdgeInsets.only(bottom: 24.0),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            color: Color(0xB8000000),
+            color: const Color(0xB8000000),
             borderRadius: BorderRadius.circular(2.0),
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 2.0),
+            padding: const EdgeInsets.symmetric(horizontal: 2.0),
             child: Text(text, style: effectiveTextStyle),
           ),
         ),

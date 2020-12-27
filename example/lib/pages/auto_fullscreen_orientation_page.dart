@@ -20,7 +20,7 @@ class _AutoFullscreenOrientationPageState
             fit: BoxFit.contain,
             autoDetectFullscreenDeviceOrientation: true);
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.forBiggerBlazesUrl);
+        BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -51,7 +51,7 @@ class _AutoFullscreenOrientationPageState
             child: Text("Play horizontal video"),
             onPressed: () {
               BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.NETWORK,
+                  BetterPlayerDataSourceType.network,
                   Constants.forBiggerBlazesUrl);
               _betterPlayerController.setupDataSource(dataSource);
             },
@@ -60,7 +60,7 @@ class _AutoFullscreenOrientationPageState
             child: Text("Play vertical video"),
             onPressed: () async {
               BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.NETWORK,
+                  BetterPlayerDataSourceType.network,
                   Constants.verticalVideoUrl);
               _betterPlayerController.setupDataSource(dataSource);
             },

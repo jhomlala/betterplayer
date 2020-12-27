@@ -1,8 +1,12 @@
+// Dart imports:
 import 'dart:ui';
 
-import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
+// Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+// Project imports:
+import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
 
 class BetterPlayerControlsConfiguration {
   ///Color of the control bars
@@ -161,7 +165,7 @@ class BetterPlayerControlsConfiguration {
       this.skipsTimeInMilliseconds = 15000});
 
   factory BetterPlayerControlsConfiguration.white() {
-    return BetterPlayerControlsConfiguration(
+    return const BetterPlayerControlsConfiguration(
         controlBarColor: Colors.white,
         textColor: Colors.black,
         iconsColor: Colors.black,
@@ -172,7 +176,7 @@ class BetterPlayerControlsConfiguration {
   }
 
   factory BetterPlayerControlsConfiguration.cupertino() {
-    return BetterPlayerControlsConfiguration(
+    return const BetterPlayerControlsConfiguration(
         fullscreenEnableIcon: CupertinoIcons.fullscreen,
         fullscreenDisableIcon: CupertinoIcons.fullscreen_exit,
         playIcon: CupertinoIcons.play_arrow_solid,

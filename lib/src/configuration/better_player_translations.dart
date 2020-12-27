@@ -30,7 +30,6 @@ class BetterPlayerTranslations {
         generalNone: "Brak",
         generalDefault: "Domyślne",
         playlistLoadingNextVideo: "Ładowanie następnego filmu",
-        controlsLive: "LIVE",
         controlsNextVideoIn: "Następne video za",
         overflowMenuPlaybackSpeed: "Szybkość odtwarzania",
         overflowMenuSubtitles: "Napisy",

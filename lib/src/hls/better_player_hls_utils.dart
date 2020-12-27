@@ -1,23 +1,29 @@
+// Dart imports:
 import 'dart:convert';
 import 'dart:io';
 
+// Package imports:
+import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:flutter_hls_parser/flutter_hls_parser.dart';
+
+// Project imports:
 import 'package:better_player/src/hls/better_player_hls_subtitle.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
-import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 
 ///HLS helper class
 class BetterPlayerHlsUtils {
-  static HttpClient _httpClient = HttpClient()
-    ..connectionTimeout = Duration(seconds: 5);
-  static HlsPlaylistParser _hlsPlaylistParser = HlsPlaylistParser.create();
+  static final HttpClient _httpClient = HttpClient()
+    ..connectionTimeout = const Duration(seconds: 5);
+  static final HlsPlaylistParser _hlsPlaylistParser =
+      HlsPlaylistParser.create();
 
   static Future<List<BetterPlayerHlsTrack>> parseTracks(
       String masterPlaylistUrl) async {
     assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
-    List<BetterPlayerHlsTrack> tracks = List();
+    final List<BetterPlayerHlsTrack> tracks = [];
     try {
-      String data = await _getDataFromUrl(masterPlaylistUrl);
-      var parsedPlaylist = await HlsPlaylistParser.create()
+      final String data = await _getDataFromUrl(masterPlaylistUrl);
+      final parsedPlaylist = await HlsPlaylistParser.create()
           .parseString(Uri.parse(masterPlaylistUrl), data);
       if (parsedPlaylist is HlsMasterPlaylist) {
         parsedPlaylist.variants.forEach(
@@ -28,7 +34,7 @@ class BetterPlayerHlsUtils {
         );
       }
     } catch (exception) {
-      print("Exception on parseSubtitles: " + exception.toString());
+      BetterPlayerUtils.print("Exception on parseSubtitles: $exception");
     }
     return tracks;
   }
@@ -37,15 +43,15 @@ class BetterPlayerHlsUtils {
   static Future<List<BetterPlayerHlsSubtitle>> parseSubtitles(
       String masterPlaylistUrl) async {
     assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
-    List<BetterPlayerHlsSubtitle> subtitles = List();
+    final List<BetterPlayerHlsSubtitle> subtitles = [];
     try {
-      String data = await _getDataFromUrl(masterPlaylistUrl);
+      final String data = await _getDataFromUrl(masterPlaylistUrl);
       if (data != null) {
-        var parsedPlaylist = await HlsPlaylistParser.create()
+        final parsedPlaylist = await HlsPlaylistParser.create()
             .parseString(Uri.parse(masterPlaylistUrl), data);
         if (parsedPlaylist is HlsMasterPlaylist) {
-          for (Rendition element in parsedPlaylist.subtitles) {
-            var hlsSubtitle = await _parseSubtitlesPlaylist(element);
+          for (final Rendition element in parsedPlaylist.subtitles) {
+            final hlsSubtitle = await _parseSubtitlesPlaylist(element);
             if (hlsSubtitle != null) {
               subtitles.add(hlsSubtitle);
             }
@@ -53,7 +59,7 @@ class BetterPlayerHlsUtils {
         }
       }
     } catch (exception) {
-      print("Exception on parseSubtitles: " + exception.toString());
+      BetterPlayerUtils.print("Exception on parseSubtitles: $exception");
     }
 
     return subtitles;
@@ -63,17 +69,18 @@ class BetterPlayerHlsUtils {
       Rendition rendition) async {
     assert(rendition != null, "Rendition can't be null");
     try {
-      var subtitleData = await _getDataFromUrl(rendition.url.toString());
-      var parsedSubtitle =
+      final subtitleData = await _getDataFromUrl(rendition.url.toString());
+      final parsedSubtitle =
           await _hlsPlaylistParser.parseString(rendition.url, subtitleData);
-      var hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
-      var hlsSubtitlesUrls = List<String>();
+      final hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
+      final hlsSubtitlesUrls = <String>[];
 
-      for (Segment segment in hlsMediaPlaylist.segments) {
-        var split = rendition.url.toString().split("/");
+      for (final Segment segment in hlsMediaPlaylist.segments) {
+        final split = rendition.url.toString().split("/");
         var realUrl = "";
         for (var index = 0; index < split.length - 1; index++) {
-          realUrl += split[index] + "/";
+          // ignore: use_string_buffers
+          realUrl += "${split[index]}/";
         }
         realUrl += segment.url;
         hlsSubtitlesUrls.add(realUrl);
@@ -84,7 +91,8 @@ class BetterPlayerHlsUtils {
           url: rendition.url.toString(),
           realUrls: hlsSubtitlesUrls);
     } catch (exception) {
-      print("Failed to process subtitles playlist: " + exception.toString());
+      BetterPlayerUtils.print(
+          "Failed to process subtitles playlist: $exception");
       return null;
     }
   }
@@ -92,15 +100,15 @@ class BetterPlayerHlsUtils {
   static Future<String> _getDataFromUrl(String url) async {
     try {
       assert(url != null, "Url can't be null!");
-      var request = await _httpClient.getUrl(Uri.parse(url));
-      var response = await request.close();
+      final request = await _httpClient.getUrl(Uri.parse(url));
+      final response = await request.close();
       var data = "";
-      await response.transform(Utf8Decoder()).listen((contents) {
+      await response.transform(const Utf8Decoder()).listen((contents) {
         data = contents.toString();
-      }).asFuture();
+      }).asFuture<String>();
       return data;
     } catch (exception) {
-      print("GetDataFromUrl failed: " + exception.toString());
+      BetterPlayerUtils.print("GetDataFromUrl failed: $exception");
       return null;
     }
   }

@@ -2,13 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Dart imports:
 import 'dart:async';
 import 'dart:ui';
 
+// Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
+// Package imports:
 import 'package:meta/meta.dart' show required, visibleForTesting;
 
+// Project imports:
 import 'closed_caption_file.dart';
 import 'method_channel_video_player.dart';
 
@@ -45,7 +50,7 @@ abstract class VideoPlayerPlatform {
     if (!instance.isMock) {
       try {
         instance._verifyProvidesDefaultImplementations();
-      } on NoSuchMethodError catch (_) {
+      } catch (_) {
         throw AssertionError(
             'Platform interfaces must not be implemented with `implements`');
       }
@@ -255,7 +260,7 @@ class DataSource {
     } else if (package != null && package.isNotEmpty) {
       result = "$package:$asset";
     } else {
-      result = "$asset";
+      result = asset;
     }
 
     if (formatHint != null) {
@@ -446,6 +451,7 @@ class DurationRange {
   }
 
   @override
+  // ignore: no_runtimetype_tostring
   String toString() => '$runtimeType(start: $start, end: $end)';
 
   @override

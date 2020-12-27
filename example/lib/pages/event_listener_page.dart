@@ -11,7 +11,7 @@ class EventListenerPage extends StatefulWidget {
 
 class _EventListenerPageState extends State<EventListenerPage> {
   BetterPlayerController _betterPlayerController;
-  List<BetterPlayerEvent> events = List();
+  List<BetterPlayerEvent> events = [];
   StreamController<DateTime> _eventStreamController =
       StreamController.broadcast();
 
@@ -29,7 +29,7 @@ class _EventListenerPageState extends State<EventListenerPage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.elephantDreamVideoUrl);
+        BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.addEventsListener((event) {
@@ -74,7 +74,7 @@ class _EventListenerPageState extends State<EventListenerPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                "Event: ${event.betterPlayerEventType} parameters: ${(event.parameters ?? {}).toString()}"),
+                                "Event: ${event.betterPlayerEventType} parameters: ${(event.parameters ?? <String, dynamic>{}).toString()}"),
                             Divider(),
                           ],
                         ),

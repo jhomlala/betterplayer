@@ -1,6 +1,7 @@
 name: better_player_example
 description: Better Player example usage app.
 version: 1.0.0+1
+publish_to: none
 
 environment:
   sdk: ">=2.2.2 <3.0.0"

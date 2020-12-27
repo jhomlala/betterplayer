@@ -1,11 +1,15 @@
+// Dart imports:
 import 'dart:math';
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/video_player/video_player.dart';
-import 'package:flutter/material.dart';
 
 ///Base class for both material and cupertino controls
 abstract class BetterPlayerControlsState<T extends StatefulWidget>
@@ -29,7 +33,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   void skipBack() {
     cancelAndRestartTimer();
-    final beginning = Duration(seconds: 0).inMilliseconds;
+    final beginning = const Duration().inMilliseconds;
     final skip = (latestValue.position -
             Duration(
                 milliseconds:
@@ -50,12 +54,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void onShowMoreClicked() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       builder: (context) {
         return SafeArea(
           top: false,
-          bottom: true,
           child: _buildMoreOptionsList(),
         );
       },
@@ -63,8 +66,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildMoreOptionsList() {
-    var translations = betterPlayerController.translations;
+    final translations = betterPlayerController.translations;
     return SingleChildScrollView(
+      // ignore: avoid_unnecessary_containers
       child: Container(
         child: Column(
           children: [
@@ -107,7 +111,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     );
   }
 
-  Widget _buildMoreOptionsListRow(IconData icon, String name, Function onTap) {
+  Widget _buildMoreOptionsListRow(
+      IconData icon, String name, void Function() onTap) {
     assert(icon != null, "Icon can't be null");
     assert(name != null, "Name can't be null");
     assert(onTap != null, "OnTap can't be null");
@@ -130,12 +135,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showSpeedChooserWidget() {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
         context: context,
         builder: (context) {
           return SafeArea(
             top: false,
-            bottom: true,
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -157,6 +161,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   Widget _buildSpeedRow(double value) {
     assert(value != null, "Value can't be null");
     return BetterPlayerMaterialClickableWidget(
+      onTap: () {
+        Navigator.of(context).pop();
+        betterPlayerController.setSpeed(value);
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
@@ -174,10 +182,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           ],
         ),
       ),
-      onTap: () {
-        Navigator.of(context).pop();
-        betterPlayerController.setSpeed(value);
-      },
     );
   }
 
@@ -188,7 +192,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         return true;
       }
 
-      Duration position = latestValue.position;
+      final Duration position = latestValue.position;
 
       Duration bufferedEndPosition;
       if (latestValue.buffered?.isNotEmpty == true) {
@@ -196,7 +200,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       }
 
       if (position != null && bufferedEndPosition != null) {
-        var difference = bufferedEndPosition - position;
+        final difference = bufferedEndPosition - position;
 
         if (latestValue.isPlaying &&
             latestValue.isBuffering &&
@@ -209,23 +213,22 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showSubtitlesSelectionWidget() {
-    var subtitles =
+    final subtitles =
         List.of(betterPlayerController.betterPlayerSubtitlesSourceList);
-    var noneSubtitlesElementExists = subtitles?.firstWhere(
-            (source) => source.type == BetterPlayerSubtitlesSourceType.NONE,
+    final noneSubtitlesElementExists = subtitles?.firstWhere(
+            (source) => source.type == BetterPlayerSubtitlesSourceType.none,
             orElse: () => null) !=
         null;
     if (!noneSubtitlesElementExists) {
       subtitles?.add(BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.NONE));
+          type: BetterPlayerSubtitlesSourceType.none));
     }
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       builder: (context) {
         return SafeArea(
           top: false,
-          bottom: true,
           child: SingleChildScrollView(
             child: Column(
               children: subtitles
@@ -241,19 +244,24 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   Widget _buildSubtitlesSourceRow(BetterPlayerSubtitlesSource subtitlesSource) {
     assert(subtitlesSource != null, "SubtitleSource can't be null");
 
-    var selectedSourceType = betterPlayerController.betterPlayerSubtitlesSource;
-    bool isSelected = (subtitlesSource == selectedSourceType) ||
-        (subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE &&
+    final selectedSourceType =
+        betterPlayerController.betterPlayerSubtitlesSource;
+    final bool isSelected = (subtitlesSource == selectedSourceType) ||
+        (subtitlesSource.type == BetterPlayerSubtitlesSourceType.none &&
             subtitlesSource?.type == selectedSourceType.type);
 
     return BetterPlayerMaterialClickableWidget(
+      onTap: () {
+        Navigator.of(context).pop();
+        betterPlayerController.setupSubtitleSource(subtitlesSource);
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
           children: [
             const SizedBox(width: 16),
             Text(
-              subtitlesSource.type == BetterPlayerSubtitlesSourceType.NONE
+              subtitlesSource.type == BetterPlayerSubtitlesSourceType.none
                   ? betterPlayerController.translations.generalNone
                   : subtitlesSource.name ??
                       betterPlayerController.translations.generalDefault,
@@ -264,10 +272,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           ],
         ),
       ),
-      onTap: () {
-        Navigator.of(context).pop();
-        betterPlayerController.setupSubtitleSource(subtitlesSource);
-      },
     );
   }
 
@@ -275,16 +279,18 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Track selection is used for HLS videos
   ///Resolution selection is used for normal videos
   void _showQualitiesSelectionWidget() {
-    List<String> trackNames =
+    final List<String> trackNames =
         betterPlayerController.betterPlayerDataSource.hlsTrackNames ?? [];
-    List<BetterPlayerHlsTrack> tracks =
+    final List<BetterPlayerHlsTrack> tracks =
         betterPlayerController.betterPlayerTracks;
-    var children = [];
+    final List<Widget> children = [];
     for (var index = 0; index < tracks.length; index++) {
-      var preferredName = trackNames.length > index ? trackNames[index] : null;
+      final preferredName =
+          trackNames.length > index ? trackNames[index] : null;
       children.add(_buildTrackRow(tracks[index], preferredName));
     }
-    var resolutions = betterPlayerController.betterPlayerDataSource.resolutions;
+    final resolutions =
+        betterPlayerController.betterPlayerDataSource.resolutions;
     resolutions?.forEach((key, value) {
       children.add(_buildResolutionSelectionRow(key, value));
     });
@@ -294,12 +300,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           betterPlayerController.translations.generalDefault));
     }
 
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       builder: (context) {
         return SafeArea(
           top: false,
-          bottom: true,
           child: SingleChildScrollView(
             child: Column(
               children: children,
@@ -313,48 +318,24 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   Widget _buildTrackRow(BetterPlayerHlsTrack track, String preferredName) {
     assert(track != null, "Track can't be null");
 
-    String trackName = preferredName ??
-        track.width.toString() +
-            "x" +
-            track.height.toString() +
-            " " +
-            BetterPlayerUtils.formatBitrate(track.bitrate);
+    final String trackName = preferredName ??
+        "${track.width}x${track.height} ${BetterPlayerUtils.formatBitrate(track.bitrate)}";
 
-    var selectedTrack = betterPlayerController.betterPlayerTrack;
-    bool isSelected = selectedTrack != null && selectedTrack == track;
+    final selectedTrack = betterPlayerController.betterPlayerTrack;
+    final bool isSelected = selectedTrack != null && selectedTrack == track;
 
     return BetterPlayerMaterialClickableWidget(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        child: Row(
-          children: [
-            const SizedBox(width: 16),
-            Text(
-              "$trackName",
-              style: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
-          ],
-        ),
-      ),
       onTap: () {
         Navigator.of(context).pop();
         betterPlayerController.setTrack(track);
       },
-    );
-  }
-
-  Widget _buildResolutionSelectionRow(String name, String url) {
-    bool isSelected = url == betterPlayerController.betterPlayerDataSource.url;
-    return BetterPlayerMaterialClickableWidget(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
           children: [
             const SizedBox(width: 16),
             Text(
-              "$name",
+              trackName,
               style: TextStyle(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
@@ -362,10 +343,31 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildResolutionSelectionRow(String name, String url) {
+    final bool isSelected =
+        url == betterPlayerController.betterPlayerDataSource.url;
+    return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
         betterPlayerController.setResolution(url);
       },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Row(
+          children: [
+            const SizedBox(width: 16),
+            Text(
+              name,
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

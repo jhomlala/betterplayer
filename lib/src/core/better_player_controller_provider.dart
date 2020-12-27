@@ -1,5 +1,8 @@
-import 'package:better_player/src/core/better_player_controller.dart';
+// Flutter imports:
 import 'package:flutter/material.dart';
+
+// Project imports:
+import 'package:better_player/src/core/better_player_controller.dart';
 
 class BetterPlayerControllerProvider extends InheritedWidget {
   const BetterPlayerControllerProvider({

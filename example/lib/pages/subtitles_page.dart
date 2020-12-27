@@ -32,10 +32,10 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
 
   void _setupDataSource() async {
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       Constants.forBiggerBlazesUrl,
       subtitles: BetterPlayerSubtitlesSource.single(
-        type: BetterPlayerSubtitlesSourceType.FILE,
+        type: BetterPlayerSubtitlesSourceType.file,
         url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
         name: "My subtitles",
         selectedByDefault: true,

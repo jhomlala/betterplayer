@@ -94,7 +94,7 @@ BetterPlayerController _betterPlayerController;
   void initState() {
     super.initState();
     BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
+        BetterPlayerDataSourceType.network,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
     _betterPlayerController = BetterPlayerController(
         BetterPlayerConfiguration(),
@@ -122,16 +122,16 @@ To use playlist, you need to create dataset with multiple videos:
     List dataSourceList = List<BetterPlayerDataSource>();
     dataSourceList.add(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
+        BetterPlayerDataSourceType.network,
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
       ),
     );
     dataSourceList.add(
-      BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSource(BetterPlayerDataSourceType.network,
           "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
     );
     dataSourceList.add(
-      BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSource(BetterPlayerDataSourceType.network,
           "http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8"),
     );
     return dataSourceList;
@@ -162,7 +162,7 @@ BetterPlayerListViewPlayer will auto play/pause video once video is visible on s
       aspectRatio: 16 / 9,
       child: BetterPlayerListVideoPlayer(
         BetterPlayerDataSource(
-            BetterPlayerDataSourceType.NETWORK, videoListData.videoUrl),
+            BetterPlayerDataSourceType.network, videoListData.videoUrl),
         key: Key(videoListData.hashCode.toString()),
         playFraction: 0.8,
       ),
@@ -179,10 +179,10 @@ Subtitles can be configured from 3 different sources: file, network and memory. 
 Network subtitles:
 ```dart
     var dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
       subtitles: BetterPlayerSubtitlesSource.single(
-          type: BetterPlayerSubtitlesSourceType.NETWORK,
+          type: BetterPlayerSubtitlesSourceType.network,
           url:
               "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"),
     );
@@ -191,10 +191,10 @@ Network subtitles:
 File subtitles:
 ```dart
  var dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.FILE,
+      BetterPlayerDataSourceType.file,
       "${directory.path}/testvideo.mp4",
       subtitles: BetterPlayerSubtitlesSource.single(
-        type: BetterPlayerSubtitlesSourceType.FILE,
+        type: BetterPlayerSubtitlesSourceType.file,
         url: "${directory.path}/example_subtitles.srt",
       ),
     );
@@ -202,14 +202,14 @@ File subtitles:
 You can pass multiple subtitles for one video:
 ```dart
 var dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
       liveStream: false,
       useHlsSubtitles: true,
       hlsTrackNames: ["Low quality", "Not so low quality", "Medium quality"],
       subtitles: [
         BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.NETWORK,
+          type: BetterPlayerSubtitlesSourceType.network,
           name: "EN",
           urls: [
             "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
@@ -217,7 +217,7 @@ var dataSource = BetterPlayerDataSource(
         ),
 
         BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.NETWORK,
+          type: BetterPlayerSubtitlesSourceType.network,
           name: "DE",
           urls: [
             "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
@@ -530,10 +530,10 @@ Define source for one video in your app. There are 3 types of data sources:
 * Memory - data source which uses list of bytes to play video from memory
 ```dart
     var dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
       subtitles: BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.FILE,
+        type: BetterPlayerSubtitlesSourceType.file,
         url: "${directory.path}/example_subtitles.srt",
       ),
       headers: {"header":"my_custom_header"}
@@ -603,7 +603,7 @@ Define cache configuration for given data source. Cache works only for network d
 Define source of subtitles in your video:
 ```dart
  var subtitles = BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.FILE,
+        type: BetterPlayerSubtitlesSourceType.file,
         url: "${directory.path}/example_subtitles.srt",
       );
 ```
@@ -662,23 +662,23 @@ https://flutter.dev/docs/development/accessibility-and-localization/internationa
 ### Listen to video events
 You can listen to video player events like:
 ```dart
-  INITIALIZED,
-  PLAY,
-  PAUSE,
-  SEEK_TO,
-  OPEN_FULLSCREEN,
-  HIDE_FULLSCREEN,
-  SET_VOLUME,
-  PROGRESS,
-  FINISHED,
-  EXCEPTION,
-  CONTROLS_VISIBLE,
-  CONTROLS_HIDDEN,
-  SET_SPEED,
-  CHANGED_SUBTITLES,
-  CHANGED_TRACK,
-  CHANGED_PLAYER_VISIBILITY,
-  CHANGED_RESOLUTION,
+  initialized,
+  play,
+  pause,
+  seekTo,
+  openFullscreen,
+  hideFullscreen,
+  setVolume,
+  progress,
+  finished,
+  exception,
+  controlsVisible,
+  controlsHidden,
+  setSpeed,
+  changedSubtitles,
+  changedTrack,
+  changedPlayerVisibility,
+  changedResolution
 ```
 
 After creating BetterPlayerController you can add event listener this way:
@@ -715,7 +715,7 @@ You can setup video with different resolutions. Use resolutions parameter in dat
 only for normal videos (non-hls) to setup different qualities of the original video.
 
 ```dart
-    var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.NETWORK,
+    var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network,
         "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
         resolutions: {
           "LOW":
@@ -745,7 +745,7 @@ To setup player notification use notificationConfiguration in BetterPlayerDataSo
 
 ```dart
 BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.NETWORK,
+      BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
       notificationConfiguration: BetterPlayerNotificationConfiguration(
         showNotification: true,

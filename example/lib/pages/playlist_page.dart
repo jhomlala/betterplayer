@@ -10,24 +10,24 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
-  List dataSourceList = List<BetterPlayerDataSource>();
+  List<BetterPlayerDataSource> dataSourceList = [];
 
   Future<List<BetterPlayerDataSource>> setupData() async {
     dataSourceList.add(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
+        BetterPlayerDataSourceType.network,
         Constants.forBiggerBlazesUrl,
         subtitles: BetterPlayerSubtitlesSource.single(
-            type: BetterPlayerSubtitlesSourceType.FILE,
+            type: BetterPlayerSubtitlesSourceType.file,
             url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl)),
       ),
     );
 
     dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK, Constants.bugBuckBunnyVideoUrl));
+        BetterPlayerDataSourceType.network, Constants.bugBuckBunnyVideoUrl));
     dataSourceList.add(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
+        BetterPlayerDataSourceType.network,
         Constants.phantomVideoUrl,
         liveStream: true,
       ),

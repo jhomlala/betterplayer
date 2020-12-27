@@ -1,9 +1,12 @@
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_data_source.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/list/better_player_list_video_player_controller.dart';
-import 'package:flutter/material.dart';
 
 class BetterPlayerListVideoPlayer extends StatefulWidget {
   ///Video to show
@@ -92,8 +95,8 @@ class _BetterPlayerListVideoPlayerState
   }
 
   void onVisibilityChanged(double visibleFraction) async {
-    bool isPlaying = _betterPlayerController.isPlaying();
-    bool initialized = _betterPlayerController.isVideoInitialized();
+    final bool isPlaying = _betterPlayerController.isPlaying();
+    final bool initialized = _betterPlayerController.isVideoInitialized();
     if (visibleFraction >= widget.playFraction) {
       if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
         _betterPlayerController.play();

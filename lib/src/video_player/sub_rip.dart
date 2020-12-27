@@ -2,8 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Dart imports:
 import 'dart:convert';
 
+// Project imports:
 import 'closed_caption_file.dart';
 
 /// Represents a [ClosedCaptionFile], parsed from the SubRip file format.
@@ -26,7 +28,7 @@ class SubRipCaptionFile extends ClosedCaptionFile {
 
 List<Caption> _parseCaptionsFromSubRipString(String file) {
   final List<Caption> captions = <Caption>[];
-  for (List<String> captionLines in _readSubRipFile(file)) {
+  for (final List<String> captionLines in _readSubRipFile(file)) {
     if (captionLines.length < 3) break;
 
     final int captionNumber = int.parse(captionLines[0]);
@@ -129,4 +131,5 @@ List<List<String>> _readSubRipFile(String file) {
 }
 
 const String _subRipTimeStamp = r'\d\d:\d\d:\d\d,\d\d\d';
+// ignore: unnecessary_raw_strings
 const String _subRipArrow = r' --> ';

@@ -1,3 +1,9 @@
+## 0.0.39
+* Added lint library for dart analysis
+* [BREAKING_CHANGE] Changed constant names to lowerCamelCase in BetterPlayerDataSourceType
+* [BREAKING_CHANGE] Changed constant names to lowerCamelCase in BetterPlayerEventType
+* [BREAKING_CHANGE] Changed constant names to lowerCamelCase in BetterPlayerSubtitlesSourceType
+
 ## 0.0.38
 * Added support for player notifications
 * Added handleLifecycle to BetterPlayerConfiguration

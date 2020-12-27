@@ -19,7 +19,7 @@ class _VideoListPageState extends State<VideoListPage> {
     Constants.forBiggerJoyridesVideoUrl,
     Constants.elephantDreamVideoUrl,
   ];
-  List<VideoListData> dataList = List();
+  List<VideoListData> dataList = [];
   var value = 0;
 
   @override
