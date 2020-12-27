@@ -24,9 +24,9 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Playback speed support  
 ✔️ HLS support (track, subtitles selection)  
 ✔️ Alternative resolution support  
-✔️ Cache support
-✔️ Notifications support
-✔️ ... and much more! 
+✔️ Cache support  
+✔️ Notifications support  
+✔️ ... and much more!  
 
 
 ## Install
@@ -759,9 +759,12 @@ be shown after play for the first time.
 To play resource after leaving the app, set handleLifecycle as false in your BetterPlayerConfiguration.
 
 Important note for android:
-You need to add special service in android native code. This service need to be used to handle situation when
-app is killed without proper player destroying. Check BetterPlayerService in example project to see
-how to add this service to your app. This service will simply destroy all remaining notifications.
+You need to add special service in android native code. Service will simply destroy all remaining notifications. 
+This service need to be used to handle situation when app is killed without proper player destroying. 
+Check BetterPlayerService in example project to see how to add this service to your app.
+https://github.com/jhomlala/betterplayer/blob/feature/player_notifications/example/android/app/src/main/kotlin/com/jhomlala/better_player_example/BetterPlayerService.kt
+
+Here is an example of player with notification: https://github.com/jhomlala/betterplayer/blob/feature/player_notifications/example/lib/pages/notification_player_page.dart
 
 
 ### Add custom element to overflow menu
