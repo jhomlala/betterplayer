@@ -1,9 +1,13 @@
+// Dart imports:
 import 'dart:convert';
 import 'dart:io';
 
+// Package imports:
+import 'package:flutter_hls_parser/flutter_hls_parser.dart';
+
+// Project imports:
 import 'package:better_player/src/hls/better_player_hls_subtitle.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
-import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 
 ///HLS helper class
 class BetterPlayerHlsUtils {
@@ -97,7 +101,7 @@ class BetterPlayerHlsUtils {
       var data = "";
       await response.transform(Utf8Decoder()).listen((contents) {
         data = contents.toString();
-      }).asFuture();
+      }).asFuture<String>();
       return data;
     } catch (exception) {
       print("GetDataFromUrl failed: " + exception.toString());

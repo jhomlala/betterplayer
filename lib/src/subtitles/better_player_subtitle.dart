@@ -32,7 +32,7 @@ class BetterPlayerSubtitle {
     }
   }
 
-  static _handle2LinesSubtitles(List<String> scanner) {
+  static BetterPlayerSubtitle _handle2LinesSubtitles(List<String> scanner) {
     try {
       var timeSplit = scanner[0].split(timerSeparator);
       final start = _stringToDuration(timeSplit[0]);

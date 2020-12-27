@@ -129,7 +129,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         dataSources.clear();
         ;
     }
-b
+
     private void onDestroy() {
         // The whole FlutterView is being destroyed. Here we release resources acquired for all
         // instances

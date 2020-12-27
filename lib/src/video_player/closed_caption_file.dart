@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Project imports:
 import 'sub_rip.dart';
+
 export 'sub_rip.dart' show SubRipCaptionFile;
 
 /// A structured representation of a parsed closed caption file.

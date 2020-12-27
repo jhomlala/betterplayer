@@ -74,7 +74,7 @@ class _EventListenerPageState extends State<EventListenerPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                "Event: ${event.betterPlayerEventType} parameters: ${(event.parameters ?? {}).toString()}"),
+                                "Event: ${event.betterPlayerEventType} parameters: ${(event.parameters ?? <String, dynamic>{}).toString()}"),
                             Divider(),
                           ],
                         ),

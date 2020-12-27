@@ -1,3 +1,4 @@
+// Flutter imports:
 import 'package:flutter/rendering.dart';
 
 class BetterPlayerProgressColors {

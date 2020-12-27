@@ -2,16 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Dart imports:
 import 'dart:async';
 import 'dart:io';
 
-import 'package:better_player/src/video_player/video_player_platform_interface.dart';
+// Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+// Package imports:
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 
+// Project imports:
+import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'closed_caption_file.dart';
 
 final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
@@ -235,12 +240,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       }
     }
 
-    void errorListener(Object obj) {
-      final PlatformException e = obj;
-      value = VideoPlayerValue.erroneous(e.message);
+    void errorListener(Object object) {
+      if (object is PlatformException) {
+        final PlatformException e = object;
+        value = VideoPlayerValue.erroneous(e.message);
+      } else {
+        value = VideoPlayerValue.erroneous(object.toString());
+      }
       _timer?.cancel();
       if (!_initializingCompleter.isCompleted) {
-        _initializingCompleter.completeError(obj);
+        _initializingCompleter.completeError(object);
       }
     }
 
@@ -488,7 +497,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [volume] indicates a value between 0.0 (silent) and 1.0 (full volume) on a
   /// linear scale.
   Future<void> setVolume(double volume) async {
-    value = value.copyWith(volume: volume.clamp(0.0, 1.0));
+    value = value.copyWith(volume: volume.clamp(0.0, 1.0) as double);
     await _applyVolume();
   }
 
@@ -658,7 +667,7 @@ class _VideoScrubberState extends State<_VideoScrubber> {
   @override
   Widget build(BuildContext context) {
     void seekToRelativePosition(Offset globalPosition) {
-      final RenderBox box = context.findRenderObject();
+      final RenderBox box = context.findRenderObject() as RenderBox;
       final Offset tapPos = box.globalToLocal(globalPosition);
       final double relative = tapPos.dx / box.size.width;
       final Duration position = controller.value.duration * relative;

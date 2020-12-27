@@ -1,5 +1,10 @@
+// Dart imports:
 import 'dart:async';
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+
+// Project imports:
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
@@ -8,8 +13,6 @@ import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
-import 'package:flutter/material.dart';
-
 import 'better_player_clickable_widget.dart';
 
 class BetterPlayerMaterialControls extends StatefulWidget {
@@ -19,8 +22,10 @@ class BetterPlayerMaterialControls extends StatefulWidget {
   ///Controls config
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  BetterPlayerMaterialControls(
-      {Key key, this.onControlsVisibilityChanged, this.controlsConfiguration})
+  const BetterPlayerMaterialControls(
+      {Key key,
+      @required this.onControlsVisibilityChanged,
+      @required this.controlsConfiguration})
       : assert(onControlsVisibilityChanged != null),
         assert(controlsConfiguration != null),
         super(key: key);
@@ -85,9 +90,10 @@ class _BetterPlayerMaterialControlsState
           child: Column(
             children: [
               _buildTopBar(),
-              _wasLoading
-                  ? Expanded(child: Center(child: _buildLoadingWidget()))
-                  : _buildHitArea(),
+              if (_wasLoading)
+                Expanded(child: Center(child: _buildLoadingWidget()))
+              else
+                _buildHitArea(),
               _buildBottomBar(),
             ],
           ),
@@ -292,10 +298,11 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-  Widget _buildHitAreaClickableButton({Widget icon, Function onClicked}) {
+  Widget _buildHitAreaClickableButton(
+      {Widget icon, void Function() onClicked}) {
     return BetterPlayerMaterialClickableWidget(
+      onTap: onClicked,
       child: Align(
-        alignment: Alignment.center,
         child: Container(
           decoration: BoxDecoration(
             color: _controlsConfiguration.controlBarColor,
@@ -309,7 +316,6 @@ class _BetterPlayerMaterialControlsState
           ),
         ),
       ),
-      onTap: onClicked,
     );
   }
 

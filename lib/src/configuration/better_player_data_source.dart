@@ -1,7 +1,7 @@
+// Project imports:
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
-
 import 'better_player_cache_configuration.dart';
 
 class BetterPlayerDataSource {
@@ -111,6 +111,7 @@ class BetterPlayerDataSource {
       useHlsSubtitles: useHlsSubtitles,
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
+      cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration,
     );
   }

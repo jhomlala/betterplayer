@@ -1,8 +1,12 @@
+// Dart imports:
 import 'dart:ui';
 
-import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
+// Flutter imports:
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+
+// Project imports:
+import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
 
 class BetterPlayerControlsConfiguration {
   ///Color of the control bars

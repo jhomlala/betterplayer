@@ -2,13 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// Dart imports:
 import 'dart:async';
 import 'dart:ui';
 
+// Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
+// Package imports:
 import 'package:meta/meta.dart' show required, visibleForTesting;
 
+// Project imports:
 import 'closed_caption_file.dart';
 import 'method_channel_video_player.dart';
 

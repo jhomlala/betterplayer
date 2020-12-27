@@ -1,6 +1,15 @@
+// Dart imports:
 import 'dart:async';
 import 'dart:io';
 
+// Flutter imports:
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+// Package imports:
+import 'package:path_provider/path_provider.dart';
+
+// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_event.dart';
@@ -12,9 +21,6 @@ import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/video_player/video_player.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 
 class BetterPlayerController extends ChangeNotifier {
   static const _durationParameter = "duration";
@@ -361,8 +367,9 @@ class BetterPlayerController extends ChangeNotifier {
 
   Future<void> seekTo(Duration moment) async {
     await videoPlayerController.seekTo(moment);
+
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.SEEK_TO,
-        parameters: {_durationParameter: moment}));
+        parameters: <String, dynamic>{_durationParameter: moment}));
     if (moment > videoPlayerController.value.duration) {
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.FINISHED));
     } else {
@@ -373,7 +380,7 @@ class BetterPlayerController extends ChangeNotifier {
   Future<void> setVolume(double volume) async {
     await videoPlayerController.setVolume(volume);
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.SET_VOLUME,
-        parameters: {_volumeParameter: volume}));
+        parameters: <String, dynamic>{_volumeParameter: volume}));
   }
 
   Future<void> setSpeed(double speed) async {
@@ -382,7 +389,7 @@ class BetterPlayerController extends ChangeNotifier {
     }
     await videoPlayerController.setSpeed(speed);
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.SET_SPEED,
-        parameters: {_speedParameter: speed}));
+        parameters: <String, dynamic>{_speedParameter: speed}));
   }
 
   bool isPlaying() {
@@ -431,7 +438,9 @@ class BetterPlayerController extends ChangeNotifier {
       _postEvent(
         BetterPlayerEvent(
           BetterPlayerEventType.EXCEPTION,
-          parameters: {"exception": currentVideoPlayerValue.errorDescription},
+          parameters: <String, dynamic>{
+            "exception": currentVideoPlayerValue.errorDescription
+          },
         ),
       );
     }
@@ -453,16 +462,24 @@ class BetterPlayerController extends ChangeNotifier {
 
       if (currentPositionShifted > currentVideoPlayerValue.duration) {
         _postEvent(
-            BetterPlayerEvent(BetterPlayerEventType.FINISHED, parameters: {
-          _progressParameter: currentVideoPlayerValue.position,
-          _durationParameter: currentVideoPlayerValue.duration
-        }));
+          BetterPlayerEvent(
+            BetterPlayerEventType.FINISHED,
+            parameters: <String, dynamic>{
+              _progressParameter: currentVideoPlayerValue.position,
+              _durationParameter: currentVideoPlayerValue.duration
+            },
+          ),
+        );
       } else {
         _postEvent(
-            BetterPlayerEvent(BetterPlayerEventType.PROGRESS, parameters: {
-          _progressParameter: currentVideoPlayerValue.position,
-          _durationParameter: currentVideoPlayerValue.duration
-        }));
+          BetterPlayerEvent(
+            BetterPlayerEventType.PROGRESS,
+            parameters: <String, dynamic>{
+              _progressParameter: currentVideoPlayerValue.position,
+              _durationParameter: currentVideoPlayerValue.duration
+            },
+          ),
+        );
       }
     }
   }
