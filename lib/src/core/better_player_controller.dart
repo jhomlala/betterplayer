@@ -5,7 +5,6 @@ import 'dart:io';
 // Flutter imports:
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 // Package imports:
 import 'package:path_provider/path_provider.dart';
@@ -32,31 +31,20 @@ class BetterPlayerController extends ChangeNotifier {
 
   final BetterPlayerConfiguration betterPlayerConfiguration;
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
+  final List<Function> _eventListeners = [];
+  final List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
+
+  ///List of files to delete once player disposes.
+  final List<File> _tempFiles = [];
+  final StreamController<bool> _controlsVisibilityStreamController =
+      StreamController.broadcast();
 
   VideoPlayerController videoPlayerController;
 
   bool get autoPlay => betterPlayerConfiguration.autoPlay;
 
-  Duration get startAt => betterPlayerConfiguration.startAt;
-
-  bool get looping => betterPlayerConfiguration.looping;
-
   Widget Function(BuildContext context, String errorMessage) get errorBuilder =>
       betterPlayerConfiguration.errorBuilder;
-
-  Widget get placeholder => betterPlayerConfiguration.placeholder;
-
-  Widget get overlay => betterPlayerConfiguration.overlay;
-
-  bool get fullScreenByDefault => betterPlayerConfiguration.fullScreenByDefault;
-
-  bool get allowedScreenSleep => betterPlayerConfiguration.allowedScreenSleep;
-
-  List<SystemUiOverlay> get systemOverlaysAfterFullScreen =>
-      betterPlayerConfiguration.systemOverlaysAfterFullScreen;
-
-  List<DeviceOrientation> get deviceOrientationsAfterFullScreen =>
-      betterPlayerConfiguration.deviceOrientationsAfterFullScreen;
 
   /// Defines a event listener where video player events will be send
   Function(BetterPlayerEvent) get eventListener =>
@@ -68,13 +56,9 @@ class BetterPlayerController extends ChangeNotifier {
 
   int _lastPositionSelection = 0;
 
-  final List<Function> _eventListeners = [];
-
   BetterPlayerDataSource _betterPlayerDataSource;
 
   BetterPlayerDataSource get betterPlayerDataSource => _betterPlayerDataSource;
-
-  final List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
 
   List<BetterPlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
       _betterPlayerSubtitlesSourceList;
@@ -110,17 +94,11 @@ class BetterPlayerController extends ChangeNotifier {
   ///Currently used translations
   BetterPlayerTranslations translations = BetterPlayerTranslations();
 
-  ///List of files to delete once player disposes.
-  final List<File> _tempFiles = [];
-
   ///Has current data source started
   bool _hasCurrentDataSourceStarted = false;
 
   ///Has current data source initialized
   bool _hasCurrentDataSourceInitialized = false;
-
-  final StreamController<bool> _controlsVisibilityStreamController =
-      StreamController.broadcast();
 
   ///Stream which sends flag whenever visibility of controls changes
   Stream<bool> get controlsVisibilityStream =>
@@ -307,8 +285,9 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future _initialize() async {
-    await videoPlayerController.setLooping(looping);
+    await videoPlayerController.setLooping(betterPlayerConfiguration.looping);
 
+    final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (autoPlay) {
       if (fullScreenByDefault) {
         enterFullScreen();
@@ -321,6 +300,7 @@ class BetterPlayerController extends ChangeNotifier {
       }
     }
 
+    final startAt = betterPlayerConfiguration.startAt;
     if (startAt != null) {
       await videoPlayerController.seekTo(startAt);
     }

@@ -2,6 +2,9 @@
 * Fixed loadingColor and loadingWidget for cupertino player
 * Increased size of cupertino buttons
 * Fixed setControlsEnabled in cupertino/material player
+* [BREAKING_CHANGE] Removed startAt, looping, placeholder, overlay, fullScreenByDefault,
+ allowedScreenSleep, systemOverlaysAfterFullScreen, deviceOrientationsAfterFullScreen from BetterPlayerController
+
 
 ## 0.0.40
 * Exposed VideoPlayerValue in export

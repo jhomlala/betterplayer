@@ -218,7 +218,7 @@ class BetterPlayerState extends State<BetterPlayer>
       );
     }
 
-    if (!widget.controller.allowedScreenSleep) {
+    if (!_betterPlayerConfiguration.allowedScreenSleep) {
       Wakelock.enable();
     }
 
@@ -231,9 +231,9 @@ class BetterPlayerState extends State<BetterPlayer>
     Wakelock.disable();
 
     await SystemChrome.setEnabledSystemUIOverlays(
-        widget.controller.systemOverlaysAfterFullScreen);
+        _betterPlayerConfiguration.systemOverlaysAfterFullScreen);
     await SystemChrome.setPreferredOrientations(
-        widget.controller.deviceOrientationsAfterFullScreen);
+        _betterPlayerConfiguration.deviceOrientationsAfterFullScreen);
   }
 
   Widget _buildPlayer() {
