@@ -1,3 +1,6 @@
+## 0.0.40
+* Exposed VideoPlayerValue in export
+
 ## 0.0.39
 * Added lint library for dart analysis
 * [BREAKING_CHANGE] Changed constant names to lowerCamelCase in BetterPlayerDataSourceType
