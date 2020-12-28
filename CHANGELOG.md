@@ -1,3 +1,7 @@
+## 0.0.41
+* Fixed loadingColor and loadingWidget for cupertino player
+* Increased size of cupertino buttons
+
 ## 0.0.40
 * Exposed VideoPlayerValue in export
 * Fixed log issue
