@@ -22,11 +22,11 @@ class BetterPlayerMaterialControls extends StatefulWidget {
   ///Controls config
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
-  const BetterPlayerMaterialControls(
-      {Key key,
-      @required this.onControlsVisibilityChanged,
-      @required this.controlsConfiguration})
-      : assert(onControlsVisibilityChanged != null),
+  const BetterPlayerMaterialControls({
+    Key key,
+    @required this.onControlsVisibilityChanged,
+    @required this.controlsConfiguration,
+  })  : assert(onControlsVisibilityChanged != null),
         assert(controlsConfiguration != null),
         super(key: key);
 
@@ -156,6 +156,10 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildTopBar() {
+    if (!betterPlayerController.controlsEnabled) {
+      return const SizedBox();
+    }
+
     return _controlsConfiguration.enableOverflowMenu
         ? AnimatedOpacity(
             opacity: _hideStuff ? 0.0 : 1.0,
@@ -189,10 +193,12 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-  AnimatedOpacity _buildBottomBar() {
+  Widget _buildBottomBar() {
+    if (!betterPlayerController.controlsEnabled) {
+      return const SizedBox();
+    }
     return AnimatedOpacity(
-      opacity:
-          !_betterPlayerController.controlsEnabled || _hideStuff ? 0.0 : 1.0,
+      opacity: _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
       child: Container(
@@ -265,6 +271,9 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildHitArea() {
+    if (!betterPlayerController.controlsEnabled) {
+      return const SizedBox();
+    }
     return Expanded(
       child: Container(
         color: Colors.transparent,

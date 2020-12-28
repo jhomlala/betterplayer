@@ -1,6 +1,7 @@
 ## 0.0.41
 * Fixed loadingColor and loadingWidget for cupertino player
 * Increased size of cupertino buttons
+* Fixed setControlsEnabled in cupertino/material player
 
 ## 0.0.40
 * Exposed VideoPlayerValue in export

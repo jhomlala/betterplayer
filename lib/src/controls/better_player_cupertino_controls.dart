@@ -144,11 +144,14 @@ class _BetterPlayerCupertinoControlsState
     super.didChangeDependencies();
   }
 
-  AnimatedOpacity _buildBottomBar(
+  Widget _buildBottomBar(
     Color backgroundColor,
     Color iconColor,
     double barHeight,
   ) {
+    if (!betterPlayerController.controlsEnabled) {
+      return const SizedBox();
+    }
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
@@ -254,7 +257,6 @@ class _BetterPlayerCupertinoControlsState
                       ? _controlsConfiguration.fullscreenDisableIcon
                       : _controlsConfiguration.fullscreenEnableIcon,
                   color: iconColor,
-
                 ),
               ),
             ),
@@ -321,7 +323,6 @@ class _BetterPlayerCupertinoControlsState
                 child: Icon(
                   _controlsConfiguration.overflowMenuIcon,
                   color: iconColor,
-
                 ),
               ),
             ),
@@ -467,6 +468,10 @@ class _BetterPlayerCupertinoControlsState
     double barHeight,
     double buttonPadding,
   ) {
+    if (!betterPlayerController.controlsEnabled) {
+      return const SizedBox();
+    }
+
     return Container(
       height: barHeight,
       margin: EdgeInsets.only(
