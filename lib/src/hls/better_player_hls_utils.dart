@@ -91,8 +91,7 @@ class BetterPlayerHlsUtils {
           url: rendition.url.toString(),
           realUrls: hlsSubtitlesUrls);
     } catch (exception) {
-      BetterPlayerUtils.log(
-          "Failed to process subtitles playlist: $exception");
+      BetterPlayerUtils.log("Failed to process subtitles playlist: $exception");
       return null;
     }
   }

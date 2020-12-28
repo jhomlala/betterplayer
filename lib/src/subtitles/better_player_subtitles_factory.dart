@@ -74,8 +74,7 @@ class BetterPlayerSubtitlesFactory {
     try {
       return _parseString(source.content);
     } catch (exception) {
-      BetterPlayerUtils.log(
-          "Failed to read subtitles from memory: $exception");
+      BetterPlayerUtils.log("Failed to read subtitles from memory: $exception");
     }
     return [];
   }
