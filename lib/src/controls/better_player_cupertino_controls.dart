@@ -144,11 +144,14 @@ class _BetterPlayerCupertinoControlsState
     super.didChangeDependencies();
   }
 
-  AnimatedOpacity _buildBottomBar(
+  Widget _buildBottomBar(
     Color backgroundColor,
     Color iconColor,
     double barHeight,
   ) {
+    if (!betterPlayerController.controlsEnabled) {
+      return const SizedBox();
+    }
     return AnimatedOpacity(
       opacity: _hideStuff ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
@@ -254,7 +257,6 @@ class _BetterPlayerCupertinoControlsState
                       ? _controlsConfiguration.fullscreenDisableIcon
                       : _controlsConfiguration.fullscreenEnableIcon,
                   color: iconColor,
-                  size: 12.0,
                 ),
               ),
             ),
@@ -321,7 +323,6 @@ class _BetterPlayerCupertinoControlsState
                 child: Icon(
                   _controlsConfiguration.overflowMenuIcon,
                   color: iconColor,
-                  size: 16.0,
                 ),
               ),
             ),
@@ -368,7 +369,6 @@ class _BetterPlayerCupertinoControlsState
                       ? _controlsConfiguration.muteIcon
                       : _controlsConfiguration.unMuteIcon,
                   color: iconColor,
-                  size: 16.0,
                 ),
               ),
             ),
@@ -394,7 +394,6 @@ class _BetterPlayerCupertinoControlsState
               ? _controlsConfiguration.pauseIcon
               : _controlsConfiguration.playIcon,
           color: iconColor,
-          size: 16.0,
         ),
       ),
     );
@@ -442,7 +441,6 @@ class _BetterPlayerCupertinoControlsState
         child: Icon(
           _controlsConfiguration.skipBackIcon,
           color: iconColor,
-          size: 12.0,
         ),
       ),
     );
@@ -459,7 +457,6 @@ class _BetterPlayerCupertinoControlsState
         child: Icon(
           _controlsConfiguration.skipForwardIcon,
           color: iconColor,
-          size: 12.0,
         ),
       ),
     );
@@ -471,6 +468,10 @@ class _BetterPlayerCupertinoControlsState
     double barHeight,
     double buttonPadding,
   ) {
+    if (!betterPlayerController.controlsEnabled) {
+      return const SizedBox();
+    }
+
     return Container(
       height: barHeight,
       margin: EdgeInsets.only(
@@ -700,10 +701,14 @@ class _BetterPlayerCupertinoControlsState
   }
 
   Widget _buildLoadingWidget() {
+    if (_controlsConfiguration.loadingWidget != null) {
+      return _controlsConfiguration.loadingWidget;
+    }
+
     return CircularProgressIndicator(
       valueColor: AlwaysStoppedAnimation<Color>(
-        _controlsConfiguration.controlBarColor,
-      ),
+          _controlsConfiguration.loadingColor ??
+              _controlsConfiguration.controlBarColor),
     );
   }
 }

@@ -123,7 +123,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       child: Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
-          betterPlayerController.placeholder ?? Container(),
+          betterPlayerController.betterPlayerConfiguration.placeholder ??
+              Container(),
           Transform.rotate(
             angle: rotation * pi / 180,
             child: _BetterPlayerVideoFitWidget(
@@ -131,7 +132,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
               betterPlayerController.betterPlayerConfiguration.fit,
             ),
           ),
-          betterPlayerController.overlay ?? Container(),
+          betterPlayerController.betterPlayerConfiguration.overlay ??
+              Container(),
           BetterPlayerSubtitlesDrawer(
             betterPlayerController: betterPlayerController,
             betterPlayerSubtitlesConfiguration: subtitlesConfiguration,

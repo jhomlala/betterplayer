@@ -19,11 +19,9 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
-        "https://v5.szjal.cn/20200829/qByymCNH/index.m3u8");
+        BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
-
     super.initState();
   }
 
