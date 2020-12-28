@@ -1,5 +1,6 @@
 ## 0.0.40
 * Exposed VideoPlayerValue in export
+* Fixed log issue
 
 ## 0.0.39
 * Added lint library for dart analysis

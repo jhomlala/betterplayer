@@ -36,12 +36,12 @@ class BetterPlayerSubtitlesFactory {
           final subtitlesCache = _parseString(fileContent);
           subtitles.addAll(subtitlesCache);
         } else {
-          BetterPlayerUtils.print("$url doesn't exist!");
+          BetterPlayerUtils.log("$url doesn't exist!");
         }
       }
       return subtitles;
     } catch (exception) {
-      BetterPlayerUtils.print("Failed to read subtitles from file: $exception");
+      BetterPlayerUtils.log("Failed to read subtitles from file: $exception");
     }
     return [];
   }
@@ -60,10 +60,10 @@ class BetterPlayerSubtitlesFactory {
       }
       client.close();
 
-      BetterPlayerUtils.print("Parsed total subtitles: ${subtitles.length}");
+      BetterPlayerUtils.log("Parsed total subtitles: ${subtitles.length}");
       return subtitles;
     } catch (exception) {
-      BetterPlayerUtils.print(
+      BetterPlayerUtils.log(
           "Failed to read subtitles from network: $exception");
     }
     return [];
@@ -74,7 +74,7 @@ class BetterPlayerSubtitlesFactory {
     try {
       return _parseString(source.content);
     } catch (exception) {
-      BetterPlayerUtils.print(
+      BetterPlayerUtils.log(
           "Failed to read subtitles from memory: $exception");
     }
     return [];
