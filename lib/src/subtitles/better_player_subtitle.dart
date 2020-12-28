@@ -29,7 +29,7 @@ class BetterPlayerSubtitle {
       }
       return BetterPlayerSubtitle._();
     } catch (exception) {
-      BetterPlayerUtils.print("Failed to parse subtitle line: $value");
+      BetterPlayerUtils.log("Failed to parse subtitle line: $value");
       return BetterPlayerSubtitle._();
     }
   }
@@ -44,7 +44,7 @@ class BetterPlayerSubtitle {
       return BetterPlayerSubtitle._(
           index: -1, start: start, end: end, texts: texts);
     } catch (exception) {
-      BetterPlayerUtils.print("Failed to parse subtitle line: $scanner");
+      BetterPlayerUtils.log("Failed to parse subtitle line: $scanner");
       return BetterPlayerSubtitle._();
     }
   }
@@ -66,7 +66,7 @@ class BetterPlayerSubtitle {
       return BetterPlayerSubtitle._(
           index: index, start: start, end: end, texts: texts);
     } catch (exception) {
-      BetterPlayerUtils.print("Failed to parse subtitle line: $scanner");
+      BetterPlayerUtils.log("Failed to parse subtitle line: $scanner");
       return BetterPlayerSubtitle._();
     }
   }
@@ -101,7 +101,7 @@ class BetterPlayerSubtitle {
           milliseconds: int.tryParse(secsAndMillsSplit[1]));
       return result;
     } catch (exception) {
-      BetterPlayerUtils.print("Failed to process value: $value");
+      BetterPlayerUtils.log("Failed to process value: $value");
       return const Duration();
     }
   }

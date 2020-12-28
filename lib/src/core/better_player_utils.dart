@@ -59,8 +59,9 @@ class BetterPlayerUtils {
     return width > height ? width / height : height / width;
   }
 
-  static void print(String logMessage) {
+  static void log(String logMessage) {
     if (!kReleaseMode) {
+      // ignore: avoid_print
       print(logMessage);
     }
   }

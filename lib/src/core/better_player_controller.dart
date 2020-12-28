@@ -594,7 +594,7 @@ class BetterPlayerController extends ChangeNotifier {
               orElse: () => null) ??
           _getDefaultTranslations(locale);
     } else {
-      BetterPlayerUtils.print("Locale is null. Couldn't setup translations.");
+      BetterPlayerUtils.log("Locale is null. Couldn't setup translations.");
     }
   }
 

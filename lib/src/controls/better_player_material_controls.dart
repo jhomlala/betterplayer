@@ -618,9 +618,14 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildLoadingWidget() {
+    if (_controlsConfiguration.loadingWidget != null) {
+      return _controlsConfiguration.loadingWidget;
+    }
+
     return CircularProgressIndicator(
-      valueColor:
-          AlwaysStoppedAnimation<Color>(_controlsConfiguration.controlBarColor),
+      valueColor: AlwaysStoppedAnimation<Color>(
+          _controlsConfiguration.loadingColor ??
+              _controlsConfiguration.controlBarColor),
     );
   }
 }
