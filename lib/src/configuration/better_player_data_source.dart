@@ -105,7 +105,7 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration notificationConfiguration,
   }) {
     return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      BetterPlayerDataSourceType.file,
       url,
       subtitles: subtitles,
       useHlsSubtitles: useHlsSubtitles,

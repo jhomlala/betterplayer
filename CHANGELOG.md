@@ -1,10 +1,14 @@
+## 0.0.42
+* Fixed resolution issue
+* Fixed type of BetterPlayerDataSource for file type
+* Added audio notify on dispose (iOS) (fixed by https://github.com/kingiol)
+
 ## 0.0.41
 * Fixed loadingColor and loadingWidget for cupertino player
 * Increased size of cupertino buttons
 * Fixed setControlsEnabled in cupertino/material player
 * [BREAKING_CHANGE] Removed startAt, looping, placeholder, overlay, fullScreenByDefault,
  allowedScreenSleep, systemOverlaysAfterFullScreen, deviceOrientationsAfterFullScreen from BetterPlayerController
-
 
 ## 0.0.40
 * Exposed VideoPlayerValue in export

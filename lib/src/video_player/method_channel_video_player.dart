@@ -8,6 +8,7 @@ import 'dart:async';
 import 'dart:ui';
 
 // Flutter imports:
+import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -195,12 +196,29 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       final String key = map["key"] as String;
       switch (eventType) {
         case 'initialized':
+          double width = 0;
+          double height = 0;
+
+          try {
+            if (map.containsKey("width")) {
+              num widthNum = map["width"];
+              width = widthNum.toDouble();
+            }
+            if (map.containsKey("height")) {
+              num heightNum = map["height"];
+              height = heightNum.toDouble();
+            }
+          } catch (exception) {
+            BetterPlayerUtils.log(exception);
+          }
+
+          Size size = Size(width, height);
+
           return VideoEvent(
             eventType: VideoEventType.initialized,
             key: key,
             duration: Duration(milliseconds: map['duration'] as int),
-            size: Size((map['width'] as int)?.toDouble() ?? 0.0,
-                (map['height'] as int)?.toDouble() ?? 0.0),
+            size: size,
           );
         case 'completed':
           return VideoEvent(

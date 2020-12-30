@@ -886,6 +886,7 @@ NSMutableDictionary*  _artworkImageDict;
                     [player dispose];
                 }
             });
+            [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
             result(nil);
         } else if ([@"setLooping" isEqualToString:call.method]) {
             [player setIsLooping:[argsMap[@"looping"] boolValue]];
