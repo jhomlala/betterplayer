@@ -15,6 +15,7 @@ import 'package:better_player_example/pages/notification_player_page.dart';
 import 'package:better_player_example/pages/overridden_aspect_ratio_page.dart';
 import 'package:better_player_example/pages/playlist_page.dart';
 import 'package:better_player_example/pages/resolutions_page.dart';
+import 'package:better_player_example/pages/reusable_video_list/reusable_video_list_page.dart';
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_page.dart';
@@ -119,6 +120,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Notifications player page", () {
         _navigateToPage(NotificationPlayerPage());
+      }),
+      _buildExampleElementWidget("Reusable video list page", () {
+        _navigateToPage(ReusableVideoListPage());
       }),
     ];
   }

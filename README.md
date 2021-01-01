@@ -35,7 +35,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.42
+  better_player: ^0.0.43
 ```
 
 2. Install it
@@ -324,6 +324,14 @@ Possible configuration options:
     ///[deviceOrientationsOnFullScreen] and [fullScreenAspectRatio] value will be
     /// ignored.
     final bool autoDetectFullscreenDeviceOrientation;
+
+    ///Defines flag which enables/disables lifecycle handling (pause on app closed,
+    ///play on app resumed). Default value is true.
+    final bool handleLifecycle;
+
+    ///Defines flag which enabled/disabled auto dispose on BetterPlayer dispose.
+    ///Default value is true.
+    final bool autoDispose;
 ```
 
 ### BetterPlayerSubtitlesConfiguration

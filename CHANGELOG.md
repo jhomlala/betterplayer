@@ -1,3 +1,9 @@
+## 0.0.43
+* Added autoDispose flag in BetterPlayerConfiguration
+* Added removeEventsListener in BetterPlayerController
+* Video list examples update
+* Lint fixes
+
 ## 0.0.42
 * Fixed resolution issue
 * Fixed type of BetterPlayerDataSource for file type
