@@ -8,6 +8,7 @@ import android.content.Context;
 import android.util.Log;
 import android.util.LongSparseArray;
 
+import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -108,12 +109,12 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                         binding.getBinaryMessenger(),
                         FlutterMain::getLookupKeyForAsset,
                         FlutterMain::getLookupKeyForAsset,
-                        binding.getFlutterEngine().getRenderer());
+                        binding.getTextureRegistry());
         flutterState.startListening(this);
     }
 
     @Override
-    public void onDetachedFromEngine(FlutterPluginBinding binding) {
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
         if (flutterState == null) {
             Log.wtf(TAG, "Detached from the engine before registering to it.");
         }
@@ -140,7 +141,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     }
 
     @Override
-    public void onMethodCall(MethodCall call, Result result) {
+    public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         if (flutterState == null || flutterState.textureRegistry == null) {
             result.error("no_activity", "better_player plugin requires a foreground activity", null);
             return;
@@ -211,14 +212,14 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                 player.sendBufferingUpdate();
                 break;
             case SET_SPEED_METHOD:
-                player.setSpeed((Double) call.argument(SPEED_PARAMETER));
+                player.setSpeed(call.argument(SPEED_PARAMETER));
                 result.success(null);
                 break;
             case SET_TRACK_PARAMETERS_METHOD:
                 player.setTrackParameters(
-                        (Integer) call.argument(WIDTH_PARAMETER),
-                        (Integer) call.argument(HEIGHT_PARAMETER),
-                        (Integer) call.argument(BITRATE_PARAMETER));
+                        call.argument(WIDTH_PARAMETER),
+                        call.argument(HEIGHT_PARAMETER),
+                        call.argument(BITRATE_PARAMETER));
                 result.success(null);
                 break;
             case DISPOSE_METHOD:
@@ -321,8 +322,8 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         }
     }
 
-
-    private <T> T getParameter(Map<String, Object> parameters, Object key, T defaultValue) {
+    @SuppressWarnings("unchecked")
+    private <T> T getParameter(Map<String, Object> parameters, String key, T defaultValue) {
         if (parameters.containsKey(key)) {
             Object value = parameters.get(key);
             if (value != null) {

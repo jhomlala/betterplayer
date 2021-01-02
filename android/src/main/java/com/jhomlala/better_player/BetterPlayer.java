@@ -18,7 +18,6 @@ import android.os.ResultReceiver;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.C;
@@ -52,7 +51,6 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -73,25 +71,15 @@ final class BetterPlayer {
     private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
     private static final int NOTIFICATION_ID = 20772077;
 
-    private SimpleExoPlayer exoPlayer;
-
-    private Surface surface;
-
+    private final SimpleExoPlayer exoPlayer;
+    private final DefaultTrackSelector trackSelector;
     private final TextureRegistry.SurfaceTextureEntry textureEntry;
-
-    private QueuingEventSink eventSink = new QueuingEventSink();
-
+    private final QueuingEventSink eventSink = new QueuingEventSink();
     private final EventChannel eventChannel;
 
     private boolean isInitialized = false;
-
+    private Surface surface;
     private String key;
-
-    private DefaultTrackSelector trackSelector;
-
-    private long maxCacheSize;
-    private long maxCacheFileSize;
-
     private PlayerNotificationManager playerNotificationManager;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
@@ -175,24 +163,22 @@ final class BetterPlayer {
             @Nullable
             @Override
             public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
-                if (imageUrl == null){
+                if (imageUrl == null) {
                     return null;
                 }
-                if (bitmap != null){
+                if (bitmap != null) {
                     return bitmap;
                 }
                 new Thread(() -> {
                     bitmap = null;
-                    if (imageUrl.contains("http")){
+                    if (imageUrl.contains("http")) {
                         bitmap = getBitmapFromExternalURL(imageUrl);
                     } else {
                         bitmap = getBitmapFromInternalURL(imageUrl);
                     }
 
                     Bitmap finalBitmap = bitmap;
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        callback.onBitmap(finalBitmap);
-                    });
+                    new Handler(Looper.getMainLooper()).post(() -> callback.onBitmap(finalBitmap));
 
                 }).start();
                 return null;
@@ -246,7 +232,7 @@ final class BetterPlayer {
         playerNotificationManager.setControlDispatcher(new ControlDispatcher() {
             @Override
             public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
-                String eventType = "";
+                String eventType;
                 if (player.getPlayWhenReady()) {
                     eventType = "pause";
                 } else {
@@ -287,25 +273,22 @@ final class BetterPlayer {
         });
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             refreshHandler = new Handler();
-            refreshRunnable = new Runnable() {
-                @Override
-                public void run() {
-                    PlaybackStateCompat playbackState = null;
-                    if (exoPlayer.getPlayWhenReady()) {
-                        playbackState = new PlaybackStateCompat.Builder()
-                                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-                                .setState(PlaybackStateCompat.STATE_PAUSED, getPosition(), 1.0f)
-                                .build();
-                    } else {
-                        playbackState = new PlaybackStateCompat.Builder()
-                                .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-                                .setState(PlaybackStateCompat.STATE_PLAYING, getPosition(), 1.0f)
-                                .build();
-                    }
-
-                    mediaSession.setPlaybackState(playbackState);
-                    refreshHandler.postDelayed(refreshRunnable, 1000);
+            refreshRunnable = () -> {
+                PlaybackStateCompat playbackState;
+                if (exoPlayer.getPlayWhenReady()) {
+                    playbackState = new PlaybackStateCompat.Builder()
+                            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                            .setState(PlaybackStateCompat.STATE_PAUSED, getPosition(), 1.0f)
+                            .build();
+                } else {
+                    playbackState = new PlaybackStateCompat.Builder()
+                            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+                            .setState(PlaybackStateCompat.STATE_PLAYING, getPosition(), 1.0f)
+                            .build();
                 }
+
+                mediaSession.setPlaybackState(playbackState);
+                refreshHandler.postDelayed(refreshRunnable, 1000);
             };
             refreshHandler.postDelayed(refreshRunnable, 0);
         }
@@ -323,27 +306,27 @@ final class BetterPlayer {
         exoPlayer.seekTo(0);
     }
 
-    public void removeNotificationData(){
+    public void removeNotificationData() {
         exoPlayer.removeListener(exoPlayerEventListener);
         if (refreshHandler != null) {
             refreshHandler.removeCallbacksAndMessages(null);
             refreshHandler = null;
             refreshRunnable = null;
         }
-        if (playerNotificationManager != null){
+        if (playerNotificationManager != null) {
             playerNotificationManager.setPlayer(null);
         }
         bitmap = null;
     }
 
-    private static Bitmap getBitmapFromInternalURL(String src){
+    private static Bitmap getBitmapFromInternalURL(String src) {
         try {
-            File file = new File(src);
             return BitmapFactory.decodeFile(src);
-        } catch (Exception exception){
+        } catch (Exception exception) {
             return null;
         }
     }
+
     private static Bitmap getBitmapFromExternalURL(String src) {
         try {
             URL url = new URL(src);
@@ -351,8 +334,7 @@ final class BetterPlayer {
             connection.setDoInput(true);
             connection.connect();
             InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
+            return BitmapFactory.decodeStream(input);
         } catch (IOException exception) {
             return null;
         }
