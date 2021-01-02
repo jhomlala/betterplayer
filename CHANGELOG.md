@@ -3,6 +3,7 @@
 * Added removeEventsListener in BetterPlayerController
 * Video list examples update
 * Fixed Android native build warnings
+* Fixed placeholder until play issues
 * Lint fixes
 
 
