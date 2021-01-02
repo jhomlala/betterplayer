@@ -36,6 +36,11 @@ class BetterPlayerConfiguration {
   /// Should the placeholder be shown until play is pressed
   final bool showPlaceholderUntilPlay;
 
+  /// Placeholder position of player stack. If false, then placeholder will be
+  /// displayed on the bottom, so user need to hide it manually. Default is
+  /// true.
+  final bool placeholderOnTop;
+
   /// A widget which is placed between the video and the controls
   final Widget overlay;
 
@@ -108,6 +113,7 @@ class BetterPlayerConfiguration {
     this.fullScreenByDefault = false,
     this.placeholder,
     this.showPlaceholderUntilPlay = false,
+    this.placeholderOnTop = true,
     this.overlay,
     this.errorBuilder,
     this.allowedScreenSleep = true,
@@ -143,6 +149,8 @@ class BetterPlayerConfiguration {
     bool looping,
     bool fullScreenByDefault,
     Widget placeholder,
+    bool showPlaceholderUntilPlay,
+    bool placeholderOnTop,
     Widget overlay,
     bool showControlsOnInitialize,
     Widget Function(BuildContext context, String errorMessage) errorBuilder,
@@ -168,6 +176,9 @@ class BetterPlayerConfiguration {
       looping: looping ?? this.looping,
       fullScreenByDefault: fullScreenByDefault ?? this.fullScreenByDefault,
       placeholder: placeholder ?? this.placeholder,
+      showPlaceholderUntilPlay:
+          showPlaceholderUntilPlay ?? this.showPlaceholderUntilPlay,
+      placeholderOnTop: placeholderOnTop ?? this.placeholderOnTop,
       overlay: overlay ?? this.overlay,
       errorBuilder: errorBuilder ?? this.errorBuilder,
       allowedScreenSleep: allowedScreenSleep ?? this.allowedScreenSleep,

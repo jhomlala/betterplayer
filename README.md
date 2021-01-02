@@ -269,6 +269,11 @@ Possible configuration options:
     /// Should the placeholder be shown until play is pressed
     final bool showPlaceholderUntilPlay;
 
+    /// Placeholder position of player stack. If false, then placeholder will be
+    /// displayed on the bottom, so user need to hide it manually. Default is
+    /// true.
+    final bool placeholderOnTop;
+
     /// A widget which is placed between the video and the controls
     final Widget overlay;
 
