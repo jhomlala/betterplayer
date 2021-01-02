@@ -50,14 +50,6 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
       body: Container(
         color: Colors.grey,
         child: Column(children: [
-          FlatButton(
-            child: Text("Update page state"),
-            onPressed: () {
-              setState(() {
-                value++;
-              });
-            },
-          ),
           Expanded(
             child: ListView.builder(
               itemCount: dataList.length,

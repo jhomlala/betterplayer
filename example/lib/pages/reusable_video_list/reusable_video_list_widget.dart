@@ -29,10 +29,14 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   bool _initialized = false;
   bool _wasPlaying = false;
   Duration _lastPosition;
+  bool _afterBuild = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _afterBuild = true;
+    });
   }
 
   @override
@@ -42,9 +46,6 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   }
 
   void _setupController() {
-    if (!mounted){
-      return;
-    }
     if (controller == null) {
       controller = widget.videoListController.getBetterPlayerController();
       controller.setupDataSource(
@@ -55,14 +56,12 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   }
 
   void _freeController() {
-    if (!mounted){
-      return;
-    }
     if (!_initialized) {
       _initialized = true;
       return;
     }
     if (controller != null && _initialized) {
+      _afterBuild = false;
       controller.removeEventsListener(onPlayerEvent);
       _wasPlaying = controller.isPlaying();
       _lastPosition = controller.videoPlayerController.value.position;
@@ -85,6 +84,8 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
     }
   }
 
+  ///TODO: Handle "setState() or markNeedsBuild() called during build." error
+  ///when fast scrolling through the list
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -99,29 +100,31 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
               style: TextStyle(fontSize: 50),
             ),
           ),
-          StreamBuilder<BetterPlayerController>(
-            stream: betterPlayerControllerStreamController.stream,
-            builder: (context, snapshot) {
-              return VisibilityDetector(
-                key: Key(this.hashCode.toString() +
-                    DateTime.now().millisecond.toString()),
-                onVisibilityChanged: (info) {
-                  if (info.visibleFraction >= 0.8) {
-                    _setupController();
-                  } else {
-                    _freeController();
-                  }
-                },
-                child: AspectRatio(
+          VisibilityDetector(
+            key: Key(hashCode.toString() + DateTime.now().toString()),
+            onVisibilityChanged: (info) {
+              if (!_afterBuild) {
+                return;
+              }
+              if (info.visibleFraction >= 0.8) {
+                _setupController();
+              } else {
+                _freeController();
+              }
+            },
+            child: StreamBuilder<BetterPlayerController>(
+              stream: betterPlayerControllerStreamController.stream,
+              builder: (context, snapshot) {
+                return AspectRatio(
                   aspectRatio: 16 / 9,
                   child: controller != null
                       ? BetterPlayer(
                           controller: controller,
                         )
                       : Container(),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
           Padding(
             padding: EdgeInsets.all(8),
@@ -168,5 +171,4 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
     _freeController();
     super.deactivate();
   }
-
 }
