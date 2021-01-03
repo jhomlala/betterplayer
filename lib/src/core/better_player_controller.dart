@@ -473,6 +473,10 @@ class BetterPlayerController extends ChangeNotifier {
     _eventListeners.add(eventListener);
   }
 
+  void removeEventsListener(Function(BetterPlayerEvent) eventListener) {
+    _eventListeners.remove(eventListener);
+  }
+
   bool isLiveStream() {
     return _betterPlayerDataSource?.liveStream == true;
   }
@@ -629,6 +633,9 @@ class BetterPlayerController extends ChangeNotifier {
 
   @override
   void dispose() {
+    if (!betterPlayerConfiguration.autoDispose) {
+      return;
+    }
     if (!_disposed) {
       _eventListeners.clear();
       videoPlayerController?.removeListener(_fullScreenListener);

@@ -1,3 +1,12 @@
+## 0.0.43
+* Added autoDispose flag in BetterPlayerConfiguration
+* Added removeEventsListener in BetterPlayerController
+* Video list examples update
+* Fixed Android native build warnings
+* Fixed placeholder until play issues
+* Added placeholderOnTop to the BetterPlayerConfiguration
+* Lint fixes
+
 ## 0.0.42
 * Fixed resolution issue
 * Fixed type of BetterPlayerDataSource for file type

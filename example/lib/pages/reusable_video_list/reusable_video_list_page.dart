@@ -2,16 +2,18 @@ import 'dart:math';
 
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/model/video_list_data.dart';
+import 'package:better_player_example/pages/reusable_video_list/reusable_video_list_controller.dart';
+import 'package:better_player_example/pages/reusable_video_list/reusable_video_list_widget.dart';
 import 'package:flutter/material.dart';
 
-import 'video_list_widget.dart';
-
-class VideoListPage extends StatefulWidget {
+class ReusableVideoListPage extends StatefulWidget {
   @override
-  _VideoListPageState createState() => _VideoListPageState();
+  _ReusableVideoListPageState createState() => _ReusableVideoListPageState();
 }
 
-class _VideoListPageState extends State<VideoListPage> {
+class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
+  ReusableVideoListController videoListController =
+      ReusableVideoListController();
   final _random = new Random();
   final List<String> _videos = [
     Constants.bugBuckBunnyVideoUrl,
@@ -36,27 +38,26 @@ class _VideoListPageState extends State<VideoListPage> {
   }
 
   @override
+  void dispose() {
+    videoListController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Video in list")),
+      appBar: AppBar(title: Text("Reusable video list")),
       body: Container(
         color: Colors.grey,
         child: Column(children: [
-          FlatButton(
-            child: Text("Update page state"),
-            onPressed: () {
-              setState(() {
-                value++;
-              });
-            },
-          ),
           Expanded(
             child: ListView.builder(
               itemCount: dataList.length,
               itemBuilder: (context, index) {
                 VideoListData videoListData = dataList[index];
-                return VideoListWidget(
+                return ReusableVideoListWidget(
                   videoListData: videoListData,
+                  videoListController: videoListController,
                 );
               },
             ),

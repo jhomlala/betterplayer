@@ -7,6 +7,7 @@ import 'package:better_player_example/pages/cache_page.dart';
 import 'package:better_player_example/pages/controller_controls_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
+import 'package:better_player_example/pages/fade_placeholder_page.dart';
 import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/hls_tracks_page.dart';
 import 'package:better_player_example/pages/memory_player_page.dart';
@@ -15,6 +16,7 @@ import 'package:better_player_example/pages/notification_player_page.dart';
 import 'package:better_player_example/pages/overridden_aspect_ratio_page.dart';
 import 'package:better_player_example/pages/playlist_page.dart';
 import 'package:better_player_example/pages/resolutions_page.dart';
+import 'package:better_player_example/pages/reusable_video_list/reusable_video_list_page.dart';
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_page.dart';
@@ -119,6 +121,12 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Notifications player page", () {
         _navigateToPage(NotificationPlayerPage());
+      }),
+      _buildExampleElementWidget("Reusable video list page", () {
+        _navigateToPage(ReusableVideoListPage());
+      }),
+      _buildExampleElementWidget("Fade placeholder page", () {
+        _navigateToPage(FadePlaceholderPage());
       }),
     ];
   }

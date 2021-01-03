@@ -201,18 +201,18 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
           try {
             if (map.containsKey("width")) {
-              num widthNum = map["width"];
+              final num widthNum = map["width"] as num;
               width = widthNum.toDouble();
             }
             if (map.containsKey("height")) {
-              num heightNum = map["height"];
+              final num heightNum = map["height"] as num;
               height = heightNum.toDouble();
             }
           } catch (exception) {
-            BetterPlayerUtils.log(exception);
+            BetterPlayerUtils.log(exception.toString());
           }
 
-          Size size = Size(width, height);
+          final Size size = Size(width, height);
 
           return VideoEvent(
             eventType: VideoEventType.initialized,
