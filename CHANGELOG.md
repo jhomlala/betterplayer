@@ -4,8 +4,8 @@
 * Video list examples update
 * Fixed Android native build warnings
 * Fixed placeholder until play issues
-* Lint fixes
 * Added placeholderOnTop to the BetterPlayerConfiguration
+* Lint fixes
 
 ## 0.0.42
 * Fixed resolution issue
