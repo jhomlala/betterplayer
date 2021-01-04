@@ -2,6 +2,7 @@
 import 'dart:ui';
 
 // Flutter imports:
+import 'package:better_player/better_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -76,7 +77,10 @@ class BetterPlayerControlsConfiguration {
   final Duration controlsHideTime;
 
   ///Custom controls, it will override Material/Cupertino controls
-  final Widget customControls;
+  final Widget Function(BetterPlayerController controller) customControls;
+
+  ///Flag to use a forced platform
+  final PlayerPlatform playerPlatform;
 
   ///Flag used to show/hide controls
   final bool showControls;
@@ -154,6 +158,7 @@ class BetterPlayerControlsConfiguration {
     this.progressBarBackgroundColor = Colors.white60,
     this.controlsHideTime = const Duration(milliseconds: 300),
     this.customControls,
+    this.playerPlatform,
     this.showControls = true,
     this.showControlsOnInitialize = true,
     this.controlBarHeight = 48.0,
@@ -193,3 +198,5 @@ class BetterPlayerControlsConfiguration {
         enableProgressText: true);
   }
 }
+
+enum PlayerPlatform { IOS, ANDROID }

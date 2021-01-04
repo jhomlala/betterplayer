@@ -158,18 +158,40 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     BuildContext context,
     BetterPlayerController betterPlayerController,
   ) {
-    if (controlsConfiguration.showControls &&
-        controlsConfiguration.customControls == null) {
-      if (Platform.isAndroid) {
-        return BetterPlayerMaterialControls(
-          onControlsVisibilityChanged: onControlsVisibilityChanged,
-          controlsConfiguration: controlsConfiguration,
-        );
+    if (controlsConfiguration.showControls) {
+      if (controlsConfiguration.customControls == null &&
+          controlsConfiguration.playerPlatform == null) {
+        if (Platform.isAndroid) {
+          return BetterPlayerMaterialControls(
+            onControlsVisibilityChanged: onControlsVisibilityChanged,
+            controlsConfiguration: controlsConfiguration,
+          );
+        } else {
+          return BetterPlayerCupertinoControls(
+            onControlsVisibilityChanged: onControlsVisibilityChanged,
+            controlsConfiguration: controlsConfiguration,
+          );
+        }
       } else {
-        return BetterPlayerCupertinoControls(
-          onControlsVisibilityChanged: onControlsVisibilityChanged,
-          controlsConfiguration: controlsConfiguration,
-        );
+        if (controlsConfiguration.customControls == null) {
+          switch (controlsConfiguration.playerPlatform) {
+            case PlayerPlatform.IOS:
+              return BetterPlayerCupertinoControls(
+                onControlsVisibilityChanged: onControlsVisibilityChanged,
+                controlsConfiguration: controlsConfiguration,
+              );
+              break;
+            case PlayerPlatform.ANDROID:
+              return BetterPlayerMaterialControls(
+                onControlsVisibilityChanged: onControlsVisibilityChanged,
+                controlsConfiguration: controlsConfiguration,
+              );
+              break;
+            default:
+          }
+        } else {
+          return controlsConfiguration.customControls(betterPlayerController);
+        }
       }
     }
 
