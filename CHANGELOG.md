@@ -1,3 +1,6 @@
+## 0.0.44
+* Added placeholder until play example
+
 ## 0.0.43
 * Added autoDispose flag in BetterPlayerConfiguration
 * Added removeEventsListener in BetterPlayerController
