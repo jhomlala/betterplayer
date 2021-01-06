@@ -36,7 +36,8 @@ class BetterPlayerMaterialControls extends StatefulWidget {
   }
 }
 
-class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<BetterPlayerMaterialControls> {
+class _BetterPlayerMaterialControlsState
+    extends BetterPlayerControlsState<BetterPlayerMaterialControls> {
   VideoPlayerValue _latestValue;
   double _latestVolume;
   bool _hideStuff = true;
@@ -49,7 +50,8 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
   BetterPlayerController _betterPlayerController;
   StreamSubscription _controlsVisibilityStreamSubscription;
 
-  BetterPlayerControlsConfiguration get _controlsConfiguration => widget.controlsConfiguration;
+  BetterPlayerControlsConfiguration get _controlsConfiguration =>
+      widget.controlsConfiguration;
 
   @override
   VideoPlayerValue get latestValue => _latestValue;
@@ -58,7 +60,8 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
   BetterPlayerController get betterPlayerController => _betterPlayerController;
 
   @override
-  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration => _controlsConfiguration;
+  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
+      _controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +90,10 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
           child: Column(
             children: [
               _buildTopBar(),
-              if (_wasLoading) Expanded(child: Center(child: _buildLoadingWidget())) else _buildHitArea(),
+              if (_wasLoading)
+                Expanded(child: Center(child: _buildLoadingWidget()))
+              else
+                _buildHitArea(),
               _buildBottomBar(),
             ],
           ),
@@ -127,7 +133,8 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
 
   Widget _buildErrorWidget() {
     if (_betterPlayerController.errorBuilder != null) {
-      return _betterPlayerController.errorBuilder(context, _betterPlayerController.videoPlayerController.value.errorDescription);
+      return _betterPlayerController.errorBuilder(context,
+          _betterPlayerController.videoPlayerController.value.errorDescription);
     } else {
       return Center(
         child: Column(
@@ -199,17 +206,30 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
         color: _controlsConfiguration.controlBarColor,
         child: Row(
           children: [
-            if (_controlsConfiguration.enablePlayPause) _buildPlayPause(_controller) else const SizedBox(),
+            if (_controlsConfiguration.enablePlayPause)
+              _buildPlayPause(_controller)
+            else
+              const SizedBox(),
             if (_betterPlayerController.isLiveStream())
               _buildLiveWidget()
             else
-              _controlsConfiguration.enableProgressText ? _buildPosition() : const SizedBox(),
+              _controlsConfiguration.enableProgressText
+                  ? _buildPosition()
+                  : const SizedBox(),
             if (_betterPlayerController.isLiveStream())
               const SizedBox()
             else
-              _controlsConfiguration.enableProgressBar ? _buildProgressBar() : const SizedBox(),
-            if (_controlsConfiguration.enableMute) _buildMuteButton(_controller) else const SizedBox(),
-            if (_controlsConfiguration.enableFullscreen) _buildExpandButton() else const SizedBox(),
+              _controlsConfiguration.enableProgressBar
+                  ? _buildProgressBar()
+                  : const SizedBox(),
+            if (_controlsConfiguration.enableMute)
+              _buildMuteButton(_controller)
+            else
+              const SizedBox(),
+            if (_controlsConfiguration.enableFullscreen)
+              _buildExpandButton()
+            else
+              const SizedBox(),
           ],
         ),
       ),
@@ -220,7 +240,9 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
     return Expanded(
       child: Text(
         _betterPlayerController.translations.controlsLive,
-        style: TextStyle(color: _controlsConfiguration.liveTextColor, fontWeight: FontWeight.bold),
+        style: TextStyle(
+            color: _controlsConfiguration.liveTextColor,
+            fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -237,7 +259,9 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Center(
             child: Icon(
-              _betterPlayerController.isFullScreen ? Icons.fullscreen_exit : Icons.fullscreen,
+              _betterPlayerController.isFullScreen
+                  ? Icons.fullscreen_exit
+                  : Icons.fullscreen,
               color: _controlsConfiguration.iconsColor,
             ),
           ),
@@ -275,15 +299,22 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          if (_controlsConfiguration.enableSkips) _buildSkipButton() else const SizedBox(),
+          if (_controlsConfiguration.enableSkips)
+            _buildSkipButton()
+          else
+            const SizedBox(),
           _buildReplayButton(),
-          if (_controlsConfiguration.enableSkips) _buildForwardButton() else const SizedBox(),
+          if (_controlsConfiguration.enableSkips)
+            _buildForwardButton()
+          else
+            const SizedBox(),
         ],
       ),
     );
   }
 
-  Widget _buildHitAreaClickableButton({Widget icon, void Function() onClicked}) {
+  Widget _buildHitAreaClickableButton(
+      {Widget icon, void Function() onClicked}) {
     return BetterPlayerMaterialClickableWidget(
       onTap: onClicked,
       child: Align(
@@ -412,7 +443,9 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
             height: _controlsConfiguration.controlBarHeight,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Icon(
-              (_latestValue != null && _latestValue.volume > 0) ? _controlsConfiguration.muteIcon : _controlsConfiguration.unMuteIcon,
+              (_latestValue != null && _latestValue.volume > 0)
+                  ? _controlsConfiguration.muteIcon
+                  : _controlsConfiguration.unMuteIcon,
               color: _controlsConfiguration.iconsColor,
             ),
           ),
@@ -429,7 +462,9 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
         margin: const EdgeInsets.symmetric(horizontal: 4),
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Icon(
-          controller.value.isPlaying ? _controlsConfiguration.pauseIcon : _controlsConfiguration.playIcon,
+          controller.value.isPlaying
+              ? _controlsConfiguration.pauseIcon
+              : _controlsConfiguration.playIcon,
           color: _controlsConfiguration.iconsColor,
         ),
       ),
@@ -437,8 +472,12 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
   }
 
   Widget _buildPosition() {
-    final position = _latestValue != null && _latestValue.position != null ? _latestValue.position : Duration.zero;
-    final duration = _latestValue != null && _latestValue.duration != null ? _latestValue.duration : Duration.zero;
+    final position = _latestValue != null && _latestValue.position != null
+        ? _latestValue.position
+        : Duration.zero;
+    final duration = _latestValue != null && _latestValue.duration != null
+        ? _latestValue.duration
+        : Duration.zero;
 
     return Padding(
       padding: const EdgeInsets.only(right: 24),
@@ -469,7 +508,8 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
 
     _updateState();
 
-    if ((_controller.value != null && _controller.value.isPlaying) || _betterPlayerController.autoPlay) {
+    if ((_controller.value != null && _controller.value.isPlaying) ||
+        _betterPlayerController.autoPlay) {
       _startHideTimer();
     }
 
@@ -481,7 +521,8 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
       });
     }
 
-    _controlsVisibilityStreamSubscription = _betterPlayerController.controlsVisibilityStream.listen((state) {
+    _controlsVisibilityStreamSubscription =
+        _betterPlayerController.controlsVisibilityStream.listen((state) {
       setState(() {
         _hideStuff = !state;
       });
@@ -496,7 +537,8 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
       _hideStuff = true;
 
       _betterPlayerController.toggleFullScreen();
-      _showAfterExpandCollapseTimer = Timer(_controlsConfiguration.controlsHideTime, () {
+      _showAfterExpandCollapseTimer =
+          Timer(_controlsConfiguration.controlsHideTime, () {
         setState(() {
           cancelAndRestartTimer();
         });
@@ -541,7 +583,10 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
 
   void _updateState() {
     if (mounted) {
-      if (!_hideStuff || isVideoFinished(_controller.value) || _wasLoading || isLoading(_controller.value)) {
+      if (!_hideStuff ||
+          isVideoFinished(_controller.value) ||
+          _wasLoading ||
+          isLoading(_controller.value)) {
         setState(() {
           _latestValue = _controller.value;
           if (isVideoFinished(_latestValue)) {
@@ -569,7 +614,8 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
               playedColor: _controlsConfiguration.progressBarPlayedColor,
               handleColor: _controlsConfiguration.progressBarHandleColor,
               bufferedColor: _controlsConfiguration.progressBarBufferedColor,
-              backgroundColor: _controlsConfiguration.progressBarBackgroundColor),
+              backgroundColor:
+                  _controlsConfiguration.progressBarBackgroundColor),
         ),
       ),
     );
@@ -586,7 +632,9 @@ class _BetterPlayerMaterialControlsState extends BetterPlayerControlsState<Bette
     }
 
     return CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(_controlsConfiguration.loadingColor ?? _controlsConfiguration.controlBarColor),
+      valueColor: AlwaysStoppedAnimation<Color>(
+          _controlsConfiguration.loadingColor ??
+              _controlsConfiguration.controlBarColor),
     );
   }
 }

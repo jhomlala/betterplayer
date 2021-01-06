@@ -48,7 +48,10 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                   BetterPlayerDataSourceType.network,
                   videoListData.videoUrl,
                   notificationConfiguration:
-                      BetterPlayerNotificationConfiguration(showNotification: true, title: videoListData.videoTitle, author: "Test"),
+                      BetterPlayerNotificationConfiguration(
+                          showNotification: true,
+                          title: videoListData.videoTitle,
+                          author: "Test"),
                 ),
                 configuration: BetterPlayerConfiguration(
                   autoPlay: false,
@@ -62,7 +65,8 @@ class _VideoListWidgetState extends State<VideoListWidget> {
               aspectRatio: 1),
           Padding(
             padding: EdgeInsets.all(8),
-            child: Text("Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
+            child: Text(
+                "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
                 "town. Plainspoken sheriff Roy Scheider, hippie shark "
                 "researcher Richard Dreyfuss, and a squirrely boat captain "
                 "set out to find the beast, but will they escape with their "

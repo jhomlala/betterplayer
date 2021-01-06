@@ -14,7 +14,8 @@ class SubRipCaptionFile extends ClosedCaptionFile {
   /// Parses a string into a [ClosedCaptionFile], assuming [fileContents] is in
   /// the SubRip file format.
   /// * See: https://en.wikipedia.org/wiki/SubRip
-  SubRipCaptionFile(this.fileContents) : _captions = _parseCaptionsFromSubRipString(fileContents);
+  SubRipCaptionFile(this.fileContents)
+      : _captions = _parseCaptionsFromSubRipString(fileContents);
 
   /// The entire body of the SubRip file.
   final String fileContents;
@@ -31,7 +32,8 @@ List<Caption> _parseCaptionsFromSubRipString(String file) {
     if (captionLines.length < 3) break;
 
     final int captionNumber = int.parse(captionLines[0]);
-    final _StartAndEnd startAndEnd = _StartAndEnd.fromSubRipString(captionLines[1]);
+    final _StartAndEnd startAndEnd =
+        _StartAndEnd.fromSubRipString(captionLines[1]);
 
     final String text = captionLines.sublist(2).join('\n');
 
@@ -60,7 +62,8 @@ class _StartAndEnd {
   // For example:
   // 00:01:54,724 --> 00:01:56,760
   static _StartAndEnd fromSubRipString(String line) {
-    final RegExp format = RegExp(_subRipTimeStamp + _subRipArrow + _subRipTimeStamp);
+    final RegExp format =
+        RegExp(_subRipTimeStamp + _subRipArrow + _subRipTimeStamp);
 
     if (!format.hasMatch(line)) {
       return _StartAndEnd(null, null);

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class ControlsConfigurationPage extends StatefulWidget {
   @override
-  _ControlsConfigurationPageState createState() => _ControlsConfigurationPageState();
+  _ControlsConfigurationPageState createState() =>
+      _ControlsConfigurationPageState();
 }
 
 class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
@@ -12,7 +13,8 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
 
   @override
   void initState() {
-    BetterPlayerControlsConfiguration controlsConfiguration = BetterPlayerControlsConfiguration(
+    BetterPlayerControlsConfiguration controlsConfiguration =
+        BetterPlayerControlsConfiguration(
       controlBarColor: Colors.indigoAccent.withAlpha(200),
       iconsColor: Colors.lightGreen,
       playIcon: Icons.forward,
@@ -25,8 +27,12 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
     );
 
     BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(aspectRatio: 16 / 9, fit: BoxFit.contain, controlsConfiguration: controlsConfiguration);
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
+        BetterPlayerConfiguration(
+            aspectRatio: 16 / 9,
+            fit: BoxFit.contain,
+            controlsConfiguration: controlsConfiguration);
+    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();

@@ -21,9 +21,12 @@ class BetterPlayerPlaylist extends StatefulWidget {
     @required this.betterPlayerDataSourceList,
     @required this.betterPlayerConfiguration,
     @required this.betterPlayerPlaylistConfiguration,
-  })  : assert(betterPlayerDataSourceList != null, "BetterPlayerDataSourceList can't be null or empty"),
-        assert(betterPlayerConfiguration != null, "BetterPlayerConfiguration can't be null"),
-        assert(betterPlayerPlaylistConfiguration != null, "BetterPlayerPlaylistConfiguration can't be null"),
+  })  : assert(betterPlayerDataSourceList != null,
+            "BetterPlayerDataSourceList can't be null or empty"),
+        assert(betterPlayerConfiguration != null,
+            "BetterPlayerConfiguration can't be null"),
+        assert(betterPlayerPlaylistConfiguration != null,
+            "BetterPlayerPlaylistConfiguration can't be null"),
         super(key: key);
 
   @override
@@ -35,7 +38,8 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   BetterPlayerController _controller;
   bool _changingToNextVideo = false;
 
-  List<BetterPlayerDataSource> get _betterPlayerDataSourceList => widget.betterPlayerDataSourceList;
+  List<BetterPlayerDataSource> get _betterPlayerDataSourceList =>
+      widget.betterPlayerDataSourceList;
   StreamSubscription _nextVideoTimeStreamSubscription;
 
   @override
@@ -47,7 +51,8 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   }
 
   void _registerListeners() {
-    _nextVideoTimeStreamSubscription = _controller.nextVideoTimeStreamController.stream.listen((data) {
+    _nextVideoTimeStreamSubscription =
+        _controller.nextVideoTimeStreamController.stream.listen((data) {
       if (data == 0) {
         _onVideoChange();
       }
@@ -77,7 +82,9 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
 
   void _setupPlayer() {
     _controller = BetterPlayerController(widget.betterPlayerConfiguration,
-        betterPlayerPlaylistConfiguration: widget.betterPlayerPlaylistConfiguration, betterPlayerDataSource: _currentSource);
+        betterPlayerPlaylistConfiguration:
+            widget.betterPlayerPlaylistConfiguration,
+        betterPlayerDataSource: _currentSource);
 
     _controller.addEventsListener((event) async {
       if (event.betterPlayerEventType == BetterPlayerEventType.finished) {
@@ -117,7 +124,8 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: _controller.getAspectRatio() ?? BetterPlayerUtils.calculateAspectRatio(context),
+      aspectRatio: _controller.getAspectRatio() ??
+          BetterPlayerUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         key: Key(_getKey()),
         controller: _controller,

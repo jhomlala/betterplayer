@@ -18,11 +18,13 @@ class _PlaylistPageState extends State<PlaylistPage> {
         BetterPlayerDataSourceType.network,
         Constants.forBiggerBlazesUrl,
         subtitles: BetterPlayerSubtitlesSource.single(
-            type: BetterPlayerSubtitlesSourceType.file, url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl)),
+            type: BetterPlayerSubtitlesSourceType.file,
+            url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl)),
       ),
     );
 
-    dataSourceList.add(BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.bugBuckBunnyVideoUrl));
+    dataSourceList.add(BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network, Constants.bugBuckBunnyVideoUrl));
     dataSourceList.add(
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
@@ -49,7 +51,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
             return ListView(children: [
               Padding(
                 padding: EdgeInsets.all(8),
-                child: Text("Playlist widget will load automatically next video once current "
+                child: Text(
+                    "Playlist widget will load automatically next video once current "
                     "finishes. User can't use player controls when video is changing."),
               ),
               AspectRatio(
@@ -58,14 +61,18 @@ class _PlaylistPageState extends State<PlaylistPage> {
                       autoPlay: true,
                       aspectRatio: 1,
                       fit: BoxFit.cover,
-                      subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(fontSize: 10),
-                      controlsConfiguration: BetterPlayerControlsConfiguration.cupertino(),
+                      subtitlesConfiguration:
+                          BetterPlayerSubtitlesConfiguration(fontSize: 10),
+                      controlsConfiguration:
+                          BetterPlayerControlsConfiguration.cupertino(),
                       deviceOrientationsAfterFullScreen: [
                         DeviceOrientation.portraitUp,
                         DeviceOrientation.portraitDown,
                       ]),
                   betterPlayerPlaylistConfiguration:
-                      BetterPlayerPlaylistConfiguration(loopVideos: true, nextVideoDelay: Duration(seconds: 5)),
+                      BetterPlayerPlaylistConfiguration(
+                          loopVideos: true,
+                          nextVideoDelay: Duration(seconds: 5)),
                   betterPlayerDataSourceList: snapshot.data,
                 ),
                 aspectRatio: 1,

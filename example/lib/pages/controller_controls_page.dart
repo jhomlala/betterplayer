@@ -12,11 +12,13 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(
+    BetterPlayerConfiguration betterPlayerConfiguration =
+        BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
+    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -44,8 +46,11 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
           ),
           Wrap(
             children: [
-              FlatButton(child: Text("Play"), onPressed: _betterPlayerController.play),
-              FlatButton(child: Text("Pause"), onPressed: _betterPlayerController.pause),
+              FlatButton(
+                  child: Text("Play"), onPressed: _betterPlayerController.play),
+              FlatButton(
+                  child: Text("Pause"),
+                  onPressed: _betterPlayerController.pause),
               FlatButton(
                 child: Text("Hide controls"),
                 onPressed: () {

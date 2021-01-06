@@ -77,7 +77,8 @@ class BetterPlayerControlsConfiguration {
   final Duration controlsHideTime;
 
   ///Custom controls, it will override Material/Cupertino controls
-  final Widget Function(BetterPlayerController controller) customControlsBuilder;
+  final Widget Function(BetterPlayerController controller)
+      customControlsBuilder;
 
   ///Flag to use a forced platform
   final PlayerTheme playerTheme;

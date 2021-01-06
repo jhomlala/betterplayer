@@ -12,7 +12,8 @@ class EventListenerPage extends StatefulWidget {
 class _EventListenerPageState extends State<EventListenerPage> {
   BetterPlayerController _betterPlayerController;
   List<BetterPlayerEvent> events = [];
-  StreamController<DateTime> _eventStreamController = StreamController.broadcast();
+  StreamController<DateTime> _eventStreamController =
+      StreamController.broadcast();
 
   @override
   void dispose() {
@@ -22,11 +23,13 @@ class _EventListenerPageState extends State<EventListenerPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(
+    BetterPlayerConfiguration betterPlayerConfiguration =
+        BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
+    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.addEventsListener((event) {

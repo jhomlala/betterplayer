@@ -11,19 +11,24 @@ import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 
 ///HLS helper class
 class BetterPlayerHlsUtils {
-  static final HttpClient _httpClient = HttpClient()..connectionTimeout = const Duration(seconds: 5);
-  static final HlsPlaylistParser _hlsPlaylistParser = HlsPlaylistParser.create();
+  static final HttpClient _httpClient = HttpClient()
+    ..connectionTimeout = const Duration(seconds: 5);
+  static final HlsPlaylistParser _hlsPlaylistParser =
+      HlsPlaylistParser.create();
 
-  static Future<List<BetterPlayerHlsTrack>> parseTracks(String masterPlaylistUrl) async {
+  static Future<List<BetterPlayerHlsTrack>> parseTracks(
+      String masterPlaylistUrl) async {
     assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
     final List<BetterPlayerHlsTrack> tracks = [];
     try {
       final String data = await _getDataFromUrl(masterPlaylistUrl);
-      final parsedPlaylist = await HlsPlaylistParser.create().parseString(Uri.parse(masterPlaylistUrl), data);
+      final parsedPlaylist = await HlsPlaylistParser.create()
+          .parseString(Uri.parse(masterPlaylistUrl), data);
       if (parsedPlaylist is HlsMasterPlaylist) {
         parsedPlaylist.variants.forEach(
           (variant) {
-            tracks.add(BetterPlayerHlsTrack(variant.format.width, variant.format.height, variant.format.bitrate));
+            tracks.add(BetterPlayerHlsTrack(variant.format.width,
+                variant.format.height, variant.format.bitrate));
           },
         );
       }
@@ -34,13 +39,15 @@ class BetterPlayerHlsUtils {
   }
 
   ///Parse subtitles from provided m3u8 url
-  static Future<List<BetterPlayerHlsSubtitle>> parseSubtitles(String masterPlaylistUrl) async {
+  static Future<List<BetterPlayerHlsSubtitle>> parseSubtitles(
+      String masterPlaylistUrl) async {
     assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
     final List<BetterPlayerHlsSubtitle> subtitles = [];
     try {
       final String data = await _getDataFromUrl(masterPlaylistUrl);
       if (data != null) {
-        final parsedPlaylist = await HlsPlaylistParser.create().parseString(Uri.parse(masterPlaylistUrl), data);
+        final parsedPlaylist = await HlsPlaylistParser.create()
+            .parseString(Uri.parse(masterPlaylistUrl), data);
         if (parsedPlaylist is HlsMasterPlaylist) {
           for (final Rendition element in parsedPlaylist.subtitles) {
             final hlsSubtitle = await _parseSubtitlesPlaylist(element);
@@ -57,11 +64,13 @@ class BetterPlayerHlsUtils {
     return subtitles;
   }
 
-  static Future<BetterPlayerHlsSubtitle> _parseSubtitlesPlaylist(Rendition rendition) async {
+  static Future<BetterPlayerHlsSubtitle> _parseSubtitlesPlaylist(
+      Rendition rendition) async {
     assert(rendition != null, "Rendition can't be null");
     try {
       final subtitleData = await _getDataFromUrl(rendition.url.toString());
-      final parsedSubtitle = await _hlsPlaylistParser.parseString(rendition.url, subtitleData);
+      final parsedSubtitle =
+          await _hlsPlaylistParser.parseString(rendition.url, subtitleData);
       final hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
       final hlsSubtitlesUrls = <String>[];
 
@@ -76,7 +85,10 @@ class BetterPlayerHlsUtils {
         hlsSubtitlesUrls.add(realUrl);
       }
       return BetterPlayerHlsSubtitle(
-          name: rendition.format.label, language: rendition.format.language, url: rendition.url.toString(), realUrls: hlsSubtitlesUrls);
+          name: rendition.format.label,
+          language: rendition.format.language,
+          url: rendition.url.toString(),
+          realUrls: hlsSubtitlesUrls);
     } catch (exception) {
       BetterPlayerUtils.log("Failed to process subtitles playlist: $exception");
       return null;

@@ -57,10 +57,14 @@ class BetterPlayerDataSource {
     this.hlsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
-    this.notificationConfiguration = const BetterPlayerNotificationConfiguration(showNotification: false),
+    this.notificationConfiguration =
+        const BetterPlayerNotificationConfiguration(showNotification: false),
   }) : assert(
-            ((type == BetterPlayerDataSourceType.network || type == BetterPlayerDataSourceType.file) && url != null) ||
-                (type == BetterPlayerDataSourceType.memory && bytes?.isNotEmpty == true),
+            ((type == BetterPlayerDataSourceType.network ||
+                        type == BetterPlayerDataSourceType.file) &&
+                    url != null) ||
+                (type == BetterPlayerDataSourceType.memory &&
+                    bytes?.isNotEmpty == true),
             "Url can't be null in network or file data source | bytes can't be null when using memory data source");
 
   ///Factory method to build network data source which uses url as data source
@@ -161,7 +165,8 @@ class BetterPlayerDataSource {
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
       resolutions: resolutions ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
-      notificationConfiguration: notificationConfiguration ?? this.notificationConfiguration,
+      notificationConfiguration:
+          notificationConfiguration ?? this.notificationConfiguration,
     );
   }
 }
