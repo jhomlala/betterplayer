@@ -97,11 +97,6 @@ static void* playbackBufferFullContext = &playbackBufferFullContext;
               options:0
               context:playbackBufferFullContext];
     
-    // Add an observer that will respond to itemDidPlayToEndTime
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(itemDidPlayToEndTime:)
-                                                 name:AVPlayerItemDidPlayToEndTimeNotification
-                                               object:item];
 }
 
 - (void)removeVideoOutput {
@@ -146,9 +141,12 @@ static void* playbackBufferFullContext = &playbackBufferFullContext;
     [[_player currentItem] removeObserver:self
                                forKeyPath:@"playbackBufferFull"
                                   context:playbackBufferFullContext];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     AVAsset* asset = [_player.currentItem asset];
     [asset cancelLoading];
+    
+    
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification*)notification {
@@ -268,6 +266,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     } else {
         item = [AVPlayerItem playerItemWithURL:url];
     }
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
     
     return [self setDataSourcePlayerItem:item withKey:key];
 }
@@ -308,6 +307,16 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
     [self addObservers:item];
 }
+
+- (void)playbackStalled:(NSNotification *)notification {
+    if (_eventSink != nil) {
+        _eventSink([FlutterError
+                    errorWithCode:@"VideoError"
+                    message:@"Failed to load video: playback stalled"
+                    details:nil]);
+    }
+}
+
 
 - (void)observeValueForKeyPath:(NSString*)path
                       ofObject:(id)object
@@ -805,7 +814,7 @@ NSMutableDictionary*  _artworkImageDict;
         [playerToRemoveListener.player removeTimeObserver: timeObserverId];
     }
     [_timeObserverIdDict removeAllObjects];
-  
+    
 }
 
 
