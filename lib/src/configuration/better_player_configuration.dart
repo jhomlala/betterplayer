@@ -1,7 +1,13 @@
+// Flutter imports:
+// Project imports:
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/core/better_player.dart';
+import 'package:better_player/src/configuration/better_player_translations.dart';
+import 'package:better_player/src/controls/better_player_controls_configuration.dart';
+import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'better_player_event.dart';
 
 class BetterPlayerConfiguration {
   /// Play the video as soon as it's displayed
@@ -170,32 +176,23 @@ class BetterPlayerConfiguration {
       looping: looping ?? this.looping,
       fullScreenByDefault: fullScreenByDefault ?? this.fullScreenByDefault,
       placeholder: placeholder ?? this.placeholder,
-      showPlaceholderUntilPlay:
-          showPlaceholderUntilPlay ?? this.showPlaceholderUntilPlay,
+      showPlaceholderUntilPlay: showPlaceholderUntilPlay ?? this.showPlaceholderUntilPlay,
       placeholderOnTop: placeholderOnTop ?? this.placeholderOnTop,
       overlay: overlay ?? this.overlay,
       errorBuilder: errorBuilder ?? this.errorBuilder,
       allowedScreenSleep: allowedScreenSleep ?? this.allowedScreenSleep,
-      deviceOrientationsOnFullScreen:
-          deviceOrientationsOnFullScreen ?? this.deviceOrientationsOnFullScreen,
-      systemOverlaysAfterFullScreen:
-          systemOverlaysAfterFullScreen ?? this.systemOverlaysAfterFullScreen,
-      deviceOrientationsAfterFullScreen: deviceOrientationsAfterFullScreen ??
-          this.deviceOrientationsAfterFullScreen,
+      deviceOrientationsOnFullScreen: deviceOrientationsOnFullScreen ?? this.deviceOrientationsOnFullScreen,
+      systemOverlaysAfterFullScreen: systemOverlaysAfterFullScreen ?? this.systemOverlaysAfterFullScreen,
+      deviceOrientationsAfterFullScreen: deviceOrientationsAfterFullScreen ?? this.deviceOrientationsAfterFullScreen,
       routePageBuilder: routePageBuilder ?? this.routePageBuilder,
       eventListener: eventListener ?? this.eventListener,
-      subtitlesConfiguration:
-          subtitlesConfiguration ?? this.subtitlesConfiguration,
-      controlsConfiguration:
-          controlsConfiguration ?? this.controlsConfiguration,
+      subtitlesConfiguration: subtitlesConfiguration ?? this.subtitlesConfiguration,
+      controlsConfiguration: controlsConfiguration ?? this.controlsConfiguration,
       fit: fit ?? this.fit,
       rotation: rotation ?? this.rotation,
-      playerVisibilityChangedBehavior: playerVisibilityChangedBehavior ??
-          this.playerVisibilityChangedBehavior,
+      playerVisibilityChangedBehavior: playerVisibilityChangedBehavior ?? this.playerVisibilityChangedBehavior,
       translations: translations ?? this.translations,
-      autoDetectFullscreenDeviceOrientation:
-          autoDetectFullscreenDeviceOrientation ??
-              this.autoDetectFullscreenDeviceOrientation,
+      autoDetectFullscreenDeviceOrientation: autoDetectFullscreenDeviceOrientation ?? this.autoDetectFullscreenDeviceOrientation,
     );
   }
 }

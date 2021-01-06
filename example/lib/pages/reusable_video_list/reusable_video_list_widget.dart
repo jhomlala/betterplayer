@@ -17,15 +17,13 @@ class ReusableVideoListWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _ReusableVideoListWidgetState createState() =>
-      _ReusableVideoListWidgetState();
+  _ReusableVideoListWidgetState createState() => _ReusableVideoListWidgetState();
 }
 
 class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   VideoListData get videoListData => widget.videoListData;
   BetterPlayerController controller;
-  StreamController<BetterPlayerController>
-      betterPlayerControllerStreamController = StreamController.broadcast();
+  StreamController<BetterPlayerController> betterPlayerControllerStreamController = StreamController.broadcast();
   bool _initialized = false;
   bool _wasPlaying = false;
   Duration _lastPosition;
@@ -48,8 +46,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   void _setupController() {
     if (controller == null) {
       controller = widget.videoListController.getBetterPlayerController();
-      controller.setupDataSource(
-          BetterPlayerDataSource.network(videoListData.videoUrl));
+      controller.setupDataSource(BetterPlayerDataSource.network(videoListData.videoUrl));
       betterPlayerControllerStreamController.add(controller);
       controller.addEventsListener(onPlayerEvent);
     }
@@ -128,8 +125,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
           ),
           Padding(
             padding: EdgeInsets.all(8),
-            child: Text(
-                "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
+            child: Text("Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
                 "town. Plainspoken sheriff Roy Scheider, hippie shark "
                 "researcher Richard Dreyfuss, and a squirrely boat captain "
                 "set out to find the beast, but will they escape with their "

@@ -5,9 +5,6 @@ class BetterPlayerPlaylistConfiguration {
   ///Should videos be looped
   final bool loopVideos;
 
-  BetterPlayerPlaylistConfiguration(
-      {this.nextVideoDelay = const Duration(milliseconds: 3000),
-      this.loopVideos = true})
-      : assert(nextVideoDelay != null && nextVideoDelay.inSeconds >= 3,
-            "NextVideoDelay should be at least 3 seconds");
+  BetterPlayerPlaylistConfiguration({this.nextVideoDelay = const Duration(milliseconds: 3000), this.loopVideos = true})
+      : assert(nextVideoDelay != null && nextVideoDelay.inSeconds >= 3, "NextVideoDelay should be at least 3 seconds");
 }

@@ -2,6 +2,7 @@
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
+
 import 'better_player_cache_configuration.dart';
 
 class BetterPlayerDataSource {
@@ -56,14 +57,10 @@ class BetterPlayerDataSource {
     this.hlsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
-    this.notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(showNotification: false),
+    this.notificationConfiguration = const BetterPlayerNotificationConfiguration(showNotification: false),
   }) : assert(
-            ((type == BetterPlayerDataSourceType.network ||
-                        type == BetterPlayerDataSourceType.file) &&
-                    url != null) ||
-                (type == BetterPlayerDataSourceType.memory &&
-                    bytes?.isNotEmpty == true),
+            ((type == BetterPlayerDataSourceType.network || type == BetterPlayerDataSourceType.file) && url != null) ||
+                (type == BetterPlayerDataSourceType.memory && bytes?.isNotEmpty == true),
             "Url can't be null in network or file data source | bytes can't be null when using memory data source");
 
   ///Factory method to build network data source which uses url as data source
@@ -164,8 +161,7 @@ class BetterPlayerDataSource {
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
       resolutions: resolutions ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
-      notificationConfiguration:
-          notificationConfiguration ?? this.notificationConfiguration,
+      notificationConfiguration: notificationConfiguration ?? this.notificationConfiguration,
     );
   }
 }

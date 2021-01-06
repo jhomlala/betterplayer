@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 
 class OverriddenAspectRatioPage extends StatefulWidget {
   @override
-  _OverriddenAspectRatioPageState createState() =>
-      _OverriddenAspectRatioPageState();
+  _OverriddenAspectRatioPageState createState() => _OverriddenAspectRatioPageState();
 }
 
 class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
@@ -13,13 +12,11 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.fill,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
+    BetterPlayerDataSource dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.setOverriddenAspectRatio(1.0);

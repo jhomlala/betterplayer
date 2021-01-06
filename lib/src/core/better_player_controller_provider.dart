@@ -1,8 +1,7 @@
 // Flutter imports:
-import 'package:flutter/material.dart';
-
 // Project imports:
 import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:flutter/material.dart';
 
 class BetterPlayerControllerProvider extends InheritedWidget {
   const BetterPlayerControllerProvider({
@@ -16,6 +15,5 @@ class BetterPlayerControllerProvider extends InheritedWidget {
   final BetterPlayerController controller;
 
   @override
-  bool updateShouldNotify(BetterPlayerControllerProvider old) =>
-      controller != old.controller;
+  bool updateShouldNotify(BetterPlayerControllerProvider old) => controller != old.controller;
 }

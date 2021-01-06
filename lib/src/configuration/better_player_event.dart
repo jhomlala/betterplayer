@@ -7,6 +7,5 @@ class BetterPlayerEvent {
   final BetterPlayerEventType betterPlayerEventType;
   final Map<String, dynamic> parameters;
 
-  BetterPlayerEvent(this.betterPlayerEventType, {this.parameters})
-      : assert(betterPlayerEventType != null);
+  BetterPlayerEvent(this.betterPlayerEventType, {this.parameters}) : assert(betterPlayerEventType != null);
 }

@@ -1,11 +1,10 @@
 // Flutter imports:
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
 // Project imports:
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
   BetterPlayerCupertinoVideoProgressBar(
@@ -30,8 +29,7 @@ class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
   }
 }
 
-class _VideoProgressBarState
-    extends State<BetterPlayerCupertinoVideoProgressBar> {
+class _VideoProgressBarState extends State<BetterPlayerCupertinoVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
       setState(() {});
@@ -151,10 +149,8 @@ class _ProgressBarPainter extends CustomPainter {
     if (!value.initialized) {
       return;
     }
-    final double playedPartPercent =
-        value.position.inMilliseconds / value.duration.inMilliseconds;
-    final double playedPart =
-        playedPartPercent > 1 ? size.width : playedPartPercent * size.width;
+    final double playedPartPercent = value.position.inMilliseconds / value.duration.inMilliseconds;
+    final double playedPart = playedPartPercent > 1 ? size.width : playedPartPercent * size.width;
     for (final DurationRange range in value.buffered) {
       final double start = range.startFraction(value.duration) * size.width;
       final double end = range.endFraction(value.duration) * size.width;
@@ -180,10 +176,7 @@ class _ProgressBarPainter extends CustomPainter {
       colors.playedPaint,
     );
 
-    final shadowPath = Path()
-      ..addOval(Rect.fromCircle(
-          center: Offset(playedPart, baseOffset + barHeight / 2),
-          radius: handleHeight));
+    final shadowPath = Path()..addOval(Rect.fromCircle(center: Offset(playedPart, baseOffset + barHeight / 2), radius: handleHeight));
 
     canvas.drawShadow(shadowPath, Colors.black, 0.2, false);
     canvas.drawCircle(

@@ -34,8 +34,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<int> create() async {
-    final Map<String, dynamic> response =
-        await _channel.invokeMapMethod<String, dynamic>('create');
+    final Map<String, dynamic> response = await _channel.invokeMapMethod<String, dynamic>('create');
     return response['textureId'] as int;
   }
 
@@ -149,8 +148,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> setTrackParameters(
-      int textureId, int width, int height, int bitrate) {
+  Future<void> setTrackParameters(int textureId, int width, int height, int bitrate) {
     return _channel.invokeMethod<void>(
       'setTrackParameters',
       <String, dynamic>{
@@ -185,9 +183,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
-    return _eventChannelFor(textureId)
-        .receiveBroadcastStream()
-        .map((dynamic event) {
+    return _eventChannelFor(textureId).receiveBroadcastStream().map((dynamic event) {
       Map<dynamic, dynamic> map;
       if (event is Map) {
         map = event;

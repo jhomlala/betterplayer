@@ -4,23 +4,17 @@ import 'package:flutter/material.dart';
 
 class AutoFullscreenOrientationPage extends StatefulWidget {
   @override
-  _AutoFullscreenOrientationPageState createState() =>
-      _AutoFullscreenOrientationPageState();
+  _AutoFullscreenOrientationPageState createState() => _AutoFullscreenOrientationPageState();
 }
 
-class _AutoFullscreenOrientationPageState
-    extends State<AutoFullscreenOrientationPage> {
+class _AutoFullscreenOrientationPageState extends State<AutoFullscreenOrientationPage> {
   BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-            aspectRatio: 16 / 9,
-            fit: BoxFit.contain,
-            autoDetectFullscreenDeviceOrientation: true);
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
+        BetterPlayerConfiguration(aspectRatio: 16 / 9, fit: BoxFit.contain, autoDetectFullscreenDeviceOrientation: true);
+    BetterPlayerDataSource dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -50,18 +44,14 @@ class _AutoFullscreenOrientationPageState
           RaisedButton(
             child: Text("Play horizontal video"),
             onPressed: () {
-              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.forBiggerBlazesUrl);
+              BetterPlayerDataSource dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),
           RaisedButton(
             child: Text("Play vertical video"),
             onPressed: () async {
-              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.verticalVideoUrl);
+              BetterPlayerDataSource dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.verticalVideoUrl);
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),

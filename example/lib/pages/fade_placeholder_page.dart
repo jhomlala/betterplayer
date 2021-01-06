@@ -15,8 +15,7 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       placeholder: _buildPlaceholder(),

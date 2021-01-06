@@ -4,9 +4,9 @@ import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/auto_fullscreen_orientation_page.dart';
 import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/cache_page.dart';
+import 'package:better_player_example/pages/change_player_theme_page.dart';
 import 'package:better_player_example/pages/controller_controls_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
-import 'package:better_player_example/pages/custom_controller_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/fade_placeholder_page.dart';
 import 'package:better_player_example/pages/hls_subtitles_page.dart';
@@ -78,9 +78,6 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("Controls configuration", () {
         _navigateToPage(ControlsConfigurationPage());
       }),
-      _buildExampleElementWidget("Custom Controls Player", () {
-        _navigateToPage(CustomControllerPage());
-      }),
       _buildExampleElementWidget("Event listener", () {
         _navigateToPage(EventListenerPage());
       }),
@@ -132,6 +129,9 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("Fade placeholder page", () {
         _navigateToPage(FadePlaceholderPage());
       }),
+      _buildExampleElementWidget("Change player theme", () {
+        _navigateToPage(ChangePlayerThemePage());
+      }),
     ];
   }
 
@@ -165,8 +165,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save subtitles to file, so we can use it later
   Future _saveAssetSubtitleToFile() async {
-    String content =
-        await rootBundle.loadString("assets/example_subtitles.srt");
+    String content = await rootBundle.loadString("assets/example_subtitles.srt");
     final directory = await getApplicationDocumentsDirectory();
     var file = File("${directory.path}/example_subtitles.srt");
     file.writeAsString(content);

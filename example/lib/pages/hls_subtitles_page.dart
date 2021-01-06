@@ -12,14 +12,12 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.hlsPlaylistUrl,
-        useHlsSubtitles: true);
+    BetterPlayerDataSource dataSource =
+        BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.hlsPlaylistUrl, useHlsSubtitles: true);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();

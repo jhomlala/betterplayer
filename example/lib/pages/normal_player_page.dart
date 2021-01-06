@@ -13,8 +13,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -50,9 +49,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           RaisedButton(
             child: Text("Play network data source"),
             onPressed: () {
-              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.forBiggerBlazesUrl);
+              BetterPlayerDataSource dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),
@@ -60,8 +57,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             child: Text("Play file data source"),
             onPressed: () async {
               String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
-              BetterPlayerDataSource dataSource =
-                  BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
+              BetterPlayerDataSource dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),

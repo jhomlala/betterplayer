@@ -12,8 +12,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    BetterPlayerConfiguration betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       handleLifecycle: true,
@@ -32,8 +31,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
         showNotification: true,
         title: "Elephant dream",
         author: "Some author",
-        imageUrl:
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg",
+        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg",
       ),
     );
     _betterPlayerController.setupDataSource(dataSource);

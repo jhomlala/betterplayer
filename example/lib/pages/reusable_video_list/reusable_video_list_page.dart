@@ -12,8 +12,7 @@ class ReusableVideoListPage extends StatefulWidget {
 }
 
 class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
-  ReusableVideoListController videoListController =
-      ReusableVideoListController();
+  ReusableVideoListController videoListController = ReusableVideoListController();
   final _random = new Random();
   final List<String> _videos = [
     Constants.bugBuckBunnyVideoUrl,

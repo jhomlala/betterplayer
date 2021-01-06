@@ -9,7 +9,6 @@ import 'dart:ui';
 // Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-
 // Package imports:
 import 'package:meta/meta.dart' show required, visibleForTesting;
 
@@ -51,8 +50,7 @@ abstract class VideoPlayerPlatform {
       try {
         instance._verifyProvidesDefaultImplementations();
       } catch (_) {
-        throw AssertionError(
-            'Platform interfaces must not be implemented with `implements`');
+        throw AssertionError('Platform interfaces must not be implemented with `implements`');
       }
     }
     _instance = instance;
@@ -112,8 +110,7 @@ abstract class VideoPlayerPlatform {
   }
 
   /// Sets the video track parameters (used to select quality of the video)
-  Future<void> setTrackParameters(
-      int textureId, int width, int height, int bitrate) {
+  Future<void> setTrackParameters(int textureId, int width, int height, int bitrate) {
     throw UnimplementedError('setTrackParameters() has not been implemented.');
   }
 
@@ -366,11 +363,7 @@ class VideoEvent {
   }
 
   @override
-  int get hashCode =>
-      eventType.hashCode ^
-      duration.hashCode ^
-      size.hashCode ^
-      buffered.hashCode;
+  int get hashCode => eventType.hashCode ^ duration.hashCode ^ size.hashCode ^ buffered.hashCode;
 }
 
 /// Type of the event.
@@ -456,11 +449,7 @@ class DurationRange {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DurationRange &&
-          runtimeType == other.runtimeType &&
-          start == other.start &&
-          end == other.end;
+      identical(this, other) || other is DurationRange && runtimeType == other.runtimeType && start == other.start && end == other.end;
 
   @override
   int get hashCode => start.hashCode ^ end.hashCode;

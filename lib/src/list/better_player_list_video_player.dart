@@ -1,12 +1,11 @@
 // Flutter imports:
-import 'package:flutter/material.dart';
-
 // Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_data_source.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/list/better_player_list_video_player_controller.dart';
+import 'package:flutter/material.dart';
 
 class BetterPlayerListVideoPlayer extends StatefulWidget {
   ///Video to show
@@ -26,8 +25,7 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
   ///Flag to determine if video should be auto paused
   final bool autoPause;
 
-  final BetterPlayerListVideoPlayerController
-      betterPlayerListVideoPlayerController;
+  final BetterPlayerListVideoPlayerController betterPlayerListVideoPlayerController;
 
   const BetterPlayerListVideoPlayer(
     this.dataSource, {
@@ -39,20 +37,17 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
     Key key,
   })  : assert(dataSource != null, "Data source can't be null"),
         assert(configuration != null, "Configuration can't be null"),
-        assert(
-            playFraction != null && playFraction >= 0.0 && playFraction <= 1.0,
+        assert(playFraction != null && playFraction >= 0.0 && playFraction <= 1.0,
             "Play fraction can't be null and must be between 0.0 and 1.0"),
         assert(autoPlay != null, "Auto play can't be null"),
         assert(autoPause != null, "Auto pause can't be null"),
         super(key: key);
 
   @override
-  _BetterPlayerListVideoPlayerState createState() =>
-      _BetterPlayerListVideoPlayerState();
+  _BetterPlayerListVideoPlayerState createState() => _BetterPlayerListVideoPlayerState();
 }
 
-class _BetterPlayerListVideoPlayerState
-    extends State<BetterPlayerListVideoPlayer>
+class _BetterPlayerListVideoPlayerState extends State<BetterPlayerListVideoPlayer>
     with AutomaticKeepAliveClientMixin<BetterPlayerListVideoPlayer> {
   BetterPlayerController _betterPlayerController;
   bool _isDisposing = false;
@@ -69,8 +64,7 @@ class _BetterPlayerListVideoPlayerState
     );
 
     if (widget.betterPlayerListVideoPlayerController != null) {
-      widget.betterPlayerListVideoPlayerController
-          .setBetterPlayerController(_betterPlayerController);
+      widget.betterPlayerListVideoPlayerController.setBetterPlayerController(_betterPlayerController);
     }
   }
 
@@ -85,8 +79,7 @@ class _BetterPlayerListVideoPlayerState
   Widget build(BuildContext context) {
     super.build(context);
     return AspectRatio(
-      aspectRatio: _betterPlayerController.getAspectRatio() ??
-          BetterPlayerUtils.calculateAspectRatio(context),
+      aspectRatio: _betterPlayerController.getAspectRatio() ?? BetterPlayerUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         key: Key("${_getUniqueKey()}_player"),
         controller: _betterPlayerController,
