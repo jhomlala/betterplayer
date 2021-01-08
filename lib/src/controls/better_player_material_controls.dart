@@ -303,6 +303,7 @@ class _BetterPlayerMaterialControlsState
             _buildSkipButton()
           else
             const SizedBox(),
+          _buildPlayPause(_controller),
           _buildReplayButton(),
           if (_controlsConfiguration.enableSkips)
             _buildForwardButton()
