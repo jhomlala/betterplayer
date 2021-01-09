@@ -634,6 +634,11 @@ class BetterPlayerController extends ChangeNotifier {
     return _overriddenAspectRatio ?? betterPlayerConfiguration.aspectRatio;
   }
 
+  Future<void> enablePictureInPicture(
+      double top, double left, double width, double height) {
+    return videoPlayerController.enablePictureInPicture(top, left, width, height);
+  }
+
   @override
   void dispose() {
     if (!betterPlayerConfiguration.autoDispose) {

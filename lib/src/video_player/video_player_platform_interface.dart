@@ -9,6 +9,7 @@ import 'dart:ui';
 // Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
 // Package imports:
 import 'package:meta/meta.dart' show required, visibleForTesting;
 
@@ -124,6 +125,18 @@ abstract class VideoPlayerPlatform {
   /// Gets the video position as [Duration] from the start.
   Future<Duration> getPosition(int textureId) {
     throw UnimplementedError('getPosition() has not been implemented.');
+  }
+
+  ///Enables PiP mode.
+  Future<void> enablePictureInPicture(
+      int textureId, double top, double left, double width, double height) {
+    throw UnimplementedError('enablePictureInPicture() has not been implemented.');
+  }
+
+  ///Disables PiP mode.
+  Future<void> disablePictureInPicture(
+      int textureId) {
+    throw UnimplementedError('enablePictureInPicture() has not been implemented.');
   }
 
   /// Returns a widget displaying the video with a given textureID.

@@ -20,8 +20,8 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.forBiggerBlazesUrl,
-      overriddenDuration: Duration(seconds: 5),
+      Constants.elephantDreamVideoUrl,
+
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -49,12 +49,9 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             child: BetterPlayer(controller: _betterPlayerController),
           ),
           RaisedButton(
-            child: Text("Play network data source"),
+            child: Text("Show PiP"),
             onPressed: () {
-              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.forBiggerBlazesUrl);
-              _betterPlayerController.setupDataSource(dataSource);
+              _betterPlayerController.enablePictureInPicture(0, 0, 320, 180);
             },
           ),
           RaisedButton(

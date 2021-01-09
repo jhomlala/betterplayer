@@ -527,6 +527,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _textureId, width, height, bitrate);
   }
 
+  Future<void> enablePictureInPicture(
+      double top, double left, double width, double height) async {
+    await _videoPlayerPlatform.enablePictureInPicture(
+        textureId, top, left, width, height);
+  }
+
+  Future<void> disablePictureInPicture() async {
+    await _videoPlayerPlatform.disablePictureInPicture(textureId);
+  }
+
   /// The closed caption based on the current [position] in the video.
   ///
   /// If there are no closed captions at the current [position], this will
