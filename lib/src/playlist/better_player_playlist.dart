@@ -30,10 +30,10 @@ class BetterPlayerPlaylist extends StatefulWidget {
         super(key: key);
 
   @override
-  _BetterPlayerPlaylistState createState() => _BetterPlayerPlaylistState();
+  BetterPlayerPlaylistState createState() => BetterPlayerPlaylistState();
 }
 
-class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
+class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   BetterPlayerDataSource _currentSource;
   BetterPlayerController _controller;
   bool _changingToNextVideo = false;
@@ -141,4 +141,7 @@ class _BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
 
   ///Get currently used source in playlist
   BetterPlayerDataSource get currentSource => _currentSource;
+
+  ///Get [BetterPlayerController] instance used in playlist
+  BetterPlayerController get betterPlayerController => _controller;
 }
