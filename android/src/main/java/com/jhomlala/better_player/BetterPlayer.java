@@ -18,6 +18,7 @@ import android.os.ResultReceiver;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.util.Log;
 import android.view.Surface;
 
 import com.google.android.exoplayer2.C;
@@ -30,6 +31,7 @@ import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
@@ -85,6 +87,7 @@ final class BetterPlayer {
     private Runnable refreshRunnable;
     private EventListener exoPlayerEventListener;
     private Bitmap bitmap;
+    private long overriddenDuration;
 
     BetterPlayer(
             Context context,
@@ -102,14 +105,14 @@ final class BetterPlayer {
 
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
-            Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize) {
+            Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
+            long overriddenDuration) {
         this.key = key;
-
+        this.overriddenDuration = overriddenDuration;
         isInitialized = false;
 
         Uri uri = Uri.parse(dataSource);
         DataSource.Factory dataSourceFactory;
-
 
         if (isHTTP(uri)) {
             DefaultHttpDataSourceFactory defaultHttpDataSourceFactory =
@@ -130,11 +133,17 @@ final class BetterPlayer {
                 dataSourceFactory = defaultHttpDataSourceFactory;
             }
         } else {
+
             dataSourceFactory = new DefaultDataSourceFactory(context, "ExoPlayer");
         }
 
         MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
-        exoPlayer.prepare(mediaSource);
+        if (overriddenDuration != 0) {
+            ClippingMediaSource clippingMediaSource = new ClippingMediaSource(mediaSource, 0, overriddenDuration * 1000);
+            exoPlayer.prepare(clippingMediaSource);
+        } else {
+            exoPlayer.prepare(mediaSource);
+        }
 
         result.success(null);
     }
@@ -297,7 +306,7 @@ final class BetterPlayer {
             @Override
             public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
                 mediaSession.setMetadata(new MediaMetadataCompat.Builder()
-                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, exoPlayer.getDuration())
+                        .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, getDuration())
                         .build());
             }
         };
@@ -305,6 +314,7 @@ final class BetterPlayer {
         exoPlayer.addListener(exoPlayerEventListener);
         exoPlayer.seekTo(0);
     }
+
 
     public void removeNotificationData() {
         exoPlayer.removeListener(exoPlayerEventListener);
@@ -523,7 +533,7 @@ final class BetterPlayer {
             Map<String, Object> event = new HashMap<>();
             event.put("event", "initialized");
             event.put("key", key);
-            event.put("duration", exoPlayer.getDuration());
+            event.put("duration", getDuration());
 
             if (exoPlayer.getVideoFormat() != null) {
                 Format videoFormat = exoPlayer.getVideoFormat();
@@ -540,6 +550,10 @@ final class BetterPlayer {
             }
             eventSink.success(event);
         }
+    }
+
+    private long getDuration() {
+        return exoPlayer.getDuration();
     }
 
     void dispose() {

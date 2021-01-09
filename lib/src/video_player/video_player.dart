@@ -8,10 +8,12 @@ import 'dart:io';
 
 // Project imports:
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
+
 // Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 // Package imports:
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
@@ -263,14 +265,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// The name of the asset is given by the [dataSource] argument and must not be
   /// null. The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
-  Future<void> setAssetDataSource(String dataSource,
-      {String package,
-      Future<ClosedCaptionFile> closedCaptionFile,
-      bool showNotification,
-      String title,
-      String author,
-      String imageUrl,
-      String notificationChannelName}) {
+  Future<void> setAssetDataSource(
+    String dataSource, {
+    String package,
+    Future<ClosedCaptionFile> closedCaptionFile,
+    bool showNotification,
+    String title,
+    String author,
+    String imageUrl,
+    String notificationChannelName,
+    Duration overriddenDuration,
+  }) {
     return _setDataSource(
       DataSource(
         sourceType: DataSourceType.asset,
@@ -282,6 +287,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         author: author,
         imageUrl: imageUrl,
         notificationChannelName: notificationChannelName,
+        overriddenDuration: overriddenDuration,
       ),
     );
   }
@@ -306,23 +312,24 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String author,
     String imageUrl,
     String notificationChannelName,
+    Duration overriddenDuration,
   }) {
     return _setDataSource(
       DataSource(
-        sourceType: DataSourceType.network,
-        uri: dataSource,
-        formatHint: formatHint,
-        closedCaptionFile: closedCaptionFile,
-        headers: headers,
-        useCache: useCache,
-        maxCacheSize: maxCacheSize,
-        maxCacheFileSize: maxCacheFileSize,
-        showNotification: showNotification,
-        title: title,
-        author: author,
-        imageUrl: imageUrl,
-        notificationChannelName: notificationChannelName,
-      ),
+          sourceType: DataSourceType.network,
+          uri: dataSource,
+          formatHint: formatHint,
+          closedCaptionFile: closedCaptionFile,
+          headers: headers,
+          useCache: useCache,
+          maxCacheSize: maxCacheSize,
+          maxCacheFileSize: maxCacheFileSize,
+          showNotification: showNotification,
+          title: title,
+          author: author,
+          imageUrl: imageUrl,
+          notificationChannelName: notificationChannelName,
+          overriddenDuration: overriddenDuration),
     );
   }
 
@@ -338,18 +345,19 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String author,
     String imageUrl,
     String notificationChannelName,
+    Duration overriddenDuration,
   }) {
     return _setDataSource(
       DataSource(
-        sourceType: DataSourceType.file,
-        uri: 'file://${file.path}',
-        closedCaptionFile: closedCaptionFile,
-        showNotification: showNotification,
-        title: title,
-        author: author,
-        imageUrl: imageUrl,
-        notificationChannelName: notificationChannelName,
-      ),
+          sourceType: DataSourceType.file,
+          uri: 'file://${file.path}',
+          closedCaptionFile: closedCaptionFile,
+          showNotification: showNotification,
+          title: title,
+          author: author,
+          imageUrl: imageUrl,
+          notificationChannelName: notificationChannelName,
+          overriddenDuration: overriddenDuration),
     );
   }
 
