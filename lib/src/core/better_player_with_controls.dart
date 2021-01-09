@@ -3,12 +3,11 @@ import 'dart:async';
 import 'dart:math';
 
 // Flutter imports:
-import 'package:better_player/src/controls/better_player_theme.dart';
 import 'package:flutter/material.dart';
 
 // Project imports:
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/controls/better_player_controls_configuration.dart';
+
 import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
@@ -160,12 +159,14 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   ) {
     if (controlsConfiguration.showControls) {
       if (controlsConfiguration.customControlsBuilder != null &&
-          controlsConfiguration.playerTheme == PlayerTheme.custom) {
+          controlsConfiguration.playerTheme == BetterPlayerTheme.custom) {
         return controlsConfiguration
             .customControlsBuilder(betterPlayerController);
-      } else if (controlsConfiguration.playerTheme == PlayerTheme.material) {
+      } else if (controlsConfiguration.playerTheme ==
+          BetterPlayerTheme.material) {
         return _buildMaterialControl();
-      } else if (controlsConfiguration.playerTheme == PlayerTheme.cupertino) {
+      } else if (controlsConfiguration.playerTheme ==
+          BetterPlayerTheme.cupertino) {
         return _buildCupertinoControl();
       }
     }

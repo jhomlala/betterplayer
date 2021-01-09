@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:better_player/better_player.dart';
 // Project imports:
 import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
-import 'package:better_player/src/controls/better_player_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -76,12 +75,12 @@ class BetterPlayerControlsConfiguration {
   ///Time to hide controls
   final Duration controlsHideTime;
 
-  ///Custom controls, it will override Material/Cupertino controls
+  ///Parameter used to build custom controls
   final Widget Function(BetterPlayerController controller)
       customControlsBuilder;
 
-  ///Flag to use a forced platform
-  final PlayerTheme playerTheme;
+  ///Parameter used to change theme of the player
+  final BetterPlayerTheme playerTheme;
 
   ///Flag used to show/hide controls
   final bool showControls;
@@ -159,7 +158,7 @@ class BetterPlayerControlsConfiguration {
     this.progressBarBackgroundColor = Colors.white60,
     this.controlsHideTime = const Duration(milliseconds: 300),
     this.customControlsBuilder,
-    this.playerTheme = PlayerTheme.material,
+    this.playerTheme = BetterPlayerTheme.material,
     this.showControls = true,
     this.showControlsOnInitialize = true,
     this.controlBarHeight = 48.0,

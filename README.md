@@ -467,8 +467,12 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
    ///Time to hide controls
    final Duration controlsHideTime;
 
-   ///Custom controls, it will override Material/Cupertino controls
-   final Widget customControls;
+   ///Parameter used to build custom controls
+   final Widget Function(BetterPlayerController controller)
+       customControlsBuilder;
+
+   ///Parameter used to change theme of the player
+   final BetterPlayerTheme playerTheme;
 
    ///Flag used to show/hide controls
    final bool showControls;
