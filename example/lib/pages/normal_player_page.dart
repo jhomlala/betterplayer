@@ -21,6 +21,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.forBiggerBlazesUrl,
+      overriddenDuration: Duration(seconds: 5),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);

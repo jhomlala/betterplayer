@@ -10,10 +10,12 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
-  List<BetterPlayerDataSource> dataSourceList = [];
+  final GlobalKey<BetterPlayerPlaylistState> _betterPlayerPlaylistStateKey =
+      GlobalKey();
+  List<BetterPlayerDataSource> _dataSourceList = [];
 
   Future<List<BetterPlayerDataSource>> setupData() async {
-    dataSourceList.add(
+    _dataSourceList.add(
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
         Constants.forBiggerBlazesUrl,
@@ -23,9 +25,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
       ),
     );
 
-    dataSourceList.add(BetterPlayerDataSource(
+    _dataSourceList.add(BetterPlayerDataSource(
         BetterPlayerDataSourceType.network, Constants.bugBuckBunnyVideoUrl));
-    dataSourceList.add(
+    _dataSourceList.add(
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
         Constants.phantomVideoUrl,
@@ -33,7 +35,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       ),
     );
 
-    return dataSourceList;
+    return _dataSourceList;
   }
 
   @override
@@ -57,6 +59,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
               ),
               AspectRatio(
                 child: BetterPlayerPlaylist(
+                  key: _betterPlayerPlaylistStateKey,
                   betterPlayerConfiguration: BetterPlayerConfiguration(
                       autoPlay: true,
                       aspectRatio: 1,
@@ -76,7 +79,19 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   betterPlayerDataSourceList: snapshot.data,
                 ),
                 aspectRatio: 1,
-              )
+              ),
+              ElevatedButton(
+                child: Text("Get current position"),
+                onPressed: () {
+                  var position = _betterPlayerPlaylistStateKey
+                      .currentState
+                      .betterPlayerController
+                      .videoPlayerController
+                      .value
+                      .position;
+                  print("The position is: $position");
+                },
+              ),
             ]);
           }
         },

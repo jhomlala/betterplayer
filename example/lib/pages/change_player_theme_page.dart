@@ -11,7 +11,7 @@ class ChangePlayerThemePage extends StatefulWidget {
 class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
   BetterPlayerController _betterPlayerController;
   BetterPlayerDataSource _dataSource;
-  PlayerTheme _playerTheme = PlayerTheme.material;
+  BetterPlayerTheme _playerTheme = BetterPlayerTheme.material;
 
   @override
   void initState() {
@@ -57,7 +57,7 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                   child: Text("MATERIAL"),
                   onPressed: () {
                     setState(() {
-                      _playerTheme = PlayerTheme.material;
+                      _playerTheme = BetterPlayerTheme.material;
                       _betterPlayerController.pause();
                       _betterPlayerController = new BetterPlayerController(
                         BetterPlayerConfiguration(
@@ -76,7 +76,7 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                   child: Text("CUPERTINO"),
                   onPressed: () {
                     setState(() {
-                      _playerTheme = PlayerTheme.cupertino;
+                      _playerTheme = BetterPlayerTheme.cupertino;
                       _betterPlayerController.pause();
                       _betterPlayerController = new BetterPlayerController(
                         BetterPlayerConfiguration(
@@ -95,7 +95,7 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                   child: Text("CUSTOM"),
                   onPressed: () {
                     setState(() {
-                      _playerTheme = PlayerTheme.custom;
+                      _playerTheme = BetterPlayerTheme.custom;
                       _betterPlayerController.pause();
                       _betterPlayerController = new BetterPlayerController(
                         BetterPlayerConfiguration(

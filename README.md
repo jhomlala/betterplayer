@@ -35,7 +35,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.43
+  better_player: ^0.0.44
 ```
 
 2. Install it
@@ -467,8 +467,12 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
    ///Time to hide controls
    final Duration controlsHideTime;
 
-   ///Custom controls, it will override Material/Cupertino controls
-   final Widget customControls;
+   ///Parameter used to build custom controls
+   final Widget Function(BetterPlayerController controller)
+       customControlsBuilder;
+
+   ///Parameter used to change theme of the player
+   final BetterPlayerTheme playerTheme;
 
    ///Flag used to show/hide controls
    final bool showControls;
@@ -815,6 +819,27 @@ You can use BetterPlayerControlsConfiguration to add custom element to the overf
 If null then aspectRatio from BetterPlayerConfiguration will be used.
 ```dart
    betterPlayerController.setOverriddenAspectRatio(1.0);
+```
+
+### Overridden duration
+If overridden duration is set then video player will play video until this duration.
+```dart
+BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.elephantDreamVideoUrl,
+      ///Play only 10 seconds of this video.
+      overriddenDuration: Duration(seconds: 10),
+    );
+```
+
+### (iOS only) Add into info.plist (to support fullscreen rotation):
+```xml
+<key>UISupportedInterfaceOrientations</key>
+<array>
+   <string>UIInterfaceOrientationPortrait</string>
+   <string>UIInterfaceOrientationLandscapeLeft</string>
+   <string>UIInterfaceOrientationLandscapeRight</string>
+</array>
 ```
 
 ### More documentation

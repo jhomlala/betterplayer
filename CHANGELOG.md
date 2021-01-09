@@ -1,3 +1,11 @@
+## 0.0.44
+* Added placeholder until play example
+* Added playback stalled feature in iOS. iOS version should behave same as Android once video failed to load.
+* Added BetterPlayerTheme to controls configuration (added by https://github.com/maine98).
+* [BREAKING_CHANGE] Changed custom controls builder in BetterPlayerControlsConfiguration. Now it accepts BetterPlayerController.
+* Exposed BetterPlayerPlaylistState and betterPlayerController getter within.
+* Added overriddenDuration to BetterPlayerDataSource.
+
 ## 0.0.43
 * Added autoDispose flag in BetterPlayerConfiguration
 * Added removeEventsListener in BetterPlayerController

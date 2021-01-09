@@ -53,6 +53,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String AUTHOR_PARAMETER = "author";
     private static final String IMAGE_URL_PARAMETER = "imageUrl";
     private static final String NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName";
+    private static final String OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -128,7 +129,6 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         }
         videoPlayers.clear();
         dataSources.clear();
-        ;
     }
 
     private void onDestroy() {
@@ -240,6 +240,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         dataSources.put(getTextureId(player), dataSource);
         String key = getParameter(dataSource, KEY_PARAMETER, "");
         Map<String, String> headers = getParameter(dataSource, HEADERS_PARAMETER, new HashMap<>());
+        Number overriddenDuration = getParameter(dataSource, OVERRIDDEN_DURATION_PARAMETER, 0);
 
         if (dataSource.get(ASSET_PARAMETER) != null) {
             String asset = getParameter(dataSource, ASSET_PARAMETER, "");
@@ -261,7 +262,9 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     headers,
                     false,
                     0L,
-                    0L);
+                    0L,
+                    overriddenDuration.longValue()
+                    );
         } else {
             boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
             Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 0);
@@ -279,7 +282,9 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     headers,
                     useCache,
                     maxCacheSize,
-                    maxCacheFileSize);
+                    maxCacheFileSize,
+                    overriddenDuration.longValue()
+            );
         }
     }
 

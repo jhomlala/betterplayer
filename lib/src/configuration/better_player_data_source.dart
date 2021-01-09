@@ -43,7 +43,11 @@ class BetterPlayerDataSource {
   ///List of bytes, used only in memory player
   final List<int> bytes;
 
+  ///Configuration of remote controls notification
   final BetterPlayerNotificationConfiguration notificationConfiguration;
+
+  ///Duration which will be returned instead of original duration
+  final Duration overriddenDuration;
 
   BetterPlayerDataSource(
     this.type,
@@ -59,6 +63,7 @@ class BetterPlayerDataSource {
     this.cacheConfiguration,
     this.notificationConfiguration =
         const BetterPlayerNotificationConfiguration(showNotification: false),
+    this.overriddenDuration,
   }) : assert(
             ((type == BetterPlayerDataSourceType.network ||
                         type == BetterPlayerDataSourceType.file) &&
@@ -79,6 +84,7 @@ class BetterPlayerDataSource {
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
+    Duration overriddenDuration,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -91,6 +97,7 @@ class BetterPlayerDataSource {
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration,
+      overriddenDuration: overriddenDuration,
     );
   }
 
@@ -104,17 +111,16 @@ class BetterPlayerDataSource {
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
+    Duration overriddenDuration,
   }) {
-    return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.file,
-      url,
-      subtitles: subtitles,
-      useHlsSubtitles: useHlsSubtitles,
-      useHlsTracks: useHlsTracks,
-      resolutions: qualities,
-      cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration,
-    );
+    return BetterPlayerDataSource(BetterPlayerDataSourceType.file, url,
+        subtitles: subtitles,
+        useHlsSubtitles: useHlsSubtitles,
+        useHlsTracks: useHlsTracks,
+        resolutions: qualities,
+        cacheConfiguration: cacheConfiguration,
+        notificationConfiguration: notificationConfiguration,
+        overriddenDuration: overriddenDuration);
   }
 
   ///Factory method to build network data source which uses bytes as data source.
@@ -127,18 +133,17 @@ class BetterPlayerDataSource {
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
+    Duration overriddenDuration,
   }) {
-    return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.memory,
-      "",
-      bytes: bytes,
-      subtitles: subtitles,
-      useHlsSubtitles: useHlsSubtitles,
-      useHlsTracks: useHlsTracks,
-      resolutions: qualities,
-      cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration,
-    );
+    return BetterPlayerDataSource(BetterPlayerDataSourceType.memory, "",
+        bytes: bytes,
+        subtitles: subtitles,
+        useHlsSubtitles: useHlsSubtitles,
+        useHlsTracks: useHlsTracks,
+        resolutions: qualities,
+        cacheConfiguration: cacheConfiguration,
+        notificationConfiguration: notificationConfiguration,
+        overriddenDuration: overriddenDuration);
   }
 
   BetterPlayerDataSource copyWith({
@@ -153,6 +158,7 @@ class BetterPlayerDataSource {
     Map<String, String> resolutions,
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
+    Duration overriddenDuration,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -167,6 +173,7 @@ class BetterPlayerDataSource {
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
       notificationConfiguration:
           notificationConfiguration ?? this.notificationConfiguration,
+      overriddenDuration: overriddenDuration ?? this.overriddenDuration,
     );
   }
 }
