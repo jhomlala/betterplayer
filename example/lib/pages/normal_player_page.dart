@@ -10,6 +10,7 @@ class NormalPlayerPage extends StatefulWidget {
 
 class _NormalPlayerPageState extends State<NormalPlayerPage> {
   BetterPlayerController _betterPlayerController;
+  GlobalKey _betterPlayerKey = GlobalKey();
 
   @override
   void initState() {
@@ -46,21 +47,18 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           ),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
+            child: BetterPlayer(controller: _betterPlayerController, key: _betterPlayerKey,),
           ),
           RaisedButton(
             child: Text("Show PiP"),
             onPressed: () {
-              _betterPlayerController.enablePictureInPicture(0, 0, 320, 180);
+              _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
             },
           ),
           RaisedButton(
-            child: Text("Play file data source"),
+            child: Text("Disable PiP"),
             onPressed: () async {
-              String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
-              BetterPlayerDataSource dataSource =
-                  BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
-              _betterPlayerController.setupDataSource(dataSource);
+              _betterPlayerController.disablePictureInPicture();
             },
           ),
         ],

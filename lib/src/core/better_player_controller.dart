@@ -634,9 +634,20 @@ class BetterPlayerController extends ChangeNotifier {
     return _overriddenAspectRatio ?? betterPlayerConfiguration.aspectRatio;
   }
 
-  Future<void> enablePictureInPicture(
-      double top, double left, double width, double height) {
-    return videoPlayerController.enablePictureInPicture(top, left, width, height);
+  Future<void> enablePictureInPicture(GlobalKey betterPlayerGlobalKey) {
+    final RenderBox renderBox =
+        betterPlayerGlobalKey.currentContext.findRenderObject();
+    final Offset position = renderBox.localToGlobal(Offset.zero);
+    return videoPlayerController.enablePictureInPicture(
+      left: position.dx,
+      top: position.dy,
+      width: renderBox.size.width,
+      height: renderBox.size.height,
+    );
+  }
+
+  Future<void> disablePictureInPicture(){
+    return videoPlayerController.disablePictureInPicture();
   }
 
   @override
