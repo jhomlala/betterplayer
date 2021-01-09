@@ -9,7 +9,6 @@ import 'dart:ui';
 // Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-
 // Package imports:
 import 'package:meta/meta.dart' show required, visibleForTesting;
 

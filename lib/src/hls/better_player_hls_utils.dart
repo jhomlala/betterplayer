@@ -4,11 +4,10 @@ import 'dart:io';
 
 // Package imports:
 import 'package:better_player/src/core/better_player_utils.dart';
-import 'package:flutter_hls_parser/flutter_hls_parser.dart';
-
 // Project imports:
 import 'package:better_player/src/hls/better_player_hls_subtitle.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
+import 'package:flutter_hls_parser/flutter_hls_parser.dart';
 
 ///HLS helper class
 class BetterPlayerHlsUtils {

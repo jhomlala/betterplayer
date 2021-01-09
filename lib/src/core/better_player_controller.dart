@@ -2,13 +2,6 @@
 import 'dart:async';
 import 'dart:io';
 
-// Flutter imports:
-import 'package:better_player/src/core/better_player_utils.dart';
-import 'package:flutter/material.dart';
-
-// Package imports:
-import 'package:path_provider/path_provider.dart';
-
 // Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
@@ -16,11 +9,16 @@ import 'package:better_player/src/configuration/better_player_event.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/configuration/better_player_translations.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
+// Flutter imports:
+import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/video_player/video_player.dart';
+import 'package:flutter/material.dart';
+// Package imports:
+import 'package:path_provider/path_provider.dart';
 
 class BetterPlayerController extends ChangeNotifier {
   static const _durationParameter = "duration";
