@@ -1,9 +1,9 @@
 // Dart imports:
 import 'dart:async';
-import 'dart:io';
 import 'dart:math';
 
 // Flutter imports:
+import 'package:better_player/src/controls/better_player_theme.dart';
 import 'package:flutter/material.dart';
 
 // Project imports:
@@ -158,22 +158,33 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     BuildContext context,
     BetterPlayerController betterPlayerController,
   ) {
-    if (controlsConfiguration.showControls &&
-        controlsConfiguration.customControls == null) {
-      if (Platform.isAndroid) {
-        return BetterPlayerMaterialControls(
-          onControlsVisibilityChanged: onControlsVisibilityChanged,
-          controlsConfiguration: controlsConfiguration,
-        );
-      } else {
-        return BetterPlayerCupertinoControls(
-          onControlsVisibilityChanged: onControlsVisibilityChanged,
-          controlsConfiguration: controlsConfiguration,
-        );
+    if (controlsConfiguration.showControls) {
+      if (controlsConfiguration.customControlsBuilder != null &&
+          controlsConfiguration.playerTheme == PlayerTheme.custom) {
+        return controlsConfiguration
+            .customControlsBuilder(betterPlayerController);
+      } else if (controlsConfiguration.playerTheme == PlayerTheme.material) {
+        return _buildMaterialControl();
+      } else if (controlsConfiguration.playerTheme == PlayerTheme.cupertino) {
+        return _buildCupertinoControl();
       }
     }
 
     return const SizedBox();
+  }
+
+  Widget _buildMaterialControl() {
+    return BetterPlayerMaterialControls(
+      onControlsVisibilityChanged: onControlsVisibilityChanged,
+      controlsConfiguration: controlsConfiguration,
+    );
+  }
+
+  Widget _buildCupertinoControl() {
+    return BetterPlayerCupertinoControls(
+      onControlsVisibilityChanged: onControlsVisibilityChanged,
+      controlsConfiguration: controlsConfiguration,
+    );
   }
 
   void onControlsVisibilityChanged(bool state) {

@@ -4,6 +4,7 @@ import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/auto_fullscreen_orientation_page.dart';
 import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/cache_page.dart';
+import 'package:better_player_example/pages/change_player_theme_page.dart';
 import 'package:better_player_example/pages/controller_controls_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
@@ -131,6 +132,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Placeholder until play page", () {
         _navigateToPage(PlaceholderUntilPlayPage());
+      }),
+      _buildExampleElementWidget("Change player theme", () {
+        _navigateToPage(ChangePlayerThemePage());
       }),
     ];
   }

@@ -11,6 +11,7 @@ export 'src/configuration/better_player_translations.dart';
 export 'src/controls/better_player_controls_configuration.dart';
 export 'src/controls/better_player_overflow_menu_item.dart';
 export 'src/controls/better_player_progress_colors.dart';
+export 'src/controls/better_player_theme.dart';
 export 'src/core/better_player.dart';
 export 'src/core/better_player_controller.dart';
 export 'src/core/better_player_controller_provider.dart';
