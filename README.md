@@ -821,6 +821,17 @@ If null then aspectRatio from BetterPlayerConfiguration will be used.
    betterPlayerController.setOverriddenAspectRatio(1.0);
 ```
 
+### Overridden duration
+If overridden duration is set then video player will play video until this duration.
+```dart
+BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.elephantDreamVideoUrl,
+      ///Play only 10 seconds of this video.
+      overriddenDuration: Duration(seconds: 10),
+    );
+```
+
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html
 

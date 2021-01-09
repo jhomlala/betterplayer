@@ -15,6 +15,7 @@ import 'package:better_player_example/pages/memory_player_page.dart';
 import 'package:better_player_example/pages/normal_player_page.dart';
 import 'package:better_player_example/pages/notification_player_page.dart';
 import 'package:better_player_example/pages/overridden_aspect_ratio_page.dart';
+import 'package:better_player_example/pages/overriden_duration_page.dart';
 import 'package:better_player_example/pages/placeholder_until_play_page.dart';
 import 'package:better_player_example/pages/playlist_page.dart';
 import 'package:better_player_example/pages/resolutions_page.dart';
@@ -133,8 +134,11 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("Placeholder until play page", () {
         _navigateToPage(PlaceholderUntilPlayPage());
       }),
-      _buildExampleElementWidget("Change player theme", () {
+      _buildExampleElementWidget("Change player theme page", () {
         _navigateToPage(ChangePlayerThemePage());
+      }),
+      _buildExampleElementWidget("Overridden duration page", () {
+        _navigateToPage(OverriddenDurationPage());
       }),
     ];
   }

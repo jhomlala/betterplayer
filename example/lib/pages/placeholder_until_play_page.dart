@@ -1,17 +1,19 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
+import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
 
 class PlaceholderUntilPlayPage extends StatefulWidget {
   @override
-  _PlaceholderUntilPlayPageState createState() => _PlaceholderUntilPlayPageState();
+  _PlaceholderUntilPlayPageState createState() =>
+      _PlaceholderUntilPlayPageState();
 }
 
 class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   BetterPlayerController _betterPlayerController;
   StreamController<bool> _placeholderStreamController =
-  StreamController.broadcast();
+      StreamController.broadcast();
   bool _showPlaceholder = true;
 
   @override
@@ -23,14 +25,15 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   @override
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
-    BetterPlayerConfiguration(
+        BetterPlayerConfiguration(
       fit: BoxFit.contain,
       placeholder: _buildVideoPlaceholder(),
       showPlaceholderUntilPlay: true,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
-        "http://www.documentarymania.org/video_flutter.php?title=Gravity");
+      BetterPlayerDataSourceType.network,
+      Constants.elephantDreamVideoUrl,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.addEventsListener((event) {
@@ -54,8 +57,8 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
       builder: (context, snapshot) {
         return _showPlaceholder
             ? Image.network(
-          "https://imgix.bustle.com/uploads/image/2020/8/5/23905b9c-6b8c-47fa-bc0f-434de1d7e9bf-avengers-5.jpg",
-        )
+                "https://imgix.bustle.com/uploads/image/2020/8/5/23905b9c-6b8c-47fa-bc0f-434de1d7e9bf-avengers-5.jpg",
+              )
             : const SizedBox();
       },
     );
