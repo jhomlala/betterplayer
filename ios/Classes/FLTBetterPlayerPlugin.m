@@ -249,12 +249,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     return transform;
 }
 
-- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key{
+- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key overriddenDuration:(int) overriddenDuration{
     NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{} withCache: false];
+    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{} withCache: false overriddenDuration:overriddenDuration];
 }
 
-- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache{
+- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration{
     if (headers == [NSNull null]){
         headers = @{};
     }
@@ -265,6 +265,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         item = [AVPlayerItem playerItemWithURL:proxyURL];
     } else {
         item = [AVPlayerItem playerItemWithURL:url];
+    }
+    
+    if (@available(iOS 10.0, *) && overriddenDuration > 0) {
+        item.forwardPlaybackEndTime = CMTimeMake(overriddenDuration/1000, 1);
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
     
@@ -328,7 +332,15 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             for (NSValue* rangeValue in [object loadedTimeRanges]) {
                 CMTimeRange range = [rangeValue CMTimeRangeValue];
                 int64_t start = FLTCMTimeToMillis(range.start);
-                [values addObject:@[ @(start), @(start + FLTCMTimeToMillis(range.duration)) ]];
+                int64_t end = start + FLTCMTimeToMillis(range.duration);
+                if (!CMTIME_IS_INVALID(_player.currentItem.forwardPlaybackEndTime)) {
+                    int64_t endTime = FLTCMTimeToMillis(_player.currentItem.forwardPlaybackEndTime);
+                    if (end > endTime){
+                        end = endTime;
+                    }
+                }
+                
+                [values addObject:@[ @(start), @(end) ]];
             }
             _eventSink(@{@"event" : @"bufferingUpdate", @"values" : values, @"key" : _key});
         }
@@ -445,6 +457,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         time =  [[_player currentItem] duration];
     } else {
         time =  [[[_player currentItem] asset] duration];
+    }
+    if (!CMTIME_IS_INVALID(_player.currentItem.forwardPlaybackEndTime)) {
+        NSLog(@"Using forwardplaybackedntime!");
+        time = [[_player currentItem] forwardPlaybackEndTime];
     }
     
     return FLTCMTimeToMillis(time);
@@ -848,7 +864,10 @@ NSMutableDictionary*  _artworkImageDict;
             NSString* uriArg = dataSource[@"uri"];
             NSString* key = dataSource[@"key"];
             NSDictionary* headers = dataSource[@"headers"];
-            
+            int overriddenDuration = 0;
+            if ([dataSource objectForKey:@"overriddenDuration"] != [NSNull null]){
+                overriddenDuration = [dataSource[@"overriddenDuration"] intValue];
+            }
             
             BOOL useCache = false;
             id useCacheObject = [dataSource objectForKey:@"useCache"];
@@ -867,9 +886,9 @@ NSMutableDictionary*  _artworkImageDict;
                 } else {
                     assetPath = [_registrar lookupKeyForAsset:assetArg];
                 }
-                [player setDataSourceAsset:assetPath withKey:key];
+                [player setDataSourceAsset:assetPath withKey:key overriddenDuration:overriddenDuration];
             } else if (uriArg) {
-                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withHeaders:headers withCache: useCache];
+                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withHeaders:headers withCache: useCache overriddenDuration:overriddenDuration];
             } else {
                 result(FlutterMethodNotImplemented);
             }
