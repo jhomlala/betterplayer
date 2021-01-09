@@ -56,9 +56,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
       stream: _placeholderStreamController.stream,
       builder: (context, snapshot) {
         return _showPlaceholder
-            ? Image.network(
-                "https://imgix.bustle.com/uploads/image/2020/8/5/23905b9c-6b8c-47fa-bc0f-434de1d7e9bf-avengers-5.jpg",
-              )
+            ? Image.network(Constants.placeholderUrl)
             : const SizedBox();
       },
     );

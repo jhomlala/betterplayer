@@ -241,7 +241,6 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         String key = getParameter(dataSource, KEY_PARAMETER, "");
         Map<String, String> headers = getParameter(dataSource, HEADERS_PARAMETER, new HashMap<>());
         Number overriddenDuration = getParameter(dataSource, OVERRIDDEN_DURATION_PARAMETER, 0);
-        Log.d("Video_Player","Overriden duration is" + overriddenDuration);
 
         if (dataSource.get(ASSET_PARAMETER) != null) {
             String asset = getParameter(dataSource, ASSET_PARAMETER, "");
