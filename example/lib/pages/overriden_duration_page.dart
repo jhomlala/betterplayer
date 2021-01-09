@@ -27,6 +27,7 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
+
       ///Play only 10 seconds of this video.
       overriddenDuration: Duration(seconds: 10),
     );

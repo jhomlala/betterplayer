@@ -35,7 +35,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.43
+  better_player: ^0.0.44
 ```
 
 2. Install it
@@ -830,6 +830,16 @@ BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       ///Play only 10 seconds of this video.
       overriddenDuration: Duration(seconds: 10),
     );
+```
+
+### (iOS only) Add into info.plist (to support fullscreen rotation):
+```xml
+<key>UISupportedInterfaceOrientations</key>
+<array>
+   <string>UIInterfaceOrientationPortrait</string>
+   <string>UIInterfaceOrientationLandscapeLeft</string>
+   <string>UIInterfaceOrientationLandscapeRight</string>
+</array>
 ```
 
 ### More documentation
