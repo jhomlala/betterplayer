@@ -30,6 +30,7 @@ import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -556,7 +557,47 @@ final class BetterPlayer {
         return exoPlayer.getDuration();
     }
 
+    public void addMediaSession(Context context){
+
+        MediaSessionCompat mediaSession = new MediaSessionCompat(context, "ExoPlayer");
+
+        mediaSession.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public void onSeekTo(long pos) {
+                exoPlayer.seekTo(pos);
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "seek");
+                event.put("position", pos);
+                eventSink.success(event);
+                super.onSeekTo(pos);
+            }
+
+            @Override
+            public void onCommand(String command, Bundle extras, ResultReceiver cb) {
+                super.onCommand(command, extras, cb);
+            }
+
+            @Override
+            public void onPlay() {
+                play();
+            }
+
+            @Override
+            public void onPause() {
+                pause();
+            }
+        });
+        mediaSession.setActive(true);
+
+
+        MediaSessionConnector mediaSessionConnector =
+                new MediaSessionConnector(mediaSession);
+        mediaSessionConnector.setPlayer(exoPlayer,null,null);
+        Log.d("AND_BETTER_P", "Added media session ");
+    }
+
     void dispose() {
+        Log.d("AND_BETTER_P", "Dispose player ");
         removeNotificationData();
         if (isInitialized) {
             exoPlayer.stop();

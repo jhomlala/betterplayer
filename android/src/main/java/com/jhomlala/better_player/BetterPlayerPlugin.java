@@ -4,12 +4,19 @@
 
 package com.jhomlala.better_player;
 
+import android.app.Activity;
+import android.app.PictureInPictureParams;
+import android.app.RemoteAction;
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.util.LongSparseArray;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -26,7 +33,7 @@ import java.util.Map;
 /**
  * Android platform implementation of the VideoPlayerPlugin.
  */
-public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
+public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodCallHandler {
     private static final String TAG = "BetterPlayerPlugin";
     private static final String CHANNEL = "better_player_channel";
     private static final String EVENTS_CHANNEL = "better_player_channel/videoEvents";
@@ -72,6 +79,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private final LongSparseArray<Map<String, Object>> dataSources = new LongSparseArray<>();
     private FlutterState flutterState;
     private long currentNotificationTextureId = -1;
+    private Activity activity;
 
     /**
      * Register this with the v2 embedding for the plugin to respond to lifecycle callbacks.
@@ -95,11 +103,13 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
      */
     public static void registerWith(Registrar registrar) {
         final BetterPlayerPlugin plugin = new BetterPlayerPlugin(registrar);
+
         registrar.addViewDestroyListener(
                 view -> {
                     plugin.onDestroy();
                     return false; // We are not interested in assuming ownership of the NativeView.
                 });
+
     }
 
     @Override
@@ -124,6 +134,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     }
 
     private void disposeAllPlayers() {
+        Log.d("AND_BETTER_P", "Dispose all players");
         for (int i = 0; i < videoPlayers.size(); i++) {
             videoPlayers.valueAt(i).dispose();
         }
@@ -137,6 +148,8 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
         // of VideoPlayer. Once https://github.com/flutter/flutter/issues/19358 is resolved this may
         // be replaced with just asserting that videoPlayers.isEmpty().
         // https://github.com/flutter/flutter/issues/20989 tracks this.
+
+        Log.d("AND_BETTER_P"," ON DESTROY CALLED");
         disposeAllPlayers();
     }
 
@@ -146,6 +159,8 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             result.error("no_activity", "better_player plugin requires a foreground activity", null);
             return;
         }
+
+
         switch (call.method) {
             case INIT_METHOD:
                 disposeAllPlayers();
@@ -153,6 +168,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             case CREATE_METHOD: {
                 TextureRegistry.SurfaceTextureEntry handle =
                         flutterState.textureRegistry.createSurfaceTexture();
+
                 EventChannel eventChannel =
                         new EventChannel(
                                 flutterState.binaryMessenger, EVENTS_CHANNEL + handle.id());
@@ -165,7 +181,12 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             }
             default: {
                 long textureId = ((Number) call.argument(TEXTURE_ID_PARAMETER)).longValue();
+                for (int index =0;index<videoPlayers.size();index++){
+                    Log.d("AND_BETTER_P", "VIDEO PLAYER TEXTURE ID EXISTS: " + videoPlayers.keyAt(index));
+                }
+
                 BetterPlayer player = videoPlayers.get(textureId);
+
                 if (player == null) {
                     result.error(
                             "Unknown textureId",
@@ -180,6 +201,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     }
 
     private void onMethodCall(MethodCall call, Result result, long textureId, BetterPlayer player) {
+        Log.d("AND_BETTER_P", "On method call: " + call.method);
         switch (call.method) {
             case SET_DATA_SOURCE_METHOD: {
                 setDataSource(call, result, player);
@@ -222,7 +244,17 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                         call.argument(BITRATE_PARAMETER));
                 result.success(null);
                 break;
+            case "enablePictureInPicture": {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    player.addMediaSession(flutterState.applicationContext);
+
+                    activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
+                }
+                result.success(null);
+                break;
+            }
             case DISPOSE_METHOD:
+                Log.d("AND_BETTER_P", "Dispose method called!!!");
                 player.dispose();
                 videoPlayers.remove(textureId);
                 dataSources.remove(textureId);
@@ -264,7 +296,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                     0L,
                     0L,
                     overriddenDuration.longValue()
-                    );
+            );
         } else {
             boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
             Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 0);
@@ -336,6 +368,29 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             }
         }
         return defaultValue;
+    }
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        Log.d("BETTER_PLAYER_AND", "ON attached to activity");
+        Toast.makeText(binding.getActivity(), "ON ATTACHED!", Toast.LENGTH_SHORT).show();
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        Log.d("BETTER_PLAYER_AND", "ON DETACHED FROM ACTIVITY FOR CONFIG CHANGES");
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        Log.d("BETTER_PLAYER_AND", "ON RE-ATTACHED");
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        Log.d("BETTER_PLAYER_AND", "ON DETACHED FROM ACTIVITY");
+
     }
 
     private interface KeyForAssetFn {

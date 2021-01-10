@@ -52,7 +52,8 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           RaisedButton(
             child: Text("Show PiP"),
             onPressed: () {
-              _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
+              //_betterPlayerController.enablePictureInPicture(_betterPlayerKey);
+              _betterPlayerController.enablePictureInPicture(null);
             },
           ),
           RaisedButton(

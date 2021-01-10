@@ -196,6 +196,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> _create() async {
     _textureId = await _videoPlayerPlatform.create();
+    print("CREATE CALLED!" + _textureId.toString());
     _creatingCompleter.complete(null);
 
     unawaited(_applyLooping());

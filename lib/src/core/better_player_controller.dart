@@ -634,7 +634,12 @@ class BetterPlayerController extends ChangeNotifier {
     return _overriddenAspectRatio ?? betterPlayerConfiguration.aspectRatio;
   }
 
-  Future<void> enablePictureInPicture(GlobalKey betterPlayerGlobalKey) {
+  Future<void> enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async{
+    ///Android only
+    if (betterPlayerGlobalKey == null){
+      await videoPlayerController.enablePictureInPicture(left: 0, top:0, width: 0,height: 0);
+      await enterFullScreen();
+    }
     final RenderBox renderBox =
         betterPlayerGlobalKey.currentContext.findRenderObject();
     final Offset position = renderBox.localToGlobal(Offset.zero);
@@ -652,6 +657,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   @override
   void dispose() {
+
     if (!betterPlayerConfiguration.autoDispose) {
       return;
     }

@@ -26,6 +26,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> dispose(int textureId) {
+    print("DISPOSE METHOD CALLED $textureId");
     return _channel.invokeMethod<void>(
       'dispose',
       <String, dynamic>{'textureId': textureId},
