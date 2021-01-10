@@ -112,6 +112,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   double _overriddenAspectRatio;
 
+  bool _wasInPip = false;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -437,6 +439,15 @@ class BetterPlayerController extends ChangeNotifier {
       _hasCurrentDataSourceInitialized = true;
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.initialized));
     }
+    if (currentVideoPlayerValue.isPip){
+      _wasInPip = true;
+    } else if (_wasInPip){
+      print("LEFT PIP MODE");
+      _wasInPip = false;
+      exitFullScreen();
+      setControlsEnabled(true);
+    }
+
 
     final int now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastPositionSelection > 500) {
@@ -638,7 +649,9 @@ class BetterPlayerController extends ChangeNotifier {
     ///Android only
     if (betterPlayerGlobalKey == null){
       await videoPlayerController.enablePictureInPicture(left: 0, top:0, width: 0,height: 0);
+      await setControlsEnabled(false);
       await enterFullScreen();
+      return;
     }
     final RenderBox renderBox =
         betterPlayerGlobalKey.currentContext.findRenderObject();

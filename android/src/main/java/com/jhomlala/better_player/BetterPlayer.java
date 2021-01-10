@@ -88,7 +88,6 @@ final class BetterPlayer {
     private Runnable refreshRunnable;
     private EventListener exoPlayerEventListener;
     private Bitmap bitmap;
-    private long overriddenDuration;
 
     BetterPlayer(
             Context context,
@@ -109,7 +108,6 @@ final class BetterPlayer {
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
             long overriddenDuration) {
         this.key = key;
-        this.overriddenDuration = overriddenDuration;
         isInitialized = false;
 
         Uri uri = Uri.parse(dataSource);
@@ -557,7 +555,7 @@ final class BetterPlayer {
         return exoPlayer.getDuration();
     }
 
-    public void addMediaSession(Context context){
+    public void addMediaSession(Context context) {
 
         MediaSessionCompat mediaSession = new MediaSessionCompat(context, "ExoPlayer");
 
@@ -592,12 +590,19 @@ final class BetterPlayer {
 
         MediaSessionConnector mediaSessionConnector =
                 new MediaSessionConnector(mediaSession);
-        mediaSessionConnector.setPlayer(exoPlayer,null,null);
-        Log.d("AND_BETTER_P", "Added media session ");
+        mediaSessionConnector.setPlayer(exoPlayer, null, null);
+
+    }
+
+
+    public void onPictureInPictureStatusChanged(boolean inPip) {
+        Map<String, Object> event = new HashMap<>();
+        event.put("event", inPip ? "pipStart" : "pipStop");
+        eventSink.success(event);
     }
 
     void dispose() {
-        Log.d("AND_BETTER_P", "Dispose player ");
+
         removeNotificationData();
         if (isInitialized) {
             exoPlayer.stop();
@@ -630,6 +635,7 @@ final class BetterPlayer {
         result = 31 * result + (surface != null ? surface.hashCode() : 0);
         return result;
     }
+
 }
 
 

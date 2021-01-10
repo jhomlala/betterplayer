@@ -6,12 +6,11 @@ package com.jhomlala.better_player;
 
 import android.app.Activity;
 import android.app.PictureInPictureParams;
-import android.app.RemoteAction;
 import android.content.Context;
 import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.util.LongSparseArray;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -80,6 +79,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private FlutterState flutterState;
     private long currentNotificationTextureId = -1;
     private Activity activity;
+    private Handler pipHandler;
+    private Runnable pipRunnable;
 
     /**
      * Register this with the v2 embedding for the plugin to respond to lifecycle callbacks.
@@ -149,7 +150,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         // be replaced with just asserting that videoPlayers.isEmpty().
         // https://github.com/flutter/flutter/issues/20989 tracks this.
 
-        Log.d("AND_BETTER_P"," ON DESTROY CALLED");
+        Log.d("AND_BETTER_P", " ON DESTROY CALLED");
         disposeAllPlayers();
     }
 
@@ -181,10 +182,6 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
             }
             default: {
                 long textureId = ((Number) call.argument(TEXTURE_ID_PARAMETER)).longValue();
-                for (int index =0;index<videoPlayers.size();index++){
-                    Log.d("AND_BETTER_P", "VIDEO PLAYER TEXTURE ID EXISTS: " + videoPlayers.keyAt(index));
-                }
-
                 BetterPlayer player = videoPlayers.get(textureId);
 
                 if (player == null) {
@@ -247,14 +244,14 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
             case "enablePictureInPicture": {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     player.addMediaSession(flutterState.applicationContext);
-
                     activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
+                    startPictureInPictureListenerTimer(player);
+                    player.onPictureInPictureStatusChanged(true);
                 }
                 result.success(null);
                 break;
             }
             case DISPOSE_METHOD:
-                Log.d("AND_BETTER_P", "Dispose method called!!!");
                 player.dispose();
                 videoPlayers.remove(textureId);
                 dataSources.remove(textureId);
@@ -265,6 +262,25 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 break;
         }
     }
+
+    private void startPictureInPictureListenerTimer(BetterPlayer player) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            pipHandler = new Handler();
+            pipRunnable = () -> {
+                if (activity.isInPictureInPictureMode()) {
+                    pipHandler.postDelayed(pipRunnable, 100);
+                } else {
+                    Log.d("AND_B", "LEFT PICTURE MODE");
+                    player.onPictureInPictureStatusChanged(false);
+                    pipHandler.removeCallbacks(pipRunnable);
+                    pipRunnable = null;
+                    pipHandler = null;
+                }
+            };
+            pipHandler.post(pipRunnable);
+        }
+    }
+
 
     private void setDataSource(MethodCall call, Result result, BetterPlayer player) {
         Map<String, Object> dataSource = call.argument(DATA_SOURCE_PARAMETER);
@@ -372,25 +388,19 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
 
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-        Log.d("BETTER_PLAYER_AND", "ON attached to activity");
-        Toast.makeText(binding.getActivity(), "ON ATTACHED!", Toast.LENGTH_SHORT).show();
         activity = binding.getActivity();
     }
 
     @Override
     public void onDetachedFromActivityForConfigChanges() {
-        Log.d("BETTER_PLAYER_AND", "ON DETACHED FROM ACTIVITY FOR CONFIG CHANGES");
     }
 
     @Override
     public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
-        Log.d("BETTER_PLAYER_AND", "ON RE-ATTACHED");
     }
 
     @Override
     public void onDetachedFromActivity() {
-        Log.d("BETTER_PLAYER_AND", "ON DETACHED FROM ACTIVITY");
-
     }
 
     private interface KeyForAssetFn {

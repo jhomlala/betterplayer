@@ -42,6 +42,7 @@ class VideoPlayerValue {
     this.volume = 1.0,
     this.speed = 1.0,
     this.errorDescription,
+    this.isPip = false,
   });
 
   /// Returns an instance with a `null` [Duration].
@@ -94,6 +95,9 @@ class VideoPlayerValue {
   /// Is null when [initialized] is false.
   final Size size;
 
+  ///Is in Picture in Picture Mode
+  final bool isPip;
+
   /// Indicates whether or not the video has been loaded and is ready to play.
   bool get initialized => duration != null;
 
@@ -128,6 +132,7 @@ class VideoPlayerValue {
     double volume,
     String errorDescription,
     double speed,
+    bool isPip,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -141,6 +146,7 @@ class VideoPlayerValue {
       volume: volume ?? this.volume,
       speed: speed ?? this.speed,
       errorDescription: errorDescription ?? this.errorDescription,
+      isPip:  isPip ?? this.isPip,
     );
   }
 
@@ -196,7 +202,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> _create() async {
     _textureId = await _videoPlayerPlatform.create();
-    print("CREATE CALLED!" + _textureId.toString());
     _creatingCompleter.complete(null);
 
     unawaited(_applyLooping());
@@ -238,8 +243,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.seek:
           seekTo(event.position);
           break;
+        case VideoEventType.pipStart:
+          value = value.copyWith(isPip: true);
+          break;
+        case VideoEventType.pipStop:
+          value = value.copyWith(isPip: false);
+          break;
         case VideoEventType.unknown:
           break;
+
       }
     }
 

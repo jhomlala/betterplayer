@@ -417,6 +417,12 @@ enum VideoEventType {
   /// The video is set to given to position
   seek,
 
+  /// The video is displayed in Picture in Picture mode
+  pipStart,
+
+  /// Picture in picture mode has been dismissed
+  pipStop,
+
   /// An unknown event has been received.
   unknown,
 }
