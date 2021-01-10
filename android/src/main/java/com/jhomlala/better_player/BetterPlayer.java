@@ -26,6 +26,7 @@ import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.PlaybackPreparer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -88,6 +89,7 @@ final class BetterPlayer {
     private Runnable refreshRunnable;
     private EventListener exoPlayerEventListener;
     private Bitmap bitmap;
+    private MediaSessionCompat mediaSession;
 
     BetterPlayer(
             Context context,
@@ -215,43 +217,18 @@ final class BetterPlayer {
         playerNotificationManager.setUseNavigationActions(false);
         playerNotificationManager.setStopAction(null);
 
-        MediaSessionCompat mediaSession = new MediaSessionCompat(context, "ExoPlayer");
-
-        mediaSession.setCallback(new MediaSessionCompat.Callback() {
-            @Override
-            public void onSeekTo(long pos) {
-                exoPlayer.seekTo(pos);
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", "seek");
-                event.put("position", pos);
-                eventSink.success(event);
-                super.onSeekTo(pos);
-            }
-
-            @Override
-            public void onCommand(String command, Bundle extras, ResultReceiver cb) {
-                super.onCommand(command, extras, cb);
-            }
-        });
-        mediaSession.setActive(true);
+        MediaSessionCompat mediaSession = setupMediaSession(context);
         playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
 
 
         playerNotificationManager.setControlDispatcher(new ControlDispatcher() {
             @Override
             public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
-                String eventType;
                 if (player.getPlayWhenReady()) {
-                    eventType = "pause";
+                    sendEvent("pause");
                 } else {
-                    eventType = "play";
+                    sendEvent("play");
                 }
-
-
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", eventType);
-                eventSink.success(event);
-
                 return true;
             }
 
@@ -315,7 +292,7 @@ final class BetterPlayer {
     }
 
 
-    public void removeNotificationData() {
+    public void disposeRemoteNotifications() {
         exoPlayer.removeListener(exoPlayerEventListener);
         if (refreshHandler != null) {
             refreshHandler.removeCallbacksAndMessages(null);
@@ -555,10 +532,11 @@ final class BetterPlayer {
         return exoPlayer.getDuration();
     }
 
-    public void addMediaSession(Context context) {
-
-        MediaSessionCompat mediaSession = new MediaSessionCompat(context, "ExoPlayer");
-
+    public MediaSessionCompat setupMediaSession(Context context) {
+        if (mediaSession != null) {
+            mediaSession.release();
+        }
+        MediaSessionCompat mediaSession = new MediaSessionCompat(context, "BetterPlayer");
         mediaSession.setCallback(new MediaSessionCompat.Callback() {
             @Override
             public void onSeekTo(long pos) {
@@ -572,28 +550,33 @@ final class BetterPlayer {
 
             @Override
             public void onCommand(String command, Bundle extras, ResultReceiver cb) {
+                Log.d("AND_PLAYER", "ON COMMAND " + command);
                 super.onCommand(command, extras, cb);
             }
 
             @Override
             public void onPlay() {
+                Log.d("AND_PLAYER", "PLAY CALLED");
+                sendEvent("play");
                 play();
             }
 
             @Override
             public void onPause() {
+                Log.d("AND_PLAYER", "PUASe CALLED");
+                sendEvent("pause");
                 pause();
             }
         });
         mediaSession.setActive(true);
-
-
         MediaSessionConnector mediaSessionConnector =
                 new MediaSessionConnector(mediaSession);
-        mediaSessionConnector.setPlayer(exoPlayer, null, null);
+        mediaSessionConnector.setPlayer(exoPlayer, null);
 
+
+        this.mediaSession = mediaSession;
+        return mediaSession;
     }
-
 
     public void onPictureInPictureStatusChanged(boolean inPip) {
         Map<String, Object> event = new HashMap<>();
@@ -601,9 +584,22 @@ final class BetterPlayer {
         eventSink.success(event);
     }
 
-    void dispose() {
+    public void disposeMediaSession() {
+        if (mediaSession != null) {
+            mediaSession.release();
+        }
+        mediaSession = null;
+    }
 
-        removeNotificationData();
+    private void sendEvent(String eventType) {
+        Map<String, Object> event = new HashMap<>();
+        event.put("event", eventType);
+        eventSink.success(event);
+    }
+
+    void dispose() {
+        disposeMediaSession();
+        disposeRemoteNotifications();
         if (isInitialized) {
             exoPlayer.stop();
         }

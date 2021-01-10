@@ -112,7 +112,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   double _overriddenAspectRatio;
 
-  bool _wasInPip = false;
+  bool _wasInPipMode = false;
+  bool _wasInFullScreenBeforePiP = false;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -439,15 +440,13 @@ class BetterPlayerController extends ChangeNotifier {
       _hasCurrentDataSourceInitialized = true;
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.initialized));
     }
-    if (currentVideoPlayerValue.isPip){
-      _wasInPip = true;
-    } else if (_wasInPip){
-      print("LEFT PIP MODE");
-      _wasInPip = false;
+    if (currentVideoPlayerValue.isPip) {
+      _wasInPipMode = true;
+    } else if (_wasInPipMode) {
+      _wasInPipMode = false;
       exitFullScreen();
       setControlsEnabled(true);
     }
-
 
     final int now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastPositionSelection > 500) {
@@ -645,32 +644,44 @@ class BetterPlayerController extends ChangeNotifier {
     return _overriddenAspectRatio ?? betterPlayerConfiguration.aspectRatio;
   }
 
-  Future<void> enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async{
-    ///Android only
-    if (betterPlayerGlobalKey == null){
-      await videoPlayerController.enablePictureInPicture(left: 0, top:0, width: 0,height: 0);
-      await setControlsEnabled(false);
-      await enterFullScreen();
-      return;
+  Future<void> enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async {
+    assert(
+        betterPlayerGlobalKey != null, "BetterPlayerGlobalKey can't be null");
+    if (await videoPlayerController.isPictureInPictureSupported()) {
+      if (Platform.isAndroid) {
+        _wasInFullScreenBeforePiP = _isFullScreen;
+        await videoPlayerController.enablePictureInPicture(
+            left: 0, top: 0, width: 0, height: 0);
+        await setControlsEnabled(false);
+        await enterFullScreen();
+        return;
+      }
+      if (Platform.isIOS) {
+        final RenderBox renderBox =
+            betterPlayerGlobalKey.currentContext.findRenderObject();
+        final Offset position = renderBox.localToGlobal(Offset.zero);
+        return videoPlayerController.enablePictureInPicture(
+          left: position.dx,
+          top: position.dy,
+          width: renderBox.size.width,
+          height: renderBox.size.height,
+        );
+      } else {
+        print("Unsupported PiP in current platform.");
+      }
+    } else {
+      print("Picture in picture is not supported in this device. If you're "
+          "using Android, please check if you're using activity v2 "
+          "embedding.");
     }
-    final RenderBox renderBox =
-        betterPlayerGlobalKey.currentContext.findRenderObject();
-    final Offset position = renderBox.localToGlobal(Offset.zero);
-    return videoPlayerController.enablePictureInPicture(
-      left: position.dx,
-      top: position.dy,
-      width: renderBox.size.width,
-      height: renderBox.size.height,
-    );
   }
 
-  Future<void> disablePictureInPicture(){
+  Future<void> disablePictureInPicture() {
     return videoPlayerController.disablePictureInPicture();
   }
 
   @override
   void dispose() {
-
     if (!betterPlayerConfiguration.autoDispose) {
       return;
     }

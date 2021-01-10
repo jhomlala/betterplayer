@@ -6,13 +6,16 @@ package com.jhomlala.better_player;
 
 import android.app.Activity;
 import android.app.PictureInPictureParams;
+import android.app.RemoteAction;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.util.LongSparseArray;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.RemoteActionCompat;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -60,6 +63,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String IMAGE_URL_PARAMETER = "imageUrl";
     private static final String NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName";
     private static final String OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration";
+    private static final String ENABLE_PICTURE_IN_PICTURE = "enablePictureInPicture";
+    private static final String DISABLE_PICTURE_IN_PICTURE = "disablePictureInPicture";
+    private static final String IS_PICTURE_IN_PICTURE_SUPPORTED = "isPictureInPictureSupported";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -241,43 +247,27 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                         call.argument(BITRATE_PARAMETER));
                 result.success(null);
                 break;
-            case "enablePictureInPicture": {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    player.addMediaSession(flutterState.applicationContext);
-                    activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
-                    startPictureInPictureListenerTimer(player);
-                    player.onPictureInPictureStatusChanged(true);
-                }
+            case ENABLE_PICTURE_IN_PICTURE: {
+                enablePictureInPicture(player);
                 result.success(null);
                 break;
             }
+            case DISABLE_PICTURE_IN_PICTURE: {
+                disablePictureInPicture(player);
+                result.success(null);
+                break;
+            }
+            case IS_PICTURE_IN_PICTURE_SUPPORTED:
+                result.success(isPictureInPictureSupported());
+                break;
+
             case DISPOSE_METHOD:
-                player.dispose();
-                videoPlayers.remove(textureId);
-                dataSources.remove(textureId);
+                dispose(player, textureId);
                 result.success(null);
                 break;
             default:
                 result.notImplemented();
                 break;
-        }
-    }
-
-    private void startPictureInPictureListenerTimer(BetterPlayer player) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            pipHandler = new Handler();
-            pipRunnable = () -> {
-                if (activity.isInPictureInPictureMode()) {
-                    pipHandler.postDelayed(pipRunnable, 100);
-                } else {
-                    Log.d("AND_B", "LEFT PICTURE MODE");
-                    player.onPictureInPictureStatusChanged(false);
-                    pipHandler.removeCallbacks(pipRunnable);
-                    pipRunnable = null;
-                    pipHandler = null;
-                }
-            };
-            pipHandler.post(pipRunnable);
         }
     }
 
@@ -371,7 +361,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
 
     private void removeOtherNotificationListeners() {
         for (int index = 0; index < videoPlayers.size(); index++) {
-            videoPlayers.valueAt(index).removeNotificationData();
+            videoPlayers.valueAt(index).disposeRemoteNotifications();
         }
     }
 
@@ -401,6 +391,60 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
 
     @Override
     public void onDetachedFromActivity() {
+    }
+
+    private boolean isPictureInPictureSupported() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && activity != null
+                && activity.getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
+    }
+
+    private void enablePictureInPicture(BetterPlayer player) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            player.setupMediaSession(flutterState.applicationContext);
+            activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
+            startPictureInPictureListenerTimer(player);
+            player.onPictureInPictureStatusChanged(true);
+        }
+    }
+
+    private void disablePictureInPicture(BetterPlayer player) {
+        stopPipHandler();
+        activity.moveTaskToBack(false);
+        player.onPictureInPictureStatusChanged(false);
+        player.disposeMediaSession();
+    }
+
+    private void startPictureInPictureListenerTimer(BetterPlayer player) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            pipHandler = new Handler();
+            pipRunnable = () -> {
+                if (activity.isInPictureInPictureMode()) {
+                    pipHandler.postDelayed(pipRunnable, 100);
+                } else {
+                    player.onPictureInPictureStatusChanged(false);
+                    player.disposeMediaSession();
+                    stopPipHandler();
+                }
+            };
+            pipHandler.post(pipRunnable);
+        }
+    }
+
+    private void dispose(BetterPlayer player, long textureId) {
+        player.dispose();
+        videoPlayers.remove(textureId);
+        dataSources.remove(textureId);
+        stopPipHandler();
+    }
+
+    private void stopPipHandler() {
+        if (pipHandler != null) {
+            pipHandler.removeCallbacksAndMessages(null);
+            pipHandler = null;
+        }
+        pipRunnable = null;
     }
 
     private interface KeyForAssetFn {
