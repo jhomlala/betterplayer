@@ -1,3 +1,6 @@
+## 0.0.45
+* Added Picture in Picture support
+
 ## 0.0.44
 * Added placeholder until play example
 * Added playback stalled feature in iOS. iOS version should behave same as Android once video failed to load.

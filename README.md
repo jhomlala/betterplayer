@@ -35,7 +35,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.44
+  better_player: ^0.0.45
 ```
 
 2. Install it
@@ -841,6 +841,41 @@ BetterPlayerDataSource dataSource = BetterPlayerDataSource(
    <string>UIInterfaceOrientationLandscapeRight</string>
 </array>
 ```
+
+### Picture in Picture
+Picture in Picture is not supported on all devices.
+iOS: iOS > 14.0
+Android: Android > 8.0, enough RAM, v2 android embedding
+
+Each OS provides method to check if given device supports PiP. If device doesn't support PiP, then
+error will be printed in console.
+
+To show PiP mode call this method:
+
+```dart
+ _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
+```
+BetterPlayerKey is a key which is used in BetterPlayer widget:
+
+```dart
+ GlobalKey _betterPlayerKey = GlobalKey();
+ ...
+   AspectRatio(
+             aspectRatio: 16 / 9,
+             child: BetterPlayer(
+               controller: _betterPlayerController,
+               key: _betterPlayerKey,
+             ),
+           ),
+```
+
+To hide PiP mode call this method:
+```dart
+ _betterPlayerController.disablePictureInPicture();
+```
+
+
+
 
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html
