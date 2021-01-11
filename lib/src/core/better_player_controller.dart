@@ -104,16 +104,35 @@ class BetterPlayerController extends ChangeNotifier {
   Stream<bool> get controlsVisibilityStream =>
       _controlsVisibilityStreamController.stream;
 
+  ///Current app lifecycle state.
   AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
 
+  ///Flag which determines if controls (UI interface) is shown. When false,
+  ///UI won't be shown (show only player surface).
   bool _controlsEnabled = true;
 
+  ///Flag which determines if controls (UI interface) is shown. When false,
+  ///UI won't be shown (show only player surface).
   bool get controlsEnabled => _controlsEnabled;
 
+  ///Overridden aspect ratio which will be used instead of aspect ratio passed
+  ///in configuration.
   double _overriddenAspectRatio;
 
+  ///Was Picture in Picture opened.
   bool _wasInPipMode = false;
+
+  ///Was player in fullscreen before Picture in Picture opened.
   bool _wasInFullScreenBeforePiP = false;
+
+  ///Was controls enabled before Picture in Picture opened.
+  bool _wasControlsEnabledBeforePiP = false;
+
+  ///GlobalKey of the BetterPlayer widget
+  GlobalKey _betterPlayerGlobalKey;
+
+  ///Getter of the GlobalKey
+  GlobalKey get betterPlayerGlobalKey => _betterPlayerGlobalKey;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -444,8 +463,12 @@ class BetterPlayerController extends ChangeNotifier {
       _wasInPipMode = true;
     } else if (_wasInPipMode) {
       _wasInPipMode = false;
-      exitFullScreen();
-      setControlsEnabled(true);
+      if (_wasInFullScreenBeforePiP) {
+        exitFullScreen();
+      }
+      if (_wasControlsEnabledBeforePiP) {
+        setControlsEnabled(true);
+      }
       videoPlayerController.refresh();
     }
 
@@ -645,10 +668,15 @@ class BetterPlayerController extends ChangeNotifier {
     return _overriddenAspectRatio ?? betterPlayerConfiguration.aspectRatio;
   }
 
+  ///Enable Picture in Picture (PiP) mode. [betterPlayerGlobalKey] is required
+  ///to open PiP mode in iOS. When device is not supported, PiP mode won't be
+  ///open.
   Future<void> enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async {
     assert(
         betterPlayerGlobalKey != null, "BetterPlayerGlobalKey can't be null");
     if (await videoPlayerController.isPictureInPictureSupported()) {
+      _wasInFullScreenBeforePiP = _isFullScreen;
+      _wasControlsEnabledBeforePiP = _controlsEnabled;
       if (Platform.isAndroid) {
         _wasInFullScreenBeforePiP = _isFullScreen;
         await videoPlayerController.enablePictureInPicture(
@@ -660,6 +688,12 @@ class BetterPlayerController extends ChangeNotifier {
       if (Platform.isIOS) {
         final RenderBox renderBox =
             betterPlayerGlobalKey.currentContext.findRenderObject();
+        if (renderBox == null) {
+          print(
+              "Can't show PiP. RenderBox is null. Did you provide valid global"
+              " key?");
+          return;
+        }
         final Offset position = renderBox.localToGlobal(Offset.zero);
         return videoPlayerController.enablePictureInPicture(
           left: position.dx,
@@ -677,8 +711,16 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Disable Picture in Picture mode if it's enabled.
   Future<void> disablePictureInPicture() {
     return videoPlayerController.disablePictureInPicture();
+  }
+
+  ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
+  void setBetterPlayerGlobalKey(GlobalKey betterPlayerGlobalKey) {
+    assert(
+        betterPlayerGlobalKey != null, "BetterPlayerGlobalKey can't be null");
+    _betterPlayerGlobalKey = betterPlayerGlobalKey;
   }
 
   @override

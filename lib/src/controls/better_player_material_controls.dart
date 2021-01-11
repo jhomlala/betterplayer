@@ -161,22 +161,56 @@ class _BetterPlayerMaterialControlsState
       return const SizedBox();
     }
 
-    return _controlsConfiguration.enableOverflowMenu
-        ? AnimatedOpacity(
-            opacity: _hideStuff ? 0.0 : 1.0,
-            duration: _controlsConfiguration.controlsHideTime,
-            onEnd: _onPlayerHide,
-            child: Container(
-              height: _controlsConfiguration.controlBarHeight,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  _buildMoreButton(),
-                ],
+    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+      _controlsConfiguration.enableOverflowMenu
+          ? AnimatedOpacity(
+              opacity: _hideStuff ? 0.0 : 1.0,
+              duration: _controlsConfiguration.controlsHideTime,
+              onEnd: _onPlayerHide,
+              child: Container(
+                height: _controlsConfiguration.controlBarHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildPiPButton(),
+                  ],
+                ),
               ),
-            ),
-          )
-        : const SizedBox();
+            )
+          : const SizedBox(),
+      _controlsConfiguration.enableOverflowMenu
+          ? AnimatedOpacity(
+              opacity: _hideStuff ? 0.0 : 1.0,
+              duration: _controlsConfiguration.controlsHideTime,
+              onEnd: _onPlayerHide,
+              child: Container(
+                height: _controlsConfiguration.controlBarHeight,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildMoreButton(),
+                  ],
+                ),
+              ),
+            )
+          : const SizedBox()
+    ]);
+  }
+
+  Widget _buildPiPButton() {
+    return BetterPlayerMaterialClickableWidget(
+      onTap: () {
+        betterPlayerController.enablePictureInPicture(
+            betterPlayerController.betterPlayerGlobalKey);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          _controlsConfiguration.pipMenuIcon,
+          color: _controlsConfiguration.iconsColor,
+        ),
+      ),
+    );
   }
 
   Widget _buildMoreButton() {
