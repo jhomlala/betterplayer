@@ -580,6 +580,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<bool> isPictureInPictureSupported() async{
     return _videoPlayerPlatform.isPictureInPictureEnabled(textureId);
   }
+
+  void refresh() {
+    value = value.copyWith();
+  }
 }
 
 /// Widget that displays the video controlled by [controller].

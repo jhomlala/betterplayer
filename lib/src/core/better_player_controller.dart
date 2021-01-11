@@ -446,6 +446,7 @@ class BetterPlayerController extends ChangeNotifier {
       _wasInPipMode = false;
       exitFullScreen();
       setControlsEnabled(true);
+      videoPlayerController.refresh();
     }
 
     final int now = DateTime.now().millisecondsSinceEpoch;
