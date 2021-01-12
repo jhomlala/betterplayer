@@ -874,7 +874,18 @@ To hide PiP mode call this method:
  _betterPlayerController.disablePictureInPicture();
 ```
 
+PiP menu item is enabled as default in both Material and Cuperino controls. You can disable it with
+BetterPlayerControlsConfiguration's variable: enablePip. You can change PiP control menu icon with
+pipMenuIcon variable.
 
+Warning:
+Both Android and iOS PiP versions are in very early stage. There can be bugs and small issues. Please
+make sure that you've checked state of the PiP in Better Player before moving it to the production.
+
+Known limitations:
+Android: When PiP is enabled, Better Player will open full screen mode to play video correctly. When
+user disables PiP, Better Player will back to the previous settings and for a half of second your device
+will have incorrect orientation.
 
 
 ### More documentation
