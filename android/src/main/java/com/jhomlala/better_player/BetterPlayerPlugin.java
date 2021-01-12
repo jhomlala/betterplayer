@@ -141,7 +141,6 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     }
 
     private void disposeAllPlayers() {
-        Log.d("AND_BETTER_P", "Dispose all players");
         for (int i = 0; i < videoPlayers.size(); i++) {
             videoPlayers.valueAt(i).dispose();
         }
@@ -155,8 +154,6 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         // of VideoPlayer. Once https://github.com/flutter/flutter/issues/19358 is resolved this may
         // be replaced with just asserting that videoPlayers.isEmpty().
         // https://github.com/flutter/flutter/issues/20989 tracks this.
-
-        Log.d("AND_BETTER_P", " ON DESTROY CALLED");
         disposeAllPlayers();
     }
 
@@ -204,7 +201,6 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     }
 
     private void onMethodCall(MethodCall call, Result result, long textureId, BetterPlayer player) {
-        Log.d("AND_BETTER_P", "On method call: " + call.method);
         switch (call.method) {
             case SET_DATA_SOURCE_METHOD: {
                 setDataSource(call, result, player);
