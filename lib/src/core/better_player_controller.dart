@@ -678,20 +678,20 @@ class BetterPlayerController extends ChangeNotifier {
     if (await videoPlayerController.isPictureInPictureSupported()) {
       _wasInFullScreenBeforePiP = _isFullScreen;
       _wasControlsEnabledBeforePiP = _controlsEnabled;
-      await setControlsEnabled(false);
+      setControlsEnabled(false);
       if (Platform.isAndroid) {
         _wasInFullScreenBeforePiP = _isFullScreen;
         await videoPlayerController.enablePictureInPicture(
             left: 0, top: 0, width: 0, height: 0);
-        await enterFullScreen();
+        enterFullScreen();
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
         return;
       }
       if (Platform.isIOS) {
         final RenderBox renderBox =
-            betterPlayerGlobalKey.currentContext.findRenderObject();
+            betterPlayerGlobalKey.currentContext.findRenderObject() as RenderBox;
         if (renderBox == null) {
-          print(
+          BetterPlayerUtils.log(
               "Can't show PiP. RenderBox is null. Did you provide valid global"
               " key?");
           return;
@@ -704,10 +704,10 @@ class BetterPlayerController extends ChangeNotifier {
           height: renderBox.size.height,
         );
       } else {
-        print("Unsupported PiP in current platform.");
+        BetterPlayerUtils.log("Unsupported PiP in current platform.");
       }
     } else {
-      print("Picture in picture is not supported in this device. If you're "
+      BetterPlayerUtils.log("Picture in picture is not supported in this device. If you're "
           "using Android, please check if you're using activity v2 "
           "embedding.");
     }

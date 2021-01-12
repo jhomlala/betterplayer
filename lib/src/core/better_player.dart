@@ -94,7 +94,6 @@ class BetterPlayerState extends State<BetterPlayer>
 
     ///Controller from list widget must be dismissed manually
     if (widget.controller.betterPlayerPlaylistConfiguration == null) {
-      print("DISPOSED HERE 1");
       widget.controller.dispose();
     }
 

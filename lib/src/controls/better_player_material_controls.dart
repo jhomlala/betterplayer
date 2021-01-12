@@ -202,12 +202,13 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-  Widget _buildPipButtonWrapperWidget(bool hideStuff, Function onPlayerHide){
+  Widget _buildPipButtonWrapperWidget(bool hideStuff, void Function() onPlayerHide) {
     return FutureBuilder<bool>(
       future: betterPlayerController.isPictureInPictureSupported(),
       builder: (context, snapshot) {
-        bool isPipSupported = snapshot.data ?? false;
-        if (isPipSupported) {
+        final bool isPipSupported = snapshot.data ?? false;
+        if (isPipSupported &&
+            _betterPlayerController.betterPlayerGlobalKey != null) {
           return AnimatedOpacity(
             opacity: hideStuff ? 0.0 : 1.0,
             duration: betterPlayerControlsConfiguration.controlsHideTime,
