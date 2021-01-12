@@ -221,7 +221,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
-
   @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
     return _eventChannelFor(textureId)

@@ -688,8 +688,8 @@ class BetterPlayerController extends ChangeNotifier {
         return;
       }
       if (Platform.isIOS) {
-        final RenderBox renderBox =
-            betterPlayerGlobalKey.currentContext.findRenderObject() as RenderBox;
+        final RenderBox renderBox = betterPlayerGlobalKey.currentContext
+            .findRenderObject() as RenderBox;
         if (renderBox == null) {
           BetterPlayerUtils.log(
               "Can't show PiP. RenderBox is null. Did you provide valid global"
@@ -707,7 +707,8 @@ class BetterPlayerController extends ChangeNotifier {
         BetterPlayerUtils.log("Unsupported PiP in current platform.");
       }
     } else {
-      BetterPlayerUtils.log("Picture in picture is not supported in this device. If you're "
+      BetterPlayerUtils.log(
+          "Picture in picture is not supported in this device. If you're "
           "using Android, please check if you're using activity v2 "
           "embedding.");
     }

@@ -202,7 +202,8 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-  Widget _buildPipButtonWrapperWidget(bool hideStuff, void Function() onPlayerHide) {
+  Widget _buildPipButtonWrapperWidget(
+      bool hideStuff, void Function() onPlayerHide) {
     return FutureBuilder<bool>(
       future: betterPlayerController.isPictureInPictureSupported(),
       builder: (context, snapshot) {

@@ -14,7 +14,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
   @override
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
-    BetterPlayerConfiguration(
+        BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -62,7 +62,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             onPressed: () async {
               String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
               BetterPlayerDataSource dataSource =
-              BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
+                  BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),

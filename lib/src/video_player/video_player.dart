@@ -146,7 +146,7 @@ class VideoPlayerValue {
       volume: volume ?? this.volume,
       speed: speed ?? this.speed,
       errorDescription: errorDescription ?? this.errorDescription,
-      isPip:  isPip ?? this.isPip,
+      isPip: isPip ?? this.isPip,
     );
   }
 
@@ -251,7 +251,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.unknown:
           break;
-
       }
     }
 
@@ -577,8 +576,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     value = value.copyWith(caption: _getCaptionAt(position));
   }
 
-  Future<bool> isPictureInPictureSupported() async{
-    if (_textureId == null){
+  Future<bool> isPictureInPictureSupported() async {
+    if (_textureId == null) {
       return false;
     }
     return _videoPlayerPlatform.isPictureInPictureEnabled(_textureId);
