@@ -130,17 +130,19 @@ abstract class VideoPlayerPlatform {
   ///Enables PiP mode.
   Future<void> enablePictureInPicture(
       int textureId, double top, double left, double width, double height) {
-    throw UnimplementedError('enablePictureInPicture() has not been implemented.');
+    throw UnimplementedError(
+        'enablePictureInPicture() has not been implemented.');
   }
 
   ///Disables PiP mode.
-  Future<void> disablePictureInPicture(
-      int textureId) {
-    throw UnimplementedError('enablePictureInPicture() has not been implemented.');
+  Future<void> disablePictureInPicture(int textureId) {
+    throw UnimplementedError(
+        'disablePictureInPicture() has not been implemented.');
   }
 
   Future<bool> isPictureInPictureEnabled(int textureId) {
-    throw UnimplementedError('isPictureInPictureEnabled() has not been implemented.');
+    throw UnimplementedError(
+        'isPictureInPictureEnabled() has not been implemented.');
   }
 
   /// Returns a widget displaying the video with a given textureID.

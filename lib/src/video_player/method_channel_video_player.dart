@@ -211,6 +211,16 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
+  @override
+  Future<void> disablePictureInPicture(int textureId) {
+    return _channel.invokeMethod<bool>(
+      'disablePictureInPicture',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
 
   @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
