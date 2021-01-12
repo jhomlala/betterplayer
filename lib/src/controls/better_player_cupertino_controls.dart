@@ -725,7 +725,10 @@ class _BetterPlayerCupertinoControlsState
           bool isPipSupported = snapshot.data ?? false;
           if (isPipSupported) {
             return GestureDetector(
-              onTap: _onExpandCollapse,
+              onTap: () {
+                betterPlayerController.enablePictureInPicture(
+                    betterPlayerController.betterPlayerGlobalKey);
+              },
               child: AnimatedOpacity(
                 opacity: _hideStuff ? 0.0 : 1.0,
                 duration: _controlsConfiguration.controlsHideTime,

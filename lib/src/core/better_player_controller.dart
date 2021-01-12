@@ -678,11 +678,11 @@ class BetterPlayerController extends ChangeNotifier {
     if (await videoPlayerController.isPictureInPictureSupported()) {
       _wasInFullScreenBeforePiP = _isFullScreen;
       _wasControlsEnabledBeforePiP = _controlsEnabled;
+      await setControlsEnabled(false);
       if (Platform.isAndroid) {
         _wasInFullScreenBeforePiP = _isFullScreen;
         await videoPlayerController.enablePictureInPicture(
             left: 0, top: 0, width: 0, height: 0);
-        await setControlsEnabled(false);
         await enterFullScreen();
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
         return;
