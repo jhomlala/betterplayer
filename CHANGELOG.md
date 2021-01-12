@@ -1,5 +1,12 @@
 ## 0.0.45
-* Added Picture in Picture support
+* Added Picture in Picture support.
+* Added new parameters in BetterPlayerControlsConfiguration: pipMenuIcon and enablePip.
+* Added new methods in BetterPlayerController: enablePictureInPicture, disablePictureInPicture, isPictureInPictureSupported,
+setBetterPlayerGlobalKey.
+* Added Picture in Picture icon in player controls.
+* Added Picture in Picture example.
+* Updated ExoPlayer version.
+* Added pipStart and pipStop events.
 
 ## 0.0.44
 * Added placeholder until play example

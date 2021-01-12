@@ -481,6 +481,11 @@ class _BetterPlayerCupertinoControlsState
       ),
       child: Row(
         children: <Widget>[
+          if (_controlsConfiguration.enablePip)
+            _buildPipButton(
+                backgroundColor, iconColor, barHeight, buttonPadding)
+          else
+            const SizedBox(),
           if (_controlsConfiguration.enableFullscreen)
             _buildExpandButton(
                 backgroundColor, iconColor, barHeight, buttonPadding)
@@ -710,5 +715,47 @@ class _BetterPlayerCupertinoControlsState
           _controlsConfiguration.loadingColor ??
               _controlsConfiguration.controlBarColor),
     );
+  }
+
+  Widget _buildPipButton(Color backgroundColor, Color iconColor,
+      double barHeight, double buttonPadding) {
+    return FutureBuilder<bool>(
+        future: _betterPlayerController.isPictureInPictureSupported(),
+        builder: (context, snapshot) {
+          bool isPipSupported = snapshot.data ?? false;
+          if (isPipSupported) {
+            return GestureDetector(
+              onTap: _onExpandCollapse,
+              child: AnimatedOpacity(
+                opacity: _hideStuff ? 0.0 : 1.0,
+                duration: _controlsConfiguration.controlsHideTime,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 10),
+                    child: Container(
+                      height: barHeight,
+                      padding: EdgeInsets.only(
+                        left: buttonPadding,
+                        right: buttonPadding,
+                      ),
+                      color: backgroundColor,
+                      child: Center(
+                        child: Icon(
+                          _betterPlayerController.isFullScreen
+                              ? _controlsConfiguration.fullscreenDisableIcon
+                              : _controlsConfiguration.fullscreenEnableIcon,
+                          color: iconColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return const SizedBox();
+          }
+        });
   }
 }

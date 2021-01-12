@@ -162,42 +162,31 @@ class _BetterPlayerMaterialControlsState
     }
 
     return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-      _controlsConfiguration.enableOverflowMenu
-          ? AnimatedOpacity(
-              opacity: _hideStuff ? 0.0 : 1.0,
-              duration: _controlsConfiguration.controlsHideTime,
-              onEnd: _onPlayerHide,
-              child: Container(
-                height: _controlsConfiguration.controlBarHeight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _buildPiPButton(),
-                  ],
-                ),
-              ),
-            )
-          : const SizedBox(),
-      _controlsConfiguration.enableOverflowMenu
-          ? AnimatedOpacity(
-              opacity: _hideStuff ? 0.0 : 1.0,
-              duration: _controlsConfiguration.controlsHideTime,
-              onEnd: _onPlayerHide,
-              child: Container(
-                height: _controlsConfiguration.controlBarHeight,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    _buildMoreButton(),
-                  ],
-                ),
-              ),
-            )
-          : const SizedBox()
+      if (_controlsConfiguration.enablePip)
+        _buildPipButtonWrapperWidget(_hideStuff, _onPlayerHide)
+      else
+        const SizedBox(),
+      if (_controlsConfiguration.enableOverflowMenu)
+        AnimatedOpacity(
+          opacity: _hideStuff ? 0.0 : 1.0,
+          duration: _controlsConfiguration.controlsHideTime,
+          onEnd: _onPlayerHide,
+          child: Container(
+            height: _controlsConfiguration.controlBarHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildMoreButton(),
+              ],
+            ),
+          ),
+        )
+      else
+        const SizedBox()
     ]);
   }
 
-  Widget _buildPiPButton() {
+  Widget _buildPipButton() {
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         betterPlayerController.enablePictureInPicture(
@@ -206,10 +195,37 @@ class _BetterPlayerMaterialControlsState
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Icon(
-          _controlsConfiguration.pipMenuIcon,
-          color: _controlsConfiguration.iconsColor,
+          betterPlayerControlsConfiguration.pipMenuIcon,
+          color: betterPlayerControlsConfiguration.iconsColor,
         ),
       ),
+    );
+  }
+
+  Widget _buildPipButtonWrapperWidget(bool hideStuff, Function onPlayerHide){
+    return FutureBuilder<bool>(
+      future: betterPlayerController.isPictureInPictureSupported(),
+      builder: (context, snapshot) {
+        bool isPipSupported = snapshot.data ?? false;
+        if (isPipSupported) {
+          return AnimatedOpacity(
+            opacity: hideStuff ? 0.0 : 1.0,
+            duration: betterPlayerControlsConfiguration.controlsHideTime,
+            onEnd: onPlayerHide,
+            child: Container(
+              height: betterPlayerControlsConfiguration.controlBarHeight,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _buildPipButton(),
+                ],
+              ),
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
     );
   }
 

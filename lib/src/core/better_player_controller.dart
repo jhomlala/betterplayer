@@ -462,8 +462,9 @@ class BetterPlayerController extends ChangeNotifier {
     if (currentVideoPlayerValue.isPip) {
       _wasInPipMode = true;
     } else if (_wasInPipMode) {
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStop));
       _wasInPipMode = false;
-      if (_wasInFullScreenBeforePiP) {
+      if (!_wasInFullScreenBeforePiP) {
         exitFullScreen();
       }
       if (_wasControlsEnabledBeforePiP) {
@@ -683,6 +684,7 @@ class BetterPlayerController extends ChangeNotifier {
             left: 0, top: 0, width: 0, height: 0);
         await setControlsEnabled(false);
         await enterFullScreen();
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
         return;
       }
       if (Platform.isIOS) {
@@ -721,6 +723,11 @@ class BetterPlayerController extends ChangeNotifier {
     assert(
         betterPlayerGlobalKey != null, "BetterPlayerGlobalKey can't be null");
     _betterPlayerGlobalKey = betterPlayerGlobalKey;
+  }
+
+  ///Check if picture in picture mode is supported in this device.
+  Future<bool> isPictureInPictureSupported() async {
+    return videoPlayerController.isPictureInPictureSupported();
   }
 
   @override

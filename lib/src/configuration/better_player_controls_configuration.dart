@@ -3,6 +3,7 @@ import 'dart:ui';
 
 // Flutter imports:
 import 'package:better_player/better_player.dart';
+
 // Project imports:
 import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
 import 'package:flutter/cupertino.dart';
@@ -107,6 +108,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to show/hide qualities
   final bool enableQualities;
 
+  ///Flag used to show/hide PiP mode
+  final bool enablePip;
+
   ///Custom items of overflow menu
   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
@@ -170,6 +174,7 @@ class BetterPlayerControlsConfiguration {
     this.enablePlaybackSpeed = true,
     this.enableSubtitles = true,
     this.enableQualities = true,
+    this.enablePip = true,
     this.overflowMenuCustomItems = const [],
     this.overflowMenuIcon = Icons.more_vert,
     this.pipMenuIcon = Icons.picture_in_picture,
