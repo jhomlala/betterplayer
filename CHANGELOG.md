@@ -7,6 +7,8 @@ setBetterPlayerGlobalKey.
 * Added Picture in Picture example.
 * Updated ExoPlayer version.
 * Added pipStart and pipStop events.
+* [BREAKING_CHANGE] Removed skipsTimeInMilliseconds. Added forwardSkipTimeInMilliseconds and backwardSkipTimeInMilliseconds.
+
 
 ## 0.0.44
 * Added placeholder until play example

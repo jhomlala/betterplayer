@@ -132,8 +132,11 @@ class BetterPlayerControlsConfiguration {
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
 
-  ///Time which will be used once user uses rewind and forward
-  final int skipsTimeInMilliseconds;
+  ///Time which will be used once user uses forward
+  final int forwardSkipTimeInMilliseconds;
+
+  ///Time which will be used once user uses backward
+  final int backwardSkipTimeInMilliseconds;
 
   ///Color of default loading indicator
   final Color loadingColor;
@@ -182,7 +185,8 @@ class BetterPlayerControlsConfiguration {
     this.qualitiesIcon = Icons.hd,
     this.subtitlesIcon = Icons.text_fields,
     this.overflowMenuIconsColor = Colors.black,
-    this.skipsTimeInMilliseconds = 15000,
+    this.forwardSkipTimeInMilliseconds = 15000,
+    this.backwardSkipTimeInMilliseconds = 15000,
     this.loadingColor = Colors.black,
     this.loadingWidget,
   });
