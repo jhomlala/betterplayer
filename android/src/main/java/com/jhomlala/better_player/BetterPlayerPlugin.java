@@ -4,12 +4,21 @@
 
 package com.jhomlala.better_player;
 
+import android.app.Activity;
+import android.app.PictureInPictureParams;
+import android.app.RemoteAction;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Handler;
 import android.util.Log;
 import android.util.LongSparseArray;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.RemoteActionCompat;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -26,7 +35,7 @@ import java.util.Map;
 /**
  * Android platform implementation of the VideoPlayerPlugin.
  */
-public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
+public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodCallHandler {
     private static final String TAG = "BetterPlayerPlugin";
     private static final String CHANNEL = "better_player_channel";
     private static final String EVENTS_CHANNEL = "better_player_channel/videoEvents";
@@ -54,6 +63,9 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String IMAGE_URL_PARAMETER = "imageUrl";
     private static final String NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName";
     private static final String OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration";
+    private static final String ENABLE_PICTURE_IN_PICTURE = "enablePictureInPicture";
+    private static final String DISABLE_PICTURE_IN_PICTURE = "disablePictureInPicture";
+    private static final String IS_PICTURE_IN_PICTURE_SUPPORTED = "isPictureInPictureSupported";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -72,6 +84,9 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private final LongSparseArray<Map<String, Object>> dataSources = new LongSparseArray<>();
     private FlutterState flutterState;
     private long currentNotificationTextureId = -1;
+    private Activity activity;
+    private Handler pipHandler;
+    private Runnable pipRunnable;
 
     /**
      * Register this with the v2 embedding for the plugin to respond to lifecycle callbacks.
@@ -95,11 +110,13 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
      */
     public static void registerWith(Registrar registrar) {
         final BetterPlayerPlugin plugin = new BetterPlayerPlugin(registrar);
+
         registrar.addViewDestroyListener(
                 view -> {
                     plugin.onDestroy();
                     return false; // We are not interested in assuming ownership of the NativeView.
                 });
+
     }
 
     @Override
@@ -146,6 +163,8 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             result.error("no_activity", "better_player plugin requires a foreground activity", null);
             return;
         }
+
+
         switch (call.method) {
             case INIT_METHOD:
                 disposeAllPlayers();
@@ -153,6 +172,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             case CREATE_METHOD: {
                 TextureRegistry.SurfaceTextureEntry handle =
                         flutterState.textureRegistry.createSurfaceTexture();
+
                 EventChannel eventChannel =
                         new EventChannel(
                                 flutterState.binaryMessenger, EVENTS_CHANNEL + handle.id());
@@ -166,6 +186,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             default: {
                 long textureId = ((Number) call.argument(TEXTURE_ID_PARAMETER)).longValue();
                 BetterPlayer player = videoPlayers.get(textureId);
+
                 if (player == null) {
                     result.error(
                             "Unknown textureId",
@@ -222,10 +243,22 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                         call.argument(BITRATE_PARAMETER));
                 result.success(null);
                 break;
+            case ENABLE_PICTURE_IN_PICTURE: {
+                enablePictureInPicture(player);
+                result.success(null);
+                break;
+            }
+            case DISABLE_PICTURE_IN_PICTURE: {
+                disablePictureInPicture(player);
+                result.success(null);
+                break;
+            }
+            case IS_PICTURE_IN_PICTURE_SUPPORTED:
+                result.success(isPictureInPictureSupported());
+                break;
+
             case DISPOSE_METHOD:
-                player.dispose();
-                videoPlayers.remove(textureId);
-                dataSources.remove(textureId);
+                dispose(player, textureId);
                 result.success(null);
                 break;
             default:
@@ -233,6 +266,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
                 break;
         }
     }
+
 
     private void setDataSource(MethodCall call, Result result, BetterPlayer player) {
         Map<String, Object> dataSource = call.argument(DATA_SOURCE_PARAMETER);
@@ -323,7 +357,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
 
     private void removeOtherNotificationListeners() {
         for (int index = 0; index < videoPlayers.size(); index++) {
-            videoPlayers.valueAt(index).removeNotificationData();
+            videoPlayers.valueAt(index).disposeRemoteNotifications();
         }
     }
 
@@ -336,6 +370,77 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             }
         }
         return defaultValue;
+    }
+
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        activity = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+    }
+
+    private boolean isPictureInPictureSupported() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && activity != null
+                && activity.getPackageManager()
+                .hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
+    }
+
+    private void enablePictureInPicture(BetterPlayer player) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            player.setupMediaSession(flutterState.applicationContext, true);
+            activity.enterPictureInPictureMode(new PictureInPictureParams.Builder().build());
+            startPictureInPictureListenerTimer(player);
+            player.onPictureInPictureStatusChanged(true);
+        }
+    }
+
+    private void disablePictureInPicture(BetterPlayer player) {
+        stopPipHandler();
+        activity.moveTaskToBack(false);
+        player.onPictureInPictureStatusChanged(false);
+        player.disposeMediaSession();
+    }
+
+    private void startPictureInPictureListenerTimer(BetterPlayer player) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            pipHandler = new Handler();
+            pipRunnable = () -> {
+                if (activity.isInPictureInPictureMode()) {
+                    pipHandler.postDelayed(pipRunnable, 100);
+                } else {
+                    player.onPictureInPictureStatusChanged(false);
+                    player.disposeMediaSession();
+                    stopPipHandler();
+                }
+            };
+            pipHandler.post(pipRunnable);
+        }
+    }
+
+    private void dispose(BetterPlayer player, long textureId) {
+        player.dispose();
+        videoPlayers.remove(textureId);
+        dataSources.remove(textureId);
+        stopPipHandler();
+    }
+
+    private void stopPipHandler() {
+        if (pipHandler != null) {
+            pipHandler.removeCallbacksAndMessages(null);
+            pipHandler = null;
+        }
+        pipRunnable = null;
     }
 
     private interface KeyForAssetFn {

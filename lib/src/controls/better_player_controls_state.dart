@@ -7,6 +7,7 @@ import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/video_player/video_player.dart';
+
 // Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -35,8 +36,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final beginning = const Duration().inMilliseconds;
     final skip = (latestValue.position -
             Duration(
-                milliseconds:
-                    betterPlayerControlsConfiguration.skipsTimeInMilliseconds))
+                milliseconds: betterPlayerControlsConfiguration
+                    .backwardSkipTimeInMilliseconds))
         .inMilliseconds;
     betterPlayerController.seekTo(Duration(milliseconds: max(skip, beginning)));
   }
@@ -46,8 +47,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final end = latestValue.duration.inMilliseconds;
     final skip = (latestValue.position +
             Duration(
-                milliseconds:
-                    betterPlayerControlsConfiguration.skipsTimeInMilliseconds))
+                milliseconds: betterPlayerControlsConfiguration
+                    .forwardSkipTimeInMilliseconds))
         .inMilliseconds;
     betterPlayerController.seekTo(Duration(milliseconds: min(skip, end)));
   }

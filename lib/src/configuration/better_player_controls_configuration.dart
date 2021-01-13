@@ -3,6 +3,7 @@ import 'dart:ui';
 
 // Flutter imports:
 import 'package:better_player/better_player.dart';
+
 // Project imports:
 import 'package:better_player/src/controls/better_player_overflow_menu_item.dart';
 import 'package:flutter/cupertino.dart';
@@ -107,11 +108,17 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to show/hide qualities
   final bool enableQualities;
 
+  ///Flag used to show/hide PiP mode
+  final bool enablePip;
+
   ///Custom items of overflow menu
   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
   ///Icon of the overflow menu
   final IconData overflowMenuIcon;
+
+  ///Icon of the PiP menu
+  final IconData pipMenuIcon;
 
   ///Icon of the playback speed menu item from overflow menu
   final IconData playbackSpeedIcon;
@@ -125,8 +132,11 @@ class BetterPlayerControlsConfiguration {
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
 
-  ///Time which will be used once user uses rewind and forward
-  final int skipsTimeInMilliseconds;
+  ///Time which will be used once user uses forward
+  final int forwardSkipTimeInMilliseconds;
+
+  ///Time which will be used once user uses backward
+  final int backwardSkipTimeInMilliseconds;
 
   ///Color of default loading indicator
   final Color loadingColor;
@@ -158,7 +168,7 @@ class BetterPlayerControlsConfiguration {
     this.progressBarBackgroundColor = Colors.white60,
     this.controlsHideTime = const Duration(milliseconds: 300),
     this.customControlsBuilder,
-    this.playerTheme = BetterPlayerTheme.material,
+    this.playerTheme,
     this.showControls = true,
     this.showControlsOnInitialize = true,
     this.controlBarHeight = 48.0,
@@ -167,13 +177,16 @@ class BetterPlayerControlsConfiguration {
     this.enablePlaybackSpeed = true,
     this.enableSubtitles = true,
     this.enableQualities = true,
+    this.enablePip = true,
     this.overflowMenuCustomItems = const [],
     this.overflowMenuIcon = Icons.more_vert,
+    this.pipMenuIcon = Icons.picture_in_picture,
     this.playbackSpeedIcon = Icons.shutter_speed,
     this.qualitiesIcon = Icons.hd,
     this.subtitlesIcon = Icons.text_fields,
     this.overflowMenuIconsColor = Colors.black,
-    this.skipsTimeInMilliseconds = 15000,
+    this.forwardSkipTimeInMilliseconds = 15000,
+    this.backwardSkipTimeInMilliseconds = 15000,
     this.loadingColor = Colors.black,
     this.loadingWidget,
   });

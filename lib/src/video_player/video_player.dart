@@ -42,6 +42,7 @@ class VideoPlayerValue {
     this.volume = 1.0,
     this.speed = 1.0,
     this.errorDescription,
+    this.isPip = false,
   });
 
   /// Returns an instance with a `null` [Duration].
@@ -94,6 +95,9 @@ class VideoPlayerValue {
   /// Is null when [initialized] is false.
   final Size size;
 
+  ///Is in Picture in Picture Mode
+  final bool isPip;
+
   /// Indicates whether or not the video has been loaded and is ready to play.
   bool get initialized => duration != null;
 
@@ -128,6 +132,7 @@ class VideoPlayerValue {
     double volume,
     String errorDescription,
     double speed,
+    bool isPip,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -141,6 +146,7 @@ class VideoPlayerValue {
       volume: volume ?? this.volume,
       speed: speed ?? this.speed,
       errorDescription: errorDescription ?? this.errorDescription,
+      isPip: isPip ?? this.isPip,
     );
   }
 
@@ -177,12 +183,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _create();
   }
 
+  final StreamController<VideoEvent> videoEventStreamController =
+      StreamController.broadcast();
+  final Completer<void> _creatingCompleter = Completer<void>();
   int _textureId;
 
   ClosedCaptionFile _closedCaptionFile;
   Timer _timer;
   bool _isDisposed = false;
-  final Completer<void> _creatingCompleter = Completer<void>();
   Completer<void> _initializingCompleter;
   StreamSubscription<dynamic> _eventSubscription;
 
@@ -205,6 +213,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
+      videoEventStreamController.add(event);
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(
@@ -225,7 +234,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: true);
           break;
         case VideoEventType.bufferingEnd:
-          value = value.copyWith(isBuffering: false);
+          if (value.isBuffering) {
+            value = value.copyWith(isBuffering: false);
+          }
           break;
 
         case VideoEventType.play:
@@ -236,6 +247,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.seek:
           seekTo(event.position);
+          break;
+        case VideoEventType.pipStart:
+          value = value.copyWith(isPip: true);
+          break;
+        case VideoEventType.pipStop:
+          value = value.copyWith(isPip: false);
           break;
         case VideoEventType.unknown:
           break;
@@ -396,6 +413,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _timer?.cancel();
         await _eventSubscription?.cancel();
         await _videoPlayerPlatform.dispose(_textureId);
+        videoEventStreamController.close();
       }
     }
     _isDisposed = true;
@@ -527,6 +545,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _textureId, width, height, bitrate);
   }
 
+  Future<void> enablePictureInPicture(
+      {double top, double left, double width, double height}) async {
+    await _videoPlayerPlatform.enablePictureInPicture(
+        textureId, top, left, width, height);
+  }
+
+  Future<void> disablePictureInPicture() async {
+    await _videoPlayerPlatform.disablePictureInPicture(textureId);
+  }
+
   /// The closed caption based on the current [position] in the video.
   ///
   /// If there are no closed captions at the current [position], this will
@@ -552,6 +580,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   void _updatePosition(Duration position) {
     value = value.copyWith(position: position);
     value = value.copyWith(caption: _getCaptionAt(position));
+  }
+
+  Future<bool> isPictureInPictureSupported() async {
+    if (_textureId == null) {
+      return false;
+    }
+    return _videoPlayerPlatform.isPictureInPictureEnabled(_textureId);
+  }
+
+  void refresh() {
+    value = value.copyWith();
   }
 }
 

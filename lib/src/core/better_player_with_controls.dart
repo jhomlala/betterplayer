@@ -1,5 +1,6 @@
 // Dart imports:
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 // Flutter imports:
@@ -158,15 +159,18 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     BetterPlayerController betterPlayerController,
   ) {
     if (controlsConfiguration.showControls) {
+      BetterPlayerTheme playerTheme = controlsConfiguration.playerTheme;
+      playerTheme ??= Platform.isAndroid != null
+          ? BetterPlayerTheme.material
+          : BetterPlayerTheme.cupertino;
+
       if (controlsConfiguration.customControlsBuilder != null &&
-          controlsConfiguration.playerTheme == BetterPlayerTheme.custom) {
+          playerTheme == BetterPlayerTheme.custom) {
         return controlsConfiguration
             .customControlsBuilder(betterPlayerController);
-      } else if (controlsConfiguration.playerTheme ==
-          BetterPlayerTheme.material) {
+      } else if (playerTheme == BetterPlayerTheme.material) {
         return _buildMaterialControl();
-      } else if (controlsConfiguration.playerTheme ==
-          BetterPlayerTheme.cupertino) {
+      } else if (playerTheme == BetterPlayerTheme.cupertino) {
         return _buildCupertinoControl();
       }
     }

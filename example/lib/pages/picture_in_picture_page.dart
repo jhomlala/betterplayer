@@ -1,15 +1,15 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
-import 'package:better_player_example/utils.dart';
 import 'package:flutter/material.dart';
 
-class NormalPlayerPage extends StatefulWidget {
+class PictureInPicturePage extends StatefulWidget {
   @override
-  _NormalPlayerPageState createState() => _NormalPlayerPageState();
+  _PictureInPicturePageState createState() => _PictureInPicturePageState();
 }
 
-class _NormalPlayerPageState extends State<NormalPlayerPage> {
+class _PictureInPicturePageState extends State<PictureInPicturePage> {
   BetterPlayerController _betterPlayerController;
+  GlobalKey _betterPlayerKey = GlobalKey();
 
   @override
   void initState() {
@@ -20,11 +20,11 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.forBiggerBlazesUrl,
-      //overriddenDuration: Duration(seconds: 5),
+      Constants.elephantDreamVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
+    _betterPlayerController.setBetterPlayerGlobalKey(_betterPlayerKey);
     super.initState();
   }
 
@@ -32,7 +32,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player"),
+        title: Text("Picture in Picture player"),
       ),
       body: Column(
         children: [
@@ -40,30 +40,27 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Normal player with configuration managed by developer.",
+              "Example which shows how to use PiP.",
               style: TextStyle(fontSize: 16),
             ),
           ),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
+            child: BetterPlayer(
+              controller: _betterPlayerController,
+              key: _betterPlayerKey,
+            ),
           ),
           RaisedButton(
-            child: Text("Play network data source"),
+            child: Text("Show PiP"),
             onPressed: () {
-              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.forBiggerBlazesUrl);
-              _betterPlayerController.setupDataSource(dataSource);
+              _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
             },
           ),
           RaisedButton(
-            child: Text("Play file data source"),
+            child: Text("Disable PiP"),
             onPressed: () async {
-              String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
-              BetterPlayerDataSource dataSource =
-                  BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
-              _betterPlayerController.setupDataSource(dataSource);
+              _betterPlayerController.disablePictureInPicture();
             },
           ),
         ],
