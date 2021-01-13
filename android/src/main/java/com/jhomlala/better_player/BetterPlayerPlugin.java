@@ -64,6 +64,7 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
     private static final String PAUSE_METHOD = "pause";
     private static final String SEEK_TO_METHOD = "seekTo";
     private static final String POSITION_METHOD = "position";
+    private static final String ABSOLUTE_POSITION_METHOD = "absolutePosition";
     private static final String SET_SPEED_METHOD = "setSpeed";
     private static final String SET_TRACK_PARAMETERS_METHOD = "setTrackParameters";
     private static final String DISPOSE_METHOD = "dispose";
@@ -210,6 +211,9 @@ public class BetterPlayerPlugin implements MethodCallHandler, FlutterPlugin {
             case POSITION_METHOD:
                 result.success(player.getPosition());
                 player.sendBufferingUpdate();
+                break;
+            case ABSOLUTE_POSITION_METHOD:
+                result.success(player.getAbsolutePosition());
                 break;
             case SET_SPEED_METHOD:
                 player.setSpeed(call.argument(SPEED_PARAMETER));

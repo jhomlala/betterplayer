@@ -187,6 +187,19 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<DateTime> getAbsolutePosition(int textureId) async {
+    final int milliseconds =
+    await _channel.invokeMethod<int>(
+      'absolutePosition',
+      <String, dynamic>{'textureId': textureId},
+    );
+
+    if (milliseconds <= 0) return null;
+
+    return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+  }
+
+  @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
     return _eventChannelFor(textureId)
         .receiveBroadcastStream()
