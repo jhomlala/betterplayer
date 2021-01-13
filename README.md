@@ -26,7 +26,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Alternative resolution support  
 ✔️ Cache support  
 ✔️ Notifications support  
-✔️ Picture in Picture support 
+✔️ Picture in Picture support   
 ✔️ ... and much more!  
 
 
