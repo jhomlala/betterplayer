@@ -53,6 +53,7 @@ int64_t FLTCMTimeToMillis(CMTime time) {
 @property(nonatomic, readonly) int failedCount;
 @property(nonatomic) AVPlayerLayer* _playerLayer;
 @property(nonatomic) bool _pictureInPicture;
+@property(nonatomic) bool _observersAdded;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -92,7 +93,7 @@ AVPictureInPictureController *_pipController;
 }
 
 - (void)addObservers:(AVPlayerItem*)item {
-    
+    __observersAdded = true;
     [item addObserver:self forKeyPath:@"loadedTimeRanges" options:0 context:timeRangeContext];
     [item addObserver:self forKeyPath:@"status" options:0 context:statusContext];
     [item addObserver:self
@@ -107,7 +108,11 @@ AVPictureInPictureController *_pipController;
            forKeyPath:@"playbackBufferFull"
               options:0
               context:playbackBufferFullContext];
-
+     [[NSNotificationCenter defaultCenter] addObserver:self
+                                              selector:@selector(itemDidPlayToEndTime:)
+                                                  name:AVPlayerItemDidPlayToEndTimeNotification
+                                                object:item];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
 }
 
 - (void)removeVideoOutput {
@@ -137,8 +142,13 @@ AVPictureInPictureController *_pipController;
         return;
     }
     
-    
-    
+    [self removeObservers];
+    AVAsset* asset = [_player.currentItem asset];
+    [asset cancelLoading];
+}
+
+- (void) removeObservers{
+    __observersAdded = false;
     [[_player currentItem] removeObserver:self forKeyPath:@"status" context:statusContext];
     [[_player currentItem] removeObserver:self
                                forKeyPath:@"loadedTimeRanges"
@@ -154,10 +164,6 @@ AVPictureInPictureController *_pipController;
                                   context:playbackBufferFullContext];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    AVAsset* asset = [_player.currentItem asset];
-    [asset cancelLoading];
-
-
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification*)notification {
@@ -167,6 +173,8 @@ AVPictureInPictureController *_pipController;
     } else {
         if (_eventSink) {
             _eventSink(@{@"event" : @"completed", @"key" : _key});
+            [ self removeObservers];
+            
         }
     }
 }
@@ -281,7 +289,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (@available(iOS 10.0, *) && overriddenDuration > 0) {
         item.forwardPlaybackEndTime = CMTimeMake(overriddenDuration/1000, 1);
     }
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
 
     return [self setDataSourcePlayerItem:item withKey:key];
 }
@@ -400,7 +407,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         _displayLink.paused = YES;
         return;
     }
-    
+    if (__observersAdded == false){
+        [self addObservers:[_player currentItem]];
+    }
+
     if (_isPlaying) {
         [_player play];
     } else {

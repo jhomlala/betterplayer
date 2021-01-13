@@ -214,7 +214,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         return;
       }
       videoEventStreamController.add(event);
-
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(
@@ -235,7 +234,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: true);
           break;
         case VideoEventType.bufferingEnd:
-          value = value.copyWith(isBuffering: false);
+          if (value.isBuffering) {
+            value = value.copyWith(isBuffering: false);
+          }
           break;
 
         case VideoEventType.play:
