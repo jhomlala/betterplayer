@@ -481,7 +481,6 @@ class _BetterPlayerCupertinoControlsState
       ),
       child: Row(
         children: <Widget>[
-
           if (_controlsConfiguration.enableFullscreen)
             _buildExpandButton(
                 backgroundColor, iconColor, barHeight, buttonPadding)

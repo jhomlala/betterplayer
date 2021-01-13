@@ -12,6 +12,7 @@ setBetterPlayerGlobalKey.
 * Fixed event play/pause event not triggered when controlling video with PiP or remote notification.
 * Fixed playerTheme not set correctly.
 * Fixed progress bar able to drag over other buttons.
+* Fixed iOS player last second issue (player did not complete on last second of resource).
 
 ## 0.0.44
 * Added placeholder until play example
