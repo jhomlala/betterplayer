@@ -26,6 +26,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Alternative resolution support  
 ✔️ Cache support  
 ✔️ Notifications support  
+✔️ Picture in Picture support 
 ✔️ ... and much more!  
 
 
@@ -517,8 +518,17 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
    ///Color of overflow menu icons
    final Color overflowMenuIconsColor;
 
-   ///Time which will be used once user uses rewind and forward
-   final int skipsTimeInMilliseconds;
+   ///Time which will be used once user uses forward
+   final int forwardSkipTimeInMilliseconds;
+
+   ///Time which will be used once user uses backward
+   final int backwardSkipTimeInMilliseconds;
+
+   ///Color of default loading indicator
+   final Color loadingColor;
+
+   ///Widget which can be used instead of default progress
+   final Widget loadingWidget;
 ```
 
 ### BetterPlayerPlaylistConfiguration
