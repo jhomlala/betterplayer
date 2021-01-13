@@ -11,6 +11,7 @@ setBetterPlayerGlobalKey.
 * Updated notification service in android example.
 * Fixed event play/pause event not triggered when controlling video with PiP or remote notification.
 * Fixed playerTheme not set correctly.
+* Fixed progress bar able to drag over other buttons.
 
 ## 0.0.44
 * Added placeholder until play example

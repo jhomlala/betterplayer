@@ -66,8 +66,10 @@ class _VideoProgressBarState
       final box = context.findRenderObject() as RenderBox;
       final Offset tapPos = box.globalToLocal(globalPosition);
       final double relative = tapPos.dx / box.size.width;
-      final Duration position = controller.value.duration * relative;
-      betterPlayerController.seekTo(position);
+      if (relative > 0) {
+        final Duration position = controller.value.duration * relative;
+        betterPlayerController.seekTo(position);
+      }
     }
 
     return GestureDetector(
