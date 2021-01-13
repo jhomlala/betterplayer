@@ -17,6 +17,7 @@ import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -133,6 +134,9 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Getter of the GlobalKey
   GlobalKey get betterPlayerGlobalKey => _betterPlayerGlobalKey;
+
+  ///StreamSubscription for VideoEvent listener
+  StreamSubscription<VideoEvent> _videoEventStreamSubscription;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -311,7 +315,9 @@ class BetterPlayerController extends ChangeNotifier {
 
   Future _initialize() async {
     await videoPlayerController.setLooping(betterPlayerConfiguration.looping);
-
+    _videoEventStreamSubscription = videoPlayerController
+        .videoEventStreamController.stream
+        .listen(_handleVideoEvent);
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (autoPlay) {
       if (fullScreenByDefault) {
@@ -731,6 +737,25 @@ class BetterPlayerController extends ChangeNotifier {
     return videoPlayerController.isPictureInPictureSupported();
   }
 
+  ///Handle VideoEvent when remote controls notification / PiP is shown
+  void _handleVideoEvent(VideoEvent event) {
+    switch (event.eventType) {
+      case VideoEventType.play:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
+        break;
+      case VideoEventType.pause:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pause));
+        break;
+      case VideoEventType.seek:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo));
+        break;
+      default:
+
+        ///TODO: Handle when needed
+        break;
+    }
+  }
+
   @override
   void dispose() {
     if (!betterPlayerConfiguration.autoDispose) {
@@ -744,6 +769,7 @@ class BetterPlayerController extends ChangeNotifier {
       _nextVideoTimer?.cancel();
       nextVideoTimeStreamController.close();
       _controlsVisibilityStreamController.close();
+      _videoEventStreamSubscription?.cancel();
       _disposed = true;
 
       ///Delete files async

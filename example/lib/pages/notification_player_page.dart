@@ -19,6 +19,9 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
       handleLifecycle: true,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
+    _betterPlayerController.addEventsListener((event) => {
+      print("EVENT: " + event.betterPlayerEventType.toString())
+    });
     _setupDataSource();
     super.initState();
   }

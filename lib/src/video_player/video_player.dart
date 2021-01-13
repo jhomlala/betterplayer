@@ -183,12 +183,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _create();
   }
 
+  final StreamController<VideoEvent> videoEventStreamController =
+      StreamController.broadcast();
+  final Completer<void> _creatingCompleter = Completer<void>();
   int _textureId;
 
   ClosedCaptionFile _closedCaptionFile;
   Timer _timer;
   bool _isDisposed = false;
-  final Completer<void> _creatingCompleter = Completer<void>();
   Completer<void> _initializingCompleter;
   StreamSubscription<dynamic> _eventSubscription;
 
@@ -211,6 +213,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
+      videoEventStreamController.add(event);
+
       switch (event.eventType) {
         case VideoEventType.initialized:
           value = value.copyWith(
@@ -408,6 +412,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _timer?.cancel();
         await _eventSubscription?.cancel();
         await _videoPlayerPlatform.dispose(_textureId);
+        videoEventStreamController.close();
       }
     }
     _isDisposed = true;
