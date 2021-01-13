@@ -10,6 +10,7 @@ setBetterPlayerGlobalKey.
 * [BREAKING_CHANGE] Removed skipsTimeInMilliseconds. Added forwardSkipTimeInMilliseconds and backwardSkipTimeInMilliseconds.
 * Updated notification service in android example.
 * Fixed event play/pause event not triggered when controlling video with PiP or remote notification.
+* Fixed playerTheme not set correctly.
 
 ## 0.0.44
 * Added placeholder until play example

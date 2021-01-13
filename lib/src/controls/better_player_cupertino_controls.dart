@@ -481,13 +481,14 @@ class _BetterPlayerCupertinoControlsState
       ),
       child: Row(
         children: <Widget>[
-          if (_controlsConfiguration.enablePip)
-            _buildPipButton(
+
+          if (_controlsConfiguration.enableFullscreen)
+            _buildExpandButton(
                 backgroundColor, iconColor, barHeight, buttonPadding)
           else
             const SizedBox(),
-          if (_controlsConfiguration.enableFullscreen)
-            _buildExpandButton(
+          if (_controlsConfiguration.enablePip)
+            _buildPipButton(
                 backgroundColor, iconColor, barHeight, buttonPadding)
           else
             const SizedBox(),
@@ -746,9 +747,7 @@ class _BetterPlayerCupertinoControlsState
                       color: backgroundColor,
                       child: Center(
                         child: Icon(
-                          _betterPlayerController.isFullScreen
-                              ? _controlsConfiguration.fullscreenDisableIcon
-                              : _controlsConfiguration.fullscreenEnableIcon,
+                          _controlsConfiguration.pipMenuIcon,
                           color: iconColor,
                         ),
                       ),

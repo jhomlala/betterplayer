@@ -1,4 +1,5 @@
 // Dart imports:
+import 'dart:io';
 import 'dart:ui';
 
 // Flutter imports:
@@ -168,7 +169,7 @@ class BetterPlayerControlsConfiguration {
     this.progressBarBackgroundColor = Colors.white60,
     this.controlsHideTime = const Duration(milliseconds: 300),
     this.customControlsBuilder,
-    this.playerTheme = BetterPlayerTheme.material,
+    this.playerTheme,
     this.showControls = true,
     this.showControlsOnInitialize = true,
     this.controlBarHeight = 48.0,
