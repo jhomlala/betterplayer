@@ -63,7 +63,6 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String IMAGE_URL_PARAMETER = "imageUrl";
     private static final String NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName";
     private static final String OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration";
-    private static final String OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration";
     private static final String ENABLE_PICTURE_IN_PICTURE = "enablePictureInPicture";
     private static final String DISABLE_PICTURE_IN_PICTURE = "disablePictureInPicture";
     private static final String IS_PICTURE_IN_PICTURE_SUPPORTED = "isPictureInPictureSupported";

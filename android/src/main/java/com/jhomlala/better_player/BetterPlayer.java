@@ -645,10 +645,6 @@ private ControlDispatcher setupControlDispatcher() {
         eventSink.success(event);
     }
 
-    private long getDuration() {
-        return exoPlayer.getDuration();
-    }
-
     void dispose() {
         disposeMediaSession();
         disposeRemoteNotifications();
