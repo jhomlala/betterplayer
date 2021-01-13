@@ -161,22 +161,74 @@ class _BetterPlayerMaterialControlsState
       return const SizedBox();
     }
 
-    return _controlsConfiguration.enableOverflowMenu
-        ? AnimatedOpacity(
-            opacity: _hideStuff ? 0.0 : 1.0,
-            duration: _controlsConfiguration.controlsHideTime,
-            onEnd: _onPlayerHide,
+    return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+      if (_controlsConfiguration.enablePip)
+        _buildPipButtonWrapperWidget(_hideStuff, _onPlayerHide)
+      else
+        const SizedBox(),
+      if (_controlsConfiguration.enableOverflowMenu)
+        AnimatedOpacity(
+          opacity: _hideStuff ? 0.0 : 1.0,
+          duration: _controlsConfiguration.controlsHideTime,
+          onEnd: _onPlayerHide,
+          child: Container(
+            height: _controlsConfiguration.controlBarHeight,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildMoreButton(),
+              ],
+            ),
+          ),
+        )
+      else
+        const SizedBox()
+    ]);
+  }
+
+  Widget _buildPipButton() {
+    return BetterPlayerMaterialClickableWidget(
+      onTap: () {
+        betterPlayerController.enablePictureInPicture(
+            betterPlayerController.betterPlayerGlobalKey);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          betterPlayerControlsConfiguration.pipMenuIcon,
+          color: betterPlayerControlsConfiguration.iconsColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPipButtonWrapperWidget(
+      bool hideStuff, void Function() onPlayerHide) {
+    return FutureBuilder<bool>(
+      future: betterPlayerController.isPictureInPictureSupported(),
+      builder: (context, snapshot) {
+        final bool isPipSupported = snapshot.data ?? false;
+        if (isPipSupported &&
+            _betterPlayerController.betterPlayerGlobalKey != null) {
+          return AnimatedOpacity(
+            opacity: hideStuff ? 0.0 : 1.0,
+            duration: betterPlayerControlsConfiguration.controlsHideTime,
+            onEnd: onPlayerHide,
             child: Container(
-              height: _controlsConfiguration.controlBarHeight,
+              height: betterPlayerControlsConfiguration.controlBarHeight,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  _buildMoreButton(),
+                  _buildPipButton(),
                 ],
               ),
             ),
-          )
-        : const SizedBox();
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
   }
 
   Widget _buildMoreButton() {

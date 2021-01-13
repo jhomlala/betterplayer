@@ -42,6 +42,7 @@ class VideoPlayerValue {
     this.volume = 1.0,
     this.speed = 1.0,
     this.errorDescription,
+    this.isPip = false,
   });
 
   /// Returns an instance with a `null` [Duration].
@@ -94,6 +95,9 @@ class VideoPlayerValue {
   /// Is null when [initialized] is false.
   final Size size;
 
+  ///Is in Picture in Picture Mode
+  final bool isPip;
+
   /// Indicates whether or not the video has been loaded and is ready to play.
   bool get initialized => duration != null;
 
@@ -128,6 +132,7 @@ class VideoPlayerValue {
     double volume,
     String errorDescription,
     double speed,
+    bool isPip,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -141,6 +146,7 @@ class VideoPlayerValue {
       volume: volume ?? this.volume,
       speed: speed ?? this.speed,
       errorDescription: errorDescription ?? this.errorDescription,
+      isPip: isPip ?? this.isPip,
     );
   }
 
@@ -236,6 +242,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.seek:
           seekTo(event.position);
+          break;
+        case VideoEventType.pipStart:
+          value = value.copyWith(isPip: true);
+          break;
+        case VideoEventType.pipStop:
+          value = value.copyWith(isPip: false);
           break;
         case VideoEventType.unknown:
           break;
@@ -527,6 +539,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _textureId, width, height, bitrate);
   }
 
+  Future<void> enablePictureInPicture(
+      {double top, double left, double width, double height}) async {
+    await _videoPlayerPlatform.enablePictureInPicture(
+        textureId, top, left, width, height);
+  }
+
+  Future<void> disablePictureInPicture() async {
+    await _videoPlayerPlatform.disablePictureInPicture(textureId);
+  }
+
   /// The closed caption based on the current [position] in the video.
   ///
   /// If there are no closed captions at the current [position], this will
@@ -552,6 +574,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   void _updatePosition(Duration position) {
     value = value.copyWith(position: position);
     value = value.copyWith(caption: _getCaptionAt(position));
+  }
+
+  Future<bool> isPictureInPictureSupported() async {
+    if (_textureId == null) {
+      return false;
+    }
+    return _videoPlayerPlatform.isPictureInPictureEnabled(_textureId);
+  }
+
+  void refresh() {
+    value = value.copyWith();
   }
 }
 

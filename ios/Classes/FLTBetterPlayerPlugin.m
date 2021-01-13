@@ -7,6 +7,7 @@
 #import <GLKit/GLKit.h>
 #import <KTVHTTPCache/KTVHTTPCache.h>
 #import <MediaPlayer/MediaPlayer.h>
+#import <AVKit/AVKit.h>
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -36,7 +37,7 @@ int64_t FLTCMTimeToMillis(CMTime time) {
 }
 @end
 
-@interface FLTBetterPlayer : NSObject <FlutterTexture, FlutterStreamHandler>
+@interface FLTBetterPlayer : NSObject <FlutterTexture, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
 @property(readonly, nonatomic) AVPlayer* player;
 @property(readonly, nonatomic) AVPlayerItemVideoOutput* videoOutput;
 @property(readonly, nonatomic) CADisplayLink* displayLink;
@@ -50,6 +51,8 @@ int64_t FLTCMTimeToMillis(CMTime time) {
 @property(nonatomic, readonly) NSString* key;
 @property(nonatomic, readonly) CVPixelBufferRef prevBuffer;
 @property(nonatomic, readonly) int failedCount;
+@property(nonatomic) AVPlayerLayer* _playerLayer;
+@property(nonatomic) bool _pictureInPicture;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -63,6 +66,14 @@ static void* statusContext = &statusContext;
 static void* playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void* playbackBufferEmptyContext = &playbackBufferEmptyContext;
 static void* playbackBufferFullContext = &playbackBufferFullContext;
+
+
+#if TARGET_OS_IOS
+void (^__strong _Nonnull _restoreUserInterfaceForPIPStopCompletionHandler)(BOOL);
+API_AVAILABLE(ios(9.0))
+AVPictureInPictureController *_pipController;
+#endif
+
 
 @implementation FLTBetterPlayer
 - (instancetype)initWithFrameUpdater:(FLTFrameUpdater*)frameUpdater {
@@ -96,7 +107,7 @@ static void* playbackBufferFullContext = &playbackBufferFullContext;
            forKeyPath:@"playbackBufferFull"
               options:0
               context:playbackBufferFullContext];
-    
+
 }
 
 - (void)removeVideoOutput {
@@ -145,8 +156,8 @@ static void* playbackBufferFullContext = &playbackBufferFullContext;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     AVAsset* asset = [_player.currentItem asset];
     [asset cancelLoading];
-    
-    
+
+
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification*)notification {
@@ -271,7 +282,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         item.forwardPlaybackEndTime = CMTimeMake(overriddenDuration/1000, 1);
     }
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
-    
+
     return [self setDataSourcePlayerItem:item withKey:key];
 }
 
@@ -339,7 +350,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                         end = endTime;
                     }
                 }
-                
+
                 [values addObject:@[ @(start), @(end) ]];
             }
             _eventSink(@{@"event" : @"bufferingUpdate", @"values" : values, @"key" : _key});
@@ -384,8 +395,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)updatePlayingState {
-    NSLog(@"Update playing state");
-    
     if (!_isInitialized || !_key) {
         NSLog(@"not initalized and paused!!");
         _displayLink.paused = YES;
@@ -459,10 +468,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         time =  [[[_player currentItem] asset] duration];
     }
     if (!CMTIME_IS_INVALID(_player.currentItem.forwardPlaybackEndTime)) {
-        NSLog(@"Using forwardplaybackedntime!");
         time = [[_player currentItem] forwardPlaybackEndTime];
     }
-    
+
     return FLTCMTimeToMillis(time);
 }
 
@@ -511,7 +519,114 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _player.currentItem.preferredMaximumResolution = CGSizeMake(width, height);
 }
 
+- (void)setPictureInPicture:(BOOL)pictureInPicture
+{
+    self._pictureInPicture = pictureInPicture;
+    if (@available(iOS 9.0, *)) {
+        if (_pipController && self._pictureInPicture && ![_pipController isPictureInPictureActive]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_pipController startPictureInPicture];
+            });
+        } else if (_pipController && !self._pictureInPicture && [_pipController isPictureInPictureActive]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [_pipController stopPictureInPicture];
+            });
+        } else {
+            // Fallback on earlier versions
+        } }
+}
 
+#if TARGET_OS_IOS
+- (void)setRestoreUserInterfaceForPIPStopCompletionHandler:(BOOL)restore
+{
+    if (_restoreUserInterfaceForPIPStopCompletionHandler != NULL) {
+        _restoreUserInterfaceForPIPStopCompletionHandler(restore);
+        _restoreUserInterfaceForPIPStopCompletionHandler = NULL;
+    }
+}
+
+- (void)setupPipController {
+    if (@available(iOS 9.0, *)) {
+        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+        [[AVAudioSession sharedInstance] setActive: YES error: nil];
+        [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
+        if (!_pipController && self._playerLayer && [AVPictureInPictureController isPictureInPictureSupported]) {
+            _pipController = [[AVPictureInPictureController alloc] initWithPlayerLayer:self._playerLayer];
+            _pipController.delegate = self;
+        }
+    } else {
+        // Fallback on earlier versions
+    }
+}
+
+- (void) enablePictureInPicture: (CGRect) frame{
+    [self disablePictureInPicture];
+    [self usePlayerLayer:frame];
+}
+
+- (void)usePlayerLayer: (CGRect) frame
+{
+    if( _player )
+    {
+        // Create new controller passing reference to the AVPlayerLayer
+        self._playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
+        UIViewController* vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+        self._playerLayer.frame = frame;
+        self._playerLayer.needsDisplayOnBoundsChange = YES;
+        //  [self._playerLayer addObserver:self forKeyPath:readyForDisplayKeyPath options:NSKeyValueObservingOptionNew context:nil];
+        [vc.view.layer addSublayer:self._playerLayer];
+        vc.view.layer.needsDisplayOnBoundsChange = YES;
+        if (@available(iOS 9.0, *)) {
+            _pipController = NULL;
+        }
+        [self setupPipController];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{
+            [self setPictureInPicture:true];
+        });
+    }
+}
+
+- (void)disablePictureInPicture
+{
+    [self setPictureInPicture:true];
+    if (__playerLayer){
+        [self._playerLayer removeFromSuperlayer];
+        self._playerLayer = nil;
+        if (_eventSink != nil) {
+            _eventSink(@{@"event" : @"pipStop"});
+        }
+    }
+}
+#endif
+
+#if TARGET_OS_IOS
+- (void)pictureInPictureControllerDidStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
+    [self disablePictureInPicture];
+}
+
+- (void)pictureInPictureControllerDidStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
+    if (_eventSink != nil) {
+        _eventSink(@{@"event" : @"pipStart"});
+    }
+}
+
+- (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
+
+}
+
+- (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
+
+}
+
+- (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController failedToStartPictureInPictureWithError:(NSError *)error {
+
+}
+
+- (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL))completionHandler {
+    [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
+}
+#endif
 // This workaround if you will change dataSource. Flutter engine caches CVPixelBufferRef and if you
 // return NULL from method copyPixelBuffer Flutter will use cached CVPixelBufferRef. If you will
 // change your datasource you can see frame from previeous video. Thats why we should return
@@ -538,6 +653,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
     return _prevBuffer;
 }
+
 
 - (CVPixelBufferRef)copyPixelBuffer {
     //Disabled because of black frame issue
@@ -602,6 +718,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)dispose {
     [self disposeSansEventChannel];
     [_eventChannel setStreamHandler:nil];
+    [self disablePictureInPicture];
+    [self setPictureInPicture:false];
     _disposed = true;
 }
 
@@ -830,11 +948,13 @@ NSMutableDictionary*  _artworkImageDict;
         [playerToRemoveListener.player removeTimeObserver: timeObserverId];
     }
     [_timeObserverIdDict removeAllObjects];
-    
+
 }
 
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+
+
     if ([@"init" isEqualToString:call.method]) {
         // Allow audio playback when the Ring/Silent switch is set to silent
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
@@ -936,7 +1056,6 @@ NSMutableDictionary*  _artworkImageDict;
             result(nil);
         } else if ([@"setSpeed" isEqualToString:call.method]) {
             [player setSpeed:[[argsMap objectForKey:@"speed"] doubleValue] result:result];
-            return;
         }else if ([@"setTrackParameters" isEqualToString:call.method]) {
             int width = argsMap[@"width"];
             int height = argsMap[@"height"];
@@ -944,7 +1063,27 @@ NSMutableDictionary*  _artworkImageDict;
             
             [player setTrackParameters:width: height : bitrate];
             result(nil);
-        }else {
+        } else if ([@"enablePictureInPicture" isEqualToString:call.method]){
+            double left = [argsMap[@"left"] doubleValue];
+            double top = [argsMap[@"top"] doubleValue];
+            double width = [argsMap[@"width"] doubleValue];
+            double height = [argsMap[@"height"] doubleValue];
+            [player enablePictureInPicture:CGRectMake(left, top, width, height)];
+        } else if ([@"isPictureInPictureSupported" isEqualToString:call.method]){
+            if (@available(iOS 9.0, *)){
+                if ([AVPictureInPictureController isPictureInPictureSupported]){
+                    result([NSNumber numberWithBool:true]);
+                    return;
+                }
+            }
+
+            result([NSNumber numberWithBool:false]);
+        } else if ([@"disablePictureInPicture" isEqualToString:call.method]){
+            [player disablePictureInPicture];
+            [player setPictureInPicture:false];
+        }
+
+        else {
             result(FlutterMethodNotImplemented);
         }
     }

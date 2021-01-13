@@ -17,4 +17,6 @@ enum BetterPlayerEventType {
   changedTrack,
   changedPlayerVisibility,
   changedResolution,
+  pipStart,
+  pipStop,
 }
