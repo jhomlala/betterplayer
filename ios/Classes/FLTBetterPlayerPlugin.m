@@ -288,7 +288,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         NSURL *proxyURL = [KTVHTTPCache proxyURLWithOriginalURL:url];
         item = [AVPlayerItem playerItemWithURL:proxyURL];
     } else {
-        item = [AVPlayerItem playerItemWithURL:url];
+        AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
+                                                options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
+        item = [AVPlayerItem playerItemWithAsset:asset];
     }
     
     if (@available(iOS 10.0, *) && overriddenDuration > 0) {
