@@ -89,12 +89,12 @@ AVPictureInPictureController *_pipController;
                                                selector:@selector(onDisplayLink:)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     _displayLink.paused = YES;
+    self._observersAdded = false;
     return self;
 }
 
 - (void)addObservers:(AVPlayerItem*)item {
     if (!self._observersAdded){
-        self._observersAdded = true;
         [item addObserver:self forKeyPath:@"loadedTimeRanges" options:0 context:timeRangeContext];
         [item addObserver:self forKeyPath:@"status" options:0 context:statusContext];
         [item addObserver:self
@@ -114,6 +114,7 @@ AVPictureInPictureController *_pipController;
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:item];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
+        self._observersAdded = true;
     }
 }
 
@@ -151,8 +152,6 @@ AVPictureInPictureController *_pipController;
 
 - (void) removeObservers{
     if (self._observersAdded){
-        self._observersAdded = false;
-        
         [[_player currentItem] removeObserver:self forKeyPath:@"status" context:statusContext];
         [[_player currentItem] removeObserver:self
                                    forKeyPath:@"loadedTimeRanges"
@@ -168,6 +167,7 @@ AVPictureInPictureController *_pipController;
                                       context:playbackBufferFullContext];
         [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
+        self._observersAdded = false;
     }
 }
 
@@ -412,7 +412,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         _displayLink.paused = YES;
         return;
     }
-    if (__observersAdded == false){
+    if (!self._observersAdded){
         [self addObservers:[_player currentItem]];
     }
     
