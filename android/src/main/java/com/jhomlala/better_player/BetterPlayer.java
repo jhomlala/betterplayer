@@ -6,15 +6,15 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.ResultReceiver;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -24,17 +24,19 @@ import android.view.Surface;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -48,8 +50,10 @@ import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.media.session.MediaButtonReceiver;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
@@ -75,10 +79,10 @@ final class BetterPlayer {
     private static final int NOTIFICATION_ID = 20772077;
 
     private final SimpleExoPlayer exoPlayer;
-    private final DefaultTrackSelector trackSelector;
     private final TextureRegistry.SurfaceTextureEntry textureEntry;
     private final QueuingEventSink eventSink = new QueuingEventSink();
     private final EventChannel eventChannel;
+    private final DefaultTrackSelector trackSelector;
 
     private boolean isInitialized = false;
     private Surface surface;
@@ -88,7 +92,8 @@ final class BetterPlayer {
     private Runnable refreshRunnable;
     private EventListener exoPlayerEventListener;
     private Bitmap bitmap;
-    private long overriddenDuration;
+    private MediaSessionCompat mediaSession;
+
 
     BetterPlayer(
             Context context,
@@ -97,9 +102,8 @@ final class BetterPlayer {
             Result result) {
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
-
-        trackSelector = new DefaultTrackSelector();
-        exoPlayer = ExoPlayerFactory.newSimpleInstance(context, trackSelector);
+        trackSelector = new DefaultTrackSelector(context);
+        exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
 
         setupVideoPlayer(eventChannel, textureEntry, result);
     }
@@ -109,7 +113,6 @@ final class BetterPlayer {
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
             long overriddenDuration) {
         this.key = key;
-        this.overriddenDuration = overriddenDuration;
         isInitialized = false;
 
         Uri uri = Uri.parse(dataSource);
@@ -141,10 +144,11 @@ final class BetterPlayer {
         MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
         if (overriddenDuration != 0) {
             ClippingMediaSource clippingMediaSource = new ClippingMediaSource(mediaSource, 0, overriddenDuration * 1000);
-            exoPlayer.prepare(clippingMediaSource);
+            exoPlayer.setMediaSource(clippingMediaSource);
         } else {
-            exoPlayer.prepare(mediaSource);
+            exoPlayer.setMediaSource(mediaSource);
         }
+        exoPlayer.prepare();
 
         result.success(null);
     }
@@ -153,26 +157,28 @@ final class BetterPlayer {
 
         PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter
                 = new PlayerNotificationManager.MediaDescriptionAdapter() {
+            @NonNull
             @Override
-            public String getCurrentContentTitle(Player player) {
+            public String getCurrentContentTitle(@NonNull Player player) {
                 return title;
             }
 
             @Nullable
             @Override
-            public PendingIntent createCurrentContentIntent(Player player) {
+            public PendingIntent createCurrentContentIntent(@NonNull Player player) {
                 return null;
             }
 
             @Nullable
             @Override
-            public String getCurrentContentText(Player player) {
+            public String getCurrentContentText(@NonNull Player player) {
                 return author;
             }
 
             @Nullable
             @Override
-            public Bitmap getCurrentLargeIcon(Player player, PlayerNotificationManager.BitmapCallback callback) {
+            public Bitmap getCurrentLargeIcon(@NonNull Player player,
+                                              @NonNull PlayerNotificationManager.BitmapCallback callback) {
                 if (imageUrl == null) {
                     return null;
                 }
@@ -214,73 +220,15 @@ final class BetterPlayer {
                 NOTIFICATION_ID,
                 mediaDescriptionAdapter);
         playerNotificationManager.setPlayer(exoPlayer);
-        playerNotificationManager.setUseNavigationActions(false);
-        playerNotificationManager.setStopAction(null);
+        playerNotificationManager.setUseNextAction(false);
+        playerNotificationManager.setUsePreviousAction(false);
+        playerNotificationManager.setUseStopAction(false);
 
-        MediaSessionCompat mediaSession = new MediaSessionCompat(context, "ExoPlayer");
-
-        mediaSession.setCallback(new MediaSessionCompat.Callback() {
-            @Override
-            public void onSeekTo(long pos) {
-                exoPlayer.seekTo(pos);
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", "seek");
-                event.put("position", pos);
-                eventSink.success(event);
-                super.onSeekTo(pos);
-            }
-
-            @Override
-            public void onCommand(String command, Bundle extras, ResultReceiver cb) {
-                super.onCommand(command, extras, cb);
-            }
-        });
-        mediaSession.setActive(true);
+        MediaSessionCompat mediaSession = setupMediaSession(context, false);
         playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
 
 
-        playerNotificationManager.setControlDispatcher(new ControlDispatcher() {
-            @Override
-            public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
-                String eventType;
-                if (player.getPlayWhenReady()) {
-                    eventType = "pause";
-                } else {
-                    eventType = "play";
-                }
-
-
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", eventType);
-                eventSink.success(event);
-
-                return true;
-            }
-
-            @Override
-            public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", "seek");
-                event.put("position", positionMs);
-                eventSink.success(event);
-                return true;
-            }
-
-            @Override
-            public boolean dispatchSetRepeatMode(Player player, int repeatMode) {
-                return false;
-            }
-
-            @Override
-            public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) {
-                return false;
-            }
-
-            @Override
-            public boolean dispatchStop(Player player, boolean reset) {
-                return false;
-            }
-        });
+        playerNotificationManager.setControlDispatcher(setupControlDispatcher());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             refreshHandler = new Handler();
             refreshRunnable = () -> {
@@ -305,7 +253,7 @@ final class BetterPlayer {
 
         exoPlayerEventListener = new EventListener() {
             @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            public void onPlaybackStateChanged(int playbackState) {
                 mediaSession.setMetadata(new MediaMetadataCompat.Builder()
                         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, getDuration())
                         .build());
@@ -317,7 +265,81 @@ final class BetterPlayer {
     }
 
 
-    public void removeNotificationData() {
+private ControlDispatcher setupControlDispatcher() {
+        return new ControlDispatcher() {
+            @Override
+            public boolean dispatchPrepare(Player player) {
+                return false;
+            }
+
+            @Override
+            public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
+                if (player.getPlayWhenReady()) {
+                    sendEvent("pause");
+                } else {
+                    sendEvent("play");
+                }
+                return true;
+            }
+
+            @Override
+            public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "seek");
+                event.put("position", positionMs);
+                eventSink.success(event);
+                return true;
+            }
+
+            @Override
+            public boolean dispatchPrevious(Player player) {
+                return false;
+            }
+
+            @Override
+            public boolean dispatchNext(Player player) {
+                return false;
+            }
+
+            @Override
+            public boolean dispatchRewind(Player player) {
+                return false;
+            }
+
+            @Override
+            public boolean dispatchFastForward(Player player) {
+                return false;
+            }
+
+            @Override
+            public boolean dispatchSetRepeatMode(Player player, int repeatMode) {
+                return false;
+            }
+
+            @Override
+            public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) {
+                return false;
+            }
+
+            @Override
+            public boolean dispatchStop(Player player, boolean reset) {
+                return false;
+            }
+
+            @Override
+            public boolean isRewindEnabled() {
+                return false;
+            }
+
+            @Override
+            public boolean isFastForwardEnabled() {
+                return false;
+            }
+        };
+    }
+
+
+    public void disposeRemoteNotifications() {
         exoPlayer.removeListener(exoPlayerEventListener);
         if (refreshHandler != null) {
             refreshHandler.removeCallbacksAndMessages(null);
@@ -389,18 +411,19 @@ final class BetterPlayer {
                 return new SsMediaSource.Factory(
                         new DefaultSsChunkSource.Factory(mediaDataSourceFactory),
                         new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(
                         new DefaultDashChunkSource.Factory(mediaDataSourceFactory),
                         new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
-                        .createMediaSource(uri);
+                        .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_HLS:
-                return new HlsMediaSource.Factory(mediaDataSourceFactory).createMediaSource(uri);
+                return new HlsMediaSource.Factory(mediaDataSourceFactory)
+                        .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_OTHER:
-                return new ExtractorMediaSource.Factory(mediaDataSourceFactory)
-                        .setExtractorsFactory(new DefaultExtractorsFactory())
-                        .createMediaSource(uri);
+                return new ProgressiveMediaSource.Factory(mediaDataSourceFactory,
+                        new DefaultExtractorsFactory())
+                        .createMediaSource(MediaItem.fromUri(uri));
             default: {
                 throw new IllegalStateException("Unsupported type: " + type);
             }
@@ -431,7 +454,7 @@ final class BetterPlayer {
                 new EventListener() {
 
                     @Override
-                    public void onPlayerStateChanged(final boolean playWhenReady, final int playbackState) {
+                    public void onPlaybackStateChanged(int playbackState) {
                         if (playbackState == Player.STATE_BUFFERING) {
                             sendBufferingUpdate();
                             Map<String, Object> event = new HashMap<>();
@@ -567,8 +590,75 @@ final class BetterPlayer {
         return exoPlayer.getDuration();
     }
 
+    /**
+     * Create media session which will be used in notifications, pip mode.
+     *
+     * @param context                - android context
+     * @param setupControlDispatcher - should add control dispatcher to created MediaSession
+     * @return - configured MediaSession instance
+     */
+    public MediaSessionCompat setupMediaSession(Context context, boolean setupControlDispatcher) {
+        if (mediaSession != null) {
+            mediaSession.release();
+        }
+        ComponentName mediaButtonReceiver = new ComponentName(context, MediaButtonReceiver.class);
+        MediaSessionCompat mediaSession = new MediaSessionCompat(context, "BetterPlayer", mediaButtonReceiver, null);
+        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        mediaSession.setCallback(new MediaSessionCompat.Callback() {
+            @Override
+            public void onSeekTo(long pos) {
+                exoPlayer.seekTo(pos);
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "seek");
+                event.put("position", pos);
+                eventSink.success(event);
+                super.onSeekTo(pos);
+            }
+        });
+
+        mediaSession.setActive(true);
+
+        MediaSessionConnector mediaSessionConnector =
+                new MediaSessionConnector(mediaSession);
+        if (setupControlDispatcher) {
+            mediaSessionConnector.setControlDispatcher(setupControlDispatcher());
+        }
+        mediaSessionConnector.setPlayer(exoPlayer);
+
+
+        Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
+        mediaButtonIntent.setClass(context, MediaButtonReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, mediaButtonIntent, 0);
+        mediaSession.setMediaButtonReceiver(pendingIntent);
+
+
+        this.mediaSession = mediaSession;
+        return mediaSession;
+    }
+
+    public void onPictureInPictureStatusChanged(boolean inPip) {
+        Map<String, Object> event = new HashMap<>();
+        event.put("event", inPip ? "pipStart" : "pipStop");
+        eventSink.success(event);
+    }
+
+    public void disposeMediaSession() {
+        if (mediaSession != null) {
+            mediaSession.release();
+        }
+        mediaSession = null;
+    }
+
+    private void sendEvent(String eventType) {
+        Map<String, Object> event = new HashMap<>();
+        event.put("event", eventType);
+        eventSink.success(event);
+    }
+
     void dispose() {
-        removeNotificationData();
+        disposeMediaSession();
+        disposeRemoteNotifications();
         if (isInitialized) {
             exoPlayer.stop();
         }
@@ -600,6 +690,7 @@ final class BetterPlayer {
         result = 31 * result + (surface != null ? surface.hashCode() : 0);
         return result;
     }
+
 }
 
 

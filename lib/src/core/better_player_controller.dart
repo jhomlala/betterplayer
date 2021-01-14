@@ -17,6 +17,7 @@ import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -104,13 +105,38 @@ class BetterPlayerController extends ChangeNotifier {
   Stream<bool> get controlsVisibilityStream =>
       _controlsVisibilityStreamController.stream;
 
+  ///Current app lifecycle state.
   AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
 
+  ///Flag which determines if controls (UI interface) is shown. When false,
+  ///UI won't be shown (show only player surface).
   bool _controlsEnabled = true;
 
+  ///Flag which determines if controls (UI interface) is shown. When false,
+  ///UI won't be shown (show only player surface).
   bool get controlsEnabled => _controlsEnabled;
 
+  ///Overridden aspect ratio which will be used instead of aspect ratio passed
+  ///in configuration.
   double _overriddenAspectRatio;
+
+  ///Was Picture in Picture opened.
+  bool _wasInPipMode = false;
+
+  ///Was player in fullscreen before Picture in Picture opened.
+  bool _wasInFullScreenBeforePiP = false;
+
+  ///Was controls enabled before Picture in Picture opened.
+  bool _wasControlsEnabledBeforePiP = false;
+
+  ///GlobalKey of the BetterPlayer widget
+  GlobalKey _betterPlayerGlobalKey;
+
+  ///Getter of the GlobalKey
+  GlobalKey get betterPlayerGlobalKey => _betterPlayerGlobalKey;
+
+  ///StreamSubscription for VideoEvent listener
+  StreamSubscription<VideoEvent> _videoEventStreamSubscription;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -289,7 +315,9 @@ class BetterPlayerController extends ChangeNotifier {
 
   Future _initialize() async {
     await videoPlayerController.setLooping(betterPlayerConfiguration.looping);
-
+    _videoEventStreamSubscription = videoPlayerController
+        .videoEventStreamController.stream
+        .listen(_handleVideoEvent);
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (autoPlay) {
       if (fullScreenByDefault) {
@@ -436,6 +464,19 @@ class BetterPlayerController extends ChangeNotifier {
         !_hasCurrentDataSourceInitialized) {
       _hasCurrentDataSourceInitialized = true;
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.initialized));
+    }
+    if (currentVideoPlayerValue.isPip) {
+      _wasInPipMode = true;
+    } else if (_wasInPipMode) {
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStop));
+      _wasInPipMode = false;
+      if (!_wasInFullScreenBeforePiP) {
+        exitFullScreen();
+      }
+      if (_wasControlsEnabledBeforePiP) {
+        setControlsEnabled(true);
+      }
+      videoPlayerController.refresh();
     }
 
     final int now = DateTime.now().millisecondsSinceEpoch;
@@ -634,6 +675,87 @@ class BetterPlayerController extends ChangeNotifier {
     return _overriddenAspectRatio ?? betterPlayerConfiguration.aspectRatio;
   }
 
+  ///Enable Picture in Picture (PiP) mode. [betterPlayerGlobalKey] is required
+  ///to open PiP mode in iOS. When device is not supported, PiP mode won't be
+  ///open.
+  Future<void> enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async {
+    assert(
+        betterPlayerGlobalKey != null, "BetterPlayerGlobalKey can't be null");
+    if (await videoPlayerController.isPictureInPictureSupported()) {
+      _wasInFullScreenBeforePiP = _isFullScreen;
+      _wasControlsEnabledBeforePiP = _controlsEnabled;
+      setControlsEnabled(false);
+      if (Platform.isAndroid) {
+        _wasInFullScreenBeforePiP = _isFullScreen;
+        await videoPlayerController.enablePictureInPicture(
+            left: 0, top: 0, width: 0, height: 0);
+        enterFullScreen();
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
+        return;
+      }
+      if (Platform.isIOS) {
+        final RenderBox renderBox = betterPlayerGlobalKey.currentContext
+            .findRenderObject() as RenderBox;
+        if (renderBox == null) {
+          BetterPlayerUtils.log(
+              "Can't show PiP. RenderBox is null. Did you provide valid global"
+              " key?");
+          return;
+        }
+        final Offset position = renderBox.localToGlobal(Offset.zero);
+        return videoPlayerController.enablePictureInPicture(
+          left: position.dx,
+          top: position.dy,
+          width: renderBox.size.width,
+          height: renderBox.size.height,
+        );
+      } else {
+        BetterPlayerUtils.log("Unsupported PiP in current platform.");
+      }
+    } else {
+      BetterPlayerUtils.log(
+          "Picture in picture is not supported in this device. If you're "
+          "using Android, please check if you're using activity v2 "
+          "embedding.");
+    }
+  }
+
+  ///Disable Picture in Picture mode if it's enabled.
+  Future<void> disablePictureInPicture() {
+    return videoPlayerController.disablePictureInPicture();
+  }
+
+  ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
+  void setBetterPlayerGlobalKey(GlobalKey betterPlayerGlobalKey) {
+    assert(
+        betterPlayerGlobalKey != null, "BetterPlayerGlobalKey can't be null");
+    _betterPlayerGlobalKey = betterPlayerGlobalKey;
+  }
+
+  ///Check if picture in picture mode is supported in this device.
+  Future<bool> isPictureInPictureSupported() async {
+    return videoPlayerController.isPictureInPictureSupported();
+  }
+
+  ///Handle VideoEvent when remote controls notification / PiP is shown
+  void _handleVideoEvent(VideoEvent event) {
+    switch (event.eventType) {
+      case VideoEventType.play:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
+        break;
+      case VideoEventType.pause:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pause));
+        break;
+      case VideoEventType.seek:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo));
+        break;
+      default:
+
+        ///TODO: Handle when needed
+        break;
+    }
+  }
+
   @override
   void dispose() {
     if (!betterPlayerConfiguration.autoDispose) {
@@ -647,6 +769,7 @@ class BetterPlayerController extends ChangeNotifier {
       _nextVideoTimer?.cancel();
       nextVideoTimeStreamController.close();
       _controlsVisibilityStreamController.close();
+      _videoEventStreamSubscription?.cancel();
       _disposed = true;
 
       ///Delete files async

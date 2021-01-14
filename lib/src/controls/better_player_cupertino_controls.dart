@@ -486,6 +486,11 @@ class _BetterPlayerCupertinoControlsState
                 backgroundColor, iconColor, barHeight, buttonPadding)
           else
             const SizedBox(),
+          if (_controlsConfiguration.enablePip)
+            _buildPipButton(
+                backgroundColor, iconColor, barHeight, buttonPadding)
+          else
+            const SizedBox(),
           Expanded(child: Container()),
           if (_controlsConfiguration.enableMute)
             _buildMuteButton(_controller, backgroundColor, iconColor, barHeight,
@@ -710,5 +715,49 @@ class _BetterPlayerCupertinoControlsState
           _controlsConfiguration.loadingColor ??
               _controlsConfiguration.controlBarColor),
     );
+  }
+
+  Widget _buildPipButton(Color backgroundColor, Color iconColor,
+      double barHeight, double buttonPadding) {
+    return FutureBuilder<bool>(
+        future: _betterPlayerController.isPictureInPictureSupported(),
+        builder: (context, snapshot) {
+          final isPipSupported = snapshot.data ?? false;
+          if (isPipSupported &&
+              _betterPlayerController.betterPlayerGlobalKey != null) {
+            return GestureDetector(
+              onTap: () {
+                betterPlayerController.enablePictureInPicture(
+                    betterPlayerController.betterPlayerGlobalKey);
+              },
+              child: AnimatedOpacity(
+                opacity: _hideStuff ? 0.0 : 1.0,
+                duration: _controlsConfiguration.controlsHideTime,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 10),
+                    child: Container(
+                      height: barHeight,
+                      padding: EdgeInsets.only(
+                        left: buttonPadding,
+                        right: buttonPadding,
+                      ),
+                      color: backgroundColor,
+                      child: Center(
+                        child: Icon(
+                          _controlsConfiguration.pipMenuIcon,
+                          color: iconColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          } else {
+            return const SizedBox();
+          }
+        });
   }
 }

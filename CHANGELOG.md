@@ -1,3 +1,19 @@
+## 0.0.45
+* Added Picture in Picture support.
+* Added new parameters in BetterPlayerControlsConfiguration: pipMenuIcon and enablePip.
+* Added new methods in BetterPlayerController: enablePictureInPicture, disablePictureInPicture, isPictureInPictureSupported,
+setBetterPlayerGlobalKey.
+* Added Picture in Picture icon in player controls.
+* Added Picture in Picture example.
+* Updated ExoPlayer version.
+* Added pipStart and pipStop events.
+* [BREAKING_CHANGE] Removed skipsTimeInMilliseconds. Added forwardSkipTimeInMilliseconds and backwardSkipTimeInMilliseconds.
+* Updated notification service in android example.
+* Fixed event play/pause event not triggered when controlling video with PiP or remote notification.
+* Fixed playerTheme not set correctly.
+* Fixed progress bar able to drag over other buttons.
+* Fixed iOS player last second issue (player did not complete on last second of resource).
+
 ## 0.0.44
 * Added placeholder until play example
 * Added playback stalled feature in iOS. iOS version should behave same as Android once video failed to load.

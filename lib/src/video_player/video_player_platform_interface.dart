@@ -9,6 +9,7 @@ import 'dart:ui';
 // Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
 // Package imports:
 import 'package:meta/meta.dart' show required, visibleForTesting;
 
@@ -129,6 +130,24 @@ abstract class VideoPlayerPlatform {
   /// Gets the video position as [DateTime].
   Future<DateTime> getAbsolutePosition(int textureId) {
     throw UnimplementedError('getAbsolutePosition() has not been implemented.');
+  }
+
+  ///Enables PiP mode.
+  Future<void> enablePictureInPicture(
+      int textureId, double top, double left, double width, double height) {
+    throw UnimplementedError(
+        'enablePictureInPicture() has not been implemented.');
+  }
+
+  ///Disables PiP mode.
+  Future<void> disablePictureInPicture(int textureId) {
+    throw UnimplementedError(
+        'disablePictureInPicture() has not been implemented.');
+  }
+
+  Future<bool> isPictureInPictureEnabled(int textureId) {
+    throw UnimplementedError(
+        'isPictureInPictureEnabled() has not been implemented.');
   }
 
   /// Returns a widget displaying the video with a given textureID.
@@ -408,6 +427,12 @@ enum VideoEventType {
 
   /// The video is set to given to position
   seek,
+
+  /// The video is displayed in Picture in Picture mode
+  pipStart,
+
+  /// Picture in picture mode has been dismissed
+  pipStop,
 
   /// An unknown event has been received.
   unknown,
