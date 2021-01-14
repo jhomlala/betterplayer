@@ -93,26 +93,28 @@ AVPictureInPictureController *_pipController;
 }
 
 - (void)addObservers:(AVPlayerItem*)item {
-    __observersAdded = true;
-    [item addObserver:self forKeyPath:@"loadedTimeRanges" options:0 context:timeRangeContext];
-    [item addObserver:self forKeyPath:@"status" options:0 context:statusContext];
-    [item addObserver:self
-           forKeyPath:@"playbackLikelyToKeepUp"
-              options:0
-              context:playbackLikelyToKeepUpContext];
-    [item addObserver:self
-           forKeyPath:@"playbackBufferEmpty"
-              options:0
-              context:playbackBufferEmptyContext];
-    [item addObserver:self
-           forKeyPath:@"playbackBufferFull"
-              options:0
-              context:playbackBufferFullContext];
-     [[NSNotificationCenter defaultCenter] addObserver:self
-                                              selector:@selector(itemDidPlayToEndTime:)
-                                                  name:AVPlayerItemDidPlayToEndTimeNotification
-                                                object:item];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
+    if (!self._observersAdded){
+        self._observersAdded = true;
+        [item addObserver:self forKeyPath:@"loadedTimeRanges" options:0 context:timeRangeContext];
+        [item addObserver:self forKeyPath:@"status" options:0 context:statusContext];
+        [item addObserver:self
+               forKeyPath:@"playbackLikelyToKeepUp"
+                  options:0
+                  context:playbackLikelyToKeepUpContext];
+        [item addObserver:self
+               forKeyPath:@"playbackBufferEmpty"
+                  options:0
+                  context:playbackBufferEmptyContext];
+        [item addObserver:self
+               forKeyPath:@"playbackBufferFull"
+                  options:0
+                  context:playbackBufferFullContext];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemDidPlayToEndTime:)
+                                                     name:AVPlayerItemDidPlayToEndTimeNotification
+                                                   object:item];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
+    }
 }
 
 - (void)removeVideoOutput {
@@ -148,22 +150,25 @@ AVPictureInPictureController *_pipController;
 }
 
 - (void) removeObservers{
-    __observersAdded = false;
-    [[_player currentItem] removeObserver:self forKeyPath:@"status" context:statusContext];
-    [[_player currentItem] removeObserver:self
-                               forKeyPath:@"loadedTimeRanges"
-                                  context:timeRangeContext];
-    [[_player currentItem] removeObserver:self
-                               forKeyPath:@"playbackLikelyToKeepUp"
-                                  context:playbackLikelyToKeepUpContext];
-    [[_player currentItem] removeObserver:self
-                               forKeyPath:@"playbackBufferEmpty"
-                                  context:playbackBufferEmptyContext];
-    [[_player currentItem] removeObserver:self
-                               forKeyPath:@"playbackBufferFull"
-                                  context:playbackBufferFullContext];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    if (self._observersAdded){
+        self._observersAdded = false;
+        
+        [[_player currentItem] removeObserver:self forKeyPath:@"status" context:statusContext];
+        [[_player currentItem] removeObserver:self
+                                   forKeyPath:@"loadedTimeRanges"
+                                      context:timeRangeContext];
+        [[_player currentItem] removeObserver:self
+                                   forKeyPath:@"playbackLikelyToKeepUp"
+                                      context:playbackLikelyToKeepUpContext];
+        [[_player currentItem] removeObserver:self
+                                   forKeyPath:@"playbackBufferEmpty"
+                                      context:playbackBufferEmptyContext];
+        [[_player currentItem] removeObserver:self
+                                   forKeyPath:@"playbackBufferFull"
+                                      context:playbackBufferFullContext];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification*)notification {
@@ -289,7 +294,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (@available(iOS 10.0, *) && overriddenDuration > 0) {
         item.forwardPlaybackEndTime = CMTimeMake(overriddenDuration/1000, 1);
     }
-
+    
     return [self setDataSourcePlayerItem:item withKey:key];
 }
 
@@ -357,7 +362,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                         end = endTime;
                     }
                 }
-
+                
                 [values addObject:@[ @(start), @(end) ]];
             }
             _eventSink(@{@"event" : @"bufferingUpdate", @"values" : values, @"key" : _key});
@@ -410,7 +415,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (__observersAdded == false){
         [self addObservers:[_player currentItem]];
     }
-
+    
     if (_isPlaying) {
         [_player play];
     } else {
@@ -480,7 +485,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (!CMTIME_IS_INVALID(_player.currentItem.forwardPlaybackEndTime)) {
         time = [[_player currentItem] forwardPlaybackEndTime];
     }
-
+    
     return FLTCMTimeToMillis(time);
 }
 
@@ -622,15 +627,15 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
-
+    
 }
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
-
+    
 }
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController failedToStartPictureInPictureWithError:(NSError *)error {
-
+    
 }
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL))completionHandler {
@@ -958,13 +963,13 @@ NSMutableDictionary*  _artworkImageDict;
         [playerToRemoveListener.player removeTimeObserver: timeObserverId];
     }
     [_timeObserverIdDict removeAllObjects];
-
+    
 }
 
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-
-
+    
+    
     if ([@"init" isEqualToString:call.method]) {
         // Allow audio playback when the Ring/Silent switch is set to silent
         [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
@@ -1086,13 +1091,13 @@ NSMutableDictionary*  _artworkImageDict;
                     return;
                 }
             }
-
+            
             result([NSNumber numberWithBool:false]);
         } else if ([@"disablePictureInPicture" isEqualToString:call.method]){
             [player disablePictureInPicture];
             [player setPictureInPicture:false];
         }
-
+        
         else {
             result(FlutterMethodNotImplemented);
         }
