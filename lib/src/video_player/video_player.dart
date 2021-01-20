@@ -34,6 +34,7 @@ class VideoPlayerValue {
     @required this.duration,
     this.size,
     this.position = const Duration(),
+    this.absolutePosition,
     this.caption = const Caption(),
     this.buffered = const <DurationRange>[],
     this.isPlaying = false,
@@ -60,6 +61,11 @@ class VideoPlayerValue {
 
   /// The current playback position.
   final Duration position;
+
+  /// The current absolute playback position.
+  ///
+  /// Is null when is not available.
+  final DateTime absolutePosition;
 
   /// The [Caption] that should be displayed based on the current [position].
   ///
@@ -124,6 +130,7 @@ class VideoPlayerValue {
     Duration duration,
     Size size,
     Duration position,
+    DateTime absolutePosition,
     Caption caption,
     List<DurationRange> buffered,
     bool isPlaying,
@@ -138,6 +145,7 @@ class VideoPlayerValue {
       duration: duration ?? this.duration,
       size: size ?? this.size,
       position: position ?? this.position,
+      absolutePosition: absolutePosition ?? this.absolutePosition,
       caption: caption ?? this.caption,
       buffered: buffered ?? this.buffered,
       isPlaying: isPlaying ?? this.isPlaying,
@@ -157,6 +165,7 @@ class VideoPlayerValue {
         'duration: $duration, '
         'size: $size, '
         'position: $position, '
+        'absolutePosition: $absolutePosition, '
         'caption: $caption, '
         'buffered: [${buffered.join(', ')}], '
         'isPlaying: $isPlaying, '
@@ -464,11 +473,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             return;
           }
           final Duration newPosition = await position;
+          final DateTime newAbsolutePosition = await absolutePosition;
           // ignore: invariant_booleans
           if (_isDisposed) {
             return;
           }
-          _updatePosition(newPosition);
+          _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
         },
       );
     } else {
@@ -496,6 +506,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return null;
     }
     return _videoPlayerPlatform.getPosition(_textureId);
+  }
+
+  /// The absolute position in the current video stream
+  /// (i.e. EXT-X-PROGRAM-DATE-TIME in HLS).
+  Future<DateTime> get absolutePosition async {
+    if (!value.initialized && _isDisposed) {
+      return null;
+    }
+    return _videoPlayerPlatform.getAbsolutePosition(_textureId);
   }
 
   /// Sets the video's current timestamp to be at [moment]. The next
@@ -577,8 +596,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return const Caption();
   }
 
-  void _updatePosition(Duration position) {
+  void _updatePosition(Duration position, {DateTime absolutePosition}) {
     value = value.copyWith(position: position);
+    value = value.copyWith(absolutePosition: absolutePosition);
     value = value.copyWith(caption: _getCaptionAt(position));
   }
 

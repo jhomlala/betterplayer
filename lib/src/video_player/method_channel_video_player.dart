@@ -187,6 +187,17 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<DateTime> getAbsolutePosition(int textureId) async {
+    final int milliseconds = await _channel.invokeMethod<int>(
+      'absolutePosition',
+      <String, dynamic>{'textureId': textureId},
+    );
+
+    if (milliseconds <= 0) return null;
+
+    return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+  }
+
   Future<void> enablePictureInPicture(int textureId, double top, double left,
       double width, double height) async {
     return _channel.invokeMethod<void>(
