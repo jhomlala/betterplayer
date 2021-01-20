@@ -549,10 +549,8 @@ class _BetterPlayerCupertinoControlsState
   @override
   void cancelAndRestartTimer() {
     _hideTimer?.cancel();
-
     setState(() {
       _hideStuff = false;
-
       _startHideTimer();
     });
   }
@@ -653,6 +651,9 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _startHideTimer() {
+    if (_betterPlayerController.controlsAlwaysVisible){
+      return;
+    }
     _hideTimer = Timer(const Duration(seconds: 3), () {
       setState(() {
         _hideStuff = true;

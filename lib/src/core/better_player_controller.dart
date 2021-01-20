@@ -138,6 +138,11 @@ class BetterPlayerController extends ChangeNotifier {
   ///StreamSubscription for VideoEvent listener
   StreamSubscription<VideoEvent> _videoEventStreamSubscription;
 
+  ///Are controls always visible
+  bool _controlsAlwaysVisible = false;
+
+  bool get controlsAlwaysVisible => _controlsAlwaysVisible;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -754,6 +759,14 @@ class BetterPlayerController extends ChangeNotifier {
         ///TODO: Handle when needed
         break;
     }
+  }
+
+  ///Setup controls always visible mode
+  void setControlsAlwaysVisible(bool controlsAlwaysVisible) {
+    assert(
+        controlsAlwaysVisible != null, "ControlsAlwaysVisible can't be null");
+    _controlsAlwaysVisible = controlsAlwaysVisible;
+    _controlsVisibilityStreamController.add(controlsAlwaysVisible);
   }
 
   @override
