@@ -6,6 +6,7 @@ import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/cache_page.dart';
 import 'package:better_player_example/pages/change_player_theme_page.dart';
 import 'package:better_player_example/pages/controller_controls_page.dart';
+import 'package:better_player_example/pages/controls_always_visible_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/fade_placeholder_page.dart';
@@ -143,6 +144,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("Picture in Picture page", () {
         _navigateToPage(PictureInPicturePage());
+      }),
+      _buildExampleElementWidget("Controls always visible page", () {
+        _navigateToPage(ControlsAlwaysVisiblePage());
       }),
     ];
   }

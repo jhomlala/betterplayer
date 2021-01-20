@@ -897,6 +897,11 @@ Android: When PiP is enabled, Better Player will open full screen mode to play v
 user disables PiP, Better Player will back to the previous settings and for a half of second your device
 will have incorrect orientation.
 
+### Set controls always visible
+```dart
+    betterPlayerController.setControlsAlwaysVisible(true);
+```
+
 
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html

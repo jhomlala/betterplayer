@@ -627,6 +627,9 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _startHideTimer() {
+    if (_betterPlayerController.controlsAlwaysVisible) {
+      return;
+    }
     _hideTimer = Timer(const Duration(seconds: 3), () {
       setState(() {
         _hideStuff = true;
