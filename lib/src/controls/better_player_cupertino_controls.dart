@@ -651,7 +651,7 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _startHideTimer() {
-    if (_betterPlayerController.controlsAlwaysVisible){
+    if (_betterPlayerController.controlsAlwaysVisible) {
       return;
     }
     _hideTimer = Timer(const Duration(seconds: 3), () {

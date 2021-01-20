@@ -1,6 +1,7 @@
 ## 0.0.47
 * Fixed Android loading indicator issue.
 * Added setControlsAlwaysVisible in BetterPlayerController.
+* Added absolutePosition feature (added by https://github.com/FlutterSu)
 
 ## 0.0.46
 * Fixed iOS AVPlayer observer issue.

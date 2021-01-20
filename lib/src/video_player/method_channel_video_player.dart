@@ -198,6 +198,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     return DateTime.fromMillisecondsSinceEpoch(milliseconds);
   }
 
+  @override
   Future<void> enablePictureInPicture(int textureId, double top, double left,
       double width, double height) async {
     return _channel.invokeMethod<void>(
