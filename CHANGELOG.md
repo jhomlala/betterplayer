@@ -1,3 +1,7 @@
+## 0.0.47
+* Fixed Android loading indicator issue.
+
+
 ## 0.0.46
 * Fixed iOS AVPlayer observer issue.
 * Fixed iOS headers not applied issue.
