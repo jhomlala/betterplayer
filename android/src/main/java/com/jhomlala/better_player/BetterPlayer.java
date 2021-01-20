@@ -29,6 +29,7 @@ import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -549,6 +550,16 @@ final class BetterPlayer {
     }
 
     long getPosition() {
+        return exoPlayer.getCurrentPosition();
+    }
+
+    long getAbsolutePosition() {
+        Timeline timeline = exoPlayer.getCurrentTimeline();
+        if (!timeline.isEmpty()) {
+            long windowStartTimeMs = timeline.getWindow(0, new Timeline.Window()).windowStartTimeMs;
+            long pos = exoPlayer.getCurrentPosition();
+            return (windowStartTimeMs + pos);
+        }
         return exoPlayer.getCurrentPosition();
     }
 
