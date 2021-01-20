@@ -53,6 +53,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.media.session.MediaButtonReceiver;
+
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
@@ -264,7 +265,7 @@ final class BetterPlayer {
     }
 
 
-private ControlDispatcher setupControlDispatcher() {
+    private ControlDispatcher setupControlDispatcher() {
         return new ControlDispatcher() {
             @Override
             public boolean dispatchPrepare(Player player) {
@@ -460,14 +461,15 @@ private ControlDispatcher setupControlDispatcher() {
                             event.put("event", "bufferingStart");
                             eventSink.success(event);
                         } else if (playbackState == Player.STATE_READY) {
-                            if (isInitialized) {
-                                Map<String, Object> event = new HashMap<>();
-                                event.put("event", "bufferingEnd");
-                                eventSink.success(event);
-                            } else {
+                            if (!isInitialized) {
                                 isInitialized = true;
                                 sendInitialized();
                             }
+
+                            Map<String, Object> event = new HashMap<>();
+                            event.put("event", "bufferingEnd");
+                            eventSink.success(event);
+
                         } else if (playbackState == Player.STATE_ENDED) {
                             Map<String, Object> event = new HashMap<>();
                             event.put("event", "completed");
