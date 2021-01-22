@@ -205,7 +205,7 @@ final class BetterPlayer {
         String playerNotificationChannelName = notificationChannelName;
         if (notificationChannelName == null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                int importance = NotificationManager.IMPORTANCE_LOW;
                 NotificationChannel channel = new NotificationChannel(DEFAULT_NOTIFICATION_CHANNEL,
                         DEFAULT_NOTIFICATION_CHANNEL, importance);
                 channel.setDescription(DEFAULT_NOTIFICATION_CHANNEL);
