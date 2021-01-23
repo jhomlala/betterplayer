@@ -1,5 +1,6 @@
 ## 0.0.48
 * Fixed loading large videos in iOS.
+* Fixed partly progress bar jumping when seek issue in iOS.
 
 ## 0.0.47
 * Fixed Android loading indicator issue.
