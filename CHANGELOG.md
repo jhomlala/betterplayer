@@ -1,3 +1,9 @@
+## 0.0.48
+* Fixed loading large videos in iOS.
+* Fixed partly progress bar jumping when seek issue in iOS.
+* Added forceDispose parameter to dispose method in BetterPlayerController.
+* Fixed Android notification vibration issue (fixed by https://github.com/marcusforsberg).
+
 ## 0.0.47
 * Fixed Android loading indicator issue.
 * Added setControlsAlwaysVisible in BetterPlayerController.

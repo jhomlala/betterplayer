@@ -89,6 +89,11 @@ AVPictureInPictureController *_pipController;
     _disposed = false;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+    
+    ///Fix for loading large videos
+    if (@available(iOS 10.0, *)) {
+        _player.automaticallyWaitsToMinimizeStalling = false;
+    }
     _displayLink = [CADisplayLink displayLinkWithTarget:frameUpdater
                                                selector:@selector(onDisplayLink:)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
@@ -117,7 +122,8 @@ AVPictureInPictureController *_pipController;
                                                  selector:@selector(itemDidPlayToEndTime:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:item];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
+        ///Currently disabled, because it leads to unexpected problems
+        //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
         self._observersAdded = true;
     }
 }
@@ -169,7 +175,8 @@ AVPictureInPictureController *_pipController;
         [[_player currentItem] removeObserver:self
                                    forKeyPath:@"playbackBufferFull"
                                       context:playbackBufferFullContext];
-        [[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
+        ///Currently disabled
+        ///[[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         self._observersAdded = false;
     }
@@ -500,9 +507,21 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)seekTo:(int)location {
+    ///When player is playing, pause video, seek to new position and start again. This will prevent issues with seekbar jumps.
+    bool wasPlaying = _isPlaying;
+    if (wasPlaying){
+        [_player pause];
+    }
+
     [_player seekToTime:CMTimeMake(location, 1000)
         toleranceBefore:kCMTimeZero
-         toleranceAfter:kCMTimeZero];
+         toleranceAfter:kCMTimeZero
+            completionHandler:^(BOOL finished){
+        if (wasPlaying){
+            [self->_player play];
+        }
+    }];
+
 }
 
 - (void)setIsLooping:(bool)isLooping {

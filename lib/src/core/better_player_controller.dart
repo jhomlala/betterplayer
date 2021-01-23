@@ -769,9 +769,12 @@ class BetterPlayerController extends ChangeNotifier {
     _controlsVisibilityStreamController.add(controlsAlwaysVisible);
   }
 
+  ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
+  ///autoDispose parameter will be overridden and controller will be disposed
+  ///(if it wasn't disposed before).
   @override
-  void dispose() {
-    if (!betterPlayerConfiguration.autoDispose) {
+  void dispose({bool forceDispose = false}) {
+    if (!betterPlayerConfiguration.autoDispose && !forceDispose) {
       return;
     }
     if (!_disposed) {
