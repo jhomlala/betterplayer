@@ -4,10 +4,12 @@ import 'dart:async';
 // Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
+
 // Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+
 // Package imports:
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
@@ -23,30 +25,30 @@ typedef BetterPlayerRoutePageBuilder = Widget Function(
 class BetterPlayer extends StatefulWidget {
   const BetterPlayer({Key key, @required this.controller})
       : assert(
-            controller != null, 'You must provide a better player controller'),
+  controller != null, 'You must provide a better player controller'),
         super(key: key);
 
   factory BetterPlayer.network(
-    String url, {
-    BetterPlayerConfiguration betterPlayerConfiguration,
-  }) =>
+      String url, {
+        BetterPlayerConfiguration betterPlayerConfiguration,
+      }) =>
       BetterPlayer(
         controller: BetterPlayerController(
           betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
           betterPlayerDataSource:
-              BetterPlayerDataSource(BetterPlayerDataSourceType.network, url),
+          BetterPlayerDataSource(BetterPlayerDataSourceType.network, url),
         ),
       );
 
   factory BetterPlayer.file(
-    String url, {
-    BetterPlayerConfiguration betterPlayerConfiguration,
-  }) =>
+      String url, {
+        BetterPlayerConfiguration betterPlayerConfiguration,
+      }) =>
       BetterPlayer(
         controller: BetterPlayerController(
           betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
           betterPlayerDataSource:
-              BetterPlayerDataSource(BetterPlayerDataSourceType.file, url),
+          BetterPlayerDataSource(BetterPlayerDataSourceType.file, url),
         ),
       );
 
@@ -65,6 +67,12 @@ class BetterPlayerState extends State<BetterPlayer>
 
   bool _isFullScreen = false;
 
+  ///State of navigator on widget created
+  NavigatorState _navigatorState;
+
+  ///Flag which determines if widget has initialized
+  bool _initialized = false;
+
   @override
   void initState() {
     super.initState();
@@ -72,6 +80,18 @@ class BetterPlayerState extends State<BetterPlayer>
     Future.delayed(Duration.zero, () {
       _setup();
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (!_initialized) {
+      final navigator = Navigator.of(context);
+      setState(() {
+        _navigatorState = navigator;
+      });
+      _initialized = true;
+    }
+    super.didChangeDependencies();
   }
 
   Future<void> _setup() async {
@@ -88,6 +108,18 @@ class BetterPlayerState extends State<BetterPlayer>
 
   @override
   void dispose() {
+    ///If somehow BetterPlayer widget has been disposed from widget tree and
+    ///full screen is on, then full screen route must be pop and return to normal
+    ///state.
+    if (_isFullScreen) {
+      Wakelock.disable();
+      _navigatorState.maybePop();
+      SystemChrome.setEnabledSystemUIOverlays(
+          _betterPlayerConfiguration.systemOverlaysAfterFullScreen);
+      SystemChrome.setPreferredOrientations(
+          _betterPlayerConfiguration.deviceOrientationsAfterFullScreen);
+    }
+
     WidgetsBinding.instance.removeObserver(this);
     widget.controller.removeListener(onFullScreenChanged);
 
@@ -159,10 +191,10 @@ class BetterPlayerState extends State<BetterPlayer>
   }
 
   Widget _fullScreenRoutePageBuilder(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      ) {
     final controllerProvider = BetterPlayerControllerProvider(
         controller: widget.controller, child: _buildPlayer());
 
