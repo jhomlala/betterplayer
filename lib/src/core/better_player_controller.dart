@@ -287,6 +287,7 @@ class BetterPlayerController extends ChangeNotifier {
               ?.notificationConfiguration?.notificationChannelName,
           overriddenDuration: _betterPlayerDataSource.overriddenDuration,
           formatHint: _getVideoFormat(_betterPlayerDataSource.videoFormat),
+          stopBufferingOnPause: _betterPlayerDataSource.stopBufferingOnPause,
         );
 
         break;
@@ -387,6 +388,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   Future<void> play() async {
+    print("PLAY!!!");
     if (_appLifecycleState == AppLifecycleState.resumed) {
       await videoPlayerController.play();
       _hasCurrentDataSourceStarted = true;
@@ -462,7 +464,7 @@ class BetterPlayerController extends ChangeNotifier {
         : BetterPlayerEvent(BetterPlayerEventType.controlsHidden));
   }
 
-  void postEvent(BetterPlayerEvent betterPlayerEvent){
+  void postEvent(BetterPlayerEvent betterPlayerEvent) {
     _postEvent(betterPlayerEvent);
   }
 

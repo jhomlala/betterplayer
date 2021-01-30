@@ -59,6 +59,8 @@ int64_t FLTNSTimeIntervalToMillis(NSTimeInterval interval) {
 @property(nonatomic) bool _pictureInPicture;
 @property(nonatomic) bool _observersAdded;
 @property(nonatomic) int stalledCount;
+@property(nonatomic) bool stopBufferingOnPause;
+@property(nonatomic) AVPlayerItem* item;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -320,7 +322,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _key = key;
     _stalledCount =0;
     [_player replaceCurrentItemWithPlayerItem:item];
-    
     AVAsset* asset = [item asset];
     void (^assetCompletionHandler)(void) = ^{
         if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
@@ -454,7 +455,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)updatePlayingState {
     if (!_isInitialized || !_key) {
-        NSLog(@"not initalized and paused!!");
         _displayLink.paused = YES;
         return;
     }
@@ -504,18 +504,49 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             @"height" : @(height),
             @"key" : _key
                    });
+        [self setBufferingEnabled: false];
     }
 }
 
 - (void)play {
+    NSLog(@"PLAY");
+    [self setBufferingEnabled: true];
     _stalledCount = 0;
     _isPlaying = true;
     [self updatePlayingState];
 }
 
 - (void)pause {
+    [self setBufferingEnabled: false];
     _isPlaying = false;
     [self updatePlayingState];
+}
+
+
+
+- (void) setBufferingEnabled: (bool) bufferingEnabled{
+    if ([self stopBufferingOnPause]){
+        if (@available(iOS 10.0, *)) {
+            if (bufferingEnabled){
+                NSLog(@"Enabled buffering");
+                dispatch_async(dispatch_get_main_queue(), ^{
+                [self.player replaceCurrentItemWithPlayerItem:_item];
+                });
+                _player.automaticallyWaitsToMinimizeStalling = false;
+                _player.currentItem.preferredForwardBufferDuration = 0;
+                //_player.automaticallyWaitsToMinimizeStalling = false;
+            } else {
+                NSLog(@"Disabled buffering");
+                _item = _player.currentItem;
+                
+                _player.currentItem.preferredForwardBufferDuration = 1;
+                _player.automaticallyWaitsToMinimizeStalling = true;
+                //_player.currentItem.preferredPeakBitRate = 0;
+                
+                //_player.automaticallyWaitsToMinimizeStalling = true;
+            }
+        }
+    }
 }
 
 - (int64_t)position {
@@ -1073,6 +1104,13 @@ NSMutableDictionary*  _artworkImageDict;
                 useCache = [[dataSource objectForKey:@"useCache"] boolValue];
             }
             
+            BOOL stopBufferingOnPause  = false;
+            id stopBufferingOnPauseObject = [dataSource objectForKey:@"stopBufferingOnPause"];
+            if (stopBufferingOnPauseObject != [NSNull null]) {
+                stopBufferingOnPause= [[dataSource objectForKey:@"stopBufferingOnPause"] boolValue];
+            }
+            [player setStopBufferingOnPause:stopBufferingOnPause];
+            
             if (headers == nil){
                 headers = @{};
             }
@@ -1121,6 +1159,7 @@ NSMutableDictionary*  _artworkImageDict;
             [player setVolume:[argsMap[@"volume"] doubleValue]];
             result(nil);
         } else if ([@"play" isEqualToString:call.method]) {
+            NSLog(@"PLAY!");
             [self setupRemoteNotification:player];
             [player play];
             result(nil);

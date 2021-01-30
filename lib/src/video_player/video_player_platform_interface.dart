@@ -206,6 +206,7 @@ class DataSource {
     this.imageUrl,
     this.notificationChannelName,
     this.overriddenDuration,
+    this.stopBufferingOnPause = false,
   }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -276,6 +277,8 @@ class DataSource {
   final String notificationChannelName;
 
   final Duration overriddenDuration;
+
+  final bool stopBufferingOnPause;
 
   /// Key to compare DataSource
   String get key {

@@ -341,6 +341,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String imageUrl,
     String notificationChannelName,
     Duration overriddenDuration,
+    bool stopBufferingOnPause = false,
   }) {
     return _setDataSource(
       DataSource(
@@ -357,7 +358,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           author: author,
           imageUrl: imageUrl,
           notificationChannelName: notificationChannelName,
-          overriddenDuration: overriddenDuration),
+          overriddenDuration: overriddenDuration,
+          stopBufferingOnPause: stopBufferingOnPause),
     );
   }
 

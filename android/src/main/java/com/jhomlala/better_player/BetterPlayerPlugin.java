@@ -6,7 +6,6 @@ package com.jhomlala.better_player;
 
 import android.app.Activity;
 import android.app.PictureInPictureParams;
-import android.app.RemoteAction;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -15,7 +14,7 @@ import android.util.Log;
 import android.util.LongSparseArray;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.RemoteActionCompat;
+
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -63,9 +62,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String IMAGE_URL_PARAMETER = "imageUrl";
     private static final String NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName";
     private static final String OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration";
-    private static final String ENABLE_PICTURE_IN_PICTURE = "enablePictureInPicture";
-    private static final String DISABLE_PICTURE_IN_PICTURE = "disablePictureInPicture";
-    private static final String IS_PICTURE_IN_PICTURE_SUPPORTED = "isPictureInPictureSupported";
+    private static final String STOP_BUFFERING_ON_PAUSE_PARAMETER = "stopBufferingOnPause";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -79,6 +76,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String ABSOLUTE_POSITION_METHOD = "absolutePosition";
     private static final String SET_SPEED_METHOD = "setSpeed";
     private static final String SET_TRACK_PARAMETERS_METHOD = "setTrackParameters";
+    private static final String ENABLE_PICTURE_IN_PICTURE_METHOD = "enablePictureInPicture";
+    private static final String DISABLE_PICTURE_IN_PICTURE_METHOD = "disablePictureInPicture";
+    private static final String IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD = "isPictureInPictureSupported";
     private static final String DISPOSE_METHOD = "dispose";
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
@@ -247,17 +247,17 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                         call.argument(BITRATE_PARAMETER));
                 result.success(null);
                 break;
-            case ENABLE_PICTURE_IN_PICTURE: {
+            case ENABLE_PICTURE_IN_PICTURE_METHOD: {
                 enablePictureInPicture(player);
                 result.success(null);
                 break;
             }
-            case DISABLE_PICTURE_IN_PICTURE: {
+            case DISABLE_PICTURE_IN_PICTURE_METHOD: {
                 disablePictureInPicture(player);
                 result.success(null);
                 break;
             }
-            case IS_PICTURE_IN_PICTURE_SUPPORTED:
+            case IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD:
                 result.success(isPictureInPictureSupported());
                 break;
 
@@ -301,8 +301,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     false,
                     0L,
                     0L,
-                    overriddenDuration.longValue()
-                    );
+                    overriddenDuration.longValue(),
+                    false
+            );
         } else {
             boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
             Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 0);
@@ -311,6 +312,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
             long maxCacheFileSize = maxCacheFileSizeNumber.longValue();
             String uri = getParameter(dataSource, URI_PARAMETER, "");
             String formatHint = getParameter(dataSource, FORMAT_HINT_PARAMETER, null);
+            boolean stopBufferingOnPause = getParameter(dataSource, STOP_BUFFERING_ON_PAUSE_PARAMETER, false);
             player.setDataSource(
                     flutterState.applicationContext,
                     key,
@@ -321,7 +323,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     useCache,
                     maxCacheSize,
                     maxCacheFileSize,
-                    overriddenDuration.longValue()
+                    overriddenDuration.longValue(),
+                    stopBufferingOnPause
             );
         }
     }

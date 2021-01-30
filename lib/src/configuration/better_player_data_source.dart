@@ -54,6 +54,9 @@ class BetterPlayerDataSource {
   ///Video format hint when data source url has not valid extension.
   final BetterPlayerVideoFormat videoFormat;
 
+  ///Should stop loading video when video is paused;
+  final bool stopBufferingOnPause;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -70,6 +73,7 @@ class BetterPlayerDataSource {
         const BetterPlayerNotificationConfiguration(showNotification: false),
     this.overriddenDuration,
     this.videoFormat,
+    this.stopBufferingOnPause = false,
   }) : assert(
             ((type == BetterPlayerDataSourceType.network ||
                         type == BetterPlayerDataSourceType.file) &&
@@ -91,6 +95,7 @@ class BetterPlayerDataSource {
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
+    bool stopBufferingOnPause,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -104,6 +109,7 @@ class BetterPlayerDataSource {
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration,
       overriddenDuration: overriddenDuration,
+      stopBufferingOnPause: stopBufferingOnPause,
     );
   }
 
@@ -165,6 +171,7 @@ class BetterPlayerDataSource {
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
+    bool stopBufferingOnPause,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -180,6 +187,7 @@ class BetterPlayerDataSource {
       notificationConfiguration:
           notificationConfiguration ?? this.notificationConfiguration,
       overriddenDuration: overriddenDuration ?? this.overriddenDuration,
+      stopBufferingOnPause: stopBufferingOnPause ?? this.stopBufferingOnPause,
     );
   }
 }

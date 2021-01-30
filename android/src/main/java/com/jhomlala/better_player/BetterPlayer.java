@@ -34,7 +34,6 @@ import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
-import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
@@ -94,6 +93,7 @@ final class BetterPlayer {
     private EventListener exoPlayerEventListener;
     private Bitmap bitmap;
     private MediaSessionCompat mediaSession;
+    private BetterPlayerLoadControlAdapter betterPlayerLoadControlAdapter;
 
 
     BetterPlayer(
@@ -104,18 +104,21 @@ final class BetterPlayer {
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
         trackSelector = new DefaultTrackSelector(context);
-        exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
-
+        betterPlayerLoadControlAdapter = new BetterPlayerLoadControlAdapter();
+        exoPlayer = new SimpleExoPlayer.Builder(context)
+                .setTrackSelector(trackSelector)
+                .setLoadControl(betterPlayerLoadControlAdapter).build();
         setupVideoPlayer(eventChannel, textureEntry, result);
     }
+
 
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
-            long overriddenDuration) {
+            long overriddenDuration, boolean stopBufferingOnPause) {
         this.key = key;
         isInitialized = false;
-
+        betterPlayerLoadControlAdapter.setDefaultMode(!stopBufferingOnPause);
         Uri uri = Uri.parse(dataSource);
         DataSource.Factory dataSourceFactory;
 

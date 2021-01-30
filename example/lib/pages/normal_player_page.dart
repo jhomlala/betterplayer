@@ -21,6 +21,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.bugBuckBunnyVideoUrl,
+      stopBufferingOnPause: true
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);

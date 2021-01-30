@@ -57,6 +57,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'imageUrl': dataSource.imageUrl,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+          'stopBufferingOnPause': dataSource.stopBufferingOnPause,
         };
         break;
       case DataSourceType.network:
@@ -74,6 +75,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'imageUrl': dataSource.imageUrl,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+          'stopBufferingOnPause': dataSource.stopBufferingOnPause,
         };
         break;
       case DataSourceType.file:
@@ -89,6 +91,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'imageUrl': dataSource.imageUrl,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+          'stopBufferingOnPause': dataSource.stopBufferingOnPause,
         };
         break;
     }
