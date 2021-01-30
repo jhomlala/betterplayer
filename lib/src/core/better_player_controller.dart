@@ -142,7 +142,10 @@ class BetterPlayerController extends ChangeNotifier {
   ///Are controls always visible
   bool _controlsAlwaysVisible = false;
 
+  ///Are controls always visible
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
+
+  VideoPlayerValue _videoPlayerValueOnError;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -475,6 +478,9 @@ class BetterPlayerController extends ChangeNotifier {
   void _onVideoPlayerChanged() async {
     final currentVideoPlayerValue = videoPlayerController.value;
     if (currentVideoPlayerValue.hasError) {
+      if (_videoPlayerValueOnError == null) {
+        _videoPlayerValueOnError = currentVideoPlayerValue;
+      }
       _postEvent(
         BetterPlayerEvent(
           BetterPlayerEventType.exception,
@@ -786,6 +792,16 @@ class BetterPlayerController extends ChangeNotifier {
         controlsAlwaysVisible != null, "ControlsAlwaysVisible can't be null");
     _controlsAlwaysVisible = controlsAlwaysVisible;
     _controlsVisibilityStreamController.add(controlsAlwaysVisible);
+  }
+
+  Future retryDataSource() async {
+    await _setupDataSource(_betterPlayerDataSource);
+    if (_videoPlayerValueOnError != null) {
+      final position = _videoPlayerValueOnError.position;
+      await seekTo(position);
+      await play();
+      _videoPlayerValueOnError = null;
+    }
   }
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then

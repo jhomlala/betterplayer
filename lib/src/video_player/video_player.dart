@@ -271,9 +271,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     void errorListener(Object object) {
       if (object is PlatformException) {
         final PlatformException e = object;
-        value = VideoPlayerValue.erroneous(e.message);
+        value = value.copyWith(errorDescription: e.message);
+        //value = VideoPlayerValue.erroneous(e.message);
       } else {
-        value = VideoPlayerValue.erroneous(object.toString());
+        //value = VideoPlayerValue.erroneous(object.toString());
+        value.copyWith(errorDescription: object.toString());
       }
       _timer?.cancel();
       if (!_initializingCompleter.isCompleted) {

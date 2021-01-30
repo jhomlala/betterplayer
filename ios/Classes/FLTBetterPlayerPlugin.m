@@ -58,6 +58,7 @@ int64_t FLTNSTimeIntervalToMillis(NSTimeInterval interval) {
 @property(nonatomic) AVPlayerLayer* _playerLayer;
 @property(nonatomic) bool _pictureInPicture;
 @property(nonatomic) bool _observersAdded;
+@property(nonatomic) int stalledCount;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -65,6 +66,7 @@ int64_t FLTNSTimeIntervalToMillis(NSTimeInterval interval) {
 - (int64_t) duration;
 - (int64_t) position;
 @end
+
 
 static void* timeRangeContext = &timeRangeContext;
 static void* statusContext = &statusContext;
@@ -106,6 +108,7 @@ AVPictureInPictureController *_pipController;
     if (!self._observersAdded){
         [item addObserver:self forKeyPath:@"loadedTimeRanges" options:0 context:timeRangeContext];
         [item addObserver:self forKeyPath:@"status" options:0 context:statusContext];
+        [_player addObserver:self forKeyPath:@"rate" options:0 context:nil];
         [item addObserver:self
                forKeyPath:@"playbackLikelyToKeepUp"
                   options:0
@@ -122,8 +125,10 @@ AVPictureInPictureController *_pipController;
                                                  selector:@selector(itemDidPlayToEndTime:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:item];
-        ///Currently disabled, because it leads to unexpected problems
-        //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(playbackStalled:) name:AVPlayerItemPlaybackStalledNotification object:item ];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemFailedToPlayToEndTime:)
+                                                     name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                                   object:item];
         self._observersAdded = true;
     }
 }
@@ -175,14 +180,13 @@ AVPictureInPictureController *_pipController;
         [[_player currentItem] removeObserver:self
                                    forKeyPath:@"playbackBufferFull"
                                       context:playbackBufferFullContext];
-        ///Currently disabled
-        ///[[NSNotificationCenter defaultCenter] removeObserver:self name:AVPlayerItemPlaybackStalledNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         self._observersAdded = false;
     }
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification*)notification {
+    
     if (_isLooping) {
         AVPlayerItem* p = [notification object];
         [p seekToTime:kCMTimeZero completionHandler:nil];
@@ -194,6 +198,7 @@ AVPictureInPictureController *_pipController;
         }
     }
 }
+
 
 static inline CGFloat radiansToDegrees(CGFloat radians) {
     // Input range [-pi, pi] or [-180, 180]
@@ -313,6 +318,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setDataSourcePlayerItem:(AVPlayerItem*)item withKey:(NSString*)key{
     _key = key;
+    _stalledCount =0;
     [_player replaceCurrentItemWithPlayerItem:item];
     
     AVAsset* asset = [item asset];
@@ -348,20 +354,47 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self addObservers:item];
 }
 
-- (void)playbackStalled:(NSNotification *)notification {
-    if (_eventSink != nil) {
-        _eventSink([FlutterError
-                    errorWithCode:@"VideoError"
-                    message:@"Failed to load video: playback stalled"
-                    details:nil]);
+-(void)handleStalled {
+    if (_player.currentItem.playbackLikelyToKeepUp ||
+        [self availableDuration] - CMTimeGetSeconds(_player.currentItem.currentTime) > 10.0) {
+        [self play];
+    } else {
+        _stalledCount++;
+        if (_stalledCount > 5){
+            _eventSink([FlutterError
+                        errorWithCode:@"VideoError"
+                        message:@"Failed to load video: playback stalled"
+                        details:nil]);
+            return;
+        }
+        [self performSelector:@selector(handleStalled) withObject:nil afterDelay:1];
     }
 }
 
+- (NSTimeInterval) availableDuration
+{
+    NSArray *loadedTimeRanges = [[_player currentItem] loadedTimeRanges];
+    CMTimeRange timeRange = [[loadedTimeRanges objectAtIndex:0] CMTimeRangeValue];
+    Float64 startSeconds = CMTimeGetSeconds(timeRange.start);
+    Float64 durationSeconds = CMTimeGetSeconds(timeRange.duration);
+    NSTimeInterval result = startSeconds + durationSeconds;
+    return result;
+}
 
 - (void)observeValueForKeyPath:(NSString*)path
                       ofObject:(id)object
                         change:(NSDictionary*)change
                        context:(void*)context {
+    
+    if ([path isEqualToString:@"rate"]) {
+        if (_player.rate == 0 && //if player rate dropped to 0
+            CMTIME_COMPARE_INLINE(_player.currentItem.currentTime, >, kCMTimeZero) && //if video was started
+            CMTIME_COMPARE_INLINE(_player.currentItem.currentTime, <, _player.currentItem.duration) && //but not yet finished
+            _isPlaying) { //instance variable to handle overall state (changed to YES when user triggers playback)
+            [self handleStalled];
+        }
+    }
+    
     if (context == timeRangeContext) {
         if (_eventSink != nil) {
             NSMutableArray<NSArray<NSNumber*>*>* values = [[NSMutableArray alloc] init];
@@ -475,6 +508,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)play {
+    _stalledCount = 0;
     _isPlaying = true;
     [self updatePlayingState];
 }
@@ -489,7 +523,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (int64_t)absolutePosition {
-  return FLTNSTimeIntervalToMillis([[[_player currentItem] currentDate] timeIntervalSince1970]);
+    return FLTNSTimeIntervalToMillis([[[_player currentItem] currentDate] timeIntervalSince1970]);
 }
 
 - (int64_t)duration {
@@ -512,16 +546,16 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (wasPlaying){
         [_player pause];
     }
-
+    
     [_player seekToTime:CMTimeMake(location, 1000)
         toleranceBefore:kCMTimeZero
          toleranceAfter:kCMTimeZero
-            completionHandler:^(BOOL finished){
+      completionHandler:^(BOOL finished){
         if (wasPlaying){
             [self->_player play];
         }
     }];
-
+    
 }
 
 - (void)setIsLooping:(bool)isLooping {
@@ -1093,7 +1127,7 @@ NSMutableDictionary*  _artworkImageDict;
         } else if ([@"position" isEqualToString:call.method]) {
             result(@([player position]));
         } else if ([@"absolutePosition" isEqualToString:call.method]) {
-              result(@([player absolutePosition]));
+            result(@([player absolutePosition]));
         } else if ([@"seekTo" isEqualToString:call.method]) {
             [player seekTo:[argsMap[@"location"] intValue]];
             result(nil);

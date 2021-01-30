@@ -1,6 +1,8 @@
 ## 0.0.49
 * Fixed fullscreen dispose issue.
-* Added videoFormat parameter in BetterPlayerDataSource.
+* Added videoFormat parameter in BetterPlayerDataSource (should be used when data source url has no extension).
+* Added retry feature after video failed to load.
+* Added enableRetry in BetterPlayerControlsConfiguration.
 
 ## 0.0.48
 * Fixed loading large videos in iOS.
