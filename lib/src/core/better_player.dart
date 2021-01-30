@@ -144,10 +144,12 @@ class BetterPlayerState extends State<BetterPlayer>
     final controller = widget.controller;
     if (controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
+      controller.postEvent(BetterPlayerEvent(BetterPlayerEventType.openFullscreen));
       await _pushFullScreenWidget(context);
     } else if (_isFullScreen && !controller.cancelFullScreenDismiss) {
-      Navigator.of(context, rootNavigator: true).pop();
+      await Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
+      controller.postEvent(BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
     }
 
     if (controller.cancelFullScreenDismiss) {

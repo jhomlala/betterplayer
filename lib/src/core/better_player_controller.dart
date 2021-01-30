@@ -373,21 +373,16 @@ class BetterPlayerController extends ChangeNotifier {
 
   void enterFullScreen() {
     _isFullScreen = true;
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.openFullscreen));
     notifyListeners();
   }
 
   void exitFullScreen() {
     _isFullScreen = false;
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
     notifyListeners();
   }
 
   void toggleFullScreen() {
     _isFullScreen = !_isFullScreen;
-    _postEvent(_isFullScreen
-        ? BetterPlayerEvent(BetterPlayerEventType.openFullscreen)
-        : BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
     notifyListeners();
   }
 
@@ -465,6 +460,10 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(isVisible
         ? BetterPlayerEvent(BetterPlayerEventType.controlsVisible)
         : BetterPlayerEvent(BetterPlayerEventType.controlsHidden));
+  }
+
+  void postEvent(BetterPlayerEvent betterPlayerEvent){
+    _postEvent(betterPlayerEvent);
   }
 
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {

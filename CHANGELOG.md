@@ -3,6 +3,7 @@
 * Added videoFormat parameter in BetterPlayerDataSource (should be used when data source url has no extension).
 * Added retry feature after video failed to load.
 * Added enableRetry in BetterPlayerControlsConfiguration.
+* Changed BetterPlayerEventType.openFullscreen and BetterPlayerEventType.hideFullscreen events behavior (now events trigger after route change).
 
 ## 0.0.48
 * Fixed loading large videos in iOS.
