@@ -607,6 +607,18 @@ Possible configuration options:
 
   ///Optional cache configuration, used only for network data sources
   final BetterPlayerCacheConfiguration cacheConfiguration;
+
+  ///List of bytes, used only in memory player
+  final List<int> bytes;
+
+  ///Configuration of remote controls notification
+  final BetterPlayerNotificationConfiguration notificationConfiguration;
+
+  ///Duration which will be returned instead of original duration
+  final Duration overriddenDuration;
+
+  ///Video format hint when data source url has not valid extension.
+  final BetterPlayerVideoFormat videoFormat;
 ```
 
 

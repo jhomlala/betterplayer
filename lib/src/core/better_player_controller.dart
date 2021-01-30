@@ -8,6 +8,7 @@ import 'package:better_player/src/configuration/better_player_configuration.dart
 import 'package:better_player/src/configuration/better_player_event.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/configuration/better_player_translations.dart';
+import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
 
 // Flutter imports:
@@ -242,6 +243,23 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  VideoFormat _getVideoFormat(BetterPlayerVideoFormat betterPlayerVideoFormat) {
+    if (betterPlayerVideoFormat == null) {
+      return null;
+    }
+    switch (betterPlayerVideoFormat) {
+      case BetterPlayerVideoFormat.dash:
+        return VideoFormat.dash;
+      case BetterPlayerVideoFormat.hls:
+        return VideoFormat.hls;
+      case BetterPlayerVideoFormat.ss:
+        return VideoFormat.ss;
+      case BetterPlayerVideoFormat.other:
+        return VideoFormat.other;
+    }
+    return null;
+  }
+
   Future _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
@@ -265,6 +283,7 @@ class BetterPlayerController extends ChangeNotifier {
           notificationChannelName: _betterPlayerDataSource
               ?.notificationConfiguration?.notificationChannelName,
           overriddenDuration: _betterPlayerDataSource.overriddenDuration,
+          formatHint: _getVideoFormat(_betterPlayerDataSource.videoFormat),
         );
 
         break;

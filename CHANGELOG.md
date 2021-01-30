@@ -1,5 +1,6 @@
 ## 0.0.49
 * Fixed fullscreen dispose issue.
+* Added videoFormat parameter in BetterPlayerDataSource.
 
 ## 0.0.48
 * Fixed loading large videos in iOS.

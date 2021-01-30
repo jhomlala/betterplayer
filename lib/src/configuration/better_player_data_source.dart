@@ -1,7 +1,9 @@
 // Project imports:
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
+import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
+import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
 import 'better_player_cache_configuration.dart';
 
@@ -49,6 +51,9 @@ class BetterPlayerDataSource {
   ///Duration which will be returned instead of original duration
   final Duration overriddenDuration;
 
+  ///Video format hint when data source url has not valid extension.
+  final BetterPlayerVideoFormat videoFormat;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -64,6 +69,7 @@ class BetterPlayerDataSource {
     this.notificationConfiguration =
         const BetterPlayerNotificationConfiguration(showNotification: false),
     this.overriddenDuration,
+    this.videoFormat,
   }) : assert(
             ((type == BetterPlayerDataSourceType.network ||
                         type == BetterPlayerDataSourceType.file) &&
