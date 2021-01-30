@@ -20,7 +20,8 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.forBiggerBlazesUrl,
+      "https://d6b09034.tekurarere.tk/mq/NNUVmAXzjPHmdFAxvlmOAXjNYAmNAgjVmZJiRmX_lp",
+      videoFormat: BetterPlayerVideoFormat.hls,
       //overriddenDuration: Duration(seconds: 5),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
