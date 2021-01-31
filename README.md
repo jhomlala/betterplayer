@@ -500,6 +500,12 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
    ///Flag used to show/hide qualities
    final bool enableQualities;
 
+   ///Flag used to show/hide PiP mode
+   final bool enablePip;
+
+   ///Flag used to enable/disable retry feature
+   final bool enableRetry;
+
    ///Custom items of overflow menu
    final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
