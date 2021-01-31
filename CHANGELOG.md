@@ -1,3 +1,12 @@
+## 0.0.49
+* Fixed fullscreen dispose issue.
+* Added videoFormat parameter in BetterPlayerDataSource (should be used when data source url has no extension).
+* Added retry feature after video failed to load.
+* Added enableRetry in BetterPlayerControlsConfiguration.
+* Changed BetterPlayerEventType.openFullscreen and BetterPlayerEventType.hideFullscreen events behavior (now events trigger after route change).
+* Removed closed caption support from original video_player codebase.
+* Fixed chinese translation typo (fixed by https://github.com/Big7lion)
+
 ## 0.0.48
 * Fixed loading large videos in iOS.
 * Fixed partly progress bar jumping when seek issue in iOS.

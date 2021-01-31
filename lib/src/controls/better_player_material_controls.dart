@@ -68,7 +68,10 @@ class _BetterPlayerMaterialControlsState
   Widget build(BuildContext context) {
     _wasLoading = isLoading(_latestValue);
     if (_latestValue?.hasError == true) {
-      return _buildErrorWidget();
+      return Container(
+        color: Colors.black,
+        child: _buildErrorWidget(),
+      );
     }
     return MouseRegion(
       onHover: (_) {
@@ -137,6 +140,7 @@ class _BetterPlayerMaterialControlsState
       return _betterPlayerController.errorBuilder(context,
           _betterPlayerController.videoPlayerController.value.errorDescription);
     } else {
+      final textStyle = TextStyle(color: _controlsConfiguration.textColor);
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -148,8 +152,18 @@ class _BetterPlayerMaterialControlsState
             ),
             Text(
               _betterPlayerController.translations.generalDefaultError,
-              style: TextStyle(color: _controlsConfiguration.textColor),
+              style: textStyle,
             ),
+            if (_controlsConfiguration.enableRetry)
+              FlatButton(
+                onPressed: () {
+                  _betterPlayerController.retryDataSource();
+                },
+                child: Text(
+                  _betterPlayerController.translations.generalRetry,
+                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
+              )
           ],
         ),
       );

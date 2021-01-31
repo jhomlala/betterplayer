@@ -18,8 +18,6 @@ import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 
-import 'closed_caption_file.dart';
-
 final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
 // This will clear all open videos on the platform when a full restart is
 // performed.
@@ -35,7 +33,6 @@ class VideoPlayerValue {
     this.size,
     this.position = const Duration(),
     this.absolutePosition,
-    this.caption = const Caption(),
     this.buffered = const <DurationRange>[],
     this.isPlaying = false,
     this.isLooping = false,
@@ -66,12 +63,6 @@ class VideoPlayerValue {
   ///
   /// Is null when is not available.
   final DateTime absolutePosition;
-
-  /// The [Caption] that should be displayed based on the current [position].
-  ///
-  /// This field will never be null. If there is no caption for the current
-  /// [position], this will be an empty [Caption] object.
-  final Caption caption;
 
   /// The currently buffered ranges.
   final List<DurationRange> buffered;
@@ -131,7 +122,6 @@ class VideoPlayerValue {
     Size size,
     Duration position,
     DateTime absolutePosition,
-    Caption caption,
     List<DurationRange> buffered,
     bool isPlaying,
     bool isLooping,
@@ -146,7 +136,6 @@ class VideoPlayerValue {
       size: size ?? this.size,
       position: position ?? this.position,
       absolutePosition: absolutePosition ?? this.absolutePosition,
-      caption: caption ?? this.caption,
       buffered: buffered ?? this.buffered,
       isPlaying: isPlaying ?? this.isPlaying,
       isLooping: isLooping ?? this.isLooping,
@@ -166,7 +155,6 @@ class VideoPlayerValue {
         'size: $size, '
         'position: $position, '
         'absolutePosition: $absolutePosition, '
-        'caption: $caption, '
         'buffered: [${buffered.join(', ')}], '
         'isPlaying: $isPlaying, '
         'isLooping: $isLooping, '
@@ -197,7 +185,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   final Completer<void> _creatingCompleter = Completer<void>();
   int _textureId;
 
-  ClosedCaptionFile _closedCaptionFile;
   Timer _timer;
   bool _isDisposed = false;
   Completer<void> _initializingCompleter;
@@ -271,9 +258,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     void errorListener(Object object) {
       if (object is PlatformException) {
         final PlatformException e = object;
-        value = VideoPlayerValue.erroneous(e.message);
+        value = value.copyWith(errorDescription: e.message);
+        //value = VideoPlayerValue.erroneous(e.message);
       } else {
-        value = VideoPlayerValue.erroneous(object.toString());
+        //value = VideoPlayerValue.erroneous(object.toString());
+        value.copyWith(errorDescription: object.toString());
       }
       _timer?.cancel();
       if (!_initializingCompleter.isCompleted) {
@@ -294,7 +283,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> setAssetDataSource(
     String dataSource, {
     String package,
-    Future<ClosedCaptionFile> closedCaptionFile,
     bool showNotification,
     String title,
     String author,
@@ -307,7 +295,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         sourceType: DataSourceType.asset,
         asset: dataSource,
         package: package,
-        closedCaptionFile: closedCaptionFile,
         showNotification: showNotification,
         title: title,
         author: author,
@@ -328,7 +315,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> setNetworkDataSource(
     String dataSource, {
     VideoFormat formatHint,
-    Future<ClosedCaptionFile> closedCaptionFile,
     Map<String, String> headers,
     bool useCache = false,
     int maxCacheSize,
@@ -345,7 +331,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.network,
           uri: dataSource,
           formatHint: formatHint,
-          closedCaptionFile: closedCaptionFile,
           headers: headers,
           useCache: useCache,
           maxCacheSize: maxCacheSize,
@@ -365,7 +350,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// `'file://${file.path}'`.
   Future<void> setFileDataSource(
     File file, {
-    Future<ClosedCaptionFile> closedCaptionFile,
     bool showNotification,
     String title,
     String author,
@@ -377,7 +361,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       DataSource(
           sourceType: DataSourceType.file,
           uri: 'file://${file.path}',
-          closedCaptionFile: closedCaptionFile,
           showNotification: showNotification,
           title: title,
           author: author,
@@ -399,11 +382,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     if (!_creatingCompleter.isCompleted) await _creatingCompleter.future;
-
-    if (dataSourceDescription.closedCaptionFile != null) {
-      _closedCaptionFile ??= await dataSourceDescription.closedCaptionFile;
-      value = value.copyWith(caption: _getCaptionAt(value.position));
-    }
 
     _initializingCompleter = Completer<void>();
 
@@ -574,32 +552,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _videoPlayerPlatform.disablePictureInPicture(textureId);
   }
 
-  /// The closed caption based on the current [position] in the video.
-  ///
-  /// If there are no closed captions at the current [position], this will
-  /// return an empty [Caption].
-  ///
-  /// If no [closedCaptionFile] was specified, this will always return an empty
-  /// [Caption].
-  Caption _getCaptionAt(Duration position) {
-    if (_closedCaptionFile == null) {
-      return const Caption();
-    }
-
-    // TODO: This would be more efficient as a binary search.
-    for (final caption in _closedCaptionFile.captions) {
-      if (caption.start <= position && caption.end >= position) {
-        return caption;
-      }
-    }
-
-    return const Caption();
-  }
-
   void _updatePosition(Duration position, {DateTime absolutePosition}) {
     value = value.copyWith(position: position);
     value = value.copyWith(absolutePosition: absolutePosition);
-    value = value.copyWith(caption: _getCaptionAt(position));
   }
 
   Future<bool> isPictureInPictureSupported() async {

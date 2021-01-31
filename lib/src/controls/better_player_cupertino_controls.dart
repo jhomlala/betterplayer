@@ -68,7 +68,10 @@ class _BetterPlayerCupertinoControlsState
     _betterPlayerController = BetterPlayerController.of(context);
 
     if (_latestValue?.hasError == true) {
-      return _buildErrorWidget();
+      return Container(
+        color: Colors.black,
+        child: _buildErrorWidget(),
+      );
     }
 
     final backgroundColor = _controlsConfiguration.controlBarColor;
@@ -687,6 +690,7 @@ class _BetterPlayerCupertinoControlsState
       return _betterPlayerController.errorBuilder(context,
           _betterPlayerController.videoPlayerController.value.errorDescription);
     } else {
+      final textStyle = TextStyle(color: _controlsConfiguration.textColor);
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -698,8 +702,18 @@ class _BetterPlayerCupertinoControlsState
             ),
             Text(
               _betterPlayerController.translations.generalDefaultError,
-              style: TextStyle(color: _controlsConfiguration.textColor),
+              style: textStyle,
             ),
+            if (_controlsConfiguration.enableRetry)
+              FlatButton(
+                onPressed: () {
+                  _betterPlayerController.retryDataSource();
+                },
+                child: Text(
+                  _betterPlayerController.translations.generalRetry,
+                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                ),
+              )
           ],
         ),
       );

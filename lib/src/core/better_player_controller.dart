@@ -8,6 +8,7 @@ import 'package:better_player/src/configuration/better_player_configuration.dart
 import 'package:better_player/src/configuration/better_player_event.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/configuration/better_player_translations.dart';
+import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
 
 // Flutter imports:
@@ -141,7 +142,10 @@ class BetterPlayerController extends ChangeNotifier {
   ///Are controls always visible
   bool _controlsAlwaysVisible = false;
 
+  ///Are controls always visible
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
+
+  VideoPlayerValue _videoPlayerValueOnError;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -242,6 +246,23 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  VideoFormat _getVideoFormat(BetterPlayerVideoFormat betterPlayerVideoFormat) {
+    if (betterPlayerVideoFormat == null) {
+      return null;
+    }
+    switch (betterPlayerVideoFormat) {
+      case BetterPlayerVideoFormat.dash:
+        return VideoFormat.dash;
+      case BetterPlayerVideoFormat.hls:
+        return VideoFormat.hls;
+      case BetterPlayerVideoFormat.ss:
+        return VideoFormat.ss;
+      case BetterPlayerVideoFormat.other:
+        return VideoFormat.other;
+    }
+    return null;
+  }
+
   Future _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
@@ -265,6 +286,7 @@ class BetterPlayerController extends ChangeNotifier {
           notificationChannelName: _betterPlayerDataSource
               ?.notificationConfiguration?.notificationChannelName,
           overriddenDuration: _betterPlayerDataSource.overriddenDuration,
+          formatHint: _getVideoFormat(_betterPlayerDataSource.videoFormat),
         );
 
         break;
@@ -351,21 +373,16 @@ class BetterPlayerController extends ChangeNotifier {
 
   void enterFullScreen() {
     _isFullScreen = true;
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.openFullscreen));
     notifyListeners();
   }
 
   void exitFullScreen() {
     _isFullScreen = false;
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
     notifyListeners();
   }
 
   void toggleFullScreen() {
     _isFullScreen = !_isFullScreen;
-    _postEvent(_isFullScreen
-        ? BetterPlayerEvent(BetterPlayerEventType.openFullscreen)
-        : BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
     notifyListeners();
   }
 
@@ -445,6 +462,10 @@ class BetterPlayerController extends ChangeNotifier {
         : BetterPlayerEvent(BetterPlayerEventType.controlsHidden));
   }
 
+  void postEvent(BetterPlayerEvent betterPlayerEvent) {
+    _postEvent(betterPlayerEvent);
+  }
+
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
     for (final Function eventListener in _eventListeners) {
       if (eventListener != null) {
@@ -456,6 +477,7 @@ class BetterPlayerController extends ChangeNotifier {
   void _onVideoPlayerChanged() async {
     final currentVideoPlayerValue = videoPlayerController.value;
     if (currentVideoPlayerValue.hasError) {
+      _videoPlayerValueOnError ??= currentVideoPlayerValue;
       _postEvent(
         BetterPlayerEvent(
           BetterPlayerEventType.exception,
@@ -767,6 +789,16 @@ class BetterPlayerController extends ChangeNotifier {
         controlsAlwaysVisible != null, "ControlsAlwaysVisible can't be null");
     _controlsAlwaysVisible = controlsAlwaysVisible;
     _controlsVisibilityStreamController.add(controlsAlwaysVisible);
+  }
+
+  Future retryDataSource() async {
+    await _setupDataSource(_betterPlayerDataSource);
+    if (_videoPlayerValueOnError != null) {
+      final position = _videoPlayerValueOnError.position;
+      await seekTo(position);
+      await play();
+      _videoPlayerValueOnError = null;
+    }
   }
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
