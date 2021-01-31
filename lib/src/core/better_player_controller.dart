@@ -462,7 +462,7 @@ class BetterPlayerController extends ChangeNotifier {
         : BetterPlayerEvent(BetterPlayerEventType.controlsHidden));
   }
 
-  void postEvent(BetterPlayerEvent betterPlayerEvent){
+  void postEvent(BetterPlayerEvent betterPlayerEvent) {
     _postEvent(betterPlayerEvent);
   }
 
@@ -477,9 +477,7 @@ class BetterPlayerController extends ChangeNotifier {
   void _onVideoPlayerChanged() async {
     final currentVideoPlayerValue = videoPlayerController.value;
     if (currentVideoPlayerValue.hasError) {
-      if (_videoPlayerValueOnError == null) {
-        _videoPlayerValueOnError = currentVideoPlayerValue;
-      }
+      _videoPlayerValueOnError ??= currentVideoPlayerValue;
       _postEvent(
         BetterPlayerEvent(
           BetterPlayerEventType.exception,

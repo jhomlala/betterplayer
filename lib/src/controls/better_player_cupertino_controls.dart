@@ -706,13 +706,13 @@ class _BetterPlayerCupertinoControlsState
             ),
             if (_controlsConfiguration.enableRetry)
               FlatButton(
+                onPressed: () {
+                  _betterPlayerController.retryDataSource();
+                },
                 child: Text(
                   _betterPlayerController.translations.generalRetry,
                   style: textStyle.copyWith(fontWeight: FontWeight.bold),
                 ),
-                onPressed: () {
-                  _betterPlayerController.retryDataSource();
-                },
               )
           ],
         ),

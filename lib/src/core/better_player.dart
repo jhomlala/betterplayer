@@ -25,30 +25,30 @@ typedef BetterPlayerRoutePageBuilder = Widget Function(
 class BetterPlayer extends StatefulWidget {
   const BetterPlayer({Key key, @required this.controller})
       : assert(
-  controller != null, 'You must provide a better player controller'),
+            controller != null, 'You must provide a better player controller'),
         super(key: key);
 
   factory BetterPlayer.network(
-      String url, {
-        BetterPlayerConfiguration betterPlayerConfiguration,
-      }) =>
+    String url, {
+    BetterPlayerConfiguration betterPlayerConfiguration,
+  }) =>
       BetterPlayer(
         controller: BetterPlayerController(
           betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
           betterPlayerDataSource:
-          BetterPlayerDataSource(BetterPlayerDataSourceType.network, url),
+              BetterPlayerDataSource(BetterPlayerDataSourceType.network, url),
         ),
       );
 
   factory BetterPlayer.file(
-      String url, {
-        BetterPlayerConfiguration betterPlayerConfiguration,
-      }) =>
+    String url, {
+    BetterPlayerConfiguration betterPlayerConfiguration,
+  }) =>
       BetterPlayer(
         controller: BetterPlayerController(
           betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
           betterPlayerDataSource:
-          BetterPlayerDataSource(BetterPlayerDataSourceType.file, url),
+              BetterPlayerDataSource(BetterPlayerDataSourceType.file, url),
         ),
       );
 
@@ -144,12 +144,14 @@ class BetterPlayerState extends State<BetterPlayer>
     final controller = widget.controller;
     if (controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
-      controller.postEvent(BetterPlayerEvent(BetterPlayerEventType.openFullscreen));
+      controller
+          .postEvent(BetterPlayerEvent(BetterPlayerEventType.openFullscreen));
       await _pushFullScreenWidget(context);
     } else if (_isFullScreen && !controller.cancelFullScreenDismiss) {
-      await Navigator.of(context, rootNavigator: true).pop();
+      Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
-      controller.postEvent(BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
+      controller
+          .postEvent(BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
     }
 
     if (controller.cancelFullScreenDismiss) {
@@ -193,10 +195,10 @@ class BetterPlayerState extends State<BetterPlayer>
   }
 
   Widget _fullScreenRoutePageBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      ) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
     final controllerProvider = BetterPlayerControllerProvider(
         controller: widget.controller, child: _buildPlayer());
 
