@@ -4,6 +4,7 @@
 * Added retry feature after video failed to load.
 * Added enableRetry in BetterPlayerControlsConfiguration.
 * Changed BetterPlayerEventType.openFullscreen and BetterPlayerEventType.hideFullscreen events behavior (now events trigger after route change).
+* Removed closed caption support from original video_player codebase.
 
 ## 0.0.48
 * Fixed loading large videos in iOS.
