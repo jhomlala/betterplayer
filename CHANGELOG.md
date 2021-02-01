@@ -1,3 +1,7 @@
+## 0.0.50
+* Fixed deprecated resizeToAvoidBottomPadding
+* Fixed playing large videos in iOS.
+
 ## 0.0.49
 * Fixed fullscreen dispose issue.
 * Added videoFormat parameter in BetterPlayerDataSource (should be used when data source url has no extension).

@@ -463,7 +463,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
     
     if (_isPlaying) {
-        [_player play];
+        if (@available(iOS 10.0, *)) {
+            [_player playImmediatelyAtRate:1.0];
+        } else {
+            [_player play];
+        }
     } else {
         [_player pause];
     }
