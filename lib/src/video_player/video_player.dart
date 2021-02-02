@@ -567,6 +567,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   void refresh() {
     value = value.copyWith();
   }
+
+  void setAudio(String audioName) {
+    _videoPlayerPlatform.setAudio(_textureId,audioName);
+  }
 }
 
 /// Widget that displays the video controlled by [controller].

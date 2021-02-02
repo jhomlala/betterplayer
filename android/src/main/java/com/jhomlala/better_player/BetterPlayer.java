@@ -37,12 +37,17 @@ import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.source.TrackGroup;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.ui.DefaultTrackNameProvider;
+import com.google.android.exoplayer2.ui.TrackNameProvider;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
@@ -656,6 +661,54 @@ final class BetterPlayer {
         Map<String, Object> event = new HashMap<>();
         event.put("event", eventType);
         eventSink.success(event);
+    }
+
+
+    void setAudio(String audioName, Context context) {
+        String TAG = "VIDEO_PLAYER_ANDROID";
+        Log.d(TAG, "SET AUDIO: " + audioName);
+        MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
+                trackSelector.getCurrentMappedTrackInfo();
+
+        StringBuilder str = new StringBuilder();
+
+        for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {
+            Log.d(TAG, "INDEX: " + i);
+
+            if (mappedTrackInfo.getRendererType(i) != C.TRACK_TYPE_AUDIO) {
+                Log.d(TAG, "NOT AUDIO. SKIPPED");
+                continue;
+            }
+
+            TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(i);
+            for (int j = 0; j < trackGroupArray.length; j++) {
+                Log.d(TAG, "J:" + j);
+
+                TrackGroup group = trackGroupArray.get(j);
+
+                //TrackNameProvider provider = new DefaultTrackNameProvider(context.getResources());
+                for (int k = 0; k < group.length; k++) {
+                    Log.d(TAG, "K:" + k);
+                    Log.d(TAG, "FORMAT: " + group.getFormat(k).language);
+                    //Log.d(TAG,"TRACK NAME: >" + provider.getTrackName(group.getFormat(k))+"< vs >"+audioName+"<");
+                    if (group.getFormat(k).language.equals(audioName)) {
+                        Log.d(TAG, "USING TRACK NAME!!!" + audioName);
+
+                        DefaultTrackSelector.ParametersBuilder builder = trackSelector.getParameters().buildUpon();
+                        builder.clearSelectionOverrides(i).setRendererDisabled(i, false);
+                        int[] tracks = {k};
+                        DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(j, tracks);
+                        builder.setSelectionOverride(i, mappedTrackInfo.getTrackGroups(i), override);
+                        trackSelector.setParameters(builder);
+                        return;
+
+
+                    }
+
+                }
+            }
+
+        }
     }
 
     void dispose() {

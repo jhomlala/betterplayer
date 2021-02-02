@@ -4,6 +4,8 @@ import 'dart:io';
 
 // Package imports:
 import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
+
 // Project imports:
 import 'package:better_player/src/hls/better_player_hls_subtitle.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
@@ -109,5 +111,23 @@ class BetterPlayerHlsUtils {
       BetterPlayerUtils.log("GetDataFromUrl failed: $exception");
       return null;
     }
+  }
+
+  static Future<List<BetterPlayerHlsAudioTrack>> parseLanguages(String url) async {
+    List<BetterPlayerHlsAudioTrack> audios = [];
+    final String data = await _getDataFromUrl(url);
+    if (data != null) {
+      final parsedPlaylist =
+          await HlsPlaylistParser.create().parseString(Uri.parse(url), data);
+      final hlsMasterPlaylist = parsedPlaylist as HlsMasterPlaylist;
+      for (Rendition audio in hlsMasterPlaylist.audios) {
+        audios.add(BetterPlayerHlsAudioTrack(
+          label: audio.name,
+          language: audio.format.language,
+          url: audio.url.toString(),
+        ));
+      }
+    }
+    return audios;
   }
 }

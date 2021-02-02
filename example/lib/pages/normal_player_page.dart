@@ -20,7 +20,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.bugBuckBunnyVideoUrl,
+      "http://cdn.theoplayer.com/video/elephants-dream/playlist.m3u8",
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -48,12 +48,9 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             child: BetterPlayer(controller: _betterPlayerController),
           ),
           RaisedButton(
-            child: Text("Play network data source"),
+            child: Text("Set audio"),
             onPressed: () {
-              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.forBiggerBlazesUrl);
-              _betterPlayerController.setupDataSource(dataSource);
+              _betterPlayerController.setAudio("sp");
             },
           ),
           RaisedButton(

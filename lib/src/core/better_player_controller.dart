@@ -13,6 +13,7 @@ import 'package:better_player/src/core/better_player_controller_provider.dart';
 
 // Flutter imports:
 import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
@@ -145,6 +146,8 @@ class BetterPlayerController extends ChangeNotifier {
   ///Are controls always visible
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
 
+  List<BetterPlayerHlsAudioTrack> betterPlayerAudioTracks;
+
   VideoPlayerValue _videoPlayerValueOnError;
 
   BetterPlayerController(
@@ -191,14 +194,14 @@ class BetterPlayerController extends ChangeNotifier {
 
     /// Load hls tracks
     if (_betterPlayerDataSource?.useHlsTracks == true &&
-        betterPlayerDataSource.url.contains(_hlsExtension)) {
+        _isDataSourceHls(betterPlayerDataSource)) {
       _betterPlayerTracks =
           await BetterPlayerHlsUtils.parseTracks(betterPlayerDataSource.url);
     }
 
     /// Load hls subtitles
     if (betterPlayerDataSource?.useHlsSubtitles == true &&
-        betterPlayerDataSource.url.contains(_hlsExtension)) {
+        _isDataSourceHls(betterPlayerDataSource)) {
       final hlsSubtitles =
           await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
       hlsSubtitles?.forEach((hlsSubtitle) {
@@ -209,6 +212,12 @@ class BetterPlayerController extends ChangeNotifier {
               urls: hlsSubtitle.realUrls),
         );
       });
+    }
+
+    if (betterPlayerDataSource?.useHlsSubtitles == true &&
+        _isDataSourceHls(betterPlayerDataSource)) {
+      betterPlayerAudioTracks =
+          await BetterPlayerHlsUtils.parseLanguages(betterPlayerDataSource.url);
     }
 
     _betterPlayerSubtitlesSourceList.add(
@@ -226,6 +235,10 @@ class BetterPlayerController extends ChangeNotifier {
     setupSubtitleSource(
         defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last);
   }
+
+  bool _isDataSourceHls(BetterPlayerDataSource betterPlayerDataSource) =>
+      betterPlayerDataSource.url.contains(_hlsExtension) ||
+      betterPlayerDataSource.videoFormat == VideoFormat.hls;
 
   ///Setup subtitles to be displayed from given subtitle source
   Future<void> setupSubtitleSource(
@@ -799,6 +812,10 @@ class BetterPlayerController extends ChangeNotifier {
       await play();
       _videoPlayerValueOnError = null;
     }
+  }
+
+  void setAudio(String audioName) {
+    videoPlayerController.setAudio(audioName);
   }
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then

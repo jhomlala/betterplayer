@@ -114,6 +114,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to enable/disable retry feature
   final bool enableRetry;
 
+  ///Flag used to show/hide audio tracks
+  final bool enableAudioTracks;
+
   ///Custom items of overflow menu
   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
@@ -131,6 +134,9 @@ class BetterPlayerControlsConfiguration {
 
   ///Icon of the qualities menu item from overflow menu
   final IconData qualitiesIcon;
+
+  ///Icon of the audios menu item from overflow menu
+  final IconData audioTracksIcon;
 
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
@@ -165,6 +171,7 @@ class BetterPlayerControlsConfiguration {
     this.enableProgressBar = true,
     this.enablePlayPause = true,
     this.enableSkips = true,
+    this.enableAudioTracks = true,
     this.progressBarPlayedColor = Colors.white,
     this.progressBarHandleColor = Colors.white,
     this.progressBarBufferedColor = Colors.white70,
@@ -188,6 +195,7 @@ class BetterPlayerControlsConfiguration {
     this.playbackSpeedIcon = Icons.shutter_speed,
     this.qualitiesIcon = Icons.hd,
     this.subtitlesIcon = Icons.text_fields,
+    this.audioTracksIcon = Icons.audiotrack,
     this.overflowMenuIconsColor = Colors.black,
     this.forwardSkipTimeInMilliseconds = 15000,
     this.backwardSkipTimeInMilliseconds = 15000,

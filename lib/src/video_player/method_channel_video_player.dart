@@ -234,6 +234,17 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setAudio(int textureId,String audioName) {
+    print("SET AUDIO");
+    return _channel.invokeMethod<void>(
+      'setAudio',
+      <String, dynamic>{
+        'textureId': textureId,
+        'audioName':audioName},
+    );
+  }
+
+  @override
   Stream<VideoEvent> videoEventsFor(int textureId) {
     return _eventChannelFor(textureId)
         .receiveBroadcastStream()
