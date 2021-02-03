@@ -25,69 +25,94 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:path_provider/path_provider.dart';
 
+///Class used to control overall BetterPlayer behavior.
 class BetterPlayerController extends ChangeNotifier {
-  static const _durationParameter = "duration";
-  static const _progressParameter = "progress";
-  static const _volumeParameter = "volume";
-  static const _speedParameter = "speed";
-  static const _hlsExtension = "m3u8";
+  static const String _durationParameter = "duration";
+  static const String _progressParameter = "progress";
+  static const String _volumeParameter = "volume";
+  static const String _speedParameter = "speed";
+  static const String _hlsExtension = "m3u8";
 
+  ///General configuration used in controller instance.
   final BetterPlayerConfiguration betterPlayerConfiguration;
+
+  ///Playlist configuration used in controller instance.
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
+
+  ///List of event listeners, which listen to events.
   final List<Function> _eventListeners = [];
-  final List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
 
   ///List of files to delete once player disposes.
   final List<File> _tempFiles = [];
+
+  ///Stream controller which emits stream when control visibility changes.
   final StreamController<bool> _controlsVisibilityStreamController =
       StreamController.broadcast();
 
+  ///Instance of video player controller which is adapter used to communicate
+  ///between flutter high level code and lower level native code.
   VideoPlayerController videoPlayerController;
 
-  bool get autoPlay => betterPlayerConfiguration.autoPlay;
-
-  Widget Function(BuildContext context, String errorMessage) get errorBuilder =>
-      betterPlayerConfiguration.errorBuilder;
-
-  /// Defines a event listener where video player events will be send
+  /// Defines a event listener where video player events will be send.
   Function(BetterPlayerEvent) get eventListener =>
       betterPlayerConfiguration.eventListener;
 
+  ///Flag used to store full screen mode state.
   bool _isFullScreen = false;
 
+  ///Flag used to store full screen mode state.
   bool get isFullScreen => _isFullScreen;
 
+  ///TODO: Recheck this
   int _lastPositionSelection = 0;
 
+  ///Currently used data source in player.
   BetterPlayerDataSource _betterPlayerDataSource;
 
+  ///Currently used data source in player.
   BetterPlayerDataSource get betterPlayerDataSource => _betterPlayerDataSource;
 
+  ///List of BetterPlayerSubtitlesSources.
+  final List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
+
+  ///List of BetterPlayerSubtitlesSources.
   List<BetterPlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
       _betterPlayerSubtitlesSourceList;
   BetterPlayerSubtitlesSource _betterPlayerSubtitlesSource;
 
+  ///Currently used subtitles source.
   BetterPlayerSubtitlesSource get betterPlayerSubtitlesSource =>
       _betterPlayerSubtitlesSource;
 
+  ///Subtitles lines for current data source.
   List<BetterPlayerSubtitle> subtitlesLines = [];
 
+  ///List of tracks available for current data source. Used only for HLS.
   List<BetterPlayerHlsTrack> _betterPlayerTracks = [];
 
+  ///List of tracks available for current data source. Used only for HLS.
   List<BetterPlayerHlsTrack> get betterPlayerTracks => _betterPlayerTracks;
 
+  ///Currently selected player track. Used only for HLS.
   BetterPlayerHlsTrack _betterPlayerTrack;
 
+  ///Currently selected player track. Used only for HLS.
   BetterPlayerHlsTrack get betterPlayerTrack => _betterPlayerTrack;
 
+  ///Timer for next video. Used in playlist.
   Timer _nextVideoTimer;
 
+  ///Time for next video.
   int _nextVideoTime;
+
+  ///Stream controller which emits next video time.
   StreamController<int> nextVideoTimeStreamController =
       StreamController.broadcast();
 
+  ///Has player been disposed.
   bool _disposed = false;
 
+  ///Was player playing before automatic pause.
   bool _wasPlayingBeforePause = false;
 
   ///Internal flag used to cancel dismiss of the full screen. Used when user
@@ -146,8 +171,21 @@ class BetterPlayerController extends ChangeNotifier {
   ///Are controls always visible
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
 
-  List<BetterPlayerHlsAudioTrack> betterPlayerAudioTracks;
+  ///List of all possible audio tracks returned from HLS stream
+  List<BetterPlayerHlsAudioTrack> _betterPlayerAudioTracks;
 
+  ///List of all possible audio tracks returned from HLS stream
+  List<BetterPlayerHlsAudioTrack> get betterPlayerAudioTracks =>
+      _betterPlayerAudioTracks;
+
+  ///Selected HLS audio track
+  BetterPlayerHlsAudioTrack _betterPlayerHlsAudioTrack;
+
+  ///Selected HLS audio track
+  BetterPlayerHlsAudioTrack get betterPlayerAudioTrack =>
+      _betterPlayerHlsAudioTrack;
+
+  ///Selected videoPlayerValue when error occured.
   VideoPlayerValue _videoPlayerValueOnError;
 
   BetterPlayerController(
@@ -216,7 +254,7 @@ class BetterPlayerController extends ChangeNotifier {
 
     if (betterPlayerDataSource?.useHlsSubtitles == true &&
         _isDataSourceHls(betterPlayerDataSource)) {
-      betterPlayerAudioTracks =
+      _betterPlayerAudioTracks =
           await BetterPlayerHlsUtils.parseLanguages(betterPlayerDataSource.url);
     }
 
@@ -359,7 +397,7 @@ class BetterPlayerController extends ChangeNotifier {
         .videoEventStreamController.stream
         .listen(_handleVideoEvent);
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
-    if (autoPlay) {
+    if (betterPlayerConfiguration.autoPlay) {
       if (fullScreenByDefault) {
         enterFullScreen();
       }
@@ -605,6 +643,7 @@ class BetterPlayerController extends ChangeNotifier {
 
     ///Default element clicked:
     if (track.width == 0 && track.height == 0 && track.bitrate == 0) {
+      _betterPlayerTrack = null;
       return;
     }
 
@@ -814,8 +853,21 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Set [audioTrack] in player. Works only for HLS streams.
+  void setAudioTrack(BetterPlayerHlsAudioTrack audioTrack) {
+    assert(audioTrack != null, "AudioTrack can't be null");
+
+    if (audioTrack.language == null) {
+      _betterPlayerHlsAudioTrack = null;
+      return;
+    }
+
+    _betterPlayerHlsAudioTrack = audioTrack;
+    videoPlayerController.setAudioTrack(audioTrack.language);
+  }
+
   void setAudio(String audioName) {
-    videoPlayerController.setAudio(audioName);
+    videoPlayerController.setAudioTrack(audioName);
   }
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then

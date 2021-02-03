@@ -6,7 +6,6 @@ package com.jhomlala.better_player;
 
 import android.app.Activity;
 import android.app.PictureInPictureParams;
-import android.app.RemoteAction;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -15,7 +14,6 @@ import android.util.Log;
 import android.util.LongSparseArray;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.RemoteActionCompat;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
@@ -67,7 +65,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String ENABLE_PICTURE_IN_PICTURE = "enablePictureInPicture";
     private static final String DISABLE_PICTURE_IN_PICTURE = "disablePictureInPicture";
     private static final String IS_PICTURE_IN_PICTURE_SUPPORTED = "isPictureInPictureSupported";
-    private static final String AUDIO_NAME = "audioName";
+    private static final String LANGUAGE_CODE = "languageCode";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -81,7 +79,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String ABSOLUTE_POSITION_METHOD = "absolutePosition";
     private static final String SET_SPEED_METHOD = "setSpeed";
     private static final String SET_TRACK_PARAMETERS_METHOD = "setTrackParameters";
-    private static final String SET_AUDIO_METHOD = "setAudio";
+    private static final String SET_AUDIO_TRACK_METHOD = "setAudioTrack";
     private static final String DISPOSE_METHOD = "dispose";
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
@@ -263,8 +261,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
             case IS_PICTURE_IN_PICTURE_SUPPORTED:
                 result.success(isPictureInPictureSupported());
                 break;
-            case SET_AUDIO_METHOD:
-                player.setAudio(call.argument(AUDIO_NAME), flutterState.applicationContext);
+            case SET_AUDIO_TRACK_METHOD:
+                player.setAudioTrack(call.argument(LANGUAGE_CODE));
                 result.success(null);
                 break;
 

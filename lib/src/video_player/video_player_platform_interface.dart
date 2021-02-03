@@ -148,7 +148,7 @@ abstract class VideoPlayerPlatform {
         'isPictureInPictureEnabled() has not been implemented.');
   }
 
-  Future<void> setAudio(int textureId, String audioName) {
+  Future<void> setAudioTrack(int textureId, String audioName) {
     throw UnimplementedError(
         'setAudio() has not been implemented.');
   }

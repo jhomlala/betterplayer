@@ -234,13 +234,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> setAudio(int textureId,String audioName) {
-    print("SET AUDIO");
+  Future<void> setAudioTrack(int textureId, String languageCode) {
     return _channel.invokeMethod<void>(
-      'setAudio',
+      'setAudioTrack',
       <String, dynamic>{
         'textureId': textureId,
-        'audioName':audioName},
+        'languageCode': languageCode,
+      },
     );
   }
 

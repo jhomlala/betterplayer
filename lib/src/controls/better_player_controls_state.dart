@@ -97,7 +97,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             if (betterPlayerControlsConfiguration.enableAudioTracks)
               _buildMoreOptionsListRow(
                   betterPlayerControlsConfiguration.audioTracksIcon,
-                  translations.overflowMenuQuality, () {
+                  translations.overflowMenuAudioTracks, () {
                 Navigator.of(context).pop();
                 _showAudioTracksSelectionWidget();
               }),
@@ -383,8 +383,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final List<BetterPlayerHlsAudioTrack> tracks =
         betterPlayerController.betterPlayerAudioTracks;
     final List<Widget> children = [];
+    final BetterPlayerHlsAudioTrack selectedAudioTrack =
+        betterPlayerController.betterPlayerAudioTrack;
     for (var index = 0; index < tracks.length; index++) {
-      children.add(_buildAudioTrackRow(tracks[index]));
+      children.add(_buildAudioTrackRow(tracks[index], selectedAudioTrack));
     }
     final resolutions =
         betterPlayerController.betterPlayerDataSource.resolutions;
@@ -393,8 +395,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     });
 
     if (children.isEmpty) {
-      children.add(_buildTrackRow(BetterPlayerHlsTrack(0, 0, 0),
-          betterPlayerController.translations.generalDefault));
+      children.add(
+        _buildAudioTrackRow(
+            BetterPlayerHlsAudioTrack(
+              label: betterPlayerController.translations.generalDefault,
+            ),
+            selectedAudioTrack),
+      );
     }
 
     showModalBottomSheet<void>(
@@ -412,17 +419,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     );
   }
 
-
-  Widget _buildAudioTrackRow(BetterPlayerHlsAudioTrack audioTrack) {
+  Widget _buildAudioTrackRow(BetterPlayerHlsAudioTrack audioTrack,
+      BetterPlayerHlsAudioTrack selectedAudioTrack) {
     assert(audioTrack != null, "Track can't be null");
 
-
-    //final bool isSelected = selectedTrack != null && selectedTrack == track;
-final bool isSelected = false;
+    final bool isSelected =
+        selectedAudioTrack != null && selectedAudioTrack == audioTrack;
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
-        //betterPlayerController.setTrack(track);
+        betterPlayerController.setAudioTrack(audioTrack);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),

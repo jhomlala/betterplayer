@@ -1,6 +1,7 @@
 ## 0.0.50
 * Fixed deprecated resizeToAvoidBottomPadding
 * Fixed playing large videos in iOS.
+* [BREAKING_CHANGE] Removed autoPlay and errorBuilder from BetterPlayerController. These can be accessed via betterPlayerController.
 
 ## 0.0.49
 * Fixed fullscreen dispose issue.
