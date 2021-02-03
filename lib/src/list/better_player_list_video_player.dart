@@ -103,6 +103,7 @@ class _BetterPlayerListVideoPlayerState
     } else {
       if (widget.autoPause && initialized && isPlaying && !_isDisposing) {
         _betterPlayerController.pause();
+        _betterPlayerController.seekTo(Duration(seconds: 0));
       }
     }
   }
