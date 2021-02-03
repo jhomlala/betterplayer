@@ -708,6 +708,27 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL))completionHandler {
     [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
 }
+
+- (void) setAudioTrack:(NSString*) name index:(int) index{
+    
+    AVMediaSelectionGroup *audioSelectionGroup = [[[_player currentItem] asset] mediaSelectionGroupForMediaCharacteristic: AVMediaCharacteristicAudible];
+    NSArray* options = audioSelectionGroup.options;
+    
+    int i;
+    for (i = 0; i < [options count]; i++) {
+        AVMediaSelectionOption* option = [options objectAtIndex:i];
+        NSArray *metaDatas = [AVMetadataItem metadataItemsFromArray:option.commonMetadata withKey:@"title" keySpace:@"comn"];
+        if (metaDatas.count > 0) {
+            NSString *title = ((AVMetadataItem*)[metaDatas objectAtIndex:0]).stringValue;
+            if (title == name && index == i ){
+                [[_player currentItem] selectMediaOption:option inMediaSelectionGroup: audioSelectionGroup];
+            }
+        }
+        
+    }
+}
+
+
 #endif
 // This workaround if you will change dataSource. Flutter engine caches CVPixelBufferRef and if you
 // return NULL from method copyPixelBuffer Flutter will use cached CVPixelBufferRef. If you will
@@ -1165,6 +1186,10 @@ NSMutableDictionary*  _artworkImageDict;
         } else if ([@"disablePictureInPicture" isEqualToString:call.method]){
             [player disablePictureInPicture];
             [player setPictureInPicture:false];
+        } else if ([@"setAudioTrack" isEqualToString:call.method]){
+            NSString* name = argsMap[@"name"];
+            int index = [argsMap[@"index"] intValue];
+            [player setAudioTrack:name index: index];
         }
         
         else {
