@@ -568,9 +568,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     value = value.copyWith();
   }
 
-  ///Sets audio track based on language code.
-  void setAudioTrack(String languageCode) {
-    _videoPlayerPlatform.setAudioTrack(_textureId, languageCode);
+  void setAudioTrack(String languageCode, int index) {
+    _videoPlayerPlatform.setAudioTrack(_textureId, languageCode, index);
   }
 }
 

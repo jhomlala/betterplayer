@@ -47,12 +47,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
           ),
-          RaisedButton(
-            child: Text("Set audio"),
-            onPressed: () {
-              _betterPlayerController.setAudio("sp");
-            },
-          ),
+
           RaisedButton(
             child: Text("Play file data source"),
             onPressed: () async {

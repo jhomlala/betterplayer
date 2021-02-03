@@ -863,12 +863,10 @@ class BetterPlayerController extends ChangeNotifier {
     }
 
     _betterPlayerHlsAudioTrack = audioTrack;
-    videoPlayerController.setAudioTrack(audioTrack.language);
+    ///TODO: Handle android index and label.
+    videoPlayerController.setAudioTrack(audioTrack.label,1);
   }
 
-  void setAudio(String audioName) {
-    videoPlayerController.setAudioTrack(audioName);
-  }
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
   ///autoDispose parameter will be overridden and controller will be disposed
