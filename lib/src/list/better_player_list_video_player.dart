@@ -25,6 +25,9 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
   ///Flag to determine if video should be auto paused
   final bool autoPause;
 
+  ///Flag to determine if video should begin anew when resumed
+  final bool resumeFromStart;
+
   final BetterPlayerListVideoPlayerController
       betterPlayerListVideoPlayerController;
 
@@ -34,6 +37,7 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
     this.playFraction = 0.6,
     this.autoPlay = true,
     this.autoPause = true,
+    this.resumeFromStart = false,
     this.betterPlayerListVideoPlayerController,
     Key key,
   })  : assert(dataSource != null, "Data source can't be null"),
@@ -103,7 +107,9 @@ class _BetterPlayerListVideoPlayerState
     } else {
       if (widget.autoPause && initialized && isPlaying && !_isDisposing) {
         _betterPlayerController.pause();
-        _betterPlayerController.seekTo(Duration(seconds: 0));
+        if (widget.resumeFromStart) {
+          _betterPlayerController.seekTo(Duration(seconds: 0));
+        }
       }
     }
   }
