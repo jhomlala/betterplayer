@@ -95,7 +95,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     return Center(
       child: Container(
         width: double.infinity,
-        color: Colors.black,
+        color: betterPlayerController
+            .betterPlayerConfiguration.controlsConfiguration.backgroundColor,
         child: AspectRatio(
           aspectRatio: aspectRatio,
           child: _buildPlayerWithControls(betterPlayerController, context),

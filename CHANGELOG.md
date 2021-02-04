@@ -5,7 +5,7 @@
 * Added HLS Audio track support.
 * Added setAudioTrack method in BetterPlayerController.
 * Added useHlsAudioTrack parameter in BetterPlayerDataSource.
-* Added enableAudioTracks and audioTracksIcon in BetterPlayerControlsConfiguration.
+* Added enableAudioTracks and audioTracksIcon, backgroundColor in BetterPlayerControlsConfiguration.
 * Fixed HLS loading speed.
 
 ## 0.0.49

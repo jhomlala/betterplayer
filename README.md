@@ -541,6 +541,9 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
 
    ///Widget which can be used instead of default progress
    final Widget loadingWidget;
+
+   ///Color of the background, when no frame is displayed.
+   final Color backgroundColor;
 ```
 
 ### BetterPlayerPlaylistConfiguration

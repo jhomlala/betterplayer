@@ -153,6 +153,9 @@ class BetterPlayerControlsConfiguration {
   ///Widget which can be used instead of default progress
   final Widget loadingWidget;
 
+  ///Color of the background, when no frame is displayed.
+  final Color backgroundColor;
+
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -201,6 +204,7 @@ class BetterPlayerControlsConfiguration {
     this.backwardSkipTimeInMilliseconds = 15000,
     this.loadingColor = Colors.black,
     this.loadingWidget,
+    this.backgroundColor = Colors.black,
   });
 
   factory BetterPlayerControlsConfiguration.white() {
