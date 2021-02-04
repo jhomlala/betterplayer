@@ -6,6 +6,7 @@
 * Added setAudioTrack method in BetterPlayerController.
 * Added useHlsAudioTrack parameter in BetterPlayerDataSource.
 * Added enableAudioTracks and audioTracksIcon in BetterPlayerControlsConfiguration.
+* Fixed HLS loading speed.
 
 ## 0.0.49
 * Fixed fullscreen dispose issue.
