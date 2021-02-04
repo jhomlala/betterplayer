@@ -710,17 +710,16 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void) setAudioTrack:(NSString*) name index:(int) index{
-    
     AVMediaSelectionGroup *audioSelectionGroup = [[[_player currentItem] asset] mediaSelectionGroupForMediaCharacteristic: AVMediaCharacteristicAudible];
     NSArray* options = audioSelectionGroup.options;
     
-    int i;
-    for (i = 0; i < [options count]; i++) {
-        AVMediaSelectionOption* option = [options objectAtIndex:i];
+    
+    for (int index = 0; index < [options count]; index++) {
+        AVMediaSelectionOption* option = [options objectAtIndex:index];
         NSArray *metaDatas = [AVMetadataItem metadataItemsFromArray:option.commonMetadata withKey:@"title" keySpace:@"comn"];
         if (metaDatas.count > 0) {
             NSString *title = ((AVMetadataItem*)[metaDatas objectAtIndex:0]).stringValue;
-            if (title == name && index == i ){
+            if (title == name && index == index ){
                 [[_player currentItem] selectMediaOption:option inMediaSelectionGroup: audioSelectionGroup];
             }
         }

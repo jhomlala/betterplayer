@@ -230,37 +230,18 @@ class BetterPlayerController extends ChangeNotifier {
       _betterPlayerSubtitlesSourceList.addAll(betterPlayerDataSource.subtitles);
     }
 
-    /// Load hls tracks
-    if (_betterPlayerDataSource?.useHlsTracks == true &&
-        _isDataSourceHls(betterPlayerDataSource)) {
-      _betterPlayerTracks =
-          await BetterPlayerHlsUtils.parseTracks(betterPlayerDataSource.url);
-    }
-
-    /// Load hls subtitles
-    if (betterPlayerDataSource?.useHlsSubtitles == true &&
-        _isDataSourceHls(betterPlayerDataSource)) {
-      final hlsSubtitles =
-          await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
-      hlsSubtitles?.forEach((hlsSubtitle) {
+    if (_isDataSourceHls(betterPlayerDataSource)) {
+      _setupHlsDataSource().then((dynamic value) {
         _betterPlayerSubtitlesSourceList.add(
           BetterPlayerSubtitlesSource(
-              type: BetterPlayerSubtitlesSourceType.network,
-              name: hlsSubtitle.name,
-              urls: hlsSubtitle.realUrls),
+              type: BetterPlayerSubtitlesSourceType.none),
         );
       });
+    } else {
+      _betterPlayerSubtitlesSourceList.add(
+        BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.none),
+      );
     }
-
-    if (betterPlayerDataSource?.useHlsSubtitles == true &&
-        _isDataSourceHls(betterPlayerDataSource)) {
-      _betterPlayerAudioTracks =
-          await BetterPlayerHlsUtils.parseLanguages(betterPlayerDataSource.url);
-    }
-
-    _betterPlayerSubtitlesSourceList.add(
-      BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.none),
-    );
 
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
@@ -277,6 +258,39 @@ class BetterPlayerController extends ChangeNotifier {
   bool _isDataSourceHls(BetterPlayerDataSource betterPlayerDataSource) =>
       betterPlayerDataSource.url.contains(_hlsExtension) ||
       betterPlayerDataSource.videoFormat == VideoFormat.hls;
+
+  Future _setupHlsDataSource() async {
+    String hlsData =
+        await BetterPlayerHlsUtils.getDataFromUrl(betterPlayerDataSource.url);
+    if (hlsData != null) {
+      /// Load hls tracks
+      if (_betterPlayerDataSource?.useHlsTracks == true) {
+        _betterPlayerTracks = await BetterPlayerHlsUtils.parseTracks(
+            hlsData, betterPlayerDataSource.url);
+      }
+
+      /// Load hls subtitles
+      if (betterPlayerDataSource?.useHlsSubtitles == true) {
+        final hlsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
+            hlsData, betterPlayerDataSource.url);
+        hlsSubtitles?.forEach((hlsSubtitle) {
+          _betterPlayerSubtitlesSourceList.add(
+            BetterPlayerSubtitlesSource(
+                type: BetterPlayerSubtitlesSourceType.network,
+                name: hlsSubtitle.name,
+                urls: hlsSubtitle.realUrls),
+          );
+        });
+      }
+
+      ///Load audio tracks
+      if (betterPlayerDataSource?.useHlsAudioTracks == true &&
+          _isDataSourceHls(betterPlayerDataSource)) {
+        _betterPlayerAudioTracks = await BetterPlayerHlsUtils.parseLanguages(
+            hlsData, betterPlayerDataSource.url);
+      }
+    }
+  }
 
   ///Setup subtitles to be displayed from given subtitle source
   Future<void> setupSubtitleSource(
