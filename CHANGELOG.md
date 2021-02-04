@@ -2,6 +2,10 @@
 * Fixed deprecated resizeToAvoidBottomPadding
 * Fixed playing large videos in iOS.
 * [BREAKING_CHANGE] Removed autoPlay and errorBuilder from BetterPlayerController. These can be accessed via betterPlayerController.
+* Added HLS Audio track support.
+* Added setAudioTrack method in BetterPlayerController.
+* Added useHlsAudioTrack parameter in BetterPlayerDataSource.
+* Added enableAudioTracks and audioTracksIcon in BetterPlayerControlsConfiguration.
 
 ## 0.0.49
 * Fixed fullscreen dispose issue.
