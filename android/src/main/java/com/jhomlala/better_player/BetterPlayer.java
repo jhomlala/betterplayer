@@ -664,27 +664,31 @@ final class BetterPlayer {
         eventSink.success(event);
     }
 
-
-    void setAudioTrack(String languageCode) {
+    void setAudioTrack(String name, Integer index) {
         try {
             MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
                     trackSelector.getCurrentMappedTrackInfo();
             if (mappedTrackInfo != null) {
-                for (int i = 0; i < mappedTrackInfo.getRendererCount(); i++) {
-                    if (mappedTrackInfo.getRendererType(i) != C.TRACK_TYPE_AUDIO) {
+                for (int rendererIndex = 0; rendererIndex < mappedTrackInfo.getRendererCount();
+                     rendererIndex++) {
+                    if (mappedTrackInfo.getRendererType(rendererIndex) != C.TRACK_TYPE_AUDIO) {
                         continue;
                     }
-                    TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(i);
-                    for (int j = 0; j < trackGroupArray.length; j++) {
-                        TrackGroup group = trackGroupArray.get(j);
-                        for (int k = 0; k < group.length; k++) {
-                            String groupLanguage = group.getFormat(k).language;
-                            if (groupLanguage != null && groupLanguage.equals(languageCode)) {
-                                DefaultTrackSelector.ParametersBuilder builder = trackSelector.getParameters().buildUpon();
-                                builder.clearSelectionOverrides(i).setRendererDisabled(i, false);
-                                int[] tracks = {k};
-                                DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(j, tracks);
-                                builder.setSelectionOverride(i, mappedTrackInfo.getTrackGroups(i), override);
+                    TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex);
+                    for (int groupIndex = 0; groupIndex < trackGroupArray.length; groupIndex++) {
+                        TrackGroup group = trackGroupArray.get(groupIndex);
+                        for (int groupElementIndex = 0; groupElementIndex < group.length; groupElementIndex++) {
+                            String label = group.getFormat(groupElementIndex).label;
+                            if (name.equals(label) && index == groupIndex) {
+                                DefaultTrackSelector.ParametersBuilder builder =
+                                        trackSelector.getParameters().buildUpon();
+                                builder.clearSelectionOverrides(rendererIndex)
+                                        .setRendererDisabled(rendererIndex, false);
+                                int[] tracks = {groupElementIndex};
+                                DefaultTrackSelector.SelectionOverride override =
+                                        new DefaultTrackSelector.SelectionOverride(groupIndex, tracks);
+                                builder.setSelectionOverride(rendererIndex,
+                                        mappedTrackInfo.getTrackGroups(rendererIndex), override);
                                 trackSelector.setParameters(builder);
                                 return;
                             }

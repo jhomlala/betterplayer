@@ -113,15 +113,19 @@ class BetterPlayerHlsUtils {
     }
   }
 
-  static Future<List<BetterPlayerHlsAudioTrack>> parseLanguages(String url) async {
+  static Future<List<BetterPlayerHlsAudioTrack>> parseLanguages(
+      String url) async {
     List<BetterPlayerHlsAudioTrack> audios = [];
     final String data = await _getDataFromUrl(url);
     if (data != null) {
       final parsedPlaylist =
           await HlsPlaylistParser.create().parseString(Uri.parse(url), data);
       final hlsMasterPlaylist = parsedPlaylist as HlsMasterPlaylist;
-      for (Rendition audio in hlsMasterPlaylist.audios) {
+
+      for (int index = 0; index < hlsMasterPlaylist.audios.length; index++) {
+        Rendition audio = hlsMasterPlaylist.audios[index];
         audios.add(BetterPlayerHlsAudioTrack(
+          id: index,
           label: audio.name,
           language: audio.format.language,
           url: audio.url.toString(),

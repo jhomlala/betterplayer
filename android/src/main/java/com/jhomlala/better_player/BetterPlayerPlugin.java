@@ -62,10 +62,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String IMAGE_URL_PARAMETER = "imageUrl";
     private static final String NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName";
     private static final String OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration";
-    private static final String ENABLE_PICTURE_IN_PICTURE = "enablePictureInPicture";
-    private static final String DISABLE_PICTURE_IN_PICTURE = "disablePictureInPicture";
-    private static final String IS_PICTURE_IN_PICTURE_SUPPORTED = "isPictureInPictureSupported";
-    private static final String LANGUAGE_CODE = "languageCode";
+    private static final String NAME_PARAMETER = "name";
+    private static final String INDEX_PARAMETER = "index";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -80,6 +78,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String SET_SPEED_METHOD = "setSpeed";
     private static final String SET_TRACK_PARAMETERS_METHOD = "setTrackParameters";
     private static final String SET_AUDIO_TRACK_METHOD = "setAudioTrack";
+    private static final String ENABLE_PICTURE_IN_PICTURE_METHOD = "enablePictureInPicture";
+    private static final String DISABLE_PICTURE_IN_PICTURE_METHOD = "disablePictureInPicture";
+    private static final String IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD = "isPictureInPictureSupported";
     private static final String DISPOSE_METHOD = "dispose";
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
@@ -248,21 +249,22 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                         call.argument(BITRATE_PARAMETER));
                 result.success(null);
                 break;
-            case ENABLE_PICTURE_IN_PICTURE: {
+            case ENABLE_PICTURE_IN_PICTURE_METHOD:
                 enablePictureInPicture(player);
                 result.success(null);
                 break;
-            }
-            case DISABLE_PICTURE_IN_PICTURE: {
+
+            case DISABLE_PICTURE_IN_PICTURE_METHOD:
                 disablePictureInPicture(player);
                 result.success(null);
                 break;
-            }
-            case IS_PICTURE_IN_PICTURE_SUPPORTED:
+
+            case IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD:
                 result.success(isPictureInPictureSupported());
                 break;
+
             case SET_AUDIO_TRACK_METHOD:
-                player.setAudioTrack(call.argument(LANGUAGE_CODE));
+                player.setAudioTrack(call.argument(NAME_PARAMETER), call.argument(INDEX_PARAMETER));
                 result.success(null);
                 break;
 
