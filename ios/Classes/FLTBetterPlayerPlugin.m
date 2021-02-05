@@ -186,7 +186,6 @@ AVPictureInPictureController *_pipController;
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification*)notification {
-    
     if (_isLooping) {
         AVPlayerItem* p = [notification object];
         [p seekToTime:kCMTimeZero completionHandler:nil];

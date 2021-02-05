@@ -63,7 +63,7 @@ class BetterPlayerController extends ChangeNotifier {
   ///Flag used to store full screen mode state.
   bool get isFullScreen => _isFullScreen;
 
-  ///TODO: Recheck this
+  ///Time when last progress event was sent
   int _lastPositionSelection = 0;
 
   ///Currently used data source in player.
@@ -574,34 +574,15 @@ class BetterPlayerController extends ChangeNotifier {
     final int now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastPositionSelection > 500) {
       _lastPositionSelection = now;
-      final Duration currentPositionShifted = Duration(
-          milliseconds: currentVideoPlayerValue.position.inMilliseconds + 500);
-      if (currentPositionShifted == null ||
-          currentVideoPlayerValue.duration == null) {
-        return;
-      }
-
-      if (currentPositionShifted > currentVideoPlayerValue.duration) {
-        _postEvent(
-          BetterPlayerEvent(
-            BetterPlayerEventType.finished,
-            parameters: <String, dynamic>{
-              _progressParameter: currentVideoPlayerValue.position,
-              _durationParameter: currentVideoPlayerValue.duration
-            },
-          ),
-        );
-      } else {
-        _postEvent(
-          BetterPlayerEvent(
-            BetterPlayerEventType.progress,
-            parameters: <String, dynamic>{
-              _progressParameter: currentVideoPlayerValue.position,
-              _durationParameter: currentVideoPlayerValue.duration
-            },
-          ),
-        );
-      }
+      _postEvent(
+        BetterPlayerEvent(
+          BetterPlayerEventType.progress,
+          parameters: <String, dynamic>{
+            _progressParameter: currentVideoPlayerValue.position,
+            _durationParameter: currentVideoPlayerValue.duration
+          },
+        ),
+      );
     }
   }
 
@@ -831,7 +812,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   ///Handle VideoEvent when remote controls notification / PiP is shown
-  void _handleVideoEvent(VideoEvent event) {
+  void _handleVideoEvent(VideoEvent event) async {
     switch (event.eventType) {
       case VideoEventType.play:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
@@ -841,6 +822,18 @@ class BetterPlayerController extends ChangeNotifier {
         break;
       case VideoEventType.seek:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo));
+        break;
+      case VideoEventType.completed:
+        final videoValue = await videoPlayerController.value;
+        _postEvent(
+          BetterPlayerEvent(
+            BetterPlayerEventType.finished,
+            parameters: <String, dynamic>{
+              _progressParameter: videoValue.position,
+              _durationParameter: videoValue.duration
+            },
+          ),
+        );
         break;
       default:
 

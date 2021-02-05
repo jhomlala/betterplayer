@@ -7,6 +7,7 @@
 * Added useHlsAudioTrack parameter in BetterPlayerDataSource.
 * Added enableAudioTracks and audioTracksIcon, backgroundColor in BetterPlayerControlsConfiguration.
 * Fixed HLS loading speed.
+* Fixed finished event creation.
 
 ## 0.0.49
 * Fixed fullscreen dispose issue.
