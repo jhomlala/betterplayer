@@ -13,6 +13,7 @@ import 'package:better_player/src/core/better_player_controller_provider.dart';
 
 // Flutter imports:
 import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
@@ -24,70 +25,95 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:path_provider/path_provider.dart';
 
+///Class used to control overall BetterPlayer behavior.
 class BetterPlayerController extends ChangeNotifier {
-  static const _durationParameter = "duration";
-  static const _progressParameter = "progress";
-  static const _volumeParameter = "volume";
-  static const _speedParameter = "speed";
-  static const _hlsExtension = "m3u8";
+  static const String _durationParameter = "duration";
+  static const String _progressParameter = "progress";
+  static const String _volumeParameter = "volume";
+  static const String _speedParameter = "speed";
+  static const String _hlsExtension = "m3u8";
 
+  ///General configuration used in controller instance.
   final BetterPlayerConfiguration betterPlayerConfiguration;
+
+  ///Playlist configuration used in controller instance.
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
+
+  ///List of event listeners, which listen to events.
   final List<Function> _eventListeners = [];
-  final List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
 
   ///List of files to delete once player disposes.
   final List<File> _tempFiles = [];
+
+  ///Stream controller which emits stream when control visibility changes.
   final StreamController<bool> _controlsVisibilityStreamController =
       StreamController.broadcast();
 
+  ///Instance of video player controller which is adapter used to communicate
+  ///between flutter high level code and lower level native code.
   VideoPlayerController videoPlayerController;
 
-  bool get autoPlay => betterPlayerConfiguration.autoPlay;
-
-  Widget Function(BuildContext context, String errorMessage) get errorBuilder =>
-      betterPlayerConfiguration.errorBuilder;
-
-  /// Defines a event listener where video player events will be send
+  /// Defines a event listener where video player events will be send.
   Function(BetterPlayerEvent) get eventListener =>
       betterPlayerConfiguration.eventListener;
 
+  ///Flag used to store full screen mode state.
   bool _isFullScreen = false;
 
+  ///Flag used to store full screen mode state.
   bool get isFullScreen => _isFullScreen;
 
+  ///Time when last progress event was sent
   int _lastPositionSelection = 0;
 
+  ///Currently used data source in player.
   BetterPlayerDataSource _betterPlayerDataSource;
 
+  ///Currently used data source in player.
   BetterPlayerDataSource get betterPlayerDataSource => _betterPlayerDataSource;
 
+  ///List of BetterPlayerSubtitlesSources.
+  final List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
+
+  ///List of BetterPlayerSubtitlesSources.
   List<BetterPlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
       _betterPlayerSubtitlesSourceList;
   BetterPlayerSubtitlesSource _betterPlayerSubtitlesSource;
 
+  ///Currently used subtitles source.
   BetterPlayerSubtitlesSource get betterPlayerSubtitlesSource =>
       _betterPlayerSubtitlesSource;
 
+  ///Subtitles lines for current data source.
   List<BetterPlayerSubtitle> subtitlesLines = [];
 
+  ///List of tracks available for current data source. Used only for HLS.
   List<BetterPlayerHlsTrack> _betterPlayerTracks = [];
 
+  ///List of tracks available for current data source. Used only for HLS.
   List<BetterPlayerHlsTrack> get betterPlayerTracks => _betterPlayerTracks;
 
+  ///Currently selected player track. Used only for HLS.
   BetterPlayerHlsTrack _betterPlayerTrack;
 
+  ///Currently selected player track. Used only for HLS.
   BetterPlayerHlsTrack get betterPlayerTrack => _betterPlayerTrack;
 
+  ///Timer for next video. Used in playlist.
   Timer _nextVideoTimer;
 
+  ///Time for next video.
   int _nextVideoTime;
+
+  ///Stream controller which emits next video time.
   StreamController<int> nextVideoTimeStreamController =
       StreamController.broadcast();
 
+  ///Has player been disposed.
   bool _disposed = false;
 
-  bool _wasPlayingBeforePause = false;
+  ///Was player playing before automatic pause.
+  bool _wasPlayingBeforePause;
 
   ///Internal flag used to cancel dismiss of the full screen. Used when user
   ///switches quality (track or resolution) of the video. You should ignore it.
@@ -145,6 +171,21 @@ class BetterPlayerController extends ChangeNotifier {
   ///Are controls always visible
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
 
+  ///List of all possible audio tracks returned from HLS stream
+  List<BetterPlayerHlsAudioTrack> _betterPlayerAudioTracks;
+
+  ///List of all possible audio tracks returned from HLS stream
+  List<BetterPlayerHlsAudioTrack> get betterPlayerAudioTracks =>
+      _betterPlayerAudioTracks;
+
+  ///Selected HLS audio track
+  BetterPlayerHlsAudioTrack _betterPlayerHlsAudioTrack;
+
+  ///Selected HLS audio track
+  BetterPlayerHlsAudioTrack get betterPlayerAudioTrack =>
+      _betterPlayerHlsAudioTrack;
+
+  ///Selected videoPlayerValue when error occured.
   VideoPlayerValue _videoPlayerValueOnError;
 
   BetterPlayerController(
@@ -189,31 +230,18 @@ class BetterPlayerController extends ChangeNotifier {
       _betterPlayerSubtitlesSourceList.addAll(betterPlayerDataSource.subtitles);
     }
 
-    /// Load hls tracks
-    if (_betterPlayerDataSource?.useHlsTracks == true &&
-        betterPlayerDataSource.url.contains(_hlsExtension)) {
-      _betterPlayerTracks =
-          await BetterPlayerHlsUtils.parseTracks(betterPlayerDataSource.url);
-    }
-
-    /// Load hls subtitles
-    if (betterPlayerDataSource?.useHlsSubtitles == true &&
-        betterPlayerDataSource.url.contains(_hlsExtension)) {
-      final hlsSubtitles =
-          await BetterPlayerHlsUtils.parseSubtitles(betterPlayerDataSource.url);
-      hlsSubtitles?.forEach((hlsSubtitle) {
+    if (_isDataSourceHls(betterPlayerDataSource)) {
+      _setupHlsDataSource().then((dynamic value) {
         _betterPlayerSubtitlesSourceList.add(
           BetterPlayerSubtitlesSource(
-              type: BetterPlayerSubtitlesSourceType.network,
-              name: hlsSubtitle.name,
-              urls: hlsSubtitle.realUrls),
+              type: BetterPlayerSubtitlesSourceType.none),
         );
       });
+    } else {
+      _betterPlayerSubtitlesSourceList.add(
+        BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.none),
+      );
     }
-
-    _betterPlayerSubtitlesSourceList.add(
-      BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.none),
-    );
 
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
@@ -225,6 +253,43 @@ class BetterPlayerController extends ChangeNotifier {
     ///Setup subtitles (none is default)
     setupSubtitleSource(
         defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last);
+  }
+
+  bool _isDataSourceHls(BetterPlayerDataSource betterPlayerDataSource) =>
+      betterPlayerDataSource.url.contains(_hlsExtension) ||
+      betterPlayerDataSource.videoFormat == VideoFormat.hls;
+
+  Future _setupHlsDataSource() async {
+    String hlsData =
+        await BetterPlayerHlsUtils.getDataFromUrl(betterPlayerDataSource.url);
+    if (hlsData != null) {
+      /// Load hls tracks
+      if (_betterPlayerDataSource?.useHlsTracks == true) {
+        _betterPlayerTracks = await BetterPlayerHlsUtils.parseTracks(
+            hlsData, betterPlayerDataSource.url);
+      }
+
+      /// Load hls subtitles
+      if (betterPlayerDataSource?.useHlsSubtitles == true) {
+        final hlsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
+            hlsData, betterPlayerDataSource.url);
+        hlsSubtitles?.forEach((hlsSubtitle) {
+          _betterPlayerSubtitlesSourceList.add(
+            BetterPlayerSubtitlesSource(
+                type: BetterPlayerSubtitlesSourceType.network,
+                name: hlsSubtitle.name,
+                urls: hlsSubtitle.realUrls),
+          );
+        });
+      }
+
+      ///Load audio tracks
+      if (betterPlayerDataSource?.useHlsAudioTracks == true &&
+          _isDataSourceHls(betterPlayerDataSource)) {
+        _betterPlayerAudioTracks = await BetterPlayerHlsUtils.parseLanguages(
+            hlsData, betterPlayerDataSource.url);
+      }
+    }
   }
 
   ///Setup subtitles to be displayed from given subtitle source
@@ -346,7 +411,7 @@ class BetterPlayerController extends ChangeNotifier {
         .videoEventStreamController.stream
         .listen(_handleVideoEvent);
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
-    if (autoPlay) {
+    if (betterPlayerConfiguration.autoPlay) {
       if (fullScreenByDefault) {
         enterFullScreen();
       }
@@ -390,6 +455,7 @@ class BetterPlayerController extends ChangeNotifier {
     if (_appLifecycleState == AppLifecycleState.resumed) {
       await videoPlayerController.play();
       _hasCurrentDataSourceStarted = true;
+      _wasPlayingBeforePause = null;
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
     }
   }
@@ -509,34 +575,15 @@ class BetterPlayerController extends ChangeNotifier {
     final int now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastPositionSelection > 500) {
       _lastPositionSelection = now;
-      final Duration currentPositionShifted = Duration(
-          milliseconds: currentVideoPlayerValue.position.inMilliseconds + 500);
-      if (currentPositionShifted == null ||
-          currentVideoPlayerValue.duration == null) {
-        return;
-      }
-
-      if (currentPositionShifted > currentVideoPlayerValue.duration) {
-        _postEvent(
-          BetterPlayerEvent(
-            BetterPlayerEventType.finished,
-            parameters: <String, dynamic>{
-              _progressParameter: currentVideoPlayerValue.position,
-              _durationParameter: currentVideoPlayerValue.duration
-            },
-          ),
-        );
-      } else {
-        _postEvent(
-          BetterPlayerEvent(
-            BetterPlayerEventType.progress,
-            parameters: <String, dynamic>{
-              _progressParameter: currentVideoPlayerValue.position,
-              _durationParameter: currentVideoPlayerValue.duration
-            },
-          ),
-        );
-      }
+      _postEvent(
+        BetterPlayerEvent(
+          BetterPlayerEventType.progress,
+          parameters: <String, dynamic>{
+            _progressParameter: currentVideoPlayerValue.position,
+            _durationParameter: currentVideoPlayerValue.duration
+          },
+        ),
+      );
     }
   }
 
@@ -592,6 +639,7 @@ class BetterPlayerController extends ChangeNotifier {
 
     ///Default element clicked:
     if (track.width == 0 && track.height == 0 && track.bitrate == 0) {
+      _betterPlayerTrack = null;
       return;
     }
 
@@ -607,16 +655,19 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(
         BetterPlayerEvent(BetterPlayerEventType.changedPlayerVisibility));
 
-    if (betterPlayerConfiguration.handleLifecycle) {
+    if (!_betterPlayerDataSource.notificationConfiguration.showNotification &&
+        betterPlayerConfiguration.handleLifecycle) {
       if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
         betterPlayerConfiguration
             .playerVisibilityChangedBehavior(visibilityFraction);
       } else {
         if (visibilityFraction == 0) {
-          _wasPlayingBeforePause = isPlaying();
+          if (_wasPlayingBeforePause == null) {
+            _wasPlayingBeforePause = isPlaying();
+          }
           pause();
         } else {
-          if (_wasPlayingBeforePause && !isPlaying()) {
+          if (_wasPlayingBeforePause == true && !isPlaying()) {
             play();
           }
         }
@@ -675,15 +726,18 @@ class BetterPlayerController extends ChangeNotifier {
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
   void setAppLifecycleState(AppLifecycleState appLifecycleState) {
-    if (betterPlayerConfiguration.handleLifecycle) {
+    if (!_betterPlayerDataSource.notificationConfiguration.showNotification &&
+        betterPlayerConfiguration.handleLifecycle) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
-        if (_wasPlayingBeforePause) {
+        if (_wasPlayingBeforePause == true) {
           play();
         }
       }
       if (appLifecycleState == AppLifecycleState.paused) {
-        _wasPlayingBeforePause = isPlaying();
+        if (_wasPlayingBeforePause == null) {
+          _wasPlayingBeforePause = isPlaying();
+        }
         pause();
       }
     }
@@ -765,7 +819,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   ///Handle VideoEvent when remote controls notification / PiP is shown
-  void _handleVideoEvent(VideoEvent event) {
+  void _handleVideoEvent(VideoEvent event) async {
     switch (event.eventType) {
       case VideoEventType.play:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
@@ -775,6 +829,18 @@ class BetterPlayerController extends ChangeNotifier {
         break;
       case VideoEventType.seek:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo));
+        break;
+      case VideoEventType.completed:
+        final videoValue = await videoPlayerController.value;
+        _postEvent(
+          BetterPlayerEvent(
+            BetterPlayerEventType.finished,
+            parameters: <String, dynamic>{
+              _progressParameter: videoValue.position,
+              _durationParameter: videoValue.duration
+            },
+          ),
+        );
         break;
       default:
 
@@ -801,6 +867,19 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Set [audioTrack] in player. Works only for HLS streams.
+  void setAudioTrack(BetterPlayerHlsAudioTrack audioTrack) {
+    assert(audioTrack != null, "AudioTrack can't be null");
+
+    if (audioTrack.language == null) {
+      _betterPlayerHlsAudioTrack = null;
+      return;
+    }
+
+    _betterPlayerHlsAudioTrack = audioTrack;
+    videoPlayerController.setAudioTrack(audioTrack.label, audioTrack.id);
+  }
+
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
   ///autoDispose parameter will be overridden and controller will be disposed
   ///(if it wasn't disposed before).
@@ -810,6 +889,7 @@ class BetterPlayerController extends ChangeNotifier {
       return;
     }
     if (!_disposed) {
+      pause();
       _eventListeners.clear();
       videoPlayerController?.removeListener(_fullScreenListener);
       videoPlayerController?.removeListener(_onVideoPlayerChanged);

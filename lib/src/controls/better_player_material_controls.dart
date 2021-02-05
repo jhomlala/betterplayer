@@ -136,8 +136,10 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildErrorWidget() {
-    if (_betterPlayerController.errorBuilder != null) {
-      return _betterPlayerController.errorBuilder(context,
+    final errorBuilder =
+        _betterPlayerController.betterPlayerConfiguration.errorBuilder;
+    if (errorBuilder != null) {
+      return errorBuilder(context,
           _betterPlayerController.videoPlayerController.value.errorDescription);
     } else {
       final textStyle = TextStyle(color: _controlsConfiguration.textColor);
@@ -155,7 +157,7 @@ class _BetterPlayerMaterialControlsState
               style: textStyle,
             ),
             if (_controlsConfiguration.enableRetry)
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   _betterPlayerController.retryDataSource();
                 },
@@ -576,7 +578,7 @@ class _BetterPlayerMaterialControlsState
     _updateState();
 
     if ((_controller.value != null && _controller.value.isPlaying) ||
-        _betterPlayerController.autoPlay) {
+        _betterPlayerController.betterPlayerConfiguration.autoPlay) {
       _startHideTimer();
     }
 

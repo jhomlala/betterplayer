@@ -36,7 +36,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.49
+  better_player: ^0.0.50
 ```
 
 2. Install it
@@ -506,6 +506,9 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
    ///Flag used to enable/disable retry feature
    final bool enableRetry;
 
+   ///Flag used to show/hide audio tracks
+   final bool enableAudioTracks;
+
    ///Custom items of overflow menu
    final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
@@ -521,6 +524,9 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
    ///Icon of the qualities menu item from overflow menu
    final IconData qualitiesIcon;
 
+   ///Icon of the audios menu item from overflow menu
+   final IconData audioTracksIcon;
+
    ///Color of overflow menu icons
    final Color overflowMenuIconsColor;
 
@@ -535,6 +541,9 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
 
    ///Widget which can be used instead of default progress
    final Widget loadingWidget;
+
+   ///Color of the background, when no frame is displayed.
+   final Color backgroundColor;
 ```
 
 ### BetterPlayerPlaylistConfiguration
@@ -600,6 +609,9 @@ Possible configuration options:
 
   ///Should player use hls tracks
   final bool useHlsTracks;
+
+  ///Should player use hls audio tracks
+  final bool useHlsAudioTracks;
 
   ///List of strings that represents tracks names.
   ///If empty, then better player will choose name based on track parameters

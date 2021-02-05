@@ -28,6 +28,9 @@ class BetterPlayerDataSource {
   ///Should player use hls tracks
   final bool useHlsTracks;
 
+  ///Should player use hls audio tracks
+  final bool useHlsAudioTracks;
+
   ///List of strings that represents tracks names.
   ///If empty, then better player will choose name based on track parameters
   final List<String> hlsTrackNames;
@@ -62,6 +65,7 @@ class BetterPlayerDataSource {
     this.headers,
     this.useHlsSubtitles = true,
     this.useHlsTracks = true,
+    this.useHlsAudioTracks = true,
     this.hlsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
@@ -86,6 +90,7 @@ class BetterPlayerDataSource {
     Map<String, String> headers,
     bool useHlsSubtitles,
     bool useHlsTracks,
+    bool useHlsAudioTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
@@ -99,6 +104,7 @@ class BetterPlayerDataSource {
       headers: headers,
       useHlsSubtitles: useHlsSubtitles,
       useHlsTracks: useHlsTracks,
+      useHlsAudioTracks: useHlsAudioTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration,
@@ -160,6 +166,7 @@ class BetterPlayerDataSource {
     Map<String, String> headers,
     bool useHlsSubtitles,
     bool useHlsTracks,
+    bool useHlsAudioTracks,
     Map<String, String> resolutions,
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
@@ -174,6 +181,7 @@ class BetterPlayerDataSource {
       headers: headers ?? this.headers,
       useHlsSubtitles: useHlsSubtitles ?? this.useHlsSubtitles,
       useHlsTracks: useHlsTracks ?? this.useHlsTracks,
+      useHlsAudioTracks: useHlsAudioTracks ?? this.useHlsAudioTracks,
       resolutions: resolutions ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
       notificationConfiguration:

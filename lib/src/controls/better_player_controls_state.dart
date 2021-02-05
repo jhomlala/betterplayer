@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 
@@ -92,6 +93,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   translations.overflowMenuQuality, () {
                 Navigator.of(context).pop();
                 _showQualitiesSelectionWidget();
+              }),
+            if (betterPlayerControlsConfiguration.enableAudioTracks)
+              _buildMoreOptionsListRow(
+                  betterPlayerControlsConfiguration.audioTracksIcon,
+                  translations.overflowMenuAudioTracks, () {
+                Navigator.of(context).pop();
+                _showAudioTracksSelectionWidget();
               }),
             if (betterPlayerControlsConfiguration
                 .overflowMenuCustomItems?.isNotEmpty)
@@ -361,6 +369,71 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             const SizedBox(width: 16),
             Text(
               name,
+              style: TextStyle(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAudioTracksSelectionWidget() {
+    final List<BetterPlayerHlsAudioTrack> tracks =
+        betterPlayerController.betterPlayerAudioTracks;
+    final List<Widget> children = [];
+    final BetterPlayerHlsAudioTrack selectedAudioTrack =
+        betterPlayerController.betterPlayerAudioTrack;
+    if (tracks != null) {
+      for (var index = 0; index < tracks.length; index++) {
+        children.add(_buildAudioTrackRow(tracks[index], selectedAudioTrack));
+      }
+    }
+
+    if (children.isEmpty) {
+      children.add(
+        _buildAudioTrackRow(
+            BetterPlayerHlsAudioTrack(
+              label: betterPlayerController.translations.generalDefault,
+            ),
+            selectedAudioTrack),
+      );
+    }
+
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            child: Column(
+              children: children,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAudioTrackRow(BetterPlayerHlsAudioTrack audioTrack,
+      BetterPlayerHlsAudioTrack selectedAudioTrack) {
+    assert(audioTrack != null, "Track can't be null");
+
+    final bool isSelected =
+        selectedAudioTrack != null && selectedAudioTrack == audioTrack;
+    return BetterPlayerMaterialClickableWidget(
+      onTap: () {
+        Navigator.of(context).pop();
+        betterPlayerController.setAudioTrack(audioTrack);
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Row(
+          children: [
+            const SizedBox(width: 16),
+            Text(
+              audioTrack.label,
               style: TextStyle(
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),

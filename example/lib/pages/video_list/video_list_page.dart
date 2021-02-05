@@ -42,7 +42,7 @@ class _VideoListPageState extends State<VideoListPage> {
       body: Container(
         color: Colors.grey,
         child: Column(children: [
-          FlatButton(
+          TextButton(
             child: Text("Update page state"),
             onPressed: () {
               setState(() {

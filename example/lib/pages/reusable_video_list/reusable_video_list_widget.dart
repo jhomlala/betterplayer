@@ -138,21 +138,21 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
           ),
           Center(
             child: Wrap(children: [
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Play"),
                 onPressed: () {
                   controller.play();
                 },
               ),
               const SizedBox(width: 8),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Pause"),
                 onPressed: () {
                   controller.pause();
                 },
               ),
               const SizedBox(width: 8),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Set max volume"),
                 onPressed: () {
                   controller.setVolume(100);

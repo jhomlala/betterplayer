@@ -11,6 +11,7 @@ class BetterPlayerTranslations {
   final String overflowMenuPlaybackSpeed;
   final String overflowMenuSubtitles;
   final String overflowMenuQuality;
+  final String overflowMenuAudioTracks;
 
   BetterPlayerTranslations({
     this.languageCode = "en",
@@ -24,6 +25,7 @@ class BetterPlayerTranslations {
     this.overflowMenuPlaybackSpeed = "Playback speed",
     this.overflowMenuSubtitles = "Subtitles",
     this.overflowMenuQuality = "Quality",
+    this.overflowMenuAudioTracks = "Audio",
   });
 
   factory BetterPlayerTranslations.polish() => BetterPlayerTranslations(
@@ -37,6 +39,7 @@ class BetterPlayerTranslations {
         overflowMenuPlaybackSpeed: "Szybkość odtwarzania",
         overflowMenuSubtitles: "Napisy",
         overflowMenuQuality: "Jakość",
+        overflowMenuAudioTracks: "Dzwiek",
       );
 
   factory BetterPlayerTranslations.chinese() => BetterPlayerTranslations(
@@ -51,6 +54,7 @@ class BetterPlayerTranslations {
         overflowMenuPlaybackSpeed: "播放速度",
         overflowMenuSubtitles: "字幕",
         overflowMenuQuality: "质量",
+        overflowMenuAudioTracks: "音訊",
       );
 
   factory BetterPlayerTranslations.hindi() => BetterPlayerTranslations(
@@ -65,5 +69,6 @@ class BetterPlayerTranslations {
         overflowMenuPlaybackSpeed: "प्लेबैक की गति",
         overflowMenuSubtitles: "उपशीर्षक",
         overflowMenuQuality: "गुणवत्ता",
+        overflowMenuAudioTracks: "ऑडियो",
       );
 }

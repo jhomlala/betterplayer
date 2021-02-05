@@ -47,7 +47,7 @@ class _AutoFullscreenOrientationPageState
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("Play horizontal video"),
             onPressed: () {
               BetterPlayerDataSource dataSource = BetterPlayerDataSource(
@@ -56,7 +56,7 @@ class _AutoFullscreenOrientationPageState
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("Play vertical video"),
             onPressed: () async {
               BetterPlayerDataSource dataSource = BetterPlayerDataSource(

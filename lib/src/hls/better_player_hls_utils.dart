@@ -4,6 +4,8 @@ import 'dart:io';
 
 // Package imports:
 import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
+
 // Project imports:
 import 'package:better_player/src/hls/better_player_hls_subtitle.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
@@ -17,11 +19,10 @@ class BetterPlayerHlsUtils {
       HlsPlaylistParser.create();
 
   static Future<List<BetterPlayerHlsTrack>> parseTracks(
-      String masterPlaylistUrl) async {
-    assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
+      String data, String masterPlaylistUrl) async {
+    assert(data != null, "Data can't be null");
     final List<BetterPlayerHlsTrack> tracks = [];
     try {
-      final String data = await _getDataFromUrl(masterPlaylistUrl);
       final parsedPlaylist = await HlsPlaylistParser.create()
           .parseString(Uri.parse(masterPlaylistUrl), data);
       if (parsedPlaylist is HlsMasterPlaylist) {
@@ -40,20 +41,19 @@ class BetterPlayerHlsUtils {
 
   ///Parse subtitles from provided m3u8 url
   static Future<List<BetterPlayerHlsSubtitle>> parseSubtitles(
-      String masterPlaylistUrl) async {
+      String data, String masterPlaylistUrl) async {
+    assert(data != null, "Data can't be null");
     assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
+
     final List<BetterPlayerHlsSubtitle> subtitles = [];
     try {
-      final String data = await _getDataFromUrl(masterPlaylistUrl);
-      if (data != null) {
-        final parsedPlaylist = await HlsPlaylistParser.create()
-            .parseString(Uri.parse(masterPlaylistUrl), data);
-        if (parsedPlaylist is HlsMasterPlaylist) {
-          for (final Rendition element in parsedPlaylist.subtitles) {
-            final hlsSubtitle = await _parseSubtitlesPlaylist(element);
-            if (hlsSubtitle != null) {
-              subtitles.add(hlsSubtitle);
-            }
+      final parsedPlaylist = await HlsPlaylistParser.create()
+          .parseString(Uri.parse(masterPlaylistUrl), data);
+      if (parsedPlaylist is HlsMasterPlaylist) {
+        for (final Rendition element in parsedPlaylist.subtitles) {
+          final hlsSubtitle = await _parseSubtitlesPlaylist(element);
+          if (hlsSubtitle != null) {
+            subtitles.add(hlsSubtitle);
           }
         }
       }
@@ -68,7 +68,7 @@ class BetterPlayerHlsUtils {
       Rendition rendition) async {
     assert(rendition != null, "Rendition can't be null");
     try {
-      final subtitleData = await _getDataFromUrl(rendition.url.toString());
+      final subtitleData = await getDataFromUrl(rendition.url.toString());
       final parsedSubtitle =
           await _hlsPlaylistParser.parseString(rendition.url, subtitleData);
       final hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
@@ -95,7 +95,29 @@ class BetterPlayerHlsUtils {
     }
   }
 
-  static Future<String> _getDataFromUrl(String url) async {
+  static Future<List<BetterPlayerHlsAudioTrack>> parseLanguages(
+      String data, String masterPlaylistUrl) async {
+    assert(data != null, "Data can't be null");
+    assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
+    List<BetterPlayerHlsAudioTrack> audios = [];
+    final parsedPlaylist = await HlsPlaylistParser.create()
+        .parseString(Uri.parse(masterPlaylistUrl), data);
+    final hlsMasterPlaylist = parsedPlaylist as HlsMasterPlaylist;
+
+    for (int index = 0; index < hlsMasterPlaylist.audios.length; index++) {
+      Rendition audio = hlsMasterPlaylist.audios[index];
+      audios.add(BetterPlayerHlsAudioTrack(
+        id: index,
+        label: audio.name,
+        language: audio.format.language,
+        url: audio.url.toString(),
+      ));
+    }
+
+    return audios;
+  }
+
+  static Future<String> getDataFromUrl(String url) async {
     try {
       assert(url != null, "Url can't be null!");
       final request = await _httpClient.getUrl(Uri.parse(url));
@@ -104,6 +126,7 @@ class BetterPlayerHlsUtils {
       await response.transform(const Utf8Decoder()).listen((contents) {
         data = contents.toString();
       }).asFuture<String>();
+
       return data;
     } catch (exception) {
       BetterPlayerUtils.log("GetDataFromUrl failed: $exception");
