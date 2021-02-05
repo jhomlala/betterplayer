@@ -39,7 +39,7 @@ class BetterPlayerTranslations {
         overflowMenuPlaybackSpeed: "Szybkość odtwarzania",
         overflowMenuSubtitles: "Napisy",
         overflowMenuQuality: "Jakość",
-        overflowMenuAudioTracks: "Dzwiek",
+        overflowMenuAudioTracks: "Dźwięk",
       );
 
   factory BetterPlayerTranslations.chinese() => BetterPlayerTranslations(
