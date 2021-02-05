@@ -47,7 +47,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("Play file data source"),
             onPressed: () async {
               String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);

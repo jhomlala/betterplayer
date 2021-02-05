@@ -51,13 +51,13 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
               key: _betterPlayerKey,
             ),
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("Show PiP"),
             onPressed: () {
               _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
             },
           ),
-          RaisedButton(
+          ElevatedButton(
             child: Text("Disable PiP"),
             onPressed: () async {
               _betterPlayerController.disablePictureInPicture();

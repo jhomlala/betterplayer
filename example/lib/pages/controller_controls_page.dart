@@ -46,18 +46,18 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
           ),
           Wrap(
             children: [
-              FlatButton(
+              TextButton(
                   child: Text("Play"), onPressed: _betterPlayerController.play),
-              FlatButton(
+              TextButton(
                   child: Text("Pause"),
                   onPressed: _betterPlayerController.pause),
-              FlatButton(
+              TextButton(
                 child: Text("Hide controls"),
                 onPressed: () {
                   _betterPlayerController.setControlsVisibility(false);
                 },
               ),
-              FlatButton(
+              TextButton(
                 child: Text("Show controls"),
                 onPressed: () {
                   _betterPlayerController.setControlsVisibility(true);

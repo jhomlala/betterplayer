@@ -707,7 +707,7 @@ class _BetterPlayerCupertinoControlsState
               style: textStyle,
             ),
             if (_controlsConfiguration.enableRetry)
-              FlatButton(
+              TextButton(
                 onPressed: () {
                   _betterPlayerController.retryDataSource();
                 },
