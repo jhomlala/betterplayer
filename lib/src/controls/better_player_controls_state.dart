@@ -385,14 +385,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final List<Widget> children = [];
     final BetterPlayerHlsAudioTrack selectedAudioTrack =
         betterPlayerController.betterPlayerAudioTrack;
-    for (var index = 0; index < tracks.length; index++) {
-      children.add(_buildAudioTrackRow(tracks[index], selectedAudioTrack));
+    if (tracks != null) {
+      for (var index = 0; index < tracks.length; index++) {
+        children.add(_buildAudioTrackRow(tracks[index], selectedAudioTrack));
+      }
     }
-    final resolutions =
-        betterPlayerController.betterPlayerDataSource.resolutions;
-    resolutions?.forEach((key, value) {
-      children.add(_buildResolutionSelectionRow(key, value));
-    });
 
     if (children.isEmpty) {
       children.add(
