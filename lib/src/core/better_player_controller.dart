@@ -113,7 +113,7 @@ class BetterPlayerController extends ChangeNotifier {
   bool _disposed = false;
 
   ///Was player playing before automatic pause.
-  bool _wasPlayingBeforePause = false;
+  bool _wasPlayingBeforePause;
 
   ///Internal flag used to cancel dismiss of the full screen. Used when user
   ///switches quality (track or resolution) of the video. You should ignore it.
@@ -455,6 +455,7 @@ class BetterPlayerController extends ChangeNotifier {
     if (_appLifecycleState == AppLifecycleState.resumed) {
       await videoPlayerController.play();
       _hasCurrentDataSourceStarted = true;
+      _wasPlayingBeforePause = null;
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
     }
   }
@@ -654,16 +655,19 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(
         BetterPlayerEvent(BetterPlayerEventType.changedPlayerVisibility));
 
-    if (betterPlayerConfiguration.handleLifecycle) {
+    if (!_betterPlayerDataSource.notificationConfiguration.showNotification &&
+        betterPlayerConfiguration.handleLifecycle) {
       if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
         betterPlayerConfiguration
             .playerVisibilityChangedBehavior(visibilityFraction);
       } else {
         if (visibilityFraction == 0) {
-          _wasPlayingBeforePause = isPlaying();
+          if (_wasPlayingBeforePause == null) {
+            _wasPlayingBeforePause = isPlaying();
+          }
           pause();
         } else {
-          if (_wasPlayingBeforePause && !isPlaying()) {
+          if (_wasPlayingBeforePause == true && !isPlaying()) {
             play();
           }
         }
@@ -722,15 +726,18 @@ class BetterPlayerController extends ChangeNotifier {
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
   void setAppLifecycleState(AppLifecycleState appLifecycleState) {
-    if (betterPlayerConfiguration.handleLifecycle) {
+    if (!_betterPlayerDataSource.notificationConfiguration.showNotification &&
+        betterPlayerConfiguration.handleLifecycle) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
-        if (_wasPlayingBeforePause) {
+        if (_wasPlayingBeforePause == true) {
           play();
         }
       }
       if (appLifecycleState == AppLifecycleState.paused) {
-        _wasPlayingBeforePause = isPlaying();
+        if (_wasPlayingBeforePause == null) {
+          _wasPlayingBeforePause = isPlaying();
+        }
         pause();
       }
     }
@@ -882,6 +889,7 @@ class BetterPlayerController extends ChangeNotifier {
       return;
     }
     if (!_disposed) {
+      pause();
       _eventListeners.clear();
       videoPlayerController?.removeListener(_fullScreenListener);
       videoPlayerController?.removeListener(_onVideoPlayerChanged);
