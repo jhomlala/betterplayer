@@ -149,8 +149,7 @@ abstract class VideoPlayerPlatform {
   }
 
   Future<void> setAudioTrack(int textureId, String name, int index) {
-    throw UnimplementedError(
-        'setAudio() has not been implemented.');
+    throw UnimplementedError('setAudio() has not been implemented.');
   }
 
   /// Returns a widget displaying the video with a given textureID.

@@ -240,7 +240,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       <String, dynamic>{
         'textureId': textureId,
         'name': name,
-        'index':index,
+        'index': index,
       },
     );
   }
