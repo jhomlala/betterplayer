@@ -1,6 +1,8 @@
 // Flutter imports:
 import 'package:flutter/material.dart';
 
+///Configuration of subtitles - colors/padding/font. Used in
+///BetterPlayerConfiguration.
 class BetterPlayerSubtitlesConfiguration {
   ///Subtitle font size
   final double fontSize;

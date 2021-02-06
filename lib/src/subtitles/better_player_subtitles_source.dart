@@ -1,6 +1,8 @@
 // Project imports:
 import 'better_player_subtitles_source_type.dart';
 
+///Representation of subtitles source. Used to define subtitles in Better
+/// Player.
 class BetterPlayerSubtitlesSource {
   ///Source type
   final BetterPlayerSubtitlesSourceType type;

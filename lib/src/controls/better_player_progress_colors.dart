@@ -1,6 +1,7 @@
 // Flutter imports:
 import 'package:flutter/rendering.dart';
 
+///Representation of colors used in progress bar.
 class BetterPlayerProgressColors {
   BetterPlayerProgressColors({
     Color playedColor = const Color.fromRGBO(255, 0, 0, 0.7),

@@ -1,5 +1,7 @@
 ## 0.0.52
 * Fixed unregister listener issue in iOS.
+* Updated documentation.
+* [BREAKING_CHANGE] BetterPlayerState visibility changed to private.
 
 ## 0.0.51
 * Fixed lint issues.

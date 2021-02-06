@@ -25,7 +25,7 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:path_provider/path_provider.dart';
 
-///Class used to control overall BetterPlayer behavior.
+///Class used to control overall Better Player behavior.
 class BetterPlayerController extends ChangeNotifier {
   static const String _durationParameter = "duration";
   static const String _progressParameter = "progress";

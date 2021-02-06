@@ -1,3 +1,5 @@
+
+///Additional configuration used in Better Player Playlist player.
 class BetterPlayerPlaylistConfiguration {
   ///How long user should wait for next video
   final Duration nextVideoDelay;
