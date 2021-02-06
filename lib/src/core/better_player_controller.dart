@@ -232,20 +232,20 @@ class BetterPlayerController extends ChangeNotifier {
 
     if (_isDataSourceHls(betterPlayerDataSource)) {
       _setupHlsDataSource().then((dynamic value) {
-        _betterPlayerSubtitlesSourceList.add(
-          BetterPlayerSubtitlesSource(
-              type: BetterPlayerSubtitlesSourceType.none),
-        );
+        _setupSubtitles();
       });
     } else {
-      _betterPlayerSubtitlesSourceList.add(
-        BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.none),
-      );
+      _setupSubtitles();
     }
 
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
+  }
 
+  void _setupSubtitles() {
+    _betterPlayerSubtitlesSourceList.add(
+      BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.none),
+    );
     final defaultSubtitle = _betterPlayerSubtitlesSourceList.firstWhere(
         (element) => element.selectedByDefault == true,
         orElse: () => null);
