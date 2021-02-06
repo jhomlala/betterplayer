@@ -99,13 +99,13 @@ class BetterPlayerHlsUtils {
       String data, String masterPlaylistUrl) async {
     assert(data != null, "Data can't be null");
     assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
-    List<BetterPlayerHlsAudioTrack> audios = [];
+    final List<BetterPlayerHlsAudioTrack> audios = [];
     final parsedPlaylist = await HlsPlaylistParser.create()
         .parseString(Uri.parse(masterPlaylistUrl), data);
     final hlsMasterPlaylist = parsedPlaylist as HlsMasterPlaylist;
 
     for (int index = 0; index < hlsMasterPlaylist.audios.length; index++) {
-      Rendition audio = hlsMasterPlaylist.audios[index];
+      final Rendition audio = hlsMasterPlaylist.audios[index];
       audios.add(BetterPlayerHlsAudioTrack(
         id: index,
         label: audio.name,
