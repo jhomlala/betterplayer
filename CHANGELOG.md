@@ -1,3 +1,7 @@
+## 0.0.51
+* Fixed lint issues.
+* Fixed subtitles setup issue.
+
 ## 0.0.50
 * Fixed deprecated resizeToAvoidBottomPadding
 * Fixed playing large videos in iOS.
