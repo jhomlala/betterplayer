@@ -1,3 +1,6 @@
+## 0.0.52
+* Fixed unregister listener issue in iOS.
+
 ## 0.0.51
 * Fixed lint issues.
 * Fixed subtitles setup issue.
