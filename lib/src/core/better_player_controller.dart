@@ -257,10 +257,10 @@ class BetterPlayerController extends ChangeNotifier {
 
   bool _isDataSourceHls(BetterPlayerDataSource betterPlayerDataSource) =>
       betterPlayerDataSource.url.contains(_hlsExtension) ||
-      betterPlayerDataSource.videoFormat == VideoFormat.hls;
+      betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.hls;
 
   Future _setupHlsDataSource() async {
-    String hlsData =
+    final String hlsData =
         await BetterPlayerHlsUtils.getDataFromUrl(betterPlayerDataSource.url);
     if (hlsData != null) {
       /// Load hls tracks
@@ -662,9 +662,7 @@ class BetterPlayerController extends ChangeNotifier {
             .playerVisibilityChangedBehavior(visibilityFraction);
       } else {
         if (visibilityFraction == 0) {
-          if (_wasPlayingBeforePause == null) {
-            _wasPlayingBeforePause = isPlaying();
-          }
+          _wasPlayingBeforePause ??= isPlaying();
           pause();
         } else {
           if (_wasPlayingBeforePause == true && !isPlaying()) {
@@ -735,9 +733,7 @@ class BetterPlayerController extends ChangeNotifier {
         }
       }
       if (appLifecycleState == AppLifecycleState.paused) {
-        if (_wasPlayingBeforePause == null) {
-          _wasPlayingBeforePause = isPlaying();
-        }
+        _wasPlayingBeforePause ??= isPlaying();
         pause();
       }
     }
@@ -831,7 +827,7 @@ class BetterPlayerController extends ChangeNotifier {
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo));
         break;
       case VideoEventType.completed:
-        final videoValue = await videoPlayerController.value;
+        final videoValue = videoPlayerController.value;
         _postEvent(
           BetterPlayerEvent(
             BetterPlayerEventType.finished,

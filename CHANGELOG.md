@@ -1,3 +1,6 @@
+## 0.0.51
+* Fixed lint issues.
+
 ## 0.0.50
 * Fixed deprecated resizeToAvoidBottomPadding
 * Fixed playing large videos in iOS.
