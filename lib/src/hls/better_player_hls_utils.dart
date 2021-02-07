@@ -102,16 +102,17 @@ class BetterPlayerHlsUtils {
     final List<BetterPlayerHlsAudioTrack> audios = [];
     final parsedPlaylist = await HlsPlaylistParser.create()
         .parseString(Uri.parse(masterPlaylistUrl), data);
-    final hlsMasterPlaylist = parsedPlaylist as HlsMasterPlaylist;
+    if (parsedPlaylist is HlsMasterPlaylist) {
 
-    for (int index = 0; index < hlsMasterPlaylist.audios.length; index++) {
-      final Rendition audio = hlsMasterPlaylist.audios[index];
-      audios.add(BetterPlayerHlsAudioTrack(
-        id: index,
-        label: audio.name,
-        language: audio.format.language,
-        url: audio.url.toString(),
-      ));
+      for (int index = 0; index < parsedPlaylist.audios.length; index++) {
+        final Rendition audio = parsedPlaylist.audios[index];
+        audios.add(BetterPlayerHlsAudioTrack(
+          id: index,
+          label: audio.name,
+          language: audio.format.language,
+          url: audio.url.toString(),
+        ));
+      }
     }
 
     return audios;

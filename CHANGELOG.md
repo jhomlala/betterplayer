@@ -2,6 +2,7 @@
 * Fixed unregister listener issue in iOS.
 * Updated documentation.
 * [BREAKING_CHANGE] BetterPlayerState visibility changed to private.
+* Fixed HLS audio tracks playlist selection issue.
 
 ## 0.0.51
 * Fixed lint issues.
