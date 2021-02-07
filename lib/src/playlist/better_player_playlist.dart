@@ -11,6 +11,7 @@ import 'package:better_player/src/playlist/better_player_playlist_configuration.
 // Flutter imports:
 import 'package:flutter/material.dart';
 
+///Special version of Better Player used to play videos in playlist.
 class BetterPlayerPlaylist extends StatefulWidget {
   final List<BetterPlayerDataSource> betterPlayerDataSourceList;
   final BetterPlayerConfiguration betterPlayerConfiguration;
@@ -33,6 +34,8 @@ class BetterPlayerPlaylist extends StatefulWidget {
   BetterPlayerPlaylistState createState() => BetterPlayerPlaylistState();
 }
 
+///State of BetterPlayerPlaylist. Can be used to access BetterPlayerController
+///instance.
 class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   BetterPlayerDataSource _currentSource;
   BetterPlayerController _controller;

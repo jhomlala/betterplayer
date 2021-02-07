@@ -36,7 +36,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.51
+  better_player: ^0.0.52
 ```
 
 2. Install it
@@ -446,6 +446,9 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
 
    ///Flag used to enable/disable progress bar
    final bool enableProgressBar;
+
+   ///Flag used to enable/disable progress bar drag
+   final bool enableProgressBarDrag;
 
    ///Flag used to enable/disable play-pause
    final bool enablePlayPause;

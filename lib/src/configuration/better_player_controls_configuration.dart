@@ -9,6 +9,8 @@ import 'package:better_player/src/controls/better_player_overflow_menu_item.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+///UI configuration of Better Player. Allows to change colors/icons/behavior
+///of controls. Used in BetterPlayerConfiguration.
 class BetterPlayerControlsConfiguration {
   ///Color of the control bars
   final Color controlBarColor;
@@ -54,6 +56,9 @@ class BetterPlayerControlsConfiguration {
 
   ///Flag used to enable/disable progress bar
   final bool enableProgressBar;
+
+  ///Flag used to enable/disable progress bar drag
+  final bool enableProgressBarDrag;
 
   ///Flag used to enable/disable play-pause
   final bool enablePlayPause;
@@ -172,6 +177,7 @@ class BetterPlayerControlsConfiguration {
     this.enableMute = true,
     this.enableProgressText = false,
     this.enableProgressBar = true,
+    this.enableProgressBarDrag = true,
     this.enablePlayPause = true,
     this.enableSkips = true,
     this.enableAudioTracks = true,
@@ -202,7 +208,7 @@ class BetterPlayerControlsConfiguration {
     this.overflowMenuIconsColor = Colors.black,
     this.forwardSkipTimeInMilliseconds = 15000,
     this.backwardSkipTimeInMilliseconds = 15000,
-    this.loadingColor = Colors.black,
+    this.loadingColor = Colors.white,
     this.loadingWidget,
     this.backgroundColor = Colors.black,
   });

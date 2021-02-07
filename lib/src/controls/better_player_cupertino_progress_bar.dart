@@ -1,6 +1,7 @@
 // Flutter imports:
 // Project imports:
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
+import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,8 @@ import 'package:flutter/widgets.dart';
 
 class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
   BetterPlayerCupertinoVideoProgressBar(
-    this.controller, {
+    this.controller,
+    this.betterPlayerController, {
     BetterPlayerProgressColors colors,
     this.onDragEnd,
     this.onDragStart,
@@ -18,6 +20,7 @@ class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
         super(key: key);
 
   final VideoPlayerController controller;
+  final BetterPlayerController betterPlayerController;
   final BetterPlayerProgressColors colors;
   final Function() onDragStart;
   final Function() onDragEnd;
@@ -41,6 +44,9 @@ class _VideoProgressBarState
   bool _controllerWasPlaying = false;
 
   VideoPlayerController get controller => widget.controller;
+
+  BetterPlayerController get betterPlayerController =>
+      widget.betterPlayerController;
 
   @override
   void initState() {
@@ -66,9 +72,12 @@ class _VideoProgressBarState
       }
     }
 
+    final bool enableProgressBarDrag = betterPlayerController
+        .betterPlayerConfiguration.controlsConfiguration.enableProgressBarDrag;
+
     return GestureDetector(
       onHorizontalDragStart: (DragStartDetails details) {
-        if (!controller.value.initialized) {
+        if (!controller.value.initialized || !enableProgressBarDrag) {
           return;
         }
         _controllerWasPlaying = controller.value.isPlaying;
@@ -81,7 +90,7 @@ class _VideoProgressBarState
         }
       },
       onHorizontalDragUpdate: (DragUpdateDetails details) {
-        if (!controller.value.initialized) {
+        if (!controller.value.initialized || !enableProgressBarDrag) {
           return;
         }
         seekToRelativePosition(details.globalPosition);
@@ -91,6 +100,10 @@ class _VideoProgressBarState
         }
       },
       onHorizontalDragEnd: (DragEndDetails details) {
+        if (!enableProgressBarDrag) {
+          return;
+        }
+
         if (_controllerWasPlaying) {
           controller.play();
         }
@@ -99,7 +112,7 @@ class _VideoProgressBarState
         }
       },
       onTapDown: (TapDownDetails details) {
-        if (!controller.value.initialized) {
+        if (!controller.value.initialized || !enableProgressBarDrag) {
           return;
         }
 

@@ -25,7 +25,8 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:path_provider/path_provider.dart';
 
-///Class used to control overall BetterPlayer behavior.
+///Class used to control overall Better Player behavior. Main class to change
+///state of Better Player.
 class BetterPlayerController extends ChangeNotifier {
   static const String _durationParameter = "duration";
   static const String _progressParameter = "progress";
@@ -200,6 +201,7 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Get BetterPlayerController from context. Used in InheritedWidget.
   static BetterPlayerController of(BuildContext context) {
     final betterPLayerControllerProvider = context
         .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>();
@@ -207,6 +209,7 @@ class BetterPlayerController extends ChangeNotifier {
     return betterPLayerControllerProvider.controller;
   }
 
+  ///Setup new data source in Better Player.
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
@@ -242,6 +245,7 @@ class BetterPlayerController extends ChangeNotifier {
     await _setupDataSource(betterPlayerDataSource);
   }
 
+  ///Configure subtitles based on subtitles source.
   void _setupSubtitles() {
     _betterPlayerSubtitlesSourceList.add(
       BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.none),
@@ -255,10 +259,14 @@ class BetterPlayerController extends ChangeNotifier {
         defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last);
   }
 
+  ///Check if given [betterPlayerDataSource] is HLS-type data source.
   bool _isDataSourceHls(BetterPlayerDataSource betterPlayerDataSource) =>
       betterPlayerDataSource.url.contains(_hlsExtension) ||
       betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.hls;
 
+  ///Configure HLS data source based on provided data source and configuration.
+  ///This method configures tracks, subtitles and audio tracks from given
+  ///master playlist.
   Future _setupHlsDataSource() async {
     final String hlsData =
         await BetterPlayerHlsUtils.getDataFromUrl(betterPlayerDataSource.url);
@@ -311,6 +319,8 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Get VideoFormat from BetterPlayerVideoFormat (adapter method which translates
+  ///to video_player supported format).
   VideoFormat _getVideoFormat(BetterPlayerVideoFormat betterPlayerVideoFormat) {
     if (betterPlayerVideoFormat == null) {
       return null;
@@ -328,6 +338,7 @@ class BetterPlayerController extends ChangeNotifier {
     return null;
   }
 
+  ///Internal method which invokes videoPlayerController source setup.
   Future _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
@@ -395,9 +406,11 @@ class BetterPlayerController extends ChangeNotifier {
         throw UnimplementedError(
             "${betterPlayerDataSource.type} is not implemented");
     }
-    await _initialize();
+    await _initializeVideo();
   }
 
+  ///Create file from provided list of bytes. File will be created in temporary
+  ///directory.
   Future<File> _createFile(List<int> bytes) async {
     final String dir = (await getTemporaryDirectory()).path;
     final File temp = File('$dir/better_player_${DateTime.now()}.temp');
@@ -405,7 +418,9 @@ class BetterPlayerController extends ChangeNotifier {
     return temp;
   }
 
-  Future _initialize() async {
+  ///Initializes video based on configuration. Invoke actions which need to be
+  ///run on player start.
+  Future _initializeVideo() async {
     await videoPlayerController.setLooping(betterPlayerConfiguration.looping);
     _videoEventStreamSubscription = videoPlayerController
         .videoEventStreamController.stream
@@ -419,7 +434,7 @@ class BetterPlayerController extends ChangeNotifier {
       await play();
     } else {
       if (fullScreenByDefault) {
-        videoPlayerController.addListener(_fullScreenListener);
+        videoPlayerController.addListener(_onFullScreenStateChanged);
       }
     }
 
@@ -429,28 +444,34 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
-  Future<void> _fullScreenListener() async {
+  ///Method which is invoked when full screen changes.
+  Future<void> _onFullScreenStateChanged() async {
     if (videoPlayerController.value.isPlaying && !_isFullScreen) {
       enterFullScreen();
-      videoPlayerController.removeListener(_fullScreenListener);
+      videoPlayerController.removeListener(_onFullScreenStateChanged);
     }
   }
 
+  ///Enables full screen mode in player. This will trigger route change.
   void enterFullScreen() {
     _isFullScreen = true;
     notifyListeners();
   }
 
+  ///Disables full screen mode in player. This will trigger route change.
   void exitFullScreen() {
     _isFullScreen = false;
     notifyListeners();
   }
 
+  ///Enables/disables full screen mode based on current fullscreen state.
   void toggleFullScreen() {
     _isFullScreen = !_isFullScreen;
     notifyListeners();
   }
 
+  ///Start video playback. Play will be triggered only if current lifecycle state
+  ///is resumed.
   Future<void> play() async {
     if (_appLifecycleState == AppLifecycleState.resumed) {
       await videoPlayerController.play();
@@ -460,15 +481,18 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Enables/disables looping (infinity playback) mode.
   Future<void> setLooping(bool looping) async {
     await videoPlayerController.setLooping(looping);
   }
 
+  ///Stop video playback.
   Future<void> pause() async {
     await videoPlayerController.pause();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.pause));
   }
 
+  ///Move player to specific position/moment of the video.
   Future<void> seekTo(Duration moment) async {
     await videoPlayerController.seekTo(moment);
 
@@ -481,12 +505,17 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Set volume of player. Allows values from 0.0 to 1.0.
   Future<void> setVolume(double volume) async {
+    if (volume < 0.0 || volume > 1.0) {
+      throw ArgumentError("Volume must be between 0.0 and 1.0");
+    }
     await videoPlayerController.setVolume(volume);
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.setVolume,
         parameters: <String, dynamic>{_volumeParameter: volume}));
   }
 
+  ///Set playback speed of video. Allows to set speed value between 0 and 2.
   Future<void> setSpeed(double speed) async {
     if (speed < 0 || speed > 2) {
       throw ArgumentError("Speed must be between 0 and 2");
@@ -496,10 +525,12 @@ class BetterPlayerController extends ChangeNotifier {
         parameters: <String, dynamic>{_speedParameter: speed}));
   }
 
+  ///Flag which determines whenever player is playing or not.
   bool isPlaying() {
     return videoPlayerController.value.isPlaying;
   }
 
+  ///Flag which determines whenever player is loading video data or not.
   bool isBuffering() {
     return videoPlayerController.value.isBuffering;
   }
@@ -528,10 +559,12 @@ class BetterPlayerController extends ChangeNotifier {
         : BetterPlayerEvent(BetterPlayerEventType.controlsHidden));
   }
 
+  ///Send player event. Shouldn't be used manually.
   void postEvent(BetterPlayerEvent betterPlayerEvent) {
     _postEvent(betterPlayerEvent);
   }
 
+  ///Send player event to all listeners.
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
     for (final Function eventListener in _eventListeners) {
       if (eventListener != null) {
@@ -540,6 +573,7 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Listener used to handle video player changes.
   void _onVideoPlayerChanged() async {
     final currentVideoPlayerValue = videoPlayerController.value;
     if (currentVideoPlayerValue.hasError) {
@@ -587,22 +621,29 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Add event listener which listens to player events.
   void addEventsListener(Function(BetterPlayerEvent) eventListener) {
     _eventListeners.add(eventListener);
   }
 
+  ///Remove event listener. This method should be called once you're disposing
+  ///Better Player.
   void removeEventsListener(Function(BetterPlayerEvent) eventListener) {
     _eventListeners.remove(eventListener);
   }
 
+  ///Flag which determines whenever player is playing live data source.
   bool isLiveStream() {
     return _betterPlayerDataSource?.liveStream == true;
   }
 
+  ///Flag which determines whenever player data source has been initialized.
   bool isVideoInitialized() {
     return videoPlayerController.value.initialized;
   }
 
+  ///Start timer which will trigger next video. Used in playlist. Do not use
+  ///manually.
   void startNextVideoTimer() {
     if (_nextVideoTimer == null) {
       _nextVideoTime =
@@ -620,6 +661,7 @@ class BetterPlayerController extends ChangeNotifier {
     }
   }
 
+  ///Cancel next video timer. Used in playlist. Do not use manually.
   void cancelNextVideoTimer() {
     _nextVideoTime = null;
     nextVideoTimeStreamController.add(_nextVideoTime);
@@ -627,13 +669,15 @@ class BetterPlayerController extends ChangeNotifier {
     _nextVideoTimer = null;
   }
 
+  ///Play next video form playlist. Do not use manually.
   void playNextVideo() {
     _nextVideoTime = 0;
     nextVideoTimeStreamController.add(_nextVideoTime);
     cancelNextVideoTimer();
   }
 
-  ///Setup track parameters for currently played video
+  ///Setup track parameters for currently played video. Can be used only for HLS
+  ///data source.
   void setTrack(BetterPlayerHlsTrack track) {
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedTrack));
 
@@ -648,6 +692,11 @@ class BetterPlayerController extends ChangeNotifier {
     _betterPlayerTrack = track;
   }
 
+  ///Listener which handles state of player visibility. If player visibility is
+  ///below 0.0 then video will be paused. When value is greater than 0, video
+  ///will play again. If there's different handler of visibility then it will be
+  ///used. If showNotification is set in data source or handleLifecycle is false
+  /// then this logic will be ignored.
   void onPlayerVisibilityChanged(double visibilityFraction) async {
     if (_disposed) {
       return;
@@ -721,8 +770,13 @@ class BetterPlayerController extends ChangeNotifier {
     return BetterPlayerTranslations();
   }
 
+  ///Flag which determines whenever current data source has started.
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
+  ///Set current lifecycle state. If state is [AppLifecycleState.resumed] then
+  ///player starts playing again. if lifecycle is in [AppLifecycleState.paused]
+  ///state, then video playback will stop. If showNotification is set in data
+  ///source or handleLifecycle is false then this logic will be ignored.
   void setAppLifecycleState(AppLifecycleState appLifecycleState) {
     if (!_betterPlayerDataSource.notificationConfiguration.showNotification &&
         betterPlayerConfiguration.handleLifecycle) {
@@ -853,6 +907,7 @@ class BetterPlayerController extends ChangeNotifier {
     _controlsVisibilityStreamController.add(controlsAlwaysVisible);
   }
 
+  ///Retry data source if playback failed.
   Future retryDataSource() async {
     await _setupDataSource(_betterPlayerDataSource);
     if (_videoPlayerValueOnError != null) {
@@ -887,7 +942,7 @@ class BetterPlayerController extends ChangeNotifier {
     if (!_disposed) {
       pause();
       _eventListeners.clear();
-      videoPlayerController?.removeListener(_fullScreenListener);
+      videoPlayerController?.removeListener(_onFullScreenStateChanged);
       videoPlayerController?.removeListener(_onVideoPlayerChanged);
       videoPlayerController?.dispose();
       _nextVideoTimer?.cancel();

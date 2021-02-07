@@ -1,6 +1,7 @@
 // Project imports:
 import 'package:better_player/better_player.dart';
 
+///Controller of Better Player List Video Player.
 class BetterPlayerListVideoPlayerController {
   BetterPlayerController _betterPlayerController;
 

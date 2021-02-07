@@ -8,6 +8,9 @@ import 'package:flutter/services.dart';
 
 import 'better_player_event.dart';
 
+///Configuration of Better Player. Allows to setup general behavior of player.
+///Master configuration which contains children that configure specific part
+///of player.
 class BetterPlayerConfiguration {
   /// Play the video as soon as it's displayed
   final bool autoPlay;

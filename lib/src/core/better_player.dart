@@ -16,12 +16,7 @@ import 'package:wakelock/wakelock.dart';
 
 import 'better_player_controller_provider.dart';
 
-typedef BetterPlayerRoutePageBuilder = Widget Function(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    BetterPlayerControllerProvider controllerProvider);
-
+///Widget which uses provided controller to render video player.
 class BetterPlayer extends StatefulWidget {
   const BetterPlayer({Key key, @required this.controller})
       : assert(
@@ -55,12 +50,12 @@ class BetterPlayer extends StatefulWidget {
   final BetterPlayerController controller;
 
   @override
-  BetterPlayerState createState() {
-    return BetterPlayerState();
+  _BetterPlayerState createState() {
+    return _BetterPlayerState();
   }
 }
 
-class BetterPlayerState extends State<BetterPlayer>
+class _BetterPlayerState extends State<BetterPlayer>
     with WidgetsBindingObserver {
   BetterPlayerConfiguration get _betterPlayerConfiguration =>
       widget.controller.betterPlayerConfiguration;
@@ -288,3 +283,10 @@ class BetterPlayerState extends State<BetterPlayer>
     widget.controller.setAppLifecycleState(state);
   }
 }
+
+///Page route builder used in fullscreen mode.
+typedef BetterPlayerRoutePageBuilder = Widget Function(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    BetterPlayerControllerProvider controllerProvider);

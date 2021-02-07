@@ -7,6 +7,7 @@ import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/list/better_player_list_video_player_controller.dart';
 import 'package:flutter/material.dart';
 
+///Special version of Better Player which is used to play video in list view.
 class BetterPlayerListVideoPlayer extends StatefulWidget {
   ///Video to show
   final BetterPlayerDataSource dataSource;

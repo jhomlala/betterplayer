@@ -668,6 +668,7 @@ final class BetterPlayer {
         try {
             MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
                     trackSelector.getCurrentMappedTrackInfo();
+
             if (mappedTrackInfo != null) {
                 for (int rendererIndex = 0; rendererIndex < mappedTrackInfo.getRendererCount();
                      rendererIndex++) {
@@ -675,21 +676,29 @@ final class BetterPlayer {
                         continue;
                     }
                     TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex);
+                    boolean hasElementWithoutLabel = false;
                     for (int groupIndex = 0; groupIndex < trackGroupArray.length; groupIndex++) {
                         TrackGroup group = trackGroupArray.get(groupIndex);
                         for (int groupElementIndex = 0; groupElementIndex < group.length; groupElementIndex++) {
                             String label = group.getFormat(groupElementIndex).label;
-                            if (name.equals(label) && index == groupIndex) {
-                                DefaultTrackSelector.ParametersBuilder builder =
-                                        trackSelector.getParameters().buildUpon();
-                                builder.clearSelectionOverrides(rendererIndex)
-                                        .setRendererDisabled(rendererIndex, false);
-                                int[] tracks = {groupElementIndex};
-                                DefaultTrackSelector.SelectionOverride override =
-                                        new DefaultTrackSelector.SelectionOverride(groupIndex, tracks);
-                                builder.setSelectionOverride(rendererIndex,
-                                        mappedTrackInfo.getTrackGroups(rendererIndex), override);
-                                trackSelector.setParameters(builder);
+                            if (label == null) {
+                                hasElementWithoutLabel = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    for (int groupIndex = 0; groupIndex < trackGroupArray.length; groupIndex++) {
+                        TrackGroup group = trackGroupArray.get(groupIndex);
+                        for (int groupElementIndex = 0; groupElementIndex < group.length; groupElementIndex++) {
+                            String label = group.getFormat(groupElementIndex).label;
+                            if ( name.equals(label) && index == groupIndex) {
+                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
+                                return;
+                            }
+                            ///Fallback option
+                            if (hasElementWithoutLabel && name.equals(label)){
+                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
                                 return;
                             }
 
@@ -701,6 +710,23 @@ final class BetterPlayer {
             Log.e(TAG, "setAudioTrack failed" + exception.toString());
         }
     }
+
+    private void setAudioTrack(int rendererIndex, int groupIndex, int groupElementIndex) {
+        MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
+                trackSelector.getCurrentMappedTrackInfo();
+        Log.d(TAG, "Selected audio!");
+        DefaultTrackSelector.ParametersBuilder builder =
+                trackSelector.getParameters().buildUpon();
+        builder.clearSelectionOverrides(rendererIndex)
+                .setRendererDisabled(rendererIndex, false);
+        int[] tracks = {groupElementIndex};
+        DefaultTrackSelector.SelectionOverride override =
+                new DefaultTrackSelector.SelectionOverride(groupIndex, tracks);
+        builder.setSelectionOverride(rendererIndex,
+                mappedTrackInfo.getTrackGroups(rendererIndex), override);
+        trackSelector.setParameters(builder);
+    }
+
 
     void dispose() {
         disposeMediaSession();
