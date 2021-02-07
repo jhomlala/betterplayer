@@ -208,7 +208,7 @@ class BetterPlayerControlsConfiguration {
     this.overflowMenuIconsColor = Colors.black,
     this.forwardSkipTimeInMilliseconds = 15000,
     this.backwardSkipTimeInMilliseconds = 15000,
-    this.loadingColor = Colors.black,
+    this.loadingColor = Colors.white,
     this.loadingWidget,
     this.backgroundColor = Colors.black,
   });

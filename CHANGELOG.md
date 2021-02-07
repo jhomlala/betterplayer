@@ -5,6 +5,7 @@
 * Fixed HLS audio tracks playlist selection issue.
 * Added enableProgressBarDrag in BetterPlayerControlsConfiguration.
 * Fixed audio track picking in ExoPlayer (Android).
+* Changed default loadingColor.
 
 ## 0.0.51
 * Fixed lint issues.
