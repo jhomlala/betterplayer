@@ -57,6 +57,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to enable/disable progress bar
   final bool enableProgressBar;
 
+  ///Flag used to enable/disable progress bar drag
+  final bool enableProgressBarDrag;
+
   ///Flag used to enable/disable play-pause
   final bool enablePlayPause;
 
@@ -174,6 +177,7 @@ class BetterPlayerControlsConfiguration {
     this.enableMute = true,
     this.enableProgressText = false,
     this.enableProgressBar = true,
+    this.enableProgressBarDrag = true,
     this.enablePlayPause = true,
     this.enableSkips = true,
     this.enableAudioTracks = true,
