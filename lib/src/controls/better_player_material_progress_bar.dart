@@ -72,9 +72,12 @@ class _VideoProgressBarState
       }
     }
 
+    final bool enableProgressBarDrag = betterPlayerController
+        .betterPlayerConfiguration.controlsConfiguration.enableProgressBarDrag;
+
     return GestureDetector(
       onHorizontalDragStart: (DragStartDetails details) {
-        if (!controller.value.initialized) {
+        if (!controller.value.initialized || !enableProgressBarDrag) {
           return;
         }
 
@@ -88,7 +91,7 @@ class _VideoProgressBarState
         }
       },
       onHorizontalDragUpdate: (DragUpdateDetails details) {
-        if (!controller.value.initialized) {
+        if (!controller.value.initialized || !enableProgressBarDrag) {
           return;
         }
 
@@ -99,6 +102,10 @@ class _VideoProgressBarState
         }
       },
       onHorizontalDragEnd: (DragEndDetails details) {
+        if (!enableProgressBarDrag) {
+          return;
+        }
+
         if (_controllerWasPlaying) {
           controller.play();
         }
@@ -108,7 +115,7 @@ class _VideoProgressBarState
         }
       },
       onTapDown: (TapDownDetails details) {
-        if (!controller.value.initialized) {
+        if (!controller.value.initialized || !enableProgressBarDrag) {
           return;
         }
         seekToRelativePosition(details.globalPosition);

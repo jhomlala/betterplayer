@@ -209,7 +209,7 @@ class BetterPlayerController extends ChangeNotifier {
     return betterPLayerControllerProvider.controller;
   }
 
-  ///Setup new data source in Better Player. 
+  ///Setup new data source in Better Player.
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
@@ -507,7 +507,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Set volume of player. Allows values from 0.0 to 1.0.
   Future<void> setVolume(double volume) async {
-    if (volume < 0.0 || volume > 1.0){
+    if (volume < 0.0 || volume > 1.0) {
       throw ArgumentError("Volume must be between 0.0 and 1.0");
     }
     await videoPlayerController.setVolume(volume);

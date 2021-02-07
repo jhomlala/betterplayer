@@ -1,4 +1,3 @@
-
 ///Configuration of notification which is displayed once user moves app to
 ///background.
 class BetterPlayerNotificationConfiguration {

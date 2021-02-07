@@ -447,6 +447,9 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
    ///Flag used to enable/disable progress bar
    final bool enableProgressBar;
 
+   ///Flag used to enable/disable progress bar drag
+   final bool enableProgressBarDrag;
+
    ///Flag used to enable/disable play-pause
    final bool enablePlayPause;
 

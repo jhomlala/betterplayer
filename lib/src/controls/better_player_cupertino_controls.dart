@@ -605,6 +605,7 @@ class _BetterPlayerCupertinoControlsState
         padding: const EdgeInsets.only(right: 12.0),
         child: BetterPlayerCupertinoVideoProgressBar(
           _controller,
+          _betterPlayerController,
           onDragStart: () {
             _hideTimer?.cancel();
           },

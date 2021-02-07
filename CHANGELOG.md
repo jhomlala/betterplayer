@@ -3,6 +3,7 @@
 * Updated documentation.
 * [BREAKING_CHANGE] BetterPlayerState visibility changed to private.
 * Fixed HLS audio tracks playlist selection issue.
+* Added enableProgressBarDrag in BetterPlayerControlsConfiguration.
 
 ## 0.0.51
 * Fixed lint issues.

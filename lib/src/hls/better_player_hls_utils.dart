@@ -103,7 +103,6 @@ class BetterPlayerHlsUtils {
     final parsedPlaylist = await HlsPlaylistParser.create()
         .parseString(Uri.parse(masterPlaylistUrl), data);
     if (parsedPlaylist is HlsMasterPlaylist) {
-
       for (int index = 0; index < parsedPlaylist.audios.length; index++) {
         final Rendition audio = parsedPlaylist.audios[index];
         audios.add(BetterPlayerHlsAudioTrack(
