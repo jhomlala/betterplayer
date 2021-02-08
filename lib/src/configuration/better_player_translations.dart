@@ -71,4 +71,19 @@ class BetterPlayerTranslations {
         overflowMenuQuality: "गुणवत्ता",
         overflowMenuAudioTracks: "ऑडियो",
       );
+
+  factory BetterPlayerTranslations.arabic() => BetterPlayerTranslations(
+        languageCode: "ar",
+        generalDefaultError: "لا يمكن تشغيل الفيديو",
+        generalNone: "لا يوجد",
+        generalDefault: "الاساسي",
+        generalRetry: "اعادة المحاوله",
+        playlistLoadingNextVideo: "تحميل الفيديو التالي",
+        controlsLive: "مباشر",
+        controlsNextVideoIn: "الفيديو التالي في",
+        overflowMenuPlaybackSpeed: "سرعة التشغيل",
+        overflowMenuSubtitles: "الترجمة",
+        overflowMenuQuality: "الجودة",
+        overflowMenuAudioTracks: "الصوت",
+      );
 }
