@@ -1,7 +1,7 @@
+import 'package:better_player/src/hls/hls_parser/drm_init_data.dart';
+import 'package:better_player/src/hls/hls_parser/playlist.dart';
+import 'package:better_player/src/hls/hls_parser/segment.dart';
 import 'package:meta/meta.dart';
-import 'segment.dart';
-import 'drm_init_data.dart';
-import 'playlist.dart';
 
 class HlsMediaPlaylist extends HlsPlaylist {
   HlsMediaPlaylist._({
@@ -44,12 +44,13 @@ class HlsMediaPlaylist extends HlsPlaylist {
     @required List<String> tags,
     @required bool hasIndependentSegments,
   }) {
-    int durationUs = segments.isNotEmpty
+    final int durationUs = segments.isNotEmpty
         ? segments.last.relativeStartTimeUs ?? 0 + segments.last.durationUs ?? 0
         : null;
 
-    if (startOffsetUs != null && startOffsetUs < 0)
+    if (startOffsetUs != null && startOffsetUs < 0) {
       startOffsetUs = durationUs ?? 0 + startOffsetUs;
+    }
 
     return HlsMediaPlaylist._(
       playlistType: playlistType,
@@ -71,11 +72,11 @@ class HlsMediaPlaylist extends HlsPlaylist {
     );
   }
 
-  static const int PLAYLIST_TYPE_UNKNOWN = 0;
-  static const int PLAYLIST_TYPE_VOD = 1;
-  static const int PLAYLIST_TYPE_EVENT = 2;
+  static const int playlistTypeUnknown = 0;
+  static const int playlistTypeVod = 1;
+  static const int playlistTypeEvent = 2;
 
-  /// The type of the playlist. The value is [PLAYLIST_TYPE_UNKNOWN] or [PLAYLIST_TYPE_VOD] or [PLAYLIST_TYPE_EVENT] and not null.
+  /// The type of the playlist. The value is [playlistTypeUnknown] or [playlistTypeVod] or [playlistTypeEvent] and not null.
   final int playlistType;
 
   /// The start offset in microseconds, as defined by #EXT-X-START, may be null if unknown.

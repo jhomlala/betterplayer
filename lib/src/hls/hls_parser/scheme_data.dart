@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
-import 'package:meta/meta.dart';
 import 'dart:typed_data';
+
+import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 
 class SchemeData {
   SchemeData({

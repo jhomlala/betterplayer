@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class VariantInfo {
   VariantInfo({
@@ -30,12 +30,13 @@ class VariantInfo {
 
   @override
   bool operator ==(dynamic other) {
-    if (other is VariantInfo)
+    if (other is VariantInfo) {
       return other.bitrate == bitrate &&
           other.videoGroupId == videoGroupId &&
           other.audioGroupId == audioGroupId &&
           other.subtitleGroupId == subtitleGroupId &&
           other.captionGroupId == captionGroupId;
+    }
     return false;
   }
 

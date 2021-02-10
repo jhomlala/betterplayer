@@ -1,4 +1,4 @@
-import 'format.dart';
+import 'package:better_player/src/hls/hls_parser/format.dart';
 import 'package:meta/meta.dart';
 
 class Variant {

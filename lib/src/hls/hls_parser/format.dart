@@ -39,7 +39,7 @@ class Format {
           @required int width,
           @required int height,
           @required double frameRate,
-          int selectionFlags = Util.SELECTION_FLAG_DEFAULT,
+          int selectionFlags = Util.selectionFlagDefault,
           int roleFlags}) =>
       Format(
         id: id,
@@ -63,11 +63,11 @@ class Format {
   final String label;
 
   /// Track selection flags.
-  /// [Util.SELECTION_FLAG_DEFAULT] or [Util.SELECTION_FLAG_FORCED] or [Util.SELECTION_FLAG_AUTOSELECT]
+  /// [Util.selectionFlagDefault] or [Util.selectionFlagForced] or [Util.selectionFlagAutoSelect]
   final int selectionFlags;
 
   /// Track role flags.
-  /// [Util.ROLE_FLAG_DESCRIBES_MUSIC_AND_SOUND] or [Util.ROLE_FLAG_DESCRIBES_VIDEO] or [Util.ROLE_FLAG_EASY_TO_READ] or [Util.ROLE_FLAG_TRANSCRIBES_DIALOG]
+  /// [Util.roleFlagDescribesMusicAndSound] or [Util.roleFlagDescribesVideo] or [Util.roleFlagEasyToRead] or [Util.roleFlagTranscribesDialog]
   final int roleFlags;
 
   ///Average bandwidth

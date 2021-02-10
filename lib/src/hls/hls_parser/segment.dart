@@ -1,4 +1,4 @@
-import 'drm_init_data.dart';
+import 'package:better_player/src/hls/hls_parser/drm_init_data.dart';
 import 'package:meta/meta.dart';
 
 class Segment {

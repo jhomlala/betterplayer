@@ -1,10 +1,11 @@
-import 'mime_types.dart';
-import 'exception.dart';
+import 'package:better_player/src/hls/hls_parser/exception.dart';
+import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 
 class LibUtil {
   static bool startsWith(List<int> source, List<int> checker) {
-    for (int i = 0; i < checker.length; i++)
+    for (int i = 0; i < checker.length; i++) {
       if (source[i] != checker[i]) return false;
+    }
 
     return true;
   }
@@ -17,18 +18,18 @@ class LibUtil {
   /// ECMAScript standard: http://ecma-international.org/ecma-262/5.1/#sec-15.10
   static bool isWhitespace(int rune) =>
       (rune >= 0x0009 && rune <= 0x000D) ||
-          rune == 0x0020 ||
-          rune == 0x0085 ||
-          rune == 0x00A0 ||
-          rune == 0x1680 ||
-          rune == 0x180E ||
-          (rune >= 0x2000 && rune <= 0x200A) ||
-          rune == 0x2028 ||
-          rune == 0x2029 ||
-          rune == 0x202F ||
-          rune == 0x205F ||
-          rune == 0x3000 ||
-          rune == 0xFEFF;
+      rune == 0x0020 ||
+      rune == 0x0085 ||
+      rune == 0x00A0 ||
+      rune == 0x1680 ||
+      rune == 0x180E ||
+      (rune >= 0x2000 && rune <= 0x200A) ||
+      rune == 0x2028 ||
+      rune == 0x2029 ||
+      rune == 0x202F ||
+      rune == 0x205F ||
+      rune == 0x3000 ||
+      rune == 0xFEFF;
 
   static String excludeWhiteSpace(String string) =>
       string.split('').where((it) => !isWhitespace(it.codeUnitAt(0))).join();
@@ -37,19 +38,20 @@ class LibUtil {
       (codeUnit == '\n'.codeUnitAt(0)) || (codeUnit == '\r'.codeUnitAt(0));
 
   static String getCodecsOfType(String codecs, int trackType) {
-    var output = Util.splitCodecs(codecs)
+    final output = Util.splitCodecs(codecs)
         .where((codec) => trackType == MimeTypes.getTrackTypeOfCodec(codec))
         .join(',');
     return output.isEmpty ? null : output;
   }
 
   static int parseXsDateTime(String value) {
-    String pattern =
+    const String pattern =
         '(\\d\\d\\d\\d)\\-(\\d\\d)\\-(\\d\\d)[Tt](\\d\\d):(\\d\\d):(\\d\\d)([\\.,](\\d+))?([Zz]|((\\+|\\-)(\\d?\\d):?(\\d\\d)))?';
-    List<Match> matchList = RegExp(pattern).allMatches(value).toList();
-    if (matchList.isEmpty)
+    final List<Match> matchList = RegExp(pattern).allMatches(value).toList();
+    if (matchList.isEmpty) {
       throw ParserException('Invalid date/time format: $value');
-    Match match = matchList[0];
+    }
+    final Match match = matchList[0];
     int timezoneShift;
     if (match.group(9) == null) {
       // No time zone specified.
@@ -63,7 +65,7 @@ class LibUtil {
     }
 
     //todo UTCではなくGMT?
-    DateTime dateTime = DateTime.utc(
+    final DateTime dateTime = DateTime.utc(
         int.parse(match.group(1)),
         int.parse(match.group(2)),
         int.parse(match.group(3)),
@@ -83,45 +85,45 @@ class LibUtil {
   }
 
   static int msToUs(int timeMs) =>
-      (timeMs == null || timeMs == Util.TIME_END_OF_SOURCE)
+      (timeMs == null || timeMs == Util.timeEndOfSource)
           ? timeMs
           : (timeMs * 1000);
 }
 
 class Util {
-  static const int SELECTION_FLAG_DEFAULT = 1;
-  static const int SELECTION_FLAG_FORCED = 1 << 1; // 2
-  static const int SELECTION_FLAG_AUTOSELECT = 1 << 2; // 4
-  static const int ROLE_FLAG_DESCRIBES_VIDEO = 1 << 9;
-  static const int ROLE_FLAG_DESCRIBES_MUSIC_AND_SOUND = 1 << 10;
-  static const int ROLE_FLAG_TRANSCRIBES_DIALOG = 1 << 12;
-  static const int ROLE_FLAG_EASY_TO_READ = 1 << 13;
+  static const int selectionFlagDefault = 1;
+  static const int selectionFlagForced = 1 << 1; // 2
+  static const int selectionFlagAutoSelect = 1 << 2; // 4
+  static const int roleFlagDescribesVideo = 1 << 9;
+  static const int roleFlagDescribesMusicAndSound = 1 << 10;
+  static const int roleFlagTranscribesDialog = 1 << 12;
+  static const int roleFlagEasyToRead = 1 << 13;
 
   /// A type constant for tracks of unknown type.
-  static const int TRACK_TYPE_UNKNOWN = -1;
+  static const int trackTypeUnknown = -1;
 
   /// A type constant for tracks of some default type, where the type itself is unknown.
-  static const int TRACK_TYPE_DEFAULT = 0;
+  static const int trackTypeDefault = 0;
 
   /// A type constant for audio tracks.
-  static const int TRACK_TYPE_AUDIO = 1;
+  static const int trackTypeAudio = 1;
 
   /// A type constant for video tracks.
-  static const int TRACK_TYPE_VIDEO = 2;
+  static const int trackTypeVideo = 2;
 
   /// A type constant for text tracks.
-  static const int TRACK_TYPE_TEXT = 3;
+  static const int trackTypeText = 3;
 
   /// A type constant for metadata tracks.
-  static const int TRACK_TYPE_METADATA = 4;
+  static const int trackTypeMetadata = 4;
 
   /// A type constant for camera motion tracks.
-  static const int TRACK_TYPE_CAMERA_MOTION = 5;
+  static const int trackTypeCameraMotion = 5;
 
   /// A type constant for a dummy or empty track.
-  static const int TRACK_TYPE_NONE = 6;
+  static const int trackTypeNone = 6;
 
-  static const int TIME_END_OF_SOURCE = 0;
+  static const int timeEndOfSource = 0;
 
   static List<String> splitCodecs(String codecs) => codecs?.isNotEmpty != true
       ? <String>[]
@@ -129,6 +131,6 @@ class Util {
 }
 
 class CencType {
-  static const String CENC = 'TYPE_CENC';
-  static const String CBCS = 'TYPE_CBCS';
+  static const String cenc = 'TYPE_CENC';
+  static const String cnbs = 'TYPE_CBCS';
 }
