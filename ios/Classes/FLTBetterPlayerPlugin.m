@@ -125,10 +125,6 @@ AVPictureInPictureController *_pipController;
                                                  selector:@selector(itemDidPlayToEndTime:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:item];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(itemFailedToPlayToEndTime:)
-                                                     name:AVPlayerItemFailedToPlayToEndTimeNotification
-                                                   object:item];
         self._observersAdded = true;
     }
 }
