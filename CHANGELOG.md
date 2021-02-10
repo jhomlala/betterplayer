@@ -1,3 +1,8 @@
+## 0.0.53
+* Fixed fullscreen issue.
+* Fixed HLS tracks selection.
+* Removed HLS parser package and included HLS parser package in Better Player.
+
 ## 0.0.52
 * Fixed unregister listener issue in iOS.
 * Updated documentation.
