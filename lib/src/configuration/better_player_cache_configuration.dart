@@ -6,6 +6,7 @@ class BetterPlayerCacheConfiguration {
   ///Enable cache for network data source
   final bool useCache;
 
+  ///TODO: REMOVE THIS PARAMETER
   /// The maximum cache size to keep on disk in bytes.
   /// Android only option.
   final int maxCacheSize;
