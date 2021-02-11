@@ -128,7 +128,7 @@ class BetterPlayerHlsUtils {
       final response = await request.close();
       var data = "";
       await response.transform(const Utf8Decoder()).listen((contents) {
-        data = contents.toString();
+        data += contents.toString();
       }).asFuture<String>();
 
       return data;

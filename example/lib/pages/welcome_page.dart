@@ -10,6 +10,7 @@ import 'package:better_player_example/pages/controls_always_visible_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/fade_placeholder_page.dart';
+import 'package:better_player_example/pages/hls_audio_page.dart';
 import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/hls_tracks_page.dart';
 import 'package:better_player_example/pages/memory_player_page.dart';
@@ -96,6 +97,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("HLS tracks", () {
         _navigateToPage(HlsTracksPage());
+      }),
+      _buildExampleElementWidget("HLS Audio", () {
+        _navigateToPage(HlsAudioPage());
       }),
       _buildExampleElementWidget("Cache", () {
         _navigateToPage(CachePage());
