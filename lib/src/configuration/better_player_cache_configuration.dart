@@ -7,7 +7,9 @@ class BetterPlayerCacheConfiguration {
   final bool useCache;
 
   /// The maximum cache size to keep on disk in bytes.
-  /// Android only option.
+  /// Android only option. This value is used only when first video access
+  /// cache. This value is used for all players within your app. It can't be
+  /// changed during app work.
   final int maxCacheSize;
 
   /// The maximum size of each individual file in bytes.

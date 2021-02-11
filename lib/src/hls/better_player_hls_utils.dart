@@ -9,7 +9,11 @@ import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
 // Project imports:
 import 'package:better_player/src/hls/better_player_hls_subtitle.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
-import 'package:flutter_hls_parser/flutter_hls_parser.dart';
+import 'package:better_player/src/hls/hls_parser/hls_master_playlist.dart';
+import 'package:better_player/src/hls/hls_parser/hls_media_playlist.dart';
+import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
+import 'package:better_player/src/hls/hls_parser/rendition.dart';
+import 'package:better_player/src/hls/hls_parser/segment.dart';
 
 ///HLS helper class
 class BetterPlayerHlsUtils {
@@ -124,7 +128,7 @@ class BetterPlayerHlsUtils {
       final response = await request.close();
       var data = "";
       await response.transform(const Utf8Decoder()).listen((contents) {
-        data = contents.toString();
+        data += contents.toString();
       }).asFuture<String>();
 
       return data;

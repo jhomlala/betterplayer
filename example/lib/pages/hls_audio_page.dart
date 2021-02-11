@@ -1,14 +1,13 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
-import 'package:better_player_example/utils.dart';
 import 'package:flutter/material.dart';
 
-class NormalPlayerPage extends StatefulWidget {
+class HlsAudioPage extends StatefulWidget {
   @override
-  _NormalPlayerPageState createState() => _NormalPlayerPageState();
+  _HlsAudioPageState createState() => _HlsAudioPageState();
 }
 
-class _NormalPlayerPageState extends State<NormalPlayerPage> {
+class _HlsAudioPageState extends State<HlsAudioPage> {
   BetterPlayerController _betterPlayerController;
 
   @override
@@ -20,7 +19,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.bugBuckBunnyVideoUrl,
+      Constants.elephantDreamStreamUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -31,7 +30,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player"),
+        title: Text("HLS Audio"),
       ),
       body: Column(
         children: [
@@ -39,22 +38,15 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Normal player with configuration managed by developer.",
+              "Click on overflow menu (3 dots) and select Audio. You can choose "
+              "audio track from HLS stream. Better Player will setup audio"
+              " automatically for you.",
               style: TextStyle(fontSize: 16),
             ),
           ),
           AspectRatio(
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
-          ),
-          ElevatedButton(
-            child: Text("Play file data source"),
-            onPressed: () async {
-              String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
-              BetterPlayerDataSource dataSource =
-                  BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
-              _betterPlayerController.setupDataSource(dataSource);
-            },
           ),
         ],
       ),

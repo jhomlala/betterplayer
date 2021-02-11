@@ -118,7 +118,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Internal flag used to cancel dismiss of the full screen. Used when user
   ///switches quality (track or resolution) of the video. You should ignore it.
-  bool cancelFullScreenDismiss = true;
+  bool cancelFullScreenDismiss = false;
 
   ///Currently used translations
   BetterPlayerTranslations translations = BetterPlayerTranslations();
@@ -256,7 +256,8 @@ class BetterPlayerController extends ChangeNotifier {
 
     ///Setup subtitles (none is default)
     setupSubtitleSource(
-        defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last);
+        defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last,
+        sourceInitialize: true);
   }
 
   ///Check if given [betterPlayerDataSource] is HLS-type data source.
@@ -301,8 +302,8 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   ///Setup subtitles to be displayed from given subtitle source
-  Future<void> setupSubtitleSource(
-      BetterPlayerSubtitlesSource subtitlesSource) async {
+  Future<void> setupSubtitleSource(BetterPlayerSubtitlesSource subtitlesSource,
+      {bool sourceInitialize = false}) async {
     assert(subtitlesSource != null, "SubtitlesSource can't be null");
     _betterPlayerSubtitlesSource = subtitlesSource;
     subtitlesLines.clear();
@@ -313,7 +314,7 @@ class BetterPlayerController extends ChangeNotifier {
     }
 
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedSubtitles));
-    if (!_disposed) {
+    if (!_disposed && !sourceInitialize) {
       cancelFullScreenDismiss = true;
       notifyListeners();
     }

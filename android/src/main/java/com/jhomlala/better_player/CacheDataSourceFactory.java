@@ -16,8 +16,10 @@ import java.io.File;
 class CacheDataSourceFactory implements DataSource.Factory {
     private final Context context;
     private final DefaultDataSourceFactory defaultDatasourceFactory;
+
+    ///TODO: remove maxCacheSize
     private final long maxFileSize, maxCacheSize;
-    private static SimpleCache downloadCache;
+
 
     CacheDataSourceFactory(
             Context context,
@@ -35,17 +37,12 @@ class CacheDataSourceFactory implements DataSource.Factory {
 
     @Override
     public DataSource createDataSource() {
-        LeastRecentlyUsedCacheEvictor evictor = new LeastRecentlyUsedCacheEvictor(maxCacheSize);
-
-        if (downloadCache == null) {
-            downloadCache = new SimpleCache(new File(context.getCacheDir(), "video"), evictor);
-        }
-
+        SimpleCache betterPlayerCache = BetterPlayerCache.createCache(context,maxCacheSize);
         return new CacheDataSource(
-                downloadCache,
+                betterPlayerCache,
                 defaultDatasourceFactory.createDataSource(),
                 new FileDataSource(),
-                new CacheDataSink(downloadCache, maxFileSize),
+                new CacheDataSink(betterPlayerCache, maxFileSize),
                 CacheDataSource.FLAG_BLOCK_ON_CACHE | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR,
                 null);
     }

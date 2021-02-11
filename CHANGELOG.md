@@ -1,3 +1,12 @@
+## 0.0.53
+* Fixed fullscreen issue.
+* Fixed HLS tracks selection.
+* Removed HLS parser package and included HLS parser package in Better Player.
+* Removed unused player observer in iOS.
+* Fixed cache issue in Android where multiple Better Player instances uses same directory.
+* Fixed HLS parsing issue.
+* Added HLS Audio examoke,
+
 ## 0.0.52
 * Fixed unregister listener issue in iOS.
 * Updated documentation.

@@ -139,6 +139,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         if (flutterState == null) {
             Log.wtf(TAG, "Detached from the engine before registering to it.");
         }
+        BetterPlayerCache.releaseCache();
         flutterState.stopListening();
         flutterState = null;
     }
