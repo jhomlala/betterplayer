@@ -4,29 +4,36 @@ import android.content.Context;
 
 import com.google.android.exoplayer2.database.ExoDatabaseProvider;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.NoOpCacheEvictor;
 import com.google.android.exoplayer2.upstream.cache.SimpleCache;
 
 import java.io.File;
 
 public class BetterPlayerCache {
-    private static SimpleCache sDownloadCache;
+    private static volatile SimpleCache instance;
 
-    public static void createCache(Context context) {
-        if (sDownloadCache == null) {
-            sDownloadCache = new SimpleCache(
-                    new File(context.getCacheDir(), "betterPlayerCache"),
-                    new LeastRecentlyUsedCacheEvictor(100 * 1024 * 1024),
-                    new ExoDatabaseProvider(context));
+    public static SimpleCache createCache(Context context, long cacheFileSize) {
+        if (instance == null) {
+            synchronized (BetterPlayerCache.class) {
+                if (instance == null) {
+                    instance = new SimpleCache(
+                            new File(context.getCacheDir(), "betterPlayerCache"),
+                            new LeastRecentlyUsedCacheEvictor(cacheFileSize),
+                            new ExoDatabaseProvider(context));
+                }
+            }
         }
+        return instance;
     }
 
-    public static SimpleCache getInstance() {
-        return sDownloadCache;
-    }
 
     public static void releaseCache() {
-        sDownloadCache.release();
-        sDownloadCache = null;
+        try {
+            if (instance != null) {
+                instance.release();
+                instance = null;
+            }
+        } catch (Exception exception) {
+
+        }
     }
 }

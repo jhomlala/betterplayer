@@ -37,7 +37,7 @@ class CacheDataSourceFactory implements DataSource.Factory {
 
     @Override
     public DataSource createDataSource() {
-        SimpleCache betterPlayerCache = BetterPlayerCache.getInstance();
+        SimpleCache betterPlayerCache = BetterPlayerCache.createCache(context,maxCacheSize);
         return new CacheDataSource(
                 betterPlayerCache,
                 defaultDatasourceFactory.createDataSource(),

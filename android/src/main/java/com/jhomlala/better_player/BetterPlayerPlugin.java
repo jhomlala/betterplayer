@@ -132,16 +132,14 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                         FlutterMain::getLookupKeyForAsset,
                         binding.getTextureRegistry());
         flutterState.startListening(this);
-        ///Pre-warm cache
-        BetterPlayerCache.createCache(flutterState.applicationContext);
     }
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-        BetterPlayerCache.releaseCache();
         if (flutterState == null) {
             Log.wtf(TAG, "Detached from the engine before registering to it.");
         }
+        BetterPlayerCache.releaseCache();
         flutterState.stopListening();
         flutterState = null;
     }
