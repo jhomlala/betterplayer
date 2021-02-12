@@ -28,6 +28,21 @@ class BetterPlayerTranslations {
     this.overflowMenuAudioTracks = "Audio",
   });
 
+  factory BetterPlayerTranslations.arabic() => BetterPlayerTranslations(
+        languageCode: 'ar',
+        generalDefaultError: 'لا يمكن تشغيل الفيديو',
+        generalDefault: 'افتراضي',
+        generalNone: 'لا يوجد',
+        generalRetry: 'حاول مجدداً',
+        playlistLoadingNextVideo: 'جاري تحميل الفيديو التالي',
+        controlsLive: 'مباشر',
+        controlsNextVideoIn: 'الفيديو التالي',
+        overflowMenuPlaybackSpeed: 'سرعة الفيديو',
+        overflowMenuSubtitles: 'ترجمات',
+        overflowMenuQuality: 'الجودة',
+        overflowMenuAudioTracks: 'الصوت',
+      );
+
   factory BetterPlayerTranslations.polish() => BetterPlayerTranslations(
         languageCode: "pl",
         generalDefaultError: "Video nie może zostać odtworzone",

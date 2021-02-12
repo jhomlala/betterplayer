@@ -712,7 +712,7 @@ the BetterPlayerConfiguration. Here is an example:
               ),
             ],
 ```
-There are 4 pre build in languages: EN, PL, ZH (chinese simplified), HI (hindi). If you didn't provide
+There are 4 pre build in languages: EN, AR, PL, ZH (chinese simplified), HI (hindi). If you didn't provide
 any translation then EN translations will be used or any of the pre build in translations, only if it's
 match current user locale.
 
