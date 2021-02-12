@@ -80,18 +80,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 ),
                 aspectRatio: 1,
               ),
-              ElevatedButton(
-                child: Text("Get current position"),
-                onPressed: () {
-                  var position = _betterPlayerPlaylistStateKey
-                      .currentState
-                      .betterPlayerController
-                      .videoPlayerController
-                      .value
-                      .position;
-                  print("The position is: $position");
-                },
-              ),
             ]);
           }
         },

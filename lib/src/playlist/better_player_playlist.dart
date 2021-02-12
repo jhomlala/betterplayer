@@ -8,6 +8,8 @@ import 'package:better_player/src/configuration/better_player_data_source.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/playlist/better_player_playlist_configuration.dart';
+import 'package:better_player/src/playlist/better_player_playlist_controller.dart';
+
 // Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -22,21 +24,51 @@ class BetterPlayerPlaylist extends StatefulWidget {
     @required this.betterPlayerDataSourceList,
     @required this.betterPlayerConfiguration,
     @required this.betterPlayerPlaylistConfiguration,
-  })  : assert(betterPlayerDataSourceList != null,
-            "BetterPlayerDataSourceList can't be null or empty"),
+  })
+      : assert(betterPlayerDataSourceList != null,
+  "BetterPlayerDataSourceList can't be null or empty"),
         assert(betterPlayerConfiguration != null,
-            "BetterPlayerConfiguration can't be null"),
+        "BetterPlayerConfiguration can't be null"),
         assert(betterPlayerPlaylistConfiguration != null,
-            "BetterPlayerPlaylistConfiguration can't be null"),
+        "BetterPlayerPlaylistConfiguration can't be null"),
         super(key: key);
 
   @override
   BetterPlayerPlaylistState createState() => BetterPlayerPlaylistState();
 }
 
+class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
+
+  BetterPlayerPlaylistController _betterPlayerPlaylistController;
+
+  BetterPlayerController get _betterPlayerController => _betterPlayerPlaylistController.betterPlayerController;
+
+  @override
+  void initState() {
+    _betterPlayerPlaylistController = BetterPlayerPlaylistController(
+      widget.betterPlayerDataSourceList,
+      betterPlayerConfiguration: widget.betterPlayerConfiguration,
+    betterPlayerPlaylistConfiguration: widget.betterPlayerPlaylistConfiguration);
+    super.initState();
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    return AspectRatio(
+      aspectRatio: _betterPlayerController.getAspectRatio() ??
+          BetterPlayerUtils.calculateAspectRatio(context),
+      child: BetterPlayer(
+        controller: _betterPlayerController,
+      ),
+    );
+  }
+
+}
+
 ///State of BetterPlayerPlaylist. Can be used to access BetterPlayerController
 ///instance.
-class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
+/*class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   BetterPlayerDataSource _currentSource;
   BetterPlayerController _controller;
   bool _changingToNextVideo = false;
@@ -147,4 +179,4 @@ class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
 
   ///Get [BetterPlayerController] instance used in playlist
   BetterPlayerController get betterPlayerController => _controller;
-}
+}*/
