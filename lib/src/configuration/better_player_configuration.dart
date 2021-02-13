@@ -184,7 +184,8 @@ class BetterPlayerConfiguration {
       overlay: overlay ?? this.overlay,
       errorBuilder: errorBuilder ?? this.errorBuilder,
       allowedScreenSleep: allowedScreenSleep ?? this.allowedScreenSleep,
-      fullScreenAspectRatio: fullScreenAspectRatio ?? this.fullScreenAspectRatio,
+      fullScreenAspectRatio:
+          fullScreenAspectRatio ?? this.fullScreenAspectRatio,
       deviceOrientationsOnFullScreen:
           deviceOrientationsOnFullScreen ?? this.deviceOrientationsOnFullScreen,
       systemOverlaysAfterFullScreen:
