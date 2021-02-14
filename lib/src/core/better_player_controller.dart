@@ -269,8 +269,10 @@ class BetterPlayerController extends ChangeNotifier {
   ///This method configures tracks, subtitles and audio tracks from given
   ///master playlist.
   Future _setupHlsDataSource() async {
-    final String hlsData =
-        await BetterPlayerHlsUtils.getDataFromUrl(betterPlayerDataSource.url);
+    final String hlsData = await BetterPlayerHlsUtils.getDataFromUrl(
+      betterPlayerDataSource.url,
+      betterPlayerDataSource.headers,
+    );
     if (hlsData != null) {
       /// Load hls tracks
       if (_betterPlayerDataSource?.useHlsTracks == true) {
