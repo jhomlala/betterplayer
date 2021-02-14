@@ -4,6 +4,9 @@
 state. Playlist video can be changed with setupDataSource method and current video index can be
 accessed with currentDataSourceIndex getter.
 * Fixed iOS availableDuration index issue.
+* Added arabic translations (by https://github.com/mohamed-Etman).
+* Added headers to HLS data request (by https://github.com/mohamed-Etman).
+* Added fullScreenAspectRatio to copyWith method in BetterPlayerConfiguration (by https://github.com/njlawton)
 
 ## 0.0.53
 * Fixed fullscreen issue.
