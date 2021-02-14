@@ -13,6 +13,25 @@ class _PlaylistPageState extends State<PlaylistPage> {
   final GlobalKey<BetterPlayerPlaylistState> _betterPlayerPlaylistStateKey =
       GlobalKey();
   List<BetterPlayerDataSource> _dataSourceList = [];
+  BetterPlayerConfiguration _betterPlayerConfiguration;
+  BetterPlayerPlaylistConfiguration _betterPlayerPlaylistConfiguration;
+
+  _PlaylistPageState() {
+    _betterPlayerConfiguration = BetterPlayerConfiguration(
+      autoPlay: true,
+      aspectRatio: 1,
+      fit: BoxFit.cover,
+      subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(fontSize: 10),
+      deviceOrientationsAfterFullScreen: [
+        DeviceOrientation.portraitUp,
+        DeviceOrientation.portraitDown,
+      ],
+    );
+    _betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
+      loopVideos: true,
+      nextVideoDelay: Duration(seconds: 5),
+    );
+  }
 
   Future<List<BetterPlayerDataSource>> setupData() async {
     _dataSourceList.add(
@@ -20,18 +39,20 @@ class _PlaylistPageState extends State<PlaylistPage> {
         BetterPlayerDataSourceType.network,
         Constants.forBiggerBlazesUrl,
         subtitles: BetterPlayerSubtitlesSource.single(
-            type: BetterPlayerSubtitlesSourceType.file,
-            url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl)),
+          type: BetterPlayerSubtitlesSourceType.file,
+          url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
+        ),
       ),
     );
 
-    _dataSourceList.add(BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.bugBuckBunnyVideoUrl));
+    _dataSourceList.add(
+      BetterPlayerDataSource(
+          BetterPlayerDataSourceType.network, Constants.bugBuckBunnyVideoUrl),
+    );
     _dataSourceList.add(
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
-        Constants.phantomVideoUrl,
-        liveStream: true,
+        Constants.forBiggerJoyridesVideoUrl,
       ),
     );
 
@@ -60,25 +81,39 @@ class _PlaylistPageState extends State<PlaylistPage> {
               AspectRatio(
                 child: BetterPlayerPlaylist(
                   key: _betterPlayerPlaylistStateKey,
-                  betterPlayerConfiguration: BetterPlayerConfiguration(
-                      autoPlay: true,
-                      aspectRatio: 1,
-                      fit: BoxFit.cover,
-                      subtitlesConfiguration:
-                          BetterPlayerSubtitlesConfiguration(fontSize: 10),
-                      controlsConfiguration:
-                          BetterPlayerControlsConfiguration.cupertino(),
-                      deviceOrientationsAfterFullScreen: [
-                        DeviceOrientation.portraitUp,
-                        DeviceOrientation.portraitDown,
-                      ]),
+                  betterPlayerConfiguration: _betterPlayerConfiguration,
                   betterPlayerPlaylistConfiguration:
-                      BetterPlayerPlaylistConfiguration(
-                          loopVideos: true,
-                          nextVideoDelay: Duration(seconds: 5)),
+                      _betterPlayerPlaylistConfiguration,
                   betterPlayerDataSourceList: snapshot.data,
                 ),
                 aspectRatio: 1,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _betterPlayerPlaylistController.setupDataSource(0);
+                },
+                child: Text("Change to first data source"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _betterPlayerPlaylistController.setupDataSource(2);
+                },
+                child: Text("Change to last source"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  print("Currently playing video: " +
+                      _betterPlayerPlaylistController.currentDataSourceIndex
+                          .toString());
+                },
+                child: Text("Check currently playing video index"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  _betterPlayerPlaylistController.betterPlayerController
+                      .pause();
+                },
+                child: Text("Pause current video with BetterPlayerController"),
               ),
             ]);
           }
@@ -86,4 +121,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       ),
     );
   }
+
+  BetterPlayerPlaylistController get _betterPlayerPlaylistController =>
+      _betterPlayerPlaylistStateKey.currentState.betterPlayerPlaylistController;
 }
