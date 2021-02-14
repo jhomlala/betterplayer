@@ -3,7 +3,7 @@
 * Added new BetterPlayerPlaylistController which is accessible from BetterPlayerPlaylist's current
 state. Playlist video can be changed with setupDataSource method and current video index can be
 accessed with currentDataSourceIndex getter.
-
+* Fixed iOS availableDuration index issue.
 
 ## 0.0.53
 * Fixed fullscreen issue.
