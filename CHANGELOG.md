@@ -1,3 +1,13 @@
+## 0.0.54
+* Refactored BetterPlayerPlaylist feature.
+* Added new BetterPlayerPlaylistController which is accessible from BetterPlayerPlaylist's current
+state. Playlist video can be changed with setupDataSource method and current video index can be
+accessed with currentDataSourceIndex getter.
+* Fixed iOS availableDuration index issue.
+* Added arabic translations (by https://github.com/mohamed-Etman).
+* Added headers to HLS data request (by https://github.com/mohamed-Etman).
+* Added fullScreenAspectRatio to copyWith method in BetterPlayerConfiguration (by https://github.com/njlawton)
+
 ## 0.0.53
 * Fixed fullscreen issue.
 * Fixed HLS tracks selection.
@@ -5,7 +15,7 @@
 * Removed unused player observer in iOS.
 * Fixed cache issue in Android where multiple Better Player instances uses same directory.
 * Fixed HLS parsing issue.
-* Added HLS Audio examoke,
+* Added HLS Audio example.
 
 ## 0.0.52
 * Fixed unregister listener issue in iOS.

@@ -16,12 +16,6 @@ class _EventListenerPageState extends State<EventListenerPage> {
       StreamController.broadcast();
 
   @override
-  void dispose() {
-    _eventStreamController.close();
-    super.dispose();
-  }
-
-  @override
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
@@ -32,20 +26,29 @@ class _EventListenerPageState extends State<EventListenerPage> {
         BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
-    _betterPlayerController.addEventsListener((event) {
-      events.insert(0, event);
-
-      ///Used to refresh only list of events
-      _eventStreamController.add(DateTime.now());
-    });
+    _betterPlayerController.addEventsListener(_handleEvent);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _eventStreamController.close();
+    _betterPlayerController.removeEventsListener(_handleEvent);
+    super.dispose();
+  }
+
+  void _handleEvent(BetterPlayerEvent event) {
+    events.insert(0, event);
+
+    ///Used to refresh only list of events
+    _eventStreamController.add(DateTime.now());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player"),
+        title: Text("Event listener"),
       ),
       body: Column(
         children: [
