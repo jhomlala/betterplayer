@@ -1,3 +1,6 @@
+## 0.0.55
+* Dart analysis fix
+
 ## 0.0.54
 * Refactored BetterPlayerPlaylist feature.
 * Added new BetterPlayerPlaylistController which is accessible from BetterPlayerPlaylist's current
