@@ -707,7 +707,9 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(
         BetterPlayerEvent(BetterPlayerEventType.changedPlayerVisibility));
 
-    if (!_betterPlayerDataSource.notificationConfiguration.showNotification &&
+    if (!(_betterPlayerDataSource
+                ?.notificationConfiguration?.showNotification ==
+            true) &&
         betterPlayerConfiguration.handleLifecycle) {
       if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
         betterPlayerConfiguration
