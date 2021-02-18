@@ -1,5 +1,6 @@
 ## 0.0.56
 * Fixed empty data source notification issue.
+* Fixed WebVTT subtitles parsing issue.
 
 ## 0.0.55
 * Dart analysis fix
