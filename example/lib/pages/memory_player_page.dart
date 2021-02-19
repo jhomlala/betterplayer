@@ -31,7 +31,8 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
     File file = File(filePath);
 
     List<int> bytes = file.readAsBytesSync().buffer.asUint8List();
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource.memory(bytes);
+    BetterPlayerDataSource dataSource =
+        BetterPlayerDataSource.memory(bytes, videoExtension: "mp4");
     _betterPlayerController.setupDataSource(dataSource);
   }
 

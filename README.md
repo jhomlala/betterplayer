@@ -640,6 +640,9 @@ Possible configuration options:
 
   ///Video format hint when data source url has not valid extension.
   final BetterPlayerVideoFormat videoFormat;
+
+  ///Extension of video without dot. Used only in memory data source.
+  final String videoExtension;
 ```
 
 

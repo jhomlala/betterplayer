@@ -58,6 +58,9 @@ class BetterPlayerDataSource {
   ///Video format hint when data source url has not valid extension.
   final BetterPlayerVideoFormat videoFormat;
 
+  ///Extension of video without dot. Used only in memory data source.
+  final String videoExtension;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -75,6 +78,7 @@ class BetterPlayerDataSource {
         const BetterPlayerNotificationConfiguration(showNotification: false),
     this.overriddenDuration,
     this.videoFormat,
+    this.videoExtension,
   }) : assert(
             ((type == BetterPlayerDataSourceType.network ||
                         type == BetterPlayerDataSourceType.file) &&
@@ -140,6 +144,7 @@ class BetterPlayerDataSource {
   ///Url parameter is not used in this data source.
   factory BetterPlayerDataSource.memory(
     List<int> bytes, {
+    String videoExtension,
     List<BetterPlayerSubtitlesSource> subtitles,
     bool useHlsSubtitles,
     bool useHlsTracks,
@@ -149,6 +154,7 @@ class BetterPlayerDataSource {
     Duration overriddenDuration,
   }) {
     return BetterPlayerDataSource(BetterPlayerDataSourceType.memory, "",
+        videoExtension: videoExtension,
         bytes: bytes,
         subtitles: subtitles,
         useHlsSubtitles: useHlsSubtitles,
