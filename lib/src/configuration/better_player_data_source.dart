@@ -1,4 +1,5 @@
 // Project imports:
+
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/configuration/better_player_video_format.dart';
@@ -58,6 +59,9 @@ class BetterPlayerDataSource {
   ///Video format hint when data source url has not valid extension.
   final BetterPlayerVideoFormat videoFormat;
 
+  ///Extension of video without dot. Used only in memory data source.
+  final String videoExtension;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -75,6 +79,7 @@ class BetterPlayerDataSource {
         const BetterPlayerNotificationConfiguration(showNotification: false),
     this.overriddenDuration,
     this.videoFormat,
+    this.videoExtension,
   }) : assert(
             ((type == BetterPlayerDataSourceType.network ||
                         type == BetterPlayerDataSourceType.file) &&
@@ -97,6 +102,7 @@ class BetterPlayerDataSource {
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
+    BetterPlayerVideoFormat videoFormat,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -111,6 +117,7 @@ class BetterPlayerDataSource {
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration,
       overriddenDuration: overriddenDuration,
+      videoFormat: videoFormat,
     );
   }
 
@@ -140,6 +147,7 @@ class BetterPlayerDataSource {
   ///Url parameter is not used in this data source.
   factory BetterPlayerDataSource.memory(
     List<int> bytes, {
+    String videoExtension,
     List<BetterPlayerSubtitlesSource> subtitles,
     bool useHlsSubtitles,
     bool useHlsTracks,
@@ -148,15 +156,19 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
   }) {
-    return BetterPlayerDataSource(BetterPlayerDataSourceType.memory, "",
-        bytes: bytes,
-        subtitles: subtitles,
-        useHlsSubtitles: useHlsSubtitles,
-        useHlsTracks: useHlsTracks,
-        resolutions: qualities,
-        cacheConfiguration: cacheConfiguration,
-        notificationConfiguration: notificationConfiguration,
-        overriddenDuration: overriddenDuration);
+    return BetterPlayerDataSource(
+      BetterPlayerDataSourceType.memory,
+      "",
+      videoExtension: videoExtension,
+      bytes: bytes,
+      subtitles: subtitles,
+      useHlsSubtitles: useHlsSubtitles,
+      useHlsTracks: useHlsTracks,
+      resolutions: qualities,
+      cacheConfiguration: cacheConfiguration,
+      notificationConfiguration: notificationConfiguration,
+      overriddenDuration: overriddenDuration,
+    );
   }
 
   BetterPlayerDataSource copyWith({
@@ -173,6 +185,8 @@ class BetterPlayerDataSource {
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
+    BetterPlayerVideoFormat videoFormat,
+    String videoExtension,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -189,6 +203,8 @@ class BetterPlayerDataSource {
       notificationConfiguration:
           notificationConfiguration ?? this.notificationConfiguration,
       overriddenDuration: overriddenDuration ?? this.overriddenDuration,
+      videoFormat: videoFormat ?? this.videoFormat,
+      videoExtension: videoExtension ?? this.videoExtension,
     );
   }
 }

@@ -243,6 +243,8 @@ class BetterPlayerController extends ChangeNotifier {
 
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
+
+    notifyListeners();
   }
 
   ///Configure subtitles based on subtitles source.
@@ -384,7 +386,8 @@ class BetterPlayerController extends ChangeNotifier {
         );
         break;
       case BetterPlayerDataSourceType.memory:
-        final file = await _createFile(_betterPlayerDataSource.bytes);
+        final file = await _createFile(_betterPlayerDataSource.bytes,
+            extension: _betterPlayerDataSource.videoExtension);
 
         if (file != null) {
           await videoPlayerController.setFileDataSource(
@@ -414,9 +417,10 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Create file from provided list of bytes. File will be created in temporary
   ///directory.
-  Future<File> _createFile(List<int> bytes) async {
+  Future<File> _createFile(List<int> bytes, {String extension = "temp"}) async {
     final String dir = (await getTemporaryDirectory()).path;
-    final File temp = File('$dir/better_player_${DateTime.now()}.temp');
+    final File temp = File(
+        '$dir/better_player_${DateTime.now().millisecondsSinceEpoch}.$extension');
     await temp.writeAsBytes(bytes);
     return temp;
   }
@@ -707,7 +711,9 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(
         BetterPlayerEvent(BetterPlayerEventType.changedPlayerVisibility));
 
-    if (!_betterPlayerDataSource.notificationConfiguration.showNotification &&
+    if (!(_betterPlayerDataSource
+                ?.notificationConfiguration?.showNotification ==
+            true) &&
         betterPlayerConfiguration.handleLifecycle) {
       if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
         betterPlayerConfiguration

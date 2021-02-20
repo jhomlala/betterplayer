@@ -29,6 +29,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   bool isVideoFinished(VideoPlayerValue videoPlayerValue) {
     return videoPlayerValue?.position != null &&
         videoPlayerValue?.duration != null &&
+        videoPlayerValue.position.inMilliseconds != 0 &&
+        videoPlayerValue.duration.inMilliseconds != 0 &&
         videoPlayerValue.position >= videoPlayerValue.duration;
   }
 

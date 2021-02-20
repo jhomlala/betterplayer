@@ -36,7 +36,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.55
+  better_player: ^0.0.56
 ```
 
 2. Install it
@@ -640,6 +640,9 @@ Possible configuration options:
 
   ///Video format hint when data source url has not valid extension.
   final BetterPlayerVideoFormat videoFormat;
+
+  ///Extension of video without dot. Used only in memory data source.
+  final String videoExtension;
 ```
 
 

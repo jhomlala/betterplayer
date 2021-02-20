@@ -90,11 +90,12 @@ class BetterPlayerSubtitlesFactory {
 
     final List<BetterPlayerSubtitle> subtitlesObj = [];
 
+    final bool isWebVTT = components.contains("WEBVTT");
     for (final component in components) {
       if (component.isEmpty) {
         continue;
       }
-      final subtitle = BetterPlayerSubtitle(component);
+      final subtitle = BetterPlayerSubtitle(component, isWebVTT);
       if (subtitle != null &&
           subtitle.start != null &&
           subtitle.end != null &&

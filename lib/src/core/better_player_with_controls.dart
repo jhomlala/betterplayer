@@ -62,11 +62,11 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   }
 
   void _onControllerChanged() {
-    if (!_initalized) {
-      setState(() {
+    setState(() {
+      if (!_initalized) {
         _initalized = true;
-      });
-    }
+      }
+    });
   }
 
   @override

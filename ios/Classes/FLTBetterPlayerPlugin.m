@@ -982,33 +982,41 @@ NSMutableDictionary*  _artworkImageDict;
         NSString* key =  [self getTextureId:player];
         MPMediaItemArtwork* artworkImage = [_artworkImageDict objectForKey:key];
         
-        if (artworkImage){
-            [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
-            [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
-            
-        } else {
-            dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-            dispatch_async(queue, ^{
-                UIImage * tempArtworkImage = nil;
-                if ([imageUrl rangeOfString:@"http"].location == NSNotFound){
-                    tempArtworkImage = [UIImage imageWithContentsOfFile:imageUrl];
-                } else {
-                    NSURL *nsImageUrl =[NSURL URLWithString:imageUrl];
-                    tempArtworkImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:nsImageUrl]];
-                }
-                if(tempArtworkImage)
-                {
-                    MPMediaItemArtwork* artworkImage = [[MPMediaItemArtwork alloc] initWithImage: tempArtworkImage];
-                    [_artworkImageDict setObject:artworkImage forKey:key];
-                    [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
-                }
+        if (key != [NSNull null]){
+            if (artworkImage){
+                [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
                 [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
-            });
+                
+            } else {
+                dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+                dispatch_async(queue, ^{
+                    @try{
+                        UIImage * tempArtworkImage = nil;
+                        if ([imageUrl rangeOfString:@"http"].location == NSNotFound){
+                            tempArtworkImage = [UIImage imageWithContentsOfFile:imageUrl];
+                        } else {
+                            NSURL *nsImageUrl =[NSURL URLWithString:imageUrl];
+                            tempArtworkImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:nsImageUrl]];
+                        }
+                        if(tempArtworkImage)
+                        {
+                            MPMediaItemArtwork* artworkImage = [[MPMediaItemArtwork alloc] initWithImage: tempArtworkImage];
+                            [_artworkImageDict setObject:artworkImage forKey:key];
+                            [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
+                        }
+                        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
+                    }
+                    @catch(NSException *exception) {
+                        
+                    }
+                });
+            }
         }
     } else {
         [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
     }
 }
+
 
 
 - (NSString*) getTextureId: (FLTBetterPlayer*) player{
