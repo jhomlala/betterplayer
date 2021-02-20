@@ -5,6 +5,7 @@
 * Added videoExtension parameter for memory data source (works only with memory data source).
 * Added videoFormat parameter to network data source.
 * Fixed controls visible all time on live stream.
+* Fixed potential iOS notification crash.
 
 ## 0.0.55
 * Dart analysis fix
