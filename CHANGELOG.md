@@ -1,5 +1,6 @@
 ## 0.0.57
 * Fixed iOS HLS initialization issue.
+* Fixed issue where video plays after resume even if it's not visible.
 
 ## 0.0.56
 * Fixed empty data source notification issue.

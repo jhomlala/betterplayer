@@ -186,8 +186,11 @@ class BetterPlayerController extends ChangeNotifier {
   BetterPlayerHlsAudioTrack get betterPlayerAudioTrack =>
       _betterPlayerHlsAudioTrack;
 
-  ///Selected videoPlayerValue when error occured.
+  ///Selected videoPlayerValue when error occurred.
   VideoPlayerValue _videoPlayerValueOnError;
+
+  ///Flag which holds information about player visibility
+  bool _isPlayerVisible = true;
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -705,6 +708,7 @@ class BetterPlayerController extends ChangeNotifier {
   ///used. If showNotification is set in data source or handleLifecycle is false
   /// then this logic will be ignored.
   void onPlayerVisibilityChanged(double visibilityFraction) async {
+    _isPlayerVisible = visibilityFraction > 0;
     if (_disposed) {
       return;
     }
@@ -791,7 +795,7 @@ class BetterPlayerController extends ChangeNotifier {
         betterPlayerConfiguration.handleLifecycle) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
-        if (_wasPlayingBeforePause == true) {
+        if (_wasPlayingBeforePause == true && _isPlayerVisible) {
           play();
         }
       }
