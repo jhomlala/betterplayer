@@ -1,3 +1,6 @@
+## 0.0.57
+* Fixed iOS HLS initialization issue.
+
 ## 0.0.56
 * Fixed empty data source notification issue.
 * Fixed WebVTT subtitles parsing issue.
