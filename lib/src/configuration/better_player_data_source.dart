@@ -1,4 +1,5 @@
 // Project imports:
+
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/configuration/better_player_video_format.dart';
@@ -101,6 +102,7 @@ class BetterPlayerDataSource {
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
+    BetterPlayerVideoFormat videoFormat,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -115,6 +117,7 @@ class BetterPlayerDataSource {
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration,
       overriddenDuration: overriddenDuration,
+      videoFormat: videoFormat,
     );
   }
 
@@ -153,16 +156,19 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
   }) {
-    return BetterPlayerDataSource(BetterPlayerDataSourceType.memory, "",
-        videoExtension: videoExtension,
-        bytes: bytes,
-        subtitles: subtitles,
-        useHlsSubtitles: useHlsSubtitles,
-        useHlsTracks: useHlsTracks,
-        resolutions: qualities,
-        cacheConfiguration: cacheConfiguration,
-        notificationConfiguration: notificationConfiguration,
-        overriddenDuration: overriddenDuration);
+    return BetterPlayerDataSource(
+      BetterPlayerDataSourceType.memory,
+      "",
+      videoExtension: videoExtension,
+      bytes: bytes,
+      subtitles: subtitles,
+      useHlsSubtitles: useHlsSubtitles,
+      useHlsTracks: useHlsTracks,
+      resolutions: qualities,
+      cacheConfiguration: cacheConfiguration,
+      notificationConfiguration: notificationConfiguration,
+      overriddenDuration: overriddenDuration,
+    );
   }
 
   BetterPlayerDataSource copyWith({
@@ -179,6 +185,8 @@ class BetterPlayerDataSource {
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
+    BetterPlayerVideoFormat videoFormat,
+    String videoExtension,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -195,6 +203,8 @@ class BetterPlayerDataSource {
       notificationConfiguration:
           notificationConfiguration ?? this.notificationConfiguration,
       overriddenDuration: overriddenDuration ?? this.overriddenDuration,
+      videoFormat: videoFormat ?? this.videoFormat,
+      videoExtension: videoExtension ?? this.videoExtension,
     );
   }
 }
