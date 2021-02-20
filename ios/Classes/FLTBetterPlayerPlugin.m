@@ -73,6 +73,7 @@ static void* statusContext = &statusContext;
 static void* playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void* playbackBufferEmptyContext = &playbackBufferEmptyContext;
 static void* playbackBufferFullContext = &playbackBufferFullContext;
+static void* presentationSizeContext = &presentationSizeContext;
 
 
 #if TARGET_OS_IOS
@@ -109,6 +110,7 @@ AVPictureInPictureController *_pipController;
         [_player addObserver:self forKeyPath:@"rate" options:0 context:nil];
         [item addObserver:self forKeyPath:@"loadedTimeRanges" options:0 context:timeRangeContext];
         [item addObserver:self forKeyPath:@"status" options:0 context:statusContext];
+        [item addObserver:self forKeyPath:@"presentationSize" options:0 context:presentationSizeContext];
         [item addObserver:self
                forKeyPath:@"playbackLikelyToKeepUp"
                   options:0
@@ -165,6 +167,7 @@ AVPictureInPictureController *_pipController;
     if (self._observersAdded){
         [_player removeObserver:self forKeyPath:@"rate" context:nil];
         [[_player currentItem] removeObserver:self forKeyPath:@"status" context:statusContext];
+        [[_player currentItem] removeObserver:self forKeyPath:@"presentationSize" context:presentationSizeContext];
         [[_player currentItem] removeObserver:self
                                    forKeyPath:@"loadedTimeRanges"
                                       context:timeRangeContext];
@@ -414,7 +417,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             }
             _eventSink(@{@"event" : @"bufferingUpdate", @"values" : values, @"key" : _key});
         }
-    } else if (context == statusContext) {
+    }
+    else if (context == presentationSizeContext){
+        [self onReadyToPlay];
+    }
+    
+    else if (context == statusContext) {
         AVPlayerItem* item = (AVPlayerItem*)object;
         switch (item.status) {
             case AVPlayerItemStatusFailed:
@@ -476,7 +484,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)onReadyToPlay {
-    NSLog(@"OnReadyToPlay");
     if (_eventSink && !_isInitialized && _key) {
         if (!_player.currentItem) {
             return;
@@ -484,7 +491,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         if (_player.status != AVPlayerStatusReadyToPlay) {
             return;
         }
-        
+
         CGSize size = [_player currentItem].presentationSize;
         CGFloat width = size.width;
         CGFloat height = size.height;
