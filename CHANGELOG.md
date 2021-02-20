@@ -2,6 +2,7 @@
 * Fixed empty data source notification issue.
 * Fixed WebVTT subtitles parsing issue.
 * Fixed memory data source issue on iOS.
+* Fixed controls visible all time on live stream.
 
 ## 0.0.55
 * Dart analysis fix
