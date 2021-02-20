@@ -420,7 +420,7 @@ class BetterPlayerController extends ChangeNotifier {
   Future<File> _createFile(List<int> bytes, {String extension = "temp"}) async {
     final String dir = (await getTemporaryDirectory()).path;
     final File temp = File(
-        '$dir/better_player_${DateTime.now().millisecondsSinceEpoch}.${extension}');
+        '$dir/better_player_${DateTime.now().millisecondsSinceEpoch}.$extension');
     await temp.writeAsBytes(bytes);
     return temp;
   }

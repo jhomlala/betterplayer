@@ -90,7 +90,7 @@ class BetterPlayerSubtitlesFactory {
 
     final List<BetterPlayerSubtitle> subtitlesObj = [];
 
-    bool isWebVTT = components.contains("WEBVTT");
+    final bool isWebVTT = components.contains("WEBVTT");
     for (final component in components) {
       if (component.isEmpty) {
         continue;
