@@ -83,6 +83,8 @@ final class BetterPlayer {
     private static final String FORMAT_HLS = "hls";
     private static final String FORMAT_OTHER = "other";
     private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
+    private static final String USER_AGENT = "User-Agent";
+    private static final String USER_AGENT_PROPERTY = "http.agent";
     private static final int NOTIFICATION_ID = 20772077;
 
     private final SimpleExoPlayer exoPlayer;
@@ -125,10 +127,18 @@ final class BetterPlayer {
         Uri uri = Uri.parse(dataSource);
         DataSource.Factory dataSourceFactory;
 
+        String userAgent = System.getProperty(USER_AGENT_PROPERTY);
+        if (headers != null && headers.containsKey(USER_AGENT)) {
+            String userAgentHeader = headers.get(USER_AGENT);
+            if (userAgentHeader != null) {
+                userAgent = userAgentHeader;
+            }
+        }
+
         if (isHTTP(uri)) {
             DefaultHttpDataSourceFactory defaultHttpDataSourceFactory =
                     new DefaultHttpDataSourceFactory(
-                            "ExoPlayer",
+                            userAgent,
                             null,
                             DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
                             DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
@@ -145,7 +155,7 @@ final class BetterPlayer {
             }
         } else {
 
-            dataSourceFactory = new DefaultDataSourceFactory(context, "ExoPlayer");
+            dataSourceFactory = new DefaultDataSourceFactory(context, userAgent);
         }
 
         MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
@@ -692,12 +702,12 @@ final class BetterPlayer {
                         TrackGroup group = trackGroupArray.get(groupIndex);
                         for (int groupElementIndex = 0; groupElementIndex < group.length; groupElementIndex++) {
                             String label = group.getFormat(groupElementIndex).label;
-                            if ( name.equals(label) && index == groupIndex) {
+                            if (name.equals(label) && index == groupIndex) {
                                 setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
                                 return;
                             }
                             ///Fallback option
-                            if (hasElementWithoutLabel && name.equals(label)){
+                            if (hasElementWithoutLabel && name.equals(label)) {
                                 setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
                                 return;
                             }

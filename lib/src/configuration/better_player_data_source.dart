@@ -62,6 +62,7 @@ class BetterPlayerDataSource {
   ///Extension of video without dot. Used only in memory data source.
   final String videoExtension;
 
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
