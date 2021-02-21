@@ -44,8 +44,10 @@ import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelectionUtil;
 import com.google.android.exoplayer2.ui.DefaultTrackNameProvider;
 import com.google.android.exoplayer2.ui.TrackNameProvider;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -558,6 +560,11 @@ final class BetterPlayer {
         if (bitrate != 0) {
             parametersBuilder.setMaxVideoBitrate(bitrate);
         }
+        if (width == 0 && height == 0 && bitrate == 0){
+            parametersBuilder.clearVideoSizeConstraints();
+            parametersBuilder.setMaxVideoBitrate(Integer.MAX_VALUE);
+        }
+
         trackSelector.setParameters(parametersBuilder);
     }
 

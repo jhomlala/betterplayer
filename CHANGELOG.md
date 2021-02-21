@@ -2,6 +2,7 @@
 * Fixed iOS HLS initialization issue.
 * Fixed issue where video plays after resume even if it's not visible.
 * Updated User-Agent picking for Android.
+* Added auto option for quality selection.
 
 ## 0.0.56
 * Fixed empty data source notification issue.

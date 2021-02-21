@@ -491,7 +491,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         if (_player.status != AVPlayerStatusReadyToPlay) {
             return;
         }
-
+        
         CGSize size = [_player currentItem].presentationSize;
         CGFloat width = size.width;
         CGFloat height = size.height;
@@ -606,7 +606,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setTrackParameters:(int) width: (int) height: (int)bitrate {
     _player.currentItem.preferredPeakBitRate = bitrate;
-    _player.currentItem.preferredMaximumResolution = CGSizeMake(width, height);
+    if (@available(iOS 11.0, *)) {
+        if (width == 0 && height == 0){
+            _player.currentItem.preferredMaximumResolution = CGSizeZero;
+        } else {
+            _player.currentItem.preferredMaximumResolution = CGSizeMake(width, height);
+        }
+    }
 }
 
 - (void)setPictureInPicture:(BOOL)pictureInPicture
@@ -1177,9 +1183,9 @@ NSMutableDictionary*  _artworkImageDict;
         } else if ([@"setSpeed" isEqualToString:call.method]) {
             [player setSpeed:[[argsMap objectForKey:@"speed"] doubleValue] result:result];
         }else if ([@"setTrackParameters" isEqualToString:call.method]) {
-            int width = argsMap[@"width"];
-            int height = argsMap[@"height"];
-            int bitrate = argsMap[@"bitrate"];
+            int width = [argsMap[@"width"] intValue];
+            int height = [argsMap[@"height"] intValue];
+            int bitrate = [argsMap[@"bitrate"] intValue];
             
             [player setTrackParameters:width: height : bitrate];
             result(nil);

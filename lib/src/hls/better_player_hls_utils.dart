@@ -37,6 +37,10 @@ class BetterPlayerHlsUtils {
           },
         );
       }
+
+      if (tracks.isNotEmpty) {
+        tracks.insert(0, BetterPlayerHlsTrack.defaultTrack());
+      }
     } catch (exception) {
       BetterPlayerUtils.log("Exception on parseSubtitles: $exception");
     }

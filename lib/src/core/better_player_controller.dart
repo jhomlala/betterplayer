@@ -246,7 +246,7 @@ class BetterPlayerController extends ChangeNotifier {
 
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
-
+    setTrack(BetterPlayerHlsTrack.defaultTrack());
     notifyListeners();
   }
 
@@ -690,12 +690,6 @@ class BetterPlayerController extends ChangeNotifier {
   ///data source.
   void setTrack(BetterPlayerHlsTrack track) {
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedTrack));
-
-    ///Default element clicked:
-    if (track.width == 0 && track.height == 0 && track.bitrate == 0) {
-      _betterPlayerTrack = null;
-      return;
-    }
 
     videoPlayerController.setTrackParameters(
         track.width, track.height, track.bitrate);
