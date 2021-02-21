@@ -10,4 +10,19 @@ class BetterPlayerHlsTrack {
   final int bitrate;
 
   BetterPlayerHlsTrack(this.width, this.height, this.bitrate);
+
+  factory BetterPlayerHlsTrack.defaultTrack() {
+    return BetterPlayerHlsTrack(0, 0, 0);
+  }
+
+  @override
+  int get hashCode => super.hashCode;
+
+  @override
+  bool operator ==(dynamic other) {
+    return other is BetterPlayerHlsTrack &&
+        width == other.width &&
+        height == other.height &&
+        bitrate == other.bitrate;
+  }
 }

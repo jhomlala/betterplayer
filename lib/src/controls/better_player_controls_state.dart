@@ -295,10 +295,17 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         betterPlayerController.betterPlayerTracks;
     final List<Widget> children = [];
     for (var index = 0; index < tracks.length; index++) {
-      final preferredName =
-          trackNames.length > index ? trackNames[index] : null;
+      final track = tracks[index];
+
+      String preferredName;
+      if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
+        preferredName = betterPlayerController.translations.qualityAuto;
+      } else {
+        preferredName = trackNames.length > index ? trackNames[index] : null;
+      }
       children.add(_buildTrackRow(tracks[index], preferredName));
     }
+
     final resolutions =
         betterPlayerController.betterPlayerDataSource.resolutions;
     resolutions?.forEach((key, value) {
@@ -306,8 +313,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     });
 
     if (children.isEmpty) {
-      children.add(_buildTrackRow(BetterPlayerHlsTrack(0, 0, 0),
-          betterPlayerController.translations.generalDefault));
+      children.add(
+        _buildTrackRow(BetterPlayerHlsTrack.defaultTrack(),
+            betterPlayerController.translations.qualityAuto),
+      );
     }
 
     showModalBottomSheet<void>(
