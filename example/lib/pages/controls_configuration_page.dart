@@ -24,6 +24,9 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
       enableFullscreen: false,
       controlBarHeight: 60,
       loadingColor: Colors.red,
+      overflowModalColor: Colors.indigo,
+      overflowModalTextColor: Colors.white,
+      overflowMenuIconsColor: Colors.white,
     );
 
     BetterPlayerConfiguration betterPlayerConfiguration =

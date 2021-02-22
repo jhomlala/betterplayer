@@ -161,6 +161,13 @@ class BetterPlayerControlsConfiguration {
   ///Color of the background, when no frame is displayed.
   final Color backgroundColor;
 
+  ///Color of the bottom modal sheet used for overflow menu items.
+  final Color overflowModalColor;
+
+  ///Color of text in bottom modal sheet used for overflow menu items.
+  final Color overflowModalTextColor;
+
+
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -211,6 +218,8 @@ class BetterPlayerControlsConfiguration {
     this.loadingColor = Colors.white,
     this.loadingWidget,
     this.backgroundColor = Colors.black,
+    this.overflowModalColor = Colors.white,
+    this.overflowModalTextColor = Colors.black
   });
 
   factory BetterPlayerControlsConfiguration.white() {

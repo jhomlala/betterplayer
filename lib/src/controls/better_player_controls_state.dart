@@ -57,15 +57,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void onShowMoreClicked() {
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          top: false,
-          child: _buildMoreOptionsList(),
-        );
-      },
-    );
+    _showModalBottomSheet([_buildMoreOptionsList()]);
   }
 
   Widget _buildMoreOptionsList() {
@@ -137,7 +129,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               color: betterPlayerControlsConfiguration.overflowMenuIconsColor,
             ),
             const SizedBox(width: 16),
-            Text(name),
+            Text(
+              name,
+              style: _getOverflowMenuElementTextStyle(false),
+            ),
           ],
         ),
       ),
@@ -145,31 +140,23 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showSpeedChooserWidget() {
-    showModalBottomSheet<void>(
-        context: context,
-        builder: (context) {
-          return SafeArea(
-            top: false,
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildSpeedRow(0.25),
-                  _buildSpeedRow(0.5),
-                  _buildSpeedRow(0.75),
-                  _buildSpeedRow(1.0),
-                  _buildSpeedRow(1.25),
-                  _buildSpeedRow(1.5),
-                  _buildSpeedRow(1.75),
-                  _buildSpeedRow(2.0),
-                ],
-              ),
-            ),
-          );
-        });
+    _showModalBottomSheet([
+      _buildSpeedRow(0.25),
+      _buildSpeedRow(0.5),
+      _buildSpeedRow(0.75),
+      _buildSpeedRow(1.0),
+      _buildSpeedRow(1.25),
+      _buildSpeedRow(1.5),
+      _buildSpeedRow(1.75),
+      _buildSpeedRow(2.0),
+    ]);
   }
 
   Widget _buildSpeedRow(double value) {
     assert(value != null, "Value can't be null");
+    bool isSelected =
+        betterPlayerController.videoPlayerController.value.speed == value;
+
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
@@ -182,12 +169,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             const SizedBox(width: 16),
             Text(
               "$value x",
-              style: TextStyle(
-                  fontWeight: betterPlayerController
-                              .videoPlayerController.value.speed ==
-                          value
-                      ? FontWeight.bold
-                      : FontWeight.normal),
+              style: _getOverflowMenuElementTextStyle(isSelected),
             )
           ],
         ),
@@ -234,21 +216,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           type: BetterPlayerSubtitlesSourceType.none));
     }
 
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            child: Column(
-              children: subtitles
-                  .map((source) => _buildSubtitlesSourceRow(source))
-                  .toList(),
-            ),
-          ),
-        );
-      },
-    );
+    _showModalBottomSheet(
+        subtitles.map((source) => _buildSubtitlesSourceRow(source)).toList());
   }
 
   Widget _buildSubtitlesSourceRow(BetterPlayerSubtitlesSource subtitlesSource) {
@@ -275,9 +244,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   ? betterPlayerController.translations.generalNone
                   : subtitlesSource.name ??
                       betterPlayerController.translations.generalDefault,
-              style: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+              style: _getOverflowMenuElementTextStyle(isSelected),
             ),
           ],
         ),
@@ -319,19 +286,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       );
     }
 
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            child: Column(
-              children: children,
-            ),
-          ),
-        );
-      },
-    );
+    _showModalBottomSheet(children);
   }
 
   Widget _buildTrackRow(BetterPlayerHlsTrack track, String preferredName) {
@@ -355,9 +310,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             const SizedBox(width: 16),
             Text(
               trackName,
-              style: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+              style: _getOverflowMenuElementTextStyle(isSelected),
             ),
           ],
         ),
@@ -380,9 +333,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             const SizedBox(width: 16),
             Text(
               name,
-              style: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+              style: _getOverflowMenuElementTextStyle(isSelected),
             ),
           ],
         ),
@@ -412,19 +363,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       );
     }
 
-    showModalBottomSheet<void>(
-      context: context,
-      builder: (context) {
-        return SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            child: Column(
-              children: children,
-            ),
-          ),
-        );
-      },
-    );
+    _showModalBottomSheet(children);
   }
 
   Widget _buildAudioTrackRow(BetterPlayerHlsAudioTrack audioTrack,
@@ -445,13 +384,35 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             const SizedBox(width: 16),
             Text(
               audioTrack.label,
-              style: TextStyle(
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
+              style: _getOverflowMenuElementTextStyle(isSelected),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  TextStyle _getOverflowMenuElementTextStyle(bool isSelected) {
+    return TextStyle(
+      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      color: betterPlayerControlsConfiguration.overflowModalTextColor,
+    );
+  }
+
+  void _showModalBottomSheet(List<Widget> children) {
+    showModalBottomSheet<void>(
+      backgroundColor: betterPlayerControlsConfiguration.overflowModalColor,
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            child: Column(
+              children: children,
+            ),
+          ),
+        );
+      },
     );
   }
 }

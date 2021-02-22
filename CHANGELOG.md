@@ -1,3 +1,6 @@
+## 0.0.58
+* Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.
+
 ## 0.0.57
 * Fixed iOS HLS initialization issue.
 * Fixed issue where video plays after resume even if it's not visible.
