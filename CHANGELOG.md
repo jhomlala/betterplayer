@@ -1,5 +1,6 @@
 ## 0.0.58
 * Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.
+* Disabled picture in picture in fullscreen mode.
 
 ## 0.0.57
 * Fixed iOS HLS initialization issue.

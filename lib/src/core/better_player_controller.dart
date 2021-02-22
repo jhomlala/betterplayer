@@ -872,7 +872,8 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Check if picture in picture mode is supported in this device.
   Future<bool> isPictureInPictureSupported() async {
-    return videoPlayerController.isPictureInPictureSupported();
+    return await videoPlayerController.isPictureInPictureSupported() &&
+        !_isFullScreen;
   }
 
   ///Handle VideoEvent when remote controls notification / PiP is shown
