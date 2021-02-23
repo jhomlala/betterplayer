@@ -188,7 +188,7 @@ class _BetterPlayerCupertinoControlsState
                     )
                   : Row(
                       children: <Widget>[
-                        if (_controlsConfiguration.enablePlayPause)
+                        if (_controlsConfiguration.enableSkips)
                           _buildSkipBack(iconColor, barHeight)
                         else
                           const SizedBox(),
@@ -196,7 +196,7 @@ class _BetterPlayerCupertinoControlsState
                           _buildPlayPause(_controller, iconColor, barHeight)
                         else
                           const SizedBox(),
-                        if (_controlsConfiguration.enablePlayPause)
+                        if (_controlsConfiguration.enableSkips)
                           _buildSkipForward(iconColor, barHeight)
                         else
                           const SizedBox(),
