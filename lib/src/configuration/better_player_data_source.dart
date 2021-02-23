@@ -1,6 +1,7 @@
 // Project imports:
 
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
+import 'package:better_player/src/configuration/better_player_drm_configuration.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
@@ -62,6 +63,9 @@ class BetterPlayerDataSource {
   ///Extension of video without dot. Used only in memory data source.
   final String videoExtension;
 
+  ///Configuration of content protection
+  final BetterPlayerDrmConfiguration drmConfiguration;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -80,6 +84,7 @@ class BetterPlayerDataSource {
     this.overriddenDuration,
     this.videoFormat,
     this.videoExtension,
+    this.drmConfiguration,
   }) : assert(
             ((type == BetterPlayerDataSourceType.network ||
                         type == BetterPlayerDataSourceType.file) &&
@@ -103,6 +108,7 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
     BetterPlayerVideoFormat videoFormat,
+    BetterPlayerDrmConfiguration drmConfiguration,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -118,6 +124,7 @@ class BetterPlayerDataSource {
       notificationConfiguration: notificationConfiguration,
       overriddenDuration: overriddenDuration,
       videoFormat: videoFormat,
+      drmConfiguration: drmConfiguration,
     );
   }
 
@@ -187,6 +194,7 @@ class BetterPlayerDataSource {
     Duration overriddenDuration,
     BetterPlayerVideoFormat videoFormat,
     String videoExtension,
+    BetterPlayerDrmConfiguration drmConfiguration,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -205,6 +213,7 @@ class BetterPlayerDataSource {
       overriddenDuration: overriddenDuration ?? this.overriddenDuration,
       videoFormat: videoFormat ?? this.videoFormat,
       videoExtension: videoExtension ?? this.videoExtension,
+      drmConfiguration: drmConfiguration ?? this.drmConfiguration,
     );
   }
 }

@@ -5,6 +5,7 @@ import 'dart:io';
 // Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
+import 'package:better_player/src/configuration/better_player_drm_type.dart';
 import 'package:better_player/src/configuration/better_player_event.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/configuration/better_player_translations.dart';
@@ -33,6 +34,7 @@ class BetterPlayerController extends ChangeNotifier {
   static const String _volumeParameter = "volume";
   static const String _speedParameter = "speed";
   static const String _hlsExtension = "m3u8";
+  static const String _authorizationHeader = "Authorization";
 
   ///General configuration used in controller instance.
   final BetterPlayerConfiguration betterPlayerConfiguration;
@@ -276,7 +278,7 @@ class BetterPlayerController extends ChangeNotifier {
   Future _setupHlsDataSource() async {
     final String hlsData = await BetterPlayerHlsUtils.getDataFromUrl(
       betterPlayerDataSource.url,
-      betterPlayerDataSource.headers,
+      _getHeaders(),
     );
     if (hlsData != null) {
       /// Load hls tracks
@@ -354,7 +356,7 @@ class BetterPlayerController extends ChangeNotifier {
       case BetterPlayerDataSourceType.network:
         await videoPlayerController.setNetworkDataSource(
           betterPlayerDataSource.url,
-          headers: betterPlayerDataSource.headers,
+          headers: _getHeaders(),
           useCache:
               _betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
           maxCacheSize:
@@ -937,6 +939,19 @@ class BetterPlayerController extends ChangeNotifier {
 
     _betterPlayerHlsAudioTrack = audioTrack;
     videoPlayerController.setAudioTrack(audioTrack.label, audioTrack.id);
+  }
+
+  ///Build headers map that will be used to setup video player controller. Apply
+  ///DRM headers if available.
+  Map<String, String> _getHeaders() {
+    var headers = betterPlayerDataSource.headers ?? {};
+    if (betterPlayerDataSource.drmConfiguration != null &&
+        betterPlayerDataSource.drmConfiguration?.drmType ==
+            BetterPlayerDrmType.AES) {
+      headers[_authorizationHeader] =
+          betterPlayerDataSource.drmConfiguration.token;
+    }
+    return headers;
   }
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then

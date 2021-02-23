@@ -10,6 +10,8 @@ export 'src/configuration/better_player_event_type.dart';
 export 'src/configuration/better_player_notification_configuration.dart';
 export 'src/configuration/better_player_theme.dart';
 export 'src/configuration/better_player_translations.dart';
+export 'src/configuration/better_player_drm_configuration.dart';
+export 'src/configuration/better_player_drm_type.dart';
 export 'src/configuration/better_player_video_format.dart';
 export 'src/controls/better_player_overflow_menu_item.dart';
 export 'src/controls/better_player_progress_colors.dart';
