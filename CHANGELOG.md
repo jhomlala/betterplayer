@@ -2,6 +2,7 @@
 * Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.
 * Disabled picture in picture in fullscreen mode.
 * Fixed enabled parameter for skip back and forward.
+* Fixed notification configuration null issue.
 
 ## 0.0.57
 * Fixed iOS HLS initialization issue.
