@@ -10,7 +10,6 @@ import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/configuration/better_player_translations.dart';
 import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
-
 // Flutter imports:
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
@@ -21,7 +20,6 @@ import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
-
 // Package imports:
 import 'package:path_provider/path_provider.dart';
 
@@ -362,7 +360,7 @@ class BetterPlayerController extends ChangeNotifier {
           maxCacheFileSize:
               _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
           showNotification: _betterPlayerDataSource
-              .notificationConfiguration?.showNotification,
+              ?.notificationConfiguration?.showNotification,
           title: _betterPlayerDataSource?.notificationConfiguration?.title,
           author: _betterPlayerDataSource?.notificationConfiguration?.author,
           imageUrl:
@@ -378,7 +376,7 @@ class BetterPlayerController extends ChangeNotifier {
         await videoPlayerController.setFileDataSource(
           File(betterPlayerDataSource.url),
           showNotification: _betterPlayerDataSource
-              .notificationConfiguration?.showNotification,
+              ?.notificationConfiguration?.showNotification,
           title: _betterPlayerDataSource?.notificationConfiguration?.title,
           author: _betterPlayerDataSource?.notificationConfiguration?.author,
           imageUrl:
@@ -396,7 +394,7 @@ class BetterPlayerController extends ChangeNotifier {
           await videoPlayerController.setFileDataSource(
             file,
             showNotification: _betterPlayerDataSource
-                .notificationConfiguration?.showNotification,
+                ?.notificationConfiguration?.showNotification,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
             imageUrl:
@@ -785,7 +783,9 @@ class BetterPlayerController extends ChangeNotifier {
   ///state, then video playback will stop. If showNotification is set in data
   ///source or handleLifecycle is false then this logic will be ignored.
   void setAppLifecycleState(AppLifecycleState appLifecycleState) {
-    if (!_betterPlayerDataSource.notificationConfiguration.showNotification &&
+    if (!(_betterPlayerDataSource
+                ?.notificationConfiguration?.showNotification ??
+            false) &&
         betterPlayerConfiguration.handleLifecycle) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {

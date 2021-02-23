@@ -100,7 +100,8 @@ class BetterPlayerDataSource {
     bool useHlsAudioTracks,
     Map<String, String> qualities,
     BetterPlayerCacheConfiguration cacheConfiguration,
-    BetterPlayerNotificationConfiguration notificationConfiguration,
+    BetterPlayerNotificationConfiguration notificationConfiguration =
+        const BetterPlayerNotificationConfiguration(showNotification: false),
     Duration overriddenDuration,
     BetterPlayerVideoFormat videoFormat,
   }) {
@@ -139,7 +140,9 @@ class BetterPlayerDataSource {
         useHlsTracks: useHlsTracks,
         resolutions: qualities,
         cacheConfiguration: cacheConfiguration,
-        notificationConfiguration: notificationConfiguration,
+        notificationConfiguration: notificationConfiguration =
+            const BetterPlayerNotificationConfiguration(
+                showNotification: false),
         overriddenDuration: overriddenDuration);
   }
 
@@ -166,7 +169,8 @@ class BetterPlayerDataSource {
       useHlsTracks: useHlsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration,
+      notificationConfiguration: notificationConfiguration =
+          const BetterPlayerNotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
     );
   }
@@ -183,7 +187,8 @@ class BetterPlayerDataSource {
     bool useHlsAudioTracks,
     Map<String, String> resolutions,
     BetterPlayerCacheConfiguration cacheConfiguration,
-    BetterPlayerNotificationConfiguration notificationConfiguration,
+    BetterPlayerNotificationConfiguration notificationConfiguration =
+        const BetterPlayerNotificationConfiguration(showNotification: false),
     Duration overriddenDuration,
     BetterPlayerVideoFormat videoFormat,
     String videoExtension,
