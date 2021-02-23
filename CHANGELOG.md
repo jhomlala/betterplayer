@@ -3,6 +3,7 @@
 * Disabled picture in picture in fullscreen mode.
 * Fixed enabled parameter for skip back and forward.
 * Fixed notification configuration null issue (by https://github.com/bounty1342)
+* Added AES DRM support.
 
 ## 0.0.57
 * Fixed iOS HLS initialization issue.
