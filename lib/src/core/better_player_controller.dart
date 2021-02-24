@@ -947,7 +947,7 @@ class BetterPlayerController extends ChangeNotifier {
     var headers = betterPlayerDataSource.headers ?? {};
     if (betterPlayerDataSource.drmConfiguration != null &&
         betterPlayerDataSource.drmConfiguration?.drmType ==
-            BetterPlayerDrmType.AES) {
+            BetterPlayerDrmType.TOKEN) {
       headers[_authorizationHeader] =
           betterPlayerDataSource.drmConfiguration.token;
     }
