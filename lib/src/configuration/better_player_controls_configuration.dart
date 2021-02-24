@@ -10,7 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 ///UI configuration of Better Player. Allows to change colors/icons/behavior
-///of controls. Used in BetterPlayerConfiguration.
+///of controls. Used in BetterPlayerConfiguration. Configuration applies only
+///for player displayed in app, not in notification or PiP mode.
 class BetterPlayerControlsConfiguration {
   ///Color of the control bars
   final Color controlBarColor;
