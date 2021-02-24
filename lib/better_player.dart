@@ -5,6 +5,8 @@ export 'src/configuration/better_player_configuration.dart';
 export 'src/configuration/better_player_controls_configuration.dart';
 export 'src/configuration/better_player_data_source.dart';
 export 'src/configuration/better_player_data_source_type.dart';
+export 'src/configuration/better_player_drm_configuration.dart';
+export 'src/configuration/better_player_drm_type.dart';
 export 'src/configuration/better_player_event.dart';
 export 'src/configuration/better_player_event_type.dart';
 export 'src/configuration/better_player_notification_configuration.dart';

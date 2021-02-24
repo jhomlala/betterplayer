@@ -16,13 +16,14 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
       ReusableVideoListController();
   final _random = new Random();
   final List<String> _videos = [
-    Constants.bugBuckBunnyVideoUrl,
     Constants.forBiggerBlazesUrl,
     Constants.forBiggerJoyridesVideoUrl,
-    Constants.elephantDreamVideoUrl,
   ];
   List<VideoListData> dataList = [];
   var value = 0;
+  final ScrollController _scrollController = ScrollController();
+  int lastMilli = DateTime.now().millisecondsSinceEpoch;
+  bool _canBuildVideo = true;
 
   @override
   void initState() {
@@ -51,19 +52,47 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
         color: Colors.grey,
         child: Column(children: [
           Expanded(
-            child: ListView.builder(
-              itemCount: dataList.length,
-              itemBuilder: (context, index) {
-                VideoListData videoListData = dataList[index];
-                return ReusableVideoListWidget(
-                  videoListData: videoListData,
-                  videoListController: videoListController,
-                );
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                final now = DateTime.now();
+                final timeDiff = now.millisecondsSinceEpoch - lastMilli;
+                if (notification is ScrollUpdateNotification) {
+                  final pixelsPerMilli = notification.scrollDelta / timeDiff;
+                  if (pixelsPerMilli.abs() > 1) {
+                    _canBuildVideo = false;
+                  } else {
+                    _canBuildVideo = true;
+                  }
+                  lastMilli = DateTime.now().millisecondsSinceEpoch;
+                }
+
+                if (notification is ScrollEndNotification) {
+                  _canBuildVideo = true;
+                  lastMilli = DateTime.now().millisecondsSinceEpoch;
+                }
+
+                return true;
               },
+              child: ListView.builder(
+                itemCount: dataList.length,
+                controller: _scrollController,
+                itemBuilder: (context, index) {
+                  VideoListData videoListData = dataList[index];
+                  return ReusableVideoListWidget(
+                    videoListData: videoListData,
+                    videoListController: videoListController,
+                    canBuildVideo: _checkCanBuildVideo,
+                  );
+                },
+              ),
             ),
           )
         ]),
       ),
     );
+  }
+
+  bool _checkCanBuildVideo() {
+    return _canBuildVideo;
   }
 }

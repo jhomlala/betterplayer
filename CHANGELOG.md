@@ -1,3 +1,11 @@
+## 0.0.58
+* Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.
+* Disabled picture in picture in fullscreen mode.
+* Fixed enabled parameter for skip back and forward.
+* Fixed notification configuration null issue (by https://github.com/bounty1342)
+* Added token based and widevine DRM support.
+* Updated documentation.
+
 ## 0.0.57
 * Fixed iOS HLS initialization issue.
 * Fixed issue where video plays after resume even if it's not visible.

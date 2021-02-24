@@ -74,6 +74,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'imageUrl': dataSource.imageUrl,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+          'licenseUrl': dataSource.licenseUrl,
+          'drmHeaders': dataSource.drmHeaders,
         };
         break;
       case DataSourceType.file:

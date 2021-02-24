@@ -26,7 +26,8 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Alternative resolution support  
 ✔️ Cache support  
 ✔️ Notifications support  
-✔️ Picture in Picture support   
+✔️ Picture in Picture support     
+✔️ DRM support (token, Widevine)  
 ✔️ ... and much more!  
 
 
@@ -36,7 +37,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.57
+  better_player: ^0.0.58
 ```
 
 2. Install it
@@ -936,6 +937,45 @@ will have incorrect orientation.
 ### Set controls always visible
 ```dart
     betterPlayerController.setControlsAlwaysVisible(true);
+```
+
+### DRM
+To configure DRM for your data source, use drmConfiguration parameter. 
+Supported DRMs:
+
+* Token based (authorization header): Android/iOS
+* Widevine (licensue url + headers): Android
+
+Additional DRM types may be added in the future.
+
+Token based:
+```dart
+ BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      "url",
+      videoFormat: BetterPlayerVideoFormat.hls,
+      drmConfiguration: BetterPlayerDrmConfiguration(
+        drmType: BetterPlayerDrmType.token,
+        token:
+            "Bearer=token",
+      ),
+    );
+````
+
+Widevine (license url based):
+```dart
+ BetterPlayerDataSource _widevineDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      "url",
+      drmConfiguration: BetterPlayerDrmConfiguration(
+        drmType: BetterPlayerDrmType.widevine,
+        licenseUrl:
+            "licenseUrl",
+        headers: {"header": "value"}
+      ),
+    );
+    _widevineController.setupDataSource(_widevineDataSource);
+
 ```
 
 

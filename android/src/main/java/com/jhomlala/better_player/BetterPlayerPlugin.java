@@ -64,6 +64,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration";
     private static final String NAME_PARAMETER = "name";
     private static final String INDEX_PARAMETER = "index";
+    private static final String LICENSE_URL_PARAMETER = "licenseUrl";
+    private static final String DRM_HEADERS_PARAMETER = "drmHeaders";
 
     private static final String INIT_METHOD = "init";
     private static final String CREATE_METHOD = "create";
@@ -309,7 +311,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     false,
                     0L,
                     0L,
-                    overriddenDuration.longValue()
+                    overriddenDuration.longValue(),
+                    null,
+                    null
             );
         } else {
             boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
@@ -319,6 +323,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
             long maxCacheFileSize = maxCacheFileSizeNumber.longValue();
             String uri = getParameter(dataSource, URI_PARAMETER, "");
             String formatHint = getParameter(dataSource, FORMAT_HINT_PARAMETER, null);
+            String licenseUrl = getParameter(dataSource, LICENSE_URL_PARAMETER, null);
+            Map<String, String> drmHeaders = getParameter(dataSource, DRM_HEADERS_PARAMETER, new HashMap<>());
             player.setDataSource(
                     flutterState.applicationContext,
                     key,
@@ -329,7 +335,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     useCache,
                     maxCacheSize,
                     maxCacheFileSize,
-                    overriddenDuration.longValue()
+                    overriddenDuration.longValue(),
+                    licenseUrl,
+                    drmHeaders
             );
         }
     }

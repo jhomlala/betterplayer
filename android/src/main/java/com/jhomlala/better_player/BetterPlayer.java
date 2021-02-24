@@ -31,9 +31,11 @@ import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
+import com.google.android.exoplayer2.drm.DrmSessionManager;
+import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -44,12 +46,8 @@ import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelectionUtil;
-import com.google.android.exoplayer2.ui.DefaultTrackNameProvider;
-import com.google.android.exoplayer2.ui.TrackNameProvider;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
@@ -104,6 +102,7 @@ final class BetterPlayer {
     private EventListener exoPlayerEventListener;
     private Bitmap bitmap;
     private MediaSessionCompat mediaSession;
+    private DrmSessionManager drmSessionManager;
 
 
     BetterPlayer(
@@ -122,7 +121,7 @@ final class BetterPlayer {
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
-            long overriddenDuration) {
+            long overriddenDuration, String licenseUrl, Map<String, String> drmHeaders) {
         this.key = key;
         isInitialized = false;
 
@@ -135,6 +134,15 @@ final class BetterPlayer {
             if (userAgentHeader != null) {
                 userAgent = userAgentHeader;
             }
+        }
+
+        if (licenseUrl != null && !licenseUrl.isEmpty()) {
+            HttpMediaDrmCallback httpMediaDrmCallback =
+                    new HttpMediaDrmCallback(licenseUrl, new DefaultHttpDataSourceFactory());
+            drmSessionManager = new DefaultDrmSessionManager.Builder()
+                    .setKeyRequestParameters(drmHeaders).build(httpMediaDrmCallback);
+        } else {
+            drmSessionManager = null;
         }
 
         if (isHTTP(uri)) {
@@ -430,18 +438,22 @@ final class BetterPlayer {
                 return new SsMediaSource.Factory(
                         new DefaultSsChunkSource.Factory(mediaDataSourceFactory),
                         new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
+                        .setDrmSessionManager(drmSessionManager)
                         .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(
                         new DefaultDashChunkSource.Factory(mediaDataSourceFactory),
                         new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
+                        .setDrmSessionManager(drmSessionManager)
                         .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_HLS:
                 return new HlsMediaSource.Factory(mediaDataSourceFactory)
+                        .setDrmSessionManager(drmSessionManager)
                         .createMediaSource(MediaItem.fromUri(uri));
             case C.TYPE_OTHER:
                 return new ProgressiveMediaSource.Factory(mediaDataSourceFactory,
                         new DefaultExtractorsFactory())
+                        .setDrmSessionManager(drmSessionManager)
                         .createMediaSource(MediaItem.fromUri(uri));
             default: {
                 throw new IllegalStateException("Unsupported type: " + type);
@@ -560,7 +572,7 @@ final class BetterPlayer {
         if (bitrate != 0) {
             parametersBuilder.setMaxVideoBitrate(bitrate);
         }
-        if (width == 0 && height == 0 && bitrate == 0){
+        if (width == 0 && height == 0 && bitrate == 0) {
             parametersBuilder.clearVideoSizeConstraints();
             parametersBuilder.setMaxVideoBitrate(Integer.MAX_VALUE);
         }

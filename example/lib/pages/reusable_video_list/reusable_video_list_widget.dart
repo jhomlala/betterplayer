@@ -9,11 +9,13 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 class ReusableVideoListWidget extends StatefulWidget {
   final VideoListData videoListData;
   final ReusableVideoListController videoListController;
+  final Function canBuildVideo;
 
   const ReusableVideoListWidget({
     Key key,
     this.videoListData,
     this.videoListController,
+    this.canBuildVideo,
   }) : super(key: key);
 
   @override
@@ -27,16 +29,11 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   StreamController<BetterPlayerController>
       betterPlayerControllerStreamController = StreamController.broadcast();
   bool _initialized = false;
-  bool _wasPlaying = false;
-  Duration _lastPosition;
-  bool _afterBuild = false;
+  Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _afterBuild = true;
-    });
   }
 
   @override
@@ -48,8 +45,9 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   void _setupController() {
     if (controller == null) {
       controller = widget.videoListController.getBetterPlayerController();
-      controller.setupDataSource(
-          BetterPlayerDataSource.network(videoListData.videoUrl));
+      controller.setupDataSource(BetterPlayerDataSource.network(
+          videoListData.videoUrl,
+          cacheConfiguration: BetterPlayerCacheConfiguration(useCache: true)));
       betterPlayerControllerStreamController.add(controller);
       controller.addEventsListener(onPlayerEvent);
     }
@@ -61,10 +59,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
       return;
     }
     if (controller != null && _initialized) {
-      _afterBuild = false;
       controller.removeEventsListener(onPlayerEvent);
-      _wasPlaying = controller.isPlaying();
-      _lastPosition = controller.videoPlayerController.value.position;
       widget.videoListController.freeBetterPlayerController(controller);
       controller.pause();
       controller = null;
@@ -74,11 +69,14 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   }
 
   void onPlayerEvent(BetterPlayerEvent event) {
+    if (event.betterPlayerEventType == BetterPlayerEventType.progress) {
+      videoListData.lastPosition = event.parameters["progress"] as Duration;
+    }
     if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
-      if (_lastPosition != null) {
-        controller.seekTo(_lastPosition);
+      if (videoListData.lastPosition != null) {
+        controller.seekTo(videoListData.lastPosition);
       }
-      if (_wasPlaying) {
+      if (videoListData.wasPlaying) {
         controller.play();
       }
     }
@@ -103,10 +101,19 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
           VisibilityDetector(
             key: Key(hashCode.toString() + DateTime.now().toString()),
             onVisibilityChanged: (info) {
-              if (!_afterBuild) {
+              if (!widget.canBuildVideo()) {
+                _timer?.cancel();
+                _timer = null;
+                _timer = Timer(Duration(milliseconds: 500), () {
+                  if (info.visibleFraction >= 0.6) {
+                    _setupController();
+                  } else {
+                    _freeController();
+                  }
+                });
                 return;
               }
-              if (info.visibleFraction >= 0.8) {
+              if (info.visibleFraction >= 0.6) {
                 _setupController();
               } else {
                 _freeController();
@@ -121,7 +128,15 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                       ? BetterPlayer(
                           controller: controller,
                         )
-                      : Container(),
+                      : Container(
+                          color: Colors.black,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          ),
+                        ),
                 );
               },
             ),
@@ -155,7 +170,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
               ElevatedButton(
                 child: Text("Set max volume"),
                 onPressed: () {
-                  controller.setVolume(100);
+                  controller.setVolume(1.0);
                 },
               ),
             ]),
@@ -167,6 +182,9 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
 
   @override
   void deactivate() {
+    if (controller != null) {
+      videoListData.wasPlaying = controller.isPlaying();
+    }
     _initialized = true;
     _freeController();
     super.deactivate();
