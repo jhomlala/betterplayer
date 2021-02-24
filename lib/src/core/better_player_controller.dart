@@ -946,10 +946,10 @@ class BetterPlayerController extends ChangeNotifier {
   ///Build headers map that will be used to setup video player controller. Apply
   ///DRM headers if available.
   Map<String, String> _getHeaders() {
-    var headers = betterPlayerDataSource.headers ?? {};
+    final headers = betterPlayerDataSource.headers ?? {};
     if (betterPlayerDataSource.drmConfiguration != null &&
         betterPlayerDataSource.drmConfiguration?.drmType ==
-            BetterPlayerDrmType.TOKEN) {
+            BetterPlayerDrmType.token) {
       headers[_authorizationHeader] =
           betterPlayerDataSource.drmConfiguration.token;
     }

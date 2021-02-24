@@ -10,7 +10,6 @@ class DrmPage extends StatefulWidget {
 class _DrmPageState extends State<DrmPage> {
   BetterPlayerController _tokenController;
   BetterPlayerController _widevineController;
-  BetterPlayerController _widevineTokenController;
 
   @override
   void initState() {
@@ -24,7 +23,7 @@ class _DrmPageState extends State<DrmPage> {
       Constants.tokenEncodedHlsUrl,
       videoFormat: BetterPlayerVideoFormat.hls,
       drmConfiguration: BetterPlayerDrmConfiguration(
-          drmType: BetterPlayerDrmType.TOKEN,
+          drmType: BetterPlayerDrmType.token,
           token: Constants.tokenEncodedHlsToken),
     );
     _tokenController = BetterPlayerController(betterPlayerConfiguration);
@@ -35,7 +34,7 @@ class _DrmPageState extends State<DrmPage> {
       BetterPlayerDataSourceType.network,
       Constants.widevineVideoUrl,
       drmConfiguration: BetterPlayerDrmConfiguration(
-          drmType: BetterPlayerDrmType.WIDEVINE,
+          drmType: BetterPlayerDrmType.widevine,
           licenseUrl: Constants.widevineLicenseUrl,
           headers: {"Test": "Test2"}),
     );

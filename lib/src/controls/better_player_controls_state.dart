@@ -154,7 +154,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   Widget _buildSpeedRow(double value) {
     assert(value != null, "Value can't be null");
-    bool isSelected =
+    final bool isSelected =
         betterPlayerController.videoPlayerController.value.speed == value;
 
     return BetterPlayerMaterialClickableWidget(

@@ -955,7 +955,7 @@ Token based:
       "url",
       videoFormat: BetterPlayerVideoFormat.hls,
       drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.AES,
+        drmType: BetterPlayerDrmType.token,
         token:
             "Bearer=token",
       ),
@@ -968,7 +968,7 @@ Widevine (license url based):
       BetterPlayerDataSourceType.network,
       "url",
       drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.WIDEVINE,
+        drmType: BetterPlayerDrmType.widevine,
         licenseUrl:
             "licenseUrl",
         headers: {"header": "value"}
