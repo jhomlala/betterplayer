@@ -69,11 +69,11 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   }
 
   void onPlayerEvent(BetterPlayerEvent event) {
-    if (event.betterPlayerEventType == BetterPlayerEventType.progress){
+    if (event.betterPlayerEventType == BetterPlayerEventType.progress) {
       videoListData.lastPosition = event.parameters["progress"] as Duration;
     }
     if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
-      if (videoListData.lastPosition != null){
+      if (videoListData.lastPosition != null) {
         controller.seekTo(videoListData.lastPosition);
       }
       if (videoListData.wasPlaying) {
@@ -104,7 +104,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
               if (!widget.canBuildVideo()) {
                 _timer?.cancel();
                 _timer = null;
-                _timer = Timer(Duration(milliseconds: 500), (){
+                _timer = Timer(Duration(milliseconds: 500), () {
                   if (info.visibleFraction >= 0.6) {
                     _setupController();
                   } else {
@@ -130,10 +130,12 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                         )
                       : Container(
                           color: Colors.black,
-                          child: Center(child: CircularProgressIndicator(
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          ),
                         ),
                 );
               },
@@ -180,7 +182,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
 
   @override
   void deactivate() {
-    if (controller != null){
+    if (controller != null) {
       videoListData.wasPlaying = controller.isPlaying();
     }
     _initialized = true;

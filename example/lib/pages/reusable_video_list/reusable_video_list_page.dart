@@ -25,7 +25,6 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
   int lastMilli = DateTime.now().millisecondsSinceEpoch;
   bool _canBuildVideo = true;
 
-
   @override
   void initState() {
     _setupData();
@@ -45,8 +44,6 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
     super.dispose();
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,14 +53,14 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
         child: Column(children: [
           Expanded(
             child: NotificationListener<ScrollNotification>(
-              onNotification: ( notification){
+              onNotification: (notification) {
                 final now = DateTime.now();
                 final timeDiff = now.millisecondsSinceEpoch - lastMilli;
                 if (notification is ScrollUpdateNotification) {
                   final pixelsPerMilli = notification.scrollDelta / timeDiff;
-                  if (pixelsPerMilli.abs() > 1){
+                  if (pixelsPerMilli.abs() > 1) {
                     _canBuildVideo = false;
-                  }else {
+                  } else {
                     _canBuildVideo = true;
                   }
                   lastMilli = DateTime.now().millisecondsSinceEpoch;
@@ -80,7 +77,6 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
                 itemCount: dataList.length,
                 controller: _scrollController,
                 itemBuilder: (context, index) {
-
                   VideoListData videoListData = dataList[index];
                   return ReusableVideoListWidget(
                     videoListData: videoListData,
@@ -96,7 +92,7 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
     );
   }
 
-  bool _checkCanBuildVideo(){
+  bool _checkCanBuildVideo() {
     return _canBuildVideo;
   }
 }

@@ -273,7 +273,7 @@ class DataSource {
 
   final String licenseUrl;
 
-  final Map<String,String> drmHeaders;
+  final Map<String, String> drmHeaders;
 
   /// Key to compare DataSource
   String get key {
