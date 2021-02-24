@@ -373,6 +373,8 @@ class BetterPlayerController extends ChangeNotifier {
               ?.notificationConfiguration?.notificationChannelName,
           overriddenDuration: _betterPlayerDataSource.overriddenDuration,
           formatHint: _getVideoFormat(_betterPlayerDataSource.videoFormat),
+          licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
+          drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
         );
 
         break;

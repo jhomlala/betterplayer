@@ -26,7 +26,8 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Alternative resolution support  
 ✔️ Cache support  
 ✔️ Notifications support  
-✔️ Picture in Picture support   
+✔️ Picture in Picture support     
+✔️ DRM support (token, Widevine)  
 ✔️ ... and much more!  
 
 
@@ -939,20 +940,44 @@ will have incorrect orientation.
 ```
 
 ### DRM
-To configure DRM for your data source, use drmConfiguration parameter. Currently only AES DRM is available.
+To configure DRM for your data source, use drmConfiguration parameter. 
+Supported DRMs:
 
+* Token based (authorization header): Android/iOS
+* Widevine (licensue url + headers): Android
+
+Additional DRM types may be added in the future.
+
+Token based:
 ```dart
  BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      "https://amssamples.streaming.mediaservices.windows.net/830584f8-f0c8-4e41-968b-6538b9380aa5/TearsOfSteelTeaser.ism/manifest(format=m3u8-aapl)",
+      "url",
       videoFormat: BetterPlayerVideoFormat.hls,
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.AES,
         token:
-            "Bearer=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cm46bWljcm9zb2Z0OmF6dXJlOm1lZGlhc2VydmljZXM6Y29udGVudGtleWlkZW50aWZpZXIiOiI5ZGRhMGJjYy01NmZiLTQxNDMtOWQzMi0zYWI5Y2M2ZWE4MGIiLCJpc3MiOiJodHRwOi8vdGVzdGFjcy5jb20vIiwiYXVkIjoidXJuOnRlc3QiLCJleHAiOjE3MTA4MDczODl9.lJXm5hmkp5ArRIAHqVJGefW2bcTzd91iZphoKDwa6w8",
+            "Bearer=token",
       ),
     );
+````
+
+Widevine (license url based):
+```dart
+ BetterPlayerDataSource _widevineDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      "url",
+      drmConfiguration: BetterPlayerDrmConfiguration(
+        drmType: BetterPlayerDrmType.WIDEVINE,
+        licenseUrl:
+            "licenseUrl",
+        headers: {"header": "value"}
+      ),
+    );
+    _widevineController.setupDataSource(_widevineDataSource);
+
 ```
+
 
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html

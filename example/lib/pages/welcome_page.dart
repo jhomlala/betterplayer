@@ -153,7 +153,7 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("Controls always visible", () {
         _navigateToPage(ControlsAlwaysVisiblePage());
       }),
-      _buildExampleElementWidget("DRM page", () {
+      _buildExampleElementWidget("DRM", () {
         _navigateToPage(DrmPage());
       }),
     ];

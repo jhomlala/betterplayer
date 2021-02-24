@@ -8,7 +8,9 @@ class DrmPage extends StatefulWidget {
 }
 
 class _DrmPageState extends State<DrmPage> {
-  BetterPlayerController _betterPlayerController;
+  BetterPlayerController _tokenController;
+  BetterPlayerController _widevineController;
+  BetterPlayerController _widevineTokenController;
 
   @override
   void initState() {
@@ -17,7 +19,7 @@ class _DrmPageState extends State<DrmPage> {
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+    BetterPlayerDataSource _tokenDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.tokenEncodedHlsUrl,
       videoFormat: BetterPlayerVideoFormat.hls,
@@ -25,8 +27,20 @@ class _DrmPageState extends State<DrmPage> {
           drmType: BetterPlayerDrmType.TOKEN,
           token: Constants.tokenEncodedHlsToken),
     );
-    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(dataSource);
+    _tokenController = BetterPlayerController(betterPlayerConfiguration);
+    _tokenController.setupDataSource(_tokenDataSource);
+
+    _widevineController = BetterPlayerController(betterPlayerConfiguration);
+    BetterPlayerDataSource _widevineDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.widevineVideoUrl,
+      drmConfiguration: BetterPlayerDrmConfiguration(
+          drmType: BetterPlayerDrmType.WIDEVINE,
+          licenseUrl: Constants.widevineLicenseUrl,
+          headers: {"Test": "Test2"}),
+    );
+    _widevineController.setupDataSource(_widevineDataSource);
+
     super.initState();
   }
 
@@ -37,18 +51,31 @@ class _DrmPageState extends State<DrmPage> {
         title: Text("DRM player"),
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Token based DRM.",
+              "Auth token based DRM.",
               style: TextStyle(fontSize: 16),
             ),
           ),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
+            child: BetterPlayer(controller: _tokenController),
+          ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              "Widevine - license url based DRM. Works only for Android.",
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: BetterPlayer(controller: _widevineController),
           ),
         ],
       ),
