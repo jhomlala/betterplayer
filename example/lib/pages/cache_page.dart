@@ -31,7 +31,7 @@ class _CachePageState extends State<CachePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player"),
+        title: Text("Cache"),
       ),
       body: Column(
         children: [

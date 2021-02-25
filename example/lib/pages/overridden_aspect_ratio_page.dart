@@ -30,7 +30,7 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Overridden aspect ratio player"),
+        title: Text("Overridden aspect ratio"),
       ),
       body: Column(
         children: [

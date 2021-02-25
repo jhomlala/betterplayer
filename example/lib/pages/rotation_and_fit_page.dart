@@ -29,7 +29,7 @@ class _RotationAndFitPageState extends State<RotationAndFitPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player"),
+        title: Text("Rotation and fit"),
       ),
       body: Column(
         children: [

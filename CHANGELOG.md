@@ -5,6 +5,7 @@
 * Added missing controller dispose from BetterPlayer widget dispose.
 * Added fix for iOS aspect ratio issue.
 * Fixed auto play issue where player starts video after load initialization process and player is not visible.
+* Updated texts in examples.
 
 ## 0.0.58
 * Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.

@@ -1,8 +1,5 @@
-import 'dart:async';
-
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
-import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -20,31 +17,21 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
         BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-          autoPlay: true,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.elephantDreamStreamUrl,
-      videoFormat: BetterPlayerVideoFormat.hls,
+      "http://cdn.theoplayer.com/video/elephants-dream/playlist.m3u8",
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(milliseconds: 300), (){
-      return Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => RotationAndFitPage()),
-      );
-    });
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("DRM page"),
+        title: Text("Normal player"),
       ),
       body: Column(
         children: [
@@ -52,7 +39,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "AES DRM example.",
+              "Normal player with configuration managed by developer.",
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -63,10 +50,10 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           ElevatedButton(
             child: Text("Play file data source"),
             onPressed: () async {
-              return Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => RotationAndFitPage()),
-              );
+              String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
+              BetterPlayerDataSource dataSource =
+                  BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
+              _betterPlayerController.setupDataSource(dataSource);
             },
           ),
         ],

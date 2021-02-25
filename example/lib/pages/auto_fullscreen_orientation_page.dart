@@ -30,7 +30,7 @@ class _AutoFullscreenOrientationPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player"),
+        title: Text("Auto full screen orientation"),
       ),
       body: Column(
         children: [
