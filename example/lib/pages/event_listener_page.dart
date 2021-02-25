@@ -56,7 +56,8 @@ class _EventListenerPageState extends State<EventListenerPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Better Player exposes events which can be listened with event listener. Start player to see events flowing.",
+              "Better Player exposes events which can be listened with event "
+              "listener. Start player to see events flowing.",
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -76,8 +77,8 @@ class _EventListenerPageState extends State<EventListenerPage> {
                         (event) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                                "Event: ${event.betterPlayerEventType} parameters: ${(event.parameters ?? <String, dynamic>{}).toString()}"),
+                            Text("Event: ${event.betterPlayerEventType} "
+                                "parameters: ${(event.parameters ?? <String, dynamic>{}).toString()}"),
                             Divider(),
                           ],
                         ),

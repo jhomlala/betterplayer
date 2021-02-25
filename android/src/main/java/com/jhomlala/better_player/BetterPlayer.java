@@ -54,7 +54,6 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 
@@ -142,7 +141,7 @@ final class BetterPlayer {
 
         if (licenseUrl != null && !licenseUrl.isEmpty()) {
             HttpMediaDrmCallback httpMediaDrmCallback =
-                    new HttpMediaDrmCallback(licenseUrl, new DefaultHttpDataSourceFactory());
+                    new HttpMediaDrmCallback(licenseUrl, new DefaultHttpDataSource.Factory());
             if (Util.SDK_INT < 18) {
                 Log.e(TAG, "Protected content not supported on API levels below 18");
                 drmSessionManager = null;
@@ -170,25 +169,21 @@ final class BetterPlayer {
         }
 
         if (isHTTP(uri)) {
-            DefaultHttpDataSourceFactory defaultHttpDataSourceFactory =
-                    new DefaultHttpDataSourceFactory(
-                            userAgent,
-                            null,
-                            DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
-                            DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,
-                            true);
+            dataSourceFactory = new DefaultHttpDataSource.Factory()
+                    .setUserAgent(userAgent)
+                    .setAllowCrossProtocolRedirects(true)
+                    .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
+                    .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS);
+
             if (headers != null) {
-                defaultHttpDataSourceFactory.getDefaultRequestProperties().set(headers);
+                ((DefaultHttpDataSource.Factory) dataSourceFactory).setDefaultRequestProperties(headers);
             }
 
             if (useCache && maxCacheSize > 0 && maxCacheFileSize > 0) {
                 dataSourceFactory =
-                        new CacheDataSourceFactory(context, maxCacheSize, maxCacheFileSize, defaultHttpDataSourceFactory);
-            } else {
-                dataSourceFactory = defaultHttpDataSourceFactory;
+                        new CacheDataSourceFactory(context, maxCacheSize, maxCacheFileSize, dataSourceFactory);
             }
         } else {
-
             dataSourceFactory = new DefaultDataSourceFactory(context, userAgent);
         }
 
@@ -275,6 +270,7 @@ final class BetterPlayer {
         playerNotificationManager.setUsePreviousAction(false);
         playerNotificationManager.setUseStopAction(false);
 
+
         MediaSessionCompat mediaSession = setupMediaSession(context, false);
         playerNotificationManager.setMediaSessionToken(mediaSession.getSessionToken());
 
@@ -335,10 +331,7 @@ final class BetterPlayer {
 
             @Override
             public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", "seek");
-                event.put("position", positionMs);
-                eventSink.success(event);
+                sendSeekToEvent(positionMs);
                 return true;
             }
 
@@ -354,12 +347,14 @@ final class BetterPlayer {
 
             @Override
             public boolean dispatchRewind(Player player) {
+                sendSeekToEvent(player.getCurrentPosition() - 5000);
                 return false;
             }
 
             @Override
             public boolean dispatchFastForward(Player player) {
-                return false;
+                sendSeekToEvent(player.getCurrentPosition() + 5000);
+                return true;
             }
 
             @Override
@@ -378,13 +373,18 @@ final class BetterPlayer {
             }
 
             @Override
-            public boolean isRewindEnabled() {
+            public boolean dispatchSetPlaybackParameters(Player player, PlaybackParameters playbackParameters) {
                 return false;
             }
 
             @Override
+            public boolean isRewindEnabled() {
+                return true;
+            }
+
+            @Override
             public boolean isFastForwardEnabled() {
-                return false;
+                return true;
             }
         };
     }
@@ -437,7 +437,11 @@ final class BetterPlayer {
             Uri uri, DataSource.Factory mediaDataSourceFactory, String formatHint, Context context) {
         int type;
         if (formatHint == null) {
-            type = Util.inferContentType(uri.getLastPathSegment());
+            String lastPathSegment = uri.getLastPathSegment();
+            if (lastPathSegment == null) {
+                lastPathSegment = "";
+            }
+            type = Util.inferContentType(lastPathSegment);
         } else {
             switch (formatHint) {
                 case FORMAT_SS:
@@ -535,9 +539,7 @@ final class BetterPlayer {
 
                     @Override
                     public void onPlayerError(final ExoPlaybackException error) {
-                        if (eventSink != null) {
-                            eventSink.error("VideoError", "Video player had error " + error, null);
-                        }
+                        eventSink.error("VideoError", "Video player had error " + error, null);
                     }
                 });
 
@@ -555,13 +557,18 @@ final class BetterPlayer {
         eventSink.success(event);
     }
 
-    @SuppressWarnings("deprecation")
     private static void setAudioAttributes(SimpleExoPlayer exoPlayer) {
+        Player.AudioComponent audioComponent = exoPlayer.getAudioComponent();
+        if (audioComponent == null) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            exoPlayer.setAudioAttributes(
-                    new AudioAttributes.Builder().setContentType(C.CONTENT_TYPE_MOVIE).build());
+
+            audioComponent.setAudioAttributes(
+                    new AudioAttributes.Builder().setContentType(C.CONTENT_TYPE_MOVIE).build(), false);
         } else {
-            exoPlayer.setAudioStreamType(C.STREAM_TYPE_MUSIC);
+            audioComponent.setAudioAttributes(
+                    new AudioAttributes.Builder().setContentType(C.CONTENT_TYPE_MUSIC).build(), false);
         }
     }
 
@@ -664,29 +671,21 @@ final class BetterPlayer {
         }
         ComponentName mediaButtonReceiver = new ComponentName(context, MediaButtonReceiver.class);
         MediaSessionCompat mediaSession = new MediaSessionCompat(context, "BetterPlayer", mediaButtonReceiver, null);
-        mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-
         mediaSession.setCallback(new MediaSessionCompat.Callback() {
             @Override
             public void onSeekTo(long pos) {
-                exoPlayer.seekTo(pos);
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", "seek");
-                event.put("position", pos);
-                eventSink.success(event);
+                sendSeekToEvent(pos);
                 super.onSeekTo(pos);
             }
         });
 
         mediaSession.setActive(true);
-
         MediaSessionConnector mediaSessionConnector =
                 new MediaSessionConnector(mediaSession);
         if (setupControlDispatcher) {
             mediaSessionConnector.setControlDispatcher(setupControlDispatcher());
         }
         mediaSessionConnector.setPlayer(exoPlayer);
-
 
         Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
         mediaButtonIntent.setClass(context, MediaButtonReceiver.class);
@@ -767,17 +766,26 @@ final class BetterPlayer {
     private void setAudioTrack(int rendererIndex, int groupIndex, int groupElementIndex) {
         MappingTrackSelector.MappedTrackInfo mappedTrackInfo =
                 trackSelector.getCurrentMappedTrackInfo();
-        Log.d(TAG, "Selected audio!");
-        DefaultTrackSelector.ParametersBuilder builder =
-                trackSelector.getParameters().buildUpon();
-        builder.clearSelectionOverrides(rendererIndex)
-                .setRendererDisabled(rendererIndex, false);
-        int[] tracks = {groupElementIndex};
-        DefaultTrackSelector.SelectionOverride override =
-                new DefaultTrackSelector.SelectionOverride(groupIndex, tracks);
-        builder.setSelectionOverride(rendererIndex,
-                mappedTrackInfo.getTrackGroups(rendererIndex), override);
-        trackSelector.setParameters(builder);
+        if (mappedTrackInfo != null) {
+            DefaultTrackSelector.ParametersBuilder builder =
+                    trackSelector.getParameters().buildUpon();
+            builder.clearSelectionOverrides(rendererIndex)
+                    .setRendererDisabled(rendererIndex, false);
+            int[] tracks = {groupElementIndex};
+            DefaultTrackSelector.SelectionOverride override =
+                    new DefaultTrackSelector.SelectionOverride(groupIndex, tracks);
+            builder.setSelectionOverride(rendererIndex,
+                    mappedTrackInfo.getTrackGroups(rendererIndex), override);
+            trackSelector.setParameters(builder);
+        }
+    }
+
+    private void sendSeekToEvent(long positionMs) {
+        exoPlayer.seekTo(positionMs);
+        Map<String, Object> event = new HashMap<>();
+        event.put("event", "seek");
+        event.put("position", positionMs);
+        eventSink.success(event);
     }
 
 

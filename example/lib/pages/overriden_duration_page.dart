@@ -38,7 +38,7 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Notification player"),
+        title: Text("Overridden duration"),
       ),
       body: Column(
         children: [
@@ -46,7 +46,8 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Click play on player to show notification in status bar.",
+              "Duration of this video is overridden. Now this video will have"
+              " 10 seconds only.",
               style: TextStyle(fontSize: 16),
             ),
           ),

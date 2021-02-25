@@ -28,7 +28,7 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Controller controls page"),
+        title: Text("Controller controls"),
       ),
       body: Column(
         children: [
@@ -36,7 +36,8 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Control player with BetterPlayerController",
+              "Control player with BetterPlayerController. You can control all"
+              "aspects of player without using UI of player.",
               style: TextStyle(fontSize: 16),
             ),
           ),

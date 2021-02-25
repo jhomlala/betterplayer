@@ -506,16 +506,22 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             return;
         }
         
+        //Fix from https://github.com/flutter/flutter/issues/66413
+        AVPlayerItemTrack *track = [self.player currentItem].tracks.firstObject;
+        CGSize naturalSize = track.assetTrack.naturalSize;
+        CGAffineTransform prefTrans = track.assetTrack.preferredTransform;
+        CGSize realSize = CGSizeApplyAffineTransform(naturalSize, prefTrans);
+        
         _isInitialized = true;
         [self addVideoOutput];
         [self updatePlayingState];
         _eventSink(@{
             @"event" : @"initialized",
             @"duration" : @([self duration]),
-            @"width" : @(width),
-            @"height" : @(height),
+            @"width" : @(fabs(realSize.width) ? : width),
+            @"height" : @(fabs(realSize.height) ? : height),
             @"key" : _key
-                   });
+        });
     }
 }
 

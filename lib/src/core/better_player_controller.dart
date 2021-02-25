@@ -11,6 +11,7 @@ import 'package:better_player/src/configuration/better_player_event_type.dart';
 import 'package:better_player/src/configuration/better_player_translations.dart';
 import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/core/better_player_controller_provider.dart';
+
 // Flutter imports:
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
@@ -21,6 +22,7 @@ import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
+
 // Package imports:
 import 'package:path_provider/path_provider.dart';
 
@@ -437,13 +439,22 @@ class BetterPlayerController extends ChangeNotifier {
     _videoEventStreamSubscription = videoPlayerController
         .videoEventStreamController.stream
         .listen(_handleVideoEvent);
+
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (betterPlayerConfiguration.autoPlay) {
       if (fullScreenByDefault) {
         enterFullScreen();
       }
-
-      await play();
+      if (_isAutomaticPlayPauseHandled()) {
+        if (_appLifecycleState == AppLifecycleState.resumed &&
+            _isPlayerVisible) {
+          await play();
+        } else {
+          _wasPlayingBeforePause = true;
+        }
+      } else {
+        await play();
+      }
     } else {
       if (fullScreenByDefault) {
         videoPlayerController.addListener(_onFullScreenStateChanged);
@@ -698,6 +709,14 @@ class BetterPlayerController extends ChangeNotifier {
     _betterPlayerTrack = track;
   }
 
+  ///Check if player can be played/paused automatically
+  bool _isAutomaticPlayPauseHandled() {
+    return !(_betterPlayerDataSource
+                ?.notificationConfiguration?.showNotification ==
+            true) &&
+        betterPlayerConfiguration.handleLifecycle;
+  }
+
   ///Listener which handles state of player visibility. If player visibility is
   ///below 0.0 then video will be paused. When value is greater than 0, video
   ///will play again. If there's different handler of visibility then it will be
@@ -711,10 +730,7 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(
         BetterPlayerEvent(BetterPlayerEventType.changedPlayerVisibility));
 
-    if (!(_betterPlayerDataSource
-                ?.notificationConfiguration?.showNotification ==
-            true) &&
-        betterPlayerConfiguration.handleLifecycle) {
+    if (_isAutomaticPlayPauseHandled()) {
       if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
         betterPlayerConfiguration
             .playerVisibilityChangedBehavior(visibilityFraction);
@@ -787,10 +803,7 @@ class BetterPlayerController extends ChangeNotifier {
   ///state, then video playback will stop. If showNotification is set in data
   ///source or handleLifecycle is false then this logic will be ignored.
   void setAppLifecycleState(AppLifecycleState appLifecycleState) {
-    if (!(_betterPlayerDataSource
-                ?.notificationConfiguration?.showNotification ??
-            false) &&
-        betterPlayerConfiguration.handleLifecycle) {
+    if (_isAutomaticPlayPauseHandled()) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
         if (_wasPlayingBeforePause == true && _isPlayerVisible) {

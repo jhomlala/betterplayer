@@ -66,7 +66,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Placeholder until play player"),
+        title: Text("Placeholder until play"),
       ),
       body: Column(
         children: [
@@ -74,7 +74,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Normal player with configuration managed by developer.",
+              "Normal player with placeholder shown until video is started.",
               style: TextStyle(fontSize: 16),
             ),
           ),

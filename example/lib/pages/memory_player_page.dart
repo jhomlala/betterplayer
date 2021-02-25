@@ -48,7 +48,8 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Memory player with plays video from bytes.",
+              "Memory player with plays video from bytes list. In this example"
+              "file bytes are read to list and then used in player.",
               style: TextStyle(fontSize: 16),
             ),
           ),

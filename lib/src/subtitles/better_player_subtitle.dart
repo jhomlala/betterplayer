@@ -52,25 +52,23 @@ class BetterPlayerSubtitle {
   static BetterPlayerSubtitle _handle3LinesAndMoreSubtitles(
       List<String> scanner, bool isWebVTT) {
     try {
-      if (isWebVTT) {
-        final timeSplit = scanner[0].split(timerSeparator);
-        final start = _stringToDuration(timeSplit[0]);
-        final end = _stringToDuration(timeSplit[1]);
-        final texts = scanner.sublist(1, scanner.length);
-        return BetterPlayerSubtitle._(
-            index: -1, start: start, end: end, texts: texts);
+      int index = -1;
+      List<String> timeSplit = [];
+      int firstLineOfText = 0;
+      if (scanner[0].contains(timerSeparator)) {
+        timeSplit = scanner[0].split(timerSeparator);
+        firstLineOfText = 1;
       } else {
-        if (scanner[0].isEmpty) {
-          scanner.removeAt(0);
-        }
-        final index = int.tryParse(scanner[0]);
-        final timeSplit = scanner[1].split(timerSeparator);
-        final start = _stringToDuration(timeSplit[0]);
-        final end = _stringToDuration(timeSplit[1]);
-        final texts = scanner.sublist(2, scanner.length);
-        return BetterPlayerSubtitle._(
-            index: index, start: start, end: end, texts: texts);
+        index = int.tryParse(scanner[0]);
+        timeSplit = scanner[1].split(timerSeparator);
+        firstLineOfText = 2;
       }
+
+      final start = _stringToDuration(timeSplit[0]);
+      final end = _stringToDuration(timeSplit[1]);
+      final texts = scanner.sublist(firstLineOfText, scanner.length);
+      return BetterPlayerSubtitle._(
+          index: index, start: start, end: end, texts: texts);
     } catch (exception) {
       BetterPlayerUtils.log("Failed to parse subtitle line: $scanner");
       return BetterPlayerSubtitle._();

@@ -1,3 +1,13 @@
+## 0.0.59
+* Fixed WEBVTT subtitles parsing.
+* Updated ExoPlayer version.
+* Refactored ExoPlayer code.
+* Added missing controller dispose from BetterPlayer widget dispose.
+* Added fix for iOS aspect ratio issue.
+* Fixed auto play issue where player starts video after load initialization process and player is not visible.
+* Updated texts in examples.
+* Added missing widevine DRM parameters (by https://github.com/FlutterSu)
+
 ## 0.0.58
 * Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.
 * Disabled picture in picture in fullscreen mode.
