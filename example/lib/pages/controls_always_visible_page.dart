@@ -45,7 +45,7 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               "Controls are always visible. Click on button below to"
-                  " enable/disable this mode.",
+              " enable/disable this mode.",
               style: TextStyle(fontSize: 16),
             ),
           ),

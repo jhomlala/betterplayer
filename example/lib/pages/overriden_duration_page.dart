@@ -47,7 +47,7 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
               "Duration of this video is overridden. Now this video will have"
-                  " 10 seconds only.",
+              " 10 seconds only.",
               style: TextStyle(fontSize: 16),
             ),
           ),
