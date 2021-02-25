@@ -34,6 +34,9 @@ import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
+import com.google.android.exoplayer2.drm.DummyExoMediaDrm;
+import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
+import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
@@ -72,6 +75,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.google.android.exoplayer2.PlaybackParameters;
 
@@ -138,8 +142,28 @@ final class BetterPlayer {
         if (licenseUrl != null && !licenseUrl.isEmpty()) {
             HttpMediaDrmCallback httpMediaDrmCallback =
                     new HttpMediaDrmCallback(licenseUrl, new DefaultHttpDataSource.Factory());
-            drmSessionManager = new DefaultDrmSessionManager.Builder()
-                    .setKeyRequestParameters(drmHeaders).build(httpMediaDrmCallback);
+            if (Util.SDK_INT < 18) {
+                Log.e(TAG, "Protected content not supported on API levels below 18");
+                drmSessionManager = null;
+            } else {
+                UUID drmSchemeUuid = Util.getDrmUuid("widevine");
+                drmSessionManager =
+                        new DefaultDrmSessionManager.Builder()
+                                .setUuidAndExoMediaDrmProvider(drmSchemeUuid,
+                                        uuid -> {
+                                            try {
+                                                FrameworkMediaDrm mediaDrm = FrameworkMediaDrm.newInstance(uuid);
+                                                // Force L3.
+                                                mediaDrm.setPropertyString("securityLevel", "L3");
+                                                return mediaDrm;
+                                            } catch (UnsupportedDrmException e) {
+                                                return new DummyExoMediaDrm();
+                                            }
+                                        })
+                                .setMultiSession(false)
+                                .setKeyRequestParameters(drmHeaders)
+                                .build(httpMediaDrmCallback);
+            }
         } else {
             drmSessionManager = null;
         }
