@@ -1,3 +1,6 @@
+## 0.0.59
+* Fixed WEBVTT subtitles parsing.
+
 ## 0.0.58
 * Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.
 * Disabled picture in picture in fullscreen mode.
