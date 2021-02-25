@@ -6,7 +6,7 @@
 * Added fix for iOS aspect ratio issue.
 * Fixed auto play issue where player starts video after load initialization process and player is not visible.
 * Updated texts in examples.
-* Added missing Widevine DRM parameters (by https://github.com/FlutterSu)
+* Added missing widevine DRM parameters (by https://github.com/FlutterSu)
 
 ## 0.0.58
 * Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.
