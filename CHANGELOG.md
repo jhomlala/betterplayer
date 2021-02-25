@@ -1,5 +1,8 @@
 ## 0.0.59
 * Fixed WEBVTT subtitles parsing.
+* Updated ExoPlayer version.
+* Refactored ExoPlayer code.
+* Added missing controller dispose from BetterPlayer widget dispose.
 
 ## 0.0.58
 * Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.

@@ -117,6 +117,7 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     WidgetsBinding.instance.removeObserver(this);
     widget.controller.removeListener(onFullScreenChanged);
+    widget.controller.dispose();
     super.dispose();
   }
 
