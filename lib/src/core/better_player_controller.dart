@@ -440,7 +440,6 @@ class BetterPlayerController extends ChangeNotifier {
         .videoEventStreamController.stream
         .listen(_handleVideoEvent);
 
-    await Future.delayed(Duration(seconds: 1), () {});
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (betterPlayerConfiguration.autoPlay) {
       if (fullScreenByDefault) {
