@@ -1,6 +1,7 @@
 ## 0.0.60
 * Updated documentation.
 * Added null checking for videoPlayerController inside BetterPlayerController.
+* Added setMixWithOthers method to BetterPlayerController.
 
 ## 0.0.59
 * Fixed WEBVTT subtitles parsing.

@@ -956,6 +956,11 @@ class BetterPlayerController extends ChangeNotifier {
     videoPlayerController?.setAudioTrack(audioTrack.label, audioTrack.id);
   }
 
+  ///Enable or disable audio mixing with other sound within device.
+  void setMixWithOthers(bool mixWithOthers){
+    videoPlayerController.setMixWithOthers(mixWithOthers);
+  }
+
   ///Build headers map that will be used to setup video player controller. Apply
   ///DRM headers if available.
   Map<String, String> _getHeaders() {
