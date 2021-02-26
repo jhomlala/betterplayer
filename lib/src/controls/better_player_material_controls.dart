@@ -329,8 +329,8 @@ class _BetterPlayerMaterialControlsState
           child: Center(
             child: Icon(
               _betterPlayerController.isFullScreen
-                  ? Icons.fullscreen_exit
-                  : Icons.fullscreen,
+                  ? _controlsConfiguration.fullscreenDisableIcon
+                  : _controlsConfiguration.fullscreenEnableIcon,
               color: _controlsConfiguration.iconsColor,
             ),
           ),
