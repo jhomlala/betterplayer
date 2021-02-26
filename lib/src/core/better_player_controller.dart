@@ -225,7 +225,7 @@ class BetterPlayerController extends ChangeNotifier {
     ///Build videoPlayerController if null
     if (videoPlayerController == null) {
       videoPlayerController = VideoPlayerController();
-      videoPlayerController.addListener(_onVideoPlayerChanged);
+      videoPlayerController?.addListener(_onVideoPlayerChanged);
     }
 
     ///Clear hls tracks
@@ -354,7 +354,7 @@ class BetterPlayerController extends ChangeNotifier {
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.network:
-        await videoPlayerController.setNetworkDataSource(
+        await videoPlayerController?.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: _getHeaders(),
           useCache:
@@ -379,7 +379,7 @@ class BetterPlayerController extends ChangeNotifier {
 
         break;
       case BetterPlayerDataSourceType.file:
-        await videoPlayerController.setFileDataSource(
+        await videoPlayerController?.setFileDataSource(
           File(betterPlayerDataSource.url),
           showNotification: _betterPlayerDataSource
               ?.notificationConfiguration?.showNotification,
@@ -397,7 +397,7 @@ class BetterPlayerController extends ChangeNotifier {
             extension: _betterPlayerDataSource.videoExtension);
 
         if (file != null) {
-          await videoPlayerController.setFileDataSource(
+          await videoPlayerController?.setFileDataSource(
             file,
             showNotification: _betterPlayerDataSource
                 ?.notificationConfiguration?.showNotification,
@@ -435,10 +435,10 @@ class BetterPlayerController extends ChangeNotifier {
   ///Initializes video based on configuration. Invoke actions which need to be
   ///run on player start.
   Future _initializeVideo() async {
-    await videoPlayerController.setLooping(betterPlayerConfiguration.looping);
+    await videoPlayerController?.setLooping(betterPlayerConfiguration.looping);
     _videoEventStreamSubscription = videoPlayerController
-        .videoEventStreamController.stream
-        .listen(_handleVideoEvent);
+        ?.videoEventStreamController?.stream
+        ?.listen(_handleVideoEvent);
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (betterPlayerConfiguration.autoPlay) {
@@ -457,21 +457,21 @@ class BetterPlayerController extends ChangeNotifier {
       }
     } else {
       if (fullScreenByDefault) {
-        videoPlayerController.addListener(_onFullScreenStateChanged);
+        videoPlayerController?.addListener(_onFullScreenStateChanged);
       }
     }
 
     final startAt = betterPlayerConfiguration.startAt;
     if (startAt != null) {
-      await videoPlayerController.seekTo(startAt);
+      await videoPlayerController?.seekTo(startAt);
     }
   }
 
   ///Method which is invoked when full screen changes.
   Future<void> _onFullScreenStateChanged() async {
-    if (videoPlayerController.value.isPlaying && !_isFullScreen) {
+    if (videoPlayerController?.value?.isPlaying == true && !_isFullScreen) {
       enterFullScreen();
-      videoPlayerController.removeListener(_onFullScreenStateChanged);
+      videoPlayerController?.removeListener(_onFullScreenStateChanged);
     }
   }
 
@@ -497,7 +497,7 @@ class BetterPlayerController extends ChangeNotifier {
   ///is resumed.
   Future<void> play() async {
     if (_appLifecycleState == AppLifecycleState.resumed) {
-      await videoPlayerController.play();
+      await videoPlayerController?.play();
       _hasCurrentDataSourceStarted = true;
       _wasPlayingBeforePause = null;
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
@@ -506,22 +506,22 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Enables/disables looping (infinity playback) mode.
   Future<void> setLooping(bool looping) async {
-    await videoPlayerController.setLooping(looping);
+    await videoPlayerController?.setLooping(looping);
   }
 
   ///Stop video playback.
   Future<void> pause() async {
-    await videoPlayerController.pause();
+    await videoPlayerController?.pause();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.pause));
   }
 
   ///Move player to specific position/moment of the video.
   Future<void> seekTo(Duration moment) async {
-    await videoPlayerController.seekTo(moment);
+    await videoPlayerController?.seekTo(moment);
 
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo,
         parameters: <String, dynamic>{_durationParameter: moment}));
-    if (moment > videoPlayerController.value.duration) {
+    if (moment > videoPlayerController?.value?.duration) {
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.finished));
     } else {
       cancelNextVideoTimer();
@@ -533,7 +533,7 @@ class BetterPlayerController extends ChangeNotifier {
     if (volume < 0.0 || volume > 1.0) {
       throw ArgumentError("Volume must be between 0.0 and 1.0");
     }
-    await videoPlayerController.setVolume(volume);
+    await videoPlayerController?.setVolume(volume);
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.setVolume,
         parameters: <String, dynamic>{_volumeParameter: volume}));
   }
@@ -543,19 +543,19 @@ class BetterPlayerController extends ChangeNotifier {
     if (speed < 0 || speed > 2) {
       throw ArgumentError("Speed must be between 0 and 2");
     }
-    await videoPlayerController.setSpeed(speed);
+    await videoPlayerController?.setSpeed(speed);
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.setSpeed,
         parameters: <String, dynamic>{_speedParameter: speed}));
   }
 
   ///Flag which determines whenever player is playing or not.
   bool isPlaying() {
-    return videoPlayerController.value.isPlaying;
+    return videoPlayerController?.value?.isPlaying;
   }
 
   ///Flag which determines whenever player is loading video data or not.
   bool isBuffering() {
-    return videoPlayerController.value.isBuffering;
+    return videoPlayerController?.value?.isBuffering;
   }
 
   ///Show or hide controls manually
@@ -598,7 +598,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Listener used to handle video player changes.
   void _onVideoPlayerChanged() async {
-    final currentVideoPlayerValue = videoPlayerController.value;
+    final currentVideoPlayerValue = videoPlayerController?.value;
     if (currentVideoPlayerValue.hasError) {
       _videoPlayerValueOnError ??= currentVideoPlayerValue;
       _postEvent(
@@ -626,7 +626,7 @@ class BetterPlayerController extends ChangeNotifier {
       if (_wasControlsEnabledBeforePiP) {
         setControlsEnabled(true);
       }
-      videoPlayerController.refresh();
+      videoPlayerController?.refresh();
     }
 
     final int now = DateTime.now().millisecondsSinceEpoch;
@@ -662,7 +662,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Flag which determines whenever player data source has been initialized.
   bool isVideoInitialized() {
-    return videoPlayerController.value.initialized;
+    return videoPlayerController?.value?.initialized;
   }
 
   ///Start timer which will trigger next video. Used in playlist. Do not use
@@ -704,7 +704,7 @@ class BetterPlayerController extends ChangeNotifier {
   void setTrack(BetterPlayerHlsTrack track) {
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedTrack));
 
-    videoPlayerController.setTrackParameters(
+    videoPlayerController?.setTrackParameters(
         track.width, track.height, track.bitrate);
     _betterPlayerTrack = track;
   }
@@ -750,14 +750,14 @@ class BetterPlayerController extends ChangeNotifier {
   ///Set different resolution (quality) for video
   void setResolution(String url) async {
     assert(url != null, "Url can't be null");
-    final position = await videoPlayerController.position;
+    final position = await videoPlayerController?.position;
     final wasPlayingBeforeChange = isPlaying();
     cancelFullScreenDismiss = true;
-    videoPlayerController.pause();
+    videoPlayerController?.pause();
     await setupDataSource(betterPlayerDataSource.copyWith(url: url));
-    videoPlayerController.seekTo(position);
+    videoPlayerController?.seekTo(position);
     if (wasPlayingBeforeChange) {
-      videoPlayerController.play();
+      videoPlayerController?.play();
     }
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedResolution));
   }
@@ -836,13 +836,13 @@ class BetterPlayerController extends ChangeNotifier {
   Future<void> enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async {
     assert(
         betterPlayerGlobalKey != null, "BetterPlayerGlobalKey can't be null");
-    if (await videoPlayerController.isPictureInPictureSupported()) {
+    if (await videoPlayerController?.isPictureInPictureSupported()) {
       _wasInFullScreenBeforePiP = _isFullScreen;
       _wasControlsEnabledBeforePiP = _controlsEnabled;
       setControlsEnabled(false);
       if (Platform.isAndroid) {
         _wasInFullScreenBeforePiP = _isFullScreen;
-        await videoPlayerController.enablePictureInPicture(
+        await videoPlayerController?.enablePictureInPicture(
             left: 0, top: 0, width: 0, height: 0);
         enterFullScreen();
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
@@ -858,7 +858,7 @@ class BetterPlayerController extends ChangeNotifier {
           return;
         }
         final Offset position = renderBox.localToGlobal(Offset.zero);
-        return videoPlayerController.enablePictureInPicture(
+        return videoPlayerController?.enablePictureInPicture(
           left: position.dx,
           top: position.dy,
           width: renderBox.size.width,
@@ -877,7 +877,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Disable Picture in Picture mode if it's enabled.
   Future<void> disablePictureInPicture() {
-    return videoPlayerController.disablePictureInPicture();
+    return videoPlayerController?.disablePictureInPicture();
   }
 
   ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
@@ -889,7 +889,7 @@ class BetterPlayerController extends ChangeNotifier {
 
   ///Check if picture in picture mode is supported in this device.
   Future<bool> isPictureInPictureSupported() async {
-    return await videoPlayerController.isPictureInPictureSupported() &&
+    return await videoPlayerController?.isPictureInPictureSupported() &&
         !_isFullScreen;
   }
 
@@ -906,7 +906,7 @@ class BetterPlayerController extends ChangeNotifier {
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo));
         break;
       case VideoEventType.completed:
-        final videoValue = videoPlayerController.value;
+        final videoValue = videoPlayerController?.value;
         _postEvent(
           BetterPlayerEvent(
             BetterPlayerEventType.finished,
@@ -953,7 +953,7 @@ class BetterPlayerController extends ChangeNotifier {
     }
 
     _betterPlayerHlsAudioTrack = audioTrack;
-    videoPlayerController.setAudioTrack(audioTrack.label, audioTrack.id);
+    videoPlayerController?.setAudioTrack(audioTrack.label, audioTrack.id);
   }
 
   ///Build headers map that will be used to setup video player controller. Apply
