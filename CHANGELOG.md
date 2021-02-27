@@ -3,6 +3,7 @@
 * Added null checking for videoPlayerController inside BetterPlayerController.
 * Added setMixWithOthers method to BetterPlayerController.
 * Added initialStartIndex in BetterPlayerPlaylistConfiguration.
+* Fixed issue where player did not disposed properly on app quit.
 
 ## 0.0.59
 * Fixed WEBVTT subtitles parsing.
