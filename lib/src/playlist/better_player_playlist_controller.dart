@@ -48,7 +48,14 @@ class BetterPlayerPlaylistController {
       betterPlayerConfiguration,
       betterPlayerPlaylistConfiguration: betterPlayerPlaylistConfiguration,
     );
-    _currentDataSourceIndex = 0;
+
+    var initialStartIndex =
+        betterPlayerPlaylistConfiguration.initialStartIndex ?? 0;
+    if (initialStartIndex >= _betterPlayerDataSourceList.length) {
+      initialStartIndex = 0;
+    }
+
+    _currentDataSourceIndex = initialStartIndex;
     setupDataSource(_currentDataSourceIndex);
     _betterPlayerController.addEventsListener(_handleEvent);
     _nextVideoTimeStreamSubscription = _betterPlayerController

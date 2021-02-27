@@ -6,9 +6,14 @@ class BetterPlayerPlaylistConfiguration {
   ///Should videos be looped
   final bool loopVideos;
 
+  ///Index of video that will start on playlist start. Id must be less than
+  ///elements in data source list. Default is 0.
+  final int initialStartIndex;
+
   const BetterPlayerPlaylistConfiguration({
     this.nextVideoDelay = const Duration(milliseconds: 3000),
     this.loopVideos = true,
+    this.initialStartIndex = 0,
   })  : assert(nextVideoDelay != null),
         assert(loopVideos != null);
 }

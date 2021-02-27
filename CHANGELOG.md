@@ -2,6 +2,7 @@
 * Updated documentation.
 * Added null checking for videoPlayerController inside BetterPlayerController.
 * Added setMixWithOthers method to BetterPlayerController.
+* Added initialStartIndex in BetterPlayerPlaylistConfiguration.
 
 ## 0.0.59
 * Fixed WEBVTT subtitles parsing.

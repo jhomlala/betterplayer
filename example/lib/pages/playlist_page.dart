@@ -30,6 +30,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
       loopVideos: true,
       nextVideoDelay: Duration(seconds: 5),
+      initialStartIndex: 10
     );
   }
 

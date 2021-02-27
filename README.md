@@ -567,6 +567,10 @@ Possible configuration options:
 
   ///Should videos be looped
   final bool loopVideos;
+
+  ///Index of video that will start on playlist start. Id must be less than
+  ///elements in data source list. Default is 0.
+  final int initialStartIndex;
 ```
 
 ### BetterPlayerDataSource
