@@ -17,6 +17,9 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
+**Example code*
+Paste here your minimal reproducible code. This code should be ready to copy-paste-run.
+
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
