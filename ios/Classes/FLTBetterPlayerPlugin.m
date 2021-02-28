@@ -649,7 +649,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setupPipController {
     if (@available(iOS 9.0, *)) {
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         [[AVAudioSession sharedInstance] setActive: YES error: nil];
         [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
         if (!_pipController && self._playerLayer && [AVPictureInPictureController isPictureInPictureSupported]) {
@@ -745,6 +744,17 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         }
         
     }
+    
+}
+
+- (void)setMixWithOthers:(bool)mixWithOthers {
+  if (mixWithOthers) {
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback
+                                     withOptions:AVAudioSessionCategoryOptionMixWithOthers
+                                           error:nil];
+  } else {
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+  }
 }
 
 
@@ -900,6 +910,7 @@ NSMutableDictionary*  _artworkImageDict;
                                          eventChannelWithName:[NSString stringWithFormat:@"better_player_channel/videoEvents%lld",
                                                                textureId]
                                          binaryMessenger:_messenger];
+    [player setMixWithOthers:false];
     [eventChannel setStreamHandler:player];
     player.eventChannel = eventChannel;
     _players[@(textureId)] = player;
@@ -927,7 +938,6 @@ NSMutableDictionary*  _artworkImageDict;
 }
 
 - (void) setRemoteCommandsNotificationActive{
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
     [[AVAudioSession sharedInstance] setActive:true error:nil];
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
 }
@@ -1087,7 +1097,6 @@ NSMutableDictionary*  _artworkImageDict;
     
     if ([@"init" isEqualToString:call.method]) {
         // Allow audio playback when the Ring/Silent switch is set to silent
-        [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
         for (NSNumber* textureId in _players) {
             [_registry unregisterTexture:[textureId unsignedIntegerValue]];
             [_players[textureId] dispose];
@@ -1217,6 +1226,8 @@ NSMutableDictionary*  _artworkImageDict;
             NSString* name = argsMap[@"name"];
             int index = [argsMap[@"index"] intValue];
             [player setAudioTrack:name index: index];
+        } else if ([@"setMixWithOthers" isEqualToString:call.method]){
+            [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
         }
         
         else {

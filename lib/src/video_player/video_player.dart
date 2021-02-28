@@ -576,6 +576,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   void setAudioTrack(String name, int index) {
     _videoPlayerPlatform.setAudioTrack(_textureId, name, index);
   }
+
+  void setMixWithOthers(bool mixWithOthers) {
+    _videoPlayerPlatform.setMixWithOthers(_textureId, mixWithOthers);
+  }
 }
 
 /// Widget that displays the video controlled by [controller].

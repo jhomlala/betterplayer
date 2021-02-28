@@ -18,9 +18,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   _PlaylistPageState() {
     _betterPlayerConfiguration = BetterPlayerConfiguration(
-      autoPlay: true,
       aspectRatio: 1,
       fit: BoxFit.cover,
+      placeholderOnTop: true,
+      showPlaceholderUntilPlay: true,
       subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(fontSize: 10),
       deviceOrientationsAfterFullScreen: [
         DeviceOrientation.portraitUp,
@@ -29,25 +30,33 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
     _betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
       loopVideos: true,
-      nextVideoDelay: Duration(seconds: 5),
+      nextVideoDelay: Duration(seconds: 1),
     );
   }
 
   Future<List<BetterPlayerDataSource>> setupData() async {
     _dataSourceList.add(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
-        Constants.forBiggerBlazesUrl,
-        subtitles: BetterPlayerSubtitlesSource.single(
-          type: BetterPlayerSubtitlesSourceType.file,
-          url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
-        ),
-      ),
+          BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl,
+          subtitles: BetterPlayerSubtitlesSource.single(
+            type: BetterPlayerSubtitlesSourceType.file,
+            url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
+          ),
+          placeholder: Image.network(
+            Constants.catImageUrl,
+            fit: BoxFit.cover,
+          )),
     );
 
     _dataSourceList.add(
       BetterPlayerDataSource(
-          BetterPlayerDataSourceType.network, Constants.bugBuckBunnyVideoUrl),
+        BetterPlayerDataSourceType.network,
+        Constants.bugBuckBunnyVideoUrl,
+        placeholder: Image.network(
+          Constants.catImageUrl,
+          fit: BoxFit.cover,
+        ),
+      ),
     );
     _dataSourceList.add(
       BetterPlayerDataSource(

@@ -1,3 +1,12 @@
+## 0.0.60
+* Updated documentation.
+* Added null checking for videoPlayerController inside BetterPlayerController.
+* Added setMixWithOthers method to BetterPlayerController.
+* Added initialStartIndex in BetterPlayerPlaylistConfiguration.
+* Fixed issue where player did not disposed properly on app quit.
+* Added placeholder parameter in BetterPlayerDataSource.
+* Fixed custom material full screen icons (by https://github.com/FelipeFernandesLeandro)
+
 ## 0.0.59
 * Fixed WEBVTT subtitles parsing.
 * Updated ExoPlayer version.
@@ -6,7 +15,7 @@
 * Added fix for iOS aspect ratio issue.
 * Fixed auto play issue where player starts video after load initialization process and player is not visible.
 * Updated texts in examples.
-* Added missing widevine DRM parameters (by https://github.com/FlutterSu)
+* Added missing widevine DRM parameters (by https://github.com/FlutterSu).
 
 ## 0.0.58
 * Added overflowModalColor and overflowModalTextColor in BetterPlayerControlsConfiguration.

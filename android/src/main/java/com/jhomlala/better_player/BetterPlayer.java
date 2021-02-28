@@ -507,7 +507,7 @@ final class BetterPlayer {
 
         surface = new Surface(textureEntry.surfaceTexture());
         exoPlayer.setVideoSurface(surface);
-        setAudioAttributes(exoPlayer);
+        setAudioAttributes(exoPlayer, true);
 
         exoPlayer.addListener(
                 new EventListener() {
@@ -557,7 +557,7 @@ final class BetterPlayer {
         eventSink.success(event);
     }
 
-    private static void setAudioAttributes(SimpleExoPlayer exoPlayer) {
+    private void setAudioAttributes(SimpleExoPlayer exoPlayer, Boolean mixWithOthers) {
         Player.AudioComponent audioComponent = exoPlayer.getAudioComponent();
         if (audioComponent == null) {
             return;
@@ -565,10 +565,10 @@ final class BetterPlayer {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
             audioComponent.setAudioAttributes(
-                    new AudioAttributes.Builder().setContentType(C.CONTENT_TYPE_MOVIE).build(), false);
+                    new AudioAttributes.Builder().setContentType(C.CONTENT_TYPE_MOVIE).build(), !mixWithOthers);
         } else {
             audioComponent.setAudioAttributes(
-                    new AudioAttributes.Builder().setContentType(C.CONTENT_TYPE_MUSIC).build(), false);
+                    new AudioAttributes.Builder().setContentType(C.CONTENT_TYPE_MUSIC).build(), !mixWithOthers);
         }
     }
 
@@ -788,6 +788,10 @@ final class BetterPlayer {
         eventSink.success(event);
     }
 
+    public void setMixWithOthers(Boolean mixWithOthers) {
+        setAudioAttributes(exoPlayer,mixWithOthers);
+    }
+
 
     void dispose() {
         disposeMediaSession();
@@ -823,7 +827,6 @@ final class BetterPlayer {
         result = 31 * result + (surface != null ? surface.hashCode() : 0);
         return result;
     }
-
 }
 
 
