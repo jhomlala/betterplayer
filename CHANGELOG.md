@@ -4,6 +4,7 @@
 * Added setMixWithOthers method to BetterPlayerController.
 * Added initialStartIndex in BetterPlayerPlaylistConfiguration.
 * Fixed issue where player did not disposed properly on app quit.
+* Added placeholder parameter in BetterPlayerDataSource.
 
 ## 0.0.59
 * Fixed WEBVTT subtitles parsing.

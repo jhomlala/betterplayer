@@ -648,6 +648,15 @@ Possible configuration options:
 
   ///Extension of video without dot. Used only in memory data source.
   final String videoExtension;
+
+  ///Configuration of content protection
+  final BetterPlayerDrmConfiguration drmConfiguration;
+
+  ///Placeholder widget which will be shown until video load or play. This
+  ///placeholder may be useful if you want to show placeholder before each video
+  ///in playlist. Otherwise, you should use placeholder from
+  /// BetterPlayerConfiguration.
+  final Widget placeholder;
 ```
 
 
@@ -981,7 +990,12 @@ Widevine (license url based):
     _widevineController.setupDataSource(_widevineDataSource);
 
 ```
-
+### Set mix audio with others
+You can enable mix with audio with others app with method:
+```dart
+betterPlayerController.setMixWithOthers(true)
+```
+Default value is false.
 
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html

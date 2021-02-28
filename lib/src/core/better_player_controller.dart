@@ -33,6 +33,7 @@ class BetterPlayerController extends ChangeNotifier {
   static const String _progressParameter = "progress";
   static const String _volumeParameter = "volume";
   static const String _speedParameter = "speed";
+  static const String _dataSourceParameter = "dataSource";
   static const String _hlsExtension = "m3u8";
   static const String _authorizationHeader = "Authorization";
 
@@ -218,6 +219,10 @@ class BetterPlayerController extends ChangeNotifier {
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     assert(
         betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
+    postEvent(BetterPlayerEvent(BetterPlayerEventType.setupDataSource,
+        parameters: <String, dynamic>{
+          _dataSourceParameter: betterPlayerDataSource,
+        }));
     _hasCurrentDataSourceStarted = false;
     _hasCurrentDataSourceInitialized = false;
     _betterPlayerDataSource = betterPlayerDataSource;
@@ -957,7 +962,7 @@ class BetterPlayerController extends ChangeNotifier {
   }
 
   ///Enable or disable audio mixing with other sound within device.
-  void setMixWithOthers(bool mixWithOthers){
+  void setMixWithOthers(bool mixWithOthers) {
     videoPlayerController.setMixWithOthers(mixWithOthers);
   }
 

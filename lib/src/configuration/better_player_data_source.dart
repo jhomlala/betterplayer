@@ -5,6 +5,7 @@ import 'package:better_player/src/configuration/better_player_drm_configuration.
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
+import 'package:flutter/widgets.dart';
 
 import 'better_player_cache_configuration.dart';
 
@@ -66,6 +67,12 @@ class BetterPlayerDataSource {
   ///Configuration of content protection
   final BetterPlayerDrmConfiguration drmConfiguration;
 
+  ///Placeholder widget which will be shown until video load or play. This
+  ///placeholder may be useful if you want to show placeholder before each video
+  ///in playlist. Otherwise, you should use placeholder from
+  /// BetterPlayerConfiguration.
+  final Widget placeholder;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -85,6 +92,7 @@ class BetterPlayerDataSource {
     this.videoFormat,
     this.videoExtension,
     this.drmConfiguration,
+    this.placeholder,
   }) : assert(
             ((type == BetterPlayerDataSourceType.network ||
                         type == BetterPlayerDataSourceType.file) &&
@@ -110,6 +118,7 @@ class BetterPlayerDataSource {
     Duration overriddenDuration,
     BetterPlayerVideoFormat videoFormat,
     BetterPlayerDrmConfiguration drmConfiguration,
+    Widget placeholder,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -126,6 +135,7 @@ class BetterPlayerDataSource {
       overriddenDuration: overriddenDuration,
       videoFormat: videoFormat,
       drmConfiguration: drmConfiguration,
+      placeholder: placeholder,
     );
   }
 
@@ -140,17 +150,21 @@ class BetterPlayerDataSource {
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
+    Widget placeholder,
   }) {
-    return BetterPlayerDataSource(BetterPlayerDataSourceType.file, url,
-        subtitles: subtitles,
-        useHlsSubtitles: useHlsSubtitles,
-        useHlsTracks: useHlsTracks,
-        resolutions: qualities,
-        cacheConfiguration: cacheConfiguration,
-        notificationConfiguration: notificationConfiguration =
-            const BetterPlayerNotificationConfiguration(
-                showNotification: false),
-        overriddenDuration: overriddenDuration);
+    return BetterPlayerDataSource(
+      BetterPlayerDataSourceType.file,
+      url,
+      subtitles: subtitles,
+      useHlsSubtitles: useHlsSubtitles,
+      useHlsTracks: useHlsTracks,
+      resolutions: qualities,
+      cacheConfiguration: cacheConfiguration,
+      notificationConfiguration: notificationConfiguration =
+          const BetterPlayerNotificationConfiguration(showNotification: false),
+      overriddenDuration: overriddenDuration,
+      placeholder: placeholder,
+    );
   }
 
   ///Factory method to build network data source which uses bytes as data source.
@@ -165,6 +179,7 @@ class BetterPlayerDataSource {
     BetterPlayerCacheConfiguration cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration,
     Duration overriddenDuration,
+    Widget placeholder,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.memory,
@@ -179,6 +194,7 @@ class BetterPlayerDataSource {
       notificationConfiguration: notificationConfiguration =
           const BetterPlayerNotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
+      placeholder: placeholder,
     );
   }
 
@@ -200,6 +216,7 @@ class BetterPlayerDataSource {
     BetterPlayerVideoFormat videoFormat,
     String videoExtension,
     BetterPlayerDrmConfiguration drmConfiguration,
+    Widget placeholder,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -219,6 +236,7 @@ class BetterPlayerDataSource {
       videoFormat: videoFormat ?? this.videoFormat,
       videoExtension: videoExtension ?? this.videoExtension,
       drmConfiguration: drmConfiguration ?? this.drmConfiguration,
+      placeholder: placeholder ?? this.placeholder,
     );
   }
 }
