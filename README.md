@@ -66,8 +66,6 @@ Advanced video player based on video_player and Chewie. It's solves many typical
     </tr>	
 </table>
 
-
-
 ## Introduction
 This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is awesome plugin and works well in many cases. Better Player is a continuation of ideas introduced in Chewie. Better player fix common bugs, adds more configuration options and solves typical use cases. 
 
@@ -96,7 +94,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.60
+  better_player: ^0.0.61
 ```
 
 2. Install it
@@ -110,6 +108,10 @@ $ flutter packages get
 ```dart
 import 'package:better_player/better_player.dart';
 ```
+
+## Important information
+This plugin development is in progress. You may encounter breaking changes each version. This plugin is developed part-time for free. If you need
+some feature which is supported by other player available in pub dev, then feel free to create PR. All valuable contributions are welcome!
 
 ## General Usage
 Check [Example project](https://github.com/jhomlala/betterplayer/tree/master/example) which shows how to use Better Player in different scenarios.

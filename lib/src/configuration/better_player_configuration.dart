@@ -103,7 +103,11 @@ class BetterPlayerConfiguration {
   ///play on app resumed). Default value is true.
   final bool handleLifecycle;
 
-  ///Defines flag which enabled/disabled auto dispose on BetterPlayer dispose.
+  ///Defines flag which enabled/disabled auto dispose of
+  ///[BetterPlayerController] on [BetterPlayer] dispose. When it's true and
+  ///[BetterPlayerController] instance has been attached to [BetterPlayer] widget
+  ///and dispose has been called on [BetterPlayer] instance, then
+  ///[BetterPlayerController] will be disposed.
   ///Default value is true.
   final bool autoDispose;
 
