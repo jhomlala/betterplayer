@@ -7,6 +7,9 @@ assignees: jhomlala
 
 ---
 
+**History check**
+Please confirm that you've checked issues history and you didn't find anything which may solve your issue.
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
