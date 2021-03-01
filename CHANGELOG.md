@@ -1,3 +1,6 @@
+## 0.0.61
+* Fixed fullscreenByDefault issue.
+
 ## 0.0.60
 * Updated documentation.
 * Added null checking for videoPlayerController inside BetterPlayerController.

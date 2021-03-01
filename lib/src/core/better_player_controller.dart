@@ -254,7 +254,6 @@ class BetterPlayerController extends ChangeNotifier {
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
     setTrack(BetterPlayerHlsTrack.defaultTrack());
-    notifyListeners();
   }
 
   ///Configure subtitles based on subtitles source.
@@ -441,6 +440,7 @@ class BetterPlayerController extends ChangeNotifier {
   ///run on player start.
   Future _initializeVideo() async {
     await videoPlayerController?.setLooping(betterPlayerConfiguration.looping);
+
     _videoEventStreamSubscription = videoPlayerController
         ?.videoEventStreamController?.stream
         ?.listen(_handleVideoEvent);
@@ -462,7 +462,7 @@ class BetterPlayerController extends ChangeNotifier {
       }
     } else {
       if (fullScreenByDefault) {
-        videoPlayerController?.addListener(_onFullScreenStateChanged);
+        enterFullScreen();
       }
     }
 
