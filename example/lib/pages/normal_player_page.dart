@@ -23,7 +23,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       "http://cdn.theoplayer.com/video/elephants-dream/playlist.m3u8",
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(dataSource);
+   // _betterPlayerController.setupDataSource(dataSource);
     super.initState();
   }
 

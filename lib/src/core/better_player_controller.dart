@@ -5,6 +5,7 @@ import 'dart:io';
 // Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
+import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/configuration/better_player_drm_type.dart';
 import 'package:better_player/src/configuration/better_player_event.dart';
 import 'package:better_player/src/configuration/better_player_event_type.dart';
@@ -28,7 +29,7 @@ import 'package:path_provider/path_provider.dart';
 
 ///Class used to control overall Better Player behavior. Main class to change
 ///state of Better Player.
-class BetterPlayerController extends ChangeNotifier {
+class BetterPlayerController {
   static const String _durationParameter = "duration";
   static const String _progressParameter = "progress";
   static const String _volumeParameter = "volume";
@@ -195,6 +196,14 @@ class BetterPlayerController extends ChangeNotifier {
   ///Flag which holds information about player visibility
   bool _isPlayerVisible = true;
 
+  StreamController<BetterPlayerControllerEvent>
+      _controllerEventStreamController = StreamController.broadcast();
+
+  ///Stream of internal controller events. Shouldn't be used inside app. For
+  ///normal events, use eventListener.
+  Stream<BetterPlayerControllerEvent> get controllerEventStream =>
+      _controllerEventStreamController.stream;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -254,6 +263,7 @@ class BetterPlayerController extends ChangeNotifier {
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
     setTrack(BetterPlayerHlsTrack.defaultTrack());
+    _addControllerEvent(BetterPlayerControllerEvent.setupDataSource);
   }
 
   ///Configure subtitles based on subtitles source.
@@ -329,7 +339,7 @@ class BetterPlayerController extends ChangeNotifier {
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedSubtitles));
     if (!_disposed && !sourceInitialize) {
       cancelFullScreenDismiss = true;
-      notifyListeners();
+      _addControllerEvent(BetterPlayerControllerEvent.changeSubtitles);
     }
   }
 
@@ -483,19 +493,23 @@ class BetterPlayerController extends ChangeNotifier {
   ///Enables full screen mode in player. This will trigger route change.
   void enterFullScreen() {
     _isFullScreen = true;
-    notifyListeners();
+    _addControllerEvent(BetterPlayerControllerEvent.openFullscreen);
   }
 
   ///Disables full screen mode in player. This will trigger route change.
   void exitFullScreen() {
     _isFullScreen = false;
-    notifyListeners();
+    _addControllerEvent(BetterPlayerControllerEvent.hideFullscreen);
   }
 
   ///Enables/disables full screen mode based on current fullscreen state.
   void toggleFullScreen() {
     _isFullScreen = !_isFullScreen;
-    notifyListeners();
+    if (_isFullScreen) {
+      _addControllerEvent(BetterPlayerControllerEvent.openFullscreen);
+    } else {
+      _addControllerEvent(BetterPlayerControllerEvent.hideFullscreen);
+    }
   }
 
   ///Start video playback. Play will be triggered only if current lifecycle state
@@ -979,10 +993,14 @@ class BetterPlayerController extends ChangeNotifier {
     return headers;
   }
 
+  void _addControllerEvent(BetterPlayerControllerEvent event) {
+    assert(event != null, "Event can't be null");
+    _controllerEventStreamController.add(event);
+  }
+
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
   ///autoDispose parameter will be overridden and controller will be disposed
   ///(if it wasn't disposed before).
-  @override
   void dispose({bool forceDispose = false}) {
     if (!betterPlayerConfiguration.autoDispose && !forceDispose) {
       return;
@@ -998,10 +1016,10 @@ class BetterPlayerController extends ChangeNotifier {
       _controlsVisibilityStreamController.close();
       _videoEventStreamSubscription?.cancel();
       _disposed = true;
+      _controllerEventStreamController.close();
 
       ///Delete files async
       _tempFiles?.forEach((file) => file.delete());
-      super.dispose();
     }
   }
 }

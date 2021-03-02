@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 
 // Flutter imports:
+import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:flutter/material.dart';
 
 // Project imports:
@@ -37,19 +38,24 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   final StreamController<bool> playerVisibilityStreamController =
       StreamController();
 
-  bool _initalized = false;
+  bool _initialized = false;
+
+  StreamSubscription _controllerEventSubscription;
 
   @override
   void initState() {
     playerVisibilityStreamController.add(true);
-    widget.controller.addListener(_onControllerChanged);
+    _controllerEventSubscription =
+        widget.controller.controllerEventStream.listen(_onControllerChanged);
     super.initState();
   }
 
   @override
   void didUpdateWidget(BetterPlayerWithControls oldWidget) {
     if (oldWidget.controller != widget.controller) {
-      widget.controller.addListener(_onControllerChanged);
+      _controllerEventSubscription?.cancel();
+      _controllerEventSubscription =
+          widget.controller.controllerEventStream.listen(_onControllerChanged);
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -57,14 +63,14 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   @override
   void dispose() {
     playerVisibilityStreamController.close();
-    widget.controller.removeListener(_onControllerChanged);
+    _controllerEventSubscription?.cancel();
     super.dispose();
   }
 
-  void _onControllerChanged() {
+  void _onControllerChanged(BetterPlayerControllerEvent event) {
     setState(() {
-      if (!_initalized) {
-        _initalized = true;
+      if (!_initialized) {
+        _initialized = true;
       }
     });
   }
@@ -117,7 +123,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     if (betterPlayerController.betterPlayerDataSource == null) {
       return Container();
     }
-    _initalized = true;
+    _initialized = true;
 
     final bool placeholderOnTop =
         betterPlayerController.betterPlayerConfiguration.placeholderOnTop ??
