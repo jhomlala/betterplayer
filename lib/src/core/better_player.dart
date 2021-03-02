@@ -4,6 +4,7 @@ import 'dart:async';
 // Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
+import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
 
 // Flutter imports:
@@ -76,9 +77,6 @@ class _BetterPlayerState extends State<BetterPlayer>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    Future.delayed(Duration.zero, () {
-      _setup();
-    });
   }
 
   @override
@@ -88,6 +86,7 @@ class _BetterPlayerState extends State<BetterPlayer>
       setState(() {
         _navigatorState = navigator;
       });
+      _setup();
       _initialized = true;
     }
     super.didChangeDependencies();
@@ -96,15 +95,23 @@ class _BetterPlayerState extends State<BetterPlayer>
   Future<void> _setup() async {
     _controllerEventSubscription =
         widget.controller.controllerEventStream.listen(onControllerEvent);
+
+    //Default locale
     var locale = const Locale("en", "US");
-    if (mounted) {
-      final contextLocale = Localizations.localeOf(context);
-      if (contextLocale != null) {
-        locale = contextLocale;
+    try{
+      if (mounted) {
+        final contextLocale = Localizations.localeOf(context);
+        if (contextLocale != null) {
+          locale = contextLocale;
+        }
       }
+    }catch (exception){
+      BetterPlayerUtils.log(exception);
     }
     widget.controller.setupTranslations(locale);
   }
+
+
 
   @override
   void dispose() {

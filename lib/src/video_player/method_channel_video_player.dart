@@ -94,14 +94,16 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         };
         break;
     }
-
-    return _channel.invokeMethod<void>(
+    print("INVOKE");
+    await _channel.invokeMethod<void>(
       'setDataSource',
       <String, dynamic>{
         'textureId': textureId,
         'dataSource': dataSourceDescription,
       },
     );
+    print("RESULT");
+    return;
   }
 
   @override
@@ -267,6 +269,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       if (event is Map) {
         map = event;
       }
+      print("GOT EVENT: " + map.toString());
       final String eventType = map["event"] as String;
       final String key = map["key"] as String;
       switch (eventType) {

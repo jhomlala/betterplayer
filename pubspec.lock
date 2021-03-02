@@ -83,6 +83,11 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_localizations:
+    dependency: "direct dev"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
