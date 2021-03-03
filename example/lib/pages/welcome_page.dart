@@ -162,7 +162,7 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget _buildExampleElementWidget(String name, Function onClicked) {
     return Material(
       child: InkWell(
-        onTap: onClicked,
+        onTap: onClicked as void Function()?,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

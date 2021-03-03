@@ -13,8 +13,8 @@ class _PlaylistPageState extends State<PlaylistPage> {
   final GlobalKey<BetterPlayerPlaylistState> _betterPlayerPlaylistStateKey =
       GlobalKey();
   List<BetterPlayerDataSource> _dataSourceList = [];
-  BetterPlayerConfiguration _betterPlayerConfiguration;
-  BetterPlayerPlaylistConfiguration _betterPlayerPlaylistConfiguration;
+  late BetterPlayerConfiguration _betterPlayerConfiguration;
+  late BetterPlayerPlaylistConfiguration _betterPlayerPlaylistConfiguration;
 
   _PlaylistPageState() {
     _betterPlayerConfiguration = BetterPlayerConfiguration(
@@ -93,33 +93,33 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   betterPlayerConfiguration: _betterPlayerConfiguration,
                   betterPlayerPlaylistConfiguration:
                       _betterPlayerPlaylistConfiguration,
-                  betterPlayerDataSourceList: snapshot.data,
+                  betterPlayerDataSourceList: snapshot.data!,
                 ),
                 aspectRatio: 1,
               ),
               ElevatedButton(
                 onPressed: () {
-                  _betterPlayerPlaylistController.setupDataSource(0);
+                  _betterPlayerPlaylistController!.setupDataSource(0);
                 },
                 child: Text("Change to first data source"),
               ),
               ElevatedButton(
                 onPressed: () {
-                  _betterPlayerPlaylistController.setupDataSource(2);
+                  _betterPlayerPlaylistController!.setupDataSource(2);
                 },
                 child: Text("Change to last source"),
               ),
               ElevatedButton(
                 onPressed: () {
                   print("Currently playing video: " +
-                      _betterPlayerPlaylistController.currentDataSourceIndex
+                      _betterPlayerPlaylistController!.currentDataSourceIndex
                           .toString());
                 },
                 child: Text("Check currently playing video index"),
               ),
               ElevatedButton(
                 onPressed: () {
-                  _betterPlayerPlaylistController.betterPlayerController
+                  _betterPlayerPlaylistController!.betterPlayerController!
                       .pause();
                 },
                 child: Text("Pause current video with BetterPlayerController"),
@@ -131,6 +131,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
   }
 
-  BetterPlayerPlaylistController get _betterPlayerPlaylistController =>
-      _betterPlayerPlaylistStateKey.currentState.betterPlayerPlaylistController;
+  BetterPlayerPlaylistController? get _betterPlayerPlaylistController =>
+      _betterPlayerPlaylistStateKey
+          .currentState!.betterPlayerPlaylistController;
 }

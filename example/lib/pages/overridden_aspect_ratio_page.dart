@@ -9,7 +9,7 @@ class OverriddenAspectRatioPage extends StatefulWidget {
 }
 
 class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {

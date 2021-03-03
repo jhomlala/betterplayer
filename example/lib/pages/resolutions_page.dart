@@ -8,7 +8,7 @@ class ResolutionsPage extends StatefulWidget {
 }
 
 class _ResolutionsPageState extends State<ResolutionsPage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {

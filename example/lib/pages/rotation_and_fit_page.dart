@@ -8,7 +8,7 @@ class RotationAndFitPage extends StatefulWidget {
 }
 
 class _RotationAndFitPageState extends State<RotationAndFitPage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {

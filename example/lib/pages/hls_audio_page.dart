@@ -8,7 +8,7 @@ class HlsAudioPage extends StatefulWidget {
 }
 
 class _HlsAudioPageState extends State<HlsAudioPage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {

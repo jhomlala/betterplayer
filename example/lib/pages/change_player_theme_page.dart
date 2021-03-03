@@ -9,8 +9,8 @@ class ChangePlayerThemePage extends StatefulWidget {
 }
 
 class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
-  BetterPlayerController _betterPlayerController;
-  BetterPlayerDataSource _dataSource;
+  late BetterPlayerController _betterPlayerController;
+  BetterPlayerDataSource? _dataSource;
   BetterPlayerTheme _playerTheme = BetterPlayerTheme.material;
 
   @override

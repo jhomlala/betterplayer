@@ -10,7 +10,7 @@ class FadePlaceholderPage extends StatefulWidget {
 }
 
 class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
   StreamController<bool> _playController = StreamController.broadcast();
 
   @override
