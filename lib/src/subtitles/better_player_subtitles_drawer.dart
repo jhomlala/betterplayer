@@ -23,7 +23,7 @@ class BetterPlayerSubtitlesDrawer extends StatefulWidget {
     required this.betterPlayerController,
     this.betterPlayerSubtitlesConfiguration,
     required this.playerVisibilityStream,
-  })  : super(key: key);
+  }) : super(key: key);
 
   @override
   _BetterPlayerSubtitlesDrawerState createState() =>
@@ -147,7 +147,6 @@ class _BetterPlayerSubtitlesDrawerState
   }
 
   Widget _getTextWithStroke(String subtitleText) {
-
     return Container(
       color: _configuration!.backgroundColor,
       child: Stack(

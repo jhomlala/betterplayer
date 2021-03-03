@@ -9,7 +9,7 @@ class BetterPlayerControllerProvider extends InheritedWidget {
     Key? key,
     required this.controller,
     required Widget child,
-  })  : super(key: key, child: child);
+  }) : super(key: key, child: child);
 
   final BetterPlayerController controller;
 

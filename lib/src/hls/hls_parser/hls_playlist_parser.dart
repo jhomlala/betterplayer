@@ -457,7 +457,6 @@ class HlsPlaylistParser {
               language: language,
             );
 
-
             // ignore: unnecessary_null_comparison
             if (uri == null) {
               muxedAudioFormat = format;

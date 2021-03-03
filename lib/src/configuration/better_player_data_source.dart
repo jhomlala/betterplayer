@@ -95,7 +95,7 @@ class BetterPlayerDataSource {
     this.placeholder,
   }) : assert(
             (type == BetterPlayerDataSourceType.network ||
-                        type == BetterPlayerDataSourceType.file) ||
+                    type == BetterPlayerDataSourceType.file) ||
                 (type == BetterPlayerDataSourceType.memory &&
                     bytes?.isNotEmpty == true),
             "Url can't be null in network or file data source | bytes can't be null when using memory data source");

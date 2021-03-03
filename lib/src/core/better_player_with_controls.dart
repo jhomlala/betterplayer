@@ -214,7 +214,7 @@ class _BetterPlayerVideoFitWidget extends StatefulWidget {
     this.betterPlayerController,
     this.boxFit, {
     Key? key,
-  })  : super(key: key);
+  }) : super(key: key);
 
   final BetterPlayerController betterPlayerController;
   final BoxFit boxFit;

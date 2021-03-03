@@ -20,8 +20,7 @@ import 'better_player_controller_provider.dart';
 
 ///Widget which uses provided controller to render video player.
 class BetterPlayer extends StatefulWidget {
-  const BetterPlayer({Key? key, required this.controller})
-      : super(key: key);
+  const BetterPlayer({Key? key, required this.controller}) : super(key: key);
 
   factory BetterPlayer.network(
     String url, {
@@ -96,18 +95,16 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     //Default locale
     var locale = const Locale("en", "US");
-    try{
+    try {
       if (mounted) {
         final contextLocale = Localizations.localeOf(context);
         locale = contextLocale;
       }
-    }catch (exception){
+    } catch (exception) {
       BetterPlayerUtils.log(exception.toString());
     }
     widget.controller.setupTranslations(locale);
   }
-
-
 
   @override
   void dispose() {
@@ -242,8 +239,7 @@ class _BetterPlayerState extends State<BetterPlayer>
       if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
           true) {
         final aspectRatio =
-            widget.controller.videoPlayerController?.value.aspectRatio ??
-                1.0;
+            widget.controller.videoPlayerController?.value.aspectRatio ?? 1.0;
         List<DeviceOrientation> deviceOrientations;
         if (aspectRatio < 1.0) {
           deviceOrientations = [

@@ -85,9 +85,7 @@ class LibUtil {
   }
 
   static int msToUs(int timeMs) =>
-      (timeMs == Util.timeEndOfSource)
-          ? timeMs
-          : (timeMs * 1000);
+      (timeMs == Util.timeEndOfSource) ? timeMs : (timeMs * 1000);
 }
 
 class Util {

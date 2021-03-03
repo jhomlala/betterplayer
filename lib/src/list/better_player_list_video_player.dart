@@ -37,8 +37,7 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
     this.autoPause = true,
     this.betterPlayerListVideoPlayerController,
     Key? key,
-  })  : assert(
-            playFraction >= 0.0 && playFraction <= 1.0,
+  })  : assert(playFraction >= 0.0 && playFraction <= 1.0,
             "Play fraction can't be null and must be between 0.0 and 1.0"),
         super(key: key);
 

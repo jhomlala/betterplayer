@@ -49,7 +49,6 @@ class BetterPlayerHlsUtils {
   ///Parse subtitles from provided m3u8 url
   static Future<List<BetterPlayerHlsSubtitle>> parseSubtitles(
       String data, String masterPlaylistUrl) async {
-
     final List<BetterPlayerHlsSubtitle> subtitles = [];
     try {
       final parsedPlaylist = await HlsPlaylistParser.create()

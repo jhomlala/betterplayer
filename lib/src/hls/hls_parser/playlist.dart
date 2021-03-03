@@ -1,4 +1,3 @@
-
 abstract class HlsPlaylist {
   HlsPlaylist({
     required this.baseUri,

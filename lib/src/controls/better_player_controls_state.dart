@@ -218,7 +218,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildSubtitlesSourceRow(BetterPlayerSubtitlesSource subtitlesSource) {
-
     final selectedSourceType =
         betterPlayerController!.betterPlayerSubtitlesSource;
     final bool isSelected = (subtitlesSource == selectedSourceType) ||
@@ -286,7 +285,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildTrackRow(BetterPlayerHlsTrack track, String? preferredName) {
-
     final String trackName = preferredName ??
         "${track.width}x${track.height} ${BetterPlayerUtils.formatBitrate(track.bitrate!)}";
 
@@ -363,7 +361,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   Widget _buildAudioTrackRow(BetterPlayerHlsAudioTrack audioTrack,
       BetterPlayerHlsAudioTrack? selectedAudioTrack) {
-
     final bool isSelected =
         selectedAudioTrack != null && selectedAudioTrack == audioTrack;
     return BetterPlayerMaterialClickableWidget(

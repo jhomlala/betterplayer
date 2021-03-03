@@ -32,8 +32,7 @@ class BetterPlayerPlaylistController {
     this.betterPlayerConfiguration = const BetterPlayerConfiguration(),
     this.betterPlayerPlaylistConfiguration =
         const BetterPlayerPlaylistConfiguration(),
-  })  : assert(
-            _betterPlayerDataSourceList.isNotEmpty,
+  }) : assert(_betterPlayerDataSourceList.isNotEmpty,
             "Better Player data source list can't be empty") {
     _setup();
   }
@@ -45,8 +44,7 @@ class BetterPlayerPlaylistController {
       betterPlayerPlaylistConfiguration: betterPlayerPlaylistConfiguration,
     );
 
-    var initialStartIndex =
-        betterPlayerPlaylistConfiguration.initialStartIndex;
+    var initialStartIndex = betterPlayerPlaylistConfiguration.initialStartIndex;
     if (initialStartIndex >= _betterPlayerDataSourceList.length) {
       initialStartIndex = 0;
     }
@@ -97,8 +95,7 @@ class BetterPlayerPlaylistController {
   ///in constructor. Index must
   void setupDataSource(int index) {
     assert(
-        index >= 0 &&
-            index < _betterPlayerDataSourceList.length,
+        index >= 0 && index < _betterPlayerDataSourceList.length,
         "Index must be greater than 0 and less than size of data source "
         "list - 1");
     if (index <= _dataSourceLength) {

@@ -9,7 +9,7 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
     Key? key,
     required this.onTap,
     required this.child,
-  })  : super(key: key);
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

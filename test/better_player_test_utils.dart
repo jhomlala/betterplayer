@@ -1,4 +1,4 @@
-class BetterPlayerTestUtils{
+class BetterPlayerTestUtils {
   static const String bugBuckBunnyVideoUrl =
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
   static const String forBiggerBlazesUrl =
