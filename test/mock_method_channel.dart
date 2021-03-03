@@ -37,10 +37,10 @@ class MockMethodChannel {
         MethodChannel("better_player_channel/videoEvents$id");
 
     eventChannel.setMockMethodCallHandler((MethodCall methodCall) async {
-      ServicesBinding.instance.defaultBinaryMessenger.handlePlatformMessage(
+      ServicesBinding.instance!.defaultBinaryMessenger.handlePlatformMessage(
           "better_player_channel/videoEvents$id",
           const StandardMethodCodec().encodeSuccessEnvelope(_getInitResult()),
-          (ByteData data) {});
+          (ByteData? data) {});
     });
 
     eventsChannels.add(eventChannel);

@@ -7,7 +7,7 @@ class DrmInitData {
   DrmInitData({this.schemeType, this.schemeData = const []});
 
   final List<SchemeData> schemeData;
-  final String schemeType;
+  final String? schemeType;
 
   @override
   bool operator ==(dynamic other) {

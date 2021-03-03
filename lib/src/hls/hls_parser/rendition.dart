@@ -1,22 +1,21 @@
 import 'package:better_player/src/hls/hls_parser/format.dart';
-import 'package:meta/meta.dart';
 
 class Rendition {
   Rendition(
       {this.url,
-      @required this.format,
-      @required this.groupId,
-      @required this.name});
+      required this.format,
+      required this.groupId,
+      required this.name});
 
   /// The rendition's url, or null if the tag does not have a URI attribute.
-  final Uri url;
+  final Uri? url;
 
   /// Format information associated with this rendition.
   final Format format;
 
   /// The group to which this rendition belongs.
-  final String groupId;
+  final String? groupId;
 
   /// The name of the rendition.
-  final String name;
+  final String? name;
 }

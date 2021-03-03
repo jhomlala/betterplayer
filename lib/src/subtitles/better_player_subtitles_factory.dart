@@ -13,7 +13,6 @@ import 'better_player_subtitles_source_type.dart';
 class BetterPlayerSubtitlesFactory {
   static Future<List<BetterPlayerSubtitle>> parseSubtitles(
       BetterPlayerSubtitlesSource source) async {
-    assert(source != null);
     switch (source.type) {
       case BetterPlayerSubtitlesSourceType.file:
         return _parseSubtitlesFromFile(source);
@@ -30,8 +29,8 @@ class BetterPlayerSubtitlesFactory {
       BetterPlayerSubtitlesSource source) async {
     try {
       final List<BetterPlayerSubtitle> subtitles = [];
-      for (final String url in source.urls) {
-        final file = File(url);
+      for (final String? url in source.urls!) {
+        final file = File(url!);
         if (file.existsSync()) {
           final String fileContent = await file.readAsString();
           final subtitlesCache = _parseString(fileContent);
@@ -52,8 +51,8 @@ class BetterPlayerSubtitlesFactory {
     try {
       final client = HttpClient();
       final List<BetterPlayerSubtitle> subtitles = [];
-      for (final String url in source.urls) {
-        final request = await client.getUrl(Uri.parse(url));
+      for (final String? url in source.urls!) {
+        final request = await client.getUrl(Uri.parse(url!));
         final response = await request.close();
         final data = await response.transform(const Utf8Decoder()).join();
         final cacheList = _parseString(data);
@@ -73,7 +72,7 @@ class BetterPlayerSubtitlesFactory {
   static List<BetterPlayerSubtitle> _parseSubtitlesFromMemory(
       BetterPlayerSubtitlesSource source) {
     try {
-      return _parseString(source.content);
+      return _parseString(source.content!);
     } catch (exception) {
       BetterPlayerUtils.log("Failed to read subtitles from memory: $exception");
     }
@@ -81,7 +80,6 @@ class BetterPlayerSubtitlesFactory {
   }
 
   static List<BetterPlayerSubtitle> _parseString(String value) {
-    assert(value != null);
 
     List<String> components = value.split('\r\n\r\n');
     if (components.length == 1) {
@@ -96,8 +94,7 @@ class BetterPlayerSubtitlesFactory {
         continue;
       }
       final subtitle = BetterPlayerSubtitle(component, isWebVTT);
-      if (subtitle != null &&
-          subtitle.start != null &&
+      if (subtitle.start != null &&
           subtitle.end != null &&
           subtitle.texts != null) {
         subtitlesObj.add(subtitle);

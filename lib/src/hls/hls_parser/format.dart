@@ -1,6 +1,3 @@
-import 'package:meta/meta.dart';
-import 'package:flutter/cupertino.dart';
-
 import 'drm_init_data.dart';
 import 'metadata.dart';
 import 'util.dart';
@@ -24,23 +21,23 @@ class Format {
     this.height,
     this.frameRate,
     this.channelCount,
-    String language,
+    String? language,
     this.accessibilityChannel,
   }) : language = language?.toLowerCase();
 
   factory Format.createVideoContainerFormat(
-          {String id,
-          String label,
-          String containerMimeType,
-          String sampleMimeType,
-          @required String codecs,
-          int bitrate,
-          int averageBitrate,
-          @required int width,
-          @required int height,
-          @required double frameRate,
+          {String? id,
+          String? label,
+          String? containerMimeType,
+          String? sampleMimeType,
+          required String? codecs,
+          int? bitrate,
+          int? averageBitrate,
+          required int? width,
+          required int? height,
+          required double? frameRate,
           int selectionFlags = Util.selectionFlagDefault,
-          int roleFlags}) =>
+          int? roleFlags}) =>
       Format(
         id: id,
         label: label,
@@ -57,62 +54,62 @@ class Format {
       );
 
   /// An identifier for the format, or null if unknown or not applicable.
-  final String id;
+  final String? id;
 
   /// The human readable label, or null if unknown or not applicable.
-  final String label;
+  final String? label;
 
   /// Track selection flags.
   /// [Util.selectionFlagDefault] or [Util.selectionFlagForced] or [Util.selectionFlagAutoSelect]
-  final int selectionFlags;
+  final int? selectionFlags;
 
   /// Track role flags.
   /// [Util.roleFlagDescribesMusicAndSound] or [Util.roleFlagDescribesVideo] or [Util.roleFlagEasyToRead] or [Util.roleFlagTranscribesDialog]
-  final int roleFlags;
+  final int? roleFlags;
 
   ///Average bandwidth
-  final int bitrate;
+  final int? bitrate;
 
   /// The average bandwidth in bits per second, or null if unknown or not applicable.
-  final int averageBitrate;
+  final int? averageBitrate;
 
   /// Codecs of the format as described in RFC 6381, or null if unknown or not applicable.
-  final String codecs;
+  final String? codecs;
 
   /// Metadata, or null if unknown or not applicable.
-  final Metadata metadata;
+  final Metadata? metadata;
 
   /// The mime type of the container, or null if unknown or not applicable.
-  final String containerMimeType;
+  final String? containerMimeType;
 
   ///The mime type of the elementary stream (i.e. the individual samples), or null if unknown or not applicable.
-  final String sampleMimeType;
+  final String? sampleMimeType;
 
   ///DRM initialization data if the stream is protected, or null otherwise.
-  final DrmInitData drmInitData;
+  final DrmInitData? drmInitData;
 
   //todo ここ追加で検討
   /// For samples that contain subsamples, this is an offset that should be added to subsample timestamps.
   /// A value of {@link #OFFSET_SAMPLE_RELATIVE} indicates that subsample timestamps are relative to the timestamps of their parent samples.
-  final int subsampleOffsetUs;
+  final int? subsampleOffsetUs;
 
   /// The width of the video in pixels, or null if unknown or not applicable.
-  final int width;
+  final int? width;
 
   /// The height of the video in pixels, or null if unknown or not applicable.
-  final int height;
+  final int? height;
 
   /// The frame rate in frames per second, or null if unknown or not applicable.
-  final double frameRate;
+  final double? frameRate;
 
   /// The number of audio channels, or null if unknown or not applicable.
-  final int channelCount;
+  final int? channelCount;
 
   /// The language of the video, or null if unknown or not applicable.
-  final String language;
+  final String? language;
 
   /// The Accessibility channel, or null if not known or applicable.
-  final int accessibilityChannel;
+  final int? accessibilityChannel;
 
   Format copyWithMetadata(Metadata metadata) => Format(
         id: id,

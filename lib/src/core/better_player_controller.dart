@@ -22,6 +22,7 @@ import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 
 // Package imports:
@@ -42,10 +43,10 @@ class BetterPlayerController {
   final BetterPlayerConfiguration betterPlayerConfiguration;
 
   ///Playlist configuration used in controller instance.
-  final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
+  final BetterPlayerPlaylistConfiguration? betterPlayerPlaylistConfiguration;
 
   ///List of event listeners, which listen to events.
-  final List<Function> _eventListeners = [];
+  final List<Function?> _eventListeners = [];
 
   ///List of files to delete once player disposes.
   final List<File> _tempFiles = [];
@@ -56,10 +57,10 @@ class BetterPlayerController {
 
   ///Instance of video player controller which is adapter used to communicate
   ///between flutter high level code and lower level native code.
-  VideoPlayerController videoPlayerController;
+  VideoPlayerController? videoPlayerController;
 
   /// Defines a event listener where video player events will be send.
-  Function(BetterPlayerEvent) get eventListener =>
+  Function(BetterPlayerEvent)? get eventListener =>
       betterPlayerConfiguration.eventListener;
 
   ///Flag used to store full screen mode state.
@@ -72,10 +73,10 @@ class BetterPlayerController {
   int _lastPositionSelection = 0;
 
   ///Currently used data source in player.
-  BetterPlayerDataSource _betterPlayerDataSource;
+  BetterPlayerDataSource? _betterPlayerDataSource;
 
   ///Currently used data source in player.
-  BetterPlayerDataSource get betterPlayerDataSource => _betterPlayerDataSource;
+  BetterPlayerDataSource? get betterPlayerDataSource => _betterPlayerDataSource;
 
   ///List of BetterPlayerSubtitlesSources.
   final List<BetterPlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
@@ -83,10 +84,10 @@ class BetterPlayerController {
   ///List of BetterPlayerSubtitlesSources.
   List<BetterPlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
       _betterPlayerSubtitlesSourceList;
-  BetterPlayerSubtitlesSource _betterPlayerSubtitlesSource;
+  BetterPlayerSubtitlesSource? _betterPlayerSubtitlesSource;
 
   ///Currently used subtitles source.
-  BetterPlayerSubtitlesSource get betterPlayerSubtitlesSource =>
+  BetterPlayerSubtitlesSource? get betterPlayerSubtitlesSource =>
       _betterPlayerSubtitlesSource;
 
   ///Subtitles lines for current data source.
@@ -99,26 +100,26 @@ class BetterPlayerController {
   List<BetterPlayerHlsTrack> get betterPlayerTracks => _betterPlayerTracks;
 
   ///Currently selected player track. Used only for HLS.
-  BetterPlayerHlsTrack _betterPlayerTrack;
+  BetterPlayerHlsTrack? _betterPlayerTrack;
 
   ///Currently selected player track. Used only for HLS.
-  BetterPlayerHlsTrack get betterPlayerTrack => _betterPlayerTrack;
+  BetterPlayerHlsTrack? get betterPlayerTrack => _betterPlayerTrack;
 
   ///Timer for next video. Used in playlist.
-  Timer _nextVideoTimer;
+  Timer? _nextVideoTimer;
 
   ///Time for next video.
-  int _nextVideoTime;
+  int? _nextVideoTime;
 
   ///Stream controller which emits next video time.
-  StreamController<int> nextVideoTimeStreamController =
+  StreamController<int?> nextVideoTimeStreamController =
       StreamController.broadcast();
 
   ///Has player been disposed.
   bool _disposed = false;
 
   ///Was player playing before automatic pause.
-  bool _wasPlayingBeforePause;
+  bool? _wasPlayingBeforePause;
 
   ///Internal flag used to cancel dismiss of the full screen. Used when user
   ///switches quality (track or resolution) of the video. You should ignore it.
@@ -150,7 +151,7 @@ class BetterPlayerController {
 
   ///Overridden aspect ratio which will be used instead of aspect ratio passed
   ///in configuration.
-  double _overriddenAspectRatio;
+  double? _overriddenAspectRatio;
 
   ///Was Picture in Picture opened.
   bool _wasInPipMode = false;
@@ -162,13 +163,13 @@ class BetterPlayerController {
   bool _wasControlsEnabledBeforePiP = false;
 
   ///GlobalKey of the BetterPlayer widget
-  GlobalKey _betterPlayerGlobalKey;
+  GlobalKey? _betterPlayerGlobalKey;
 
   ///Getter of the GlobalKey
-  GlobalKey get betterPlayerGlobalKey => _betterPlayerGlobalKey;
+  GlobalKey? get betterPlayerGlobalKey => _betterPlayerGlobalKey;
 
   ///StreamSubscription for VideoEvent listener
-  StreamSubscription<VideoEvent> _videoEventStreamSubscription;
+  StreamSubscription<VideoEvent>? _videoEventStreamSubscription;
 
   ///Are controls always visible
   bool _controlsAlwaysVisible = false;
@@ -177,21 +178,21 @@ class BetterPlayerController {
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
 
   ///List of all possible audio tracks returned from HLS stream
-  List<BetterPlayerHlsAudioTrack> _betterPlayerAudioTracks;
+  List<BetterPlayerHlsAudioTrack>? _betterPlayerAudioTracks;
 
   ///List of all possible audio tracks returned from HLS stream
-  List<BetterPlayerHlsAudioTrack> get betterPlayerAudioTracks =>
+  List<BetterPlayerHlsAudioTrack>? get betterPlayerAudioTracks =>
       _betterPlayerAudioTracks;
 
   ///Selected HLS audio track
-  BetterPlayerHlsAudioTrack _betterPlayerHlsAudioTrack;
+  BetterPlayerHlsAudioTrack? _betterPlayerHlsAudioTrack;
 
   ///Selected HLS audio track
-  BetterPlayerHlsAudioTrack get betterPlayerAudioTrack =>
+  BetterPlayerHlsAudioTrack? get betterPlayerAudioTrack =>
       _betterPlayerHlsAudioTrack;
 
   ///Selected videoPlayerValue when error occurred.
-  VideoPlayerValue _videoPlayerValueOnError;
+  VideoPlayerValue? _videoPlayerValueOnError;
 
   ///Flag which holds information about player visibility
   bool _isPlayerVisible = true;
@@ -207,9 +208,8 @@ class BetterPlayerController {
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
-    BetterPlayerDataSource betterPlayerDataSource,
-  }) : assert(betterPlayerConfiguration != null,
-            "BetterPlayerConfiguration can't be null") {
+    BetterPlayerDataSource? betterPlayerDataSource,
+  }) {
     _eventListeners.add(eventListener);
     if (betterPlayerDataSource != null) {
       setupDataSource(betterPlayerDataSource);
@@ -219,15 +219,13 @@ class BetterPlayerController {
   ///Get BetterPlayerController from context. Used in InheritedWidget.
   static BetterPlayerController of(BuildContext context) {
     final betterPLayerControllerProvider = context
-        .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>();
+        .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>()!;
 
     return betterPLayerControllerProvider.controller;
   }
 
   ///Setup new data source in Better Player.
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
-    assert(
-        betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
     postEvent(BetterPlayerEvent(BetterPlayerEventType.setupDataSource,
         parameters: <String, dynamic>{
           _dataSourceParameter: betterPlayerDataSource,
@@ -246,10 +244,11 @@ class BetterPlayerController {
     betterPlayerTracks.clear();
 
     ///Setup subtitles
-    final List<BetterPlayerSubtitlesSource> betterPlayerSubtitlesSourceList =
+    final List<BetterPlayerSubtitlesSource>? betterPlayerSubtitlesSourceList =
         betterPlayerDataSource.subtitles;
     if (betterPlayerSubtitlesSourceList != null) {
-      _betterPlayerSubtitlesSourceList.addAll(betterPlayerDataSource.subtitles);
+      _betterPlayerSubtitlesSourceList
+          .addAll(betterPlayerDataSource.subtitles!);
     }
 
     if (_isDataSourceHls(betterPlayerDataSource)) {
@@ -271,9 +270,8 @@ class BetterPlayerController {
     _betterPlayerSubtitlesSourceList.add(
       BetterPlayerSubtitlesSource(type: BetterPlayerSubtitlesSourceType.none),
     );
-    final defaultSubtitle = _betterPlayerSubtitlesSourceList.firstWhere(
-        (element) => element.selectedByDefault == true,
-        orElse: () => null);
+    final defaultSubtitle = _betterPlayerSubtitlesSourceList
+        .firstWhereOrNull((element) => element.selectedByDefault == true);
 
     ///Setup subtitles (none is default)
     setupSubtitleSource(
@@ -290,22 +288,22 @@ class BetterPlayerController {
   ///This method configures tracks, subtitles and audio tracks from given
   ///master playlist.
   Future _setupHlsDataSource() async {
-    final String hlsData = await BetterPlayerHlsUtils.getDataFromUrl(
-      betterPlayerDataSource.url,
+    final String? hlsData = await BetterPlayerHlsUtils.getDataFromUrl(
+      betterPlayerDataSource!.url,
       _getHeaders(),
     );
     if (hlsData != null) {
       /// Load hls tracks
       if (_betterPlayerDataSource?.useHlsTracks == true) {
         _betterPlayerTracks = await BetterPlayerHlsUtils.parseTracks(
-            hlsData, betterPlayerDataSource.url);
+            hlsData, betterPlayerDataSource!.url);
       }
 
       /// Load hls subtitles
       if (betterPlayerDataSource?.useHlsSubtitles == true) {
         final hlsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
-            hlsData, betterPlayerDataSource.url);
-        hlsSubtitles?.forEach((hlsSubtitle) {
+            hlsData, betterPlayerDataSource!.url);
+        hlsSubtitles.forEach((hlsSubtitle) {
           _betterPlayerSubtitlesSourceList.add(
             BetterPlayerSubtitlesSource(
                 type: BetterPlayerSubtitlesSourceType.network,
@@ -317,9 +315,9 @@ class BetterPlayerController {
 
       ///Load audio tracks
       if (betterPlayerDataSource?.useHlsAudioTracks == true &&
-          _isDataSourceHls(betterPlayerDataSource)) {
+          _isDataSourceHls(betterPlayerDataSource!)) {
         _betterPlayerAudioTracks = await BetterPlayerHlsUtils.parseLanguages(
-            hlsData, betterPlayerDataSource.url);
+            hlsData, betterPlayerDataSource!.url);
       }
     }
   }
@@ -327,7 +325,6 @@ class BetterPlayerController {
   ///Setup subtitles to be displayed from given subtitle source
   Future<void> setupSubtitleSource(BetterPlayerSubtitlesSource subtitlesSource,
       {bool sourceInitialize = false}) async {
-    assert(subtitlesSource != null, "SubtitlesSource can't be null");
     _betterPlayerSubtitlesSource = subtitlesSource;
     subtitlesLines.clear();
     if (subtitlesSource.type != BetterPlayerSubtitlesSourceType.none) {
@@ -345,7 +342,8 @@ class BetterPlayerController {
 
   ///Get VideoFormat from BetterPlayerVideoFormat (adapter method which translates
   ///to video_player supported format).
-  VideoFormat _getVideoFormat(BetterPlayerVideoFormat betterPlayerVideoFormat) {
+  VideoFormat? _getVideoFormat(
+      BetterPlayerVideoFormat? betterPlayerVideoFormat) {
     if (betterPlayerVideoFormat == null) {
       return null;
     }
@@ -359,24 +357,22 @@ class BetterPlayerController {
       case BetterPlayerVideoFormat.other:
         return VideoFormat.other;
     }
-    return null;
   }
 
   ///Internal method which invokes videoPlayerController source setup.
   Future _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
-    assert(
-        betterPlayerDataSource != null, "BetterPlayerDataSource can't be null");
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.network:
         await videoPlayerController?.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: _getHeaders(),
           useCache:
-              _betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
+              _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
           maxCacheSize:
-              _betterPlayerDataSource.cacheConfiguration?.maxCacheSize ?? 0,
+              _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
           maxCacheFileSize:
-              _betterPlayerDataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
+              _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
+                  0,
           showNotification: _betterPlayerDataSource
               ?.notificationConfiguration?.showNotification,
           title: _betterPlayerDataSource?.notificationConfiguration?.title,
@@ -385,8 +381,8 @@ class BetterPlayerController {
               _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
           notificationChannelName: _betterPlayerDataSource
               ?.notificationConfiguration?.notificationChannelName,
-          overriddenDuration: _betterPlayerDataSource.overriddenDuration,
-          formatHint: _getVideoFormat(_betterPlayerDataSource.videoFormat),
+          overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
+          formatHint: _getVideoFormat(_betterPlayerDataSource!.videoFormat),
           licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
           drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
         );
@@ -403,14 +399,14 @@ class BetterPlayerController {
               _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
           notificationChannelName: _betterPlayerDataSource
               ?.notificationConfiguration?.notificationChannelName,
-          overriddenDuration: _betterPlayerDataSource.overriddenDuration,
+          overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
         );
         break;
       case BetterPlayerDataSourceType.memory:
-        final file = await _createFile(_betterPlayerDataSource.bytes,
-            extension: _betterPlayerDataSource.videoExtension);
+        final file = await _createFile(_betterPlayerDataSource!.bytes!,
+            extension: _betterPlayerDataSource!.videoExtension);
 
-        if (file != null) {
+        if (file.existsSync()) {
           await videoPlayerController?.setFileDataSource(
             file,
             showNotification: _betterPlayerDataSource
@@ -421,7 +417,7 @@ class BetterPlayerController {
                 _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
             notificationChannelName: _betterPlayerDataSource
                 ?.notificationConfiguration?.notificationChannelName,
-            overriddenDuration: _betterPlayerDataSource.overriddenDuration,
+            overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
           );
           _tempFiles.add(file);
         } else {
@@ -438,7 +434,8 @@ class BetterPlayerController {
 
   ///Create file from provided list of bytes. File will be created in temporary
   ///directory.
-  Future<File> _createFile(List<int> bytes, {String extension = "temp"}) async {
+  Future<File> _createFile(List<int> bytes,
+      {String? extension = "temp"}) async {
     final String dir = (await getTemporaryDirectory()).path;
     final File temp = File(
         '$dir/better_player_${DateTime.now().millisecondsSinceEpoch}.$extension');
@@ -452,8 +449,8 @@ class BetterPlayerController {
     await videoPlayerController?.setLooping(betterPlayerConfiguration.looping);
 
     _videoEventStreamSubscription = videoPlayerController
-        ?.videoEventStreamController?.stream
-        ?.listen(_handleVideoEvent);
+        ?.videoEventStreamController.stream
+        .listen(_handleVideoEvent);
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (betterPlayerConfiguration.autoPlay) {
@@ -484,7 +481,7 @@ class BetterPlayerController {
 
   ///Method which is invoked when full screen changes.
   Future<void> _onFullScreenStateChanged() async {
-    if (videoPlayerController?.value?.isPlaying == true && !_isFullScreen) {
+    if (videoPlayerController?.value.isPlaying == true && !_isFullScreen) {
       enterFullScreen();
       videoPlayerController?.removeListener(_onFullScreenStateChanged);
     }
@@ -540,7 +537,12 @@ class BetterPlayerController {
 
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo,
         parameters: <String, dynamic>{_durationParameter: moment}));
-    if (moment > videoPlayerController?.value?.duration) {
+
+    final Duration? currentDuration = videoPlayerController?.value.duration;
+    if (currentDuration == null) {
+      return;
+    }
+    if (moment > currentDuration) {
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.finished));
     } else {
       cancelNextVideoTimer();
@@ -568,24 +570,22 @@ class BetterPlayerController {
   }
 
   ///Flag which determines whenever player is playing or not.
-  bool isPlaying() {
-    return videoPlayerController?.value?.isPlaying;
+  bool? isPlaying() {
+    return videoPlayerController?.value.isPlaying;
   }
 
   ///Flag which determines whenever player is loading video data or not.
-  bool isBuffering() {
-    return videoPlayerController?.value?.isBuffering;
+  bool? isBuffering() {
+    return videoPlayerController?.value.isBuffering;
   }
 
   ///Show or hide controls manually
   void setControlsVisibility(bool isVisible) {
-    assert(isVisible != null, "IsVisible can't be null");
     _controlsVisibilityStreamController.add(isVisible);
   }
 
   ///Enable/disable controls (when enabled = false, controls will be always hidden)
   void setControlsEnabled(bool enabled) {
-    assert(enabled != null, "Enabled can't be null");
     if (!enabled) {
       _controlsVisibilityStreamController.add(false);
     }
@@ -595,7 +595,6 @@ class BetterPlayerController {
   ///Internal method, used to trigger CONTROLS_VISIBLE or CONTROLS_HIDDEN event
   ///once controls state changed.
   void toggleControlsVisibility(bool isVisible) {
-    assert(isVisible != null, "IsVisible can't be null");
     _postEvent(isVisible
         ? BetterPlayerEvent(BetterPlayerEventType.controlsVisible)
         : BetterPlayerEvent(BetterPlayerEventType.controlsHidden));
@@ -608,7 +607,7 @@ class BetterPlayerController {
 
   ///Send player event to all listeners.
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
-    for (final Function eventListener in _eventListeners) {
+    for (final Function? eventListener in _eventListeners) {
       if (eventListener != null) {
         eventListener(betterPlayerEvent);
       }
@@ -617,7 +616,10 @@ class BetterPlayerController {
 
   ///Listener used to handle video player changes.
   void _onVideoPlayerChanged() async {
-    final currentVideoPlayerValue = videoPlayerController?.value;
+    final VideoPlayerValue currentVideoPlayerValue =
+        videoPlayerController?.value ??
+            VideoPlayerValue(duration: const Duration());
+
     if (currentVideoPlayerValue.hasError) {
       _videoPlayerValueOnError ??= currentVideoPlayerValue;
       _postEvent(
@@ -680,8 +682,8 @@ class BetterPlayerController {
   }
 
   ///Flag which determines whenever player data source has been initialized.
-  bool isVideoInitialized() {
-    return videoPlayerController?.value?.initialized;
+  bool? isVideoInitialized() {
+    return videoPlayerController?.value.initialized;
   }
 
   ///Start timer which will trigger next video. Used in playlist. Do not use
@@ -689,7 +691,7 @@ class BetterPlayerController {
   void startNextVideoTimer() {
     if (_nextVideoTimer == null) {
       _nextVideoTime =
-          betterPlayerPlaylistConfiguration.nextVideoDelay.inSeconds;
+          betterPlayerPlaylistConfiguration!.nextVideoDelay.inSeconds;
       nextVideoTimeStreamController.add(_nextVideoTime);
       _nextVideoTimer =
           Timer.periodic(const Duration(milliseconds: 1000), (_timer) async {
@@ -697,7 +699,9 @@ class BetterPlayerController {
           _timer.cancel();
           _nextVideoTimer = null;
         }
-        _nextVideoTime -= 1;
+        if (_nextVideoTime != null) {
+          _nextVideoTime = _nextVideoTime! - 1;
+        }
         nextVideoTimeStreamController.add(_nextVideoTime);
       });
     }
@@ -752,13 +756,13 @@ class BetterPlayerController {
     if (_isAutomaticPlayPauseHandled()) {
       if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
         betterPlayerConfiguration
-            .playerVisibilityChangedBehavior(visibilityFraction);
+            .playerVisibilityChangedBehavior!(visibilityFraction);
       } else {
         if (visibilityFraction == 0) {
           _wasPlayingBeforePause ??= isPlaying();
           pause();
         } else {
-          if (_wasPlayingBeforePause == true && !isPlaying()) {
+          if (_wasPlayingBeforePause == true && !isPlaying()!) {
             play();
           }
         }
@@ -768,12 +772,11 @@ class BetterPlayerController {
 
   ///Set different resolution (quality) for video
   void setResolution(String url) async {
-    assert(url != null, "Url can't be null");
     final position = await videoPlayerController?.position;
-    final wasPlayingBeforeChange = isPlaying();
+    final wasPlayingBeforeChange = isPlaying()!;
     cancelFullScreenDismiss = true;
     videoPlayerController?.pause();
-    await setupDataSource(betterPlayerDataSource.copyWith(url: url));
+    await setupDataSource(betterPlayerDataSource!.copyWith(url: url));
     videoPlayerController?.seekTo(position);
     if (wasPlayingBeforeChange) {
       videoPlayerController?.play();
@@ -784,11 +787,11 @@ class BetterPlayerController {
   ///Setup translations for given locale. In normal use cases it shouldn't be
   ///called manually.
   void setupTranslations(Locale locale) {
+    // ignore: unnecessary_null_comparison
     if (locale != null) {
       final String languageCode = locale.languageCode;
-      translations = betterPlayerConfiguration.translations?.firstWhere(
-              (translations) => translations.languageCode == languageCode,
-              orElse: () => null) ??
+      translations = betterPlayerConfiguration.translations?.firstWhereOrNull(
+              (translations) => translations.languageCode == languageCode) ??
           _getDefaultTranslations(locale);
     } else {
       BetterPlayerUtils.log("Locale is null. Couldn't setup translations.");
@@ -798,20 +801,17 @@ class BetterPlayerController {
   ///Setup default translations for selected user locale. These translations
   ///are pre-build in.
   BetterPlayerTranslations _getDefaultTranslations(Locale locale) {
-    if (locale != null) {
-      final String languageCode = locale.languageCode;
-      switch (languageCode) {
-        case "pl":
-          return BetterPlayerTranslations.polish();
-        case "zh":
-          return BetterPlayerTranslations.chinese();
-        case "hi":
-          return BetterPlayerTranslations.hindi();
-        default:
-          return BetterPlayerTranslations();
-      }
+    final String languageCode = locale.languageCode;
+    switch (languageCode) {
+      case "pl":
+        return BetterPlayerTranslations.polish();
+      case "zh":
+        return BetterPlayerTranslations.chinese();
+      case "hi":
+        return BetterPlayerTranslations.hindi();
+      default:
+        return BetterPlayerTranslations();
     }
-    return BetterPlayerTranslations();
   }
 
   ///Flag which determines whenever current data source has started.
@@ -845,17 +845,16 @@ class BetterPlayerController {
   ///Get aspect ratio used in current video. If aspect ratio is null, then
   ///aspect ratio from BetterPlayerConfiguration will be used. Otherwise
   ///[_overriddenAspectRatio] will be used.
-  double getAspectRatio() {
+  double? getAspectRatio() {
     return _overriddenAspectRatio ?? betterPlayerConfiguration.aspectRatio;
   }
 
   ///Enable Picture in Picture (PiP) mode. [betterPlayerGlobalKey] is required
   ///to open PiP mode in iOS. When device is not supported, PiP mode won't be
   ///open.
-  Future<void> enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async {
-    assert(
-        betterPlayerGlobalKey != null, "BetterPlayerGlobalKey can't be null");
-    if (await videoPlayerController?.isPictureInPictureSupported()) {
+  Future<void>? enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async {
+    if (await (videoPlayerController?.isPictureInPictureSupported()
+        as FutureOr<bool>)) {
       _wasInFullScreenBeforePiP = _isFullScreen;
       _wasControlsEnabledBeforePiP = _controlsEnabled;
       setControlsEnabled(false);
@@ -868,8 +867,8 @@ class BetterPlayerController {
         return;
       }
       if (Platform.isIOS) {
-        final RenderBox renderBox = betterPlayerGlobalKey.currentContext
-            .findRenderObject() as RenderBox;
+        final RenderBox? renderBox = betterPlayerGlobalKey.currentContext!
+            .findRenderObject() as RenderBox?;
         if (renderBox == null) {
           BetterPlayerUtils.log(
               "Can't show PiP. RenderBox is null. Did you provide valid global"
@@ -895,20 +894,20 @@ class BetterPlayerController {
   }
 
   ///Disable Picture in Picture mode if it's enabled.
-  Future<void> disablePictureInPicture() {
+  Future<void>? disablePictureInPicture() {
     return videoPlayerController?.disablePictureInPicture();
   }
 
+  // ignore: use_setters_to_change_properties
   ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
   void setBetterPlayerGlobalKey(GlobalKey betterPlayerGlobalKey) {
-    assert(
-        betterPlayerGlobalKey != null, "BetterPlayerGlobalKey can't be null");
     _betterPlayerGlobalKey = betterPlayerGlobalKey;
   }
 
   ///Check if picture in picture mode is supported in this device.
   Future<bool> isPictureInPictureSupported() async {
-    return await videoPlayerController?.isPictureInPictureSupported() &&
+    return (await (videoPlayerController?.isPictureInPictureSupported()
+            as FutureOr<bool>)) &&
         !_isFullScreen;
   }
 
@@ -925,13 +924,13 @@ class BetterPlayerController {
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo));
         break;
       case VideoEventType.completed:
-        final videoValue = videoPlayerController?.value;
+        final VideoPlayerValue? videoValue = videoPlayerController?.value;
         _postEvent(
           BetterPlayerEvent(
             BetterPlayerEventType.finished,
             parameters: <String, dynamic>{
-              _progressParameter: videoValue.position,
-              _durationParameter: videoValue.duration
+              _progressParameter: videoValue?.position,
+              _durationParameter: videoValue?.duration
             },
           ),
         );
@@ -945,17 +944,15 @@ class BetterPlayerController {
 
   ///Setup controls always visible mode
   void setControlsAlwaysVisible(bool controlsAlwaysVisible) {
-    assert(
-        controlsAlwaysVisible != null, "ControlsAlwaysVisible can't be null");
     _controlsAlwaysVisible = controlsAlwaysVisible;
     _controlsVisibilityStreamController.add(controlsAlwaysVisible);
   }
 
   ///Retry data source if playback failed.
   Future retryDataSource() async {
-    await _setupDataSource(_betterPlayerDataSource);
+    await _setupDataSource(_betterPlayerDataSource!);
     if (_videoPlayerValueOnError != null) {
-      final position = _videoPlayerValueOnError.position;
+      final position = _videoPlayerValueOnError!.position;
       await seekTo(position);
       await play();
       _videoPlayerValueOnError = null;
@@ -964,7 +961,6 @@ class BetterPlayerController {
 
   ///Set [audioTrack] in player. Works only for HLS streams.
   void setAudioTrack(BetterPlayerHlsAudioTrack audioTrack) {
-    assert(audioTrack != null, "AudioTrack can't be null");
 
     if (audioTrack.language == null) {
       _betterPlayerHlsAudioTrack = null;
@@ -977,24 +973,23 @@ class BetterPlayerController {
 
   ///Enable or disable audio mixing with other sound within device.
   void setMixWithOthers(bool mixWithOthers) {
-    videoPlayerController.setMixWithOthers(mixWithOthers);
+    videoPlayerController!.setMixWithOthers(mixWithOthers);
   }
 
   ///Build headers map that will be used to setup video player controller. Apply
   ///DRM headers if available.
-  Map<String, String> _getHeaders() {
-    final headers = betterPlayerDataSource.headers ?? {};
-    if (betterPlayerDataSource.drmConfiguration != null &&
-        betterPlayerDataSource.drmConfiguration?.drmType ==
-            BetterPlayerDrmType.token) {
+  Map<String, String?> _getHeaders() {
+    final headers = betterPlayerDataSource!.headers ?? {};
+    if (betterPlayerDataSource?.drmConfiguration?.drmType ==
+            BetterPlayerDrmType.token &&
+        betterPlayerDataSource?.drmConfiguration?.token != null) {
       headers[_authorizationHeader] =
-          betterPlayerDataSource.drmConfiguration.token;
+          betterPlayerDataSource!.drmConfiguration!.token!;
     }
     return headers;
   }
 
   void _addControllerEvent(BetterPlayerControllerEvent event) {
-    assert(event != null, "Event can't be null");
     _controllerEventStreamController.add(event);
   }
 
@@ -1019,7 +1014,7 @@ class BetterPlayerController {
       _controllerEventStreamController.close();
 
       ///Delete files async
-      _tempFiles?.forEach((file) => file.delete());
+      _tempFiles.forEach((file) => file.delete());
     }
   }
 }

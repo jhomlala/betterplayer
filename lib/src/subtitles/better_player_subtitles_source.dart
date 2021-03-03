@@ -5,19 +5,19 @@ import 'better_player_subtitles_source_type.dart';
 /// Player.
 class BetterPlayerSubtitlesSource {
   ///Source type
-  final BetterPlayerSubtitlesSourceType type;
+  final BetterPlayerSubtitlesSourceType? type;
 
   ///Name of the subtitles, default value is "Default subtitles"
-  final String name;
+  final String? name;
 
   ///Url of the subtitles, used with file or network subtitles
-  final List<String> urls;
+  final List<String?>? urls;
 
   ///Content of subtitles, used when type is memory
-  final String content;
+  final String? content;
 
   ///Subtitles selected by default, without user interaction
-  final bool selectedByDefault;
+  final bool? selectedByDefault;
 
   BetterPlayerSubtitlesSource({
     this.type,
@@ -29,11 +29,11 @@ class BetterPlayerSubtitlesSource {
 
   ///Creates list with only one subtitles
   static List<BetterPlayerSubtitlesSource> single({
-    BetterPlayerSubtitlesSourceType type,
+    BetterPlayerSubtitlesSourceType? type,
     String name = "Default subtitles",
-    String url,
-    String content,
-    bool selectedByDefault,
+    String? url,
+    String? content,
+    bool? selectedByDefault,
   }) =>
       [
         BetterPlayerSubtitlesSource(

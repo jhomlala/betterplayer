@@ -1,13 +1,13 @@
 /// Represents HLS track which can be played within player
 class BetterPlayerHlsTrack {
   ///Width in px of the track
-  final int width;
+  final int? width;
 
   ///Height in px of the track
-  final int height;
+  final int? height;
 
   ///Bitrate in px of the track
-  final int bitrate;
+  final int? bitrate;
 
   BetterPlayerHlsTrack(this.width, this.height, this.bitrate);
 
@@ -16,6 +16,7 @@ class BetterPlayerHlsTrack {
   }
 
   @override
+  // ignore: unnecessary_overrides
   int get hashCode => super.hashCode;
 
   @override

@@ -24,7 +24,6 @@ class BetterPlayerHlsUtils {
 
   static Future<List<BetterPlayerHlsTrack>> parseTracks(
       String data, String masterPlaylistUrl) async {
-    assert(data != null, "Data can't be null");
     final List<BetterPlayerHlsTrack> tracks = [];
     try {
       final parsedPlaylist = await HlsPlaylistParser.create()
@@ -50,8 +49,6 @@ class BetterPlayerHlsUtils {
   ///Parse subtitles from provided m3u8 url
   static Future<List<BetterPlayerHlsSubtitle>> parseSubtitles(
       String data, String masterPlaylistUrl) async {
-    assert(data != null, "Data can't be null");
-    assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
 
     final List<BetterPlayerHlsSubtitle> subtitles = [];
     try {
@@ -72,11 +69,14 @@ class BetterPlayerHlsUtils {
     return subtitles;
   }
 
-  static Future<BetterPlayerHlsSubtitle> _parseSubtitlesPlaylist(
+  static Future<BetterPlayerHlsSubtitle?> _parseSubtitlesPlaylist(
       Rendition rendition) async {
-    assert(rendition != null, "Rendition can't be null");
     try {
       final subtitleData = await getDataFromUrl(rendition.url.toString());
+      if (subtitleData == null) {
+        return null;
+      }
+
       final parsedSubtitle =
           await _hlsPlaylistParser.parseString(rendition.url, subtitleData);
       final hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
@@ -89,7 +89,7 @@ class BetterPlayerHlsUtils {
           // ignore: use_string_buffers
           realUrl += "${split[index]}/";
         }
-        realUrl += segment.url;
+        realUrl += segment.url!;
         hlsSubtitlesUrls.add(realUrl);
       }
       return BetterPlayerHlsSubtitle(
@@ -105,8 +105,6 @@ class BetterPlayerHlsUtils {
 
   static Future<List<BetterPlayerHlsAudioTrack>> parseLanguages(
       String data, String masterPlaylistUrl) async {
-    assert(data != null, "Data can't be null");
-    assert(masterPlaylistUrl != null, "MasterPlaylistUrl can't be null");
     final List<BetterPlayerHlsAudioTrack> audios = [];
     final parsedPlaylist = await HlsPlaylistParser.create()
         .parseString(Uri.parse(masterPlaylistUrl), data);
@@ -125,13 +123,12 @@ class BetterPlayerHlsUtils {
     return audios;
   }
 
-  static Future<String> getDataFromUrl(String url,
-      [Map<String, String> headers]) async {
+  static Future<String?> getDataFromUrl(String url,
+      [Map<String, String?>? headers]) async {
     try {
-      assert(url != null, "Url can't be null!");
       final request = await _httpClient.getUrl(Uri.parse(url));
       if (headers != null) {
-        headers.forEach((name, value) => request.headers.add(name, value));
+        headers.forEach((name, value) => request.headers.add(name, value!));
       }
 
       final response = await request.close();

@@ -1,16 +1,16 @@
 ///Representation of HLS audio track
 class BetterPlayerHlsAudioTrack {
   ///Id of track inside HLS playlist
-  final int id;
+  final int? id;
 
   ///Description of the audio
-  final String label;
+  final String? label;
 
   ///Language code
-  final String language;
+  final String? language;
 
   ///Url of audio track
-  final String url;
+  final String? url;
 
   BetterPlayerHlsAudioTrack({this.id, this.label, this.language, this.url});
 }

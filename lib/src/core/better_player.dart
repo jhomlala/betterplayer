@@ -20,14 +20,12 @@ import 'better_player_controller_provider.dart';
 
 ///Widget which uses provided controller to render video player.
 class BetterPlayer extends StatefulWidget {
-  const BetterPlayer({Key key, @required this.controller})
-      : assert(
-            controller != null, 'You must provide a better player controller'),
-        super(key: key);
+  const BetterPlayer({Key? key, required this.controller})
+      : super(key: key);
 
   factory BetterPlayer.network(
     String url, {
-    BetterPlayerConfiguration betterPlayerConfiguration,
+    BetterPlayerConfiguration? betterPlayerConfiguration,
   }) =>
       BetterPlayer(
         controller: BetterPlayerController(
@@ -39,7 +37,7 @@ class BetterPlayer extends StatefulWidget {
 
   factory BetterPlayer.file(
     String url, {
-    BetterPlayerConfiguration betterPlayerConfiguration,
+    BetterPlayerConfiguration? betterPlayerConfiguration,
   }) =>
       BetterPlayer(
         controller: BetterPlayerController(
@@ -65,18 +63,18 @@ class _BetterPlayerState extends State<BetterPlayer>
   bool _isFullScreen = false;
 
   ///State of navigator on widget created
-  NavigatorState _navigatorState;
+  late NavigatorState _navigatorState;
 
   ///Flag which determines if widget has initialized
   bool _initialized = false;
 
   ///Subscription for controller events
-  StreamSubscription _controllerEventSubscription;
+  StreamSubscription? _controllerEventSubscription;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance!.addObserver(this);
   }
 
   @override
@@ -101,9 +99,7 @@ class _BetterPlayerState extends State<BetterPlayer>
     try{
       if (mounted) {
         final contextLocale = Localizations.localeOf(context);
-        if (contextLocale != null) {
-          locale = contextLocale;
-        }
+        locale = contextLocale;
       }
     }catch (exception){
       BetterPlayerUtils.log(exception.toString());
@@ -127,7 +123,7 @@ class _BetterPlayerState extends State<BetterPlayer>
           _betterPlayerConfiguration.deviceOrientationsAfterFullScreen);
     }
 
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance!.removeObserver(this);
     _controllerEventSubscription?.cancel();
     widget.controller.dispose();
     super.dispose();
@@ -209,7 +205,7 @@ class _BetterPlayerState extends State<BetterPlayer>
       BetterPlayerControllerProvider controllerProvider) {
     return AnimatedBuilder(
       animation: animation,
-      builder: (BuildContext context, Widget child) {
+      builder: (BuildContext context, Widget? child) {
         return _buildFullScreenVideo(context, animation, controllerProvider);
       },
     );
@@ -246,7 +242,7 @@ class _BetterPlayerState extends State<BetterPlayer>
       if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
           true) {
         final aspectRatio =
-            widget?.controller?.videoPlayerController?.value?.aspectRatio ??
+            widget.controller.videoPlayerController?.value.aspectRatio ??
                 1.0;
         List<DeviceOrientation> deviceOrientations;
         if (aspectRatio < 1.0) {

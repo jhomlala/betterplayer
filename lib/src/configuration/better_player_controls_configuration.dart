@@ -83,11 +83,11 @@ class BetterPlayerControlsConfiguration {
   final Duration controlsHideTime;
 
   ///Parameter used to build custom controls
-  final Widget Function(BetterPlayerController controller)
+  final Widget Function(BetterPlayerController controller)?
       customControlsBuilder;
 
   ///Parameter used to change theme of the player
-  final BetterPlayerTheme playerTheme;
+  final BetterPlayerTheme? playerTheme;
 
   ///Flag used to show/hide controls
   final bool showControls;
@@ -157,7 +157,7 @@ class BetterPlayerControlsConfiguration {
   final Color loadingColor;
 
   ///Widget which can be used instead of default progress
-  final Widget loadingWidget;
+  final Widget? loadingWidget;
 
   ///Color of the background, when no frame is displayed.
   final Color backgroundColor;

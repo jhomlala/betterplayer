@@ -16,24 +16,25 @@ class BetterPlayerConfiguration {
   final bool autoPlay;
 
   /// Start video at a certain position
-  final Duration startAt;
+  final Duration? startAt;
 
   /// Whether or not the video should loop
   final bool looping;
 
   /// When the video playback runs  into an error, you can build a custom
   /// error message.
-  final Widget Function(BuildContext context, String errorMessage) errorBuilder;
+  final Widget Function(BuildContext context, String? errorMessage)?
+      errorBuilder;
 
   /// The Aspect Ratio of the Video. Important to get the correct size of the
   /// video!
   ///
   /// Will fallback to fitting within the space allowed.
-  final double aspectRatio;
+  final double? aspectRatio;
 
   /// The placeholder is displayed underneath the Video before it is initialized
   /// or played.
-  final Widget placeholder;
+  final Widget? placeholder;
 
   /// Should the placeholder be shown until play is pressed
   final bool showPlaceholderUntilPlay;
@@ -44,7 +45,7 @@ class BetterPlayerConfiguration {
   final bool placeholderOnTop;
 
   /// A widget which is placed between the video and the controls
-  final Widget overlay;
+  final Widget? overlay;
 
   /// Defines if the player will start in fullscreen when play is pressed
   final bool fullScreenByDefault;
@@ -53,7 +54,7 @@ class BetterPlayerConfiguration {
   final bool allowedScreenSleep;
 
   /// Defines aspect ratio which will be used in fullscreen
-  final double fullScreenAspectRatio;
+  final double? fullScreenAspectRatio;
 
   /// Defines the set of allowed device orientations on entering fullscreen
   final List<DeviceOrientation> deviceOrientationsOnFullScreen;
@@ -65,10 +66,10 @@ class BetterPlayerConfiguration {
   final List<DeviceOrientation> deviceOrientationsAfterFullScreen;
 
   /// Defines a custom RoutePageBuilder for the fullscreen
-  final BetterPlayerRoutePageBuilder routePageBuilder;
+  final BetterPlayerRoutePageBuilder? routePageBuilder;
 
   /// Defines a event listener where video player events will be send
-  final Function(BetterPlayerEvent) eventListener;
+  final Function(BetterPlayerEvent)? eventListener;
 
   ///Defines subtitles configuration
   final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
@@ -85,11 +86,11 @@ class BetterPlayerConfiguration {
   final double rotation;
 
   ///Defines function which will react on player visibility changed
-  final Function(double visibilityFraction) playerVisibilityChangedBehavior;
+  final Function(double visibilityFraction)? playerVisibilityChangedBehavior;
 
   ///Defines translations used in player. If null, then default english translations
   ///will be used.
-  final List<BetterPlayerTranslations> translations;
+  final List<BetterPlayerTranslations>? translations;
 
   ///Defines if player should auto detect full screen device orientation based
   ///on aspect ratio of the video. If aspect ratio of the video is < 1 then
@@ -149,31 +150,31 @@ class BetterPlayerConfiguration {
   });
 
   BetterPlayerConfiguration copyWith({
-    double aspectRatio,
-    bool autoPlay,
-    Duration startAt,
-    bool looping,
-    bool fullScreenByDefault,
-    Widget placeholder,
-    bool showPlaceholderUntilPlay,
-    bool placeholderOnTop,
-    Widget overlay,
-    bool showControlsOnInitialize,
-    Widget Function(BuildContext context, String errorMessage) errorBuilder,
-    bool allowedScreenSleep,
-    double fullScreenAspectRatio,
-    List<DeviceOrientation> deviceOrientationsOnFullScreen,
-    List<SystemUiOverlay> systemOverlaysAfterFullScreen,
-    List<DeviceOrientation> deviceOrientationsAfterFullScreen,
-    BetterPlayerRoutePageBuilder routePageBuilder,
-    Function(BetterPlayerEvent) eventListener,
-    BetterPlayerSubtitlesConfiguration subtitlesConfiguration,
-    BetterPlayerControlsConfiguration controlsConfiguration,
-    BoxFit fit,
-    double rotation,
-    Function(double visibilityFraction) playerVisibilityChangedBehavior,
-    List<BetterPlayerTranslations> translations,
-    bool autoDetectFullscreenDeviceOrientation,
+    double? aspectRatio,
+    bool? autoPlay,
+    Duration? startAt,
+    bool? looping,
+    bool? fullScreenByDefault,
+    Widget? placeholder,
+    bool? showPlaceholderUntilPlay,
+    bool? placeholderOnTop,
+    Widget? overlay,
+    bool? showControlsOnInitialize,
+    Widget Function(BuildContext context, String? errorMessage)? errorBuilder,
+    bool? allowedScreenSleep,
+    double? fullScreenAspectRatio,
+    List<DeviceOrientation>? deviceOrientationsOnFullScreen,
+    List<SystemUiOverlay>? systemOverlaysAfterFullScreen,
+    List<DeviceOrientation>? deviceOrientationsAfterFullScreen,
+    BetterPlayerRoutePageBuilder? routePageBuilder,
+    Function(BetterPlayerEvent)? eventListener,
+    BetterPlayerSubtitlesConfiguration? subtitlesConfiguration,
+    BetterPlayerControlsConfiguration? controlsConfiguration,
+    BoxFit? fit,
+    double? rotation,
+    Function(double visibilityFraction)? playerVisibilityChangedBehavior,
+    List<BetterPlayerTranslations>? translations,
+    bool? autoDetectFullscreenDeviceOrientation,
   }) {
     return BetterPlayerConfiguration(
       aspectRatio: aspectRatio ?? this.aspectRatio,

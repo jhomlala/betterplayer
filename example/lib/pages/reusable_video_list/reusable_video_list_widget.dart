@@ -4,7 +4,7 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player_example/model/video_list_data.dart';
 import 'package:better_player_example/pages/reusable_video_list/reusable_video_list_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_widgets/flutter_widgets.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class ReusableVideoListWidget extends StatefulWidget {
   final VideoListData videoListData;

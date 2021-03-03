@@ -6,7 +6,7 @@ import 'variant.dart';
 
 class HlsMasterPlaylist extends HlsPlaylist {
   HlsMasterPlaylist({
-    String baseUri,
+    String? baseUri,
     List<String> tags = const [], // ignore: always_specify_types
     this.variants = const [], // ignore: always_specify_types
     this.videos = const [], // ignore: always_specify_types
@@ -27,7 +27,7 @@ class HlsMasterPlaylist extends HlsPlaylist {
             hasIndependentSegments: hasIndependentSegments);
 
   /// All of the media playlist URLs referenced by the playlist.
-  final List<Uri> mediaPlaylistUrls;
+  final List<Uri?> mediaPlaylistUrls;
 
   /// The variants declared by the playlist.
   final List<Variant> variants;
@@ -45,22 +45,22 @@ class HlsMasterPlaylist extends HlsPlaylist {
   final List<Rendition> closedCaptions;
 
   ///The format of the audio muxed in the variants. May be null if the playlist does not declare any mixed audio.
-  final Format muxedAudioFormat;
+  final Format? muxedAudioFormat;
 
   ///The format of the closed captions declared by the playlist. May be empty if the playlist
   ///explicitly declares no captions are available, or null if the playlist does not declare any
   ///captions information.
-  final List<Format> muxedCaptionFormats;
+  final List<Format>? muxedCaptionFormats;
 
   /// Contains variable definitions, as defined by the #EXT-X-DEFINE tag.
-  final Map<String, String> variableDefinitions;
+  final Map<String?, String> variableDefinitions;
 
   /// DRM initialization data derived from #EXT-X-SESSION-KEY tags.
   final List<DrmInitData> sessionKeyDrmInitData;
 
-  static List<Uri> _getMediaPlaylistUrls(
+  static List<Uri?> _getMediaPlaylistUrls(
       List<Variant> variants, List<List<Rendition>> renditionList) {
-    final uriList = <Uri>[];
+    final uriList = <Uri?>[];
     variants.forEach((element) {
       uriList.add(element.url);
     });

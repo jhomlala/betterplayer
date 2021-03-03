@@ -10,6 +10,7 @@ import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 
 // Flutter imports:
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
 
 ///Base class for both material and cupertino controls
@@ -18,42 +19,43 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Min. time of buffered video to hide loading timer (in milliseconds)
   static const int _bufferingInterval = 20000;
 
-  BetterPlayerController get betterPlayerController;
+  BetterPlayerController? get betterPlayerController;
 
   BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration;
 
-  VideoPlayerValue get latestValue;
+  VideoPlayerValue? get latestValue;
 
   void cancelAndRestartTimer();
 
-  bool isVideoFinished(VideoPlayerValue videoPlayerValue) {
+  bool isVideoFinished(VideoPlayerValue? videoPlayerValue) {
     return videoPlayerValue?.position != null &&
         videoPlayerValue?.duration != null &&
-        videoPlayerValue.position.inMilliseconds != 0 &&
-        videoPlayerValue.duration.inMilliseconds != 0 &&
-        videoPlayerValue.position >= videoPlayerValue.duration;
+        videoPlayerValue!.position.inMilliseconds != 0 &&
+        videoPlayerValue.duration!.inMilliseconds != 0 &&
+        videoPlayerValue.position >= videoPlayerValue.duration!;
   }
 
   void skipBack() {
     cancelAndRestartTimer();
     final beginning = const Duration().inMilliseconds;
-    final skip = (latestValue.position -
+    final skip = (latestValue!.position -
             Duration(
                 milliseconds: betterPlayerControlsConfiguration
                     .backwardSkipTimeInMilliseconds))
         .inMilliseconds;
-    betterPlayerController.seekTo(Duration(milliseconds: max(skip, beginning)));
+    betterPlayerController!
+        .seekTo(Duration(milliseconds: max(skip, beginning)));
   }
 
   void skipForward() {
     cancelAndRestartTimer();
-    final end = latestValue.duration.inMilliseconds;
-    final skip = (latestValue.position +
+    final end = latestValue!.duration!.inMilliseconds;
+    final skip = (latestValue!.position +
             Duration(
                 milliseconds: betterPlayerControlsConfiguration
                     .forwardSkipTimeInMilliseconds))
         .inMilliseconds;
-    betterPlayerController.seekTo(Duration(milliseconds: min(skip, end)));
+    betterPlayerController!.seekTo(Duration(milliseconds: min(skip, end)));
   }
 
   void onShowMoreClicked() {
@@ -61,7 +63,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildMoreOptionsList() {
-    final translations = betterPlayerController.translations;
+    final translations = betterPlayerController!.translations;
     return SingleChildScrollView(
       // ignore: avoid_unnecessary_containers
       child: Container(
@@ -96,14 +98,14 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                 _showAudioTracksSelectionWidget();
               }),
             if (betterPlayerControlsConfiguration
-                .overflowMenuCustomItems?.isNotEmpty)
+                .overflowMenuCustomItems.isNotEmpty)
               ...betterPlayerControlsConfiguration.overflowMenuCustomItems.map(
                 (customItem) => _buildMoreOptionsListRow(
                   customItem.icon,
                   customItem.title,
                   () {
                     Navigator.of(context).pop();
-                    customItem.onClicked?.call();
+                    customItem.onClicked.call();
                   },
                 ),
               )
@@ -115,9 +117,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   Widget _buildMoreOptionsListRow(
       IconData icon, String name, void Function() onTap) {
-    assert(icon != null, "Icon can't be null");
-    assert(name != null, "Name can't be null");
-    assert(onTap != null, "OnTap can't be null");
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,
       child: Padding(
@@ -153,14 +152,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildSpeedRow(double value) {
-    assert(value != null, "Value can't be null");
     final bool isSelected =
-        betterPlayerController.videoPlayerController.value.speed == value;
+        betterPlayerController!.videoPlayerController!.value.speed == value;
 
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
-        betterPlayerController.setSpeed(value);
+        betterPlayerController!.setSpeed(value);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -178,7 +176,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   ///Latest value can be null
-  bool isLoading(VideoPlayerValue latestValue) {
+  bool isLoading(VideoPlayerValue? latestValue) {
     if (latestValue != null) {
       if (!latestValue.isPlaying && latestValue.duration == null) {
         return true;
@@ -186,12 +184,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
       final Duration position = latestValue.position;
 
-      Duration bufferedEndPosition;
-      if (latestValue.buffered?.isNotEmpty == true) {
+      Duration? bufferedEndPosition;
+      if (latestValue.buffered.isNotEmpty == true) {
         bufferedEndPosition = latestValue.buffered.last.end;
       }
 
-      if (position != null && bufferedEndPosition != null) {
+      if (bufferedEndPosition != null) {
         final difference = bufferedEndPosition - position;
 
         if (latestValue.isPlaying &&
@@ -206,13 +204,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   void _showSubtitlesSelectionWidget() {
     final subtitles =
-        List.of(betterPlayerController.betterPlayerSubtitlesSourceList);
-    final noneSubtitlesElementExists = subtitles?.firstWhere(
-            (source) => source.type == BetterPlayerSubtitlesSourceType.none,
-            orElse: () => null) !=
+        List.of(betterPlayerController!.betterPlayerSubtitlesSourceList);
+    final noneSubtitlesElementExists = subtitles.firstWhereOrNull(
+            (source) => source.type == BetterPlayerSubtitlesSourceType.none) !=
         null;
     if (!noneSubtitlesElementExists) {
-      subtitles?.add(BetterPlayerSubtitlesSource(
+      subtitles.add(BetterPlayerSubtitlesSource(
           type: BetterPlayerSubtitlesSourceType.none));
     }
 
@@ -221,18 +218,17 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildSubtitlesSourceRow(BetterPlayerSubtitlesSource subtitlesSource) {
-    assert(subtitlesSource != null, "SubtitleSource can't be null");
 
     final selectedSourceType =
-        betterPlayerController.betterPlayerSubtitlesSource;
+        betterPlayerController!.betterPlayerSubtitlesSource;
     final bool isSelected = (subtitlesSource == selectedSourceType) ||
         (subtitlesSource.type == BetterPlayerSubtitlesSourceType.none &&
-            subtitlesSource?.type == selectedSourceType.type);
+            subtitlesSource.type == selectedSourceType!.type);
 
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
-        betterPlayerController.setupSubtitleSource(subtitlesSource);
+        betterPlayerController!.setupSubtitleSource(subtitlesSource);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -241,9 +237,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             const SizedBox(width: 16),
             Text(
               subtitlesSource.type == BetterPlayerSubtitlesSourceType.none
-                  ? betterPlayerController.translations.generalNone
+                  ? betterPlayerController!.translations.generalNone
                   : subtitlesSource.name ??
-                      betterPlayerController.translations.generalDefault,
+                      betterPlayerController!.translations.generalDefault,
               style: _getOverflowMenuElementTextStyle(isSelected),
             ),
           ],
@@ -257,16 +253,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Resolution selection is used for normal videos
   void _showQualitiesSelectionWidget() {
     final List<String> trackNames =
-        betterPlayerController.betterPlayerDataSource.hlsTrackNames ?? [];
+        betterPlayerController!.betterPlayerDataSource!.hlsTrackNames ?? [];
     final List<BetterPlayerHlsTrack> tracks =
-        betterPlayerController.betterPlayerTracks;
+        betterPlayerController!.betterPlayerTracks;
     final List<Widget> children = [];
     for (var index = 0; index < tracks.length; index++) {
       final track = tracks[index];
 
-      String preferredName;
+      String? preferredName;
       if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
-        preferredName = betterPlayerController.translations.qualityAuto;
+        preferredName = betterPlayerController!.translations.qualityAuto;
       } else {
         preferredName = trackNames.length > index ? trackNames[index] : null;
       }
@@ -274,7 +270,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     }
 
     final resolutions =
-        betterPlayerController.betterPlayerDataSource.resolutions;
+        betterPlayerController!.betterPlayerDataSource!.resolutions;
     resolutions?.forEach((key, value) {
       children.add(_buildResolutionSelectionRow(key, value));
     });
@@ -282,26 +278,25 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     if (children.isEmpty) {
       children.add(
         _buildTrackRow(BetterPlayerHlsTrack.defaultTrack(),
-            betterPlayerController.translations.qualityAuto),
+            betterPlayerController!.translations.qualityAuto),
       );
     }
 
     _showModalBottomSheet(children);
   }
 
-  Widget _buildTrackRow(BetterPlayerHlsTrack track, String preferredName) {
-    assert(track != null, "Track can't be null");
+  Widget _buildTrackRow(BetterPlayerHlsTrack track, String? preferredName) {
 
     final String trackName = preferredName ??
-        "${track.width}x${track.height} ${BetterPlayerUtils.formatBitrate(track.bitrate)}";
+        "${track.width}x${track.height} ${BetterPlayerUtils.formatBitrate(track.bitrate!)}";
 
-    final selectedTrack = betterPlayerController.betterPlayerTrack;
+    final selectedTrack = betterPlayerController!.betterPlayerTrack;
     final bool isSelected = selectedTrack != null && selectedTrack == track;
 
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
-        betterPlayerController.setTrack(track);
+        betterPlayerController!.setTrack(track);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -320,11 +315,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   Widget _buildResolutionSelectionRow(String name, String url) {
     final bool isSelected =
-        url == betterPlayerController.betterPlayerDataSource.url;
+        url == betterPlayerController!.betterPlayerDataSource!.url;
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
-        betterPlayerController.setResolution(url);
+        betterPlayerController!.setResolution(url);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -342,11 +337,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showAudioTracksSelectionWidget() {
-    final List<BetterPlayerHlsAudioTrack> tracks =
-        betterPlayerController.betterPlayerAudioTracks;
+    final List<BetterPlayerHlsAudioTrack>? tracks =
+        betterPlayerController!.betterPlayerAudioTracks;
     final List<Widget> children = [];
-    final BetterPlayerHlsAudioTrack selectedAudioTrack =
-        betterPlayerController.betterPlayerAudioTrack;
+    final BetterPlayerHlsAudioTrack? selectedAudioTrack =
+        betterPlayerController!.betterPlayerAudioTrack;
     if (tracks != null) {
       for (var index = 0; index < tracks.length; index++) {
         children.add(_buildAudioTrackRow(tracks[index], selectedAudioTrack));
@@ -357,7 +352,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       children.add(
         _buildAudioTrackRow(
             BetterPlayerHlsAudioTrack(
-              label: betterPlayerController.translations.generalDefault,
+              label: betterPlayerController!.translations.generalDefault,
             ),
             selectedAudioTrack),
       );
@@ -367,15 +362,14 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildAudioTrackRow(BetterPlayerHlsAudioTrack audioTrack,
-      BetterPlayerHlsAudioTrack selectedAudioTrack) {
-    assert(audioTrack != null, "Track can't be null");
+      BetterPlayerHlsAudioTrack? selectedAudioTrack) {
 
     final bool isSelected =
         selectedAudioTrack != null && selectedAudioTrack == audioTrack;
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
-        betterPlayerController.setAudioTrack(audioTrack);
+        betterPlayerController!.setAudioTrack(audioTrack);
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -383,7 +377,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           children: [
             const SizedBox(width: 16),
             Text(
-              audioTrack.label,
+              audioTrack.label!,
               style: _getOverflowMenuElementTextStyle(isSelected),
             ),
           ],
