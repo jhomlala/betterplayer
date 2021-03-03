@@ -775,11 +775,11 @@ class BetterPlayerController {
     final position = await videoPlayerController?.position;
     final wasPlayingBeforeChange = isPlaying()!;
     cancelFullScreenDismiss = true;
-    videoPlayerController?.pause();
+    pause();
     await setupDataSource(betterPlayerDataSource!.copyWith(url: url));
     videoPlayerController?.seekTo(position);
     if (wasPlayingBeforeChange) {
-      videoPlayerController?.play();
+      play();
     }
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedResolution));
   }
@@ -961,7 +961,6 @@ class BetterPlayerController {
 
   ///Set [audioTrack] in player. Works only for HLS streams.
   void setAudioTrack(BetterPlayerHlsAudioTrack audioTrack) {
-
     if (audioTrack.language == null) {
       _betterPlayerHlsAudioTrack = null;
       return;

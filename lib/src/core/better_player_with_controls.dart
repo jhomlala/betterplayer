@@ -277,10 +277,7 @@ class _BetterPlayerVideoFitWidgetState
     }
     widget.betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == BetterPlayerEventType.play) {
-        if (widget.betterPlayerController.betterPlayerConfiguration
-                .showPlaceholderUntilPlay &&
-            !_started &&
-            mounted) {
+        if (!_started) {
           setState(() {
             _started =
                 widget.betterPlayerController.hasCurrentDataSourceStarted;
