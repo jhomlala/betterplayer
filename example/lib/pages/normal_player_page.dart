@@ -17,6 +17,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
         BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
+      autoPlay: true,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(
