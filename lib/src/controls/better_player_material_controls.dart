@@ -27,7 +27,7 @@ class BetterPlayerMaterialControls extends StatefulWidget {
     Key? key,
     required this.onControlsVisibilityChanged,
     required this.controlsConfiguration,
-  })  : super(key: key);
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -71,34 +71,29 @@ class _BetterPlayerMaterialControlsState
         child: _buildErrorWidget(),
       );
     }
-    return MouseRegion(
-      onHover: (_) {
-        cancelAndRestartTimer();
+    return GestureDetector(
+      onTap: () {
+        _hideStuff
+            ? cancelAndRestartTimer()
+            : setState(() {
+                _hideStuff = true;
+              });
       },
-      child: GestureDetector(
-        onTap: () {
-          _hideStuff
-              ? cancelAndRestartTimer()
-              : setState(() {
-                  _hideStuff = true;
-                });
-        },
-        onDoubleTap: () {
-          cancelAndRestartTimer();
-          _onPlayPause();
-        },
-        child: AbsorbPointer(
-          absorbing: _hideStuff,
-          child: Column(
-            children: [
-              _buildTopBar(),
-              if (_wasLoading)
-                Expanded(child: Center(child: _buildLoadingWidget()))
-              else
-                _buildHitArea(),
-              _buildBottomBar(),
-            ],
-          ),
+      onDoubleTap: () {
+        cancelAndRestartTimer();
+        _onPlayPause();
+      },
+      child: AbsorbPointer(
+        absorbing: _hideStuff,
+        child: Column(
+          children: [
+            _buildTopBar(),
+            if (_wasLoading)
+              Expanded(child: Center(child: _buildLoadingWidget()))
+            else
+              _buildHitArea(),
+            _buildBottomBar(),
+          ],
         ),
       ),
     );
@@ -137,8 +132,10 @@ class _BetterPlayerMaterialControlsState
     final errorBuilder =
         _betterPlayerController!.betterPlayerConfiguration.errorBuilder;
     if (errorBuilder != null) {
-      return errorBuilder(context,
-          _betterPlayerController!.videoPlayerController!.value.errorDescription);
+      return errorBuilder(
+          context,
+          _betterPlayerController!
+              .videoPlayerController!.value.errorDescription);
     } else {
       final textStyle = TextStyle(color: _controlsConfiguration.textColor);
       return Center(
@@ -540,9 +537,8 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildPosition() {
-    final position = _latestValue != null
-        ? _latestValue!.position
-        : Duration.zero;
+    final position =
+        _latestValue != null ? _latestValue!.position : Duration.zero;
     final duration = _latestValue != null && _latestValue!.duration != null
         ? _latestValue!.duration!
         : Duration.zero;
@@ -703,8 +699,8 @@ class _BetterPlayerMaterialControlsState
     }
 
     return CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(
-          _controlsConfiguration.loadingColor),
+      valueColor:
+          AlwaysStoppedAnimation<Color>(_controlsConfiguration.loadingColor),
     );
   }
 }

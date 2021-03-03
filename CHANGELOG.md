@@ -1,5 +1,7 @@
 ## 0.0.62
 * Refactored internal event handling.
+* Migrated to null safety.
+* Fixed issue where player controls were immediately hidden.
 
 ## 0.0.61
 * Fixed fullscreenByDefault issue.

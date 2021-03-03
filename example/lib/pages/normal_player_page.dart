@@ -19,6 +19,8 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       fit: BoxFit.contain,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
+    _betterPlayerController.setupDataSource(
+        BetterPlayerDataSource.network(Constants.forBiggerBlazesUrl));
     super.initState();
   }
 
