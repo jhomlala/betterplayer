@@ -48,8 +48,9 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
             child: Text("Play file data source"),
             onPressed: () async {
               String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
-              BetterPlayerDataSource dataSource =
-                  BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
+              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+                  BetterPlayerDataSourceType.network,
+                  Constants.elephantDreamStreamUrl);
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),
