@@ -132,13 +132,14 @@ class BetterPlayerHlsUtils {
 
       final response = await request.close();
       var data = "";
-      await response.transform(const Utf8Decoder()).listen((contents) {
-        data += contents.toString();
-      }).asFuture<String>();
+      await response.transform(const Utf8Decoder()).listen((content) {
+        data += content.toString();
+      }).asFuture<String?>();
 
       return data;
-    } catch (exception) {
+    } catch (exception, stackTrace) {
       BetterPlayerUtils.log("GetDataFromUrl failed: $exception");
+      print(stackTrace);
       return null;
     }
   }
