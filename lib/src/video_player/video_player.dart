@@ -216,6 +216,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             duration: event.duration,
             size: event.size,
           );
+          print("INITIALIZING COMPLETER HASH: " + _initializingCompleter.hashCode.toString());
           _initializingCompleter.complete(null);
           _applyPlayPause();
           break;
