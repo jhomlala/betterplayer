@@ -18,12 +18,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      "http://cdn.theoplayer.com/video/elephants-dream/playlist.m3u8",
-    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-   // _betterPlayerController.setupDataSource(dataSource);
     super.initState();
   }
 

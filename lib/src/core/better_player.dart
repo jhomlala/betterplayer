@@ -106,7 +106,7 @@ class _BetterPlayerState extends State<BetterPlayer>
         }
       }
     }catch (exception){
-      BetterPlayerUtils.log(exception);
+      BetterPlayerUtils.log(exception.toString());
     }
     widget.controller.setupTranslations(locale);
   }

@@ -196,7 +196,7 @@ class BetterPlayerController {
   ///Flag which holds information about player visibility
   bool _isPlayerVisible = true;
 
-  StreamController<BetterPlayerControllerEvent>
+  final StreamController<BetterPlayerControllerEvent>
       _controllerEventStreamController = StreamController.broadcast();
 
   ///Stream of internal controller events. Shouldn't be used inside app. For

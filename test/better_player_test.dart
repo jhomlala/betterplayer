@@ -1,9 +1,6 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'better_player_mock_controller.dart';
@@ -13,7 +10,8 @@ import 'mock_method_channel.dart';
 void main() {
   setUpAll(() {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
-    MockMethodChannel mockMethodChannel = MockMethodChannel();
+    // ignore: unused_local_variable
+    final MockMethodChannel mockMethodChannel = MockMethodChannel();
   });
 
   testWidgets("Better Player simple player - network",
@@ -33,8 +31,8 @@ void main() {
   });
 
   testWidgets("BetterPlayer - with controller", (WidgetTester tester) async {
-    BetterPlayerMockController betterPlayerController =
-        BetterPlayerMockController(BetterPlayerConfiguration());
+    final BetterPlayerMockController betterPlayerController =
+        BetterPlayerMockController(const BetterPlayerConfiguration());
     await tester.pumpWidget(_wrapWidget(BetterPlayer(
       controller: betterPlayerController,
     )));

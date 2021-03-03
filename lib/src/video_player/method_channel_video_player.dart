@@ -94,7 +94,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         };
         break;
     }
-    print("INVOKE");
     await _channel.invokeMethod<void>(
       'setDataSource',
       <String, dynamic>{
@@ -102,7 +101,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         'dataSource': dataSourceDescription,
       },
     );
-    print("RESULT");
     return;
   }
 
@@ -269,7 +267,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       if (event is Map) {
         map = event;
       }
-      print("GOT EVENT: " + map.toString());
       final String eventType = map["event"] as String;
       final String key = map["key"] as String;
       switch (eventType) {
