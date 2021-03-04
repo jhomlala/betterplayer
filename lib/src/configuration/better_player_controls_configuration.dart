@@ -237,7 +237,6 @@ class BetterPlayerControlsConfiguration {
         fullscreenEnableIcon: CupertinoIcons.fullscreen,
         fullscreenDisableIcon: CupertinoIcons.fullscreen_exit,
         playIcon: CupertinoIcons.play_arrow_solid,
-        pauseIcon: CupertinoIcons.pause_solid,
-        enableProgressText: true);
+        pauseIcon: CupertinoIcons.pause_solid);
   }
 }
