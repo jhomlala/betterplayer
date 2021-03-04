@@ -182,7 +182,7 @@ class BetterPlayerControlsConfiguration {
       this.skipForwardIcon = Icons.fast_forward,
       this.enableFullscreen = true,
       this.enableMute = true,
-      this.enableProgressText = false,
+      this.enableProgressText = true,
       this.enableProgressBar = true,
       this.enableProgressBarDrag = true,
       this.enablePlayPause = true,

@@ -4,6 +4,7 @@
 * Fixed issue where player controls were immediately hidden.
 * Removed cancelFullScreenDismiss parameter.
 * Added initialization check for VideoPlayerController.
+* Changed default value of enableProgressText to true in BetterPlayerControlsConfiguration.
 * General bug fixes.
 
 ## 0.0.61
