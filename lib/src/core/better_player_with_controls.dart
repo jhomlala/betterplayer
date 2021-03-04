@@ -231,7 +231,7 @@ class _BetterPlayerVideoFitWidgetState
 
   bool _initialized = false;
 
-  late VoidCallback _initializedListener;
+  VoidCallback? _initializedListener;
 
   bool _started = false;
 
@@ -252,8 +252,10 @@ class _BetterPlayerVideoFitWidgetState
   void didUpdateWidget(_BetterPlayerVideoFitWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.betterPlayerController.videoPlayerController != controller) {
-      oldWidget.betterPlayerController.videoPlayerController!
-          .removeListener(_initializedListener);
+      if (_initializedListener != null) {
+        oldWidget.betterPlayerController.videoPlayerController!
+            .removeListener(_initializedListener!);
+      }
       _initialized = false;
       _initialize();
     }
@@ -271,7 +273,7 @@ class _BetterPlayerVideoFitWidgetState
           setState(() {});
         }
       };
-      controller!.addListener(_initializedListener);
+      controller!.addListener(_initializedListener!);
     } else {
       _initialized = true;
     }
@@ -318,8 +320,10 @@ class _BetterPlayerVideoFitWidgetState
 
   @override
   void dispose() {
-    widget.betterPlayerController.videoPlayerController!
-        .removeListener(_initializedListener);
+    if (_initializedListener != null) {
+      widget.betterPlayerController.videoPlayerController!
+          .removeListener(_initializedListener!);
+    }
     super.dispose();
   }
 }
