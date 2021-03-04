@@ -959,9 +959,11 @@ class BetterPlayerController {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
-    return (await (videoPlayerController!.isPictureInPictureSupported()
-            as FutureOr<bool>)) &&
-        !_isFullScreen;
+
+    final bool isPipSupported =
+        (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
+
+    return isPipSupported && !_isFullScreen;
   }
 
   ///Handle VideoEvent when remote controls notification / PiP is shown
