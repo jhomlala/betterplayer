@@ -9,6 +9,9 @@ enum BetterPlayerControllerEvent {
   ///Subtitles changed.
   changeSubtitles,
 
-  ///New data source has been set
-  setupDataSource
+  ///New data source has been set.
+  setupDataSource,
+
+  //Video has started.
+  play
 }

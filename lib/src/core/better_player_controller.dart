@@ -227,6 +227,7 @@ class BetterPlayerController {
         parameters: <String, dynamic>{
           _dataSourceParameter: betterPlayerDataSource,
         }));
+    _postControllerEvent(BetterPlayerControllerEvent.setupDataSource);
     _hasCurrentDataSourceStarted = false;
     _hasCurrentDataSourceInitialized = false;
     _betterPlayerDataSource = betterPlayerDataSource;
@@ -259,7 +260,6 @@ class BetterPlayerController {
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
     setTrack(BetterPlayerHlsTrack.defaultTrack());
-    _addControllerEvent(BetterPlayerControllerEvent.setupDataSource);
   }
 
   ///Configure subtitles based on subtitles source.
@@ -332,7 +332,7 @@ class BetterPlayerController {
 
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedSubtitles));
     if (!_disposed && !sourceInitialize) {
-      _addControllerEvent(BetterPlayerControllerEvent.changeSubtitles);
+      _postControllerEvent(BetterPlayerControllerEvent.changeSubtitles);
     }
   }
 
@@ -486,22 +486,22 @@ class BetterPlayerController {
   ///Enables full screen mode in player. This will trigger route change.
   void enterFullScreen() {
     _isFullScreen = true;
-    _addControllerEvent(BetterPlayerControllerEvent.openFullscreen);
+    _postControllerEvent(BetterPlayerControllerEvent.openFullscreen);
   }
 
   ///Disables full screen mode in player. This will trigger route change.
   void exitFullScreen() {
     _isFullScreen = false;
-    _addControllerEvent(BetterPlayerControllerEvent.hideFullscreen);
+    _postControllerEvent(BetterPlayerControllerEvent.hideFullscreen);
   }
 
   ///Enables/disables full screen mode based on current fullscreen state.
   void toggleFullScreen() {
     _isFullScreen = !_isFullScreen;
     if (_isFullScreen) {
-      _addControllerEvent(BetterPlayerControllerEvent.openFullscreen);
+      _postControllerEvent(BetterPlayerControllerEvent.openFullscreen);
     } else {
-      _addControllerEvent(BetterPlayerControllerEvent.hideFullscreen);
+      _postControllerEvent(BetterPlayerControllerEvent.hideFullscreen);
     }
   }
 
@@ -513,6 +513,7 @@ class BetterPlayerController {
       _hasCurrentDataSourceStarted = true;
       _wasPlayingBeforePause = null;
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
+      _postControllerEvent(BetterPlayerControllerEvent.play);
     }
   }
 
@@ -983,9 +984,10 @@ class BetterPlayerController {
     return headers;
   }
 
-  void _addControllerEvent(BetterPlayerControllerEvent event) {
+  void _postControllerEvent(BetterPlayerControllerEvent event) {
     _controllerEventStreamController.add(event);
   }
+
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
   ///autoDispose parameter will be overridden and controller will be disposed

@@ -235,6 +235,8 @@ class _BetterPlayerVideoFitWidgetState
 
   bool _started = false;
 
+  StreamSubscription? _controllerEventSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -277,8 +279,10 @@ class _BetterPlayerVideoFitWidgetState
     } else {
       _initialized = true;
     }
-    widget.betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == BetterPlayerEventType.play) {
+
+    _controllerEventSubscription =
+        widget.betterPlayerController.controllerEventStream.listen((event) {
+      if (event == BetterPlayerControllerEvent.play) {
         if (!_started) {
           setState(() {
             _started =
@@ -286,8 +290,7 @@ class _BetterPlayerVideoFitWidgetState
           });
         }
       }
-      if (event.betterPlayerEventType ==
-          BetterPlayerEventType.setupDataSource) {
+      if (event == BetterPlayerControllerEvent.setupDataSource) {
         setState(() {
           _started = false;
         });
@@ -297,6 +300,8 @@ class _BetterPlayerVideoFitWidgetState
 
   @override
   Widget build(BuildContext context) {
+    print("STARTED: " + _started.toString());
+    print("INITIALIZED:" + _initialized.toString());
     if (_initialized && _started) {
       return Center(
         child: Container(
@@ -324,6 +329,7 @@ class _BetterPlayerVideoFitWidgetState
       widget.betterPlayerController.videoPlayerController!
           .removeListener(_initializedListener!);
     }
+    _controllerEventSubscription?.cancel();
     super.dispose();
   }
 }
