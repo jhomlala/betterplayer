@@ -144,10 +144,7 @@ class _BetterPlayerState extends State<BetterPlayer>
       case BetterPlayerControllerEvent.hideFullscreen:
         onFullScreenChanged();
         break;
-      case BetterPlayerControllerEvent.changeSubtitles:
-        setState(() {});
-        break;
-      case BetterPlayerControllerEvent.setupDataSource:
+      default:
         setState(() {});
         break;
     }
@@ -167,7 +164,6 @@ class _BetterPlayerState extends State<BetterPlayer>
       controller
           .postEvent(BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
     }
-
   }
 
   @override

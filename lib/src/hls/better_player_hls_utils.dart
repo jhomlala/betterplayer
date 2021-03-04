@@ -137,9 +137,8 @@ class BetterPlayerHlsUtils {
       }).asFuture<String?>();
 
       return data;
-    } catch (exception, stackTrace) {
+    } catch (exception) {
       BetterPlayerUtils.log("GetDataFromUrl failed: $exception");
-      print(stackTrace);
       return null;
     }
   }

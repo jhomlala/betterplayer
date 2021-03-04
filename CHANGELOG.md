@@ -3,6 +3,7 @@
 * Migrated to null safety.
 * Fixed issue where player controls were immediately hidden.
 * Removed cancelFullScreenDismiss parameter.
+* Added initialization check for VideoPlayerController.
 * General bug fixes.
 
 ## 0.0.61

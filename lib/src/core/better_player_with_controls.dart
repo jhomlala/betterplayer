@@ -300,8 +300,6 @@ class _BetterPlayerVideoFitWidgetState
 
   @override
   Widget build(BuildContext context) {
-    print("STARTED: " + _started.toString());
-    print("INITIALIZED:" + _initialized.toString());
     if (_initialized && _started) {
       return Center(
         child: Container(
