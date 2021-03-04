@@ -121,9 +121,6 @@ class BetterPlayerController {
   ///Was player playing before automatic pause.
   bool? _wasPlayingBeforePause;
 
-  ///Internal flag used to cancel dismiss of the full screen. Used when user
-  ///switches quality (track or resolution) of the video. You should ignore it.
-  bool cancelFullScreenDismiss = false;
 
   ///Currently used translations
   BetterPlayerTranslations translations = BetterPlayerTranslations();
@@ -335,7 +332,6 @@ class BetterPlayerController {
 
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedSubtitles));
     if (!_disposed && !sourceInitialize) {
-      cancelFullScreenDismiss = true;
       _addControllerEvent(BetterPlayerControllerEvent.changeSubtitles);
     }
   }
@@ -774,7 +770,6 @@ class BetterPlayerController {
   void setResolution(String url) async {
     final position = await videoPlayerController?.position;
     final wasPlayingBeforeChange = isPlaying()!;
-    cancelFullScreenDismiss = true;
     pause();
     await setupDataSource(betterPlayerDataSource!.copyWith(url: url));
     videoPlayerController?.seekTo(position);
