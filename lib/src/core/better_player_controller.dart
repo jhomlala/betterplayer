@@ -314,6 +314,9 @@ class BetterPlayerController {
           _isDataSourceHls(betterPlayerDataSource!)) {
         _betterPlayerAudioTracks = await BetterPlayerHlsUtils.parseLanguages(
             hlsData, betterPlayerDataSource!.url);
+        if (_betterPlayerAudioTracks?.isNotEmpty == true){
+          setAudioTrack(_betterPlayerAudioTracks!.first);
+        }
       }
     }
   }

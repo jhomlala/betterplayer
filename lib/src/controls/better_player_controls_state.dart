@@ -342,27 +342,28 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         betterPlayerController!.betterPlayerAudioTrack;
     if (tracks != null) {
       for (var index = 0; index < tracks.length; index++) {
-        children.add(_buildAudioTrackRow(tracks[index], selectedAudioTrack));
+        final bool isSelected =
+            selectedAudioTrack != null && selectedAudioTrack == tracks[index];
+        children.add(_buildAudioTrackRow(tracks[index], isSelected));
       }
     }
 
     if (children.isEmpty) {
       children.add(
         _buildAudioTrackRow(
-            BetterPlayerHlsAudioTrack(
-              label: betterPlayerController!.translations.generalDefault,
-            ),
-            selectedAudioTrack),
+          BetterPlayerHlsAudioTrack(
+            label: betterPlayerController!.translations.generalDefault,
+          ),
+          true,
+        ),
       );
     }
 
     _showModalBottomSheet(children);
   }
 
-  Widget _buildAudioTrackRow(BetterPlayerHlsAudioTrack audioTrack,
-      BetterPlayerHlsAudioTrack? selectedAudioTrack) {
-    final bool isSelected =
-        selectedAudioTrack != null && selectedAudioTrack == audioTrack;
+  Widget _buildAudioTrackRow(
+      BetterPlayerHlsAudioTrack audioTrack, bool isSelected) {
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
