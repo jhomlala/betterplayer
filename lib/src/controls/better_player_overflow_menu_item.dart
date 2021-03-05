@@ -10,7 +10,7 @@ class BetterPlayerOverflowMenuItem {
   final String title;
 
   ///Callback when item is clicked
-  final Function onClicked;
+  final Function() onClicked;
 
   BetterPlayerOverflowMenuItem(this.icon, this.title, this.onClicked);
 }

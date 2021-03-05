@@ -104,7 +104,7 @@ packages:
       name: flutter_widget_from_html_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.0-rc.2021030201"
+    version: "0.6.0-rc.2021030401"
   html:
     dependency: transitive
     description:
@@ -132,7 +132,7 @@ packages:
       name: lint
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.1"
+    version: "1.5.2"
   matcher:
     dependency: transitive
     description:
@@ -329,4 +329,4 @@ packages:
     version: "0.2.0"
 sdks:
   dart: ">=2.12.0 <3.0.0"
-  flutter: ">=1.24.0-0"
+  flutter: ">=2.0.0"

@@ -46,7 +46,7 @@ class BetterPlayerController {
   final BetterPlayerPlaylistConfiguration? betterPlayerPlaylistConfiguration;
 
   ///List of event listeners, which listen to events.
-  final List<Function?> _eventListeners = [];
+  final List<Function(BetterPlayerEvent)?> _eventListeners = [];
 
   ///List of files to delete once player disposes.
   final List<File> _tempFiles = [];
@@ -639,7 +639,7 @@ class BetterPlayerController {
 
   ///Send player event to all listeners.
   void _postEvent(BetterPlayerEvent betterPlayerEvent) {
-    for (final Function? eventListener in _eventListeners) {
+    for (final Function(BetterPlayerEvent)? eventListener in _eventListeners) {
       if (eventListener != null) {
         eventListener(betterPlayerEvent);
       }

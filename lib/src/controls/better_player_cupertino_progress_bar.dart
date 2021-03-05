@@ -63,12 +63,15 @@ class _VideoProgressBarState
   @override
   Widget build(BuildContext context) {
     void seekToRelativePosition(Offset globalPosition) {
-      final box = context.findRenderObject() as RenderBox;
-      final Offset tapPos = box.globalToLocal(globalPosition);
-      final double relative = tapPos.dx / box.size.width;
-      if (relative > 0) {
-        final Duration position = controller!.value.duration! * relative;
-        controller!.seekTo(position);
+      final RenderObject? renderObject = context.findRenderObject();
+      if (renderObject != null) {
+        final box = renderObject as RenderBox;
+        final Offset tapPos = box.globalToLocal(globalPosition);
+        final double relative = tapPos.dx / box.size.width;
+        if (relative > 0) {
+          final Duration position = controller!.value.duration! * relative;
+          controller!.seekTo(position);
+        }
       }
     }
 
