@@ -19,59 +19,59 @@ class BetterPlayerDataSource {
   final String url;
 
   ///Subtitles configuration
-  final List<BetterPlayerSubtitlesSource> subtitles;
+  final List<BetterPlayerSubtitlesSource>? subtitles;
 
   ///Flag to determine if current data source is live stream
-  final bool liveStream;
+  final bool? liveStream;
 
   /// Custom headers for player
-  final Map<String, String> headers;
+  final Map<String, String>? headers;
 
   ///Should player use hls subtitles
-  final bool useHlsSubtitles;
+  final bool? useHlsSubtitles;
 
   ///Should player use hls tracks
-  final bool useHlsTracks;
+  final bool? useHlsTracks;
 
   ///Should player use hls audio tracks
-  final bool useHlsAudioTracks;
+  final bool? useHlsAudioTracks;
 
   ///List of strings that represents tracks names.
   ///If empty, then better player will choose name based on track parameters
-  final List<String> hlsTrackNames;
+  final List<String>? hlsTrackNames;
 
   ///Optional, alternative resolutions for non-hls video. Used to setup
   ///different qualities for video.
   ///Data should be in given format:
   ///{"360p": "url", "540p": "url2" }
-  final Map<String, String> resolutions;
+  final Map<String, String>? resolutions;
 
   ///Optional cache configuration, used only for network data sources
-  final BetterPlayerCacheConfiguration cacheConfiguration;
+  final BetterPlayerCacheConfiguration? cacheConfiguration;
 
   ///List of bytes, used only in memory player
-  final List<int> bytes;
+  final List<int>? bytes;
 
   ///Configuration of remote controls notification
-  final BetterPlayerNotificationConfiguration notificationConfiguration;
+  final BetterPlayerNotificationConfiguration? notificationConfiguration;
 
   ///Duration which will be returned instead of original duration
-  final Duration overriddenDuration;
+  final Duration? overriddenDuration;
 
   ///Video format hint when data source url has not valid extension.
-  final BetterPlayerVideoFormat videoFormat;
+  final BetterPlayerVideoFormat? videoFormat;
 
   ///Extension of video without dot. Used only in memory data source.
-  final String videoExtension;
+  final String? videoExtension;
 
   ///Configuration of content protection
-  final BetterPlayerDrmConfiguration drmConfiguration;
+  final BetterPlayerDrmConfiguration? drmConfiguration;
 
   ///Placeholder widget which will be shown until video load or play. This
   ///placeholder may be useful if you want to show placeholder before each video
   ///in playlist. Otherwise, you should use placeholder from
   /// BetterPlayerConfiguration.
-  final Widget placeholder;
+  final Widget? placeholder;
 
   BetterPlayerDataSource(
     this.type,
@@ -94,9 +94,8 @@ class BetterPlayerDataSource {
     this.drmConfiguration,
     this.placeholder,
   }) : assert(
-            ((type == BetterPlayerDataSourceType.network ||
-                        type == BetterPlayerDataSourceType.file) &&
-                    url != null) ||
+            (type == BetterPlayerDataSourceType.network ||
+                    type == BetterPlayerDataSourceType.file) ||
                 (type == BetterPlayerDataSourceType.memory &&
                     bytes?.isNotEmpty == true),
             "Url can't be null in network or file data source | bytes can't be null when using memory data source");
@@ -105,20 +104,20 @@ class BetterPlayerDataSource {
   ///Bytes parameter is not used in this data source.
   factory BetterPlayerDataSource.network(
     String url, {
-    List<BetterPlayerSubtitlesSource> subtitles,
-    bool liveStream,
-    Map<String, String> headers,
-    bool useHlsSubtitles,
-    bool useHlsTracks,
-    bool useHlsAudioTracks,
-    Map<String, String> qualities,
-    BetterPlayerCacheConfiguration cacheConfiguration,
+    List<BetterPlayerSubtitlesSource>? subtitles,
+    bool? liveStream,
+    Map<String, String>? headers,
+    bool? useHlsSubtitles,
+    bool? useHlsTracks,
+    bool? useHlsAudioTracks,
+    Map<String, String>? qualities,
+    BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration =
         const BetterPlayerNotificationConfiguration(showNotification: false),
-    Duration overriddenDuration,
-    BetterPlayerVideoFormat videoFormat,
-    BetterPlayerDrmConfiguration drmConfiguration,
-    Widget placeholder,
+    Duration? overriddenDuration,
+    BetterPlayerVideoFormat? videoFormat,
+    BetterPlayerDrmConfiguration? drmConfiguration,
+    Widget? placeholder,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -143,14 +142,14 @@ class BetterPlayerDataSource {
   ///Bytes parameter is not used in this data source.
   factory BetterPlayerDataSource.file(
     String url, {
-    List<BetterPlayerSubtitlesSource> subtitles,
-    bool useHlsSubtitles,
-    bool useHlsTracks,
-    Map<String, String> qualities,
-    BetterPlayerCacheConfiguration cacheConfiguration,
-    BetterPlayerNotificationConfiguration notificationConfiguration,
-    Duration overriddenDuration,
-    Widget placeholder,
+    List<BetterPlayerSubtitlesSource>? subtitles,
+    bool? useHlsSubtitles,
+    bool? useHlsTracks,
+    Map<String, String>? qualities,
+    BetterPlayerCacheConfiguration? cacheConfiguration,
+    BetterPlayerNotificationConfiguration? notificationConfiguration,
+    Duration? overriddenDuration,
+    Widget? placeholder,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.file,
@@ -171,15 +170,15 @@ class BetterPlayerDataSource {
   ///Url parameter is not used in this data source.
   factory BetterPlayerDataSource.memory(
     List<int> bytes, {
-    String videoExtension,
-    List<BetterPlayerSubtitlesSource> subtitles,
-    bool useHlsSubtitles,
-    bool useHlsTracks,
-    Map<String, String> qualities,
-    BetterPlayerCacheConfiguration cacheConfiguration,
-    BetterPlayerNotificationConfiguration notificationConfiguration,
-    Duration overriddenDuration,
-    Widget placeholder,
+    String? videoExtension,
+    List<BetterPlayerSubtitlesSource>? subtitles,
+    bool? useHlsSubtitles,
+    bool? useHlsTracks,
+    Map<String, String>? qualities,
+    BetterPlayerCacheConfiguration? cacheConfiguration,
+    BetterPlayerNotificationConfiguration? notificationConfiguration,
+    Duration? overriddenDuration,
+    Widget? placeholder,
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.memory,
@@ -199,24 +198,24 @@ class BetterPlayerDataSource {
   }
 
   BetterPlayerDataSource copyWith({
-    BetterPlayerDataSourceType type,
-    String url,
-    List<int> bytes,
-    List<BetterPlayerSubtitlesSource> subtitles,
-    bool liveStream,
-    Map<String, String> headers,
-    bool useHlsSubtitles,
-    bool useHlsTracks,
-    bool useHlsAudioTracks,
-    Map<String, String> resolutions,
-    BetterPlayerCacheConfiguration cacheConfiguration,
-    BetterPlayerNotificationConfiguration notificationConfiguration =
+    BetterPlayerDataSourceType? type,
+    String? url,
+    List<int>? bytes,
+    List<BetterPlayerSubtitlesSource>? subtitles,
+    bool? liveStream,
+    Map<String, String>? headers,
+    bool? useHlsSubtitles,
+    bool? useHlsTracks,
+    bool? useHlsAudioTracks,
+    Map<String, String>? resolutions,
+    BetterPlayerCacheConfiguration? cacheConfiguration,
+    BetterPlayerNotificationConfiguration? notificationConfiguration =
         const BetterPlayerNotificationConfiguration(showNotification: false),
-    Duration overriddenDuration,
-    BetterPlayerVideoFormat videoFormat,
-    String videoExtension,
-    BetterPlayerDrmConfiguration drmConfiguration,
-    Widget placeholder,
+    Duration? overriddenDuration,
+    BetterPlayerVideoFormat? videoFormat,
+    String? videoExtension,
+    BetterPlayerDrmConfiguration? drmConfiguration,
+    Widget? placeholder,
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,

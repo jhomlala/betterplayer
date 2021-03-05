@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 class BetterPlayerUtils {
   static String formatBitrate(int bitrate) {
-    assert(bitrate != null, "Bitrate can't be null");
     if (bitrate < 1000) {
       return "$bitrate bit/s";
     }
@@ -17,7 +16,6 @@ class BetterPlayerUtils {
   }
 
   static String formatDuration(Duration position) {
-    assert(position != null, "Position can't be null!");
     final ms = position.inMilliseconds;
 
     int seconds = ms ~/ 1000;
@@ -51,7 +49,6 @@ class BetterPlayerUtils {
   }
 
   static double calculateAspectRatio(BuildContext context) {
-    assert(context != null, "Context can't be null!");
     final size = MediaQuery.of(context).size;
     final width = size.width;
     final height = size.height;

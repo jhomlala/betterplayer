@@ -11,7 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 // Package imports:
-import 'package:meta/meta.dart' show required, visibleForTesting;
+import 'package:meta/meta.dart' show visibleForTesting;
 
 import 'method_channel_video_player.dart';
 
@@ -65,99 +65,99 @@ abstract class VideoPlayerPlatform {
   }
 
   /// Clears one video.
-  Future<void> dispose(int textureId) {
+  Future<void> dispose(int? textureId) {
     throw UnimplementedError('dispose() has not been implemented.');
   }
 
   /// Creates an instance of a video player and returns its textureId.
-  Future<int> create() {
+  Future<int?> create() {
     throw UnimplementedError('create() has not been implemented.');
   }
 
   /// Set data source of video.
-  Future<void> setDataSource(int textureId, DataSource dataSource) {
+  Future<void> setDataSource(int? textureId, DataSource dataSource) {
     throw UnimplementedError('setDataSource() has not been implemented.');
   }
 
   /// Returns a Stream of [VideoEventType]s.
-  Stream<VideoEvent> videoEventsFor(int textureId) {
+  Stream<VideoEvent> videoEventsFor(int? textureId) {
     throw UnimplementedError('videoEventsFor() has not been implemented.');
   }
 
   /// Sets the looping attribute of the video.
-  Future<void> setLooping(int textureId, bool looping) {
+  Future<void> setLooping(int? textureId, bool looping) {
     throw UnimplementedError('setLooping() has not been implemented.');
   }
 
   /// Starts the video playback.
-  Future<void> play(int textureId) {
+  Future<void> play(int? textureId) {
     throw UnimplementedError('play() has not been implemented.');
   }
 
   /// Stops the video playback.
-  Future<void> pause(int textureId) {
+  Future<void> pause(int? textureId) {
     throw UnimplementedError('pause() has not been implemented.');
   }
 
   /// Sets the volume to a range between 0.0 and 1.0.
-  Future<void> setVolume(int textureId, double volume) {
+  Future<void> setVolume(int? textureId, double volume) {
     throw UnimplementedError('setVolume() has not been implemented.');
   }
 
   /// Sets the video speed to a range between 0.0 and 2.0
-  Future<void> setSpeed(int textureId, double speed) {
+  Future<void> setSpeed(int? textureId, double speed) {
     throw UnimplementedError('setSpeed() has not been implemented.');
   }
 
   /// Sets the video track parameters (used to select quality of the video)
   Future<void> setTrackParameters(
-      int textureId, int width, int height, int bitrate) {
+      int? textureId, int? width, int? height, int? bitrate) {
     throw UnimplementedError('setTrackParameters() has not been implemented.');
   }
 
   /// Sets the video position to a [Duration] from the start.
-  Future<void> seekTo(int textureId, Duration position) {
+  Future<void> seekTo(int? textureId, Duration? position) {
     throw UnimplementedError('seekTo() has not been implemented.');
   }
 
   /// Gets the video position as [Duration] from the start.
-  Future<Duration> getPosition(int textureId) {
+  Future<Duration> getPosition(int? textureId) {
     throw UnimplementedError('getPosition() has not been implemented.');
   }
 
   /// Gets the video position as [DateTime].
-  Future<DateTime> getAbsolutePosition(int textureId) {
+  Future<DateTime?> getAbsolutePosition(int? textureId) {
     throw UnimplementedError('getAbsolutePosition() has not been implemented.');
   }
 
   ///Enables PiP mode.
-  Future<void> enablePictureInPicture(
-      int textureId, double top, double left, double width, double height) {
+  Future<void> enablePictureInPicture(int? textureId, double? top, double? left,
+      double? width, double? height) {
     throw UnimplementedError(
         'enablePictureInPicture() has not been implemented.');
   }
 
   ///Disables PiP mode.
-  Future<void> disablePictureInPicture(int textureId) {
+  Future<void> disablePictureInPicture(int? textureId) {
     throw UnimplementedError(
         'disablePictureInPicture() has not been implemented.');
   }
 
-  Future<bool> isPictureInPictureEnabled(int textureId) {
+  Future<bool?> isPictureInPictureEnabled(int? textureId) {
     throw UnimplementedError(
         'isPictureInPictureEnabled() has not been implemented.');
   }
 
-  Future<void> setAudioTrack(int textureId, String name, int index) {
+  Future<void> setAudioTrack(int? textureId, String? name, int? index) {
     throw UnimplementedError('setAudio() has not been implemented.');
   }
 
-  Future<void> setMixWithOthers(int textureId, bool mixWithOthers) {
+  Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
 
   /// Returns a widget displaying the video with a given textureID.
-  Widget buildView(int textureId) {
+  Widget buildView(int? textureId) {
     throw UnimplementedError('buildView() has not been implemented.');
   }
 
@@ -194,7 +194,7 @@ class DataSource {
   /// package and null otherwise.
   ///
   DataSource({
-    @required this.sourceType,
+    required this.sourceType,
     this.uri,
     this.formatHint,
     this.asset,
@@ -226,14 +226,14 @@ class DataSource {
   ///
   /// This will be in different formats depending on the [DataSourceType] of
   /// the original video.
-  final String uri;
+  final String? uri;
 
   /// **Android only**. Will override the platform's generic file format
   /// detection with whatever is set here.
-  final VideoFormat formatHint;
+  final VideoFormat? formatHint;
 
   /// **Android only**. String representation of a formatHint.
-  String get rawFormalHint {
+  String? get rawFormalHint {
     switch (formatHint) {
       case VideoFormat.ss:
         return 'ss';
@@ -243,49 +243,49 @@ class DataSource {
         return 'dash';
       case VideoFormat.other:
         return 'other';
+      default:
+        return null;
     }
-
-    return null;
   }
 
   /// The name of the asset. Only set for [DataSourceType.asset] videos.
-  final String asset;
+  final String? asset;
 
   /// The package that the asset was loaded from. Only set for
   /// [DataSourceType.asset] videos.
-  final String package;
+  final String? package;
 
-  final Map<String, String> headers;
+  final Map<String, String?>? headers;
 
   final bool useCache;
 
-  final int maxCacheSize;
+  final int? maxCacheSize;
 
-  final int maxCacheFileSize;
+  final int? maxCacheFileSize;
 
-  final bool showNotification;
+  final bool? showNotification;
 
-  final String title;
+  final String? title;
 
-  final String author;
+  final String? author;
 
-  final String imageUrl;
+  final String? imageUrl;
 
-  final String notificationChannelName;
+  final String? notificationChannelName;
 
-  final Duration overriddenDuration;
+  final Duration? overriddenDuration;
 
-  final String licenseUrl;
+  final String? licenseUrl;
 
-  final Map<String, String> drmHeaders;
+  final Map<String, String>? drmHeaders;
 
   /// Key to compare DataSource
   String get key {
-    String result = "";
+    String? result = "";
 
-    if (uri != null && uri.isNotEmpty) {
+    if (uri != null && uri!.isNotEmpty) {
       result = uri;
-    } else if (package != null && package.isNotEmpty) {
+    } else if (package != null && package!.isNotEmpty) {
       result = "$package:$asset";
     } else {
       result = asset;
@@ -295,7 +295,7 @@ class DataSource {
       result = "$result:$rawFormalHint";
     }
 
-    return result;
+    return result!;
   }
 
   @override
@@ -347,8 +347,8 @@ class VideoEvent {
   /// Depending on the [eventType], the [duration], [size] and [buffered]
   /// arguments can be null.
   VideoEvent({
-    @required this.eventType,
-    @required this.key,
+    required this.eventType,
+    required this.key,
     this.duration,
     this.size,
     this.buffered,
@@ -361,25 +361,25 @@ class VideoEvent {
   /// Data source of the video.
   ///
   /// Used to determine which video the event belongs to.
-  final String key;
+  final String? key;
 
   /// Duration of the video.
   ///
   /// Only used if [eventType] is [VideoEventType.initialized].
-  final Duration duration;
+  final Duration? duration;
 
   /// Size of the video.
   ///
   /// Only used if [eventType] is [VideoEventType.initialized].
-  final Size size;
+  final Size? size;
 
   /// Buffered parts of the video.
   ///
   /// Only used if [eventType] is [VideoEventType.bufferingUpdate].
-  final List<DurationRange> buffered;
+  final List<DurationRange>? buffered;
 
   ///Seek position
-  final Duration position;
+  final Duration? position;
 
   @override
   bool operator ==(Object other) {

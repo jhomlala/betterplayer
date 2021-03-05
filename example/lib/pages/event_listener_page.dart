@@ -10,7 +10,7 @@ class EventListenerPage extends StatefulWidget {
 }
 
 class _EventListenerPageState extends State<EventListenerPage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
   List<BetterPlayerEvent> events = [];
   StreamController<DateTime> _eventStreamController =
       StreamController.broadcast();

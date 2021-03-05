@@ -8,7 +8,7 @@ class HlsTracksPage extends StatefulWidget {
 }
 
 class _HlsTracksPageState extends State<HlsTracksPage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {

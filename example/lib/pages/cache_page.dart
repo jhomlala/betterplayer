@@ -8,7 +8,7 @@ class CachePage extends StatefulWidget {
 }
 
 class _CachePageState extends State<CachePage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {

@@ -57,7 +57,7 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
                 final now = DateTime.now();
                 final timeDiff = now.millisecondsSinceEpoch - lastMilli;
                 if (notification is ScrollUpdateNotification) {
-                  final pixelsPerMilli = notification.scrollDelta / timeDiff;
+                  final pixelsPerMilli = notification.scrollDelta! / timeDiff;
                   if (pixelsPerMilli.abs() > 1) {
                     _canBuildVideo = false;
                   } else {

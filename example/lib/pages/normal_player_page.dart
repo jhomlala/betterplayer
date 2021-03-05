@@ -9,7 +9,7 @@ class NormalPlayerPage extends StatefulWidget {
 }
 
 class _NormalPlayerPageState extends State<NormalPlayerPage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {
@@ -17,13 +17,11 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
         BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-    );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      "http://cdn.theoplayer.com/video/elephants-dream/playlist.m3u8",
+      autoPlay: true,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(dataSource);
+    _betterPlayerController.setupDataSource(
+        BetterPlayerDataSource.network(Constants.forBiggerBlazesUrl));
     super.initState();
   }
 

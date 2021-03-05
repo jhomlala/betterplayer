@@ -9,7 +9,7 @@ class ControlsConfigurationPage extends StatefulWidget {
 }
 
 class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
-  BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController;
 
   @override
   void initState() {

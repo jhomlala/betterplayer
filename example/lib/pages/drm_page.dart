@@ -8,8 +8,8 @@ class DrmPage extends StatefulWidget {
 }
 
 class _DrmPageState extends State<DrmPage> {
-  BetterPlayerController _tokenController;
-  BetterPlayerController _widevineController;
+  late BetterPlayerController _tokenController;
+  late BetterPlayerController _widevineController;
 
   @override
   void initState() {

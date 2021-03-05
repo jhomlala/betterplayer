@@ -26,7 +26,7 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
   ///Flag to determine if video should be auto paused
   final bool autoPause;
 
-  final BetterPlayerListVideoPlayerController
+  final BetterPlayerListVideoPlayerController?
       betterPlayerListVideoPlayerController;
 
   const BetterPlayerListVideoPlayer(
@@ -36,14 +36,9 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
     this.autoPlay = true,
     this.autoPause = true,
     this.betterPlayerListVideoPlayerController,
-    Key key,
-  })  : assert(dataSource != null, "Data source can't be null"),
-        assert(configuration != null, "Configuration can't be null"),
-        assert(
-            playFraction != null && playFraction >= 0.0 && playFraction <= 1.0,
+    Key? key,
+  })  : assert(playFraction >= 0.0 && playFraction <= 1.0,
             "Play fraction can't be null and must be between 0.0 and 1.0"),
-        assert(autoPlay != null, "Auto play can't be null"),
-        assert(autoPause != null, "Auto pause can't be null"),
         super(key: key);
 
   @override
@@ -54,7 +49,7 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
 class _BetterPlayerListVideoPlayerState
     extends State<BetterPlayerListVideoPlayer>
     with AutomaticKeepAliveClientMixin<BetterPlayerListVideoPlayer> {
-  BetterPlayerController _betterPlayerController;
+  BetterPlayerController? _betterPlayerController;
   bool _isDisposing = false;
 
   @override
@@ -70,14 +65,14 @@ class _BetterPlayerListVideoPlayerState
     );
 
     if (widget.betterPlayerListVideoPlayerController != null) {
-      widget.betterPlayerListVideoPlayerController
+      widget.betterPlayerListVideoPlayerController!
           .setBetterPlayerController(_betterPlayerController);
     }
   }
 
   @override
   void dispose() {
-    _betterPlayerController.dispose();
+    _betterPlayerController!.dispose();
     _isDisposing = true;
     super.dispose();
   }
@@ -86,25 +81,25 @@ class _BetterPlayerListVideoPlayerState
   Widget build(BuildContext context) {
     super.build(context);
     return AspectRatio(
-      aspectRatio: _betterPlayerController.getAspectRatio() ??
+      aspectRatio: _betterPlayerController!.getAspectRatio() ??
           BetterPlayerUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         key: Key("${_getUniqueKey()}_player"),
-        controller: _betterPlayerController,
+        controller: _betterPlayerController!,
       ),
     );
   }
 
   void onVisibilityChanged(double visibleFraction) async {
-    final bool isPlaying = _betterPlayerController.isPlaying();
-    final bool initialized = _betterPlayerController.isVideoInitialized();
+    final bool? isPlaying = _betterPlayerController!.isPlaying();
+    final bool? initialized = _betterPlayerController!.isVideoInitialized();
     if (visibleFraction >= widget.playFraction) {
-      if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
-        _betterPlayerController.play();
+      if (widget.autoPlay && initialized! && !isPlaying! && !_isDisposing) {
+        _betterPlayerController!.play();
       }
     } else {
-      if (widget.autoPause && initialized && isPlaying && !_isDisposing) {
-        _betterPlayerController.pause();
+      if (widget.autoPause && initialized! && isPlaying! && !_isDisposing) {
+        _betterPlayerController!.pause();
       }
     }
   }
