@@ -445,7 +445,6 @@ class BetterPlayerController {
   ///run on player start.
   Future _initializeVideo() async {
     setLooping(betterPlayerConfiguration.looping);
-
     _videoEventStreamSubscription = videoPlayerController
         ?.videoEventStreamController.stream
         .listen(_handleVideoEvent);
