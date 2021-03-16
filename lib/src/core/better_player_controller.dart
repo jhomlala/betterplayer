@@ -1066,11 +1066,13 @@ class BetterPlayerController {
       return;
     }
     if (!_disposed) {
-      pause();
+      if (videoPlayerController != null) {
+        pause();
+        videoPlayerController!.removeListener(_onFullScreenStateChanged);
+        videoPlayerController!.removeListener(_onVideoPlayerChanged);
+        videoPlayerController!.dispose();
+      }
       _eventListeners.clear();
-      videoPlayerController?.removeListener(_onFullScreenStateChanged);
-      videoPlayerController?.removeListener(_onVideoPlayerChanged);
-      videoPlayerController?.dispose();
       _nextVideoTimer?.cancel();
       nextVideoTimeStreamController.close();
       _controlsVisibilityStreamController.close();

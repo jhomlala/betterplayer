@@ -1,3 +1,6 @@
+## 0.0.63
+* Fixed pause method in dispose.
+
 ## 0.0.62
 * Refactored internal event handling.
 * [BREAKING_CHANGE] Migrated to null safety.
