@@ -1040,6 +1040,15 @@ class BetterPlayerController {
     videoPlayerController!.setMixWithOthers(mixWithOthers);
   }
 
+  ///Clear all cached data. Video player controller must be initialized to
+  ///clear the cache.
+  void clearCache() {
+    if (videoPlayerController == null) {
+      throw StateError("The data source has not been initialized");
+    }
+    videoPlayerController!.clearCache();
+  }
+
   ///Build headers map that will be used to setup video player controller. Apply
   ///DRM headers if available.
   Map<String, String?> _getHeaders() {

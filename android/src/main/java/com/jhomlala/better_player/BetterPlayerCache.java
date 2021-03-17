@@ -1,6 +1,7 @@
 package com.jhomlala.better_player;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.android.exoplayer2.database.ExoDatabaseProvider;
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
@@ -25,7 +26,6 @@ public class BetterPlayerCache {
         return instance;
     }
 
-
     public static void releaseCache() {
         try {
             if (instance != null) {
@@ -33,7 +33,7 @@ public class BetterPlayerCache {
                 instance = null;
             }
         } catch (Exception exception) {
-
+            Log.e("BetterPlayerCache", exception.toString());
         }
     }
 }

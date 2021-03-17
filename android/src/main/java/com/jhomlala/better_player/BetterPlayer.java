@@ -66,6 +66,7 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -789,9 +790,21 @@ final class BetterPlayer {
     }
 
     public void setMixWithOthers(Boolean mixWithOthers) {
-        setAudioAttributes(exoPlayer,mixWithOthers);
+        setAudioAttributes(exoPlayer, mixWithOthers);
     }
 
+    //Clear cache without accessing BetterPlayerCache.
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public void clearCache(Context context) {
+        try {
+            File file = context.getCacheDir();
+            if (file != null) {
+                file.delete();
+            }
+        } catch (Exception exception) {
+            Log.e("Cache", exception.toString());
+        }
+    }
 
     void dispose() {
         disposeMediaSession();
@@ -827,6 +840,7 @@ final class BetterPlayer {
         result = 31 * result + (surface != null ? surface.hashCode() : 0);
         return result;
     }
+
 }
 
 
