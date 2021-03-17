@@ -1228,9 +1228,9 @@ NSMutableDictionary*  _artworkImageDict;
             [player setAudioTrack:name index: index];
         } else if ([@"setMixWithOthers" isEqualToString:call.method]){
             [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
-        }
-        
-        else {
+        } else if ([@"clearCache" isEqualToString:call.method]){
+            [KTVHTTPCache cacheDeleteAllCaches];
+        } else {
             result(FlutterMethodNotImplemented);
         }
     }
