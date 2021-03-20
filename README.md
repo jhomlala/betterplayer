@@ -94,7 +94,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.62
+  better_player: ^0.0.63
 ```
 
 2. Install it

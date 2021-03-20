@@ -260,6 +260,16 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> clearCache(int? textureId) {
+    return _channel.invokeMethod<void>(
+      'clearCache',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
+  @override
   Stream<VideoEvent> videoEventsFor(int? textureId) {
     return _eventChannelFor(textureId)
         .receiveBroadcastStream()

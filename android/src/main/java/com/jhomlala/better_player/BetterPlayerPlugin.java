@@ -85,6 +85,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String DISABLE_PICTURE_IN_PICTURE_METHOD = "disablePictureInPicture";
     private static final String IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD = "isPictureInPictureSupported";
     private static final String SET_MIX_WITH_OTHERS_METHOD = "setMixWithOthers";
+    private static final String CLEAR_CACHE_METHOD = "clearCache";
     private static final String DISPOSE_METHOD = "dispose";
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
@@ -275,6 +276,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 break;
             case SET_MIX_WITH_OTHERS_METHOD:
                 player.setMixWithOthers(call.argument(MIX_WITH_OTHERS_PARAMETER));
+                break;
+            case CLEAR_CACHE_METHOD:
+                player.clearCache(flutterState.applicationContext);
                 break;
             case DISPOSE_METHOD:
                 dispose(player, textureId);

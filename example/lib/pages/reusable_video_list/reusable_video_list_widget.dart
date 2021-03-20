@@ -45,11 +45,16 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   void _setupController() {
     if (controller == null) {
       controller = widget.videoListController!.getBetterPlayerController();
-      controller!.setupDataSource(BetterPlayerDataSource.network(
-          videoListData!.videoUrl,
-          cacheConfiguration: BetterPlayerCacheConfiguration(useCache: true)));
-      betterPlayerControllerStreamController.add(controller);
-      controller!.addEventsListener(onPlayerEvent);
+      if (controller != null) {
+        controller!.setupDataSource(BetterPlayerDataSource.network(
+            videoListData!.videoUrl,
+            cacheConfiguration:
+                BetterPlayerCacheConfiguration(useCache: true)));
+        if (!betterPlayerControllerStreamController.isClosed) {
+          betterPlayerControllerStreamController.add(controller);
+        }
+        controller!.addEventsListener(onPlayerEvent);
+      }
     }
   }
 
@@ -63,7 +68,9 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
       widget.videoListController!.freeBetterPlayerController(controller);
       controller!.pause();
       controller = null;
-      betterPlayerControllerStreamController.add(null);
+      if (!betterPlayerControllerStreamController.isClosed) {
+        betterPlayerControllerStreamController.add(null);
+      }
       _initialized = false;
     }
   }
@@ -186,7 +193,6 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
       videoListData!.wasPlaying = controller!.isPlaying();
     }
     _initialized = true;
-    _freeController();
     super.deactivate();
   }
 }

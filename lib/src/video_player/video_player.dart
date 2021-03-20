@@ -578,6 +578,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   void setMixWithOthers(bool mixWithOthers) {
     _videoPlayerPlatform.setMixWithOthers(_textureId, mixWithOthers);
   }
+
+  void clearCache() {
+    _videoPlayerPlatform.clearCache(_textureId);
+  }
 }
 
 /// Widget that displays the video controlled by [controller].
