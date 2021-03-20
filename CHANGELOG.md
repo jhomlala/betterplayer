@@ -1,6 +1,7 @@
 ## 0.0.63
 * Fixed pause method in dispose.
 * Added clearCache method in BetterPlayerController.
+* Fixed reusable video player example issues.
 
 ## 0.0.62
 * Refactored internal event handling.
