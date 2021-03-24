@@ -44,6 +44,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String USE_CACHE_PARAMETER = "useCache";
     private static final String MAX_CACHE_SIZE_PARAMETER = "maxCacheSize";
     private static final String MAX_CACHE_FILE_SIZE_PARAMETER = "maxCacheFileSize";
+    private static final String PRECACHE_SIZE_PARAMETER = "preCacheSize";
     private static final String ASSET_PARAMETER = "asset";
     private static final String PACKAGE_PARAMETER = "package";
     private static final String URI_PARAMETER = "uri";
@@ -87,6 +88,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String SET_MIX_WITH_OTHERS_METHOD = "setMixWithOthers";
     private static final String CLEAR_CACHE_METHOD = "clearCache";
     private static final String DISPOSE_METHOD = "dispose";
+    private static final String PRECACHE_METHOD = "preCache";
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
     private final LongSparseArray<Map<String, Object>> dataSources = new LongSparseArray<>();
@@ -193,6 +195,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 videoPlayers.put(handle.id(), player);
                 break;
             }
+            case PRECACHE_METHOD:
+                preCache(call, result);
+                break;
             default: {
                 long textureId = ((Number) call.argument(TEXTURE_ID_PARAMETER)).longValue();
                 BetterPlayer player = videoPlayers.get(textureId);
@@ -349,6 +354,30 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     drmHeaders
             );
         }
+    }
+
+    private void preCache(MethodCall call, Result result) {
+        Map<String, Object> dataSource = call.argument(DATA_SOURCE_PARAMETER);
+
+        String key = getParameter(dataSource, KEY_PARAMETER, "");
+        Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 100*1024*1024);
+        Number maxCacheFileSizeNumber = getParameter(dataSource, MAX_CACHE_FILE_SIZE_PARAMETER, 10*1024*1024);
+        long maxCacheSize = maxCacheSizeNumber.longValue();
+        long maxCacheFileSize = maxCacheFileSizeNumber.longValue();
+        Number preCacheSizeNumber = getParameter(dataSource, PRECACHE_SIZE_PARAMETER, 3*1024*1024);
+        long preCacheSize = preCacheSizeNumber.longValue();
+        String uri = getParameter(dataSource, URI_PARAMETER, "");
+        Map<String, String> headers = getParameter(dataSource, HEADERS_PARAMETER, new HashMap<>());
+
+        BetterPlayer.preCache(flutterState.applicationContext,
+                key,
+                uri,
+                preCacheSize,
+                maxCacheSize,
+                maxCacheFileSize,
+                headers,
+                result
+        );
     }
 
     private Long getTextureId(BetterPlayer betterPlayer) {

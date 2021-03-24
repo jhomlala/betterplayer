@@ -51,9 +51,13 @@ import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheWriter;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 
@@ -120,6 +124,72 @@ final class BetterPlayer {
         exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
 
         setupVideoPlayer(eventChannel, textureEntry, result);
+    }
+
+    static void preCache(Context context, String key, String dataSource, long preCacheSize, long maxCacheSize, long maxCacheFileSize, Map<String, String> headers, Result result) {
+
+        Uri uri = Uri.parse(dataSource);
+        DataSource.Factory dataSourceFactory;
+
+        String userAgent = System.getProperty(USER_AGENT_PROPERTY);
+        if (headers != null && headers.containsKey(USER_AGENT)) {
+            String userAgentHeader = headers.get(USER_AGENT);
+            if (userAgentHeader != null) {
+                userAgent = userAgentHeader;
+            }
+        }
+
+        if (isHTTP(uri)) {
+            dataSourceFactory = new DefaultHttpDataSource.Factory()
+                    .setUserAgent(userAgent)
+                    .setAllowCrossProtocolRedirects(true)
+                    .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
+                    .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS);
+
+            if (headers != null) {
+                ((DefaultHttpDataSource.Factory) dataSourceFactory).setDefaultRequestProperties(headers);
+            }
+
+
+            DataSpec dataSpec = new DataSpec(uri, 0, preCacheSize);
+
+            class ProgressListener implements CacheWriter.ProgressListener {
+                @Override
+                public void onProgress(long requestLength, long bytesCached, long newBytesCached) {
+                    if (bytesCached >= requestLength) {
+                        //notify the requested size has finished caching
+                        new Handler(Looper.getMainLooper()).post(() -> result.success(null));
+                    }
+                }
+            }
+            CacheDataSourceFactory cacheDataSourceFactory =
+                    new CacheDataSourceFactory(context, maxCacheSize, maxCacheFileSize, dataSourceFactory);
+
+
+            CacheWriter cacheWriter = new CacheWriter(cacheDataSourceFactory.createDataSource(), dataSpec, true, null, new ProgressListener());
+
+            //start caching in a background thread
+            Runnable r = () -> {
+                try {
+                    cacheWriter.cache();
+                } catch (IOException ioException) {
+                    //we have to catch IOFException manually to avoid throwing when the video is actually fully loaded
+                    //see https://github.com/google/ExoPlayer/issues/7326
+                    if (ioException.getMessage().contains("Response code: 416")) {
+                        new Handler(Looper.getMainLooper()).post(() -> result.success(null));
+                    } else {
+                        //notify caching failed
+                        new Handler(Looper.getMainLooper()).post(() -> result.error(ioException.toString(), Arrays.toString(ioException.getStackTrace()), ioException));
+                    }
+                }
+            };
+            new Thread(r).start();
+
+        } else {
+            //preCache only possible from remote dataSource
+            result.error("Preloading only possible for remote data sources", null, null);
+        }
+
     }
 
     void setDataSource(

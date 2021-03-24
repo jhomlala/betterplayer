@@ -74,6 +74,11 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('create() has not been implemented.');
   }
 
+  /// Pre-caches a video.
+  Future<void> preCache(DataSource dataSource, int preCacheSize) {
+    return Future.value();
+  }
+
   /// Set data source of video.
   Future<void> setDataSource(int? textureId, DataSource dataSource) {
     throw UnimplementedError('setDataSource() has not been implemented.');

@@ -104,6 +104,26 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     return;
   }
 
+
+  @override
+  Future<void> preCache(DataSource dataSource, int preCacheSize) {
+    Map<String, dynamic>? dataSourceDescription;
+    dataSourceDescription = <String, dynamic>{
+      'key': dataSource.key,
+      'uri': dataSource.uri,
+      'headers': dataSource.headers,
+      'maxCacheSize': dataSource.maxCacheSize,
+      'maxCacheFileSize': dataSource.maxCacheFileSize,
+      'preCacheSize': preCacheSize
+    };
+    return _channel.invokeMethod<void>(
+      'preCache',
+      <String, dynamic>{
+        'dataSource': dataSourceDescription,
+      },
+    );
+  }
+
   @override
   Future<void> setLooping(int? textureId, bool looping) {
     return _channel.invokeMethod<void>(
