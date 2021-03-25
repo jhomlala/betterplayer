@@ -226,8 +226,7 @@ class BetterPlayerController {
   ///is downloaded or when the complete file is downloaded if the file is smaller than the requested size.
   static Future<void> preCache(
       BetterPlayerDataSource betterPlayerDataSource) async {
-
-    if (Platform.isAndroid){
+    if (Platform.isAndroid) {
       final cacheConfig = betterPlayerDataSource.cacheConfiguration ??
           BetterPlayerCacheConfiguration(useCache: true);
 
@@ -241,11 +240,11 @@ class BetterPlayerController {
           maxCacheSize: cacheConfig.maxCacheSize,
           maxCacheFileSize: cacheConfig.maxCacheFileSize);
 
-      return _videoPlayerPlatform.preCache(dataSource, cacheConfig.preCacheSize);
+      return _videoPlayerPlatform.preCache(
+          dataSource, cacheConfig.preCacheSize);
     } else {
       return Future.error("PreCaching is currently only supported on Android.");
     }
-
   }
 
   ///Setup new data source in Better Player.

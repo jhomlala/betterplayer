@@ -360,11 +360,11 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         Map<String, Object> dataSource = call.argument(DATA_SOURCE_PARAMETER);
 
         String key = getParameter(dataSource, KEY_PARAMETER, "");
-        Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 100*1024*1024);
-        Number maxCacheFileSizeNumber = getParameter(dataSource, MAX_CACHE_FILE_SIZE_PARAMETER, 10*1024*1024);
+        Number maxCacheSizeNumber = getParameter(dataSource, MAX_CACHE_SIZE_PARAMETER, 100 * 1024 * 1024);
+        Number maxCacheFileSizeNumber = getParameter(dataSource, MAX_CACHE_FILE_SIZE_PARAMETER, 10 * 1024 * 1024);
         long maxCacheSize = maxCacheSizeNumber.longValue();
         long maxCacheFileSize = maxCacheFileSizeNumber.longValue();
-        Number preCacheSizeNumber = getParameter(dataSource, PRECACHE_SIZE_PARAMETER, 3*1024*1024);
+        Number preCacheSizeNumber = getParameter(dataSource, PRECACHE_SIZE_PARAMETER, 3 * 1024 * 1024);
         long preCacheSize = preCacheSizeNumber.longValue();
         String uri = getParameter(dataSource, URI_PARAMETER, "");
         Map<String, String> headers = getParameter(dataSource, HEADERS_PARAMETER, new HashMap<>());

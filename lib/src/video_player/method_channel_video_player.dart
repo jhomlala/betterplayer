@@ -104,7 +104,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     return;
   }
 
-
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) {
     Map<String, dynamic>? dataSourceDescription;

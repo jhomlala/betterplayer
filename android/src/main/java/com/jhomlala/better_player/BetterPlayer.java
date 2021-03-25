@@ -55,8 +55,7 @@ import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
+import com.google.android.exoplayer2.upstream.HttpDataSource.HttpDataSourceException;
 import com.google.android.exoplayer2.upstream.cache.CacheWriter;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
@@ -172,19 +171,18 @@ final class BetterPlayer {
             Runnable r = () -> {
                 try {
                     cacheWriter.cache();
-                } catch (IOException ioException) {
-                    //we have to catch IOFException manually to avoid throwing when the video is actually fully loaded
+                } catch (Exception e) {
+                    //we have to catch HttpDataSourceException manually to avoid throwing when the video is actually fully loaded
                     //see https://github.com/google/ExoPlayer/issues/7326
-                    if (ioException.getMessage().contains("Response code: 416")) {
+                    if (e instanceof HttpDataSourceException) {
                         new Handler(Looper.getMainLooper()).post(() -> result.success(null));
                     } else {
                         //notify caching failed
-                        new Handler(Looper.getMainLooper()).post(() -> result.error(ioException.toString(), Arrays.toString(ioException.getStackTrace()), ioException));
+                        new Handler(Looper.getMainLooper()).post(() -> result.error(e.toString(), Arrays.toString(e.getStackTrace()), e));
                     }
                 }
             };
             new Thread(r).start();
-
         } else {
             //preCache only possible from remote dataSource
             result.error("Preloading only possible for remote data sources", null, null);
