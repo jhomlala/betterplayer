@@ -143,6 +143,13 @@ final class BetterPlayer {
         if (licenseUrl != null && !licenseUrl.isEmpty()) {
             HttpMediaDrmCallback httpMediaDrmCallback =
                     new HttpMediaDrmCallback(licenseUrl, new DefaultHttpDataSource.Factory());
+
+            if (drmHeaders != null) {
+                for (Map.Entry<String, String> entry : drmHeaders.entrySet()) {
+                    httpMediaDrmCallback.setKeyRequestProperty(entry.getKey(), entry.getValue());
+                }
+            }
+
             if (Util.SDK_INT < 18) {
                 Log.e(TAG, "Protected content not supported on API levels below 18");
                 drmSessionManager = null;
@@ -162,7 +169,6 @@ final class BetterPlayer {
                                             }
                                         })
                                 .setMultiSession(false)
-                                .setKeyRequestParameters(drmHeaders)
                                 .build(httpMediaDrmCallback);
             }
         } else {
