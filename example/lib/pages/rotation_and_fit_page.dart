@@ -15,7 +15,7 @@ class _RotationAndFitPageState extends State<RotationAndFitPage> {
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
       aspectRatio: 1.0,
-      fit: BoxFit.cover,
+      fit: BoxFit.fill,
       rotation: 90,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
@@ -41,10 +41,10 @@ class _RotationAndFitPageState extends State<RotationAndFitPage> {
               style: TextStyle(fontSize: 16),
             ),
           ),
-          Container(width: 300,child: AspectRatio(
+          AspectRatio(
             aspectRatio: 1.0,
             child: BetterPlayer(controller: _betterPlayerController),
-          ),)
+          ),
         ],
       ),
     );
