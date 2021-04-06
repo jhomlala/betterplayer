@@ -1,3 +1,6 @@
+## 0.0.64
+* Added Turkish translations (by https://github.com/smurat)
+
 ## 0.0.63
 * Fixed pause method in dispose.
 * Added clearCache method in BetterPlayerController.
