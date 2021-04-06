@@ -1,6 +1,7 @@
 ## 0.0.64
-* Added Turkish translations (by https://github.com/smurat)
-* Video fit fixes (by https://github.com/themadmrj)
+* Added Turkish translations (by https://github.com/smurat).
+* Video fit fixes (by https://github.com/themadmrj).
+* Fixed speed iOS issue.
 
 ## 0.0.63
 * Fixed pause method in dispose.
