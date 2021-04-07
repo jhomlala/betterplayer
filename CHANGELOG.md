@@ -3,6 +3,7 @@
 * Video fit fixes (by https://github.com/themadmrj).
 * Fixed speed iOS issue.
 * Fixed Android's notification image OOM issue.
+* Fixed 0 second delay issue in playlist.
 
 ## 0.0.63
 * Fixed pause method in dispose.
