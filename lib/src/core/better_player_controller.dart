@@ -445,6 +445,9 @@ class BetterPlayerController {
   ///run on player start.
   Future _initializeVideo() async {
     setLooping(betterPlayerConfiguration.looping);
+    _videoEventStreamSubscription?.cancel();
+    _videoEventStreamSubscription = null;
+
     _videoEventStreamSubscription = videoPlayerController
         ?.videoEventStreamController.stream
         .listen(_handleVideoEvent);
@@ -731,6 +734,10 @@ class BetterPlayerController {
       _nextVideoTime =
           betterPlayerPlaylistConfiguration!.nextVideoDelay.inSeconds;
       nextVideoTimeStreamController.add(_nextVideoTime);
+      if (_nextVideoTime == 0) {
+        return;
+      }
+
       _nextVideoTimer =
           Timer.periodic(const Duration(milliseconds: 1000), (_timer) async {
         if (_nextVideoTime == 1) {
