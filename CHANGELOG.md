@@ -4,6 +4,7 @@
 * Fixed speed iOS issue.
 * Fixed Android's notification image OOM issue.
 * Fixed 0 second delay issue in playlist.
+* Fixed drmHeaders to be sent in headers rather than request body (by https://github.com/FlutterSu)
 
 ## 0.0.63
 * Fixed pause method in dispose.
