@@ -28,8 +28,6 @@ import 'package:flutter/material.dart';
 // Package imports:
 import 'package:path_provider/path_provider.dart';
 
-import '../video_player/video_player_platform_interface.dart';
-
 ///Class used to control overall Better Player behavior. Main class to change
 ///state of Better Player.
 class BetterPlayerController {
@@ -222,8 +220,10 @@ class BetterPlayerController {
     return betterPLayerControllerProvider.controller;
   }
 
-  ///PreCache a video. Currently supports Android only. The future succeed when the requested size, specified in [BetterPlayerCacheConfiguration.preCacheSize],
-  ///is downloaded or when the complete file is downloaded if the file is smaller than the requested size.
+  ///PreCache a video. Currently supports Android only. The future succeed when
+  ///the requested size, specified in
+  ///[BetterPlayerCacheConfiguration.preCacheSize], is downloaded or when the
+  ///complete file is downloaded if the file is smaller than the requested size.
   static Future<void> preCache(
       BetterPlayerDataSource betterPlayerDataSource) async {
     if (Platform.isAndroid) {
