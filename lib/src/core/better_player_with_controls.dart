@@ -312,7 +312,6 @@ class _BetterPlayerVideoFitWidgetState
                 width: controller!.value.size?.width ?? 0,
                 height: controller!.value.size?.height ?? 0,
                 child: VideoPlayer(controller),
-                //
               ),
             ),
           ),

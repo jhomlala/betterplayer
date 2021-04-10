@@ -2,6 +2,8 @@ package com.jhomlala.better_player;
 
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
+import static com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory;
+import static com.jhomlala.better_player.DataSourceUtils.getUserAgent;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -52,8 +54,11 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.HttpDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheWriter;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 
@@ -86,8 +91,6 @@ final class BetterPlayer {
     private static final String FORMAT_HLS = "hls";
     private static final String FORMAT_OTHER = "other";
     private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
-    private static final String USER_AGENT = "User-Agent";
-    private static final String USER_AGENT_PROPERTY = "http.agent";
     private static final int NOTIFICATION_ID = 20772077;
     private static final int DEFAULT_NOTIFICATION_IMAGE_SIZE_PX = 256;
 
@@ -122,6 +125,63 @@ final class BetterPlayer {
         setupVideoPlayer(eventChannel, textureEntry, result);
     }
 
+
+    static void preCache(Context context, String key, String dataSource, long preCacheSize,
+                         long maxCacheSize, long maxCacheFileSize, Map<String, String> headers,
+                         Result result) {
+
+        Uri uri = Uri.parse(dataSource);
+
+        if (isHTTP(uri)) {
+
+            String userAgent = getUserAgent(headers);
+            DataSource.Factory dataSourceFactory = getDataSourceFactory(userAgent, headers);
+
+            DataSpec dataSpec = new DataSpec(uri, 0, preCacheSize);
+
+
+            CacheDataSourceFactory cacheDataSourceFactory =
+                    new CacheDataSourceFactory(context, maxCacheSize, maxCacheFileSize, dataSourceFactory);
+
+            final Handler mainHandler = new Handler(Looper.getMainLooper());
+
+            CacheWriter cacheWriter = new CacheWriter(
+                    cacheDataSourceFactory.createDataSource(),
+                    dataSpec,
+                    true,
+                    null,
+                    (long requestLength, long bytesCached, long newBytesCached) -> {
+                        if (bytesCached >= requestLength) {
+                            //notify the requested size has finished caching
+                            mainHandler.post(() -> result.success(null));
+                        }
+                    });
+
+            //start caching in a background thread
+            Runnable r = () -> {
+                try {
+                    cacheWriter.cache();
+                } catch (Exception e) {
+                    //we have to catch HttpDataSourceException manually to avoid throwing when the video is actually fully loaded
+                    //see https://github.com/google/ExoPlayer/issues/7326
+                    if (e instanceof HttpDataSource.HttpDataSourceException) {
+                        mainHandler.post(() -> result.success(null));
+                    } else {
+                        //notify caching failed
+                        mainHandler.post(() -> result.error(e.toString(), Arrays.toString(e.getStackTrace()), e));
+                    }
+                }
+            };
+            new Thread(r).start();
+        } else {
+            //preCache only possible from remote dataSource
+            result.error("Preloading only possible for remote data sources", null, null);
+        }
+
+
+    }
+
+
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
@@ -132,13 +192,7 @@ final class BetterPlayer {
         Uri uri = Uri.parse(dataSource);
         DataSource.Factory dataSourceFactory;
 
-        String userAgent = System.getProperty(USER_AGENT_PROPERTY);
-        if (headers != null && headers.containsKey(USER_AGENT)) {
-            String userAgentHeader = headers.get(USER_AGENT);
-            if (userAgentHeader != null) {
-                userAgent = userAgentHeader;
-            }
-        }
+        String userAgent = getUserAgent(headers);
 
         if (licenseUrl != null && !licenseUrl.isEmpty()) {
             HttpMediaDrmCallback httpMediaDrmCallback =
@@ -170,15 +224,7 @@ final class BetterPlayer {
         }
 
         if (isHTTP(uri)) {
-            dataSourceFactory = new DefaultHttpDataSource.Factory()
-                    .setUserAgent(userAgent)
-                    .setAllowCrossProtocolRedirects(true)
-                    .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
-                    .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS);
-
-            if (headers != null) {
-                ((DefaultHttpDataSource.Factory) dataSourceFactory).setDefaultRequestProperties(headers);
-            }
+            dataSourceFactory = getDataSourceFactory(userAgent, headers);
 
             if (useCache && maxCacheSize > 0 && maxCacheFileSize > 0) {
                 dataSourceFactory =
@@ -470,7 +516,7 @@ final class BetterPlayer {
     }
 
 
-    private static boolean isHTTP(Uri uri) {
+    static boolean isHTTP(Uri uri) {
         if (uri == null || uri.getScheme() == null) {
             return false;
         }
