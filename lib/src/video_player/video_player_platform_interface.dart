@@ -75,8 +75,13 @@ abstract class VideoPlayerPlatform {
   }
 
   /// Pre-caches a video.
-  Future<void> preCache(DataSource dataSource, int preCacheSize) {
-    return Future.value();
+  Future<void> preCache( DataSource dataSource, int preCacheSize) {
+    throw UnimplementedError('preCache() has not been implemented.');
+  }
+
+  /// Pre-caches a video.
+  Future<void> stopPreCache( String url) {
+    throw UnimplementedError('stopPreCache() has not been implemented.');
   }
 
   /// Set data source of video.
@@ -161,7 +166,7 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
 
-  Future<void> clearCache(int? textureId) {
+  Future<void> clearCache() {
     throw UnimplementedError('clearCache() has not been implemented.');
   }
 

@@ -224,27 +224,31 @@ class BetterPlayerController {
   ///the requested size, specified in
   ///[BetterPlayerCacheConfiguration.preCacheSize], is downloaded or when the
   ///complete file is downloaded if the file is smaller than the requested size.
-  static Future<void> preCache(
-      BetterPlayerDataSource betterPlayerDataSource) async {
-    if (Platform.isAndroid) {
-      final cacheConfig = betterPlayerDataSource.cacheConfiguration ??
-          BetterPlayerCacheConfiguration(useCache: true);
-
-      final VideoPlayerPlatform _videoPlayerPlatform =
-          VideoPlayerPlatform.instance;
-      final dataSource = DataSource(
-          sourceType: DataSourceType.network,
-          uri: betterPlayerDataSource.url,
-          useCache: true,
-          headers: betterPlayerDataSource.headers,
-          maxCacheSize: cacheConfig.maxCacheSize,
-          maxCacheFileSize: cacheConfig.maxCacheFileSize);
-
-      return _videoPlayerPlatform.preCache(
-          dataSource, cacheConfig.preCacheSize);
-    } else {
-      return Future.error("PreCaching is currently only supported on Android.");
+  Future<void> preCache(BetterPlayerDataSource betterPlayerDataSource) async {
+    if (!Platform.isAndroid) {
+      return Future.error("preCache is currently only supported on Android.");
     }
+
+    final cacheConfig = betterPlayerDataSource.cacheConfiguration ??
+        BetterPlayerCacheConfiguration(useCache: true);
+
+    final dataSource = DataSource(
+        sourceType: DataSourceType.network,
+        uri: betterPlayerDataSource.url,
+        useCache: true,
+        headers: betterPlayerDataSource.headers,
+        maxCacheSize: cacheConfig.maxCacheSize,
+        maxCacheFileSize: cacheConfig.maxCacheFileSize);
+
+    return VideoPlayerController.preCache(dataSource, cacheConfig.preCacheSize);
+  }
+
+  Future<void> stopPreCache(
+      BetterPlayerDataSource betterPlayerDataSource) async {
+    if (!Platform.isAndroid) {
+      return Future.error("stopPreCache is currently only supported on Android.");
+    }
+    return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url);
   }
 
   ///Setup new data source in Better Player.
@@ -1076,11 +1080,8 @@ class BetterPlayerController {
 
   ///Clear all cached data. Video player controller must be initialized to
   ///clear the cache.
-  void clearCache() {
-    if (videoPlayerController == null) {
-      throw StateError("The data source has not been initialized");
-    }
-    videoPlayerController!.clearCache();
+  Future<void> clearCache() async {
+    return VideoPlayerController.clearCache();
   }
 
   ///Build headers map that will be used to setup video player controller. Apply

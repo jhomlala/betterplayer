@@ -9,6 +9,7 @@ class CachePage extends StatefulWidget {
 
 class _CachePageState extends State<CachePage> {
   late BetterPlayerController _betterPlayerController;
+  late BetterPlayerDataSource _betterPlayerDataSource;
 
   @override
   void initState() {
@@ -17,13 +18,17 @@ class _CachePageState extends State<CachePage> {
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+    _betterPlayerDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.forBiggerBlazesUrl,
-      cacheConfiguration: BetterPlayerCacheConfiguration(useCache: true),
+      Constants.elephantDreamVideoUrl,
+      cacheConfiguration: BetterPlayerCacheConfiguration(
+          useCache: true,
+          preCacheSize: 10 * 1024 * 1024,
+          maxCacheSize: 10 * 1024 * 1024,
+          maxCacheFileSize: 10 * 1024 * 1024),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(dataSource);
+    _betterPlayerController.preCache(_betterPlayerDataSource);
     super.initState();
   }
 
@@ -54,6 +59,19 @@ class _CachePageState extends State<CachePage> {
             child: Text("Clear cache"),
             onPressed: () {
               _betterPlayerController.clearCache();
+              // _betterPlayerController.clearCache();
+            },
+          ),
+          TextButton(
+            child: Text("Stop pre cache"),
+            onPressed: () {
+              _betterPlayerController.stopPreCache(_betterPlayerDataSource);
+            },
+          ),
+          TextButton(
+            child: Text("Start video"),
+            onPressed: () {
+              _betterPlayerController.setupDataSource(_betterPlayerDataSource);
             },
           )
         ],
