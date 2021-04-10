@@ -72,7 +72,6 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -93,6 +92,7 @@ final class BetterPlayer {
     private static final String FORMAT_OTHER = "other";
     private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
     private static final int NOTIFICATION_ID = 20772077;
+    private static final int DEFAULT_NOTIFICATION_IMAGE_SIZE_PX = 256;
 
     private final SimpleExoPlayer exoPlayer;
     private final TextureRegistry.SurfaceTextureEntry textureEntry;
@@ -450,25 +450,69 @@ final class BetterPlayer {
         bitmap = null;
     }
 
-    private static Bitmap getBitmapFromInternalURL(String src) {
+    private Bitmap getBitmapFromInternalURL(String src) {
         try {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            options.inSampleSize = calculateBitmapInSmapleSize(options,
+                    DEFAULT_NOTIFICATION_IMAGE_SIZE_PX,
+                    DEFAULT_NOTIFICATION_IMAGE_SIZE_PX);
+            options.inJustDecodeBounds = false;
             return BitmapFactory.decodeFile(src);
         } catch (Exception exception) {
+            Log.e(TAG, "Failed to get bitmap from internal url: " + src);
             return null;
         }
     }
 
-    private static Bitmap getBitmapFromExternalURL(String src) {
+
+    private Bitmap getBitmapFromExternalURL(String src) {
+        InputStream inputStream = null;
         try {
             URL url = new URL(src);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
-        } catch (IOException exception) {
+            inputStream = connection.getInputStream();
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(inputStream, null, options);
+            inputStream.close();
+            connection = (HttpURLConnection) url.openConnection();
+            inputStream = connection.getInputStream();
+            options.inSampleSize = calculateBitmapInSmapleSize(
+                    options, DEFAULT_NOTIFICATION_IMAGE_SIZE_PX, DEFAULT_NOTIFICATION_IMAGE_SIZE_PX);
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeStream(inputStream, null, options);
+
+        } catch (Exception exception) {
+            Log.e(TAG, "Failed to get bitmap from external url: " + src);
             return null;
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (Exception exception) {
+                Log.e(TAG, "Failed to close bitmap input stream/");
+            }
         }
+    }
+
+    private int calculateBitmapInSmapleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
     }
 
 
