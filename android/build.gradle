@@ -50,6 +50,7 @@ android {
         implementation "android.arch.lifecycle:common-java8:1.1.1"
         implementation 'androidx.annotation:annotation:1.1.0'
         implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+        implementation "androidx.work:work-runtime:2.5.0"
     }
 }
 

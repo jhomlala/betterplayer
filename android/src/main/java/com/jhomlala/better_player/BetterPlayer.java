@@ -54,11 +54,8 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSpec;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheWriter;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 
@@ -66,6 +63,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.media.session.MediaButtonReceiver;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -126,59 +126,36 @@ final class BetterPlayer {
     }
 
 
-    static void preCache(Context context, String key, String dataSource, long preCacheSize,
+    static void preCache(Context context, String dataSource, long preCacheSize,
                          long maxCacheSize, long maxCacheFileSize, Map<String, String> headers,
                          Result result) {
-
-        Uri uri = Uri.parse(dataSource);
-
-        if (isHTTP(uri)) {
-
-            String userAgent = getUserAgent(headers);
-            DataSource.Factory dataSourceFactory = getDataSourceFactory(userAgent, headers);
-
-            DataSpec dataSpec = new DataSpec(uri, 0, preCacheSize);
-
-
-            CacheDataSourceFactory cacheDataSourceFactory =
-                    new CacheDataSourceFactory(context, maxCacheSize, maxCacheFileSize, dataSourceFactory);
-
-            final Handler mainHandler = new Handler(Looper.getMainLooper());
-
-            CacheWriter cacheWriter = new CacheWriter(
-                    cacheDataSourceFactory.createDataSource(),
-                    dataSpec,
-                    true,
-                    null,
-                    (long requestLength, long bytesCached, long newBytesCached) -> {
-                        if (bytesCached >= requestLength) {
-                            //notify the requested size has finished caching
-                            mainHandler.post(() -> result.success(null));
-                        }
-                    });
-
-            //start caching in a background thread
-            Runnable r = () -> {
-                try {
-                    cacheWriter.cache();
-                } catch (Exception e) {
-                    //we have to catch HttpDataSourceException manually to avoid throwing when the video is actually fully loaded
-                    //see https://github.com/google/ExoPlayer/issues/7326
-                    if (e instanceof HttpDataSource.HttpDataSourceException) {
-                        mainHandler.post(() -> result.success(null));
-                    } else {
-                        //notify caching failed
-                        mainHandler.post(() -> result.error(e.toString(), Arrays.toString(e.getStackTrace()), e));
-                    }
-                }
-            };
-            new Thread(r).start();
-        } else {
-            //preCache only possible from remote dataSource
-            result.error("Preloading only possible for remote data sources", null, null);
+        Data.Builder dataBuilder = new Data.Builder()
+                .putString("url", dataSource)
+                .putLong("preCacheSize", preCacheSize)
+                .putLong("maxCacheSize", maxCacheSize)
+                .putLong("maxCacheFileSize", maxCacheFileSize);
+        for (String headerKey : headers.keySet()) {
+            dataBuilder.putString("header_" + headerKey, headers.get(headerKey));
         }
 
+        OneTimeWorkRequest cacheWorkRequest = new OneTimeWorkRequest.Builder(CacheWorker.class)
+                .addTag(dataSource)
+                .setInputData(dataBuilder.build()).build();
+        WorkManager.getInstance(context).enqueue(cacheWorkRequest);
+        result.success(null);
+    }
 
+    static void stopPreCache(Context context, String url, Result result) {
+        Log.d(TAG,"STOP PRE CACHE");
+        WorkManager.getInstance(context).cancelAllWorkByTag(url);
+        result.success("");
+        /*if (WorkManager.getInstance(context).getWorkInfosByTag(url).cancel(true)) {
+            Log.d(TAG,"CANCELLED!");
+            result.success(null);
+        } else {
+            Log.d(TAG,"NOT CANCELLED!");
+            result.error("", "", null);
+        }*/
     }
 
 
@@ -885,14 +862,16 @@ final class BetterPlayer {
 
     //Clear cache without accessing BetterPlayerCache.
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void clearCache(Context context) {
+    public static void clearCache(Context context, Result result) {
         try {
             File file = context.getCacheDir();
             if (file != null) {
                 file.delete();
             }
+            result.success(null);
         } catch (Exception exception) {
             Log.e("Cache", exception.toString());
+            result.error("", "", "");
         }
     }
 
