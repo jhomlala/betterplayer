@@ -5,6 +5,8 @@
 * Fixed Android's notification image OOM issue.
 * Fixed 0 second delay issue in playlist.
 * Fixed drmHeaders to be sent in headers rather than request body (by https://github.com/FlutterSu)
+* Added preCache, stopPreCache method in BetterPlayerController (coauthored with: https://github.com/themadmrj)
+* [BREAKING_CHANGE] clearCache method doesn't require to setup data source in order to use.
 
 ## 0.0.63
 * Fixed pause method in dispose.

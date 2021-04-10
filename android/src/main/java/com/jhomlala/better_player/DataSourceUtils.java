@@ -1,5 +1,7 @@
 package com.jhomlala.better_player;
 
+import android.net.Uri;
+
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 
@@ -32,5 +34,13 @@ class DataSourceUtils {
             ((DefaultHttpDataSource.Factory) dataSourceFactory).setDefaultRequestProperties(headers);
         }
         return dataSourceFactory;
+    }
+
+    static boolean isHTTP(Uri uri) {
+        if (uri == null || uri.getScheme() == null) {
+            return false;
+        }
+        String scheme = uri.getScheme();
+        return scheme.equals("http") || scheme.equals("https");
     }
 }

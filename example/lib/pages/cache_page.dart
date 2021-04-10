@@ -28,7 +28,6 @@ class _CachePageState extends State<CachePage> {
           maxCacheFileSize: 10 * 1024 * 1024),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.preCache(_betterPlayerDataSource);
     super.initState();
   }
 
@@ -56,10 +55,9 @@ class _CachePageState extends State<CachePage> {
             child: BetterPlayer(controller: _betterPlayerController),
           ),
           TextButton(
-            child: Text("Clear cache"),
+            child: Text("Start pre cache"),
             onPressed: () {
-              _betterPlayerController.clearCache();
-              // _betterPlayerController.clearCache();
+              _betterPlayerController.preCache(_betterPlayerDataSource);
             },
           ),
           TextButton(
@@ -69,11 +67,17 @@ class _CachePageState extends State<CachePage> {
             },
           ),
           TextButton(
-            child: Text("Start video"),
+            child: Text("Play video"),
             onPressed: () {
               _betterPlayerController.setupDataSource(_betterPlayerDataSource);
             },
-          )
+          ),
+          TextButton(
+            child: Text("Clear cache"),
+            onPressed: () {
+              _betterPlayerController.clearCache();
+            },
+          ),
         ],
       ),
     );

@@ -125,40 +125,6 @@ final class BetterPlayer {
         setupVideoPlayer(eventChannel, textureEntry, result);
     }
 
-
-    static void preCache(Context context, String dataSource, long preCacheSize,
-                         long maxCacheSize, long maxCacheFileSize, Map<String, String> headers,
-                         Result result) {
-        Data.Builder dataBuilder = new Data.Builder()
-                .putString("url", dataSource)
-                .putLong("preCacheSize", preCacheSize)
-                .putLong("maxCacheSize", maxCacheSize)
-                .putLong("maxCacheFileSize", maxCacheFileSize);
-        for (String headerKey : headers.keySet()) {
-            dataBuilder.putString("header_" + headerKey, headers.get(headerKey));
-        }
-
-        OneTimeWorkRequest cacheWorkRequest = new OneTimeWorkRequest.Builder(CacheWorker.class)
-                .addTag(dataSource)
-                .setInputData(dataBuilder.build()).build();
-        WorkManager.getInstance(context).enqueue(cacheWorkRequest);
-        result.success(null);
-    }
-
-    static void stopPreCache(Context context, String url, Result result) {
-        Log.d(TAG,"STOP PRE CACHE");
-        WorkManager.getInstance(context).cancelAllWorkByTag(url);
-        result.success("");
-        /*if (WorkManager.getInstance(context).getWorkInfosByTag(url).cancel(true)) {
-            Log.d(TAG,"CANCELLED!");
-            result.success(null);
-        } else {
-            Log.d(TAG,"NOT CANCELLED!");
-            result.error("", "", null);
-        }*/
-    }
-
-
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
@@ -200,7 +166,7 @@ final class BetterPlayer {
             drmSessionManager = null;
         }
 
-        if (isHTTP(uri)) {
+        if (DataSourceUtils.isHTTP(uri)) {
             dataSourceFactory = getDataSourceFactory(userAgent, headers);
 
             if (useCache && maxCacheSize > 0 && maxCacheFileSize > 0) {
@@ -492,14 +458,6 @@ final class BetterPlayer {
         return inSampleSize;
     }
 
-
-    static boolean isHTTP(Uri uri) {
-        if (uri == null || uri.getScheme() == null) {
-            return false;
-        }
-        String scheme = uri.getScheme();
-        return scheme.equals("http") || scheme.equals("https");
-    }
 
     private MediaSource buildMediaSource(
             Uri uri, DataSource.Factory mediaDataSourceFactory, String formatHint, Context context) {
@@ -870,9 +828,36 @@ final class BetterPlayer {
             }
             result.success(null);
         } catch (Exception exception) {
-            Log.e("Cache", exception.toString());
+            Log.e(TAG, exception.toString());
             result.error("", "", "");
         }
+    }
+
+    //Start pre cache of video. Invoke work manager job and start caching in background.
+    static void preCache(Context context, String dataSource, long preCacheSize,
+                         long maxCacheSize, long maxCacheFileSize, Map<String, String> headers,
+                         Result result) {
+        Data.Builder dataBuilder = new Data.Builder()
+                .putString(BetterPlayerPlugin.URL_PARAMETER, dataSource)
+                .putLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, preCacheSize)
+                .putLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, maxCacheSize)
+                .putLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, maxCacheFileSize);
+        for (String headerKey : headers.keySet()) {
+            dataBuilder.putString(BetterPlayerPlugin.HEADER_PARAMETER + headerKey, headers.get(headerKey));
+        }
+
+        OneTimeWorkRequest cacheWorkRequest = new OneTimeWorkRequest.Builder(CacheWorker.class)
+                .addTag(dataSource)
+                .setInputData(dataBuilder.build()).build();
+        WorkManager.getInstance(context).enqueue(cacheWorkRequest);
+        result.success(null);
+    }
+
+    //Stop pre cache of video with given url. If there's no work manager job for given url, then
+    //it will be ignored.
+    static void stopPreCache(Context context, String url, Result result) {
+        WorkManager.getInstance(context).cancelAllWorkByTag(url);
+        result.success(null);
     }
 
     void dispose() {

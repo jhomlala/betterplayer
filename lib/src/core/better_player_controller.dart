@@ -220,36 +220,6 @@ class BetterPlayerController {
     return betterPLayerControllerProvider.controller;
   }
 
-  ///PreCache a video. Currently supports Android only. The future succeed when
-  ///the requested size, specified in
-  ///[BetterPlayerCacheConfiguration.preCacheSize], is downloaded or when the
-  ///complete file is downloaded if the file is smaller than the requested size.
-  Future<void> preCache(BetterPlayerDataSource betterPlayerDataSource) async {
-    if (!Platform.isAndroid) {
-      return Future.error("preCache is currently only supported on Android.");
-    }
-
-    final cacheConfig = betterPlayerDataSource.cacheConfiguration ??
-        BetterPlayerCacheConfiguration(useCache: true);
-
-    final dataSource = DataSource(
-        sourceType: DataSourceType.network,
-        uri: betterPlayerDataSource.url,
-        useCache: true,
-        headers: betterPlayerDataSource.headers,
-        maxCacheSize: cacheConfig.maxCacheSize,
-        maxCacheFileSize: cacheConfig.maxCacheFileSize);
-
-    return VideoPlayerController.preCache(dataSource, cacheConfig.preCacheSize);
-  }
-
-  Future<void> stopPreCache(
-      BetterPlayerDataSource betterPlayerDataSource) async {
-    if (!Platform.isAndroid) {
-      return Future.error("stopPreCache is currently only supported on Android.");
-    }
-    return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url);
-  }
 
   ///Setup new data source in Better Player.
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
@@ -1095,6 +1065,40 @@ class BetterPlayerController {
           betterPlayerDataSource!.drmConfiguration!.token!;
     }
     return headers;
+  }
+
+  ///PreCache a video. Currently supports Android only. The future succeed when
+  ///the requested size, specified in
+  ///[BetterPlayerCacheConfiguration.preCacheSize], is downloaded or when the
+  ///complete file is downloaded if the file is smaller than the requested size.
+  Future<void> preCache(BetterPlayerDataSource betterPlayerDataSource) async {
+    if (!Platform.isAndroid) {
+      return Future.error("preCache is currently only supported on Android.");
+    }
+
+    final cacheConfig = betterPlayerDataSource.cacheConfiguration ??
+        BetterPlayerCacheConfiguration(useCache: true);
+
+    final dataSource = DataSource(
+        sourceType: DataSourceType.network,
+        uri: betterPlayerDataSource.url,
+        useCache: true,
+        headers: betterPlayerDataSource.headers,
+        maxCacheSize: cacheConfig.maxCacheSize,
+        maxCacheFileSize: cacheConfig.maxCacheFileSize);
+
+    return VideoPlayerController.preCache(dataSource, cacheConfig.preCacheSize);
+  }
+
+  ///Stop pre cache for given [betterPlayerDataSource]. If there was no pre
+  ///cache started for given [betterPlayerDataSource] then it will be ignored.
+  Future<void> stopPreCache(
+      BetterPlayerDataSource betterPlayerDataSource) async {
+    if (!Platform.isAndroid) {
+      return Future.error(
+          "stopPreCache is currently only supported on Android.");
+    }
+    return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url);
   }
 
   /// Add controller internal event.
