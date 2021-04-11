@@ -106,7 +106,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) {
-    Map<String, dynamic> dataSourceDescription = <String, dynamic>{
+    final Map<String, dynamic> dataSourceDescription = <String, dynamic>{
       'key': dataSource.key,
       'uri': dataSource.uri,
       'headers': dataSource.headers,
@@ -291,8 +291,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   Future<void> clearCache() {
     return _channel.invokeMethod<void>(
       'clearCache',
-      <String, dynamic>{
-      },
+      <String, dynamic>{},
     );
   }
 

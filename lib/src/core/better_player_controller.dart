@@ -220,7 +220,6 @@ class BetterPlayerController {
     return betterPLayerControllerProvider.controller;
   }
 
-
   ///Setup new data source in Better Player.
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     postEvent(BetterPlayerEvent(BetterPlayerEventType.setupDataSource,
@@ -1077,7 +1076,7 @@ class BetterPlayerController {
     }
 
     final cacheConfig = betterPlayerDataSource.cacheConfiguration ??
-        BetterPlayerCacheConfiguration(useCache: true);
+        const BetterPlayerCacheConfiguration(useCache: true);
 
     final dataSource = DataSource(
         sourceType: DataSourceType.network,

@@ -75,12 +75,12 @@ abstract class VideoPlayerPlatform {
   }
 
   /// Pre-caches a video.
-  Future<void> preCache( DataSource dataSource, int preCacheSize) {
+  Future<void> preCache(DataSource dataSource, int preCacheSize) {
     throw UnimplementedError('preCache() has not been implemented.');
   }
 
   /// Pre-caches a video.
-  Future<void> stopPreCache( String url) {
+  Future<void> stopPreCache(String url) {
     throw UnimplementedError('stopPreCache() has not been implemented.');
   }
 

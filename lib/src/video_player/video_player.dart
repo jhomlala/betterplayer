@@ -579,16 +579,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _videoPlayerPlatform.setMixWithOthers(_textureId, mixWithOthers);
   }
 
-  static Future clearCache() async{
+  static Future clearCache() async {
     return _videoPlayerPlatform.clearCache();
   }
 
-  static Future preCache(DataSource dataSource, int preCacheSize) async{
+  static Future preCache(DataSource dataSource, int preCacheSize) async {
     return _videoPlayerPlatform.preCache(dataSource, preCacheSize);
   }
 
-  static Future stopPreCache(String url) async{
-    return _videoPlayerPlatform.stopPreCache( url);
+  static Future stopPreCache(String url) async {
+    return _videoPlayerPlatform.stopPreCache(url);
   }
 }
 
