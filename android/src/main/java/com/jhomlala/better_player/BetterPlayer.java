@@ -2,6 +2,8 @@ package com.jhomlala.better_player;
 
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
+import static com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory;
+import static com.jhomlala.better_player.DataSourceUtils.getUserAgent;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -61,13 +63,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import androidx.media.session.MediaButtonReceiver;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -87,9 +91,8 @@ final class BetterPlayer {
     private static final String FORMAT_HLS = "hls";
     private static final String FORMAT_OTHER = "other";
     private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
-    private static final String USER_AGENT = "User-Agent";
-    private static final String USER_AGENT_PROPERTY = "http.agent";
     private static final int NOTIFICATION_ID = 20772077;
+    private static final int DEFAULT_NOTIFICATION_IMAGE_SIZE_PX = 256;
 
     private final SimpleExoPlayer exoPlayer;
     private final TextureRegistry.SurfaceTextureEntry textureEntry;
@@ -132,13 +135,7 @@ final class BetterPlayer {
         Uri uri = Uri.parse(dataSource);
         DataSource.Factory dataSourceFactory;
 
-        String userAgent = System.getProperty(USER_AGENT_PROPERTY);
-        if (headers != null && headers.containsKey(USER_AGENT)) {
-            String userAgentHeader = headers.get(USER_AGENT);
-            if (userAgentHeader != null) {
-                userAgent = userAgentHeader;
-            }
-        }
+        String userAgent = getUserAgent(headers);
 
         if (licenseUrl != null && !licenseUrl.isEmpty()) {
             HttpMediaDrmCallback httpMediaDrmCallback =
@@ -175,16 +172,8 @@ final class BetterPlayer {
             drmSessionManager = null;
         }
 
-        if (isHTTP(uri)) {
-            dataSourceFactory = new DefaultHttpDataSource.Factory()
-                    .setUserAgent(userAgent)
-                    .setAllowCrossProtocolRedirects(true)
-                    .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
-                    .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS);
-
-            if (headers != null) {
-                ((DefaultHttpDataSource.Factory) dataSourceFactory).setDefaultRequestProperties(headers);
-            }
+        if (DataSourceUtils.isHTTP(uri)) {
+            dataSourceFactory = getDataSourceFactory(userAgent, headers);
 
             if (useCache && maxCacheSize > 0 && maxCacheFileSize > 0) {
                 dataSourceFactory =
@@ -410,35 +399,71 @@ final class BetterPlayer {
         bitmap = null;
     }
 
-    private static Bitmap getBitmapFromInternalURL(String src) {
+    private Bitmap getBitmapFromInternalURL(String src) {
         try {
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            options.inSampleSize = calculateBitmapInSmapleSize(options,
+                    DEFAULT_NOTIFICATION_IMAGE_SIZE_PX,
+                    DEFAULT_NOTIFICATION_IMAGE_SIZE_PX);
+            options.inJustDecodeBounds = false;
             return BitmapFactory.decodeFile(src);
         } catch (Exception exception) {
+            Log.e(TAG, "Failed to get bitmap from internal url: " + src);
             return null;
         }
     }
 
-    private static Bitmap getBitmapFromExternalURL(String src) {
+
+    private Bitmap getBitmapFromExternalURL(String src) {
+        InputStream inputStream = null;
         try {
             URL url = new URL(src);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            return BitmapFactory.decodeStream(input);
-        } catch (IOException exception) {
+            inputStream = connection.getInputStream();
+
+            final BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(inputStream, null, options);
+            inputStream.close();
+            connection = (HttpURLConnection) url.openConnection();
+            inputStream = connection.getInputStream();
+            options.inSampleSize = calculateBitmapInSmapleSize(
+                    options, DEFAULT_NOTIFICATION_IMAGE_SIZE_PX, DEFAULT_NOTIFICATION_IMAGE_SIZE_PX);
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeStream(inputStream, null, options);
+
+        } catch (Exception exception) {
+            Log.e(TAG, "Failed to get bitmap from external url: " + src);
             return null;
+        } finally {
+            try {
+                if (inputStream != null) {
+                    inputStream.close();
+                }
+            } catch (Exception exception) {
+                Log.e(TAG, "Failed to close bitmap input stream/");
+            }
         }
     }
 
+    private int calculateBitmapInSmapleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
 
-    private static boolean isHTTP(Uri uri) {
-        if (uri == null || uri.getScheme() == null) {
-            return false;
+        if (height > reqHeight || width > reqWidth) {
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
         }
-        String scheme = uri.getScheme();
-        return scheme.equals("http") || scheme.equals("https");
+        return inSampleSize;
     }
+
 
     private MediaSource buildMediaSource(
             Uri uri, DataSource.Factory mediaDataSourceFactory, String formatHint, Context context) {
@@ -801,15 +826,44 @@ final class BetterPlayer {
 
     //Clear cache without accessing BetterPlayerCache.
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    public void clearCache(Context context) {
+    public static void clearCache(Context context, Result result) {
         try {
             File file = context.getCacheDir();
             if (file != null) {
                 file.delete();
             }
+            result.success(null);
         } catch (Exception exception) {
-            Log.e("Cache", exception.toString());
+            Log.e(TAG, exception.toString());
+            result.error("", "", "");
         }
+    }
+
+    //Start pre cache of video. Invoke work manager job and start caching in background.
+    static void preCache(Context context, String dataSource, long preCacheSize,
+                         long maxCacheSize, long maxCacheFileSize, Map<String, String> headers,
+                         Result result) {
+        Data.Builder dataBuilder = new Data.Builder()
+                .putString(BetterPlayerPlugin.URL_PARAMETER, dataSource)
+                .putLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, preCacheSize)
+                .putLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, maxCacheSize)
+                .putLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, maxCacheFileSize);
+        for (String headerKey : headers.keySet()) {
+            dataBuilder.putString(BetterPlayerPlugin.HEADER_PARAMETER + headerKey, headers.get(headerKey));
+        }
+
+        OneTimeWorkRequest cacheWorkRequest = new OneTimeWorkRequest.Builder(CacheWorker.class)
+                .addTag(dataSource)
+                .setInputData(dataBuilder.build()).build();
+        WorkManager.getInstance(context).enqueue(cacheWorkRequest);
+        result.success(null);
+    }
+
+    //Stop pre cache of video with given url. If there's no work manager job for given url, then
+    //it will be ignored.
+    static void stopPreCache(Context context, String url, Result result) {
+        WorkManager.getInstance(context).cancelAllWorkByTag(url);
+        result.success(null);
     }
 
     void dispose() {

@@ -35,7 +35,7 @@ class CacheDataSourceFactory implements DataSource.Factory {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public DataSource createDataSource() {
+    public CacheDataSource createDataSource() {
         SimpleCache betterPlayerCache = BetterPlayerCache.createCache(context, maxCacheSize);
         return new CacheDataSource(
                 betterPlayerCache,

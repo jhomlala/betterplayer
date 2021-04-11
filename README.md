@@ -94,7 +94,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.63
+  better_player: ^0.0.64
 ```
 
 2. Install it
@@ -1060,6 +1060,22 @@ Default value is false.
 
 ### More documentation
 https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html
+
+### Cache
+Clear all cached data:
+
+```dart
+betterPlayerController.clearCache();
+```
+Start pre cache before playing video (android only):
+```dart
+betterPlayerController.preCache(_betterPlayerDataSource);
+```dart
+
+Stop running pre cache (android only):
+```dart
+betterPlayerController.stopPreCache(_betterPlayerDataSource);
+```dart
 
 
 

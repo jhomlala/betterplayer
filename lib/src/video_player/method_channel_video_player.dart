@@ -105,6 +105,34 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> preCache(DataSource dataSource, int preCacheSize) {
+    final Map<String, dynamic> dataSourceDescription = <String, dynamic>{
+      'key': dataSource.key,
+      'uri': dataSource.uri,
+      'headers': dataSource.headers,
+      'maxCacheSize': dataSource.maxCacheSize,
+      'maxCacheFileSize': dataSource.maxCacheFileSize,
+      'preCacheSize': preCacheSize
+    };
+    return _channel.invokeMethod<void>(
+      'preCache',
+      <String, dynamic>{
+        'dataSource': dataSourceDescription,
+      },
+    );
+  }
+
+  @override
+  Future<void> stopPreCache(String url) {
+    return _channel.invokeMethod<void>(
+      'stopPreCache',
+      <String, dynamic>{
+        'url': url,
+      },
+    );
+  }
+
+  @override
   Future<void> setLooping(int? textureId, bool looping) {
     return _channel.invokeMethod<void>(
       'setLooping',
@@ -260,12 +288,10 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> clearCache(int? textureId) {
+  Future<void> clearCache() {
     return _channel.invokeMethod<void>(
       'clearCache',
-      <String, dynamic>{
-        'textureId': textureId,
-      },
+      <String, dynamic>{},
     );
   }
 

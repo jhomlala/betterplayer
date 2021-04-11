@@ -59,6 +59,7 @@ int64_t FLTNSTimeIntervalToMillis(NSTimeInterval interval) {
 @property(nonatomic) bool _pictureInPicture;
 @property(nonatomic) bool _observersAdded;
 @property(nonatomic) int stalledCount;
+@property(nonatomic) float playerRate;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -317,7 +318,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setDataSourcePlayerItem:(AVPlayerItem*)item withKey:(NSString*)key{
     _key = key;
-    _stalledCount =0;
+    _stalledCount = 0;
+    _playerRate = 1;
     [_player replaceCurrentItemWithPlayerItem:item];
     
     AVAsset* asset = [item asset];
@@ -474,8 +476,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (_isPlaying) {
         if (@available(iOS 10.0, *)) {
             [_player playImmediatelyAtRate:1.0];
+            _player.rate = _playerRate;
         } else {
             [_player play];
+            _player.rate = _playerRate;
         }
     } else {
         [_player pause];
@@ -586,7 +590,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setSpeed:(double)speed result:(FlutterResult)result {
     if (speed == 1.0 || speed == 0.0) {
-        _player.rate = speed;
+        _playerRate = 1;
         result(nil);
     } else if (speed < 0 || speed > 2.0) {
         result([FlutterError errorWithCode:@"unsupported_speed"
@@ -594,7 +598,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                                    details:nil]);
     } else if ((speed > 1.0 && _player.currentItem.canPlayFastForward) ||
                (speed < 1.0 && _player.currentItem.canPlaySlowForward)) {
-        _player.rate = speed;
+        _playerRate = speed;
         result(nil);
     } else {
         if (speed > 1.0) {
@@ -606,6 +610,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                                        message:@"This video cannot be played slow forward"
                                        details:nil]);
         }
+    }
+    
+    if (_isPlaying){
+        _player.rate = _playerRate;
     }
 }
 

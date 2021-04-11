@@ -20,8 +20,10 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       autoPlay: true,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(
-        BetterPlayerDataSource.network(Constants.forBiggerBlazesUrl));
+    _betterPlayerController.setupDataSource(BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      "https://s038.jetfilmvid.com/videoplayback?K2ZIdkZ6NEFaV0NwUjJ0dlNiY1p2NWVlY25XVWtoVk9icFJPQzZwS2cxSEQ1aEs3dE1uYXlUVW80WUhwT2JYUjo6r%2BTqrxkaUUtrUromydVAKw%3D%3D",
+    ));
     super.initState();
   }
 
