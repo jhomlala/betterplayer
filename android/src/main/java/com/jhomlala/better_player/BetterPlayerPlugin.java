@@ -72,6 +72,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     public static final String MAX_CACHE_SIZE_PARAMETER = "maxCacheSize";
     public static final String MAX_CACHE_FILE_SIZE_PARAMETER = "maxCacheFileSize";
     public static final String HEADER_PARAMETER = "header_";
+    public static final String FILE_PATH_PARAMETER = "filePath";
 
 
     private static final String INIT_METHOD = "init";

@@ -1,3 +1,7 @@
+## 0.0.65
+* Refactored Android notification image selection.
+
+
 ## 0.0.64
 * Added Turkish translations (by https://github.com/smurat).
 * Video fit fixes (by https://github.com/themadmrj).
