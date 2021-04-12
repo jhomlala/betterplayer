@@ -1,6 +1,6 @@
 ## 0.0.65
 * Refactored Android notification image selection.
-
+* Added headers parameter in BetterPlayerSubtitlesSource. Headers is an optional parameter.
 
 ## 0.0.64
 * Added Turkish translations (by https://github.com/smurat).
