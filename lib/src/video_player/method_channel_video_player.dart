@@ -57,6 +57,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'imageUrl': dataSource.imageUrl,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+          'activityName': dataSource.activityName
         };
         break;
       case DataSourceType.network:
@@ -76,6 +77,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
           'licenseUrl': dataSource.licenseUrl,
           'drmHeaders': dataSource.drmHeaders,
+          'activityName': dataSource.activityName
         };
         break;
       case DataSourceType.file:
@@ -91,6 +93,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'imageUrl': dataSource.imageUrl,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+          'activityName': dataSource.activityName
         };
         break;
     }
@@ -102,34 +105,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       },
     );
     return;
-  }
-
-  @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) {
-    final Map<String, dynamic> dataSourceDescription = <String, dynamic>{
-      'key': dataSource.key,
-      'uri': dataSource.uri,
-      'headers': dataSource.headers,
-      'maxCacheSize': dataSource.maxCacheSize,
-      'maxCacheFileSize': dataSource.maxCacheFileSize,
-      'preCacheSize': preCacheSize
-    };
-    return _channel.invokeMethod<void>(
-      'preCache',
-      <String, dynamic>{
-        'dataSource': dataSourceDescription,
-      },
-    );
-  }
-
-  @override
-  Future<void> stopPreCache(String url) {
-    return _channel.invokeMethod<void>(
-      'stopPreCache',
-      <String, dynamic>{
-        'url': url,
-      },
-    );
   }
 
   @override
@@ -292,6 +267,34 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     return _channel.invokeMethod<void>(
       'clearCache',
       <String, dynamic>{},
+    );
+  }
+
+  @override
+  Future<void> preCache(DataSource dataSource, int preCacheSize) {
+    final Map<String, dynamic> dataSourceDescription = <String, dynamic>{
+      'key': dataSource.key,
+      'uri': dataSource.uri,
+      'headers': dataSource.headers,
+      'maxCacheSize': dataSource.maxCacheSize,
+      'maxCacheFileSize': dataSource.maxCacheFileSize,
+      'preCacheSize': preCacheSize
+    };
+    return _channel.invokeMethod<void>(
+      'preCache',
+      <String, dynamic>{
+        'dataSource': dataSourceDescription,
+      },
+    );
+  }
+
+  @override
+  Future<void> stopPreCache(String url) {
+    return _channel.invokeMethod<void>(
+      'stopPreCache',
+      <String, dynamic>{
+        'url': url,
+      },
     );
   }
 

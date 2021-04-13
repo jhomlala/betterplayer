@@ -225,6 +225,7 @@ class DataSource {
     this.overriddenDuration,
     this.licenseUrl,
     this.drmHeaders,
+    this.activityName,
   }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -292,6 +293,8 @@ class DataSource {
   final String? licenseUrl;
 
   final Map<String, String>? drmHeaders;
+
+  final String? activityName;
 
   /// Key to compare DataSource
   String get key {

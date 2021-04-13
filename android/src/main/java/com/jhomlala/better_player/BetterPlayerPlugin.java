@@ -73,6 +73,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     public static final String MAX_CACHE_FILE_SIZE_PARAMETER = "maxCacheFileSize";
     public static final String HEADER_PARAMETER = "header_";
     public static final String FILE_PATH_PARAMETER = "filePath";
+    public static final String ACTIVITY_NAME_PARAMETER = "activityName";
 
 
     private static final String INIT_METHOD = "init";
@@ -438,7 +439,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     String author = getParameter(dataSource, AUTHOR_PARAMETER, "");
                     String imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "");
                     String notificationChannelName = getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null);
-                    betterPlayer.setupPlayerNotification(flutterState.applicationContext, title, author, imageUrl, notificationChannelName);
+                    String activityName = getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity");
+                    betterPlayer.setupPlayerNotification(flutterState.applicationContext,
+                            title, author, imageUrl, notificationChannelName, activityName);
                 }
             }
         } catch (Exception exception) {
