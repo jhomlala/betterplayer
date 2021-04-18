@@ -16,7 +16,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -154,21 +153,23 @@ final class BetterPlayer {
                 drmSessionManager = null;
             } else {
                 UUID drmSchemeUuid = Util.getDrmUuid("widevine");
-                drmSessionManager =
-                        new DefaultDrmSessionManager.Builder()
-                                .setUuidAndExoMediaDrmProvider(drmSchemeUuid,
-                                        uuid -> {
-                                            try {
-                                                FrameworkMediaDrm mediaDrm = FrameworkMediaDrm.newInstance(uuid);
-                                                // Force L3.
-                                                mediaDrm.setPropertyString("securityLevel", "L3");
-                                                return mediaDrm;
-                                            } catch (UnsupportedDrmException e) {
-                                                return new DummyExoMediaDrm();
-                                            }
-                                        })
-                                .setMultiSession(false)
-                                .build(httpMediaDrmCallback);
+                if (drmSchemeUuid != null) {
+                    drmSessionManager =
+                            new DefaultDrmSessionManager.Builder()
+                                    .setUuidAndExoMediaDrmProvider(drmSchemeUuid,
+                                            uuid -> {
+                                                try {
+                                                    FrameworkMediaDrm mediaDrm = FrameworkMediaDrm.newInstance(uuid);
+                                                    // Force L3.
+                                                    mediaDrm.setPropertyString("securityLevel", "L3");
+                                                    return mediaDrm;
+                                                } catch (UnsupportedDrmException e) {
+                                                    return new DummyExoMediaDrm();
+                                                }
+                                            })
+                                    .setMultiSession(false)
+                                    .build(httpMediaDrmCallback);
+                }
             }
         } else {
             drmSessionManager = null;
@@ -252,7 +253,6 @@ final class BetterPlayer {
 
                 workManager.enqueue(imageWorkRequest);
 
-                Observer<WorkInfo> finalWorkInfoObserver = null;
                 Observer<WorkInfo> workInfoObserver = workInfo -> {
                     try {
                         if (workInfo != null) {
