@@ -3,6 +3,7 @@
 * Added headers parameter in BetterPlayerSubtitlesSource. Headers is an optional parameter.
 * Added activityName to BetterPlayerNotificationConfiguration.
 * Android notification will open back application (by https://github.com/shashikantdurge)
+* Fixed playing audio-only resources in iOS.
 
 ## 0.0.64
 * Added Turkish translations (by https://github.com/smurat).
