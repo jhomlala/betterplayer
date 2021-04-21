@@ -5,6 +5,7 @@
 * Android notification will open back application (by https://github.com/shashikantdurge).
 * Fixed playing audio-only resources in iOS.
 * Updated Exo Player version.
+* Fixed notification not updating correctly for playlists in Android.
 
 ## 0.0.64
 * Added Turkish translations (by https://github.com/smurat).
