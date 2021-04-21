@@ -102,6 +102,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private final LongSparseArray<Map<String, Object>> dataSources = new LongSparseArray<>();
     private FlutterState flutterState;
     private long currentNotificationTextureId = -1;
+    private Map<String, Object> currentNotificationDataSource;
     private Activity activity;
     private Handler pipHandler;
     private Runnable pipRunnable;
@@ -427,12 +428,17 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         try {
             Long textureId = getTextureId(betterPlayer);
             if (textureId != null) {
-                if (textureId == currentNotificationTextureId) {
+                Map<String, Object> dataSource = dataSources.get(textureId);
+                //Don't setup notification for the same source.
+                if (textureId == currentNotificationTextureId
+                        && currentNotificationDataSource != null
+                        && dataSource != null
+                        && currentNotificationDataSource == dataSource) {
                     return;
                 }
+                currentNotificationDataSource = dataSource;
                 currentNotificationTextureId = textureId;
                 removeOtherNotificationListeners();
-                Map<String, Object> dataSource = dataSources.get(textureId);
                 boolean showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false);
                 if (showNotification) {
                     String title = getParameter(dataSource, TITLE_PARAMETER, "");
