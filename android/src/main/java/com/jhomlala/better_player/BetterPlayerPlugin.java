@@ -15,6 +15,7 @@ import android.util.LongSparseArray;
 
 import androidx.annotation.NonNull;
 
+import io.flutter.embedding.engine.loader.FlutterLoader;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -24,8 +25,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
-import io.flutter.view.FlutterMain;
 import io.flutter.view.TextureRegistry;
 
 import java.util.HashMap;
@@ -72,6 +71,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     public static final String MAX_CACHE_SIZE_PARAMETER = "maxCacheSize";
     public static final String MAX_CACHE_FILE_SIZE_PARAMETER = "maxCacheFileSize";
     public static final String HEADER_PARAMETER = "header_";
+    public static final String FILE_PATH_PARAMETER = "filePath";
+    public static final String ACTIVITY_NAME_PARAMETER = "activityName";
 
 
     private static final String INIT_METHOD = "init";
@@ -100,52 +101,20 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private final LongSparseArray<Map<String, Object>> dataSources = new LongSparseArray<>();
     private FlutterState flutterState;
     private long currentNotificationTextureId = -1;
+    private Map<String, Object> currentNotificationDataSource;
     private Activity activity;
     private Handler pipHandler;
     private Runnable pipRunnable;
 
-    /**
-     * Register this with the v2 embedding for the plugin to respond to lifecycle callbacks.
-     */
-    public BetterPlayerPlugin() {
-    }
-
-    @SuppressWarnings("deprecation")
-    private BetterPlayerPlugin(Registrar registrar) {
-        this.flutterState =
-                new FlutterState(
-                        registrar.context(),
-                        registrar.messenger(),
-                        registrar::lookupKeyForAsset,
-                        registrar::lookupKeyForAsset,
-                        registrar.textures());
-        flutterState.startListening(this);
-    }
-
-    /**
-     * Registers this with the stable v1 embedding. Will not respond to lifecycle events.
-     */
-    @SuppressWarnings("deprecation")
-    public static void registerWith(Registrar registrar) {
-        final BetterPlayerPlugin plugin = new BetterPlayerPlugin(registrar);
-
-        registrar.addViewDestroyListener(
-                view -> {
-                    plugin.onDestroy();
-                    return false; // We are not interested in assuming ownership of the NativeView.
-                });
-
-    }
-
-    @SuppressWarnings("deprecation")
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
+        FlutterLoader loader = new FlutterLoader();
         this.flutterState =
                 new FlutterState(
                         binding.getApplicationContext(),
                         binding.getBinaryMessenger(),
-                        FlutterMain::getLookupKeyForAsset,
-                        FlutterMain::getLookupKeyForAsset,
+                        loader::getLookupKeyForAsset,
+                        loader::getLookupKeyForAsset,
                         binding.getTextureRegistry());
         flutterState.startListening(this);
     }
@@ -169,14 +138,6 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         dataSources.clear();
     }
 
-    private void onDestroy() {
-        // The whole FlutterView is being destroyed. Here we release resources acquired for all
-        // instances
-        // of VideoPlayer. Once https://github.com/flutter/flutter/issues/19358 is resolved this may
-        // be replaced with just asserting that videoPlayers.isEmpty().
-        // https://github.com/flutter/flutter/issues/20989 tracks this.
-        disposeAllPlayers();
-    }
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
@@ -425,19 +386,26 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         try {
             Long textureId = getTextureId(betterPlayer);
             if (textureId != null) {
-                if (textureId == currentNotificationTextureId) {
+                Map<String, Object> dataSource = dataSources.get(textureId);
+                //Don't setup notification for the same source.
+                if (textureId == currentNotificationTextureId
+                        && currentNotificationDataSource != null
+                        && dataSource != null
+                        && currentNotificationDataSource == dataSource) {
                     return;
                 }
+                currentNotificationDataSource = dataSource;
                 currentNotificationTextureId = textureId;
                 removeOtherNotificationListeners();
-                Map<String, Object> dataSource = dataSources.get(textureId);
                 boolean showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false);
                 if (showNotification) {
                     String title = getParameter(dataSource, TITLE_PARAMETER, "");
                     String author = getParameter(dataSource, AUTHOR_PARAMETER, "");
                     String imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "");
                     String notificationChannelName = getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null);
-                    betterPlayer.setupPlayerNotification(flutterState.applicationContext, title, author, imageUrl, notificationChannelName);
+                    String activityName = getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity");
+                    betterPlayer.setupPlayerNotification(flutterState.applicationContext,
+                            title, author, imageUrl, notificationChannelName, activityName);
                 }
             }
         } catch (Exception exception) {

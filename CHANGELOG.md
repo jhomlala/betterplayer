@@ -1,3 +1,13 @@
+## 0.0.65
+* Refactored Android notification image selection.
+* Added headers parameter in BetterPlayerSubtitlesSource. Headers is an optional parameter.
+* Added activityName to BetterPlayerNotificationConfiguration.
+* Android notification will open back application (by https://github.com/shashikantdurge).
+* Fixed playing audio-only resources in iOS.
+* Updated Exo Player version.
+* Fixed notification not updating correctly for playlists in Android.
+* [BREAKING_CHANGE] Removed deprecated Android code. Better Player supports now only v2 embedding.
+
 ## 0.0.64
 * Added Turkish translations (by https://github.com/smurat).
 * Video fit fixes (by https://github.com/themadmrj).

@@ -16,11 +16,16 @@ class BetterPlayerNotificationConfiguration {
   ///Name of the notification channel. Used only in Android.
   final String? notificationChannelName;
 
+  ///Name of activity used to open application from notification. Used only
+  ///in Android.
+  final String? activityName;
+
   const BetterPlayerNotificationConfiguration({
     this.showNotification,
     this.title,
     this.author,
     this.imageUrl,
     this.notificationChannelName,
+    this.activityName,
   });
 }

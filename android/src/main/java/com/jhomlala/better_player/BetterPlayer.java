@@ -16,7 +16,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -62,9 +61,11 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import androidx.lifecycle.Observer;
 import androidx.media.session.MediaButtonReceiver;
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import io.flutter.plugin.common.EventChannel;
@@ -72,9 +73,6 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.view.TextureRegistry;
 
 import java.io.File;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -92,7 +90,6 @@ final class BetterPlayer {
     private static final String FORMAT_OTHER = "other";
     private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
     private static final int NOTIFICATION_ID = 20772077;
-    private static final int DEFAULT_NOTIFICATION_IMAGE_SIZE_PX = 256;
 
     private final SimpleExoPlayer exoPlayer;
     private final TextureRegistry.SurfaceTextureEntry textureEntry;
@@ -110,6 +107,8 @@ final class BetterPlayer {
     private Bitmap bitmap;
     private MediaSessionCompat mediaSession;
     private DrmSessionManager drmSessionManager;
+    private WorkManager workManager;
+    private HashMap<UUID, Observer<WorkInfo>> workerObserverMap;
 
 
     BetterPlayer(
@@ -121,6 +120,8 @@ final class BetterPlayer {
         this.textureEntry = textureEntry;
         trackSelector = new DefaultTrackSelector(context);
         exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
+        workManager = WorkManager.getInstance(context);
+        workerObserverMap = new HashMap<>();
 
         setupVideoPlayer(eventChannel, textureEntry, result);
     }
@@ -152,21 +153,23 @@ final class BetterPlayer {
                 drmSessionManager = null;
             } else {
                 UUID drmSchemeUuid = Util.getDrmUuid("widevine");
-                drmSessionManager =
-                        new DefaultDrmSessionManager.Builder()
-                                .setUuidAndExoMediaDrmProvider(drmSchemeUuid,
-                                        uuid -> {
-                                            try {
-                                                FrameworkMediaDrm mediaDrm = FrameworkMediaDrm.newInstance(uuid);
-                                                // Force L3.
-                                                mediaDrm.setPropertyString("securityLevel", "L3");
-                                                return mediaDrm;
-                                            } catch (UnsupportedDrmException e) {
-                                                return new DummyExoMediaDrm();
-                                            }
-                                        })
-                                .setMultiSession(false)
-                                .build(httpMediaDrmCallback);
+                if (drmSchemeUuid != null) {
+                    drmSessionManager =
+                            new DefaultDrmSessionManager.Builder()
+                                    .setUuidAndExoMediaDrmProvider(drmSchemeUuid,
+                                            uuid -> {
+                                                try {
+                                                    FrameworkMediaDrm mediaDrm = FrameworkMediaDrm.newInstance(uuid);
+                                                    // Force L3.
+                                                    mediaDrm.setPropertyString("securityLevel", "L3");
+                                                    return mediaDrm;
+                                                } catch (UnsupportedDrmException e) {
+                                                    return new DummyExoMediaDrm();
+                                                }
+                                            })
+                                    .setMultiSession(false)
+                                    .build(httpMediaDrmCallback);
+                }
             }
         } else {
             drmSessionManager = null;
@@ -195,7 +198,10 @@ final class BetterPlayer {
         result.success(null);
     }
 
-    public void setupPlayerNotification(Context context, String title, String author, String imageUrl, String notificationChannelName) {
+
+    public void setupPlayerNotification(Context context, String title, String author,
+                                        String imageUrl, String notificationChannelName,
+                                        String activityName) {
 
         PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter
                 = new PlayerNotificationManager.MediaDescriptionAdapter() {
@@ -208,10 +214,11 @@ final class BetterPlayer {
             @Nullable
             @Override
             public PendingIntent createCurrentContentIntent(@NonNull Player player) {
+
                 final String packageName = context.getApplicationContext().getPackageName();
                 Intent notificationIntent = new Intent();
                 notificationIntent.setClassName(packageName,
-                        packageName + ".MainActivity");
+                        packageName + "." + activityName);
                 notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                         | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 return PendingIntent.getActivity(context, 0,
@@ -234,18 +241,54 @@ final class BetterPlayer {
                 if (bitmap != null) {
                     return bitmap;
                 }
-                new Thread(() -> {
-                    bitmap = null;
-                    if (imageUrl.contains("http")) {
-                        bitmap = getBitmapFromExternalURL(imageUrl);
-                    } else {
-                        bitmap = getBitmapFromInternalURL(imageUrl);
+
+
+                OneTimeWorkRequest imageWorkRequest = new OneTimeWorkRequest.Builder(ImageWorker.class)
+                        .addTag(imageUrl)
+                        .setInputData(
+                                new Data.Builder()
+                                        .putString(BetterPlayerPlugin.URL_PARAMETER, imageUrl)
+                                        .build())
+                        .build();
+
+                workManager.enqueue(imageWorkRequest);
+
+                Observer<WorkInfo> workInfoObserver = workInfo -> {
+                    try {
+                        if (workInfo != null) {
+                            WorkInfo.State state = workInfo.getState();
+                            if (state == WorkInfo.State.SUCCEEDED) {
+
+                                Data outputData = workInfo.getOutputData();
+                                String filePath = outputData.getString(BetterPlayerPlugin.FILE_PATH_PARAMETER);
+                                //Bitmap here is already processed and it's very small, so it won't
+                                //break anything.
+                                bitmap = BitmapFactory.decodeFile(filePath);
+                                callback.onBitmap(bitmap);
+
+                            }
+                            if (state == WorkInfo.State.SUCCEEDED
+                                    || state == WorkInfo.State.CANCELLED
+                                    || state == WorkInfo.State.FAILED) {
+                                final UUID uuid = imageWorkRequest.getId();
+                                Observer<WorkInfo> observer = workerObserverMap.remove(uuid);
+                                if (observer != null) {
+                                    workManager.getWorkInfoByIdLiveData(uuid).removeObserver(observer);
+                                }
+                            }
+                        }
+
+
+                    } catch (Exception exception) {
+                        Log.e(TAG, "Image select error: " + exception);
                     }
+                };
 
-                    Bitmap finalBitmap = bitmap;
-                    new Handler(Looper.getMainLooper()).post(() -> callback.onBitmap(finalBitmap));
+                final UUID workerUuid = imageWorkRequest.getId();
+                workManager.getWorkInfoByIdLiveData(workerUuid)
+                        .observeForever(workInfoObserver);
+                workerObserverMap.put(workerUuid, workInfoObserver);
 
-                }).start();
                 return null;
             }
         };
@@ -404,71 +447,6 @@ final class BetterPlayer {
             playerNotificationManager.setPlayer(null);
         }
         bitmap = null;
-    }
-
-    private Bitmap getBitmapFromInternalURL(String src) {
-        try {
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            options.inSampleSize = calculateBitmapInSmapleSize(options,
-                    DEFAULT_NOTIFICATION_IMAGE_SIZE_PX,
-                    DEFAULT_NOTIFICATION_IMAGE_SIZE_PX);
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeFile(src);
-        } catch (Exception exception) {
-            Log.e(TAG, "Failed to get bitmap from internal url: " + src);
-            return null;
-        }
-    }
-
-
-    private Bitmap getBitmapFromExternalURL(String src) {
-        InputStream inputStream = null;
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            inputStream = connection.getInputStream();
-
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(inputStream, null, options);
-            inputStream.close();
-            connection = (HttpURLConnection) url.openConnection();
-            inputStream = connection.getInputStream();
-            options.inSampleSize = calculateBitmapInSmapleSize(
-                    options, DEFAULT_NOTIFICATION_IMAGE_SIZE_PX, DEFAULT_NOTIFICATION_IMAGE_SIZE_PX);
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeStream(inputStream, null, options);
-
-        } catch (Exception exception) {
-            Log.e(TAG, "Failed to get bitmap from external url: " + src);
-            return null;
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (Exception exception) {
-                Log.e(TAG, "Failed to close bitmap input stream/");
-            }
-        }
-    }
-
-    private int calculateBitmapInSmapleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) >= reqHeight
-                    && (halfWidth / inSampleSize) >= reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
     }
 
 

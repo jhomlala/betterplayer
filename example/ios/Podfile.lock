@@ -1,0 +1,49 @@
+PODS:
+  - better_player (0.0.1):
+    - Flutter
+    - KTVHTTPCache (~> 2.0.0)
+  - CocoaAsyncSocket (7.6.4)
+  - Flutter (1.0.0)
+  - KTVCocoaHTTPServer (1.0.0):
+    - CocoaAsyncSocket
+  - KTVHTTPCache (2.0.1):
+    - KTVCocoaHTTPServer
+  - path_provider (0.0.1):
+    - Flutter
+  - wakelock (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - better_player (from `.symlinks/plugins/better_player/ios`)
+  - Flutter (from `Flutter`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - wakelock (from `.symlinks/plugins/wakelock/ios`)
+
+SPEC REPOS:
+  trunk:
+    - CocoaAsyncSocket
+    - KTVCocoaHTTPServer
+    - KTVHTTPCache
+
+EXTERNAL SOURCES:
+  better_player:
+    :path: ".symlinks/plugins/better_player/ios"
+  Flutter:
+    :path: Flutter
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
+  wakelock:
+    :path: ".symlinks/plugins/wakelock/ios"
+
+SPEC CHECKSUMS:
+  better_player: a4383402f457e53720525888c0fc5d337ef6ba11
+  CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  KTVCocoaHTTPServer: df8d7b861e603ff8037e9b2138aca2563a6b768d
+  KTVHTTPCache: 588c3eb16f6bd1e6fde1e230dabfb7bd4e490a4d
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
+
+PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+
+COCOAPODS: 1.10.0
