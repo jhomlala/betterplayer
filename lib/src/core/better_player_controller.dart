@@ -552,6 +552,11 @@ class BetterPlayerController {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
+    if (videoPlayerController?.value.duration == null){
+      throw StateError("The video has not been initialized yet.");
+    }
+
+
     await videoPlayerController!.seekTo(moment);
 
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo,

@@ -1,3 +1,6 @@
+## 0.0.66
+* Added check in seek method to handle scenario when video wasn't ready to play.
+
 ## 0.0.65
 * Refactored Android notification image selection.
 * Added headers parameter in BetterPlayerSubtitlesSource. Headers is an optional parameter.
