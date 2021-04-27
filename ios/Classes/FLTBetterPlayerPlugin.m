@@ -59,6 +59,7 @@ int64_t FLTNSTimeIntervalToMillis(NSTimeInterval interval) {
 @property(nonatomic) bool _pictureInPicture;
 @property(nonatomic) bool _observersAdded;
 @property(nonatomic) int stalledCount;
+@property(nonatomic) bool isStalledCheckStarted;
 @property(nonatomic) float playerRate;
 - (void)play;
 - (void)pause;
@@ -319,6 +320,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)setDataSourcePlayerItem:(AVPlayerItem*)item withKey:(NSString*)key{
     _key = key;
     _stalledCount = 0;
+    _isStalledCheckStarted = false;
     _playerRate = 1;
     [_player replaceCurrentItemWithPlayerItem:item];
     
@@ -356,19 +358,28 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 -(void)handleStalled {
+    if (_isStalledCheckStarted){
+        return;
+    }
+   _isStalledCheckStarted = true;
+    [self startStalledCheck];
+}
+
+-(void)startStalledCheck{
     if (_player.currentItem.playbackLikelyToKeepUp ||
         [self availableDuration] - CMTimeGetSeconds(_player.currentItem.currentTime) > 10.0) {
         [self play];
     } else {
         _stalledCount++;
-        if (_stalledCount > 5){
+        if (_stalledCount > 60){
             _eventSink([FlutterError
                         errorWithCode:@"VideoError"
                         message:@"Failed to load video: playback stalled"
                         details:nil]);
             return;
         }
-        [self performSelector:@selector(handleStalled) withObject:nil afterDelay:1];
+        [self performSelector:@selector(startStalledCheck) withObject:nil afterDelay:1];
+        
     }
 }
 
@@ -535,6 +546,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)play {
     _stalledCount = 0;
+    _isStalledCheckStarted = false;
     _isPlaying = true;
     [self updatePlayingState];
 }
