@@ -1,5 +1,6 @@
 ## 0.0.66
 * Added check in seek method to handle scenario when video wasn't ready to play.
+* Added setupDataSourceList in BetterPlayerPlaylistController.
 
 ## 0.0.65
 * Refactored Android notification image selection.
