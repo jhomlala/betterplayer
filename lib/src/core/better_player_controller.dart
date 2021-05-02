@@ -864,6 +864,8 @@ class BetterPlayerController {
         return BetterPlayerTranslations.hindi();
       case "tr":
         return BetterPlayerTranslations.turkish();
+      case "vi":
+        return BetterPlayerTranslations.vietnamese();
       default:
         return BetterPlayerTranslations();
     }
