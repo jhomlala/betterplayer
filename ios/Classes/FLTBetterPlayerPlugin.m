@@ -872,6 +872,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)dispose {
+    [self pause];
     [self disposeSansEventChannel];
     [_eventChannel setStreamHandler:nil];
     [self disablePictureInPicture];
