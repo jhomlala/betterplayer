@@ -7,6 +7,8 @@ import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
 import 'package:better_player/src/hls/better_player_hls_track.dart';
+import 'package:better_player/src/dash/better_player_dash_audio_track.dart';
+import 'package:better_player/src/dash/better_player_dash_track.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 
 // Flutter imports:
@@ -248,26 +250,45 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   ///Build both track and resolution selection
-  ///Track selection is used for HLS videos
+  ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void _showQualitiesSelectionWidget() {
-    final List<String> trackNames =
+    // HLS
+    final List<String> hlsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.hlsTrackNames ?? [];
-    final List<BetterPlayerHlsTrack> tracks =
-        betterPlayerController!.betterPlayerTracks;
+    final List<BetterPlayerHlsTrack> hlsTracks =
+        betterPlayerController!.betterPlayerHlsTracks;
     final List<Widget> children = [];
-    for (var index = 0; index < tracks.length; index++) {
-      final track = tracks[index];
+    for (var index = 0; index < hlsTracks.length; index++) {
+      final track = hlsTracks[index];
 
       String? preferredName;
       if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
         preferredName = betterPlayerController!.translations.qualityAuto;
       } else {
-        preferredName = trackNames.length > index ? trackNames[index] : null;
+        preferredName = hlsTrackNames.length > index ? hlsTrackNames[index] : null;
       }
-      children.add(_buildTrackRow(tracks[index], preferredName));
+      children.add(_buildTrackRow(hlsTracks[index], preferredName));
     }
 
+    //DASH
+    final List<String> dashTrackNames =
+        betterPlayerController!.betterPlayerDataSource!.dashTrackNames ?? [];
+    final List<BetterPlayerDashTrack> dashTracks =
+        betterPlayerController!.betterPlayerDashTracks;
+    for (var index = 0; index < dashTracks.length; index++) {
+      final track = dashTracks[index];
+
+      String? preferredName;
+      if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
+        preferredName = betterPlayerController!.translations.qualityAuto;
+      } else {
+        preferredName = dashTrackNames.length > index ? dashTrackNames[index] : null;
+      }
+      children.add(_buildTrackRow(dashTracks[index], preferredName));
+    }
+
+    // normal videos
     final resolutions =
         betterPlayerController!.betterPlayerDataSource!.resolutions;
     resolutions?.forEach((key, value) {
@@ -284,11 +305,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     _showModalBottomSheet(children);
   }
 
-  Widget _buildTrackRow(BetterPlayerHlsTrack track, String? preferredName) {
+  Widget _buildTrackRow(dynamic track, String? preferredName) {
+    final int width = track.width ?? 0;
+    final int height = track.height ?? 0;
+    final int bitrate = track.bitrate ?? 0;
     final String trackName = preferredName ??
-        "${track.width}x${track.height} ${BetterPlayerUtils.formatBitrate(track.bitrate!)}";
+        "${width}x${height} ${BetterPlayerUtils.formatBitrate(bitrate)}";
 
-    final selectedTrack = betterPlayerController!.betterPlayerTrack;
+    final selectedTrack = (track is BetterPlayerHlsTrack)
+        ? betterPlayerController!.betterPlayerHlsTrack
+        : betterPlayerController!.betterPlayerDashTrack;
     final bool isSelected = selectedTrack != null && selectedTrack == track;
 
     return BetterPlayerMaterialClickableWidget(
@@ -335,16 +361,30 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showAudioTracksSelectionWidget() {
-    final List<BetterPlayerHlsAudioTrack>? tracks =
-        betterPlayerController!.betterPlayerAudioTracks;
+    //HLS
+    final List<BetterPlayerHlsAudioTrack>? hlsTracks =
+        betterPlayerController!.betterPlayerHlsAudioTracks;
     final List<Widget> children = [];
-    final BetterPlayerHlsAudioTrack? selectedAudioTrack =
-        betterPlayerController!.betterPlayerAudioTrack;
-    if (tracks != null) {
-      for (var index = 0; index < tracks.length; index++) {
+    final BetterPlayerHlsAudioTrack? selectedHlsAudioTrack =
+        betterPlayerController!.betterPlayerHlsAudioTrack;
+    if (hlsTracks != null) {
+      for (var index = 0; index < hlsTracks.length; index++) {
         final bool isSelected =
-            selectedAudioTrack != null && selectedAudioTrack == tracks[index];
-        children.add(_buildAudioTrackRow(tracks[index], isSelected));
+            selectedHlsAudioTrack != null && selectedHlsAudioTrack == hlsTracks[index];
+        children.add(_buildAudioTrackRow(hlsTracks[index], isSelected));
+      }
+    }
+
+    //DASH
+    final List<BetterPlayerDashAudioTrack>? dashTracks =
+        betterPlayerController!.betterPlayerDashAudioTracks;
+    final BetterPlayerDashAudioTrack? selectedDashAudioTrack =
+        betterPlayerController!.betterPlayerDashAudioTrack;
+    if (dashTracks != null) {
+      for (var index = 0; index < dashTracks.length; index++) {
+        final bool isSelected =
+            selectedDashAudioTrack != null && selectedDashAudioTrack == dashTracks[index];
+        children.add(_buildAudioTrackRow(dashTracks[index], isSelected));
       }
     }
 
@@ -363,7 +403,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildAudioTrackRow(
-      BetterPlayerHlsAudioTrack audioTrack, bool isSelected) {
+      dynamic audioTrack, bool isSelected) {
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
