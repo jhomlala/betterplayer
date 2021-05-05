@@ -94,10 +94,6 @@ AVPictureInPictureController *_pipController;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     
-    ///Fix for loading large videos
-    if (@available(iOS 10.0, *)) {
-        _player.automaticallyWaitsToMinimizeStalling = false;
-    }
     _displayLink = [CADisplayLink displayLinkWithTarget:frameUpdater
                                                selector:@selector(onDisplayLink:)];
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
