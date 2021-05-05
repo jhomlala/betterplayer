@@ -2,6 +2,7 @@
 * Added check in seek method to handle scenario when video wasn't ready to play.
 * Added setupDataSourceList in BetterPlayerPlaylistController.
 * Fixed playback stalled issue in iOS.
+* Added pause on iOS dispose call.
 
 ## 0.0.65
 * Refactored Android notification image selection.
