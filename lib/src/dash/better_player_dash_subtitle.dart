@@ -3,6 +3,9 @@ class BetterPlayerDashSubtitle {
   ///Language of the subtitle
   final String? language;
 
+  ///Name of the subtitle
+  final String? name;
+
   ///MimeType of the subtitle
   final String? mimeType;
 
@@ -14,6 +17,7 @@ class BetterPlayerDashSubtitle {
 
   BetterPlayerDashSubtitle({
     this.language,
+    this.name,
     this.mimeType,
     this.segmentAlignment,
     this.url
