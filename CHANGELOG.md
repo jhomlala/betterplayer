@@ -3,6 +3,7 @@
 * Added setupDataSourceList in BetterPlayerPlaylistController.
 * Fixed playback stalled issue in iOS.
 * Added pause on iOS dispose call.
+* Added bufferedStart, bufferedUpdate, bufferedEnd events.
 
 ## 0.0.65
 * Refactored Android notification image selection.
