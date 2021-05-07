@@ -84,6 +84,10 @@ class BetterPlayerDashUtils {
     String? language = node.getAttribute('lang');
     String? mimeType = node.getAttribute('mimeType');
 
+    if (label == null) {
+      label = language;
+    }
+
     return BetterPlayerDashAudioTrack(
       id: index,
       segmentAlignment: segmentAlignmentStr.toLowerCase() == 'true',
@@ -95,6 +99,7 @@ class BetterPlayerDashUtils {
 
   static BetterPlayerDashSubtitle parseSubtitle(XmlElement node) {
     String segmentAlignmentStr = node.getAttribute('segmentAlignment') ?? '';
+    String? name = node.getAttribute('label');
     String? language = node.getAttribute('lang');
     String? mimeType = node.getAttribute('mimeType');
     String? url = node.getElement('Representation')?.getElement('BaseURL')?.text;
@@ -102,7 +107,12 @@ class BetterPlayerDashUtils {
       url = 'https:' + url;
     }
 
+    if (name == null) {
+      name = language;
+    }
+
     return BetterPlayerDashSubtitle(
+      name: name,
       language: language,
       mimeType: mimeType,
       segmentAlignment: segmentAlignmentStr.toLowerCase() == 'true',
