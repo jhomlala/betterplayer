@@ -197,6 +197,9 @@ AVPictureInPictureController *_pipController;
             [ self removeObservers];
             
         }
+        [_player pause];
+         _isPlaying = false;
+         _displayLink.paused = YES;
     }
 }
 
