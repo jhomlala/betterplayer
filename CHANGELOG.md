@@ -1,3 +1,13 @@
+## 0.0.66
+* Added check in seek method to handle scenario when video wasn't ready to play.
+* Added setupDataSourceList in BetterPlayerPlaylistController.
+* Fixed playback stalled issue in iOS.
+* Added pause on iOS dispose call.
+* Added bufferedStart, bufferedUpdate, bufferedEnd events.
+* Fixed full screen dismissed when new data source loaded.
+* Added forget option for VisibilityDetectorController (by https://github.com/ChopinDavid).
+* Added vietnamese translations (by https://github.com/thanhvn-57).
+
 ## 0.0.65
 * Refactored Android notification image selection.
 * Added headers parameter in BetterPlayerSubtitlesSource. Headers is an optional parameter.

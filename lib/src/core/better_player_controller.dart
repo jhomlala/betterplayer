@@ -36,6 +36,7 @@ class BetterPlayerController {
   static const String _volumeParameter = "volume";
   static const String _speedParameter = "speed";
   static const String _dataSourceParameter = "dataSource";
+  static const String _bufferedParameter = "buffered";
   static const String _hlsExtension = "m3u8";
   static const String _authorizationHeader = "Authorization";
 
@@ -457,7 +458,7 @@ class BetterPlayerController {
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (betterPlayerConfiguration.autoPlay) {
-      if (fullScreenByDefault) {
+      if (fullScreenByDefault && !isFullScreen) {
         enterFullScreen();
       }
       if (_isAutomaticPlayPauseHandled()) {
@@ -552,6 +553,10 @@ class BetterPlayerController {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
+    if (videoPlayerController?.value.duration == null) {
+      throw StateError("The video has not been initialized yet.");
+    }
+
     await videoPlayerController!.seekTo(moment);
 
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo,
@@ -1005,6 +1010,18 @@ class BetterPlayerController {
             },
           ),
         );
+        break;
+      case VideoEventType.bufferingStart:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingStart));
+        break;
+      case VideoEventType.bufferingUpdate:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingUpdate,
+            parameters: <String, dynamic>{
+              _bufferedParameter: event.buffered,
+            }));
+        break;
+      case VideoEventType.bufferingEnd:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingEnd));
         break;
       default:
 
