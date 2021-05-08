@@ -40,9 +40,9 @@ class BetterPlayerPlaylistController {
   ///Initialize controller and listeners.
   void _setup() {
     _betterPlayerController ??= BetterPlayerController(
-        betterPlayerConfiguration,
-        betterPlayerPlaylistConfiguration: betterPlayerPlaylistConfiguration,
-      );
+      betterPlayerConfiguration,
+      betterPlayerPlaylistConfiguration: betterPlayerPlaylistConfiguration,
+    );
 
     var initialStartIndex = betterPlayerPlaylistConfiguration.initialStartIndex;
     if (initialStartIndex >= _betterPlayerDataSourceList.length) {
