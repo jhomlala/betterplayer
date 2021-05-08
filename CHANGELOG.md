@@ -4,6 +4,7 @@
 * Fixed playback stalled issue in iOS.
 * Added pause on iOS dispose call.
 * Added bufferedStart, bufferedUpdate, bufferedEnd events.
+* Fixed full screen dismissed when new data source loaded.
 
 ## 0.0.65
 * Refactored Android notification image selection.
