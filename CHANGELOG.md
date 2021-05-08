@@ -6,6 +6,7 @@
 * Added bufferedStart, bufferedUpdate, bufferedEnd events.
 * Fixed full screen dismissed when new data source loaded.
 * Added forget option for VisibilityDetectorController (by https://github.com/ChopinDavid).
+* Added vietnamese translations (by https://github.com/thanhvn-57).
 
 ## 0.0.65
 * Refactored Android notification image selection.

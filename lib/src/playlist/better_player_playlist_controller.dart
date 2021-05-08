@@ -39,12 +39,10 @@ class BetterPlayerPlaylistController {
 
   ///Initialize controller and listeners.
   void _setup() {
-    if (_betterPlayerController == null) {
-      _betterPlayerController = BetterPlayerController(
+    _betterPlayerController ??= BetterPlayerController(
         betterPlayerConfiguration,
         betterPlayerPlaylistConfiguration: betterPlayerPlaylistConfiguration,
       );
-    }
 
     var initialStartIndex = betterPlayerPlaylistConfiguration.initialStartIndex;
     if (initialStartIndex >= _betterPlayerDataSourceList.length) {
@@ -63,10 +61,8 @@ class BetterPlayerPlaylistController {
     });
   }
 
-  /**
-   * Setup new data source list. Pauses currently played video and init new data
-   * source list. Previous data source list will be removed.
-   */
+  /// Setup new data source list. Pauses currently played video and init new data
+  /// source list. Previous data source list will be removed.
   void setupDataSourceList(List<BetterPlayerDataSource> dataSourceList) {
     _betterPlayerController?.pause();
     _betterPlayerDataSourceList.clear();
