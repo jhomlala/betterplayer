@@ -5,6 +5,7 @@
 * Added pause on iOS dispose call.
 * Added bufferedStart, bufferedUpdate, bufferedEnd events.
 * Fixed full screen dismissed when new data source loaded.
+* Added forget option for VisibilityDetectorController (by https://github.com/ChopinDavid).
 
 ## 0.0.65
 * Refactored Android notification image selection.
