@@ -458,7 +458,7 @@ class BetterPlayerController {
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (betterPlayerConfiguration.autoPlay) {
-      if (fullScreenByDefault) {
+      if (fullScreenByDefault && !isFullScreen) {
         enterFullScreen();
       }
       if (_isAutomaticPlayPauseHandled()) {
