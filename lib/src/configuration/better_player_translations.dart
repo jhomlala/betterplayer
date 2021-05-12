@@ -91,6 +91,7 @@ class BetterPlayerTranslations {
         overflowMenuAudioTracks: "الصوت",
         qualityAuto: "ऑटो",
       );
+
   factory BetterPlayerTranslations.turkish() => BetterPlayerTranslations(
       languageCode: "tr",
       generalDefaultError: "Video oynatılamıyor",
@@ -105,4 +106,20 @@ class BetterPlayerTranslations {
       overflowMenuQuality: "Kalite",
       overflowMenuAudioTracks: "Ses",
       qualityAuto: "Otomatik");
+
+  factory BetterPlayerTranslations.vietnamese() => BetterPlayerTranslations(
+        languageCode: "vi",
+        generalDefaultError: "Video không thể phát bây giờ",
+        generalNone: "Không có",
+        generalDefault: "Mặc định",
+        generalRetry: "Thử lại ngay",
+        controlsLive: "Trực tiếp",
+        playlistLoadingNextVideo: "Đang tải video tiếp theo",
+        controlsNextVideoIn: "Video tiếp theo",
+        overflowMenuPlaybackSpeed: "Tốc độ phát",
+        overflowMenuSubtitles: "Phụ đề",
+        overflowMenuQuality: "Chất lượng",
+        overflowMenuAudioTracks: "Âm thanh",
+        qualityAuto: "Tự động",
+      );
 }

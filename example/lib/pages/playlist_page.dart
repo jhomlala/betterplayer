@@ -124,6 +124,22 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 },
                 child: Text("Pause current video with BetterPlayerController"),
               ),
+              ElevatedButton(
+                onPressed: () {
+                  var list = [
+                    BetterPlayerDataSource(
+                      BetterPlayerDataSourceType.network,
+                      Constants.bugBuckBunnyVideoUrl,
+                      placeholder: Image.network(
+                        Constants.catImageUrl,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  ];
+                  _betterPlayerPlaylistController?.setupDataSourceList(list);
+                },
+                child: Text("Setup new data source list"),
+              ),
             ]);
           }
         },

@@ -459,7 +459,7 @@ class BetterPlayerController {
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (betterPlayerConfiguration.autoPlay) {
-      if (fullScreenByDefault) {
+      if (fullScreenByDefault && !isFullScreen) {
         enterFullScreen();
       }
       if (_isAutomaticPlayPauseHandled()) {
@@ -554,6 +554,10 @@ class BetterPlayerController {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
+    if (videoPlayerController?.value.duration == null) {
+      throw StateError("The video has not been initialized yet.");
+    }
+
     await videoPlayerController!.seekTo(moment);
 
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo,
@@ -866,6 +870,8 @@ class BetterPlayerController {
         return BetterPlayerTranslations.hindi();
       case "tr":
         return BetterPlayerTranslations.turkish();
+      case "vi":
+        return BetterPlayerTranslations.vietnamese();
       default:
         return BetterPlayerTranslations();
     }
@@ -1005,6 +1011,18 @@ class BetterPlayerController {
             },
           ),
         );
+        break;
+      case VideoEventType.bufferingStart:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingStart));
+        break;
+      case VideoEventType.bufferingUpdate:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingUpdate,
+            parameters: <String, dynamic>{
+              _bufferedParameter: event.buffered,
+            }));
+        break;
+      case VideoEventType.bufferingEnd:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingEnd));
         break;
       default:
 
