@@ -7,9 +7,6 @@ import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 import 'package:xml/xml.dart';
 
-// Package imports:
-import 'package:better_player/src/core/better_player_utils.dart';
-
 // Project imports:
 import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
 import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
@@ -17,8 +14,6 @@ import 'package:better_player/src/asms/better_player_asms_track.dart';
 
 ///DASH helper class
 class BetterPlayerDashUtils {
-  static final HttpClient _httpClient = HttpClient()
-    ..connectionTimeout = const Duration(seconds: 5);
 
   static Future<BetterPlayerAsmsDataHolder> parse(
       String data, String masterPlaylistUrl) async {
@@ -56,9 +51,7 @@ class BetterPlayerDashUtils {
       final int bitrate = int.parse(representation.getAttribute('bandwidth') ?? '0');
       final int frameRate = int.parse(representation.getAttribute('frameRate') ?? '0');
       final String? codecs = representation.getAttribute('codecs');
-      print("codes: "+(codecs ?? ''));
       final String? mimeType = MimeTypes.getMediaMimeType(codecs ?? '');
-      print("mimeType: "+(mimeType ?? ''));
       tracks.add(BetterPlayerAsmsTrack(id, width, height, bitrate, frameRate, codecs, mimeType));
     });
 
@@ -103,29 +96,9 @@ class BetterPlayerDashUtils {
       language: language,
       mimeType: mimeType,
       segmentAlignment: segmentAlignmentStr.toLowerCase() == 'true',
-      url: url
+      url: url,
+      realUrls: [url ?? '']
     );
-  }
-
-  static Future<String?> getDataFromUrl(String url,
-      [Map<String, String?>? headers]) async {
-    try {
-      final request = await _httpClient.getUrl(Uri.parse(url));
-      if (headers != null) {
-        headers.forEach((name, value) => request.headers.add(name, value!));
-      }
-
-      final response = await request.close();
-      var data = "";
-      await response.transform(const Utf8Decoder()).listen((content) {
-        data += content.toString();
-      }).asFuture<String?>();
-
-      return data;
-    } catch (exception) {
-      BetterPlayerUtils.log("GetDataFromUrl failed: $exception");
-      return null;
-    }
   }
 
 }

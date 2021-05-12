@@ -4,7 +4,9 @@ import 'dart:io';
 
 // Package imports:
 import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
+import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
 import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
+import 'package:better_player/src/asms/better_player_asms_utils.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 
 // Project imports:
@@ -17,10 +19,26 @@ import 'package:better_player/src/hls/hls_parser/segment.dart';
 
 ///HLS helper class
 class BetterPlayerHlsUtils {
-  static final HttpClient _httpClient = HttpClient()
-    ..connectionTimeout = const Duration(seconds: 5);
-  static final HlsPlaylistParser _hlsPlaylistParser =
-      HlsPlaylistParser.create();
+
+  static Future<BetterPlayerAsmsDataHolder> parse(
+      String data, String masterPlaylistUrl) async {
+    List<BetterPlayerAsmsTrack> tracks = [];
+    List<BetterPlayerAsmsSubtitle> subtitles = [];
+    List<BetterPlayerAsmsAudioTrack> audios = [];
+    try {
+      final List<List<dynamic>> list = await Future.wait([
+        parseTracks(data, masterPlaylistUrl),
+        parseSubtitles(data, masterPlaylistUrl),
+        parseLanguages(data, masterPlaylistUrl)
+      ]);
+      tracks = list[0] as List<BetterPlayerAsmsTrack>;
+      subtitles = list[1] as List<BetterPlayerAsmsSubtitle>;
+      audios = list[2] as List<BetterPlayerAsmsAudioTrack>;
+    } catch (exception) {
+      BetterPlayerUtils.log("Exception on hls parse: $exception");
+    }
+    return BetterPlayerAsmsDataHolder(tracks: tracks, audios: audios, subtitles: subtitles);
+  }
 
   static Future<List<BetterPlayerAsmsTrack>> parseTracks(
       String data, String masterPlaylistUrl) async {
@@ -71,7 +89,10 @@ class BetterPlayerHlsUtils {
   static Future<BetterPlayerAsmsSubtitle?> _parseSubtitlesPlaylist(
       Rendition rendition) async {
     try {
-      final subtitleData = await getDataFromUrl(rendition.url.toString());
+
+      final HlsPlaylistParser _hlsPlaylistParser =
+      HlsPlaylistParser.create();
+      final subtitleData = await BetterPlayerAsmsUtils.getDataFromUrl(rendition.url.toString());
       if (subtitleData == null) {
         return null;
       }
@@ -120,26 +141,5 @@ class BetterPlayerHlsUtils {
     }
 
     return audios;
-  }
-
-  static Future<String?> getDataFromUrl(String url,
-      [Map<String, String?>? headers]) async {
-    try {
-      final request = await _httpClient.getUrl(Uri.parse(url));
-      if (headers != null) {
-        headers.forEach((name, value) => request.headers.add(name, value!));
-      }
-
-      final response = await request.close();
-      var data = "";
-      await response.transform(const Utf8Decoder()).listen((content) {
-        data += content.toString();
-      }).asFuture<String?>();
-
-      return data;
-    } catch (exception) {
-      BetterPlayerUtils.log("GetDataFromUrl failed: $exception");
-      return null;
-    }
   }
 }

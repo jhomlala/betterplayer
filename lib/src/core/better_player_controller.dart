@@ -8,6 +8,7 @@ import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
 import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
 import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
 import 'package:better_player/src/asms/better_player_asms_track.dart';
+import 'package:better_player/src/asms/better_player_asms_utils.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/configuration/better_player_drm_type.dart';
@@ -39,8 +40,6 @@ class BetterPlayerController {
   static const String _volumeParameter = "volume";
   static const String _speedParameter = "speed";
   static const String _dataSourceParameter = "dataSource";
-  static const String _hlsExtension = "m3u8";
-  static const String _dashExtension = "mpd";
   static const String _authorizationHeader = "Authorization";
 
   ///General configuration used in controller instance.
@@ -281,45 +280,29 @@ class BetterPlayerController {
 
   ///Check if given [betterPlayerDataSource] is HLS / DASH-type data source.
   bool _isDataSourceAsms(BetterPlayerDataSource betterPlayerDataSource) =>
-      _isDataSourceHls(betterPlayerDataSource) || _isDataSourceDash(betterPlayerDataSource);
-
-  ///Check if given [betterPlayerDataSource] is HLS-type data source.
-  bool _isDataSourceHls(BetterPlayerDataSource betterPlayerDataSource) =>
-      betterPlayerDataSource.url.contains(_hlsExtension) ||
-      betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.hls;
-
-  ///Check if given [betterPlayerDataSource] is DASH-type data source.
-  bool _isDataSourceDash(BetterPlayerDataSource betterPlayerDataSource) =>
-      betterPlayerDataSource.url.contains(_dashExtension) ||
-          betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.dash;
+      (BetterPlayerAsmsUtils.isDataSourceHls(betterPlayerDataSource.url) || betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.hls)
+          || (BetterPlayerAsmsUtils.isDataSourceDash(betterPlayerDataSource.url) || betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.dash);
 
   ///Configure HLS / DASH data source based on provided data source and configuration.
   ///This method configures tracks, subtitles and audio tracks from given
   ///master playlist.
   Future _setupAsmsDataSource(BetterPlayerDataSource source) async {
-    return _isDataSourceHls(source) ? _setupHlsDataSource() : _setupDashDataSource();
-  }
-
-  ///Configure HLS data source based on provided data source and configuration.
-  ///This method configures tracks, subtitles and audio tracks from given
-  ///master playlist.
-  Future _setupHlsDataSource() async {
-    final String? hlsData = await BetterPlayerHlsUtils.getDataFromUrl(
+    final String? data = await BetterPlayerAsmsUtils.getDataFromUrl(
       betterPlayerDataSource!.url,
       _getHeaders(),
     );
-    if (hlsData != null) {
-      /// Load hls tracks
+    if (data != null) {
+      BetterPlayerAsmsDataHolder _response = await BetterPlayerAsmsUtils.parse(
+          data, betterPlayerDataSource!.url);
+      /// Load tracks
       if (_betterPlayerDataSource?.useAsmsTracks == true) {
-        _betterPlayerAsmsTracks = await BetterPlayerHlsUtils.parseTracks(
-            hlsData, betterPlayerDataSource!.url);
+        _betterPlayerAsmsTracks = _response.tracks ?? [];
       }
 
-      /// Load hls subtitles
+      /// Load subtitles
       if (betterPlayerDataSource?.useAsmsSubtitles == true) {
-        final asmsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
-            hlsData, betterPlayerDataSource!.url);
-        asmsSubtitles.forEach((asmsSubtitle) {
+        final List<BetterPlayerAsmsSubtitle> asmsSubtitles = _response.subtitles ?? [];
+        asmsSubtitles.forEach((BetterPlayerAsmsSubtitle asmsSubtitle) {
           _betterPlayerSubtitlesSourceList.add(
             BetterPlayerSubtitlesSource(
                 type: BetterPlayerSubtitlesSourceType.network,
@@ -331,48 +314,7 @@ class BetterPlayerController {
 
       ///Load audio tracks
       if (betterPlayerDataSource?.useAsmsAudioTracks == true &&
-          _isDataSourceHls(betterPlayerDataSource!)) {
-        _betterPlayerAsmsAudioTracks = await BetterPlayerHlsUtils.parseLanguages(
-            hlsData, betterPlayerDataSource!.url);
-        if (_betterPlayerAsmsAudioTracks?.isNotEmpty == true) {
-          setAudioTrack(_betterPlayerAsmsAudioTracks!.first);
-        }
-      }
-    }
-  }
-
-  ///Configure DASH data source based on provided data source and configuration.
-  ///This method configures tracks, subtitles and audio tracks from given
-  ///master playlist.
-  Future _setupDashDataSource() async {
-    final String? dashData = await BetterPlayerDashUtils.getDataFromUrl(
-      betterPlayerDataSource!.url,
-      _getHeaders(),
-    );
-    if (dashData != null) {
-      BetterPlayerAsmsDataHolder _response = await BetterPlayerDashUtils.parse(
-          dashData, betterPlayerDataSource!.url);
-      /// Load dash tracks
-      if (_betterPlayerDataSource?.useAsmsTracks == true) {
-        _betterPlayerAsmsTracks = _response.tracks ?? [];
-      }
-
-      /// Load dash subtitles
-      if (betterPlayerDataSource?.useAsmsSubtitles == true) {
-        final List<BetterPlayerAsmsSubtitle> asmSubtitles = _response.subtitles ?? [];
-        asmSubtitles.forEach((BetterPlayerAsmsSubtitle asmSubtitle) {
-          _betterPlayerSubtitlesSourceList.add(
-            BetterPlayerSubtitlesSource(
-                type: BetterPlayerSubtitlesSourceType.network,
-                name: asmSubtitle.language,
-                urls: [asmSubtitle.url]),
-          );
-        });
-      }
-
-      ///Load audio tracks
-      if (betterPlayerDataSource?.useAsmsAudioTracks == true &&
-          _isDataSourceDash(betterPlayerDataSource!)) {
+          _isDataSourceAsms(betterPlayerDataSource!)) {
         _betterPlayerAsmsAudioTracks = _response.audios ?? [];
         if (_betterPlayerAsmsAudioTracks?.isNotEmpty == true) {
           setAudioTrack(_betterPlayerAsmsAudioTracks!.first);
