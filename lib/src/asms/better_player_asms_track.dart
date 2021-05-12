@@ -1,5 +1,5 @@
-/// Represents DASH track which can be played within player
-class BetterPlayerDashTrack {
+/// Represents HLS / DASH track which can be played within player
+class BetterPlayerAsmsTrack {
   ///Id of the track
   final String? id;
 
@@ -18,10 +18,10 @@ class BetterPlayerDashTrack {
   ///Codecs of the track
   final String? codecs;
 
-  BetterPlayerDashTrack(this.id, this.width, this.height, this.bitrate, this.frameRate, this.codecs);
+  BetterPlayerAsmsTrack(this.id, this.width, this.height, this.bitrate, this.frameRate, this.codecs);
 
-  factory BetterPlayerDashTrack.defaultTrack() {
-    return BetterPlayerDashTrack('', 0, 0, 0, 0, '');
+  factory BetterPlayerAsmsTrack.defaultTrack() {
+    return BetterPlayerAsmsTrack('', 0, 0, 0, 0, '');
   }
 
   @override
@@ -30,7 +30,7 @@ class BetterPlayerDashTrack {
 
   @override
   bool operator ==(dynamic other) {
-    return other is BetterPlayerDashTrack &&
+    return other is BetterPlayerAsmsTrack &&
         width == other.width &&
         height == other.height &&
         bitrate == other.bitrate &&

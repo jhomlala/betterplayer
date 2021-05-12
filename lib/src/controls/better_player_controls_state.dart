@@ -3,12 +3,10 @@ import 'dart:math';
 
 // Project imports:
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
+import 'package:better_player/src/asms/better_player_asms_track.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
-import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
-import 'package:better_player/src/hls/better_player_hls_track.dart';
-import 'package:better_player/src/dash/better_player_dash_audio_track.dart';
-import 'package:better_player/src/dash/better_player_dash_track.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 
 // Flutter imports:
@@ -253,39 +251,22 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void _showQualitiesSelectionWidget() {
-    // HLS
-    final List<String> hlsTrackNames =
-        betterPlayerController!.betterPlayerDataSource!.hlsTrackNames ?? [];
-    final List<BetterPlayerHlsTrack> hlsTracks =
-        betterPlayerController!.betterPlayerHlsTracks;
+    // HLS / DASH
+    final List<String> asmsTrackNames =
+        betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
+    final List<BetterPlayerAsmsTrack> asmsTracks =
+        betterPlayerController!.betterPlayerAsmsTracks;
     final List<Widget> children = [];
-    for (var index = 0; index < hlsTracks.length; index++) {
-      final track = hlsTracks[index];
+    for (var index = 0; index < asmsTracks.length; index++) {
+      final track = asmsTracks[index];
 
       String? preferredName;
       if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
         preferredName = betterPlayerController!.translations.qualityAuto;
       } else {
-        preferredName = hlsTrackNames.length > index ? hlsTrackNames[index] : null;
+        preferredName = asmsTrackNames.length > index ? asmsTrackNames[index] : null;
       }
-      children.add(_buildTrackRow(hlsTracks[index], preferredName));
-    }
-
-    //DASH
-    final List<String> dashTrackNames =
-        betterPlayerController!.betterPlayerDataSource!.dashTrackNames ?? [];
-    final List<BetterPlayerDashTrack> dashTracks =
-        betterPlayerController!.betterPlayerDashTracks;
-    for (var index = 0; index < dashTracks.length; index++) {
-      final track = dashTracks[index];
-
-      String? preferredName;
-      if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
-        preferredName = betterPlayerController!.translations.qualityAuto;
-      } else {
-        preferredName = dashTrackNames.length > index ? dashTrackNames[index] : null;
-      }
-      children.add(_buildTrackRow(dashTracks[index], preferredName));
+      children.add(_buildTrackRow(asmsTracks[index], preferredName));
     }
 
     // normal videos
@@ -297,7 +278,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (children.isEmpty) {
       children.add(
-        _buildTrackRow(BetterPlayerHlsTrack.defaultTrack(),
+        _buildTrackRow(BetterPlayerAsmsTrack.defaultTrack(),
             betterPlayerController!.translations.qualityAuto),
       );
     }
@@ -305,16 +286,14 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     _showModalBottomSheet(children);
   }
 
-  Widget _buildTrackRow(dynamic track, String? preferredName) {
+  Widget _buildTrackRow(BetterPlayerAsmsTrack track, String? preferredName) {
     final int width = track.width ?? 0;
     final int height = track.height ?? 0;
     final int bitrate = track.bitrate ?? 0;
     final String trackName = preferredName ??
         "${width}x${height} ${BetterPlayerUtils.formatBitrate(bitrate)}";
 
-    final selectedTrack = (track is BetterPlayerHlsTrack)
-        ? betterPlayerController!.betterPlayerHlsTrack
-        : betterPlayerController!.betterPlayerDashTrack;
+    final BetterPlayerAsmsTrack? selectedTrack = betterPlayerController!.betterPlayerAsmsTrack;
     final bool isSelected = selectedTrack != null && selectedTrack == track;
 
     return BetterPlayerMaterialClickableWidget(
@@ -361,37 +340,24 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showAudioTracksSelectionWidget() {
-    //HLS
-    final List<BetterPlayerHlsAudioTrack>? hlsTracks =
-        betterPlayerController!.betterPlayerHlsAudioTracks;
+    //HLS / DASH
+    final List<BetterPlayerAsmsAudioTrack>? asmsTracks =
+        betterPlayerController!.betterPlayerAsmsAudioTracks;
     final List<Widget> children = [];
-    final BetterPlayerHlsAudioTrack? selectedHlsAudioTrack =
-        betterPlayerController!.betterPlayerHlsAudioTrack;
-    if (hlsTracks != null) {
-      for (var index = 0; index < hlsTracks.length; index++) {
+    final BetterPlayerAsmsAudioTrack? selectedAsmsAudioTrack =
+        betterPlayerController!.betterPlayerAsmsAudioTrack;
+    if (asmsTracks != null) {
+      for (var index = 0; index < asmsTracks.length; index++) {
         final bool isSelected =
-            selectedHlsAudioTrack != null && selectedHlsAudioTrack == hlsTracks[index];
-        children.add(_buildAudioTrackRow(hlsTracks[index], isSelected));
-      }
-    }
-
-    //DASH
-    final List<BetterPlayerDashAudioTrack>? dashTracks =
-        betterPlayerController!.betterPlayerDashAudioTracks;
-    final BetterPlayerDashAudioTrack? selectedDashAudioTrack =
-        betterPlayerController!.betterPlayerDashAudioTrack;
-    if (dashTracks != null) {
-      for (var index = 0; index < dashTracks.length; index++) {
-        final bool isSelected =
-            selectedDashAudioTrack != null && selectedDashAudioTrack == dashTracks[index];
-        children.add(_buildAudioTrackRow(dashTracks[index], isSelected));
+            selectedAsmsAudioTrack != null && selectedAsmsAudioTrack == asmsTracks[index];
+        children.add(_buildAudioTrackRow(asmsTracks[index], isSelected));
       }
     }
 
     if (children.isEmpty) {
       children.add(
         _buildAudioTrackRow(
-          BetterPlayerHlsAudioTrack(
+          BetterPlayerAsmsAudioTrack(
             label: betterPlayerController!.translations.generalDefault,
           ),
           true,

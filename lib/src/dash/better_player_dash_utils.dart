@@ -8,18 +8,18 @@ import 'package:xml/xml.dart';
 
 // Package imports:
 import 'package:better_player/src/core/better_player_utils.dart';
-import 'package:better_player/src/dash/better_player_dash_audio_track.dart';
 
 // Project imports:
-import 'package:better_player/src/dash/better_player_dash_subtitle.dart';
-import 'package:better_player/src/dash/better_player_dash_track.dart';
+import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
+import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
+import 'package:better_player/src/asms/better_player_asms_track.dart';
 
 import 'better_player_dash_video.dart';
 
 class DashObject {
   List<BetterPlayerDashVideo>? videos;
-  List<BetterPlayerDashSubtitle>? subtitles;
-  List<BetterPlayerDashAudioTrack>? audios;
+  List<BetterPlayerAsmsSubtitle>? subtitles;
+  List<BetterPlayerAsmsAudioTrack>? audios;
 
   DashObject({this.videos, this.subtitles, this.audios});
 }
@@ -34,8 +34,8 @@ class BetterPlayerDashUtils {
     final document = XmlDocument.parse(data);
     final adaptationSets = document.findAllElements('AdaptationSet');
     List<BetterPlayerDashVideo> videos = [];
-    List<BetterPlayerDashAudioTrack> audios = [];
-    List<BetterPlayerDashSubtitle> subtitles = [];
+    List<BetterPlayerAsmsAudioTrack> audios = [];
+    List<BetterPlayerAsmsSubtitle> subtitles = [];
     int audiosCount = 0;
     adaptationSets.forEach((node) {
       final mimeType = node.getAttribute('mimeType');
@@ -55,7 +55,7 @@ class BetterPlayerDashUtils {
 
   static BetterPlayerDashVideo parseVideo(XmlElement node) {
     String segmentAlignmentStr = node.getAttribute('segmentAlignment') ?? '';
-    List<BetterPlayerDashTrack> tracks = [];
+    List<BetterPlayerAsmsTrack> tracks = [];
     String? mimeType = null;
 
     final representations = node.findAllElements('Representation');
@@ -68,7 +68,7 @@ class BetterPlayerDashUtils {
       final int frameRate = int.parse(representation.getAttribute('frameRate') ?? '0');
       final String? codecs = representation.getAttribute('codecs');
       mimeType = MimeTypes.getCustomMimeTypeForCodec(codecs ?? '');
-      tracks.add(BetterPlayerDashTrack(id, width, height, bitrate, frameRate, codecs));
+      tracks.add(BetterPlayerAsmsTrack(id, width, height, bitrate, frameRate, codecs));
     });
 
     return BetterPlayerDashVideo(
@@ -78,7 +78,7 @@ class BetterPlayerDashUtils {
     );
   }
 
-  static BetterPlayerDashAudioTrack parseAudio(XmlElement node, int index) {
+  static BetterPlayerAsmsAudioTrack parseAudio(XmlElement node, int index) {
     String segmentAlignmentStr = node.getAttribute('segmentAlignment') ?? '';
     String? label = node.getAttribute('label');
     String? language = node.getAttribute('lang');
@@ -88,7 +88,7 @@ class BetterPlayerDashUtils {
       label = language;
     }
 
-    return BetterPlayerDashAudioTrack(
+    return BetterPlayerAsmsAudioTrack(
       id: index,
       segmentAlignment: segmentAlignmentStr.toLowerCase() == 'true',
       label: label,
@@ -97,7 +97,7 @@ class BetterPlayerDashUtils {
     );
   }
 
-  static BetterPlayerDashSubtitle parseSubtitle(XmlElement node) {
+  static BetterPlayerAsmsSubtitle parseSubtitle(XmlElement node) {
     String segmentAlignmentStr = node.getAttribute('segmentAlignment') ?? '';
     String? name = node.getAttribute('label');
     String? language = node.getAttribute('lang');
@@ -111,7 +111,7 @@ class BetterPlayerDashUtils {
       name = language;
     }
 
-    return BetterPlayerDashSubtitle(
+    return BetterPlayerAsmsSubtitle(
       name: name,
       language: language,
       mimeType: mimeType,

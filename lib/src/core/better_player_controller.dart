@@ -4,6 +4,9 @@ import 'dart:io';
 
 // Project imports:
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
+import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
+import 'package:better_player/src/asms/better_player_asms_track.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/configuration/better_player_drm_type.dart';
@@ -15,12 +18,7 @@ import 'package:better_player/src/core/better_player_controller_provider.dart';
 
 // Flutter imports:
 import 'package:better_player/src/core/better_player_utils.dart';
-import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
-import 'package:better_player/src/hls/better_player_hls_track.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
-import 'package:better_player/src/dash/better_player_dash_audio_track.dart';
-import 'package:better_player/src/dash/better_player_dash_track.dart';
-import 'package:better_player/src/dash/better_player_dash_subtitle.dart';
 import 'package:better_player/src/dash/better_player_dash_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
@@ -98,29 +96,17 @@ class BetterPlayerController {
   ///Subtitles lines for current data source.
   List<BetterPlayerSubtitle> subtitlesLines = [];
 
-  ///List of tracks available for current data source. Used only for HLS.
-  List<BetterPlayerHlsTrack> _betterPlayerHlsTracks = [];
+  ///List of tracks available for current data source. Used only for HLS / DASH.
+  List<BetterPlayerAsmsTrack> _betterPlayerAsmsTracks = [];
 
-  ///List of tracks available for current data source. Used only for HLS.
-  List<BetterPlayerHlsTrack> get betterPlayerHlsTracks => _betterPlayerHlsTracks;
+  ///List of tracks available for current data source. Used only for HLS / DASH.
+  List<BetterPlayerAsmsTrack> get betterPlayerAsmsTracks => _betterPlayerAsmsTracks;
 
-  ///Currently selected player track. Used only for HLS.
-  BetterPlayerHlsTrack? _betterPlayerHlsTrack;
+  ///Currently selected player track. Used only for HLS / DASH.
+  BetterPlayerAsmsTrack? _betterPlayerAsmsTrack;
 
-  ///Currently selected player track. Used only for HLS.
-  BetterPlayerHlsTrack? get betterPlayerHlsTrack => _betterPlayerHlsTrack;
-
-  ///List of tracks available for current data source. Used only for DASH.
-  List<BetterPlayerDashTrack> _betterPlayerDashTracks = [];
-
-  ///List of tracks available for current data source. Used only for DASH.
-  List<BetterPlayerDashTrack> get betterPlayerDashTracks => _betterPlayerDashTracks;
-
-  ///Currently selected player track. Used only for DASH.
-  BetterPlayerDashTrack? _betterPlayerDashTrack;
-
-  ///Currently selected player track. Used only for DASH.
-  BetterPlayerDashTrack? get betterPlayerDashTrack => _betterPlayerDashTrack;
+  ///Currently selected player track. Used only for HLS / DASH.
+  BetterPlayerAsmsTrack? get betterPlayerAsmsTrack => _betterPlayerAsmsTrack;
 
   ///Timer for next video. Used in playlist.
   Timer? _nextVideoTimer;
@@ -190,33 +176,19 @@ class BetterPlayerController {
   ///Are controls always visible
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
 
-  ///List of all possible audio tracks returned from HLS stream
-  List<BetterPlayerHlsAudioTrack>? _betterPlayerHlsAudioTracks;
+  ///List of all possible audio tracks returned from ASMS stream
+  List<BetterPlayerAsmsAudioTrack>? _betterPlayerAsmsAudioTracks;
 
-  ///List of all possible audio tracks returned from HLS stream
-  List<BetterPlayerHlsAudioTrack>? get betterPlayerHlsAudioTracks =>
-      _betterPlayerHlsAudioTracks;
+  ///List of all possible audio tracks returned from ASMS stream
+  List<BetterPlayerAsmsAudioTrack>? get betterPlayerAsmsAudioTracks =>
+      _betterPlayerAsmsAudioTracks;
 
-  ///Selected HLS audio track
-  BetterPlayerHlsAudioTrack? _betterPlayerHlsAudioTrack;
+  ///Selected ASMS audio track
+  BetterPlayerAsmsAudioTrack? _betterPlayerAsmsAudioTrack;
 
-  ///Selected HLS audio track
-  BetterPlayerHlsAudioTrack? get betterPlayerHlsAudioTrack =>
-      _betterPlayerHlsAudioTrack;
-
-  ///List of all possible audio tracks returned from DASH stream
-  List<BetterPlayerDashAudioTrack>? _betterPlayerDashAudioTracks;
-
-  ///List of all possible audio tracks returned from DASH stream
-  List<BetterPlayerDashAudioTrack>? get betterPlayerDashAudioTracks =>
-      _betterPlayerDashAudioTracks;
-
-  ///Selected DASH audio track
-  BetterPlayerDashAudioTrack? _betterPlayerDashAudioTrack;
-
-  ///Selected DASH audio track
-  BetterPlayerDashAudioTrack? get betterPlayerDashAudioTrack =>
-      _betterPlayerDashAudioTrack;
+  ///Selected ASMS audio track
+  BetterPlayerAsmsAudioTrack? get betterPlayerAsmsAudioTrack =>
+      _betterPlayerAsmsAudioTrack;
 
   ///Selected videoPlayerValue when error occurred.
   VideoPlayerValue? _videoPlayerValueOnError;
@@ -268,11 +240,8 @@ class BetterPlayerController {
       videoPlayerController?.addListener(_onVideoPlayerChanged);
     }
 
-    ///Clear hls tracks
-    betterPlayerHlsTracks.clear();
-
-    ///Clear dash tracks
-    betterPlayerDashTracks.clear();
+    ///Clear asms tracks
+    betterPlayerAsmsTracks.clear();
 
     ///Setup subtitles
     final List<BetterPlayerSubtitlesSource>? betterPlayerSubtitlesSourceList =
@@ -282,12 +251,8 @@ class BetterPlayerController {
           .addAll(betterPlayerDataSource.subtitles!);
     }
 
-    if (_isDataSourceHls(betterPlayerDataSource)) {
-      _setupHlsDataSource().then((dynamic value) {
-        _setupSubtitles();
-      });
-    } else if (_isDataSourceDash(betterPlayerDataSource)) {
-      _setupDashDataSource().then((dynamic value) {
+    if (_isDataSourceAsms(betterPlayerDataSource)) {
+      _setupAsmsDataSource(betterPlayerDataSource).then((dynamic value) {
         _setupSubtitles();
       });
     } else {
@@ -296,7 +261,7 @@ class BetterPlayerController {
 
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
-    setTrack(BetterPlayerHlsTrack.defaultTrack());
+    setTrack(BetterPlayerAsmsTrack.defaultTrack());
   }
 
   ///Configure subtitles based on subtitles source.
@@ -313,6 +278,10 @@ class BetterPlayerController {
         sourceInitialize: true);
   }
 
+  ///Check if given [betterPlayerDataSource] is HLS / DASH-type data source.
+  bool _isDataSourceAsms(BetterPlayerDataSource betterPlayerDataSource) =>
+      _isDataSourceHls(betterPlayerDataSource) || _isDataSourceDash(betterPlayerDataSource);
+
   ///Check if given [betterPlayerDataSource] is HLS-type data source.
   bool _isDataSourceHls(BetterPlayerDataSource betterPlayerDataSource) =>
       betterPlayerDataSource.url.contains(_hlsExtension) ||
@@ -322,6 +291,13 @@ class BetterPlayerController {
   bool _isDataSourceDash(BetterPlayerDataSource betterPlayerDataSource) =>
       betterPlayerDataSource.url.contains(_dashExtension) ||
           betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.dash;
+
+  ///Configure HLS / DASH data source based on provided data source and configuration.
+  ///This method configures tracks, subtitles and audio tracks from given
+  ///master playlist.
+  Future _setupAsmsDataSource(BetterPlayerDataSource source) async {
+    return _isDataSourceHls(source) ? _setupHlsDataSource() : _setupDashDataSource();
+  }
 
   ///Configure HLS data source based on provided data source and configuration.
   ///This method configures tracks, subtitles and audio tracks from given
@@ -333,32 +309,32 @@ class BetterPlayerController {
     );
     if (hlsData != null) {
       /// Load hls tracks
-      if (_betterPlayerDataSource?.useHlsTracks == true) {
-        _betterPlayerHlsTracks = await BetterPlayerHlsUtils.parseTracks(
+      if (_betterPlayerDataSource?.useAsmsTracks == true) {
+        _betterPlayerAsmsTracks = await BetterPlayerHlsUtils.parseTracks(
             hlsData, betterPlayerDataSource!.url);
       }
 
       /// Load hls subtitles
-      if (betterPlayerDataSource?.useHlsSubtitles == true) {
-        final hlsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
+      if (betterPlayerDataSource?.useAsmsSubtitles == true) {
+        final asmsSubtitles = await BetterPlayerHlsUtils.parseSubtitles(
             hlsData, betterPlayerDataSource!.url);
-        hlsSubtitles.forEach((hlsSubtitle) {
+        asmsSubtitles.forEach((asmsSubtitle) {
           _betterPlayerSubtitlesSourceList.add(
             BetterPlayerSubtitlesSource(
                 type: BetterPlayerSubtitlesSourceType.network,
-                name: hlsSubtitle.name,
-                urls: hlsSubtitle.realUrls),
+                name: asmsSubtitle.name,
+                urls: asmsSubtitle.realUrls),
           );
         });
       }
 
       ///Load audio tracks
-      if (betterPlayerDataSource?.useHlsAudioTracks == true &&
+      if (betterPlayerDataSource?.useAsmsAudioTracks == true &&
           _isDataSourceHls(betterPlayerDataSource!)) {
-        _betterPlayerHlsAudioTracks = await BetterPlayerHlsUtils.parseLanguages(
+        _betterPlayerAsmsAudioTracks = await BetterPlayerHlsUtils.parseLanguages(
             hlsData, betterPlayerDataSource!.url);
-        if (_betterPlayerHlsAudioTracks?.isNotEmpty == true) {
-          setAudioTrack(_betterPlayerHlsAudioTracks!.first);
+        if (_betterPlayerAsmsAudioTracks?.isNotEmpty == true) {
+          setAudioTrack(_betterPlayerAsmsAudioTracks!.first);
         }
       }
     }
@@ -376,32 +352,32 @@ class BetterPlayerController {
       DashObject _response = await BetterPlayerDashUtils.parse(
           dashData, betterPlayerDataSource!.url);
       /// Load dash tracks
-      if (_betterPlayerDataSource?.useDashTracks == true) {
+      if (_betterPlayerDataSource?.useAsmsTracks == true) {
         final videos = _response.videos ?? [];
         if (videos.length > 0) {
-          _betterPlayerDashTracks = videos[0].tracks ?? [];
+          _betterPlayerAsmsTracks = videos[0].tracks ?? [];
         }
       }
 
       /// Load dash subtitles
-      if (betterPlayerDataSource?.useDashSubtitles == true) {
-        final List<BetterPlayerDashSubtitle> dashSubtitles = _response.subtitles ?? [];
-        dashSubtitles.forEach((BetterPlayerDashSubtitle dashSubtitle) {
+      if (betterPlayerDataSource?.useAsmsSubtitles == true) {
+        final List<BetterPlayerAsmsSubtitle> asmSubtitles = _response.subtitles ?? [];
+        asmSubtitles.forEach((BetterPlayerAsmsSubtitle asmSubtitle) {
           _betterPlayerSubtitlesSourceList.add(
             BetterPlayerSubtitlesSource(
                 type: BetterPlayerSubtitlesSourceType.network,
-                name: dashSubtitle.language,
-                urls: [dashSubtitle.url]),
+                name: asmSubtitle.language,
+                urls: [asmSubtitle.url]),
           );
         });
       }
 
       ///Load audio tracks
-      if (betterPlayerDataSource?.useDashAudioTracks == true &&
+      if (betterPlayerDataSource?.useAsmsAudioTracks == true &&
           _isDataSourceDash(betterPlayerDataSource!)) {
-        _betterPlayerDashAudioTracks = _response.audios ?? [];
-        if (_betterPlayerDashAudioTracks?.isNotEmpty == true) {
-          setAudioTrack(_betterPlayerDashAudioTracks!.first);
+        _betterPlayerAsmsAudioTracks = _response.audios ?? [];
+        if (_betterPlayerAsmsAudioTracks?.isNotEmpty == true) {
+          setAudioTrack(_betterPlayerAsmsAudioTracks!.first);
         }
       }
     }
@@ -858,13 +834,7 @@ class BetterPlayerController {
 
   ///Setup track parameters for currently played video. Can be only used for HLS or DASH
   ///data source.
-  void setTrack(dynamic track) {
-    (track is BetterPlayerHlsTrack) ? setHlsTrack(track) : setDashTrack(track);
-  }
-
-  ///Setup track parameters for currently played video. Can be used only for HLS
-  ///data source.
-  void setHlsTrack(BetterPlayerHlsTrack track) {
+  void setTrack(BetterPlayerAsmsTrack track) {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
@@ -872,20 +842,7 @@ class BetterPlayerController {
 
     videoPlayerController!
         .setTrackParameters(track.width, track.height, track.bitrate);
-    _betterPlayerHlsTrack = track;
-  }
-
-  ///Setup track parameters for currently played video. Can be used only for DASH
-  ///data source.
-  void setDashTrack(BetterPlayerDashTrack track) {
-    if (videoPlayerController == null) {
-      throw StateError("The data source has not been initialized");
-    }
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedTrack));
-
-    videoPlayerController!
-        .setTrackParameters(track.width, track.height, track.bitrate);
-    _betterPlayerDashTrack = track;
+    _betterPlayerAsmsTrack = track;
   }
 
   ///Check if player can be played/paused automatically
@@ -1134,37 +1091,17 @@ class BetterPlayerController {
   }
 
   ///Set [audioTrack] in player. Works only for HLS or DASH streams.
-  void setAudioTrack(dynamic audioTrack) {
-    (audioTrack is BetterPlayerHlsAudioTrack) ? setHlsAudioTrack(audioTrack) : setDashAudioTrack(audioTrack);
-  }
-
-  ///Set [audioTrack] in player. Works only for HLS streams.
-  void setHlsAudioTrack(BetterPlayerHlsAudioTrack audioTrack) {
+  void setAudioTrack(BetterPlayerAsmsAudioTrack audioTrack) {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
 
     if (audioTrack.language == null) {
-      _betterPlayerHlsAudioTrack = null;
+      _betterPlayerAsmsAudioTrack = null;
       return;
     }
 
-    _betterPlayerHlsAudioTrack = audioTrack;
-    videoPlayerController!.setAudioTrack(audioTrack.label, audioTrack.id);
-  }
-
-  ///Set [audioTrack] in player. Works only for DASH streams.
-  void setDashAudioTrack(BetterPlayerDashAudioTrack audioTrack) {
-    if (videoPlayerController == null) {
-      throw StateError("The data source has not been initialized");
-    }
-
-    if (audioTrack.language == null) {
-      _betterPlayerDashAudioTrack = null;
-      return;
-    }
-
-    _betterPlayerDashAudioTrack = audioTrack;
+    _betterPlayerAsmsAudioTrack = audioTrack;
     videoPlayerController!.setAudioTrack(audioTrack.label, audioTrack.id);
   }
 

@@ -27,31 +27,18 @@ class BetterPlayerDataSource {
   /// Custom headers for player
   final Map<String, String>? headers;
 
-  ///Should player use hls subtitles
-  final bool? useHlsSubtitles;
+  ///Should player use hls / dash subtitles
+  final bool? useAsmsSubtitles;
 
   ///Should player use hls tracks
-  final bool? useHlsTracks;
+  final bool? useAsmsTracks;
 
-  ///Should player use hls audio tracks
-  final bool? useHlsAudioTracks;
-
-  ///List of strings that represents tracks names.
-  ///If empty, then better player will choose name based on track parameters
-  final List<String>? hlsTrackNames;
-
-  ///Should player use dash subtitles
-  final bool? useDashSubtitles;
-
-  ///Should player use dash tracks
-  final bool? useDashTracks;
-
-  ///Should player use dash audio tracks
-  final bool? useDashAudioTracks;
+  ///Should player use hls /das audio tracks
+  final bool? useAsmsAudioTracks;
 
   ///List of strings that represents tracks names.
   ///If empty, then better player will choose name based on track parameters
-  final List<String>? dashTrackNames;
+  final List<String>? asmsTrackNames;
 
   ///Optional, alternative resolutions for non-hls/dash video. Used to setup
   ///different qualities for video.
@@ -93,14 +80,10 @@ class BetterPlayerDataSource {
     this.subtitles,
     this.liveStream = false,
     this.headers,
-    this.useHlsSubtitles = true,
-    this.useHlsTracks = true,
-    this.useHlsAudioTracks = true,
-    this.hlsTrackNames,
-    this.useDashSubtitles = true,
-    this.useDashTracks = true,
-    this.useDashAudioTracks = true,
-    this.dashTrackNames,
+    this.useAsmsSubtitles = true,
+    this.useAsmsTracks = true,
+    this.useAsmsAudioTracks = true,
+    this.asmsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
     this.notificationConfiguration =
@@ -124,12 +107,9 @@ class BetterPlayerDataSource {
     List<BetterPlayerSubtitlesSource>? subtitles,
     bool? liveStream,
     Map<String, String>? headers,
-    bool? useHlsSubtitles,
-    bool? useHlsTracks,
-    bool? useHlsAudioTracks,
-    bool? useDashSubtitles,
-    bool? useDashTracks,
-    bool? useDashAudioTracks,
+    bool? useAsmsSubtitles,
+    bool? useAsmsTracks,
+    bool? useAsmsAudioTracks,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration =
@@ -145,12 +125,9 @@ class BetterPlayerDataSource {
       subtitles: subtitles,
       liveStream: liveStream,
       headers: headers,
-      useHlsSubtitles: useHlsSubtitles,
-      useHlsTracks: useHlsTracks,
-      useHlsAudioTracks: useHlsAudioTracks,
-      useDashSubtitles: useDashSubtitles,
-      useDashTracks: useDashTracks,
-      useDashAudioTracks: useDashAudioTracks,
+      useAsmsSubtitles: useAsmsSubtitles,
+      useAsmsTracks: useAsmsTracks,
+      useAsmsAudioTracks: useAsmsAudioTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration,
@@ -166,10 +143,8 @@ class BetterPlayerDataSource {
   factory BetterPlayerDataSource.file(
     String url, {
     List<BetterPlayerSubtitlesSource>? subtitles,
-    bool? useHlsSubtitles,
-    bool? useHlsTracks,
-    bool? useDashSubtitles,
-    bool? useDashTracks,
+    bool? useAsmsSubtitles,
+    bool? useAsmsTracks,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration,
@@ -180,10 +155,8 @@ class BetterPlayerDataSource {
       BetterPlayerDataSourceType.file,
       url,
       subtitles: subtitles,
-      useHlsSubtitles: useHlsSubtitles,
-      useHlsTracks: useHlsTracks,
-      useDashSubtitles: useDashSubtitles,
-      useDashTracks: useDashTracks,
+      useAsmsSubtitles: useAsmsSubtitles,
+      useAsmsTracks: useAsmsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration =
@@ -199,10 +172,8 @@ class BetterPlayerDataSource {
     List<int> bytes, {
     String? videoExtension,
     List<BetterPlayerSubtitlesSource>? subtitles,
-    bool? useHlsSubtitles,
-    bool? useHlsTracks,
-    bool? useDashSubtitles,
-    bool? useDashTracks,
+    bool? useAsmsSubtitles,
+    bool? useAsmsTracks,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration,
@@ -215,10 +186,8 @@ class BetterPlayerDataSource {
       videoExtension: videoExtension,
       bytes: bytes,
       subtitles: subtitles,
-      useHlsSubtitles: useHlsSubtitles,
-      useHlsTracks: useHlsTracks,
-      useDashSubtitles: useDashSubtitles,
-      useDashTracks: useDashTracks,
+      useAsmsSubtitles: useAsmsSubtitles,
+      useAsmsTracks: useAsmsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration =
@@ -235,12 +204,8 @@ class BetterPlayerDataSource {
     List<BetterPlayerSubtitlesSource>? subtitles,
     bool? liveStream,
     Map<String, String>? headers,
-    bool? useHlsSubtitles,
-    bool? useHlsTracks,
-    bool? useHlsAudioTracks,
-    bool? useDashSubtitles,
-    bool? useDashTracks,
-    bool? useDashAudioTracks,
+    bool? useAsmsSubtitles,
+    bool? useAsmsTracks,
     Map<String, String>? resolutions,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration =
@@ -258,12 +223,9 @@ class BetterPlayerDataSource {
       subtitles: subtitles ?? this.subtitles,
       liveStream: liveStream ?? this.liveStream,
       headers: headers ?? this.headers,
-      useHlsSubtitles: useHlsSubtitles ?? this.useHlsSubtitles,
-      useHlsTracks: useHlsTracks ?? this.useHlsTracks,
-      useHlsAudioTracks: useHlsAudioTracks ?? this.useHlsAudioTracks,
-      useDashSubtitles: useDashSubtitles ?? this.useDashSubtitles,
-      useDashTracks: useDashTracks ?? this.useDashTracks,
-      useDashAudioTracks: useDashAudioTracks ?? this.useDashAudioTracks,
+      useAsmsSubtitles: useAsmsSubtitles ?? this.useAsmsSubtitles,
+      useAsmsTracks: useAsmsTracks ?? this.useAsmsTracks,
+      useAsmsAudioTracks: useAsmsAudioTracks ?? this.useAsmsAudioTracks,
       resolutions: resolutions ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
       notificationConfiguration:
