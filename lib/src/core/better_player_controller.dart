@@ -353,10 +353,7 @@ class BetterPlayerController {
           dashData, betterPlayerDataSource!.url);
       /// Load dash tracks
       if (_betterPlayerDataSource?.useAsmsTracks == true) {
-        final videos = _response.videos ?? [];
-        if (videos.length > 0) {
-          _betterPlayerAsmsTracks = videos[0].tracks ?? [];
-        }
+        _betterPlayerAsmsTracks = _response.tracks ?? [];
       }
 
       /// Load dash subtitles

@@ -18,10 +18,13 @@ class BetterPlayerAsmsTrack {
   ///Codecs of the track
   final String? codecs;
 
-  BetterPlayerAsmsTrack(this.id, this.width, this.height, this.bitrate, this.frameRate, this.codecs);
+  ///mimeType of the video track
+  final String? mimeType;
+
+  BetterPlayerAsmsTrack(this.id, this.width, this.height, this.bitrate, this.frameRate, this.codecs, this.mimeType);
 
   factory BetterPlayerAsmsTrack.defaultTrack() {
-    return BetterPlayerAsmsTrack('', 0, 0, 0, 0, '');
+    return BetterPlayerAsmsTrack('', 0, 0, 0, 0, '', '');
   }
 
   @override
@@ -35,6 +38,7 @@ class BetterPlayerAsmsTrack {
         height == other.height &&
         bitrate == other.bitrate &&
         frameRate == other.frameRate &&
-        codecs == other.codecs;
+        codecs == other.codecs &&
+        mimeType == other.mimeType;
   }
 }

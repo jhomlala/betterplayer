@@ -32,7 +32,7 @@ class BetterPlayerHlsUtils {
         parsedPlaylist.variants.forEach(
           (variant) {
             tracks.add(BetterPlayerAsmsTrack('', variant.format.width,
-                variant.format.height, variant.format.bitrate, 0, ''));
+                variant.format.height, variant.format.bitrate, 0, '', ''));
           },
         );
       }
