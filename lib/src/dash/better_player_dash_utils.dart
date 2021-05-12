@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 // External Package imports:
+import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 import 'package:xml/xml.dart';
 
@@ -14,20 +15,12 @@ import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
 import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
 import 'package:better_player/src/asms/better_player_asms_track.dart';
 
-class DashObject {
-  List<BetterPlayerAsmsTrack>? tracks;
-  List<BetterPlayerAsmsSubtitle>? subtitles;
-  List<BetterPlayerAsmsAudioTrack>? audios;
-
-  DashObject({this.tracks, this.subtitles, this.audios});
-}
-
 ///DASH helper class
 class BetterPlayerDashUtils {
   static final HttpClient _httpClient = HttpClient()
     ..connectionTimeout = const Duration(seconds: 5);
 
-  static Future<DashObject> parse(
+  static Future<BetterPlayerAsmsDataHolder> parse(
       String data, String masterPlaylistUrl) async {
     final document = XmlDocument.parse(data);
     final adaptationSets = document.findAllElements('AdaptationSet');
@@ -48,7 +41,7 @@ class BetterPlayerDashUtils {
         }
       }
     });
-    return DashObject(tracks: tracks, audios: audios, subtitles: subtitles);
+    return BetterPlayerAsmsDataHolder(tracks: tracks, audios: audios, subtitles: subtitles);
   }
 
   static List<BetterPlayerAsmsTrack> parseVideo(XmlElement node) {

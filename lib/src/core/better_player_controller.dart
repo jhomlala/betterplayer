@@ -5,6 +5,7 @@ import 'dart:io';
 // Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
+import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
 import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
 import 'package:better_player/src/asms/better_player_asms_track.dart';
 import 'package:better_player/src/configuration/better_player_configuration.dart';
@@ -349,7 +350,7 @@ class BetterPlayerController {
       _getHeaders(),
     );
     if (dashData != null) {
-      DashObject _response = await BetterPlayerDashUtils.parse(
+      BetterPlayerAsmsDataHolder _response = await BetterPlayerDashUtils.parse(
           dashData, betterPlayerDataSource!.url);
       /// Load dash tracks
       if (_betterPlayerDataSource?.useAsmsTracks == true) {
