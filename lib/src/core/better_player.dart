@@ -6,12 +6,10 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
-
 // Flutter imports:
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
 // Package imports:
 import 'package:visibility_detector/visibility_detector.dart';
 import 'package:wakelock/wakelock.dart';
@@ -123,6 +121,8 @@ class _BetterPlayerState extends State<BetterPlayer>
     WidgetsBinding.instance!.removeObserver(this);
     _controllerEventSubscription?.cancel();
     widget.controller.dispose();
+    VisibilityDetectorController.instance
+        .forget(Key("${widget.controller.hashCode}_key"));
     super.dispose();
   }
 
