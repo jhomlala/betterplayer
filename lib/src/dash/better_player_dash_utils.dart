@@ -4,6 +4,7 @@ import 'dart:io';
 
 // External Package imports:
 import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
+import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 import 'package:xml/xml.dart';
 
@@ -17,25 +18,29 @@ class BetterPlayerDashUtils {
 
   static Future<BetterPlayerAsmsDataHolder> parse(
       String data, String masterPlaylistUrl) async {
-    final document = XmlDocument.parse(data);
-    final adaptationSets = document.findAllElements('AdaptationSet');
     List<BetterPlayerAsmsTrack> tracks = [];
     List<BetterPlayerAsmsAudioTrack> audios = [];
     List<BetterPlayerAsmsSubtitle> subtitles = [];
-    int audiosCount = 0;
-    adaptationSets.forEach((node) {
-      final mimeType = node.getAttribute('mimeType');
-      if (mimeType != null) {
-        if (MimeTypes.isVideo(mimeType)) {
-          tracks = tracks + parseVideo(node);
-        } else if (MimeTypes.isAudio(mimeType)) {
-          audios.add(parseAudio(node, audiosCount));
-          audiosCount += 1;
-        } else if (MimeTypes.isText(mimeType)) {
-          subtitles.add(parseSubtitle(node));
+    try {
+      int audiosCount = 0;
+      final document = XmlDocument.parse(data);
+      final adaptationSets = document.findAllElements('AdaptationSet');
+      adaptationSets.forEach((node) {
+        final mimeType = node.getAttribute('mimeType');
+        if (mimeType != null) {
+          if (MimeTypes.isVideo(mimeType)) {
+            tracks = tracks + parseVideo(node);
+          } else if (MimeTypes.isAudio(mimeType)) {
+            audios.add(parseAudio(node, audiosCount));
+            audiosCount += 1;
+          } else if (MimeTypes.isText(mimeType)) {
+            subtitles.add(parseSubtitle(node));
+          }
         }
-      }
-    });
+      });
+    } catch (exception) {
+      BetterPlayerUtils.log("Exception on hls parse: $exception");
+    }
     return BetterPlayerAsmsDataHolder(tracks: tracks, audios: audios, subtitles: subtitles);
   }
 
