@@ -103,12 +103,19 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         width: double.infinity,
         color: betterPlayerController
             .betterPlayerConfiguration.controlsConfiguration.backgroundColor,
-        child: Align(
-          child: AspectRatio(
-            aspectRatio: aspectRatio,
-            child: _buildPlayerWithControls(betterPlayerController, context),
-          ),
-        ),
+        child:
+        Stack(
+            children: [
+              Align(
+                child: AspectRatio(
+                  aspectRatio: aspectRatio,
+                  child: _buildPlayerWithControls(
+                      betterPlayerController, context),
+                ),
+              ),
+              _buildControls(context, betterPlayerController),
+            ]
+        )
       ),
     );
   }
@@ -151,7 +158,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             playerVisibilityStream: playerVisibilityStreamController.stream,
           ),
           if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
-          _buildControls(context, betterPlayerController),
         ],
       ),
     );
