@@ -264,7 +264,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
         preferredName = betterPlayerController!.translations.qualityAuto;
       } else {
-        preferredName = asmsTrackNames.length > index ? asmsTrackNames[index] : null;
+        preferredName =
+            asmsTrackNames.length > index ? asmsTrackNames[index] : null;
       }
       children.add(_buildTrackRow(asmsTracks[index], preferredName));
     }
@@ -292,9 +293,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final int bitrate = track.bitrate ?? 0;
     final String mimeType = (track.mimeType ?? '').replaceAll('video/', '');
     final String trackName = preferredName ??
-        "${width}x${height} ${BetterPlayerUtils.formatBitrate(bitrate)} ${mimeType}";
+        "${width}x$height ${BetterPlayerUtils.formatBitrate(bitrate)} $mimeType";
 
-    final BetterPlayerAsmsTrack? selectedTrack = betterPlayerController!.betterPlayerAsmsTrack;
+    final BetterPlayerAsmsTrack? selectedTrack =
+        betterPlayerController!.betterPlayerAsmsTrack;
     final bool isSelected = selectedTrack != null && selectedTrack == track;
 
     return BetterPlayerMaterialClickableWidget(
@@ -349,8 +351,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         betterPlayerController!.betterPlayerAsmsAudioTrack;
     if (asmsTracks != null) {
       for (var index = 0; index < asmsTracks.length; index++) {
-        final bool isSelected =
-            selectedAsmsAudioTrack != null && selectedAsmsAudioTrack == asmsTracks[index];
+        final bool isSelected = selectedAsmsAudioTrack != null &&
+            selectedAsmsAudioTrack == asmsTracks[index];
         children.add(_buildAudioTrackRow(asmsTracks[index], isSelected));
       }
     }
@@ -370,7 +372,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   Widget _buildAudioTrackRow(
-      dynamic audioTrack, bool isSelected) {
+      BetterPlayerAsmsAudioTrack audioTrack, bool isSelected) {
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();

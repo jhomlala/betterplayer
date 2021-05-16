@@ -18,8 +18,10 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.hlsTestStreamUrl,
-        useAsmsSubtitles: true);
+      BetterPlayerDataSourceType.network,
+      Constants.hlsTestStreamUrl,
+      useAsmsSubtitles: true,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();

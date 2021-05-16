@@ -27,7 +27,7 @@ class BetterPlayerDataSource {
   /// Custom headers for player
   final Map<String, String>? headers;
 
-  ///Should player use hls / dash subtitles
+  ///Should player use hls / dash subtitles (ASMS - Adaptive Streaming Media Sources).
   final bool? useAsmsSubtitles;
 
   ///Should player use hls tracks
@@ -206,6 +206,7 @@ class BetterPlayerDataSource {
     Map<String, String>? headers,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
+    bool? useAsmsAudioTracks,
     Map<String, String>? resolutions,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration =

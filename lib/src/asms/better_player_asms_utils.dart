@@ -3,23 +3,15 @@ import 'dart:convert';
 import 'dart:io';
 
 // Package imports:
-import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
-import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 
 // Project imports:
-import 'package:better_player/src/asms/better_player_asms_track.dart';
 import 'package:better_player/src/dash/better_player_dash_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
-import 'package:better_player/src/hls/hls_parser/hls_master_playlist.dart';
-import 'package:better_player/src/hls/hls_parser/hls_media_playlist.dart';
-import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
-import 'package:better_player/src/hls/hls_parser/rendition.dart';
-import 'package:better_player/src/hls/hls_parser/segment.dart';
 
 import 'better_player_asms_data_holder.dart';
 
-///HLS helper class
+///Base helper class for ASMS parsing.
 class BetterPlayerAsmsUtils {
   static const String _hlsExtension = "m3u8";
   static const String _dashExtension = "mpd";
@@ -32,13 +24,12 @@ class BetterPlayerAsmsUtils {
       isDataSourceHls(url) || isDataSourceDash(url);
 
   ///Check if given url is HLS-type data source.
-  static bool isDataSourceHls(String url) =>
-      url.contains(_hlsExtension);
+  static bool isDataSourceHls(String url) => url.contains(_hlsExtension);
 
   ///Check if given url is DASH-type data source.
-  static bool isDataSourceDash(String url) =>
-      url.contains(_dashExtension);
+  static bool isDataSourceDash(String url) => url.contains(_dashExtension);
 
+  ///Parse playlist based on type of stream.
   static Future<BetterPlayerAsmsDataHolder> parse(
       String data, String masterPlaylistUrl) async {
     return isDataSourceDash(masterPlaylistUrl)
@@ -46,8 +37,12 @@ class BetterPlayerAsmsUtils {
         : BetterPlayerHlsUtils.parse(data, masterPlaylistUrl);
   }
 
-  static Future<String?> getDataFromUrl(String url,
-      [Map<String, String?>? headers]) async {
+  ///Request data from given uri along with headers. May return null if resource
+  ///is not available or on error.
+  static Future<String?> getDataFromUrl(
+    String url, [
+    Map<String, String?>? headers,
+  ]) async {
     try {
       final request = await _httpClient.getUrl(Uri.parse(url));
       if (headers != null) {

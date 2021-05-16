@@ -6,10 +6,10 @@ class BetterPlayerAsmsSubtitle {
   ///Name of the subtitle
   final String? name;
 
-  ///MimeType of the subtitle
+  ///MimeType of the subtitle (DASH only)
   final String? mimeType;
 
-  ///SegmentAligment
+  ///Segment alignment (DASH only)
   final bool? segmentAlignment;
 
   ///Url of the subtitle (master playlist)
@@ -18,12 +18,11 @@ class BetterPlayerAsmsSubtitle {
   ///Urls of specific files
   final List<String>? realUrls;
 
-  BetterPlayerAsmsSubtitle({
-    this.language,
-    this.name,
-    this.mimeType,
-    this.segmentAlignment,
-    this.url,
-    this.realUrls
-  });
+  BetterPlayerAsmsSubtitle(
+      {this.language,
+      this.name,
+      this.mimeType,
+      this.segmentAlignment,
+      this.url,
+      this.realUrls});
 }
