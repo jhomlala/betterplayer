@@ -657,7 +657,7 @@ Use BetterPlayerDataSource.network to build network data source, BetterPlayerDat
 to build memory data source.
 
 Possible configuration options:
-```
+```dart
   ///Type of source of video
   final BetterPlayerDataSourceType type;
 
