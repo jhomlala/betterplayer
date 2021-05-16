@@ -2,6 +2,7 @@
 * Added support for DASH adaptive stream subtitles, audio tracks, tracks (by https://github.com/adrianByv)
 * [BREAKING_CHANGE] Changed useHlsSubtitles, useHlsTracks, useHlsAudio to useAsmsSubtitles, useAsmsTracks, useAsmsAudio.
 * Added DASH example.
+* Fixed progress bar jumps when seeking video.
 
 ## 0.0.66
 * Added check in seek method to handle scenario when video wasn't ready to play.
