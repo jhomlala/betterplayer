@@ -766,7 +766,7 @@ final class BetterPlayer {
                                 return;
                             }
                             ///Fallback option
-                            if (hasElementWithoutLabel && name.equals(label)) {
+                            if (hasElementWithoutLabel && index == groupIndex) {
                                 setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
                                 return;
                             }
