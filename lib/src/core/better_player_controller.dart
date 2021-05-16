@@ -20,8 +20,6 @@ import 'package:better_player/src/core/better_player_controller_provider.dart';
 
 // Flutter imports:
 import 'package:better_player/src/core/better_player_utils.dart';
-import 'package:better_player/src/hls/better_player_hls_utils.dart';
-import 'package:better_player/src/dash/better_player_dash_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -37,6 +35,7 @@ import 'package:path_provider/path_provider.dart';
 class BetterPlayerController {
   static const String _durationParameter = "duration";
   static const String _progressParameter = "progress";
+  static const String _bufferedParameter = "buffered";
   static const String _volumeParameter = "volume";
   static const String _speedParameter = "speed";
   static const String _dataSourceParameter = "dataSource";
@@ -100,7 +99,8 @@ class BetterPlayerController {
   List<BetterPlayerAsmsTrack> _betterPlayerAsmsTracks = [];
 
   ///List of tracks available for current data source. Used only for HLS / DASH.
-  List<BetterPlayerAsmsTrack> get betterPlayerAsmsTracks => _betterPlayerAsmsTracks;
+  List<BetterPlayerAsmsTrack> get betterPlayerAsmsTracks =>
+      _betterPlayerAsmsTracks;
 
   ///Currently selected player track. Used only for HLS / DASH.
   BetterPlayerAsmsTrack? _betterPlayerAsmsTrack;
@@ -280,8 +280,10 @@ class BetterPlayerController {
 
   ///Check if given [betterPlayerDataSource] is HLS / DASH-type data source.
   bool _isDataSourceAsms(BetterPlayerDataSource betterPlayerDataSource) =>
-      (BetterPlayerAsmsUtils.isDataSourceHls(betterPlayerDataSource.url) || betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.hls)
-          || (BetterPlayerAsmsUtils.isDataSourceDash(betterPlayerDataSource.url) || betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.dash);
+      (BetterPlayerAsmsUtils.isDataSourceHls(betterPlayerDataSource.url) ||
+          betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.hls) ||
+      (BetterPlayerAsmsUtils.isDataSourceDash(betterPlayerDataSource.url) ||
+          betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.dash);
 
   ///Configure HLS / DASH data source based on provided data source and configuration.
   ///This method configures tracks, subtitles and audio tracks from given
@@ -292,8 +294,9 @@ class BetterPlayerController {
       _getHeaders(),
     );
     if (data != null) {
-      BetterPlayerAsmsDataHolder _response = await BetterPlayerAsmsUtils.parse(
-          data, betterPlayerDataSource!.url);
+      final BetterPlayerAsmsDataHolder _response =
+          await BetterPlayerAsmsUtils.parse(data, betterPlayerDataSource!.url);
+
       /// Load tracks
       if (_betterPlayerDataSource?.useAsmsTracks == true) {
         _betterPlayerAsmsTracks = _response.tracks ?? [];
@@ -301,7 +304,8 @@ class BetterPlayerController {
 
       /// Load subtitles
       if (betterPlayerDataSource?.useAsmsSubtitles == true) {
-        final List<BetterPlayerAsmsSubtitle> asmsSubtitles = _response.subtitles ?? [];
+        final List<BetterPlayerAsmsSubtitle> asmsSubtitles =
+            _response.subtitles ?? [];
         asmsSubtitles.forEach((BetterPlayerAsmsSubtitle asmsSubtitle) {
           _betterPlayerSubtitlesSourceList.add(
             BetterPlayerSubtitlesSource(
