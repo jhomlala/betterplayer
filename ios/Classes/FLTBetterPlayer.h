@@ -19,7 +19,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTBetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
 @property(readonly, nonatomic) FLTBetterPlayerView* playerView;
 @property(readonly, nonatomic) AVPlayer* player;
-@property(readonly, nonatomic) AVPlayerItemVideoOutput* videoOutput;
 @property(nonatomic) FlutterEventChannel* eventChannel;
 @property(nonatomic) FlutterEventSink eventSink;
 @property(nonatomic) CGAffineTransform preferredTransform;

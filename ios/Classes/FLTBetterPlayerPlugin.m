@@ -13,6 +13,8 @@
 NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
+int texturesCount = -1;
+
 
 #pragma mark - FlutterPlugin protocol
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -61,9 +63,13 @@ NSMutableDictionary*  _artworkImageDict;
 }
 
 #pragma mark - FLTBetterPlayerPlugin class
+- (int)newTextureId {
+    texturesCount += 1;
+    return texturesCount;
+}
 - (void)onPlayerSetup:(FLTBetterPlayer*)player
                result:(FlutterResult)result {
-    int64_t textureId = [_players count];
+    int64_t textureId = [self newTextureId];
     FlutterEventChannel* eventChannel = [FlutterEventChannel
                                          eventChannelWithName:[NSString stringWithFormat:@"better_player_channel/videoEvents%lld",
                                                                textureId]

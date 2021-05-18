@@ -78,22 +78,10 @@ AVPictureInPictureController *_pipController;
     }
 }
 
-- (void)removeVideoOutput {
-    _videoOutput = nil;
-    if (_player.currentItem == nil) {
-        return;
-    }
-    NSArray<AVPlayerItemOutput*>* outputs = [[_player currentItem] outputs];
-    for (AVPlayerItemOutput* output in outputs) {
-        [[_player currentItem] removeOutput:output];
-    }
-}
-
 - (void)clear {
     _isInitialized = false;
     _isPlaying = false;
     _disposed = false;
-    _videoOutput = nil;
     _failedCount = 0;
     _key = nil;
     if (_player.currentItem == nil) {
@@ -187,28 +175,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     videoComposition.frameDuration = CMTimeMake(1, 30);
     
     return videoComposition;
-}
-
-- (void)addVideoOutput {
-    if (_player.currentItem == nil) {
-        return;
-    }
-    
-    if (_videoOutput) {
-        NSArray<AVPlayerItemOutput*>* outputs = [[_player currentItem] outputs];
-        for (AVPlayerItemOutput* output in outputs) {
-            if (output == _videoOutput) {
-                return;
-            }
-        }
-    }
-    
-    NSDictionary* pixBuffAttributes = @{
-        (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
-        (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
-    };
-    _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
-    [_player.currentItem addOutput:_videoOutput];
 }
 
 - (CGAffineTransform)fixTransform:(AVAssetTrack*)videoTrack {
@@ -474,7 +440,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         CGSize realSize = CGSizeApplyAffineTransform(naturalSize, prefTrans);
         
         _isInitialized = true;
-        [self addVideoOutput];
         [self updatePlayingState];
         _eventSink(@{
             @"event" : @"initialized",
