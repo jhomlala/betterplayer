@@ -10,6 +10,7 @@ class DrmPage extends StatefulWidget {
 class _DrmPageState extends State<DrmPage> {
   late BetterPlayerController _tokenController;
   late BetterPlayerController _widevineController;
+  late BetterPlayerController _fairplayController;
 
   @override
   void initState() {
@@ -40,6 +41,16 @@ class _DrmPageState extends State<DrmPage> {
     );
     _widevineController.setupDataSource(_widevineDataSource);
 
+    _fairplayController = BetterPlayerController(betterPlayerConfiguration);
+    BetterPlayerDataSource _fairplayDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.fairplayHlsUrl,
+      drmConfiguration: BetterPlayerDrmConfiguration(
+          drmType: BetterPlayerDrmType.fairplay,
+          certificateUrl: Constants.fairplayCertificateUrl)
+    );
+    _fairplayController.setupDataSource(_fairplayDataSource);
+
     super.initState();
   }
 
@@ -49,9 +60,8 @@ class _DrmPageState extends State<DrmPage> {
       appBar: AppBar(
         title: Text("DRM player"),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+      body: SingleChildScrollView(
+        child: Column(children: [
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -76,8 +86,20 @@ class _DrmPageState extends State<DrmPage> {
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _widevineController),
           ),
+          const SizedBox(height: 16),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              "Fairplay - certificate url based EZDRM. Works only for iOS.",
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: BetterPlayer(controller: _fairplayController),
+          ),
         ],
       ),
-    );
+    ));
   }
 }
