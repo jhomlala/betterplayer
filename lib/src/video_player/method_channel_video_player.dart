@@ -77,6 +77,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
           'licenseUrl': dataSource.licenseUrl,
+          'certificateUrl': dataSource.certificateUrl,
           'drmHeaders': dataSource.drmHeaders,
           'activityName': dataSource.activityName
         };
@@ -276,6 +277,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     final Map<String, dynamic> dataSourceDescription = <String, dynamic>{
       'key': dataSource.key,
       'uri': dataSource.uri,
+      'certificateUrl': dataSource.certificateUrl,
       'headers': dataSource.headers,
       'maxCacheSize': dataSource.maxCacheSize,
       'maxCacheFileSize': dataSource.maxCacheFileSize,

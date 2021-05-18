@@ -328,6 +328,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? notificationChannelName,
     Duration? overriddenDuration,
     String? licenseUrl,
+    String? certificateUrl,
     Map<String, String>? drmHeaders,
     String? activityName,
   }) {
@@ -347,6 +348,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         notificationChannelName: notificationChannelName,
         overriddenDuration: overriddenDuration,
         licenseUrl: licenseUrl,
+        certificateUrl: certificateUrl,
         drmHeaders: drmHeaders,
         activityName: activityName,
       ),

@@ -200,12 +200,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     return transform;
 }
 
-- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key overriddenDuration:(int) overriddenDuration{
+- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl overriddenDuration:(int) overriddenDuration{
     NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{} withCache: false overriddenDuration:overriddenDuration];
+    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withCertificateUrl:certificateUrl withHeaders: @{} withCache: false overriddenDuration:overriddenDuration];
 }
 
-- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration{
+- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration{
     if (headers == [NSNull null]){
         headers = @{};
     }
@@ -217,6 +217,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     } else {
         AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
                                                 options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
+        
+        if (certificateUrl && certificateUrl != [NSNull null] && [certificateUrl length] > 0) {
+            _loaderDelegate = [[FLTEzdrmAssetsLoaderDelegate alloc] initWithCertificateUrl:[[NSURL alloc] initWithString: certificateUrl]];
+            dispatch_queue_attr_t qos = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, -1);
+            dispatch_queue_t streamQueue = dispatch_queue_create("streamQueue", qos);
+            [asset.resourceLoader setDelegate:_loaderDelegate queue:streamQueue];
+        }
         item = [AVPlayerItem playerItemWithAsset:asset];
     }
     

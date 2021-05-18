@@ -383,6 +383,7 @@ class BetterPlayerController {
             overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
             formatHint: _getVideoFormat(_betterPlayerDataSource!.videoFormat),
             licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
+            certificateUrl: _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
             drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
             activityName: _betterPlayerDataSource
                 ?.notificationConfiguration?.activityName);

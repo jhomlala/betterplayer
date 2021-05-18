@@ -13,12 +13,14 @@
 #import <GLKit/GLKit.h>
 #import "FLTTimeUtils.h"
 #import "FLTBetterPlayerView.h"
+#import "FLTEzdrmAssetsLoaderDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTBetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
 @property(readonly, nonatomic) FLTBetterPlayerView* playerView;
 @property(readonly, nonatomic) AVPlayer* player;
+@property(readonly, nonatomic) FLTEzdrmAssetsLoaderDelegate* loaderDelegate;
 @property(nonatomic) FlutterEventChannel* eventChannel;
 @property(nonatomic) FlutterEventSink eventSink;
 @property(nonatomic) CGAffineTransform preferredTransform;
@@ -45,8 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setFrame:(CGRect)frame;
 - (void)setMixWithOthers:(bool)mixWithOthers;
 - (void)seekTo:(int)location;
-- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key overriddenDuration:(int) overriddenDuration;
-- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration;
+- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl overriddenDuration:(int) overriddenDuration;
+- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration;
 - (void)setVolume:(double)volume;
 - (void)setSpeed:(double)speed result:(FlutterResult)result;
 - (void) setAudioTrack:(NSString*) name index:(int) index;
