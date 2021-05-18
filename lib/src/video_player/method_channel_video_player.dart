@@ -9,6 +9,7 @@ import 'dart:ui';
 
 // Flutter imports:
 import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -401,7 +402,16 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Widget buildView(int? textureId) {
-    return Texture(textureId: textureId!);
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return UiKitView(
+        key: Key(DateTime.now().toString()),  // To reassign AVPlayer to the old player after fullscreen
+        viewType: 'com.jhomlala/better_player',
+        creationParamsCodec: const StandardMessageCodec(),
+        creationParams: {'textureId': textureId!},
+      );
+    } else {
+      return Texture(textureId: textureId!);
+    }
   }
 
   EventChannel _eventChannelFor(int? textureId) {

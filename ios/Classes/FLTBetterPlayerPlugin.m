@@ -14,19 +14,20 @@ NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
 
+#pragma mark - FlutterPlugin protocol
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel =
     [FlutterMethodChannel methodChannelWithName:@"better_player_channel"
                                 binaryMessenger:[registrar messenger]];
     FLTBetterPlayerPlugin* instance = [[FLTBetterPlayerPlugin alloc] initWithRegistrar:registrar];
     [registrar addMethodCallDelegate:instance channel:channel];
-    [registrar publish:instance];
+    //[registrar publish:instance];
+    [registrar registerViewFactory:instance withId:@"com.jhomlala/better_player"];
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     self = [super init];
     NSAssert(self, @"super init cannot be nil");
-    _registry = [registrar textures];
     _messenger = [registrar messenger];
     _registrar = registrar;
     _players = [NSMutableDictionary dictionaryWithCapacity:1];
@@ -45,11 +46,24 @@ NSMutableDictionary*  _artworkImageDict;
     [_players removeAllObjects];
 }
 
+#pragma mark - FlutterPlatformViewFactory protocol
+- (NSObject<FlutterPlatformView>*)createWithFrame:(CGRect)frame
+                                   viewIdentifier:(int64_t)viewId
+                                        arguments:(id _Nullable)args {
+    NSNumber* textureId = [args objectForKey:@"textureId"];
+    FLTBetterPlayerView* player = [_players objectForKey:@(textureId.intValue)];
+    [player setFrame:frame];
+    return player;
+}
+
+- (NSObject<FlutterMessageCodec>*)createArgsCodec {
+    return [FlutterStandardMessageCodec sharedInstance];
+}
+
+#pragma mark - FLTBetterPlayerPlugin class
 - (void)onPlayerSetup:(FLTBetterPlayer*)player
-         frameUpdater:(FLTFrameUpdater*)frameUpdater
                result:(FlutterResult)result {
-    int64_t textureId = [_registry registerTexture:player];
-    frameUpdater.textureId = textureId;
+    int64_t textureId = [_players count];
     FlutterEventChannel* eventChannel = [FlutterEventChannel
                                          eventChannelWithName:[NSString stringWithFormat:@"better_player_channel/videoEvents%lld",
                                                                textureId]
@@ -242,16 +256,14 @@ NSMutableDictionary*  _artworkImageDict;
     if ([@"init" isEqualToString:call.method]) {
         // Allow audio playback when the Ring/Silent switch is set to silent
         for (NSNumber* textureId in _players) {
-            [_registry unregisterTexture:[textureId unsignedIntegerValue]];
             [_players[textureId] dispose];
         }
         
         [_players removeAllObjects];
         result(nil);
     } else if ([@"create" isEqualToString:call.method]) {
-        FLTFrameUpdater* frameUpdater = [[FLTFrameUpdater alloc] initWithRegistry:_registry];
-        FLTBetterPlayer* player = [[FLTBetterPlayer alloc] initWithFrameUpdater:frameUpdater];
-        [self onPlayerSetup:player frameUpdater:frameUpdater result:result];
+        FLTBetterPlayer* player = [[FLTBetterPlayer alloc] initWithFrame:CGRectZero];
+        [self onPlayerSetup:player result:result];
     } else {
         NSDictionary* argsMap = call.arguments;
         int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
@@ -259,7 +271,6 @@ NSMutableDictionary*  _artworkImageDict;
         if ([@"setDataSource" isEqualToString:call.method]) {
             [player clear];
             // This call will clear cached frame because we will return transparent frame
-            [_registry textureFrameAvailable:textureId];
             
             NSDictionary* dataSource = argsMap[@"dataSource"];
             [_dataSourceDict setObject:dataSource forKey:[self getTextureId:player]];
@@ -299,7 +310,6 @@ NSMutableDictionary*  _artworkImageDict;
         } else if ([@"dispose" isEqualToString:call.method]) {
             [self disposeNotificationData:player];
             [self setRemoteCommandsNotificationNotActive];
-            [_registry unregisterTexture:textureId];
             [_players removeObjectForKey:@(textureId)];
             // If the Flutter contains https://github.com/flutter/engine/pull/12695,
             // the `player` is disposed via `onTextureUnregistered` at the right time.

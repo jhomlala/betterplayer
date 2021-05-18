@@ -9,17 +9,17 @@
 #import <Flutter/Flutter.h>
 #import <AVKit/AVKit.h>
 #import <AVFoundation/AVFoundation.h>
-#import "FLTFrameUpdater.h"
 #import <KTVHTTPCache/KTVHTTPCache.h>
 #import <GLKit/GLKit.h>
 #import "FLTTimeUtils.h"
+#import "FLTBetterPlayerView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface FLTBetterPlayer : NSObject <FlutterTexture, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
+@interface FLTBetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
+@property(readonly, nonatomic) FLTBetterPlayerView* playerView;
 @property(readonly, nonatomic) AVPlayer* player;
 @property(readonly, nonatomic) AVPlayerItemVideoOutput* videoOutput;
-@property(readonly, nonatomic) CADisplayLink* displayLink;
 @property(nonatomic) FlutterEventChannel* eventChannel;
 @property(nonatomic) FlutterEventSink eventSink;
 @property(nonatomic) CGAffineTransform preferredTransform;
@@ -28,7 +28,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) bool isLooping;
 @property(nonatomic, readonly) bool isInitialized;
 @property(nonatomic, readonly) NSString* key;
-@property(nonatomic, readonly) CVPixelBufferRef prevBuffer;
 @property(nonatomic, readonly) int failedCount;
 @property(nonatomic) AVPlayerLayer* _playerLayer;
 @property(nonatomic) bool _pictureInPicture;
@@ -43,7 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (int64_t) duration;
 - (int64_t) position;
 
-- (instancetype)initWithFrameUpdater:(FLTFrameUpdater*)frameUpdater;
+- (instancetype)initWithFrame:(CGRect)frame;
+- (void)setFrame:(CGRect)frame;
 - (void)setMixWithOthers:(bool)mixWithOthers;
 - (void)seekTo:(int)location;
 - (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key overriddenDuration:(int) overriddenDuration;

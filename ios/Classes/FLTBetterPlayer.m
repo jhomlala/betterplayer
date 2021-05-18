@@ -22,7 +22,7 @@ AVPictureInPictureController *_pipController;
 #endif
 
 @implementation FLTBetterPlayer
-- (instancetype)initWithFrameUpdater:(FLTFrameUpdater*)frameUpdater {
+- (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
@@ -30,17 +30,26 @@ AVPictureInPictureController *_pipController;
     _disposed = false;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-    
+    _playerView = [[FLTBetterPlayerView alloc] initWithFrame:frame];
+    _playerView.player = _player;
     ///Fix for loading large videos
     if (@available(iOS 10.0, *)) {
         _player.automaticallyWaitsToMinimizeStalling = false;
     }
-    _displayLink = [CADisplayLink displayLinkWithTarget:frameUpdater
-                                               selector:@selector(onDisplayLink:)];
-    [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    _displayLink.paused = YES;
     self._observersAdded = false;
     return self;
+}
+
+- (nonnull UIView *)view {
+    if (_playerView == nil || _playerView == NULL || [_playerView.class isKindOfClass:NSNull.class]) {
+        return [[UIView alloc] init];
+    } else {
+        return _playerView;
+    }
+}
+
+- (void)setFrame:(CGRect)frame {
+    [_playerView setFrame:frame];
 }
 
 - (void)addObservers:(AVPlayerItem*)item {
@@ -81,7 +90,6 @@ AVPictureInPictureController *_pipController;
 }
 
 - (void)clear {
-    _displayLink.paused = YES;
     _isInitialized = false;
     _isPlaying = false;
     _disposed = false;
@@ -413,7 +421,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)updatePlayingState {
     if (!_isInitialized || !_key) {
         NSLog(@"not initalized and paused!!");
-        _displayLink.paused = YES;
         return;
     }
     if (!self._observersAdded){
@@ -431,7 +438,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     } else {
         [_player pause];
     }
-    _displayLink.paused = !_isPlaying;
 }
 
 - (void)onReadyToPlay {
@@ -719,63 +725,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 
 #endif
-// This workaround if you will change dataSource. Flutter engine caches CVPixelBufferRef and if you
-// return NULL from method copyPixelBuffer Flutter will use cached CVPixelBufferRef. If you will
-// change your datasource you can see frame from previeous video. Thats why we should return
-// trasparent frame for this situation
-- (CVPixelBufferRef)prevTransparentBuffer {
-    if (_prevBuffer) {
-        CVPixelBufferLockBaseAddress(_prevBuffer, 0);
-        
-        int bufferWidth = CVPixelBufferGetWidth(_prevBuffer);
-        int bufferHeight = CVPixelBufferGetHeight(_prevBuffer);
-        unsigned char* pixel = (unsigned char*)CVPixelBufferGetBaseAddress(_prevBuffer);
-        
-        for (int row = 0; row < bufferHeight; row++) {
-            for (int column = 0; column < bufferWidth; column++) {
-                pixel[0] = 0;
-                pixel[1] = 0;
-                pixel[2] = 0;
-                pixel[3] = 0;
-                pixel += 4;
-            }
-        }
-        CVPixelBufferUnlockBaseAddress(_prevBuffer, 0);
-        return _prevBuffer;
-    }
-    return _prevBuffer;
-}
-
-
-- (CVPixelBufferRef)copyPixelBuffer {
-    //Disabled because of black frame issue
-    /*if (!_videoOutput || !_isInitialized || !_isPlaying || !_key || ![_player currentItem] ||
-     ![[_player currentItem] isPlaybackLikelyToKeepUp]) {
-     return [self prevTransparentBuffer];
-     }*/
-    
-    CMTime outputItemTime = [_videoOutput itemTimeForHostTime:CACurrentMediaTime()];
-    if ([_videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
-        _failedCount = 0;
-        _prevBuffer = [_videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
-        return _prevBuffer;
-    } else {
-        // AVPlayerItemVideoOutput.hasNewPixelBufferForItemTime doesn't work correctly
-        _failedCount++;
-        if (_failedCount > 100) {
-            _failedCount = 0;
-            [self removeVideoOutput];
-            [self addVideoOutput];
-        }
-        return NULL;
-    }
-}
-
-- (void)onTextureUnregistered {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self dispose];
-    });
-}
 
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
     _eventSink = nil;
@@ -800,7 +749,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)disposeSansEventChannel {
     @try{
         [self clear];
-        [_displayLink invalidate];
     }
     @catch(NSException *exception) {
         NSLog(exception.debugDescription);
