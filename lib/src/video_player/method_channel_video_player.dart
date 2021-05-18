@@ -406,7 +406,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   Widget buildView(int? textureId) {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return UiKitView(
-        key: Key(DateTime.now().toString()),  // To reassign AVPlayer to the old player after fullscreen
         viewType: 'com.jhomlala/better_player',
         creationParamsCodec: const StandardMessageCodec(),
         creationParams: {'textureId': textureId!},

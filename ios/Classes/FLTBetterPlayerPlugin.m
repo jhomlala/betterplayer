@@ -54,7 +54,6 @@ int texturesCount = -1;
                                         arguments:(id _Nullable)args {
     NSNumber* textureId = [args objectForKey:@"textureId"];
     FLTBetterPlayerView* player = [_players objectForKey:@(textureId.intValue)];
-    [player setFrame:frame];
     return player;
 }
 

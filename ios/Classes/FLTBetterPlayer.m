@@ -30,8 +30,6 @@ AVPictureInPictureController *_pipController;
     _disposed = false;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-    _playerView = [[FLTBetterPlayerView alloc] initWithFrame:frame];
-    _playerView.player = _player;
     ///Fix for loading large videos
     if (@available(iOS 10.0, *)) {
         _player.automaticallyWaitsToMinimizeStalling = false;
@@ -41,15 +39,9 @@ AVPictureInPictureController *_pipController;
 }
 
 - (nonnull UIView *)view {
-    if (_playerView == nil || _playerView == NULL || [_playerView.class isKindOfClass:NSNull.class]) {
-        return [[UIView alloc] init];
-    } else {
-        return _playerView;
-    }
-}
-
-- (void)setFrame:(CGRect)frame {
-    [_playerView setFrame:frame];
+    FLTBetterPlayerView *playerView = [[FLTBetterPlayerView alloc] initWithFrame:CGRectZero];
+    playerView.player = _player;
+    return playerView;
 }
 
 - (void)addObservers:(AVPlayerItem*)item {

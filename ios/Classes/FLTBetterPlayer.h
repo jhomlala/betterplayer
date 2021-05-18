@@ -18,7 +18,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTBetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
-@property(readonly, nonatomic) FLTBetterPlayerView* playerView;
 @property(readonly, nonatomic) AVPlayer* player;
 @property(readonly, nonatomic) FLTEzdrmAssetsLoaderDelegate* loaderDelegate;
 @property(nonatomic) FlutterEventChannel* eventChannel;
@@ -44,7 +43,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (int64_t) position;
 
 - (instancetype)initWithFrame:(CGRect)frame;
-- (void)setFrame:(CGRect)frame;
 - (void)setMixWithOthers:(bool)mixWithOthers;
 - (void)seekTo:(int)location;
 - (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl overriddenDuration:(int) overriddenDuration;
