@@ -192,6 +192,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   bool get _created => _creatingCompleter.isCompleted;
 
+  DateTime? _seekTime;
+  Duration? _seekPosition;
+
   /// This is just exposed for testing. It shouldn't be used by anyone depending
   /// on the plugin.
   @visibleForTesting
@@ -454,7 +457,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (value.isPlaying) {
       await _videoPlayerPlatform.play(_textureId);
       _timer = Timer.periodic(
-        const Duration(milliseconds: 500),
+        const Duration(milliseconds: 300),
         (Timer timer) async {
           if (_isDisposed) {
             return;
@@ -466,6 +469,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             return;
           }
           _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
+
+          if (_seekTime != null) {
+            final difference = DateTime.now().millisecondsSinceEpoch -
+                _seekTime!.millisecondsSinceEpoch;
+            if (difference > 400) {
+              _seekPosition = null;
+              _seekTime = null;
+            }
+          }
         },
       );
     } else {
@@ -513,6 +525,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposed) {
       return;
     }
+    _seekPosition = position;
+    _seekTime = DateTime.now();
 
     Duration? positionToSeek = position;
     if (position! > value.duration!) {
@@ -562,8 +576,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   void _updatePosition(Duration? position, {DateTime? absolutePosition}) {
-    value = value.copyWith(position: position);
-    value = value.copyWith(absolutePosition: absolutePosition);
+    value = value.copyWith(position: _seekPosition ?? position);
+    if (_seekPosition == null) {
+      value = value.copyWith(absolutePosition: absolutePosition);
+    }
   }
 
   Future<bool?> isPictureInPictureSupported() async {
