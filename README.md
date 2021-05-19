@@ -464,6 +464,8 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
       ),
     );
 ```
+
+
 ```dart
    ///Color of the control bars
    final Color controlBarColor;
