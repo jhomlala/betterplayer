@@ -971,8 +971,10 @@ NSMutableDictionary*  _artworkImageDict;
 }
 
 - (void) setRemoteCommandsNotificationNotActive{
-    // TODO: figure out how to handle closing AudioSession
-    //[[AVAudioSession sharedInstance] setActive:false error:nil];
+    if ([_players count] == 0) {
+        [[AVAudioSession sharedInstance] setActive:false error:nil];
+    }
+    
     [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
 }
 
@@ -1203,8 +1205,9 @@ NSMutableDictionary*  _artworkImageDict;
                     [player dispose];
                 }
             });
-            // TODO: Figure out what to do to disactivated AVAudioSession
-            // [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
+            if ([_players count] == 0) {
+                [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
+            }
             result(nil);
         } else if ([@"setLooping" isEqualToString:call.method]) {
             [player setIsLooping:[argsMap[@"looping"] boolValue]];
