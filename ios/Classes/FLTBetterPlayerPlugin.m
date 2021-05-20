@@ -149,7 +149,7 @@ int texturesCount = -1;
             
             MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
             CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
-            int64_t millis = [FLTTimeUtils FLTCMTimeToMillis:(time)];
+            int64_t millis = [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
             [player seekTo: millis];
             player.eventSink(@{@"event" : @"seek", @"position": @(millis)});
             return MPRemoteCommandHandlerStatusSuccess;

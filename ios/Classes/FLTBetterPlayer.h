@@ -11,7 +11,7 @@
 #import <AVFoundation/AVFoundation.h>
 #import <KTVHTTPCache/KTVHTTPCache.h>
 #import <GLKit/GLKit.h>
-#import "FLTTimeUtils.h"
+#import "BetterPlayerTimeUtils.h"
 #import "FLTBetterPlayerView.h"
 #import "FLTEzdrmAssetsLoaderDelegate.h"
 

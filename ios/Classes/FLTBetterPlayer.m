@@ -326,10 +326,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             NSMutableArray<NSArray<NSNumber*>*>* values = [[NSMutableArray alloc] init];
             for (NSValue* rangeValue in [object loadedTimeRanges]) {
                 CMTimeRange range = [rangeValue CMTimeRangeValue];
-                int64_t start = [FLTTimeUtils FLTCMTimeToMillis:(range.start)];
-                int64_t end = start + [FLTTimeUtils FLTCMTimeToMillis:(range.duration)];
+                int64_t start = [BetterPlayerTimeUtils FLTCMTimeToMillis:(range.start)];
+                int64_t end = start + [BetterPlayerTimeUtils FLTCMTimeToMillis:(range.duration)];
                 if (!CMTIME_IS_INVALID(_player.currentItem.forwardPlaybackEndTime)) {
-                    int64_t endTime = [FLTTimeUtils FLTCMTimeToMillis:(_player.currentItem.forwardPlaybackEndTime)];
+                    int64_t endTime = [BetterPlayerTimeUtils FLTCMTimeToMillis:(_player.currentItem.forwardPlaybackEndTime)];
                     if (end > endTime){
                         end = endTime;
                     }
@@ -463,11 +463,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (int64_t)position {
-    return [FLTTimeUtils FLTCMTimeToMillis:([_player currentTime])];
+    return [BetterPlayerTimeUtils FLTCMTimeToMillis:([_player currentTime])];
 }
 
 - (int64_t)absolutePosition {
-    return [FLTTimeUtils FLTNSTimeIntervalToMillis:([[[_player currentItem] currentDate] timeIntervalSince1970])];
+    return [BetterPlayerTimeUtils FLTNSTimeIntervalToMillis:([[[_player currentItem] currentDate] timeIntervalSince1970])];
 }
 
 - (int64_t)duration {
@@ -481,7 +481,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         time = [[_player currentItem] forwardPlaybackEndTime];
     }
     
-    return [FLTTimeUtils FLTCMTimeToMillis:(time)];
+    return [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
 }
 
 - (void)seekTo:(int)location {
