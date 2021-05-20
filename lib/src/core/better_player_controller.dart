@@ -203,6 +203,11 @@ class BetterPlayerController {
   ///normal events, use eventListener.
   Stream<BetterPlayerControllerEvent> get controllerEventStream =>
       _controllerEventStreamController.stream;
+  ///Flag which determines whether are ASMS segments loading
+  bool _asmsSegmentsLoading = false;
+  
+  ///List of loaded ASMS segments
+  List<String> _asmsSegmentsLoaded = [];
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -309,9 +314,13 @@ class BetterPlayerController {
         asmsSubtitles.forEach((BetterPlayerAsmsSubtitle asmsSubtitle) {
           _betterPlayerSubtitlesSourceList.add(
             BetterPlayerSubtitlesSource(
-                type: BetterPlayerSubtitlesSourceType.network,
-                name: asmsSubtitle.name,
-                urls: asmsSubtitle.realUrls),
+              type: BetterPlayerSubtitlesSourceType.network,
+              name: asmsSubtitle.name,
+              urls: asmsSubtitle.realUrls,
+              asmsIsSegmented: asmsSubtitle.isSegmented,
+              asmsSegmentsTime: asmsSubtitle.segmentsTime,
+              asmsSegments: asmsSubtitle.segments,
+            ),
           );
         });
       }
@@ -332,7 +341,13 @@ class BetterPlayerController {
       {bool sourceInitialize = false}) async {
     _betterPlayerSubtitlesSource = subtitlesSource;
     subtitlesLines.clear();
+    _asmsSegmentsLoaded.clear();
+    _asmsSegmentsLoading = false;
+
     if (subtitlesSource.type != BetterPlayerSubtitlesSourceType.none) {
+      if (subtitlesSource.asmsIsSegmented == true) {
+        return;
+      }
       final subtitlesParsed =
           await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
       subtitlesLines.addAll(subtitlesParsed);
@@ -342,6 +357,35 @@ class BetterPlayerController {
     if (!_disposed && !sourceInitialize) {
       _postControllerEvent(BetterPlayerControllerEvent.changeSubtitles);
     }
+  }
+
+  Future _loadSubtitlesSegments(Duration position) async {
+    if (_asmsSegmentsLoading) {
+      return;
+    }
+    _asmsSegmentsLoading = true;
+    Duration loadDurationEnd = Duration(
+        milliseconds: position.inMilliseconds +
+            5 * (_betterPlayerSubtitlesSource?.asmsSegmentsTime ?? 5000));
+    
+    final segmentsToLoad = _betterPlayerSubtitlesSource?.asmsSegments
+        ?.where((segment) {
+          return segment.start > position &&
+              segment.end < loadDurationEnd &&
+              !_asmsSegmentsLoaded.contains(segment.url);
+        })
+        .map((segment) => segment.url)
+        .toList();
+    
+    if ((segmentsToLoad?.length ?? 0) > 0) {
+      final subtitlesParsed = await BetterPlayerSubtitlesFactory.parseSubtitles(
+          BetterPlayerSubtitlesSource(
+              type: _betterPlayerSubtitlesSource!.type, urls: segmentsToLoad));
+      subtitlesLines.addAll(subtitlesParsed);
+      _asmsSegmentsLoaded.addAll(segmentsToLoad!);
+    } 
+    
+    _asmsSegmentsLoading = false;
   }
 
   ///Get VideoFormat from BetterPlayerVideoFormat (adapter method which translates
@@ -696,6 +740,10 @@ class BetterPlayerController {
         setControlsEnabled(true);
       }
       videoPlayerController?.refresh();
+    }
+
+    if (_betterPlayerSubtitlesSource?.asmsIsSegmented == true) {
+      _loadSubtitlesSegments(currentVideoPlayerValue.position);
     }
 
     final int now = DateTime.now().millisecondsSinceEpoch;

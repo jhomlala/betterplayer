@@ -775,7 +775,7 @@ class HlsPlaylistParser {
       } else if (line.startsWith(tagTargetDuration)) {
         targetDurationUs = int.parse(_parseStringAttr(
                 source: line, pattern: regexpTargetDuration)!) *
-            100000;
+            1000000;
       } else if (line.startsWith(tagMediaSequence)) {
         mediaSequence = int.parse(
             _parseStringAttr(source: line, pattern: regexpMediaSequence)!);

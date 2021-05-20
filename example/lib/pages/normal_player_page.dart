@@ -22,7 +22,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.bugBuckBunnyVideoUrl,
+      "https://eng-demo.cablecast.tv/segmented-captions/vod.m3u8",
     ));
     super.initState();
   }
