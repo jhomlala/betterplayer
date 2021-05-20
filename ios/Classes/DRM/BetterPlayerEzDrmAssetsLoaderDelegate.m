@@ -1,13 +1,10 @@
-//
-//  FLTEzdrmAssetsLoaderDelegate.m
-//  better_player
-//
-//  Created by Koldo on 18/05/2021.
-//
+// Copyright 2017 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
-#import "FLTEzdrmAssetsLoaderDelegate.h"
+#import "BetterPlayerEzDrmAssetsLoaderDelegate.h"
 
-@implementation FLTEzdrmAssetsLoaderDelegate
+@implementation BetterPlayerEzDrmAssetsLoaderDelegate
 
 NSString *_assetId;
 
@@ -24,23 +21,23 @@ NSString * KEY_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
 }
 
 /*------------------------------------------
-**
-** getContentKeyAndLeaseExpiryfromKeyServerModuleWithRequest
-**
-** takes the bundled SPC and sends it the the
-** key server defined at KEY_SERVER_URL in the View Controller
-** it returns a CKC which then is returned.
-** ---------------------------------------*/
+ **
+ ** getContentKeyAndLeaseExpiryfromKeyServerModuleWithRequest
+ **
+ ** takes the bundled SPC and sends it the the
+ ** key server defined at KEY_SERVER_URL in the View Controller
+ ** it returns a CKC which then is returned.
+ ** ---------------------------------------*/
 - (NSData *)getContentKeyAndLeaseExpiryfromKeyServerModuleWithRequest:(NSData*)requestBytes and:(NSString *)assetId and:(NSString *)customParams and:(NSError *)errorOut {
     NSData * decodedData;
     NSURLResponse * response;
     NSURL * ksmURL = [[NSURL alloc] initWithString: [NSString stringWithFormat:@"%@%@%@",KEY_SERVER_URL,assetId,customParams]];
-
+    
     NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:ksmURL];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-type"];
     [request setHTTPBody:requestBytes];
-
+    
     @try {
         decodedData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
     }
@@ -88,13 +85,13 @@ NSString * KEY_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
         [loadingRequest finishLoadingWithError:nil];
         return YES;
     }
-
+    
     NSString * passthruParams = [NSString stringWithFormat:@"?customdata=%@", _assetId];
     NSData * responseData;
     NSError * error;
-
+    
     responseData = [self getContentKeyAndLeaseExpiryfromKeyServerModuleWithRequest:requestBytes and:_assetId and:passthruParams and:error];
-
+    
     if (responseData != nil && responseData != NULL && ![responseData.class isKindOfClass:NSNull.class]){
         AVAssetResourceLoadingDataRequest * dataRequest = loadingRequest.dataRequest;
         [dataRequest respondWithData:responseData];
@@ -102,12 +99,12 @@ NSString * KEY_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
     } else {
         [loadingRequest finishLoadingWithError:error];
     }
-
+    
     return YES;
 }
 
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForRenewalOfRequestedResource:(AVAssetResourceRenewalRequest *)renewalRequest {
-    NSLog(@"shouldWaitForRenewalOfRequestedResource");
     return [self resourceLoader:resourceLoader shouldWaitForLoadingOfRequestedResource:renewalRequest];
 }
+
 @end

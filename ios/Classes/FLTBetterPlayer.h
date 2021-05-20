@@ -13,13 +13,13 @@
 #import <GLKit/GLKit.h>
 #import "BetterPlayerTimeUtils.h"
 #import "FLTBetterPlayerView.h"
-#import "FLTEzdrmAssetsLoaderDelegate.h"
+#import "BetterPlayerEzDrmAssetsLoaderDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTBetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
 @property(readonly, nonatomic) AVPlayer* player;
-@property(readonly, nonatomic) FLTEzdrmAssetsLoaderDelegate* loaderDelegate;
+@property(readonly, nonatomic) BetterPlayerEzDrmAssetsLoaderDelegate* loaderDelegate;
 @property(nonatomic) FlutterEventChannel* eventChannel;
 @property(nonatomic) FlutterEventSink eventSink;
 @property(nonatomic) CGAffineTransform preferredTransform;
