@@ -16,10 +16,6 @@ NSString * KEY_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
     return self;
 }
 
-- (void)removeKeyWith:(NSFileManager *)fileManager {
-
-}
-
 /*------------------------------------------
  **
  ** getContentKeyAndLeaseExpiryfromKeyServerModuleWithRequest
