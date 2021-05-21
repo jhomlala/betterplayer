@@ -1,14 +1,13 @@
-// Dart imports:
-import 'dart:convert';
-import 'dart:io';
-
 // Package imports:
+import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
+import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
+import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
+import 'package:better_player/src/asms/better_player_asms_subtitle_segment.dart';
+import 'package:better_player/src/asms/better_player_asms_utils.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
-import 'package:better_player/src/hls/better_player_hls_audio_track.dart';
 
 // Project imports:
-import 'package:better_player/src/hls/better_player_hls_subtitle.dart';
-import 'package:better_player/src/hls/better_player_hls_track.dart';
+import 'package:better_player/src/asms/better_player_asms_track.dart';
 import 'package:better_player/src/hls/hls_parser/hls_master_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_media_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
@@ -17,28 +16,44 @@ import 'package:better_player/src/hls/hls_parser/segment.dart';
 
 ///HLS helper class
 class BetterPlayerHlsUtils {
-  static final HttpClient _httpClient = HttpClient()
-    ..connectionTimeout = const Duration(seconds: 5);
-  static final HlsPlaylistParser _hlsPlaylistParser =
-      HlsPlaylistParser.create();
-
-  static Future<List<BetterPlayerHlsTrack>> parseTracks(
+  static Future<BetterPlayerAsmsDataHolder> parse(
       String data, String masterPlaylistUrl) async {
-    final List<BetterPlayerHlsTrack> tracks = [];
+    List<BetterPlayerAsmsTrack> tracks = [];
+    List<BetterPlayerAsmsSubtitle> subtitles = [];
+    List<BetterPlayerAsmsAudioTrack> audios = [];
+    try {
+      final List<List<dynamic>> list = await Future.wait([
+        parseTracks(data, masterPlaylistUrl),
+        parseSubtitles(data, masterPlaylistUrl),
+        parseLanguages(data, masterPlaylistUrl)
+      ]);
+      tracks = list[0] as List<BetterPlayerAsmsTrack>;
+      subtitles = list[1] as List<BetterPlayerAsmsSubtitle>;
+      audios = list[2] as List<BetterPlayerAsmsAudioTrack>;
+    } catch (exception) {
+      BetterPlayerUtils.log("Exception on hls parse: $exception");
+    }
+    return BetterPlayerAsmsDataHolder(
+        tracks: tracks, audios: audios, subtitles: subtitles);
+  }
+
+  static Future<List<BetterPlayerAsmsTrack>> parseTracks(
+      String data, String masterPlaylistUrl) async {
+    final List<BetterPlayerAsmsTrack> tracks = [];
     try {
       final parsedPlaylist = await HlsPlaylistParser.create()
           .parseString(Uri.parse(masterPlaylistUrl), data);
       if (parsedPlaylist is HlsMasterPlaylist) {
         parsedPlaylist.variants.forEach(
           (variant) {
-            tracks.add(BetterPlayerHlsTrack(variant.format.width,
-                variant.format.height, variant.format.bitrate));
+            tracks.add(BetterPlayerAsmsTrack('', variant.format.width,
+                variant.format.height, variant.format.bitrate, 0, '', ''));
           },
         );
       }
 
       if (tracks.isNotEmpty) {
-        tracks.insert(0, BetterPlayerHlsTrack.defaultTrack());
+        tracks.insert(0, BetterPlayerAsmsTrack.defaultTrack());
       }
     } catch (exception) {
       BetterPlayerUtils.log("Exception on parseSubtitles: $exception");
@@ -47,13 +62,16 @@ class BetterPlayerHlsUtils {
   }
 
   ///Parse subtitles from provided m3u8 url
-  static Future<List<BetterPlayerHlsSubtitle>> parseSubtitles(
+  static Future<List<BetterPlayerAsmsSubtitle>> parseSubtitles(
       String data, String masterPlaylistUrl) async {
-    final List<BetterPlayerHlsSubtitle> subtitles = [];
+    final List<BetterPlayerAsmsSubtitle> subtitles = [];
     try {
+      print("Parse subtitles!");
       final parsedPlaylist = await HlsPlaylistParser.create()
           .parseString(Uri.parse(masterPlaylistUrl), data);
+
       if (parsedPlaylist is HlsMasterPlaylist) {
+        print("TAGS: " + parsedPlaylist.tags.toString());
         for (final Rendition element in parsedPlaylist.subtitles) {
           final hlsSubtitle = await _parseSubtitlesPlaylist(element);
           if (hlsSubtitle != null) {
@@ -68,10 +86,12 @@ class BetterPlayerHlsUtils {
     return subtitles;
   }
 
-  static Future<BetterPlayerHlsSubtitle?> _parseSubtitlesPlaylist(
+  static Future<BetterPlayerAsmsSubtitle?> _parseSubtitlesPlaylist(
       Rendition rendition) async {
     try {
-      final subtitleData = await getDataFromUrl(rendition.url.toString());
+      final HlsPlaylistParser _hlsPlaylistParser = HlsPlaylistParser.create();
+      final subtitleData =
+          await BetterPlayerAsmsUtils.getDataFromUrl(rendition.url.toString());
       if (subtitleData == null) {
         return null;
       }
@@ -81,6 +101,9 @@ class BetterPlayerHlsUtils {
       final hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
       final hlsSubtitlesUrls = <String>[];
 
+      List<BetterPlayerAsmsSubtitleSegment> asmsSegments = [];
+      bool isSegmented = hlsMediaPlaylist.segments.length > 1;
+      int microSecondsFromStart = 0;
       for (final Segment segment in hlsMediaPlaylist.segments) {
         final split = rendition.url.toString().split("/");
         var realUrl = "";
@@ -90,27 +113,50 @@ class BetterPlayerHlsUtils {
         }
         realUrl += segment.url!;
         hlsSubtitlesUrls.add(realUrl);
+
+        if (isSegmented) {
+          int nextMicroSecondsFromStart =
+              microSecondsFromStart + segment.durationUs!;
+          microSecondsFromStart = nextMicroSecondsFromStart;
+          asmsSegments.add(
+            BetterPlayerAsmsSubtitleSegment(
+              Duration(microseconds: microSecondsFromStart),
+              Duration(microseconds: nextMicroSecondsFromStart),
+              realUrl,
+            ),
+          );
+        }
       }
-      return BetterPlayerHlsSubtitle(
-          name: rendition.format.label,
-          language: rendition.format.language,
-          url: rendition.url.toString(),
-          realUrls: hlsSubtitlesUrls);
+
+      int targetDuration = 0;
+      if (parsedSubtitle.targetDurationUs != null) {
+        targetDuration = parsedSubtitle.targetDurationUs! ~/ 1000;
+      }
+
+      return BetterPlayerAsmsSubtitle(
+        name: rendition.format.label,
+        language: rendition.format.language,
+        url: rendition.url.toString(),
+        realUrls: hlsSubtitlesUrls,
+        isSegmented: isSegmented,
+        segmentsTime: targetDuration,
+        segments: asmsSegments,
+      );
     } catch (exception) {
       BetterPlayerUtils.log("Failed to process subtitles playlist: $exception");
       return null;
     }
   }
 
-  static Future<List<BetterPlayerHlsAudioTrack>> parseLanguages(
+  static Future<List<BetterPlayerAsmsAudioTrack>> parseLanguages(
       String data, String masterPlaylistUrl) async {
-    final List<BetterPlayerHlsAudioTrack> audios = [];
+    final List<BetterPlayerAsmsAudioTrack> audios = [];
     final parsedPlaylist = await HlsPlaylistParser.create()
         .parseString(Uri.parse(masterPlaylistUrl), data);
     if (parsedPlaylist is HlsMasterPlaylist) {
       for (int index = 0; index < parsedPlaylist.audios.length; index++) {
         final Rendition audio = parsedPlaylist.audios[index];
-        audios.add(BetterPlayerHlsAudioTrack(
+        audios.add(BetterPlayerAsmsAudioTrack(
           id: index,
           label: audio.name,
           language: audio.format.language,
@@ -120,26 +166,5 @@ class BetterPlayerHlsUtils {
     }
 
     return audios;
-  }
-
-  static Future<String?> getDataFromUrl(String url,
-      [Map<String, String?>? headers]) async {
-    try {
-      final request = await _httpClient.getUrl(Uri.parse(url));
-      if (headers != null) {
-        headers.forEach((name, value) => request.headers.add(name, value!));
-      }
-
-      final response = await request.close();
-      var data = "";
-      await response.transform(const Utf8Decoder()).listen((content) {
-        data += content.toString();
-      }).asFuture<String?>();
-
-      return data;
-    } catch (exception) {
-      BetterPlayerUtils.log("GetDataFromUrl failed: $exception");
-      return null;
-    }
   }
 }

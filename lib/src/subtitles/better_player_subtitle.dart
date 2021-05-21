@@ -87,7 +87,6 @@ class BetterPlayerSubtitle {
       }
 
       final component = componentValue.split(':');
-
       // Interpret a missing hour component to mean 00 hours
       if (component.length == 2) {
         component.insert(0, "00");
