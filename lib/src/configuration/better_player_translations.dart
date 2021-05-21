@@ -129,7 +129,7 @@ class BetterPlayerTranslations {
     generalNone: "Ninguno",
     generalDefault: "Por defecto",
     generalRetry: "Reintentar",
-    controlsLive: "EN VIVO",
+    controlsLive: "EN DIRECTO",
     playlistLoadingNextVideo: "Cargando siguiente video",
     controlsNextVideoIn: "Siguiente video en",
     overflowMenuPlaybackSpeed: "Velocidad",
