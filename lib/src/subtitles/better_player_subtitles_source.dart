@@ -25,13 +25,16 @@ class BetterPlayerSubtitlesSource {
   // [BetterPlayerSubtitlesSourceType.memory] source type.
   final Map<String, String>? headers;
 
-  ///Is ASMS segmented source (more than 1 subtitle file)
+  ///Is ASMS segmented source (more than 1 subtitle file). This shouldn't be
+  ///configured manually.
   final bool? asmsIsSegmented;
 
-  ///Max. time between segments in milliseconds
+  ///Max. time between segments in milliseconds. This shouldn't be configured
+  /// manually.
   final int? asmsSegmentsTime;
 
-  ///List of segments (start,end,url of the segment)
+  ///List of segments (start,end,url of the segment). This shouldn't be
+  ///configured manually.
   final List<BetterPlayerAsmsSubtitleSegment>? asmsSegments;
 
   BetterPlayerSubtitlesSource({

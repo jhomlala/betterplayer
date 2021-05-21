@@ -66,12 +66,10 @@ class BetterPlayerHlsUtils {
       String data, String masterPlaylistUrl) async {
     final List<BetterPlayerAsmsSubtitle> subtitles = [];
     try {
-      print("Parse subtitles!");
       final parsedPlaylist = await HlsPlaylistParser.create()
           .parseString(Uri.parse(masterPlaylistUrl), data);
 
       if (parsedPlaylist is HlsMasterPlaylist) {
-        print("TAGS: " + parsedPlaylist.tags.toString());
         for (final Rendition element in parsedPlaylist.subtitles) {
           final hlsSubtitle = await _parseSubtitlesPlaylist(element);
           if (hlsSubtitle != null) {
@@ -86,6 +84,12 @@ class BetterPlayerHlsUtils {
     return subtitles;
   }
 
+  ///Parse HLS subtitles playlist. If subtitles are segmented (more than 1
+  ///segment is present in playlist), then setup subtitles as segmented.
+  ///Segmented subtitles are loading with JIT policy, when video is playing
+  ///to prevent massive load od video start. Segmented subtitles will have
+  ///filled segments list which contains start, end and url of subtitles based
+  ///on time in playlist.
   static Future<BetterPlayerAsmsSubtitle?> _parseSubtitlesPlaylist(
       Rendition rendition) async {
     try {

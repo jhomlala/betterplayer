@@ -20,13 +20,14 @@ class BetterPlayerAsmsSubtitle {
   ///Urls of specific files
   final List<String>? realUrls;
 
-  ///Should subtitles be loaded with segments
+  ///Should subtitles be loaded with segments.
   final bool? isSegmented;
 
   ///Max value between segments. In HLS defined as #EXT-X-TARGETDURATION.
+  ///Only used when [isSegmented] is true.
   final int? segmentsTime;
 
-  ///List of subtitle segments
+  ///List of subtitle segments. Only used when [isSegmented] is true.
   final List<BetterPlayerAsmsSubtitleSegment>? segments;
 
   BetterPlayerAsmsSubtitle({

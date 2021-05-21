@@ -131,10 +131,6 @@ class _BetterPlayerSubtitlesDrawerState
     final Duration position = _latestValue!.position;
     for (final BetterPlayerSubtitle subtitle
         in widget.betterPlayerController.subtitlesLines) {
-      print("SUBTITLE: " +
-          subtitle.start.toString() +
-          " END: " +
-          subtitle.end.toString());
       if (subtitle.start! <= position && subtitle.end! >= position) {
         return subtitle.texts;
       }

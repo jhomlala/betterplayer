@@ -1,3 +1,10 @@
+## 0.0.68
+* Added support for segmented subtitles.
+* Added new fields in in BetterPlayerSubtitlesSource: `asmsIsSegmented`, `asmsSegmentsTime` and ` asmsSegments`. These fields shouldn't be configured
+manually.
+* Fixed parsing VTT subtitle timestamps with no hour component (by https://github.com/trms-alex).
+* Fixed parsing VTT subtitles when there's no subtitles in the file (by https://github.com/trms-alex).
+
 ## 0.0.67
 * Added support for DASH adaptive stream subtitles, audio tracks, tracks (by https://github.com/adrianByv)
 * [BREAKING_CHANGE] Changed useHlsSubtitles, useHlsTracks, useHlsAudio to useAsmsSubtitles, useAsmsTracks, useAsmsAudio.
