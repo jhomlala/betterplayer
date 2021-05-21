@@ -45,4 +45,6 @@ class Constants {
       "https://github.com/koldo92/betterplayer/raw/fairplay_ezdrm/example/assets/eleisure.cer";
   static String catImageUrl =
       "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg";
+  static String dashStreamUrl =
+      "https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd";
 }

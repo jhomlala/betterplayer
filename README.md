@@ -80,6 +80,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ BoxFit of video support  
 ✔️ Playback speed support  
 ✔️ HLS support (track, subtitles, audio track selection)  
+✔️ DASH support (track, subtitles, audio track selection)     
 ✔️ Alternative resolution support  
 ✔️ Cache support  
 ✔️ Notifications support  
@@ -94,7 +95,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.66
+  better_player: ^0.0.67
 ```
 
 2. Install it
@@ -268,7 +269,7 @@ var dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
       liveStream: false,
-      useHlsSubtitles: true,
+      useAsmsSubtitles: true,
       hlsTrackNames: ["Low quality", "Not so low quality", "Medium quality"],
       subtitles: [
         BetterPlayerSubtitlesSource(
@@ -463,6 +464,8 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
       ),
     );
 ```
+
+
 ```dart
    ///Color of the control bars
    final Color controlBarColor;
@@ -656,7 +659,7 @@ Use BetterPlayerDataSource.network to build network data source, BetterPlayerDat
 to build memory data source.
 
 Possible configuration options:
-```
+```dart
   ///Type of source of video
   final BetterPlayerDataSourceType type;
 
@@ -673,14 +676,14 @@ Possible configuration options:
   /// Custom headers for player
   final Map<String, String> headers;
 
-  ///Should player use hls subtitles. Default is true.
-  final bool useHlsSubtitles;
+  ///Should player use hls / dash subtitles (ASMS - Adaptive Streaming Media Sources).
+  final bool useAsmsSubtitles;
 
   ///Should player use hls tracks
-  final bool useHlsTracks;
+  final bool useAsmsTracks;
 
-  ///Should player use hls audio tracks
-  final bool useHlsAudioTracks;
+  ///Should player use hls /das audio tracks
+  final bool useAsmsAudioTracks;
 
   ///List of strings that represents tracks names.
   ///If empty, then better player will choose name based on track parameters

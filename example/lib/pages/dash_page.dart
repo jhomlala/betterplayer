@@ -2,12 +2,12 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
 
-class HlsTracksPage extends StatefulWidget {
+class DashPage extends StatefulWidget {
   @override
-  _HlsTracksPageState createState() => _HlsTracksPageState();
+  _DashPageState createState() => _DashPageState();
 }
 
-class _HlsTracksPageState extends State<HlsTracksPage> {
+class _DashPageState extends State<DashPage> {
   late BetterPlayerController _betterPlayerController;
 
   @override
@@ -18,10 +18,8 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
       fit: BoxFit.contain,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      Constants.hlsTestStreamUrl,
-      useAsmsSubtitles: true,
-    );
+        BetterPlayerDataSourceType.network, Constants.dashStreamUrl,
+        useAsmsSubtitles: true, useAsmsTracks: true);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -31,7 +29,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("HLS tracks"),
+        title: Text("Dash page"),
       ),
       body: Column(
         children: [
@@ -39,8 +37,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Player with HLS stream which loads tracks from HLS."
-              " You can choose tracks by using overflow menu (3 dots in right corner).",
+              "Player with DASH audio tracks, subtitles and tracks.",
               style: TextStyle(fontSize: 16),
             ),
           ),

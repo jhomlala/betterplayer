@@ -1,3 +1,10 @@
+## 0.0.67
+* Added support for DASH adaptive stream subtitles, audio tracks, tracks (by https://github.com/adrianByv)
+* [BREAKING_CHANGE] Changed useHlsSubtitles, useHlsTracks, useHlsAudio to useAsmsSubtitles, useAsmsTracks, useAsmsAudio.
+* Added DASH example.
+* Fixed progress bar jumps when seeking video.
+* Fixed end of video looping final second, and video stutter during AudioSession deactivation (by https://github.com/NicholasNagy)
+
 ## 0.0.66
 * Added check in seek method to handle scenario when video wasn't ready to play.
 * Added setupDataSourceList in BetterPlayerPlaylistController.

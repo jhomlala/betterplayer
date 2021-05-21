@@ -106,7 +106,10 @@ int texturesCount = -1;
 }
 
 - (void) setRemoteCommandsNotificationNotActive{
-    [[AVAudioSession sharedInstance] setActive:false error:nil];
+    if ([_players count] == 0) {
+        [[AVAudioSession sharedInstance] setActive:false error:nil];
+    }
+    
     [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
 }
 
@@ -314,6 +317,7 @@ int texturesCount = -1;
             }
             result(nil);
         } else if ([@"dispose" isEqualToString:call.method]) {
+            [player clear];
             [self disposeNotificationData:player];
             [self setRemoteCommandsNotificationNotActive];
             [_players removeObjectForKey:@(textureId)];
@@ -333,7 +337,9 @@ int texturesCount = -1;
                     [player dispose];
                 }
             });
-            [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
+            if ([_players count] == 0) {
+                [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
+            }
             result(nil);
         } else if ([@"setLooping" isEqualToString:call.method]) {
             [player setIsLooping:[argsMap[@"looping"] boolValue]];
