@@ -204,6 +204,12 @@ class BetterPlayerController {
   Stream<BetterPlayerControllerEvent> get controllerEventStream =>
       _controllerEventStreamController.stream;
 
+  ///Flag which determines whether are ASMS segments loading
+  bool _asmsSegmentsLoading = false;
+
+  ///List of loaded ASMS segments
+  final List<String> _asmsSegmentsLoaded = [];
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -309,9 +315,13 @@ class BetterPlayerController {
         asmsSubtitles.forEach((BetterPlayerAsmsSubtitle asmsSubtitle) {
           _betterPlayerSubtitlesSourceList.add(
             BetterPlayerSubtitlesSource(
-                type: BetterPlayerSubtitlesSourceType.network,
-                name: asmsSubtitle.name,
-                urls: asmsSubtitle.realUrls),
+              type: BetterPlayerSubtitlesSourceType.network,
+              name: asmsSubtitle.name,
+              urls: asmsSubtitle.realUrls,
+              asmsIsSegmented: asmsSubtitle.isSegmented,
+              asmsSegmentsTime: asmsSubtitle.segmentsTime,
+              asmsSegments: asmsSubtitle.segments,
+            ),
           );
         });
       }
@@ -327,12 +337,20 @@ class BetterPlayerController {
     }
   }
 
-  ///Setup subtitles to be displayed from given subtitle source
+  ///Setup subtitles to be displayed from given subtitle source.
+  ///If subtitles source is segmented then don't load videos at start. Videos
+  ///will load with just in time policy.
   Future<void> setupSubtitleSource(BetterPlayerSubtitlesSource subtitlesSource,
       {bool sourceInitialize = false}) async {
     _betterPlayerSubtitlesSource = subtitlesSource;
     subtitlesLines.clear();
+    _asmsSegmentsLoaded.clear();
+    _asmsSegmentsLoading = false;
+
     if (subtitlesSource.type != BetterPlayerSubtitlesSourceType.none) {
+      if (subtitlesSource.asmsIsSegmented == true) {
+        return;
+      }
       final subtitlesParsed =
           await BetterPlayerSubtitlesFactory.parseSubtitles(subtitlesSource);
       subtitlesLines.addAll(subtitlesParsed);
@@ -341,6 +359,56 @@ class BetterPlayerController {
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedSubtitles));
     if (!_disposed && !sourceInitialize) {
       _postControllerEvent(BetterPlayerControllerEvent.changeSubtitles);
+    }
+  }
+
+  ///Load ASMS subtitles segments for given [position].
+  ///Segments are being loaded within range (current video position;endPosition)
+  ///where endPosition is based on time segment detected in HLS playlist. If
+  ///time segment is not present then 5000 ms will be used. Also time segment
+  ///is multiplied by 5 to increase window of duration.
+  ///Segments are also cached, so same segment won't load twice. Only one
+  ///pack of segments can be load at given time.
+  Future _loadAsmsSubtitlesSegments(Duration position) async {
+    try {
+      if (_asmsSegmentsLoading) {
+        return;
+      }
+      _asmsSegmentsLoading = true;
+      final BetterPlayerSubtitlesSource? source = _betterPlayerSubtitlesSource;
+      final Duration loadDurationEnd = Duration(
+          milliseconds: position.inMilliseconds +
+              5 * (_betterPlayerSubtitlesSource?.asmsSegmentsTime ?? 5000));
+
+      final segmentsToLoad = _betterPlayerSubtitlesSource?.asmsSegments
+          ?.where((segment) {
+            return segment.startTime > position &&
+                segment.endTime < loadDurationEnd &&
+                !_asmsSegmentsLoaded.contains(segment.realUrl);
+          })
+          .map((segment) => segment.realUrl)
+          .toList();
+
+      if (segmentsToLoad != null && segmentsToLoad.isNotEmpty) {
+        final subtitlesParsed =
+            await BetterPlayerSubtitlesFactory.parseSubtitles(
+                BetterPlayerSubtitlesSource(
+          type: _betterPlayerSubtitlesSource!.type,
+          headers: _betterPlayerSubtitlesSource!.headers,
+          urls: segmentsToLoad,
+        ));
+
+        ///Additional check if current source of subtitles is same as source
+        ///used to start loading subtitles. It can be different when user
+        ///changes subtitles and there was already pending load.
+        if (source == _betterPlayerSubtitlesSource) {
+          subtitlesLines.addAll(subtitlesParsed);
+          _asmsSegmentsLoaded.addAll(segmentsToLoad);
+        }
+      }
+      _asmsSegmentsLoading = false;
+    } catch (exception) {
+      BetterPlayerUtils.log("Load ASMS subtitle segments failed: $exception");
     }
   }
 
@@ -698,6 +766,10 @@ class BetterPlayerController {
       videoPlayerController?.refresh();
     }
 
+    if (_betterPlayerSubtitlesSource?.asmsIsSegmented == true) {
+      _loadAsmsSubtitlesSegments(currentVideoPlayerValue.position);
+    }
+
     final int now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastPositionSelection > 500) {
       _lastPositionSelection = now;
@@ -876,6 +948,8 @@ class BetterPlayerController {
         return BetterPlayerTranslations.turkish();
       case "vi":
         return BetterPlayerTranslations.vietnamese();
+      case "es":
+        return BetterPlayerTranslations.spanish();
       default:
         return BetterPlayerTranslations();
     }

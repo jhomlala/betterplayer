@@ -2,6 +2,7 @@
 import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
 import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
 import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
+import 'package:better_player/src/asms/better_player_asms_subtitle_segment.dart';
 import 'package:better_player/src/asms/better_player_asms_utils.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 
@@ -67,6 +68,7 @@ class BetterPlayerHlsUtils {
     try {
       final parsedPlaylist = await HlsPlaylistParser.create()
           .parseString(Uri.parse(masterPlaylistUrl), data);
+
       if (parsedPlaylist is HlsMasterPlaylist) {
         for (final Rendition element in parsedPlaylist.subtitles) {
           final hlsSubtitle = await _parseSubtitlesPlaylist(element);
@@ -82,6 +84,12 @@ class BetterPlayerHlsUtils {
     return subtitles;
   }
 
+  ///Parse HLS subtitles playlist. If subtitles are segmented (more than 1
+  ///segment is present in playlist), then setup subtitles as segmented.
+  ///Segmented subtitles are loading with JIT policy, when video is playing
+  ///to prevent massive load od video start. Segmented subtitles will have
+  ///filled segments list which contains start, end and url of subtitles based
+  ///on time in playlist.
   static Future<BetterPlayerAsmsSubtitle?> _parseSubtitlesPlaylist(
       Rendition rendition) async {
     try {
@@ -97,6 +105,9 @@ class BetterPlayerHlsUtils {
       final hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
       final hlsSubtitlesUrls = <String>[];
 
+      final List<BetterPlayerAsmsSubtitleSegment> asmsSegments = [];
+      final bool isSegmented = hlsMediaPlaylist.segments.length > 1;
+      int microSecondsFromStart = 0;
       for (final Segment segment in hlsMediaPlaylist.segments) {
         final split = rendition.url.toString().split("/");
         var realUrl = "";
@@ -106,12 +117,35 @@ class BetterPlayerHlsUtils {
         }
         realUrl += segment.url!;
         hlsSubtitlesUrls.add(realUrl);
+
+        if (isSegmented) {
+          final int nextMicroSecondsFromStart =
+              microSecondsFromStart + segment.durationUs!;
+          microSecondsFromStart = nextMicroSecondsFromStart;
+          asmsSegments.add(
+            BetterPlayerAsmsSubtitleSegment(
+              Duration(microseconds: microSecondsFromStart),
+              Duration(microseconds: nextMicroSecondsFromStart),
+              realUrl,
+            ),
+          );
+        }
       }
+
+      int targetDuration = 0;
+      if (parsedSubtitle.targetDurationUs != null) {
+        targetDuration = parsedSubtitle.targetDurationUs! ~/ 1000;
+      }
+
       return BetterPlayerAsmsSubtitle(
-          name: rendition.format.label,
-          language: rendition.format.language,
-          url: rendition.url.toString(),
-          realUrls: hlsSubtitlesUrls);
+        name: rendition.format.label,
+        language: rendition.format.language,
+        url: rendition.url.toString(),
+        realUrls: hlsSubtitlesUrls,
+        isSegmented: isSegmented,
+        segmentsTime: targetDuration,
+        segments: asmsSegments,
+      );
     } catch (exception) {
       BetterPlayerUtils.log("Failed to process subtitles playlist: $exception");
       return null;

@@ -1,7 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
-import 'package:better_player_example/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class NormalPlayerPage extends StatefulWidget {
   @override
@@ -9,24 +9,6 @@ class NormalPlayerPage extends StatefulWidget {
 }
 
 class _NormalPlayerPageState extends State<NormalPlayerPage> {
-  late BetterPlayerController _betterPlayerController;
-
-  @override
-  void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-      aspectRatio: 16 / 9,
-      fit: BoxFit.contain,
-      autoPlay: true,
-    );
-    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      Constants.bugBuckBunnyVideoUrl,
-    ));
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,16 +27,15 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           ),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-          ElevatedButton(
-            child: Text("Play file data source"),
-            onPressed: () async {
-              String url = await Utils.getFileUrl(Constants.fileTestVideoUrl);
-              BetterPlayerDataSource dataSource =
-                  BetterPlayerDataSource(BetterPlayerDataSourceType.file, url);
-              _betterPlayerController.setupDataSource(dataSource);
-            },
+            child: BetterPlayer.network(
+              Constants.forBiggerBlazesUrl,
+              betterPlayerConfiguration: BetterPlayerConfiguration(
+                  deviceOrientationsAfterFullScreen: [
+                    DeviceOrientation.portraitUp
+                  ],
+                  aspectRatio: 16 / 9,
+                  fullScreenAspectRatio: 16 / 9),
+            ),
           ),
         ],
       ),

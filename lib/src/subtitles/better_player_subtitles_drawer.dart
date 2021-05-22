@@ -6,8 +6,10 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:better_player/src/video_player/video_player.dart';
+
 // Flutter imports:
 import 'package:flutter/material.dart';
+
 // Package imports:
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
@@ -125,6 +127,7 @@ class _BetterPlayerSubtitlesDrawerState
     if (_latestValue == null) {
       return [];
     }
+
     final Duration position = _latestValue!.position;
     for (final BetterPlayerSubtitle subtitle
         in widget.betterPlayerController.subtitlesLines) {

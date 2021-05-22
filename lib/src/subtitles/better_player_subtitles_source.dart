@@ -1,4 +1,6 @@
 // Project imports:
+import 'package:better_player/src/asms/better_player_asms_subtitle_segment.dart';
+
 import 'better_player_subtitles_source_type.dart';
 
 ///Representation of subtitles source. Used to define subtitles in Better
@@ -23,6 +25,18 @@ class BetterPlayerSubtitlesSource {
   // [BetterPlayerSubtitlesSourceType.memory] source type.
   final Map<String, String>? headers;
 
+  ///Is ASMS segmented source (more than 1 subtitle file). This shouldn't be
+  ///configured manually.
+  final bool? asmsIsSegmented;
+
+  ///Max. time between segments in milliseconds. This shouldn't be configured
+  /// manually.
+  final int? asmsSegmentsTime;
+
+  ///List of segments (start,end,url of the segment). This shouldn't be
+  ///configured manually.
+  final List<BetterPlayerAsmsSubtitleSegment>? asmsSegments;
+
   BetterPlayerSubtitlesSource({
     this.type,
     this.name = "Default subtitles",
@@ -30,6 +44,9 @@ class BetterPlayerSubtitlesSource {
     this.content,
     this.selectedByDefault,
     this.headers,
+    this.asmsIsSegmented,
+    this.asmsSegmentsTime,
+    this.asmsSegments,
   });
 
   ///Creates list with only one subtitles
