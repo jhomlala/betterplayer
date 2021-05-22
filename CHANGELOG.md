@@ -5,6 +5,7 @@ manually.
 * Fixed parsing VTT subtitle timestamps with no hour component (by https://github.com/trms-alex).
 * Fixed parsing VTT subtitles when there's no subtitles in the file (by https://github.com/trms-alex).
 * Added ES translations (by https://github.com/koldo92)
+* Updated dependencies
 
 ## 0.0.67
 * Added support for DASH adaptive stream subtitles, audio tracks, tracks (by https://github.com/adrianByv)

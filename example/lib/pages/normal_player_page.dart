@@ -28,7 +28,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           AspectRatio(
             aspectRatio: 16 / 9,
             child: BetterPlayer.network(
-              Constants.segmentedSubtitlesHlsUrl,
+              Constants.forBiggerBlazesUrl,
               betterPlayerConfiguration: BetterPlayerConfiguration(
                   deviceOrientationsAfterFullScreen: [
                     DeviceOrientation.portraitUp
