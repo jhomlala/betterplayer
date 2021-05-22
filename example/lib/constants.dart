@@ -44,4 +44,5 @@ class Constants {
       "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg";
   static String dashStreamUrl =
       "https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd";
+  static String segmentedSubtitlesHlsUrl = "https://eng-demo.cablecast.tv/segmented-captions/vod.m3u8";
 }

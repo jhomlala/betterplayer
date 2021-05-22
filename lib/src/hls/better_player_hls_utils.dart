@@ -105,8 +105,8 @@ class BetterPlayerHlsUtils {
       final hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
       final hlsSubtitlesUrls = <String>[];
 
-      List<BetterPlayerAsmsSubtitleSegment> asmsSegments = [];
-      bool isSegmented = hlsMediaPlaylist.segments.length > 1;
+      final List<BetterPlayerAsmsSubtitleSegment> asmsSegments = [];
+      final bool isSegmented = hlsMediaPlaylist.segments.length > 1;
       int microSecondsFromStart = 0;
       for (final Segment segment in hlsMediaPlaylist.segments) {
         final split = rendition.url.toString().split("/");
@@ -119,7 +119,7 @@ class BetterPlayerHlsUtils {
         hlsSubtitlesUrls.add(realUrl);
 
         if (isSegmented) {
-          int nextMicroSecondsFromStart =
+          final int nextMicroSecondsFromStart =
               microSecondsFromStart + segment.durationUs!;
           microSecondsFromStart = nextMicroSecondsFromStart;
           asmsSegments.add(

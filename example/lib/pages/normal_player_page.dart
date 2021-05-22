@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -27,7 +28,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
           AspectRatio(
             aspectRatio: 16 / 9,
             child: BetterPlayer.network(
-              "https://eng-demo.cablecast.tv/segmented-captions/vod.m3u8",
+              Constants.segmentedSubtitlesHlsUrl,
               betterPlayerConfiguration: BetterPlayerConfiguration(
                   deviceOrientationsAfterFullScreen: [
                     DeviceOrientation.portraitUp
