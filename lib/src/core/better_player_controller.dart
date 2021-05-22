@@ -208,7 +208,7 @@ class BetterPlayerController {
   bool _asmsSegmentsLoading = false;
 
   ///List of loaded ASMS segments
-  List<String> _asmsSegmentsLoaded = [];
+  final List<String> _asmsSegmentsLoaded = [];
 
   BetterPlayerController(
     this.betterPlayerConfiguration, {
@@ -375,8 +375,8 @@ class BetterPlayerController {
         return;
       }
       _asmsSegmentsLoading = true;
-      BetterPlayerSubtitlesSource? _source = _betterPlayerSubtitlesSource;
-      Duration loadDurationEnd = Duration(
+      final BetterPlayerSubtitlesSource? source = _betterPlayerSubtitlesSource;
+      final Duration loadDurationEnd = Duration(
           milliseconds: position.inMilliseconds +
               5 * (_betterPlayerSubtitlesSource?.asmsSegmentsTime ?? 5000));
 
@@ -389,7 +389,7 @@ class BetterPlayerController {
           .map((segment) => segment.realUrl)
           .toList();
 
-      if (segmentsToLoad != null && segmentsToLoad.length > 0) {
+      if (segmentsToLoad != null && segmentsToLoad.isNotEmpty) {
         final subtitlesParsed =
             await BetterPlayerSubtitlesFactory.parseSubtitles(
                 BetterPlayerSubtitlesSource(
@@ -401,7 +401,7 @@ class BetterPlayerController {
         ///Additional check if current source of subtitles is same as source
         ///used to start loading subtitles. It can be different when user
         ///changes subtitles and there was already pending load.
-        if (_source == _betterPlayerSubtitlesSource) {
+        if (source == _betterPlayerSubtitlesSource) {
           subtitlesLines.addAll(subtitlesParsed);
           _asmsSegmentsLoaded.addAll(segmentsToLoad);
         }
