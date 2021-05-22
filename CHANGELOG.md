@@ -5,6 +5,7 @@ manually.
 * Fixed parsing VTT subtitle timestamps with no hour component (by https://github.com/trms-alex).
 * Fixed parsing VTT subtitles when there's no subtitles in the file (by https://github.com/trms-alex).
 * Added ES translations (by https://github.com/koldo92)
+* Fixed iOS Picture in Picture play/pause state
 * Updated dependencies
 * Updated iOS example configuration
 
