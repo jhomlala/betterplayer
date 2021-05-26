@@ -310,6 +310,25 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                        context:(void*)context {
     
     if ([path isEqualToString:@"rate"]) {
+        if (@available(iOS 10.0, *)) {
+            if (_pipController.pictureInPictureActive == true){
+                if (_lastAvPlayerTimeControlStatus != [NSNull null] && _lastAvPlayerTimeControlStatus == _player.timeControlStatus){
+                    return;
+                }
+
+                if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused){
+                    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+                    _eventSink(@{@"event" : @"pause"});
+                    return;
+
+                }
+                if (_player.timeControlStatus == AVPlayerTimeControlStatusPlaying){
+                    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+                    _eventSink(@{@"event" : @"play"});
+                }
+            }
+        }
+
         if (_player.rate == 0 && //if player rate dropped to 0
             CMTIME_COMPARE_INLINE(_player.currentItem.currentTime, >, kCMTimeZero) && //if video was started
             CMTIME_COMPARE_INLINE(_player.currentItem.currentTime, <, _player.currentItem.duration) && //but not yet finished

@@ -122,4 +122,19 @@ class BetterPlayerTranslations {
         overflowMenuAudioTracks: "Âm thanh",
         qualityAuto: "Tự động",
       );
+
+  factory BetterPlayerTranslations.spanish() => BetterPlayerTranslations(
+        languageCode: "es",
+        generalDefaultError: "No se puede reproducir el video",
+        generalNone: "Ninguno",
+        generalDefault: "Por defecto",
+        generalRetry: "Reintentar",
+        controlsLive: "EN DIRECTO",
+        playlistLoadingNextVideo: "Cargando siguiente video",
+        controlsNextVideoIn: "Siguiente video en",
+        overflowMenuPlaybackSpeed: "Velocidad",
+        overflowMenuSubtitles: "Subtítulos",
+        overflowMenuQuality: "Calidad",
+        qualityAuto: "Automática",
+      );
 }

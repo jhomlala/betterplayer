@@ -1,3 +1,5 @@
+import 'package:better_player/src/asms/better_player_asms_subtitle_segment.dart';
+
 ///Representation of HLS / DASH subtitle element.
 class BetterPlayerAsmsSubtitle {
   ///Language of the subtitle
@@ -18,11 +20,25 @@ class BetterPlayerAsmsSubtitle {
   ///Urls of specific files
   final List<String>? realUrls;
 
-  BetterPlayerAsmsSubtitle(
-      {this.language,
-      this.name,
-      this.mimeType,
-      this.segmentAlignment,
-      this.url,
-      this.realUrls});
+  ///Should subtitles be loaded with segments.
+  final bool? isSegmented;
+
+  ///Max value between segments. In HLS defined as #EXT-X-TARGETDURATION.
+  ///Only used when [isSegmented] is true.
+  final int? segmentsTime;
+
+  ///List of subtitle segments. Only used when [isSegmented] is true.
+  final List<BetterPlayerAsmsSubtitleSegment>? segments;
+
+  BetterPlayerAsmsSubtitle({
+    this.language,
+    this.name,
+    this.mimeType,
+    this.segmentAlignment,
+    this.url,
+    this.realUrls,
+    this.isSegmented,
+    this.segmentsTime,
+    this.segments,
+  });
 }

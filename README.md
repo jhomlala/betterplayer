@@ -79,7 +79,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ HTTP Headers support  
 ✔️ BoxFit of video support  
 ✔️ Playback speed support  
-✔️ HLS support (track, subtitles, audio track selection)  
+✔️ HLS support (track, subtitles (also segmented), audio track selection)  
 ✔️ DASH support (track, subtitles, audio track selection)     
 ✔️ Alternative resolution support  
 ✔️ Cache support  
@@ -95,7 +95,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.67
+  better_player: ^0.0.68
 ```
 
 2. Install it
