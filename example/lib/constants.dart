@@ -40,7 +40,8 @@ class Constants {
       "https://storage.googleapis.com/wvmedia/cenc/h264/tears/tears_sd.mpd";
   static String widevineLicenseUrl =
       "https://proxy.uat.widevine.com/proxy?provider=widevine_test";
-  static String fairplayHlsUrl = "https://fps.ezdrm.com/demo/hls/BigBuckBunny_320x180.m3u8";
+  static String fairplayHlsUrl =
+      "https://fps.ezdrm.com/demo/hls/BigBuckBunny_320x180.m3u8";
   static String fairplayCertificateUrl =
       "https://github.com/koldo92/betterplayer/raw/fairplay_ezdrm/example/assets/eleisure.cer";
   static String catImageUrl =
