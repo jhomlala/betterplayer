@@ -376,10 +376,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     } else {
         _stalledCount++;
         if (_stalledCount > 60){
-            _eventSink([FlutterError
+            if (_eventSink != nil) {
+                _eventSink([FlutterError
                         errorWithCode:@"VideoError"
                         message:@"Failed to load video: playback stalled"
                         details:nil]);
+            }
             return;
         }
         [self performSelector:@selector(startStalledCheck) withObject:nil afterDelay:1];
@@ -416,13 +418,17 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 
                 if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused){
                     _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
-                    _eventSink(@{@"event" : @"pause"});
+                    if (_eventSink != nil) {
+                      _eventSink(@{@"event" : @"pause"});
+                    }
                     return;
                 
                 }
                 if (_player.timeControlStatus == AVPlayerTimeControlStatusPlaying){
                     _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
-                    _eventSink(@{@"event" : @"play"});
+                    if (_eventSink != nil) {
+                      _eventSink(@{@"event" : @"play"});
+                    }
                 }
             }
         }
