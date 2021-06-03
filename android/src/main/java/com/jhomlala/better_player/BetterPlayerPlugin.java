@@ -73,6 +73,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     public static final String HEADER_PARAMETER = "header_";
     public static final String FILE_PATH_PARAMETER = "filePath";
     public static final String ACTIVITY_NAME_PARAMETER = "activityName";
+    public static final String CACHE_KEY_PARAMETER = "cacheKey";
 
 
     private static final String INIT_METHOD = "init";
@@ -300,7 +301,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     0L,
                     overriddenDuration.longValue(),
                     null,
-                    null
+                    null, null
             );
         } else {
             boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
@@ -309,6 +310,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
             long maxCacheSize = maxCacheSizeNumber.longValue();
             long maxCacheFileSize = maxCacheFileSizeNumber.longValue();
             String uri = getParameter(dataSource, URI_PARAMETER, "");
+            String cacheKey = getParameter(dataSource, CACHE_KEY_PARAMETER, null);
             String formatHint = getParameter(dataSource, FORMAT_HINT_PARAMETER, null);
             String licenseUrl = getParameter(dataSource, LICENSE_URL_PARAMETER, null);
             Map<String, String> drmHeaders = getParameter(dataSource, DRM_HEADERS_PARAMETER, new HashMap<>());
@@ -324,7 +326,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     maxCacheFileSize,
                     overriddenDuration.longValue(),
                     licenseUrl,
-                    drmHeaders
+                    drmHeaders,
+                    cacheKey
             );
         }
     }
@@ -345,6 +348,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
             Number preCacheSizeNumber = getParameter(dataSource, PRE_CACHE_SIZE_PARAMETER, 3 * 1024 * 1024);
             long preCacheSize = preCacheSizeNumber.longValue();
             String uri = getParameter(dataSource, URI_PARAMETER, "");
+            String cacheKey = getParameter(dataSource, CACHE_KEY_PARAMETER, null);
             Map<String, String> headers = getParameter(dataSource, HEADERS_PARAMETER, new HashMap<>());
 
             BetterPlayer.preCache(flutterState.applicationContext,
@@ -353,6 +357,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     maxCacheSize,
                     maxCacheFileSize,
                     headers,
+                    cacheKey,
                     result
             );
         }
