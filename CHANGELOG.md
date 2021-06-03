@@ -1,6 +1,7 @@
 ## 0.0.69
 * Fixed cache clear on Android.
 * Added file check for file data source.
+* Fixed issue with black screen for some videos on iOS (by https://github.com/themadmrj)
 
 ## 0.0.68
 * Added support for segmented subtitles.
