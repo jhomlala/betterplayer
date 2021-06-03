@@ -24,8 +24,11 @@ import android.view.Surface;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
+import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.EventListener;
@@ -53,6 +56,7 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.util.Util;
@@ -91,11 +95,18 @@ final class BetterPlayer {
     private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
     private static final int NOTIFICATION_ID = 20772077;
 
+    /*Buffer rates for the video*/
+    final int minBufferMs = 5_000;
+    final int maxBufferMs = 10_000;
+    final int bufferForPlaybackMs = 1_500;
+    final int bufferForPlaybackAfterRebufferMs = 2_500;
+
     private final SimpleExoPlayer exoPlayer;
     private final TextureRegistry.SurfaceTextureEntry textureEntry;
     private final QueuingEventSink eventSink = new QueuingEventSink();
     private final EventChannel eventChannel;
     private final DefaultTrackSelector trackSelector;
+    private final LoadControl loadControl;
 
     private boolean isInitialized = false;
     private Surface surface;
@@ -119,7 +130,11 @@ final class BetterPlayer {
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
         trackSelector = new DefaultTrackSelector(context);
-        exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).build();
+        DefaultLoadControl.Builder loadBuilder = new DefaultLoadControl.Builder();
+        loadBuilder.setBufferDurationsMs(minBufferMs, maxBufferMs, bufferForPlaybackMs, bufferForPlaybackAfterRebufferMs);
+        loadControl = loadBuilder.build();
+
+        exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).setLoadControl(loadControl).build();
         workManager = WorkManager.getInstance(context);
         workerObserverMap = new HashMap<>();
 
@@ -887,5 +902,6 @@ final class BetterPlayer {
     }
 
 }
+
 
 
