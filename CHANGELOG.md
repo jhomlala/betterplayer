@@ -1,5 +1,6 @@
 ## 0.0.69
 * Fixed cache clear on Android.
+* Added file check for file data source.
 
 ## 0.0.68
 * Added support for segmented subtitles.

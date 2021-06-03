@@ -462,6 +462,11 @@ class BetterPlayerController {
 
         break;
       case BetterPlayerDataSourceType.file:
+        final file = File(betterPlayerDataSource.url);
+        if (!file.existsSync()) {
+          throw ArgumentError("Passed file doesn't exists.");
+        }
+
         await videoPlayerController?.setFileDataSource(
             File(betterPlayerDataSource.url),
             showNotification: _betterPlayerDataSource
