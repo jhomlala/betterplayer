@@ -813,16 +813,29 @@ final class BetterPlayer {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void clearCache(Context context, Result result) {
         try {
-            File file = context.getCacheDir();
-            if (file != null) {
-                file.delete();
-            }
+            File file = new File(context.getCacheDir(), "betterPlayerCache");
+            deleteDirectory(file);
             result.success(null);
         } catch (Exception exception) {
             Log.e(TAG, exception.toString());
             result.error("", "", "");
         }
     }
+
+    private static void deleteDirectory(File file) {
+        if (file.isDirectory()) {
+            File[] entries = file.listFiles();
+            if (entries != null) {
+                for (File entry : entries) {
+                    deleteDirectory(entry);
+                }
+            }
+        }
+        if (!file.delete()) {
+            Log.e(TAG, "Failed to delete cache dir.");
+        }
+    }
+
 
     //Start pre cache of video. Invoke work manager job and start caching in background.
     static void preCache(Context context, String dataSource, long preCacheSize,

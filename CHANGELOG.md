@@ -1,3 +1,6 @@
+## 0.0.69
+* Fixed cache clear on Android.
+
 ## 0.0.68
 * Added support for segmented subtitles.
 * Added new fields in in BetterPlayerSubtitlesSource: `asmsIsSegmented`, `asmsSegmentsTime` and ` asmsSegments`. These fields shouldn't be configured
