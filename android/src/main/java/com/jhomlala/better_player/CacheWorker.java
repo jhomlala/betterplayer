@@ -42,6 +42,7 @@ public class CacheWorker extends Worker {
         try {
             Data data = getInputData();
             String url = data.getString(BetterPlayerPlugin.URL_PARAMETER);
+            String cacheKey = data.getString(BetterPlayerPlugin.CACHE_KEY_PARAMETER);
             long preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0);
             long maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0);
             long maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0);
@@ -57,7 +58,12 @@ public class CacheWorker extends Worker {
             if (DataSourceUtils.isHTTP(uri)) {
                 String userAgent = DataSourceUtils.getUserAgent(headers);
                 DataSource.Factory dataSourceFactory = DataSourceUtils.getDataSourceFactory(userAgent, headers);
+
                 DataSpec dataSpec = new DataSpec(uri, 0, preCacheSize);
+                if (cacheKey != null && cacheKey.length() > 0) {
+                    dataSpec = dataSpec.buildUpon().setKey(cacheKey).build();
+                }
+                
                 CacheDataSourceFactory cacheDataSourceFactory =
                         new CacheDataSourceFactory(mContext, maxCacheSize, maxCacheFileSize, dataSourceFactory);
 

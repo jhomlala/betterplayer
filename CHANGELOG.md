@@ -1,3 +1,10 @@
+## 0.0.69
+* Fixed cache clear on Android.
+* Added file check for file data source.
+* Fixed issue with black screen for some videos on iOS (by https://github.com/themadmrj)
+* Fixed iOS eventSink issues. (by https://github.com/alextekartik)
+* Added key parameter in BetterPlayerCacheConfiguration to provide way to re-use same video between app sessions.
+
 ## 0.0.68
 * Added support for segmented subtitles.
 * Added new fields in in BetterPlayerSubtitlesSource: `asmsIsSegmented`, `asmsSegmentsTime` and ` asmsSegments`. These fields shouldn't be configured
