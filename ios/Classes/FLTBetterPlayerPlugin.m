@@ -278,7 +278,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   // videoTrack.preferredTransform Setting tx to the height of the video instead of 0, properly
   // displays the video https://github.com/flutter/flutter/issues/17606#issuecomment-413473181
   NSInteger rotationDegrees = (NSInteger)round(radiansToDegrees(atan2(transform.b, transform.a)));
-  NSLog(@"VIDEO__ %f, %f, %f, %f, %li", transform.tx, transform.ty, videoTrack.naturalSize.height, videoTrack.naturalSize.width, (long)rotationDegrees);
+  //NSLog(@"VIDEO__ %f, %f, %f, %f, %li", transform.tx, transform.ty, videoTrack.naturalSize.height, videoTrack.naturalSize.width, (long)rotationDegrees);
   if (rotationDegrees == 90) {
     transform.tx = videoTrack.naturalSize.height;
     transform.ty = 0;
@@ -619,6 +619,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         if (wasPlaying){
             [self->_player play];
         }
+        _player.rate = _playerRate;
     }];
     
 }
