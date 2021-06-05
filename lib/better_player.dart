@@ -1,5 +1,11 @@
 library better_player;
 
+export 'src/asms/better_player_asms_audio_track.dart';
+export 'src/asms/better_player_asms_data_holder.dart';
+export 'src/asms/better_player_asms_subtitle.dart';
+export 'src/asms/better_player_asms_subtitle_segment.dart';
+export 'src/asms/better_player_asms_track.dart';
+export 'src/asms/better_player_asms_utils.dart';
 export 'src/configuration/better_player_cache_configuration.dart';
 export 'src/configuration/better_player_configuration.dart';
 export 'src/configuration/better_player_controls_configuration.dart';

@@ -1,5 +1,6 @@
 ## 0.0.70
 * Fixed playback speed after seek in iOS.
+* Exposed ASMS classes.
 
 ## 0.0.69
 * Fixed cache clear on Android.
