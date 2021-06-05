@@ -1,6 +1,7 @@
 ## 0.0.70
 * Fixed playback speed after seek in iOS.
 * Exposed ASMS classes.
+* Exposed BetterPlayerControlsState to provide ways to build custom controls with additional menus.
 * Added error handling for CacheWorker to prevent unexpected crashes.
 
 ## 0.0.69
