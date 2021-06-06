@@ -41,7 +41,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       response =
       await _channel.invokeMapMethod<String, dynamic>('create');
     }else{
-      final responseLinkedHashMap = await _channel.invokeMethod<Map<String, dynamic>?>(
+      final responseLinkedHashMap = await _channel.invokeMethod<Map?>(
         'create',
         <String, dynamic>{
           'minBufferMs': betterPlayerAndroidConfiguration.minBufferMs,
