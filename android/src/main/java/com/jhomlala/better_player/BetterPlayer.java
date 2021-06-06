@@ -1,10 +1,5 @@
 package com.jhomlala.better_player;
 
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
-import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
-import static com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory;
-import static com.jhomlala.better_player.DataSourceUtils.getUserAgent;
-
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -22,14 +17,23 @@ import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Surface;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.lifecycle.Observer;
+import androidx.media.session.MediaButtonReceiver;
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkInfo;
+import androidx.work.WorkManager;
+
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -37,9 +41,9 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
 import com.google.android.exoplayer2.drm.DummyExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
+import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -55,26 +59,11 @@ import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
+import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.util.Util;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
-import androidx.lifecycle.Observer;
-import androidx.media.session.MediaButtonReceiver;
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkInfo;
-import androidx.work.WorkManager;
-
-import io.flutter.plugin.common.EventChannel;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.view.TextureRegistry;
 
 import java.io.File;
 import java.util.Arrays;
@@ -84,7 +73,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import com.google.android.exoplayer2.PlaybackParameters;
+import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel.Result;
+import io.flutter.view.TextureRegistry;
+
+import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
+import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
+import static com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory;
+import static com.jhomlala.better_player.DataSourceUtils.getUserAgent;
 
 final class BetterPlayer {
     private static final String TAG = "BetterPlayer";
@@ -94,12 +90,6 @@ final class BetterPlayer {
     private static final String FORMAT_OTHER = "other";
     private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
     private static final int NOTIFICATION_ID = 20772077;
-
-    /*Buffer rates for the video*/
-    final int minBufferMs = 5_000;
-    final int maxBufferMs = 10_000;
-    final int bufferForPlaybackMs = 1_500;
-    final int bufferForPlaybackAfterRebufferMs = 2_500;
 
     private final SimpleExoPlayer exoPlayer;
     private final TextureRegistry.SurfaceTextureEntry textureEntry;
@@ -120,18 +110,24 @@ final class BetterPlayer {
     private DrmSessionManager drmSessionManager;
     private WorkManager workManager;
     private HashMap<UUID, Observer<WorkInfo>> workerObserverMap;
+    private CustomDefaultLoadControl customDefaultLoadControl;
 
 
     BetterPlayer(
             Context context,
             EventChannel eventChannel,
             TextureRegistry.SurfaceTextureEntry textureEntry,
+            CustomDefaultLoadControl customDefaultLoadControl,
             Result result) {
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
         trackSelector = new DefaultTrackSelector(context);
+
+        this.customDefaultLoadControl = customDefaultLoadControl != null ? customDefaultLoadControl : new CustomDefaultLoadControl();
         DefaultLoadControl.Builder loadBuilder = new DefaultLoadControl.Builder();
-        loadBuilder.setBufferDurationsMs(minBufferMs, maxBufferMs, bufferForPlaybackMs, bufferForPlaybackAfterRebufferMs);
+        loadBuilder.setBufferDurationsMs(
+                this.customDefaultLoadControl.minBufferMs, this.customDefaultLoadControl.maxBufferMs,
+                this.customDefaultLoadControl.bufferForPlaybackMs, this.customDefaultLoadControl.bufferForPlaybackAfterRebufferMs);
         loadControl = loadBuilder.build();
 
         exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).setLoadControl(loadControl).build();

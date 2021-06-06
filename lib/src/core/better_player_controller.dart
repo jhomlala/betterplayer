@@ -50,6 +50,10 @@ class BetterPlayerController {
   ///List of event listeners, which listen to events.
   final List<Function(BetterPlayerEvent)?> _eventListeners = [];
 
+  ///User is able to check wether there are already listeners registered and if so can remove them
+  ///Is useful in cases where multiple listeners should not be allowed and therefore need to be removed
+  List<Function(BetterPlayerEvent)?> get eventListeners => _eventListeners;
+
   ///List of files to delete once player disposes.
   final List<File> _tempFiles = [];
 
@@ -242,7 +246,7 @@ class BetterPlayerController {
 
     ///Build videoPlayerController if null
     if (videoPlayerController == null) {
-      videoPlayerController = VideoPlayerController();
+      videoPlayerController = VideoPlayerController(betterPlayerAndroidConfiguration: betterPlayerDataSource.betterPlayerAndroidConfiguration);
       videoPlayerController?.addListener(_onVideoPlayerChanged);
     }
 

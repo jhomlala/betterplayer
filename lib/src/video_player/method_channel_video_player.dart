@@ -5,9 +5,11 @@
 
 // Dart imports:
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 // Flutter imports:
+import 'package:better_player/src/configuration/better_player_android_configuration.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -33,9 +35,23 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int?> create() async {
-    final Map<String, dynamic>? response =
-        await _channel.invokeMapMethod<String, dynamic>('create');
+  Future<int?> create({BetterPlayerAndroidConfiguration? betterPlayerAndroidConfiguration}) async {
+    late final Map<String, dynamic>? response;
+    if(betterPlayerAndroidConfiguration==null||Platform.isIOS){
+      response =
+      await _channel.invokeMapMethod<String, dynamic>('create');
+    }else{
+      response = await _channel.invokeMethod<Map<String, dynamic>>(
+        'create',
+        <String, dynamic>{
+          'minBufferMs': betterPlayerAndroidConfiguration.minBufferMs,
+          'maxBufferMs': betterPlayerAndroidConfiguration.maxBufferMs,
+          'bufferForPlaybackMs' : betterPlayerAndroidConfiguration.bufferForPlaybackMs,
+          'bufferForPlaybackAfterConfiguration' : betterPlayerAndroidConfiguration.bufferForPlaybackAfterRebufferMs
+
+        },
+      );
+    }
     return response?['textureId'] as int?;
   }
 
