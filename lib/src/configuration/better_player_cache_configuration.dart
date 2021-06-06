@@ -9,7 +9,7 @@ class BetterPlayerCacheConfiguration {
   /// The maximum cache size to keep on disk in bytes. This value is used only
   /// when first video access. cache. This value is used for all players within
   /// your app. It can't be changed during app work.
-  // Android only option.
+  /// Android only option.
   final int maxCacheSize;
 
   /// The maximum size of each individual file in bytes.
@@ -19,10 +19,13 @@ class BetterPlayerCacheConfiguration {
   /// The size to download.
   final int preCacheSize;
 
-  const BetterPlayerCacheConfiguration({
-    this.useCache = false,
-    this.maxCacheSize = 10 * 1024 * 1024,
-    this.maxCacheFileSize = 10 * 1024 * 1024,
-    this.preCacheSize = 3 * 1024 * 1024,
-  });
+  ///Cache key to re-use same cached data between app sessions.
+  final String? key;
+
+  const BetterPlayerCacheConfiguration(
+      {this.useCache = false,
+      this.maxCacheSize = 10 * 1024 * 1024,
+      this.maxCacheFileSize = 10 * 1024 * 1024,
+      this.preCacheSize = 3 * 1024 * 1024,
+      this.key});
 }

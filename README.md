@@ -95,7 +95,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.68
+  better_player: ^0.0.69
 ```
 
 2. Install it
@@ -737,6 +737,9 @@ Define cache configuration for given data source. Cache works only for network d
   /// The maximum size of each individual file in bytes.
   /// Android only option.
   final int maxCacheFileSize;
+
+  ///Cache key to re-use same cached data between app sessions.
+  final String? key;
 ```
 
 

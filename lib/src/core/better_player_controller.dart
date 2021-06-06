@@ -440,32 +440,39 @@ class BetterPlayerController {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.network:
         await videoPlayerController?.setNetworkDataSource(
-            betterPlayerDataSource.url,
-            headers: _getHeaders(),
-            useCache:
-                _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
-            maxCacheSize:
-                _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
-            maxCacheFileSize:
-                _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
-                    0,
-            showNotification: _betterPlayerDataSource
-                ?.notificationConfiguration?.showNotification,
-            title: _betterPlayerDataSource?.notificationConfiguration?.title,
-            author: _betterPlayerDataSource?.notificationConfiguration?.author,
-            imageUrl:
-                _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
-            notificationChannelName: _betterPlayerDataSource
-                ?.notificationConfiguration?.notificationChannelName,
-            overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-            formatHint: _getVideoFormat(_betterPlayerDataSource!.videoFormat),
-            licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
-            drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
-            activityName: _betterPlayerDataSource
-                ?.notificationConfiguration?.activityName);
+          betterPlayerDataSource.url,
+          headers: _getHeaders(),
+          useCache:
+              _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
+          maxCacheSize:
+              _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
+          maxCacheFileSize:
+              _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
+                  0,
+          cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
+          showNotification: _betterPlayerDataSource
+              ?.notificationConfiguration?.showNotification,
+          title: _betterPlayerDataSource?.notificationConfiguration?.title,
+          author: _betterPlayerDataSource?.notificationConfiguration?.author,
+          imageUrl:
+              _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+          notificationChannelName: _betterPlayerDataSource
+              ?.notificationConfiguration?.notificationChannelName,
+          overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
+          formatHint: _getVideoFormat(_betterPlayerDataSource!.videoFormat),
+          licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
+          drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
+          activityName:
+              _betterPlayerDataSource?.notificationConfiguration?.activityName,
+        );
 
         break;
       case BetterPlayerDataSourceType.file:
+        final file = File(betterPlayerDataSource.url);
+        if (!file.existsSync()) {
+          throw ArgumentError("Passed file doesn't exists.");
+        }
+
         await videoPlayerController?.setFileDataSource(
             File(betterPlayerDataSource.url),
             showNotification: _betterPlayerDataSource
@@ -1186,12 +1193,14 @@ class BetterPlayerController {
         const BetterPlayerCacheConfiguration(useCache: true);
 
     final dataSource = DataSource(
-        sourceType: DataSourceType.network,
-        uri: betterPlayerDataSource.url,
-        useCache: true,
-        headers: betterPlayerDataSource.headers,
-        maxCacheSize: cacheConfig.maxCacheSize,
-        maxCacheFileSize: cacheConfig.maxCacheFileSize);
+      sourceType: DataSourceType.network,
+      uri: betterPlayerDataSource.url,
+      useCache: true,
+      headers: betterPlayerDataSource.headers,
+      maxCacheSize: cacheConfig.maxCacheSize,
+      maxCacheFileSize: cacheConfig.maxCacheFileSize,
+      cacheKey: cacheConfig.key,
+    );
 
     return VideoPlayerController.preCache(dataSource, cacheConfig.preCacheSize);
   }
