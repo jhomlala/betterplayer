@@ -41,7 +41,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       response =
       await _channel.invokeMapMethod<String, dynamic>('create');
     }else{
-      response = await _channel.invokeMethod<Map<String, dynamic>>(
+      final responseLinkedHashMap = await _channel.invokeMethod<Map<String, dynamic>?>(
         'create',
         <String, dynamic>{
           'minBufferMs': betterPlayerAndroidConfiguration.minBufferMs,
@@ -51,6 +51,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
         },
       );
+
+      response = responseLinkedHashMap!=null?Map<String, dynamic>.from(responseLinkedHashMap):null;
     }
     return response?['textureId'] as int?;
   }
