@@ -47,7 +47,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'minBufferMs': betterPlayerAndroidConfiguration.minBufferMs,
           'maxBufferMs': betterPlayerAndroidConfiguration.maxBufferMs,
           'bufferForPlaybackMs' : betterPlayerAndroidConfiguration.bufferForPlaybackMs,
-          'bufferForPlaybackAfterConfiguration' : betterPlayerAndroidConfiguration.bufferForPlaybackAfterRebufferMs
+          'bufferForPlaybackAfterRebufferMs' : betterPlayerAndroidConfiguration.bufferForPlaybackAfterRebufferMs
 
         },
       );
