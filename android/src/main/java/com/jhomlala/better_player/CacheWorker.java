@@ -100,7 +100,7 @@ public class CacheWorker extends Worker {
     public void onStopped() {
         try {
             mCacheWriter.cancel();
-        } catch (e, stack) {
+        } catch (Exception exception) {
             // Pass
         }
         super.onStopped();
