@@ -98,7 +98,11 @@ public class CacheWorker extends Worker {
 
     @Override
     public void onStopped() {
-        mCacheWriter.cancel();
+        try {
+            mCacheWriter.cancel();
+        } catch (e, stack) {
+            // Pass
+        }
         super.onStopped();
     }
 }
