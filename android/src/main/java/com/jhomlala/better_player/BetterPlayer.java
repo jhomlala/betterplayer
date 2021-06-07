@@ -129,7 +129,8 @@ final class BetterPlayer {
     void setDataSource(
             Context context, String key, String dataSource, String formatHint, Result result,
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
-            long overriddenDuration, String licenseUrl, Map<String, String> drmHeaders) {
+            long overriddenDuration, String licenseUrl, Map<String, String> drmHeaders,
+            String cacheKey) {
         this.key = key;
         isInitialized = false;
 
@@ -186,7 +187,7 @@ final class BetterPlayer {
             dataSourceFactory = new DefaultDataSourceFactory(context, userAgent);
         }
 
-        MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, context);
+        MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, cacheKey, context);
         if (overriddenDuration != 0) {
             ClippingMediaSource clippingMediaSource = new ClippingMediaSource(mediaSource, 0, overriddenDuration * 1000);
             exoPlayer.setMediaSource(clippingMediaSource);
@@ -451,7 +452,8 @@ final class BetterPlayer {
 
 
     private MediaSource buildMediaSource(
-            Uri uri, DataSource.Factory mediaDataSourceFactory, String formatHint, Context context) {
+            Uri uri, DataSource.Factory mediaDataSourceFactory, String formatHint, String cacheKey,
+            Context context) {
         int type;
         if (formatHint == null) {
             String lastPathSegment = uri.getLastPathSegment();
@@ -478,28 +480,35 @@ final class BetterPlayer {
                     break;
             }
         }
+        MediaItem.Builder mediaItemBuilder = new MediaItem.Builder();
+        mediaItemBuilder.setUri(uri);
+        if (cacheKey != null && cacheKey.length() > 0) {
+            mediaItemBuilder.setCustomCacheKey(cacheKey);
+        }
+        MediaItem mediaItem = mediaItemBuilder.build();
         switch (type) {
+
             case C.TYPE_SS:
                 return new SsMediaSource.Factory(
                         new DefaultSsChunkSource.Factory(mediaDataSourceFactory),
                         new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
                         .setDrmSessionManager(drmSessionManager)
-                        .createMediaSource(MediaItem.fromUri(uri));
+                        .createMediaSource(mediaItem);
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(
                         new DefaultDashChunkSource.Factory(mediaDataSourceFactory),
                         new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
                         .setDrmSessionManager(drmSessionManager)
-                        .createMediaSource(MediaItem.fromUri(uri));
+                        .createMediaSource(mediaItem);
             case C.TYPE_HLS:
                 return new HlsMediaSource.Factory(mediaDataSourceFactory)
                         .setDrmSessionManager(drmSessionManager)
-                        .createMediaSource(MediaItem.fromUri(uri));
+                        .createMediaSource(mediaItem);
             case C.TYPE_OTHER:
                 return new ProgressiveMediaSource.Factory(mediaDataSourceFactory,
                         new DefaultExtractorsFactory())
                         .setDrmSessionManager(drmSessionManager)
-                        .createMediaSource(MediaItem.fromUri(uri));
+                        .createMediaSource(mediaItem);
             default: {
                 throw new IllegalStateException("Unsupported type: " + type);
             }
@@ -813,10 +822,8 @@ final class BetterPlayer {
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void clearCache(Context context, Result result) {
         try {
-            File file = context.getCacheDir();
-            if (file != null) {
-                file.delete();
-            }
+            File file = new File(context.getCacheDir(), "betterPlayerCache");
+            deleteDirectory(file);
             result.success(null);
         } catch (Exception exception) {
             Log.e(TAG, exception.toString());
@@ -824,15 +831,34 @@ final class BetterPlayer {
         }
     }
 
+    private static void deleteDirectory(File file) {
+        if (file.isDirectory()) {
+            File[] entries = file.listFiles();
+            if (entries != null) {
+                for (File entry : entries) {
+                    deleteDirectory(entry);
+                }
+            }
+        }
+        if (!file.delete()) {
+            Log.e(TAG, "Failed to delete cache dir.");
+        }
+    }
+
+
     //Start pre cache of video. Invoke work manager job and start caching in background.
     static void preCache(Context context, String dataSource, long preCacheSize,
                          long maxCacheSize, long maxCacheFileSize, Map<String, String> headers,
-                         Result result) {
+                         String cacheKey, Result result) {
         Data.Builder dataBuilder = new Data.Builder()
                 .putString(BetterPlayerPlugin.URL_PARAMETER, dataSource)
                 .putLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, preCacheSize)
                 .putLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, maxCacheSize)
                 .putLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, maxCacheFileSize);
+
+        if (cacheKey != null) {
+            dataBuilder.putString(BetterPlayerPlugin.CACHE_KEY_PARAMETER, cacheKey);
+        }
         for (String headerKey : headers.keySet()) {
             dataBuilder.putString(BetterPlayerPlugin.HEADER_PARAMETER + headerKey, headers.get(headerKey));
         }
