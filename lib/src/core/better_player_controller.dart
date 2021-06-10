@@ -1176,10 +1176,6 @@ class BetterPlayerController {
   ///[BetterPlayerCacheConfiguration.preCacheSize], is downloaded or when the
   ///complete file is downloaded if the file is smaller than the requested size.
   Future<void> preCache(BetterPlayerDataSource betterPlayerDataSource) async {
-    if (!Platform.isAndroid) {
-      return Future.error("preCache is currently only supported on Android.");
-    }
-
     final cacheConfig = betterPlayerDataSource.cacheConfiguration ??
         const BetterPlayerCacheConfiguration(useCache: true);
 

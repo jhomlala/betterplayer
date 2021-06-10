@@ -5,9 +5,10 @@
 #import "FLTBetterPlayerPlugin.h"
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
-#import <KTVHTTPCache/KTVHTTPCache.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <AVKit/AVKit.h>
+#import "CacheHandler.h"
+#import "CachingPlayerItem.h"
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -292,6 +293,19 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   return transform;
 }
 
+// We store the last pre-cached CachingPlayerItem objects to be able to play even if the download
+// has not finished.
+NSMutableDictionary* _preCachedURLs = [[NSMutableDictionary alloc]init];
+
+- (void)preCacheURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers{
+    CachingPlayerItem* item;
+    CacheHandler *cacheHandler = [[CacheHandler alloc] init];        
+    item = [cacheHandler getCachingPlayerItem: url:url, key:key, headers:headers];    
+    [_preCachedURLs setObject:item forKey:key];
+    [item download];
+}
+
+
 - (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key overriddenDuration:(int) overriddenDuration{
     NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
     return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{} withCache: false overriddenDuration:overriddenDuration];
@@ -303,9 +317,14 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
     AVPlayerItem* item;
     if (useCache){
-        [KTVHTTPCache downloadSetAdditionalHeaders:headers];
-        NSURL *proxyURL = [KTVHTTPCache proxyURLWithOriginalURL:url];
-        item = [AVPlayerItem playerItemWithURL:proxyURL];
+        // Fetch ongoing pre-cached url if it exists
+        if ([_preCachedURLs objectForKey:key) {
+            item = [_preCachedURLs objectForKey:key];
+            [_preCachedURLs removeObjectForKey:key];
+        } else {
+            CacheHandler* cacheHandler = [[CacheHandler alloc] init];        
+            item = [cacheHandler getCachingPlayerItem: url:url, key:key, headers:headers];
+        }
     } else {
         AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
                                                 options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
@@ -374,12 +393,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     } else {
         _stalledCount++;
         if (_stalledCount > 60){
-            if (_eventSink != nil) {
-                _eventSink([FlutterError
+            _eventSink([FlutterError
                         errorWithCode:@"VideoError"
                         message:@"Failed to load video: playback stalled"
                         details:nil]);
-            }
             return;
         }
         [self performSelector:@selector(startStalledCheck) withObject:nil afterDelay:1];
@@ -416,17 +433,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 
                 if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused){
                     _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
-                    if (_eventSink != nil) {
-                      _eventSink(@{@"event" : @"pause"});
-                    }
+                    _eventSink(@{@"event" : @"pause"});
                     return;
                 
                 }
                 if (_player.timeControlStatus == AVPlayerTimeControlStatusPlaying){
                     _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
-                    if (_eventSink != nil) {
-                      _eventSink(@{@"event" : @"play"});
-                    }
+                    _eventSink(@{@"event" : @"play"});
                 }
             }
         }
@@ -941,7 +954,6 @@ NSMutableDictionary*  _artworkImageDict;
     _timeObserverIdDict = [NSMutableDictionary dictionary];
     _artworkImageDict = [NSMutableDictionary dictionary];
     _dataSourceDict = [NSMutableDictionary dictionary];
-    [KTVHTTPCache proxyStart:nil];
     return self;
 }
 
@@ -1286,8 +1298,17 @@ NSMutableDictionary*  _artworkImageDict;
             [player setAudioTrack:name index: index];
         } else if ([@"setMixWithOthers" isEqualToString:call.method]){
             [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
+        } else if ([@"preCache" isEqualToString:call.method]){
+            NSString* uriArg = dataSource[@"uri"];
+            NSString* key = dataSource[@"key"];
+            NSDictionary* headers = dataSource[@"headers"];
+            if (headers == nil){
+                headers = @{};
+            }
+            [player preCacheURL:[NSURL url:uriArg] withKey:key withHeaders:headers];
         } else if ([@"clearCache" isEqualToString:call.method]){
-            [KTVHTTPCache cacheDeleteAllCaches];
+            CacheHandler* cacheHandler = [[CacheHandler alloc] init];        
+            [cacheHandler clearCache];
         } else {
             result(FlutterMethodNotImplemented);
         }
