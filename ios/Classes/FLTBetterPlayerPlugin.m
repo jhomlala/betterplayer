@@ -7,8 +7,7 @@
 #import <GLKit/GLKit.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <AVKit/AVKit.h>
-#import "CacheHandler.h"
-#import "CachingPlayerItem.h"
+#import <better_player/better_player-Swift.h>
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -106,6 +105,9 @@ AVPictureInPictureController *_pipController;
     [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
     _displayLink.paused = YES;
     self._observersAdded = false;
+
+
+
     return self;
 }
 
@@ -293,38 +295,20 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   return transform;
 }
 
-// We store the last pre-cached CachingPlayerItem objects to be able to play even if the download
-// has not finished.
-NSMutableDictionary* _preCachedURLs = [[NSMutableDictionary alloc]init];
-
-- (void)preCacheURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers{
-    CachingPlayerItem* item;
-    CacheHandler *cacheHandler = [[CacheHandler alloc] init];        
-    item = [cacheHandler getCachingPlayerItem: url:url, key:key, headers:headers];    
-    [_preCachedURLs setObject:item forKey:key];
-    [item download];
-}
 
 
-- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key overriddenDuration:(int) overriddenDuration{
+- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration{
     NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{} withCache: false overriddenDuration:overriddenDuration];
+    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{} cacheKey:cacheKey withCache:false cacheManager:cacheManager overriddenDuration:overriddenDuration];
 }
 
-- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration{
+- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers cacheKey:(NSString*)cacheKey withCache:(BOOL)useCache cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration{
     if (headers == [NSNull null]){
         headers = @{};
     }
     AVPlayerItem* item;
     if (useCache){
-        // Fetch ongoing pre-cached url if it exists
-        if ([_preCachedURLs objectForKey:key) {
-            item = [_preCachedURLs objectForKey:key];
-            [_preCachedURLs removeObjectForKey:key];
-        } else {
-            CacheHandler* cacheHandler = [[CacheHandler alloc] init];        
-            item = [cacheHandler getCachingPlayerItem: url:url, key:key, headers:headers];
-        }
+        item = [cacheManager getCachingPlayerItem:url cacheKey:cacheKey headers:headers];
     } else {
         AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
                                                 options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
@@ -933,7 +917,7 @@ NSMutableDictionary* _preCachedURLs = [[NSMutableDictionary alloc]init];
 NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
-
+CacheManager* _cacheManager;
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel =
@@ -954,6 +938,7 @@ NSMutableDictionary*  _artworkImageDict;
     _timeObserverIdDict = [NSMutableDictionary dictionary];
     _artworkImageDict = [NSMutableDictionary dictionary];
     _dataSourceDict = [NSMutableDictionary dictionary];
+    _cacheManager = [[CacheManager alloc] init];
     return self;
 }
 
@@ -1189,7 +1174,9 @@ NSMutableDictionary*  _artworkImageDict;
             NSString* assetArg = dataSource[@"asset"];
             NSString* uriArg = dataSource[@"uri"];
             NSString* key = dataSource[@"key"];
+            NSString* cacheKey = dataSource[@"cacheKey"];
             NSDictionary* headers = dataSource[@"headers"];
+            NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
             int overriddenDuration = 0;
             if ([dataSource objectForKey:@"overriddenDuration"] != [NSNull null]){
                 overriddenDuration = [dataSource[@"overriddenDuration"] intValue];
@@ -1199,9 +1186,12 @@ NSMutableDictionary*  _artworkImageDict;
             id useCacheObject = [dataSource objectForKey:@"useCache"];
             if (useCacheObject != [NSNull null]) {
                 useCache = [[dataSource objectForKey:@"useCache"] boolValue];
+                if (useCache){
+                    [_cacheManager setMaxCacheSize:maxCacheSize];
+                }
             }
             
-            if (headers == nil){
+            if (headers == nil || headers == [ NSNull null ]){
                 headers = @{};
             }
             if (assetArg) {
@@ -1212,9 +1202,9 @@ NSMutableDictionary*  _artworkImageDict;
                 } else {
                     assetPath = [_registrar lookupKeyForAsset:assetArg];
                 }
-                [player setDataSourceAsset:assetPath withKey:key overriddenDuration:overriddenDuration];
+                [player setDataSourceAsset:assetPath withKey:key cacheKey:cacheKey cacheManager:_cacheManager overriddenDuration:overriddenDuration];
             } else if (uriArg) {
-                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withHeaders:headers withCache: useCache overriddenDuration:overriddenDuration];
+                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withHeaders:headers cacheKey:cacheKey withCache:useCache cacheManager:_cacheManager overriddenDuration:overriddenDuration];
             } else {
                 result(FlutterMethodNotImplemented);
             }
@@ -1298,17 +1288,22 @@ NSMutableDictionary*  _artworkImageDict;
             [player setAudioTrack:name index: index];
         } else if ([@"setMixWithOthers" isEqualToString:call.method]){
             [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
-        } else if ([@"preCache" isEqualToString:call.method]){
+        } else if ([@"preCache" isEqualToString:call.method]){            
+            NSDictionary* dataSource = argsMap[@"dataSource"];
             NSString* uriArg = dataSource[@"uri"];
-            NSString* key = dataSource[@"key"];
+            NSString* cacheKey = dataSource[@"cacheKey"];
             NSDictionary* headers = dataSource[@"headers"];
-            if (headers == nil){
+            NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
+            if (headers == nil || headers == [ NSNull null ]){
                 headers = @{};
             }
-            [player preCacheURL:[NSURL url:uriArg] withKey:key withHeaders:headers];
-        } else if ([@"clearCache" isEqualToString:call.method]){
-            CacheHandler* cacheHandler = [[CacheHandler alloc] init];        
-            [cacheHandler clearCache];
+            [_cacheManager setMaxCacheSize:maxCacheSize];
+            [_cacheManager preCacheURL:[NSURL URLWithString:uriArg] cacheKey:cacheKey withHeaders:headers completionHandler:^(BOOL success){
+                result(nil);
+            }];
+        } else if ([@"clearCache" isEqualToString:call.method]){       
+            [_cacheManager clearCache];
+            result(nil);
         } else {
             result(FlutterMethodNotImplemented);
         }
