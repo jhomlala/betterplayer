@@ -9,7 +9,7 @@ import 'dart:io';
 import 'dart:ui';
 
 // Flutter imports:
-import 'package:better_player/src/configuration/better_player_android_configuration.dart';
+import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -36,24 +36,27 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<int?> create({BetterPlayerAndroidConfiguration? betterPlayerAndroidConfiguration}) async {
+  Future<int?> create({
+    BetterPlayerBufferingConfiguration? bufferingConfiguration,
+  }) async {
     late final Map<String, dynamic>? response;
-    if(betterPlayerAndroidConfiguration==null||Platform.isIOS){
-      response =
-      await _channel.invokeMapMethod<String, dynamic>('create');
-    }else{
+    if (bufferingConfiguration == null) {
+      response = await _channel.invokeMapMethod<String, dynamic>('create');
+    } else {
       final responseLinkedHashMap = await _channel.invokeMethod<Map?>(
         'create',
         <String, dynamic>{
-          'minBufferMs': betterPlayerAndroidConfiguration.minBufferMs,
-          'maxBufferMs': betterPlayerAndroidConfiguration.maxBufferMs,
-          'bufferForPlaybackMs' : betterPlayerAndroidConfiguration.bufferForPlaybackMs,
-          'bufferForPlaybackAfterRebufferMs' : betterPlayerAndroidConfiguration.bufferForPlaybackAfterRebufferMs
-
+          'minBufferMs': bufferingConfiguration.minBufferMs,
+          'maxBufferMs': bufferingConfiguration.maxBufferMs,
+          'bufferForPlaybackMs': bufferingConfiguration.bufferForPlaybackMs,
+          'bufferForPlaybackAfterRebufferMs':
+              bufferingConfiguration.bufferForPlaybackAfterRebufferMs,
         },
       );
 
-      response = responseLinkedHashMap!=null?Map<String, dynamic>.from(responseLinkedHashMap):null;
+      response = responseLinkedHashMap != null
+          ? Map<String, dynamic>.from(responseLinkedHashMap)
+          : null;
     }
     return response?['textureId'] as int?;
   }

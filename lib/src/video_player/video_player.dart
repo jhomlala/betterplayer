@@ -7,7 +7,7 @@ import 'dart:async';
 import 'dart:io';
 
 // Project imports:
-import 'package:better_player/src/configuration/better_player_android_configuration.dart';
+import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
 // Flutter imports:
@@ -49,7 +49,8 @@ class VideoPlayerValue {
 
   /// Returns an instance with a `null` [Duration] and the given
   /// [errorDescription].
-  VideoPlayerValue.erroneous(String errorDescription) : this(duration: null, errorDescription: errorDescription);
+  VideoPlayerValue.erroneous(String errorDescription)
+      : this(duration: null, errorDescription: errorDescription);
 
   /// The total duration of the video.
   ///
@@ -175,14 +176,17 @@ class VideoPlayerValue {
 ///
 /// After [dispose] all further calls are ignored.
 class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
-  final BetterPlayerAndroidConfiguration betterPlayerAndroidConfiguration;
+  final BetterPlayerBufferingConfiguration bufferingConfiguration;
 
   /// Constructs a [VideoPlayerController] and creates video controller on platform side.
-  VideoPlayerController({this.betterPlayerAndroidConfiguration = const BetterPlayerAndroidConfiguration()}) : super(VideoPlayerValue(duration: null)) {
+  VideoPlayerController({
+    this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
+  }) : super(VideoPlayerValue(duration: null)) {
     _create();
   }
 
-  final StreamController<VideoEvent> videoEventStreamController = StreamController.broadcast();
+  final StreamController<VideoEvent> videoEventStreamController =
+      StreamController.broadcast();
   final Completer<void> _creatingCompleter = Completer<void>();
   int? _textureId;
 
@@ -203,7 +207,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> _create() async {
-    _textureId = await _videoPlayerPlatform.create(betterPlayerAndroidConfiguration: betterPlayerAndroidConfiguration);
+    _textureId = await _videoPlayerPlatform.create(
+      bufferingConfiguration: bufferingConfiguration,
+    );
     _creatingCompleter.complete(null);
 
     unawaited(_applyLooping());
@@ -263,9 +269,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (object is PlatformException) {
         final PlatformException e = object;
         value = value.copyWith(errorDescription: e.message);
-        //value = VideoPlayerValue.erroneous(e.message);
       } else {
-        //value = VideoPlayerValue.erroneous(object.toString());
         value.copyWith(errorDescription: object.toString());
       }
       _timer?.cancel();
@@ -274,7 +278,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       }
     }
 
-    _eventSubscription = _videoPlayerPlatform.videoEventsFor(_textureId).listen(eventListener, onError: errorListener);
+    _eventSubscription = _videoPlayerPlatform
+        .videoEventsFor(_textureId)
+        .listen(eventListener, onError: errorListener);
   }
 
   /// Set data source for playing a video from an asset.
@@ -402,7 +408,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     _initializingCompleter = Completer<void>();
 
-    await VideoPlayerPlatform.instance.setDataSource(_textureId, dataSourceDescription);
+    await VideoPlayerPlatform.instance
+        .setDataSource(_textureId, dataSourceDescription);
     return _initializingCompleter.future;
   }
 
@@ -473,7 +480,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
 
           if (_seekTime != null) {
-            final difference = DateTime.now().millisecondsSinceEpoch - _seekTime!.millisecondsSinceEpoch;
+            final difference = DateTime.now().millisecondsSinceEpoch -
+                _seekTime!.millisecondsSinceEpoch;
             if (difference > 400) {
               _seekPosition = null;
               _seekTime = null;
@@ -562,11 +570,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [height] specifies height of the selected track
   /// [bitrate] specifies bitrate of the selected track
   Future<void> setTrackParameters(int? width, int? height, int? bitrate) async {
-    await _videoPlayerPlatform.setTrackParameters(_textureId, width, height, bitrate);
+    await _videoPlayerPlatform.setTrackParameters(
+        _textureId, width, height, bitrate);
   }
 
-  Future<void> enablePictureInPicture({double? top, double? left, double? width, double? height}) async {
-    await _videoPlayerPlatform.enablePictureInPicture(textureId, top, left, width, height);
+  Future<void> enablePictureInPicture(
+      {double? top, double? left, double? width, double? height}) async {
+    await _videoPlayerPlatform.enablePictureInPicture(
+        textureId, top, left, width, height);
   }
 
   Future<void> disablePictureInPicture() async {
@@ -665,7 +676,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return _textureId == null ? Container() : _videoPlayerPlatform.buildView(_textureId);
+    return _textureId == null
+        ? Container()
+        : _videoPlayerPlatform.buildView(_textureId);
   }
 }
 

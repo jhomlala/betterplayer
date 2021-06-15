@@ -151,7 +151,6 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
             return;
         }
 
-
         switch (call.method) {
             case INIT_METHOD:
                 disposeAllPlayers();
@@ -163,13 +162,22 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 EventChannel eventChannel =
                         new EventChannel(
                                 flutterState.binaryMessenger, EVENTS_CHANNEL + handle.id());
+                CustomDefaultLoadControl customDefaultLoadControl = null;
+                if (call.hasArgument(MIN_BUFFER_MS) && call.hasArgument(MAX_BUFFER_MS) &&
+                        call.hasArgument(BUFFER_FOR_PLAYBACK_MS) &&
+                        call.hasArgument(BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)) {
 
-                CustomDefaultLoadControl customDefaultLoadControl =
-                        new CustomDefaultLoadControl(call.argument(MIN_BUFFER_MS), call.argument(MAX_BUFFER_MS),
-                                call.argument(BUFFER_FOR_PLAYBACK_MS), call.argument(BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS));
+                    customDefaultLoadControl =
+                            new CustomDefaultLoadControl(call.argument(MIN_BUFFER_MS),
+                                    call.argument(MAX_BUFFER_MS),
+                                    call.argument(BUFFER_FOR_PLAYBACK_MS),
+                                    call.argument(BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS)
+                            );
+                }
 
                 BetterPlayer player =
-                        new BetterPlayer(flutterState.applicationContext, eventChannel, handle, customDefaultLoadControl, result);
+                        new BetterPlayer(flutterState.applicationContext, eventChannel, handle,
+                                customDefaultLoadControl, result);
 
                 videoPlayers.put(handle.id(), player);
                 break;

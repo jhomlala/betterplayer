@@ -7,7 +7,7 @@ import 'dart:async';
 import 'dart:ui';
 
 // Flutter imports:
-import 'package:better_player/src/configuration/better_player_android_configuration.dart';
+import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -71,7 +71,8 @@ abstract class VideoPlayerPlatform {
   }
 
   /// Creates an instance of a video player and returns its textureId.
-  Future<int?> create({BetterPlayerAndroidConfiguration? betterPlayerAndroidConfiguration}) {
+  Future<int?> create(
+      {BetterPlayerBufferingConfiguration? bufferingConfiguration}) {
     throw UnimplementedError('create() has not been implemented.');
   }
 

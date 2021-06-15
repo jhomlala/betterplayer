@@ -123,14 +123,20 @@ final class BetterPlayer {
         this.textureEntry = textureEntry;
         trackSelector = new DefaultTrackSelector(context);
 
-        this.customDefaultLoadControl = customDefaultLoadControl != null ? customDefaultLoadControl : new CustomDefaultLoadControl();
+        this.customDefaultLoadControl = customDefaultLoadControl != null ?
+                customDefaultLoadControl : new CustomDefaultLoadControl();
         DefaultLoadControl.Builder loadBuilder = new DefaultLoadControl.Builder();
         loadBuilder.setBufferDurationsMs(
-                this.customDefaultLoadControl.minBufferMs, this.customDefaultLoadControl.maxBufferMs,
-                this.customDefaultLoadControl.bufferForPlaybackMs, this.customDefaultLoadControl.bufferForPlaybackAfterRebufferMs);
+                this.customDefaultLoadControl.minBufferMs,
+                this.customDefaultLoadControl.maxBufferMs,
+                this.customDefaultLoadControl.bufferForPlaybackMs,
+                this.customDefaultLoadControl.bufferForPlaybackAfterRebufferMs);
         loadControl = loadBuilder.build();
 
-        exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).setLoadControl(loadControl).build();
+        exoPlayer = new SimpleExoPlayer.Builder(context)
+                .setTrackSelector(trackSelector)
+                .setLoadControl(loadControl)
+                .build();
         workManager = WorkManager.getInstance(context);
         workerObserverMap = new HashMap<>();
 
