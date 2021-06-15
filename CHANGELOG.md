@@ -3,6 +3,7 @@
 * Exposed ASMS classes.
 * Exposed BetterPlayerControlsState to provide ways to build custom controls with additional menus.
 * Added error handling for CacheWorker to prevent unexpected crashes.
+* Added support for FairPlay EZDRM (by https://github.com/adrianByv and https://github.com/koldo92)
 
 ## 0.0.69
 * Fixed cache clear on Android.
