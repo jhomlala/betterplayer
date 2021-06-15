@@ -6,7 +6,7 @@
 * Added support for FairPlay EZDRM (by https://github.com/adrianByv and https://github.com/koldo92)
 * Added `certificateUrl` parameter in BetterPlayerDrmConfiguration.
 * Added support for custom buffering configuration in Android (by https://github.com/Letalus)
-* Added `bufferingConfiguration` paramter in BetterPlayerConfiguration which contains buffering settings.
+* Added `bufferingConfiguration` parameter in BetterPlayerConfiguration which contains buffering settings.
 
 ## 0.0.69
 * Fixed cache clear on Android.
