@@ -464,6 +464,11 @@ class BetterPlayerController {
 
         break;
       case BetterPlayerDataSourceType.file:
+        final file = File(betterPlayerDataSource.url);
+        if (!file.existsSync()) {
+          throw ArgumentError("Passed file doesn't exists.");
+        }
+
         await videoPlayerController?.setFileDataSource(
             File(betterPlayerDataSource.url),
             showNotification: _betterPlayerDataSource
@@ -1184,12 +1189,14 @@ class BetterPlayerController {
         const BetterPlayerCacheConfiguration(useCache: true);
 
     final dataSource = DataSource(
-        sourceType: DataSourceType.network,
-        uri: betterPlayerDataSource.url,
-        useCache: true,
-        headers: betterPlayerDataSource.headers,
-        maxCacheSize: cacheConfig.maxCacheSize,
-        maxCacheFileSize: cacheConfig.maxCacheFileSize);
+      sourceType: DataSourceType.network,
+      uri: betterPlayerDataSource.url,
+      useCache: true,
+      headers: betterPlayerDataSource.headers,
+      maxCacheSize: cacheConfig.maxCacheSize,
+      maxCacheFileSize: cacheConfig.maxCacheFileSize,
+      cacheKey: cacheConfig.key,
+    );
 
     return VideoPlayerController.preCache(dataSource, cacheConfig.preCacheSize);
   }

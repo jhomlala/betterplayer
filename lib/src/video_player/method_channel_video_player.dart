@@ -70,6 +70,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'useCache': dataSource.useCache,
           'maxCacheSize': dataSource.maxCacheSize,
           'maxCacheFileSize': dataSource.maxCacheFileSize,
+          'cacheKey': dataSource.cacheKey,
           'showNotification': dataSource.showNotification,
           'title': dataSource.title,
           'author': dataSource.author,
@@ -79,7 +80,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'licenseUrl': dataSource.licenseUrl,
           'certificateUrl': dataSource.certificateUrl,
           'drmHeaders': dataSource.drmHeaders,
-          'activityName': dataSource.activityName
+          'activityName': dataSource.activityName,
         };
         break;
       case DataSourceType.file:
@@ -281,7 +282,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       'headers': dataSource.headers,
       'maxCacheSize': dataSource.maxCacheSize,
       'maxCacheFileSize': dataSource.maxCacheFileSize,
-      'preCacheSize': preCacheSize
+      'preCacheSize': preCacheSize,
+      'cacheKey': dataSource.cacheKey,
     };
     return _channel.invokeMethod<void>(
       'preCache',
