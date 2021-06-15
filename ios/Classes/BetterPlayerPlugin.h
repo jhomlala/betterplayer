@@ -9,10 +9,10 @@
 #import <KTVHTTPCache/KTVHTTPCache.h>
 #import <GLKit/GLKit.h>
 #import "BetterPlayerTimeUtils.h"
-#import "FLTBetterPlayer.h"
+#import "BetterPlayer.h"
 #import <MediaPlayer/MediaPlayer.h>
 
-@interface FLTBetterPlayerPlugin : NSObject <FlutterPlugin, FlutterPlatformViewFactory>
+@interface BetterPlayerPlugin : NSObject <FlutterPlugin, FlutterPlatformViewFactory>
 
 @property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger>* messenger;
 @property(readonly, strong, nonatomic) NSMutableDictionary* players;

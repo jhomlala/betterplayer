@@ -6,8 +6,8 @@
 #import <AVKit/AVKit.h>
 #import <AVFoundation/AVFoundation.h>
 
-// FLTBetterPlayerView.h
-@interface FLTBetterPlayerView : UIView
+// BetterPlayerView.h
+@interface BetterPlayerView : UIView
 @property AVPlayer *player;
 @property (readonly) AVPlayerLayer *playerLayer;
 @end

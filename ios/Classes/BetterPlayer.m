@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTBetterPlayer.h"
+#import "BetterPlayer.h"
 
 static void* timeRangeContext = &timeRangeContext;
 static void* statusContext = &statusContext;
@@ -18,7 +18,7 @@ API_AVAILABLE(ios(9.0))
 AVPictureInPictureController *_pipController;
 #endif
 
-@implementation FLTBetterPlayer
+@implementation BetterPlayer
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
     NSAssert(self, @"super init cannot be nil");
@@ -36,7 +36,7 @@ AVPictureInPictureController *_pipController;
 }
 
 - (nonnull UIView *)view {
-    FLTBetterPlayerView *playerView = [[FLTBetterPlayerView alloc] initWithFrame:CGRectZero];
+    BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
     return playerView;
 }

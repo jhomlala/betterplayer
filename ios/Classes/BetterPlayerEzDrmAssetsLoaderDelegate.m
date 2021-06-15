@@ -18,13 +18,13 @@ NSString * KEY_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
 
 /*------------------------------------------
  **
- ** getContentKeyAndLeaseExpiryfromKeyServerModuleWithRequest
+ ** getContentKeyAndLeaseExpiryFromKeyServerModuleWithRequest
  **
  ** takes the bundled SPC and sends it the the
  ** key server defined at KEY_SERVER_URL in the View Controller
  ** it returns a CKC which then is returned.
  ** ---------------------------------------*/
-- (NSData *)getContentKeyAndLeaseExpiryfromKeyServerModuleWithRequest:(NSData*)requestBytes and:(NSString *)assetId and:(NSString *)customParams and:(NSError *)errorOut {
+- (NSData *)getContentKeyAndLeaseExpiryFromKeyServerModuleWithRequest:(NSData*)requestBytes and:(NSString *)assetId and:(NSString *)customParams and:(NSError *)errorOut {
     NSData * decodedData;
     NSURLResponse * response;
     NSURL * ksmURL = [[NSURL alloc] initWithString: [NSString stringWithFormat:@"%@%@%@",KEY_SERVER_URL,assetId,customParams]];
@@ -86,7 +86,7 @@ NSString * KEY_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
     NSData * responseData;
     NSError * error;
     
-    responseData = [self getContentKeyAndLeaseExpiryfromKeyServerModuleWithRequest:requestBytes and:_assetId and:passthruParams and:error];
+    responseData = [self getContentKeyAndLeaseExpiryFromKeyServerModuleWithRequest:requestBytes and:_assetId and:passthruParams and:error];
     
     if (responseData != nil && responseData != NULL && ![responseData.class isKindOfClass:NSNull.class]){
         AVAssetResourceLoadingDataRequest * dataRequest = loadingRequest.dataRequest;

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTBetterPlayerPlugin.h"
+#import "BetterPlayerPlugin.h"
 
 
 #if !__has_feature(objc_arc)
@@ -10,7 +10,7 @@
 #endif
 
 
-@implementation FLTBetterPlayerPlugin
+@implementation BetterPlayerPlugin
 NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
@@ -22,7 +22,7 @@ int texturesCount = -1;
     FlutterMethodChannel* channel =
     [FlutterMethodChannel methodChannelWithName:@"better_player_channel"
                                 binaryMessenger:[registrar messenger]];
-    FLTBetterPlayerPlugin* instance = [[FLTBetterPlayerPlugin alloc] initWithRegistrar:registrar];
+    BetterPlayerPlugin* instance = [[BetterPlayerPlugin alloc] initWithRegistrar:registrar];
     [registrar addMethodCallDelegate:instance channel:channel];
     //[registrar publish:instance];
     [registrar registerViewFactory:instance withId:@"com.jhomlala/better_player"];
@@ -43,7 +43,7 @@ int texturesCount = -1;
 
 - (void)detachFromEngineForRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     for (NSNumber* textureId in _players.allKeys) {
-        FLTBetterPlayer* player = _players[textureId];
+        BetterPlayer* player = _players[textureId];
         [player disposeSansEventChannel];
     }
     [_players removeAllObjects];
@@ -54,7 +54,7 @@ int texturesCount = -1;
                                    viewIdentifier:(int64_t)viewId
                                         arguments:(id _Nullable)args {
     NSNumber* textureId = [args objectForKey:@"textureId"];
-    FLTBetterPlayerView* player = [_players objectForKey:@(textureId.intValue)];
+    BetterPlayerView* player = [_players objectForKey:@(textureId.intValue)];
     return player;
 }
 
@@ -62,12 +62,12 @@ int texturesCount = -1;
     return [FlutterStandardMessageCodec sharedInstance];
 }
 
-#pragma mark - FLTBetterPlayerPlugin class
+#pragma mark - BetterPlayerPlugin class
 - (int)newTextureId {
     texturesCount += 1;
     return texturesCount;
 }
-- (void)onPlayerSetup:(FLTBetterPlayer*)player
+- (void)onPlayerSetup:(BetterPlayer*)player
                result:(FlutterResult)result {
     int64_t textureId = [self newTextureId];
     FlutterEventChannel* eventChannel = [FlutterEventChannel
@@ -81,7 +81,7 @@ int texturesCount = -1;
     result(@{@"textureId" : @(textureId)});
 }
 
-- (void) setupRemoteNotification :(FLTBetterPlayer*) player{
+- (void) setupRemoteNotification :(BetterPlayer*) player{
     [self stopOtherUpdateListener:player];
     NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
     BOOL showNotification = false;
@@ -115,7 +115,7 @@ int texturesCount = -1;
 }
 
 
-- (void) setupRemoteCommands:(FLTBetterPlayer*)player  {
+- (void) setupRemoteCommands:(BetterPlayer*)player  {
     MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
     [commandCenter.togglePlayPauseCommand setEnabled:YES];
     [commandCenter.playCommand setEnabled:YES];
@@ -162,7 +162,7 @@ int texturesCount = -1;
     }
 }
 
-- (void) setupRemoteCommandNotification:(FLTBetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl{
+- (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl{
     float positionInSeconds = player.position /1000;
     float durationInSeconds = player.duration/ 1000;
     
@@ -215,13 +215,13 @@ int texturesCount = -1;
 
 
 
-- (NSString*) getTextureId: (FLTBetterPlayer*) player{
+- (NSString*) getTextureId: (BetterPlayer*) player{
     NSArray* temp = [_players allKeysForObject: player];
     NSString* key = [temp lastObject];
     return key;
 }
 
-- (void) setupUpdateListener:(FLTBetterPlayer*)player,NSString* title, NSString* author,NSString* imageUrl  {
+- (void) setupUpdateListener:(BetterPlayer*)player,NSString* title, NSString* author,NSString* imageUrl  {
     id _timeObserverId = [player.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time){
         [self setupRemoteCommandNotification:player, title, author, imageUrl];
     }];
@@ -231,7 +231,7 @@ int texturesCount = -1;
 }
 
 
-- (void) disposeNotificationData: (FLTBetterPlayer*)player{
+- (void) disposeNotificationData: (BetterPlayer*)player{
     NSString* key =  [self getTextureId:player];
     id _timeObserverId = _timeObserverIdDict[key];
     [_timeObserverIdDict removeObjectForKey: key];
@@ -243,7 +243,7 @@ int texturesCount = -1;
     [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo =  @{};
 }
 
-- (void) stopOtherUpdateListener: (FLTBetterPlayer*) player{
+- (void) stopOtherUpdateListener: (BetterPlayer*) player{
     NSString* currentPlayerTextureId = [self getTextureId:player];
     for (NSString* textureId in _timeObserverIdDict.allKeys) {
         if (currentPlayerTextureId == textureId){
@@ -251,7 +251,7 @@ int texturesCount = -1;
         }
         
         id timeObserverId = [_timeObserverIdDict objectForKey:textureId];
-        FLTBetterPlayer* playerToRemoveListener = [_players objectForKey:textureId];
+        BetterPlayer* playerToRemoveListener = [_players objectForKey:textureId];
         [playerToRemoveListener.player removeTimeObserver: timeObserverId];
     }
     [_timeObserverIdDict removeAllObjects];
@@ -271,12 +271,12 @@ int texturesCount = -1;
         [_players removeAllObjects];
         result(nil);
     } else if ([@"create" isEqualToString:call.method]) {
-        FLTBetterPlayer* player = [[FLTBetterPlayer alloc] initWithFrame:CGRectZero];
+        BetterPlayer* player = [[BetterPlayer alloc] initWithFrame:CGRectZero];
         [self onPlayerSetup:player result:result];
     } else {
         NSDictionary* argsMap = call.arguments;
         int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
-        FLTBetterPlayer* player = _players[@(textureId)];
+        BetterPlayer* player = _players[@(textureId)];
         if ([@"setDataSource" isEqualToString:call.method]) {
             [player clear];
             // This call will clear cached frame because we will return transparent frame

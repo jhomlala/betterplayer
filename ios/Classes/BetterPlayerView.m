@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTBetterPlayerView.h"
+#import "BetterPlayerView.h"
 
-// FLTBetterPlayerView.m
-@implementation FLTBetterPlayerView
+// BetterPlayerView.m
+@implementation BetterPlayerView
 - (AVPlayer *)player {
     return self.playerLayer.player;
 }
