@@ -11,6 +11,9 @@ class BetterPlayerDrmConfiguration {
   ///Url of license server, used only for WIDEVINE/PLAYREADY DRM
   final String? licenseUrl;
 
+  ///Url of fairplay certificate
+  final String? certificateUrl;
+
   ///Additional headers send with auth request, used only for WIDEVINE DRM
   final Map<String, String>? headers;
 
@@ -18,6 +21,7 @@ class BetterPlayerDrmConfiguration {
     this.drmType,
     this.token,
     this.licenseUrl,
+    this.certificateUrl,
     this.headers,
   });
 }

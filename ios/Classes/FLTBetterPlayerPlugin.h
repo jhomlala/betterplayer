@@ -2,7 +2,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import <Foundation/Foundation.h>
 #import <Flutter/Flutter.h>
+#import <AVKit/AVKit.h>
+#import <AVFoundation/AVFoundation.h>
+#import <KTVHTTPCache/KTVHTTPCache.h>
+#import <GLKit/GLKit.h>
+#import "BetterPlayerTimeUtils.h"
+#import "FLTBetterPlayer.h"
+#import <MediaPlayer/MediaPlayer.h>
 
-@interface FLTBetterPlayerPlugin : NSObject <FlutterPlugin>
+@interface FLTBetterPlayerPlugin : NSObject <FlutterPlugin, FlutterPlatformViewFactory>
+
+@property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger>* messenger;
+@property(readonly, strong, nonatomic) NSMutableDictionary* players;
+@property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar>* registrar;
+
 @end
