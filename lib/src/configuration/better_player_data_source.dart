@@ -1,5 +1,6 @@
 // Project imports:
 
+import 'package:better_player/src/configuration/better_player_android_configuration.dart';
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_drm_configuration.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
@@ -73,6 +74,9 @@ class BetterPlayerDataSource {
   /// BetterPlayerConfiguration.
   final Widget? placeholder;
 
+  ///Specific android related code which enables the user to f.e. optimize video loading, buffering and playing
+  final BetterPlayerAndroidConfiguration betterPlayerAndroidConfiguration;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -86,18 +90,16 @@ class BetterPlayerDataSource {
     this.asmsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
-    this.notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(showNotification: false),
+    this.betterPlayerAndroidConfiguration = const BetterPlayerAndroidConfiguration(),
+    this.notificationConfiguration = const BetterPlayerNotificationConfiguration(showNotification: false),
     this.overriddenDuration,
     this.videoFormat,
     this.videoExtension,
     this.drmConfiguration,
     this.placeholder,
   }) : assert(
-            (type == BetterPlayerDataSourceType.network ||
-                    type == BetterPlayerDataSourceType.file) ||
-                (type == BetterPlayerDataSourceType.memory &&
-                    bytes?.isNotEmpty == true),
+            (type == BetterPlayerDataSourceType.network || type == BetterPlayerDataSourceType.file) ||
+                (type == BetterPlayerDataSourceType.memory && bytes?.isNotEmpty == true),
             "Url can't be null in network or file data source | bytes can't be null when using memory data source");
 
   ///Factory method to build network data source which uses url as data source
@@ -112,6 +114,7 @@ class BetterPlayerDataSource {
     bool? useAsmsAudioTracks,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
+    BetterPlayerAndroidConfiguration betterPlayerAndroidConfiguration = const BetterPlayerAndroidConfiguration(),
     BetterPlayerNotificationConfiguration notificationConfiguration =
         const BetterPlayerNotificationConfiguration(showNotification: false),
     Duration? overriddenDuration,
@@ -135,6 +138,7 @@ class BetterPlayerDataSource {
       videoFormat: videoFormat,
       drmConfiguration: drmConfiguration,
       placeholder: placeholder,
+      betterPlayerAndroidConfiguration: betterPlayerAndroidConfiguration
     );
   }
 
@@ -229,8 +233,7 @@ class BetterPlayerDataSource {
       useAsmsAudioTracks: useAsmsAudioTracks ?? this.useAsmsAudioTracks,
       resolutions: resolutions ?? this.resolutions,
       cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
-      notificationConfiguration:
-          notificationConfiguration ?? this.notificationConfiguration,
+      notificationConfiguration: notificationConfiguration ?? this.notificationConfiguration,
       overriddenDuration: overriddenDuration ?? this.overriddenDuration,
       videoFormat: videoFormat ?? this.videoFormat,
       videoExtension: videoExtension ?? this.videoExtension,
