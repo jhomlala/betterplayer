@@ -228,7 +228,7 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     await SystemChrome.setEnabledSystemUIOverlays([]);
 
-    if (isAndroid) {
+
       if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
           true) {
         final aspectRatio =
@@ -252,12 +252,7 @@ class _BetterPlayerState extends State<BetterPlayer>
               .deviceOrientationsOnFullScreen,
         );
       }
-    } else {
-      await SystemChrome.setPreferredOrientations(
-        widget.controller.betterPlayerConfiguration
-            .deviceOrientationsOnFullScreen,
-      );
-    }
+
 
     if (!_betterPlayerConfiguration.allowedScreenSleep) {
       Wakelock.enable();
