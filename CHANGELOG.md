@@ -1,4 +1,5 @@
 ## 0.0.70
+* Fixed file data source exception. Right now user will be only warned.
 * Fixed playback speed after seek in iOS.
 * Exposed ASMS classes.
 * Exposed BetterPlayerControlsState to provide ways to build custom controls with additional menus.
