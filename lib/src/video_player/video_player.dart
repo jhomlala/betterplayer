@@ -531,6 +531,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// If [moment] is outside of the video's full range it will be automatically
   /// and silently clamped.
   Future<void> seekTo(Duration? position) async {
+    bool isPlaying = value.isPlaying;
+    int positionInMs = value.position.inMilliseconds ?? 0;
+    int durationInMs = value?.duration?.inMilliseconds ?? 0;
+
+    if (positionInMs >= durationInMs && position?.inMilliseconds == 0) {
+      isPlaying = true;
+    }
+
     if (_isDisposed) {
       return;
     }
@@ -545,6 +553,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
     await _videoPlayerPlatform.seekTo(_textureId, positionToSeek);
     _updatePosition(position);
+    if (isPlaying) {
+      play();
+    } else {
+      pause();
+    }
   }
 
   /// Sets the audio volume of [this].

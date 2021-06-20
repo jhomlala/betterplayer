@@ -2,6 +2,7 @@
 * Fixed file data source exception. Right now user will be only warned.
 * Fixed playback speed after seek in iOS.
 * Fixed `overriddenDuration` behavior in iOS when passed `overriddenDuration` is longer than video duration.
+* Fixed issue where controls were not updated after video finish.
 * Exposed ASMS classes.
 * Exposed BetterPlayerControlsState to provide ways to build custom controls with additional menus.
 * Added error handling for CacheWorker to prevent unexpected crashes.
