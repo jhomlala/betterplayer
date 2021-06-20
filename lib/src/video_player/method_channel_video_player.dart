@@ -5,7 +5,6 @@
 
 // Dart imports:
 import 'dart:async';
-import 'dart:io';
 import 'dart:ui';
 
 // Flutter imports:
