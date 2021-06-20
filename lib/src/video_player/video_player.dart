@@ -532,8 +532,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// and silently clamped.
   Future<void> seekTo(Duration? position) async {
     bool isPlaying = value.isPlaying;
-    int positionInMs = value.position.inMilliseconds ?? 0;
-    int durationInMs = value?.duration?.inMilliseconds ?? 0;
+    int positionInMs = value.position.inMilliseconds;
+    int durationInMs = value.duration?.inMilliseconds ?? 0;
 
     if (positionInMs >= durationInMs && position?.inMilliseconds == 0) {
       isPlaying = true;
