@@ -470,7 +470,7 @@ class BetterPlayerController {
       case BetterPlayerDataSourceType.file:
         final file = File(betterPlayerDataSource.url);
         if (!file.existsSync()) {
-          Timber.d("File ${file.path} doesn't exists. This may be because "
+          print("File ${file.path} doesn't exists. This may be because "
               "you're acessing file from native path and Flutter doesn't "
               "recognize this path.");
         }

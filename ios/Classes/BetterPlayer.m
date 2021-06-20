@@ -193,6 +193,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration{
+    _overriddenDuration = 0;
     if (headers == [NSNull null]){
         headers = @{};
     }
@@ -215,7 +216,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
     
     if (@available(iOS 10.0, *) && overriddenDuration > 0) {
-        item.forwardPlaybackEndTime = CMTimeMake(overriddenDuration/1000, 1);
+        _overriddenDuration = overriddenDuration;
     }
     
     return [self setDataSourcePlayerItem:item withKey:key];
@@ -457,6 +458,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         CGSize naturalSize = track.assetTrack.naturalSize;
         CGAffineTransform prefTrans = track.assetTrack.preferredTransform;
         CGSize realSize = CGSizeApplyAffineTransform(naturalSize, prefTrans);
+        
+        int64_t duration = [BetterPlayerTimeUtils FLTCMTimeToMillis:(_player.currentItem.asset.duration)];
+        if (_overriddenDuration > 0 && duration > _overriddenDuration){
+            _player.currentItem.forwardPlaybackEndTime = CMTimeMake(_overriddenDuration/1000, 1);
+        }
         
         _isInitialized = true;
         [self updatePlayingState];
