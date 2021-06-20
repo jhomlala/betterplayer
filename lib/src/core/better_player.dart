@@ -227,31 +227,29 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     await SystemChrome.setEnabledSystemUIOverlays([]);
 
-
-      if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
-          true) {
-        final aspectRatio =
-            widget.controller.videoPlayerController?.value.aspectRatio ?? 1.0;
-        List<DeviceOrientation> deviceOrientations;
-        if (aspectRatio < 1.0) {
-          deviceOrientations = [
-            DeviceOrientation.portraitUp,
-            DeviceOrientation.portraitDown
-          ];
-        } else {
-          deviceOrientations = [
-            DeviceOrientation.landscapeLeft,
-            DeviceOrientation.landscapeRight
-          ];
-        }
-        await SystemChrome.setPreferredOrientations(deviceOrientations);
+    if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
+        true) {
+      final aspectRatio =
+          widget.controller.videoPlayerController?.value.aspectRatio ?? 1.0;
+      List<DeviceOrientation> deviceOrientations;
+      if (aspectRatio < 1.0) {
+        deviceOrientations = [
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown
+        ];
       } else {
-        await SystemChrome.setPreferredOrientations(
-          widget.controller.betterPlayerConfiguration
-              .deviceOrientationsOnFullScreen,
-        );
+        deviceOrientations = [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight
+        ];
       }
-
+      await SystemChrome.setPreferredOrientations(deviceOrientations);
+    } else {
+      await SystemChrome.setPreferredOrientations(
+        widget.controller.betterPlayerConfiguration
+            .deviceOrientationsOnFullScreen,
+      );
+    }
 
     if (!_betterPlayerConfiguration.allowedScreenSleep) {
       Wakelock.enable();
