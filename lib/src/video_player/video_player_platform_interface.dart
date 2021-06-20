@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:ui';
 
 // Flutter imports:
+import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -70,7 +71,8 @@ abstract class VideoPlayerPlatform {
   }
 
   /// Creates an instance of a video player and returns its textureId.
-  Future<int?> create() {
+  Future<int?> create(
+      {BetterPlayerBufferingConfiguration? bufferingConfiguration}) {
     throw UnimplementedError('create() has not been implemented.');
   }
 
@@ -225,6 +227,7 @@ class DataSource {
     this.notificationChannelName,
     this.overriddenDuration,
     this.licenseUrl,
+    this.certificateUrl,
     this.drmHeaders,
     this.activityName,
   }) : assert(uri == null || asset == null);
@@ -295,6 +298,8 @@ class DataSource {
 
   final String? licenseUrl;
 
+  final String? certificateUrl;
+
   final Map<String, String>? drmHeaders;
 
   final String? activityName;
@@ -320,7 +325,7 @@ class DataSource {
 
   @override
   String toString() {
-    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint:'
+    return 'DataSource{sourceType: $sourceType, uri: $uri certificateUrl: $certificateUrl, formatHint:'
         ' $formatHint, asset: $asset, package: $package, headers: $headers,'
         ' useCache: $useCache,maxCacheSize: $maxCacheSize, maxCacheFileSize: '
         '$maxCacheFileSize, showNotification: $showNotification, title: $title,'

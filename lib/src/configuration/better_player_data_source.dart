@@ -1,5 +1,6 @@
 // Project imports:
 
+import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_drm_configuration.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
@@ -73,6 +74,10 @@ class BetterPlayerDataSource {
   /// BetterPlayerConfiguration.
   final Widget? placeholder;
 
+  ///Configuration of video buffering. Currently only supported in Android
+  ///platform.
+  final BetterPlayerBufferingConfiguration bufferingConfiguration;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -87,12 +92,15 @@ class BetterPlayerDataSource {
     this.resolutions,
     this.cacheConfiguration,
     this.notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(showNotification: false),
+        const BetterPlayerNotificationConfiguration(
+      showNotification: false,
+    ),
     this.overriddenDuration,
     this.videoFormat,
     this.videoExtension,
     this.drmConfiguration,
     this.placeholder,
+    this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
   }) : assert(
             (type == BetterPlayerDataSourceType.network ||
                     type == BetterPlayerDataSourceType.file) ||
@@ -118,6 +126,8 @@ class BetterPlayerDataSource {
     BetterPlayerVideoFormat? videoFormat,
     BetterPlayerDrmConfiguration? drmConfiguration,
     Widget? placeholder,
+    BetterPlayerBufferingConfiguration bufferingConfiguration =
+        const BetterPlayerBufferingConfiguration(),
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -135,6 +145,7 @@ class BetterPlayerDataSource {
       videoFormat: videoFormat,
       drmConfiguration: drmConfiguration,
       placeholder: placeholder,
+      bufferingConfiguration: bufferingConfiguration,
     );
   }
 
@@ -216,6 +227,8 @@ class BetterPlayerDataSource {
     String? videoExtension,
     BetterPlayerDrmConfiguration? drmConfiguration,
     Widget? placeholder,
+    BetterPlayerBufferingConfiguration? bufferingConfiguration =
+        const BetterPlayerBufferingConfiguration(),
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,
@@ -236,6 +249,8 @@ class BetterPlayerDataSource {
       videoExtension: videoExtension ?? this.videoExtension,
       drmConfiguration: drmConfiguration ?? this.drmConfiguration,
       placeholder: placeholder ?? this.placeholder,
+      bufferingConfiguration:
+          bufferingConfiguration ?? this.bufferingConfiguration,
     );
   }
 }

@@ -1,5 +1,11 @@
 library better_player;
 
+export 'src/asms/better_player_asms_audio_track.dart';
+export 'src/asms/better_player_asms_data_holder.dart';
+export 'src/asms/better_player_asms_subtitle.dart';
+export 'src/asms/better_player_asms_subtitle_segment.dart';
+export 'src/asms/better_player_asms_track.dart';
+export 'src/asms/better_player_asms_utils.dart';
 export 'src/configuration/better_player_cache_configuration.dart';
 export 'src/configuration/better_player_configuration.dart';
 export 'src/configuration/better_player_controls_configuration.dart';
@@ -13,6 +19,8 @@ export 'src/configuration/better_player_notification_configuration.dart';
 export 'src/configuration/better_player_theme.dart';
 export 'src/configuration/better_player_translations.dart';
 export 'src/configuration/better_player_video_format.dart';
+export 'src/configuration/better_player_buffering_configuration.dart';
+export 'src/controls/better_player_controls_state.dart';
 export 'src/controls/better_player_overflow_menu_item.dart';
 export 'src/controls/better_player_progress_colors.dart';
 export 'src/core/better_player.dart';
