@@ -378,6 +378,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? notificationChannelName,
     Duration? overriddenDuration,
     String? activityName,
+    String? clearKey
   }) {
     return _setDataSource(
       DataSource(
@@ -389,7 +390,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           imageUrl: imageUrl,
           notificationChannelName: notificationChannelName,
           overriddenDuration: overriddenDuration,
-          activityName: activityName),
+          activityName: activityName,
+          clearKey: clearKey
+      ),
     );
   }
 

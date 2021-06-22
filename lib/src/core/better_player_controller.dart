@@ -487,7 +487,9 @@ class BetterPlayerController {
                 ?.notificationConfiguration?.notificationChannelName,
             overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
             activityName: _betterPlayerDataSource
-                ?.notificationConfiguration?.activityName);
+                ?.notificationConfiguration?.activityName,
+              clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey
+        );
         break;
       case BetterPlayerDataSourceType.memory:
         final file = await _createFile(_betterPlayerDataSource!.bytes!,

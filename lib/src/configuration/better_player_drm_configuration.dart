@@ -14,6 +14,9 @@ class BetterPlayerDrmConfiguration {
   ///Url of fairplay certificate
   final String? certificateUrl;
 
+  //ClearKey json object, used only for ClearKey protection.
+  final String? clearKey;
+
   ///Additional headers send with auth request, used only for WIDEVINE DRM
   final Map<String, String>? headers;
 
@@ -23,5 +26,6 @@ class BetterPlayerDrmConfiguration {
     this.licenseUrl,
     this.certificateUrl,
     this.headers,
+    this.clearKey
   });
 }
