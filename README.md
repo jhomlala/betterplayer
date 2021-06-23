@@ -85,7 +85,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ Cache support  
 ✔️ Notifications support  
 ✔️ Picture in Picture support     
-✔️ DRM support (token, Widevine)  
+✔️ DRM support (token, Widevine, FairPlay EZDRM).    
 ✔️ ... and much more!  
 
 
@@ -95,7 +95,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 ```yaml
 dependencies:
-  better_player: ^0.0.69
+  better_player: ^0.0.70
 ```
 
 2. Install it
@@ -763,6 +763,30 @@ Possible configuration options:
   ///Content of subtitles, used when type is memory
   final String content;
 ```
+
+### BetterPlayerBufferingConfiguration
+Configuration class used to setup better buffering experience or setup custom load settings. Currently used only in Android.
+
+Possible configuration options:
+```dart
+  ///The default minimum duration of media that the player will attempt to
+  ///ensure is buffered at all times, in milliseconds.
+  final int minBufferMs;
+
+  ///The default maximum duration of media that the player will attempt to
+  ///buffer, in milliseconds.
+  final int maxBufferMs;
+
+  ///The default duration of media that must be buffered for playback to start
+  ///or resume following a user action such as a seek, in milliseconds.
+  final int bufferForPlaybackMs;
+
+  ///The default duration of media that must be buffered for playback to resume
+  ///after a rebuffer, in milliseconds. A rebuffer is defined to be caused by
+  ///buffer depletion rather than a user action.
+  final int bufferForPlaybackAfterRebufferMs;
+```
+
 
 ### BetterPlayerTranslations
 You can provide translations for different languages. You need to pass list of BetterPlayerTranslations to

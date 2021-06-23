@@ -10,6 +10,7 @@ class DrmPage extends StatefulWidget {
 class _DrmPageState extends State<DrmPage> {
   late BetterPlayerController _tokenController;
   late BetterPlayerController _widevineController;
+  late BetterPlayerController _fairplayController;
 
   @override
   void initState() {
@@ -40,6 +41,17 @@ class _DrmPageState extends State<DrmPage> {
     );
     _widevineController.setupDataSource(_widevineDataSource);
 
+    _fairplayController = BetterPlayerController(betterPlayerConfiguration);
+    BetterPlayerDataSource _fairplayDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.fairplayHlsUrl,
+      drmConfiguration: BetterPlayerDrmConfiguration(
+        drmType: BetterPlayerDrmType.fairplay,
+        certificateUrl: Constants.fairplayCertificateUrl,
+      ),
+    );
+    _fairplayController.setupDataSource(_fairplayDataSource);
+
     super.initState();
   }
 
@@ -49,34 +61,48 @@ class _DrmPageState extends State<DrmPage> {
       appBar: AppBar(
         title: Text("DRM player"),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Auth token based DRM.",
-              style: TextStyle(fontSize: 16),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "Auth token based DRM.",
+                style: TextStyle(fontSize: 16),
+              ),
             ),
-          ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _tokenController),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Widevine - license url based DRM. Works only for Android.",
-              style: TextStyle(fontSize: 16),
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(controller: _tokenController),
             ),
-          ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _widevineController),
-          ),
-        ],
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "Widevine - license url based DRM. Works only for Android.",
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(controller: _widevineController),
+            ),
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "Fairplay - certificate url based EZDRM. Works only for iOS.",
+                style: TextStyle(fontSize: 16),
+              ),
+            ),
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(controller: _fairplayController),
+            ),
+            const SizedBox(height: 100),
+          ],
+        ),
       ),
     );
   }

@@ -1,3 +1,18 @@
+## 0.0.70
+* Fixed file data source exception. Right now user will be only warned.
+* Fixed playback speed after seek in iOS.
+* Fixed `overriddenDuration` behavior in iOS when passed `overriddenDuration` is longer than video duration.
+* Fixed issue where controls were not updated after video finish.
+* Fixed auto full screen orientation not enabled in iOS.
+* Exposed ASMS classes.
+* Exposed BetterPlayerControlsState to provide ways to build custom controls with additional menus.
+* Added error handling for CacheWorker to prevent unexpected crashes.
+* Added support for FairPlay EZDRM (by https://github.com/adrianByv and https://github.com/koldo92)
+* Added `certificateUrl` parameter in BetterPlayerDrmConfiguration.
+* Added support for custom buffering configuration in Android (by https://github.com/Letalus)
+* Added `bufferingConfiguration` parameter in BetterPlayerConfiguration which contains buffering settings.
+
+
 ## 0.0.69
 * Fixed cache clear on Android.
 * Added file check for file data source.
