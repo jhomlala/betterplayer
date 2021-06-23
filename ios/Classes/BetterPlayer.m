@@ -71,6 +71,7 @@ int64_t FLTNSTimeIntervalToMillis(NSTimeInterval interval) {
 - (int64_t) position;
 @end
 
+
 static void* timeRangeContext = &timeRangeContext;
 static void* statusContext = &statusContext;
 static void* playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;

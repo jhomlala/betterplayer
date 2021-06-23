@@ -468,16 +468,12 @@ class BetterPlayerController {
 
         break;
       case BetterPlayerDataSourceType.file:
-<<<<<<< HEAD
-=======
         final file = File(betterPlayerDataSource.url);
         if (!file.existsSync()) {
           print("File ${file.path} doesn't exists. This may be because "
               "you're acessing file from native path and Flutter doesn't "
               "recognize this path.");
         }
-
->>>>>>> 7a77fa499628b2669399d4c2b93f7905f1a6537b
         await videoPlayerController?.setFileDataSource(
             File(betterPlayerDataSource.url),
             showNotification: _betterPlayerDataSource
