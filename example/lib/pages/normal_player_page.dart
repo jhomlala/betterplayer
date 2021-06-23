@@ -1,7 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class NormalPlayerPage extends StatefulWidget {
   @override
@@ -9,33 +8,38 @@ class NormalPlayerPage extends StatefulWidget {
 }
 
 class _NormalPlayerPageState extends State<NormalPlayerPage> {
+  late BetterPlayerController _betterPlayerController;
+  late BetterPlayerDataSource _betterPlayerDataSource;
+
+  @override
+  void initState() {
+    BetterPlayerConfiguration betterPlayerConfiguration =
+        BetterPlayerConfiguration(
+      aspectRatio: 16 / 9,
+      fit: BoxFit.contain,
+      autoPlay: true,
+    );
+    _betterPlayerDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.elephantDreamVideoUrl,
+    );
+    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
+    _betterPlayerController.setupDataSource(_betterPlayerDataSource);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player"),
+        title: Text("Normal player page"),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Normal player with configuration managed by developer.",
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: BetterPlayer.network(
-              Constants.forBiggerBlazesUrl,
-              betterPlayerConfiguration: BetterPlayerConfiguration(
-                  deviceOrientationsAfterFullScreen: [
-                    DeviceOrientation.portraitUp
-                  ],
-                  aspectRatio: 16 / 9,
-                  fullScreenAspectRatio: 16 / 9),
-            ),
+            child: BetterPlayer(controller: _betterPlayerController),
           ),
         ],
       ),

@@ -63,7 +63,7 @@ public class CacheWorker extends Worker {
                 if (cacheKey != null && cacheKey.length() > 0) {
                     dataSpec = dataSpec.buildUpon().setKey(cacheKey).build();
                 }
-                
+
                 CacheDataSourceFactory cacheDataSourceFactory =
                         new CacheDataSourceFactory(mContext, maxCacheSize, maxCacheFileSize, dataSourceFactory);
 
@@ -100,9 +100,9 @@ public class CacheWorker extends Worker {
     public void onStopped() {
         try {
             mCacheWriter.cancel();
+            super.onStopped();
         } catch (Exception exception) {
-            // Pass
+            Log.e(TAG, exception.toString());
         }
-        super.onStopped();
     }
 }

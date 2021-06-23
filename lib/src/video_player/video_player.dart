@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:io';
 
 // Project imports:
+import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
 // Flutter imports:
@@ -175,8 +176,12 @@ class VideoPlayerValue {
 ///
 /// After [dispose] all further calls are ignored.
 class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
+  final BetterPlayerBufferingConfiguration bufferingConfiguration;
+
   /// Constructs a [VideoPlayerController] and creates video controller on platform side.
-  VideoPlayerController() : super(VideoPlayerValue(duration: null)) {
+  VideoPlayerController({
+    this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
+  }) : super(VideoPlayerValue(duration: null)) {
     _create();
   }
 
@@ -202,7 +207,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> _create() async {
-    _textureId = await _videoPlayerPlatform.create();
+    _textureId = await _videoPlayerPlatform.create(
+      bufferingConfiguration: bufferingConfiguration,
+    );
     _creatingCompleter.complete(null);
 
     unawaited(_applyLooping());
@@ -262,9 +269,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (object is PlatformException) {
         final PlatformException e = object;
         value = value.copyWith(errorDescription: e.message);
-        //value = VideoPlayerValue.erroneous(e.message);
       } else {
-        //value = VideoPlayerValue.erroneous(object.toString());
         value.copyWith(errorDescription: object.toString());
       }
       _timer?.cancel();
@@ -332,6 +337,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? notificationChannelName,
     Duration? overriddenDuration,
     String? licenseUrl,
+    String? certificateUrl,
     Map<String, String>? drmHeaders,
     String? activityName,
   }) {
@@ -352,6 +358,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         notificationChannelName: notificationChannelName,
         overriddenDuration: overriddenDuration,
         licenseUrl: licenseUrl,
+        certificateUrl: certificateUrl,
         drmHeaders: drmHeaders,
         activityName: activityName,
       ),
@@ -524,6 +531,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// If [moment] is outside of the video's full range it will be automatically
   /// and silently clamped.
   Future<void> seekTo(Duration? position) async {
+    bool isPlaying = value.isPlaying;
+    int positionInMs = value.position.inMilliseconds;
+    int durationInMs = value.duration?.inMilliseconds ?? 0;
+
+    if (positionInMs >= durationInMs && position?.inMilliseconds == 0) {
+      isPlaying = true;
+    }
+
     if (_isDisposed) {
       return;
     }
@@ -538,6 +553,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
     await _videoPlayerPlatform.seekTo(_textureId, positionToSeek);
     _updatePosition(position);
+    if (isPlaying) {
+      play();
+    } else {
+      pause();
+    }
   }
 
   /// Sets the audio volume of [this].

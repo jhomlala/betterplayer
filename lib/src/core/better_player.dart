@@ -220,7 +220,6 @@ class _BetterPlayerState extends State<BetterPlayer>
   }
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
-    final isAndroid = Theme.of(context).platform == TargetPlatform.android;
     final TransitionRoute<void> route = PageRouteBuilder<void>(
       settings: const RouteSettings(),
       pageBuilder: _fullScreenRoutePageBuilder,
@@ -228,30 +227,23 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     await SystemChrome.setEnabledSystemUIOverlays([]);
 
-    if (isAndroid) {
-      if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
-          true) {
-        final aspectRatio =
-            widget.controller.videoPlayerController?.value.aspectRatio ?? 1.0;
-        List<DeviceOrientation> deviceOrientations;
-        if (aspectRatio < 1.0) {
-          deviceOrientations = [
-            DeviceOrientation.portraitUp,
-            DeviceOrientation.portraitDown
-          ];
-        } else {
-          deviceOrientations = [
-            DeviceOrientation.landscapeLeft,
-            DeviceOrientation.landscapeRight
-          ];
-        }
-        await SystemChrome.setPreferredOrientations(deviceOrientations);
+    if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
+        true) {
+      final aspectRatio =
+          widget.controller.videoPlayerController?.value.aspectRatio ?? 1.0;
+      List<DeviceOrientation> deviceOrientations;
+      if (aspectRatio < 1.0) {
+        deviceOrientations = [
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown
+        ];
       } else {
-        await SystemChrome.setPreferredOrientations(
-          widget.controller.betterPlayerConfiguration
-              .deviceOrientationsOnFullScreen,
-        );
+        deviceOrientations = [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight
+        ];
       }
+      await SystemChrome.setPreferredOrientations(deviceOrientations);
     } else {
       await SystemChrome.setPreferredOrientations(
         widget.controller.betterPlayerConfiguration
