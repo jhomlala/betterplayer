@@ -61,6 +61,9 @@ class BetterPlayerController {
   ///between flutter high level code and lower level native code.
   VideoPlayerController? videoPlayerController;
 
+  ///Expose all active eventListeners
+  List<Function(BetterPlayerEvent)?> get eventListeners => _eventListeners;
+
   /// Defines a event listener where video player events will be send.
   Function(BetterPlayerEvent)? get eventListener =>
       betterPlayerConfiguration.eventListener;
