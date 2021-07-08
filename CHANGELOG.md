@@ -1,3 +1,6 @@
+## 0.0.71
+* Fixed play after seeking issue on iOS.
+
 ## 0.0.70
 * Fixed file data source exception. Right now user will be only warned.
 * Fixed playback speed after seek in iOS.

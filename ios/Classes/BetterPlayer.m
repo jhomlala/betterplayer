@@ -477,6 +477,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)play {
+    NSLog(@"PLAY PLAY PLAY!");
     _stalledCount = 0;
     _isStalledCheckStarted = false;
     _isPlaying = true;
@@ -522,11 +523,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
          toleranceAfter:kCMTimeZero
       completionHandler:^(BOOL finished){
         if (wasPlaying){
-            [self->_player play];
+            _player.rate = _playerRate;
         }
-        _player.rate = _playerRate;
     }];
-    
 }
 
 - (void)setIsLooping:(bool)isLooping {
