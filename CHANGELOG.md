@@ -1,6 +1,7 @@
 ## 0.0.71
 * Fixed play after seeking issue on iOS.
 * Fixed audio track selection issue on iOS/Android.
+* Fixed issue where speed which couldn't be applied on iOS was saved in player state.
 
 ## 0.0.70
 * Fixed file data source exception. Right now user will be only warned.
