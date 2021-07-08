@@ -477,7 +477,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)play {
-    NSLog(@"PLAY PLAY PLAY!");
     _stalledCount = 0;
     _isStalledCheckStarted = false;
     _isPlaying = true;
@@ -689,12 +688,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     NSArray* options = audioSelectionGroup.options;
     
     
-    for (int index = 0; index < [options count]; index++) {
-        AVMediaSelectionOption* option = [options objectAtIndex:index];
+    for (int audioTrackIndex = 0; audioTrackIndex < [options count]; audioTrackIndex++) {
+        AVMediaSelectionOption* option = [options objectAtIndex:audioTrackIndex];
         NSArray *metaDatas = [AVMetadataItem metadataItemsFromArray:option.commonMetadata withKey:@"title" keySpace:@"comn"];
         if (metaDatas.count > 0) {
             NSString *title = ((AVMetadataItem*)[metaDatas objectAtIndex:0]).stringValue;
-            if (title == name && index == index ){
+            if ([name compare:title] == NSOrderedSame && audioTrackIndex == index ){
                 [[_player currentItem] selectMediaOption:option inMediaSelectionGroup: audioSelectionGroup];
             }
         }
