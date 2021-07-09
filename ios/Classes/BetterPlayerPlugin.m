@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #import "BetterPlayerPlugin.h"
-
+#import <better_player/better_player-Swift.h>
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -14,6 +14,7 @@
 NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
+CacheManager* _cacheManager;
 int texturesCount = -1;
 
 
@@ -37,7 +38,7 @@ int texturesCount = -1;
     _timeObserverIdDict = [NSMutableDictionary dictionary];
     _artworkImageDict = [NSMutableDictionary dictionary];
     _dataSourceDict = [NSMutableDictionary dictionary];
-    [KTVHTTPCache proxyStart:nil];
+    _cacheManager = [[CacheManager alloc] init];
     return self;
 }
 
@@ -288,6 +289,8 @@ int texturesCount = -1;
             NSString* key = dataSource[@"key"];
             NSString* certificateUrl = dataSource[@"certificateUrl"];
             NSDictionary* headers = dataSource[@"headers"];
+            NSString* cacheKey = dataSource[@"cacheKey"];
+            NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
             int overriddenDuration = 0;
             if ([dataSource objectForKey:@"overriddenDuration"] != [NSNull null]){
                 overriddenDuration = [dataSource[@"overriddenDuration"] intValue];
@@ -297,9 +300,12 @@ int texturesCount = -1;
             id useCacheObject = [dataSource objectForKey:@"useCache"];
             if (useCacheObject != [NSNull null]) {
                 useCache = [[dataSource objectForKey:@"useCache"] boolValue];
+                if (useCache){
+                    [_cacheManager setMaxCacheSize:maxCacheSize];
+                }
             }
             
-            if (headers == nil){
+            if (headers == nil || headers == [ NSNull null ]){
                 headers = @{};
             }
             if (assetArg) {
@@ -310,9 +316,9 @@ int texturesCount = -1;
                 } else {
                     assetPath = [_registrar lookupKeyForAsset:assetArg];
                 }
-                [player setDataSourceAsset:assetPath withKey:key withCertificateUrl:certificateUrl overriddenDuration:overriddenDuration];
+                [player setDataSourceAsset:assetPath withKey:key withCertificateUrl:certificateUrl cacheKey:cacheKey cacheManager:_cacheManager overriddenDuration:overriddenDuration];
             } else if (uriArg) {
-                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withCertificateUrl:certificateUrl withHeaders:headers withCache: useCache overriddenDuration:overriddenDuration];
+                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withCertificateUrl:certificateUrl withHeaders:headers withCache: useCache cacheKey:cacheKey cacheManager:_cacheManager overriddenDuration:overriddenDuration];
             } else {
                 result(FlutterMethodNotImplemented);
             }
@@ -395,8 +401,22 @@ int texturesCount = -1;
             [player setAudioTrack:name index: index];
         } else if ([@"setMixWithOthers" isEqualToString:call.method]){
             [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
-        } else if ([@"clearCache" isEqualToString:call.method]){
-            [KTVHTTPCache cacheDeleteAllCaches];
+        } else if ([@"preCache" isEqualToString:call.method]){            
+            NSDictionary* dataSource = argsMap[@"dataSource"];
+            NSString* uriArg = dataSource[@"uri"];
+            NSString* cacheKey = dataSource[@"cacheKey"];
+            NSDictionary* headers = dataSource[@"headers"];
+            NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
+            if (headers == nil || headers == [ NSNull null ]){
+                headers = @{};
+            }
+            [_cacheManager setMaxCacheSize:maxCacheSize];
+            [_cacheManager preCacheURL:[NSURL URLWithString:uriArg] cacheKey:cacheKey withHeaders:headers completionHandler:^(BOOL success){
+                result(nil);
+            }];
+        } else if ([@"clearCache" isEqualToString:call.method]){       
+            [_cacheManager clearCache];
+            result(nil);
         } else {
             result(FlutterMethodNotImplemented);
         }

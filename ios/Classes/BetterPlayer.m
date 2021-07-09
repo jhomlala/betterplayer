@@ -3,6 +3,74 @@
 // found in the LICENSE file.
 
 #import "BetterPlayer.h"
+#import <AVFoundation/AVFoundation.h>
+#import <GLKit/GLKit.h>
+#import <MediaPlayer/MediaPlayer.h>
+#import <AVKit/AVKit.h>
+#import <better_player/better_player-Swift.h>
+
+#if !__has_feature(objc_arc)
+#error Code Requires ARC.
+#endif
+
+int64_t FLTCMTimeToMillis(CMTime time) {
+    if (time.timescale == 0) return 0;
+    return time.value * 1000 / time.timescale;
+}
+
+int64_t FLTNSTimeIntervalToMillis(NSTimeInterval interval) {
+    return (int64_t)(interval * 1000.0);
+}
+
+@interface FLTFrameUpdater : NSObject
+@property(nonatomic) int64_t textureId;
+@property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry>* registry;
+- (void)onDisplayLink:(CADisplayLink*)link;
+@end
+
+@implementation FLTFrameUpdater
+- (FLTFrameUpdater*)initWithRegistry:(NSObject<FlutterTextureRegistry>*)registry {
+    NSAssert(self, @"super init cannot be nil");
+    if (self == nil) return nil;
+    _registry = registry;
+    return self;
+}
+
+- (void)onDisplayLink:(CADisplayLink*)link {
+    [_registry textureFrameAvailable:_textureId];
+}
+@end
+
+@interface FLTBetterPlayer : NSObject <FlutterTexture, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
+@property(readonly, nonatomic) AVPlayer* player;
+@property(readonly, nonatomic) AVPlayerItemVideoOutput* videoOutput;
+@property(readonly, nonatomic) CADisplayLink* displayLink;
+@property(nonatomic) FlutterEventChannel* eventChannel;
+@property(nonatomic) FlutterEventSink eventSink;
+@property(nonatomic) CGAffineTransform preferredTransform;
+@property(nonatomic, readonly) bool disposed;
+@property(nonatomic, readonly) bool isPlaying;
+@property(nonatomic) bool isLooping;
+@property(nonatomic, readonly) bool isInitialized;
+@property(nonatomic, readonly) NSString* key;
+@property(nonatomic, readonly) CVPixelBufferRef prevBuffer;
+@property(nonatomic, readonly) int failedCount;
+@property(nonatomic) AVPlayerLayer* _playerLayer;
+@property(nonatomic) bool _pictureInPicture;
+@property(nonatomic) bool _observersAdded;
+@property(nonatomic) int stalledCount;
+@property(nonatomic) bool isStalledCheckStarted;
+@property(nonatomic) float playerRate;
+@property(nonatomic) AVPlayerTimeControlStatus lastAvPlayerTimeControlStatus;
+- (void)play;
+- (void)pause;
+- (void)setIsLooping:(bool)isLooping;
+- (void)updatePlayingState;
+- (int64_t) duration;
+- (int64_t) position;
+@end
+
+
 
 static void* timeRangeContext = &timeRangeContext;
 static void* statusContext = &statusContext;
@@ -187,20 +255,20 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   return transform;
 }
 
-- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl overriddenDuration:(int) overriddenDuration{
+
+- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration{
     NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withCertificateUrl:certificateUrl withHeaders: @{} withCache: false overriddenDuration:overriddenDuration];
+    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withCertificateUrl:certificateUrl withHeaders: @{} withCache: false cacheKey:cacheKey cacheManager:cacheManager overriddenDuration:overriddenDuration];
 }
 
-- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration{
+- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration{
+    _overriddenDuration = 0;
     if (headers == [NSNull null]){
         headers = @{};
     }
     AVPlayerItem* item;
     if (useCache){
-        [KTVHTTPCache downloadSetAdditionalHeaders:headers];
-        NSURL *proxyURL = [KTVHTTPCache proxyURLWithOriginalURL:url];
-        item = [AVPlayerItem playerItemWithURL:proxyURL];
+        item = [cacheManager getCachingPlayerItem:url cacheKey:cacheKey headers:headers];
     } else {
         AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
                                                 options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
@@ -215,7 +283,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
     
     if (@available(iOS 10.0, *) && overriddenDuration > 0) {
-        item.forwardPlaybackEndTime = CMTimeMake(overriddenDuration/1000, 1);
+        _overriddenDuration = overriddenDuration;
     }
     
     return [self setDataSourcePlayerItem:item withKey:key];
@@ -276,12 +344,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     } else {
         _stalledCount++;
         if (_stalledCount > 60){
-            if (_eventSink != nil) {
-                _eventSink([FlutterError
+            _eventSink([FlutterError
                         errorWithCode:@"VideoError"
                         message:@"Failed to load video: playback stalled"
                         details:nil]);
-            }
             return;
         }
         [self performSelector:@selector(startStalledCheck) withObject:nil afterDelay:1];
@@ -318,17 +384,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
                 if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused){
                     _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
-                    if (_eventSink != nil) {
-                      _eventSink(@{@"event" : @"pause"});
-                    }
+                    _eventSink(@{@"event" : @"pause"});
                     return;
 
                 }
                 if (_player.timeControlStatus == AVPlayerTimeControlStatusPlaying){
                     _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
-                    if (_eventSink != nil) {
-                      _eventSink(@{@"event" : @"play"});
-                    }
+                    _eventSink(@{@"event" : @"play"});
                 }
             }
         }
@@ -458,6 +520,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         CGAffineTransform prefTrans = track.assetTrack.preferredTransform;
         CGSize realSize = CGSizeApplyAffineTransform(naturalSize, prefTrans);
         
+
+        int64_t duration = [BetterPlayerTimeUtils FLTCMTimeToMillis:(_player.currentItem.asset.duration)];
+        if (_overriddenDuration > 0 && duration > _overriddenDuration){
+            _player.currentItem.forwardPlaybackEndTime = CMTimeMake(_overriddenDuration/1000, 1);
+        }
+        
         _isInitialized = true;
         [self updatePlayingState];
         _eventSink(@{
@@ -516,11 +584,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
          toleranceAfter:kCMTimeZero
       completionHandler:^(BOOL finished){
         if (wasPlaying){
-            [self->_player play];
+            _player.rate = _playerRate;
         }
-        _player.rate = _playerRate;
     }];
-    
 }
 
 - (void)setIsLooping:(bool)isLooping {
@@ -684,12 +750,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     NSArray* options = audioSelectionGroup.options;
     
     
-    for (int index = 0; index < [options count]; index++) {
-        AVMediaSelectionOption* option = [options objectAtIndex:index];
+    for (int audioTrackIndex = 0; audioTrackIndex < [options count]; audioTrackIndex++) {
+        AVMediaSelectionOption* option = [options objectAtIndex:audioTrackIndex];
         NSArray *metaDatas = [AVMetadataItem metadataItemsFromArray:option.commonMetadata withKey:@"title" keySpace:@"comn"];
         if (metaDatas.count > 0) {
             NSString *title = ((AVMetadataItem*)[metaDatas objectAtIndex:0]).stringValue;
-            if (title == name && index == index ){
+            if ([name compare:title] == NSOrderedSame && audioTrackIndex == index ){
                 [[_player currentItem] selectMediaOption:option inMediaSelectionGroup: audioSelectionGroup];
             }
         }
@@ -748,5 +814,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setPictureInPicture:false];
     _disposed = true;
 }
+
 
 @end

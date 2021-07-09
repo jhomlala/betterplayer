@@ -1,6 +1,5 @@
 ///Cache configuration for Better Player.
-///To enable cache on Android, useCache must be true and maxCacheSize > 0 and
-///maxCacheFileSize > 0. On iOS maxCacheSize and maxCacheFileSize take no effect,
+///To enable cache, useCache must be true. On iOS maxCacheFileSize and preCacheSize take no effect,
 ///so useCache is used only.
 class BetterPlayerCacheConfiguration {
   ///Enable cache for network data source
@@ -9,7 +8,6 @@ class BetterPlayerCacheConfiguration {
   /// The maximum cache size to keep on disk in bytes. This value is used only
   /// when first video access. cache. This value is used for all players within
   /// your app. It can't be changed during app work.
-  /// Android only option.
   final int maxCacheSize;
 
   /// The maximum size of each individual file in bytes.
@@ -17,6 +15,7 @@ class BetterPlayerCacheConfiguration {
   final int maxCacheFileSize;
 
   /// The size to download.
+  /// Android only option.
   final int preCacheSize;
 
   ///Cache key to re-use same cached data between app sessions.

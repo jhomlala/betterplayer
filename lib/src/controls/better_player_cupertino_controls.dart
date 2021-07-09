@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 
 // Flutter imports:
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:flutter/material.dart';
 
 // Project imports:
@@ -84,6 +85,9 @@ class _BetterPlayerCupertinoControlsState
     _wasLoading = isLoading(_latestValue);
     return GestureDetector(
       onTap: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
+        }
         _hideStuff
             ? cancelAndRestartTimer()
             : setState(() {
@@ -91,8 +95,16 @@ class _BetterPlayerCupertinoControlsState
               });
       },
       onDoubleTap: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
+        }
         cancelAndRestartTimer();
         _onPlayPause();
+      },
+      onLongPress: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
+        }
       },
       child: AbsorbPointer(
         absorbing: _hideStuff,

@@ -1,5 +1,19 @@
+## 0.0.71
+* Fixed play after seeking issue on iOS.
+* Fixed audio track selection issue on iOS/Android.
+* Fixed issue where speed which couldn't be applied on iOS was saved in player state.
+* Added support for D-pad navigation using a Android TV remote control (by https://github.com/danielz-nenda)
+* Added `BetterPlayerMultipleGestureDetector` to handle problems with gesture detection
+* Expose getter for `eventListeners` in `BetterPlayerController` (by https://github.com/Letalus)
+* Updated documentation
+* Updated dependencies
+
 ## 0.0.70
+* Fixed file data source exception. Right now user will be only warned.
 * Fixed playback speed after seek in iOS.
+* Fixed `overriddenDuration` behavior in iOS when passed `overriddenDuration` is longer than video duration.
+* Fixed issue where controls were not updated after video finish.
+* Fixed auto full screen orientation not enabled in iOS.
 * Exposed ASMS classes.
 * Exposed BetterPlayerControlsState to provide ways to build custom controls with additional menus.
 * Added error handling for CacheWorker to prevent unexpected crashes.
