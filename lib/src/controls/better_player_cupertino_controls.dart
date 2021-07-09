@@ -492,14 +492,14 @@ class _BetterPlayerCupertinoControlsState
   Widget _buildTopBar(
     Color backgroundColor,
     Color iconColor,
-    double topbarHeight,
+    double topBarHeight,
     double buttonPadding,
   ) {
     if (!betterPlayerController!.controlsEnabled) {
       return const SizedBox();
     }
-    final barHeight = topbarHeight * 0.8;
-    final iconSize = topbarHeight * 0.4;
+    final barHeight = topBarHeight * 0.8;
+    final iconSize = topBarHeight * 0.4;
     return Container(
       height: barHeight,
       margin: EdgeInsets.only(
