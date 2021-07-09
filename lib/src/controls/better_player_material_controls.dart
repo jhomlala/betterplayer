@@ -93,6 +93,11 @@ class _BetterPlayerMaterialControlsState
           BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
         }
       },
+      onLongPress: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
+        }
+      },
       child: AbsorbPointer(
         absorbing: _hideStuff,
         child:
