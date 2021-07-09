@@ -1,4 +1,4 @@
-![logo](media/logo.png)
+![logo](https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/logo.png)
 
 # Better Player 
 > Advanced video player for Flutter.
