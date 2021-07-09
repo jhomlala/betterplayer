@@ -30,12 +30,12 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.Player.EventListener;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
@@ -104,7 +104,7 @@ final class BetterPlayer {
     private PlayerNotificationManager playerNotificationManager;
     private Handler refreshHandler;
     private Runnable refreshRunnable;
-    private EventListener exoPlayerEventListener;
+    private ExoPlayer.Listener exoPlayerEventListener;
     private Bitmap bitmap;
     private MediaSessionCompat mediaSession;
     private DrmSessionManager drmSessionManager;
@@ -324,11 +324,10 @@ final class BetterPlayer {
             }
         }
 
-
-        playerNotificationManager = new PlayerNotificationManager(context,
-                playerNotificationChannelName,
+        playerNotificationManager = new PlayerNotificationManager.Builder(context,
                 NOTIFICATION_ID,
-                mediaDescriptionAdapter);
+                playerNotificationChannelName,
+                mediaDescriptionAdapter).build();
         playerNotificationManager.setPlayer(exoPlayer);
         playerNotificationManager.setUseNextAction(false);
         playerNotificationManager.setUsePreviousAction(false);
@@ -362,7 +361,7 @@ final class BetterPlayer {
             refreshHandler.postDelayed(refreshRunnable, 0);
         }
 
-        exoPlayerEventListener = new EventListener() {
+        exoPlayerEventListener = new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
                 mediaSession.setMetadata(new MediaMetadataCompat.Builder()
@@ -455,7 +454,9 @@ final class BetterPlayer {
 
 
     public void disposeRemoteNotifications() {
-        exoPlayer.removeListener(exoPlayerEventListener);
+        if (exoPlayerEventListener != null) {
+            exoPlayer.removeListener(exoPlayerEventListener);
+        }
         if (refreshHandler != null) {
             refreshHandler.removeCallbacksAndMessages(null);
             refreshHandler = null;
@@ -552,39 +553,37 @@ final class BetterPlayer {
         exoPlayer.setVideoSurface(surface);
         setAudioAttributes(exoPlayer, true);
 
-        exoPlayer.addListener(
-                new EventListener() {
-
-                    @Override
-                    public void onPlaybackStateChanged(int playbackState) {
-                        if (playbackState == Player.STATE_BUFFERING) {
-                            sendBufferingUpdate();
-                            Map<String, Object> event = new HashMap<>();
-                            event.put("event", "bufferingStart");
-                            eventSink.success(event);
-                        } else if (playbackState == Player.STATE_READY) {
-                            if (!isInitialized) {
-                                isInitialized = true;
-                                sendInitialized();
-                            }
-
-                            Map<String, Object> event = new HashMap<>();
-                            event.put("event", "bufferingEnd");
-                            eventSink.success(event);
-
-                        } else if (playbackState == Player.STATE_ENDED) {
-                            Map<String, Object> event = new HashMap<>();
-                            event.put("event", "completed");
-                            event.put("key", key);
-                            eventSink.success(event);
-                        }
+        exoPlayer.addListener(new Player.Listener() {
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                if (playbackState == Player.STATE_BUFFERING) {
+                    sendBufferingUpdate();
+                    Map<String, Object> event = new HashMap<>();
+                    event.put("event", "bufferingStart");
+                    eventSink.success(event);
+                } else if (playbackState == Player.STATE_READY) {
+                    if (!isInitialized) {
+                        isInitialized = true;
+                        sendInitialized();
                     }
 
-                    @Override
-                    public void onPlayerError(final ExoPlaybackException error) {
-                        eventSink.error("VideoError", "Video player had error " + error, null);
-                    }
-                });
+                    Map<String, Object> event = new HashMap<>();
+                    event.put("event", "bufferingEnd");
+                    eventSink.success(event);
+
+                } else if (playbackState == Player.STATE_ENDED) {
+                    Map<String, Object> event = new HashMap<>();
+                    event.put("event", "completed");
+                    event.put("key", key);
+                    eventSink.success(event);
+                }
+            }
+
+            @Override
+            public void onPlayerError(final ExoPlaybackException error) {
+                eventSink.error("VideoError", "Video player had error " + error, null);
+            }
+        });
 
         Map<String, Object> reply = new HashMap<>();
         reply.put("textureId", textureEntry.id());
@@ -601,7 +600,7 @@ final class BetterPlayer {
     }
 
     private void setAudioAttributes(SimpleExoPlayer exoPlayer, Boolean mixWithOthers) {
-        Player.AudioComponent audioComponent = exoPlayer.getAudioComponent();
+        ExoPlayer.AudioComponent audioComponent = exoPlayer.getAudioComponent();
         if (audioComponent == null) {
             return;
         }
@@ -782,7 +781,7 @@ final class BetterPlayer {
                                 hasElementWithoutLabel = true;
                             }
 
-                            if (format.id.equals("1/15")) {
+                            if (format.id != null && format.id.equals("1/15")) {
                                 hasStrangeAudioTrack = true;
                             }
                         }

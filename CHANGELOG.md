@@ -1,3 +1,6 @@
+## 0.0.72
+* Updated ExoPlayer version
+
 ## 0.0.71
 * Fixed play after seeking issue on iOS.
 * Fixed audio track selection issue on iOS/Android.
