@@ -90,7 +90,7 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 
 
 ## Documentation
-* [Official documentation](https://github.com/jhomlala/betterplayer)
+* [Official documentation](https://jhomlala.github.io/betterplayer/)
 * [Example application](https://github.com/jhomlala/betterplayer/tree/master/example)
 * [API reference](https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html)
 
