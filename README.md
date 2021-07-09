@@ -1087,7 +1087,7 @@ Widevine (license url based):
 
 ClearKey:
 
-A ClearKey Mp4 file can be generated with MP4Box as follow:
+A ClearKey MP4 file can be generated with MP4Box as follow:
 
 - Create drm_file.xml with the following contents.
 ```xml
@@ -1112,18 +1112,19 @@ A ClearKey Mp4 file can be generated with MP4Box as follow:
   - MP4Box -crypt drm_file.xml  testvideo.mp4  -out testvideo_encrypt_tmp.mp4
   - MP4Box -frag 240000 testvideo_encrypt_tmp.mp4 -out testvideo_encrypt.mp4 (need to create multi segment mp4 file as ExoPlayer does not read the pssh block on a single segment mp4 file)
 ```dart
- BetterPlayerDataSource(
-        BetterPlayerDataSourceType.file,
-        await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
-        // videoFormat: BetterPlayerVideoFormat.hls,
-        drmConfiguration: BetterPlayerDrmConfiguration(
-            drmType: BetterPlayerDrmType.clearKey,
-            clearKey: BetterPlayerClearKeyUtils.generate({
-              "f3c5e0361e6654b28f8049c778b23946":
-                  "a4631a153a443df9eed0593043db7519",
-              "abba271e8bcf552bbd2e86a434a9a5d9":
-                  "69eaa802a6763af979e8d1940fb88392"
-            })))
+
+    var _clearKeyDataSourceFile = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.file,
+      await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
+      drmConfiguration: BetterPlayerDrmConfiguration(
+          drmType: BetterPlayerDrmType.clearKey,
+          clearKey: BetterPlayerClearKeyUtils.generate({
+            "f3c5e0361e6654b28f8049c778b23946":
+                "a4631a153a443df9eed0593043db7519",
+            "abba271e8bcf552bbd2e86a434a9a5d9":
+                "69eaa802a6763af979e8d1940fb88392"
+          })),
+    );
 
 ```
 ### Set mix audio with others

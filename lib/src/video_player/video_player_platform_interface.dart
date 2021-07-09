@@ -307,7 +307,6 @@ class DataSource {
 
   final String? clearKey;
 
-
   /// Key to compare DataSource
   String get key {
     String? result = "";

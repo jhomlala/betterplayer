@@ -14,7 +14,7 @@ class BetterPlayerDrmConfiguration {
   ///Url of fairplay certificate
   final String? certificateUrl;
 
-  //ClearKey json object, used only for ClearKey protection.
+  ///ClearKey json object, used only for ClearKey protection. Only support for Android.
   final String? clearKey;
 
   ///Additional headers send with auth request, used only for WIDEVINE DRM
