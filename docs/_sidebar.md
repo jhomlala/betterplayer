@@ -28,3 +28,4 @@
     * [Mix audio with others](mixaudiowithothers.md)
     * [Manual dispose](manualdispose.md)
     * [Source load](sourceload.md)
+    * [Multiple gesture detector](multiplegesturedetector.md)
