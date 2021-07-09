@@ -532,8 +532,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// and silently clamped.
   Future<void> seekTo(Duration? position) async {
     bool isPlaying = value.isPlaying;
-    int positionInMs = value.position.inMilliseconds;
-    int durationInMs = value.duration?.inMilliseconds ?? 0;
+    final int positionInMs = value.position.inMilliseconds;
+    final int durationInMs = value.duration?.inMilliseconds ?? 0;
 
     if (positionInMs >= durationInMs && position?.inMilliseconds == 0) {
       isPlaying = true;
@@ -573,8 +573,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// [speed] indicates a value between 0.0 and 2.0 on a linear scale.
   Future<void> setSpeed(double speed) async {
-    value = value.copyWith(speed: speed);
-    await _applySpeed();
+    final double previousSpeed = value.speed;
+    try {
+      value = value.copyWith(speed: speed);
+      await _applySpeed();
+    } catch (exception) {
+      value = value.copyWith(speed: previousSpeed);
+      rethrow;
+    }
   }
 
   /// Sets the video track parameters of [this]

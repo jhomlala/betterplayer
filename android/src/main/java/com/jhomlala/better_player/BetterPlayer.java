@@ -772,13 +772,18 @@ final class BetterPlayer {
                     }
                     TrackGroupArray trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex);
                     boolean hasElementWithoutLabel = false;
+                    boolean hasStrangeAudioTrack = false;
                     for (int groupIndex = 0; groupIndex < trackGroupArray.length; groupIndex++) {
                         TrackGroup group = trackGroupArray.get(groupIndex);
                         for (int groupElementIndex = 0; groupElementIndex < group.length; groupElementIndex++) {
-                            String label = group.getFormat(groupElementIndex).label;
-                            if (label == null) {
+                            Format format = group.getFormat(groupElementIndex);
+
+                            if (format.label == null) {
                                 hasElementWithoutLabel = true;
-                                break;
+                            }
+
+                            if (format.id.equals("1/15")) {
+                                hasStrangeAudioTrack = true;
                             }
                         }
                     }
@@ -787,16 +792,22 @@ final class BetterPlayer {
                         TrackGroup group = trackGroupArray.get(groupIndex);
                         for (int groupElementIndex = 0; groupElementIndex < group.length; groupElementIndex++) {
                             String label = group.getFormat(groupElementIndex).label;
+
                             if (name.equals(label) && index == groupIndex) {
                                 setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
                                 return;
                             }
+
                             ///Fallback option
-                            if (hasElementWithoutLabel && index == groupIndex) {
+                            if (!hasStrangeAudioTrack && hasElementWithoutLabel && index == groupIndex) {
                                 setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
                                 return;
                             }
-
+                            ///Fallback option
+                            if (hasStrangeAudioTrack && name.equals(label)) {
+                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex);
+                                return;
+                            }
                         }
                     }
                 }
