@@ -89,27 +89,6 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ ... and much more!  
 
 
-## Install
-
-1. Add this to your **pubspec.yaml** file:
-
-```yaml
-dependencies:
-  better_player: ^0.0.70
-```
-
-2. Install it
-
-```bash
-$ flutter packages get
-```
-
-3. Import it
-
-```dart
-import 'package:better_player/better_player.dart';
-```
-
 ## Documentation
 * [Official documentation](https://github.com/jhomlala/betterplayer)
 * [Example application](https://github.com/jhomlala/betterplayer/tree/master/example)
