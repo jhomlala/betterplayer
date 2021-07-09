@@ -6,6 +6,7 @@ import 'package:better_player/src/configuration/better_player_controls_configura
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
+import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
@@ -13,8 +14,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
-
-import 'better_player_clickable_widget.dart';
 
 class BetterPlayerMaterialControls extends StatefulWidget {
   ///Callback used to send information if player bar is hidden or not
@@ -73,6 +72,9 @@ class _BetterPlayerMaterialControlsState
     }
     return GestureDetector(
       onTap: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
+        }
         _hideStuff
             ? cancelAndRestartTimer()
             : setState(() {
@@ -80,8 +82,16 @@ class _BetterPlayerMaterialControlsState
               });
       },
       onDoubleTap: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
+        }
         cancelAndRestartTimer();
         _onPlayPause();
+      },
+      onLongPress: () {
+        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+          BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
+        }
       },
       child: AbsorbPointer(
         absorbing: _hideStuff,

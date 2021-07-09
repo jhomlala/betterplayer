@@ -9,7 +9,7 @@ jobs:
   check-format:
       name: Check format using flutter format
       runs-on: ubuntu-latest
-      container: cirrusci/flutter:beta
+      container: cirrusci/flutter:stable
 
       steps:
         - name: Checkout code
@@ -20,7 +20,7 @@ jobs:
   lint:
     name: Lint
     runs-on: ubuntu-latest
-    container: cirrusci/flutter:beta
+    container: cirrusci/flutter:stable
 
     steps:
       - name: Checkout code
