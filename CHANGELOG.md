@@ -22,7 +22,6 @@
 * Added support for custom buffering configuration in Android (by https://github.com/Letalus)
 * Added `bufferingConfiguration` parameter in BetterPlayerConfiguration which contains buffering settings.
 
-
 ## 0.0.69
 * Fixed cache clear on Android.
 * Added file check for file data source.

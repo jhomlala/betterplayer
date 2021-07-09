@@ -71,6 +71,7 @@ int64_t FLTNSTimeIntervalToMillis(NSTimeInterval interval) {
 @end
 
 
+
 static void* timeRangeContext = &timeRangeContext;
 static void* statusContext = &statusContext;
 static void* playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
@@ -99,9 +100,6 @@ AVPictureInPictureController *_pipController;
         _player.automaticallyWaitsToMinimizeStalling = false;
     }
     self._observersAdded = false;
-
-
-
     return self;
 }
 
@@ -256,6 +254,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   }
   return transform;
 }
+
 
 - (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration{
     NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
@@ -521,6 +520,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         CGAffineTransform prefTrans = track.assetTrack.preferredTransform;
         CGSize realSize = CGSizeApplyAffineTransform(naturalSize, prefTrans);
         
+
         int64_t duration = [BetterPlayerTimeUtils FLTCMTimeToMillis:(_player.currentItem.asset.duration)];
         if (_overriddenDuration > 0 && duration > _overriddenDuration){
             _player.currentItem.forwardPlaybackEndTime = CMTimeMake(_overriddenDuration/1000, 1);
@@ -814,5 +814,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setPictureInPicture:false];
     _disposed = true;
 }
+
 
 @end
