@@ -10,9 +10,10 @@
 #import "BetterPlayerTimeUtils.h"
 #import "BetterPlayerView.h"
 #import "BetterPlayerEzDrmAssetsLoaderDelegate.h"
-#import <better_player/better_player-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class CacheManager;
 
 @interface BetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
 @property(readonly, nonatomic) AVPlayer* player;
