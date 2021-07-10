@@ -126,21 +126,14 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     public void onAttachedToEngine(FlutterPluginBinding binding) {
         Log.d(TAG,"ATTACHED TO ENGINE!");
         FlutterLoader loader = new FlutterLoader();
-        CastContext castContext = null;
-        try {
-            castContext = CastContext.getSharedInstance(binding.getApplicationContext());
-            Log.d(TAG,"GOT CAST CONTEXT");
-        } catch (RuntimeException e) {
 
-        }
         this.flutterState =
                 new FlutterState(
                         binding.getApplicationContext(),
                         binding.getBinaryMessenger(),
                         loader::getLookupKeyForAsset,
                         loader::getLookupKeyForAsset,
-                        binding.getTextureRegistry(),
-                        castContext);
+                        binding.getTextureRegistry());
         flutterState.startListening(this);
 
         chromeCastFactoryJava = new ChromeCastFactoryJava(binding.getBinaryMessenger());
@@ -207,7 +200,6 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
 
                 BetterPlayer player =
                         new BetterPlayer(flutterState.applicationContext,
-                                flutterState.castContext,
                                 eventChannel,
                                 handle,
                                 customDefaultLoadControl,
@@ -311,6 +303,17 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 break;
             case DISPOSE_METHOD:
                 dispose(player, textureId);
+                result.success(null);
+                break;
+            case "enableCast":
+                Map<String, Object> dataSource = dataSources.get(textureId);
+                String uri = getParameter(dataSource, URI_PARAMETER, "");
+                player.enableCast(uri);
+                result.success(null);
+                break;
+
+            case "disableCast":
+                player.disableCast();
                 result.success(null);
                 break;
             default:
@@ -573,21 +576,19 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         private final KeyForAssetAndPackageName keyForAssetAndPackageName;
         private final TextureRegistry textureRegistry;
         private final MethodChannel methodChannel;
-        private final CastContext castContext;
+
 
         FlutterState(
                 Context applicationContext,
                 BinaryMessenger messenger,
                 KeyForAssetFn keyForAsset,
                 KeyForAssetAndPackageName keyForAssetAndPackageName,
-                TextureRegistry textureRegistry,
-                CastContext castContext) {
+                TextureRegistry textureRegistry) {
             this.applicationContext = applicationContext;
             this.binaryMessenger = messenger;
             this.keyForAsset = keyForAsset;
             this.keyForAssetAndPackageName = keyForAssetAndPackageName;
             this.textureRegistry = textureRegistry;
-            this.castContext = castContext;
             methodChannel = new MethodChannel(messenger, CHANNEL);
         }
 

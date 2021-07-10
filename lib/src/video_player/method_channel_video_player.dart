@@ -294,6 +294,27 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> enableCast(int? textureId) {
+    return _channel.invokeMethod<void>(
+      'enableCast',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
+  @override
+  Future<void> disableCast(int? textureId) {
+    return _channel.invokeMethod<void>(
+      'disableCast',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
+
+  @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) {
     final Map<String, dynamic> dataSourceDescription = <String, dynamic>{
       'key': dataSource.key,
@@ -412,6 +433,18 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         case 'pipStop':
           return VideoEvent(
             eventType: VideoEventType.pipStop,
+            key: key,
+          );
+
+        case 'castSessionAvailable':
+          return VideoEvent(
+            eventType: VideoEventType.castSessionAvailable,
+            key: key,
+          );
+
+        case 'castSessionUnavailable':
+          return VideoEvent(
+            eventType: VideoEventType.castSessionUnavailable,
             key: key,
           );
 

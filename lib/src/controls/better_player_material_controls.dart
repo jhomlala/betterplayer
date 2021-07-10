@@ -183,6 +183,8 @@ class _BetterPlayerMaterialControlsState
     }
 
     return Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+      buildCastWidget(_hideStuff),
+
       if (_controlsConfiguration.enablePip)
         _buildPipButtonWrapperWidget(_hideStuff, _onPlayerHide)
       else

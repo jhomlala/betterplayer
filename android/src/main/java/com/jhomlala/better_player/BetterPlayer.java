@@ -74,6 +74,7 @@ import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.MediaQueueItem;
 import com.google.android.gms.cast.MediaSeekOptions;
 import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.media.RemoteMediaClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 
@@ -123,11 +124,11 @@ final class BetterPlayer {
     private WorkManager workManager;
     private HashMap<UUID, Observer<WorkInfo>> workerObserverMap;
     private CustomDefaultLoadControl customDefaultLoadControl;
+    private CastPlayer castPlayer;
 
 
     BetterPlayer(
             Context context,
-            CastContext castContext,
             EventChannel eventChannel,
             TextureRegistry.SurfaceTextureEntry textureEntry,
             CustomDefaultLoadControl customDefaultLoadControl,
@@ -161,48 +162,6 @@ final class BetterPlayer {
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
             long overriddenDuration, String licenseUrl, Map<String, String> drmHeaders,
             String cacheKey) {
-
-        Log.d(TAG, "Cast player init");
-        CastPlayer castPlayer = new CastPlayer(CastContext.getSharedInstance());
-        castPlayer.setSessionAvailabilityListener(new SessionAvailabilityListener() {
-            @Override
-            public void onCastSessionAvailable() {
-                Log.d(TAG, "Cast session available");
-            }
-
-            @Override
-            public void onCastSessionUnavailable() {
-                Log.d(TAG, "Cast session unavailable");
-            }
-        });
-        Log.d(TAG, "Cast session available?" + castPlayer.isCastSessionAvailable());
-        if (castPlayer.isCastSessionAvailable()) {
-           /* MediaMetadata metadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
-            metadata.putString(MediaMetadata.KEY_TITLE, "Title");
-            metadata.putString(MediaMetadata.KEY_SUBTITLE, "Subtitle");
-
-
-            MediaInfo mediaInfo = new MediaInfo.Builder(dataSource)
-                    .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
-                    .setContentType(MimeTypes.VIDEO_MP4)
-                    .setMetadata(metadata)
-                    .build();
-            MediaQueueItem mediaItem =new  MediaQueueItem.Builder(mediaInfo).build();
-            castPlayer.loadItem()
-            castPlayer?.loadItem(mediaItem, playbackPosition)*/
-
-            Log.d(TAG, "LOADING VIDEO!!!");
-            MediaInfo media = new MediaInfo.Builder(dataSource).build();
-            MediaLoadOptions options = new MediaLoadOptions.Builder().build();
-            PendingResult request = CastContext.getSharedInstance().getSessionManager().getCurrentCastSession().getRemoteMediaClient().load(media, options);
-            request.addStatusListener(new PendingResult.StatusListener() {
-                @Override
-                public void onComplete(Status status) {
-                    Log.d(TAG, "STATUS LISTENER: " + status);
-                }
-            });
-        }
-
 
         this.key = key;
         isInitialized = false;
@@ -644,6 +603,26 @@ final class BetterPlayer {
             }
         });
 
+        castPlayer = new CastPlayer(CastContext.getSharedInstance());
+        castPlayer.setSessionAvailabilityListener(new SessionAvailabilityListener() {
+            @Override
+            public void onCastSessionAvailable() {
+                Log.d(TAG, "SESSION AVAILABLE!");
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "castSessionAvailable");
+                eventSink.success(event);
+            }
+
+            @Override
+            public void onCastSessionUnavailable() {
+                Log.d(TAG, "SESSION UNAVAILABLE!");
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "castSessionUnavailable");
+                eventSink.success(event);
+            }
+        });
+
+
         Map<String, Object> reply = new HashMap<>();
         reply.put("textureId", textureEntry.id());
         result.success(reply);
@@ -673,14 +652,35 @@ final class BetterPlayer {
         }
     }
 
+    private RemoteMediaClient getCastRemoteMediaClient() {
+        if (CastContext.getSharedInstance().getSessionManager() != null
+                && CastContext.getSharedInstance().getSessionManager().getCurrentCastSession() != null) {
+            return CastContext
+                    .getSharedInstance()
+                    .getSessionManager()
+                    .getCurrentCastSession()
+                    .getRemoteMediaClient();
+        } else {
+            return null;
+        }
+    }
+
     void play() {
         exoPlayer.setPlayWhenReady(true);
-        CastContext.getSharedInstance().getSessionManager().getCurrentCastSession().getRemoteMediaClient().play();
+        RemoteMediaClient remoteMediaClient = getCastRemoteMediaClient();
+        if (remoteMediaClient != null) {
+            castPlayerSeekTo((int) getPosition());
+            remoteMediaClient.play();
+        }
     }
 
     void pause() {
         exoPlayer.setPlayWhenReady(false);
-        CastContext.getSharedInstance().getSessionManager().getCurrentCastSession().getRemoteMediaClient().pause();
+        RemoteMediaClient remoteMediaClient = getCastRemoteMediaClient();
+        if (remoteMediaClient != null) {
+            castPlayerSeekTo((int) getPosition());
+            remoteMediaClient.pause();
+        }
     }
 
     void setLooping(boolean value) {
@@ -716,8 +716,15 @@ final class BetterPlayer {
 
     void seekTo(int location) {
         exoPlayer.seekTo(location);
-        MediaSeekOptions mediaSeekOptions = new MediaSeekOptions.Builder().setPosition(location).build();
-        CastContext.getSharedInstance().getSessionManager().getCurrentCastSession().getRemoteMediaClient().seek(mediaSeekOptions);
+        castPlayerSeekTo(location);
+    }
+
+    private void castPlayerSeekTo(int location) {
+        RemoteMediaClient remoteMediaClient = getCastRemoteMediaClient();
+        if (remoteMediaClient != null) {
+            MediaSeekOptions mediaSeekOptions = new MediaSeekOptions.Builder().setPosition(location).build();
+            remoteMediaClient.seek(mediaSeekOptions);
+        }
     }
 
     long getPosition() {
@@ -981,6 +988,7 @@ final class BetterPlayer {
         if (exoPlayer != null) {
             exoPlayer.release();
         }
+        disableCast();
     }
 
     @Override
@@ -1002,6 +1010,23 @@ final class BetterPlayer {
         return result;
     }
 
+    public void enableCast(String uri) {
+        if (castPlayer.isCastSessionAvailable()) {
+
+            MediaInfo media = new MediaInfo.Builder(uri).build();
+            MediaLoadOptions options = new MediaLoadOptions.Builder().build();
+            PendingResult request = CastContext.getSharedInstance().getSessionManager().getCurrentCastSession().getRemoteMediaClient().load(media, options);
+            request.addStatusListener(status -> {
+                if (status.isSuccess()) {
+                    castPlayerSeekTo((int) getPosition());
+                }
+            });
+        }
+    }
+
+    public void disableCast(){
+        CastContext.getSharedInstance().getSessionManager().endCurrentSession(true);
+    }
 }
 
 

@@ -172,6 +172,14 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('clearCache() has not been implemented.');
   }
 
+  Future<void> enableCast(int? textureId){
+    throw UnimplementedError('enableCast() has not been implemented.');
+  }
+
+  Future<void> disableCast(int? textureId){
+    throw UnimplementedError('disableCast() has not been implemented.');
+  }
+
   /// Returns a widget displaying the video with a given textureID.
   Widget buildView(int? textureId) {
     throw UnimplementedError('buildView() has not been implemented.');
@@ -460,6 +468,10 @@ enum VideoEventType {
 
   /// Picture in picture mode has been dismissed
   pipStop,
+
+  castSessionAvailable,
+
+  castSessionUnavailable,
 
   /// An unknown event has been received.
   unknown,

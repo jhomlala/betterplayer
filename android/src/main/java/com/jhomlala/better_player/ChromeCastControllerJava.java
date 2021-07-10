@@ -1,6 +1,8 @@
 package com.jhomlala.better_player;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.View;
@@ -37,7 +39,7 @@ public class ChromeCastControllerJava implements SessionManagerListener<Session>
         this.context = context;
          methodChannel = new MethodChannel(binaryMessenger, "flutter_video_cast/chromeCast_"+viewId);
         mediaRouteButton = new MediaRouteButton(context);
-        mediaRouteButton.setRemoteIndicatorDrawable(context.getDrawable(android.R.drawable.ic_menu_add));
+        mediaRouteButton.setRemoteIndicatorDrawable(new ColorDrawable(Color.TRANSPARENT));
         sessionManager =  CastContext.getSharedInstance().getSessionManager();
         CastButtonFactory.setUpMediaRouteButton(context, mediaRouteButton);
         methodChannel.setMethodCallHandler(this);
@@ -96,8 +98,13 @@ public class ChromeCastControllerJava implements SessionManagerListener<Session>
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        Log.d("ChromeCast", "WAIT CALLED");
-        if(call.method.equals("wait")){
+        Log.d("ChromeCast", "WAIT CALLED" + call);
+        if(call.method.equals("chromeCast#wait")){
+            result.success(null);
+        }
+        if(call.method.equals("chromeCast#click")){
+            Log.d("ChromeCast", "CLICK CALLED");
+            mediaRouteButton.performClick();
             result.success(null);
         }
     }

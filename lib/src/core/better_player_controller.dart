@@ -213,6 +213,8 @@ class BetterPlayerController {
   ///List of loaded ASMS segments
   final List<String> _asmsSegmentsLoaded = [];
 
+  bool _wasInCastMode = false;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -781,6 +783,12 @@ class BetterPlayerController {
         setControlsEnabled(true);
       }
       videoPlayerController?.refresh();
+    } else if (currentVideoPlayerValue.isCastSessionAvailable && !_wasInCastMode){
+      _wasInCastMode = true;
+      videoPlayerController?.enableCast();
+    } else if (!currentVideoPlayerValue.isCastSessionAvailable && _wasInCastMode){
+      _wasInCastMode = false;
+      videoPlayerController?.disableCast();
     }
 
     if (_betterPlayerSubtitlesSource?.asmsIsSegmented == true) {
@@ -1220,6 +1228,14 @@ class BetterPlayerController {
           "stopPreCache is currently only supported on Android.");
     }
     return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url);
+  }
+
+  void enableCast() async{
+    return videoPlayerController?.enableCast();
+  }
+
+  void disableCast() async{
+    return videoPlayerController?.disableCast();
   }
 
   /// Add controller internal event.

@@ -68,12 +68,6 @@ class _WelcomePageState extends State<WelcomePage> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 8),
-            ChromeCastButton(
-              onButtonCreated: (controller) {
-                controller?.addSessionListener();
-              },
-            ),
-
             ...buildExampleElementWidgets()
           ],
         ),
