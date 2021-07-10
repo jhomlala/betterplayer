@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/auto_fullscreen_orientation_page.dart';
 import 'package:better_player_example/pages/basic_player_page.dart';
@@ -67,6 +68,12 @@ class _WelcomePageState extends State<WelcomePage> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 8),
+            ChromeCastButton(
+              onButtonCreated: (controller) {
+                controller?.addSessionListener();
+              },
+            ),
+
             ...buildExampleElementWidgets()
           ],
         ),

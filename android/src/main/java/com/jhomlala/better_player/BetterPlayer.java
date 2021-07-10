@@ -16,6 +16,7 @@ import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.Surface;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,6 +46,8 @@ import com.google.android.exoplayer2.drm.DummyExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
+import com.google.android.exoplayer2.ext.cast.CastPlayer;
+import com.google.android.exoplayer2.ext.cast.SessionAvailabilityListener;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
@@ -63,7 +66,16 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaLoadOptions;
+import com.google.android.gms.cast.MediaMetadata;
+import com.google.android.gms.cast.MediaQueueItem;
+import com.google.android.gms.cast.MediaSeekOptions;
+import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
 
 import java.io.File;
 import java.util.Arrays;
@@ -115,6 +127,7 @@ final class BetterPlayer {
 
     BetterPlayer(
             Context context,
+            CastContext castContext,
             EventChannel eventChannel,
             TextureRegistry.SurfaceTextureEntry textureEntry,
             CustomDefaultLoadControl customDefaultLoadControl,
@@ -148,6 +161,49 @@ final class BetterPlayer {
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
             long overriddenDuration, String licenseUrl, Map<String, String> drmHeaders,
             String cacheKey) {
+
+        Log.d(TAG, "Cast player init");
+        CastPlayer castPlayer = new CastPlayer(CastContext.getSharedInstance());
+        castPlayer.setSessionAvailabilityListener(new SessionAvailabilityListener() {
+            @Override
+            public void onCastSessionAvailable() {
+                Log.d(TAG, "Cast session available");
+            }
+
+            @Override
+            public void onCastSessionUnavailable() {
+                Log.d(TAG, "Cast session unavailable");
+            }
+        });
+        Log.d(TAG, "Cast session available?" + castPlayer.isCastSessionAvailable());
+        if (castPlayer.isCastSessionAvailable()) {
+           /* MediaMetadata metadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+            metadata.putString(MediaMetadata.KEY_TITLE, "Title");
+            metadata.putString(MediaMetadata.KEY_SUBTITLE, "Subtitle");
+
+
+            MediaInfo mediaInfo = new MediaInfo.Builder(dataSource)
+                    .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                    .setContentType(MimeTypes.VIDEO_MP4)
+                    .setMetadata(metadata)
+                    .build();
+            MediaQueueItem mediaItem =new  MediaQueueItem.Builder(mediaInfo).build();
+            castPlayer.loadItem()
+            castPlayer?.loadItem(mediaItem, playbackPosition)*/
+
+            Log.d(TAG, "LOADING VIDEO!!!");
+            MediaInfo media = new MediaInfo.Builder(dataSource).build();
+            MediaLoadOptions options = new MediaLoadOptions.Builder().build();
+            PendingResult request = CastContext.getSharedInstance().getSessionManager().getCurrentCastSession().getRemoteMediaClient().load(media, options);
+            request.addStatusListener(new PendingResult.StatusListener() {
+                @Override
+                public void onComplete(Status status) {
+                    Log.d(TAG, "STATUS LISTENER: " + status);
+                }
+            });
+        }
+
+
         this.key = key;
         isInitialized = false;
 
@@ -536,6 +592,7 @@ final class BetterPlayer {
     private void setupVideoPlayer(
             EventChannel eventChannel, TextureRegistry.SurfaceTextureEntry textureEntry, Result result) {
 
+
         eventChannel.setStreamHandler(
                 new EventChannel.StreamHandler() {
                     @Override
@@ -550,6 +607,8 @@ final class BetterPlayer {
                 });
 
         surface = new Surface(textureEntry.surfaceTexture());
+
+
         exoPlayer.setVideoSurface(surface);
         setAudioAttributes(exoPlayer, true);
 
@@ -616,10 +675,12 @@ final class BetterPlayer {
 
     void play() {
         exoPlayer.setPlayWhenReady(true);
+        CastContext.getSharedInstance().getSessionManager().getCurrentCastSession().getRemoteMediaClient().play();
     }
 
     void pause() {
         exoPlayer.setPlayWhenReady(false);
+        CastContext.getSharedInstance().getSessionManager().getCurrentCastSession().getRemoteMediaClient().pause();
     }
 
     void setLooping(boolean value) {
@@ -655,6 +716,8 @@ final class BetterPlayer {
 
     void seekTo(int location) {
         exoPlayer.seekTo(location);
+        MediaSeekOptions mediaSeekOptions = new MediaSeekOptions.Builder().setPosition(location).build();
+        CastContext.getSharedInstance().getSessionManager().getCurrentCastSession().getRemoteMediaClient().seek(mediaSeekOptions);
     }
 
     long getPosition() {

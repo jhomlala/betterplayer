@@ -12,8 +12,18 @@ import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.util.LongSparseArray;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.mediarouter.app.MediaRouteChooserDialog;
+import androidx.mediarouter.app.MediaRouteDialogFactory;
+import androidx.mediarouter.media.MediaRouteSelector;
+
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -110,18 +120,38 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private Activity activity;
     private Handler pipHandler;
     private Runnable pipRunnable;
+    private ChromeCastFactoryJava chromeCastFactoryJava;
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
+        Log.d(TAG,"ATTACHED TO ENGINE!");
         FlutterLoader loader = new FlutterLoader();
+        CastContext castContext = null;
+        try {
+            castContext = CastContext.getSharedInstance(binding.getApplicationContext());
+            Log.d(TAG,"GOT CAST CONTEXT");
+        } catch (RuntimeException e) {
+
+        }
         this.flutterState =
                 new FlutterState(
                         binding.getApplicationContext(),
                         binding.getBinaryMessenger(),
                         loader::getLookupKeyForAsset,
                         loader::getLookupKeyForAsset,
-                        binding.getTextureRegistry());
+                        binding.getTextureRegistry(),
+                        castContext);
         flutterState.startListening(this);
+
+        chromeCastFactoryJava = new ChromeCastFactoryJava(binding.getBinaryMessenger());
+        binding
+                .getPlatformViewRegistry()
+                .registerViewFactory(
+                        "ChromeCastButton",
+                        chromeCastFactoryJava
+                );
+
+
     }
 
     @Override
@@ -176,8 +206,12 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 }
 
                 BetterPlayer player =
-                        new BetterPlayer(flutterState.applicationContext, eventChannel, handle,
-                                customDefaultLoadControl, result);
+                        new BetterPlayer(flutterState.applicationContext,
+                                flutterState.castContext,
+                                eventChannel,
+                                handle,
+                                customDefaultLoadControl,
+                                result);
 
                 videoPlayers.put(handle.id(), player);
                 break;
@@ -454,6 +488,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         activity = binding.getActivity();
+        chromeCastFactoryJava.activty = activity;
+
     }
 
     @Override
@@ -537,18 +573,21 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         private final KeyForAssetAndPackageName keyForAssetAndPackageName;
         private final TextureRegistry textureRegistry;
         private final MethodChannel methodChannel;
+        private final CastContext castContext;
 
         FlutterState(
                 Context applicationContext,
                 BinaryMessenger messenger,
                 KeyForAssetFn keyForAsset,
                 KeyForAssetAndPackageName keyForAssetAndPackageName,
-                TextureRegistry textureRegistry) {
+                TextureRegistry textureRegistry,
+                CastContext castContext) {
             this.applicationContext = applicationContext;
             this.binaryMessenger = messenger;
             this.keyForAsset = keyForAsset;
             this.keyForAssetAndPackageName = keyForAssetAndPackageName;
             this.textureRegistry = textureRegistry;
+            this.castContext = castContext;
             methodChannel = new MethodChannel(messenger, CHANNEL);
         }
 
