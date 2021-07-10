@@ -434,7 +434,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   onButtonCreated: (controller) {
                     print("ON button created!");
                     chromeCastController = controller;
-                    controller.addSessionListener();
                   },
                 ),
                 BetterPlayerMaterialClickableWidget(

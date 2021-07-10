@@ -25,7 +25,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
-public class ChromeCastControllerJava implements SessionManagerListener<Session>, PlatformView, MethodChannel.MethodCallHandler, PendingResult.StatusListener {
+public class ChromeCastController implements SessionManagerListener<Session>, PlatformView, MethodChannel.MethodCallHandler, PendingResult.StatusListener {
     final BinaryMessenger binaryMessenger;
     final int viewId;
     final Context context;
@@ -33,7 +33,7 @@ public class ChromeCastControllerJava implements SessionManagerListener<Session>
     MediaRouteButton mediaRouteButton;
     SessionManager sessionManager;
 
-    ChromeCastControllerJava(BinaryMessenger binaryMessenger, int viewId, Context context) {
+    ChromeCastController(BinaryMessenger binaryMessenger, int viewId, Context context) {
         this.binaryMessenger = binaryMessenger;
         this.viewId = viewId;
         this.context = context;
@@ -98,10 +98,6 @@ public class ChromeCastControllerJava implements SessionManagerListener<Session>
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        Log.d("ChromeCast", "WAIT CALLED" + call);
-        if(call.method.equals("chromeCast#wait")){
-            result.success(null);
-        }
         if(call.method.equals("chromeCast#click")){
             Log.d("ChromeCast", "CLICK CALLED");
             mediaRouteButton.performClick();
