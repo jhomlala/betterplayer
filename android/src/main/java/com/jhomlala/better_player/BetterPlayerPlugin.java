@@ -234,6 +234,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         }
     }
 
+    BetterPlayer castPlayer = null;
+
     private void onMethodCall(MethodCall call, Result result, long textureId, BetterPlayer player) {
         switch (call.method) {
             case SET_DATA_SOURCE_METHOD: {
@@ -303,6 +305,14 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 break;
             case DISPOSE_METHOD:
                 dispose(player, textureId);
+                result.success(null);
+                break;
+            case "startCast":
+                if (castPlayer != null){
+                    castPlayer.stopCast();
+                }
+                castPlayer = player;
+                player.startCast();
                 result.success(null);
                 break;
             case "enableCast":

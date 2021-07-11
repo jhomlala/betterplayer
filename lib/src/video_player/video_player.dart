@@ -653,6 +653,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _videoPlayerPlatform.stopPreCache(url);
   }
 
+  void startCast() async {
+    return _videoPlayerPlatform.startCast(_textureId);
+  }
+
   void enableCast() async {
     return _videoPlayerPlatform.enableCast(_textureId);
   }

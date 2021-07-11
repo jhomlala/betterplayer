@@ -151,6 +151,7 @@ final class BetterPlayer {
                 .setTrackSelector(trackSelector)
                 .setLoadControl(loadControl)
                 .build();
+        castPlayer = new CastPlayer(CastContext.getSharedInstance());
         workManager = WorkManager.getInstance(context);
         workerObserverMap = new HashMap<>();
 
@@ -603,25 +604,6 @@ final class BetterPlayer {
             }
         });
 
-        castPlayer = new CastPlayer(CastContext.getSharedInstance());
-        castPlayer.setSessionAvailabilityListener(new SessionAvailabilityListener() {
-            @Override
-            public void onCastSessionAvailable() {
-                Log.d(TAG, "SESSION AVAILABLE!");
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", "castSessionAvailable");
-                eventSink.success(event);
-            }
-
-            @Override
-            public void onCastSessionUnavailable() {
-                Log.d(TAG, "SESSION UNAVAILABLE!");
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", "castSessionUnavailable");
-                eventSink.success(event);
-            }
-        });
-
 
         Map<String, Object> reply = new HashMap<>();
         reply.put("textureId", textureEntry.id());
@@ -989,6 +971,11 @@ final class BetterPlayer {
             exoPlayer.release();
         }
         disableCast();
+        if (castPlayer != null) {
+            Log.d(TAG,"!!!!!!!!!Cast player released");
+            castPlayer.release();
+            castPlayer = null;
+        }
     }
 
     @Override
@@ -1010,6 +997,33 @@ final class BetterPlayer {
         return result;
     }
 
+    public void startCast() {
+
+        castPlayer.setSessionAvailabilityListener(new SessionAvailabilityListener() {
+            @Override
+            public void onCastSessionAvailable() {
+                Log.d(TAG, "SESSION AVAILABLE!");
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "castSessionAvailable");
+                eventSink.success(event);
+            }
+
+            @Override
+            public void onCastSessionUnavailable() {
+                Log.d(TAG, "SESSION UNAVAILABLE!");
+                Map<String, Object> event = new HashMap<>();
+                event.put("event", "castSessionUnavailable");
+                eventSink.success(event);
+            }
+        });
+    }
+
+    public void stopCast() {
+        if (castPlayer != null) {
+            castPlayer.setSessionAvailabilityListener(null);
+        }
+    }
+
     public void enableCast(String uri) {
         if (castPlayer.isCastSessionAvailable()) {
 
@@ -1019,12 +1033,18 @@ final class BetterPlayer {
             request.addStatusListener(status -> {
                 if (status.isSuccess()) {
                     castPlayerSeekTo((int) getPosition());
+                    if (exoPlayer.isPlaying()){
+                        castPlayer.play();
+                    } else {
+                        castPlayer.pause();
+                    }
                 }
             });
         }
     }
 
-    public void disableCast(){
+    public void disableCast() {
+        startCast();
         CastContext.getSharedInstance().getSessionManager().endCurrentSession(true);
     }
 }
