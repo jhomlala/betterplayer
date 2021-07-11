@@ -313,6 +313,25 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
+  @override
+  Future<void> startCast(int? textureId) {
+    return _channel.invokeMethod<void>(
+      'startCast',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
+  @override
+  Future<void> stopCast(int? textureId) {
+    return _channel.invokeMethod<void>(
+      'startCast',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) {

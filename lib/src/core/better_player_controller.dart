@@ -213,6 +213,8 @@ class BetterPlayerController {
   ///List of loaded ASMS segments
   final List<String> _asmsSegmentsLoaded = [];
 
+  bool _startedCast = false;
+
   bool _wasInCastMode = false;
 
   BetterPlayerController(
@@ -783,11 +785,12 @@ class BetterPlayerController {
         setControlsEnabled(true);
       }
       videoPlayerController?.refresh();
-    } else if (currentVideoPlayerValue.isCastSessionAvailable && !_wasInCastMode){
+    } else if (currentVideoPlayerValue.isCastSessionAvailable && !_wasInCastMode && _startedCast){
       _wasInCastMode = true;
       videoPlayerController?.enableCast();
     } else if (!currentVideoPlayerValue.isCastSessionAvailable && _wasInCastMode){
       _wasInCastMode = false;
+      _startedCast = false;
       videoPlayerController?.disableCast();
     }
 
@@ -1230,12 +1233,18 @@ class BetterPlayerController {
     return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url);
   }
 
+
   void enableCast() async{
     return videoPlayerController?.enableCast();
   }
 
   void disableCast() async{
     return videoPlayerController?.disableCast();
+  }
+
+  void onCastClicked(){
+    _startedCast = true;
+    videoPlayerController?.startCast();
   }
 
   /// Add controller internal event.

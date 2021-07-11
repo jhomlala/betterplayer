@@ -440,10 +440,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   onTap: () {
                     print("CLICKED ON CAST");
                     chromeCastController.click();
-                    Future.delayed(Duration(seconds: 10), (){
-                      print("Enable cast.....");
-                      //betterPlayerController?.enableCast();
-                    });
+                    betterPlayerController?.onCastClicked();
                   },
                   child: Padding(
                     padding: const EdgeInsets.all(8),

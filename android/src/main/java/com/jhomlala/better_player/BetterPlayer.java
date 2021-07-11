@@ -603,26 +603,6 @@ final class BetterPlayer {
             }
         });
 
-        castPlayer = new CastPlayer(CastContext.getSharedInstance());
-        castPlayer.setSessionAvailabilityListener(new SessionAvailabilityListener() {
-            @Override
-            public void onCastSessionAvailable() {
-                Log.d(TAG, "SESSION AVAILABLE!");
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", "castSessionAvailable");
-                eventSink.success(event);
-            }
-
-            @Override
-            public void onCastSessionUnavailable() {
-                Log.d(TAG, "SESSION UNAVAILABLE!");
-                Map<String, Object> event = new HashMap<>();
-                event.put("event", "castSessionUnavailable");
-                eventSink.success(event);
-            }
-        });
-
-
         Map<String, Object> reply = new HashMap<>();
         reply.put("textureId", textureEntry.id());
         result.success(reply);
@@ -1010,6 +990,34 @@ final class BetterPlayer {
         return result;
     }
 
+    SessionAvailabilityListener sessionAvailabilityListener = new SessionAvailabilityListener() {
+        @Override
+        public void onCastSessionAvailable() {
+            Log.d(TAG, "SESSION AVAILABLE!");
+            Map<String, Object> event = new HashMap<>();
+            event.put("event", "castSessionAvailable");
+            eventSink.success(event);
+        }
+
+        @Override
+        public void onCastSessionUnavailable() {
+            Log.d(TAG, "SESSION UNAVAILABLE!");
+            Map<String, Object> event = new HashMap<>();
+            event.put("event", "castSessionUnavailable");
+            eventSink.success(event);
+        }
+    };
+
+    public void startCast(){
+        castPlayer = new CastPlayer(CastContext.getSharedInstance());
+        castPlayer.setSessionAvailabilityListener(sessionAvailabilityListener);
+    }
+
+    public void stopCast(){
+        castPlayer.setSessionAvailabilityListener(null);
+        castPlayer = null;
+    }
+
     public void enableCast(String uri) {
         if (castPlayer.isCastSessionAvailable()) {
 
@@ -1025,6 +1033,7 @@ final class BetterPlayer {
     }
 
     public void disableCast(){
+        Log.d(TAG,"DISABLE CURRENT SESSION!!!!!!!");
         CastContext.getSharedInstance().getSessionManager().endCurrentSession(true);
     }
 }

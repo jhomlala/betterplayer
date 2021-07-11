@@ -9,6 +9,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.mediarouter.app.MediaRouteButton;
+import androidx.mediarouter.media.MediaRouter;
 
 import com.google.android.gms.cast.framework.SessionManager;
 import com.google.android.gms.common.api.PendingResult;
@@ -25,7 +26,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
-public class ChromeCastController implements SessionManagerListener<Session>, PlatformView, MethodChannel.MethodCallHandler, PendingResult.StatusListener {
+public class ChromeCastController implements PlatformView, MethodChannel.MethodCallHandler {
     final BinaryMessenger binaryMessenger;
     final int viewId;
     final Context context;
@@ -37,69 +38,18 @@ public class ChromeCastController implements SessionManagerListener<Session>, Pl
         this.binaryMessenger = binaryMessenger;
         this.viewId = viewId;
         this.context = context;
-         methodChannel = new MethodChannel(binaryMessenger, "flutter_video_cast/chromeCast_"+viewId);
+        methodChannel = new MethodChannel(binaryMessenger, "better_player_cast_" + viewId);
         mediaRouteButton = new MediaRouteButton(context);
         mediaRouteButton.setRemoteIndicatorDrawable(new ColorDrawable(Color.TRANSPARENT));
-        sessionManager =  CastContext.getSharedInstance().getSessionManager();
+        sessionManager = CastContext.getSharedInstance().getSessionManager();
         CastButtonFactory.setUpMediaRouteButton(context, mediaRouteButton);
         methodChannel.setMethodCallHandler(this);
-        Log.d("ChromeCast","Controller created for id"+viewId);
     }
 
-    @Override
-    public void onSessionStarting(Session session) {
-
-    }
-
-    @Override
-    public void onSessionStarted(Session session, String s) {
-        methodChannel.invokeMethod("chromeCast#didStartSession", null);
-    }
-
-    @Override
-    public void onSessionStartFailed(Session session, int i) {
-
-    }
-
-    @Override
-    public void onSessionEnding(Session session) {
-
-    }
-
-    @Override
-    public void onSessionEnded(Session session, int i) {
-        methodChannel.invokeMethod("chromeCast#didEndSession", null);
-    }
-
-    @Override
-    public void onSessionResuming(Session session, String s) {
-
-    }
-
-    @Override
-    public void onSessionResumed(Session session, boolean b) {
-
-    }
-
-    @Override
-    public void onSessionResumeFailed(Session session, int i) {
-
-    }
-
-    @Override
-    public void onSessionSuspended(Session session, int i) {
-
-    }
-
-    @Override
-    public void onComplete(Status status) {
-
-    }
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        if(call.method.equals("chromeCast#click")){
-            Log.d("ChromeCast", "CLICK CALLED");
+        if (call.method.equals("click")) {
             mediaRouteButton.performClick();
             result.success(null);
         }

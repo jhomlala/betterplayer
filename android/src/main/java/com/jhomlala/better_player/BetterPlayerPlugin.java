@@ -114,6 +114,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
     private final LongSparseArray<Map<String, Object>> dataSources = new LongSparseArray<>();
+    private BetterPlayer castPlayerInstance = null;
     private FlutterState flutterState;
     private long currentNotificationTextureId = -1;
     private Map<String, Object> currentNotificationDataSource;
@@ -305,10 +306,29 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 dispose(player, textureId);
                 result.success(null);
                 break;
+
+            case "startCast":
+                player.startCast();
+                if (castPlayerInstance != null){
+                    castPlayerInstance.stopCast();
+                    castPlayerInstance = null;
+                }
+                castPlayerInstance = player;
+                result.success(null);
+                break;
+            case "stopCast":
+                player.stopCast();
+                result.success(null);
+                break;
             case "enableCast":
+                if (castPlayerInstance != null){
+                    castPlayerInstance.disableCast();
+                    castPlayerInstance = null;
+                }
                 Map<String, Object> dataSource = dataSources.get(textureId);
                 String uri = getParameter(dataSource, URI_PARAMETER, "");
                 player.enableCast(uri);
+                castPlayerInstance = player;
                 result.success(null);
                 break;
 

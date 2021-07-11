@@ -653,11 +653,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _videoPlayerPlatform.stopPreCache(url);
   }
 
+  void startCast() async {
+    print("[$hashCode]DISABLE CAST...");
+    return _videoPlayerPlatform.startCast(_textureId);
+  }
+
   void enableCast() async {
+    print("[$hashCode]ENABLE CAST...");
     return _videoPlayerPlatform.enableCast(_textureId);
   }
 
   void disableCast() async {
+    print("[$hashCode]DISABLE CAST...");
     return _videoPlayerPlatform.disableCast(_textureId);
   }
 }

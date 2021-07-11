@@ -172,6 +172,14 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('clearCache() has not been implemented.');
   }
 
+  Future<void> startCast(int? textureId){
+    throw UnimplementedError('startCast() has not been implemented.');
+  }
+
+  Future<void> stopCast(int? textureId){
+    throw UnimplementedError('stopCast() has not been implemented.');
+  }
+
   Future<void> enableCast(int? textureId){
     throw UnimplementedError('enableCast() has not been implemented.');
   }
