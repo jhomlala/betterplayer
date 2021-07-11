@@ -8,13 +8,14 @@
 #import <AVFoundation/AVFoundation.h>
 #import <KTVHTTPCache/KTVHTTPCache.h>
 #import <GLKit/GLKit.h>
+#import <GoogleCast/GoogleCast.h>
 #import "BetterPlayerTimeUtils.h"
 #import "BetterPlayerView.h"
 #import "BetterPlayerEzDrmAssetsLoaderDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface BetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
+@interface BetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate, GCKSessionManagerListener>
 @property(readonly, nonatomic) AVPlayer* player;
 @property(readonly, nonatomic) BetterPlayerEzDrmAssetsLoaderDelegate* loaderDelegate;
 @property(nonatomic) FlutterEventChannel* eventChannel;
@@ -55,6 +56,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)disablePictureInPicture;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;
+- (void) startCast;
+- (void) enableCast:(NSString*) uri;
 
 - (void)clear;
 - (void)disposeSansEventChannel;

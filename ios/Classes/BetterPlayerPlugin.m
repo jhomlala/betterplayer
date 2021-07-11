@@ -4,7 +4,6 @@
 
 #import "BetterPlayerPlugin.h"
 
-
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
 #endif
@@ -26,6 +25,9 @@ int texturesCount = -1;
     [registrar addMethodCallDelegate:instance channel:channel];
     //[registrar publish:instance];
     [registrar registerViewFactory:instance withId:@"com.jhomlala/better_player"];
+    BetterCastFactory* betterCastFactory = [[BetterCastFactory alloc] initWithRegistrar:registrar];
+    [registrar registerViewFactory:betterCastFactory withId:@"ChromeCastButton"];
+    
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -397,6 +399,12 @@ int texturesCount = -1;
             [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
         } else if ([@"clearCache" isEqualToString:call.method]){
             [KTVHTTPCache cacheDeleteAllCaches];
+        } else if ([@"startCast" isEqualToString:call.method]){
+            [player startCast];
+        } else if ([@"enableCast" isEqualToString:call.method]){
+            NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
+            NSString* uriArg = dataSource[@"uri"];
+            [player enableCast:uriArg];
         } else {
             result(FlutterMethodNotImplemented);
         }

@@ -712,6 +712,69 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
+- (void) startCast{
+    NSLog(@"CAST START");
+    [ GCKCastContext.sharedInstance.sessionManager addListener:self];
+}
+
+- (void) enableCast:(NSString*) uri{
+    NSLog(@"Enable cast!!");
+    if (GCKCastContext.sharedInstance.sessionManager.hasConnectedSession == true){
+        NSLog(@"HAS CONNECTED SESSION!");
+    } else {
+        NSLog(@"HAS NOT CONNECTED SESSION!");
+    }
+    NSLog(@"Enable cast!!");
+    NSLog(uri);
+    /*GCKMediaInformationBuilder* mediaInfoBuilder = [GCKMediaInformationBuilder alloc];
+    [mediaInfoBuilder setContentURL:[NSURL URLWithString:uri]];
+    GCKMediaInformation* mediaInfo = [mediaInfoBuilder build];
+    [GCKCastContext.sharedInstance.sessionManager.currentSession.remoteMediaClient loadMedia:mediaInfo];*/
+    
+    GCKMediaMetadata *metadata = [[GCKMediaMetadata alloc]
+                                    initWithMetadataType:GCKMediaMetadataTypeMovie];
+    [metadata setString:@"Big Buck Bunny (2008)" forKey:kGCKMetadataKeyTitle];
+    [metadata setString:@"Big Buck Bunny tells the story of a giant rabbit with a heart bigger than "
+     "himself. When one sunny day three rodents rudely harass him, something "
+     "snaps... and the rabbit ain't no bunny anymore! In the typical cartoon "
+     "tradition he prepares the nasty rodents a comical revenge."
+                 forKey:kGCKMetadataKeySubtitle];
+    [metadata addImage:[[GCKImage alloc]
+                        initWithURL:[[NSURL alloc] initWithString:@"https://commondatastorage.googleapis.com/"
+                                     "gtv-videos-bucket/sample/images/BigBuckBunny.jpg"]
+                        width:480
+                        height:360]];
+    
+    GCKMediaInformation* mediaInformation;
+    GCKMediaInformationBuilder *mediaInfoBuilder =
+      [[GCKMediaInformationBuilder alloc] initWithContentURL:
+       [NSURL URLWithString:@"https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"]];
+    mediaInfoBuilder.streamType = GCKMediaStreamTypeNone;
+    mediaInfoBuilder.contentType = @"video/mp4";
+    mediaInfoBuilder.metadata = metadata;
+    mediaInformation = [mediaInfoBuilder build];
+    
+    mediaInformation = [mediaInfoBuilder build];
+
+    GCKRequest *request = [GCKCastContext.sharedInstance.sessionManager.currentSession.remoteMediaClient loadMedia:mediaInformation];
+
+    
+    NSLog(@"Loaded media!");
+
+}
+
+- (void) sessionManager:(GCKSessionManager *)sessionManager didStartSession:(GCKSession *)session{
+    NSLog(@"SESSION STARTED!!!!");
+    if (_eventSink != nil) {
+        _eventSink(@{@"event" : @"castSessionAvailable"});
+    }
+}
+
+- (void)sessionManager:(GCKSessionManager *)sessionManager didEndSession:(GCKSession *)session withError:(NSError *)error{
+    NSLog(@"SESSION STOPPED!!!!");
+}
+
+
 
 #endif
 

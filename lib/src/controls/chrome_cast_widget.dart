@@ -137,15 +137,13 @@ class MethodChannelChromeCast extends ChromeCastPlatform {
   @override
   Widget buildView(Map<String, dynamic> arguments,
       PlatformViewCreatedCallback onPlatformViewCreated) {
-    if (Platform.isAndroid) {
       return AndroidView(
         viewType: 'ChromeCastButton',
         onPlatformViewCreated: onPlatformViewCreated,
         creationParams: arguments,
         creationParamsCodec: const StandardMessageCodec(),
       );
-    }
 
-    return Text('is not supported by ChromeCast plugin');
+   // return Text('is not supported by ChromeCast plugin');
   }
 }

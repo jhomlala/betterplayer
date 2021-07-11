@@ -493,6 +493,10 @@ class _BetterPlayerCupertinoControlsState
                 backgroundColor, iconColor, barHeight, buttonPadding)
           else
             const SizedBox(),
+          if (true)
+            buildCastWidget(_hideStuff)
+          else
+            const SizedBox(),
           if (_controlsConfiguration.enablePip)
             _buildPipButton(
                 backgroundColor, iconColor, barHeight, buttonPadding)

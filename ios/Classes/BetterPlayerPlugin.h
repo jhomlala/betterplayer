@@ -10,6 +10,7 @@
 #import <GLKit/GLKit.h>
 #import "BetterPlayerTimeUtils.h"
 #import "BetterPlayer.h"
+#import "BetterCastFactory.h"
 #import <MediaPlayer/MediaPlayer.h>
 
 @interface BetterPlayerPlugin : NSObject <FlutterPlugin, FlutterPlatformViewFactory>
