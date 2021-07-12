@@ -467,6 +467,7 @@ class BetterPlayerController {
           drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
           activityName:
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
+          clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey
         );
 
         break;
@@ -491,7 +492,9 @@ class BetterPlayerController {
                 ?.notificationConfiguration?.notificationChannelName,
             overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
             activityName: _betterPlayerDataSource
-                ?.notificationConfiguration?.activityName);
+                ?.notificationConfiguration?.activityName,
+            clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey
+        );
         break;
       case BetterPlayerDataSourceType.memory:
         final file = await _createFile(_betterPlayerDataSource!.bytes!,
@@ -510,7 +513,8 @@ class BetterPlayerController {
                   ?.notificationConfiguration?.notificationChannelName,
               overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
               activityName: _betterPlayerDataSource
-                  ?.notificationConfiguration?.activityName);
+                  ?.notificationConfiguration?.activityName,
+              clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey);
           _tempFiles.add(file);
         } else {
           throw ArgumentError("Couldn't create file from memory.");

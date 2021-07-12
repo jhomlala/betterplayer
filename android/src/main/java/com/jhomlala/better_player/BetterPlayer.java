@@ -44,6 +44,7 @@ import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.DummyExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
+import com.google.android.exoplayer2.drm.LocalMediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -147,7 +148,7 @@ final class BetterPlayer {
             Context context, String key, String dataSource, String formatHint, Result result,
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
             long overriddenDuration, String licenseUrl, Map<String, String> drmHeaders,
-            String cacheKey) {
+            String cacheKey, String clearKey) {
         this.key = key;
         isInitialized = false;
 
@@ -189,6 +190,16 @@ final class BetterPlayer {
                                     .build(httpMediaDrmCallback);
                 }
             }
+        } else if (clearKey != null && !clearKey.isEmpty()) {
+            if (Util.SDK_INT < 18) {
+                Log.e(TAG, "Protected content not supported on API levels below 18");
+                drmSessionManager = null;
+            } else {
+                drmSessionManager = new DefaultDrmSessionManager.Builder()
+                        .setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER).
+                                build(new LocalMediaDrmCallback(clearKey.getBytes()));
+            }
+
         } else {
             drmSessionManager = null;
         }
