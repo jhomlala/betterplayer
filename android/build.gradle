@@ -39,12 +39,12 @@ android {
     }
 
     dependencies {
-        implementation 'com.google.android.exoplayer:exoplayer-core:2.13.3'
-        implementation 'com.google.android.exoplayer:exoplayer-hls:2.13.3'
-        implementation 'com.google.android.exoplayer:exoplayer-dash:2.13.3'
-        implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.13.3'
-        implementation 'com.google.android.exoplayer:exoplayer-ui:2.13.3'
-        implementation 'com.google.android.exoplayer:extension-mediasession:2.13.3'
+        implementation 'com.google.android.exoplayer:exoplayer-core:2.14.1'
+        implementation 'com.google.android.exoplayer:exoplayer-hls:2.14.1'
+        implementation 'com.google.android.exoplayer:exoplayer-dash:2.14.1'
+        implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.14.1'
+        implementation 'com.google.android.exoplayer:exoplayer-ui:2.14.1'
+        implementation 'com.google.android.exoplayer:extension-mediasession:2.14.1'
         implementation "android.arch.lifecycle:runtime:1.1.1"
         implementation "android.arch.lifecycle:common:1.1.1"
         implementation "android.arch.lifecycle:common-java8:1.1.1"
