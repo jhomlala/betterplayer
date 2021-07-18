@@ -436,7 +436,7 @@ class _BetterPlayerCupertinoControlsState
         : const Duration();
 
     return Padding(
-      padding: const EdgeInsets.only(right: 12.0),
+      padding: const EdgeInsets.only(right: 6.0),
       child: Text(
         '-${BetterPlayerUtils.formatDuration(position)}',
         style:
@@ -451,8 +451,8 @@ class _BetterPlayerCupertinoControlsState
       child: Container(
         height: barHeight,
         color: Colors.transparent,
-        margin: const EdgeInsets.only(left: 10.0),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        // margin: const EdgeInsets.only(left: 10.0),
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         child: Icon(
           _controlsConfiguration.skipBackIcon,
           color: iconColor,
@@ -466,9 +466,9 @@ class _BetterPlayerCupertinoControlsState
       onTap: skipForward,
       child: Container(
         height: barHeight,
-        color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 6),
-        margin: const EdgeInsets.only(right: 8.0),
+        // color: Colors.transparent,
+        padding: const EdgeInsets.symmetric(horizontal: 4),
+        // margin: const EdgeInsets.only(right: 8.0),
         child: Icon(
           _controlsConfiguration.skipForwardIcon,
           color: iconColor,
@@ -612,7 +612,7 @@ class _BetterPlayerCupertinoControlsState
   Widget _buildProgressBar() {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.only(right: 12.0),
+        padding: const EdgeInsets.only(right: 6.0),
         child: BetterPlayerCupertinoVideoProgressBar(
           _controller,
           _betterPlayerController,
