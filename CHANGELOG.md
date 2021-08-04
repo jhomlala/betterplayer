@@ -1,3 +1,6 @@
+## 0.0.73
+* 
+
 ## 0.0.72
 * Updated ExoPlayer version
 

@@ -229,20 +229,26 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
         true) {
-      final aspectRatio =
-          widget.controller.videoPlayerController?.value.aspectRatio ?? 1.0;
+      // TaeHeun Lee (2021.08.04)
+
+      // final aspectRatio =
+      //     widget.controller.videoPlayerController?.value.aspectRatio ?? 1.0;
       List<DeviceOrientation> deviceOrientations;
-      if (aspectRatio < 1.0) {
-        deviceOrientations = [
-          DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown
-        ];
-      } else {
-        deviceOrientations = [
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight
-        ];
-      }
+      // if (aspectRatio < 1.0) {
+      //   deviceOrientations = [
+      //     DeviceOrientation.portraitUp,
+      //     DeviceOrientation.portraitDown
+      //   ];
+      // } else {
+      //   deviceOrientations = [
+      //     DeviceOrientation.landscapeLeft,
+      //     DeviceOrientation.landscapeRight
+      //   ];
+      // }
+      deviceOrientations = [
+        DeviceOrientation.landscapeLeft,
+        DeviceOrientation.landscapeRight
+      ];
       await SystemChrome.setPreferredOrientations(deviceOrientations);
     } else {
       await SystemChrome.setPreferredOrientations(
