@@ -3,6 +3,7 @@
 * Fixed RTL text direction issue in player controls.
 * Added `renderedSubtitle` in `BetterPlayerController`.
 * Added additional check in `postControllerEvent` to handle scenario where event stream is closed.
+* Updated ExoPlayer version
 
 ## 0.0.72
 * Updated ExoPlayer version
