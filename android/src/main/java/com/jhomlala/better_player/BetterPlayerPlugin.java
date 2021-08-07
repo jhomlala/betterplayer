@@ -238,7 +238,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 break;
             case POSITION_METHOD:
                 result.success(player.getPosition());
-                player.sendBufferingUpdate();
+                player.sendBufferingUpdate(false);
                 break;
             case ABSOLUTE_POSITION_METHOD:
                 result.success(player.getAbsolutePosition());

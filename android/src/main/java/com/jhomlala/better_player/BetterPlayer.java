@@ -111,6 +111,7 @@ final class BetterPlayer {
     private WorkManager workManager;
     private HashMap<UUID, Observer<WorkInfo>> workerObserverMap;
     private CustomDefaultLoadControl customDefaultLoadControl;
+    private long lastSendBufferedPosition = 0L;
 
 
     BetterPlayer(
@@ -556,8 +557,9 @@ final class BetterPlayer {
         exoPlayer.addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
+                
                 if (playbackState == Player.STATE_BUFFERING) {
-                    sendBufferingUpdate();
+                    sendBufferingUpdate(true);
                     Map<String, Object> event = new HashMap<>();
                     event.put("event", "bufferingStart");
                     eventSink.success(event);
@@ -590,13 +592,17 @@ final class BetterPlayer {
         result.success(reply);
     }
 
-    void sendBufferingUpdate() {
-        Map<String, Object> event = new HashMap<>();
-        event.put("event", "bufferingUpdate");
-        List<? extends Number> range = Arrays.asList(0, exoPlayer.getBufferedPosition());
-        // iOS supports a list of buffered ranges, so here is a list with a single range.
-        event.put("values", Collections.singletonList(range));
-        eventSink.success(event);
+    void sendBufferingUpdate(boolean isFromBufferingStart) {
+        long bufferedPosition = exoPlayer.getBufferedPosition();
+        if (isFromBufferingStart || bufferedPosition != lastSendBufferedPosition) {
+            Map<String, Object> event = new HashMap<>();
+            event.put("event", "bufferingUpdate");
+            List<? extends Number> range = Arrays.asList(0, bufferedPosition);
+            // iOS supports a list of buffered ranges, so here is a list with a single range.
+            event.put("values", Collections.singletonList(range));
+            eventSink.success(event);
+            lastSendBufferedPosition = bufferedPosition;
+        }
     }
 
     private void setAudioAttributes(SimpleExoPlayer exoPlayer, Boolean mixWithOthers) {

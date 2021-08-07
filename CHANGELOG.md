@@ -4,6 +4,9 @@
 * Added `renderedSubtitle` in `BetterPlayerController`.
 * Added additional check in `postControllerEvent` to handle scenario where event stream is closed.
 * Updated ExoPlayer version
+* Fixed `bufferingUpdate` event triggered too often.
+* Updated video list example with bufering configuration.
+* Updated video list documentation.
 
 ## 0.0.72
 * Updated ExoPlayer version
