@@ -37,13 +37,9 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Directionality(
-            textDirection: TextDirection.rtl,
-            child: AspectRatio(
+          AspectRatio(
               aspectRatio: 16 / 9,
               child: BetterPlayer(controller: _betterPlayerController),
-            ),
-
           ),
         ],
       ),
