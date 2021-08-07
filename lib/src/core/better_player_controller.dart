@@ -1228,7 +1228,9 @@ class BetterPlayerController {
 
   /// Add controller internal event.
   void _postControllerEvent(BetterPlayerControllerEvent event) {
-    _controllerEventStreamController.add(event);
+    if (!_controllerEventStreamController.isClosed) {
+      _controllerEventStreamController.add(event);
+    }
   }
 
 
