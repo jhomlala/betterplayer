@@ -7,6 +7,7 @@
 * Fixed `bufferingUpdate` event triggered too often.
 * Updated video list example with bufering configuration.
 * Updated video list documentation.
+* Added `setMixWithOthers` method in `BetterPlayerListVideoPlayerController`.
 
 ## 0.0.72
 * Updated ExoPlayer version
