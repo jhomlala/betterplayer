@@ -1,3 +1,6 @@
+## 0.0.73
+* Added licenseUrl support for iOS DRM.
+
 ## 0.0.72
 * Updated ExoPlayer version
 
