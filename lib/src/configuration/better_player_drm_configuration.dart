@@ -8,7 +8,7 @@ class BetterPlayerDrmConfiguration {
   ///Parameter used only for token encrypted DRMs
   final String? token;
 
-  ///Url of license server, used only for WIDEVINE/PLAYREADY DRM
+  ///Url of license server
   final String? licenseUrl;
 
   ///Url of fairplay certificate

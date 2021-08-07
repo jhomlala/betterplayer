@@ -4,7 +4,7 @@ Supported DRMs:
 
 * Token based (authorization header): Android/iOS
 * Widevine (licensue url + headers): Android
-* Fairplay EZDRM (certificate url): iOS
+* Fairplay EZDRM (certificate url, license url): iOS
 
 Additional DRM types may be added in the future.
 
@@ -42,6 +42,7 @@ BetterPlayerDataSource _fairplayDataSource = BetterPlayerDataSource(
     drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.fairplay,
         certificateUrl: Constants.fairplayCertificateUrl,
+        licenseUrl: Constants.fairplayLicenseUrl,
     ),
 );
 ```

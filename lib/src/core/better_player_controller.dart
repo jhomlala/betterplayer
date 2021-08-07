@@ -213,6 +213,10 @@ class BetterPlayerController {
   ///List of loaded ASMS segments
   final List<String> _asmsSegmentsLoaded = [];
 
+  ///Currently displayed [BetterPlayerSubtitle].
+  BetterPlayerSubtitle? renderedSubtitle;
+
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -1226,6 +1230,7 @@ class BetterPlayerController {
   void _postControllerEvent(BetterPlayerControllerEvent event) {
     _controllerEventStreamController.add(event);
   }
+
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
   ///autoDispose parameter will be overridden and controller will be disposed

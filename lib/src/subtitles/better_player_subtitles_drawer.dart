@@ -101,7 +101,9 @@ class _BetterPlayerSubtitlesDrawerState
 
   @override
   Widget build(BuildContext context) {
-    final List<String> subtitles = _getSubtitlesAtCurrentPosition()!;
+    final BetterPlayerSubtitle? subtitle = _getSubtitleAtCurrentPosition();
+    widget.betterPlayerController.renderedSubtitle = subtitle;
+    final List<String> subtitles = subtitle?.texts ?? [];
     final List<Widget> textWidgets =
         subtitles.map((text) => _buildSubtitleTextWidget(text)).toList();
 
@@ -123,19 +125,19 @@ class _BetterPlayerSubtitlesDrawerState
     );
   }
 
-  List<String>? _getSubtitlesAtCurrentPosition() {
+  BetterPlayerSubtitle? _getSubtitleAtCurrentPosition() {
     if (_latestValue == null) {
-      return [];
+      return null;
     }
 
     final Duration position = _latestValue!.position;
     for (final BetterPlayerSubtitle subtitle
         in widget.betterPlayerController.subtitlesLines) {
       if (subtitle.start! <= position && subtitle.end! >= position) {
-        return subtitle.texts;
+        return subtitle;
       }
     }
-    return [];
+    return null;
   }
 
   Widget _buildSubtitleTextWidget(String subtitleText) {
