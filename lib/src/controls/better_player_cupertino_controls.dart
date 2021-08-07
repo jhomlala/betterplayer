@@ -64,6 +64,11 @@ class _BetterPlayerCupertinoControlsState
 
   @override
   Widget build(BuildContext context) {
+    return buildLTRDirectionality(_buildMainWidget());
+  }
+
+  ///Builds main widget of the controls.
+  Widget _buildMainWidget(){
     _betterPlayerController = BetterPlayerController.of(context);
 
     if (_latestValue?.hasError == true) {
@@ -91,8 +96,8 @@ class _BetterPlayerCupertinoControlsState
         _hideStuff
             ? cancelAndRestartTimer()
             : setState(() {
-                _hideStuff = true;
-              });
+          _hideStuff = true;
+        });
       },
       onDoubleTap: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {

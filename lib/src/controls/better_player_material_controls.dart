@@ -63,6 +63,11 @@ class _BetterPlayerMaterialControlsState
 
   @override
   Widget build(BuildContext context) {
+    return buildLTRDirectionality(_buildMainWidget());
+  }
+
+  ///Builds main widget of the controls.
+  Widget _buildMainWidget(){
     _wasLoading = isLoading(_latestValue);
     if (_latestValue?.hasError == true) {
       return Container(
@@ -78,8 +83,8 @@ class _BetterPlayerMaterialControlsState
         _hideStuff
             ? cancelAndRestartTimer()
             : setState(() {
-                _hideStuff = true;
-              });
+          _hideStuff = true;
+        });
       },
       onDoubleTap: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {

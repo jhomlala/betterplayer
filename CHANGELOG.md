@@ -1,5 +1,6 @@
 ## 0.0.73
 * Added licenseUrl support for iOS DRM.
+* Fixed RTL text direction issue in player controls.
 
 ## 0.0.72
 * Updated ExoPlayer version

@@ -416,4 +416,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       },
     );
   }
+
+  ///Builds directionality widget which wraps child widget and forces left to
+  ///right directionality.
+  Widget buildLTRDirectionality(Widget child){
+    return Directionality(textDirection: TextDirection.ltr, child: child);
+  }
+
 }

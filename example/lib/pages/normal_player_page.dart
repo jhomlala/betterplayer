@@ -37,14 +37,13 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       body: Column(
         children: [
           const SizedBox(height: 8),
-          BetterPlayerMultipleGestureDetector(
+          Directionality(
+            textDirection: TextDirection.rtl,
             child: AspectRatio(
               aspectRatio: 16 / 9,
               child: BetterPlayer(controller: _betterPlayerController),
             ),
-            onTap: () {
-              print("Tap!");
-            },
+
           ),
         ],
       ),
