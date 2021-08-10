@@ -1231,7 +1231,7 @@ class BetterPlayerController {
   ///autoDispose parameter will be overridden and controller will be disposed
   ///(if it wasn't disposed before).
   void dispose({bool forceDispose = false}) {
-    if (!betterPlayerConfiguration.autoDispose && !forceDispose) {
+    if (betterPlayerConfiguration.autoDispose && !forceDispose) {
       return;
     }
     if (!_disposed) {
