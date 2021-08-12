@@ -31,5 +31,8 @@ class BetterPlayerBufferingConfiguration {
     this.bufferForPlaybackMs = defaultBufferForPlaybackMs,
     this.bufferForPlaybackAfterRebufferMs =
         defaultBufferForPlaybackAfterRebufferMs,
-  });
+  }) 
+    : assert(minBufferMs < maxBufferMs),
+      assert(minBufferMs >= bufferForPlaybackMs),
+      assert(minBufferMs >= bufferForPlaybackAfterRebufferMs);
 }
