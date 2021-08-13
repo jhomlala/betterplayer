@@ -921,6 +921,12 @@ final class BetterPlayer {
         result.success(null);
     }
 
+    //Download a given asset
+    static void downloadAsset(Context context, String url, Result result) {
+        WorkManager.getInstance(context).cancelAllWorkByTag(url);
+        result.success(null);
+    }
+
     void dispose() {
         disposeMediaSession();
         disposeRemoteNotifications();

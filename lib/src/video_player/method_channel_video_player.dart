@@ -427,6 +427,16 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> downloadAsset(String url) {
+    return _channel.invokeMethod<void>(
+      'downloadAsset',
+      <String, dynamic>{
+        'url': url,
+      },
+    );
+  }
+
+  @override
   Widget buildView(int? textureId) {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       return UiKitView(

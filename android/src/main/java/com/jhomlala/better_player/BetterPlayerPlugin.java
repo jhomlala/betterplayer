@@ -102,6 +102,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String DISPOSE_METHOD = "dispose";
     private static final String PRE_CACHE_METHOD = "preCache";
     private static final String STOP_PRE_CACHE_METHOD = "stopPreCache";
+    private static final String DOWNLOAD_ASSET_METHOD = "downloadAsset";
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
     private final LongSparseArray<Map<String, Object>> dataSources = new LongSparseArray<>();
@@ -191,6 +192,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 break;
             case CLEAR_CACHE_METHOD:
                 clearCache(result);
+                break;
+            case DOWNLOAD_ASSET_METHOD:
+                downloadAsset(call, result);
                 break;
             default: {
                 long textureId = ((Number) call.argument(TEXTURE_ID_PARAMETER)).longValue();
@@ -391,6 +395,11 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private void stopPreCache(MethodCall call, Result result) {
         String url = call.argument(URL_PARAMETER);
         BetterPlayer.stopPreCache(flutterState.applicationContext, url, result);
+    }
+
+    private void downloadAsset(MethodCall call, Result result) {
+        String url = call.argument(URL_PARAMETER);
+        BetterPlayer.downloadAsset(flutterState.applicationContext, url, result);
     }
 
     private void clearCache(Result result) {

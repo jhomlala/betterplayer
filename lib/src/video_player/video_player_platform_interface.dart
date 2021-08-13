@@ -10,7 +10,6 @@ import 'dart:ui';
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-
 // Package imports:
 import 'package:meta/meta.dart' show visibleForTesting;
 
@@ -170,6 +169,14 @@ abstract class VideoPlayerPlatform {
 
   Future<void> clearCache() {
     throw UnimplementedError('clearCache() has not been implemented.');
+  }
+
+  // TODO: return some ID of the downloaded asset?
+  // TODO: stream progress
+  // TODO: support DRM config
+  /// **Android only** Downloads a given network asset.
+  Future<void> downloadAsset(String url) {
+    throw UnimplementedError('downloadAsset() has not been implemented.');
   }
 
   /// Returns a widget displaying the video with a given textureID.
