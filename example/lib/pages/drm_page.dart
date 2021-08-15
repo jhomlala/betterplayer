@@ -48,6 +48,7 @@ class _DrmPageState extends State<DrmPage> {
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.fairplay,
         certificateUrl: Constants.fairplayCertificateUrl,
+        licenseUrl: Constants.fairplayLicenseUrl,
       ),
     );
     _fairplayController.setupDataSource(_fairplayDataSource);

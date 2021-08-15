@@ -15,6 +15,8 @@ NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
 int texturesCount = -1;
+BetterPlayer* _notificationPlayer;
+bool _remoteCommandsInitialized = false;
 
 
 #pragma mark - FlutterPlugin protocol
@@ -82,6 +84,7 @@ int texturesCount = -1;
 }
 
 - (void) setupRemoteNotification :(BetterPlayer*) player{
+    _notificationPlayer = player;
     [self stopOtherUpdateListener:player];
     NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
     BOOL showNotification = false;
@@ -116,6 +119,9 @@ int texturesCount = -1;
 
 
 - (void) setupRemoteCommands:(BetterPlayer*)player  {
+    if (_remoteCommandsInitialized){
+        return;
+    }
     MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
     [commandCenter.togglePlayPauseCommand setEnabled:YES];
     [commandCenter.playCommand setEnabled:YES];
@@ -127,22 +133,28 @@ int texturesCount = -1;
     }
     
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (player.isPlaying){
-            player.eventSink(@{@"event" : @"play"});
-        } else {
-            player.eventSink(@{@"event" : @"pause"});
-            
+        if (_notificationPlayer != [NSNull null]){
+            if (_notificationPlayer.isPlaying){
+                _notificationPlayer.eventSink(@{@"event" : @"play"});
+            } else {
+                _notificationPlayer.eventSink(@{@"event" : @"pause"});
+                
+            }
         }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
     
     [commandCenter.playCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        player.eventSink(@{@"event" : @"play"});
+        if (_notificationPlayer != [NSNull null]){
+            _notificationPlayer.eventSink(@{@"event" : @"play"});
+        }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
     
     [commandCenter.pauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        player.eventSink(@{@"event" : @"pause"});
+        if (_notificationPlayer != [NSNull null]){
+            _notificationPlayer.eventSink(@{@"event" : @"pause"});
+        }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
     
@@ -150,16 +162,18 @@ int texturesCount = -1;
     
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-            
-            MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
-            CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
-            int64_t millis = [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
-            [player seekTo: millis];
-            player.eventSink(@{@"event" : @"seek", @"position": @(millis)});
+            if (_notificationPlayer != [NSNull null]){
+                MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
+                CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
+                int64_t millis = [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
+                [_notificationPlayer seekTo: millis];
+                _notificationPlayer.eventSink(@{@"event" : @"seek", @"position": @(millis)});
+            }
             return MPRemoteCommandHandlerStatusSuccess;
         }];
         
     }
+    _remoteCommandsInitialized = true;
 }
 
 - (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl{
@@ -232,6 +246,10 @@ int texturesCount = -1;
 
 
 - (void) disposeNotificationData: (BetterPlayer*)player{
+    if (player == _notificationPlayer){
+        _notificationPlayer = NULL;
+        _remoteCommandsInitialized = false;
+    }
     NSString* key =  [self getTextureId:player];
     id _timeObserverId = _timeObserverIdDict[key];
     [_timeObserverIdDict removeObjectForKey: key];
@@ -287,7 +305,9 @@ int texturesCount = -1;
             NSString* uriArg = dataSource[@"uri"];
             NSString* key = dataSource[@"key"];
             NSString* certificateUrl = dataSource[@"certificateUrl"];
+            NSString* licenseUrl = dataSource[@"licenseUrl"];
             NSDictionary* headers = dataSource[@"headers"];
+            
             int overriddenDuration = 0;
             if ([dataSource objectForKey:@"overriddenDuration"] != [NSNull null]){
                 overriddenDuration = [dataSource[@"overriddenDuration"] intValue];
@@ -310,9 +330,9 @@ int texturesCount = -1;
                 } else {
                     assetPath = [_registrar lookupKeyForAsset:assetArg];
                 }
-                [player setDataSourceAsset:assetPath withKey:key withCertificateUrl:certificateUrl overriddenDuration:overriddenDuration];
+                [player setDataSourceAsset:assetPath withKey:key withCertificateUrl:certificateUrl withLicenseUrl: licenseUrl overriddenDuration:overriddenDuration];
             } else if (uriArg) {
-                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withCertificateUrl:certificateUrl withHeaders:headers withCache: useCache overriddenDuration:overriddenDuration];
+                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withCertificateUrl:certificateUrl withLicenseUrl: licenseUrl withHeaders:headers withCache: useCache overriddenDuration:overriddenDuration];
             } else {
                 result(FlutterMethodNotImplemented);
             }

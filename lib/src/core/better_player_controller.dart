@@ -213,6 +213,9 @@ class BetterPlayerController {
   ///List of loaded ASMS segments
   final List<String> _asmsSegmentsLoaded = [];
 
+  ///Currently displayed [BetterPlayerSubtitle].
+  BetterPlayerSubtitle? renderedSubtitle;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -441,33 +444,33 @@ class BetterPlayerController {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.network:
         await videoPlayerController?.setNetworkDataSource(
-          betterPlayerDataSource.url,
-          headers: _getHeaders(),
-          useCache:
-              _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
-          maxCacheSize:
-              _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
-          maxCacheFileSize:
-              _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
-                  0,
-          cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
-          showNotification: _betterPlayerDataSource
-              ?.notificationConfiguration?.showNotification,
-          title: _betterPlayerDataSource?.notificationConfiguration?.title,
-          author: _betterPlayerDataSource?.notificationConfiguration?.author,
-          imageUrl:
-              _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
-          notificationChannelName: _betterPlayerDataSource
-              ?.notificationConfiguration?.notificationChannelName,
-          overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-          formatHint: _getVideoFormat(_betterPlayerDataSource!.videoFormat),
-          licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
-          certificateUrl:
-              _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
-          drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
-          activityName:
-              _betterPlayerDataSource?.notificationConfiguration?.activityName,
-        );
+            betterPlayerDataSource.url,
+            headers: _getHeaders(),
+            useCache:
+                _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
+            maxCacheSize:
+                _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
+            maxCacheFileSize:
+                _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
+                    0,
+            cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
+            showNotification: _betterPlayerDataSource
+                ?.notificationConfiguration?.showNotification,
+            title: _betterPlayerDataSource?.notificationConfiguration?.title,
+            author: _betterPlayerDataSource?.notificationConfiguration?.author,
+            imageUrl:
+                _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+            notificationChannelName: _betterPlayerDataSource
+                ?.notificationConfiguration?.notificationChannelName,
+            overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
+            formatHint: _getVideoFormat(_betterPlayerDataSource!.videoFormat),
+            licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
+            certificateUrl:
+                _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
+            drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
+            activityName: _betterPlayerDataSource
+                ?.notificationConfiguration?.activityName,
+            clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey);
 
         break;
       case BetterPlayerDataSourceType.file:
@@ -491,7 +494,8 @@ class BetterPlayerController {
                 ?.notificationConfiguration?.notificationChannelName,
             overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
             activityName: _betterPlayerDataSource
-                ?.notificationConfiguration?.activityName);
+                ?.notificationConfiguration?.activityName,
+            clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey);
         break;
       case BetterPlayerDataSourceType.memory:
         final file = await _createFile(_betterPlayerDataSource!.bytes!,
@@ -510,7 +514,8 @@ class BetterPlayerController {
                   ?.notificationConfiguration?.notificationChannelName,
               overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
               activityName: _betterPlayerDataSource
-                  ?.notificationConfiguration?.activityName);
+                  ?.notificationConfiguration?.activityName,
+              clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey);
           _tempFiles.add(file);
         } else {
           throw ArgumentError("Couldn't create file from memory.");
@@ -1224,7 +1229,9 @@ class BetterPlayerController {
 
   /// Add controller internal event.
   void _postControllerEvent(BetterPlayerControllerEvent event) {
-    _controllerEventStreamController.add(event);
+    if (!_controllerEventStreamController.isClosed) {
+      _controllerEventStreamController.add(event);
+    }
   }
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then

@@ -322,46 +322,46 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// null.
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
-  Future<void> setNetworkDataSource(
-    String dataSource, {
-    VideoFormat? formatHint,
-    Map<String, String?>? headers,
-    bool useCache = false,
-    int? maxCacheSize,
-    int? maxCacheFileSize,
-    String? cacheKey,
-    bool? showNotification,
-    String? title,
-    String? author,
-    String? imageUrl,
-    String? notificationChannelName,
-    Duration? overriddenDuration,
-    String? licenseUrl,
-    String? certificateUrl,
-    Map<String, String>? drmHeaders,
-    String? activityName,
-  }) {
+  /// ClearKey DRM only supported on Android.
+  Future<void> setNetworkDataSource(String dataSource,
+      {VideoFormat? formatHint,
+      Map<String, String?>? headers,
+      bool useCache = false,
+      int? maxCacheSize,
+      int? maxCacheFileSize,
+      String? cacheKey,
+      bool? showNotification,
+      String? title,
+      String? author,
+      String? imageUrl,
+      String? notificationChannelName,
+      Duration? overriddenDuration,
+      String? licenseUrl,
+      String? certificateUrl,
+      Map<String, String>? drmHeaders,
+      String? activityName,
+      String? clearKey}) {
     return _setDataSource(
       DataSource(
-        sourceType: DataSourceType.network,
-        uri: dataSource,
-        formatHint: formatHint,
-        headers: headers,
-        useCache: useCache,
-        maxCacheSize: maxCacheSize,
-        maxCacheFileSize: maxCacheFileSize,
-        cacheKey: cacheKey,
-        showNotification: showNotification,
-        title: title,
-        author: author,
-        imageUrl: imageUrl,
-        notificationChannelName: notificationChannelName,
-        overriddenDuration: overriddenDuration,
-        licenseUrl: licenseUrl,
-        certificateUrl: certificateUrl,
-        drmHeaders: drmHeaders,
-        activityName: activityName,
-      ),
+          sourceType: DataSourceType.network,
+          uri: dataSource,
+          formatHint: formatHint,
+          headers: headers,
+          useCache: useCache,
+          maxCacheSize: maxCacheSize,
+          maxCacheFileSize: maxCacheFileSize,
+          cacheKey: cacheKey,
+          showNotification: showNotification,
+          title: title,
+          author: author,
+          imageUrl: imageUrl,
+          notificationChannelName: notificationChannelName,
+          overriddenDuration: overriddenDuration,
+          licenseUrl: licenseUrl,
+          certificateUrl: certificateUrl,
+          drmHeaders: drmHeaders,
+          activityName: activityName,
+          clearKey: clearKey),
     );
   }
 
@@ -369,16 +369,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// This will load the file from the file-URI given by:
   /// `'file://${file.path}'`.
-  Future<void> setFileDataSource(
-    File file, {
-    bool? showNotification,
-    String? title,
-    String? author,
-    String? imageUrl,
-    String? notificationChannelName,
-    Duration? overriddenDuration,
-    String? activityName,
-  }) {
+  Future<void> setFileDataSource(File file,
+      {bool? showNotification,
+      String? title,
+      String? author,
+      String? imageUrl,
+      String? notificationChannelName,
+      Duration? overriddenDuration,
+      String? activityName,
+      String? clearKey}) {
     return _setDataSource(
       DataSource(
           sourceType: DataSourceType.file,
@@ -389,7 +388,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           imageUrl: imageUrl,
           notificationChannelName: notificationChannelName,
           overriddenDuration: overriddenDuration,
-          activityName: activityName),
+          activityName: activityName,
+          clearKey: clearKey),
     );
   }
 

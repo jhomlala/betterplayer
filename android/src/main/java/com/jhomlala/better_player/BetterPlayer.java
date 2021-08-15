@@ -44,6 +44,7 @@ import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.DummyExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
+import com.google.android.exoplayer2.drm.LocalMediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -111,6 +112,7 @@ final class BetterPlayer {
     private WorkManager workManager;
     private HashMap<UUID, Observer<WorkInfo>> workerObserverMap;
     private CustomDefaultLoadControl customDefaultLoadControl;
+    private long lastSendBufferedPosition = 0L;
 
 
     BetterPlayer(
@@ -147,7 +149,7 @@ final class BetterPlayer {
             Context context, String key, String dataSource, String formatHint, Result result,
             Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
             long overriddenDuration, String licenseUrl, Map<String, String> drmHeaders,
-            String cacheKey) {
+            String cacheKey, String clearKey) {
         this.key = key;
         isInitialized = false;
 
@@ -189,6 +191,16 @@ final class BetterPlayer {
                                     .build(httpMediaDrmCallback);
                 }
             }
+        } else if (clearKey != null && !clearKey.isEmpty()) {
+            if (Util.SDK_INT < 18) {
+                Log.e(TAG, "Protected content not supported on API levels below 18");
+                drmSessionManager = null;
+            } else {
+                drmSessionManager = new DefaultDrmSessionManager.Builder()
+                        .setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER).
+                                build(new LocalMediaDrmCallback(clearKey.getBytes()));
+            }
+
         } else {
             drmSessionManager = null;
         }
@@ -556,8 +568,9 @@ final class BetterPlayer {
         exoPlayer.addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
+                
                 if (playbackState == Player.STATE_BUFFERING) {
-                    sendBufferingUpdate();
+                    sendBufferingUpdate(true);
                     Map<String, Object> event = new HashMap<>();
                     event.put("event", "bufferingStart");
                     eventSink.success(event);
@@ -590,13 +603,17 @@ final class BetterPlayer {
         result.success(reply);
     }
 
-    void sendBufferingUpdate() {
-        Map<String, Object> event = new HashMap<>();
-        event.put("event", "bufferingUpdate");
-        List<? extends Number> range = Arrays.asList(0, exoPlayer.getBufferedPosition());
-        // iOS supports a list of buffered ranges, so here is a list with a single range.
-        event.put("values", Collections.singletonList(range));
-        eventSink.success(event);
+    void sendBufferingUpdate(boolean isFromBufferingStart) {
+        long bufferedPosition = exoPlayer.getBufferedPosition();
+        if (isFromBufferingStart || bufferedPosition != lastSendBufferedPosition) {
+            Map<String, Object> event = new HashMap<>();
+            event.put("event", "bufferingUpdate");
+            List<? extends Number> range = Arrays.asList(0, bufferedPosition);
+            // iOS supports a list of buffered ranges, so here is a list with a single range.
+            event.put("values", Collections.singletonList(range));
+            eventSink.success(event);
+            lastSendBufferedPosition = bufferedPosition;
+        }
     }
 
     private void setAudioAttributes(SimpleExoPlayer exoPlayer, Boolean mixWithOthers) {

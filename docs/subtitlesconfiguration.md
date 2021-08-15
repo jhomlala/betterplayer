@@ -141,3 +141,7 @@ final Color backgroundColor;
 ///Subtitles selected by default, without user interaction
 final bool selectedByDefault;
 ```
+
+## Current subtitle
+
+To get currently displayed subtitle, use `renderedSubtitle` in `BetterPlayerController`.

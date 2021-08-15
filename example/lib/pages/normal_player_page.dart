@@ -18,10 +18,11 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       autoPlay: true,
+      looping: true,
     );
     _betterPlayerDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.elephantDreamVideoUrl,
+      Constants.forBiggerBlazesUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(_betterPlayerDataSource);
@@ -37,14 +38,9 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       body: Column(
         children: [
           const SizedBox(height: 8),
-          BetterPlayerMultipleGestureDetector(
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer(controller: _betterPlayerController),
-            ),
-            onTap: () {
-              print("Tap!");
-            },
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: BetterPlayer(controller: _betterPlayerController),
           ),
         ],
       ),
