@@ -156,11 +156,11 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("DRM", () {
         _navigateToPage(DrmPage());
       }),
+      _buildExampleElementWidget("ClearKey DRM", () {
+        _navigateToPage(ClearKeyPage());
+      }),
       _buildExampleElementWidget("DASH", () {
         _navigateToPage(DashPage());
-      }),
-      _buildExampleElementWidget("ClearKey", () {
-        _navigateToPage(ClearKeyPage());
       }),
     ];
   }

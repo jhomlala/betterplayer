@@ -105,7 +105,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("ClearKey player"),
+        title: Text("ClearKey DRM"),
       ),
       body: SingleChildScrollView(
         child: Column(

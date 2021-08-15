@@ -47,7 +47,7 @@ BetterPlayerDataSource _fairplayDataSource = BetterPlayerDataSource(
 );
 ```
 
-ClearKey:
+ClearKey (only supported in Android):
 
 A ClearKey MP4 file can be generated with MP4Box as follow:
 

@@ -12,6 +12,7 @@
 * Fixed progress bar issue where position could be set above video duration.
 * Fixed iOS remote notification command issue.
 * Removed duplicated page in example app (by https://github.com/pinguluk)
+* Added support for clear key DRM (by https://github.com/tinusneethling)
 
 ## 0.0.72
 * Updated ExoPlayer version
