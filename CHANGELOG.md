@@ -14,6 +14,7 @@
 * Removed duplicated page in example app (by https://github.com/pinguluk)
 * Added support for clear key DRM (by https://github.com/tinusneethling)
 * Refreshed look and feel of the player UI (by https://github.com/creativeblaq)
+* Added `sigmaX` and `sigmaY` parameters in BetterPlayerControlsConfiguration to control blur of cupertino controls (original idea by: https://github.com/YeFei572)
 
 ## 0.0.72
 * Updated ExoPlayer version
