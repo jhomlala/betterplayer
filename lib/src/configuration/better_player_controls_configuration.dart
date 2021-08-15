@@ -1,4 +1,5 @@
 // Dart imports:
+import 'dart:io';
 import 'dart:ui';
 
 // Flutter imports:
@@ -172,14 +173,14 @@ class BetterPlayerControlsConfiguration {
       {this.controlBarColor = Colors.black87,
       this.textColor = Colors.white,
       this.iconsColor = Colors.white,
-      this.playIcon = Icons.play_arrow,
-      this.pauseIcon = Icons.pause,
-      this.muteIcon = Icons.volume_up,
-      this.unMuteIcon = Icons.volume_mute,
-      this.fullscreenEnableIcon = Icons.fullscreen,
-      this.fullscreenDisableIcon = Icons.fullscreen_exit,
-      this.skipBackIcon = Icons.fast_rewind,
-      this.skipForwardIcon = Icons.fast_forward,
+      this.playIcon = Icons.play_arrow_outlined,
+      this.pauseIcon = Icons.pause_outlined,
+      this.muteIcon = Icons.volume_up_outlined,
+      this.unMuteIcon = Icons.volume_off_outlined,
+      this.fullscreenEnableIcon = Icons.fullscreen_outlined,
+      this.fullscreenDisableIcon = Icons.fullscreen_exit_outlined,
+      this.skipBackIcon = Icons.replay_10_outlined,
+      this.skipForwardIcon = Icons.forward_10_outlined,
       this.enableFullscreen = true,
       this.enableMute = true,
       this.enableProgressText = true,
@@ -206,15 +207,15 @@ class BetterPlayerControlsConfiguration {
       this.enablePip = true,
       this.enableRetry = true,
       this.overflowMenuCustomItems = const [],
-      this.overflowMenuIcon = Icons.more_vert,
-      this.pipMenuIcon = Icons.picture_in_picture,
-      this.playbackSpeedIcon = Icons.shutter_speed,
-      this.qualitiesIcon = Icons.hd,
-      this.subtitlesIcon = Icons.text_fields,
-      this.audioTracksIcon = Icons.audiotrack,
+      this.overflowMenuIcon = Icons.more_vert_outlined,
+      this.pipMenuIcon = Icons.picture_in_picture_outlined,
+      this.playbackSpeedIcon = Icons.shutter_speed_outlined,
+      this.qualitiesIcon = Icons.hd_outlined,
+      this.subtitlesIcon = Icons.closed_caption_outlined,
+      this.audioTracksIcon = Icons.audiotrack_outlined,
       this.overflowMenuIconsColor = Colors.black,
-      this.forwardSkipTimeInMilliseconds = 15000,
-      this.backwardSkipTimeInMilliseconds = 15000,
+      this.forwardSkipTimeInMilliseconds = 10000,
+      this.backwardSkipTimeInMilliseconds = 10000,
       this.loadingColor = Colors.white,
       this.loadingWidget,
       this.backgroundColor = Colors.black,
@@ -234,9 +235,12 @@ class BetterPlayerControlsConfiguration {
 
   factory BetterPlayerControlsConfiguration.cupertino() {
     return const BetterPlayerControlsConfiguration(
-        fullscreenEnableIcon: CupertinoIcons.fullscreen,
-        fullscreenDisableIcon: CupertinoIcons.fullscreen_exit,
-        playIcon: CupertinoIcons.play_arrow_solid,
-        pauseIcon: CupertinoIcons.pause_solid);
+      fullscreenEnableIcon: CupertinoIcons.arrow_up_left_arrow_down_right,
+      fullscreenDisableIcon: CupertinoIcons.arrow_down_right_arrow_up_left,
+      playIcon: CupertinoIcons.play_arrow_solid,
+      pauseIcon: CupertinoIcons.pause_solid,
+      skipBackIcon: CupertinoIcons.gobackward_15,
+      skipForwardIcon: CupertinoIcons.goforward_15,
+    );
   }
 }
