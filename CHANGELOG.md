@@ -13,6 +13,7 @@
 * Fixed iOS remote notification command issue.
 * Removed duplicated page in example app (by https://github.com/pinguluk)
 * Added support for clear key DRM (by https://github.com/tinusneethling)
+* Refreshed look and feel of the player UI (by https://github.com/creativeblaq)
 
 ## 0.0.72
 * Updated ExoPlayer version
