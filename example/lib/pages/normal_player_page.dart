@@ -18,7 +18,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       autoPlay: true,
-          looping: true,
+      looping: true,
     );
     _betterPlayerDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -39,8 +39,8 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
         children: [
           const SizedBox(height: 8),
           AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer(controller: _betterPlayerController),
+            aspectRatio: 16 / 9,
+            child: BetterPlayer(controller: _betterPlayerController),
           ),
         ],
       ),

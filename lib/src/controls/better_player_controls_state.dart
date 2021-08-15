@@ -311,9 +311,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final int height = track.height ?? 0;
     final int bitrate = track.bitrate ?? 0;
     final String mimeType = (track.mimeType ?? '').replaceAll('video/', '');
-    final String trackName =
-        preferredName ?? '${width > height ? height : width}p';
-    /*"${width}x$height ${BetterPlayerUtils.formatBitrate(bitrate)} $mimeType";*/
+    final String trackName = preferredName ??
+        "${width}x$height ${BetterPlayerUtils.formatBitrate(bitrate)} $mimeType";
 
     final BetterPlayerAsmsTrack? selectedTrack =
         betterPlayerController!.betterPlayerAsmsTrack;
@@ -461,13 +460,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         return SafeArea(
           top: false,
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               decoration: BoxDecoration(
                 color: betterPlayerControlsConfiguration.overflowModalColor,
                 /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24.0),
                     topRight: Radius.circular(24.0)),
               ),
@@ -489,13 +488,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         return SafeArea(
           top: false,
           child: SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            physics: const BouncingScrollPhysics(),
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               decoration: BoxDecoration(
                 color: betterPlayerControlsConfiguration.overflowModalColor,
                 /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24.0),
                     topRight: Radius.circular(24.0)),
               ),
@@ -511,8 +510,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   ///Builds directionality widget which wraps child widget and forces left to
   ///right directionality.
-  Widget buildLTRDirectionality(Widget child){
+  Widget buildLTRDirectionality(Widget child) {
     return Directionality(textDirection: TextDirection.ltr, child: child);
   }
-
 }

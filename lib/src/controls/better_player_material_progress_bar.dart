@@ -72,7 +72,7 @@ class _VideoProgressBarState
           final Duration position = controller!.value.duration! * relative;
           betterPlayerController!.seekTo(position);
         }
-        if (relative >= 1){
+        if (relative >= 1) {
           betterPlayerController!.seekTo(controller!.value.duration!);
         }
       }
@@ -173,18 +173,18 @@ class _ProgressBarPainter extends CustomPainter {
     }
     double playedPartPercent =
         value.position.inMilliseconds / value.duration!.inMilliseconds;
-    if (playedPartPercent.isNaN){
+    if (playedPartPercent.isNaN) {
       playedPartPercent = 0;
     }
     final double playedPart =
         playedPartPercent > 1 ? size.width : playedPartPercent * size.width;
     for (final DurationRange range in value.buffered) {
       double start = range.startFraction(value.duration!) * size.width;
-      if (start.isNaN){
+      if (start.isNaN) {
         start = 0;
       }
       double end = range.endFraction(value.duration!) * size.width;
-      if (end.isNaN){
+      if (end.isNaN) {
         end = 0;
       }
       canvas.drawRRect(

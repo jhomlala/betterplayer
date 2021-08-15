@@ -9,7 +9,7 @@ class BetterPlayerClearKeyUtils {
   ///The ClearKey from a Map. The key in map should be the kid with the associated value being the key. Both values should be provide in HEX format.
   static String generateKey(Map<String, String> keys,
       {String type = "temporary"}) {
-    Map keyMap = <String, dynamic>{"type": type};
+    final Map keyMap = <String, dynamic>{"type": type};
     keyMap["keys"] = <Map<String, String>>[];
     keys.forEach((key, value) => keyMap["keys"]
         .add({"kty": "oct", "kid": _base64(key), "k": _base64(value)}));
@@ -24,13 +24,14 @@ class BetterPlayerClearKeyUtils {
   }
 
   static Uint8List _encodeBigInt(BigInt number) {
-    int size = (number.bitLength + 7) >> 3;
+    var passedNumber = number;
+    final int size = (number.bitLength + 7) >> 3;
 
     final result = Uint8List(size);
     int pos = size - 1;
     for (int i = 0; i < size; i++) {
-      result[pos--] = (number & _byteMask).toInt();
-      number = number >> 8;
+      result[pos--] = (passedNumber & _byteMask).toInt();
+      passedNumber = passedNumber >> 8;
     }
     return result;
   }

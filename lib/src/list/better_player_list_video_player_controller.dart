@@ -27,7 +27,7 @@ class BetterPlayerListVideoPlayerController {
     _betterPlayerController = betterPlayerController;
   }
 
-  void setMixWithOthers(bool mixWithOthers){
+  void setMixWithOthers(bool mixWithOthers) {
     _betterPlayerController?.setMixWithOthers(mixWithOthers);
   }
 }

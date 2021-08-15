@@ -87,7 +87,7 @@ class _BetterPlayerCupertinoControlsState
     final barHeight = orientation == Orientation.portrait
         ? _controlsConfiguration.controlBarHeight
         : _controlsConfiguration.controlBarHeight + 10;
-    final buttonPadding = 10.0;
+    const buttonPadding = 10.0;
     final sigmaX = _controlsConfiguration.sigmaX;
     final sigmaY = _controlsConfiguration.sigmaY;
 
@@ -563,7 +563,7 @@ class _BetterPlayerCupertinoControlsState
             )
           else
             const SizedBox(),
-          Spacer(),
+          const Spacer(),
           if (_controlsConfiguration.enableMute)
             _buildMuteButton(
               _controller,

@@ -1,5 +1,4 @@
 // Dart imports:
-import 'dart:io';
 import 'dart:ui';
 
 // Flutter imports:

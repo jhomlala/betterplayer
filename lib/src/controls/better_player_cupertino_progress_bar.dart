@@ -72,7 +72,7 @@ class _VideoProgressBarState
           final Duration position = controller!.value.duration! * relative;
           controller!.seekTo(position);
         }
-        if (relative >= 1){
+        if (relative >= 1) {
           betterPlayerController!.seekTo(controller!.value.duration!);
         }
       }

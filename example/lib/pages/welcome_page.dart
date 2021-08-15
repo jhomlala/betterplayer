@@ -211,7 +211,8 @@ class _WelcomePageState extends State<WelcomePage> {
   }
 
   Future _saveAssetEncryptVideoToFile() async {
-    var content = await rootBundle.load("assets/${Constants.fileTestVideoEncryptUrl}");
+    var content =
+        await rootBundle.load("assets/${Constants.fileTestVideoEncryptUrl}");
     final directory = await getApplicationDocumentsDirectory();
     var file = File("${directory.path}/${Constants.fileTestVideoEncryptUrl}");
     file.writeAsBytesSync(content.buffer.asUint8List());
