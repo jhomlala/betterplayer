@@ -101,6 +101,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'certificateUrl': dataSource.certificateUrl,
           'drmHeaders': dataSource.drmHeaders,
           'activityName': dataSource.activityName,
+          'clearKey': dataSource.clearKey
         };
         break;
       case DataSourceType.file:
@@ -116,7 +117,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'imageUrl': dataSource.imageUrl,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName
+          'activityName': dataSource.activityName,
+          'clearKey': dataSource.clearKey
         };
         break;
     }

@@ -230,6 +230,7 @@ class DataSource {
     this.certificateUrl,
     this.drmHeaders,
     this.activityName,
+    this.clearKey
   }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -303,6 +304,8 @@ class DataSource {
   final Map<String, String>? drmHeaders;
 
   final String? activityName;
+
+  final String? clearKey;
 
   /// Key to compare DataSource
   String get key {
