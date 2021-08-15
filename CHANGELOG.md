@@ -11,6 +11,7 @@
 * Fixed broken link in cover page of documentation.
 * Fixed progress bar issue where position could be set above video duration.
 * Fixed iOS remote notification command issue.
+* Removed duplicated page in example app (by https://github.com/pinguluk)
 
 ## 0.0.72
 * Updated ExoPlayer version
