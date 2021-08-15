@@ -127,9 +127,6 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("Overridden aspect ratio", () {
         _navigateToPage(OverriddenAspectRatioPage());
       }),
-      _buildExampleElementWidget("Overridden aspect ratio", () {
-        _navigateToPage(OverriddenAspectRatioPage());
-      }),
       _buildExampleElementWidget("Notifications player", () {
         _navigateToPage(NotificationPlayerPage());
       }),
