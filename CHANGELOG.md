@@ -10,6 +10,7 @@
 * Added `setMixWithOthers` method in `BetterPlayerListVideoPlayerController`.
 * Fixed broken link in cover page of documentation.
 * Fixed progress bar issue where position could be set above video duration.
+* Fixed iOS remote notification command issue.
 
 ## 0.0.72
 * Updated ExoPlayer version
