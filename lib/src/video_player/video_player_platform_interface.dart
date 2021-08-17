@@ -171,12 +171,18 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('clearCache() has not been implemented.');
   }
 
-  // TODO: return some ID of the downloaded asset?
-  // TODO: stream progress
   // TODO: support DRM config
   /// **Android only** Downloads a given network asset.
-  Future<void> downloadAsset(String url) {
+  Future<void> downloadAsset({
+    required String url,
+    required String downloadId,
+  }) {
     throw UnimplementedError('downloadAsset() has not been implemented.');
+  }
+
+  /// **Android only** Returns IDs of downloaded assets
+  Future<List<String>> downloadedAssets() {
+    throw UnimplementedError('downloadedAssets() has not been implemented.');
   }
 
   /// Returns a widget displaying the video with a given textureID.

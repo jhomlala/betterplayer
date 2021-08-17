@@ -19,6 +19,7 @@ import android.view.Surface;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
 import androidx.media.session.MediaButtonReceiver;
 import androidx.work.Data;
@@ -29,6 +30,7 @@ import androidx.work.WorkManager;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
@@ -48,6 +50,9 @@ import com.google.android.exoplayer2.drm.LocalMediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.offline.DownloadHelper;
+import com.google.android.exoplayer2.offline.DownloadRequest;
+import com.google.android.exoplayer2.offline.DownloadService;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -64,9 +69,11 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,6 +89,9 @@ import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import static com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory;
 import static com.jhomlala.better_player.DataSourceUtils.getUserAgent;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 final class BetterPlayer {
     private static final String TAG = "BetterPlayer";
@@ -212,9 +222,16 @@ final class BetterPlayer {
                 dataSourceFactory =
                         new CacheDataSourceFactory(context, maxCacheSize, maxCacheFileSize, dataSourceFactory);
             }
+
         } else {
             dataSourceFactory = new DefaultDataSourceFactory(context, userAgent);
         }
+
+        dataSourceFactory = new CacheDataSource.Factory()
+            .setCache(BetterPlayerDownloadService.getDownloadCache(context))
+            .setUpstreamDataSourceFactory(dataSourceFactory)
+            .setCacheWriteDataSinkFactory(null);
+
 
         MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, cacheKey, context);
         if (overriddenDuration != 0) {
@@ -922,9 +939,55 @@ final class BetterPlayer {
     }
 
     //Download a given asset
-    static void downloadAsset(Context context, String url, Result result) {
-        WorkManager.getInstance(context).cancelAllWorkByTag(url);
-        result.success(null);
+    static void downloadAsset(Context context, String url, String downloadId, Result result) {
+        Log.i(TAG, "About to download " + url);
+        DownloadHelper downloadHelper = DownloadHelper.forMediaItem(
+                context,
+                MediaItem.fromUri(url),
+                null,
+                new DefaultDataSourceFactory(context));
+
+        downloadHelper.prepare(new DownloadHelper.Callback() {
+            @Override
+            public void onPrepared(DownloadHelper helper) {
+                Log.i(TAG, "prepared");
+//                TODO: allow for providing custom data
+                JSONObject json = new JSONObject();
+                try {
+                    json.put("title", "Download like youtube");
+                    json.put("artist", "Promise Ochornma");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                DownloadRequest downloadRequest =
+                        helper.getDownloadRequest(downloadId,
+                                Util.getUtf8Bytes(json.toString()));
+
+                DownloadService.sendAddDownload(
+                        context,
+                        BetterPlayerDownloadService.class,
+                        downloadRequest,
+                       false);
+                Log.i(TAG, "Download sent");
+                DownloadService.sendResumeDownloads(
+                        context,
+                        BetterPlayerDownloadService.class,
+                         false);
+                Log.i(TAG, "Sent resume");
+                Log.i("BetterPlayer", "cache dir " + context.getCacheDir().getPath());
+
+
+                result.success(null);
+            }
+
+            @Override
+            public void onPrepareError(DownloadHelper helper, IOException e) {
+                Log.e(TAG, "Failed prepare");
+            }
+        });
+
+
     }
 
     void dispose() {

@@ -15,7 +15,14 @@ import android.util.LongSparseArray;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.exoplayer2.offline.Download;
+import com.google.android.exoplayer2.offline.DownloadCursor;
+import com.google.android.exoplayer2.offline.DownloadManager;
+
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import io.flutter.embedding.engine.loader.FlutterLoader;
@@ -67,6 +74,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String DRM_HEADERS_PARAMETER = "drmHeaders";
     private static final String DRM_CLEARKEY_PARAMETER = "clearKey";
     private static final String MIX_WITH_OTHERS_PARAMETER = "mixWithOthers";
+    private static final String DOWNLOAD_ID_PARAMETER = "downloadId";
     public static final String URL_PARAMETER = "url";
     public static final String PRE_CACHE_SIZE_PARAMETER = "preCacheSize";
     public static final String MAX_CACHE_SIZE_PARAMETER = "maxCacheSize";
@@ -103,6 +111,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String PRE_CACHE_METHOD = "preCache";
     private static final String STOP_PRE_CACHE_METHOD = "stopPreCache";
     private static final String DOWNLOAD_ASSET_METHOD = "downloadAsset";
+    private static final String GET_DOWNLOADED_ASSETS_METHOD = "downloadedAssets";
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
     private final LongSparseArray<Map<String, Object>> dataSources = new LongSparseArray<>();
@@ -195,6 +204,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 break;
             case DOWNLOAD_ASSET_METHOD:
                 downloadAsset(call, result);
+                break;
+            case GET_DOWNLOADED_ASSETS_METHOD:
+                getDownloadedAssets(result);
                 break;
             default: {
                 long textureId = ((Number) call.argument(TEXTURE_ID_PARAMETER)).longValue();
@@ -399,7 +411,32 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
 
     private void downloadAsset(MethodCall call, Result result) {
         String url = call.argument(URL_PARAMETER);
-        BetterPlayer.downloadAsset(flutterState.applicationContext, url, result);
+        String downloadId = call.argument(DOWNLOAD_ID_PARAMETER);
+        BetterPlayer.downloadAsset(flutterState.applicationContext, url, downloadId, result);
+    }
+
+    private void getDownloadedAssets(Result result) {
+        LinkedList<String> downloadIds = new LinkedList<>();
+
+        try {
+            DownloadCursor downloadCursor =  BetterPlayerDownloadService.getDownloadManager(flutterState.applicationContext).getDownloadIndex().getDownloads();
+            if (downloadCursor.moveToFirst()) {
+                do{
+                    downloadIds.add(downloadCursor.getDownload().request.id);
+                }while (downloadCursor.moveToNext());
+            }
+        } catch (IOException e) {
+            result.error("failed to get downloads index", e.getMessage(), e);
+        }
+
+        result.success(downloadIds);
+
+//        TODO: plug in the download cache
+//        val dataSourceFactory = DefaultDataSourceFactory(context, Util.getUserAgent(context, getString(R.string.app_name)))
+//        val cachedDataSourceFactory =CacheDataSourceFactory((application as App).appContainer.downloadCache, dataSourceFactory)
+//        val mediaSources = ProgressiveMediaSource.Factory(cachedDataSourceFactory).createMediaSource(
+//                Uri.parse(media.url))
+//        player.prepare(mediaSources)
     }
 
     private void clearCache(Result result) {

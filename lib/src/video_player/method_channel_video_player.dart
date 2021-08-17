@@ -427,13 +427,27 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> downloadAsset(String url) {
+  Future<void> downloadAsset({
+    required String url,
+    required String downloadId,
+  }) {
     return _channel.invokeMethod<void>(
       'downloadAsset',
       <String, dynamic>{
         'url': url,
+        'downloadId': downloadId,
       },
     );
+  }
+
+  @override
+  Future<List<String>> downloadedAssets() async {
+    final assets = await _channel.invokeMethod<List<Object?>>(
+      'downloadedAssets',
+      <String, dynamic>{},
+    );
+
+    return assets?.cast<String>() ?? [];
   }
 
   @override
