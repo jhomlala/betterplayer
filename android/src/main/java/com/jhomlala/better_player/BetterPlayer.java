@@ -939,7 +939,7 @@ final class BetterPlayer {
     }
 
     //Download a given asset
-    static void downloadAsset(Context context, String url, String downloadId, Result result) {
+    static void downloadAsset(Context context, String url, String downloadData, Result result) {
         Log.i(TAG, "About to download " + url);
         DownloadHelper downloadHelper = DownloadHelper.forMediaItem(
                 context,
@@ -951,18 +951,8 @@ final class BetterPlayer {
             @Override
             public void onPrepared(DownloadHelper helper) {
                 Log.i(TAG, "prepared");
-//                TODO: allow for providing custom data
-                JSONObject json = new JSONObject();
-                try {
-                    json.put("title", "Download like youtube");
-                    json.put("artist", "Promise Ochornma");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
 
-                DownloadRequest downloadRequest =
-                        helper.getDownloadRequest(downloadId,
-                                Util.getUtf8Bytes(json.toString()));
+                DownloadRequest downloadRequest = helper.getDownloadRequest(url, Util.getUtf8Bytes(downloadData));
 
                 DownloadService.sendAddDownload(
                         context,

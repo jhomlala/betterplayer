@@ -5,6 +5,7 @@
 
 // Dart imports:
 import 'dart:async';
+import 'dart:convert';
 import 'dart:ui';
 
 // Flutter imports:
@@ -429,25 +430,28 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<void> downloadAsset({
     required String url,
-    required String downloadId,
+    Map<String, dynamic> data = const <String, dynamic>{},
   }) {
     return _channel.invokeMethod<void>(
       'downloadAsset',
       <String, dynamic>{
         'url': url,
-        'downloadId': downloadId,
+        'downloadData': jsonEncode(data),
       },
     );
   }
 
   @override
-  Future<List<String>> downloadedAssets() async {
-    final assets = await _channel.invokeMethod<List<Object?>>(
+  Future<Map<String, Map<String, dynamic>>> downloadedAssets() async {
+    final assets = await _channel.invokeMapMethod<String, String>(
       'downloadedAssets',
       <String, dynamic>{},
     );
 
-    return assets?.cast<String>() ?? [];
+    return assets?.map(
+          (k, v) => MapEntry(k, jsonDecode(v) as Map<String, dynamic>),
+        ) ??
+        const {};
   }
 
   @override
