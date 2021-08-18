@@ -66,12 +66,12 @@ public class BetterPlayerDownloadService extends DownloadService {
         return new DownloadNotificationHelper(this, "better_player_download_channel").buildProgressNotification(this,
                 R.drawable.exo_notification_small_icon,
                 null,
-                "whatever" ,
+                null,
                 downloads);
     }
 
-    static DownloadManager getDownloadManager(Context context) {
-        if(downloadManager == null) {
+    synchronized static DownloadManager getDownloadManager(Context context) {
+        if (downloadManager == null) {
             downloadManager = new DownloadManager(
                     context,
                     getDatabaseProvider(context),
@@ -80,12 +80,11 @@ public class BetterPlayerDownloadService extends DownloadService {
                     Runnable::run);
             downloadManager.setMaxParallelDownloads(3);
         }
-
         return downloadManager;
     }
 
-    static Cache getDownloadCache(Context context) {
-        if(downloadCache == null) {
+    synchronized static Cache getDownloadCache(Context context) {
+        if (downloadCache == null) {
             downloadCache = new SimpleCache(
 //                TODO: change to a non cache dir
                     new File(context.getCacheDir(), "BetterPlayerDownloads"),
@@ -96,13 +95,14 @@ public class BetterPlayerDownloadService extends DownloadService {
         return downloadCache;
     }
 
-    static ExoDatabaseProvider getDatabaseProvider(Context context) {
-        if(databaseProvider == null) {
-           databaseProvider = new ExoDatabaseProvider(context);
+    synchronized static ExoDatabaseProvider getDatabaseProvider(Context context) {
+        if (databaseProvider == null) {
+            databaseProvider = new ExoDatabaseProvider(context);
         }
 
         return databaseProvider;
     }
+
 
 //    /**
 //     * Creates and displays notifications for downloads when they complete or fail.

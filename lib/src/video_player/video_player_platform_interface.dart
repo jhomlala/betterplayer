@@ -173,12 +173,19 @@ abstract class VideoPlayerPlatform {
 
   // TODO: support DRM config
   /// **Android only** Downloads a given network asset.
-  /// Provided data will be associated with this download and later returned by [downloadedAssets]
-  Future<void> downloadAsset({
+  /// Provided data will be associated with this download and later returned by [downloadedAssets].
+  /// Streams the progress in percentages
+  Stream<double> downloadAsset({
     required String url,
     Map<String, dynamic> data = const <String, dynamic>{},
   }) {
     throw UnimplementedError('downloadAsset() has not been implemented.');
+  }
+
+  /// **Android only** Removes an existing downloaded asset
+  /// If asset does not exist, this call is ignored
+  Future<void> removeAsset(String url) {
+    throw UnimplementedError('removeAsset() has not been implemented.');
   }
 
   /// **Android only** Returns a Map of downloaded assets

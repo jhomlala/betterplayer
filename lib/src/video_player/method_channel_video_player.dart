@@ -428,15 +428,33 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> downloadAsset({
+  Stream<double> downloadAsset({
     required String url,
     Map<String, dynamic> data = const <String, dynamic>{},
-  }) {
-    return _channel.invokeMethod<void>(
+  }) async* {
+    await _channel.invokeMethod<void>(
       'downloadAsset',
       <String, dynamic>{
         'url': url,
         'downloadData': jsonEncode(data),
+      },
+    );
+
+    final downloadEvents = EventChannel(
+      'better_player_channel/downloadEvents$url',
+    );
+
+    await for (final event in downloadEvents.receiveBroadcastStream()) {
+      yield event as double;
+    }
+  }
+
+  @override
+  Future<void> removeAsset(String url) {
+    return _channel.invokeMethod<void>(
+      'removeAsset',
+      <String, dynamic>{
+        'url': url,
       },
     );
   }

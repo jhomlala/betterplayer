@@ -11,6 +11,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -50,7 +51,9 @@ import com.google.android.exoplayer2.drm.LocalMediaDrmCallback;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.offline.Download;
 import com.google.android.exoplayer2.offline.DownloadHelper;
+import com.google.android.exoplayer2.offline.DownloadManager;
 import com.google.android.exoplayer2.offline.DownloadRequest;
 import com.google.android.exoplayer2.offline.DownloadService;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
@@ -79,6 +82,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import io.flutter.plugin.common.EventChannel;
@@ -228,9 +233,9 @@ final class BetterPlayer {
         }
 
         dataSourceFactory = new CacheDataSource.Factory()
-            .setCache(BetterPlayerDownloadService.getDownloadCache(context))
-            .setUpstreamDataSourceFactory(dataSourceFactory)
-            .setCacheWriteDataSinkFactory(null);
+                .setCache(BetterPlayerDownloadService.getDownloadCache(context))
+                .setUpstreamDataSourceFactory(dataSourceFactory)
+                .setCacheWriteDataSinkFactory(null);
 
 
         MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, cacheKey, context);
@@ -585,7 +590,7 @@ final class BetterPlayer {
         exoPlayer.addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
-                
+
                 if (playbackState == Player.STATE_BUFFERING) {
                     sendBufferingUpdate(true);
                     Map<String, Object> event = new HashMap<>();
@@ -939,7 +944,7 @@ final class BetterPlayer {
     }
 
     //Download a given asset
-    static void downloadAsset(Context context, String url, String downloadData, Result result) {
+    static void downloadAsset(Context context, String url, String downloadData, EventChannel eventChannel, Result result) {
         Log.i(TAG, "About to download " + url);
         DownloadHelper downloadHelper = DownloadHelper.forMediaItem(
                 context,
@@ -950,7 +955,19 @@ final class BetterPlayer {
         downloadHelper.prepare(new DownloadHelper.Callback() {
             @Override
             public void onPrepared(DownloadHelper helper) {
-                Log.i(TAG, "prepared");
+                QueuingEventSink eventSink = new QueuingEventSink();
+
+                eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+                    @Override
+                    public void onListen(Object o, EventChannel.EventSink sink) {
+                        eventSink.setDelegate(sink);
+                    }
+
+                    @Override
+                    public void onCancel(Object o) {
+                        eventSink.setDelegate(null);
+                    }
+                });
 
                 DownloadRequest downloadRequest = helper.getDownloadRequest(url, Util.getUtf8Bytes(downloadData));
 
@@ -958,15 +975,43 @@ final class BetterPlayer {
                         context,
                         BetterPlayerDownloadService.class,
                         downloadRequest,
-                       false);
-                Log.i(TAG, "Download sent");
-                DownloadService.sendResumeDownloads(
-                        context,
-                        BetterPlayerDownloadService.class,
-                         false);
-                Log.i(TAG, "Sent resume");
-                Log.i("BetterPlayer", "cache dir " + context.getCacheDir().getPath());
+                        false);
 
+                Handler handler = new Handler(Looper.getMainLooper());
+
+                DownloadManager downloadManager = BetterPlayerDownloadService.getDownloadManager(context);
+
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        try {
+                            Download curr = downloadManager.getDownloadIndex().getDownload(url);
+                            if (curr != null && curr.state == Download.STATE_COMPLETED) {
+                                cancel();
+                                handler.post(() -> {
+                                    eventSink.success(100f);
+                                    eventSink.endOfStream();
+                                });
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+//                        getCurrentDownloads is used because it stores much more accurate progress percentage
+                        List<Download> downloads = downloadManager.getCurrentDownloads();
+                        Download download = null;
+                        for (Download d : downloads) {
+                            if (d.request.id.equals(url)) {
+                                download = d;
+                                break;
+                            }
+                        }
+                        if (download == null) return;
+
+                        float progress = download.getPercentDownloaded();
+                        handler.post(() -> eventSink.success(progress));
+                    }
+                }, 0, 1000);
 
                 result.success(null);
             }
@@ -1016,6 +1061,3 @@ final class BetterPlayer {
     }
 
 }
-
-
-

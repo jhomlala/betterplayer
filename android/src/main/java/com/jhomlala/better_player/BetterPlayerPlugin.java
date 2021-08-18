@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import com.google.android.exoplayer2.offline.Download;
 import com.google.android.exoplayer2.offline.DownloadCursor;
 import com.google.android.exoplayer2.offline.DownloadManager;
+import com.google.android.exoplayer2.offline.DownloadService;
 import com.google.android.exoplayer2.util.Util;
 
 import org.json.JSONException;
@@ -49,6 +50,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String TAG = "BetterPlayerPlugin";
     private static final String CHANNEL = "better_player_channel";
     private static final String EVENTS_CHANNEL = "better_player_channel/videoEvents";
+    private static final String DOWNLOAD_EVENTS_CHANNEL = "better_player_channel/downloadEvents";
     private static final String DATA_SOURCE_PARAMETER = "dataSource";
     private static final String KEY_PARAMETER = "key";
     private static final String HEADERS_PARAMETER = "headers";
@@ -116,6 +118,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String PRE_CACHE_METHOD = "preCache";
     private static final String STOP_PRE_CACHE_METHOD = "stopPreCache";
     private static final String DOWNLOAD_ASSET_METHOD = "downloadAsset";
+    private static final String REMOVE_ASSET_METHOD = "removeAsset";
     private static final String GET_DOWNLOADED_ASSETS_METHOD = "downloadedAssets";
 
     private final LongSparseArray<BetterPlayer> videoPlayers = new LongSparseArray<>();
@@ -209,6 +212,9 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 break;
             case DOWNLOAD_ASSET_METHOD:
                 downloadAsset(call, result);
+                break;
+            case REMOVE_ASSET_METHOD:
+                removeAsset(call, result);
                 break;
             case GET_DOWNLOADED_ASSETS_METHOD:
                 getDownloadedAssets(result);
@@ -417,12 +423,28 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private void downloadAsset(MethodCall call, Result result) {
         String url = call.argument(URL_PARAMETER);
         String downloadData = call.argument(DOWNLOAD_DATA_PARAMETER);
-        BetterPlayer.downloadAsset(flutterState.applicationContext, url, downloadData, result);
+
+        EventChannel eventChannel =
+                new EventChannel(flutterState.binaryMessenger, DOWNLOAD_EVENTS_CHANNEL + url);
+
+
+        BetterPlayer.downloadAsset(flutterState.applicationContext, url, downloadData, eventChannel, result);
+    }
+
+    private void removeAsset(MethodCall call, Result result) {
+        String url = call.argument(URL_PARAMETER);
+
+        DownloadService.sendRemoveDownload(
+                flutterState.applicationContext,
+                BetterPlayerDownloadService.class,
+                url,
+                false);
+
+        result.success(null);
     }
 
     private void getDownloadedAssets(Result result) {
         LinkedHashMap<String, String> downloads = new LinkedHashMap<>();
-
 
         try {
             DownloadCursor downloadCursor =  BetterPlayerDownloadService.getDownloadManager(flutterState.applicationContext).getDownloadIndex().getDownloads();

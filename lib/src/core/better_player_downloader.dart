@@ -6,7 +6,7 @@ import 'package:better_player/src/video_player/video_player_platform_interface.d
 // TODO: support DRM config
 // TODO: remove before downloading if already exists?
 class BetterPlayerDownloader {
-  static Future<void> download({
+  static Stream<double> download({
     required String url,
     Map<String, dynamic> data = const <String, dynamic>{},
   }) {
@@ -14,6 +14,10 @@ class BetterPlayerDownloader {
       url: url,
       data: data,
     );
+  }
+
+  static Future<void> remove(String url) {
+    return VideoPlayerPlatform.instance.removeAsset(url);
   }
 
   static Future<Map<String, Map<String, dynamic>>> downloadedAssets() {
