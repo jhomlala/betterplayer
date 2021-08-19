@@ -1,3 +1,4 @@
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
 // TODO: get all downloaded assets
@@ -9,10 +10,12 @@ class BetterPlayerDownloader {
   static Stream<double> download({
     required String url,
     Map<String, dynamic> data = const <String, dynamic>{},
+    BetterPlayerDrmConfiguration? drmConfiguration,
   }) {
     return VideoPlayerPlatform.instance.downloadAsset(
       url: url,
       data: data,
+      drmConfiguration: drmConfiguration,
     );
   }
 

@@ -7,6 +7,7 @@ import 'dart:async';
 import 'dart:ui';
 
 // Flutter imports:
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -171,13 +172,13 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('clearCache() has not been implemented.');
   }
 
-  // TODO: support DRM config
   /// **Android only** Downloads a given network asset.
   /// Provided data will be associated with this download and later returned by [downloadedAssets].
   /// Streams the progress in percentages
   Stream<double> downloadAsset({
     required String url,
     Map<String, dynamic> data = const <String, dynamic>{},
+    BetterPlayerDrmConfiguration? drmConfiguration,
   }) {
     throw UnimplementedError('downloadAsset() has not been implemented.');
   }

@@ -9,6 +9,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 // Flutter imports:
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:flutter/foundation.dart';
@@ -431,12 +432,21 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   Stream<double> downloadAsset({
     required String url,
     Map<String, dynamic> data = const <String, dynamic>{},
+    BetterPlayerDrmConfiguration? drmConfiguration,
   }) async* {
+    assert(
+      drmConfiguration == null ||
+          drmConfiguration.drmType == BetterPlayerDrmType.widevine,
+      'Downloading assets with drm is only supported for widevine.',
+    );
+
     await _channel.invokeMethod<void>(
       'downloadAsset',
       <String, dynamic>{
         'url': url,
         'downloadData': jsonEncode(data),
+        'licenseUrl': drmConfiguration?.licenseUrl,
+        'drmHeaders': drmConfiguration?.headers ?? {},
       },
     );
 

@@ -423,12 +423,13 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private void downloadAsset(MethodCall call, Result result) {
         String url = call.argument(URL_PARAMETER);
         String downloadData = call.argument(DOWNLOAD_DATA_PARAMETER);
+        String licenseUrl = call.argument(LICENSE_URL_PARAMETER);
+        HashMap<String, String> drmHeaders  = call.argument(DRM_HEADERS_PARAMETER);
 
         EventChannel eventChannel =
                 new EventChannel(flutterState.binaryMessenger, DOWNLOAD_EVENTS_CHANNEL + url);
 
-
-        BetterPlayer.downloadAsset(flutterState.applicationContext, url, downloadData, eventChannel, result);
+        BetterPlayer.downloadAsset(flutterState.applicationContext, url, downloadData, licenseUrl, drmHeaders, eventChannel, result);
     }
 
     private void removeAsset(MethodCall call, Result result) {
