@@ -87,10 +87,6 @@ import static com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory;
 
 final class BetterPlayer {
     private static final String TAG = "BetterPlayer";
-    private static final String FORMAT_SS = "ss";
-    private static final String FORMAT_DASH = "dash";
-    private static final String FORMAT_HLS = "hls";
-    private static final String FORMAT_OTHER = "other";
     private static final String DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION";
     private static final int NOTIFICATION_ID = 20772077;
 
@@ -449,7 +445,7 @@ final class BetterPlayer {
 
     private MediaSource buildMediaSource(Uri uri, DataSource.Factory mediaDataSourceFactory, String formatHint,
                                          String cacheKey, Context context) {
-        int type = getContentType(uri, formatHint);
+        int type = DataSourceUtils.getContentType(uri, formatHint);
 
         MediaItem mediaItem;
         Download download = BetterPlayerDownloadHelper.getDownload(context, uri.toString());
@@ -863,66 +859,6 @@ final class BetterPlayer {
     static void stopPreCache(Context context, String url, Result result) {
         WorkManager.getInstance(context).cancelAllWorkByTag(url);
         result.success(null);
-    }
-
-    // Download a given asset
-    static void downloadAsset(Context context, String url, String downloadData, String licenseUrl,
-                              HashMap<String, String> drmHeaders, String formatHint, EventChannel eventChannel, Result result) {
-        MediaItem.Builder mediaItemBuilder = new MediaItem.Builder()
-                .setUri(url)
-//                TODO: check if it is even needed
-                .setMediaMetadata(new MediaMetadata.Builder().setTitle(url).build())
-                .setMimeType(Util.getAdaptiveMimeTypeForContentType(getContentType(url, formatHint)));
-
-        if (licenseUrl != null) {
-            mediaItemBuilder
-                    .setDrmLicenseUri(licenseUrl)
-                    .setDrmUuid(C.WIDEVINE_UUID)
-                    .setDrmLicenseRequestHeaders(drmHeaders);
-        }
-
-        QueuingEventSink eventSink = new QueuingEventSink();
-
-        eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
-            @Override
-            public void onListen(Object o, EventChannel.EventSink sink) {
-                eventSink.setDelegate(sink);
-            }
-
-            @Override
-            public void onCancel(Object o) {
-                eventSink.setDelegate(null);
-            }
-        });
-
-        BetterPlayerDownloadHelper.addDownload(context, mediaItemBuilder.build(), eventSink, downloadData, () -> result.success(null));
-    }
-
-    static private int getContentType(Uri uri, @Nullable String formatHint) {
-        if (formatHint == null) {
-            String lastPathSegment = uri.getLastPathSegment();
-            if (lastPathSegment == null) {
-                lastPathSegment = "";
-            }
-            return Util.inferContentType(lastPathSegment);
-        }
-
-        switch (formatHint) {
-            case FORMAT_SS:
-                return C.TYPE_SS;
-            case FORMAT_DASH:
-                return C.TYPE_DASH;
-            case FORMAT_HLS:
-                return C.TYPE_HLS;
-            case FORMAT_OTHER:
-                return C.TYPE_OTHER;
-            default:
-                return -1;
-        }
-    }
-
-    static private int getContentType(String url, @Nullable String formatHint) {
-        return getContentType(Uri.parse(url), formatHint);
     }
 
     void dispose() {

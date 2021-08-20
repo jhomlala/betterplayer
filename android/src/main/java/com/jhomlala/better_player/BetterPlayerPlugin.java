@@ -15,6 +15,9 @@ import android.util.LongSparseArray;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.offline.Download;
 import com.google.android.exoplayer2.util.Util;
 
@@ -424,7 +427,39 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         EventChannel eventChannel =
                 new EventChannel(flutterState.binaryMessenger, DOWNLOAD_EVENTS_CHANNEL + url);
 
-        BetterPlayer.downloadAsset(flutterState.applicationContext, url, downloadData, licenseUrl, drmHeaders, formatHint, eventChannel, result);
+        MediaItem.Builder mediaItemBuilder = new MediaItem.Builder()
+                .setUri(url)
+//                TODO: check if it is even needed
+                .setMediaMetadata(new MediaMetadata.Builder().setTitle(url).build())
+                .setMimeType(Util.getAdaptiveMimeTypeForContentType(DataSourceUtils.getContentType(url, formatHint)));
+
+        if (licenseUrl != null) {
+            mediaItemBuilder
+                    .setDrmLicenseUri(licenseUrl)
+                    .setDrmUuid(C.WIDEVINE_UUID)
+                    .setDrmLicenseRequestHeaders(drmHeaders);
+        }
+
+        QueuingEventSink eventSink = new QueuingEventSink();
+
+        eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object o, EventChannel.EventSink sink) {
+                eventSink.setDelegate(sink);
+            }
+
+            @Override
+            public void onCancel(Object o) {
+                eventSink.setDelegate(null);
+            }
+        });
+
+        BetterPlayerDownloadHelper.addDownload(
+                flutterState.applicationContext,
+                mediaItemBuilder.build(),
+                eventSink,
+                downloadData,
+                () -> result.success(null));
     }
 
     private void removeAsset(MethodCall call, Result result) {

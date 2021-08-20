@@ -2,15 +2,23 @@ package com.jhomlala.better_player;
 
 import android.net.Uri;
 
+import androidx.annotation.Nullable;
+
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+import com.google.android.exoplayer2.util.Util;
 
 import java.util.Map;
 
 class DataSourceUtils {
-
     private static final String USER_AGENT = "User-Agent";
     private static final String USER_AGENT_PROPERTY = "http.agent";
+
+    private static final String FORMAT_SS = "ss";
+    private static final String FORMAT_DASH = "dash";
+    private static final String FORMAT_HLS = "hls";
+    private static final String FORMAT_OTHER = "other";
 
     static String getUserAgent(Map<String, String> headers) {
         String userAgent = System.getProperty(USER_AGENT_PROPERTY);
@@ -42,5 +50,32 @@ class DataSourceUtils {
         }
         String scheme = uri.getScheme();
         return scheme.equals("http") || scheme.equals("https");
+    }
+
+    static public int getContentType(Uri uri, @Nullable String formatHint) {
+        if (formatHint == null) {
+            String lastPathSegment = uri.getLastPathSegment();
+            if (lastPathSegment == null) {
+                lastPathSegment = "";
+            }
+            return Util.inferContentType(lastPathSegment);
+        }
+
+        switch (formatHint) {
+            case FORMAT_SS:
+                return C.TYPE_SS;
+            case FORMAT_DASH:
+                return C.TYPE_DASH;
+            case FORMAT_HLS:
+                return C.TYPE_HLS;
+            case FORMAT_OTHER:
+                return C.TYPE_OTHER;
+            default:
+                return -1;
+        }
+    }
+
+    static public int getContentType(String url, @Nullable String formatHint) {
+        return getContentType(Uri.parse(url), formatHint);
     }
 }
