@@ -179,6 +179,7 @@ abstract class VideoPlayerPlatform {
     required String url,
     Map<String, dynamic> data = const <String, dynamic>{},
     BetterPlayerDrmConfiguration? drmConfiguration,
+    BetterPlayerVideoFormat? videoFormat,
   }) {
     throw UnimplementedError('downloadAsset() has not been implemented.');
   }

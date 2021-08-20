@@ -35,7 +35,7 @@ public class ImageWorker extends Worker {
             if (imageUrl == null) {
                 return Result.failure();
             }
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             if (DataSourceUtils.isHTTP(Uri.parse(imageUrl))) {
                 bitmap = getBitmapFromExternalURL(imageUrl);
             } else {

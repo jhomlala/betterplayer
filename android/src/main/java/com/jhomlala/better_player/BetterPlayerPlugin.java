@@ -16,18 +16,12 @@ import android.util.LongSparseArray;
 import androidx.annotation.NonNull;
 
 import com.google.android.exoplayer2.offline.Download;
-import com.google.android.exoplayer2.offline.DownloadCursor;
-import com.google.android.exoplayer2.offline.DownloadManager;
-import com.google.android.exoplayer2.offline.DownloadService;
 import com.google.android.exoplayer2.util.Util;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -333,7 +327,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 assetLookupKey = flutterState.keyForAsset.get(asset);
             }
 
-                       player.setDataSource(
+            player.setDataSource(
                     flutterState.applicationContext,
                     key,
                     "asset:///" + assetLookupKey,
@@ -424,42 +418,36 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
         String url = call.argument(URL_PARAMETER);
         String downloadData = call.argument(DOWNLOAD_DATA_PARAMETER);
         String licenseUrl = call.argument(LICENSE_URL_PARAMETER);
-        HashMap<String, String> drmHeaders  = call.argument(DRM_HEADERS_PARAMETER);
+        String formatHint = call.argument(FORMAT_HINT_PARAMETER);
+        HashMap<String, String> drmHeaders = call.argument(DRM_HEADERS_PARAMETER);
 
         EventChannel eventChannel =
                 new EventChannel(flutterState.binaryMessenger, DOWNLOAD_EVENTS_CHANNEL + url);
 
-        BetterPlayer.downloadAsset(flutterState.applicationContext, url, downloadData, licenseUrl, drmHeaders, eventChannel, result);
+        BetterPlayer.downloadAsset(flutterState.applicationContext, url, downloadData, licenseUrl, drmHeaders, formatHint, eventChannel, result);
     }
 
     private void removeAsset(MethodCall call, Result result) {
         String url = call.argument(URL_PARAMETER);
 
-        DownloadService.sendRemoveDownload(
-                flutterState.applicationContext,
-                BetterPlayerDownloadService.class,
-                url,
-                false);
+        BetterPlayerDownloadHelper.removeDownload(flutterState.applicationContext, url);
 
         result.success(null);
     }
 
     private void getDownloadedAssets(Result result) {
-        LinkedHashMap<String, String> downloads = new LinkedHashMap<>();
-
         try {
-            DownloadCursor downloadCursor =  BetterPlayerDownloadService.getDownloadManager(flutterState.applicationContext).getDownloadIndex().getDownloads();
-            if (downloadCursor.moveToFirst()) {
-                do{
-                    Download curr = downloadCursor.getDownload();
-                    downloads.put(curr.request.id, Util.fromUtf8Bytes(curr.request.data));
-                }while (downloadCursor.moveToNext());
+            List<Download> downloads = BetterPlayerDownloadHelper.listDownloads(flutterState.applicationContext);
+
+            Map<String, String> downloadsMap = new LinkedHashMap<>();
+            for (Download d : downloads) {
+                downloadsMap.put(d.request.id, Util.fromUtf8Bytes(d.request.data));
             }
+
+            result.success(downloadsMap);
         } catch (IOException e) {
             result.error("failed to get downloads index", e.getMessage(), e);
         }
-
-        result.success(downloads);
     }
 
     private void clearCache(Result result) {

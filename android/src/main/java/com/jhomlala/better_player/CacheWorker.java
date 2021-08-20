@@ -25,7 +25,7 @@ import java.util.Objects;
  */
 public class CacheWorker extends Worker {
     private static final String TAG = "CacheWorker";
-    private Context mContext;
+    private final Context mContext;
     private CacheWriter mCacheWriter;
     private int mLastCacheReportIndex = 0;
 
@@ -72,13 +72,13 @@ public class CacheWorker extends Worker {
                         dataSpec,
                         null,
                         (long requestLength, long bytesCached, long newBytesCached) -> {
-                                double completedData = ((bytesCached * 100f) / preCacheSize);
-                                if (completedData >= mLastCacheReportIndex * 10) {
-                                    mLastCacheReportIndex += 1;
-                                    Log.d(TAG, "Completed pre cache of " + url + ": " + (int) completedData + "%");
-                                }
+                            double completedData = ((bytesCached * 100f) / preCacheSize);
+                            if (completedData >= mLastCacheReportIndex * 10) {
+                                mLastCacheReportIndex += 1;
+                                Log.d(TAG, "Completed pre cache of " + url + ": " + (int) completedData + "%");
                             }
-                        );
+                        }
+                );
 
                 mCacheWriter.cache();
             } else {

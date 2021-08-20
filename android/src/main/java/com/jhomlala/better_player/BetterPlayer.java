@@ -11,7 +11,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
@@ -20,7 +19,6 @@ import android.view.Surface;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.lifecycle.Observer;
 import androidx.media.session.MediaButtonReceiver;
 import androidx.work.Data;
@@ -31,7 +29,6 @@ import androidx.work.WorkManager;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ControlDispatcher;
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
@@ -44,23 +41,15 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.audio.AudioAttributes;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
-import com.google.android.exoplayer2.drm.DrmInitData;
-import com.google.android.exoplayer2.drm.DrmSession;
-import com.google.android.exoplayer2.drm.DrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.drm.DummyExoMediaDrm;
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm;
 import com.google.android.exoplayer2.drm.HttpMediaDrmCallback;
 import com.google.android.exoplayer2.drm.LocalMediaDrmCallback;
-import com.google.android.exoplayer2.drm.OfflineLicenseHelper;
 import com.google.android.exoplayer2.drm.UnsupportedDrmException;
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.offline.Download;
-import com.google.android.exoplayer2.offline.DownloadHelper;
-import com.google.android.exoplayer2.offline.DownloadManager;
-import com.google.android.exoplayer2.offline.DownloadRequest;
-import com.google.android.exoplayer2.offline.DownloadService;
 import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
@@ -77,20 +66,15 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 import io.flutter.plugin.common.EventChannel;
@@ -100,10 +84,6 @@ import io.flutter.view.TextureRegistry;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_ALL;
 import static com.google.android.exoplayer2.Player.REPEAT_MODE_OFF;
 import static com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory;
-import static com.jhomlala.better_player.DataSourceUtils.getUserAgent;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 final class BetterPlayer {
     private static final String TAG = "BetterPlayer";
@@ -119,7 +99,6 @@ final class BetterPlayer {
     private final QueuingEventSink eventSink = new QueuingEventSink();
     private final EventChannel eventChannel;
     private final DefaultTrackSelector trackSelector;
-    private final LoadControl loadControl;
 
     private boolean isInitialized = false;
     private Surface surface;
@@ -131,24 +110,23 @@ final class BetterPlayer {
     private Bitmap bitmap;
     private MediaSessionCompat mediaSession;
     private DrmSessionManager drmSessionManager;
-    private WorkManager workManager;
-    private HashMap<UUID, Observer<WorkInfo>> workerObserverMap;
-    private CustomDefaultLoadControl customDefaultLoadControl;
+    private final WorkManager workManager;
+    private final HashMap<UUID, Observer<WorkInfo>> workerObserverMap;
     private long lastSendBufferedPosition = 0L;
 
     BetterPlayer(Context context, EventChannel eventChannel, TextureRegistry.SurfaceTextureEntry textureEntry,
-            CustomDefaultLoadControl customDefaultLoadControl, Result result) {
+                 CustomDefaultLoadControl customDefaultLoadControl, Result result) {
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
         trackSelector = new DefaultTrackSelector(context);
 
-        this.customDefaultLoadControl = customDefaultLoadControl != null ? customDefaultLoadControl
+        CustomDefaultLoadControl customDefaultLoadControl1 = customDefaultLoadControl != null ? customDefaultLoadControl
                 : new CustomDefaultLoadControl();
         DefaultLoadControl.Builder loadBuilder = new DefaultLoadControl.Builder();
-        loadBuilder.setBufferDurationsMs(this.customDefaultLoadControl.minBufferMs,
-                this.customDefaultLoadControl.maxBufferMs, this.customDefaultLoadControl.bufferForPlaybackMs,
-                this.customDefaultLoadControl.bufferForPlaybackAfterRebufferMs);
-        loadControl = loadBuilder.build();
+        loadBuilder.setBufferDurationsMs(customDefaultLoadControl1.minBufferMs,
+                customDefaultLoadControl1.maxBufferMs, customDefaultLoadControl1.bufferForPlaybackMs,
+                customDefaultLoadControl1.bufferForPlaybackAfterRebufferMs);
+        LoadControl loadControl = loadBuilder.build();
 
         exoPlayer = new SimpleExoPlayer.Builder(context).setTrackSelector(trackSelector).setLoadControl(loadControl)
                 .build();
@@ -159,9 +137,9 @@ final class BetterPlayer {
     }
 
     void setDataSource(Context context, String key, String dataSource, String formatHint, Result result,
-            Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
-            long overriddenDuration, String licenseUrl, Map<String, String> drmHeaders, String cacheKey,
-            String clearKey) {
+                       Map<String, String> headers, boolean useCache, long maxCacheSize, long maxCacheFileSize,
+                       long overriddenDuration, String licenseUrl, Map<String, String> drmHeaders, String cacheKey,
+                       String clearKey) {
         this.key = key;
         isInitialized = false;
 
@@ -226,8 +204,9 @@ final class BetterPlayer {
         }
 
         dataSourceFactory = new CacheDataSource.Factory()
-                .setCache(BetterPlayerDownloadService.getDownloadCache(context))
-                .setUpstreamDataSourceFactory(dataSourceFactory).setCacheWriteDataSinkFactory(null);
+                .setCache(BetterPlayerDownloadHelper.getDownloadCache(context))
+                .setUpstreamDataSourceFactory(dataSourceFactory)
+                .setCacheWriteDataSinkFactory(null);
 
         MediaSource mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, cacheKey, context);
         if (overriddenDuration != 0) {
@@ -243,7 +222,7 @@ final class BetterPlayer {
     }
 
     public void setupPlayerNotification(Context context, String title, String author, String imageUrl,
-            String notificationChannelName, String activityName) {
+                                        String notificationChannelName, String activityName) {
 
         PlayerNotificationManager.MediaDescriptionAdapter mediaDescriptionAdapter = new PlayerNotificationManager.MediaDescriptionAdapter() {
             @NonNull
@@ -255,7 +234,6 @@ final class BetterPlayer {
             @Nullable
             @Override
             public PendingIntent createCurrentContentIntent(@NonNull Player player) {
-
                 final String packageName = context.getApplicationContext().getPackageName();
                 Intent notificationIntent = new Intent();
                 notificationIntent.setClassName(packageName, packageName + "." + activityName);
@@ -272,7 +250,7 @@ final class BetterPlayer {
             @Nullable
             @Override
             public Bitmap getCurrentLargeIcon(@NonNull Player player,
-                    @NonNull PlayerNotificationManager.BitmapCallback callback) {
+                                              @NonNull PlayerNotificationManager.BitmapCallback callback) {
                 if (imageUrl == null) {
                     return null;
                 }
@@ -380,12 +358,12 @@ final class BetterPlayer {
     private ControlDispatcher setupControlDispatcher() {
         return new ControlDispatcher() {
             @Override
-            public boolean dispatchPrepare(Player player) {
+            public boolean dispatchPrepare(@NonNull Player player) {
                 return false;
             }
 
             @Override
-            public boolean dispatchSetPlayWhenReady(Player player, boolean playWhenReady) {
+            public boolean dispatchSetPlayWhenReady(@NonNull Player player, boolean playWhenReady) {
                 if (player.getPlayWhenReady()) {
                     sendEvent("pause");
                 } else {
@@ -395,50 +373,50 @@ final class BetterPlayer {
             }
 
             @Override
-            public boolean dispatchSeekTo(Player player, int windowIndex, long positionMs) {
+            public boolean dispatchSeekTo(@NonNull Player player, int windowIndex, long positionMs) {
                 sendSeekToEvent(positionMs);
                 return true;
             }
 
             @Override
-            public boolean dispatchPrevious(Player player) {
+            public boolean dispatchPrevious(@NonNull Player player) {
                 return false;
             }
 
             @Override
-            public boolean dispatchNext(Player player) {
+            public boolean dispatchNext(@NonNull Player player) {
                 return false;
             }
 
             @Override
-            public boolean dispatchRewind(Player player) {
+            public boolean dispatchRewind(@NonNull Player player) {
                 sendSeekToEvent(player.getCurrentPosition() - 5000);
                 return false;
             }
 
             @Override
-            public boolean dispatchFastForward(Player player) {
+            public boolean dispatchFastForward(@NonNull Player player) {
                 sendSeekToEvent(player.getCurrentPosition() + 5000);
                 return true;
             }
 
             @Override
-            public boolean dispatchSetRepeatMode(Player player, int repeatMode) {
+            public boolean dispatchSetRepeatMode(@NonNull Player player, int repeatMode) {
                 return false;
             }
 
             @Override
-            public boolean dispatchSetShuffleModeEnabled(Player player, boolean shuffleModeEnabled) {
+            public boolean dispatchSetShuffleModeEnabled(@NonNull Player player, boolean shuffleModeEnabled) {
                 return false;
             }
 
             @Override
-            public boolean dispatchStop(Player player, boolean reset) {
+            public boolean dispatchStop(@NonNull Player player, boolean reset) {
                 return false;
             }
 
             @Override
-            public boolean dispatchSetPlaybackParameters(Player player, PlaybackParameters playbackParameters) {
+            public boolean dispatchSetPlaybackParameters(@NonNull Player player, @NonNull PlaybackParameters playbackParameters) {
                 return false;
             }
 
@@ -470,60 +448,27 @@ final class BetterPlayer {
     }
 
     private MediaSource buildMediaSource(Uri uri, DataSource.Factory mediaDataSourceFactory, String formatHint,
-            String cacheKey, Context context) {
-        int type;
-        if (formatHint == null) {
-            String lastPathSegment = uri.getLastPathSegment();
-            if (lastPathSegment == null) {
-                lastPathSegment = "";
-            }
-            type = Util.inferContentType(lastPathSegment);
+                                         String cacheKey, Context context) {
+        int type = getContentType(uri, formatHint);
+
+        MediaItem mediaItem;
+        Download download = BetterPlayerDownloadHelper.getDownload(context, uri.toString());
+        if (download != null) {
+            mediaItem = download.request
+                    .toMediaItem()
+                    .buildUpon()
+//                        TODO: detect DRM
+                    .setDrmUuid(C.WIDEVINE_UUID)
+                    .build();
         } else {
-            switch (formatHint) {
-                case FORMAT_SS:
-                    type = C.TYPE_SS;
-                    break;
-                case FORMAT_DASH:
-                    type = C.TYPE_DASH;
-                    break;
-                case FORMAT_HLS:
-                    type = C.TYPE_HLS;
-                    break;
-                case FORMAT_OTHER:
-                    type = C.TYPE_OTHER;
-                    break;
-                default:
-                    type = -1;
-                    break;
+            MediaItem.Builder mediaItemBuilder = new MediaItem.Builder();
+            mediaItemBuilder.setUri(uri);
+            if (cacheKey != null && cacheKey.length() > 0) {
+                mediaItemBuilder.setCustomCacheKey(cacheKey);
             }
-        }
-        MediaItem.Builder mediaItemBuilder = new MediaItem.Builder();
-        mediaItemBuilder.setUri(uri);
-        if (cacheKey != null && cacheKey.length() > 0) {
-            mediaItemBuilder.setCustomCacheKey(cacheKey);
+            mediaItem = mediaItemBuilder.build();
         }
 
-        try {
-            Download download = BetterPlayerDownloadService.getDownloadManager(context).getDownloadIndex().getDownload(uri.toString());
-            if(download != null) {
-                DownloadRequest downloadRequest = download.request;
-//                downloadRequest.toMediaItem()
-
-                mediaItemBuilder
-                        .setMediaId(downloadRequest.id)
-                        .setUri(downloadRequest.uri)
-                        .setCustomCacheKey(downloadRequest.customCacheKey)
-                        .setMimeType(downloadRequest.mimeType)
-                        .setStreamKeys(downloadRequest.streamKeys)
-                        .setDrmKeySetId(downloadRequest.keySetId)
-                        .setDrmUuid(C.WIDEVINE_UUID);
-//                        .setDrmLicenseRequestHeaders(getDrmRequestHeaders(item));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        MediaItem mediaItem = mediaItemBuilder.build();
 //        Log.i("Whathever the fuck", mediaItem.mediaId);
 //        Log.i("Whathever the fuck", mediaItem.playbackProperties.mimeType);
 //        Log.i("Whathever the fuck", mediaItem.playbackProperties.drmConfiguration.licenseUri == null ? "null" : mediaItem.playbackProperties.drmConfiguration.licenseUri.toString());
@@ -537,11 +482,11 @@ final class BetterPlayer {
             case C.TYPE_SS:
                 return new SsMediaSource.Factory(new DefaultSsChunkSource.Factory(mediaDataSourceFactory),
                         new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
-                                .setDrmSessionManager(drmSessionManager).createMediaSource(mediaItem);
+                        .setDrmSessionManager(drmSessionManager).createMediaSource(mediaItem);
             case C.TYPE_DASH:
                 return new DashMediaSource.Factory(new DefaultDashChunkSource.Factory(mediaDataSourceFactory),
                         new DefaultDataSourceFactory(context, null, mediaDataSourceFactory))
-                                .setDrmSessionManager(drmSessionManager).createMediaSource(mediaItem);
+                        .setDrmSessionManager(drmSessionManager).createMediaSource(mediaItem);
             case C.TYPE_HLS:
                 return new HlsMediaSource.Factory(mediaDataSourceFactory).setDrmSessionManager(drmSessionManager)
                         .createMediaSource(mediaItem);
@@ -555,7 +500,7 @@ final class BetterPlayer {
     }
 
     private void setupVideoPlayer(EventChannel eventChannel, TextureRegistry.SurfaceTextureEntry textureEntry,
-            Result result) {
+                                  Result result) {
 
         eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
@@ -601,7 +546,7 @@ final class BetterPlayer {
             }
 
             @Override
-            public void onPlayerError(final ExoPlaybackException error) {
+            public void onPlayerError(@NonNull final ExoPlaybackException error) {
                 eventSink.error("VideoError", "Video player had error " + error, null);
             }
         });
@@ -844,7 +789,7 @@ final class BetterPlayer {
         if (mappedTrackInfo != null) {
             DefaultTrackSelector.ParametersBuilder builder = trackSelector.getParameters().buildUpon();
             builder.clearSelectionOverrides(rendererIndex).setRendererDisabled(rendererIndex, false);
-            int[] tracks = { groupElementIndex };
+            int[] tracks = {groupElementIndex};
             DefaultTrackSelector.SelectionOverride override = new DefaultTrackSelector.SelectionOverride(groupIndex,
                     tracks);
             builder.setSelectionOverride(rendererIndex, mappedTrackInfo.getTrackGroups(rendererIndex), override);
@@ -865,7 +810,6 @@ final class BetterPlayer {
     }
 
     // Clear cache without accessing BetterPlayerCache.
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     public static void clearCache(Context context, Result result) {
         try {
             File file = new File(context.getCacheDir(), "betterPlayerCache");
@@ -894,7 +838,7 @@ final class BetterPlayer {
     // Start pre cache of video. Invoke work manager job and start caching in
     // background.
     static void preCache(Context context, String dataSource, long preCacheSize, long maxCacheSize,
-            long maxCacheFileSize, Map<String, String> headers, String cacheKey, Result result) {
+                         long maxCacheFileSize, Map<String, String> headers, String cacheKey, Result result) {
         Data.Builder dataBuilder = new Data.Builder().putString(BetterPlayerPlugin.URL_PARAMETER, dataSource)
                 .putLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, preCacheSize)
                 .putLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, maxCacheSize)
@@ -923,135 +867,62 @@ final class BetterPlayer {
 
     // Download a given asset
     static void downloadAsset(Context context, String url, String downloadData, String licenseUrl,
-            HashMap<String, String> drmHeaders, EventChannel eventChannel, Result result) {
-        Log.i(TAG, "About to download " + url);
-        MediaItem.Builder mediaItemBuilder = new MediaItem.Builder().setUri(url).setMediaMetadata(new MediaMetadata.Builder().setTitle(url).build()).setDrmLicenseRequestHeaders(drmHeaders)
-                .setMimeType("application/dash+xml");
+                              HashMap<String, String> drmHeaders, String formatHint, EventChannel eventChannel, Result result) {
+        MediaItem.Builder mediaItemBuilder = new MediaItem.Builder()
+                .setUri(url)
+//                TODO: check if it is even needed
+                .setMediaMetadata(new MediaMetadata.Builder().setTitle(url).build())
+                .setMimeType(Util.getAdaptiveMimeTypeForContentType(getContentType(url, formatHint)));
 
         if (licenseUrl != null) {
-            mediaItemBuilder.setDrmLicenseUri(licenseUrl).setDrmUuid(C.WIDEVINE_UUID);
+            mediaItemBuilder
+                    .setDrmLicenseUri(licenseUrl)
+                    .setDrmUuid(C.WIDEVINE_UUID)
+                    .setDrmLicenseRequestHeaders(drmHeaders);
         }
 
-        DownloadHelper downloadHelper = DownloadHelper.forMediaItem(context, mediaItemBuilder.build(), new DefaultRenderersFactory(context),
-                new DefaultDataSourceFactory(context));
+        QueuingEventSink eventSink = new QueuingEventSink();
 
-        downloadHelper.prepare(new DownloadHelper.Callback() {
+        eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
-            public void onPrepared(DownloadHelper helper) {
-
-
-                QueuingEventSink eventSink = new QueuingEventSink();
-
-                eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
-                    @Override
-                    public void onListen(Object o, EventChannel.EventSink sink) {
-                        eventSink.setDelegate(sink);
-                    }
-
-                    @Override
-                    public void onCancel(Object o) {
-                        eventSink.setDelegate(null);
-                    }
-                });
-
-                DownloadRequest downloadRequest = helper.getDownloadRequest(url, Util.getUtf8Bytes(downloadData));
-
-                Log.i(TAG, "licenseUrl " + licenseUrl);
-                Log.i(TAG, "drmHeaders " + drmHeaders.get("Authorization"));
-
-                    byte[] keySetId = null;
-                if (licenseUrl != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
-                    Log.i(TAG, "using offlineLicenseHelper");
-                    DefaultHttpDataSource.Factory fff = new DefaultHttpDataSource.Factory();
-                    fff.setDefaultRequestProperties(drmHeaders);
-
-                    OfflineLicenseHelper offlineLicenseHelper = OfflineLicenseHelper.newWidevineInstance(licenseUrl,
-                            false, fff, drmHeaders,
-                            new DrmSessionEventListener.EventDispatcher());
-
-                    for (int periodIndex = 0; periodIndex < helper.getPeriodCount(); periodIndex++) {
-                        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = helper.getMappedTrackInfo(periodIndex);
-                        Log.i(TAG, "getRendererCount " + mappedTrackInfo.getRendererCount());
-                        for (int rendererIndex = 0; rendererIndex < mappedTrackInfo.getRendererCount(); rendererIndex++) {
-                            TrackGroupArray trackGroups = mappedTrackInfo.getTrackGroups(rendererIndex);
-                            Log.i(TAG, "trackGroups " + trackGroups.length);
-                            for (int trackGroupIndex = 0; trackGroupIndex < trackGroups.length; trackGroupIndex++) {
-                                TrackGroup trackGroup = trackGroups.get(trackGroupIndex);
-                                Log.i(TAG, "trackGroup " + trackGroup.length);
-                                for (int formatIndex = 0; formatIndex < trackGroup.length; formatIndex++) {
-                                    Format format = trackGroup.getFormat(formatIndex);
-                                    Log.i(TAG, "Found format " + format.drmInitData.schemeType);
-                                    if (format.drmInitData != null) {
-                                        try {
-                                            keySetId = offlineLicenseHelper.downloadLicense(format);
-                                        } catch (DrmSession.DrmSessionException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-
-
-
-                }
-
-                if (keySetId != null) {
-                    Log.i(TAG, "Found keySetId, applying");
-                    downloadRequest = downloadRequest.copyWithKeySetId(keySetId);
-                }
-
-                DownloadService.sendAddDownload(context, BetterPlayerDownloadService.class, downloadRequest, false);
-
-                Handler handler = new Handler(Looper.getMainLooper());
-
-                DownloadManager downloadManager = BetterPlayerDownloadService.getDownloadManager(context);
-
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        try {
-                            Download curr = downloadManager.getDownloadIndex().getDownload(url);
-                            if (curr != null && curr.state == Download.STATE_COMPLETED) {
-                                cancel();
-                                handler.post(() -> {
-                                    eventSink.success(100f);
-                                    eventSink.endOfStream();
-                                });
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        // getCurrentDownloads is used because it stores much more accurate progress
-                        // percentage
-                        List<Download> downloads = downloadManager.getCurrentDownloads();
-                        Download download = null;
-                        for (Download d : downloads) {
-                            if (d.request.id.equals(url)) {
-                                download = d;
-                                break;
-                            }
-                        }
-                        if (download == null)
-                            return;
-
-                        float progress = download.getPercentDownloaded();
-                        handler.post(() -> eventSink.success(progress));
-                    }
-                }, 0, 1000);
-
-                result.success(null);
+            public void onListen(Object o, EventChannel.EventSink sink) {
+                eventSink.setDelegate(sink);
             }
 
             @Override
-            public void onPrepareError(DownloadHelper helper, IOException e) {
-                Log.e(TAG, "Failed prepare");
+            public void onCancel(Object o) {
+                eventSink.setDelegate(null);
             }
         });
 
+        BetterPlayerDownloadHelper.addDownload(context, mediaItemBuilder.build(), eventSink, downloadData, () -> result.success(null));
+    }
+
+    static private int getContentType(Uri uri, @Nullable String formatHint) {
+        if (formatHint == null) {
+            String lastPathSegment = uri.getLastPathSegment();
+            if (lastPathSegment == null) {
+                lastPathSegment = "";
+            }
+            return Util.inferContentType(lastPathSegment);
+        }
+
+        switch (formatHint) {
+            case FORMAT_SS:
+                return C.TYPE_SS;
+            case FORMAT_DASH:
+                return C.TYPE_DASH;
+            case FORMAT_HLS:
+                return C.TYPE_HLS;
+            case FORMAT_OTHER:
+                return C.TYPE_OTHER;
+            default:
+                return -1;
+        }
+    }
+
+    static private int getContentType(String url, @Nullable String formatHint) {
+        return getContentType(Uri.parse(url), formatHint);
     }
 
     void dispose() {

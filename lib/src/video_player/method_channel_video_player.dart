@@ -433,6 +433,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     required String url,
     Map<String, dynamic> data = const <String, dynamic>{},
     BetterPlayerDrmConfiguration? drmConfiguration,
+    BetterPlayerVideoFormat? videoFormat,
   }) async* {
     assert(
       drmConfiguration == null ||
@@ -447,6 +448,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         'downloadData': jsonEncode(data),
         'licenseUrl': drmConfiguration?.licenseUrl,
         'drmHeaders': drmConfiguration?.headers ?? {},
+        'formatHint': videoFormat == null ? null : describeEnum(videoFormat),
       },
     );
 
@@ -454,9 +456,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       'better_player_channel/downloadEvents$url',
     );
 
-    await for (final event in downloadEvents.receiveBroadcastStream()) {
-      yield event as double;
-    }
+    yield* downloadEvents.receiveBroadcastStream().cast<double>();
   }
 
   @override

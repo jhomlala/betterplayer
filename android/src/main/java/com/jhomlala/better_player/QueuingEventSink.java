@@ -18,7 +18,7 @@ import java.util.ArrayList;
  */
 final class QueuingEventSink implements EventChannel.EventSink {
   private EventChannel.EventSink delegate;
-  private ArrayList<Object> eventQueue = new ArrayList<>();
+  private final ArrayList<Object> eventQueue = new ArrayList<>();
   private boolean done = false;
 
   public void setDelegate(EventChannel.EventSink delegate) {

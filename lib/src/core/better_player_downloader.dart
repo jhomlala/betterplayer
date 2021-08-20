@@ -11,11 +11,13 @@ class BetterPlayerDownloader {
     required String url,
     Map<String, dynamic> data = const <String, dynamic>{},
     BetterPlayerDrmConfiguration? drmConfiguration,
+    BetterPlayerVideoFormat? videoFormat,
   }) {
     return VideoPlayerPlatform.instance.downloadAsset(
       url: url,
       data: data,
       drmConfiguration: drmConfiguration,
+      videoFormat: videoFormat,
     );
   }
 
