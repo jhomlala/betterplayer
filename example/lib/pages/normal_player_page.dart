@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/download_source.dart';
 import 'package:flutter/material.dart';
 
 class NormalPlayerPage extends StatefulWidget {
@@ -37,6 +38,8 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       ),
       body: Column(
         children: [
+          const SizedBox(height: 8),
+          DownloadSource(dataSource: _betterPlayerDataSource),
           const SizedBox(height: 8),
           AspectRatio(
             aspectRatio: 16 / 9,
