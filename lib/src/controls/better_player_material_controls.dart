@@ -595,9 +595,9 @@ class _BetterPlayerMaterialControlsState
             children: <TextSpan>[
               TextSpan(
                 text: ' / ${BetterPlayerUtils.formatDuration(duration)}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 10.0,
-                  color: Colors.grey,
+                  color: _controlsConfiguration.textColor,
                   decoration: TextDecoration.none,
                 ),
               )

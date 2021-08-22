@@ -251,4 +251,12 @@ class BetterPlayerControlsConfiguration {
       skipForwardIcon: CupertinoIcons.goforward_15,
     );
   }
+
+  ///Setup BetterPlayerControlsConfiguration based on Theme options.
+  factory BetterPlayerControlsConfiguration.theme(ThemeData theme) {
+    return BetterPlayerControlsConfiguration(
+      textColor: theme.textTheme.bodyText1?.color ?? Colors.white,
+      iconsColor: theme.textTheme.button?.color ?? Colors.white,
+    );
+  }
 }
