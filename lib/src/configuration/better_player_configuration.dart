@@ -112,6 +112,10 @@ class BetterPlayerConfiguration {
   ///Default value is true.
   final bool autoDispose;
 
+  ///Flag which causes to player expand to fill all remaining space. Set to false
+  ///to use minimum constraints
+  final bool expandToFill;
+
   const BetterPlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
@@ -147,6 +151,7 @@ class BetterPlayerConfiguration {
     this.autoDetectFullscreenDeviceOrientation = false,
     this.handleLifecycle = true,
     this.autoDispose = true,
+    this.expandToFill = true
   });
 
   BetterPlayerConfiguration copyWith({
