@@ -1,11 +1,15 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
-// TODO: get all downloaded assets
-// TODO: remove download
-// TODO: stream download progress
-// TODO: support DRM config
-// TODO: remove before downloading if already exists?
+// TODO: token DRM
+// TODO: clearKey DRM
+// TODO: subtitles
+// TODO: tracks
+// TODO: dartdoc
+// TODO: docs
+// TODO: readme docs
+// TODO: what happens if someone tries to download an already downloaded asset?
+// TODO: what happens if someone tries to download an already downloaded asset?
 class BetterPlayerDownloader {
   static Stream<double> download({
     required String url,

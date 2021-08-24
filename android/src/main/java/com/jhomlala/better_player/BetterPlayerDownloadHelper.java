@@ -183,18 +183,10 @@ public class BetterPlayerDownloadHelper {
 
                 Handler handler = new Handler(Looper.getMainLooper());
 
-                new Timer().schedule(new TimerTask() {
+                Timer timer = new Timer();
+                timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        Download curr = getDownload(context, url);
-                        if (curr != null && curr.state == Download.STATE_COMPLETED) {
-                            cancel();
-                            handler.post(() -> {
-                                eventSink.success(100f);
-                                eventSink.endOfStream();
-                            });
-                        }
-
                         // getCurrentDownloads is used because it stores much more accurate progress
                         // percentage
                         List<Download> downloads = getDownloadManager(context).getCurrentDownloads();
@@ -212,6 +204,27 @@ public class BetterPlayerDownloadHelper {
                         handler.post(() -> eventSink.success(progress));
                     }
                 }, 0, 1000);
+
+                getDownloadManager(context).addListener(new DownloadManager.Listener() {
+                    @Override
+                    public void onDownloadRemoved(DownloadManager downloadManager, Download download) {
+                        if (download.request.id.equals(url)) {
+                            getDownloadManager(context).removeListener(this);
+                            eventSink.error("DownloadCanceled", "Download " + url + " was canceled", null);
+                            eventSink.endOfStream();
+                        }
+                    }
+
+                    @Override
+                    public void onDownloadChanged(DownloadManager downloadManager, Download download, @Nullable Exception finalException) {
+                        if (download.request.id.equals(url) && download.state == Download.STATE_COMPLETED) {
+                            getDownloadManager(context).removeListener(this);
+                            timer.cancel();
+                            eventSink.success(100f);
+                            eventSink.endOfStream();
+                        }
+                    }
+                });
 
 
                 if (onDone != null) {
