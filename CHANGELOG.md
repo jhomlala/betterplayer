@@ -2,6 +2,7 @@
 * Added `expandToFill` in `BetterPlayerConfiguration`.
 * Added `BetterPlayerControlsConfiguration.theme` factory for `BetterPlayerControlsConfiguration`.
 * Added null checks in seek commands in `BetterPlayerControlsState`.
+* Fixed issue with live stream where player controls were always visible.
 
 ## 0.0.73
 * Added `licenseUrl` support for iOS DRM.

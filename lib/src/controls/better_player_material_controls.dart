@@ -384,20 +384,22 @@ class _BetterPlayerMaterialControlsState
       color: Colors.black54, //_controlsConfiguration.controlBarColor,
       width: double.infinity,
       height: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          if (_controlsConfiguration.enableSkips)
-            _buildSkipButton()
-          else
-            const SizedBox(),
-          _buildReplayButton(_controller!),
-          if (_controlsConfiguration.enableSkips)
-            _buildForwardButton()
-          else
-            const SizedBox(),
-        ],
-      ),
+      child: _betterPlayerController?.isLiveStream() == true
+          ? const SizedBox()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (_controlsConfiguration.enableSkips)
+                  _buildSkipButton()
+                else
+                  const SizedBox(),
+                _buildReplayButton(_controller!),
+                if (_controlsConfiguration.enableSkips)
+                  _buildForwardButton()
+                else
+                  const SizedBox(),
+              ],
+            ),
     );
   }
 
@@ -706,7 +708,8 @@ class _BetterPlayerMaterialControlsState
           isLoading(_controller!.value)) {
         setState(() {
           _latestValue = _controller!.value;
-          if (isVideoFinished(_latestValue)) {
+          if (isVideoFinished(_latestValue) &&
+              _betterPlayerController?.isLiveStream() == false) {
             _hideStuff = false;
           }
         });
@@ -716,27 +719,28 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildProgressBar() {
     return Expanded(
-        flex: 40,
-        child: Container(
-          alignment: Alignment.bottomCenter,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: BetterPlayerMaterialVideoProgressBar(
-            _controller,
-            _betterPlayerController,
-            onDragStart: () {
-              _hideTimer?.cancel();
-            },
-            onDragEnd: () {
-              _startHideTimer();
-            },
-            colors: BetterPlayerProgressColors(
-                playedColor: _controlsConfiguration.progressBarPlayedColor,
-                handleColor: _controlsConfiguration.progressBarHandleColor,
-                bufferedColor: _controlsConfiguration.progressBarBufferedColor,
-                backgroundColor:
-                    _controlsConfiguration.progressBarBackgroundColor),
-          ),
-        ));
+      flex: 40,
+      child: Container(
+        alignment: Alignment.bottomCenter,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: BetterPlayerMaterialVideoProgressBar(
+          _controller,
+          _betterPlayerController,
+          onDragStart: () {
+            _hideTimer?.cancel();
+          },
+          onDragEnd: () {
+            _startHideTimer();
+          },
+          colors: BetterPlayerProgressColors(
+              playedColor: _controlsConfiguration.progressBarPlayedColor,
+              handleColor: _controlsConfiguration.progressBarHandleColor,
+              bufferedColor: _controlsConfiguration.progressBarBufferedColor,
+              backgroundColor:
+                  _controlsConfiguration.progressBarBackgroundColor),
+        ),
+      ),
+    );
   }
 
   void _onPlayerHide() {
