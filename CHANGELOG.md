@@ -1,6 +1,7 @@
 ## 0.0.74
 * Added `expandToFill` in `BetterPlayerConfiguration`.
 * Added `BetterPlayerControlsConfiguration.theme` factory for `BetterPlayerControlsConfiguration`.
+* Added null checks in seek commands in `BetterPlayerControlsState`.
 
 ## 0.0.73
 * Added `licenseUrl` support for iOS DRM.
