@@ -10,7 +10,7 @@ class BetterPlayerTestUtils {
   static const String elephantDreamStreamUrl =
       "http://cdn.theoplayer.com/video/elephants-dream/playlist.m3u8";
 
-  BetterPlayerMockController setupBetterPlayerMockController() {
+  static BetterPlayerMockController setupBetterPlayerMockController() {
     return BetterPlayerMockController(BetterPlayerConfiguration());
   }
 }
