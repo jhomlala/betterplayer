@@ -6,13 +6,14 @@
 #import <Flutter/Flutter.h>
 #import <AVKit/AVKit.h>
 #import <AVFoundation/AVFoundation.h>
-#import <KTVHTTPCache/KTVHTTPCache.h>
 #import <GLKit/GLKit.h>
 #import "BetterPlayerTimeUtils.h"
 #import "BetterPlayerView.h"
 #import "BetterPlayerEzDrmAssetsLoaderDelegate.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class CacheManager;
 
 @interface BetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
 @property(readonly, nonatomic) AVPlayer* player;
@@ -44,8 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithFrame:(CGRect)frame;
 - (void)setMixWithOthers:(bool)mixWithOthers;
 - (void)seekTo:(int)location;
-- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withLicenseUrl:(NSString*)licenseUrl overriddenDuration:(int) overriddenDuration;
-- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withLicenseUrl:(NSString*)licenseUrl withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration;
+- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withLicenseUrl:(NSString*)licenseUrl cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration;
+- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withLicenseUrl:(NSString*)licenseUrl withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration;
 - (void)setVolume:(double)volume;
 - (void)setSpeed:(double)speed result:(FlutterResult)result;
 - (void) setAudioTrack:(NSString*) name index:(int) index;

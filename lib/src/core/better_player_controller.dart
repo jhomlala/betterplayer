@@ -1191,15 +1191,14 @@ class BetterPlayerController {
     return headers;
   }
 
-  ///PreCache a video. Currently supports Android only. The future succeed when
+  ///PreCache a video. On Android, the future succeeds when
   ///the requested size, specified in
   ///[BetterPlayerCacheConfiguration.preCacheSize], is downloaded or when the
   ///complete file is downloaded if the file is smaller than the requested size.
+  ///On iOS, the whole file will be downloaded, since [maxCacheFileSize] is
+  ///currently not supported on iOS. On iOS, the video format must be in this
+  ///list: https://github.com/sendyhalim/Swime/blob/master/Sources/MimeType.swift
   Future<void> preCache(BetterPlayerDataSource betterPlayerDataSource) async {
-    if (!Platform.isAndroid) {
-      return Future.error("preCache is currently only supported on Android.");
-    }
-
     final cacheConfig = betterPlayerDataSource.cacheConfiguration ??
         const BetterPlayerCacheConfiguration(useCache: true);
 
