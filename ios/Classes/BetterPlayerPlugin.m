@@ -322,7 +322,7 @@ bool _remoteCommandsInitialized = false;
                 }
             }
 
-            if (headers == nil || headers == [ NSNull null ]){
+            if (headers == [ NSNull null ]){
                 headers = @{};
             }
             if (assetArg) {
@@ -424,7 +424,7 @@ bool _remoteCommandsInitialized = false;
             NSString* cacheKey = dataSource[@"cacheKey"];
             NSDictionary* headers = dataSource[@"headers"];
             NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
-            if (headers == nil || headers == [ NSNull null ]){
+            if (headers == [ NSNull null ]){
                 headers = @{};
             }
             [_cacheManager setMaxCacheSize:maxCacheSize];

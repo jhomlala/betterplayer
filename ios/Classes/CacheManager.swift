@@ -18,6 +18,15 @@ import Swime
 
     var diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*30)), maxSize: 100*1024*1024)
     let memoryConfig = MemoryConfig(expiry: .never, countLimit: 10, totalCostLimit: 10)
+    let memoryConfig = MemoryConfig(
+      // Expiry date that will be applied by default for every added object
+      // if it's not overridden in the `setObject(forKey:expiry:)` method
+      expiry: .never,
+      // The maximum number of objects in memory the cache should hold
+      countLimit: 0,
+      // The maximum total cost that the cache can hold before it starts evicting objects, 0 for no limit
+      totalCostLimit: 0
+    )
 
     lazy var storage: Cache.Storage? = {
         return try? Cache.Storage(diskConfig: diskConfig, memoryConfig: memoryConfig, transformer: TransformerFactory.forCodable(ofType: Data.self))
@@ -67,23 +76,17 @@ import Swime
             if data != nil {
                 // The file is cached.
                 // We need to retrieve mimeType from Data
-                let mimeType = Swime.mimeType(data: data!)
                 self._existsInStorage = true
-                if let _mimeType = mimeType {
-                    playerItem = CachingPlayerItem(data: data!, mimeType: _mimeType.mime, fileExtension: _mimeType.ext)                    
-                    NSLog("File found in cache")
-                } else {
+                guard let mimeType = Swime.mimeType(data: data!) else {
+                    playerItem = CachingPlayerItem(data: data!, mimeType: _mimeType.mime, fileExtension: _mimeType.ext)
                     NSLog("Error: could not retrieve mimeType from Data")
-                    playerItem = CachingPlayerItem(data: data!, mimeType: "video/mpeg", fileExtension: "mp4")
                 }
             } else {
                 // The file is not cached.
                 playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
                 self._existsInStorage = false
-                NSLog("File not found in cache")
             }
         }
-
         playerItem.delegate = self
         return playerItem
     }
@@ -93,16 +96,12 @@ import Swime
         try? storage?.removeAll()
         self._preCachedURLs = Dictionary<String,CachingPlayerItem>()
     }
-
-
 }
-
 
 // MARK: - CachingPlayerItemDelegate
 extension CacheManager: CachingPlayerItemDelegate {
     func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {
         // A track is downloaded. Saving it to the cache asynchronously.
-        NSLog("File downloaded successfully, saving to cache...")
         storage?.async.setObject(data, forKey: playerItem.cacheKey ?? playerItem.url.absoluteString, completion: { _ in })
         self.completionHandler?(true)
     }

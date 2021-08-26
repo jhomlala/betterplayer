@@ -1,3 +1,8 @@
+//
+//  Code from https://github.com/neekeetab/CachingPlayerItem.
+//  Edited by mrj to allow using cacheKey and headers.
+//
+
 import Foundation
 import AVFoundation
 
@@ -46,26 +51,19 @@ open class CachingPlayerItem: AVPlayerItem {
         weak var owner: CachingPlayerItem?
         
         func resourceLoader(_ resourceLoader: AVAssetResourceLoader, shouldWaitForLoadingOfRequestedResource loadingRequest: AVAssetResourceLoadingRequest) -> Bool {
-            
             if playingFromData {
-                
                 // Nothing to load.
-                
             } else if session == nil {
-                
                 // If we're playing from a url, we need to download the file.
                 // We start loading the file on first request only.
                 guard let initialUrl = owner?.url else {
                     fatalError("internal inconsistency")
                 }
-
                 startDataRequest(with: initialUrl)
             }
-            
             pendingRequests.insert(loadingRequest)
             processPendingRequests()
             return true
-            
         }
         
         func startDataRequest(with url: URL) {
@@ -200,27 +198,22 @@ open class CachingPlayerItem: AVPlayerItem {
     /// Override/append custom file extension to URL path.
     /// This is required for the player to work correctly with the intended file type.
     init(url: URL, customFileExtension: String?, cacheKey: String?, headers: Dictionary<NSObject,AnyObject>) {
-    
         self.cacheKey = cacheKey
+        self.url = url
+        self.resourceLoaderDelegate.headers = headers
         
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
             let scheme = components.scheme,
             var urlWithCustomScheme = url.withScheme(cachingPlayerItemScheme) else {
             fatalError("Urls without a scheme are not supported")
         }
-        
-        self.url = url
         self.initialScheme = scheme
-        
+
         if let ext = customFileExtension {
             urlWithCustomScheme.deletePathExtension()
             urlWithCustomScheme.appendPathExtension(ext)
             self.customFileExtension = ext
         }
-        
-        resourceLoaderDelegate.headers = headers
-        
-        
         
         let asset = AVURLAsset(url: urlWithCustomScheme)
         asset.resourceLoader.setDelegate(resourceLoaderDelegate, queue: DispatchQueue.main)
@@ -231,7 +224,6 @@ open class CachingPlayerItem: AVPlayerItem {
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
-        
     }
     
     /// Is used for playing from Data.
@@ -256,7 +248,6 @@ open class CachingPlayerItem: AVPlayerItem {
         addObserver(self, forKeyPath: "status", options: NSKeyValueObservingOptions.new, context: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(playbackStalledHandler), name:NSNotification.Name.AVPlayerItemPlaybackStalled, object: self)
-        
     }
     
     // MARK: KVO
