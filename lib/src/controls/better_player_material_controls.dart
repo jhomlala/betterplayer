@@ -560,6 +560,7 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildPlayPause(VideoPlayerController controller) {
     return BetterPlayerMaterialClickableWidget(
+      key:Key("better_player_material_controls_play_pause_button"),
       onTap: _onPlayPause,
       child: Container(
         height: double.infinity,
