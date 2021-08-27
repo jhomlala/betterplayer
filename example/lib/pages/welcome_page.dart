@@ -4,6 +4,7 @@ import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/auto_fullscreen_orientation_page.dart';
 import 'package:better_player_example/pages/basic_player_page.dart';
 import 'package:better_player_example/pages/cache_page.dart';
+import 'package:better_player_example/pages/clearkey_page.dart';
 import 'package:better_player_example/pages/controller_controls_page.dart';
 import 'package:better_player_example/pages/controls_always_visible_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
@@ -42,6 +43,7 @@ class _WelcomePageState extends State<WelcomePage> {
   void initState() {
     _saveAssetSubtitleToFile();
     _saveAssetVideoToFile();
+    _saveAssetEncryptVideoToFile();
     _saveLogoToFile();
     super.initState();
   }
@@ -127,9 +129,6 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget("Overridden aspect ratio", () {
         _navigateToPage(OverriddenAspectRatioPage());
       }),
-      _buildExampleElementWidget("Overridden aspect ratio", () {
-        _navigateToPage(OverriddenAspectRatioPage());
-      }),
       _buildExampleElementWidget("Notifications player", () {
         _navigateToPage(NotificationPlayerPage());
       }),
@@ -156,6 +155,9 @@ class _WelcomePageState extends State<WelcomePage> {
       }),
       _buildExampleElementWidget("DRM", () {
         _navigateToPage(DrmPage());
+      }),
+      _buildExampleElementWidget("ClearKey DRM", () {
+        _navigateToPage(ClearKeyPage());
       }),
       _buildExampleElementWidget("DASH", () {
         _navigateToPage(DashPage());
@@ -205,6 +207,14 @@ class _WelcomePageState extends State<WelcomePage> {
     var content = await rootBundle.load("assets/testvideo.mp4");
     final directory = await getApplicationDocumentsDirectory();
     var file = File("${directory.path}/testvideo.mp4");
+    file.writeAsBytesSync(content.buffer.asUint8List());
+  }
+
+  Future _saveAssetEncryptVideoToFile() async {
+    var content =
+        await rootBundle.load("assets/${Constants.fileTestVideoEncryptUrl}");
+    final directory = await getApplicationDocumentsDirectory();
+    var file = File("${directory.path}/${Constants.fileTestVideoEncryptUrl}");
     file.writeAsBytesSync(content.buffer.asUint8List());
   }
 

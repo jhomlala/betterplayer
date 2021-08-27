@@ -157,4 +157,10 @@ final Widget loadingWidget;
 
 ///Color of the background, when no frame is displayed.
 final Color backgroundColor;
+
+///Quality of Gaussian Blur for x (iOS only).
+final double sigmaX;
+
+///Quality of Gaussian Blur for y (iOS only).
+final double sigmaY;
 ```

@@ -209,28 +209,29 @@ class DataSource {
   /// The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
   ///
-  DataSource({
-    required this.sourceType,
-    this.uri,
-    this.formatHint,
-    this.asset,
-    this.package,
-    this.headers,
-    this.useCache = false,
-    this.maxCacheSize = _maxCacheSize,
-    this.maxCacheFileSize = _maxCacheFileSize,
-    this.cacheKey,
-    this.showNotification = false,
-    this.title,
-    this.author,
-    this.imageUrl,
-    this.notificationChannelName,
-    this.overriddenDuration,
-    this.licenseUrl,
-    this.certificateUrl,
-    this.drmHeaders,
-    this.activityName,
-  }) : assert(uri == null || asset == null);
+  DataSource(
+      {required this.sourceType,
+      this.uri,
+      this.formatHint,
+      this.asset,
+      this.package,
+      this.headers,
+      this.useCache = false,
+      this.maxCacheSize = _maxCacheSize,
+      this.maxCacheFileSize = _maxCacheFileSize,
+      this.cacheKey,
+      this.showNotification = false,
+      this.title,
+      this.author,
+      this.imageUrl,
+      this.notificationChannelName,
+      this.overriddenDuration,
+      this.licenseUrl,
+      this.certificateUrl,
+      this.drmHeaders,
+      this.activityName,
+      this.clearKey})
+      : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
@@ -303,6 +304,8 @@ class DataSource {
   final Map<String, String>? drmHeaders;
 
   final String? activityName;
+
+  final String? clearKey;
 
   /// Key to compare DataSource
   String get key {

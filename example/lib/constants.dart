@@ -4,6 +4,9 @@ class Constants {
   static const String forBiggerBlazesUrl =
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
   static const String fileTestVideoUrl = "testvideo.mp4";
+  static const String fileTestVideoEncryptUrl = "testvideo_encrypt.mp4";
+  static const String networkTestVideoEncryptUrl =
+      "https://github.com/tinusneethling/betterplayer/raw/ClearKeySupport/example/assets/testvideo_encrypt.mp4";
   static const String fileExampleSubtitlesUrl = "example_subtitles.srt";
   static const String hlsTestStreamUrl =
       "https://mtoczko.github.io/hls-test-streams/test-group/playlist.m3u8";
@@ -44,6 +47,7 @@ class Constants {
       "https://fps.ezdrm.com/demo/hls/BigBuckBunny_320x180.m3u8";
   static String fairplayCertificateUrl =
       "https://github.com/koldo92/betterplayer/raw/fairplay_ezdrm/example/assets/eleisure.cer";
+  static String fairplayLicenseUrl = "https://fps.ezdrm.com/api/licenses/";
   static String catImageUrl =
       "https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg";
   static String dashStreamUrl =

@@ -8,11 +8,12 @@
 
 NSString *_assetId;
 
-NSString * KEY_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
+NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
 
-- (instancetype)initWithCertificateUrl:(NSURL *)certificateUrl {
+- (instancetype)init:(NSURL *)certificateURL withLicenseURL:(NSURL *)licenseURL{
     self = [super init];
-    _certificateURL = certificateUrl;
+    _certificateURL = certificateURL;
+    _licenseURL = licenseURL;
     return self;
 }
 
@@ -20,14 +21,20 @@ NSString * KEY_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
  **
  ** getContentKeyAndLeaseExpiryFromKeyServerModuleWithRequest
  **
- ** takes the bundled SPC and sends it the the
- ** key server defined at KEY_SERVER_URL in the View Controller
- ** it returns a CKC which then is returned.
+ ** Takes the bundled SPC and sends it to the license server defined at licenseUrl or KEY_SERVER_URL (if licenseUrl is null).
+ ** It returns CKC.
  ** ---------------------------------------*/
 - (NSData *)getContentKeyAndLeaseExpiryFromKeyServerModuleWithRequest:(NSData*)requestBytes and:(NSString *)assetId and:(NSString *)customParams and:(NSError *)errorOut {
     NSData * decodedData;
     NSURLResponse * response;
-    NSURL * ksmURL = [[NSURL alloc] initWithString: [NSString stringWithFormat:@"%@%@%@",KEY_SERVER_URL,assetId,customParams]];
+    
+    NSURL * finalLicenseURL;
+    if (_licenseURL != [NSNull null]){
+        finalLicenseURL = _licenseURL;
+    } else {
+        finalLicenseURL = [[NSURL alloc] initWithString: DEFAULT_LICENSE_SERVER_URL];
+    }
+    NSURL * ksmURL = [[NSURL alloc] initWithString: [NSString stringWithFormat:@"%@%@%@",finalLicenseURL,assetId,customParams]];
     
     NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:ksmURL];
     [request setHTTPMethod:@"POST"];

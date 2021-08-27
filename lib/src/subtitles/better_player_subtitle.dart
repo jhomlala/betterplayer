@@ -111,4 +111,9 @@ class BetterPlayerSubtitle {
       return const Duration();
     }
   }
+
+  @override
+  String toString() {
+    return 'BetterPlayerSubtitle{index: $index, start: $start, end: $end, texts: $texts, type: $type}';
+  }
 }

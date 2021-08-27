@@ -65,6 +65,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
     private static final String INDEX_PARAMETER = "index";
     private static final String LICENSE_URL_PARAMETER = "licenseUrl";
     private static final String DRM_HEADERS_PARAMETER = "drmHeaders";
+    private static final String DRM_CLEARKEY_PARAMETER = "clearKey";
     private static final String MIX_WITH_OTHERS_PARAMETER = "mixWithOthers";
     public static final String URL_PARAMETER = "url";
     public static final String PRE_CACHE_SIZE_PARAMETER = "preCacheSize";
@@ -238,7 +239,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 break;
             case POSITION_METHOD:
                 result.success(player.getPosition());
-                player.sendBufferingUpdate();
+                player.sendBufferingUpdate(false);
                 break;
             case ABSOLUTE_POSITION_METHOD:
                 result.success(player.getAbsolutePosition());
@@ -305,7 +306,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                 assetLookupKey = flutterState.keyForAsset.get(asset);
             }
 
-            player.setDataSource(
+                       player.setDataSource(
                     flutterState.applicationContext,
                     key,
                     "asset:///" + assetLookupKey,
@@ -317,7 +318,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     0L,
                     overriddenDuration.longValue(),
                     null,
-                    null, null
+                    null, null, null
             );
         } else {
             boolean useCache = getParameter(dataSource, USE_CACHE_PARAMETER, false);
@@ -329,6 +330,7 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
             String cacheKey = getParameter(dataSource, CACHE_KEY_PARAMETER, null);
             String formatHint = getParameter(dataSource, FORMAT_HINT_PARAMETER, null);
             String licenseUrl = getParameter(dataSource, LICENSE_URL_PARAMETER, null);
+            String clearKey = getParameter(dataSource, DRM_CLEARKEY_PARAMETER, null);
             Map<String, String> drmHeaders = getParameter(dataSource, DRM_HEADERS_PARAMETER, new HashMap<>());
             player.setDataSource(
                     flutterState.applicationContext,
@@ -343,7 +345,8 @@ public class BetterPlayerPlugin implements FlutterPlugin, ActivityAware, MethodC
                     overriddenDuration.longValue(),
                     licenseUrl,
                     drmHeaders,
-                    cacheKey
+                    cacheKey,
+                    clearKey
             );
         }
     }

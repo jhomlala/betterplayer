@@ -52,6 +52,11 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                           showNotification: true,
                           title: videoListData!.videoTitle,
                           author: "Test"),
+                  bufferingConfiguration: BetterPlayerBufferingConfiguration(
+                      minBufferMs: 2000,
+                      maxBufferMs: 10000,
+                      bufferForPlaybackMs: 1000,
+                      bufferForPlaybackAfterRebufferMs: 2000),
                 ),
                 configuration: BetterPlayerConfiguration(
                   autoPlay: false,
