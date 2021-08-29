@@ -134,18 +134,90 @@ void main() {
         expect(mockVideoPlayerController.isLoopingState, false);
       });
 
-      test("isBuffering returns correct value", () async {
-        final mockVideoPlayerController =
-            BetterPlayerTestUtils.setupMockVideoPlayerControler();
+      test("setControlsVisibility updates controlVisiblityStream", () async {
         final BetterPlayerMockController betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController(
-          controller: mockVideoPlayerController,
-        );
-        expect(betterPlayerMockController.isBuffering(), false);
-        mockVideoPlayerController.setBuffering(true);
-        expect(betterPlayerMockController.isBuffering(), true);
-        mockVideoPlayerController.setBuffering(false);
-        expect(betterPlayerMockController.isBuffering(), false);
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        var showCalls = 0;
+        var hideCalls = 0;
+        betterPlayerMockController.controlsVisibilityStream.listen((event) {
+          if (event) {
+            showCalls += 1;
+          } else {
+            hideCalls += 1;
+          }
+        });
+        betterPlayerMockController.setControlsVisibility(false);
+        betterPlayerMockController.setControlsVisibility(false);
+        betterPlayerMockController.setControlsVisibility(true);
+        betterPlayerMockController.setControlsVisibility(true);
+        betterPlayerMockController.setControlsVisibility(false);
+        await Future.delayed(const Duration(milliseconds: 100), () {});
+        expect(hideCalls, 3);
+        expect(showCalls, 2);
+      });
+
+      test("setControlsEnabled updates values correctly", () async {
+        final BetterPlayerMockController betterPlayerMockController =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        var hideCalls = 0;
+        betterPlayerMockController.controlsVisibilityStream.listen((event) {
+          hideCalls += 1;
+        });
+        betterPlayerMockController.setControlsEnabled(false);
+        betterPlayerMockController.setControlsEnabled(false);
+        await Future.delayed(const Duration(milliseconds: 100), () {});
+        expect(hideCalls, 2);
+        expect(betterPlayerMockController.controlsEnabled, false);
+        betterPlayerMockController.setControlsEnabled(true);
+        expect(betterPlayerMockController.controlsEnabled, true);
+      });
+
+      test("toggleControlsVisibility sends correct events", () async {
+        final BetterPlayerMockController betterPlayerMockController =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        var controlsVisibleEventCount = 0;
+        var controlsHiddenEventCount = 0;
+        betterPlayerMockController.addEventsListener((event) {
+          if (event.betterPlayerEventType ==
+              BetterPlayerEventType.controlsVisible) {
+            controlsVisibleEventCount += 1;
+          }
+          if (event.betterPlayerEventType ==
+              BetterPlayerEventType.controlsHidden) {
+            controlsHiddenEventCount += 1;
+          }
+        });
+        betterPlayerMockController.toggleControlsVisibility(false);
+        betterPlayerMockController.toggleControlsVisibility(true);
+        betterPlayerMockController.toggleControlsVisibility(true);
+        await Future.delayed(const Duration(milliseconds: 100), () {});
+        expect(controlsVisibleEventCount, 2);
+        expect(controlsHiddenEventCount, 1);
+      });
+
+      test("postEvent sends events to listeners", () async {
+        final BetterPlayerMockController betterPlayerMockController =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+
+        int firstEventCounter = 0;
+        int secondEventCounter = 0;
+
+        betterPlayerMockController.addEventsListener((event) {
+          firstEventCounter++;
+        });
+        betterPlayerMockController.addEventsListener((event) {
+          secondEventCounter++;
+        });
+        betterPlayerMockController
+            .postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
+        betterPlayerMockController
+            .postEvent(BetterPlayerEvent(BetterPlayerEventType.progress));
+
+        betterPlayerMockController
+            .postEvent(BetterPlayerEvent(BetterPlayerEventType.pause));
+        await Future.delayed(const Duration(milliseconds: 100), () {});
+        expect(firstEventCounter, 3);
+        expect(secondEventCounter, 3);
       });
     },
   );

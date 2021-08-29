@@ -5,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'better_player_mock_controller.dart';
-import 'better_player_test_utils.dart';
 import 'mock_method_channel.dart';
 
 void main() {

@@ -3,9 +3,8 @@ import 'package:better_player/src/video_player/video_player.dart';
 class MockVideoPlayerController extends VideoPlayerController {
   bool isLoopingState = false;
 
-
   VideoPlayerValue videoPlayerValue =
-  VideoPlayerValue(duration: Duration(seconds: 0));
+      VideoPlayerValue(duration: const Duration());
 
   @override
   Future<void> play() async {
@@ -27,6 +26,4 @@ class MockVideoPlayerController extends VideoPlayerController {
   void setBuffering(bool buffering) {
     value = videoPlayerValue.copyWith(isBuffering: buffering);
   }
-
-
 }
