@@ -64,7 +64,7 @@ void main() {
       );
 
       test(
-        "seek should change player position",
+        "seekTo should change player position",
         () async {
           final BetterPlayerController betterPlayerController =
               BetterPlayerTestUtils.setupBetterPlayerMockController();
@@ -80,6 +80,36 @@ void main() {
           position =
               await betterPlayerController.videoPlayerController!.position;
           expect(position, const Duration(seconds: 30));
+        },
+      );
+
+      test(
+        "seekTo should send event",
+        () async {
+          final BetterPlayerController betterPlayerController =
+              BetterPlayerTestUtils.setupBetterPlayerMockController();
+          final videoPlayerController =
+              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+          videoPlayerController.setDuration(const Duration(seconds: 100));
+          betterPlayerController.videoPlayerController = videoPlayerController;
+
+          int seekEventCalls = 0;
+          int finishEventCalls = 0;
+          betterPlayerController.addEventsListener((event) {
+            if (event.betterPlayerEventType == BetterPlayerEventType.seekTo) {
+              seekEventCalls += 1;
+            }
+            if (event.betterPlayerEventType == BetterPlayerEventType.finished) {
+              finishEventCalls += 1;
+            }
+          });
+          betterPlayerController.seekTo(const Duration(seconds: 5));
+          await Future.delayed(const Duration(milliseconds: 100), () {});
+          expect(seekEventCalls, 1);
+          betterPlayerController.seekTo(const Duration(seconds: 150));
+          await Future.delayed(const Duration(milliseconds: 100), () {});
+          expect(seekEventCalls, 2);
+          expect(finishEventCalls, 1);
         },
       );
 
@@ -244,7 +274,6 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         betterPlayerMockController.addEventsListener((event) {});
         betterPlayerMockController.addEventsListener((event) {});
-        //There's also additional internal listener.
         expect(betterPlayerMockController.eventListeners.length, 2);
       });
 
@@ -259,6 +288,46 @@ void main() {
         betterPlayerMockController.removeEventsListener(dummyEventListener);
         expect(betterPlayerMockController.eventListeners.length, 1);
       });
+
+      test("setVolume changes volume", () async {
+        final mockVideoPlayerController = MockVideoPlayerController();
+        final BetterPlayerMockController betterPlayerMockController =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        mockVideoPlayerController
+            .setNetworkDataSource(BetterPlayerTestUtils.bugBuckBunnyVideoUrl);
+        betterPlayerMockController.videoPlayerController =
+            mockVideoPlayerController;
+        betterPlayerMockController.setVolume(1.0);
+        expect(mockVideoPlayerController.volume, 1.0);
+        betterPlayerMockController.setVolume(0.5);
+        expect(mockVideoPlayerController.volume, 0.5);
+      });
+
+      test(
+        "setVolume should send event",
+        () async {
+          final BetterPlayerController betterPlayerMockController =
+              BetterPlayerTestUtils.setupBetterPlayerMockController();
+          final videoPlayerController =
+              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+          betterPlayerMockController.videoPlayerController =
+              videoPlayerController;
+
+          int setVolumeCalls = 0;
+          betterPlayerMockController.addEventsListener((event) {
+            if (event.betterPlayerEventType ==
+                BetterPlayerEventType.setVolume) {
+              setVolumeCalls += 1;
+            }
+          });
+          betterPlayerMockController.setVolume(1.0);
+          await Future.delayed(const Duration(milliseconds: 100), () {});
+          expect(setVolumeCalls, 1);
+          betterPlayerMockController.setVolume(1.0);
+          await Future.delayed(const Duration(milliseconds: 100), () {});
+          expect(setVolumeCalls, 2);
+        },
+      );
     },
   );
 }

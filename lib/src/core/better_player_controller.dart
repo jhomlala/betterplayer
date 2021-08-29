@@ -672,15 +672,18 @@ class BetterPlayerController {
   ///Set volume of player. Allows values from 0.0 to 1.0.
   Future<void> setVolume(double volume) async {
     if (volume < 0.0 || volume > 1.0) {
+      BetterPlayerUtils.log("Volume must be between 0.0 and 1.0");
       throw ArgumentError("Volume must be between 0.0 and 1.0");
     }
     if (videoPlayerController == null) {
       BetterPlayerUtils.log("The data source has not been initialized");
-      return;
+      throw StateError("The data source has not been initialized");
     }
     await videoPlayerController!.setVolume(volume);
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.setVolume,
-        parameters: <String, dynamic>{_volumeParameter: volume}));
+    _postEvent(BetterPlayerEvent(
+      BetterPlayerEventType.setVolume,
+      parameters: <String, dynamic>{_volumeParameter: volume},
+    ));
   }
 
   ///Set playback speed of video. Allows to set speed value between 0 and 2.

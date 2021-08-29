@@ -2,13 +2,12 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
 class MockVideoPlayerController extends VideoPlayerController {
-  MockVideoPlayerController() : super(autoCreate: false){
-    value =  VideoPlayerValue(duration: const Duration());
+  MockVideoPlayerController() : super(autoCreate: false) {
+    value = VideoPlayerValue(duration: const Duration());
   }
 
   bool isLoopingState = false;
-
-
+  double volume = 0.0;
 
   @override
   Future<void> play() async {
@@ -42,6 +41,11 @@ class MockVideoPlayerController extends VideoPlayerController {
 
   @override
   Future<Duration?> get position async => value.position;
+
+  @override
+  Future<void> setVolume(double volume) async {
+    this.volume = volume;
+  }
 
   @override
   Future<void> setNetworkDataSource(String dataSource,
