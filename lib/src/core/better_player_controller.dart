@@ -62,7 +62,8 @@ class BetterPlayerController {
   VideoPlayerController? videoPlayerController;
 
   ///Expose all active eventListeners
-  List<Function(BetterPlayerEvent)?> get eventListeners => _eventListeners;
+  List<Function(BetterPlayerEvent)?> get eventListeners =>
+      _eventListeners.sublist(1);
 
   /// Defines a event listener where video player events will be send.
   Function(BetterPlayerEvent)? get eventListener =>

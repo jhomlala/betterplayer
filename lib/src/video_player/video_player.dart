@@ -181,8 +181,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Constructs a [VideoPlayerController] and creates video controller on platform side.
   VideoPlayerController({
     this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
+    bool autoCreate = true,
   }) : super(VideoPlayerValue(duration: null)) {
-    _create();
+    if (autoCreate) {
+      _create();
+    }
   }
 
   final StreamController<VideoEvent> videoEventStreamController =
