@@ -5,22 +5,4 @@ class BetterPlayerMockController extends BetterPlayerController {
       BetterPlayerConfiguration betterPlayerConfiguration)
       : super(betterPlayerConfiguration);
 
-  bool isPlayingState = false;
-
-  @override
-  bool? isPlaying() {
-    return isPlayingState;
-  }
-
-  @override
-  Future<void> play() async {
-    isPlayingState = true;
-    return;
-  }
-
-  @override
-  Future<void> pause() async {
-    isPlayingState = false;
-    return;
-  }
 }
