@@ -415,6 +415,18 @@ void main() {
         videoPlayerController.setDuration(const Duration(seconds: 1));
         expect(betterPlayerMockController.isVideoInitialized(), true);
       });
+
+      test("startNextVideoTimer starts next video timer", () async {
+        final BetterPlayerController betterPlayerMockController =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        int eventCount = 0;
+        betterPlayerMockController.nextVideoTimeStream.listen((event) {
+          eventCount += 1;
+        });
+        betterPlayerMockController.startNextVideoTimer();
+        await Future.delayed(const Duration(milliseconds: 3000), () {});
+        expect(eventCount, 3);
+      });
     },
   );
 }

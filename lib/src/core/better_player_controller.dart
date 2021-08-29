@@ -119,8 +119,10 @@ class BetterPlayerController {
   int? _nextVideoTime;
 
   ///Stream controller which emits next video time.
-  StreamController<int?> nextVideoTimeStreamController =
+  final StreamController<int?> _nextVideoTimeStreamController =
       StreamController.broadcast();
+
+  Stream<int?> get nextVideoTimeStream => _nextVideoTimeStreamController.stream;
 
   ///Has player been disposed.
   bool _disposed = false;
@@ -846,9 +848,16 @@ class BetterPlayerController {
   ///manually.
   void startNextVideoTimer() {
     if (_nextVideoTimer == null) {
+      if (betterPlayerPlaylistConfiguration == null) {
+        BetterPlayerUtils.log(
+            "BettterPlayerPlaylistConifugration has not been set!");
+        throw StateError(
+            "BettterPlayerPlaylistConifugration has not been set!");
+      }
+
       _nextVideoTime =
           betterPlayerPlaylistConfiguration!.nextVideoDelay.inSeconds;
-      nextVideoTimeStreamController.add(_nextVideoTime);
+      _nextVideoTimeStreamController.add(_nextVideoTime);
       if (_nextVideoTime == 0) {
         return;
       }
@@ -862,7 +871,7 @@ class BetterPlayerController {
         if (_nextVideoTime != null) {
           _nextVideoTime = _nextVideoTime! - 1;
         }
-        nextVideoTimeStreamController.add(_nextVideoTime);
+        _nextVideoTimeStreamController.add(_nextVideoTime);
       });
     }
   }
@@ -870,7 +879,7 @@ class BetterPlayerController {
   ///Cancel next video timer. Used in playlist. Do not use manually.
   void cancelNextVideoTimer() {
     _nextVideoTime = null;
-    nextVideoTimeStreamController.add(_nextVideoTime);
+    _nextVideoTimeStreamController.add(_nextVideoTime);
     _nextVideoTimer?.cancel();
     _nextVideoTimer = null;
   }
@@ -878,7 +887,7 @@ class BetterPlayerController {
   ///Play next video form playlist. Do not use manually.
   void playNextVideo() {
     _nextVideoTime = 0;
-    nextVideoTimeStreamController.add(_nextVideoTime);
+    _nextVideoTimeStreamController.add(_nextVideoTime);
     cancelNextVideoTimer();
   }
 
@@ -1258,7 +1267,7 @@ class BetterPlayerController {
       }
       _eventListeners.clear();
       _nextVideoTimer?.cancel();
-      nextVideoTimeStreamController.close();
+      _nextVideoTimeStreamController.close();
       _controlsVisibilityStreamController.close();
       _videoEventStreamSubscription?.cancel();
       _disposed = true;
