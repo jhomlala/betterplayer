@@ -328,6 +328,52 @@ void main() {
           expect(setVolumeCalls, 2);
         },
       );
+
+      test("setSpeed changes speed", () async {
+        final mockVideoPlayerController = MockVideoPlayerController();
+        final BetterPlayerMockController betterPlayerMockController =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        mockVideoPlayerController
+            .setNetworkDataSource(BetterPlayerTestUtils.bugBuckBunnyVideoUrl);
+        betterPlayerMockController.videoPlayerController =
+            mockVideoPlayerController;
+        betterPlayerMockController.setSpeed(1.1);
+        expect(mockVideoPlayerController.speed, 1.1);
+        betterPlayerMockController.setSpeed(0.5);
+        expect(mockVideoPlayerController.speed, 0.5);
+        expect(() => betterPlayerMockController.setSpeed(2.5),
+            throwsA(isA<ArgumentError>()));
+        expect(mockVideoPlayerController.speed, 0.5);
+        expect(() => betterPlayerMockController.setSpeed(0.0),
+            throwsA(isA<ArgumentError>()));
+        expect(mockVideoPlayerController.speed, 0.5);
+      });
+
+      test(
+        "setSpeed should send event",
+        () async {
+          final BetterPlayerController betterPlayerMockController =
+              BetterPlayerTestUtils.setupBetterPlayerMockController();
+          final videoPlayerController =
+              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+          betterPlayerMockController.videoPlayerController =
+              videoPlayerController;
+
+          int setSpeedCalls = 0;
+          betterPlayerMockController.addEventsListener((event) {
+            if (event.betterPlayerEventType ==
+                BetterPlayerEventType.setSpeed) {
+              setSpeedCalls += 1;
+            }
+          });
+          betterPlayerMockController.setSpeed(1.5);
+          await Future.delayed(const Duration(milliseconds: 100), () {});
+          expect(setSpeedCalls, 1);
+          betterPlayerMockController.setSpeed(1.0);
+          await Future.delayed(const Duration(milliseconds: 100), () {});
+          expect(setSpeedCalls, 2);
+        },
+      );
     },
   );
 }
