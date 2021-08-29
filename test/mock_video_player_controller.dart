@@ -2,22 +2,23 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
 class MockVideoPlayerController extends VideoPlayerController {
-  MockVideoPlayerController() : super(autoCreate: false);
+  MockVideoPlayerController() : super(autoCreate: false){
+    value =  VideoPlayerValue(duration: const Duration());
+  }
 
   bool isLoopingState = false;
 
-  VideoPlayerValue videoPlayerValue =
-      VideoPlayerValue(duration: const Duration());
+
 
   @override
   Future<void> play() async {
-    value = videoPlayerValue.copyWith(isPlaying: true);
+    value = value.copyWith(isPlaying: true);
     return;
   }
 
   @override
   Future<void> pause() async {
-    value = videoPlayerValue.copyWith(isPlaying: false);
+    value = value.copyWith(isPlaying: false);
     return;
   }
 
@@ -27,8 +28,20 @@ class MockVideoPlayerController extends VideoPlayerController {
   }
 
   void setBuffering(bool buffering) {
-    value = videoPlayerValue.copyWith(isBuffering: buffering);
+    value = value.copyWith(isBuffering: buffering);
   }
+
+  void setDuration(Duration duration) {
+    value = value.copyWith(duration: duration);
+  }
+
+  @override
+  Future<void> seekTo(Duration? position) async {
+    value = value.copyWith(position: position);
+  }
+
+  @override
+  Future<Duration?> get position async => value.position;
 
   @override
   Future<void> setNetworkDataSource(String dataSource,

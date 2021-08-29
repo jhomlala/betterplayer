@@ -63,6 +63,26 @@ void main() {
         },
       );
 
+      test(
+        "seek should change player position",
+        () async {
+          final BetterPlayerController betterPlayerController =
+              BetterPlayerTestUtils.setupBetterPlayerMockController();
+          final videoPlayerController =
+              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+          videoPlayerController.setDuration(const Duration(seconds: 100));
+          betterPlayerController.videoPlayerController = videoPlayerController;
+          betterPlayerController.seekTo(const Duration(seconds: 5));
+          Duration? position =
+              await betterPlayerController.videoPlayerController!.position;
+          expect(position, const Duration(seconds: 5));
+          betterPlayerController.seekTo(const Duration(seconds: 30));
+          position =
+              await betterPlayerController.videoPlayerController!.position;
+          expect(position, const Duration(seconds: 30));
+        },
+      );
+
       test("full screen and auto play should work", () async {
         final BetterPlayerMockController betterPlayerMockController =
             BetterPlayerMockController(
