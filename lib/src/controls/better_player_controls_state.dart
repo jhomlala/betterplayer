@@ -456,6 +456,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     showCupertinoModalPopup<void>(
       barrierColor: Colors.transparent,
       context: context,
+      useRootNavigator: false,
       builder: (context) {
         return SafeArea(
           top: false,
@@ -484,6 +485,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       context: context,
+      useRootNavigator: false,
       builder: (context) {
         return SafeArea(
           top: false,
