@@ -210,7 +210,7 @@ public class BetterPlayerDownloadHelper {
                     public void onDownloadRemoved(DownloadManager downloadManager, Download download) {
                         if (download.request.id.equals(url)) {
                             getDownloadManager(context).removeListener(this);
-                            eventSink.error("DownloadCanceled", "Download " + url + " was canceled", null);
+                            eventSink.success(download.getPercentDownloaded());
                             eventSink.endOfStream();
                         }
                     }
@@ -240,4 +240,3 @@ public class BetterPlayerDownloadHelper {
         });
     }
 }
-

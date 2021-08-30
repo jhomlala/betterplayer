@@ -15,7 +15,7 @@ import java.util.List;
 public class BetterPlayerDownloadService extends DownloadService {
 
     private static final int JOB_ID = 1;
-    private static final int FOREGROUND_NOTIFICATION_ID = 1;
+    private static final int FOREGROUND_NOTIFICATION_ID = 20772078;
     private static final String DOWNLOAD_CHANNEL_NAME = "better_player_download_channel";
 
 
