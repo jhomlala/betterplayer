@@ -17,7 +17,6 @@ import Swime
     var completionHandler: ((_ success:Bool) -> Void)? = nil
 
     var diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*30)), maxSize: 100*1024*1024)
-    let memoryConfig = MemoryConfig(expiry: .never, countLimit: 10, totalCostLimit: 10)
     let memoryConfig = MemoryConfig(
       // Expiry date that will be applied by default for every added object
       // if it's not overridden in the `setObject(forKey:expiry:)` method
@@ -43,16 +42,18 @@ import Swime
     @objc public func preCacheURL(_ url: URL, cacheKey: String?, withHeaders headers: Dictionary<NSObject,AnyObject>, completionHandler: ((_ success:Bool) -> Void)?) {
         self.completionHandler = completionHandler
         
-        
         let _key: String = cacheKey ?? url.absoluteString
         // Make sure the item is not already being downloaded
         if self._preCachedURLs[_key] == nil {            
-            let item = self.getCachingPlayerItem(url, cacheKey: _key, headers: headers)
-            if !self._existsInStorage {
-                self._preCachedURLs[_key] = item
-                item.download()
+            if let item = self.getCachingPlayerItem(url, cacheKey: _key, headers: headers){
+                if !self._existsInStorage {
+                    self._preCachedURLs[_key] = item
+                    item.download()
+                } else {
+                    self.completionHandler?(true)
+                }
             } else {
-                self.completionHandler?(true)
+                self.completionHandler?(false)
             }
         } else {
             self.completionHandler?(true)
@@ -63,7 +64,7 @@ import Swime
     var _existsInStorage: Bool = false
 
     // Get a CachingPlayerItem either from the network if it's not cached or from the cache.
-    @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem {
+    @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem? {
         let playerItem: CachingPlayerItem
         let _key: String = cacheKey ?? url.absoluteString
         // Fetch ongoing pre-cached url if it exists
@@ -78,9 +79,10 @@ import Swime
                 // We need to retrieve mimeType from Data
                 self._existsInStorage = true
                 guard let mimeType = Swime.mimeType(data: data!) else {
-                    playerItem = CachingPlayerItem(data: data!, mimeType: _mimeType.mime, fileExtension: _mimeType.ext)
                     NSLog("Error: could not retrieve mimeType from Data")
+                    return nil
                 }
+                playerItem = CachingPlayerItem(data: data!, mimeType: mimeType.mime, fileExtension: mimeType.ext)
             } else {
                 // The file is not cached.
                 playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
