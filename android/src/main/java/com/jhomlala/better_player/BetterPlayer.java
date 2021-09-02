@@ -450,9 +450,13 @@ final class BetterPlayer {
         MediaItem mediaItem;
         Download download = BetterPlayerDownloadHelper.getDownload(context, uri.toString());
         if (download != null) {
-            mediaItem = download.request
-                    .toMediaItem()
-                    .buildUpon()
+            mediaItem = new MediaItem.Builder()
+                    .setMediaId(download.request.id)
+                    .setUri(download.request.uri)
+                    .setCustomCacheKey(download.request.customCacheKey)
+                    .setMimeType(download.request.mimeType)
+                    .setStreamKeys(download.request.streamKeys)
+                    .setDrmKeySetId(download.request.keySetId)
 //                        TODO: detect DRM
                     .setDrmUuid(C.WIDEVINE_UUID)
                     .build();
@@ -465,14 +469,6 @@ final class BetterPlayer {
             mediaItem = mediaItemBuilder.build();
         }
 
-//        Log.i("Whathever the fuck", mediaItem.mediaId);
-//        Log.i("Whathever the fuck", mediaItem.playbackProperties.mimeType);
-//        Log.i("Whathever the fuck", mediaItem.playbackProperties.drmConfiguration.licenseUri == null ? "null" : mediaItem.playbackProperties.drmConfiguration.licenseUri.toString());
-//        Log.i("Whathever the fuck", mediaItem.playbackProperties.drmConfiguration.requestHeaders.size() + "");
-//        Log.i("Whathever the fuck", mediaItem.playbackProperties.drmConfiguration.uuid.toString());
-//        Log.i("Whathever the fuck", mediaItem.playbackProperties.drmConfiguration.getKeySetId().length + "");
-//        Log.i("Whathever the fuck", mediaItem.playbackProperties.uri.toString());
-//        Log.i("Whathever the fuck", mediaItem.playbackProperties.streamKeys.size() + "");
         switch (type) {
 
             case C.TYPE_SS:
