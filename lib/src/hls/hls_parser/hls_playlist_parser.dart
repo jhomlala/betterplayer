@@ -602,6 +602,7 @@ class HlsPlaylistParser {
 
   static int _parseSelectionFlags(String line) {
     int flags = 0;
+
     if (parseOptionalBooleanAttribute(
         line: line,
         pattern: regexpDefault,
@@ -622,8 +623,12 @@ class HlsPlaylistParser {
     required String pattern,
     required bool defaultValue,
   }) {
-    final List<Match> list = line.allMatches(pattern).toList();
-    return list.isEmpty ? defaultValue : list.first.pattern == booleanTrue;
+    final regExp = RegExp(pattern);
+    final List<Match> list = regExp.allMatches(line).toList();
+    final ret = list.isEmpty
+        ? defaultValue
+        : line.substring(list.first.start, list.first.end).contains(booleanTrue);
+    return ret;
   }
 
   static int _parseRoleFlags(
