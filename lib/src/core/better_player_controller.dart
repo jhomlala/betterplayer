@@ -1236,11 +1236,8 @@ class BetterPlayerController {
   ///cache started for given [betterPlayerDataSource] then it will be ignored.
   Future<void> stopPreCache(
       BetterPlayerDataSource betterPlayerDataSource) async {
-    if (!Platform.isAndroid) {
-      return Future.error(
-          "stopPreCache is currently only supported on Android.");
-    }
-    return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url);
+    return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url,
+        betterPlayerDataSource.cacheConfiguration?.key);
   }
 
   /// Add controller internal event.

@@ -1,15 +1,13 @@
 PODS:
   - better_player (0.0.1):
+    - Cache
     - Flutter
-    - KTVHTTPCache (~> 2.0.0)
-  - CocoaAsyncSocket (7.6.4)
+    - Swime
+  - Cache (5.3.0)
   - Flutter (1.0.0)
-  - KTVCocoaHTTPServer (1.0.0):
-    - CocoaAsyncSocket
-  - KTVHTTPCache (2.0.1):
-    - KTVCocoaHTTPServer
   - path_provider (0.0.1):
     - Flutter
+  - Swime (3.0.6)
   - wakelock (0.0.1):
     - Flutter
 
@@ -21,9 +19,8 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - CocoaAsyncSocket
-    - KTVCocoaHTTPServer
-    - KTVHTTPCache
+    - Cache
+    - Swime
 
 EXTERNAL SOURCES:
   better_player:
@@ -36,12 +33,11 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/wakelock/ios"
 
 SPEC CHECKSUMS:
-  better_player: a4383402f457e53720525888c0fc5d337ef6ba11
-  CocoaAsyncSocket: 694058e7c0ed05a9e217d1b3c7ded962f4180845
+  better_player: 41d73b34d05e0f086ca00839e3298069b2d40023
+  Cache: 48762993ec44e1d93483c4d4a13edd18452326f4
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
-  KTVCocoaHTTPServer: df8d7b861e603ff8037e9b2138aca2563a6b768d
-  KTVHTTPCache: 588c3eb16f6bd1e6fde1e230dabfb7bd4e490a4d
   path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  Swime: d7b2c277503b6cea317774aedc2dce05613f8b0b
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
 PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c

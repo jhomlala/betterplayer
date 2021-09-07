@@ -1,8 +1,3 @@
-//
-//  CacheManager.swift
-//  betterplayer
-//  Created by mrj on 11/06/2021.
-//
 import AVKit
 import Cache
 import Swime
@@ -16,7 +11,12 @@ import Swime
 
     var completionHandler: ((_ success:Bool) -> Void)? = nil
 
-    var diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*30)), maxSize: 100*1024*1024)
+    var diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*30)),
+                                maxSize: 100*1024*1024)
+    
+    // Flag whether the CachingPlayerItem was already cached.
+    var _existsInStorage: Bool = false
+    
     let memoryConfig = MemoryConfig(
       // Expiry date that will be applied by default for every added object
       // if it's not overridden in the `setObject(forKey:expiry:)` method
@@ -59,9 +59,21 @@ import Swime
             self.completionHandler?(true)
         }
     }
-
-    // Flag whether the CachingPlayerItem was already cached.
-    var _existsInStorage: Bool = false
+    
+    @objc public func stopPreCache(_ url: URL, cacheKey: String?, completionHandler: ((_ success:Bool) -> Void)?){
+        NSLog("Stopping pre cache!")
+        let _key: String = cacheKey ?? url.absoluteString
+        if self._preCachedURLs[_key] != nil {
+            NSLog("Stopped pre cache!")
+            let playerItem = self._preCachedURLs[_key]!
+            playerItem.stopDownload()
+            self._preCachedURLs.removeValue(forKey: _key)
+            self.completionHandler?(true)
+            return
+        }
+        self.completionHandler?(false)
+    }
+    
 
     // Get a CachingPlayerItem either from the network if it's not cached or from the cache.
     @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem? {
@@ -108,12 +120,12 @@ extension CacheManager: CachingPlayerItemDelegate {
         self.completionHandler?(true)
     }
 
-/*     func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int){
+     func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int){
         /// Is called every time a new portion of data is received.
         let percentage = Double(bytesDownloaded)/Double(bytesExpected)*100.0
         let str = String(format: "%.1f%%", percentage)
         NSLog("Downloading... %@", str)
-    } */
+    }
 
     func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error){
         /// Is called on downloading error.

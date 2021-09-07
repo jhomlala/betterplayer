@@ -429,10 +429,19 @@ bool _remoteCommandsInitialized = false;
             }
             [_cacheManager setMaxCacheSize:maxCacheSize];
             [_cacheManager preCacheURL:[NSURL URLWithString:uriArg] cacheKey:cacheKey withHeaders:headers completionHandler:^(BOOL success){
-                result(nil);
             }];
+            result(nil);
         } else if ([@"clearCache" isEqualToString:call.method]){
             [_cacheManager clearCache];
+            result(nil);
+        } else if ([@"stopPreCache" isEqualToString:call.method]){
+            NSString* urlArg = argsMap[@"url"];
+            NSString* cacheKey = argsMap[@"cacheKey"];
+            if (urlArg != [NSNull null]){
+                [_cacheManager stopPreCache:[NSURL URLWithString:urlArg] cacheKey:cacheKey
+                          completionHandler:^(BOOL success){
+                }];
+            }
             result(nil);
         } else {
             result(FlutterMethodNotImplemented);

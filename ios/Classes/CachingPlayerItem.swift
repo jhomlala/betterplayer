@@ -1,7 +1,4 @@
-//
-//  Code from https://github.com/neekeetab/CachingPlayerItem.
-//  Edited by mrj to allow using cacheKey and headers.
-//
+//  Based on https://github.com/neekeetab/CachingPlayerItem.
 
 import Foundation
 import AVFoundation
@@ -182,10 +179,15 @@ open class CachingPlayerItem: AVPlayerItem {
     
     weak var delegate: CachingPlayerItemDelegate?
     
+    ///Starts current download.
     open func download() {
         if resourceLoaderDelegate.session == nil {
             resourceLoaderDelegate.startDataRequest(with: url)
         }
+    }
+    ///Stops current download.
+    open func stopDownload(){
+        resourceLoaderDelegate.session?.invalidateAndCancel()
     }
     
     private let cachingPlayerItemScheme = "cachingPlayerItemScheme"
