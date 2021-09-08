@@ -1,6 +1,5 @@
 import AVKit
 import Cache
-import Swime
 
 
 @objc public class CacheManager: NSObject {
@@ -77,6 +76,7 @@ import Swime
 
     // Get a CachingPlayerItem either from the network if it's not cached or from the cache.
     @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem? {
+        NSLog("Get caching player item")
         let playerItem: CachingPlayerItem
         let _key: String = cacheKey ?? url.absoluteString
         // Fetch ongoing pre-cached url if it exists
@@ -88,13 +88,15 @@ import Swime
             let data = try? storage?.object(forKey: _key)
             if data != nil {
                 // The file is cached.
-                // We need to retrieve mimeType from Data
                 self._existsInStorage = true
-                guard let mimeType = Swime.mimeType(data: data!) else {
-                    NSLog("Error: could not retrieve mimeType from Data")
-                    return nil
+                let mimeTypeResult = getMimeType(url:url)
+                if (mimeTypeResult.1.isEmpty){
+                    NSLog("Cache error: couldn't find mime type for url: \(url.absoluteURL). For this URL cache didn't work and video will be played without cache.")
+                    playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
+                } else {
+                    NSLog("Mime type: \(mimeTypeResult.0) / \(mimeTypeResult.1)")
+                    playerItem = CachingPlayerItem(data: data!, mimeType: mimeTypeResult.1, fileExtension: mimeTypeResult.0)
                 }
-                playerItem = CachingPlayerItem(data: data!, mimeType: mimeType.mime, fileExtension: mimeType.ext)
             } else {
                 // The file is not cached.
                 playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
@@ -109,6 +111,63 @@ import Swime
     @objc public func clearCache(){
         try? storage?.removeAll()
         self._preCachedURLs = Dictionary<String,CachingPlayerItem>()
+    }
+    
+    private func getMimeType(url: URL) -> (String,String){
+        let videoExtension = url.pathExtension
+        var mimeType = ""
+        switch (videoExtension){
+        case "m3u":
+            mimeType = "application/vnd.apple.mpegurl"
+        case "m3u8":
+            mimeType = "application/vnd.apple.mpegurl"
+        case "3gp":
+            mimeType = "video/3gpp"
+        case "mp4":
+            mimeType = "video/mp4"
+        case "m4a":
+            mimeType = "video/mp4"
+        case "m4p":
+            mimeType = "video/mp4"
+        case "m4b":
+            mimeType = "video/mp4"
+        case "m4r":
+            mimeType = "video/mp4"
+        case "m4v":
+            mimeType = "video/mp4"
+        case "m1v":
+            mimeType = "video/mpeg"
+        case "mpg":
+            mimeType = "video/mpeg"
+        case "mp2":
+            mimeType = "video/mpeg"
+        case "mpeg":
+            mimeType = "video/mpeg"
+        case "mpe":
+            mimeType = "video/mpeg"
+        case "mpv":
+            mimeType = "video/mpeg"
+        case "ogg":
+            mimeType = "video/ogg"
+        case "mov":
+            mimeType = "video/quicktime"
+        case "qt":
+            mimeType = "video/quicktime"
+        case "webm":
+            mimeType = "video/webm"
+        case "asf":
+            mimeType = "video/ms-asf"
+        case "wma":
+            mimeType = "video/ms-asf"
+        case "wmv":
+            mimeType = "video/ms-asf"
+        case "avi":
+            mimeType = "video/x-msvideo"
+        default:
+            mimeType = ""
+        }
+        
+        return (videoExtension, mimeType)
     }
 }
 
