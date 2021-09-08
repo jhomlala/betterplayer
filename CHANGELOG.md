@@ -8,6 +8,9 @@
 * [BREAKING_CHANGE] Removed BackdropFilter from cupertino theme.
 * [BREAKING_CHANGE] Removed `sigmaX` and `sigmaY` parameters from BetterPlayerControlsConfiguration.
 * Fixed iOS seek issue.
+* Changed iOS non-HLS caching implementation based on https://github.com/neekeetab/CachingPlayerItem (by https://github.com/themadmrj).
+* Added iOS HLS caching based on HLSCachingReverseProxyServer.
+* Enabled `preCache` and `stopPreCache` for iOS.
 
 ## 0.0.73
 * Added `licenseUrl` support for iOS DRM.

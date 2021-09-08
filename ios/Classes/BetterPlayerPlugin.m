@@ -135,7 +135,7 @@ bool _remoteCommandsInitialized = false;
     }
 
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (_notificationPlayer != [NSNull null]){
+        if (_notificationPlayer != (id)[NSNull null]){
             if (_notificationPlayer.isPlaying){
                 _notificationPlayer.eventSink(@{@"event" : @"play"});
             } else {
@@ -146,14 +146,14 @@ bool _remoteCommandsInitialized = false;
     }];
 
     [commandCenter.playCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (_notificationPlayer != [NSNull null]){
+        if (_notificationPlayer != (id)[NSNull null]){
             _notificationPlayer.eventSink(@{@"event" : @"play"});
         }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
 
     [commandCenter.pauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (_notificationPlayer != [NSNull null]){
+        if (_notificationPlayer != (id)[NSNull null]){
             _notificationPlayer.eventSink(@{@"event" : @"pause"});
         }
         return MPRemoteCommandHandlerStatusSuccess;
@@ -163,7 +163,7 @@ bool _remoteCommandsInitialized = false;
 
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-            if (_notificationPlayer != [NSNull null]){
+            if (_notificationPlayer != (id)[NSNull null]){
                 MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
                 CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
                 int64_t millis = [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
@@ -188,11 +188,11 @@ bool _remoteCommandsInitialized = false;
                                                   MPNowPlayingInfoPropertyPlaybackRate: @1,
     } mutableCopy];
 
-    if (imageUrl != [NSNull null]){
+    if (imageUrl != (id)[NSNull null]){
         NSString* key =  [self getTextureId:player];
         MPMediaItemArtwork* artworkImage = [_artworkImageDict objectForKey:key];
 
-        if (key != [NSNull null]){
+        if (key != (id)[NSNull null]){
             if (artworkImage){
                 [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
                 [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
@@ -323,7 +323,7 @@ bool _remoteCommandsInitialized = false;
                 }
             }
 
-            if (headers == [ NSNull null ]){
+            if (headers == (id)[ NSNull null ]){
                 headers = @{};
             }
             if (assetArg) {
