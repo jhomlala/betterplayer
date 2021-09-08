@@ -200,7 +200,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
     AVPlayerItem* item;
     if (useCache){
-        item = [cacheManager getCachingPlayerItem:url cacheKey:cacheKey headers:headers];
+        item = [cacheManager getCachingPlayerItemForNormalPlayback:url cacheKey:cacheKey headers:headers];
     } else {
         AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
                                                 options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];

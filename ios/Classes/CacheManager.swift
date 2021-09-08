@@ -1,6 +1,8 @@
 import AVKit
 import Cache
-
+import HLSCachingReverseProxyServer
+import GCDWebServer
+import PINCache
 
 @objc public class CacheManager: NSObject {
 
@@ -25,11 +27,23 @@ import Cache
       // The maximum total cost that the cache can hold before it starts evicting objects, 0 for no limit
       totalCostLimit: 0
     )
+    
+    var server: HLSCachingReverseProxyServer?
 
     lazy var storage: Cache.Storage? = {
         return try? Cache.Storage(diskConfig: diskConfig, memoryConfig: memoryConfig, transformer: TransformerFactory.forCodable(ofType: Data.self))
     }()
 
+    ///Setups cache server for HLS streams
+    @objc public func setup(){
+        GCDWebServer.setLogLevel(4)
+        let webServer = GCDWebServer()
+        let cache = PINCache.shared
+        let urlSession = URLSession.shared
+        server = HLSCachingReverseProxyServer(webServer: webServer, urlSession: urlSession, cache: cache)
+        server?.start(port: 8080)
+    }
+    
     @objc public func setMaxCacheSize(_ maxCacheSize: NSNumber?){
         if let unsigned = maxCacheSize {
             let _maxCacheSize = unsigned.uintValue
@@ -73,10 +87,21 @@ import Cache
         self.completionHandler?(false)
     }
     
+    ///Gets caching player item for normal playback.
+    @objc public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, headers: Dictionary<NSObject,AnyObject>) -> AVPlayerItem? {
+        let mimeTypeResult = getMimeType(url:url)
+        if (mimeTypeResult.1 == "application/vnd.apple.mpegurl"){
+            let reverseProxyURL = server?.reverseProxyURL(from: url)!
+            let playerItem = AVPlayerItem(url: reverseProxyURL!)
+            return playerItem
+        } else {
+            return getCachingPlayerItem(url, cacheKey: cacheKey, headers: headers)
+        }
+    }
+    
 
     // Get a CachingPlayerItem either from the network if it's not cached or from the cache.
     @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem? {
-        NSLog("Get caching player item")
         let playerItem: CachingPlayerItem
         let _key: String = cacheKey ?? url.absoluteString
         // Fetch ongoing pre-cached url if it exists
@@ -168,6 +193,12 @@ import Cache
         }
         
         return (videoExtension, mimeType)
+    }
+    
+    ///Checks wheter pre cache is supported for given url.
+    @objc public func isPreCacheSupported(url: URL) -> Bool{
+        let mimeTypeResult = getMimeType(url:url)
+        return !mimeTypeResult.1.isEmpty && mimeTypeResult.1 != "application/vnd.apple.mpegurl"
     }
 }
 

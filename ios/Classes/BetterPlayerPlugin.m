@@ -41,6 +41,7 @@ bool _remoteCommandsInitialized = false;
     _artworkImageDict = [NSMutableDictionary dictionary];
     _dataSourceDict = [NSMutableDictionary dictionary];
     _cacheManager = [[CacheManager alloc] init];
+    [_cacheManager setup];
     return self;
 }
 
@@ -420,16 +421,24 @@ bool _remoteCommandsInitialized = false;
             [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
         } else if ([@"preCache" isEqualToString:call.method]){
             NSDictionary* dataSource = argsMap[@"dataSource"];
-            NSString* uriArg = dataSource[@"uri"];
+            NSString* urlArg = dataSource[@"uri"];
             NSString* cacheKey = dataSource[@"cacheKey"];
             NSDictionary* headers = dataSource[@"headers"];
             NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
-            if (headers == [ NSNull null ]){
+            if (headers == (id)[ NSNull null ]){
                 headers = @{};
             }
-            [_cacheManager setMaxCacheSize:maxCacheSize];
-            [_cacheManager preCacheURL:[NSURL URLWithString:uriArg] cacheKey:cacheKey withHeaders:headers completionHandler:^(BOOL success){
-            }];
+            
+            if (urlArg != (id)[NSNull null]){
+                NSURL* url = [NSURL URLWithString:urlArg];
+                if ([_cacheManager isPreCacheSupportedWithUrl:url]){
+                    [_cacheManager setMaxCacheSize:maxCacheSize];
+                    [_cacheManager preCacheURL:url cacheKey:cacheKey withHeaders:headers completionHandler:^(BOOL success){
+                    }];
+                } else {
+                    NSLog(@"Pre cache is not supported for given data source.");
+                }
+            }
             result(nil);
         } else if ([@"clearCache" isEqualToString:call.method]){
             [_cacheManager clearCache];
@@ -437,10 +446,15 @@ bool _remoteCommandsInitialized = false;
         } else if ([@"stopPreCache" isEqualToString:call.method]){
             NSString* urlArg = argsMap[@"url"];
             NSString* cacheKey = argsMap[@"cacheKey"];
-            if (urlArg != [NSNull null]){
-                [_cacheManager stopPreCache:[NSURL URLWithString:urlArg] cacheKey:cacheKey
-                          completionHandler:^(BOOL success){
-                }];
+            if (urlArg != (id)[NSNull null]){
+                NSURL* url = [NSURL URLWithString:urlArg];
+                if ([_cacheManager isPreCacheSupportedWithUrl:url]){
+                    [_cacheManager stopPreCache:url cacheKey:cacheKey
+                              completionHandler:^(BOOL success){
+                    }];
+                } else {
+                    NSLog(@"Stop pre cache is not supported for given data source.");
+                }
             }
             result(nil);
         } else {
