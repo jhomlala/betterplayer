@@ -139,13 +139,9 @@ class BetterPlayerHlsUtils {
       }
 
       bool isDefault = false;
-      // bool isForced = false;
-      // bool isAutoSelect = false;
 
       if(rendition.format.selectionFlags != null) {
         isDefault = Util.checkBitPositionIsSet(rendition.format.selectionFlags!, 1);
-        // isForced = Util.checkBitPositionIsSet(rendition.format.selectionFlags!, 2);
-        // isAutoSelect = Util.checkBitPositionIsSet(rendition.format.selectionFlags!, 3);
       }
 
       return BetterPlayerAsmsSubtitle(

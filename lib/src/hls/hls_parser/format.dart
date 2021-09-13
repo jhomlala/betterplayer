@@ -39,7 +39,8 @@ class Format {
           required double? frameRate,
           int selectionFlags = Util.selectionFlagDefault,
           int? roleFlags,
-          bool? isDefault}) =>
+          bool? isDefault,
+          }) =>
       Format(
         id: id,
         label: label,
