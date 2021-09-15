@@ -11,6 +11,7 @@
 * Fixed iOS seek issue.
 * Fixed getting started button link in documentation.
 * Changed iOS non-HLS caching implementation based on https://github.com/neekeetab/CachingPlayerItem (by https://github.com/themadmrj).
+* Fixed hardcoded 30 FPS on iOS (by https://github.com/antonkrasov).
 * Enabled `preCache` and `stopPreCache` for iOS.
 
 ## 0.0.73
