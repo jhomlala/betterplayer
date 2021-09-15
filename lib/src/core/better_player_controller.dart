@@ -332,6 +332,7 @@ class BetterPlayerController {
               asmsIsSegmented: asmsSubtitle.isSegmented,
               asmsSegmentsTime: asmsSubtitle.segmentsTime,
               asmsSegments: asmsSubtitle.segments,
+              selectedByDefault: asmsSubtitle.isDefault,
             ),
           );
         });
