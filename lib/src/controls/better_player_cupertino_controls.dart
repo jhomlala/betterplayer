@@ -804,7 +804,6 @@ class _BetterPlayerCupertinoControlsState
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  color: backgroundColor,
                   height: barHeight,
                   padding: EdgeInsets.only(
                     left: buttonPadding,

@@ -7,6 +7,7 @@
 * Added null checks in seek commands in `BetterPlayerControlsState`.
 * Added tests.
 * Added iOS HLS caching based on HLSCachingReverseProxyServer.
+* Added default subtitle support for ASMS HLS data source (by https://github.com/siloebb).
 * Fixed issue with live stream where player controls were always visible.
 * Fixed iOS seek issue.
 * Fixed getting started button link in documentation.

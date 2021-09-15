@@ -74,10 +74,8 @@ import PINCache
     }
     
     @objc public func stopPreCache(_ url: URL, cacheKey: String?, completionHandler: ((_ success:Bool) -> Void)?){
-        NSLog("Stopping pre cache!")
         let _key: String = cacheKey ?? url.absoluteString
         if self._preCachedURLs[_key] != nil {
-            NSLog("Stopped pre cache!")
             let playerItem = self._preCachedURLs[_key]!
             playerItem.stopDownload()
             self._preCachedURLs.removeValue(forKey: _key)
@@ -119,7 +117,6 @@ import PINCache
                     NSLog("Cache error: couldn't find mime type for url: \(url.absoluteURL). For this URL cache didn't work and video will be played without cache.")
                     playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
                 } else {
-                    NSLog("Mime type: \(mimeTypeResult.0) / \(mimeTypeResult.1)")
                     playerItem = CachingPlayerItem(data: data!, mimeType: mimeTypeResult.1, fileExtension: mimeTypeResult.0)
                 }
             } else {
@@ -214,7 +211,7 @@ extension CacheManager: CachingPlayerItemDelegate {
         /// Is called every time a new portion of data is received.
         let percentage = Double(bytesDownloaded)/Double(bytesExpected)*100.0
         let str = String(format: "%.1f%%", percentage)
-        NSLog("Downloading... %@", str)
+        //NSLog("Downloading... %@", str)
     }
 
     func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error){

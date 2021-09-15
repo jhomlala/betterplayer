@@ -177,7 +177,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   // videoTrack.preferredTransform Setting tx to the height of the video instead of 0, properly
   // displays the video https://github.com/flutter/flutter/issues/17606#issuecomment-413473181
   NSInteger rotationDegrees = (NSInteger)round(radiansToDegrees(atan2(transform.b, transform.a)));
-  //NSLog(@"VIDEO__ %f, %f, %f, %f, %li", transform.tx, transform.ty, videoTrack.naturalSize.height, videoTrack.naturalSize.width, (long)rotationDegrees);
   if (rotationDegrees == 90) {
     transform.tx = videoTrack.naturalSize.height;
     transform.ty = 0;
@@ -198,20 +197,22 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withLicenseUrl:(NSString*)licenseUrl withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration{
     _overriddenDuration = 0;
-    if (headers == [NSNull null]){
+    if (headers == [NSNull null] || headers == NULL){
         headers = @{};
     }
+    
     AVPlayerItem* item;
     if (useCache){
+        if (cacheKey == [NSNull null]){
+            cacheKey = nil;
+        }
         item = [cacheManager getCachingPlayerItemForNormalPlayback:url cacheKey:cacheKey headers:headers];
     } else {
         AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
                                                 options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
-
         if (certificateUrl && certificateUrl != [NSNull null] && [certificateUrl length] > 0) {
             NSURL * certificateNSURL = [[NSURL alloc] initWithString: certificateUrl];
             NSURL * licenseNSURL = [[NSURL alloc] initWithString: licenseUrl];
-
             _loaderDelegate = [[BetterPlayerEzDrmAssetsLoaderDelegate alloc] init:certificateNSURL withLicenseURL:licenseNSURL];
             dispatch_queue_attr_t qos = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_DEFAULT, -1);
             dispatch_queue_t streamQueue = dispatch_queue_create("streamQueue", qos);
@@ -223,7 +224,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (@available(iOS 10.0, *) && overriddenDuration > 0) {
         _overriddenDuration = overriddenDuration;
     }
-
     return [self setDataSourcePlayerItem:item withKey:key];
 }
 
@@ -411,7 +411,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)updatePlayingState {
     if (!_isInitialized || !_key) {
-        NSLog(@"not initalized and paused!!");
         return;
     }
     if (!self._observersAdded){

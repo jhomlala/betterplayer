@@ -135,7 +135,7 @@ bool _remoteCommandsInitialized = false;
     }
 
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (_notificationPlayer != (id)[NSNull null]){
+        if (_notificationPlayer != [NSNull null]){
             if (_notificationPlayer.isPlaying){
                 _notificationPlayer.eventSink(@{@"event" : @"play"});
             } else {
@@ -146,14 +146,14 @@ bool _remoteCommandsInitialized = false;
     }];
 
     [commandCenter.playCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (_notificationPlayer != (id)[NSNull null]){
+        if (_notificationPlayer != [NSNull null]){
             _notificationPlayer.eventSink(@{@"event" : @"play"});
         }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
 
     [commandCenter.pauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (_notificationPlayer != (id)[NSNull null]){
+        if (_notificationPlayer != [NSNull null]){
             _notificationPlayer.eventSink(@{@"event" : @"pause"});
         }
         return MPRemoteCommandHandlerStatusSuccess;
@@ -163,7 +163,7 @@ bool _remoteCommandsInitialized = false;
 
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-            if (_notificationPlayer != (id)[NSNull null]){
+            if (_notificationPlayer != [NSNull null]){
                 MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
                 CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
                 int64_t millis = [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
@@ -188,11 +188,11 @@ bool _remoteCommandsInitialized = false;
                                                   MPNowPlayingInfoPropertyPlaybackRate: @1,
     } mutableCopy];
 
-    if (imageUrl != (id)[NSNull null]){
+    if (imageUrl != [NSNull null]){
         NSString* key =  [self getTextureId:player];
         MPMediaItemArtwork* artworkImage = [_artworkImageDict objectForKey:key];
 
-        if (key != (id)[NSNull null]){
+        if (key != [NSNull null]){
             if (artworkImage){
                 [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
                 [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
@@ -323,9 +323,10 @@ bool _remoteCommandsInitialized = false;
                 }
             }
 
-            if (headers == (id)[ NSNull null ]){
+            if (headers == [NSNull null] || headers == NULL){
                 headers = @{};
             }
+
             if (assetArg) {
                 NSString* assetPath;
                 NSString* package = dataSource[@"package"];
@@ -425,11 +426,11 @@ bool _remoteCommandsInitialized = false;
             NSString* cacheKey = dataSource[@"cacheKey"];
             NSDictionary* headers = dataSource[@"headers"];
             NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
-            if (headers == (id)[ NSNull null ]){
+            if (headers == [ NSNull null ]){
                 headers = @{};
             }
             
-            if (urlArg != (id)[NSNull null]){
+            if (urlArg != [NSNull null]){
                 NSURL* url = [NSURL URLWithString:urlArg];
                 if ([_cacheManager isPreCacheSupportedWithUrl:url]){
                     [_cacheManager setMaxCacheSize:maxCacheSize];
@@ -446,7 +447,7 @@ bool _remoteCommandsInitialized = false;
         } else if ([@"stopPreCache" isEqualToString:call.method]){
             NSString* urlArg = argsMap[@"url"];
             NSString* cacheKey = argsMap[@"cacheKey"];
-            if (urlArg != (id)[NSNull null]){
+            if (urlArg != [NSNull null]){
                 NSURL* url = [NSURL URLWithString:urlArg];
                 if ([_cacheManager isPreCacheSupportedWithUrl:url]){
                     [_cacheManager stopPreCache:url cacheKey:cacheKey
