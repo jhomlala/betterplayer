@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 #import "BetterPlayerPlugin.h"
-
+#import <better_player/better_player-Swift.h>
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -14,6 +14,7 @@
 NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
+CacheManager* _cacheManager;
 int texturesCount = -1;
 BetterPlayer* _notificationPlayer;
 bool _remoteCommandsInitialized = false;
@@ -39,7 +40,8 @@ bool _remoteCommandsInitialized = false;
     _timeObserverIdDict = [NSMutableDictionary dictionary];
     _artworkImageDict = [NSMutableDictionary dictionary];
     _dataSourceDict = [NSMutableDictionary dictionary];
-    [KTVHTTPCache proxyStart:nil];
+    _cacheManager = [[CacheManager alloc] init];
+    [_cacheManager setup];
     return self;
 }
 
@@ -95,7 +97,7 @@ bool _remoteCommandsInitialized = false;
     NSString* title = dataSource[@"title"];
     NSString* author = dataSource[@"author"];
     NSString* imageUrl = dataSource[@"imageUrl"];
-    
+
     if (showNotification){
         [self setRemoteCommandsNotificationActive];
         [self setupRemoteCommands: player];
@@ -113,7 +115,7 @@ bool _remoteCommandsInitialized = false;
     if ([_players count] == 0) {
         [[AVAudioSession sharedInstance] setActive:false error:nil];
     }
-    
+
     [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
 }
 
@@ -131,38 +133,37 @@ bool _remoteCommandsInitialized = false;
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand setEnabled:YES];
     }
-    
+
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (_notificationPlayer != [NSNull null]){
+        if (_notificationPlayer != (id)[NSNull null]){
             if (_notificationPlayer.isPlaying){
                 _notificationPlayer.eventSink(@{@"event" : @"play"});
             } else {
                 _notificationPlayer.eventSink(@{@"event" : @"pause"});
-                
             }
         }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
-    
+
     [commandCenter.playCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (_notificationPlayer != [NSNull null]){
+        if (_notificationPlayer != (id)[NSNull null]){
             _notificationPlayer.eventSink(@{@"event" : @"play"});
         }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
-    
+
     [commandCenter.pauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (_notificationPlayer != [NSNull null]){
+        if (_notificationPlayer != (id)[NSNull null]){
             _notificationPlayer.eventSink(@{@"event" : @"pause"});
         }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
-    
-    
-    
+
+
+
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-            if (_notificationPlayer != [NSNull null]){
+            if (_notificationPlayer != (id)[NSNull null]){
                 MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
                 CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
                 int64_t millis = [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
@@ -171,7 +172,6 @@ bool _remoteCommandsInitialized = false;
             }
             return MPRemoteCommandHandlerStatusSuccess;
         }];
-        
     }
     _remoteCommandsInitialized = true;
 }
@@ -179,24 +179,24 @@ bool _remoteCommandsInitialized = false;
 - (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl{
     float positionInSeconds = player.position /1000;
     float durationInSeconds = player.duration/ 1000;
-    
-    
+
+
     NSMutableDictionary * nowPlayingInfoDict = [@{MPMediaItemPropertyArtist: author,
                                                   MPMediaItemPropertyTitle: title,
                                                   MPNowPlayingInfoPropertyElapsedPlaybackTime: [ NSNumber numberWithFloat : positionInSeconds],
                                                   MPMediaItemPropertyPlaybackDuration: [NSNumber numberWithFloat:durationInSeconds],
                                                   MPNowPlayingInfoPropertyPlaybackRate: @1,
     } mutableCopy];
-    
-    if (imageUrl != [NSNull null]){
+
+    if (imageUrl != (id)[NSNull null]){
         NSString* key =  [self getTextureId:player];
         MPMediaItemArtwork* artworkImage = [_artworkImageDict objectForKey:key];
-        
-        if (key != [NSNull null]){
+
+        if (key != (id)[NSNull null]){
             if (artworkImage){
                 [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
                 [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
-                
+
             } else {
                 dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
                 dispatch_async(queue, ^{
@@ -217,7 +217,7 @@ bool _remoteCommandsInitialized = false;
                         [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
                     }
                     @catch(NSException *exception) {
-                        
+
                     }
                 });
             }
@@ -239,7 +239,7 @@ bool _remoteCommandsInitialized = false;
     id _timeObserverId = [player.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time){
         [self setupRemoteCommandNotification:player, title, author, imageUrl];
     }];
-    
+
     NSString* key =  [self getTextureId:player];
     [ _timeObserverIdDict setObject:_timeObserverId forKey: key];
 }
@@ -267,25 +267,25 @@ bool _remoteCommandsInitialized = false;
         if (currentPlayerTextureId == textureId){
             continue;
         }
-        
+
         id timeObserverId = [_timeObserverIdDict objectForKey:textureId];
         BetterPlayer* playerToRemoveListener = [_players objectForKey:textureId];
         [playerToRemoveListener.player removeTimeObserver: timeObserverId];
     }
     [_timeObserverIdDict removeAllObjects];
-    
+
 }
 
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    
-    
+
+
     if ([@"init" isEqualToString:call.method]) {
         // Allow audio playback when the Ring/Silent switch is set to silent
         for (NSNumber* textureId in _players) {
             [_players[textureId] dispose];
         }
-        
+
         [_players removeAllObjects];
         result(nil);
     } else if ([@"create" isEqualToString:call.method]) {
@@ -298,7 +298,7 @@ bool _remoteCommandsInitialized = false;
         if ([@"setDataSource" isEqualToString:call.method]) {
             [player clear];
             // This call will clear cached frame because we will return transparent frame
-            
+
             NSDictionary* dataSource = argsMap[@"dataSource"];
             [_dataSourceDict setObject:dataSource forKey:[self getTextureId:player]];
             NSString* assetArg = dataSource[@"asset"];
@@ -307,19 +307,23 @@ bool _remoteCommandsInitialized = false;
             NSString* certificateUrl = dataSource[@"certificateUrl"];
             NSString* licenseUrl = dataSource[@"licenseUrl"];
             NSDictionary* headers = dataSource[@"headers"];
-            
+            NSString* cacheKey = dataSource[@"cacheKey"];
+            NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
             int overriddenDuration = 0;
             if ([dataSource objectForKey:@"overriddenDuration"] != [NSNull null]){
                 overriddenDuration = [dataSource[@"overriddenDuration"] intValue];
             }
-            
+
             BOOL useCache = false;
             id useCacheObject = [dataSource objectForKey:@"useCache"];
             if (useCacheObject != [NSNull null]) {
                 useCache = [[dataSource objectForKey:@"useCache"] boolValue];
+                if (useCache){
+                    [_cacheManager setMaxCacheSize:maxCacheSize];
+                }
             }
-            
-            if (headers == nil){
+
+            if (headers == (id)[ NSNull null ]){
                 headers = @{};
             }
             if (assetArg) {
@@ -330,9 +334,9 @@ bool _remoteCommandsInitialized = false;
                 } else {
                     assetPath = [_registrar lookupKeyForAsset:assetArg];
                 }
-                [player setDataSourceAsset:assetPath withKey:key withCertificateUrl:certificateUrl withLicenseUrl: licenseUrl overriddenDuration:overriddenDuration];
+                [player setDataSourceAsset:assetPath withKey:key withCertificateUrl:certificateUrl withLicenseUrl: licenseUrl cacheKey:cacheKey cacheManager:_cacheManager overriddenDuration:overriddenDuration];
             } else if (uriArg) {
-                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withCertificateUrl:certificateUrl withLicenseUrl: licenseUrl withHeaders:headers withCache: useCache overriddenDuration:overriddenDuration];
+                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withCertificateUrl:certificateUrl withLicenseUrl: licenseUrl withHeaders:headers withCache: useCache cacheKey:cacheKey cacheManager:_cacheManager overriddenDuration:overriddenDuration];
             } else {
                 result(FlutterMethodNotImplemented);
             }
@@ -388,7 +392,7 @@ bool _remoteCommandsInitialized = false;
             int width = [argsMap[@"width"] intValue];
             int height = [argsMap[@"height"] intValue];
             int bitrate = [argsMap[@"bitrate"] intValue];
-            
+
             [player setTrackParameters:width: height : bitrate];
             result(nil);
         } else if ([@"enablePictureInPicture" isEqualToString:call.method]){
@@ -404,7 +408,7 @@ bool _remoteCommandsInitialized = false;
                     return;
                 }
             }
-            
+
             result([NSNumber numberWithBool:false]);
         } else if ([@"disablePictureInPicture" isEqualToString:call.method]){
             [player disablePictureInPicture];
@@ -415,8 +419,44 @@ bool _remoteCommandsInitialized = false;
             [player setAudioTrack:name index: index];
         } else if ([@"setMixWithOthers" isEqualToString:call.method]){
             [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
+        } else if ([@"preCache" isEqualToString:call.method]){
+            NSDictionary* dataSource = argsMap[@"dataSource"];
+            NSString* urlArg = dataSource[@"uri"];
+            NSString* cacheKey = dataSource[@"cacheKey"];
+            NSDictionary* headers = dataSource[@"headers"];
+            NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
+            if (headers == (id)[ NSNull null ]){
+                headers = @{};
+            }
+            
+            if (urlArg != (id)[NSNull null]){
+                NSURL* url = [NSURL URLWithString:urlArg];
+                if ([_cacheManager isPreCacheSupportedWithUrl:url]){
+                    [_cacheManager setMaxCacheSize:maxCacheSize];
+                    [_cacheManager preCacheURL:url cacheKey:cacheKey withHeaders:headers completionHandler:^(BOOL success){
+                    }];
+                } else {
+                    NSLog(@"Pre cache is not supported for given data source.");
+                }
+            }
+            result(nil);
         } else if ([@"clearCache" isEqualToString:call.method]){
-            [KTVHTTPCache cacheDeleteAllCaches];
+            [_cacheManager clearCache];
+            result(nil);
+        } else if ([@"stopPreCache" isEqualToString:call.method]){
+            NSString* urlArg = argsMap[@"url"];
+            NSString* cacheKey = argsMap[@"cacheKey"];
+            if (urlArg != (id)[NSNull null]){
+                NSURL* url = [NSURL URLWithString:urlArg];
+                if ([_cacheManager isPreCacheSupportedWithUrl:url]){
+                    [_cacheManager stopPreCache:url cacheKey:cacheKey
+                              completionHandler:^(BOOL success){
+                    }];
+                } else {
+                    NSLog(@"Stop pre cache is not supported for given data source.");
+                }
+            }
+            result(nil);
         } else {
             result(FlutterMethodNotImplemented);
         }

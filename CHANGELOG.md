@@ -1,3 +1,18 @@
+## 0.0.74
+* [BREAKING_CHANGE] `nextVideoTimeStreamController` is now marked as private. Please use `nextVideoTimeStream` to access stream.
+* [BREAKING_CHANGE] Removed BackdropFilter from cupertino theme.
+* [BREAKING_CHANGE] Removed `sigmaX` and `sigmaY` parameters from BetterPlayerControlsConfiguration.
+* Added `expandToFill` in `BetterPlayerConfiguration`.
+* Added `BetterPlayerControlsConfiguration.theme` factory for `BetterPlayerControlsConfiguration`.
+* Added null checks in seek commands in `BetterPlayerControlsState`.
+* Added tests.
+* Added iOS HLS caching based on HLSCachingReverseProxyServer.
+* Fixed issue with live stream where player controls were always visible.
+* Fixed iOS seek issue.
+* Fixed getting started button link in documentation.
+* Changed iOS non-HLS caching implementation based on https://github.com/neekeetab/CachingPlayerItem (by https://github.com/themadmrj).
+* Enabled `preCache` and `stopPreCache` for iOS.
+
 ## 0.0.73
 * Added `licenseUrl` support for iOS DRM.
 * Fixed RTL text direction issue in player controls.

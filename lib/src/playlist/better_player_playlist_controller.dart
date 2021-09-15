@@ -52,9 +52,8 @@ class BetterPlayerPlaylistController {
     _currentDataSourceIndex = initialStartIndex;
     setupDataSource(_currentDataSourceIndex);
     _betterPlayerController!.addEventsListener(_handleEvent);
-    _nextVideoTimeStreamSubscription = _betterPlayerController!
-        .nextVideoTimeStreamController.stream
-        .listen((time) {
+    _nextVideoTimeStreamSubscription =
+        _betterPlayerController!.nextVideoTimeStream.listen((time) {
       if (time != null && time == 0) {
         _onVideoChange();
       }
