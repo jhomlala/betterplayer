@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 class MockMethodChannel {
   final MethodChannel channel = const MethodChannel("better_player_channel");
@@ -34,12 +35,14 @@ class MockMethodChannel {
   void _createEventChannel(int id) {
     final MethodChannel eventChannel =
         MethodChannel("better_player_channel/videoEvents$id");
-
-    eventChannel.setMethodCallHandler((MethodCall methodCall) async {
-      ServicesBinding.instance!.defaultBinaryMessenger.handlePlatformMessage(
-          "better_player_channel/videoEvents$id",
-          const StandardMethodCodec().encodeSuccessEnvelope(_getInitResult()),
-          (ByteData? data) {});
+    TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+        .setMockMethodCallHandler(eventChannel, (MethodCall methodCall) async {
+      TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+          .handlePlatformMessage(
+              "better_player_channel/videoEvents$id",
+              const StandardMethodCodec()
+                  .encodeSuccessEnvelope(_getInitResult()),
+              (ByteData? data) {});
     });
 
     eventsChannels.add(eventChannel);
