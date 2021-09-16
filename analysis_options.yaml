@@ -18,5 +18,4 @@ linter:
     invalid_dependency: false
     sort_pub_dependencies: false
     avoid_unnecessary_containers: false
-    deprecated_field: false
 
