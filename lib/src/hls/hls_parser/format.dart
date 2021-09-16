@@ -26,21 +26,21 @@ class Format {
     this.isDefault,
   }) : language = language?.toLowerCase();
 
-  factory Format.createVideoContainerFormat(
-          {String? id,
-          String? label,
-          String? containerMimeType,
-          String? sampleMimeType,
-          required String? codecs,
-          int? bitrate,
-          int? averageBitrate,
-          required int? width,
-          required int? height,
-          required double? frameRate,
-          int selectionFlags = Util.selectionFlagDefault,
-          int? roleFlags,
-          bool? isDefault,
-          }) =>
+  factory Format.createVideoContainerFormat({
+    String? id,
+    String? label,
+    String? containerMimeType,
+    String? sampleMimeType,
+    required String? codecs,
+    int? bitrate,
+    int? averageBitrate,
+    required int? width,
+    required int? height,
+    required double? frameRate,
+    int selectionFlags = Util.selectionFlagDefault,
+    int? roleFlags,
+    bool? isDefault,
+  }) =>
       Format(
         id: id,
         label: label,

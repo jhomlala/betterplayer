@@ -140,20 +140,20 @@ class BetterPlayerHlsUtils {
 
       bool isDefault = false;
 
-      if(rendition.format.selectionFlags != null) {
-        isDefault = Util.checkBitPositionIsSet(rendition.format.selectionFlags!, 1);
+      if (rendition.format.selectionFlags != null) {
+        isDefault =
+            Util.checkBitPositionIsSet(rendition.format.selectionFlags!, 1);
       }
 
       return BetterPlayerAsmsSubtitle(
-        name: rendition.format.label,
-        language: rendition.format.language,
-        url: rendition.url.toString(),
-        realUrls: hlsSubtitlesUrls,
-        isSegmented: isSegmented,
-        segmentsTime: targetDuration,
-        segments: asmsSegments,
-        isDefault: isDefault
-      );
+          name: rendition.format.label,
+          language: rendition.format.language,
+          url: rendition.url.toString(),
+          realUrls: hlsSubtitlesUrls,
+          isSegmented: isSegmented,
+          segmentsTime: targetDuration,
+          segments: asmsSegments,
+          isDefault: isDefault);
     } catch (exception) {
       BetterPlayerUtils.log("Failed to process subtitles playlist: $exception");
       return null;

@@ -5,17 +5,21 @@ import 'better_player_test_utils.dart';
 import 'mock_method_channel.dart';
 import 'mock_video_player_controller.dart';
 
-MockMethodChannel? mockMethodChannel;
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  MockMethodChannel mockMethodChannel = MockMethodChannel();
 
   group(
     "BetterPlayerController tests",
     () {
-      setUp(() {
-        mockMethodChannel = MockMethodChannel();
-      });
+      setUp(
+        () => {
+          TestDefaultBinaryMessengerBinding.instance!.defaultBinaryMessenger
+              .setMockMethodCallHandler(
+                  mockMethodChannel.channel, mockMethodChannel.handle)
+        },
+      );
+
       test("Create controller without data source", () {
         final BetterPlayerMockController betterPlayerMockController =
             BetterPlayerMockController(const BetterPlayerConfiguration());

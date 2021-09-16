@@ -479,9 +479,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             return;
           }
           _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
-          if (_seekPosition != null && newPosition != null){
-            final difference = newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
-            if (difference > 0){
+          if (_seekPosition != null && newPosition != null) {
+            final difference =
+                newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
+            if (difference > 0) {
               _seekPosition = null;
             }
           }

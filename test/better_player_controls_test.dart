@@ -5,15 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import 'better_player_mock_controller.dart';
-import 'mock_method_channel.dart';
 
 void main() {
   late BetterPlayerMockController _mockController;
 
   setUpAll(() {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
-    // ignore: unused_local_variable
-    final MockMethodChannel mockMethodChannel = MockMethodChannel();
   });
 
   setUp(() {
