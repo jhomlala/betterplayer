@@ -37,4 +37,4 @@ flutter:
         package: com.jhomlala.better_player
         pluginClass: BetterPlayerPlugin
       ios:
-        pluginClass: BetterPlayerPlugin
+        pluginClass: FLTBetterPlayerPlugin

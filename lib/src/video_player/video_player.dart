@@ -358,7 +358,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           notificationChannelName: notificationChannelName,
           overriddenDuration: overriddenDuration,
           licenseUrl: licenseUrl,
-          certificateUrl: certificateUrl,
           drmHeaders: drmHeaders,
           activityName: activityName,
           clearKey: clearKey),
