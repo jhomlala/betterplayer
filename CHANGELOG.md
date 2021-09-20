@@ -14,6 +14,7 @@
 * Changed iOS non-HLS caching implementation based on https://github.com/neekeetab/CachingPlayerItem (by https://github.com/themadmrj).
 * Fixed hardcoded 30 FPS on iOS (by https://github.com/antonkrasov).
 * Enabled `preCache` and `stopPreCache` for iOS.
+* Updated dependencies.
 
 ## 0.0.73
 * Added `licenseUrl` support for iOS DRM.
