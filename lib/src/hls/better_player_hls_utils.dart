@@ -13,6 +13,7 @@ import 'package:better_player/src/hls/hls_parser/hls_media_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
 import 'package:better_player/src/hls/hls_parser/rendition.dart';
 import 'package:better_player/src/hls/hls_parser/segment.dart';
+import 'package:better_player/src/hls/hls_parser/util.dart';
 
 ///HLS helper class
 class BetterPlayerHlsUtils {
@@ -137,15 +138,22 @@ class BetterPlayerHlsUtils {
         targetDuration = parsedSubtitle.targetDurationUs! ~/ 1000;
       }
 
+      bool isDefault = false;
+
+      if (rendition.format.selectionFlags != null) {
+        isDefault =
+            Util.checkBitPositionIsSet(rendition.format.selectionFlags!, 1);
+      }
+
       return BetterPlayerAsmsSubtitle(
-        name: rendition.format.label,
-        language: rendition.format.language,
-        url: rendition.url.toString(),
-        realUrls: hlsSubtitlesUrls,
-        isSegmented: isSegmented,
-        segmentsTime: targetDuration,
-        segments: asmsSegments,
-      );
+          name: rendition.format.label,
+          language: rendition.format.language,
+          url: rendition.url.toString(),
+          realUrls: hlsSubtitlesUrls,
+          isSegmented: isSegmented,
+          segmentsTime: targetDuration,
+          segments: asmsSegments,
+          isDefault: isDefault);
     } catch (exception) {
       BetterPlayerUtils.log("Failed to process subtitles playlist: $exception");
       return null;

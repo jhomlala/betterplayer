@@ -316,12 +316,10 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> stopPreCache(String url) {
+  Future<void> stopPreCache(String url, String? cacheKey) {
     return _channel.invokeMethod<void>(
       'stopPreCache',
-      <String, dynamic>{
-        'url': url,
-      },
+      <String, dynamic>{'url': url, 'cacheKey': cacheKey},
     );
   }
 

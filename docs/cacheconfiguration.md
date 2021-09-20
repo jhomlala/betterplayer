@@ -40,12 +40,25 @@ Clear all cached data:
 betterPlayerController.clearCache();
 ```
 
-Start pre cache before playing video (android only):
+Start pre cache before playing video:
 ```dart
 betterPlayerController.preCache(_betterPlayerDataSource);
 ```
 
-Stop running pre cache (android only):
+Stop running pre cache:
 ```dart
 betterPlayerController.stopPreCache(_betterPlayerDataSource);
 ```
+
+On Android both HLS and non-HLS data sources will work in the same way (by using ExoPlayer internal cache mechanism). On iOS
+for HLS stream [HLSCachingReverseProxyServer](https://github.com/StyleShare/HLSCachingReverseProxyServer) is being used,
+and for other sources [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) is being used.
+
+See table below to check which cache options are available on given platform:
+
+|      Feature      | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS |
+|:-----------------:|:-----------:|:---------------:|:-------:|:-----------:|
+| Normal item cache |      ✓      |        ✓        |    ✓    |      ✓      |
+|     Pre cache     |      ✓      |        ✓        |    x    |      ✓      |
+|     Stop cache    |      ✓      |        ✓        |    x    |      ✓      |
+

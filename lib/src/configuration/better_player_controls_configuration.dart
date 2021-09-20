@@ -168,12 +168,6 @@ class BetterPlayerControlsConfiguration {
   ///Color of text in bottom modal sheet used for overflow menu items.
   final Color overflowModalTextColor;
 
-  ///Quality of Gaussian Blur for x (iOS only).
-  final double sigmaX;
-
-  ///Quality of Gaussian Blur for y (iOS only).
-  final double sigmaY;
-
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -226,8 +220,6 @@ class BetterPlayerControlsConfiguration {
     this.backgroundColor = Colors.black,
     this.overflowModalColor = Colors.white,
     this.overflowModalTextColor = Colors.black,
-    this.sigmaX = 10.0,
-    this.sigmaY = 10.0,
   });
 
   factory BetterPlayerControlsConfiguration.white() {
@@ -249,6 +241,14 @@ class BetterPlayerControlsConfiguration {
       pauseIcon: CupertinoIcons.pause_solid,
       skipBackIcon: CupertinoIcons.gobackward_15,
       skipForwardIcon: CupertinoIcons.goforward_15,
+    );
+  }
+
+  ///Setup BetterPlayerControlsConfiguration based on Theme options.
+  factory BetterPlayerControlsConfiguration.theme(ThemeData theme) {
+    return BetterPlayerControlsConfiguration(
+      textColor: theme.textTheme.bodyText1?.color ?? Colors.white,
+      iconsColor: theme.textTheme.button?.color ?? Colors.white,
     );
   }
 }

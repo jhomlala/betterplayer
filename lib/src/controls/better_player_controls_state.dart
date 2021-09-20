@@ -38,26 +38,30 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void skipBack() {
-    cancelAndRestartTimer();
-    final beginning = const Duration().inMilliseconds;
-    final skip = (latestValue!.position -
-            Duration(
-                milliseconds: betterPlayerControlsConfiguration
-                    .backwardSkipTimeInMilliseconds))
-        .inMilliseconds;
-    betterPlayerController!
-        .seekTo(Duration(milliseconds: max(skip, beginning)));
+    if (latestValue != null) {
+      cancelAndRestartTimer();
+      final beginning = const Duration().inMilliseconds;
+      final skip = (latestValue!.position -
+              Duration(
+                  milliseconds: betterPlayerControlsConfiguration
+                      .backwardSkipTimeInMilliseconds))
+          .inMilliseconds;
+      betterPlayerController!
+          .seekTo(Duration(milliseconds: max(skip, beginning)));
+    }
   }
 
   void skipForward() {
-    cancelAndRestartTimer();
-    final end = latestValue!.duration!.inMilliseconds;
-    final skip = (latestValue!.position +
-            Duration(
-                milliseconds: betterPlayerControlsConfiguration
-                    .forwardSkipTimeInMilliseconds))
-        .inMilliseconds;
-    betterPlayerController!.seekTo(Duration(milliseconds: min(skip, end)));
+    if (latestValue != null) {
+      cancelAndRestartTimer();
+      final end = latestValue!.duration!.inMilliseconds;
+      final skip = (latestValue!.position +
+              Duration(
+                  milliseconds: betterPlayerControlsConfiguration
+                      .forwardSkipTimeInMilliseconds))
+          .inMilliseconds;
+      betterPlayerController!.seekTo(Duration(milliseconds: min(skip, end)));
+    }
   }
 
   void onShowMoreClicked() {

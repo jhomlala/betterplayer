@@ -1,6 +1,5 @@
 // Dart imports:
 import 'dart:async';
-import 'dart:ui' as ui;
 
 // Flutter imports:
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
@@ -79,17 +78,15 @@ class _BetterPlayerCupertinoControlsState
       );
     }
 
-    final backgroundColor = _controlsConfiguration.controlBarColor;
-    final iconColor = _controlsConfiguration.iconsColor;
     _betterPlayerController = BetterPlayerController.of(context);
     _controller = _betterPlayerController!.videoPlayerController;
+    final backgroundColor = _controlsConfiguration.controlBarColor;
+    final iconColor = _controlsConfiguration.iconsColor;
     final orientation = MediaQuery.of(context).orientation;
     final barHeight = orientation == Orientation.portrait
         ? _controlsConfiguration.controlBarHeight
         : _controlsConfiguration.controlBarHeight + 10;
     const buttonPadding = 10.0;
-    final sigmaX = _controlsConfiguration.sigmaX;
-    final sigmaY = _controlsConfiguration.sigmaY;
 
     _wasLoading = isLoading(_latestValue);
     return GestureDetector(
@@ -124,8 +121,6 @@ class _BetterPlayerCupertinoControlsState
               iconColor,
               barHeight,
               buttonPadding,
-              sigmaX,
-              sigmaY,
             ),
             if (_wasLoading)
               Expanded(child: Center(child: _buildLoadingWidget()))
@@ -136,8 +131,6 @@ class _BetterPlayerCupertinoControlsState
               backgroundColor,
               iconColor,
               barHeight,
-              sigmaX,
-              sigmaY,
             ),
           ],
         ),
@@ -177,8 +170,6 @@ class _BetterPlayerCupertinoControlsState
     Color backgroundColor,
     Color iconColor,
     double barHeight,
-    double sigmaX,
-    double sigmaY,
   ) {
     if (!betterPlayerController!.controlsEnabled) {
       return const SizedBox();
@@ -188,63 +179,56 @@ class _BetterPlayerCupertinoControlsState
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
       child: Container(
-        color: Colors.transparent,
         alignment: Alignment.bottomCenter,
         margin: EdgeInsets.all(marginSize),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(10.0),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(
-              sigmaX: sigmaX,
-              sigmaY: sigmaY,
+          borderRadius: BorderRadius.circular(10),
+          child: Container(
+            height: barHeight,
+            decoration: BoxDecoration(
+              color: backgroundColor,
             ),
-            child: Container(
-              height: barHeight,
-              decoration: BoxDecoration(
-                color: backgroundColor.withOpacity(0.5),
-              ),
-              child: _betterPlayerController!.isLiveStream()
-                  ? Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        const SizedBox(width: 8),
-                        if (_controlsConfiguration.enablePlayPause)
-                          _buildPlayPause(_controller!, iconColor, barHeight)
-                        else
-                          const SizedBox(),
-                        const SizedBox(width: 8),
-                        _buildLiveWidget(),
-                      ],
-                    )
-                  : Row(
-                      children: <Widget>[
-                        if (_controlsConfiguration.enableSkips)
-                          _buildSkipBack(iconColor, barHeight)
-                        else
-                          const SizedBox(),
-                        if (_controlsConfiguration.enablePlayPause)
-                          _buildPlayPause(_controller!, iconColor, barHeight)
-                        else
-                          const SizedBox(),
-                        if (_controlsConfiguration.enableSkips)
-                          _buildSkipForward(iconColor, barHeight)
-                        else
-                          const SizedBox(),
-                        if (_controlsConfiguration.enableProgressText)
-                          _buildPosition()
-                        else
-                          const SizedBox(),
-                        if (_controlsConfiguration.enableProgressBar)
-                          _buildProgressBar()
-                        else
-                          const SizedBox(),
-                        if (_controlsConfiguration.enableProgressText)
-                          _buildRemaining()
-                        else
-                          const SizedBox()
-                      ],
-                    ),
-            ),
+            child: _betterPlayerController!.isLiveStream()
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      const SizedBox(width: 8),
+                      if (_controlsConfiguration.enablePlayPause)
+                        _buildPlayPause(_controller!, iconColor, barHeight)
+                      else
+                        const SizedBox(),
+                      const SizedBox(width: 8),
+                      _buildLiveWidget(),
+                    ],
+                  )
+                : Row(
+                    children: <Widget>[
+                      if (_controlsConfiguration.enableSkips)
+                        _buildSkipBack(iconColor, barHeight)
+                      else
+                        const SizedBox(),
+                      if (_controlsConfiguration.enablePlayPause)
+                        _buildPlayPause(_controller!, iconColor, barHeight)
+                      else
+                        const SizedBox(),
+                      if (_controlsConfiguration.enableSkips)
+                        _buildSkipForward(iconColor, barHeight)
+                      else
+                        const SizedBox(),
+                      if (_controlsConfiguration.enableProgressText)
+                        _buildPosition()
+                      else
+                        const SizedBox(),
+                      if (_controlsConfiguration.enableProgressBar)
+                        _buildProgressBar()
+                      else
+                        const SizedBox(),
+                      if (_controlsConfiguration.enableProgressText)
+                        _buildRemaining()
+                      else
+                        const SizedBox()
+                    ],
+                  ),
           ),
         ),
       ),
@@ -268,8 +252,6 @@ class _BetterPlayerCupertinoControlsState
     double barHeight,
     double iconSize,
     double buttonPadding,
-    double sigmaX,
-    double sigmaY,
   ) {
     return GestureDetector(
       onTap: _onExpandCollapse,
@@ -278,24 +260,19 @@ class _BetterPlayerCupertinoControlsState
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: sigmaX, sigmaY: sigmaY),
-            child: Container(
-              height: barHeight,
-              padding: EdgeInsets.symmetric(
-                horizontal: buttonPadding,
-              ),
-              decoration: BoxDecoration(
-                color: backgroundColor.withOpacity(0.5),
-              ),
-              child: Center(
-                child: Icon(
-                  _betterPlayerController!.isFullScreen
-                      ? _controlsConfiguration.fullscreenDisableIcon
-                      : _controlsConfiguration.fullscreenEnableIcon,
-                  color: iconColor,
-                  size: iconSize,
-                ),
+          child: Container(
+            height: barHeight,
+            padding: EdgeInsets.symmetric(
+              horizontal: buttonPadding,
+            ),
+            decoration: BoxDecoration(color: backgroundColor),
+            child: Center(
+              child: Icon(
+                _betterPlayerController!.isFullScreen
+                    ? _controlsConfiguration.fullscreenDisableIcon
+                    : _controlsConfiguration.fullscreenEnableIcon,
+                color: iconColor,
+                size: iconSize,
               ),
             ),
           ),
@@ -340,7 +317,6 @@ class _BetterPlayerCupertinoControlsState
     double barHeight,
     double iconSize,
     double buttonPadding,
-    double sigmaX,
   ) {
     return GestureDetector(
       onTap: () {
@@ -351,22 +327,19 @@ class _BetterPlayerCupertinoControlsState
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10.0),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: sigmaX),
+          child: Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+            ),
             child: Container(
-              decoration: BoxDecoration(
-                color: backgroundColor.withOpacity(0.5),
+              height: barHeight,
+              padding: EdgeInsets.symmetric(
+                horizontal: buttonPadding,
               ),
-              child: Container(
-                height: barHeight,
-                padding: EdgeInsets.symmetric(
-                  horizontal: buttonPadding,
-                ),
-                child: Icon(
-                  _controlsConfiguration.overflowMenuIcon,
-                  color: iconColor,
-                  size: iconSize,
-                ),
+              child: Icon(
+                _controlsConfiguration.overflowMenuIcon,
+                color: iconColor,
+                size: iconSize,
               ),
             ),
           ),
@@ -382,7 +355,6 @@ class _BetterPlayerCupertinoControlsState
     double barHeight,
     double iconSize,
     double buttonPadding,
-    double sigmaX,
   ) {
     return GestureDetector(
       onTap: () {
@@ -400,24 +372,21 @@ class _BetterPlayerCupertinoControlsState
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10.0),
-          child: BackdropFilter(
-            filter: ui.ImageFilter.blur(sigmaX: sigmaX),
+          child: Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+            ),
             child: Container(
-              decoration: BoxDecoration(
-                color: backgroundColor.withOpacity(0.5),
+              height: barHeight,
+              padding: EdgeInsets.symmetric(
+                horizontal: buttonPadding,
               ),
-              child: Container(
-                height: barHeight,
-                padding: EdgeInsets.symmetric(
-                  horizontal: buttonPadding,
-                ),
-                child: Icon(
-                  (_latestValue != null && _latestValue!.volume > 0)
-                      ? _controlsConfiguration.muteIcon
-                      : _controlsConfiguration.unMuteIcon,
-                  color: iconColor,
-                  size: iconSize,
-                ),
+              child: Icon(
+                (_latestValue != null && _latestValue!.volume > 0)
+                    ? _controlsConfiguration.muteIcon
+                    : _controlsConfiguration.unMuteIcon,
+                color: iconColor,
+                size: iconSize,
               ),
             ),
           ),
@@ -520,8 +489,6 @@ class _BetterPlayerCupertinoControlsState
     Color iconColor,
     double topBarHeight,
     double buttonPadding,
-    double sigmaX,
-    double sigmaY,
   ) {
     if (!betterPlayerController!.controlsEnabled) {
       return const SizedBox();
@@ -544,8 +511,6 @@ class _BetterPlayerCupertinoControlsState
               barHeight,
               iconSize,
               buttonPadding,
-              sigmaX,
-              sigmaY,
             )
           else
             const SizedBox(),
@@ -559,7 +524,6 @@ class _BetterPlayerCupertinoControlsState
               barHeight,
               iconSize,
               buttonPadding,
-              sigmaX,
             )
           else
             const SizedBox(),
@@ -572,7 +536,6 @@ class _BetterPlayerCupertinoControlsState
               barHeight,
               iconSize,
               buttonPadding,
-              sigmaX,
             )
           else
             const SizedBox(),
@@ -587,7 +550,6 @@ class _BetterPlayerCupertinoControlsState
               barHeight,
               iconSize,
               buttonPadding,
-              sigmaX,
             )
           else
             const SizedBox(),
@@ -598,7 +560,7 @@ class _BetterPlayerCupertinoControlsState
 
   Widget _buildNextVideoWidget() {
     return StreamBuilder<int?>(
-      stream: _betterPlayerController!.nextVideoTimeStreamController.stream,
+      stream: _betterPlayerController!.nextVideoTimeStream,
       builder: (context, snapshot) {
         final time = snapshot.data;
         if (time != null && time > 0) {
@@ -818,50 +780,53 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  Widget _buildPipButton(Color backgroundColor, Color iconColor,
-      double barHeight, double iconSize, double buttonPadding, double sigmaX) {
+  Widget _buildPipButton(
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double iconSize,
+    double buttonPadding,
+  ) {
     return FutureBuilder<bool>(
-        future: _betterPlayerController!.isPictureInPictureSupported(),
-        builder: (context, snapshot) {
-          final isPipSupported = snapshot.data ?? false;
-          if (isPipSupported &&
-              _betterPlayerController!.betterPlayerGlobalKey != null) {
-            return GestureDetector(
-              onTap: () {
-                betterPlayerController!.enablePictureInPicture(
-                    betterPlayerController!.betterPlayerGlobalKey!);
-              },
-              child: AnimatedOpacity(
-                opacity: _hideStuff ? 0.0 : 1.0,
-                duration: _controlsConfiguration.controlsHideTime,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: BackdropFilter(
-                    filter: ui.ImageFilter.blur(sigmaX: sigmaX),
-                    child: Container(
-                      height: barHeight,
-                      padding: EdgeInsets.only(
-                        left: buttonPadding,
-                        right: buttonPadding,
-                      ),
-                      decoration: BoxDecoration(
-                        color: backgroundColor.withOpacity(0.5),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          _controlsConfiguration.pipMenuIcon,
-                          color: iconColor,
-                          size: iconSize,
-                        ),
-                      ),
+      future: _betterPlayerController!.isPictureInPictureSupported(),
+      builder: (context, snapshot) {
+        final isPipSupported = snapshot.data ?? false;
+        if (isPipSupported &&
+            _betterPlayerController!.betterPlayerGlobalKey != null) {
+          return GestureDetector(
+            onTap: () {
+              betterPlayerController!.enablePictureInPicture(
+                  betterPlayerController!.betterPlayerGlobalKey!);
+            },
+            child: AnimatedOpacity(
+              opacity: _hideStuff ? 0.0 : 1.0,
+              duration: _controlsConfiguration.controlsHideTime,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Container(
+                  height: barHeight,
+                  padding: EdgeInsets.only(
+                    left: buttonPadding,
+                    right: buttonPadding,
+                  ),
+                  decoration: BoxDecoration(
+                    color: backgroundColor.withOpacity(0.5),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      _controlsConfiguration.pipMenuIcon,
+                      color: iconColor,
+                      size: iconSize,
                     ),
                   ),
                 ),
               ),
-            );
-          } else {
-            return const SizedBox();
-          }
-        });
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
   }
 }

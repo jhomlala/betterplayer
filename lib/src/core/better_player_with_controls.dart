@@ -97,18 +97,21 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     }
 
     aspectRatio ??= 16 / 9;
-
-    return Center(
-      child: Container(
-        width: double.infinity,
-        color: betterPlayerController
-            .betterPlayerConfiguration.controlsConfiguration.backgroundColor,
-        child: AspectRatio(
-          aspectRatio: aspectRatio,
-          child: _buildPlayerWithControls(betterPlayerController, context),
-        ),
+    final innerContainer = Container(
+      width: double.infinity,
+      color: betterPlayerController
+          .betterPlayerConfiguration.controlsConfiguration.backgroundColor,
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: _buildPlayerWithControls(betterPlayerController, context),
       ),
     );
+
+    if (betterPlayerController.betterPlayerConfiguration.expandToFill) {
+      return Center(child: innerContainer);
+    } else {
+      return innerContainer;
+    }
   }
 
   Container _buildPlayerWithControls(
