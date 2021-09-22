@@ -1,20 +1,23 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+library better_player_platform_interface;
 
 // Dart imports:
 import 'dart:async';
 import 'dart:ui';
 
 // Flutter imports:
-import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 // Package imports:
 import 'package:meta/meta.dart' show visibleForTesting;
 
-import 'method_channel_video_player.dart';
+part 'src/configuration/better_player_buffering_configuration.dart';
+part 'src/method_channel_video_player.dart';
+part 'src/better_player_utils.dart';
 
 /// The interface that implementations of video_player must implement.
 ///

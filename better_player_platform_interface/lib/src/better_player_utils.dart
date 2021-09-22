@@ -1,6 +1,4 @@
-// Flutter imports:
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+part of better_player_platform_interface;
 
 class BetterPlayerUtils {
   static String formatBitrate(int bitrate) {

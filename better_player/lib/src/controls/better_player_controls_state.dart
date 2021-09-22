@@ -7,8 +7,8 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
 import 'package:better_player/src/asms/better_player_asms_track.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
-import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 
 // Flutter imports:
 import 'package:collection/collection.dart' show IterableExtension;

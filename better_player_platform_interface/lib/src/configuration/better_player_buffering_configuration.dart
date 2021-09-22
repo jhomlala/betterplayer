@@ -1,3 +1,5 @@
+part of better_player_platform_interface;
+
 ///Configuration class used to setup better buffering experience or setup custom
 ///load settings. Currently used only in Android.
 class BetterPlayerBufferingConfiguration {

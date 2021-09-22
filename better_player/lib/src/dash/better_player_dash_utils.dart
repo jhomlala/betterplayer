@@ -1,7 +1,7 @@
 // External Package imports:
 import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
-import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:xml/xml.dart';
 
 // Project imports:

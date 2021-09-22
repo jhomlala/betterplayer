@@ -14,6 +14,6 @@ class BetterPlayerControllerProvider extends InheritedWidget {
   final BetterPlayerController controller;
 
   @override
-  bool updateShouldNotify(BetterPlayerControllerProvider old) =>
-      controller != old.controller;
+  bool updateShouldNotify(BetterPlayerControllerProvider oldWidget) =>
+      controller != oldWidget.controller;
 }
