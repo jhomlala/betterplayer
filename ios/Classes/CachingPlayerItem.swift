@@ -56,24 +56,30 @@ open class CachingPlayerItem: AVPlayerItem {
                 guard let initialUrl = owner?.url else {
                     fatalError("internal inconsistency")
                 }
-                startDataRequest(with: initialUrl)
+                startDataRequest( url: initialUrl)
             }
             pendingRequests.insert(loadingRequest)
             processPendingRequests()
             return true
         }
         
-        func startDataRequest(with url: URL) {
+        func startDataRequest(url: URL) {
             let configuration = URLSessionConfiguration.default
             configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
             session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
             var request = URLRequest(url: url)
             request.httpMethod = "GET"
-            if let unwrappedDict = self.headers {
-                for (_key, _value) in unwrappedDict.enumerated() {                    
-                    request.setValue((_value as! String), forHTTPHeaderField: (_key as! String))
+            let headersString = self.headers as? [String:AnyObject]
+            if let unwrappedDict = headersString {
+                for (headerKey,headerValue) in  unwrappedDict{
+                    guard let headerValueString = headerValue as? String
+                    else {
+                        continue
+                    }
+                    request.setValue(headerValueString, forHTTPHeaderField: headerKey)
+                    
                 }
-            }        
+            }
             session?.dataTask(with: request).resume()
         }
         
@@ -182,7 +188,7 @@ open class CachingPlayerItem: AVPlayerItem {
     ///Starts current download.
     open func download() {
         if resourceLoaderDelegate.session == nil {
-            resourceLoaderDelegate.startDataRequest(with: url)
+            resourceLoaderDelegate.startDataRequest(url: url)
         }
     }
     ///Stops current download.
