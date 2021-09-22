@@ -1,3 +1,6 @@
+## 0.0.75
+* Fixed iOS build issue connected with Swift 5.5.
+
 ## 0.0.74
 * [BREAKING_CHANGE] `nextVideoTimeStreamController` is now marked as private. Please use `nextVideoTimeStream` to access stream.
 * [BREAKING_CHANGE] Removed BackdropFilter from cupertino theme.
