@@ -168,6 +168,18 @@ class BetterPlayerControlsConfiguration {
   ///Color of text in bottom modal sheet used for overflow menu items.
   final Color overflowModalTextColor;
 
+  ///Enable back button
+  final bool enableBackButton;
+
+  ///The icon of back button
+  final IconData backButtonIcon;
+
+  ///On back button tab
+  final Function()? onBackButton;
+
+  ///Video title
+  final Widget? titleWidget;
+
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -220,6 +232,10 @@ class BetterPlayerControlsConfiguration {
     this.backgroundColor = Colors.black,
     this.overflowModalColor = Colors.white,
     this.overflowModalTextColor = Colors.black,
+    this.enableBackButton = false,
+    this.backButtonIcon = Icons.arrow_back,
+    this.onBackButton = null,
+    this.titleWidget = null,
   });
 
   factory BetterPlayerControlsConfiguration.white() {

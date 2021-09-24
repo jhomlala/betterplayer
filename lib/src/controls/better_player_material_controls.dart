@@ -14,6 +14,7 @@ import 'package:better_player/src/video_player/video_player.dart';
 
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class BetterPlayerMaterialControls extends StatefulWidget {
   ///Callback used to send information if player bar is hidden or not
@@ -208,6 +209,10 @@ class _BetterPlayerMaterialControlsState
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
+                      if (_controlsConfiguration.enableBackButton)
+                        _buildBackButton(),
+                      if (_controlsConfiguration.titleWidget != null)
+                        Expanded(child: _controlsConfiguration.titleWidget!),
                       if (_controlsConfiguration.enablePip)
                         _buildPipButtonWrapperWidget(_hideStuff, _onPlayerHide)
                       else
@@ -265,6 +270,28 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
+  Widget _buildBackButton() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: BetterPlayerMaterialClickableWidget(
+        onTap: () {
+          if (_controlsConfiguration.onBackButton != null) {
+            _controlsConfiguration.onBackButton!();
+          }
+          Navigator.pop(context);
+          if (_betterPlayerController!.isFullScreen) Navigator.pop(context);
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: Icon(
+            _controlsConfiguration.backButtonIcon,
+            color: _controlsConfiguration.iconsColor,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildMoreButton() {
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
@@ -313,10 +340,11 @@ class _BetterPlayerMaterialControlsState
                     _buildMuteButton(_controller)
                   else
                     const SizedBox(),
-                  if (_controlsConfiguration.enableFullscreen)
+                  if (_controlsConfiguration.enableFullscreen &&
+                      !_controlsConfiguration.enableBackButton)
                     _buildExpandButton()
                   else
-                    const SizedBox(),
+                    const SizedBox(width: 12),
                 ],
               ),
             ),
