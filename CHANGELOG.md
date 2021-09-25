@@ -1,6 +1,8 @@
 ## 0.0.76
 * Fixed iOS build issue.
 * [BREAKING_CHANGE] Changed min required iOS version to 11.
+* Updated `BetterPlayerConfiguration` `copyWith` method.
+* Added `useRootNavigator` option to `BetterPlayerConfiguration`.
 
 ## 0.0.75
 * Fixed iOS build issue.
