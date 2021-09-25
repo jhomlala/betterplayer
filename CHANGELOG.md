@@ -1,5 +1,9 @@
+## 0.0.76
+* Fixed iOS build issue.
+* [BREAKING_CHANGE] Changed min required iOS version to 11.
+
 ## 0.0.75
-* Fixed iOS build issue connected with Swift 5.5.
+* Fixed iOS build issue.
 
 ## 0.0.74
 * [BREAKING_CHANGE] `nextVideoTimeStreamController` is now marked as private. Please use `nextVideoTimeStream` to access stream.
