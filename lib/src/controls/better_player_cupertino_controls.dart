@@ -40,6 +40,7 @@ class _BetterPlayerCupertinoControlsState
   VideoPlayerValue? _latestValue;
   double? _latestVolume;
   bool _hideStuff = true;
+  bool _previousHideStuff = true;
   Timer? _hideTimer;
   Timer? _expandCollapseTimer;
   Timer? _initTimer;
@@ -62,8 +63,18 @@ class _BetterPlayerCupertinoControlsState
   BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _controlsConfiguration;
 
+
   @override
   Widget build(BuildContext context) {
+    if (_hideStuff != _previousHideStuff){
+      if (_hideStuff){
+        betterPlayerController?.disableCast();
+      } else {
+        betterPlayerController?.enableCast();
+      }
+    }
+    _previousHideStuff = _hideStuff;
+
     _betterPlayerController = BetterPlayerController.of(context);
 
     if (_latestValue?.hasError == true) {

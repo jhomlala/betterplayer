@@ -397,7 +397,11 @@ int texturesCount = -1;
             [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
         } else if ([@"clearCache" isEqualToString:call.method]){
             [KTVHTTPCache cacheDeleteAllCaches];
-        } else {
+        } else if ([@"enableCast" isEqualToString:call.method]){
+            [player addAirPlayButton];
+        } else if ([@"disableCast" isEqualToString:call.method]){
+            [player removeAirPlayButton];
+        }else {
             result(FlutterMethodNotImplemented);
         }
     }

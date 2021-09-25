@@ -27,6 +27,8 @@ AVPictureInPictureController *_pipController;
     _disposed = false;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
+    _player.usesExternalPlaybackWhileExternalScreenIsActive=YES;
+    _player.allowsExternalPlayback= YES;
     ///Fix for loading large videos
     if (@available(iOS 10.0, *)) {
         _player.automaticallyWaitsToMinimizeStalling = false;
@@ -35,11 +37,38 @@ AVPictureInPictureController *_pipController;
     return self;
 }
 
+
+BetterPlayerView* playerView;
 - (nonnull UIView *)view {
-    BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
+    playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
+
     return playerView;
 }
+
+AVRoutePickerView *routePickerView;
+
+- (void) addAirPlayButton{
+    dispatch_async(dispatch_get_main_queue(), ^{
+       
+            routePickerView = [[AVRoutePickerView alloc] initWithFrame:CGRectMake(780, 50, 80, 80)];
+        
+        routePickerView.tintColor = [UIColor whiteColor];
+       routePickerView.activeTintColor = [UIColor whiteColor];
+       routePickerView.delegate = self;
+    [playerView addSubview: routePickerView];
+        
+    });
+    NSLog(@"Add air play button");
+}
+
+-(void) removeAirPlayButton{
+    NSLog(@"Remove air play button");
+    dispatch_async(dispatch_get_main_queue(), ^{
+        routePickerView.removeFromSuperview;
+    });
+}
+
 
 - (void)addObservers:(AVPlayerItem*)item {
     if (!self._observersAdded){
@@ -535,7 +564,15 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _player.volume = (float)((volume < 0.0) ? 0.0 : ((volume > 1.0) ? 1.0 : volume));
 }
 
+int test = 0;
 - (void)setSpeed:(double)speed result:(FlutterResult)result {
+    if (test == 0){
+        test = 1;
+    [self addAirPlayButton];
+    } else {
+        test = 0;
+        [self removeAirPlayButton];
+    }
     if (speed == 1.0 || speed == 0.0) {
         _playerRate = 1;
         result(nil);
@@ -574,6 +611,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             _player.currentItem.preferredMaximumResolution = CGSizeMake(width, height);
         }
     }
+}
+
+-(Boolean) isPictureInPictureAvailable{
+    return [AVPictureInPictureController isPictureInPictureSupported];
 }
 
 - (void)setPictureInPicture:(BOOL)pictureInPicture
