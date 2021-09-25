@@ -30,9 +30,10 @@ import PINCache
     
     var server: HLSCachingReverseProxyServer?
 
-    lazy var storage: Cache.Storage? = {
-        return try? Cache.Storage(diskConfig: diskConfig, memoryConfig: memoryConfig, transformer: TransformerFactory.forCodable(ofType: Data.self))
+    lazy var storage: Cache.Storage<String,Data>? = {
+        return try? Cache.Storage<String,Data>(diskConfig: diskConfig, memoryConfig: memoryConfig, transformer: TransformerFactory.forCodable(ofType: Data.self))
     }()
+    
 
     ///Setups cache server for HLS streams
     @objc public func setup(){
