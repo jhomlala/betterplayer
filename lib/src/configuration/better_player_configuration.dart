@@ -179,6 +179,9 @@ class BetterPlayerConfiguration {
     Function(double visibilityFraction)? playerVisibilityChangedBehavior,
     List<BetterPlayerTranslations>? translations,
     bool? autoDetectFullscreenDeviceOrientation,
+    bool? handleLifecycle,
+    bool? autoDispose,
+    bool? expandToFill,
   }) {
     return BetterPlayerConfiguration(
       aspectRatio: aspectRatio ?? this.aspectRatio,
@@ -215,6 +218,9 @@ class BetterPlayerConfiguration {
       autoDetectFullscreenDeviceOrientation:
           autoDetectFullscreenDeviceOrientation ??
               this.autoDetectFullscreenDeviceOrientation,
+      handleLifecycle: handleLifecycle ?? this.handleLifecycle,
+      autoDispose: autoDispose ?? this.autoDispose,
+      expandToFill: expandToFill ?? this.expandToFill,
     );
   }
 }
