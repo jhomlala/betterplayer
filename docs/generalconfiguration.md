@@ -108,4 +108,12 @@ final bool handleLifecycle;
 ///Defines flag which enabled/disabled auto dispose on BetterPlayer dispose.
 ///Default value is true.
 final bool autoDispose;
+
+///Flag which causes to player expand to fill all remaining space. Set to false
+///to use minimum constraints
+final bool expandToFill;
+
+///Flag which causes to player use the root navigator to open new pages.
+///Default value is false.
+final bool useRootNavigator;
 ```
