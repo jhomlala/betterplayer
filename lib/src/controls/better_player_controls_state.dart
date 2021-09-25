@@ -460,6 +460,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     showCupertinoModalPopup<void>(
       barrierColor: Colors.transparent,
       context: context,
+      useRootNavigator:
+          betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
+              false,
       builder: (context) {
         return SafeArea(
           top: false,
@@ -488,6 +491,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       context: context,
+      useRootNavigator:
+          betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
+              false,
       builder: (context) {
         return SafeArea(
           top: false,
@@ -497,7 +503,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               decoration: BoxDecoration(
                 color: betterPlayerControlsConfiguration.overflowModalColor,
-                /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24.0),
                     topRight: Radius.circular(24.0)),
