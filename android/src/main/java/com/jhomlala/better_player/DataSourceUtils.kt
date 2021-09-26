@@ -1,46 +1,56 @@
-package com.jhomlala.better_player;
+package com.jhomlala.better_player
 
-import android.net.Uri;
+import android.net.Uri
+import com.google.android.exoplayer2.upstream.DataSource
+import com.jhomlala.better_player.DataSourceUtils
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
+internal object DataSourceUtils {
+    private const val USER_AGENT = "User-Agent"
+    private const val USER_AGENT_PROPERTY = "http.agent"
 
-import java.util.Map;
-
-class DataSourceUtils {
-
-    private static final String USER_AGENT = "User-Agent";
-    private static final String USER_AGENT_PROPERTY = "http.agent";
-
-    static String getUserAgent(Map<String, String> headers){
-        String userAgent = System.getProperty(USER_AGENT_PROPERTY);
+    @JvmStatic
+    fun getUserAgent(headers: Map<String?, String?>?): String {
+        var userAgent = System.getProperty(USER_AGENT_PROPERTY)
         if (headers != null && headers.containsKey(USER_AGENT)) {
-            String userAgentHeader = headers.get(USER_AGENT);
+            val userAgentHeader = headers[USER_AGENT]
             if (userAgentHeader != null) {
-                userAgent = userAgentHeader;
+                userAgent = userAgentHeader
             }
         }
-        return userAgent;
+        return userAgent
     }
 
-    static DataSource.Factory getDataSourceFactory(String userAgent, Map<String, String> headers){
-        DataSource.Factory dataSourceFactory = new DefaultHttpDataSource.Factory()
-                .setUserAgent(userAgent)
-                .setAllowCrossProtocolRedirects(true)
-                .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
-                .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS);
-
+    @JvmStatic
+    fun getDataSourceFactory(
+        userAgent: String?,
+        headers: Map<String?, String?>?
+    ): DataSource.Factory {
+        val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
+            .setUserAgent(userAgent)
+            .setAllowCrossProtocolRedirects(true)
+            .setConnectTimeoutMs(DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS)
+            .setReadTimeoutMs(DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS)
         if (headers != null) {
-            ((DefaultHttpDataSource.Factory) dataSourceFactory).setDefaultRequestProperties(headers);
+            val notNullHeaders = mutableMapOf<String, String>()
+            headers.forEach { entry ->
+                if (entry.key != null && entry.value != null) {
+                    notNullHeaders[entry.key!!] = entry.value!!
+                }
+            }
+            (dataSourceFactory as DefaultHttpDataSource.Factory).setDefaultRequestProperties(
+                notNullHeaders
+            )
         }
-        return dataSourceFactory;
+        return dataSourceFactory
     }
 
-    static boolean isHTTP(Uri uri) {
-        if (uri == null || uri.getScheme() == null) {
-            return false;
+    @JvmStatic
+    fun isHTTP(uri: Uri?): Boolean {
+        if (uri == null || uri.scheme == null) {
+            return false
         }
-        String scheme = uri.getScheme();
-        return scheme.equals("http") || scheme.equals("https");
+        val scheme = uri.scheme
+        return scheme == "http" || scheme == "https"
     }
 }

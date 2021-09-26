@@ -1,39 +1,40 @@
-package com.jhomlala.better_player;
+package com.jhomlala.better_player
 
-import android.content.Context;
-import android.util.Log;
+import android.content.Context
+import android.util.Log
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import java.io.File
+import java.lang.Exception
 
-import com.google.android.exoplayer2.database.ExoDatabaseProvider;
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor;
-import com.google.android.exoplayer2.upstream.cache.SimpleCache;
-
-import java.io.File;
-
-public class BetterPlayerCache {
-    private static volatile SimpleCache instance;
-
-    public static SimpleCache createCache(Context context, long cacheFileSize) {
+object BetterPlayerCache {
+    @Volatile
+    private var instance: SimpleCache? = null
+    fun createCache(context: Context, cacheFileSize: Long): SimpleCache? {
         if (instance == null) {
-            synchronized (BetterPlayerCache.class) {
+            synchronized(BetterPlayerCache::class.java) {
                 if (instance == null) {
-                    instance = new SimpleCache(
-                            new File(context.getCacheDir(), "betterPlayerCache"),
-                            new LeastRecentlyUsedCacheEvictor(cacheFileSize),
-                            new ExoDatabaseProvider(context));
+                    instance = SimpleCache(
+                        File(context.cacheDir, "betterPlayerCache"),
+                        LeastRecentlyUsedCacheEvictor(cacheFileSize),
+                        ExoDatabaseProvider(context)
+                    )
                 }
             }
         }
-        return instance;
+        return instance
     }
 
-    public static void releaseCache() {
+    @JvmStatic
+    fun releaseCache() {
         try {
             if (instance != null) {
-                instance.release();
-                instance = null;
+                instance!!.release()
+                instance = null
             }
-        } catch (Exception exception) {
-            Log.e("BetterPlayerCache", exception.toString());
+        } catch (exception: Exception) {
+            Log.e("BetterPlayerCache", exception.toString())
         }
     }
 }

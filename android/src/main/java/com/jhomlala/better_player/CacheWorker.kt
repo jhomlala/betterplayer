@@ -1,108 +1,99 @@
-package com.jhomlala.better_player;
+package com.jhomlala.better_player
 
-import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
-
-import androidx.annotation.NonNull;
-import androidx.work.Data;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
-
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DataSpec;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheWriter;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
+import android.content.Context
+import android.net.Uri
+import android.util.Log
+import com.jhomlala.better_player.DataSourceUtils.isHTTP
+import com.jhomlala.better_player.DataSourceUtils.getUserAgent
+import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
+import androidx.work.WorkerParameters
+import com.google.android.exoplayer2.upstream.cache.CacheWriter
+import androidx.work.Worker
+import com.google.android.exoplayer2.upstream.DataSpec
+import com.google.android.exoplayer2.upstream.HttpDataSource.HttpDataSourceException
+import java.lang.Exception
+import java.util.*
 
 /**
  * Cache worker which download part of video and save in cache for future usage. The cache job
  * will be executed in work manager.
  */
-public class CacheWorker extends Worker {
-    private static final String TAG = "CacheWorker";
-    private Context mContext;
-    private CacheWriter mCacheWriter;
-    private int mLastCacheReportIndex = 0;
-
-    public CacheWorker(
-            @NonNull Context context,
-            @NonNull WorkerParameters params) {
-        super(context, params);
-        this.mContext = context;
-    }
-
-    @NonNull
-    @Override
-    public Result doWork() {
+class CacheWorker(
+    private val mContext: Context,
+    params: WorkerParameters
+) : Worker(mContext, params) {
+    private var mCacheWriter: CacheWriter? = null
+    private var mLastCacheReportIndex = 0
+    override fun doWork(): Result {
         try {
-            Data data = getInputData();
-            String url = data.getString(BetterPlayerPlugin.URL_PARAMETER);
-            String cacheKey = data.getString(BetterPlayerPlugin.CACHE_KEY_PARAMETER);
-            long preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0);
-            long maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0);
-            long maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0);
-            Map<String, String> headers = new HashMap<>();
-            for (String key : data.getKeyValueMap().keySet()) {
+            val data = inputData
+            val url = data.getString(BetterPlayerPlugin.URL_PARAMETER)
+            val cacheKey = data.getString(BetterPlayerPlugin.CACHE_KEY_PARAMETER)
+            val preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0)
+            val maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0)
+            val maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0)
+            val headers: MutableMap<String?, String?> = HashMap()
+            for (key in data.keyValueMap.keys) {
                 if (key.contains(BetterPlayerPlugin.HEADER_PARAMETER)) {
-                    String keySplit = key.split(BetterPlayerPlugin.HEADER_PARAMETER)[0];
-                    headers.put(keySplit, (String) Objects.requireNonNull(data.getKeyValueMap().get(key)));
+                    val keySplit =
+                        key.split(BetterPlayerPlugin.HEADER_PARAMETER.toRegex()).toTypedArray()[0]
+                    headers[keySplit] = Objects.requireNonNull(data.keyValueMap[key]) as String
                 }
             }
-
-            Uri uri = Uri.parse(url);
-            if (DataSourceUtils.isHTTP(uri)) {
-                String userAgent = DataSourceUtils.getUserAgent(headers);
-                DataSource.Factory dataSourceFactory = DataSourceUtils.getDataSourceFactory(userAgent, headers);
-
-                DataSpec dataSpec = new DataSpec(uri, 0, preCacheSize);
-                if (cacheKey != null && cacheKey.length() > 0) {
-                    dataSpec = dataSpec.buildUpon().setKey(cacheKey).build();
+            val uri = Uri.parse(url)
+            if (isHTTP(uri)) {
+                val userAgent = getUserAgent(headers)
+                val dataSourceFactory = getDataSourceFactory(userAgent, headers)
+                var dataSpec = DataSpec(uri, 0, preCacheSize)
+                if (cacheKey != null && cacheKey.isNotEmpty()) {
+                    dataSpec = dataSpec.buildUpon().setKey(cacheKey).build()
                 }
-
-                CacheDataSourceFactory cacheDataSourceFactory =
-                        new CacheDataSourceFactory(mContext, maxCacheSize, maxCacheFileSize, dataSourceFactory);
-
-                mCacheWriter = new CacheWriter(
-                        cacheDataSourceFactory.createDataSource(),
-                        dataSpec,
-                        null,
-                        (long requestLength, long bytesCached, long newBytesCached) -> {
-                                double completedData = ((bytesCached * 100f) / preCacheSize);
-                                if (completedData >= mLastCacheReportIndex * 10) {
-                                    mLastCacheReportIndex += 1;
-                                    Log.d(TAG, "Completed pre cache of " + url + ": " + (int) completedData + "%");
-                                }
-                            }
-                        );
-
-                mCacheWriter.cache();
+                val cacheDataSourceFactory = CacheDataSourceFactory(
+                    mContext,
+                    maxCacheSize,
+                    maxCacheFileSize,
+                    dataSourceFactory
+                )
+                mCacheWriter = CacheWriter(
+                    cacheDataSourceFactory.createDataSource(),
+                    dataSpec,
+                    null
+                ) { _: Long, bytesCached: Long, _: Long ->
+                    val completedData = (bytesCached * 100f / preCacheSize).toDouble()
+                    if (completedData >= mLastCacheReportIndex * 10) {
+                        mLastCacheReportIndex += 1
+                        Log.d(
+                            TAG,
+                            "Completed pre cache of " + url + ": " + completedData.toInt() + "%"
+                        )
+                    }
+                }
+                mCacheWriter!!.cache()
             } else {
-                Log.e(TAG, "Preloading only possible for remote data sources");
-                return Result.failure();
+                Log.e(TAG, "Preloading only possible for remote data sources")
+                return Result.failure()
             }
-        } catch (Exception exception) {
-            Log.e(TAG, exception.toString());
-            if (exception instanceof HttpDataSource.HttpDataSourceException) {
-                return Result.success();
+        } catch (exception: Exception) {
+            Log.e(TAG, exception.toString())
+            return if (exception is HttpDataSourceException) {
+                Result.success()
             } else {
-                return Result.failure();
+                Result.failure()
             }
         }
-        return Result.success();
+        return Result.success()
     }
 
-    @Override
-    public void onStopped() {
+    override fun onStopped() {
         try {
-            mCacheWriter.cancel();
-            super.onStopped();
-        } catch (Exception exception) {
-            Log.e(TAG, exception.toString());
+            mCacheWriter!!.cancel()
+            super.onStopped()
+        } catch (exception: Exception) {
+            Log.e(TAG, exception.toString())
         }
+    }
+
+    companion object {
+        private const val TAG = "CacheWorker"
     }
 }
