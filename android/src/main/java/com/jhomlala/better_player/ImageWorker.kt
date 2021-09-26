@@ -1,125 +1,120 @@
-package com.jhomlala.better_player;
+package com.jhomlala.better_player
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.util.Log;
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.Log
+import androidx.work.Data
+import androidx.work.WorkerParameters
+import androidx.work.ListenableWorker
+import androidx.work.Worker
+import com.jhomlala.better_player.BetterPlayerPlugin
+import com.jhomlala.better_player.DataSourceUtils
+import com.jhomlala.better_player.ImageWorker
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.lang.Exception
+import java.net.HttpURLConnection
+import java.net.URL
 
-import androidx.annotation.NonNull;
-import androidx.work.Data;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
-
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-public class ImageWorker extends Worker {
-    private static final String TAG = "ImageWorker";
-    private static final String IMAGE_EXTENSION = ".png";
-    private static final int DEFAULT_NOTIFICATION_IMAGE_SIZE_PX = 256;
-
-    public ImageWorker(
-            @NonNull Context context,
-            @NonNull WorkerParameters params) {
-        super(context, params);
-    }
-
-    @NonNull
-    @Override
-    public Result doWork() {
-        try {
-            String imageUrl = getInputData().getString(BetterPlayerPlugin.URL_PARAMETER);
-            if (imageUrl == null) {
-                return Result.failure();
-            }
-            Bitmap bitmap = null;
-            if (DataSourceUtils.isHTTP(Uri.parse(imageUrl))) {
-                bitmap = getBitmapFromExternalURL(imageUrl);
+class ImageWorker(
+    context: Context,
+    params: WorkerParameters
+) : Worker(context, params) {
+    override fun doWork(): Result {
+        return try {
+            val imageUrl = inputData.getString(BetterPlayerPlugin.URL_PARAMETER)
+                ?: return Result.failure()
+            var bitmap: Bitmap? = null
+            bitmap = if (DataSourceUtils.isHTTP(Uri.parse(imageUrl))) {
+                getBitmapFromExternalURL(imageUrl)
             } else {
-                bitmap = getBitmapFromInternalURL(imageUrl);
+                getBitmapFromInternalURL(imageUrl)
             }
-            String fileName = imageUrl.hashCode() + IMAGE_EXTENSION;
-            String filePath = getApplicationContext().getCacheDir().getAbsolutePath() + fileName;
-
+            val fileName = imageUrl.hashCode().toString() + IMAGE_EXTENSION
+            val filePath = applicationContext.cacheDir.absolutePath + fileName
             if (bitmap == null) {
-                return Result.failure();
+                return Result.failure()
             }
-            FileOutputStream out = new FileOutputStream(filePath);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            Data data = new Data.Builder().putString(BetterPlayerPlugin.FILE_PATH_PARAMETER, filePath).build();
-            return Result.success(data);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure();
+            val out = FileOutputStream(filePath)
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+            val data =
+                Data.Builder().putString(BetterPlayerPlugin.FILE_PATH_PARAMETER, filePath).build()
+            Result.success(data)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Result.failure()
         }
     }
 
-
-    private Bitmap getBitmapFromExternalURL(String src) {
-        InputStream inputStream = null;
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            inputStream = connection.getInputStream();
-
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(inputStream, null, options);
-            inputStream.close();
-            connection = (HttpURLConnection) url.openConnection();
-            inputStream = connection.getInputStream();
+    private fun getBitmapFromExternalURL(src: String): Bitmap? {
+        var inputStream: InputStream? = null
+        return try {
+            val url = URL(src)
+            var connection = url.openConnection() as HttpURLConnection
+            inputStream = connection.inputStream
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            BitmapFactory.decodeStream(inputStream, null, options)
+            inputStream.close()
+            connection = url.openConnection() as HttpURLConnection
+            inputStream = connection.inputStream
             options.inSampleSize = calculateBitmapInSampleSize(
-                    options);
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeStream(inputStream, null, options);
-
-        } catch (Exception exception) {
-            Log.e(TAG, "Failed to get bitmap from external url: " + src);
-            return null;
+                options
+            )
+            options.inJustDecodeBounds = false
+            BitmapFactory.decodeStream(inputStream, null, options)
+        } catch (exception: Exception) {
+            Log.e(TAG, "Failed to get bitmap from external url: $src")
+            null
         } finally {
             try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (Exception exception) {
-                Log.e(TAG, "Failed to close bitmap input stream/");
+                inputStream?.close()
+            } catch (exception: Exception) {
+                Log.e(TAG, "Failed to close bitmap input stream/")
             }
         }
     }
 
-    private int calculateBitmapInSampleSize(
-            BitmapFactory.Options options) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
-
-        if (height > ImageWorker.DEFAULT_NOTIFICATION_IMAGE_SIZE_PX
-                || width > ImageWorker.DEFAULT_NOTIFICATION_IMAGE_SIZE_PX) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) >= ImageWorker.DEFAULT_NOTIFICATION_IMAGE_SIZE_PX
-                    && (halfWidth / inSampleSize) >= ImageWorker.DEFAULT_NOTIFICATION_IMAGE_SIZE_PX) {
-                inSampleSize *= 2;
+    private fun calculateBitmapInSampleSize(
+        options: BitmapFactory.Options
+    ): Int {
+        val height = options.outHeight
+        val width = options.outWidth
+        var inSampleSize = 1
+        if (height > DEFAULT_NOTIFICATION_IMAGE_SIZE_PX
+            || width > DEFAULT_NOTIFICATION_IMAGE_SIZE_PX
+        ) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
+            while (halfHeight / inSampleSize >= DEFAULT_NOTIFICATION_IMAGE_SIZE_PX
+                && halfWidth / inSampleSize >= DEFAULT_NOTIFICATION_IMAGE_SIZE_PX
+            ) {
+                inSampleSize *= 2
             }
         }
-        return inSampleSize;
+        return inSampleSize
     }
 
-    private Bitmap getBitmapFromInternalURL(String src) {
-        try {
-            final BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            options.inSampleSize = calculateBitmapInSampleSize(options
-            );
-            options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeFile(src);
-        } catch (Exception exception) {
-            Log.e(TAG, "Failed to get bitmap from internal url: " + src);
-            return null;
+    private fun getBitmapFromInternalURL(src: String): Bitmap? {
+        return try {
+            val options = BitmapFactory.Options()
+            options.inJustDecodeBounds = true
+            options.inSampleSize = calculateBitmapInSampleSize(
+                options
+            )
+            options.inJustDecodeBounds = false
+            BitmapFactory.decodeFile(src)
+        } catch (exception: Exception) {
+            Log.e(TAG, "Failed to get bitmap from internal url: $src")
+            null
         }
     }
 
+    companion object {
+        private const val TAG = "ImageWorker"
+        private const val IMAGE_EXTENSION = ".png"
+        private const val DEFAULT_NOTIFICATION_IMAGE_SIZE_PX = 256
+    }
 }

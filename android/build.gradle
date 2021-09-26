@@ -20,9 +20,10 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 16
@@ -45,13 +46,23 @@ android {
         implementation 'com.google.android.exoplayer:exoplayer-smoothstreaming:2.14.2'
         implementation 'com.google.android.exoplayer:exoplayer-ui:2.14.2'
         implementation 'com.google.android.exoplayer:extension-mediasession:2.14.2'
-        implementation "android.arch.lifecycle:runtime:1.1.1"
-        implementation "android.arch.lifecycle:common:1.1.1"
-        implementation "android.arch.lifecycle:common-java8:1.1.1"
-        implementation 'androidx.annotation:annotation:1.1.0'
-        implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-        implementation "androidx.work:work-runtime:2.5.0"
+        implementation"androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-beta01"
+        implementation"androidx.lifecycle:lifecycle-common:2.4.0-beta01"
+        implementation"androidx.lifecycle:lifecycle-common-java8:2.4.0-beta01"
+//        implementation "android.arch.lifecycle:runtime:1.1.1"
+//        implementation "android.arch.lifecycle:common:1.1.1"
+//        implementation "android.arch.lifecycle:common-java8:1.1.1"
+        implementation 'androidx.annotation:annotation:1.2.0'
+//        implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+        implementation "androidx.work:work-runtime:2.6.0"
     }
+}
+dependencies {
+    implementation "androidx.core:core-ktx:1.6.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
 
 
