@@ -10,7 +10,7 @@ internal object DataSourceUtils {
     private const val USER_AGENT_PROPERTY = "http.agent"
 
     @JvmStatic
-    fun getUserAgent(headers: Map<String?, String?>?): String {
+    fun getUserAgent(headers: Map<String, String>?): String {
         var userAgent = System.getProperty(USER_AGENT_PROPERTY)
         if (headers != null && headers.containsKey(USER_AGENT)) {
             val userAgentHeader = headers[USER_AGENT]
@@ -24,7 +24,7 @@ internal object DataSourceUtils {
     @JvmStatic
     fun getDataSourceFactory(
         userAgent: String?,
-        headers: Map<String?, String?>?
+        headers: Map<String, String>?
     ): DataSource.Factory {
         val dataSourceFactory: DataSource.Factory = DefaultHttpDataSource.Factory()
             .setUserAgent(userAgent)

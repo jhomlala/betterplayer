@@ -32,7 +32,7 @@ class CacheWorker(
             val preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0)
             val maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0)
             val maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0)
-            val headers: MutableMap<String?, String?> = HashMap()
+            val headers: MutableMap<String, String> = HashMap()
             for (key in data.keyValueMap.keys) {
                 if (key.contains(BetterPlayerPlugin.HEADER_PARAMETER)) {
                     val keySplit =
