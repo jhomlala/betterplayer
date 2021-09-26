@@ -389,7 +389,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             videoPlayers.valueAt(index).disposeRemoteNotifications()
         }
     }
-
+    @Suppress("UNCHECKED_CAST")
     private fun <T> getParameter(parameters: Map<String, Any?>?, key: String, defaultValue: T): T {
         if (parameters!!.containsKey(key)) {
             val value = parameters[key]
