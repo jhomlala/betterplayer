@@ -316,15 +316,15 @@ internal class BetterPlayer(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             refreshHandler = Handler(Looper.getMainLooper())
             refreshRunnable = Runnable {
-                val playbackState: PlaybackStateCompat = if (exoPlayer!!.playWhenReady) {
+                val playbackState: PlaybackStateCompat = if (exoPlayer?.isPlaying == true) {
                     PlaybackStateCompat.Builder()
                         .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-                        .setState(PlaybackStateCompat.STATE_PAUSED, position, 1.0f)
+                        .setState(PlaybackStateCompat.STATE_PLAYING, position, 1.0f)
                         .build()
                 } else {
                     PlaybackStateCompat.Builder()
                         .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-                        .setState(PlaybackStateCompat.STATE_PLAYING, position, 1.0f)
+                        .setState(PlaybackStateCompat.STATE_PAUSED, position, 1.0f)
                         .build()
                 }
                 mediaSession.setPlaybackState(playbackState)
@@ -668,9 +668,7 @@ internal class BetterPlayer(
      */
     @SuppressLint("UnspecifiedImmutableFlag")
     fun setupMediaSession(context: Context?, setupControlDispatcher: Boolean): MediaSessionCompat {
-        if (mediaSession != null) {
-            mediaSession!!.release()
-        }
+        mediaSession?.release()
         val mediaButtonReceiver = ComponentName(context!!, MediaButtonReceiver::class.java)
         val mediaSession = MediaSessionCompat(context, "BetterPlayer", mediaButtonReceiver, null)
         mediaSession.setCallback(object : MediaSessionCompat.Callback() {
