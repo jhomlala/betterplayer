@@ -55,6 +55,7 @@ import androidx.media.session.MediaButtonReceiver
 import androidx.work.Data
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.drm.DrmSessionManagerProvider
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
 import com.google.android.exoplayer2.upstream.DataSource
@@ -63,6 +64,8 @@ import java.io.File
 import java.lang.Exception
 import java.lang.IllegalStateException
 import java.util.*
+import kotlin.math.max
+import kotlin.math.min
 
 internal class BetterPlayer(
     context: Context,
@@ -460,27 +463,31 @@ internal class BetterPlayer(
             mediaItemBuilder.setCustomCacheKey(cacheKey)
         }
         val mediaItem = mediaItemBuilder.build()
+        var drmSessionManagerProvider: DrmSessionManagerProvider? = null
+        if (drmSessionManager != null) {
+            drmSessionManagerProvider = DrmSessionManagerProvider { drmSessionManager!! }
+        }
         return when (type) {
             C.TYPE_SS -> SsMediaSource.Factory(
                 DefaultSsChunkSource.Factory(mediaDataSourceFactory),
                 DefaultDataSourceFactory(context, null, mediaDataSourceFactory)
             )
-                .setDrmSessionManager(drmSessionManager)
+                .setDrmSessionManagerProvider(drmSessionManagerProvider)
                 .createMediaSource(mediaItem)
             C.TYPE_DASH -> DashMediaSource.Factory(
                 DefaultDashChunkSource.Factory(mediaDataSourceFactory),
                 DefaultDataSourceFactory(context, null, mediaDataSourceFactory)
             )
-                .setDrmSessionManager(drmSessionManager)
+                .setDrmSessionManagerProvider(drmSessionManagerProvider)
                 .createMediaSource(mediaItem)
             C.TYPE_HLS -> HlsMediaSource.Factory(mediaDataSourceFactory)
-                .setDrmSessionManager(drmSessionManager)
+                .setDrmSessionManagerProvider(drmSessionManagerProvider)
                 .createMediaSource(mediaItem)
             C.TYPE_OTHER -> ProgressiveMediaSource.Factory(
                 mediaDataSourceFactory,
                 DefaultExtractorsFactory()
             )
-                .setDrmSessionManager(drmSessionManager)
+                .setDrmSessionManagerProvider(drmSessionManagerProvider)
                 .createMediaSource(mediaItem)
             else -> {
                 throw IllegalStateException("Unsupported type: $type")
@@ -528,6 +535,9 @@ internal class BetterPlayer(
                         event["key"] = key
                         eventSink.success(event)
                     }
+                    Player.STATE_IDLE -> {
+                        //no-op
+                    }
                 }
             }
 
@@ -545,7 +555,7 @@ internal class BetterPlayer(
         if (isFromBufferingStart || bufferedPosition != lastSendBufferedPosition) {
             val event: MutableMap<String, Any> = HashMap()
             event["event"] = "bufferingUpdate"
-            val range: List<Number?> = Arrays.asList(0, bufferedPosition)
+            val range: List<Number?> = listOf(0, bufferedPosition)
             // iOS supports a list of buffered ranges, so here is a list with a single range.
             event["values"] = listOf(range)
             eventSink.success(event)
@@ -581,7 +591,7 @@ internal class BetterPlayer(
     }
 
     fun setVolume(value: Double) {
-        val bracketedValue = Math.max(0.0, Math.min(1.0, value))
+        val bracketedValue = max(0.0, min(1.0, value))
             .toFloat()
         exoPlayer!!.volume = bracketedValue
     }
