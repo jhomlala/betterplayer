@@ -21,7 +21,7 @@ import 'package:better_player/better_player.dart';
 
 4. (Required) iOS configuration
 
-Set deployment info of your project to min. iOS 11.0 version. This can be done in XCode in Runner -> General configuration screen.
+Set deployment info of your project to min. **iOS 11.0 version**. This can be done in XCode in Runner -> General configuration screen.
 
 5. (Optional) Additional iOS configuration
 
