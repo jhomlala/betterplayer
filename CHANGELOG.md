@@ -1,3 +1,6 @@
+## 0.0.77
+* Fixed issue with full url of subtitle for HLS data source.
+
 ## 0.0.76
 * Fixed iOS build issue.
 * [BREAKING_CHANGE] Changed min required iOS version to 11.
