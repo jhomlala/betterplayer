@@ -240,7 +240,6 @@ class BetterPlayerController {
 
   ///Setup new data source in Better Player.
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
-
     postEvent(BetterPlayerEvent(BetterPlayerEventType.setupDataSource,
         parameters: <String, dynamic>{
           _dataSourceParameter: betterPlayerDataSource,
@@ -958,7 +957,10 @@ class BetterPlayerController {
     if (wasPlayingBeforeChange) {
       play();
     }
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedResolution));
+    _postEvent(BetterPlayerEvent(
+      BetterPlayerEventType.changedResolution,
+      parameters: <String, dynamic>{"url": url},
+    ));
   }
 
   ///Setup translations for given locale. In normal use cases it shouldn't be
