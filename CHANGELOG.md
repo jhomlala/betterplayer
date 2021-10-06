@@ -1,3 +1,6 @@
+## 0.0.77
+* Fixed full screen safe area issue in cupertino controls.
+
 ## 0.0.76
 * Fixed iOS build issue.
 * [BREAKING_CHANGE] Changed min required iOS version to 11.

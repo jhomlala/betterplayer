@@ -87,8 +87,27 @@ class _BetterPlayerCupertinoControlsState
         ? _controlsConfiguration.controlBarHeight
         : _controlsConfiguration.controlBarHeight + 10;
     const buttonPadding = 10.0;
+    final isFullScreen = _betterPlayerController?.isFullScreen == true;
 
     _wasLoading = isLoading(_latestValue);
+    Widget controlsColumn = Column(children: <Widget>[
+      _buildTopBar(
+        backgroundColor,
+        iconColor,
+        barHeight,
+        buttonPadding,
+      ),
+      if (_wasLoading)
+        Expanded(child: Center(child: _buildLoadingWidget()))
+      else
+        _buildHitArea(),
+      _buildNextVideoWidget(),
+      _buildBottomBar(
+        backgroundColor,
+        iconColor,
+        barHeight,
+      ),
+    ]);
     return GestureDetector(
       onTap: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
@@ -113,28 +132,9 @@ class _BetterPlayerCupertinoControlsState
         }
       },
       child: AbsorbPointer(
-        absorbing: _hideStuff,
-        child: Column(
-          children: <Widget>[
-            _buildTopBar(
-              backgroundColor,
-              iconColor,
-              barHeight,
-              buttonPadding,
-            ),
-            if (_wasLoading)
-              Expanded(child: Center(child: _buildLoadingWidget()))
-            else
-              _buildHitArea(),
-            _buildNextVideoWidget(),
-            _buildBottomBar(
-              backgroundColor,
-              iconColor,
-              barHeight,
-            ),
-          ],
-        ),
-      ),
+          absorbing: _hideStuff,
+          child:
+              isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn),
     );
   }
 
