@@ -1,5 +1,6 @@
 ## 0.0.77
 * Fixed full screen safe area issue in cupertino controls.
+* Fixed subtitles duplication after changing data source.
 * [BREAKING_CHANGE] Changed min. Flutter version to 2.2.3.
 
 ## 0.0.76

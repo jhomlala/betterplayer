@@ -240,6 +240,7 @@ class BetterPlayerController {
 
   ///Setup new data source in Better Player.
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
+
     postEvent(BetterPlayerEvent(BetterPlayerEventType.setupDataSource,
         parameters: <String, dynamic>{
           _dataSourceParameter: betterPlayerDataSource,
@@ -248,6 +249,7 @@ class BetterPlayerController {
     _hasCurrentDataSourceStarted = false;
     _hasCurrentDataSourceInitialized = false;
     _betterPlayerDataSource = betterPlayerDataSource;
+    _betterPlayerSubtitlesSourceList.clear();
 
     ///Build videoPlayerController if null
     if (videoPlayerController == null) {
