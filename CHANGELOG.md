@@ -3,6 +3,7 @@
 * Fixed subtitles duplication after changing data source.
 * [BREAKING_CHANGE] Changed min. Flutter version to 2.2.3.
 * Added url parameter for changedResolution event.
+* Updated license
 
 ## 0.0.76
 * Fixed iOS build issue.
