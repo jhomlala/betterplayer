@@ -1,5 +1,7 @@
 // Flutter imports:
 // Project imports:
+import 'dart:async';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -48,6 +50,10 @@ class _VideoProgressBarState
   BetterPlayerController? get betterPlayerController =>
       widget.betterPlayerController;
 
+  bool shouldPlayAfterDragEnd = false;
+  Duration? lastSeek = null;
+  Timer? _updateBlockTimer = null;
+
   @override
   void initState() {
     super.initState();
@@ -57,27 +63,12 @@ class _VideoProgressBarState
   @override
   void deactivate() {
     controller!.removeListener(listener);
+    _cancelUpdateBlockTimer();
     super.deactivate();
   }
 
   @override
   Widget build(BuildContext context) {
-    void seekToRelativePosition(Offset globalPosition) {
-      final RenderObject? renderObject = context.findRenderObject();
-      if (renderObject != null) {
-        final box = renderObject as RenderBox;
-        final Offset tapPos = box.globalToLocal(globalPosition);
-        final double relative = tapPos.dx / box.size.width;
-        if (relative > 0) {
-          final Duration position = controller!.value.duration! * relative;
-          betterPlayerController!.seekTo(position);
-        }
-        if (relative >= 1) {
-          betterPlayerController!.seekTo(controller!.value.duration!);
-        }
-      }
-    }
-
     final bool enableProgressBarDrag = betterPlayerController!
         .betterPlayerConfiguration.controlsConfiguration.enableProgressBarDrag;
 
@@ -113,8 +104,10 @@ class _VideoProgressBarState
         }
 
         if (_controllerWasPlaying) {
-          controller!.play();
+          betterPlayerController?.play();
+          shouldPlayAfterDragEnd = true;
         }
+        _setupUpdateBlockTimer();
 
         if (widget.onDragEnd != null) {
           widget.onDragEnd!();
@@ -125,6 +118,7 @@ class _VideoProgressBarState
           return;
         }
         seekToRelativePosition(details.globalPosition);
+        _setupUpdateBlockTimer();
       },
       child: Center(
         child: Container(
@@ -133,13 +127,60 @@ class _VideoProgressBarState
           color: Colors.transparent,
           child: CustomPaint(
             painter: _ProgressBarPainter(
-              controller!.value,
+              _getValue(),
               widget.colors,
             ),
           ),
         ),
       ),
     );
+  }
+
+  void _setupUpdateBlockTimer() {
+    _updateBlockTimer = Timer(Duration(milliseconds: 1000), () {
+      lastSeek = null;
+      _cancelUpdateBlockTimer();
+    });
+  }
+
+  void _cancelUpdateBlockTimer() {
+    _updateBlockTimer?.cancel();
+    _updateBlockTimer = null;
+  }
+
+  VideoPlayerValue _getValue() {
+    if (lastSeek != null) {
+      return controller!.value.copyWith(position: lastSeek);
+    } else {
+      return controller!.value;
+    }
+  }
+
+  void seekToRelativePosition(Offset globalPosition) async {
+    final RenderObject? renderObject = context.findRenderObject();
+    if (renderObject != null) {
+      final box = renderObject as RenderBox;
+      final Offset tapPos = box.globalToLocal(globalPosition);
+      final double relative = tapPos.dx / box.size.width;
+      if (relative > 0) {
+        final Duration position = controller!.value.duration! * relative;
+        lastSeek = position;
+        await betterPlayerController!.seekTo(position);
+        onFinishedLastSeek();
+        if (relative >= 1) {
+          lastSeek = controller!.value.duration!;
+          await betterPlayerController!.seekTo(controller!.value.duration!);
+          onFinishedLastSeek();
+        }
+      }
+    }
+  }
+
+  void onFinishedLastSeek() {
+    if (shouldPlayAfterDragEnd) {
+      shouldPlayAfterDragEnd = false;
+      betterPlayerController?.play();
+    }
   }
 }
 
