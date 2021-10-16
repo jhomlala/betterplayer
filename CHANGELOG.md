@@ -10,6 +10,7 @@
 * Added [changedPlaylistItem] event.
 * Added [autoDetectFullscreenAspectRatio] parameter in [BetterPlayerConfiguration] (by https://github.com/Brazol)
 * Updated license.
+* Updated screenshots.
 
 ## 0.0.76
 * Fixed iOS build issue.
