@@ -82,8 +82,10 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
     double? aspectRatio;
     if (betterPlayerController.isFullScreen) {
-      if (betterPlayerController
-          .betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation) {
+      if (betterPlayerController.betterPlayerConfiguration
+              .autoDetectFullscreenDeviceOrientation ||
+          betterPlayerController
+              .betterPlayerConfiguration.autoDetectFullscreenAspectRatio) {
         aspectRatio =
             betterPlayerController.videoPlayerController?.value.aspectRatio ??
                 1.0;
