@@ -7,6 +7,7 @@
 * Added [videoExtension] support for network data source for scenario where video source has no extension and cache manager requires it.
 * Added parameters to [changedTrack] event.
 * Added [changedPlaylistItem] event.
+* Added [autoDetectFullscreenAspectRatio] parameter in [BetterPlayerConfiguration] (by https://github.com/Brazol)
 * Updated license.
 
 ## 0.0.76
