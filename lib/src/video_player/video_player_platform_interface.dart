@@ -179,7 +179,7 @@ abstract class VideoPlayerPlatform {
 
   // This method makes sure that VideoPlayer isn't implemented with `implements`.
   //
-  // See class doc for more details on why implementing this class is forbidden.
+  // See class docs for more details on why implementing this class is forbidden.
   //
   // This private method is called by the instance setter, which fails if the class is
   // implemented with `implements`.
