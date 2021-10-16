@@ -5,7 +5,8 @@
 * [BREAKING_CHANGE] Changed min. Flutter version to 2.2.3.
 * Added url parameter for changedResolution event.
 * Added [videoExtension] support for network data source for scenario where video source has no extension and cache manager requires it.
-* Added parameters to changedTrack event.
+* Added parameters to [changedTrack] event.
+* Added [changedPlaylistItem] event.
 * Updated license.
 
 ## 0.0.76
