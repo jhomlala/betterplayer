@@ -101,7 +101,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'certificateUrl': dataSource.certificateUrl,
           'drmHeaders': dataSource.drmHeaders,
           'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey
+          'clearKey': dataSource.clearKey,
+          'videoExtension': dataSource.videoExtension,
         };
         break;
       case DataSourceType.file:
@@ -306,6 +307,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       'maxCacheFileSize': dataSource.maxCacheFileSize,
       'preCacheSize': preCacheSize,
       'cacheKey': dataSource.cacheKey,
+      'videoExtension': dataSource.videoExtension,
     };
     return _channel.invokeMethod<void>(
       'preCache',

@@ -62,7 +62,7 @@ class BetterPlayerDataSource {
   ///Video format hint when data source url has not valid extension.
   final BetterPlayerVideoFormat? videoFormat;
 
-  ///Extension of video without dot. Used only in memory data source.
+  ///Extension of video without dot.
   final String? videoExtension;
 
   ///Configuration of content protection
