@@ -901,7 +901,16 @@ class BetterPlayerController {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedTrack));
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedTrack,
+        parameters: <String, dynamic>{
+          "id": track.id,
+          "width": track.width,
+          "height": track.height,
+          "bitrate": track.bitrate,
+          "frameRate": track.frameRate,
+          "codecs": track.codecs,
+          "mimeType": track.mimeType,
+        }));
 
     videoPlayerController!
         .setTrackParameters(track.width, track.height, track.bitrate);
