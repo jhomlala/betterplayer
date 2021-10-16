@@ -128,10 +128,11 @@ class Util {
       : codecs!.trim().split(RegExp('(\\s*,\\s*)'));
 
   static bool checkBitPositionIsSet(int number, int bitPosition) {
-    if ((number & (1 << (bitPosition - 1))) > 0)
+    if ((number & (1 << (bitPosition - 1))) > 0) {
       return true;
-    else
+    } else {
       return false;
+    }
   }
 }
 

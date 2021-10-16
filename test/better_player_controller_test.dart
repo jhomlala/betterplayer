@@ -7,7 +7,7 @@ import 'mock_video_player_controller.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  MockMethodChannel mockMethodChannel = MockMethodChannel();
+  final MockMethodChannel mockMethodChannel = MockMethodChannel();
 
   group(
     "BetterPlayerController tests",

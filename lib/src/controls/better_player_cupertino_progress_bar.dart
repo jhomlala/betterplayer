@@ -1,7 +1,4 @@
-// Flutter imports:
-// Project imports:
 import 'dart:async';
-
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -51,8 +48,8 @@ class _VideoProgressBarState
       widget.betterPlayerController;
 
   bool shouldPlayAfterDragEnd = false;
-  Duration? lastSeek = null;
-  Timer? _updateBlockTimer = null;
+  Duration? lastSeek;
+  Timer? _updateBlockTimer;
 
   @override
   void initState() {
@@ -134,7 +131,7 @@ class _VideoProgressBarState
   }
 
   void _setupUpdateBlockTimer() {
-    _updateBlockTimer = Timer(Duration(milliseconds: 1000), () {
+    _updateBlockTimer = Timer(const Duration(milliseconds: 1000), () {
       lastSeek = null;
       _cancelUpdateBlockTimer();
     });
@@ -165,7 +162,7 @@ class _VideoProgressBarState
         await betterPlayerController!.seekTo(position);
         onFinishedLastSeek();
         if (relative >= 1) {
-          lastSeek = controller!.value.duration!;
+          lastSeek = controller!.value.duration;
           await betterPlayerController!.seekTo(controller!.value.duration!);
           onFinishedLastSeek();
         }
