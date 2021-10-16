@@ -1,5 +1,3 @@
-// Flutter imports:
-// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_translations.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
@@ -100,6 +98,10 @@ class BetterPlayerConfiguration {
   /// ignored.
   final bool autoDetectFullscreenDeviceOrientation;
 
+  ///Defines if player should auto detect full screen aspect ration of the video.
+  ///If [deviceOrientationsOnFullScreen] is true this is done automaticaly also.
+  final bool autoDetectFullscreenAspectRatio;
+
   ///Defines flag which enables/disables lifecycle handling (pause on app closed,
   ///play on app resumed). Default value is true.
   final bool handleLifecycle;
@@ -153,6 +155,7 @@ class BetterPlayerConfiguration {
     this.playerVisibilityChangedBehavior,
     this.translations,
     this.autoDetectFullscreenDeviceOrientation = false,
+    this.autoDetectFullscreenAspectRatio = false,
     this.handleLifecycle = true,
     this.autoDispose = true,
     this.expandToFill = true,

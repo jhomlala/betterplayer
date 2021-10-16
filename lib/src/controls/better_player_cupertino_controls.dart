@@ -1,19 +1,14 @@
-// Dart imports:
 import 'dart:async';
-
-// Flutter imports:
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
-import 'package:flutter/material.dart';
-
-// Project imports:
 import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
+import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class BetterPlayerCupertinoControls extends StatefulWidget {
   ///Callback used to send information if player bar is hidden or not
@@ -87,8 +82,27 @@ class _BetterPlayerCupertinoControlsState
         ? _controlsConfiguration.controlBarHeight
         : _controlsConfiguration.controlBarHeight + 10;
     const buttonPadding = 10.0;
+    final isFullScreen = _betterPlayerController?.isFullScreen == true;
 
     _wasLoading = isLoading(_latestValue);
+    final controlsColumn = Column(children: <Widget>[
+      _buildTopBar(
+        backgroundColor,
+        iconColor,
+        barHeight,
+        buttonPadding,
+      ),
+      if (_wasLoading)
+        Expanded(child: Center(child: _buildLoadingWidget()))
+      else
+        _buildHitArea(),
+      _buildNextVideoWidget(),
+      _buildBottomBar(
+        backgroundColor,
+        iconColor,
+        barHeight,
+      ),
+    ]);
     return GestureDetector(
       onTap: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
@@ -113,28 +127,9 @@ class _BetterPlayerCupertinoControlsState
         }
       },
       child: AbsorbPointer(
-        absorbing: _hideStuff,
-        child: Column(
-          children: <Widget>[
-            _buildTopBar(
-              backgroundColor,
-              iconColor,
-              barHeight,
-              buttonPadding,
-            ),
-            if (_wasLoading)
-              Expanded(child: Center(child: _buildLoadingWidget()))
-            else
-              _buildHitArea(),
-            _buildNextVideoWidget(),
-            _buildBottomBar(
-              backgroundColor,
-              iconColor,
-              barHeight,
-            ),
-          ],
-        ),
-      ),
+          absorbing: _hideStuff,
+          child:
+              isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn),
     );
   }
 
