@@ -1,5 +1,3 @@
-// Project imports:
-
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_drm_configuration.dart';
@@ -62,7 +60,7 @@ class BetterPlayerDataSource {
   ///Video format hint when data source url has not valid extension.
   final BetterPlayerVideoFormat? videoFormat;
 
-  ///Extension of video without dot. Used only in memory data source.
+  ///Extension of video without dot.
   final String? videoExtension;
 
   ///Configuration of content protection

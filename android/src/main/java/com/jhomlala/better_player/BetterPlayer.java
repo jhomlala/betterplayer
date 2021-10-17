@@ -121,6 +121,8 @@ final class BetterPlayer {
             TextureRegistry.SurfaceTextureEntry textureEntry,
             CustomDefaultLoadControl customDefaultLoadControl,
             Result result) {
+        com.google.android.exoplayer2.util.Log.setLogLevel(
+                com.google.android.exoplayer2.util.Log.LOG_LEVEL_ERROR);
         this.eventChannel = eventChannel;
         this.textureEntry = textureEntry;
         trackSelector = new DefaultTrackSelector(context);
@@ -568,7 +570,7 @@ final class BetterPlayer {
         exoPlayer.addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
-                
+
                 if (playbackState == Player.STATE_BUFFERING) {
                     sendBufferingUpdate(true);
                     Map<String, Object> event = new HashMap<>();

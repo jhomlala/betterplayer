@@ -101,6 +101,10 @@ final List<BetterPlayerTranslations> translations;
 /// ignored.
 final bool autoDetectFullscreenDeviceOrientation;
 
+///Defines if player should auto detect full screen aspect ration of the video.
+///If [deviceOrientationsOnFullScreen] is true this is done automaticaly also.
+final bool autoDetectFullscreenAspectRatio;
+
 ///Defines flag which enables/disables lifecycle handling (pause on app closed,
 ///play on app resumed). Default value is true.
 final bool handleLifecycle;

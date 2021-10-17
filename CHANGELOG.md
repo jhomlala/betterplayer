@@ -1,3 +1,17 @@
+## 0.0.77
+* Fixed full screen safe area issue in cupertino controls.
+* Fixed subtitles duplication after changing data source.
+* Fixed progress bar issues when changing position of the video.
+* [BREAKING_CHANGE] Changed min. Flutter version to 2.2.3.
+* Changed log level in ExoPlayer to Error.
+* Added url parameter for changedResolution event.
+* Added [videoExtension] support for network data source for scenario where video source has no extension and cache manager requires it.
+* Added parameters to [changedTrack] event.
+* Added [changedPlaylistItem] event.
+* Added [autoDetectFullscreenAspectRatio] parameter in [BetterPlayerConfiguration] (by https://github.com/Brazol)
+* Updated license.
+* Updated screenshots.
+
 ## 0.0.76
 * Fixed iOS build issue.
 * [BREAKING_CHANGE] Changed min required iOS version to 11.

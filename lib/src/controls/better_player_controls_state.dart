@@ -1,8 +1,5 @@
-// Dart imports:
 import 'dart:io';
 import 'dart:math';
-
-// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
 import 'package:better_player/src/asms/better_player_asms_track.dart';
