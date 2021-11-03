@@ -1,3 +1,7 @@
+## 0.0.78
+* Migrated android native code to Kotlin
+* Updated ExoPlayer version to 2.15.1
+
 ## 0.0.77
 * Fixed full screen safe area issue in cupertino controls.
 * Fixed subtitles duplication after changing data source.

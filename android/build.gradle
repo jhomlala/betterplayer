@@ -3,12 +3,12 @@ version '0.0.77'
 
 buildscript {
 
-    ext.exoPlayerVersion = "2.14.2"
+    ext.exoPlayerVersion = "2.15.1"
     ext.lifecycleVersion = "2.4.0-beta01"
     ext.annotationVersion = "1.2.0"
     ext.workVersion = "2.6.0"
     ext.coreVersion = "1.6.0"
-    ext.gradleVersion = "3.5.0"
+    ext.gradleVersion = "4.1.0"
 
     repositories {
         google()
