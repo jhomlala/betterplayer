@@ -5,17 +5,11 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:io';
-
-// Project imports:
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
-
-// Flutter imports:
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-// Package imports:
 import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 
@@ -324,45 +318,50 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// **Android only**: The [formatHint] option allows the caller to override
   /// the video format detection code.
   /// ClearKey DRM only supported on Android.
-  Future<void> setNetworkDataSource(String dataSource,
-      {VideoFormat? formatHint,
-      Map<String, String?>? headers,
-      bool useCache = false,
-      int? maxCacheSize,
-      int? maxCacheFileSize,
-      String? cacheKey,
-      bool? showNotification,
-      String? title,
-      String? author,
-      String? imageUrl,
-      String? notificationChannelName,
-      Duration? overriddenDuration,
-      String? licenseUrl,
-      String? certificateUrl,
-      Map<String, String>? drmHeaders,
-      String? activityName,
-      String? clearKey}) {
+  Future<void> setNetworkDataSource(
+    String dataSource, {
+    VideoFormat? formatHint,
+    Map<String, String?>? headers,
+    bool useCache = false,
+    int? maxCacheSize,
+    int? maxCacheFileSize,
+    String? cacheKey,
+    bool? showNotification,
+    String? title,
+    String? author,
+    String? imageUrl,
+    String? notificationChannelName,
+    Duration? overriddenDuration,
+    String? licenseUrl,
+    String? certificateUrl,
+    Map<String, String>? drmHeaders,
+    String? activityName,
+    String? clearKey,
+    String? videoExtension,
+  }) {
     return _setDataSource(
       DataSource(
-          sourceType: DataSourceType.network,
-          uri: dataSource,
-          formatHint: formatHint,
-          headers: headers,
-          useCache: useCache,
-          maxCacheSize: maxCacheSize,
-          maxCacheFileSize: maxCacheFileSize,
-          cacheKey: cacheKey,
-          showNotification: showNotification,
-          title: title,
-          author: author,
-          imageUrl: imageUrl,
-          notificationChannelName: notificationChannelName,
-          overriddenDuration: overriddenDuration,
-          licenseUrl: licenseUrl,
-          certificateUrl: certificateUrl,
-          drmHeaders: drmHeaders,
-          activityName: activityName,
-          clearKey: clearKey),
+        sourceType: DataSourceType.network,
+        uri: dataSource,
+        formatHint: formatHint,
+        headers: headers,
+        useCache: useCache,
+        maxCacheSize: maxCacheSize,
+        maxCacheFileSize: maxCacheFileSize,
+        cacheKey: cacheKey,
+        showNotification: showNotification,
+        title: title,
+        author: author,
+        imageUrl: imageUrl,
+        notificationChannelName: notificationChannelName,
+        overriddenDuration: overriddenDuration,
+        licenseUrl: licenseUrl,
+        certificateUrl: certificateUrl,
+        drmHeaders: drmHeaders,
+        activityName: activityName,
+        clearKey: clearKey,
+        videoExtension: videoExtension,
+      ),
     );
   }
 

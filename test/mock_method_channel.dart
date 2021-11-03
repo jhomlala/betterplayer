@@ -6,7 +6,6 @@ class MockMethodChannel {
   final List<MethodChannel> eventsChannels = [];
 
   Future<Object?>? handle(MethodCall methodCall) async {
-    print("Handle: " + methodCall.toString());
     if (methodCall.method == "create") {
       final int id = getNextId();
       _createEventChannel(id);

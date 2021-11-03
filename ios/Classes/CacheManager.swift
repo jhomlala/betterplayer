@@ -30,9 +30,10 @@ import PINCache
     
     var server: HLSCachingReverseProxyServer?
 
-    lazy var storage: Cache.Storage? = {
-        return try? Cache.Storage(diskConfig: diskConfig, memoryConfig: memoryConfig, transformer: TransformerFactory.forCodable(ofType: Data.self))
+    lazy var storage: Cache.Storage<String,Data>? = {
+        return try? Cache.Storage<String,Data>(diskConfig: diskConfig, memoryConfig: memoryConfig, transformer: TransformerFactory.forCodable(ofType: Data.self))
     }()
+    
 
     ///Setups cache server for HLS streams
     @objc public func setup(){
@@ -52,13 +53,13 @@ import PINCache
     }
 
     // MARK: - Logic
-    @objc public func preCacheURL(_ url: URL, cacheKey: String?, withHeaders headers: Dictionary<NSObject,AnyObject>, completionHandler: ((_ success:Bool) -> Void)?) {
+    @objc public func preCacheURL(_ url: URL, cacheKey: String?, videoExtension: String?, withHeaders headers: Dictionary<NSObject,AnyObject>, completionHandler: ((_ success:Bool) -> Void)?) {
         self.completionHandler = completionHandler
         
         let _key: String = cacheKey ?? url.absoluteString
         // Make sure the item is not already being downloaded
         if self._preCachedURLs[_key] == nil {            
-            if let item = self.getCachingPlayerItem(url, cacheKey: _key, headers: headers){
+            if let item = self.getCachingPlayerItem(url, cacheKey: _key, videoExtension: videoExtension, headers: headers){
                 if !self._existsInStorage {
                     self._preCachedURLs[_key] = item
                     item.download()
@@ -86,20 +87,20 @@ import PINCache
     }
     
     ///Gets caching player item for normal playback.
-    @objc public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, headers: Dictionary<NSObject,AnyObject>) -> AVPlayerItem? {
-        let mimeTypeResult = getMimeType(url:url)
+    @objc public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: Dictionary<NSObject,AnyObject>) -> AVPlayerItem? {
+        let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
         if (mimeTypeResult.1 == "application/vnd.apple.mpegurl"){
             let reverseProxyURL = server?.reverseProxyURL(from: url)!
             let playerItem = AVPlayerItem(url: reverseProxyURL!)
             return playerItem
         } else {
-            return getCachingPlayerItem(url, cacheKey: cacheKey, headers: headers)
+            return getCachingPlayerItem(url, cacheKey: cacheKey, videoExtension: videoExtension, headers: headers)
         }
     }
     
 
     // Get a CachingPlayerItem either from the network if it's not cached or from the cache.
-    @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem? {
+    @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?,videoExtension: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem? {
         let playerItem: CachingPlayerItem
         let _key: String = cacheKey ?? url.absoluteString
         // Fetch ongoing pre-cached url if it exists
@@ -112,7 +113,7 @@ import PINCache
             if data != nil {
                 // The file is cached.
                 self._existsInStorage = true
-                let mimeTypeResult = getMimeType(url:url)
+                let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
                 if (mimeTypeResult.1.isEmpty){
                     NSLog("Cache error: couldn't find mime type for url: \(url.absoluteURL). For this URL cache didn't work and video will be played without cache.")
                     playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
@@ -135,8 +136,11 @@ import PINCache
         self._preCachedURLs = Dictionary<String,CachingPlayerItem>()
     }
     
-    private func getMimeType(url: URL) -> (String,String){
-        let videoExtension = url.pathExtension
+    private func getMimeType(url: URL, explicitVideoExtension: String?) -> (String,String){
+        var videoExtension = url.pathExtension
+        if (explicitVideoExtension != nil){
+            videoExtension = explicitVideoExtension!
+        }
         var mimeType = ""
         switch (videoExtension){
         case "m3u":
@@ -193,8 +197,8 @@ import PINCache
     }
     
     ///Checks wheter pre cache is supported for given url.
-    @objc public func isPreCacheSupported(url: URL) -> Bool{
-        let mimeTypeResult = getMimeType(url:url)
+    @objc public func isPreCacheSupported(url: URL, videoExtension: String?) -> Bool{
+        let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
         return !mimeTypeResult.1.isEmpty && mimeTypeResult.1 != "application/vnd.apple.mpegurl"
     }
 }

@@ -1,5 +1,3 @@
-// Flutter imports:
-// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_translations.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
@@ -100,6 +98,10 @@ class BetterPlayerConfiguration {
   /// ignored.
   final bool autoDetectFullscreenDeviceOrientation;
 
+  ///Defines if player should auto detect full screen aspect ration of the video.
+  ///If [deviceOrientationsOnFullScreen] is true this is done automaticaly also.
+  final bool autoDetectFullscreenAspectRatio;
+
   ///Defines flag which enables/disables lifecycle handling (pause on app closed,
   ///play on app resumed). Default value is true.
   final bool handleLifecycle;
@@ -116,42 +118,49 @@ class BetterPlayerConfiguration {
   ///to use minimum constraints
   final bool expandToFill;
 
-  const BetterPlayerConfiguration(
-      {this.aspectRatio,
-      this.autoPlay = false,
-      this.startAt,
-      this.looping = false,
-      this.fullScreenByDefault = false,
-      this.placeholder,
-      this.showPlaceholderUntilPlay = false,
-      this.placeholderOnTop = true,
-      this.overlay,
-      this.errorBuilder,
-      this.allowedScreenSleep = true,
-      this.fullScreenAspectRatio,
-      this.deviceOrientationsOnFullScreen = const [
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ],
-      this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
-      this.deviceOrientationsAfterFullScreen = const [
-        DeviceOrientation.portraitUp,
-        DeviceOrientation.portraitDown,
-        DeviceOrientation.landscapeLeft,
-        DeviceOrientation.landscapeRight,
-      ],
-      this.routePageBuilder,
-      this.eventListener,
-      this.subtitlesConfiguration = const BetterPlayerSubtitlesConfiguration(),
-      this.controlsConfiguration = const BetterPlayerControlsConfiguration(),
-      this.fit = BoxFit.fill,
-      this.rotation = 0,
-      this.playerVisibilityChangedBehavior,
-      this.translations,
-      this.autoDetectFullscreenDeviceOrientation = false,
-      this.handleLifecycle = true,
-      this.autoDispose = true,
-      this.expandToFill = true});
+  ///Flag which causes to player use the root navigator to open new pages.
+  ///Default value is false.
+  final bool useRootNavigator;
+
+  const BetterPlayerConfiguration({
+    this.aspectRatio,
+    this.autoPlay = false,
+    this.startAt,
+    this.looping = false,
+    this.fullScreenByDefault = false,
+    this.placeholder,
+    this.showPlaceholderUntilPlay = false,
+    this.placeholderOnTop = true,
+    this.overlay,
+    this.errorBuilder,
+    this.allowedScreenSleep = true,
+    this.fullScreenAspectRatio,
+    this.deviceOrientationsOnFullScreen = const [
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ],
+    this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
+    this.deviceOrientationsAfterFullScreen = const [
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ],
+    this.routePageBuilder,
+    this.eventListener,
+    this.subtitlesConfiguration = const BetterPlayerSubtitlesConfiguration(),
+    this.controlsConfiguration = const BetterPlayerControlsConfiguration(),
+    this.fit = BoxFit.fill,
+    this.rotation = 0,
+    this.playerVisibilityChangedBehavior,
+    this.translations,
+    this.autoDetectFullscreenDeviceOrientation = false,
+    this.autoDetectFullscreenAspectRatio = false,
+    this.handleLifecycle = true,
+    this.autoDispose = true,
+    this.expandToFill = true,
+    this.useRootNavigator = false,
+  });
 
   BetterPlayerConfiguration copyWith({
     double? aspectRatio,
@@ -179,6 +188,10 @@ class BetterPlayerConfiguration {
     Function(double visibilityFraction)? playerVisibilityChangedBehavior,
     List<BetterPlayerTranslations>? translations,
     bool? autoDetectFullscreenDeviceOrientation,
+    bool? handleLifecycle,
+    bool? autoDispose,
+    bool? expandToFill,
+    bool? useRootNavigator,
   }) {
     return BetterPlayerConfiguration(
       aspectRatio: aspectRatio ?? this.aspectRatio,
@@ -215,6 +228,10 @@ class BetterPlayerConfiguration {
       autoDetectFullscreenDeviceOrientation:
           autoDetectFullscreenDeviceOrientation ??
               this.autoDetectFullscreenDeviceOrientation,
+      handleLifecycle: handleLifecycle ?? this.handleLifecycle,
+      autoDispose: autoDispose ?? this.autoDispose,
+      expandToFill: expandToFill ?? this.expandToFill,
+      useRootNavigator: useRootNavigator ?? this.useRootNavigator,
     );
   }
 }
