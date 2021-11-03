@@ -224,7 +224,8 @@ internal class BetterPlayer(
                         or Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 return PendingIntent.getActivity(
                     context, 0,
-                    notificationIntent, 0
+                    notificationIntent,
+                    PendingIntent.FLAG_IMMUTABLE
                 )
             }
 
@@ -666,11 +667,16 @@ internal class BetterPlayer(
      * @param setupControlDispatcher - should add control dispatcher to created MediaSession
      * @return - configured MediaSession instance
      */
-    @SuppressLint("UnspecifiedImmutableFlag")
     fun setupMediaSession(context: Context?, setupControlDispatcher: Boolean): MediaSessionCompat {
         mediaSession?.release()
         val mediaButtonReceiver = ComponentName(context!!, MediaButtonReceiver::class.java)
-        val mediaSession = MediaSessionCompat(context, "BetterPlayer", mediaButtonReceiver, null)
+        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
+        val pendingIntent = PendingIntent.getBroadcast(
+            context!!,
+            0, mediaButtonIntent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        val mediaSession = MediaSessionCompat(context!!, TAG, null, pendingIntent)
         mediaSession.setCallback(object : MediaSessionCompat.Callback() {
             override fun onSeekTo(pos: Long) {
                 sendSeekToEvent(pos)
@@ -683,10 +689,6 @@ internal class BetterPlayer(
             mediaSessionConnector.setControlDispatcher(setupControlDispatcher())
         }
         mediaSessionConnector.setPlayer(exoPlayer)
-        val mediaButtonIntent = Intent(Intent.ACTION_MEDIA_BUTTON)
-        mediaButtonIntent.setClass(context, MediaButtonReceiver::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(context, 0, mediaButtonIntent, 0)
-        mediaSession.setMediaButtonReceiver(pendingIntent)
         this.mediaSession = mediaSession
         return mediaSession
     }
