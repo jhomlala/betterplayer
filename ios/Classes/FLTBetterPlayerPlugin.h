@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 #import <Flutter/Flutter.h>
+#import "BetterPlayer.h"
 
 @interface FLTBetterPlayerPlugin : NSObject <FlutterPlugin>
 @end

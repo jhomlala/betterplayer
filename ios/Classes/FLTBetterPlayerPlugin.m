@@ -5,9 +5,9 @@
 #import "FLTBetterPlayerPlugin.h"
 #import <AVFoundation/AVFoundation.h>
 #import <GLKit/GLKit.h>
-#import <KTVHTTPCache/KTVHTTPCache.h>
 #import <MediaPlayer/MediaPlayer.h>
 #import <AVKit/AVKit.h>
+#import <better_player/better_player-Swift.h>
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -292,20 +292,23 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
   return transform;
 }
 
-- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key overriddenDuration:(int) overriddenDuration{
+- (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration{
     NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
-    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{} withCache: false overriddenDuration:overriddenDuration];
+    return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withHeaders: @{} withCache: false cacheKey:cacheKey cacheManager:cacheManager overriddenDuration:overriddenDuration];
 }
 
-- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache overriddenDuration:(int) overriddenDuration{
-    if (headers == [NSNull null]){
+- (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration{
+    if (headers == nil){
         headers = @{};
     }
     AVPlayerItem* item;
-    if (useCache){
-        [KTVHTTPCache downloadSetAdditionalHeaders:headers];
-        NSURL *proxyURL = [KTVHTTPCache proxyURLWithOriginalURL:url];
-        item = [AVPlayerItem playerItemWithURL:proxyURL];
+    if (useCache) {
+        if (cacheKey == nil){
+            cacheKey = nil;
+        }
+
+        NSLog(@"Cache enabled %@", cacheKey);
+        item = [cacheManager getCachingPlayerItemForNormalPlayback:url cacheKey:cacheKey videoExtension: nil headers:headers];
     } else {
         AVURLAsset* asset = [AVURLAsset URLAssetWithURL:url
                                                 options:@{@"AVURLAssetHTTPHeaderFieldsKey" : headers}];
@@ -920,7 +923,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
-
+CacheManager* _cacheManager;
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel =
@@ -941,7 +944,8 @@ NSMutableDictionary*  _artworkImageDict;
     _timeObserverIdDict = [NSMutableDictionary dictionary];
     _artworkImageDict = [NSMutableDictionary dictionary];
     _dataSourceDict = [NSMutableDictionary dictionary];
-    [KTVHTTPCache proxyStart:nil];
+    _cacheManager = [[CacheManager alloc] init];
+    [_cacheManager setup];
     return self;
 }
 
@@ -1187,11 +1191,19 @@ NSMutableDictionary*  _artworkImageDict;
             id useCacheObject = [dataSource objectForKey:@"useCache"];
             if (useCacheObject != [NSNull null]) {
                 useCache = [[dataSource objectForKey:@"useCache"] boolValue];
+
+                if (useCache) {
+                    NSNumber* maxCacheSize = [NSNumber numberWithInt:100*1024*1024];
+                    [_cacheManager setMaxCacheSize:maxCacheSize];
+                }
             }
             
             if (headers == nil){
                 headers = @{};
             }
+
+            NSString* cacheKey = uriArg;
+
             if (assetArg) {
                 NSString* assetPath;
                 NSString* package = dataSource[@"package"];
@@ -1200,9 +1212,10 @@ NSMutableDictionary*  _artworkImageDict;
                 } else {
                     assetPath = [_registrar lookupKeyForAsset:assetArg];
                 }
-                [player setDataSourceAsset:assetPath withKey:key overriddenDuration:overriddenDuration];
+
+                [player setDataSourceAsset:assetPath withKey:key cacheKey:cacheKey cacheManager:_cacheManager overriddenDuration:overriddenDuration];
             } else if (uriArg) {
-                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withHeaders:headers withCache: useCache overriddenDuration:overriddenDuration];
+                [player setDataSourceURL:[NSURL URLWithString:uriArg] withKey:key withHeaders:headers withCache: useCache cacheKey:cacheKey cacheManager:_cacheManager overriddenDuration:overriddenDuration];
             } else {
                 result(FlutterMethodNotImplemented);
             }
@@ -1287,7 +1300,7 @@ NSMutableDictionary*  _artworkImageDict;
         } else if ([@"setMixWithOthers" isEqualToString:call.method]){
             [player setMixWithOthers:[argsMap[@"mixWithOthers"] boolValue]];
         } else if ([@"clearCache" isEqualToString:call.method]){
-            [KTVHTTPCache cacheDeleteAllCaches];
+            //[KTVHTTPCache cacheDeleteAllCaches];
         } else {
             result(FlutterMethodNotImplemented);
         }

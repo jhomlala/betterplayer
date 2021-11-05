@@ -20,7 +20,7 @@ class _CachePageState extends State<CachePage> {
     );
     _betterPlayerDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.elephantDreamVideoUrl,
+      "https://videodelivery.net/9dd71b21e6694c84bb5f49e906668d01/manifest/video.m3u8",
       cacheConfiguration: BetterPlayerCacheConfiguration(
         useCache: true,
         preCacheSize: 10 * 1024 * 1024,
