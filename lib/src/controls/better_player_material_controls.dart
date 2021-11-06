@@ -373,7 +373,7 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildMiddleRow() {
     return Container(
-      color:  _controlsConfiguration.controlBarColor,
+      color: _controlsConfiguration.controlBarColor,
       width: double.infinity,
       height: double.infinity,
       child: _betterPlayerController?.isLiveStream() == true
@@ -702,12 +702,12 @@ class _BetterPlayerMaterialControlsState
           _controller,
           _betterPlayerController,
           onDragStart: () {
-           _hideTimer?.cancel();
+            _hideTimer?.cancel();
           },
           onDragEnd: () {
             _startHideTimer();
           },
-          onTapDown: (){
+          onTapDown: () {
             cancelAndRestartTimer();
           },
           colors: BetterPlayerProgressColors(

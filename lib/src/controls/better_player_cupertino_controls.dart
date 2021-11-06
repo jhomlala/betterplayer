@@ -634,7 +634,7 @@ class _BetterPlayerCupertinoControlsState
           onDragEnd: () {
             _startHideTimer();
           },
-          onTapDown: (){
+          onTapDown: () {
             cancelAndRestartTimer();
           },
           colors: BetterPlayerProgressColors(
