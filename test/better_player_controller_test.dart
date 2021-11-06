@@ -236,7 +236,7 @@ void main() {
             controlsVisibleEventCount += 1;
           }
           if (event.betterPlayerEventType ==
-              BetterPlayerEventType.controlsHidden) {
+              BetterPlayerEventType.controlsHiddenEnd) {
             controlsHiddenEventCount += 1;
           }
         });

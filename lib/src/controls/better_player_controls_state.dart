@@ -22,6 +22,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   VideoPlayerValue? get latestValue;
 
+  bool controlsNotVisible = true;
+
   void cancelAndRestartTimer();
 
   bool isVideoFinished(VideoPlayerValue? videoPlayerValue) {
@@ -516,5 +518,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///right directionality.
   Widget buildLTRDirectionality(Widget child) {
     return Directionality(textDirection: TextDirection.ltr, child: child);
+  }
+
+  ///Called when player controls visibility should be changed.
+  void changePlayerControlsNotVisible(bool notVisible) {
+    setState(() {
+      if (notVisible) {
+        betterPlayerController?.postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.controlsHiddenStart));
+      }
+      controlsNotVisible = notVisible;
+    });
   }
 }
