@@ -14,6 +14,7 @@ class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
     this.onDragEnd,
     this.onDragStart,
     this.onDragUpdate,
+    this.onTapDown,
     Key? key,
   })  : colors = colors ?? BetterPlayerProgressColors(),
         super(key: key);
@@ -24,6 +25,7 @@ class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
   final Function()? onDragStart;
   final Function()? onDragEnd;
   final Function()? onDragUpdate;
+  final Function()? onTapDown;
 
   @override
   _VideoProgressBarState createState() {
@@ -116,6 +118,9 @@ class _VideoProgressBarState
         }
         seekToRelativePosition(details.globalPosition);
         _setupUpdateBlockTimer();
+        if (widget.onTapDown != null) {
+          widget.onTapDown!();
+        }
       },
       child: Center(
         child: Container(

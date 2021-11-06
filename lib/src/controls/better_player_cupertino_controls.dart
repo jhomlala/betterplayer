@@ -634,6 +634,9 @@ class _BetterPlayerCupertinoControlsState
           onDragEnd: () {
             _startHideTimer();
           },
+          onTapDown: (){
+            cancelAndRestartTimer();
+          },
           colors: BetterPlayerProgressColors(
               playedColor: _controlsConfiguration.progressBarPlayedColor,
               handleColor: _controlsConfiguration.progressBarHandleColor,

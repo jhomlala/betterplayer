@@ -522,6 +522,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   ///Called when player controls visibility should be changed.
   void changePlayerControlsNotVisible(bool notVisible) {
+    print("HIDE_STUFF = "+ notVisible.toString());
     setState(() {
       if (notVisible) {
         betterPlayerController?.postEvent(

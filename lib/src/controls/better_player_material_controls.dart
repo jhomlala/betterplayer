@@ -670,7 +670,7 @@ class _BetterPlayerMaterialControlsState
     if (_betterPlayerController!.controlsAlwaysVisible) {
       return;
     }
-    _hideTimer = Timer(const Duration(seconds: 3), () {
+    _hideTimer = Timer(const Duration(seconds: 5), () {
       changePlayerControlsNotVisible(true);
     });
   }
@@ -702,10 +702,13 @@ class _BetterPlayerMaterialControlsState
           _controller,
           _betterPlayerController,
           onDragStart: () {
-            _hideTimer?.cancel();
+           _hideTimer?.cancel();
           },
           onDragEnd: () {
             _startHideTimer();
+          },
+          onTapDown: (){
+            cancelAndRestartTimer();
           },
           colors: BetterPlayerProgressColors(
               playedColor: _controlsConfiguration.progressBarPlayedColor,

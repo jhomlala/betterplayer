@@ -6,6 +6,7 @@
 * Fixed install page from docs.
 * Fixed one of the showcase images
 * [BREAKING_CHANGE] Split controlsHidden into controlsHiddenStart and controlsHiddenEnd.
+* Added onTapDown handle for material and cupertino progress bar to handle show and hide of controls.
 
 ## 0.0.77
 * Fixed full screen safe area issue in cupertino controls.
