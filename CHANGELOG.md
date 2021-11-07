@@ -1,3 +1,16 @@
+## 0.0.78
+* [BREAKING_CHANGE] Split controlsHidden into controlsHiddenStart and controlsHiddenEnd.
+* [BREAKING_CHANGE] Added to Function(bool) onPlayerVisibilityChanged to customControlsBuilder in [BetterPlayerConfiguration].
+* Migrated android native code to Kotlin.
+* Updated ExoPlayer version to 2.15.1.
+* Updated screenshots.
+* Added onTapDown handle for material and cupertino progress bar to handle show and hide of controls.
+* Fixed crash related to Android 12.
+* Fixed issue with full url of subtitle for HLS data source.
+* Fixed install page from docs.
+* Fixed one of the showcase images.
+* Fixed video in list example.
+
 ## 0.0.77
 * Fixed full screen safe area issue in cupertino controls.
 * Fixed subtitles duplication after changing data source.
