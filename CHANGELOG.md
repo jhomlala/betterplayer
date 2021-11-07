@@ -1,3 +1,6 @@
+## 0.0.79
+* Fixed kotlin version issue.
+
 ## 0.0.78
 * [BREAKING_CHANGE] Split controlsHidden into controlsHiddenStart and controlsHiddenEnd.
 * [BREAKING_CHANGE] Added to Function(bool) onPlayerVisibilityChanged to customControlsBuilder in [BetterPlayerConfiguration].
