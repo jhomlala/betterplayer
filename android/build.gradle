@@ -1,5 +1,5 @@
 group 'com.jhomlala.better_player'
-version '0.0.77'
+version '0.0.78'
 
 buildscript {
 
@@ -9,6 +9,7 @@ buildscript {
     ext.workVersion = "2.7.0"
     ext.coreVersion = "1.6.0"
     ext.gradleVersion = "4.1.0"
+    ext.kotlinVersion = "1.5.31"
 
     repositories {
         google()
