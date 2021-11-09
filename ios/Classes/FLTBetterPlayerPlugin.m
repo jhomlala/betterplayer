@@ -1019,32 +1019,41 @@ CacheManager* _cacheManager;
     }
     
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        if (player.isPlaying){
-            player.eventSink(@{@"event" : @"play"});
-        } else {
-            player.eventSink(@{@"event" : @"pause"});
-            
+        if (player != [NSNull null]) {
+            if (player.isPlaying){
+                player.eventSink(@{@"event" : @"play"});
+            } else {
+                player.eventSink(@{@"event" : @"pause"});
+            }
         }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
     
     [commandCenter.playCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        player.eventSink(@{@"event" : @"play"});
+        if (player != [NSNull null]) {
+            player.eventSink(@{@"event" : @"play"});
+        }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
     
     [commandCenter.pauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        player.eventSink(@{@"event" : @"pause"});
+        if (player != [NSNull null]) {
+            player.eventSink(@{@"event" : @"pause"});
+        }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
     
     [commandCenter.previousTrackCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        player.eventSink(@{@"event" : @"skipPrevious"});
+        if (player != [NSNull null]) {
+            player.eventSink(@{@"event" : @"skipPrevious"});
+        }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
 
     [commandCenter.nextTrackCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-        player.eventSink(@{@"event" : @"skipNext"});
+        if (player != [NSNull null]) {
+            player.eventSink(@{@"event" : @"skipNext"});
+        }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
     
@@ -1054,8 +1063,10 @@ CacheManager* _cacheManager;
             MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
             CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
             int64_t millis = FLTCMTimeToMillis(time);
-            [player seekTo: millis];
-            player.eventSink(@{@"event" : @"seek", @"position": @(millis)});
+            if (player != [NSNull null]) {
+                [player seekTo: millis];
+                player.eventSink(@{@"event" : @"seek", @"position": @(millis)});
+            }
             return MPRemoteCommandHandlerStatusSuccess;
         }];
         
