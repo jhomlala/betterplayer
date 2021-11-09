@@ -34,7 +34,6 @@ class _BetterPlayerCupertinoControlsState
   final marginSize = 5.0;
   VideoPlayerValue? _latestValue;
   double? _latestVolume;
-  bool _hideStuff = true;
   Timer? _hideTimer;
   Timer? _expandCollapseTimer;
   Timer? _initTimer;
@@ -108,11 +107,9 @@ class _BetterPlayerCupertinoControlsState
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
         }
-        _hideStuff
+        controlsNotVisible
             ? cancelAndRestartTimer()
-            : setState(() {
-                _hideStuff = true;
-              });
+            : changePlayerControlsNotVisible(true);
       },
       onDoubleTap: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
@@ -127,7 +124,7 @@ class _BetterPlayerCupertinoControlsState
         }
       },
       child: AbsorbPointer(
-          absorbing: _hideStuff,
+          absorbing: controlsNotVisible,
           child:
               isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn),
     );
@@ -170,7 +167,7 @@ class _BetterPlayerCupertinoControlsState
       return const SizedBox();
     }
     return AnimatedOpacity(
-      opacity: _hideStuff ? 0.0 : 1.0,
+      opacity: controlsNotVisible ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
       child: Container(
@@ -251,7 +248,7 @@ class _BetterPlayerCupertinoControlsState
     return GestureDetector(
       onTap: _onExpandCollapse,
       child: AnimatedOpacity(
-        opacity: _hideStuff ? 0.0 : 1.0,
+        opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
@@ -281,22 +278,16 @@ class _BetterPlayerCupertinoControlsState
       child: GestureDetector(
         onTap: _latestValue != null && _latestValue!.isPlaying
             ? () {
-                if (_hideStuff == true) {
+                if (controlsNotVisible == true) {
                   cancelAndRestartTimer();
                 } else {
                   _hideTimer?.cancel();
-
-                  setState(() {
-                    _hideStuff = true;
-                  });
+                  changePlayerControlsNotVisible(true);
                 }
               }
             : () {
                 _hideTimer?.cancel();
-
-                setState(() {
-                  _hideStuff = false;
-                });
+                changePlayerControlsNotVisible(false);
               },
         child: Container(
           color: Colors.transparent,
@@ -318,7 +309,7 @@ class _BetterPlayerCupertinoControlsState
         onShowMoreClicked();
       },
       child: AnimatedOpacity(
-        opacity: _hideStuff ? 0.0 : 1.0,
+        opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10.0),
@@ -363,7 +354,7 @@ class _BetterPlayerCupertinoControlsState
         }
       },
       child: AnimatedOpacity(
-        opacity: _hideStuff ? 0.0 : 1.0,
+        opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10.0),
@@ -591,10 +582,8 @@ class _BetterPlayerCupertinoControlsState
   @override
   void cancelAndRestartTimer() {
     _hideTimer?.cancel();
-    setState(() {
-      _hideStuff = false;
-      _startHideTimer();
-    });
+    changePlayerControlsNotVisible(false);
+    _startHideTimer();
   }
 
   Future<void> _initialize() async {
@@ -609,31 +598,25 @@ class _BetterPlayerCupertinoControlsState
 
     if (_controlsConfiguration.showControlsOnInitialize) {
       _initTimer = Timer(const Duration(milliseconds: 200), () {
-        setState(() {
-          _hideStuff = false;
-        });
+        changePlayerControlsNotVisible(false);
       });
     }
     _controlsVisibilityStreamSubscription =
         _betterPlayerController!.controlsVisibilityStream.listen((state) {
-      setState(() {
-        _hideStuff = !state;
-      });
-      if (!_hideStuff) {
+      changePlayerControlsNotVisible(!state);
+
+      if (!controlsNotVisible) {
         cancelAndRestartTimer();
       }
     });
   }
 
   void _onExpandCollapse() {
-    setState(() {
-      _hideStuff = true;
-
-      _betterPlayerController!.toggleFullScreen();
-      _expandCollapseTimer = Timer(_controlsConfiguration.controlsHideTime, () {
-        setState(() {
-          cancelAndRestartTimer();
-        });
+    changePlayerControlsNotVisible(true);
+    _betterPlayerController!.toggleFullScreen();
+    _expandCollapseTimer = Timer(_controlsConfiguration.controlsHideTime, () {
+      setState(() {
+        cancelAndRestartTimer();
       });
     });
   }
@@ -650,6 +633,9 @@ class _BetterPlayerCupertinoControlsState
           },
           onDragEnd: () {
             _startHideTimer();
+          },
+          onTapDown: () {
+            cancelAndRestartTimer();
           },
           colors: BetterPlayerProgressColors(
               playedColor: _controlsConfiguration.progressBarPlayedColor,
@@ -668,29 +654,28 @@ class _BetterPlayerCupertinoControlsState
     if (_latestValue?.position != null && _latestValue?.duration != null) {
       isFinished = _latestValue!.position >= _latestValue!.duration!;
     }
-    setState(() {
-      if (_controller!.value.isPlaying) {
-        _hideStuff = false;
-        _hideTimer?.cancel();
-        _betterPlayerController!.pause();
-      } else {
-        cancelAndRestartTimer();
 
-        if (!_controller!.value.initialized) {
-          if (_betterPlayerController!.betterPlayerDataSource?.liveStream ==
-              true) {
-            _betterPlayerController!.play();
-            _betterPlayerController!.cancelNextVideoTimer();
-          }
-        } else {
-          if (isFinished) {
-            _betterPlayerController!.seekTo(const Duration());
-          }
+    if (_controller!.value.isPlaying) {
+      changePlayerControlsNotVisible(false);
+      _hideTimer?.cancel();
+      _betterPlayerController!.pause();
+    } else {
+      cancelAndRestartTimer();
+
+      if (!_controller!.value.initialized) {
+        if (_betterPlayerController!.betterPlayerDataSource?.liveStream ==
+            true) {
           _betterPlayerController!.play();
           _betterPlayerController!.cancelNextVideoTimer();
         }
+      } else {
+        if (isFinished) {
+          _betterPlayerController!.seekTo(const Duration());
+        }
+        _betterPlayerController!.play();
+        _betterPlayerController!.cancelNextVideoTimer();
       }
-    });
+    }
   }
 
   void _startHideTimer() {
@@ -698,22 +683,20 @@ class _BetterPlayerCupertinoControlsState
       return;
     }
     _hideTimer = Timer(const Duration(seconds: 3), () {
-      setState(() {
-        _hideStuff = true;
-      });
+      changePlayerControlsNotVisible(true);
     });
   }
 
   void _updateState() {
     if (mounted) {
-      if (!_hideStuff ||
+      if (!controlsNotVisible ||
           isVideoFinished(_controller!.value) ||
           _wasLoading ||
           isLoading(_controller!.value)) {
         setState(() {
           _latestValue = _controller!.value;
           if (isVideoFinished(_latestValue)) {
-            _hideStuff = false;
+            changePlayerControlsNotVisible(false);
           }
         });
       }
@@ -721,8 +704,8 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _onPlayerHide() {
-    _betterPlayerController!.toggleControlsVisibility(!_hideStuff);
-    widget.onControlsVisibilityChanged(!_hideStuff);
+    _betterPlayerController!.toggleControlsVisibility(!controlsNotVisible);
+    widget.onControlsVisibilityChanged(!controlsNotVisible);
   }
 
   Widget _buildErrorWidget() {
@@ -794,7 +777,7 @@ class _BetterPlayerCupertinoControlsState
                   betterPlayerController!.betterPlayerGlobalKey!);
             },
             child: AnimatedOpacity(
-              opacity: _hideStuff ? 0.0 : 1.0,
+              opacity: controlsNotVisible ? 0.0 : 1.0,
               duration: _controlsConfiguration.controlsHideTime,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),

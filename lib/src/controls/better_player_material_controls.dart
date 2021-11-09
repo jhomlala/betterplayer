@@ -35,7 +35,6 @@ class _BetterPlayerMaterialControlsState
     extends BetterPlayerControlsState<BetterPlayerMaterialControls> {
   VideoPlayerValue? _latestValue;
   double? _latestVolume;
-  bool _hideStuff = true;
   Timer? _hideTimer;
   Timer? _initTimer;
   Timer? _showAfterExpandCollapseTimer;
@@ -77,18 +76,15 @@ class _BetterPlayerMaterialControlsState
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
         }
-        _hideStuff
+        controlsNotVisible
             ? cancelAndRestartTimer()
-            : setState(() {
-                _hideStuff = true;
-              });
+            : changePlayerControlsNotVisible(true);
       },
       onDoubleTap: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
         }
         cancelAndRestartTimer();
-        //_onPlayPause();
       },
       onLongPress: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
@@ -96,10 +92,9 @@ class _BetterPlayerMaterialControlsState
         }
       },
       child: AbsorbPointer(
-        absorbing: _hideStuff,
+        absorbing: controlsNotVisible,
         child: Stack(
           fit: StackFit.expand,
-          //crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (_wasLoading)
               Center(child: _buildLoadingWidget())
@@ -193,28 +188,29 @@ class _BetterPlayerMaterialControlsState
     }
 
     return Container(
-        child: (_controlsConfiguration.enableOverflowMenu)
-            ? AnimatedOpacity(
-                opacity: _hideStuff ? 0.0 : 1.0,
-                duration: _controlsConfiguration.controlsHideTime,
-                onEnd: _onPlayerHide,
-                child: Container(
-                  //color: _controlsConfiguration.controlBarColor,
-                  height: _controlsConfiguration.controlBarHeight,
-                  width: double.infinity,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (_controlsConfiguration.enablePip)
-                        _buildPipButtonWrapperWidget(_hideStuff, _onPlayerHide)
-                      else
-                        const SizedBox(),
-                      _buildMoreButton(),
-                    ],
-                  ),
+      child: (_controlsConfiguration.enableOverflowMenu)
+          ? AnimatedOpacity(
+              opacity: controlsNotVisible ? 0.0 : 1.0,
+              duration: _controlsConfiguration.controlsHideTime,
+              onEnd: _onPlayerHide,
+              child: Container(
+                height: _controlsConfiguration.controlBarHeight,
+                width: double.infinity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    if (_controlsConfiguration.enablePip)
+                      _buildPipButtonWrapperWidget(
+                          controlsNotVisible, _onPlayerHide)
+                    else
+                      const SizedBox(),
+                    _buildMoreButton(),
+                  ],
                 ),
-              )
-            : const SizedBox());
+              ),
+            )
+          : const SizedBox(),
+    );
   }
 
   Widget _buildPipButton() {
@@ -282,12 +278,11 @@ class _BetterPlayerMaterialControlsState
       return const SizedBox();
     }
     return AnimatedOpacity(
-      opacity: _hideStuff ? 0.0 : 1.0,
+      opacity: controlsNotVisible ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
       child: Container(
         height: _controlsConfiguration.controlBarHeight + 20.0,
-        //color: _controlsConfiguration.controlBarColor,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -342,7 +337,7 @@ class _BetterPlayerMaterialControlsState
     return BetterPlayerMaterialClickableWidget(
       onTap: _onExpandCollapse,
       child: AnimatedOpacity(
-        opacity: _hideStuff ? 0.0 : 1.0,
+        opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: _controlsConfiguration.controlsHideTime,
         child: Container(
           height: _controlsConfiguration.controlBarHeight,
@@ -368,7 +363,7 @@ class _BetterPlayerMaterialControlsState
     return Container(
       child: Center(
         child: AnimatedOpacity(
-          opacity: _hideStuff ? 0.0 : 1.0,
+          opacity: controlsNotVisible ? 0.0 : 1.0,
           duration: _controlsConfiguration.controlsHideTime,
           child: _buildMiddleRow(),
         ),
@@ -378,7 +373,7 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildMiddleRow() {
     return Container(
-      color: Colors.black54, //_controlsConfiguration.controlBarColor,
+      color: _controlsConfiguration.controlBarColor,
       width: double.infinity,
       height: double.infinity,
       child: _betterPlayerController?.isLiveStream() == true
@@ -466,18 +461,13 @@ class _BetterPlayerMaterialControlsState
         if (isFinished) {
           if (_latestValue != null && _latestValue!.isPlaying) {
             if (_displayTapped) {
-              setState(() {
-                _hideStuff = true;
-              });
+              changePlayerControlsNotVisible(true);
             } else {
               cancelAndRestartTimer();
             }
           } else {
             _onPlayPause();
-
-            setState(() {
-              _hideStuff = true;
-            });
+            changePlayerControlsNotVisible(true);
           }
         } else {
           _onPlayPause();
@@ -537,7 +527,7 @@ class _BetterPlayerMaterialControlsState
         }
       },
       child: AnimatedOpacity(
-        opacity: _hideStuff ? 0.0 : 1.0,
+        opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRect(
           child: Container(
@@ -611,10 +601,8 @@ class _BetterPlayerMaterialControlsState
     _hideTimer?.cancel();
     _startHideTimer();
 
-    setState(() {
-      _hideStuff = false;
-      _displayTapped = true;
-    });
+    changePlayerControlsNotVisible(false);
+    _displayTapped = true;
   }
 
   Future<void> _initialize() async {
@@ -629,33 +617,26 @@ class _BetterPlayerMaterialControlsState
 
     if (_controlsConfiguration.showControlsOnInitialize) {
       _initTimer = Timer(const Duration(milliseconds: 200), () {
-        setState(() {
-          _hideStuff = false;
-        });
+        changePlayerControlsNotVisible(false);
       });
     }
 
     _controlsVisibilityStreamSubscription =
         _betterPlayerController!.controlsVisibilityStream.listen((state) {
-      setState(() {
-        _hideStuff = !state;
-      });
-      if (!_hideStuff) {
+      changePlayerControlsNotVisible(!state);
+      if (!controlsNotVisible) {
         cancelAndRestartTimer();
       }
     });
   }
 
   void _onExpandCollapse() {
-    setState(() {
-      _hideStuff = true;
-
-      _betterPlayerController!.toggleFullScreen();
-      _showAfterExpandCollapseTimer =
-          Timer(_controlsConfiguration.controlsHideTime, () {
-        setState(() {
-          cancelAndRestartTimer();
-        });
+    changePlayerControlsNotVisible(true);
+    _betterPlayerController!.toggleFullScreen();
+    _showAfterExpandCollapseTimer =
+        Timer(_controlsConfiguration.controlsHideTime, () {
+      setState(() {
+        cancelAndRestartTimer();
       });
     });
   }
@@ -667,40 +648,36 @@ class _BetterPlayerMaterialControlsState
       isFinished = _latestValue!.position >= _latestValue!.duration!;
     }
 
-    setState(() {
-      if (_controller!.value.isPlaying) {
-        _hideStuff = false;
-        _hideTimer?.cancel();
-        _betterPlayerController!.pause();
-      } else {
-        cancelAndRestartTimer();
+    if (_controller!.value.isPlaying) {
+      changePlayerControlsNotVisible(false);
+      _hideTimer?.cancel();
+      _betterPlayerController!.pause();
+    } else {
+      cancelAndRestartTimer();
 
-        if (!_controller!.value.initialized) {
-        } else {
-          if (isFinished) {
-            _betterPlayerController!.seekTo(const Duration());
-          }
-          _betterPlayerController!.play();
-          _betterPlayerController!.cancelNextVideoTimer();
+      if (!_controller!.value.initialized) {
+      } else {
+        if (isFinished) {
+          _betterPlayerController!.seekTo(const Duration());
         }
+        _betterPlayerController!.play();
+        _betterPlayerController!.cancelNextVideoTimer();
       }
-    });
+    }
   }
 
   void _startHideTimer() {
     if (_betterPlayerController!.controlsAlwaysVisible) {
       return;
     }
-    _hideTimer = Timer(const Duration(seconds: 3), () {
-      setState(() {
-        _hideStuff = true;
-      });
+    _hideTimer = Timer(const Duration(milliseconds: 3000), () {
+      changePlayerControlsNotVisible(true);
     });
   }
 
   void _updateState() {
     if (mounted) {
-      if (!_hideStuff ||
+      if (!controlsNotVisible ||
           isVideoFinished(_controller!.value) ||
           _wasLoading ||
           isLoading(_controller!.value)) {
@@ -708,7 +685,7 @@ class _BetterPlayerMaterialControlsState
           _latestValue = _controller!.value;
           if (isVideoFinished(_latestValue) &&
               _betterPlayerController?.isLiveStream() == false) {
-            _hideStuff = false;
+            changePlayerControlsNotVisible(false);
           }
         });
       }
@@ -730,6 +707,9 @@ class _BetterPlayerMaterialControlsState
           onDragEnd: () {
             _startHideTimer();
           },
+          onTapDown: () {
+            cancelAndRestartTimer();
+          },
           colors: BetterPlayerProgressColors(
               playedColor: _controlsConfiguration.progressBarPlayedColor,
               handleColor: _controlsConfiguration.progressBarHandleColor,
@@ -742,8 +722,8 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _onPlayerHide() {
-    _betterPlayerController!.toggleControlsVisibility(!_hideStuff);
-    widget.onControlsVisibilityChanged(!_hideStuff);
+    _betterPlayerController!.toggleControlsVisibility(!controlsNotVisible);
+    widget.onControlsVisibilityChanged(!controlsNotVisible);
   }
 
   Widget? _buildLoadingWidget() {

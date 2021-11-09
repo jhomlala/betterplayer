@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 
 class CustomControlsWidget extends StatefulWidget {
   final BetterPlayerController? controller;
+  final Function(bool visbility)? onControlsVisibilityChanged;
 
-  const CustomControlsWidget({Key? key, this.controller}) : super(key: key);
+  const CustomControlsWidget({
+    Key? key,
+    this.controller,
+    this.onControlsVisibilityChanged,
+  }) : super(key: key);
 
   @override
   _CustomControlsWidgetState createState() => _CustomControlsWidgetState();

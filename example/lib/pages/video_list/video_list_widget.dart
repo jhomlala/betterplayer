@@ -49,7 +49,7 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                   videoListData!.videoUrl,
                   notificationConfiguration:
                       BetterPlayerNotificationConfiguration(
-                          showNotification: true,
+                          showNotification: false,
                           title: videoListData!.videoTitle,
                           author: "Test"),
                   bufferingConfiguration: BetterPlayerBufferingConfiguration(
@@ -59,9 +59,7 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                       bufferForPlaybackAfterRebufferMs: 2000),
                 ),
                 configuration: BetterPlayerConfiguration(
-                  autoPlay: false,
-                  aspectRatio: 1,
-                ),
+                    autoPlay: false, aspectRatio: 1, handleLifecycle: true),
                 //key: Key(videoListData.hashCode.toString()),
                 playFraction: 0.8,
                 betterPlayerListVideoPlayerController: controller,

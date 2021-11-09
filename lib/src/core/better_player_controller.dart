@@ -740,7 +740,7 @@ class BetterPlayerController {
   void toggleControlsVisibility(bool isVisible) {
     _postEvent(isVisible
         ? BetterPlayerEvent(BetterPlayerEventType.controlsVisible)
-        : BetterPlayerEvent(BetterPlayerEventType.controlsHidden));
+        : BetterPlayerEvent(BetterPlayerEventType.controlsHiddenEnd));
   }
 
   ///Send player event. Shouldn't be used manually.
