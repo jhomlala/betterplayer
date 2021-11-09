@@ -8,9 +8,9 @@ PODS:
   - GCDWebServer (3.5.4):
     - GCDWebServer/Core (= 3.5.4)
   - GCDWebServer/Core (3.5.4)
-  - HLSCachingReverseProxyServer (0.1.0):
+  - HLSCachingReverseProxyServer (0.2.0):
     - GCDWebServer (~> 3.5)
-    - PINCache (>= 3.0.1-beta.3)
+    - PINCache (~> 3.0)
   - path_provider (0.0.1):
     - Flutter
   - PINCache (3.0.3):
@@ -27,6 +27,7 @@ PODS:
 DEPENDENCIES:
   - better_player (from `.symlinks/plugins/better_player/ios`)
   - Flutter (from `Flutter`)
+  - HLSCachingReverseProxyServer (from `https://github.com/SwarmMedia/HLSCachingReverseProxyServer.git`, commit `7bf8bfad3ecedd518e8903ed93a727bdbd10beb4`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - wakelock (from `.symlinks/plugins/wakelock/ios`)
 
@@ -34,7 +35,6 @@ SPEC REPOS:
   trunk:
     - Cache
     - GCDWebServer
-    - HLSCachingReverseProxyServer
     - PINCache
     - PINOperation
 
@@ -43,22 +43,30 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/better_player/ios"
   Flutter:
     :path: Flutter
+  HLSCachingReverseProxyServer:
+    :commit: 7bf8bfad3ecedd518e8903ed93a727bdbd10beb4
+    :git: https://github.com/SwarmMedia/HLSCachingReverseProxyServer.git
   path_provider:
     :path: ".symlinks/plugins/path_provider/ios"
   wakelock:
     :path: ".symlinks/plugins/wakelock/ios"
+
+CHECKOUT OPTIONS:
+  HLSCachingReverseProxyServer:
+    :commit: 7bf8bfad3ecedd518e8903ed93a727bdbd10beb4
+    :git: https://github.com/SwarmMedia/HLSCachingReverseProxyServer.git
 
 SPEC CHECKSUMS:
   better_player: 5f77b030c433bd39af0aaaffc184cf4267601a84
   Cache: 4ca7e00363fca5455f26534e5607634c820ffc2d
   Flutter: 50d75fe2f02b26cc09d224853bb45737f8b3214a
   GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
-  HLSCachingReverseProxyServer: 59935e1e0244ad7f3375d75b5ef46e8eb26ab181
+  HLSCachingReverseProxyServer: 53dec5ae8ab02330b5cd09cbe03e9a04a43b353a
   path_provider: d1e9807085df1f9cc9318206cd649dc0b76be3de
   PINCache: 7a8fc1a691173d21dbddbf86cd515de6efa55086
   PINOperation: 00c935935f1e8cf0d1e2d6b542e75b88fc3e5e20
   wakelock: d0fc7c864128eac40eba1617cb5264d9c940b46f
 
-PODFILE CHECKSUM: aafe91acc616949ddb318b77800a7f51bffa2a4c
+PODFILE CHECKSUM: 7fd2f55c59a5ec8f48880d8c7a1ea923d2e5d42a
 
 COCOAPODS: 1.11.2

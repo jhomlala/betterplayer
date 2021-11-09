@@ -31,6 +31,9 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+   # Our fork patches an incompatibility with patching HLS streams from Cloudflare.
+   pod 'HLSCachingReverseProxyServer', :git => 'https://github.com/SwarmMedia/HLSCachingReverseProxyServer.git', commit: '7bf8bfad3ecedd518e8903ed93a727bdbd10beb4'
+
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
