@@ -1012,8 +1012,8 @@ CacheManager* _cacheManager;
     [commandCenter.togglePlayPauseCommand setEnabled:YES];
     [commandCenter.playCommand setEnabled:YES];
     [commandCenter.pauseCommand setEnabled:YES];
-    [commandCenter.nextTrackCommand setEnabled:NO];
-    [commandCenter.previousTrackCommand setEnabled:NO];
+    [commandCenter.nextTrackCommand setEnabled:YES];
+    [commandCenter.previousTrackCommand setEnabled:YES];
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand setEnabled:YES];
     }
@@ -1038,7 +1038,15 @@ CacheManager* _cacheManager;
         return MPRemoteCommandHandlerStatusSuccess;
     }];
     
-    
+    [commandCenter.previousTrackCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        player.eventSink(@{@"event" : @"skipPrevious"});
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
+
+    [commandCenter.nextTrackCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        player.eventSink(@{@"event" : @"skipNext"});
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
     
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {

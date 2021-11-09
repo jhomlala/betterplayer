@@ -414,6 +414,18 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
 
+        case 'skipNext':
+          return VideoEvent(
+            eventType: VideoEventType.skipNext,
+            key: key,
+          );
+
+        case 'skipPrevious':
+          return VideoEvent(
+            eventType: VideoEventType.skipPrevious,
+            key: key,
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,

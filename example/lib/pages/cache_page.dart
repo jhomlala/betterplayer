@@ -30,8 +30,18 @@ class _CachePageState extends State<CachePage> {
         ///Android only option to use cached video between app sessions
         key: "testCacheKey",
       ),
+      notificationConfiguration: BetterPlayerNotificationConfiguration(
+        showNotification: true,
+        title: "Elephant dream",
+        author: "Some author",
+        imageUrl: Constants.catImageUrl,
+      ),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
+
+    _betterPlayerController.addEventsListener((p0) {
+      print(p0.betterPlayerEventType);
+    });
     super.initState();
   }
 
