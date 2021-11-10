@@ -17,7 +17,11 @@ A new flutter plugin project.
   s.dependency 'Flutter'
   s.dependency 'Cache', '~> 6.0.0'
   s.dependency 'HLSCachingReverseProxyServer'
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
   s.platform = :ios, '11.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
 end

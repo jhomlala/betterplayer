@@ -14,10 +14,17 @@ import PINCache
 
     var diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*30)),
                                 maxSize: 100*1024*1024)
+<<<<<<< HEAD
 
     // Flag whether the CachingPlayerItem was already cached.
     var _existsInStorage: Bool = false
 
+=======
+    
+    // Flag whether the CachingPlayerItem was already cached.
+    var _existsInStorage: Bool = false
+    
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
     let memoryConfig = MemoryConfig(
       // Expiry date that will be applied by default for every added object
       // if it's not overridden in the `setObject(forKey:expiry:)` method
@@ -27,13 +34,21 @@ import PINCache
       // The maximum total cost that the cache can hold before it starts evicting objects, 0 for no limit
       totalCostLimit: 0
     )
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
     var server: HLSCachingReverseProxyServer?
 
     lazy var storage: Cache.Storage<String,Data>? = {
         return try? Cache.Storage<String,Data>(diskConfig: diskConfig, memoryConfig: memoryConfig, transformer: TransformerFactory.forCodable(ofType: Data.self))
     }()
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
 
     ///Setups cache server for HLS streams
     @objc public func setup(){
@@ -44,21 +59,36 @@ import PINCache
         server = HLSCachingReverseProxyServer(webServer: webServer, urlSession: urlSession, cache: cache)
         server?.start(port: 8080)
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
     @objc public func setMaxCacheSize(_ maxCacheSize: NSNumber?){
         if let unsigned = maxCacheSize {
             let _maxCacheSize = unsigned.uintValue
             diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*30)), maxSize: _maxCacheSize)
+<<<<<<< HEAD
         }
+=======
+        }        
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
     }
 
     // MARK: - Logic
     @objc public func preCacheURL(_ url: URL, cacheKey: String?, videoExtension: String?, withHeaders headers: Dictionary<NSObject,AnyObject>, completionHandler: ((_ success:Bool) -> Void)?) {
         self.completionHandler = completionHandler
+<<<<<<< HEAD
 
         let _key: String = cacheKey ?? url.absoluteString
         // Make sure the item is not already being downloaded
         if self._preCachedURLs[_key] == nil {
+=======
+        
+        let _key: String = cacheKey ?? url.absoluteString
+        // Make sure the item is not already being downloaded
+        if self._preCachedURLs[_key] == nil {            
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
             if let item = self.getCachingPlayerItem(url, cacheKey: _key, videoExtension: videoExtension, headers: headers){
                 if !self._existsInStorage {
                     self._preCachedURLs[_key] = item
@@ -73,7 +103,11 @@ import PINCache
             self.completionHandler?(true)
         }
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
     @objc public func stopPreCache(_ url: URL, cacheKey: String?, completionHandler: ((_ success:Bool) -> Void)?){
         let _key: String = cacheKey ?? url.absoluteString
         if self._preCachedURLs[_key] != nil {
@@ -85,12 +119,19 @@ import PINCache
         }
         self.completionHandler?(false)
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
     ///Gets caching player item for normal playback.
     @objc public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: Dictionary<NSObject,AnyObject>) -> AVPlayerItem? {
         let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
         if (mimeTypeResult.1 == "application/vnd.apple.mpegurl"){
+<<<<<<< HEAD
             // takes this code path (hls)
+=======
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
             let reverseProxyURL = server?.reverseProxyURL(from: url)!
             let playerItem = AVPlayerItem(url: reverseProxyURL!)
             return playerItem
@@ -98,27 +139,43 @@ import PINCache
             return getCachingPlayerItem(url, cacheKey: cacheKey, videoExtension: videoExtension, headers: headers)
         }
     }
+<<<<<<< HEAD
 
 
     // Get a CachingPlayerItem either from the network if it's not cached or from the cache.
     @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?,videoExtension: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem? {
         NSLog("getCachingPlayerItem");
+=======
+    
+
+    // Get a CachingPlayerItem either from the network if it's not cached or from the cache.
+    @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?,videoExtension: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem? {
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
         let playerItem: CachingPlayerItem
         let _key: String = cacheKey ?? url.absoluteString
         // Fetch ongoing pre-cached url if it exists
         if self._preCachedURLs[_key] != nil {
+<<<<<<< HEAD
             NSLog("ongoing");
+=======
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
             playerItem = self._preCachedURLs[_key]!
             self._preCachedURLs.removeValue(forKey: _key)
         } else {
             // Trying to retrieve a track from cache syncronously
             let data = try? storage?.object(forKey: _key)
             if data != nil {
+<<<<<<< HEAD
                 NSLog("Cache hit");
                 // The file is cached.
                 self._existsInStorage = true
                 let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
                 NSLog("mime: ");
+=======
+                // The file is cached.
+                self._existsInStorage = true
+                let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
                 if (mimeTypeResult.1.isEmpty){
                     NSLog("Cache error: couldn't find mime type for url: \(url.absoluteURL). For this URL cache didn't work and video will be played without cache.")
                     playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
@@ -126,7 +183,10 @@ import PINCache
                     playerItem = CachingPlayerItem(data: data!, mimeType: mimeTypeResult.1, fileExtension: mimeTypeResult.0)
                 }
             } else {
+<<<<<<< HEAD
                 NSLog("Cache miss");
+=======
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
                 // The file is not cached.
                 playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
                 self._existsInStorage = false
@@ -135,13 +195,21 @@ import PINCache
         playerItem.delegate = self
         return playerItem
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
     // Remove all objects
     @objc public func clearCache(){
         try? storage?.removeAll()
         self._preCachedURLs = Dictionary<String,CachingPlayerItem>()
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
     private func getMimeType(url: URL, explicitVideoExtension: String?) -> (String,String){
         var videoExtension = url.pathExtension
         if (explicitVideoExtension != nil){
@@ -198,10 +266,17 @@ import PINCache
         default:
             mimeType = ""
         }
+<<<<<<< HEAD
 
         return (videoExtension, mimeType)
     }
 
+=======
+        
+        return (videoExtension, mimeType)
+    }
+    
+>>>>>>> fe7e10acef1b8edb4c660eeb1a3abb8952839b58
     ///Checks wheter pre cache is supported for given url.
     @objc public func isPreCacheSupported(url: URL, videoExtension: String?) -> Bool{
         let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)

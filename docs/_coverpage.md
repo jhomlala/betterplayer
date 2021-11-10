@@ -12,4 +12,4 @@
 - Supports both Android and iOS
 
 [GitHub](https://github.com/jhomlala/betterplayer)
-[Get Started](#home)
+[Get Started](https://jhomlala.github.io/betterplayer/#/README)

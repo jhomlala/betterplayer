@@ -12,12 +12,20 @@ You can listen to video player events like:
   finished,
   exception,
   controlsVisible,
-  controlsHidden,
+  controlsHiddenStart,
+  controlsHiddenEnd,
   setSpeed,
   changedSubtitles,
   changedTrack,
   changedPlayerVisibility,
-  changedResolution
+  changedResolution,
+  pipStart,
+  pipStop,
+  setupDataSource,
+  bufferingStart,
+  bufferingUpdate,
+  bufferingEnd,
+  changedPlaylistItem
 ```
 
 After creating `BetterPlayerController` you can add event listener this way:

@@ -1,19 +1,12 @@
 // Copyright 2017 The Chromium Authors. All rights reserved.
-// Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-// Dart imports:
 import 'dart:async';
 import 'dart:ui';
-
-// Flutter imports:
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-
-// Project imports:
 import 'video_player_platform_interface.dart';
 
 const MethodChannel _channel = MethodChannel('better_player_channel');
@@ -99,7 +92,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'licenseUrl': dataSource.licenseUrl,
           'drmHeaders': dataSource.drmHeaders,
           'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey
+          'clearKey': dataSource.clearKey,
+          'videoExtension': dataSource.videoExtension,
         };
         break;
       case DataSourceType.file:
@@ -303,6 +297,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       'maxCacheFileSize': dataSource.maxCacheFileSize,
       'preCacheSize': preCacheSize,
       'cacheKey': dataSource.cacheKey,
+      'videoExtension': dataSource.videoExtension,
     };
     return _channel.invokeMethod<void>(
       'preCache',
@@ -313,12 +308,10 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> stopPreCache(String url) {
+  Future<void> stopPreCache(String url, String? cacheKey) {
     return _channel.invokeMethod<void>(
       'stopPreCache',
-      <String, dynamic>{
-        'url': url,
-      },
+      <String, dynamic>{'url': url, 'cacheKey': cacheKey},
     );
   }
 

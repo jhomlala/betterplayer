@@ -101,6 +101,10 @@ final List<BetterPlayerTranslations> translations;
 /// ignored.
 final bool autoDetectFullscreenDeviceOrientation;
 
+///Defines if player should auto detect full screen aspect ration of the video.
+///If [deviceOrientationsOnFullScreen] is true this is done automaticaly also.
+final bool autoDetectFullscreenAspectRatio;
+
 ///Defines flag which enables/disables lifecycle handling (pause on app closed,
 ///play on app resumed). Default value is true.
 final bool handleLifecycle;
@@ -108,4 +112,12 @@ final bool handleLifecycle;
 ///Defines flag which enabled/disabled auto dispose on BetterPlayer dispose.
 ///Default value is true.
 final bool autoDispose;
+
+///Flag which causes to player expand to fill all remaining space. Set to false
+///to use minimum constraints
+final bool expandToFill;
+
+///Flag which causes to player use the root navigator to open new pages.
+///Default value is false.
+final bool useRootNavigator;
 ```

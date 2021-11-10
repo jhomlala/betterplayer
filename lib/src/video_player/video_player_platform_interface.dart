@@ -82,7 +82,7 @@ abstract class VideoPlayerPlatform {
   }
 
   /// Pre-caches a video.
-  Future<void> stopPreCache(String url) {
+  Future<void> stopPreCache(String url, String? cacheKey) {
     throw UnimplementedError('stopPreCache() has not been implemented.');
   }
 
@@ -179,7 +179,7 @@ abstract class VideoPlayerPlatform {
 
   // This method makes sure that VideoPlayer isn't implemented with `implements`.
   //
-  // See class doc for more details on why implementing this class is forbidden.
+  // See class docs for more details on why implementing this class is forbidden.
   //
   // This private method is called by the instance setter, which fails if the class is
   // implemented with `implements`.
@@ -209,28 +209,29 @@ class DataSource {
   /// The [package] argument must be non-null when the asset comes from a
   /// package and null otherwise.
   ///
-  DataSource(
-      {required this.sourceType,
-      this.uri,
-      this.formatHint,
-      this.asset,
-      this.package,
-      this.headers,
-      this.useCache = false,
-      this.maxCacheSize = _maxCacheSize,
-      this.maxCacheFileSize = _maxCacheFileSize,
-      this.cacheKey,
-      this.showNotification = false,
-      this.title,
-      this.author,
-      this.imageUrl,
-      this.notificationChannelName,
-      this.overriddenDuration,
-      this.licenseUrl,
-      this.drmHeaders,
-      this.activityName,
-      this.clearKey})
-      : assert(uri == null || asset == null);
+  DataSource({
+    required this.sourceType,
+    this.uri,
+    this.formatHint,
+    this.asset,
+    this.package,
+    this.headers,
+    this.useCache = false,
+    this.maxCacheSize = _maxCacheSize,
+    this.maxCacheFileSize = _maxCacheFileSize,
+    this.cacheKey,
+    this.showNotification = false,
+    this.title,
+    this.author,
+    this.imageUrl,
+    this.notificationChannelName,
+    this.overriddenDuration,
+    this.licenseUrl,
+    this.drmHeaders,
+    this.activityName,
+    this.clearKey,
+    this.videoExtension,
+  }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
@@ -303,6 +304,8 @@ class DataSource {
   final String? activityName;
 
   final String? clearKey;
+
+  final String? videoExtension;
 
   /// Key to compare DataSource
   String get key {

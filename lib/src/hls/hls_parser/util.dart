@@ -126,6 +126,14 @@ class Util {
   static List<String> splitCodecs(String? codecs) => codecs?.isNotEmpty != true
       ? <String>[]
       : codecs!.trim().split(RegExp('(\\s*,\\s*)'));
+
+  static bool checkBitPositionIsSet(int number, int bitPosition) {
+    if ((number & (1 << (bitPosition - 1))) > 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
 class CencType {

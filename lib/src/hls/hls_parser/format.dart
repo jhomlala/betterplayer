@@ -23,21 +23,24 @@ class Format {
     this.channelCount,
     String? language,
     this.accessibilityChannel,
+    this.isDefault,
   }) : language = language?.toLowerCase();
 
-  factory Format.createVideoContainerFormat(
-          {String? id,
-          String? label,
-          String? containerMimeType,
-          String? sampleMimeType,
-          required String? codecs,
-          int? bitrate,
-          int? averageBitrate,
-          required int? width,
-          required int? height,
-          required double? frameRate,
-          int selectionFlags = Util.selectionFlagDefault,
-          int? roleFlags}) =>
+  factory Format.createVideoContainerFormat({
+    String? id,
+    String? label,
+    String? containerMimeType,
+    String? sampleMimeType,
+    required String? codecs,
+    int? bitrate,
+    int? averageBitrate,
+    required int? width,
+    required int? height,
+    required double? frameRate,
+    int selectionFlags = Util.selectionFlagDefault,
+    int? roleFlags,
+    bool? isDefault,
+  }) =>
       Format(
         id: id,
         label: label,
@@ -51,6 +54,7 @@ class Format {
         height: height,
         frameRate: frameRate,
         roleFlags: roleFlags,
+        isDefault: isDefault,
       );
 
   /// An identifier for the format, or null if unknown or not applicable.
@@ -110,6 +114,9 @@ class Format {
 
   /// The Accessibility channel, or null if not known or applicable.
   final int? accessibilityChannel;
+
+  /// If track is marked as default, or null if not known or applicable
+  final bool? isDefault;
 
   Format copyWithMetadata(Metadata metadata) => Format(
         id: id,

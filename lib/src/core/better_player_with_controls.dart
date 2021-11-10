@@ -1,15 +1,8 @@
-// Dart imports:
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-
-// Flutter imports:
-import 'package:better_player/src/configuration/better_player_controller_event.dart';
-import 'package:flutter/material.dart';
-
-// Project imports:
 import 'package:better_player/better_player.dart';
-
+import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
@@ -17,6 +10,7 @@ import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
 import 'package:better_player/src/video_player/video_player.dart';
+import 'package:flutter/material.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
   final BetterPlayerController? controller;
@@ -82,8 +76,10 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
     double? aspectRatio;
     if (betterPlayerController.isFullScreen) {
-      if (betterPlayerController
-          .betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation) {
+      if (betterPlayerController.betterPlayerConfiguration
+              .autoDetectFullscreenDeviceOrientation ||
+          betterPlayerController
+              .betterPlayerConfiguration.autoDetectFullscreenAspectRatio) {
         aspectRatio =
             betterPlayerController.videoPlayerController?.value.aspectRatio ??
                 1.0;
@@ -97,18 +93,21 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     }
 
     aspectRatio ??= 16 / 9;
-
-    return Center(
-      child: Container(
-        width: double.infinity,
-        color: betterPlayerController
-            .betterPlayerConfiguration.controlsConfiguration.backgroundColor,
-        child: AspectRatio(
-          aspectRatio: aspectRatio,
-          child: _buildPlayerWithControls(betterPlayerController, context),
-        ),
+    final innerContainer = Container(
+      width: double.infinity,
+      color: betterPlayerController
+          .betterPlayerConfiguration.controlsConfiguration.backgroundColor,
+      child: AspectRatio(
+        aspectRatio: aspectRatio,
+        child: _buildPlayerWithControls(betterPlayerController, context),
       ),
     );
+
+    if (betterPlayerController.betterPlayerConfiguration.expandToFill) {
+      return Center(child: innerContainer);
+    } else {
+      return innerContainer;
+    }
   }
 
   Container _buildPlayerWithControls(
@@ -177,8 +176,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
       if (controlsConfiguration.customControlsBuilder != null &&
           playerTheme == BetterPlayerTheme.custom) {
-        return controlsConfiguration
-            .customControlsBuilder!(betterPlayerController);
+        return controlsConfiguration.customControlsBuilder!(
+            betterPlayerController, onControlsVisibilityChanged);
       } else if (playerTheme == BetterPlayerTheme.material) {
         return _buildMaterialControl();
       } else if (playerTheme == BetterPlayerTheme.cupertino) {

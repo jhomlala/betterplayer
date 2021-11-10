@@ -1,16 +1,11 @@
-// Dart imports:
 import 'dart:io';
 import 'dart:math';
-
-// Project imports:
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
 import 'package:better_player/src/asms/better_player_asms_track.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
-
-// Flutter imports:
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +22,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   VideoPlayerValue? get latestValue;
 
+  bool controlsNotVisible = true;
+
   void cancelAndRestartTimer();
 
   bool isVideoFinished(VideoPlayerValue? videoPlayerValue) {
@@ -38,26 +35,30 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void skipBack() {
-    cancelAndRestartTimer();
-    final beginning = const Duration().inMilliseconds;
-    final skip = (latestValue!.position -
-            Duration(
-                milliseconds: betterPlayerControlsConfiguration
-                    .backwardSkipTimeInMilliseconds))
-        .inMilliseconds;
-    betterPlayerController!
-        .seekTo(Duration(milliseconds: max(skip, beginning)));
+    if (latestValue != null) {
+      cancelAndRestartTimer();
+      final beginning = const Duration().inMilliseconds;
+      final skip = (latestValue!.position -
+              Duration(
+                  milliseconds: betterPlayerControlsConfiguration
+                      .backwardSkipTimeInMilliseconds))
+          .inMilliseconds;
+      betterPlayerController!
+          .seekTo(Duration(milliseconds: max(skip, beginning)));
+    }
   }
 
   void skipForward() {
-    cancelAndRestartTimer();
-    final end = latestValue!.duration!.inMilliseconds;
-    final skip = (latestValue!.position +
-            Duration(
-                milliseconds: betterPlayerControlsConfiguration
-                    .forwardSkipTimeInMilliseconds))
-        .inMilliseconds;
-    betterPlayerController!.seekTo(Duration(milliseconds: min(skip, end)));
+    if (latestValue != null) {
+      cancelAndRestartTimer();
+      final end = latestValue!.duration!.inMilliseconds;
+      final skip = (latestValue!.position +
+              Duration(
+                  milliseconds: betterPlayerControlsConfiguration
+                      .forwardSkipTimeInMilliseconds))
+          .inMilliseconds;
+      betterPlayerController!.seekTo(Duration(milliseconds: min(skip, end)));
+    }
   }
 
   void onShowMoreClicked() {
@@ -456,6 +457,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     showCupertinoModalPopup<void>(
       barrierColor: Colors.transparent,
       context: context,
+      useRootNavigator:
+          betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
+              false,
       builder: (context) {
         return SafeArea(
           top: false,
@@ -484,6 +488,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       context: context,
+      useRootNavigator:
+          betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
+              false,
       builder: (context) {
         return SafeArea(
           top: false,
@@ -493,7 +500,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               decoration: BoxDecoration(
                 color: betterPlayerControlsConfiguration.overflowModalColor,
-                /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
                 borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(24.0),
                     topRight: Radius.circular(24.0)),
@@ -512,5 +518,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///right directionality.
   Widget buildLTRDirectionality(Widget child) {
     return Directionality(textDirection: TextDirection.ltr, child: child);
+  }
+
+  ///Called when player controls visibility should be changed.
+  void changePlayerControlsNotVisible(bool notVisible) {
+    setState(() {
+      if (notVisible) {
+        betterPlayerController?.postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.controlsHiddenStart));
+      }
+      controlsNotVisible = notVisible;
+    });
   }
 }
