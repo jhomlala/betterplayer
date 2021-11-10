@@ -33,6 +33,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'basenote_player_page.dart';
+
 class WelcomePage extends StatefulWidget {
   @override
   _WelcomePageState createState() => _WelcomePageState();
@@ -78,6 +80,9 @@ class _WelcomePageState extends State<WelcomePage> {
 
   List<Widget> buildExampleElementWidgets() {
     return [
+      _buildExampleElementWidget("Basenote example", () {
+        _navigateToPage(BasenotePlayerPage());
+      }),
       _buildExampleElementWidget("Basic player", () {
         _navigateToPage(BasicPlayerPage());
       }),
