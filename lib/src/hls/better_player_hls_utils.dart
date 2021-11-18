@@ -113,7 +113,11 @@ class BetterPlayerHlsUtils {
           // ignore: use_string_buffers
           realUrl += "${split[index]}/";
         }
-        realUrl += segment.url!;
+        if (segment.url?.startsWith("http") == true) {
+          realUrl = segment.url!;
+        } else {
+          realUrl += segment.url!;
+        }
         hlsSubtitlesUrls.add(realUrl);
 
         if (isSegmented) {
