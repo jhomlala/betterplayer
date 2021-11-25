@@ -25,6 +25,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   bool controlsNotVisible = true;
 
+  bool autoNextVideoClose = false;
+
   void cancelAndRestartTimer();
 
   bool isVideoFinished(VideoPlayerValue? videoPlayerValue) {
@@ -530,6 +532,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             BetterPlayerEvent(BetterPlayerEventType.controlsHiddenStart));
       }
       controlsNotVisible = notVisible;
+    });
+  }
+
+  void changeAutoNextVideoClose(bool value) {
+    setState(() {
+      autoNextVideoClose = value;
     });
   }
 }
