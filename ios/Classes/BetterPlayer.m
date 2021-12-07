@@ -716,7 +716,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                                      withOptions:AVAudioSessionCategoryOptionMixWithOthers
                                            error:nil];
   } else {
-    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryPlayback error:nil];
+    [[AVAudioSession sharedInstance] setCategory:AVAudioSessionCategoryAmbient
+                                     withOptions:AVAudioSessionCategoryOptionMixWithOthers
+                                           error:nil];
   }
 }
 
