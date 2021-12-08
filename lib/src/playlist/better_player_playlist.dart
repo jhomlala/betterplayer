@@ -10,16 +10,25 @@ import 'package:flutter/material.dart';
 
 ///Special version of Better Player used to play videos in playlist.
 class BetterPlayerPlaylist extends StatefulWidget {
-  final List<BetterPlayerDataSource> betterPlayerDataSourceList;
-  final BetterPlayerConfiguration betterPlayerConfiguration;
-  final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
+  final List<BetterPlayerDataSource>? betterPlayerDataSourceList;
+  final BetterPlayerConfiguration? betterPlayerConfiguration;
+  final BetterPlayerPlaylistConfiguration? betterPlayerPlaylistConfiguration;
+  final BetterPlayerPlaylistController? betterPlayerPlaylistController;
 
-  const BetterPlayerPlaylist({
-    Key? key,
-    required this.betterPlayerDataSourceList,
-    required this.betterPlayerConfiguration,
-    required this.betterPlayerPlaylistConfiguration,
-  }) : super(key: key);
+  const BetterPlayerPlaylist(
+      {Key? key,
+      this.betterPlayerDataSourceList,
+      this.betterPlayerConfiguration,
+      this.betterPlayerPlaylistConfiguration,
+      this.betterPlayerPlaylistController})
+      : assert(
+          betterPlayerPlaylistController == null ||
+              (betterPlayerDataSourceList == null &&
+                  betterPlayerConfiguration == null &&
+                  betterPlayerPlaylistConfiguration == null),
+          'Cannot provide both Controller and Configuration.',
+        ),
+        super(key: key);
 
   @override
   BetterPlayerPlaylistState createState() => BetterPlayerPlaylistState();
@@ -38,11 +47,13 @@ class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
 
   @override
   void initState() {
-    _betterPlayerPlaylistController = BetterPlayerPlaylistController(
-        widget.betterPlayerDataSourceList,
-        betterPlayerConfiguration: widget.betterPlayerConfiguration,
-        betterPlayerPlaylistConfiguration:
-            widget.betterPlayerPlaylistConfiguration);
+    _betterPlayerPlaylistController = widget.betterPlayerPlaylistController ??
+        BetterPlayerPlaylistController(
+          widget.betterPlayerDataSourceList!,
+          betterPlayerConfiguration: widget.betterPlayerConfiguration!,
+          betterPlayerPlaylistConfiguration:
+              widget.betterPlayerPlaylistConfiguration!,
+        );
     super.initState();
   }
 
