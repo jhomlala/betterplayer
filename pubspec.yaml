@@ -19,7 +19,7 @@ dependencies:
   pedantic: ^1.11.1
   meta: ^1.7.0
   flutter_widget_from_html_core: ^0.7.0
-  visibility_detector: ^0.2.0
+  visibility_detector: ^0.2.2
   path_provider: ^2.0.5
   collection: ^1.15.0
   xml: ^5.3.0
