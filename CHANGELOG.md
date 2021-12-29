@@ -1,6 +1,7 @@
 ## 0.0.80
 * Removed pedantic dependency.
 * Updated depenedencies.
+* Fixed controls render issue for small player (by https://github.com/admarwick)
 
 ## 0.0.79
 * Fixed kotlin version issue.
