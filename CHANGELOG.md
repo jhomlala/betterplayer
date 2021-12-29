@@ -1,3 +1,12 @@
+## 0.0.80
+* Removed pedantic dependency.
+* Updated dependencies.
+* Fixed controls render issue for small player (by https://github.com/admarwick)
+* Fixed deprecated jCenter. Replaced jCenter with mavenCentral (by https://github.com/petoknm)
+* Fixed iOS GCDWebServer and PINCache import issue (by https://github.com/twogood)
+* Added is mounted check in player controls (by https://github.com/masoudk2000)
+* Updated installation documentation page.
+
 ## 0.0.79
 * Fixed kotlin version issue.
 
