@@ -334,21 +334,23 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildExpandButton() {
-    return BetterPlayerMaterialClickableWidget(
-      onTap: _onExpandCollapse,
-      child: AnimatedOpacity(
-        opacity: controlsNotVisible ? 0.0 : 1.0,
-        duration: _controlsConfiguration.controlsHideTime,
-        child: Container(
-          height: _controlsConfiguration.controlBarHeight,
-          margin: const EdgeInsets.only(right: 12.0),
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Center(
-            child: Icon(
-              _betterPlayerController!.isFullScreen
-                  ? _controlsConfiguration.fullscreenDisableIcon
-                  : _controlsConfiguration.fullscreenEnableIcon,
-              color: _controlsConfiguration.iconsColor,
+    return Padding(
+      padding: EdgeInsets.only(right: 12.0),
+      child: BetterPlayerMaterialClickableWidget(
+        onTap: _onExpandCollapse,
+        child: AnimatedOpacity(
+          opacity: controlsNotVisible ? 0.0 : 1.0,
+          duration: _controlsConfiguration.controlsHideTime,
+          child: Container(
+            height: _controlsConfiguration.controlBarHeight,
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Center(
+              child: Icon(
+                _betterPlayerController!.isFullScreen
+                    ? _controlsConfiguration.fullscreenDisableIcon
+                    : _controlsConfiguration.fullscreenEnableIcon,
+                color: _controlsConfiguration.iconsColor,
+              ),
             ),
           ),
         ),
