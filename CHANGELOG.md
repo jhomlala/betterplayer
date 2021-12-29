@@ -1,3 +1,7 @@
+## 0.0.80
+* Removed pedantic dependency.
+* Updated depenedencies.
+
 ## 0.0.79
 * Fixed kotlin version issue.
 
