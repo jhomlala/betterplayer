@@ -146,6 +146,9 @@ class BetterPlayerController {
   ///in configuration.
   double? _overriddenAspectRatio;
 
+  ///Overridden fit which will be used instead of fit passed in configuration.
+  BoxFit? _overriddenFit;
+
   ///Was Picture in Picture opened.
   bool _wasInPipMode = false;
 
@@ -1034,6 +1037,19 @@ class BetterPlayerController {
   ///[_overriddenAspectRatio] will be used.
   double? getAspectRatio() {
     return _overriddenAspectRatio ?? betterPlayerConfiguration.aspectRatio;
+  }
+
+  // ignore: use_setters_to_change_properties
+  ///Setup overridden fit.
+  void setOverriddenFit(BoxFit fit) {
+    _overriddenFit = fit;
+  }
+
+  ///Get fit used in current video. If fit is null, then fit from
+  ///BetterPlayerConfiguration will be used. Otherwise [_overriddenFit] will be
+  ///used.
+  BoxFit getFit() {
+    return _overriddenFit ?? betterPlayerConfiguration.fit;
   }
 
   ///Enable Picture in Picture (PiP) mode. [betterPlayerGlobalKey] is required

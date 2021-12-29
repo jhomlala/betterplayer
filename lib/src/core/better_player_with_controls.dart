@@ -134,7 +134,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             angle: rotation * pi / 180,
             child: _BetterPlayerVideoFitWidget(
               betterPlayerController,
-              betterPlayerController.betterPlayerConfiguration.fit,
+              betterPlayerController.getFit(),
             ),
           ),
           betterPlayerController.betterPlayerConfiguration.overlay ??
