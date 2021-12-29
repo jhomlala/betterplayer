@@ -19,12 +19,13 @@ $ flutter pub get
 import 'package:better_player/better_player.dart';
 ```
 
-4. (Required) iOS configuration
-
+4. (Required) iOS configuration 
+   You need to change these settings in order to run Better Player on iOS:
 * Set deployment info of your project to **min. iOS 11.0 version**.
 * Set Swift 5 version.
 
-5. (Required) Android configuration.
+5. (Required) Android configuration. 
+   You need to change these settings in order to run Better Player on Android:
 * Set compileSdkVersion to *31*.
 * Set kotlin version to *1.5.31*.
 
