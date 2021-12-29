@@ -37,7 +37,8 @@ class _VideoProgressBarState
     extends State<BetterPlayerCupertinoVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
-      setState(() {});
+      if (mounted)
+        setState(() {});
     };
   }
 
