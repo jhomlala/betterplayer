@@ -42,6 +42,13 @@ class BetterPlayerController {
   ///between flutter high level code and lower level native code.
   VideoPlayerController? videoPlayerController;
 
+  ///Controls configuration
+  late BetterPlayerControlsConfiguration _betterPlayerControlsConfiguration;
+
+  ///Controls configuration
+  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
+      _betterPlayerControlsConfiguration;
+
   ///Expose all active eventListeners
   List<Function(BetterPlayerEvent)?> get eventListeners =>
       _eventListeners.sublist(1);
@@ -205,6 +212,8 @@ class BetterPlayerController {
     this.betterPlayerPlaylistConfiguration,
     BetterPlayerDataSource? betterPlayerDataSource,
   }) {
+    this._betterPlayerControlsConfiguration =
+        betterPlayerConfiguration.controlsConfiguration;
     _eventListeners.add(eventListener);
     if (betterPlayerDataSource != null) {
       setupDataSource(betterPlayerDataSource);
@@ -1237,6 +1246,13 @@ class BetterPlayerController {
       BetterPlayerDataSource betterPlayerDataSource) async {
     return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url,
         betterPlayerDataSource.cacheConfiguration?.key);
+  }
+
+  /// Sets the new [betterPlayerControlsConfiguration] instance in the
+  /// controller.
+  void setBetterPlayerControlsConfiguration(
+      BetterPlayerControlsConfiguration betterPlayerControlsConfiguration) {
+    this._betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
   }
 
   /// Add controller internal event.

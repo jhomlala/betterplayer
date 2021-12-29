@@ -61,6 +61,17 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
           ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                _betterPlayerController.setBetterPlayerControlsConfiguration(
+                  BetterPlayerControlsConfiguration(
+                      overflowModalColor: Colors.amberAccent),
+                );
+              });
+            },
+            child: Text("Reset settings"),
+          )
         ],
       ),
     );

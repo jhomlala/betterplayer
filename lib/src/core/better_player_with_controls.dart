@@ -25,7 +25,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       widget.controller!.betterPlayerConfiguration.subtitlesConfiguration;
 
   BetterPlayerControlsConfiguration get controlsConfiguration =>
-      widget.controller!.betterPlayerConfiguration.controlsConfiguration;
+      widget.controller!.betterPlayerControlsConfiguration;
 
   final StreamController<bool> playerVisibilityStreamController =
       StreamController();

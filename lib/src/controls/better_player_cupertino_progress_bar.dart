@@ -67,8 +67,8 @@ class _VideoProgressBarState
 
   @override
   Widget build(BuildContext context) {
-    final bool enableProgressBarDrag = betterPlayerController!
-        .betterPlayerConfiguration.controlsConfiguration.enableProgressBarDrag;
+    final bool enableProgressBarDrag =
+        betterPlayerController!.betterPlayerControlsConfiguration.enableProgressBarDrag;
     return GestureDetector(
       onHorizontalDragStart: (DragStartDetails details) {
         if (!controller!.value.initialized || !enableProgressBarDrag) {

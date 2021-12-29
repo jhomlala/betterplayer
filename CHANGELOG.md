@@ -1,5 +1,6 @@
 ## 0.0.81
 * Fixed full screen button padding in material controls.
+* Added `setBetterPlayerControlsConfiguration` in `BetterPlayerControlsConfiguration`.
 
 ## 0.0.80
 * Removed pedantic dependency.
