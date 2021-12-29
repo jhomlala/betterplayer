@@ -31,7 +31,6 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(_betterPlayerDataSource);
-    _betterPlayerController.setOverriddenFit(BoxFit.contain)
     super.initState();
   }
 
