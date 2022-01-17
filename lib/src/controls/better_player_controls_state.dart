@@ -452,7 +452,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   void _showCupertinoModalBottomSheet(List<Widget> children) {
     showCupertinoModalPopup<void>(
-      barrierColor: Colors.transparent,
       context: context,
       useRootNavigator:
           betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
@@ -483,7 +482,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   void _showMaterialBottomSheet(List<Widget> children) {
     showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
       context: context,
       useRootNavigator:
           betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
