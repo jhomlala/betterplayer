@@ -307,13 +307,18 @@ internal class BetterPlayer(
             playerNotificationChannelName!!,
             mediaDescriptionAdapter
         ).build()
-        playerNotificationManager!!.setPlayer(exoPlayer)
-        playerNotificationManager!!.setUseNextAction(false)
-        playerNotificationManager!!.setUsePreviousAction(false)
-        playerNotificationManager!!.setUseStopAction(false)
+        playerNotificationManager?.apply {
+            exoPlayer?.let {
+                setPlayer(object : ForwardingPlayer(exoPlayer) {})
+                setUseNextAction(false)
+                setUsePreviousAction(false)
+                setUseStopAction(false)
+            }
+        }
         val mediaSession = setupMediaSession(context, false)
         playerNotificationManager!!.setMediaSessionToken(mediaSession.sessionToken)
-        playerNotificationManager!!.setControlDispatcher(setupControlDispatcher())
+
+        //playerNotificationManager!!.setControlDispatcher(setupControlDispatcher())
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             refreshHandler = Handler(Looper.getMainLooper())
             refreshRunnable = Runnable {
@@ -346,7 +351,7 @@ internal class BetterPlayer(
         exoPlayer.seekTo(0)
     }
 
-    private fun setupControlDispatcher(): ControlDispatcher {
+    /*private fun setupControlDispatcher(): ControlDispatcher {
         return object : ControlDispatcher {
             override fun dispatchPrepare(player: Player): Boolean {
                 return false
@@ -418,7 +423,7 @@ internal class BetterPlayer(
                 return true
             }
         }
-    }
+    }*/
 
     fun disposeRemoteNotifications() {
         if (exoPlayerEventListener != null) {
@@ -686,7 +691,7 @@ internal class BetterPlayer(
         mediaSession.isActive = true
         val mediaSessionConnector = MediaSessionConnector(mediaSession)
         if (setupControlDispatcher) {
-            mediaSessionConnector.setControlDispatcher(setupControlDispatcher())
+            //mediaSessionConnector.setControlDispatcher(setupControlDispatcher())
         }
         mediaSessionConnector.setPlayer(exoPlayer)
         this.mediaSession = mediaSession
