@@ -1,3 +1,8 @@
+## 0.0.82
+* Updated ExoPlayer version to 2.17.1.
+* Updated dependencies.
+* Android native code refactor.
+
 ## 0.0.81
 * Fixed full screen button padding in material controls.
 * Added `setBetterPlayerControlsConfiguration` in `BetterPlayerController`.
