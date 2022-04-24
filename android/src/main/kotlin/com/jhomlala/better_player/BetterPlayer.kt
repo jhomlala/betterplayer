@@ -769,10 +769,12 @@ internal class BetterPlayer(
         private const val NOTIFICATION_ID = 20772077
 
         //Clear cache without accessing BetterPlayerCache.
-        fun clearCache(context: Context, result: MethodChannel.Result) {
+        fun clearCache(context: Context?, result: MethodChannel.Result) {
             try {
-                val file = File(context.cacheDir, "betterPlayerCache")
-                deleteDirectory(file)
+                context?.let { context ->
+                    val file = File(context.cacheDir, "betterPlayerCache")
+                    deleteDirectory(file)
+                }
                 result.success(null)
             } catch (exception: Exception) {
                 Log.e(TAG, exception.toString())

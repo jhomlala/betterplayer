@@ -7,11 +7,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.work.Data
 import androidx.work.WorkerParameters
-import androidx.work.ListenableWorker
 import androidx.work.Worker
-import com.jhomlala.better_player.BetterPlayerPlugin
-import com.jhomlala.better_player.DataSourceUtils
-import com.jhomlala.better_player.ImageWorker
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.lang.Exception
@@ -26,8 +22,7 @@ class ImageWorker(
         return try {
             val imageUrl = inputData.getString(BetterPlayerPlugin.URL_PARAMETER)
                 ?: return Result.failure()
-            var bitmap: Bitmap? = null
-            bitmap = if (DataSourceUtils.isHTTP(Uri.parse(imageUrl))) {
+            val bitmap: Bitmap? = if (DataSourceUtils.isHTTP(Uri.parse(imageUrl))) {
                 getBitmapFromExternalURL(imageUrl)
             } else {
                 getBitmapFromInternalURL(imageUrl)
