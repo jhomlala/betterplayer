@@ -7,15 +7,14 @@ environment:
   sdk: '>=2.12.0 <3.0.0'
 
 dependencies:
-  #better_player: any
   better_player:
     path: ../
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  path_provider: ^2.0.2
-  visibility_detector: ^0.2.0
+  path_provider: ^2.0.9
+  visibility_detector: ^0.2.2
   collection: ^1.15.0
 
 dev_dependencies:

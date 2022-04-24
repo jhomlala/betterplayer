@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.jhomlala.better_player_example">
     <application android:usesCleartextTraffic="true"
-        android:name="io.flutter.app.FlutterApplication"
         android:label="Better Player Example"
         android:icon="@mipmap/ic_launcher">
         <activity
