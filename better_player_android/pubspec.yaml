@@ -1,0 +1,30 @@
+name: better_player_android
+description: Android implementation of the better_player plugin.
+repository: https://github.com/jhomlala/betterplayer
+issue_tracker: https://github.com/jhomlala/betterplayer/issues
+version: 1.0.0
+
+environment:
+  sdk: ">=2.14.0 <3.0.0"
+  flutter: ">=2.8.0"
+
+flutter:
+  plugin:
+    implements: better_player
+    platforms:
+      android:
+        dartPluginClass: AndroidBetterPlayer
+        package: com.jhomlala.better_player
+        pluginClass: BetterPlayerPlugin
+
+dependencies:
+  flutter:
+    sdk: flutter
+  #better_player_platform_interface: "1.0.0"
+  better_player_platform_interface:
+    path: ../better_player_platform_interface
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  pigeon: ^2.0.1
