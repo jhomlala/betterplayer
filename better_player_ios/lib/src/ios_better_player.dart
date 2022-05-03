@@ -10,12 +10,12 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 
 const MethodChannel _channel = MethodChannel('better_player_channel');
 
-/// An implementation of [VideoPlayerPlatform] that uses method channels.
-class IosBetterPlayer extends VideoPlayerPlatform {
+/// An implementation of [BetterPlayerPlatform] that uses method channels.
+class IosBetterPlayer extends BetterPlayerPlatform {
 
-  /// Registers this class as the default instance of [VideoPlayerPlatform].
+  /// Registers this class as the default instance of [BetterPlayerPlatform].
   static void registerWith() {
-    VideoPlayerPlatform.instance = IosBetterPlayer();
+    BetterPlayerPlatform.instance = IosBetterPlayer();
   }
 
   @override

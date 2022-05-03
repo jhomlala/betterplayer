@@ -12,31 +12,31 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'method_channel_better_player.dart';
 
-/// The interface that implementations of video_player must implement.
+/// The interface that implementations of better_player must implement.
 ///
-/// Platform implementations should extend this class rather than implement it as `video_player`
+/// Platform implementations should extend this class rather than implement it as `better_player`
 /// does not consider newly added methods to be breaking changes. Extending this class
 /// (using `extends`) ensures that the subclass will get the default implementation, while
 /// platform implementations that `implements` this interface will be broken by newly added
-/// [VideoPlayerPlatform] methods.
-abstract class VideoPlayerPlatform extends PlatformInterface{
+/// [BetterPlayerPlatform] methods.
+abstract class BetterPlayerPlatform extends PlatformInterface{
 
   /// Constructs a VideoPlayerPlatform.
-  VideoPlayerPlatform() : super(token: _token);
+  BetterPlayerPlatform() : super(token: _token);
 
   static final Object _token = Object();
 
-  static VideoPlayerPlatform _instance = MethodChannelVideoPlayer();
+  static BetterPlayerPlatform _instance = MethodChannelBetterPlayer();
 
-  /// The default instance of [VideoPlayerPlatform] to use.
+  /// The default instance of [BetterPlayerPlatform] to use.
   ///
-  /// Defaults to [MethodChannelVideoPlayer].
-  static VideoPlayerPlatform get instance => _instance;
+  /// Defaults to [MethodChannelBetterPlayer].
+  static BetterPlayerPlatform get instance => _instance;
 
   /// Platform-specific plugins should override this with their own
-  /// platform-specific class that extends [VideoPlayerPlatform] when they
+  /// platform-specific class that extends [BetterPlayerPlatform] when they
   /// register themselves.
-  static set instance(VideoPlayerPlatform instance) {
+  static set instance(BetterPlayerPlatform instance) {
     PlatformInterface.verify(instance, _token);
     _instance = instance;
   }

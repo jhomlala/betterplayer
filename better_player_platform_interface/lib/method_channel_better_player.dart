@@ -11,8 +11,8 @@ import 'better_player_platform_interface.dart';
 
 const MethodChannel _channel = MethodChannel('better_player_channel');
 
-/// An implementation of [VideoPlayerPlatform] that uses method channels.
-class MethodChannelVideoPlayer extends VideoPlayerPlatform {
+/// An implementation of [BetterPlayerPlatform] that uses method channels.
+class MethodChannelBetterPlayer extends BetterPlayerPlatform {
   @override
   Future<void> init() {
     return _channel.invokeMethod<void>('init');

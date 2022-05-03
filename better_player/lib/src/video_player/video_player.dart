@@ -10,7 +10,7 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
+final BetterPlayerPlatform _videoPlayerPlatform = BetterPlayerPlatform.instance
 // This will clear all open videos on the platform when a full restart is
 // performed.
   ..init();
@@ -411,7 +411,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     _initializingCompleter = Completer<void>();
 
-    await VideoPlayerPlatform.instance
+    await BetterPlayerPlatform.instance
         .setDataSource(_textureId, dataSourceDescription);
     return _initializingCompleter.future;
   }
