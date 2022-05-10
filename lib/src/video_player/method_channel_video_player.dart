@@ -27,6 +27,16 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> nerdStat(int? textureId) async{
+    return await _channel.invokeMethod<void>(
+      'nerdStat',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
+  @override
   Future<int?> create({
     BetterPlayerBufferingConfiguration? bufferingConfiguration,
   }) async {
@@ -408,6 +418,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             eventType: VideoEventType.pipStop,
             key: key,
           );
+
+        case 'nerdStat':
+          dynamic values = map["values"];
+          return VideoEvent(
+              eventType: VideoEventType.nerdStat,
+              key: key,
+              nerdStat: values);
 
         default:
           return VideoEvent(

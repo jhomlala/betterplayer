@@ -42,6 +42,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import android.view.Surface
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
@@ -59,6 +60,7 @@ import com.google.android.exoplayer2.drm.DrmSessionManagerProvider
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
 import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides
+import com.google.android.exoplayer2.ui.DefaultTrackNameProvider
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.google.android.exoplayer2.util.Util
@@ -95,6 +97,9 @@ internal class BetterPlayer(
     private val customDefaultLoadControl: CustomDefaultLoadControl =
         customDefaultLoadControl ?: CustomDefaultLoadControl()
     private var lastSendBufferedPosition = 0L
+    /// nerdstat
+    var startNerdStat = false
+    var nerdStatHelper: NerdStatHelper? = null
 
     init {
         val loadBuilder = DefaultLoadControl.Builder()
@@ -111,6 +116,14 @@ internal class BetterPlayer(
             .build()
         workManager = WorkManager.getInstance(context)
         workerObserverMap = HashMap()
+        nerdStatHelper = NerdStatHelper(
+            exoPlayer,
+            TextView(context),
+            eventSink,
+            exoPlayer.getCurrentTrackSelections(),
+            DefaultTrackNameProvider(context.getResources()),
+            context
+        )
         setupVideoPlayer(eventChannel, textureEntry, result)
     }
 

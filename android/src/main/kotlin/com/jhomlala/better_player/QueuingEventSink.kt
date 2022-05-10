@@ -13,7 +13,7 @@ import java.util.ArrayList
  * This class is not thread-safe. All calls must be done on the same thread or synchronized
  * externally.
  */
-internal class QueuingEventSink : EventSink {
+class QueuingEventSink : EventSink {
     private var delegate: EventSink? = null
     private val eventQueue = ArrayList<Any>()
     private var done = false

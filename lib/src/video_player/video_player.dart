@@ -33,6 +33,7 @@ class VideoPlayerValue {
     this.speed = 1.0,
     this.errorDescription,
     this.isPip = false,
+    this.nerdStatValue = ""
   });
 
   /// Returns an instance with a `null` [Duration].
@@ -94,6 +95,9 @@ class VideoPlayerValue {
   /// [errorDescription] should have information about the problem.
   bool get hasError => errorDescription != null;
 
+  /// Nerd stats
+  final String nerdStatValue;
+
   /// Returns [size.width] / [size.height] when size is non-null, or `1.0.` when
   /// size is null or the aspect ratio would be less than or equal to 0.0.
   double get aspectRatio {
@@ -122,6 +126,7 @@ class VideoPlayerValue {
     String? errorDescription,
     double? speed,
     bool? isPip,
+    String? nerdStatValue,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -136,6 +141,7 @@ class VideoPlayerValue {
       speed: speed ?? this.speed,
       errorDescription: errorDescription ?? this.errorDescription,
       isPip: isPip ?? this.isPip,
+        nerdStatValue: nerdStatValue ?? this.nerdStatValue
     );
   }
 
@@ -251,6 +257,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           break;
         case VideoEventType.pipStop:
           value = value.copyWith(isPip: false);
+          break;
+        case VideoEventType.nerdStat:
+          value = value.copyWith(isPip: false, nerdStatValue: event.nerdStat);
           break;
         case VideoEventType.unknown:
           break;
@@ -446,6 +455,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
     await _applyPlayPause();
+  }
+
+  /// Start and stop nerdstat
+  Future<void> nerdStat() async {
+    return await _videoPlayerPlatform.nerdStat(_textureId);
   }
 
   Future<void> _applyLooping() async {
