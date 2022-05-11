@@ -124,16 +124,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             PRE_CACHE_METHOD -> preCache(call, result)
             STOP_PRE_CACHE_METHOD -> stopPreCache(call, result)
             CLEAR_CACHE_METHOD -> clearCache(result)
-            NERD_STAT -> {
-                val textureId = (call.argument<Any>(TEXTURE_ID_PARAMETER) as Number?)!!.toLong()
-                val player = videoPlayers[textureId]
-                player.startNerdStat = !player.startNerdStat
-                if (player.startNerdStat) {
-                    player.nerdStatHelper?.init()
-                } else {
-                    player.nerdStatHelper?.onStop()
-                }
-            }
             else -> {
                 val textureId = (call.argument<Any>(TEXTURE_ID_PARAMETER) as Number?)!!.toLong()
                 val player = videoPlayers[textureId]
@@ -229,6 +219,14 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             DISPOSE_METHOD -> {
                 dispose(player, textureId)
                 result.success(null)
+            }
+            NERD_STAT -> {
+                player.startNerdStat = !player.startNerdStat
+                if (player.startNerdStat) {
+                    player.nerdStatHelper?.init()
+                } else {
+                    player.nerdStatHelper?.onStop()
+                }
             }
             else -> result.notImplemented()
         }
