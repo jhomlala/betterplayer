@@ -13,6 +13,9 @@
 
 @interface BetterPlayerPlugin : NSObject <FlutterPlugin, FlutterPlatformViewFactory>
 
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+@property(readonly, weak, nonatomic) NSObject<FlutterTextureRegistry>* registry;
+#endif
 @property(readonly, weak, nonatomic) NSObject<FlutterBinaryMessenger>* messenger;
 @property(readonly, strong, nonatomic) NSMutableDictionary* players;
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar>* registrar;
