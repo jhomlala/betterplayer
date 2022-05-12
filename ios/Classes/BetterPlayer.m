@@ -19,7 +19,11 @@ API_AVAILABLE(ios(9.0))
 AVPictureInPictureController *_pipController;
 #endif
 
-@implementation BetterPlayer
+@implementation BetterPlayer {
+    NSTimer *nerdStatTimer;
+    BOOL nerdStatActive;
+}
+
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super init];
     NSAssert(self, @"super init cannot be nil");
@@ -34,6 +38,29 @@ AVPictureInPictureController *_pipController;
     }
     self._observersAdded = false;
     return self;
+}
+
+- (void)toggleNerdStat {
+    if (nerdStatActive == TRUE) {
+        [nerdStatTimer invalidate];
+        nerdStatTimer = nil;
+        nerdStatActive = FALSE;
+    } else {
+        nerdStatTimer = [NSTimer scheduledTimerWithTimeInterval: 2.0
+                          target: self
+                          selector:@selector(nerdStat:)
+                          userInfo: nil repeats:YES];
+        nerdStatActive = TRUE;
+    }
+}
+
+- (void)nerdStat:(NSTimer *)timer {
+    if (_eventSink == nil) {
+        return;
+    }
+    NSString *data = [[[NerdStatHelper alloc] init] getNerdStatTextWithPlayer: _player];
+
+    _eventSink(@{ @"event" : @"nerdStat", @"values" : data});
 }
 
 - (nonnull UIView *)view {
@@ -753,6 +780,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)dispose {
+    [nerdStatTimer invalidate];
+    nerdStatTimer = nil;
     [self pause];
     [self disposeSansEventChannel];
     [_eventChannel setStreamHandler:nil];

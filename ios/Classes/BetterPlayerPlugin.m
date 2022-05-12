@@ -466,6 +466,11 @@ bool _remoteCommandsInitialized = false;
                 }
             }
             result(nil);
+        } else if ([@"nerdStat" isEqualToString:call.method]) {
+            NSDictionary* argsMap = call.arguments;
+            int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
+            BetterPlayer* player = _players[@(textureId)];
+            [player toggleNerdStat];
         } else {
             result(FlutterMethodNotImplemented);
         }
