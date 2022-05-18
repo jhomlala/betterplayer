@@ -150,12 +150,12 @@ AVPictureInPictureController *_pipController;
             [ self removeObservers];
 
         }
-    }
 #ifdef BETTER_PLAYER_FLUTTER_TEXTURE
-    [_player pause];
-     _isPlaying = false;
-     _displayLink.paused = YES;
+      [_player pause];
+      _isPlaying = false;
+      _displayLink.paused = YES;
 #endif
+    }
 }
 
 
