@@ -1271,6 +1271,10 @@ class BetterPlayerController {
     this._betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
   }
 
+  void postControllerEvent(BetterPlayerControllerEvent event) {
+    _postControllerEvent(event);
+  }
+
   /// Add controller internal event.
   void _postControllerEvent(BetterPlayerControllerEvent event) {
     if (!_controllerEventStreamController.isClosed) {
