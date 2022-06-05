@@ -7,15 +7,11 @@ class BetterPlayerSubtitle {
   final Duration? end;
   final List<String>? texts;
 
-  ///VTT OR SRT
-  final String? type;
-
   BetterPlayerSubtitle._({
     this.index,
     this.start,
     this.end,
     this.texts,
-    this.type,
   });
 
   factory BetterPlayerSubtitle(String value, bool isWebVTT) {
@@ -114,6 +110,6 @@ class BetterPlayerSubtitle {
 
   @override
   String toString() {
-    return 'BetterPlayerSubtitle{index: $index, start: $start, end: $end, texts: $texts, type: $type}';
+    return 'BetterPlayerSubtitle{index: $index, start: $start, end: $end, texts: $texts}';
   }
 }

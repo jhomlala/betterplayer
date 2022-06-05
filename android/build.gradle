@@ -7,7 +7,7 @@ buildscript {
     ext.annotationVersion = "1.2.0"
     ext.workVersion = "2.7.0"
     ext.coreVersion = "1.6.0"
-    ext.gradleVersion = "4.1.0"
+    ext.gradleVersion = "7.0.2"
     ext.kotlinVersion = "1.5.31"
 
     repositories {
