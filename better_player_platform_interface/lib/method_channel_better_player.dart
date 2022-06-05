@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 import 'dart:async';
 
+import 'package:better_player_platform_interface/messages.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -13,50 +14,47 @@ const MethodChannel _channel = MethodChannel('better_player_channel');
 
 /// An implementation of [BetterPlayerPlatform] that uses method channels.
 class MethodChannelBetterPlayer extends BetterPlayerPlatform {
+
+  final BetterPlayerApi _api = BetterPlayerApi();
+
   @override
   Future<void> init() {
-    return _channel.invokeMethod<void>('init');
+    return _api.initialize();
   }
 
   @override
   Future<void> dispose(int? textureId) {
-    return _channel.invokeMethod<void>(
-      'dispose',
-      <String, dynamic>{'textureId': textureId},
-    );
+    return _api.dispose(TextureMessage()..textureId = textureId);
   }
 
   @override
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,
   }) async {
-    late final Map<String, dynamic>? response;
-    if (bufferingConfiguration == null) {
-      response = await _channel.invokeMapMethod<String, dynamic>('create');
-    } else {
-      final responseLinkedHashMap = await _channel.invokeMethod<Map?>(
-        'create',
-        <String, dynamic>{
-          'minBufferMs': bufferingConfiguration.minBufferMs,
-          'maxBufferMs': bufferingConfiguration.maxBufferMs,
-          'bufferForPlaybackMs': bufferingConfiguration.bufferForPlaybackMs,
-          'bufferForPlaybackAfterRebufferMs':
-              bufferingConfiguration.bufferForPlaybackAfterRebufferMs,
-        },
-      );
-
-      response = responseLinkedHashMap != null
-          ? Map<String, dynamic>.from(responseLinkedHashMap)
-          : null;
+    CreateMessage createMessage = CreateMessage();
+    if (bufferingConfiguration!= null){
+      createMessage.minBufferMs = bufferingConfiguration.minBufferMs;
+      createMessage.maxBufferMs = bufferingConfiguration.maxBufferMs;
+      createMessage.bufferForPlaybackMs = bufferingConfiguration.bufferForPlaybackMs;
+      createMessage.bufferForPlaybackAfterRebufferMs = bufferingConfiguration.bufferForPlaybackAfterRebufferMs;
     }
-    return response?['textureId'] as int?;
+
+    final TextureMessage textureMessage = await _api.create(createMessage);
+    return textureMessage.textureId;
   }
 
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
+    final DataSourceMessage dataSourceMessage = DataSourceMessage();
     Map<String, dynamic>? dataSourceDescription;
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
+        dataSourceMessage.textureId = textureId;
+        dataSourceMessage.key = dataSource.key;
+        dataSourceMessage.asset = dataSource.asset;
+        dataSourceMessage.package = dataSource.package;
+
+
         dataSourceDescription = <String, dynamic>{
           'key': dataSource.key,
           'asset': dataSource.asset,
