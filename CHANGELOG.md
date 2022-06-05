@@ -1,3 +1,7 @@
+## 0.0.83
+* Updated dependencies
+* Fixed Flutter 3.0 issues
+
 ## 0.0.82
 * Updated ExoPlayer version to 2.17.1.
 * Updated dependencies.
