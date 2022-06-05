@@ -20,7 +20,11 @@ AVPictureInPictureController *_pipController;
 #endif
 
 @implementation BetterPlayer
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+- (instancetype)initWithFrameUpdater:(FrameUpdater*)frameUpdater {
+#else
 - (instancetype)initWithFrame:(CGRect)frame {
+#endif
     self = [super init];
     NSAssert(self, @"super init cannot be nil");
     _isInitialized = false;
@@ -32,6 +36,13 @@ AVPictureInPictureController *_pipController;
     if (@available(iOS 10.0, *)) {
         _player.automaticallyWaitsToMinimizeStalling = false;
     }
+  
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+  _displayLink = [CADisplayLink displayLinkWithTarget:frameUpdater
+                                             selector:@selector(onDisplayLink:)];
+  [_displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
+  _displayLink.paused = YES;
+#endif
     self._observersAdded = false;
     return self;
 }
@@ -68,10 +79,30 @@ AVPictureInPictureController *_pipController;
     }
 }
 
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+- (void)removeVideoOutput {
+    _videoOutput = nil;
+    if (_player.currentItem == nil) {
+        return;
+    }
+    NSArray<AVPlayerItemOutput*>* outputs = [[_player currentItem] outputs];
+    for (AVPlayerItemOutput* output in outputs) {
+        [[_player currentItem] removeOutput:output];
+    }
+}
+#endif
+
 - (void)clear {
+  
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+    _displayLink.paused = YES;
+#endif
     _isInitialized = false;
     _isPlaying = false;
     _disposed = false;
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+    _videoOutput = nil;
+#endif
     _failedCount = 0;
     _key = nil;
     if (_player.currentItem == nil) {
@@ -119,6 +150,11 @@ AVPictureInPictureController *_pipController;
             [ self removeObservers];
 
         }
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+      [_player pause];
+      _isPlaying = false;
+      _displayLink.paused = YES;
+#endif
     }
 }
 
@@ -169,6 +205,30 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     
     return videoComposition;
 }
+
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+- (void)addVideoOutput {
+    if (_player.currentItem == nil) {
+        return;
+    }
+    
+    if (_videoOutput) {
+        NSArray<AVPlayerItemOutput*>* outputs = [[_player currentItem] outputs];
+        for (AVPlayerItemOutput* output in outputs) {
+            if (output == _videoOutput) {
+                return;
+            }
+        }
+    }
+    
+    NSDictionary* pixBuffAttributes = @{
+        (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+        (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
+    };
+    _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:pixBuffAttributes];
+    [_player.currentItem addOutput:_videoOutput];
+}
+#endif
 
 - (CGAffineTransform)fixTransform:(AVAssetTrack*)videoTrack {
   CGAffineTransform transform = videoTrack.preferredTransform;
@@ -415,6 +475,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)updatePlayingState {
     if (!_isInitialized || !_key) {
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+        _displayLink.paused = YES;
+#endif
         return;
     }
     if (!self._observersAdded){
@@ -432,6 +495,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     } else {
         [_player pause];
     }
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+    _displayLink.paused = !_isPlaying;
+#endif
 }
 
 - (void)onReadyToPlay {
@@ -473,6 +539,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         }
 
         _isInitialized = true;
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+        [self addVideoOutput];
+#endif
         [self updatePlayingState];
         _eventSink(@{
             @"event" : @"initialized",
@@ -723,6 +792,66 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 #endif
 
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+// This workaround if you will change dataSource. Flutter engine caches CVPixelBufferRef and if you
+// return NULL from method copyPixelBuffer Flutter will use cached CVPixelBufferRef. If you will
+// change your datasource you can see frame from previeous video. Thats why we should return
+// trasparent frame for this situation
+- (CVPixelBufferRef)prevTransparentBuffer {
+    if (_prevBuffer) {
+        CVPixelBufferLockBaseAddress(_prevBuffer, 0);
+        
+        int bufferWidth = CVPixelBufferGetWidth(_prevBuffer);
+        int bufferHeight = CVPixelBufferGetHeight(_prevBuffer);
+        unsigned char* pixel = (unsigned char*)CVPixelBufferGetBaseAddress(_prevBuffer);
+        
+        for (int row = 0; row < bufferHeight; row++) {
+            for (int column = 0; column < bufferWidth; column++) {
+                pixel[0] = 0;
+                pixel[1] = 0;
+                pixel[2] = 0;
+                pixel[3] = 0;
+                pixel += 4;
+            }
+        }
+        CVPixelBufferUnlockBaseAddress(_prevBuffer, 0);
+        return _prevBuffer;
+    }
+    return _prevBuffer;
+}
+
+
+- (CVPixelBufferRef)copyPixelBuffer {
+    //Disabled because of black frame issue
+    /*if (!_videoOutput || !_isInitialized || !_isPlaying || !_key || ![_player currentItem] ||
+     ![[_player currentItem] isPlaybackLikelyToKeepUp]) {
+     return [self prevTransparentBuffer];
+     }*/
+    
+    CMTime outputItemTime = [_videoOutput itemTimeForHostTime:CACurrentMediaTime()];
+    if ([_videoOutput hasNewPixelBufferForItemTime:outputItemTime]) {
+        _failedCount = 0;
+        _prevBuffer = [_videoOutput copyPixelBufferForItemTime:outputItemTime itemTimeForDisplay:NULL];
+        return _prevBuffer;
+    } else {
+        // AVPlayerItemVideoOutput.hasNewPixelBufferForItemTime doesn't work correctly
+        _failedCount++;
+        if (_failedCount > 100) {
+            _failedCount = 0;
+            [self removeVideoOutput];
+            [self addVideoOutput];
+        }
+        return NULL;
+    }
+}
+
+- (void)onTextureUnregistered {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self dispose];
+    });
+}
+#endif
+
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments {
     _eventSink = nil;
     return nil;
@@ -746,6 +875,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)disposeSansEventChannel {
     @try{
         [self clear];
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+        [_displayLink invalidate];
+#endif
     }
     @catch(NSException *exception) {
         NSLog(exception.debugDescription);
