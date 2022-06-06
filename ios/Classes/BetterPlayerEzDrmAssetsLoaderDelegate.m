@@ -82,7 +82,7 @@ NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
         [loadingRequest finishLoadingWithError:[[NSError alloc] initWithDomain:NSURLErrorDomain code:NSURLErrorClientCertificateRejected userInfo:nil]];
     }
     @try {
-        requestBytes = [loadingRequest streamingContentKeyRequestDataForApp:certificate contentIdentifier: [str dataUsingEncoding:NSUTF8StringEncoding] options:nil error:nil];
+        requestBytes = [loadingRequest streamingContentKeyRequestDataForApp:certificate contentIdentifier: [_assetId dataUsingEncoding:NSUTF8StringEncoding] options:nil error:nil];
     }
     @catch (NSException* excp) {
         [loadingRequest finishLoadingWithError:nil];
