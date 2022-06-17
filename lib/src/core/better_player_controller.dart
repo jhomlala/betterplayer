@@ -599,8 +599,8 @@ class BetterPlayerController {
   }
 
   ///Enables/disables full screen mode based on current fullscreen state.
-  void toggleFullScreen() {
-    _isFullScreen = !_isFullScreen;
+  void toggleFullScreen({bool? forceValue}) {
+    _isFullScreen = forceValue ?? !_isFullScreen;
     if (_isFullScreen) {
       _postControllerEvent(BetterPlayerControllerEvent.openFullscreen);
     } else {
