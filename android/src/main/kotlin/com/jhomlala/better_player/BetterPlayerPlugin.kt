@@ -372,7 +372,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     val notificationChannelName =
                         getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
                     val activityName =
-                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
+                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, ".MainActivity")
                     betterPlayer.setupPlayerNotification(
                         flutterState?.applicationContext!!,
                         title, author, imageUrl, notificationChannelName, activityName
