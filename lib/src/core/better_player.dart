@@ -263,7 +263,7 @@ class _BetterPlayerState extends State<BetterPlayer>
                     _scaleFactor.toString() +
                     ' , ' +
                     _baseScaleFactor.toString());
-                if (controllerProvider.controller.getFit() == BoxFit.fill) {
+                if (controllerProvider.controller.getFit() == BoxFit.cover) {
                   debugPrint('stretched before setstate' +
                       controllerProvider.controller.getFit().toString());
                   setState(() {
@@ -285,7 +285,8 @@ class _BetterPlayerState extends State<BetterPlayer>
                   debugPrint('EXPAND before setstate' +
                       controllerProvider.controller.getFit().toString());
                   setState(() {
-                    controllerProvider.controller.setOverriddenFit(BoxFit.fill);
+                    controllerProvider.controller
+                        .setOverriddenFit(BoxFit.cover);
                     controllerProvider.controller.postControllerEvent(
                         BetterPlayerControllerEvent.expandScreen);
                     controllerProvider.updateShouldNotify(controllerProvider);
