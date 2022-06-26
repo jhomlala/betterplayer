@@ -22,6 +22,12 @@ dependencies:
   path_provider: ^2.0.10
   collection: ^1.16.0
   xml: ^6.1.0
+  better_player_platform_interface:
+    path: ../better_player_platform_interface
+  better_player_android:
+    path: ../better_player_android
+  better_player_ios:
+    path: ../better_player_ios
 
 dev_dependencies:
   lint: ^1.8.2
@@ -34,7 +40,6 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.jhomlala.better_player
-        pluginClass: BetterPlayerPlugin
+        default_package: better_player_android
       ios:
-        pluginClass: BetterPlayerPlugin
+        default_package: better_player_ios

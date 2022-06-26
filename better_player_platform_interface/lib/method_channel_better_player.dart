@@ -14,7 +14,6 @@ const MethodChannel _channel = MethodChannel('better_player_channel');
 
 /// An implementation of [BetterPlayerPlatform] that uses method channels.
 class MethodChannelBetterPlayer extends BetterPlayerPlatform {
-
   final BetterPlayerApi _api = BetterPlayerApi();
 
   @override
@@ -32,11 +31,13 @@ class MethodChannelBetterPlayer extends BetterPlayerPlatform {
     BufferingConfiguration? bufferingConfiguration,
   }) async {
     CreateMessage createMessage = CreateMessage();
-    if (bufferingConfiguration!= null){
+    if (bufferingConfiguration != null) {
       createMessage.minBufferMs = bufferingConfiguration.minBufferMs;
       createMessage.maxBufferMs = bufferingConfiguration.maxBufferMs;
-      createMessage.bufferForPlaybackMs = bufferingConfiguration.bufferForPlaybackMs;
-      createMessage.bufferForPlaybackAfterRebufferMs = bufferingConfiguration.bufferForPlaybackAfterRebufferMs;
+      createMessage.bufferForPlaybackMs =
+          bufferingConfiguration.bufferForPlaybackMs;
+      createMessage.bufferForPlaybackAfterRebufferMs =
+          bufferingConfiguration.bufferForPlaybackAfterRebufferMs;
     }
 
     final TextureMessage textureMessage = await _api.create(createMessage);
@@ -46,273 +47,204 @@ class MethodChannelBetterPlayer extends BetterPlayerPlatform {
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
     final DataSourceMessage dataSourceMessage = DataSourceMessage();
-    Map<String, dynamic>? dataSourceDescription;
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
-        dataSourceMessage.textureId = textureId;
-        dataSourceMessage.key = dataSource.key;
-        dataSourceMessage.asset = dataSource.asset;
-        dataSourceMessage.package = dataSource.package;
-
-
-        dataSourceDescription = <String, dynamic>{
-          'key': dataSource.key,
-          'asset': dataSource.asset,
-          'package': dataSource.package,
-          'useCache': false,
-          'maxCacheSize': 0,
-          'maxCacheFileSize': 0,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName
-        };
+        dataSourceMessage
+          ..asset = dataSource.asset
+          ..package = dataSource.package
+          ..useCache = false
+          ..maxCacheSize = 0
+          ..maxCacheFileSize = 0;
         break;
       case DataSourceType.network:
-        dataSourceDescription = <String, dynamic>{
-          'key': dataSource.key,
-          'uri': dataSource.uri,
-          'formatHint': dataSource.rawFormalHint,
-          'headers': dataSource.headers,
-          'useCache': dataSource.useCache,
-          'maxCacheSize': dataSource.maxCacheSize,
-          'maxCacheFileSize': dataSource.maxCacheFileSize,
-          'cacheKey': dataSource.cacheKey,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'licenseUrl': dataSource.licenseUrl,
-          'certificateUrl': dataSource.certificateUrl,
-          'drmHeaders': dataSource.drmHeaders,
-          'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey,
-          'videoExtension': dataSource.videoExtension,
-        };
+        dataSourceMessage
+          ..uri = dataSource.uri
+          ..formatHint = dataSource.rawFormalHint
+          ..headers = dataSource.headers
+          ..useCache = dataSource.useCache
+          ..maxCacheSize = dataSource.maxCacheSize
+          ..maxCacheFileSize = dataSource.maxCacheFileSize
+          ..cacheKey = dataSource.cacheKey
+          ..licenseUrl = dataSource.licenseUrl
+          ..certificateUrl = dataSource.certificateUrl
+          ..drmHeaders = dataSource.drmHeaders
+          ..clearKey = dataSource.clearKey
+          ..videoExtension = dataSource.videoExtension;
+
         break;
       case DataSourceType.file:
-        dataSourceDescription = <String, dynamic>{
-          'key': dataSource.key,
-          'uri': dataSource.uri,
-          'useCache': false,
-          'maxCacheSize': 0,
-          'maxCacheFileSize': 0,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey
-        };
+        dataSourceMessage
+          ..uri = dataSource.uri
+          ..useCache = dataSource.useCache
+          ..maxCacheSize = dataSource.maxCacheSize
+          ..maxCacheFileSize = dataSource.maxCacheFileSize
+          ..clearKey = dataSource.clearKey;
+
         break;
     }
-    await _channel.invokeMethod<void>(
-      'setDataSource',
-      <String, dynamic>{
-        'textureId': textureId,
-        'dataSource': dataSourceDescription,
-      },
-    );
-    return;
+    dataSourceMessage
+      ..textureId = textureId
+      ..key = dataSource.key
+      ..showNotification = dataSource.showNotification
+      ..title = dataSource.title
+      ..author = dataSource.author
+      ..imageUrl = dataSource.imageUrl
+      ..notificationChannelName = dataSource.notificationChannelName
+      ..overriddenDuration = dataSource.overriddenDuration?.inMilliseconds
+      ..activityName = dataSource.activityName;
+
+    await _api.setDataSource(dataSourceMessage);
   }
 
   @override
   Future<void> setLooping(int? textureId, bool looping) {
-    return _channel.invokeMethod<void>(
-      'setLooping',
-      <String, dynamic>{
-        'textureId': textureId,
-        'looping': looping,
-      },
-    );
+    SetLoopingMessage setLoopingMessage = SetLoopingMessage()
+      ..textureId = textureId
+      ..looping = looping;
+    return _api.setLooping(setLoopingMessage);
   }
 
   @override
   Future<void> play(int? textureId) {
-    return _channel.invokeMethod<void>(
-      'play',
-      <String, dynamic>{'textureId': textureId},
-    );
+    TextureMessage textureMessage = TextureMessage()..textureId = textureId;
+    return _api.play(textureMessage);
   }
 
   @override
   Future<void> pause(int? textureId) {
-    return _channel.invokeMethod<void>(
-      'pause',
-      <String, dynamic>{'textureId': textureId},
-    );
+    TextureMessage textureMessage = TextureMessage()..textureId = textureId;
+    return _api.pause(textureMessage);
   }
 
   @override
   Future<void> setVolume(int? textureId, double volume) {
-    return _channel.invokeMethod<void>(
-      'setVolume',
-      <String, dynamic>{
-        'textureId': textureId,
-        'volume': volume,
-      },
-    );
+    VolumeMessage volumeMessage = VolumeMessage()
+      ..textureId = textureId
+      ..volume = volume;
+
+    return _api.setVolume(volumeMessage);
   }
 
   @override
   Future<void> setSpeed(int? textureId, double speed) {
-    return _channel.invokeMethod<void>(
-      'setSpeed',
-      <String, dynamic>{
-        'textureId': textureId,
-        'speed': speed,
-      },
-    );
+    SetSpeedMessage setSpeedMessage = SetSpeedMessage()
+      ..textureId = textureId
+      ..speed = speed;
+    return _api.setSpeed(setSpeedMessage);
   }
 
   @override
   Future<void> setTrackParameters(
       int? textureId, int? width, int? height, int? bitrate) {
-    return _channel.invokeMethod<void>(
-      'setTrackParameters',
-      <String, dynamic>{
-        'textureId': textureId,
-        'width': width,
-        'height': height,
-        'bitrate': bitrate,
-      },
-    );
+    SetTrackParametersMessage setTrackParametersMessage =
+        SetTrackParametersMessage()
+          ..textureId = textureId
+          ..width = width
+          ..height = height
+          ..bitrate = bitrate;
+
+    return _api.setTrackParameters(setTrackParametersMessage);
   }
 
   @override
   Future<void> seekTo(int? textureId, Duration? position) {
-    return _channel.invokeMethod<void>(
-      'seekTo',
-      <String, dynamic>{
-        'textureId': textureId,
-        'location': position!.inMilliseconds,
-      },
-    );
+    SeekToMessage seekToMessage = SeekToMessage()
+      ..textureId = textureId
+      ..position = position?.inMilliseconds;
+    return _api.seekTo(seekToMessage);
   }
 
   @override
   Future<Duration> getPosition(int? textureId) async {
-    return Duration(
-        milliseconds: await _channel.invokeMethod<int>(
-              'position',
-              <String, dynamic>{'textureId': textureId},
-            ) ??
-            0);
+    TextureMessage textureMessage = TextureMessage();
+    PositionMessage positionMessage = await _api.position(textureMessage);
+    var positionInMs = positionMessage.position ?? 0;
+    return Duration(milliseconds: positionInMs);
   }
 
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
-    final int milliseconds = await _channel.invokeMethod<int>(
-          'absolutePosition',
-          <String, dynamic>{'textureId': textureId},
-        ) ??
-        0;
-
-    if (milliseconds <= 0) return null;
-
-    return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+    TextureMessage textureMessage = TextureMessage();
+    final PositionMessage positionMessage =
+        await _api.absolutePosition(textureMessage);
+    if (positionMessage.position != null) {
+      return DateTime.fromMillisecondsSinceEpoch(positionMessage.position!);
+    } else {
+      return null;
+    }
   }
 
   @override
   Future<void> enablePictureInPicture(int? textureId, double? top, double? left,
       double? width, double? height) async {
-    return _channel.invokeMethod<void>(
-      'enablePictureInPicture',
-      <String, dynamic>{
-        'textureId': textureId,
-        'top': top,
-        'left': left,
-        'width': width,
-        'height': height,
-      },
-    );
+    EnablePictureInPictureMessage enablePictureInPictureMessage =
+        EnablePictureInPictureMessage()
+          ..textureId = textureId
+          ..top = top
+          ..left = left
+          ..width = width
+          ..height = height;
+
+    _api.enablePictureInPicture(enablePictureInPictureMessage);
   }
 
   @override
   Future<bool?> isPictureInPictureEnabled(int? textureId) {
-    return _channel.invokeMethod<bool>(
-      'isPictureInPictureSupported',
-      <String, dynamic>{
-        'textureId': textureId,
-      },
-    );
+    TextureMessage textureMessage = TextureMessage()..textureId = textureId;
+    return _api.isPictureInPictureEnabled(textureMessage);
   }
 
   @override
   Future<void> disablePictureInPicture(int? textureId) {
-    return _channel.invokeMethod<bool>(
-      'disablePictureInPicture',
-      <String, dynamic>{
-        'textureId': textureId,
-      },
-    );
+    TextureMessage textureMessage = TextureMessage()..textureId = textureId;
+    return _api.disablePictureInPicture(textureMessage);
   }
 
   @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) {
-    return _channel.invokeMethod<void>(
-      'setAudioTrack',
-      <String, dynamic>{
-        'textureId': textureId,
-        'name': name,
-        'index': index,
-      },
-    );
+    SetAudioTrack setAudioTrack = SetAudioTrack()
+      ..textureId = textureId
+      ..name = name
+      ..index = index;
+    return _api.setAudioTrack(setAudioTrack);
   }
 
   @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) {
-    return _channel.invokeMethod<void>(
-      'setMixWithOthers',
-      <String, dynamic>{
-        'textureId': textureId,
-        'mixWithOthers': mixWithOthers,
-      },
-    );
+    SetMixWithOthersMessage setMixWithOthersMessage = SetMixWithOthersMessage()
+      ..textureId = textureId
+      ..mixWithOthers = mixWithOthers;
+    return _api.setMixWithOthers(setMixWithOthersMessage);
   }
 
   @override
   Future<void> clearCache() {
-    return _channel.invokeMethod<void>(
-      'clearCache',
-      <String, dynamic>{},
-    );
+    return _api.clearCache();
   }
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) {
-    final Map<String, dynamic> dataSourceDescription = <String, dynamic>{
-      'key': dataSource.key,
-      'uri': dataSource.uri,
-      'certificateUrl': dataSource.certificateUrl,
-      'headers': dataSource.headers,
-      'maxCacheSize': dataSource.maxCacheSize,
-      'maxCacheFileSize': dataSource.maxCacheFileSize,
-      'preCacheSize': preCacheSize,
-      'cacheKey': dataSource.cacheKey,
-      'videoExtension': dataSource.videoExtension,
-    };
-    return _channel.invokeMethod<void>(
-      'preCache',
-      <String, dynamic>{
-        'dataSource': dataSourceDescription,
-      },
-    );
+    PreCacheMessage preCacheMessage = PreCacheMessage();
+    preCacheMessage.dataSource = InnerPreCacheMessage()
+      ..key = dataSource.key
+      ..uri = dataSource.uri
+      ..certificateUrl = dataSource.certificateUrl
+      ..headers = dataSource.headers
+      ..maxCacheSize = dataSource.maxCacheSize
+      ..maxCacheFileSize = dataSource.maxCacheFileSize
+      ..preCacheSize = preCacheSize
+      ..cacheKey = dataSource.cacheKey
+      ..videoExtension = dataSource.videoExtension;
+
+    return _api.preCache(preCacheMessage);
   }
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) {
-    return _channel.invokeMethod<void>(
-      'stopPreCache',
-      <String, dynamic>{'url': url, 'cacheKey': cacheKey},
-    );
+    StopPreCacheMessage stopPreCacheMessage = StopPreCacheMessage()
+    ..url = url
+    ..cacheKey = cacheKey;
+    return _api.stopPreCache(stopPreCacheMessage);
   }
 
   @override

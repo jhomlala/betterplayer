@@ -8,6 +8,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.8.2"
+  better_player_android:
+    dependency: "direct main"
+    description:
+      path: "../better_player_android"
+      relative: true
+    source: path
+    version: "1.0.0"
+  better_player_ios:
+    dependency: "direct main"
+    description:
+      path: "../better_player_ios"
+      relative: true
+    source: path
+    version: "1.0.0"
+  better_player_platform_interface:
+    dependency: "direct main"
+    description:
+      path: "../better_player_platform_interface"
+      relative: true
+    source: path
+    version: "1.0.0"
   boolean_selector:
     dependency: transitive
     description:
@@ -237,7 +258,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.0"
+    version: "2.1.2"
   process:
     dependency: transitive
     description:

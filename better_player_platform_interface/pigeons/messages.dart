@@ -1,68 +1,114 @@
-// @dart = 2.9
-
-import 'package:pigeon/pigeon_lib.dart';
+import 'package:pigeon/pigeon.dart';
 
 class TextureMessage {
-  int textureId;
-}
-
-class LoopingMessage {
-  int textureId;
-  bool isLooping;
+  int? textureId;
 }
 
 class VolumeMessage {
-  int textureId;
-  double volume;
+  int? textureId;
+  double? volume;
 }
 
-class PlaybackSpeedMessage {
-  int textureId;
-  double speed;
-}
-
-class PositionMessage {
-  int textureId;
-  int position;
+class SetSpeedMessage {
+  int? textureId;
+  double? speed;
 }
 
 class CreateMessage {
-  int minBufferMs;
-  int maxBufferMs;
-  int bufferForPlaybackMs;
-  int bufferForPlaybackAfterRebufferMs;
+  int? minBufferMs;
+  int? maxBufferMs;
+  int? bufferForPlaybackMs;
+  int? bufferForPlaybackAfterRebufferMs;
 }
 
 class DataSourceMessage{
-  int textureId;
-  String key;
-  String asset;
-  String package;
-  String uri;
-  String formatHint;
-  Map headers;
-  bool useCache;
-  int maxCacheSize;
-  int maxCacheFileSize;
-  String cacheKey;
-  bool showNotification;
-  String title;
-  String author;
-  String imageUrl;
-  String notificationChannelName;
-  int overriddenDuration;
-  String licenseUrl;
-  String certificateUrl;
-  Map<String,String> drmHeaders;
-  String activityName;
-  String clearKey;
-  String videoExtension;
-
+  int? textureId;
+  String? key;
+  String? asset;
+  String? package;
+  String? uri;
+  String? formatHint;
+  Map? headers;
+  bool? useCache;
+  int? maxCacheSize;
+  int? maxCacheFileSize;
+  String? cacheKey;
+  bool? showNotification;
+  String? title;
+  String? author;
+  String? imageUrl;
+  String? notificationChannelName;
+  int? overriddenDuration;
+  String? licenseUrl;
+  String? certificateUrl;
+  Map<String?,String?>? drmHeaders;
+  String? activityName;
+  String? clearKey;
+  String? videoExtension;
 }
 
-class MixWithOthersMessage {
-  bool mixWithOthers;
+class SetLoopingMessage{
+  int? textureId;
+  bool? looping;
 }
+
+class SetTrackParametersMessage{
+  int? textureId;
+  int? width;
+  int? height;
+  int? bitrate;
+}
+
+class SeekToMessage {
+  int? textureId;
+  int? position;
+}
+
+class PositionMessage {
+  int? textureId;
+  int? position;
+}
+
+class EnablePictureInPictureMessage{
+  int? textureId;
+  double? top;
+  double? left;
+  double? width;
+  double? height;
+}
+
+class SetAudioTrack{
+  int? textureId;
+  String? name;
+  int? index;
+}
+
+class SetMixWithOthersMessage {
+  int? textureId;
+  bool? mixWithOthers;
+}
+
+class InnerPreCacheMessage{
+  String? key;
+  String? uri;
+  String? certificateUrl;
+  Map? headers;
+  int? maxCacheSize;
+  int? maxCacheFileSize;
+  int? preCacheSize;
+  String? cacheKey;
+  String? videoExtension;
+}
+
+class PreCacheMessage{
+  InnerPreCacheMessage? dataSource;
+}
+
+class StopPreCacheMessage{
+  String? url;
+  String? cacheKey;
+}
+
 
 @HostApi(dartHostTestHandler: 'TestHostVideoPlayerApi')
 abstract class BetterPlayerApi {
@@ -70,17 +116,27 @@ abstract class BetterPlayerApi {
   TextureMessage create(CreateMessage msg);
   void dispose(TextureMessage msg);
   void setDataSource(DataSourceMessage msg);
-  void setLooping(LoopingMessage msg);
+  void setLooping(SetLoopingMessage msg);
   void setVolume(VolumeMessage msg);
-  void setPlaybackSpeed(PlaybackSpeedMessage msg);
+  void setSpeed(SetSpeedMessage msg);
   void play(TextureMessage msg);
-  PositionMessage position(TextureMessage msg);
-  void seekTo(PositionMessage msg);
   void pause(TextureMessage msg);
-  void setMixWithOthers(MixWithOthersMessage msg);
+  void setTrackParameters(SetTrackParametersMessage msg);
+  void seekTo(SeekToMessage msg);
+  PositionMessage position(TextureMessage msg);
+  PositionMessage absolutePosition(TextureMessage msg);
+  void enablePictureInPicture(EnablePictureInPictureMessage msg);
+  bool isPictureInPictureEnabled(TextureMessage msg);
+  void disablePictureInPicture(TextureMessage msg);
+  void setAudioTrack(SetAudioTrack msg);
+  void setMixWithOthers(SetMixWithOthersMessage msg);
+  void clearCache();
+  void preCache(PreCacheMessage msg);
+  void stopPreCache(StopPreCacheMessage msg);
+
 }
 
 void configurePigeon(PigeonOptions opts) {
-  opts.dartOut = 'lib/messages.dart';
-  opts.dartTestOut = 'test/test.dart';
+  //opts.dartOut = 'lib/messages.dart';
+  //opts.dartTestOut = 'test/test.dart';
 }
