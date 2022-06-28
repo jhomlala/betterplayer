@@ -21,6 +21,9 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+dependency_overrides:
+  platform: ^3.1.0
+
 flutter:
   assets:
     - assets/

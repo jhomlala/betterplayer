@@ -693,7 +693,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   Widget build(BuildContext context) {
     return _textureId == null
         ? Container()
-        : _videoPlayerPlatform.buildView(_textureId);
+        : _videoPlayerPlatform.buildView(_textureId!);
   }
 }
 
