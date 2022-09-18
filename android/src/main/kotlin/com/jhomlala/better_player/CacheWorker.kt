@@ -19,11 +19,11 @@ import java.util.*
  * will be executed in work manager.
  */
 class CacheWorker(
-    private val mContext: Context,
+    private val context: Context,
     params: WorkerParameters
-) : Worker(mContext, params) {
-    private var mCacheWriter: CacheWriter? = null
-    private var mLastCacheReportIndex = 0
+) : Worker(context, params) {
+    private var cacheWriter: CacheWriter? = null
+    private var lastCacheReportIndex = 0
     override fun doWork(): Result {
         try {
             val data = inputData
@@ -49,26 +49,26 @@ class CacheWorker(
                     dataSpec = dataSpec.buildUpon().setKey(cacheKey).build()
                 }
                 val cacheDataSourceFactory = CacheDataSourceFactory(
-                    mContext,
+                    context,
                     maxCacheSize,
                     maxCacheFileSize,
                     dataSourceFactory
                 )
-                mCacheWriter = CacheWriter(
+                cacheWriter = CacheWriter(
                     cacheDataSourceFactory.createDataSource(),
                     dataSpec,
                     null
                 ) { _: Long, bytesCached: Long, _: Long ->
                     val completedData = (bytesCached * 100f / preCacheSize).toDouble()
-                    if (completedData >= mLastCacheReportIndex * 10) {
-                        mLastCacheReportIndex += 1
+                    if (completedData >= lastCacheReportIndex * 10) {
+                        lastCacheReportIndex += 1
                         Log.d(
                             TAG,
                             "Completed pre cache of " + url + ": " + completedData.toInt() + "%"
                         )
                     }
                 }
-                mCacheWriter!!.cache()
+                cacheWriter?.cache()
             } else {
                 Log.e(TAG, "Preloading only possible for remote data sources")
                 return Result.failure()
@@ -86,7 +86,7 @@ class CacheWorker(
 
     override fun onStopped() {
         try {
-            mCacheWriter!!.cancel()
+            cacheWriter?.cancel()
             super.onStopped()
         } catch (exception: Exception) {
             Log.e(TAG, exception.toString())

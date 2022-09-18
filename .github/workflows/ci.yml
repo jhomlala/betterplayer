@@ -31,14 +31,13 @@ jobs:
       - name: Lint using flutter analyze
         run: flutter analyze
         
-        
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    container: cirrusci/flutter:stable
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      - name: Test using flutter test
-        run: flutter test
+#  test:
+#    name: Test
+#    runs-on: ubuntu-latest
+#    container: cirrusci/flutter:stable
+#
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#      - name: Test using flutter test
+#        run: flutter test
