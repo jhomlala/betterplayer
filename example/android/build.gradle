@@ -1,6 +1,6 @@
 buildscript {
-    ext.kotlinVersion = "1.5.31"
-    ext.gradleVersion = "7.0.2"
+    ext.kotlinVersion = "1.7.10"
+    ext.gradleVersion = "7.3.0"
     ext.multidexVersion = "2.0.1"
     repositories {
         google()
