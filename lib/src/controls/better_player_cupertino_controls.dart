@@ -421,7 +421,7 @@ class _BetterPlayerCupertinoControlsState
 
   Widget _buildRemaining() {
     final position = _latestValue != null && _latestValue!.duration != null
-        ? _latestValue!.duration! - _latestValue!.position
+        ? _latestValue!.duration! // - _latestValue!.position
         : const Duration();
 
     return Padding(
