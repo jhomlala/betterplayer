@@ -168,15 +168,14 @@ class VideoPlayerValue {
 /// After [dispose] all further calls are ignored.
 class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   final BetterPlayerBufferingConfiguration bufferingConfiguration;
-  final bool isLive;
-  final Duration? duration;
+
 
   /// Constructs a [VideoPlayerController] and creates video controller on platform side.
   VideoPlayerController( {
-    this.isLive = false,required this.duration,
+
     this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
     bool autoCreate = true,
-  }) : super(VideoPlayerValue(duration: duration?? null)) {
+  }) : super(VideoPlayerValue(duration:  null)) {
     if (autoCreate) {
       _create();
     }
@@ -217,10 +216,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       videoEventStreamController.add(event);
       switch (event.eventType) {
         case VideoEventType.initialized:
-          isLive?
-          value = value.copyWith(
-            size: event.size,
-          ):
+
           value = value.copyWith(
             duration: event.duration,
             size: event.size,

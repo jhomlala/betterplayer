@@ -246,8 +246,6 @@ class BetterPlayerController {
     ///Build videoPlayerController if null
     if (videoPlayerController == null) {
       videoPlayerController = VideoPlayerController(
-        duration: _betterPlayerDataSource?.replacementDuration?? null,
-          isLive: _betterPlayerDataSource?.liveStream?? false,
           bufferingConfiguration:
               betterPlayerDataSource.bufferingConfiguration);
       videoPlayerController?.addListener(_onVideoPlayerChanged);
