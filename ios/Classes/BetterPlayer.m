@@ -468,7 +468,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         CGSize realSize = CGSizeApplyAffineTransform(naturalSize, prefTrans);
 
         int64_t duration = [BetterPlayerTimeUtils FLTCMTimeToMillis:(_player.currentItem.asset.duration)];
-        if (_overriddenDuration > 0 && duration > _overriddenDuration){
+        if (_overriddenDuration > 0 && duration > _overriddenDuration) {
+            _player.currentItem.forwardPlaybackEndTime = CMTimeMake(_overriddenDuration/1000, 1);
+        }
+        // AES support
+        else if (isLive && _overriddenDuration > 0) {
             _player.currentItem.forwardPlaybackEndTime = CMTimeMake(_overriddenDuration/1000, 1);
         }
 
