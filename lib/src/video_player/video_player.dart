@@ -169,8 +169,6 @@ class VideoPlayerValue {
 class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   final BetterPlayerBufferingConfiguration bufferingConfiguration;
 
-
-
   /// Constructs a [VideoPlayerController] and creates video controller on platform side.
   VideoPlayerController({
     this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
@@ -215,6 +213,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       }
       videoEventStreamController.add(event);
       switch (event.eventType) {
+
         case VideoEventType.initialized:
           value = value.copyWith(
             duration: event.duration,
