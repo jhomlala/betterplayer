@@ -196,7 +196,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)setDataSourceURL:(NSURL*)url withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withLicenseUrl:(NSString*)licenseUrl withHeaders:(NSDictionary*)headers withCache:(BOOL)useCache cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration videoExtension: (NSString*) videoExtension{
-    _overriddenDuration = 0;
+    //_overriddenDuration = 0;
     if (headers == [NSNull null] || headers == NULL){
         headers = @{};
     }
@@ -468,7 +468,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         CGSize realSize = CGSizeApplyAffineTransform(naturalSize, prefTrans);
 
         int64_t duration = [BetterPlayerTimeUtils FLTCMTimeToMillis:(_player.currentItem.asset.duration)];
-        if (_overriddenDuration > 0 && duration > _overriddenDuration){
+        if (_overriddenDuration > 0 ){
+        //&& duration > _overriddenDuration
             _player.currentItem.forwardPlaybackEndTime = CMTimeMake(_overriddenDuration/1000, 1);
         }
 
