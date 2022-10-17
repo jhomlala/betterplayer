@@ -57,9 +57,6 @@ class BetterPlayerDataSource {
   ///Duration which will be returned instead of original duration
   final Duration? overriddenDuration;
 
-  ///Duration which will be returned as desired
-  final Duration? replacementDuration;
-
   ///Video format hint when data source url has not valid extension.
   final BetterPlayerVideoFormat? videoFormat;
 
@@ -92,7 +89,6 @@ class BetterPlayerDataSource {
     this.asmsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
-        this.replacementDuration,
     this.notificationConfiguration =
         const BetterPlayerNotificationConfiguration(
       showNotification: false,
