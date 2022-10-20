@@ -361,7 +361,7 @@ internal class BetterPlayer(
                                 1.0f
                             )
                             .build()
-                    } else {
+                    } else { 
                         PlaybackStateCompat.Builder()
                             .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
                             .setState(
