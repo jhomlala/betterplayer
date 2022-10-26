@@ -626,6 +626,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _videoPlayerPlatform.setMixWithOthers(_textureId, mixWithOthers);
   }
 
+  void updateDuration(Duration? duration) {
+    value = value.copyWith(duration: duration);
+  }
   static Future clearCache() async {
     return _videoPlayerPlatform.clearCache();
   }
