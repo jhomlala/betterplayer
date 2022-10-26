@@ -25,4 +25,5 @@ enum BetterPlayerEventType {
   bufferingUpdate,
   bufferingEnd,
   changedPlaylistItem,
+  updateDuration,
 }
