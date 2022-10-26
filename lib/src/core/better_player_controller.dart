@@ -1213,7 +1213,9 @@ class BetterPlayerController {
   }
 
   void updateDuration(Duration duration) {
-    videoPlayerController!.updateDuration(duration);
+    if(videoPlayerController!=null) {
+      videoPlayerController!.updateDuration(duration);
+    }
   }
 
   ///Clear all cached data. Video player controller must be initialized to
