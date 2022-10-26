@@ -31,6 +31,7 @@ class MockVideoPlayerController extends VideoPlayerController {
     value = value.copyWith(isBuffering: buffering);
   }
 
+  @override
   void setDuration(Duration duration) {
     value = value.copyWith(duration: duration);
   }

@@ -1212,6 +1212,20 @@ class BetterPlayerController {
     videoPlayerController!.setMixWithOthers(mixWithOthers);
   }
 
+  void setDuration(Duration duration) {
+    if (videoPlayerController != null) {
+      videoPlayerController!.setDuration(duration);
+      _postEvent(
+        BetterPlayerEvent(
+          BetterPlayerEventType.setDuration,
+          parameters: <String, dynamic>{
+            _durationParameter: duration,
+          },
+        ),
+      );
+    }
+  }
+
   ///Clear all cached data. Video player controller must be initialized to
   ///clear the cache.
   Future<void> clearCache() async {
