@@ -1213,15 +1213,17 @@ class BetterPlayerController {
   }
 
   void setDuration(Duration duration) {
-    videoPlayerController!.setDuration(duration);
-    _postEvent(
-      BetterPlayerEvent(
-        BetterPlayerEventType.setDuration,
-        parameters: <String, dynamic>{
-          _durationParameter: duration,
-        },
-      ),
-    );
+    if (videoPlayerController != null) {
+      videoPlayerController!.setDuration(duration);
+      _postEvent(
+        BetterPlayerEvent(
+          BetterPlayerEventType.setDuration,
+          parameters: <String, dynamic>{
+            _durationParameter: duration,
+          },
+        ),
+      );
+    }
   }
 
   ///Clear all cached data. Video player controller must be initialized to
