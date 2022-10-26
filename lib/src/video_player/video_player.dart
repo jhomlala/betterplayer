@@ -169,7 +169,6 @@ class VideoPlayerValue {
 class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   final BetterPlayerBufferingConfiguration bufferingConfiguration;
 
-
   /// Constructs a [VideoPlayerController] and creates video controller on platform side.
   VideoPlayerController({
     this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
@@ -624,6 +623,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   void setMixWithOthers(bool mixWithOthers) {
     _videoPlayerPlatform.setMixWithOthers(_textureId, mixWithOthers);
+  }
+
+  void setDuration(Duration duration) {
+    value = value.copyWith(duration: duration);
   }
 
   static Future clearCache() async {
