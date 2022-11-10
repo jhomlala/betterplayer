@@ -10,6 +10,7 @@
 
 @property(readonly, nonatomic) NSURL* certificateURL;
 @property(readonly, nonatomic) NSURL* licenseURL;
-- (instancetype)init:(NSURL *)certificateURL withLicenseURL:(NSURL *)licenseURL;
+@property(readonly, nonatomic) NSMutableDictionary* requestHeaders;
+- (instancetype)init:(NSURL *)certificateURL withLicenseURL:(NSURL *)licenseURL withHeaders:(NSDictionary *)headers;
 
 @end

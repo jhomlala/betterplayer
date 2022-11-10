@@ -8,12 +8,21 @@
 
 NSString *_assetId;
 
-NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
+NSString * DEFAULT_LICENSE_SERVER_URL = @"https://drm-fairplay-licensing.axprod.net/AcquireLicense/";
 
-- (instancetype)init:(NSURL *)certificateURL withLicenseURL:(NSURL *)licenseURL{
+NSString *_contentTypeHeader;
+NSString *_authHeader;
+
+
+- (instancetype)init:(NSURL *)certificateURL withLicenseURL:(NSURL *)licenseURL withHeaders:(NSDictionary *)headers{
     self = [super init];
     _certificateURL = certificateURL;
     _licenseURL = licenseURL;
+    _requestHeaders = [[NSMutableDictionary alloc] init];
+    
+    _contentTypeHeader = [headers objectForKey:@"Content-Type"];
+    _authHeader = [headers objectForKey:@"Authorization"];
+    
     return self;
 }
 
@@ -34,11 +43,12 @@ NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
     } else {
         finalLicenseURL = [[NSURL alloc] initWithString: DEFAULT_LICENSE_SERVER_URL];
     }
-    NSURL * ksmURL = [[NSURL alloc] initWithString: [NSString stringWithFormat:@"%@%@%@",finalLicenseURL,assetId,customParams]];
     
-    NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:ksmURL];
+    NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:finalLicenseURL];
     [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-type"];
+    [request setValue:_contentTypeHeader forHTTPHeaderField:@"Content-type"];
+    [request setValue:_authHeader forHTTPHeaderField:@"Authorization"];
+    
     [request setHTTPBody:requestBytes];
     
     @try {
@@ -65,6 +75,7 @@ NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
 }
 
 - (BOOL)resourceLoader:(AVAssetResourceLoader *)resourceLoader shouldWaitForLoadingOfRequestedResource:(AVAssetResourceLoadingRequest *)loadingRequest {
+
     NSURL *assetURI = loadingRequest.request.URL;
     NSString * str = assetURI.absoluteString;
     NSString * mySubstring = [str substringFromIndex:str.length - 36];
