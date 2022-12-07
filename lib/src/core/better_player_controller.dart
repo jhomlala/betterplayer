@@ -1218,6 +1218,21 @@ class BetterPlayerController {
     return VideoPlayerController.clearCache();
   }
 
+  static Future<void> clearVideoCache() async {
+    return VideoPlayerController.clearCache();
+  }
+
+  static Future<Directory> getCacheDirectory() async {
+     Directory temporaryDirectory = await getTemporaryDirectory();
+     String cacheDirName = "";
+     if (Platform.isIOS) {
+       cacheDirName = "BetterPlayerCache";
+     } else {
+       cacheDirName = "betterPlayerCache";
+     }
+     return Directory("${temporaryDirectory.path}/${cacheDirName}");
+  }
+
   ///Build headers map that will be used to setup video player controller. Apply
   ///DRM headers if available.
   Map<String, String?> _getHeaders() {
