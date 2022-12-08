@@ -44,6 +44,7 @@ class BetterPlayerHlsUtils {
       if (parsedPlaylist is HlsMasterPlaylist) {
         parsedPlaylist.variants.forEach(
           (variant) {
+            // TODO: this seems wrong, might need to update details inside like frame rate
             tracks.add(BetterPlayerAsmsTrack('', variant.format.width,
                 variant.format.height, variant.format.bitrate, 0, '', ''));
           },
@@ -51,10 +52,11 @@ class BetterPlayerHlsUtils {
       }
 
       if (tracks.isNotEmpty) {
+        // Will be considered as "Auto" - for adaptive video streaming
         tracks.insert(0, BetterPlayerAsmsTrack.defaultTrack());
       }
     } catch (exception) {
-      BetterPlayerUtils.log("Exception on parseSubtitles: $exception");
+      BetterPlayerUtils.log("Exception on parseTracks: $exception");
     }
     return tracks;
   }
