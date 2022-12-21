@@ -480,19 +480,25 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       builder: (context) {
         return SafeArea(
           top: false,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              decoration: BoxDecoration(
-                color: betterPlayerControlsConfiguration.overflowModalColor,
-                /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24.0),
-                    topRight: Radius.circular(24.0)),
-              ),
-              child: Column(
-                children: children,
+          child: RawScrollbar(
+            thumbVisibility: true,
+            trackVisibility: false,
+            padding: EdgeInsets.only(top: 16),
+            radius: const Radius.circular(8),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                decoration: BoxDecoration(
+                  color: betterPlayerControlsConfiguration.overflowModalColor,
+                  /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(24.0),
+                      topRight: Radius.circular(24.0)),
+                ),
+                child: Column(
+                  children: children,
+                ),
               ),
             ),
           ),
@@ -511,18 +517,25 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       builder: (context) {
         return SafeArea(
           top: false,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              decoration: BoxDecoration(
-                color: betterPlayerControlsConfiguration.overflowModalColor,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24.0),
-                    topRight: Radius.circular(24.0)),
-              ),
-              child: Column(
-                children: children,
+          child: RawScrollbar(
+            thumbVisibility: true,
+            trackVisibility: false,
+            interactive: false,
+            padding: EdgeInsets.only(top: 16),
+            radius: const Radius.circular(8),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                decoration: BoxDecoration(
+                  color: betterPlayerControlsConfiguration.overflowModalColor,
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(24.0),
+                      topRight: Radius.circular(24.0)),
+                ),
+                child: Column(
+                  children: children,
+                ),
               ),
             ),
           ),
