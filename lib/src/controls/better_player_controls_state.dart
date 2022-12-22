@@ -492,6 +492,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                 decoration: BoxDecoration(
                   color: betterPlayerControlsConfiguration.overflowModalColor,
                   /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
+                  // TODO: handle border radius when scrolling down
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(24.0),
                       topRight: Radius.circular(24.0)),
@@ -511,6 +512,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(24.0),
+          topRight: Radius.circular(24.0),
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
       useRootNavigator:
           betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
               false,
@@ -527,12 +535,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               physics: const BouncingScrollPhysics(),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                decoration: BoxDecoration(
-                  color: betterPlayerControlsConfiguration.overflowModalColor,
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(24.0),
-                      topRight: Radius.circular(24.0)),
-                ),
+                color: betterPlayerControlsConfiguration.overflowModalColor,
                 child: Column(
                   children: children,
                 ),
