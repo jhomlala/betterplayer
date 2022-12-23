@@ -483,7 +483,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           child: RawScrollbar(
             thumbVisibility: true,
             trackVisibility: false,
-            padding: EdgeInsets.only(top: 16),
+            // TODO: upgrade flutter and add this later
+            // padding: EdgeInsets.only(top: 16),
             radius: const Radius.circular(8),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -529,7 +530,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             thumbVisibility: true,
             trackVisibility: false,
             interactive: false,
-            padding: EdgeInsets.only(top: 16),
+            // padding: EdgeInsets.only(top: 16),
             radius: const Radius.circular(8),
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
