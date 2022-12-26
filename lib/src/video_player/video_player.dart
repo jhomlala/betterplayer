@@ -5,10 +5,12 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:io';
-import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
-import 'package:better_player/src/video_player/video_player_platform_interface.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
+import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
 final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
 // This will clear all open videos on the platform when a full restart is
@@ -182,7 +184,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   final StreamController<VideoEvent> videoEventStreamController =
       StreamController.broadcast();
   final Completer<void> _creatingCompleter = Completer<void>();
-  int? _textureId;
 
   Timer? _timer;
   bool _isDisposed = false;
@@ -192,16 +193,22 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   bool get _created => _creatingCompleter.isCompleted;
   Duration? _seekPosition;
 
+  /// The id of a texture that hasn't been initialized.
+  @visibleForTesting
+  static const int kUninitializedTextureId = -1;
+  int _textureId = kUninitializedTextureId;
+
   /// This is just exposed for testing. It shouldn't be used by anyone depending
   /// on the plugin.
   @visibleForTesting
-  int? get textureId => _textureId;
+  int get textureId => _textureId;
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> _create() async {
     _textureId = await _videoPlayerPlatform.create(
-      bufferingConfiguration: bufferingConfiguration,
-    );
+          bufferingConfiguration: bufferingConfiguration,
+        ) ??
+        kUninitializedTextureId;
     _creatingCompleter.complete(null);
 
     unawaited(_applyLooping());
@@ -645,7 +652,7 @@ class VideoPlayer extends StatefulWidget {
 
   /// The [VideoPlayerController] responsible for the video being rendered in
   /// this widget.
-  final VideoPlayerController? controller;
+  final VideoPlayerController controller;
 
   @override
   _VideoPlayerState createState() => _VideoPlayerState();
@@ -654,7 +661,7 @@ class VideoPlayer extends StatefulWidget {
 class _VideoPlayerState extends State<VideoPlayer> {
   _VideoPlayerState() {
     _listener = () {
-      final int? newTextureId = widget.controller!.textureId;
+      final int newTextureId = widget.controller.textureId;
       if (newTextureId != _textureId) {
         setState(() {
           _textureId = newTextureId;
@@ -669,29 +676,29 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   void initState() {
     super.initState();
-    _textureId = widget.controller!.textureId;
+    _textureId = widget.controller.textureId;
     // Need to listen for initialization events since the actual texture ID
     // becomes available after asynchronous initialization finishes.
-    widget.controller!.addListener(_listener);
+    widget.controller.addListener(_listener);
   }
 
   @override
   void didUpdateWidget(VideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.controller!.removeListener(_listener);
-    _textureId = widget.controller!.textureId;
-    widget.controller!.addListener(_listener);
+    oldWidget.controller.removeListener(_listener);
+    _textureId = widget.controller.textureId;
+    widget.controller.addListener(_listener);
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    widget.controller!.removeListener(_listener);
+    widget.controller.removeListener(_listener);
   }
 
   @override
   Widget build(BuildContext context) {
-    return _textureId == null
+    return _textureId == VideoPlayerController.kUninitializedTextureId
         ? Container()
         : _videoPlayerPlatform.buildView(_textureId);
   }
