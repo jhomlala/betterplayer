@@ -1,4 +1,4 @@
-package com.jhomlala.better_player_example
+package com.bedford.better_player_example
 
 import android.app.*
 import android.content.Context
