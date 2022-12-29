@@ -483,16 +483,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           child: RawScrollbar(
             thumbVisibility: true,
             trackVisibility: false,
-            // TODO: upgrade flutter and add this later
-            // padding: EdgeInsets.only(top: 16),
             radius: const Radius.circular(8),
             child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                 decoration: BoxDecoration(
                   color: betterPlayerControlsConfiguration.overflowModalColor,
-                  /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
                   // TODO: handle border radius when scrolling down
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(24.0),
@@ -533,7 +529,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             // padding: EdgeInsets.only(top: 16),
             radius: const Radius.circular(8),
             child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                 color: betterPlayerControlsConfiguration.overflowModalColor,
