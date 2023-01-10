@@ -480,22 +480,33 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       builder: (context) {
         return SafeArea(
           top: false,
-          child: RawScrollbar(
-            thumbVisibility: true,
-            trackVisibility: false,
-            radius: const Radius.circular(8),
-            child: SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                decoration: BoxDecoration(
-                  color: betterPlayerControlsConfiguration.overflowModalColor,
-                  // TODO: handle border radius when scrolling down
-                  borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(24.0),
-                      topRight: Radius.circular(24.0)),
-                ),
-                child: Column(
-                  children: children,
+          bottom: false,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: 300),
+            child: ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(24.0)),
+              child: Scrollbar(
+                thumbVisibility: true,
+                trackVisibility: false,
+                radius: const Radius.circular(8),
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                    decoration: BoxDecoration(
+                        color: betterPlayerControlsConfiguration
+                            .overflowModalColor),
+                    child: SafeArea(
+                      top: false,
+                      left: false,
+                      right: false,
+                      child: Column(
+                        children: children,
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
