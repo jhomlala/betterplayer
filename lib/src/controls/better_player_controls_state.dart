@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 abstract class BetterPlayerControlsState<T extends StatefulWidget>
     extends State<T> {
   ///Min. time of buffered video to hide loading timer (in milliseconds)
-  static const int _bufferingInterval = 5000;
+  static const int _bufferingInterval = 10000;
 
   BetterPlayerController? get betterPlayerController;
 
