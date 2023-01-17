@@ -621,6 +621,7 @@ class BetterPlayerController {
 
     if (ignoreInactiveAppState && IsAppInactive) {
       canPlayVideo = IsAppInactive;
+      _appLifecycleState = AppLifecycleState.resumed;
     }
 
     if (canPlayVideo) {
