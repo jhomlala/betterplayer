@@ -610,21 +610,12 @@ class BetterPlayerController {
 
   ///Start video playback. Play will be triggered only if current lifecycle state
   ///is resumed.
-  Future<void> play({bool ignoreInactiveAppState = false}) async {
+  Future<void> play() async {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
 
-    bool IsAppResumed = _appLifecycleState == AppLifecycleState.resumed;
-    bool IsAppInactive = _appLifecycleState == AppLifecycleState.inactive;
-    bool canPlayVideo = IsAppResumed;
-
-    if (ignoreInactiveAppState && IsAppInactive) {
-      canPlayVideo = IsAppInactive;
-      resetAppLifeCycleState();
-    }
-
-    if (canPlayVideo) {
+    if (_appLifecycleState == AppLifecycleState.resumed) {
       await videoPlayerController!.play();
       _hasCurrentDataSourceStarted = true;
       _wasPlayingBeforePause = null;
