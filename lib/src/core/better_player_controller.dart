@@ -621,7 +621,7 @@ class BetterPlayerController {
 
     if (ignoreInactiveAppState && IsAppInactive) {
       canPlayVideo = IsAppInactive;
-      _appLifecycleState = AppLifecycleState.resumed;
+      resetAppLifeCycleState();
     }
 
     if (canPlayVideo) {
@@ -631,6 +631,10 @@ class BetterPlayerController {
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
       _postControllerEvent(BetterPlayerControllerEvent.play);
     }
+  }
+
+  void resetAppLifeCycleState() {
+    _appLifecycleState = AppLifecycleState.resumed;
   }
 
   ///Enables/disables looping (infinity playback) mode.
