@@ -97,10 +97,12 @@ bool _remoteCommandsInitialized = false;
     NSString* title = dataSource[@"title"];
     NSString* author = dataSource[@"author"];
     NSString* imageUrl = dataSource[@"imageUrl"];
+    int64_t skipForwardTimeInMilliseconds = [dataSource[@"skipForwardTimeInMilliseconds"] intValue];
+    int64_t skipBackwardTimeInMilliseconds = [dataSource[@"skipBackwardTimeInMilliseconds"] intValue];
 
     if (showNotification){
         [self setRemoteCommandsNotificationActive];
-        [self setupRemoteCommands: player];
+        [self setupRemoteCommands: player, skipForwardTimeInMilliseconds, skipBackwardTimeInMilliseconds];
         [self setupRemoteCommandNotification: player, title, author, imageUrl];
         [self setupUpdateListener: player, title, author, imageUrl];
     }
@@ -120,7 +122,7 @@ bool _remoteCommandsInitialized = false;
 }
 
 
-- (void) setupRemoteCommands:(BetterPlayer*)player  {
+- (void) setupRemoteCommands:(BetterPlayer*)player, skipForwardTimeInMilliseconds, skipBackwardTimeInMilliseconds {
     if (_remoteCommandsInitialized){
         return;
     }
@@ -128,11 +130,14 @@ bool _remoteCommandsInitialized = false;
     [commandCenter.togglePlayPauseCommand setEnabled:YES];
     [commandCenter.playCommand setEnabled:YES];
     [commandCenter.pauseCommand setEnabled:YES];
-    [commandCenter.nextTrackCommand setEnabled:NO];
-    [commandCenter.previousTrackCommand setEnabled:NO];
+    [commandCenter.skipForwardCommand setEnabled:YES];
+    [commandCenter.skipBackwardCommand setEnabled:YES];
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand setEnabled:YES];
     }
+
+    commandCenter.skipForwardCommand.preferredIntervals = @[@(skipForwardTimeInMilliseconds/1000)];
+    commandCenter.skipBackwardCommand.preferredIntervals = @[@(skipBackwardTimeInMilliseconds/1000)];
 
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
         if (_notificationPlayer != [NSNull null]){
@@ -159,7 +164,21 @@ bool _remoteCommandsInitialized = false;
         return MPRemoteCommandHandlerStatusSuccess;
     }];
 
+    [commandCenter.skipForwardCommand addTargetWithHandler:  ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        if (_notificationPlayer != [NSNull null]){
+            int64_t millis = [_notificationPlayer position] + skipForwardTimeInMilliseconds;
+            _notificationPlayer.eventSink(@{@"event" : @"seek", @"position": @(millis)});
+        }
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
 
+    [commandCenter.skipBackwardCommand addTargetWithHandler:  ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        if (_notificationPlayer != [NSNull null]){
+            int64_t millis = [_notificationPlayer position] - skipBackwardTimeInMilliseconds;
+            _notificationPlayer.eventSink(@{@"event" : @"seek", @"position": @(millis)});
+        }
+        return MPRemoteCommandHandlerStatusSuccess;
+    }];
 
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
