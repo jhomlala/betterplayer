@@ -5,7 +5,6 @@ import 'package:better_player/src/configuration/better_player_controller_event.d
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
-import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
@@ -111,6 +110,8 @@ class BetterPlayerController {
       StreamController.broadcast();
 
   Stream<int?> get nextVideoTimeStream => _nextVideoTimeStreamController.stream;
+
+  bool get isDisposed => _disposed;
 
   ///Has player been disposed.
   bool _disposed = false;
@@ -235,10 +236,15 @@ class BetterPlayerController {
 
   ///Setup new data source in Better Player.
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
-    postEvent(BetterPlayerEvent(BetterPlayerEventType.setupDataSource,
+    postEvent(
+      BetterPlayerEvent(
+        BetterPlayerEventType.setupDataSource,
         parameters: <String, dynamic>{
           _dataSourceParameter: betterPlayerDataSource,
-        }));
+        },
+      ),
+    );
+
     _postControllerEvent(BetterPlayerControllerEvent.setupDataSource);
     _hasCurrentDataSourceStarted = false;
     _hasCurrentDataSourceInitialized = false;
@@ -447,7 +453,7 @@ class BetterPlayerController {
           betterPlayerDataSource.url,
           headers: _getHeaders(),
           useCache:
-              betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
+              _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
           maxCacheSize:
               _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
           maxCacheFileSize:
@@ -528,6 +534,7 @@ class BetterPlayerController {
         throw UnimplementedError(
             "${betterPlayerDataSource.type} is not implemented");
     }
+
     await _initializeVideo();
   }
 
@@ -771,15 +778,16 @@ class BetterPlayerController {
 
     if (currentVideoPlayerValue.hasError) {
       _videoPlayerValueOnError ??= currentVideoPlayerValue;
-      print(_videoPlayerValueOnError?.errorDescription);
       bool isResourceError = (_videoPlayerValueOnError?.errorDescription ?? '')
           .contains('resource unavailable');
 
       if (isResourceError && !hasCachingResourceError) {
         hasCachingResourceError = true;
+
         print(
           "VIDEO PLAYER :: Resource unavailable from cache server :: Retrying without cache",
         );
+
         retryDataSource(
           betterPlayerDataSource?.copyWith(
             cacheConfiguration: const BetterPlayerCacheConfiguration(
@@ -787,6 +795,8 @@ class BetterPlayerController {
             ),
           ),
         );
+
+        setLooping(betterPlayerConfiguration.looping);
       }
 
       _postEvent(
