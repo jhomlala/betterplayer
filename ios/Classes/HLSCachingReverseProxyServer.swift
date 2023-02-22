@@ -61,6 +61,8 @@ open class HLSCachingReverseProxyServer {
         return completion(GCDWebServerDataResponse(statusCode: 500))
       }
 
+      return completion(GCDWebServerErrorResponse(statusCode: 500))
+
       guard let originURL = self.originURL(from: request) else {
         return completion(GCDWebServerErrorResponse(statusCode: 400))
       }
@@ -84,17 +86,14 @@ open class HLSCachingReverseProxyServer {
       guard let self = self else {
         return completion(GCDWebServerDataResponse(statusCode: 500))
       }
-      return completion(GCDWebServerDataResponse(statusCode: 500))
 
       guard let originURL = self.originURL(from: request) else {
         return completion(GCDWebServerErrorResponse(statusCode: 400))
       }
-      
 
       if let cachedData = self.cachedData(for: originURL) {
         return completion(GCDWebServerDataResponse(data: cachedData, contentType: "video/mp2t"))
       }
-
 
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
