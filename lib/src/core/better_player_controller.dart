@@ -210,6 +210,8 @@ class BetterPlayerController {
   ///Currently displayed [BetterPlayerSubtitle].
   BetterPlayerSubtitle? renderedSubtitle;
 
+  bool hasCachingResourceError = false;
+
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -445,7 +447,7 @@ class BetterPlayerController {
           betterPlayerDataSource.url,
           headers: _getHeaders(),
           useCache:
-              _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
+              betterPlayerDataSource.cacheConfiguration?.useCache ?? false,
           maxCacheSize:
               _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
           maxCacheFileSize:
@@ -769,6 +771,24 @@ class BetterPlayerController {
 
     if (currentVideoPlayerValue.hasError) {
       _videoPlayerValueOnError ??= currentVideoPlayerValue;
+      print(_videoPlayerValueOnError?.errorDescription);
+      bool isResourceError = (_videoPlayerValueOnError?.errorDescription ?? '')
+          .contains('resource unavailable');
+
+      if (isResourceError && !hasCachingResourceError) {
+        hasCachingResourceError = true;
+        print(
+          "VIDEO PLAYER :: Resource unavailable from cache server :: Retrying without cache",
+        );
+        retryDataSource(
+          betterPlayerDataSource?.copyWith(
+            cacheConfiguration: const BetterPlayerCacheConfiguration(
+              useCache: false,
+            ),
+          ),
+        );
+      }
+
       _postEvent(
         BetterPlayerEvent(
           BetterPlayerEventType.exception,
@@ -1182,8 +1202,13 @@ class BetterPlayerController {
   }
 
   ///Retry data source if playback failed.
-  Future retryDataSource() async {
-    await _setupDataSource(_betterPlayerDataSource!);
+  Future retryDataSource([BetterPlayerDataSource? updatedDataSource]) async {
+    if (updatedDataSource != null) {
+      _betterPlayerDataSource = updatedDataSource;
+    }
+
+    await _setupDataSource(updatedDataSource ?? _betterPlayerDataSource!);
+
     if (_videoPlayerValueOnError != null) {
       final position = _videoPlayerValueOnError!.position;
       await seekTo(position);
@@ -1264,7 +1289,7 @@ class BetterPlayerController {
   ///cache started for given [betterPlayerDataSource] then it will be ignored.
   Future<void> stopPreCache(
       BetterPlayerDataSource betterPlayerDataSource) async {
-    return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url,
+    return VideoPlayerController.stopPreCache(betterPlayerDataSource.url,
         betterPlayerDataSource.cacheConfiguration?.key);
   }
 

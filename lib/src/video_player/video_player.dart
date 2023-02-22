@@ -225,7 +225,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             duration: event.duration,
             size: event.size,
           );
-          _initializingCompleter.complete(null);
+          if (!_initializingCompleter.isCompleted) {
+            _initializingCompleter.complete(null);
+          }
           _applyPlayPause();
           break;
         case VideoEventType.completed:
@@ -412,8 +414,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     _initializingCompleter = Completer<void>();
 
-    await VideoPlayerPlatform.instance
-        .setDataSource(_textureId, dataSourceDescription);
+    await VideoPlayerPlatform.instance.setDataSource(
+      _textureId,
+      dataSourceDescription,
+    );
+
     return _initializingCompleter.future;
   }
 
