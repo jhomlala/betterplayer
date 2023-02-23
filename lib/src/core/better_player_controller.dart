@@ -788,25 +788,23 @@ class BetterPlayerController {
           "VIDEO PLAYER :: Resource unavailable from cache server :: Retrying without cache",
         );
 
-        retryDataSource(
+        await retryDataSource(
           betterPlayerDataSource?.copyWith(
             cacheConfiguration: const BetterPlayerCacheConfiguration(
               useCache: false,
             ),
           ),
         );
-
-        setLooping(betterPlayerConfiguration.looping);
+      } else {
+        _postEvent(
+          BetterPlayerEvent(
+            BetterPlayerEventType.exception,
+            parameters: <String, dynamic>{
+              "exception": currentVideoPlayerValue.errorDescription
+            },
+          ),
+        );
       }
-
-      _postEvent(
-        BetterPlayerEvent(
-          BetterPlayerEventType.exception,
-          parameters: <String, dynamic>{
-            "exception": currentVideoPlayerValue.errorDescription
-          },
-        ),
-      );
     }
     if (currentVideoPlayerValue.initialized &&
         !_hasCurrentDataSourceInitialized) {
@@ -1217,6 +1215,8 @@ class BetterPlayerController {
       _betterPlayerDataSource = updatedDataSource;
     }
 
+    _hasCurrentDataSourceInitialized = false;
+
     await _setupDataSource(updatedDataSource ?? _betterPlayerDataSource!);
 
     if (_videoPlayerValueOnError != null) {
@@ -1225,6 +1225,17 @@ class BetterPlayerController {
       await play();
       _videoPlayerValueOnError = null;
     }
+
+    await setLooping(betterPlayerConfiguration.looping);
+
+    postEvent(
+      BetterPlayerEvent(
+        BetterPlayerEventType.retryDataSource,
+        parameters: <String, dynamic>{
+          _dataSourceParameter: betterPlayerDataSource,
+        },
+      ),
+    );
   }
 
   ///Set [audioTrack] in player. Works only for HLS or DASH streams.

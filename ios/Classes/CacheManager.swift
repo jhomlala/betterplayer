@@ -2,6 +2,7 @@ import AVKit
 import Cache
 import GCDWebServer
 import PINCache
+import HLSCachingReverseProxyServer
 
 @objc public class CacheManager: NSObject {
 
