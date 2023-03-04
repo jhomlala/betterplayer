@@ -778,8 +778,12 @@ class BetterPlayerController {
 
     if (currentVideoPlayerValue.hasError) {
       _videoPlayerValueOnError ??= currentVideoPlayerValue;
-      bool isResourceError = (_videoPlayerValueOnError?.errorDescription ?? '')
-          .contains('resource unavailable');
+      String videoErrorDescription =
+          (_videoPlayerValueOnError?.errorDescription ?? '');
+
+      bool isResourceError =
+          videoErrorDescription.contains('resource unavailable') ||
+              videoErrorDescription.contains('Could not connect to the server');
 
       if (isResourceError && !hasCachingResourceError) {
         hasCachingResourceError = true;
