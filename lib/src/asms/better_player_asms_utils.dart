@@ -9,7 +9,7 @@ import 'better_player_asms_data_holder.dart';
 ///Base helper class for ASMS parsing.
 class BetterPlayerAsmsUtils {
   static const String _hlsExtension = "m3u8";
-  static const String _dashExtension = "mpd";
+  static const String _dashExtension = "dash";
 
   static final HttpClient _httpClient = HttpClient()
     ..connectionTimeout = const Duration(seconds: 5);
