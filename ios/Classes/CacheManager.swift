@@ -1,6 +1,5 @@
 import AVKit
 import Cache
-import HLSCachingReverseProxyServer
 import GCDWebServer
 import PINCache
 
@@ -12,7 +11,7 @@ import PINCache
 
     var completionHandler: ((_ success:Bool) -> Void)? = nil
 
-    var diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*30)),
+    var diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*7)),
                                 maxSize: 100*1024*1024)
     
     // Flag whether the CachingPlayerItem was already cached.
