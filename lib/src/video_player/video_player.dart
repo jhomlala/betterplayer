@@ -225,7 +225,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             duration: event.duration,
             size: event.size,
           );
-          _initializingCompleter.complete(null);
+
+          if (!_initializingCompleter.isCompleted) {
+            _initializingCompleter.complete(null);
+          }
           _applyPlayPause();
           break;
         case VideoEventType.completed:
@@ -399,6 +402,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
+  Future<void> retryDataSourceWithoutCache(
+    DataSource dataSourceDescription,
+  ) async {
+    await VideoPlayerPlatform.instance.setDataSource(
+      _textureId,
+      dataSourceDescription,
+    );
+  }
+
   Future<void> _setDataSource(DataSource dataSourceDescription) async {
     if (_isDisposed) {
       return;
@@ -414,9 +426,16 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     _initializingCompleter = Completer<void>();
 
-    await VideoPlayerPlatform.instance
-        .setDataSource(_textureId, dataSourceDescription);
-    return _initializingCompleter.future;
+    await VideoPlayerPlatform.instance.setDataSource(
+      _textureId,
+      dataSourceDescription,
+    );
+
+    if (!_initializingCompleter.isCompleted) {
+      return _initializingCompleter.future;
+    }
+
+    return null;
   }
 
   @override

@@ -2,6 +2,7 @@ import AVKit
 import Cache
 import GCDWebServer
 import PINCache
+import HLSCachingReverseProxyServer
 
 @objc public class CacheManager: NSObject {
 
@@ -47,7 +48,7 @@ import PINCache
     @objc public func setMaxCacheSize(_ maxCacheSize: NSNumber?){
         if let unsigned = maxCacheSize {
             let _maxCacheSize = unsigned.uintValue
-            diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*30)), maxSize: _maxCacheSize)
+            diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*7)), maxSize: _maxCacheSize)
         }        
     }
 
