@@ -319,7 +319,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                         change:(NSDictionary*)change
                        context:(void*)context {
 
-    if ([path isEqualToString:@"rate"]) {
+     if ([path isEqualToString:@"rate"]) {
         if (@available(iOS 10.0, *)) {
             if (_pipController.pictureInPictureActive == true){
                 if (_lastAvPlayerTimeControlStatus != [NSNull null] && _lastAvPlayerTimeControlStatus == _player.timeControlStatus){
@@ -378,6 +378,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         AVPlayerItem* item = (AVPlayerItem*)object;
         switch (item.status) {
             case AVPlayerItemStatusFailed:
+                NSLog(@"-- LOG INSIDE BETTER PLAYER OBJECTIVE C ERROR CALLBACK --");
                 NSLog(@"Failed to load video:");
                 NSLog(item.error.debugDescription);
 
@@ -390,6 +391,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 }
                 break;
             case AVPlayerItemStatusUnknown:
+                NSLog(@"--> UNKNOWN ERROR");
                 break;
             case AVPlayerItemStatusReadyToPlay:
                 [self onReadyToPlay];

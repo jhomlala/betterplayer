@@ -18,7 +18,6 @@ open class HLSCachingReverseProxyServer {
     self.addRequestHandlers()
   }
 
-
   // MARK: Starting and Stopping Server
 
   open func start(port: UInt) {
@@ -84,8 +83,13 @@ open class HLSCachingReverseProxyServer {
 
   private func addSegmentHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.ts$", request: GCDWebServerRequest.self) { [weak self] request, completion in
+      let path = request.url.path
+      print("Received request for path: \(path)")
+      NSLog("PROXY SERVER HIT: %@", Date() as NSDate)
+      return completion(GCDWebServerDataResponse(statusCode: 500))
+
       guard let self = self else {
-        return completion(GCDWebServerDataResponse(statusCode: 400))
+        return completion(GCDWebServerDataResponse(statusCode: 500))
       }
 
       guard let originURL = self.originURL(from: request) else {
@@ -98,7 +102,7 @@ open class HLSCachingReverseProxyServer {
 
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
-          return completion(GCDWebServerErrorResponse(statusCode: 400))
+          return completion(GCDWebServerErrorResponse(statusCode: 500))
         }
 
         let contentType = response.mimeType ?? "video/mp2t"

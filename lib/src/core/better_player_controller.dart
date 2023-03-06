@@ -766,8 +766,9 @@ class BetterPlayerController {
     final VideoPlayerValue currentVideoPlayerValue =
         videoPlayerController?.value ??
             VideoPlayerValue(duration: const Duration());
-
     if (currentVideoPlayerValue.hasError) {
+      print(
+          "[${DateTime.now().toIso8601String()}] ${currentVideoPlayerValue.errorDescription}");
       _videoPlayerValueOnError ??= currentVideoPlayerValue;
       _postEvent(
         BetterPlayerEvent(
