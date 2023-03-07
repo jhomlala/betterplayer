@@ -7,18 +7,22 @@ Pod::Spec.new do |s|
   s.summary          = 'A new flutter plugin project.'
   s.description      = <<-DESC
 A new flutter plugin project.
-                       DESC
+DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
-  s.dependency 'Flutter'
+  s.dependency 'Flutter' 
   s.dependency 'Cache', '~> 6.0.0'
   s.dependency 'GCDWebServer'
   s.dependency 'HLSCachingReverseProxyServer'
   s.dependency 'PINCache'
+  s.static_framework = true
+  s.dependency 'Firebase/Core'
+  s.dependency 'Firebase/Analytics'
+
   
   s.platform = :ios, '11.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
