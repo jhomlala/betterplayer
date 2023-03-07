@@ -76,7 +76,7 @@ open class HLSCachingReverseProxyServer {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.m3u8$", request: GCDWebServerRequest.self) { [weak self] request, completion in
       print("\(Date()) rpc: Received request for playlist: \(request.url.path)")
       guard let self = self else {
-return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))     Analytics.logEvent("video_player_status", parameters: [
+      Analytics.logEvent("video_player_status", parameters: [
       "code_level": "swift",
       "event":"error in getting self data",
       "screen_name":"video_feed",
@@ -86,7 +86,7 @@ return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_C
       }
 
       guard let originURL = self.originURL(from: request) else {
-        self.logVideoPlayerEvent(videoUrl:"",event:"PLAYLIST:error in getting originURL",detail:"error thrown with status code 400")
+        self.logVideoPlayerEvent(videoUrl:"",event:"PLAYLIST:error in getting originURL",detail:"error thrown with status code 401")
 
         return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
@@ -94,10 +94,9 @@ return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_C
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
       
         guard let data = data, let response = response else {
-          self.logVideoPlayerEvent(videoUrl:originURL,event:"PLAYLIST:error in getting task data",detail:"error thrown with status code 500")
+          self.logVideoPlayerEvent(videoUrl:originURL,event:"PLAYLIST:error in getting task data",detail:"error thrown with status code 401")
 
-          return completion(GCDWebServerErrorResponse(statusCode: 500))
-        }
+          return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))        }
        
         let playlistData = self.reverseProxyPlaylist(with: data, forOriginURL: originURL)
         let contentType = response.mimeType ?? "application/x-mpegurl"
@@ -135,9 +134,8 @@ return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_C
 
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
-            self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting task data",detail:"error thrown with status code 400")
-          return completion(GCDWebServerErrorResponse(statusCode: 400))
-        }
+            self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting task data",detail:"error thrown with status code 401")
+return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))        }
 
         let contentType = response.mimeType ?? "video/mp2t"
         completion(GCDWebServerDataResponse(data: data, contentType: contentType))
