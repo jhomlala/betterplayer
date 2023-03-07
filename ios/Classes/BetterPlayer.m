@@ -122,7 +122,6 @@ AVPictureInPictureController *_pipController;
     }
 }
 
-
 static inline CGFloat radiansToDegrees(CGFloat radians) {
     // Input range [-pi, pi] or [-180, 180]
     CGFloat degrees = GLKMathRadiansToDegrees((float)radians);
@@ -376,10 +375,19 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
     else if (context == statusContext) {
         AVPlayerItem* item = (AVPlayerItem*)object;
+        AVPlayerItemErrorLog *errorLog;
+        NSData *logData;
+        NSString *strData;
         switch (item.status) {
             case AVPlayerItemStatusFailed:
-                NSLog(@"Failed to load video:");
-                NSLog(item.error.debugDescription);
+                NSLog(@"rpc: Failed to load video with error: %@", item.error.debugDescription);
+                
+                errorLog = [item errorLog];
+
+                for (int i = 0; i < errorLog.events.count; i++) {
+                    AVPlayerItemErrorLogEvent *logEvent = errorLog.events[i];
+                    NSLog(@"rpc: ELI: %@ %@ %ld %@ %@", logEvent.date, logEvent.URI, (long) logEvent.errorStatusCode, logEvent.errorDomain, logEvent.errorComment);
+                }
 
                 if (_eventSink != nil) {
                     _eventSink([FlutterError
@@ -390,8 +398,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 }
                 break;
             case AVPlayerItemStatusUnknown:
+                NSLog(@"rpc: Status unknown");
                 break;
             case AVPlayerItemStatusReadyToPlay:
+                NSLog(@"rpc: Status ready to play");
                 [self onReadyToPlay];
                 break;
         }

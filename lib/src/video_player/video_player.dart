@@ -268,6 +268,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
 
     void errorListener(Object object) {
+      print("[${DateTime.now().toIso8601String()}] ${object.toString()}");
+
       if (object is PlatformException) {
         final PlatformException e = object;
         value = value.copyWith(errorDescription: e.message);

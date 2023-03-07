@@ -775,8 +775,9 @@ class BetterPlayerController {
     final VideoPlayerValue currentVideoPlayerValue =
         videoPlayerController?.value ??
             VideoPlayerValue(duration: const Duration());
-
     if (currentVideoPlayerValue.hasError) {
+      print(
+          "[${DateTime.now().toIso8601String()}] ${currentVideoPlayerValue.errorDescription}");
       _videoPlayerValueOnError ??= currentVideoPlayerValue;
       String videoErrorDescription =
           (_videoPlayerValueOnError?.errorDescription ?? '');
@@ -1226,7 +1227,7 @@ class BetterPlayerController {
     if (_videoPlayerValueOnError != null) {
       final position = _videoPlayerValueOnError!.position;
       await seekTo(position);
-      await play();
+      // await play();
       _videoPlayerValueOnError = null;
     }
 
