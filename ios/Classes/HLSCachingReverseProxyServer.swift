@@ -2,6 +2,7 @@ import GCDWebServer
 import PINCache
 import FirebaseAnalytics
 
+let FORCED_FALLBACK_STATUS_CODE: Int = 410
 
 open class HLSCachingReverseProxyServer {
   static let originURLKey = "__hls_origin_url"
@@ -52,7 +53,7 @@ open class HLSCachingReverseProxyServer {
   }
 
 
-  // MARK: Request 
+  // MARK: Request Handler
   
   func logVideoPlayerEvent(videoUrl: Any,event:Any,detail:Any) {
     print("logged swift level video player error \(videoUrl)! \(event) \(detail)")
@@ -66,28 +67,28 @@ open class HLSCachingReverseProxyServer {
 }
 
   private func addRequestHandlers() {
+     print("\(Date()) rpc: Adding request handlers")
     self.addPlaylistHandler()
     self.addSegmentHandler()
   }
 
   private func addPlaylistHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.m3u8$", request: GCDWebServerRequest.self) { [weak self] request, completion in
-
+      print("\(Date()) rpc: Received request for playlist: \(request.url.path)")
       guard let self = self else {
-
-     Analytics.logEvent("video_player_status", parameters: [
+return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))     Analytics.logEvent("video_player_status", parameters: [
       "code_level": "swift",
       "event":"error in getting self data",
       "screen_name":"video_feed",
       "details":"PLAYLIST:error thrown with status code 500"
    ])
-        return completion(GCDWebServerDataResponse(statusCode: 500))
+        return completion(GCDWebServerDataResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
 
       guard let originURL = self.originURL(from: request) else {
         self.logVideoPlayerEvent(videoUrl:"",event:"PLAYLIST:error in getting originURL",detail:"error thrown with status code 400")
 
-        return completion(GCDWebServerErrorResponse(statusCode: 400))
+        return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
   
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
@@ -110,19 +111,20 @@ open class HLSCachingReverseProxyServer {
 
   private func addSegmentHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.ts$", request: GCDWebServerRequest.self) { [weak self] request, completion in
+      
       guard let self = self else {
      Analytics.logEvent("video_player_status", parameters: [
       "code_level": "swift",
       "event":"error in getting self data",
       "screen_name":"video_feed",
-      "details":"SEGMENT:error thrown with status code 400"
+      "details":"SEGMENT:error thrown with status code 401"
    ])
-        return completion(GCDWebServerDataResponse(statusCode: 400))
-      }
+return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))      }
 
       guard let originURL = self.originURL(from: request) else {
-        self.logVideoPlayerEvent(videoUrl:"",event:"SEGMENT:error in getting originURL",detail:"error thrown with status code 400")
-        return completion(GCDWebServerErrorResponse(statusCode: 400))
+               self.logVideoPlayerEvent(videoUrl:"",event:"SEGMENT:error in getting originURL",detail:"error thrown with status code 401")
+
+       return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
 
       if let cachedData = self.cachedData(for: originURL) {
