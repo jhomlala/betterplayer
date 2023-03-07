@@ -1,6 +1,8 @@
 import GCDWebServer
 import PINCache
 
+let FORCED_FALLBACK_STATUS_CODE: Int = 410
+
 open class HLSCachingReverseProxyServer {
   static let originURLKey = "__hls_origin_url"
 
@@ -61,18 +63,18 @@ open class HLSCachingReverseProxyServer {
   private func addPlaylistHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.m3u8$", request: GCDWebServerRequest.self) { [weak self] request, completion in
       print("\(Date()) rpc: Received request for playlist: \(request.url.path)")
-      
+
       guard let self = self else {
-        return completion(GCDWebServerErrorResponse(statusCode: 410))
+        return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
 
       guard let originURL = self.originURL(from: request) else {
-        return completion(GCDWebServerErrorResponse(statusCode: 410))
+        return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
 
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
-          return completion(GCDWebServerErrorResponse(statusCode: 410))
+          return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
         }
 
         let playlistData = self.reverseProxyPlaylist(with: data, forOriginURL: originURL)
@@ -89,11 +91,11 @@ open class HLSCachingReverseProxyServer {
       print("\(Date()) rpc: Received request for segment: \(request.url.path)")
 
       guard let self = self else {
-        return completion(GCDWebServerErrorResponse(statusCode: 410))
+        return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
 
       guard let originURL = self.originURL(from: request) else {
-        return completion(GCDWebServerErrorResponse(statusCode: 410))
+        return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
 
       if let cachedData = self.cachedData(for: originURL) {
@@ -102,7 +104,7 @@ open class HLSCachingReverseProxyServer {
 
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
-          return completion(GCDWebServerErrorResponse(statusCode: 410))
+          return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
         }
 
         let contentType = response.mimeType ?? "video/mp2t"

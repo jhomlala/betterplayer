@@ -64,10 +64,6 @@ AVPictureInPictureController *_pipController;
                                                  selector:@selector(itemDidPlayToEndTime:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:item];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(newErrorLogEntry:)
-                                                     name:AVPlayerItemNewErrorLogEntryNotification
-                                                   object:item];
         self._observersAdded = true;
     }
 }
@@ -125,15 +121,6 @@ AVPictureInPictureController *_pipController;
         }
     }
 }
-
-- (void)newErrorLogEntry:(NSNotification*)notification {
-    AVPlayerItem* p = [notification object];
-    NSData *logData = [[p errorLog] extendedLogData];
-    NSString *strData = [[NSString alloc]initWithData:logData encoding:NSUTF8StringEncoding];
-
-    NSLog(@"rpc: newErrorLogEntry: %@", strData);
-}
-
 
 static inline CGFloat radiansToDegrees(CGFloat radians) {
     // Input range [-pi, pi] or [-180, 180]
@@ -331,7 +318,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                         change:(NSDictionary*)change
                        context:(void*)context {
 
-     if ([path isEqualToString:@"rate"]) {
+    if ([path isEqualToString:@"rate"]) {
         if (@available(iOS 10.0, *)) {
             if (_pipController.pictureInPictureActive == true){
                 if (_lastAvPlayerTimeControlStatus != [NSNull null] && _lastAvPlayerTimeControlStatus == _player.timeControlStatus){
@@ -396,9 +383,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 NSLog(@"rpc: Failed to load video with error: %@", item.error.debugDescription);
                 
                 errorLog = [item errorLog];
-                logData = [errorLog extendedLogData];
-                strData = [[NSString alloc]initWithData:logData encoding:NSUTF8StringEncoding];
-                NSLog(@"rpc: Error log: %@", strData);
 
                 for (int i = 0; i < errorLog.events.count; i++) {
                     AVPlayerItemErrorLogEvent *logEvent = errorLog.events[i];

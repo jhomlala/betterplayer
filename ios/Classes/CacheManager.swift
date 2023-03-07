@@ -89,7 +89,7 @@ import HLSCachingReverseProxyServer
     ///Gets caching player item for normal playback.
     @objc public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: Dictionary<NSObject,AnyObject>) -> AVPlayerItem? {
         let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
-         if (mimeTypeResult.1 == "application/vnd.apple.mpegurl"){
+        if (mimeTypeResult.1 == "application/vnd.apple.mpegurl"){
             let reverseProxyURL = server?.reverseProxyURL(from: url)!
             print("Normal URL -> \(url)")
             print("ReverseProxyURL -> \(reverseProxyURL)")
