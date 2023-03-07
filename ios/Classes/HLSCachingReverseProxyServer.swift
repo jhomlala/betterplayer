@@ -110,7 +110,7 @@ open class HLSCachingReverseProxyServer {
 
   private func addSegmentHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.ts$", request: GCDWebServerRequest.self) { [weak self] request, completion in
-      
+      print("\(Date()) rpc: Received request for segment: \(request.url.path)")
       guard let self = self else {
      Analytics.logEvent("video_player_status", parameters: [
       "code_level": "swift",
