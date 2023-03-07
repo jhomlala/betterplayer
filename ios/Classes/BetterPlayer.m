@@ -406,7 +406,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         switch (item.status) {
             case AVPlayerItemStatusFailed:
                 NSLog(@"rpc: Failed to load video with error: %@", item.error.debugDescription);
-                 if (_eventSink != nil) {
+                if (_eventSink != nil) {
                     _eventSink([FlutterError
                                 errorWithCode:@"VideoError"
                                 message:[@"Failed to load video: "
