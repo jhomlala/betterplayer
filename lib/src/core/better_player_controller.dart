@@ -1235,7 +1235,7 @@ class BetterPlayerController {
 
     postEvent(
       BetterPlayerEvent(
-        BetterPlayerEventType.retryDataSource,
+        BetterPlayerEventType.retryDataSourceWithoutCache,
         parameters: <String, dynamic>{
           _dataSourceParameter: betterPlayerDataSource,
         },

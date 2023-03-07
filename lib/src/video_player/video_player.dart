@@ -402,15 +402,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
-  Future<void> retryDataSourceWithoutCache(
-    DataSource dataSourceDescription,
-  ) async {
-    await VideoPlayerPlatform.instance.setDataSource(
-      _textureId,
-      dataSourceDescription,
-    );
-  }
-
   Future<void> _setDataSource(DataSource dataSourceDescription) async {
     if (_isDisposed) {
       return;
