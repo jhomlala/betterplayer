@@ -11,7 +11,7 @@ import PINCache
 
     var completionHandler: ((_ success:Bool) -> Void)? = nil
 
-    var diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*30)),
+    var diskConfig = DiskConfig(name: "BetterPlayerCache", expiry: .date(Date().addingTimeInterval(3600*24*7)),
                                 maxSize: 100*1024*1024)
     
     // Flag whether the CachingPlayerItem was already cached.
@@ -90,6 +90,8 @@ import PINCache
         let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
         if (mimeTypeResult.1 == "application/vnd.apple.mpegurl"){
             let reverseProxyURL = server?.reverseProxyURL(from: url)!
+            print("Normal URL -> \(url)")
+            print("ReverseProxyURL -> \(reverseProxyURL)")
             let playerItem = AVPlayerItem(url: reverseProxyURL!)
             return playerItem
         } else {
