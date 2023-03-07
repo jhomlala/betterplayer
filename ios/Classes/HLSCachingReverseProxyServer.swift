@@ -53,14 +53,16 @@ open class HLSCachingReverseProxyServer {
   // MARK: Request Handler
 
   private func addRequestHandlers() {
+      print("\(Date()) rpc: Adding request handlers")
     self.addPlaylistHandler()
     self.addSegmentHandler()
   }
 
   private func addPlaylistHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.m3u8$", request: GCDWebServerRequest.self) { [weak self] request, completion in
+      print("\(Date()) rpc: Received request for playlist: \(request.url.path)")
       guard let self = self else {
-        return completion(GCDWebServerDataResponse(statusCode: 500))
+        return completion(GCDWebServerErrorResponse(statusCode: 500))
       }
 
       guard let originURL = self.originURL(from: request) else {
@@ -83,13 +85,11 @@ open class HLSCachingReverseProxyServer {
 
   private func addSegmentHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.ts$", request: GCDWebServerRequest.self) { [weak self] request, completion in
-      let path = request.url.path
-      print("Received request for path: \(path)")
-      NSLog("PROXY SERVER HIT: %@", Date() as NSDate)
-      return completion(GCDWebServerDataResponse(statusCode: 500))
+      print("\(Date()) rpc: Received request for segment: \(request.url.path)")
+      return completion(GCDWebServerErrorResponse(statusCode: 410))
 
       guard let self = self else {
-        return completion(GCDWebServerDataResponse(statusCode: 500))
+        return completion(GCDWebServerErrorResponse(statusCode: 500))
       }
 
       guard let originURL = self.originURL(from: request) else {

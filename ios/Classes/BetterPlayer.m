@@ -64,6 +64,10 @@ AVPictureInPictureController *_pipController;
                                                  selector:@selector(itemDidPlayToEndTime:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:item];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(newErrorLogEntry:)
+                                                     name:AVPlayerItemNewErrorLogEntryNotification
+                                                   object:item];
         self._observersAdded = true;
     }
 }
@@ -120,6 +124,14 @@ AVPictureInPictureController *_pipController;
 
         }
     }
+}
+
+- (void)newErrorLogEntry:(NSNotification*)notification {
+    AVPlayerItem* p = [notification object];
+    NSData *logData = [[p errorLog] extendedLogData];
+    NSString *strData = [[NSString alloc]initWithData:logData encoding:NSUTF8StringEncoding];
+
+    NSLog(@"rpc: newErrorLogEntry: %@", strData);
 }
 
 
@@ -280,11 +292,14 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 -(void)startStalledCheck{
+    NSLog(@"rpc: startStalledCheck");
     if (_player.currentItem.playbackLikelyToKeepUp ||
         [self availableDuration] - CMTimeGetSeconds(_player.currentItem.currentTime) > 10.0) {
+        NSLog(@"rpc: not stalled");
         [self play];
     } else {
         _stalledCount++;
+        NSLog(@"rpc: incremented stall count to %d", _stalledCount);
         if (_stalledCount > 60){
             if (_eventSink != nil) {
                 _eventSink([FlutterError
@@ -376,11 +391,22 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
     else if (context == statusContext) {
         AVPlayerItem* item = (AVPlayerItem*)object;
+        AVPlayerItemErrorLog *errorLog;
+        NSData *logData;
+        NSString *strData;
         switch (item.status) {
             case AVPlayerItemStatusFailed:
-                NSLog(@"-- LOG INSIDE BETTER PLAYER OBJECTIVE C ERROR CALLBACK --");
-                NSLog(@"Failed to load video:");
-                NSLog(item.error.debugDescription);
+                NSLog(@"rpc: Failed to load video with error: %@", item.error.debugDescription);
+                
+                errorLog = [item errorLog];
+                logData = [errorLog extendedLogData];
+                strData = [[NSString alloc]initWithData:logData encoding:NSUTF8StringEncoding];
+                NSLog(@"rpc: Error log: %@", strData);
+
+                for (int i = 0; i < errorLog.events.count; i++) {
+                    AVPlayerItemErrorLogEvent *logEvent = errorLog.events[i];
+                    NSLog(@"rpc: ELI: %@ %@ %ld %@ %@", logEvent.date, logEvent.URI, (long) logEvent.errorStatusCode, logEvent.errorDomain, logEvent.errorComment);
+                }
 
                 if (_eventSink != nil) {
                     _eventSink([FlutterError
@@ -391,9 +417,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 }
                 break;
             case AVPlayerItemStatusUnknown:
-                NSLog(@"--> UNKNOWN ERROR");
+                NSLog(@"rpc: Status unknown");
                 break;
             case AVPlayerItemStatusReadyToPlay:
+                NSLog(@"rpc: Status ready to play");
                 [self onReadyToPlay];
                 break;
         }
@@ -437,6 +464,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)onReadyToPlay {
+    NSLog(@"rpc: onReadyToPlay");
     if (_eventSink && !_isInitialized && _key) {
         if (!_player.currentItem) {
             return;
@@ -444,6 +472,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         if (_player.status != AVPlayerStatusReadyToPlay) {
             return;
         }
+        NSLog(@"rpc: doing something in onReadyToPlay");
 
         CGSize size = [_player currentItem].presentationSize;
         CGFloat width = size.width;
