@@ -86,7 +86,7 @@ open class HLSCachingReverseProxyServer {
       }
 
       guard let originURL = self.originURL(from: request) else {
-        self.logVideoPlayerEvent(videoUrl:"",event:"PLAYLIST:error in getting originURL",detail:"error thrown with status code 401")
+        self.logVideoPlayerEvent(videoUrl:"",event:"PLAYLIST:error in getting originURL",detail:"error thrown")
 
         return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
@@ -94,7 +94,7 @@ open class HLSCachingReverseProxyServer {
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
       
         guard let data = data, let response = response else {
-          self.logVideoPlayerEvent(videoUrl:originURL,event:"PLAYLIST:error in getting task data",detail:"error thrown with status code 401")
+          self.logVideoPlayerEvent(videoUrl:originURL,event:"PLAYLIST:error in getting task data",detail:"Error: \(error.localizedDescription)")
 
           return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))    
          }
@@ -117,13 +117,13 @@ open class HLSCachingReverseProxyServer {
       "code_level": "swift",
       "event":"error in getting self data",
       "screen_name":"video_feed",
-      "details":"SEGMENT:error thrown with status code 401"
+      "details":"SEGMENT:error thrown"
    ])
      return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))     
  }
 
       guard let originURL = self.originURL(from: request) else {
-               self.logVideoPlayerEvent(videoUrl:"",event:"SEGMENT:error in getting originURL",detail:"error thrown with status code 401")
+               self.logVideoPlayerEvent(videoUrl:"",event:"SEGMENT:error in getting originURL",detail:"error thrown")
 
        return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
@@ -136,7 +136,7 @@ open class HLSCachingReverseProxyServer {
 
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
-            self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting task data",detail:"error thrown with status code 401")
+            self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting task data",detail:"Error: \(error.localizedDescription)")
           return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))   
      }
 
