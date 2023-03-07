@@ -20,9 +20,7 @@ open class HLSCachingReverseProxyServer {
     self.addRequestHandlers()
   }
 
-
   // MARK: Starting and Stopping Server
-
   open func start(port: UInt) {
     guard !self.webServer.isRunning else { return }
     self.port = Int(port)
@@ -35,9 +33,7 @@ open class HLSCachingReverseProxyServer {
     self.webServer.stop()
   }
 
-
   // MARK: Resource URL
-
   open func reverseProxyURL(from originURL: URL) -> URL? {
     guard let port = self.port else { return nil }
 
@@ -52,10 +48,8 @@ open class HLSCachingReverseProxyServer {
     return components.url
   }
 
-
   // MARK: Request Handler
-  
-  func logVideoPlayerEvent(videoUrl: Any,event:Any,detail:Any) {
+    func logVideoPlayerEvent(videoUrl: Any,event:Any,detail:Any) {
     print("logged swift level video player error \(videoUrl)! \(event) \(detail)")
     Analytics.logEvent("video_player_status", parameters: [
       "code_level": "swift",
@@ -75,19 +69,19 @@ open class HLSCachingReverseProxyServer {
   private func addPlaylistHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.m3u8$", request: GCDWebServerRequest.self) { [weak self] request, completion in
       print("\(Date()) rpc: Received request for playlist: \(request.url.path)")
+
       guard let self = self else {
-      Analytics.logEvent("video_player_status", parameters: [
-      "code_level": "swift",
-      "event":"error in getting self data",
-      "screen_name":"video_feed",
-      "details":"PLAYLIST:error thrown with status code 500"
-   ])
+        Analytics.logEvent("video_player_status", parameters: [
+            "code_level": "swift",
+            "event":"error in getting self data",
+            "screen_name":"video_feed",
+            "details":"PLAYLIST:error thrown with status code 500"
+        ])
         return completion(GCDWebServerDataResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
 
       guard let originURL = self.originURL(from: request) else {
-        self.logVideoPlayerEvent(videoUrl:"",event:"PLAYLIST:error in getting originURL",detail:"error thrown")
-
+        self.logVideoPlayerEvent(videoUrl:"", event:"PLAYLIST:error in getting originURL", detail:"error thrown")
         return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
   
@@ -95,7 +89,6 @@ open class HLSCachingReverseProxyServer {
       
         guard let data = data, let response = response else {
           self.logVideoPlayerEvent(videoUrl:originURL,event:"PLAYLIST:error in getting task data",detail:"Error: \(error.localizedDescription)")
-
           return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))    
          }
        
@@ -112,33 +105,32 @@ open class HLSCachingReverseProxyServer {
   private func addSegmentHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.ts$", request: GCDWebServerRequest.self) { [weak self] request, completion in
       print("\(Date()) rpc: Received request for segment: \(request.url.path)")
+
       guard let self = self else {
-     Analytics.logEvent("video_player_status", parameters: [
-      "code_level": "swift",
-      "event":"error in getting self data",
-      "screen_name":"video_feed",
-      "details":"SEGMENT:error thrown"
-   ])
+      Analytics.logEvent("video_player_status", parameters: [
+        "code_level": "swift",
+        "event":"error in getting self data",
+        "screen_name":"video_feed",
+        "details":"SEGMENT:error thrown"
+      ])
      return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))     
  }
 
       guard let originURL = self.originURL(from: request) else {
-               self.logVideoPlayerEvent(videoUrl:"",event:"SEGMENT:error in getting originURL",detail:"error thrown")
-
+       self.logVideoPlayerEvent(videoUrl:"",event:"SEGMENT:error in getting originURL",detail:"error thrown")
        return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))
       }
 
       if let cachedData = self.cachedData(for: originURL) {
         self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting cachedData",detail:"error in getting cachedData")
-
         return completion(GCDWebServerDataResponse(data: cachedData, contentType: "video/mp2t"))
       }
 
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
-            self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting task data",detail:"Error: \(error.localizedDescription)")
+          self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting task data",detail:"Error: \(error.localizedDescription)")
           return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))   
-     }
+        }
 
         let contentType = response.mimeType ?? "video/mp2t"
         completion(GCDWebServerDataResponse(data: data, contentType: contentType))
