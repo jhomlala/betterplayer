@@ -129,7 +129,7 @@ open class HLSCachingReverseProxyServer {
       }
 
       if let cachedData = self.cachedData(for: originURL) {
-        self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting cachedData",detail:cachedData)
+        self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting cachedData",detail:"error in getting cachedData")
 
         return completion(GCDWebServerDataResponse(data: cachedData, contentType: "video/mp2t"))
       }
