@@ -292,14 +292,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 -(void)startStalledCheck{
-    NSLog(@"rpc: startStalledCheck");
     if (_player.currentItem.playbackLikelyToKeepUp ||
         [self availableDuration] - CMTimeGetSeconds(_player.currentItem.currentTime) > 10.0) {
-        NSLog(@"rpc: not stalled");
         [self play];
     } else {
         _stalledCount++;
-        NSLog(@"rpc: incremented stall count to %d", _stalledCount);
         if (_stalledCount > 60){
             if (_eventSink != nil) {
                 _eventSink([FlutterError
@@ -464,7 +461,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)onReadyToPlay {
-    NSLog(@"rpc: onReadyToPlay");
     if (_eventSink && !_isInitialized && _key) {
         if (!_player.currentItem) {
             return;
@@ -472,7 +468,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         if (_player.status != AVPlayerStatusReadyToPlay) {
             return;
         }
-        NSLog(@"rpc: doing something in onReadyToPlay");
 
         CGSize size = [_player currentItem].presentationSize;
         CGFloat width = size.width;
