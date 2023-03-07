@@ -67,7 +67,7 @@ open class HLSCachingReverseProxyServer {
 }
 
   private func addRequestHandlers() {
-     print("\(Date()) rpc: Adding request handlers")
+    print("\(Date()) rpc: Adding request handlers")
     self.addPlaylistHandler()
     self.addSegmentHandler()
   }
@@ -96,7 +96,8 @@ open class HLSCachingReverseProxyServer {
         guard let data = data, let response = response else {
           self.logVideoPlayerEvent(videoUrl:originURL,event:"PLAYLIST:error in getting task data",detail:"error thrown with status code 401")
 
-          return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))        }
+          return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))    
+         }
        
         let playlistData = self.reverseProxyPlaylist(with: data, forOriginURL: originURL)
         let contentType = response.mimeType ?? "application/x-mpegurl"
@@ -118,7 +119,8 @@ open class HLSCachingReverseProxyServer {
       "screen_name":"video_feed",
       "details":"SEGMENT:error thrown with status code 401"
    ])
-return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))      }
+     return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))     
+ }
 
       guard let originURL = self.originURL(from: request) else {
                self.logVideoPlayerEvent(videoUrl:"",event:"SEGMENT:error in getting originURL",detail:"error thrown with status code 401")
@@ -135,7 +137,8 @@ return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_C
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
             self.logVideoPlayerEvent(videoUrl:originURL,event:"SEGMENT:error in getting task data",detail:"error thrown with status code 401")
-return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))        }
+          return completion(GCDWebServerErrorResponse(statusCode: FORCED_FALLBACK_STATUS_CODE))   
+     }
 
         let contentType = response.mimeType ?? "video/mp2t"
         completion(GCDWebServerDataResponse(data: data, contentType: contentType))
