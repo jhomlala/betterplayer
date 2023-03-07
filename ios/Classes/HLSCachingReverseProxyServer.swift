@@ -55,7 +55,7 @@ open class HLSCachingReverseProxyServer {
   // MARK: Request 
   
   func logVideoPlayerEvent(videoUrl: Any,event:Any,detail:Any) {
-    print("Hello, \(videoUrl)! \(event) \(detail) ")
+    print("logged swift level video player error \(videoUrl)! \(event) \(detail)")
     Analytics.logEvent("video_player_status", parameters: [
       "code_level": "swift",
       "video_url":videoUrl,
