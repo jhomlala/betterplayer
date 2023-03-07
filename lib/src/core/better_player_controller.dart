@@ -772,19 +772,34 @@ class BetterPlayerController {
 
   ///Listener used to handle video player changes.
   void _onVideoPlayerChanged() async {
+    final possibleCacheServerErrors = [
+      "resource unavailable",
+      "could not connect to the server",
+      "the operation couldnt be completed",
+    ];
+
+    final ignorableErrorLogs = [
+      "Segment exceeds specified bandwidth for variant",
+    ];
+
     final VideoPlayerValue currentVideoPlayerValue =
         videoPlayerController?.value ??
             VideoPlayerValue(duration: const Duration());
-    if (currentVideoPlayerValue.hasError) {
-      print(
-          "[${DateTime.now().toIso8601String()}] ${currentVideoPlayerValue.errorDescription}");
-      _videoPlayerValueOnError ??= currentVideoPlayerValue;
-      String videoErrorDescription =
-          (_videoPlayerValueOnError?.errorDescription ?? '');
 
-      bool isResourceError =
-          videoErrorDescription.contains('resource unavailable') ||
-              videoErrorDescription.contains('Could not connect to the server');
+    if (currentVideoPlayerValue.hasError) {
+      _videoPlayerValueOnError ??= currentVideoPlayerValue;
+
+      String errorString = currentVideoPlayerValue.errorDescription ?? '';
+      String cleanErrorString =
+          errorString.replaceAll(RegExp('[^a-zA-Z0-9\\s+]'), '').toLowerCase();
+
+      bool isResourceError = false;
+      for (String possibleError in possibleCacheServerErrors) {
+        if (cleanErrorString.contains(possibleError.toLowerCase())) {
+          isResourceError = true;
+          break;
+        }
+      }
 
       if (isResourceError && !hasCachingResourceError) {
         hasCachingResourceError = true;
@@ -801,14 +816,18 @@ class BetterPlayerController {
           ),
         );
       } else {
-        _postEvent(
-          BetterPlayerEvent(
-            BetterPlayerEventType.exception,
-            parameters: <String, dynamic>{
-              "exception": currentVideoPlayerValue.errorDescription
-            },
-          ),
-        );
+        String? ignorableError = ignorableErrorLogs.where((errorLog) {
+          return cleanErrorString.contains(errorLog);
+        }).firstOrNull;
+
+        if (ignorableError != null) {
+          _postEvent(
+            BetterPlayerEvent(
+              BetterPlayerEventType.exception,
+              parameters: <String, dynamic>{"exception": errorString},
+            ),
+          );
+        }
       }
     }
     if (currentVideoPlayerValue.initialized &&
