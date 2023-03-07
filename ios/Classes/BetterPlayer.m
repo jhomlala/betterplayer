@@ -64,8 +64,29 @@ AVPictureInPictureController *_pipController;
                                                  selector:@selector(itemDidPlayToEndTime:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:item];
+
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                         selector:@selector(handleErrorLogEntry:)
+                                             name:AVPlayerItemNewErrorLogEntryNotification
+                                           object:nil];
+
         self._observersAdded = true;
     }
+}
+
+- (void)handleErrorLogEntry:(NSNotification *)notification {
+    AVPlayerItem *playerItem = notification.object;
+    AVPlayerItemErrorLog *errorLog = playerItem.errorLog;
+    AVPlayerItemErrorLogEvent *lastEvent = [errorLog.events lastObject];
+    NSString *lastErrorComment = lastEvent.errorComment;
+
+    if (_eventSink != nil) {
+        _eventSink([FlutterError
+                    errorWithCode:@"VideoError"
+                    message:[@"Failed to load video: " stringByAppendingString:lastErrorComment]
+                    details:nil]);
+    }
+
 }
 
 - (void)clear {
@@ -104,7 +125,11 @@ AVPictureInPictureController *_pipController;
         [[_player currentItem] removeObserver:self
                                    forKeyPath:@"playbackBufferFull"
                                       context:playbackBufferFullContext];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                name:AVPlayerItemNewErrorLogEntryNotification
+                                              object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self];
+
         self._observersAdded = false;
     }
 }
@@ -381,15 +406,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         switch (item.status) {
             case AVPlayerItemStatusFailed:
                 NSLog(@"rpc: Failed to load video with error: %@", item.error.debugDescription);
-                
-                errorLog = [item errorLog];
-
-                for (int i = 0; i < errorLog.events.count; i++) {
-                    AVPlayerItemErrorLogEvent *logEvent = errorLog.events[i];
-                    NSLog(@"rpc: ELI: %@ %@ %ld %@ %@", logEvent.date, logEvent.URI, (long) logEvent.errorStatusCode, logEvent.errorDomain, logEvent.errorComment);
-                }
-
-                if (_eventSink != nil) {
+                 if (_eventSink != nil) {
                     _eventSink([FlutterError
                                 errorWithCode:@"VideoError"
                                 message:[@"Failed to load video: "
