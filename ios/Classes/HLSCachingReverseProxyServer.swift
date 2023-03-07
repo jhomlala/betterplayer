@@ -97,6 +97,8 @@ open class HLSCachingReverseProxyServer {
         let playlistData = self.reverseProxyPlaylist(with: data, forOriginURL: originURL)
         let contentType = response.mimeType ?? "application/x-mpegurl"
 
+        self.logVideoPlayerEvent(videoUrl: originURL, event: "SUCCESS", detail: "PLAYLIST: Playlist data processed successfully -> data = \(playlistData) ; contentType = \(contentType)")
+
         completion(GCDWebServerDataResponse(data: playlistData, contentType: contentType))
       }
 
@@ -134,6 +136,9 @@ open class HLSCachingReverseProxyServer {
         }
 
         let contentType = response.mimeType ?? "video/mp2t"
+
+        self.logVideoPlayerEvent(videoUrl: originURL, event: "SUCCESS", detail: "SEGMENT: Segment data processed successfully -> contentType = \(contentType)")
+
         completion(GCDWebServerDataResponse(data: data, contentType: contentType))
 
         self.saveCacheData(data, for: originURL)

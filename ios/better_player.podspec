@@ -22,7 +22,7 @@ A new flutter plugin project.
   s.static_framework = true
   s.dependency 'Firebase/Core'
   s.dependency 'Firebase/Analytics'
-
+  s.dependency 'Firebase/Auth'
   
   s.platform = :ios, '11.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
