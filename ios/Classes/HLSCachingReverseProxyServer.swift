@@ -61,17 +61,18 @@ open class HLSCachingReverseProxyServer {
   private func addPlaylistHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.m3u8$", request: GCDWebServerRequest.self) { [weak self] request, completion in
       print("\(Date()) rpc: Received request for playlist: \(request.url.path)")
+      
       guard let self = self else {
-        return completion(GCDWebServerErrorResponse(statusCode: 500))
+        return completion(GCDWebServerErrorResponse(statusCode: 410))
       }
 
       guard let originURL = self.originURL(from: request) else {
-        return completion(GCDWebServerErrorResponse(statusCode: 400))
+        return completion(GCDWebServerErrorResponse(statusCode: 410))
       }
 
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
-          return completion(GCDWebServerErrorResponse(statusCode: 500))
+          return completion(GCDWebServerErrorResponse(statusCode: 410))
         }
 
         let playlistData = self.reverseProxyPlaylist(with: data, forOriginURL: originURL)
@@ -86,14 +87,13 @@ open class HLSCachingReverseProxyServer {
   private func addSegmentHandler() {
     self.webServer.addHandler(forMethod: "GET", pathRegex: "^/.*\\.ts$", request: GCDWebServerRequest.self) { [weak self] request, completion in
       print("\(Date()) rpc: Received request for segment: \(request.url.path)")
-      return completion(GCDWebServerErrorResponse(statusCode: 410))
 
       guard let self = self else {
-        return completion(GCDWebServerErrorResponse(statusCode: 500))
+        return completion(GCDWebServerErrorResponse(statusCode: 410))
       }
 
       guard let originURL = self.originURL(from: request) else {
-        return completion(GCDWebServerErrorResponse(statusCode: 400))
+        return completion(GCDWebServerErrorResponse(statusCode: 410))
       }
 
       if let cachedData = self.cachedData(for: originURL) {
@@ -102,7 +102,7 @@ open class HLSCachingReverseProxyServer {
 
       let task = self.urlSession.dataTask(with: originURL) { data, response, error in
         guard let data = data, let response = response else {
-          return completion(GCDWebServerErrorResponse(statusCode: 500))
+          return completion(GCDWebServerErrorResponse(statusCode: 410))
         }
 
         let contentType = response.mimeType ?? "video/mp2t"
