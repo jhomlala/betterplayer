@@ -801,6 +801,13 @@ class BetterPlayerController {
         }
       }
 
+      _postEvent(
+        BetterPlayerEvent(
+          BetterPlayerEventType.exception,
+          parameters: <String, dynamic>{"exception": errorString},
+        ),
+      );
+
       if (isResourceError && !hasCachingResourceError) {
         hasCachingResourceError = true;
 
@@ -815,20 +822,21 @@ class BetterPlayerController {
             ),
           ),
         );
-      } else {
-        String? ignorableError = ignorableErrorLogs.where((errorLog) {
-          return cleanErrorString.contains(errorLog);
-        }).firstOrNull;
-
-        if (ignorableError != null) {
-          _postEvent(
-            BetterPlayerEvent(
-              BetterPlayerEventType.exception,
-              parameters: <String, dynamic>{"exception": errorString},
-            ),
-          );
-        }
       }
+      //  else {
+      //   String? ignorableError = ignorableErrorLogs.where((errorLog) {
+      //     return cleanErrorString.contains(errorLog);
+      //   }).firstOrNull;
+
+      //   if (ignorableError != null) {
+      //     _postEvent(
+      //       BetterPlayerEvent(
+      //         BetterPlayerEventType.exception,
+      //         parameters: <String, dynamic>{"exception": errorString},
+      //       ),
+      //     );
+      //   }
+      // }
     }
     if (currentVideoPlayerValue.initialized &&
         !_hasCurrentDataSourceInitialized) {
