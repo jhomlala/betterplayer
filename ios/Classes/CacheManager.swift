@@ -1,5 +1,6 @@
 import AVKit
 import Cache
+import FirebaseAnalytics
 import GCDWebServer
 import PINCache
 
@@ -43,6 +44,19 @@ import PINCache
         server = HLSCachingReverseProxyServer(webServer: webServer, urlSession: urlSession, cache: cache)
         server?.start(port: 8080)
     }
+
+    func logVideoPlayerEvent(videoUrl: Any, event: Any, detail: Any) {
+        print("logged swift level video player event in cache manager \(videoUrl)! \(event) \(detail)")
+
+        let videoUrlString = "\(videoUrl)"
+        Analytics.logEvent("video_player_status", parameters: [
+            "code_level": "swift",
+            "video_url": videoUrlString,
+            "details": detail,
+            "screen_name": "video_feed",
+            "event": event
+        ])
+    }
     
     @objc public func setMaxCacheSize(_ maxCacheSize: NSNumber?){
         if let unsigned = maxCacheSize {
@@ -53,11 +67,14 @@ import PINCache
 
     // MARK: - Logic
     @objc public func preCacheURL(_ url: URL, cacheKey: String?, videoExtension: String?, withHeaders headers: Dictionary<NSObject,AnyObject>, completionHandler: ((_ success:Bool) -> Void)?) {
+        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "preCacheURL", detail: "Start")
+
         self.completionHandler = completionHandler
         
         let _key: String = cacheKey ?? url.absoluteString
         // Make sure the item is not already being downloaded
-        if self._preCachedURLs[_key] == nil {            
+        if self._preCachedURLs[_key] == nil {
+            self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "preCacheURL", detail: "Caching")
             if let item = self.getCachingPlayerItem(url, cacheKey: _key, videoExtension: videoExtension, headers: headers){
                 if !self._existsInStorage {
                     self._preCachedURLs[_key] = item
@@ -69,11 +86,15 @@ import PINCache
                 self.completionHandler?(false)
             }
         } else {
+            self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "preCacheURL", detail: "Already cached")
             self.completionHandler?(true)
         }
+
+        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "preCacheURL", detail: "End")
     }
     
     @objc public func stopPreCache(_ url: URL, cacheKey: String?, completionHandler: ((_ success:Bool) -> Void)?){
+        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "stopPreCache", detail: "Start")
         let _key: String = cacheKey ?? url.absoluteString
         if self._preCachedURLs[_key] != nil {
             let playerItem = self._preCachedURLs[_key]!
@@ -83,16 +104,20 @@ import PINCache
             return
         }
         self.completionHandler?(false)
+        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "stopPreCache", detail: "End")
     }
     
     ///Gets caching player item for normal playback.
     @objc public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: Dictionary<NSObject,AnyObject>) -> AVPlayerItem? {
+        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItemForNormalPlayback", detail: "Start")
         let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
         if (mimeTypeResult.1 == "application/vnd.apple.mpegurl"){
+            self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItemForNormalPlayback", detail: "mimeType mpegurl")
             let reverseProxyURL = server?.reverseProxyURL(from: url)!
             let playerItem = AVPlayerItem(url: reverseProxyURL!)
             return playerItem
         } else {
+            self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItemForNormalPlayback", detail: "mimeType other")
             return getCachingPlayerItem(url, cacheKey: cacheKey, videoExtension: videoExtension, headers: headers)
         }
     }
@@ -100,39 +125,49 @@ import PINCache
 
     // Get a CachingPlayerItem either from the network if it's not cached or from the cache.
     @objc public func getCachingPlayerItem(_ url: URL, cacheKey: String?,videoExtension: String?, headers: Dictionary<NSObject,AnyObject>) -> CachingPlayerItem? {
+        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItem", detail: "Start")
         let playerItem: CachingPlayerItem
         let _key: String = cacheKey ?? url.absoluteString
         // Fetch ongoing pre-cached url if it exists
         if self._preCachedURLs[_key] != nil {
+            self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItem", detail: "Retrieving from _preCachedURLs")
             playerItem = self._preCachedURLs[_key]!
             self._preCachedURLs.removeValue(forKey: _key)
         } else {
+            self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItem", detail: "Not in _preCachedURLs")
             // Trying to retrieve a track from cache syncronously
             let data = try? storage?.object(forKey: _key)
             if data != nil {
+                self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItem", detail: "Attempting to retrieve from cache")
                 // The file is cached.
                 self._existsInStorage = true
                 let mimeTypeResult = getMimeType(url:url, explicitVideoExtension: videoExtension)
                 if (mimeTypeResult.1.isEmpty){
+                self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItem", detail: "Mimetype not found - falling back to web")
                     NSLog("Cache error: couldn't find mime type for url: \(url.absoluteURL). For this URL cache didn't work and video will be played without cache.")
                     playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
                 } else {
+                    self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItem", detail: "Retrieving from cache")
                     playerItem = CachingPlayerItem(data: data!, mimeType: mimeTypeResult.1, fileExtension: mimeTypeResult.0)
                 }
             } else {
+                self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItem", detail: "Retrieving from web")
                 // The file is not cached.
                 playerItem = CachingPlayerItem(url: url, cacheKey: _key, headers: headers)
                 self._existsInStorage = false
             }
         }
         playerItem.delegate = self
+        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "getCachingPlayerItem", detail: "End")
         return playerItem
     }
     
     // Remove all objects
     @objc public func clearCache(){
+        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "clearCache", detail: "Start")
         try? storage?.removeAll()
         self._preCachedURLs = Dictionary<String,CachingPlayerItem>()
+        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "clearCache", detail: "End")
     }
     
     private func getMimeType(url: URL, explicitVideoExtension: String?) -> (String,String){
