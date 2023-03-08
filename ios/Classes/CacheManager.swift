@@ -164,10 +164,10 @@ import PINCache
     
     // Remove all objects
     @objc public func clearCache(){
-        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "clearCache", detail: "Start")
+        self.logVideoPlayerEvent(videoUrl: "", event: "clearCache", detail: "Start")
         try? storage?.removeAll()
         self._preCachedURLs = Dictionary<String,CachingPlayerItem>()
-        self.logVideoPlayerEvent(videoUrl: url.absoluteString, event: "clearCache", detail: "End")
+        self.logVideoPlayerEvent(videoUrl: "", event: "clearCache", detail: "End")
     }
     
     private func getMimeType(url: URL, explicitVideoExtension: String?) -> (String,String){
