@@ -254,8 +254,8 @@ class BetterPlayerController {
     ///Build videoPlayerController if null
     if (videoPlayerController == null) {
       videoPlayerController = VideoPlayerController(
-          bufferingConfiguration:
-              betterPlayerDataSource.bufferingConfiguration);
+        bufferingConfiguration: betterPlayerDataSource.bufferingConfiguration,
+      );
       videoPlayerController?.addListener(_onVideoPlayerChanged);
     }
 
@@ -266,8 +266,9 @@ class BetterPlayerController {
     final List<BetterPlayerSubtitlesSource>? betterPlayerSubtitlesSourceList =
         betterPlayerDataSource.subtitles;
     if (betterPlayerSubtitlesSourceList != null) {
-      _betterPlayerSubtitlesSourceList
-          .addAll(betterPlayerDataSource.subtitles!);
+      _betterPlayerSubtitlesSourceList.addAll(
+        betterPlayerDataSource.subtitles!,
+      );
     }
 
     if (_isDataSourceAsms(betterPlayerDataSource)) {
@@ -775,7 +776,7 @@ class BetterPlayerController {
     final possibleCacheServerErrors = [
       "resource unavailable",
       "could not connect to the server",
-      "the operation couldnt be completed",
+      // "the operation couldnt be completed",
     ];
 
     final ignorableErrorLogs = [
@@ -808,7 +809,9 @@ class BetterPlayerController {
         ),
       );
 
-      if (isResourceError && !hasCachingResourceError) {
+      bool isNotPlaying = !(isPlaying() ?? false);
+
+      if (isResourceError && isNotPlaying && !hasCachingResourceError) {
         hasCachingResourceError = true;
 
         print(
@@ -822,21 +825,20 @@ class BetterPlayerController {
             ),
           ),
         );
-      }
-      //  else {
-      //   String? ignorableError = ignorableErrorLogs.where((errorLog) {
-      //     return cleanErrorString.contains(errorLog);
-      //   }).firstOrNull;
+      } else {
+        String? ignorableError = ignorableErrorLogs.where((errorLog) {
+          return cleanErrorString.contains(errorLog);
+        }).firstOrNull;
 
-      //   if (ignorableError != null) {
-      //     _postEvent(
-      //       BetterPlayerEvent(
-      //         BetterPlayerEventType.exception,
-      //         parameters: <String, dynamic>{"exception": errorString},
-      //       ),
-      //     );
-      //   }
-      // }
+        if (ignorableError != null) {
+          _postEvent(
+            BetterPlayerEvent(
+              BetterPlayerEventType.exception,
+              parameters: <String, dynamic>{"exception": errorString},
+            ),
+          );
+        }
+      }
     }
     if (currentVideoPlayerValue.initialized &&
         !_hasCurrentDataSourceInitialized) {
