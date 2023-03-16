@@ -238,6 +238,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _playerRate = 1;
     [_player replaceCurrentItemWithPlayerItem:item];
 
+    if (!@available(iOS 16.0, *)) {
+         // set buffer time into 5 seconds
+         // https://dw-ml-nfc.atlassian.net/browse/DAF-3642
+         item.preferredForwardBufferDuration = 10;
+    }
+
     AVAsset* asset = [item asset];
     void (^assetCompletionHandler)(void) = ^{
         if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
