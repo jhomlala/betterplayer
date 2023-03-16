@@ -242,9 +242,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     const BOOL isLive = CMTIME_IS_INDEFINITE(item.duration);
 
     if (!isLive && !@available(iOS 16.0, *) && item.duration.value < durationIn5Minutes.value) {
-                // set buffer time into 5 seconds
-                // https://dw-ml-nfc.atlassian.net/browse/DAF-3642
-                item.preferredForwardBufferDuration = 5;
+         // set buffer time into 5 seconds
+         // https://dw-ml-nfc.atlassian.net/browse/DAF-3642
+         item.preferredForwardBufferDuration = 5;
     }
 
     AVAsset* asset = [item asset];
