@@ -241,7 +241,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (!@available(iOS 16.0, *)) {
          // set buffer time into 5 seconds
          // https://dw-ml-nfc.atlassian.net/browse/DAF-3642
-         item.preferredForwardBufferDuration = 5;
+         item.preferredForwardBufferDuration = 10;
     }
 
     AVAsset* asset = [item asset];
