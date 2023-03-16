@@ -238,10 +238,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _playerRate = 1;
     [_player replaceCurrentItemWithPlayerItem:item];
 
-    CMTime durationIn5Minutes = CMTimeMakeWithSeconds(300, 1);
-    const BOOL isLive = CMTIME_IS_INDEFINITE(item.duration);
-
-    if (!isLive && !@available(iOS 16.0, *) && item.duration.value < durationIn5Minutes.value) {
+    if (!@available(iOS 16.0, *)) {
          // set buffer time into 5 seconds
          // https://dw-ml-nfc.atlassian.net/browse/DAF-3642
          item.preferredForwardBufferDuration = 5;
