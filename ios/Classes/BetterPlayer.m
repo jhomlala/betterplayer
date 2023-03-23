@@ -239,9 +239,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [_player replaceCurrentItemWithPlayerItem:item];
 
     if (!@available(iOS 16.0, *)) {
-         // set buffer time into 5 seconds
          // https://dw-ml-nfc.atlassian.net/browse/DAF-3642
-         item.preferredForwardBufferDuration = 10;
+         // set buffer time into 1 second
+         // This option cannot keep the buffer fixed to 1s, but the value can only be maxed to 10s.
+         // It keeps the player not frozen when fast-forwarding
+         item.preferredForwardBufferDuration = 1;
     }
 
     AVAsset* asset = [item asset];
