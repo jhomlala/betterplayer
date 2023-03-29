@@ -290,23 +290,23 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void _showQualitiesSelectionWidget() {
-    // HLS / DASH
+   // HLS / DASH
     final List<String> asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
-    final List<BetterPlayerAsmsTrack> asmsTracks =
+    final List<BetterPlayerAsmsTrack> tempAsmsTracks =
         betterPlayerController!.betterPlayerAsmsTracks;
     final List<Widget> children = [];
-    for (var index = 0; index < asmsTracks.length; index++) {
-      final track = asmsTracks[index];
+    List<BetterPlayerAsmsTrack> asmstracks = tempAsmsTracks.reversed.toList();
+    for (var index = 0; index < asmstracks.length; index++) {
+      final track = asmstracks[index];
 
       String? preferredName;
       if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
         preferredName = betterPlayerController!.translations.qualityAuto;
       } else {
-        preferredName =
-            asmsTrackNames.length > index ? asmsTrackNames[index] : null;
+        preferredName = asmsTrackNames.length > index ? asmsTrackNames[index] : null;
       }
-      children.add(_buildTrackRow(asmsTracks[index], preferredName));
+      children.add(_buildTrackRow(asmstracks[index], preferredName));
     }
 
     // normal videos
@@ -471,8 +471,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showCupertinoModalBottomSheet(List<Widget> children) {
-    showCupertinoModalPopup<void>(
-      barrierColor: Colors.transparent,
+    showModalBottomSheet<void>( 
+      backgroundColor: Colors.transparent, 
       context: context,
       useRootNavigator:
           betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
