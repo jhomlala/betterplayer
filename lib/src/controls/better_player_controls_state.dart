@@ -293,12 +293,22 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
    // HLS / DASH
     final List<String> asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
-    final List<BetterPlayerAsmsTrack> tempAsmsTracks =
+    final List<BetterPlayerAsmsTrack> asmstracks =
         betterPlayerController!.betterPlayerAsmsTracks;
-    final List<Widget> children = [];
-    List<BetterPlayerAsmsTrack> asmstracks = tempAsmsTracks.reversed.toList();
-    for (var index = 0; index < asmstracks.length; index++) {
-      final track = asmstracks[index];
+    final List<Widget> children = []; 
+  
+   final sortedTracks = [
+      ...(asmstracks
+        ..sort((a, b) {
+          if (a.height != null && b.height != null) {
+            return b.height!.compareTo(a.height!.toInt());
+          }
+          return 1;
+        }))
+    ]; 
+
+    for (var index = 0; index < sortedTracks.length; index++) {
+      final track = sortedTracks[index];
 
       String? preferredName;
       if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
@@ -306,7 +316,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       } else {
         preferredName = asmsTrackNames.length > index ? asmsTrackNames[index] : null;
       }
-      children.add(_buildTrackRow(asmstracks[index], preferredName));
+      children.add(_buildTrackRow(sortedTracks[index], preferredName));
     }
 
     // normal videos
