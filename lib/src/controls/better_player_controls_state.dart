@@ -290,22 +290,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void _showQualitiesSelectionWidget() {
-   // HLS / DASH
+    // HLS / DASH
     final List<String> asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
-    final List<BetterPlayerAsmsTrack> asmstracks =
+    final List<BetterPlayerAsmsTrack> asmsTracks =
         betterPlayerController!.betterPlayerAsmsTracks;
-    final List<Widget> children = []; 
-  
-   final sortedTracks = [
-      ...(asmstracks
-        ..sort((a, b) {
-          if (a.height != null && b.height != null) {
-            return b.height!.compareTo(a.height!.toInt());
-          }
-          return 1;
-        }))
-    ]; 
+    final List<Widget> children = [];
+
+    final sortedTracks = [
+      ...(asmsTracks..sort((a, b) => (b.height ?? 0).compareTo(a.height ?? 0)))
+    ];
 
     for (var index = 0; index < sortedTracks.length; index++) {
       final track = sortedTracks[index];
@@ -314,7 +308,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
         preferredName = betterPlayerController!.translations.qualityAuto;
       } else {
-        preferredName = asmsTrackNames.length > index ? asmsTrackNames[index] : null;
+        preferredName =
+            asmsTrackNames.length > index ? asmsTrackNames[index] : null;
       }
       children.add(_buildTrackRow(sortedTracks[index], preferredName));
     }
@@ -481,8 +476,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showCupertinoModalBottomSheet(List<Widget> children) {
-    showModalBottomSheet<void>( 
-      backgroundColor: Colors.transparent, 
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.transparent,
       context: context,
       useRootNavigator:
           betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
