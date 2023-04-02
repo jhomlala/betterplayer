@@ -427,6 +427,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
   }
 
   void _showMaterialBottomSheet(List<Widget> children) {
+    betterPlayerController?.postEvent(BetterPlayerEvent(BetterPlayerEventType.overflowOpened));
     showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       context: context,
@@ -450,7 +451,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
           ),
         );
       },
-    );
+    ).then((value) => betterPlayerController?.postEvent(BetterPlayerEvent(BetterPlayerEventType.overflowClosed)));
   }
 
   ///Builds directionality widget which wraps child widget and forces left to
