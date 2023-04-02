@@ -485,12 +485,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showMaterialBottomSheet(List<Widget> children) {
-    showModalBottomSheet<void>(
+    showBottomSheet<void>(
       backgroundColor: Colors.transparent,
       context: context,
-      useRootNavigator:
-          betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
-              false,
+
+      // useRootNavigator:
+      //     betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
+      //         false,
       builder: (context) {
         return SafeArea(
           top: false,
