@@ -427,7 +427,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
   }
 
   void _showMaterialBottomSheet(List<Widget> children) {
-    betterPlayerController?.postEvent(BetterPlayerEvent(BetterPlayerEventType.overflowOpened));
+    // very bad workaround
+    Future.delayed(Duration(milliseconds: 250), () => betterPlayerController?.postEvent(BetterPlayerEvent(BetterPlayerEventType.overflowOpened)));
     showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       context: context,
