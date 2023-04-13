@@ -466,6 +466,9 @@ bool _remoteCommandsInitialized = false;
                 }
             }
             result(nil);
+        } else if ([@"setupToStartPictureInPictureAutomatically" isEqualToString:call.method]){
+            // TODO: Implement
+            NSLog(@"setupToStartPictureInPictureAutomatically willStartPIP: %d", [argsMap[@"willStartPIP"] boolValue]);
         } else {
             result(FlutterMethodNotImplemented);
         }
