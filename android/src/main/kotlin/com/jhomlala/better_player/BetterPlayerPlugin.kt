@@ -189,9 +189,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 )
                 result.success(null)
             }
-            SETUP_TO_START_PICTURE_IN_PICTURE_AUTOMATICALLY -> {
+            SETUP_AUTOMATIC_PICTURE_IN_PICTURE_TRANSITION -> {
                 val willStartPIPPIP = call.argument<Boolean?>(WILL_START_PIP)
-                setupToStartPictureInPictureAutomatically(willStartPIPPIP ?: false)
+                setupAutomaticPictureInPictureTransition(willStartPIPPIP ?: false)
             }
             ENABLE_PICTURE_IN_PICTURE_METHOD -> {
                 enablePictureInPicture(player)
@@ -410,8 +410,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             .hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
     }
 
-    private fun setupToStartPictureInPictureAutomatically(willStartPIP: Boolean) {
-        println("setupToStartPictureInPictureAutomatically willStartPIP: ${willStartPIP.toString()}")
+    private fun setupAutomaticPictureInPictureTransition(willStartPIP: Boolean) {
+        println("setupAutomaticPictureInPictureTransition willStartPIP: ${willStartPIP.toString()}")
         // TODO: Implement
     }
 
@@ -547,7 +547,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val SET_SPEED_METHOD = "setSpeed"
         private const val SET_TRACK_PARAMETERS_METHOD = "setTrackParameters"
         private const val SET_AUDIO_TRACK_METHOD = "setAudioTrack"
-        private const val SETUP_TO_START_PICTURE_IN_PICTURE_AUTOMATICALLY = "setupToStartPictureInPictureAutomatically"
+        private const val SETUP_AUTOMATIC_PICTURE_IN_PICTURE_TRANSITION = "setupAutomaticPictureInPictureTransition"
         private const val ENABLE_PICTURE_IN_PICTURE_METHOD = "enablePictureInPicture"
         private const val DISABLE_PICTURE_IN_PICTURE_METHOD = "disablePictureInPicture"
         private const val IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD = "isPictureInPictureSupported"
