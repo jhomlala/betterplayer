@@ -593,9 +593,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _textureId, width, height, bitrate);
   }
 
-  Future<void> setupToStartPictureInPictureAutomatically(
+  Future<void> setupAutomaticPictureInPictureTransition(
       {bool? willStartPIP}) async {
-    await _videoPlayerPlatform.setupToStartPictureInPictureAutomatically(
+    await _videoPlayerPlatform.setupAutomaticPictureInPictureTransition(
       textureId: textureId,
       willStartPIP: willStartPIP,
     );

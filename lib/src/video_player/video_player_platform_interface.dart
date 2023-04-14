@@ -138,12 +138,12 @@ abstract class VideoPlayerPlatform {
   }
 
   ///Set up auto PiP transition.
-  Future<void> setupToStartPictureInPictureAutomatically({
+  Future<void> setupAutomaticPictureInPictureTransition({
     int? textureId,
     bool? willStartPIP,
   }) {
     throw UnimplementedError(
-        'setupToStartPictureInPictureAutomatically() has not been implemented.');
+        'setupAutomaticPictureInPictureTransition() has not been implemented.');
   }
 
   ///Enables PiP mode.

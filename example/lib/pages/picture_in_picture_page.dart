@@ -33,10 +33,10 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
       }
 
       if (event.betterPlayerEventType == BetterPlayerEventType.play) {
-        _betterPlayerController.setupToStartPictureInPictureAutomatically(
+        _betterPlayerController.setupAutomaticPictureInPictureTransition(
             willStartPIP: true);
       } else if (event.betterPlayerEventType == BetterPlayerEventType.pause) {
-        _betterPlayerController.setupToStartPictureInPictureAutomatically(
+        _betterPlayerController.setupAutomaticPictureInPictureTransition(
             willStartPIP: false);
       }
     };

@@ -223,12 +223,12 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> setupToStartPictureInPictureAutomatically({
+  Future<void> setupAutomaticPictureInPictureTransition({
     int? textureId,
     bool? willStartPIP,
   }) async {
     return _channel.invokeMethod<void>(
-      'setupToStartPictureInPictureAutomatically',
+      'setupAutomaticPictureInPictureTransition',
       <String, dynamic>{
         'textureId': textureId,
         'willStartPIP': willStartPIP,
