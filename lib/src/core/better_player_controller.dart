@@ -687,7 +687,7 @@ class BetterPlayerController {
 
   ///Set playback speed of video. Allows to set speed value between 0 and 2.
   Future<void> setSpeed(double speed) async {
-    if (speed <= 0 || speed > 3) {
+    if (speed <= 0 || speed > 6) {
       BetterPlayerUtils.log("Speed must be between 0 and 3");
       throw ArgumentError("Speed must be between 0 and 3");
     }
