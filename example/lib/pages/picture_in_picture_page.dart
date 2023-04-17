@@ -57,6 +57,7 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _betterPlayerController.removeEventsListener(_betterPlayerListener);
     super.dispose();
   }
 

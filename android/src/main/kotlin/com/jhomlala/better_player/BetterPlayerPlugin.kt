@@ -191,8 +191,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             SETUP_AUTOMATIC_PICTURE_IN_PICTURE_TRANSITION -> {
-                val willStartPIPPIP = call.argument<Boolean?>(WILL_START_PIP)
-                setupAutomaticPictureInPictureTransition(willStartPIPPIP ?: false)
+                val willStartPIP = call.argument<Boolean?>(WILL_START_PIP)!!
+                setupAutomaticPictureInPictureTransition(willStartPIP)
             }
             ENABLE_PICTURE_IN_PICTURE_METHOD -> {
                 enablePictureInPicture(player)
