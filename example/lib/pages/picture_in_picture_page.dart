@@ -7,13 +7,16 @@ class PictureInPicturePage extends StatefulWidget {
   _PictureInPicturePageState createState() => _PictureInPicturePageState();
 }
 
-class _PictureInPicturePageState extends State<PictureInPicturePage> {
+class _PictureInPicturePageState extends State<PictureInPicturePage>
+    with WidgetsBindingObserver {
   late BetterPlayerController _betterPlayerController;
   late Function(BetterPlayerEvent) _betterPlayerListener;
   GlobalKey _betterPlayerKey = GlobalKey();
+  late bool shouldStartPIP = false;
 
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(this);
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
@@ -35,14 +38,26 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
       if (event.betterPlayerEventType == BetterPlayerEventType.play) {
         _betterPlayerController.setupAutomaticPictureInPictureTransition(
             willStartPIP: true);
+        setState(() {
+          shouldStartPIP = true;
+        });
       } else if (event.betterPlayerEventType == BetterPlayerEventType.pause) {
         _betterPlayerController.setupAutomaticPictureInPictureTransition(
             willStartPIP: false);
+        setState(() {
+          shouldStartPIP = false;
+        });
       }
     };
 
     _betterPlayerController.addEventsListener(_betterPlayerListener);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @override
@@ -78,6 +93,17 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
             child: Text("Disable PiP"),
             onPressed: () async {
               _betterPlayerController.disablePictureInPicture();
+            },
+          ),
+          ElevatedButton(
+            child: Text('Auto PIP: ' + (shouldStartPIP ? 'ON' : 'OFF')),
+            onPressed: () async {
+              setState(() {
+                shouldStartPIP = !shouldStartPIP;
+                _betterPlayerController
+                    .setupAutomaticPictureInPictureTransition(
+                        willStartPIP: shouldStartPIP);
+              });
             },
           ),
         ],
