@@ -46,6 +46,12 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
   }
 
   @override
+  void dispose() {
+    _betterPlayerController.removeEventsListener(_betterPlayerListener);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
