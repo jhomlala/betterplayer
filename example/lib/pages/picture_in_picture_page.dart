@@ -9,6 +9,7 @@ class PictureInPicturePage extends StatefulWidget {
 
 class _PictureInPicturePageState extends State<PictureInPicturePage> {
   late BetterPlayerController _betterPlayerController;
+  late Function(BetterPlayerEvent) _betterPlayerListener;
   GlobalKey _betterPlayerKey = GlobalKey();
 
   @override
@@ -25,7 +26,29 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.setBetterPlayerGlobalKey(_betterPlayerKey);
+
+    _betterPlayerListener = (event) async {
+      if (!mounted) {
+        return;
+      }
+
+      if (event.betterPlayerEventType == BetterPlayerEventType.play) {
+        _betterPlayerController.setupAutomaticPictureInPictureTransition(
+            willStartPIP: true);
+      } else if (event.betterPlayerEventType == BetterPlayerEventType.pause) {
+        _betterPlayerController.setupAutomaticPictureInPictureTransition(
+            willStartPIP: false);
+      }
+    };
+
+    _betterPlayerController.addEventsListener(_betterPlayerListener);
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _betterPlayerController.removeEventsListener(_betterPlayerListener);
+    super.dispose();
   }
 
   @override

@@ -398,6 +398,9 @@ bool _remoteCommandsInitialized = false;
 
             [player setTrackParameters:width: height : bitrate];
             result(nil);
+        } else if ([@"setupAutomaticPictureInPictureTransition" isEqualToString:call.method]){
+            // TODO: Implement
+            NSLog(@"setupAutomaticPictureInPictureTransition willStartPIP: %d", [argsMap[@"willStartPIP"] boolValue]);
         } else if ([@"enablePictureInPicture" isEqualToString:call.method]){
             double left = [argsMap[@"left"] doubleValue];
             double top = [argsMap[@"top"] doubleValue];

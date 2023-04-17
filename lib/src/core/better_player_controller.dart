@@ -1052,6 +1052,29 @@ class BetterPlayerController {
     return _overriddenFit ?? betterPlayerConfiguration.fit;
   }
 
+  ///Set up to start Picture in Picture automatically when close app.
+  ///When device is not supported, PiP mode won't be open.
+  Future<void>? setupAutomaticPictureInPictureTransition(
+      {required bool willStartPIP}) async {
+    if (videoPlayerController == null) {
+      throw StateError("The data source has not been initialized");
+    }
+
+    final bool isPipSupported =
+        (await videoPlayerController?.isPictureInPictureSupported()) ?? false;
+
+    if (isPipSupported) {
+      await videoPlayerController?.setupAutomaticPictureInPictureTransition(
+        willStartPIP: willStartPIP,
+      );
+    } else {
+      BetterPlayerUtils.log(
+          "Picture in picture is not supported in this device. If you're "
+          "using Android, please check if you're using activity v2 "
+          "embedding.");
+    }
+  }
+
   ///Enable Picture in Picture (PiP) mode. [betterPlayerGlobalKey] is required
   ///to open PiP mode in iOS. When device is not supported, PiP mode won't be
   ///open.

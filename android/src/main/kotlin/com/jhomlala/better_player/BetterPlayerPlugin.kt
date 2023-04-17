@@ -189,6 +189,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 )
                 result.success(null)
             }
+            SETUP_AUTOMATIC_PICTURE_IN_PICTURE_TRANSITION -> {
+                val willStartPIP = call.argument<Boolean?>(WILL_START_PIP)!!
+                setupAutomaticPictureInPictureTransition(willStartPIP)
+            }
             ENABLE_PICTURE_IN_PICTURE_METHOD -> {
                 enablePictureInPicture(player)
                 result.success(null)
@@ -406,6 +410,11 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             .hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
     }
 
+    private fun setupAutomaticPictureInPictureTransition(willStartPIP: Boolean) {
+        println("setupAutomaticPictureInPictureTransition willStartPIP: ${willStartPIP.toString()}")
+        // TODO: Implement
+    }
+
     private fun enablePictureInPicture(player: BetterPlayer) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             player.setupMediaSession(flutterState!!.applicationContext)
@@ -512,6 +521,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val DRM_HEADERS_PARAMETER = "drmHeaders"
         private const val DRM_CLEARKEY_PARAMETER = "clearKey"
         private const val MIX_WITH_OTHERS_PARAMETER = "mixWithOthers"
+        private const val WILL_START_PIP = "willStartPIP"
         const val URL_PARAMETER = "url"
         const val PRE_CACHE_SIZE_PARAMETER = "preCacheSize"
         const val MAX_CACHE_SIZE_PARAMETER = "maxCacheSize"
@@ -537,6 +547,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val SET_SPEED_METHOD = "setSpeed"
         private const val SET_TRACK_PARAMETERS_METHOD = "setTrackParameters"
         private const val SET_AUDIO_TRACK_METHOD = "setAudioTrack"
+        private const val SETUP_AUTOMATIC_PICTURE_IN_PICTURE_TRANSITION = "setupAutomaticPictureInPictureTransition"
         private const val ENABLE_PICTURE_IN_PICTURE_METHOD = "enablePictureInPicture"
         private const val DISABLE_PICTURE_IN_PICTURE_METHOD = "disablePictureInPicture"
         private const val IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD = "isPictureInPictureSupported"

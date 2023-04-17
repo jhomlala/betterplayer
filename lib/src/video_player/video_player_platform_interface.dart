@@ -137,6 +137,15 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('getAbsolutePosition() has not been implemented.');
   }
 
+  ///Set up auto PiP transition.
+  Future<void> setupAutomaticPictureInPictureTransition({
+    int? textureId,
+    bool? willStartPIP,
+  }) {
+    throw UnimplementedError(
+        'setupAutomaticPictureInPictureTransition() has not been implemented.');
+  }
+
   ///Enables PiP mode.
   Future<void> enablePictureInPicture(int? textureId, double? top, double? left,
       double? width, double? height) {
