@@ -7,6 +7,7 @@ import android.app.Activity
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Rect
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -411,8 +412,15 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun setupAutomaticPictureInPictureTransition(willStartPIP: Boolean) {
-        println("setupAutomaticPictureInPictureTransition willStartPIP: ${willStartPIP.toString()}")
-        // TODO: Implement
+        // TODO: PIPプレイヤーのUI切り替え（enablePictureInPictureでやっているような内容）などが必要
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val visibleRect = Rect()
+            val params = PictureInPictureParams.Builder()
+                .setSourceRectHint(visibleRect)
+                .setAutoEnterEnabled(willStartPIP)
+                .build()
+            activity?.setPictureInPictureParams(params)
+        }
     }
 
     private fun enablePictureInPicture(player: BetterPlayer) {
