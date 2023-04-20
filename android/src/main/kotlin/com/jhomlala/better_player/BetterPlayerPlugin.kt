@@ -13,6 +13,9 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.util.LongSparseArray
+import android.util.Rational
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.jhomlala.better_player.BetterPlayerCache.releaseCache
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -23,6 +26,7 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.EventChannel
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.view.TextureRegistry
 import java.lang.Exception
@@ -40,6 +44,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var activity: Activity? = null
     private var pipHandler: Handler? = null
     private var pipRunnable: Runnable? = null
+    private var currentPlayer: BetterPlayer? = null
+    private val pipAspectRatio = Rational(16, 9)
+    private var showPictureInPictureAutomatically: Boolean = false
+
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         val loader = FlutterLoader()
         flutterState = FlutterState(
@@ -76,13 +84,37 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
+        setLifeCycleObserverForPictureInPicture(binding)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {}
 
-    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {}
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        setLifeCycleObserverForPictureInPicture(binding)
+    }
 
     override fun onDetachedFromActivity() {}
+
+    private fun setLifeCycleObserverForPictureInPicture(binding: ActivityPluginBinding) {
+        (binding.lifecycle as HiddenLifecycleReference)
+            .lifecycle
+            .addObserver(LifecycleEventObserver { _, event ->
+                Log.d("LifecycleEvent: ", event.toString())
+                // Do enterPictureInPictureMode when can not use setAutoEnterEnabled.
+                if (Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                    if (event == Lifecycle.Event.ON_PAUSE)
+                        if (this.showPictureInPictureAutomatically && this.activity?.isInPictureInPictureMode != true) {
+                            this.currentPlayer?.setupMediaSession(flutterState!!.applicationContext)
+                            val params =
+                                PictureInPictureParams.Builder()
+                                    .setAspectRatio(pipAspectRatio)
+                                    .setSourceRectHint(Rect())
+                                    .build()
+                            this.activity?.enterPictureInPictureMode(params)
+                        }
+                }
+            })
+    }
 
     private fun disposeAllPlayers() {
         for (i in 0 until videoPlayers.size()) {
@@ -192,7 +224,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             }
             SETUP_AUTOMATIC_PICTURE_IN_PICTURE_TRANSITION -> {
                 val willStartPIP = call.argument<Boolean?>(WILL_START_PIP)!!
-                setupAutomaticPictureInPictureTransition(willStartPIP)
+                setupAutomaticPictureInPictureTransition(willStartPIP, player)
+                result.success(null)
             }
             ENABLE_PICTURE_IN_PICTURE_METHOD -> {
                 enablePictureInPicture(player)
@@ -411,15 +444,19 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             .hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
     }
 
-    private fun setupAutomaticPictureInPictureTransition(willStartPIP: Boolean) {
-        // TODO: PIPプレイヤーのUI切り替え（enablePictureInPictureでやっているような内容）などが必要
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val visibleRect = Rect()
+    private fun setupAutomaticPictureInPictureTransition(willStartPIP: Boolean, player: BetterPlayer) {
+        // `setAutoEnterEnabled` only available from Build.VERSION_CODES.S(Android12)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            player.setupMediaSession(flutterState!!.applicationContext)
             val params = PictureInPictureParams.Builder()
-                .setSourceRectHint(visibleRect)
+                .setAspectRatio(pipAspectRatio)
+                .setSourceRectHint(Rect())
                 .setAutoEnterEnabled(willStartPIP)
                 .build()
             activity?.setPictureInPictureParams(params)
+        } else {
+            currentPlayer = player
+            showPictureInPictureAutomatically = willStartPIP
         }
     }
 
