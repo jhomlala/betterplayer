@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
@@ -12,7 +14,9 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
   late BetterPlayerController _betterPlayerController;
   late Function(BetterPlayerEvent) _betterPlayerListener;
   GlobalKey _betterPlayerKey = GlobalKey();
-  late bool shouldStartPIP = false;
+  late bool _shouldStartPIP = false;
+  // Whether need to switch to PIP layout. Only used in Android.
+  late bool _willSwitchToPIPLayout = false;
 
   @override
   void initState() {
@@ -21,10 +25,19 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
         BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
+      handleLifecycle: false,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
+      // notificationConfiguration: BetterPlayerNotificationConfiguration(
+      //   showNotification: true,
+      //   title: "Elephant dream",
+      //   author: "Some author",
+      //   imageUrl:
+      //       "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg",
+      //   activityName: "MainActivity",
+      // ),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -39,13 +52,13 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
         _betterPlayerController.setupAutomaticPictureInPictureTransition(
             willStartPIP: true);
         setState(() {
-          shouldStartPIP = true;
+          _shouldStartPIP = true;
         });
       } else if (event.betterPlayerEventType == BetterPlayerEventType.pause) {
         _betterPlayerController.setupAutomaticPictureInPictureTransition(
             willStartPIP: false);
         setState(() {
-          shouldStartPIP = false;
+          _shouldStartPIP = false;
         });
       }
     };
@@ -62,7 +75,45 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    debugPrint('AppLifecycleState: ${state.toString()}');
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        if (Platform.isAndroid && _willSwitchToPIPLayout) {
+          setState(() {
+            _willSwitchToPIPLayout = false;
+          });
+        }
+        break;
+      case AppLifecycleState.paused:
+        break;
+      case AppLifecycleState.inactive:
+        if (Platform.isAndroid && _shouldStartPIP) {
+          setState(() {
+            _willSwitchToPIPLayout = true;
+          });
+        }
+        break;
+      default:
+        break;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    // Show on only BetterPlayerView for android.
+    if (Platform.isAndroid && _willSwitchToPIPLayout) {
+      return AspectRatio(
+        aspectRatio: 16 / 9,
+        child: BetterPlayer(
+          controller: _betterPlayerController,
+          key: _betterPlayerKey,
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Picture in Picture player"),
@@ -97,13 +148,15 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
             },
           ),
           ElevatedButton(
-            child: Text('Auto PIP: ' + (shouldStartPIP ? 'ON' : 'OFF')),
+            child: Text('Auto PIP: ' + (_shouldStartPIP ? 'ON' : 'OFF')),
             onPressed: () async {
               setState(() {
-                shouldStartPIP = !shouldStartPIP;
+                if (Platform.isAndroid) {
+                  _shouldStartPIP = !_shouldStartPIP;
+                }
                 _betterPlayerController
                     .setupAutomaticPictureInPictureTransition(
-                        willStartPIP: shouldStartPIP);
+                        willStartPIP: _shouldStartPIP);
               });
             },
           ),
