@@ -30,14 +30,6 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
-      // notificationConfiguration: BetterPlayerNotificationConfiguration(
-      //   showNotification: true,
-      //   title: "Elephant dream",
-      //   author: "Some author",
-      //   imageUrl:
-      //       "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg",
-      //   activityName: "MainActivity",
-      // ),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -147,6 +139,7 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
               _betterPlayerController.disablePictureInPicture();
             },
           ),
+          // Button for testing.
           ElevatedButton(
             child: Text('Auto PIP: ' + (_shouldStartPIP ? 'ON' : 'OFF')),
             onPressed: () async {
