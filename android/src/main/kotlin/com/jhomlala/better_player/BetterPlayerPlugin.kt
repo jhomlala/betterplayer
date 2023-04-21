@@ -17,20 +17,18 @@ import android.util.Rational
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.jhomlala.better_player.BetterPlayerCache.releaseCache
-import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.embedding.engine.plugins.activity.ActivityAware
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.loader.FlutterLoader
+import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
+import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter
+import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.EventChannel
-import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import io.flutter.embedding.engine.plugins.lifecycle.HiddenLifecycleReference
-import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.view.TextureRegistry
-import java.lang.Exception
-import java.util.HashMap
 
 /**
  * Android platform implementation of the VideoPlayerPlugin.
@@ -95,24 +93,23 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     override fun onDetachedFromActivity() {}
 
     private fun setLifeCycleObserverForPictureInPicture(binding: ActivityPluginBinding) {
-        (binding.lifecycle as HiddenLifecycleReference)
-            .lifecycle
-            .addObserver(LifecycleEventObserver { _, event ->
-                Log.d("LifecycleEvent: ", event.toString())
-                // Do enterPictureInPictureMode when can not use setAutoEnterEnabled.
-                if (Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
-                    if (event == Lifecycle.Event.ON_PAUSE)
-                        if (this.showPictureInPictureAutomatically && this.activity?.isInPictureInPictureMode != true) {
-                            this.currentPlayer?.setupMediaSession(flutterState!!.applicationContext)
-                            val params =
-                                PictureInPictureParams.Builder()
-                                    .setAspectRatio(PIP_ASPECT_RATIO)
-                                    .setSourceRectHint(Rect())
-                                    .build()
-                            this.activity?.enterPictureInPictureMode(params)
-                        }
-                }
-            })
+        val lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
+        lifecycle.addObserver(LifecycleEventObserver { _, event ->
+            Log.d("LifecycleEvent: ", event.toString())
+            // Do enterPictureInPictureMode when can not use setAutoEnterEnabled.
+            if (Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+                if (event == Lifecycle.Event.ON_PAUSE)
+                    if (this.showPictureInPictureAutomatically && this.activity?.isInPictureInPictureMode != true) {
+                        this.currentPlayer?.setupMediaSession(flutterState!!.applicationContext)
+                        val params =
+                            PictureInPictureParams.Builder()
+                                .setAspectRatio(PIP_ASPECT_RATIO)
+                                .setSourceRectHint(Rect())
+                                .build()
+                        this.activity?.enterPictureInPictureMode(params)
+                    }
+            }
+        })
     }
 
     private fun disposeAllPlayers() {
