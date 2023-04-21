@@ -45,7 +45,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var pipHandler: Handler? = null
     private var pipRunnable: Runnable? = null
     private var currentPlayer: BetterPlayer? = null
-    private val pipAspectRatio = Rational(16, 9)
     private var showPictureInPictureAutomatically: Boolean = false
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
@@ -107,7 +106,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                             this.currentPlayer?.setupMediaSession(flutterState!!.applicationContext)
                             val params =
                                 PictureInPictureParams.Builder()
-                                    .setAspectRatio(pipAspectRatio)
+                                    .setAspectRatio(PIP_ASPECT_RATIO)
                                     .setSourceRectHint(Rect())
                                     .build()
                             this.activity?.enterPictureInPictureMode(params)
@@ -449,7 +448,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             player.setupMediaSession(flutterState!!.applicationContext)
             val params = PictureInPictureParams.Builder()
-                .setAspectRatio(pipAspectRatio)
+                .setAspectRatio(PIP_ASPECT_RATIO)
                 .setSourceRectHint(Rect())
                 .setAutoEnterEnabled(willStartPIP)
                 .build()
@@ -601,5 +600,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val DISPOSE_METHOD = "dispose"
         private const val PRE_CACHE_METHOD = "preCache"
         private const val STOP_PRE_CACHE_METHOD = "stopPreCache"
+        private val PIP_ASPECT_RATIO = Rational(16, 9)
     }
 }
