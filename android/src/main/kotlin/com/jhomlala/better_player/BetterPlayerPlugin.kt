@@ -42,7 +42,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var activity: Activity? = null
     private var pipHandler: Handler? = null
     private var pipRunnable: Runnable? = null
-    private var currentPlayer: BetterPlayer? = null
+    private var playerForPictureInPictureTransition: BetterPlayer? = null
     private var showPictureInPictureAutomatically: Boolean = false
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
@@ -100,7 +100,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             if (Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 if (event == Lifecycle.Event.ON_PAUSE)
                     if (this.showPictureInPictureAutomatically && this.activity?.isInPictureInPictureMode != true) {
-                        this.currentPlayer?.setupMediaSession(flutterState!!.applicationContext)
+                        this.playerForPictureInPictureTransition?.setupMediaSession(flutterState!!.applicationContext)
                         val params =
                             PictureInPictureParams.Builder()
                                 .setAspectRatio(PIP_ASPECT_RATIO)
@@ -451,7 +451,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 .build()
             activity?.setPictureInPictureParams(params)
         } else {
-            currentPlayer = player
+            playerForPictureInPictureTransition = player
             showPictureInPictureAutomatically = willStartPIP
         }
     }
