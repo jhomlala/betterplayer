@@ -234,6 +234,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD -> result.success(
                 isPictureInPictureSupported()
             )
+            IS_PICTURE_IN_PICTURE -> result.success(
+                activity!!.isInPictureInPictureMode
+            )
             SET_AUDIO_TRACK_METHOD -> {
                 val name = call.argument<String?>(NAME_PARAMETER)
                 val index = call.argument<Int?>(INDEX_PARAMETER)
@@ -592,6 +595,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val ENABLE_PICTURE_IN_PICTURE_METHOD = "enablePictureInPicture"
         private const val DISABLE_PICTURE_IN_PICTURE_METHOD = "disablePictureInPicture"
         private const val IS_PICTURE_IN_PICTURE_SUPPORTED_METHOD = "isPictureInPictureSupported"
+        private const val IS_PICTURE_IN_PICTURE = "isPictureInPicture"
         private const val SET_MIX_WITH_OTHERS_METHOD = "setMixWithOthers"
         private const val CLEAR_CACHE_METHOD = "clearCache"
         private const val DISPOSE_METHOD = "dispose"
