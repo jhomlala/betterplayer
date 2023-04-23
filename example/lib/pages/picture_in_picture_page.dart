@@ -1,16 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class PictureInPicturePage extends StatefulWidget {
   @override
   _PictureInPicturePageState createState() => _PictureInPicturePageState();
 }
 
-class _PictureInPicturePageState extends State<PictureInPicturePage>
-    with WidgetsBindingObserver {
+class _PictureInPicturePageState extends State<PictureInPicturePage> {
   late BetterPlayerController _betterPlayerController;
   late Function(BetterPlayerEvent) _betterPlayerListener;
   GlobalKey _betterPlayerKey = GlobalKey();
@@ -18,9 +19,29 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
   // Whether need to switch to PIP layout. Only used in Android.
   late bool _willSwitchToPIPLayout = false;
 
+  // PIP status event channel
+  final EventChannel _eventChannel =
+      const EventChannel('better_player.nfc_ch_app/pip_status_event_channel');
+
+  StreamSubscription? _streamSubscription;
+
+  void _initEventReceiver() {
+    // Set event channel for PIP status. Only in Andorid for now.
+    if (Platform.isAndroid) {
+      _streamSubscription =
+          _eventChannel.receiveBroadcastStream().listen((isPIP) async {
+        debugPrint("isPIP: $isPIP");
+        setState(() {
+          _willSwitchToPIPLayout = isPIP;
+        });
+      }, onError: (error) {
+        throw Exception('Catch an error on stream: $error');
+      });
+    }
+  }
+
   @override
   void initState() {
-    WidgetsBinding.instance.addObserver(this);
     BetterPlayerConfiguration betterPlayerConfiguration =
         BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
@@ -56,41 +77,15 @@ class _PictureInPicturePageState extends State<PictureInPicturePage>
     };
 
     _betterPlayerController.addEventsListener(_betterPlayerListener);
+    _initEventReceiver();
     super.initState();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _betterPlayerController.removeEventsListener(_betterPlayerListener);
+    _streamSubscription?.cancel();
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    debugPrint('AppLifecycleState: ${state.toString()}');
-    super.didChangeAppLifecycleState(state);
-
-    switch (state) {
-      case AppLifecycleState.resumed:
-        if (Platform.isAndroid && _willSwitchToPIPLayout) {
-          setState(() {
-            _willSwitchToPIPLayout = false;
-          });
-        }
-        break;
-      case AppLifecycleState.paused:
-        break;
-      case AppLifecycleState.inactive:
-        if (Platform.isAndroid && _shouldStartPIP) {
-          setState(() {
-            _willSwitchToPIPLayout = true;
-          });
-        }
-        break;
-      default:
-        break;
-    }
   }
 
   @override
