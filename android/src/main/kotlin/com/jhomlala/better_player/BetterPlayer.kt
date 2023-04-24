@@ -222,8 +222,8 @@ internal class BetterPlayer(
                 val packageName = context.applicationContext.packageName
                 val notificationIntent = Intent()
                 notificationIntent.setClassName(
-                    "$packageName.qa",
-                    "$packageName.$activityName"
+                    "com.example.playertest",
+                    "com.example.playertest.$activityName"
                 )
                 notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
                         or Intent.FLAG_ACTIVITY_SINGLE_TOP)
