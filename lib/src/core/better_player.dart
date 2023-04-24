@@ -62,7 +62,7 @@ class _BetterPlayerState extends State<BetterPlayer>
   StreamSubscription? _controllerEventSubscription;
 
   // For PIP status handling.
-  final EventChannel _eventChannel =
+  final EventChannel _pipStatusEventChannel =
       const EventChannel('better_player.nfc_ch_app/pip_status_event_channel');
   StreamSubscription? _pipStatusSubscription;
 
