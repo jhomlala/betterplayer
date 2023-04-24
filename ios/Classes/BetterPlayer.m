@@ -39,6 +39,7 @@ AVPictureInPictureController *_pipController;
 - (nonnull UIView *)view {
     BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
+    self._betterPlayerView = playerView;
     return playerView;
 }
 
@@ -626,8 +627,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (@available(iOS 9.0, *)) {
         [[AVAudioSession sharedInstance] setActive: YES error: nil];
         [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
-        if (!_pipController && self._playerLayer && [AVPictureInPictureController isPictureInPictureSupported]) {
-            _pipController = [[AVPictureInPictureController alloc] initWithPlayerLayer:self._playerLayer];
+        AVPlayerLayer *playerLayer = self._betterPlayerView.playerLayer;
+        if (!_pipController && playerLayer && [AVPictureInPictureController isPictureInPictureSupported]) {
+            _pipController = [[AVPictureInPictureController alloc] initWithPlayerLayer: playerLayer];
             _pipController.delegate = self;
         }
     } else {
@@ -663,12 +665,45 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 }
 
+- (void)preparePictureInPicture: (CGRect) frame
+{
+    if( _player)
+    {
+        // Create new controller passing reference to the AVPlayerLayer
+        self._playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
+        UIViewController* vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
+        self._playerLayer.frame = frame;
+        self._playerLayer.needsDisplayOnBoundsChange = YES;
+        [vc.view.layer addSublayer:self._playerLayer];
+        vc.view.layer.needsDisplayOnBoundsChange = YES;
+        if (@available(iOS 9.0, *)) {
+            _pipController = NULL;
+        }
+        [self setupPipController];
+    }
+}
+
+- (void)willStartPictureInPicture: (bool) willStart
+{
+    if (willStart) {
+        if(!_pipController) {
+            [self preparePictureInPicture:CGRectZero];
+        }
+    } else {
+        _pipController = nil;
+    }
+}
+
 - (void)disablePictureInPicture
 {
     [self setPictureInPicture:true];
     if (__playerLayer){
         [self._playerLayer removeFromSuperlayer];
         self._playerLayer = nil;
+        if (_pipController) {
+            _pipController = nil;
+            [self willStartPictureInPicture: true];
+        }
         if (_eventSink != nil) {
             _eventSink(@{@"event" : @"pipStop"});
         }
