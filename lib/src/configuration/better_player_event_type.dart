@@ -19,7 +19,7 @@ enum BetterPlayerEventType {
   changedPlayerVisibility,
   changedResolution,
   pipStart, // Fire when start PIP by tap button in UI (not when close app).
-  pipStop, // Fire when start PIP by tap button in UI (not when close app).
+  pipStop, // Fire when start PIP by tap button in UI (not when open app from PIP).
   setupDataSource,
   bufferingStart,
   bufferingUpdate,
@@ -27,5 +27,5 @@ enum BetterPlayerEventType {
   changedPlaylistItem,
   setDuration,
   enteringPIP, // Only in Android. Fire when start PIP by tap button in UI and close app.
-  exitingPIP, // Only in Android. Fire when start PIP by tap button in UI and close app.
+  exitingPIP, // Only in Android. Fire when start PIP by tap button in UI and open app from PIP.
 }
