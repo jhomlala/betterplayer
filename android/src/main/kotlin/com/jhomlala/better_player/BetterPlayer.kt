@@ -207,7 +207,7 @@ internal class BetterPlayer(
     fun setupPlayerNotification(
         context: Context, title: String, author: String?,
         imageUrl: String?, notificationChannelName: String?,
-        activityName: String
+        activityName: String, packageName: String?
     ) {
         val mediaDescriptionAdapter: MediaDescriptionAdapter = object : MediaDescriptionAdapter {
             override fun getCurrentContentTitle(player: Player): String {
@@ -216,18 +216,13 @@ internal class BetterPlayer(
 
             @SuppressLint("UnspecifiedImmutableFlag")
             override fun createCurrentContentIntent(player: Player): PendingIntent? {
-                val packageName = context.applicationContext.packageName
-                val flavor = BuildConfig.FLAVOR
-
-                val packageNameWithFlavor = if (flavor == "prod") {
-                    packageName
-                } else {
-                    "$packageName$flavor"
+                if(packageName == null) {
+                    packageName = context.applicationContext.packageName
                 }
                 val notificationIntent = Intent()
                 notificationIntent.setClassName(
-                    packageNameWithFlavor,
-                    "$packageNameWithFlavor.$activityName"
+                    packageName,
+                    "$packageName.$activityName"
                 )
                 notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
                         or Intent.FLAG_ACTIVITY_SINGLE_TOP)

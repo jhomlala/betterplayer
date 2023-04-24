@@ -20,6 +20,10 @@ class BetterPlayerNotificationConfiguration {
   ///in Android.
   final String? activityName;
 
+  ///Package of activity used to open application from notification. Used only
+  ///in Android.
+  final String? packageName;
+
   const BetterPlayerNotificationConfiguration({
     this.showNotification,
     this.title,
@@ -27,5 +31,6 @@ class BetterPlayerNotificationConfiguration {
     this.imageUrl,
     this.notificationChannelName,
     this.activityName,
+    this.packageName,
   });
 }
