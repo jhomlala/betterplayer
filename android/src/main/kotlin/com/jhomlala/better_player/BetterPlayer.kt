@@ -219,7 +219,7 @@ internal class BetterPlayer(
 //                if(packageName == null) {
 //                    packageName = context.applicationContext.packageName
 //                }
-                val packageName1 = "io.threadable.oireachtas.qa"
+//                val packageName1 = "${context.applicationContext.packageName}.qa"
                 val notificationIntent = Intent()
                 notificationIntent.setClassName(
                     packageName1,
