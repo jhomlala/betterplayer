@@ -26,4 +26,6 @@ enum BetterPlayerEventType {
   bufferingEnd,
   changedPlaylistItem,
   setDuration,
+  enteringPIP, // Only used in Android
+  exitingPIP, // Only used in Android
 }

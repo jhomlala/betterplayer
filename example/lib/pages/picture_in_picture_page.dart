@@ -19,27 +19,6 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
   // Whether need to switch to PIP layout. Only used in Android.
   late bool _willSwitchToPIPLayout = false;
 
-  // PIP status event channel
-  final EventChannel _eventChannel =
-      const EventChannel('better_player.nfc_ch_app/pip_status_event_channel');
-
-  StreamSubscription? _streamSubscription;
-
-  void _initEventReceiver() {
-    // Set event channel for PIP status. Only in Andorid for now.
-    if (Platform.isAndroid) {
-      _streamSubscription =
-          _eventChannel.receiveBroadcastStream().listen((isPIP) async {
-        debugPrint("isPIP: $isPIP");
-        setState(() {
-          _willSwitchToPIPLayout = isPIP;
-        });
-      }, onError: (error) {
-        throw Exception('Catch an error on stream: $error');
-      });
-    }
-  }
-
   @override
   void initState() {
     BetterPlayerConfiguration betterPlayerConfiguration =
@@ -73,18 +52,28 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
         setState(() {
           _shouldStartPIP = false;
         });
+      } else if (event.betterPlayerEventType ==
+          BetterPlayerEventType.enteringPIP) {
+        _betterPlayerController.setControlsEnabled(false);
+        setState(() {
+          _willSwitchToPIPLayout = true;
+        });
+      } else if (event.betterPlayerEventType ==
+          BetterPlayerEventType.exitingPIP) {
+        _betterPlayerController.setControlsEnabled(true);
+        setState(() {
+          _willSwitchToPIPLayout = false;
+        });
       }
     };
 
     _betterPlayerController.addEventsListener(_betterPlayerListener);
-    _initEventReceiver();
     super.initState();
   }
 
   @override
   void dispose() {
     _betterPlayerController.removeEventsListener(_betterPlayerListener);
-    _streamSubscription?.cancel();
     super.dispose();
   }
 
