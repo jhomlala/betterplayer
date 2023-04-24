@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 class PictureInPicturePage extends StatefulWidget {
   @override
@@ -39,6 +37,9 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
       if (!mounted) {
         return;
       }
+
+      debugPrint(
+          'betterPlayerEventType: ${event.betterPlayerEventType}, event.parameters: ${event.parameters.toString()}');
 
       if (event.betterPlayerEventType == BetterPlayerEventType.play) {
         _betterPlayerController.setupAutomaticPictureInPictureTransition(
@@ -90,54 +91,62 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Picture in Picture player"),
-      ),
-      body: Column(
-        children: [
-          const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Example which shows how to use PiP.",
-              style: TextStyle(fontSize: 16),
+    return WillPopScope(
+      onWillPop: () async {
+        _betterPlayerController.setupAutomaticPictureInPictureTransition(
+            willStartPIP: false);
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Picture in Picture player"),
+        ),
+        body: Column(
+          children: [
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                "Example which shows how to use PiP.",
+                style: TextStyle(fontSize: 16),
+              ),
             ),
-          ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(
-              controller: _betterPlayerController,
-              key: _betterPlayerKey,
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(
+                controller: _betterPlayerController,
+                key: _betterPlayerKey,
+              ),
             ),
-          ),
-          ElevatedButton(
-            child: Text("Show PiP"),
-            onPressed: () {
-              _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
-            },
-          ),
-          ElevatedButton(
-            child: Text("Disable PiP"),
-            onPressed: () async {
-              _betterPlayerController.disablePictureInPicture();
-            },
-          ),
-          // Button for testing.
-          ElevatedButton(
-            child: Text('Auto PIP: ' + (_shouldStartPIP ? 'ON' : 'OFF')),
-            onPressed: () async {
-              setState(() {
-                if (Platform.isAndroid) {
-                  _shouldStartPIP = !_shouldStartPIP;
-                }
+            ElevatedButton(
+              child: Text("Show PiP"),
+              onPressed: () {
                 _betterPlayerController
-                    .setupAutomaticPictureInPictureTransition(
-                        willStartPIP: _shouldStartPIP);
-              });
-            },
-          ),
-        ],
+                    .enablePictureInPicture(_betterPlayerKey);
+              },
+            ),
+            ElevatedButton(
+              child: Text("Disable PiP"),
+              onPressed: () async {
+                _betterPlayerController.disablePictureInPicture();
+              },
+            ),
+            // Button for testing.
+            ElevatedButton(
+              child: Text('Auto PIP: ' + (_shouldStartPIP ? 'ON' : 'OFF')),
+              onPressed: () async {
+                setState(() {
+                  if (Platform.isAndroid) {
+                    _shouldStartPIP = !_shouldStartPIP;
+                  }
+                  _betterPlayerController
+                      .setupAutomaticPictureInPictureTransition(
+                          willStartPIP: _shouldStartPIP);
+                });
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
