@@ -521,7 +521,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         const val HEADER_PARAMETER = "header_"
         const val FILE_PATH_PARAMETER = "filePath"
         const val ACTIVITY_NAME_PARAMETER = "activityName"
-        const val PACKAGE_NAME_PARAMETER = 'packageName'
+        const val PACKAGE_NAME_PARAMETER = "packageName"
         const val MIN_BUFFER_MS = "minBufferMs"
         const val MAX_BUFFER_MS = "maxBufferMs"
         const val BUFFER_FOR_PLAYBACK_MS = "bufferForPlaybackMs"
