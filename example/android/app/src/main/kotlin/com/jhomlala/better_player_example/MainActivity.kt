@@ -37,7 +37,7 @@ class MainActivity : FlutterActivity() {
             })
     }
 
-    ///TODO: Call this method via channel after remote notification start∂
+    ///TODO: Call this method via channel after remote notification start
     private fun startNotificationService() {
         try {
             val intent = Intent(this, BetterPlayerService::class.java)
