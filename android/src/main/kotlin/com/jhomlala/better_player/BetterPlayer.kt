@@ -219,7 +219,7 @@ internal class BetterPlayer(
 //                if(packageName == null) {
 //                    packageName = context.applicationContext.packageName
 //                }
-                val packageName1 = 'eu.houses.oireachtas.qa'
+                val packageName1 = "eu.houses.oireachtas.qa"
                 val notificationIntent = Intent()
                 notificationIntent.setClassName(
                     packageName1,
