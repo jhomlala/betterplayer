@@ -667,7 +667,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)preparePictureInPicture: (CGRect) frame
 {
-    if( _player)
+    if(_player)
     {
         // Create new controller passing reference to the AVPlayerLayer
         self._playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
