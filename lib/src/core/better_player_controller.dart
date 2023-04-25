@@ -468,6 +468,7 @@ class BetterPlayerController {
           drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
           activityName:
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
+          packageName: _betterPlayerDataSource?.notificationConfiguration?.packageName,
           clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
           videoExtension: _betterPlayerDataSource!.videoExtension,
         );

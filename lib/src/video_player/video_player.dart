@@ -333,6 +333,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? certificateUrl,
     Map<String, String>? drmHeaders,
     String? activityName,
+        String? packageName,
     String? clearKey,
     String? videoExtension,
   }) {
@@ -356,6 +357,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         certificateUrl: certificateUrl,
         drmHeaders: drmHeaders,
         activityName: activityName,
+        packageName : packageName,
         clearKey: clearKey,
         videoExtension: videoExtension,
       ),

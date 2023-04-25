@@ -225,6 +225,7 @@ class DataSource {
     this.certificateUrl,
     this.drmHeaders,
     this.activityName,
+    this.packageName,
     this.clearKey,
     this.videoExtension,
   }) : assert(uri == null || asset == null);
@@ -300,6 +301,8 @@ class DataSource {
   final Map<String, String>? drmHeaders;
 
   final String? activityName;
+
+  final String? packageName;
 
   final String? clearKey;
 
