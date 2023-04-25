@@ -496,6 +496,8 @@ class BetterPlayerController {
             overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
             activityName: _betterPlayerDataSource
                 ?.notificationConfiguration?.activityName,
+            packageName: _betterPlayerDataSource
+                ?.notificationConfiguration?.packageName,
             clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey);
         break;
       case BetterPlayerDataSourceType.memory:
@@ -516,6 +518,8 @@ class BetterPlayerController {
               overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
               activityName: _betterPlayerDataSource
                   ?.notificationConfiguration?.activityName,
+              packageName: _betterPlayerDataSource
+                  ?.notificationConfiguration?.packageName,
               clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey);
           _tempFiles.add(file);
         } else {
