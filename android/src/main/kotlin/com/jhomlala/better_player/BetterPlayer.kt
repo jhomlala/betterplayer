@@ -207,7 +207,7 @@ internal class BetterPlayer(
     fun setupPlayerNotification(
         context: Context, title: String, author: String?,
         imageUrl: String?, notificationChannelName: String?,
-        activityName: String, packageName: String?
+        activityName: String, packageName: String
     ) {
         val mediaDescriptionAdapter: MediaDescriptionAdapter = object : MediaDescriptionAdapter {
             override fun getCurrentContentTitle(player: Player): String {
@@ -222,7 +222,7 @@ internal class BetterPlayer(
                 val notificationIntent = Intent()
                 notificationIntent.setClassName(
 //                    "eu.houses.oireachtas.qa",
-                    packageName!,// : context.applicationContext.packageName,
+                    packageName,// : context.applicationContext.packageName,
                     activityName
                 )
                 notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
