@@ -222,7 +222,7 @@ internal class BetterPlayer(
                 val packageName = context.applicationContext.packageName
                 val notificationIntent = Intent()
                 notificationIntent.setClassName(
-                    "io.threadable.oireachtas",
+                    "eu.houses.oireachtas",
                     "io.threadable.oireachtas.$activityName"
                 )
                 notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
