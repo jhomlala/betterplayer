@@ -216,12 +216,13 @@ internal class BetterPlayer(
 
             @SuppressLint("UnspecifiedImmutableFlag")
             override fun createCurrentContentIntent(player: Player): PendingIntent? {
-                if(packageName == null) {
-                    packageName = context.applicationContext.packageName
-                }
+//                if(packageName == null) {
+//                    packageName = context.applicationContext.packageName
+//                }
                 val notificationIntent = Intent()
                 notificationIntent.setClassName(
-                    packageName != null ? packageName : context.applicationContext.packageName
+                    "eu.houses.oireachtas.qa",
+//                    packageName != null ? packageName : context.applicationContext.packageName,
                     "io.threadable.oireachtas.$activityName"
                 )
                 notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
