@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
@@ -60,6 +61,11 @@ class _BetterPlayerState extends State<BetterPlayer>
   ///Subscription for controller events
   StreamSubscription? _controllerEventSubscription;
 
+  // For PIP status handling.
+  final EventChannel _pipStatusEventChannel =
+      const EventChannel('better_player.nfc_ch_app/pip_status_event_channel');
+  StreamSubscription? _pipStatusSubscription;
+
   @override
   void initState() {
     super.initState();
@@ -82,6 +88,10 @@ class _BetterPlayerState extends State<BetterPlayer>
   Future<void> _setup() async {
     _controllerEventSubscription =
         widget.controller.controllerEventStream.listen(onControllerEvent);
+
+    if (Platform.isAndroid) {
+      _setPIPStatusSubscription();
+    }
 
     //Default locale
     var locale = const Locale("en", "US");
@@ -112,6 +122,7 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     WidgetsBinding.instance.removeObserver(this);
     _controllerEventSubscription?.cancel();
+    _pipStatusSubscription?.cancel();
     widget.controller.dispose();
     VisibilityDetectorController.instance
         .forget(Key("${widget.controller.hashCode}_key"));
@@ -140,6 +151,20 @@ class _BetterPlayerState extends State<BetterPlayer>
         setState(() {});
         break;
     }
+  }
+
+  // Set listener for PIP status. Only needed in Andorid for now.
+  void _setPIPStatusSubscription() {
+    _pipStatusSubscription =
+        _pipStatusEventChannel.receiveBroadcastStream().listen((isPIP) async {
+      debugPrint("isPIP: $isPIP");
+      final betterPlayerEvent = isPIP
+          ? BetterPlayerEventType.enteringPIP
+          : BetterPlayerEventType.exitingPIP;
+      widget.controller.postEvent(BetterPlayerEvent(betterPlayerEvent));
+    }, onError: (error) {
+      throw Exception('Catch an error on stream: $error');
+    });
   }
 
   // ignore: avoid_void_async
