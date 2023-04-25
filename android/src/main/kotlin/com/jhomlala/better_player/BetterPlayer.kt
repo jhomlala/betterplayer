@@ -223,7 +223,7 @@ internal class BetterPlayer(
                 notificationIntent.setClassName(
                     "eu.houses.oireachtas.qa",
 //                    packageName != null ? packageName : context.applicationContext.packageName,
-                    "io.threadable.oireachtas.$activityName"
+                    $activityName
                 )
                 notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
                         or Intent.FLAG_ACTIVITY_SINGLE_TOP)
