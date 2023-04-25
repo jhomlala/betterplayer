@@ -221,8 +221,8 @@ internal class BetterPlayer(
 //                }
                 val notificationIntent = Intent()
                 notificationIntent.setClassName(
-                    "eu.houses.oireachtas.qa",
-//                    packageName != null ? packageName : context.applicationContext.packageName,
+//                    "eu.houses.oireachtas.qa",
+                    packageName != null ? packageName : context.applicationContext.packageName,
                     activityName
                 )
                 notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
