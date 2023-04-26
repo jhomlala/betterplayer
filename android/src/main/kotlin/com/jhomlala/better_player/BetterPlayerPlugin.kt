@@ -495,6 +495,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         player.dispose()
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
+        setupAutomaticPictureInPictureTransition(false, player)
         stopPipHandler()
     }
 
