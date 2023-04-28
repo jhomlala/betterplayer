@@ -1187,6 +1187,14 @@ class BetterPlayerController {
       case VideoEventType.bufferingEnd:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingEnd));
         break;
+
+      case VideoEventType.enteringPIP:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.enteringPIP));
+        break;
+
+      case VideoEventType.exitingPIP:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.exitingPIP));
+        break;
       default:
 
         ///TODO: Handle when needed

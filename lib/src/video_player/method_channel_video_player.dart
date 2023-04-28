@@ -423,6 +423,18 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
 
+        case 'enteringPIP':
+          return VideoEvent(
+            eventType: VideoEventType.enteringPIP,
+            key: key,
+          );
+
+        case 'exitingPIP':
+          return VideoEvent(
+            eventType: VideoEventType.exitingPIP,
+            key: key,
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,

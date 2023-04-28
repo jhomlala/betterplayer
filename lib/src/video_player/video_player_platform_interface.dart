@@ -471,6 +471,12 @@ enum VideoEventType {
   /// Picture in picture mode has been dismissed
   pipStop,
 
+  /// will start Picture in picture
+  enteringPIP,
+
+  /// will stop Picture in picture
+  exitingPIP,
+
   /// An unknown event has been received.
   unknown,
 }
