@@ -501,7 +501,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _stalledCount = 0;
     _isStalledCheckStarted = false;
     _isPlaying = true;
-    [self updatePlayingState];
 }
 
 - (void)pause {
