@@ -68,6 +68,11 @@ AVPictureInPictureController *_pipController;
     }
 }
 
+- (AVPlayer *)getPlayer {
+    return _player;
+}
+
+
 - (void)clear {
     _isInitialized = false;
     _isPlaying = false;

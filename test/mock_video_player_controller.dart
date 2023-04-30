@@ -72,6 +72,7 @@ class MockVideoPlayerController extends VideoPlayerController {
     String? certificateUrl,
     Map<String, String>? drmHeaders,
     String? activityName,
+    String? packageName,
     String? clearKey,
     String? videoExtension,
   }) async {}

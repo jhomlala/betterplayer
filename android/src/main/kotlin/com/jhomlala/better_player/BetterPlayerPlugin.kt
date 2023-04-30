@@ -372,10 +372,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     val notificationChannelName =
                         getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
                     val activityName =
-                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
+                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "${flutterState?.applicationContext!!.applicationContext.packageName}.MainActivity")
+                    val packageName =
+                        getParameter(dataSource, PACKAGE_NAME_PARAMETER, flutterState?.applicationContext!!.applicationContext.packageName)
                     betterPlayer.setupPlayerNotification(
                         flutterState?.applicationContext!!,
-                        title, author, imageUrl, notificationChannelName, activityName
+                        title, author, imageUrl, notificationChannelName, activityName, packageName
                     )
                 }
             }
@@ -519,6 +521,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         const val HEADER_PARAMETER = "header_"
         const val FILE_PATH_PARAMETER = "filePath"
         const val ACTIVITY_NAME_PARAMETER = "activityName"
+        const val PACKAGE_NAME_PARAMETER = "packageName"
         const val MIN_BUFFER_MS = "minBufferMs"
         const val MAX_BUFFER_MS = "maxBufferMs"
         const val BUFFER_FOR_PLAYBACK_MS = "bufferForPlaybackMs"
