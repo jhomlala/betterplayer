@@ -40,6 +40,9 @@ AVPictureInPictureController *_pipController;
     BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
     self._betterPlayerView = playerView;
+    if (!_pipController) {
+        [self setupPipController];
+    }
     return playerView;
 }
 
@@ -802,6 +805,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)dispose {
+    _pipController = nil;
     [self pause];
     [self disposeSansEventChannel];
     [_eventChannel setStreamHandler:nil];
