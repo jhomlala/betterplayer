@@ -8,7 +8,7 @@ buildscript {
     ext.workVersion = "2.7.0"
     ext.coreVersion = "1.6.0"
     ext.gradleVersion = "7.4.2"
-    ext.kotlin_version = '1.7.10'
+    ext.kotlinVersion = '1.7.10'
 
     repositories {
         google()
@@ -32,7 +32,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
