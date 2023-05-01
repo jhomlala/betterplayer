@@ -153,6 +153,27 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> mute(int? textureId, bool value) {
+    return _channel.invokeMethod<void>(
+      'mute',
+      <String, dynamic>{
+        'textureId': textureId,
+        'muteValue': value,
+      },
+    );
+  }
+
+  @override
+  Future<bool?> isMuted(int? textureId) async {
+    return await _channel.invokeMethod<bool>(
+      'isMuted',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
+  @override
   Future<void> setVolume(int? textureId, double volume) {
     return _channel.invokeMethod<void>(
       'setVolume',
@@ -387,6 +408,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         case 'pause':
           return VideoEvent(
             eventType: VideoEventType.pause,
+            key: key,
+          );
+        case 'mute':
+          return VideoEvent(
+            eventType: VideoEventType.mute,
             key: key,
           );
 

@@ -167,6 +167,13 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 player.pause()
                 result.success(null)
             }
+            MUTE_METHOD -> {
+                player.mute(call.argument<Any>(MUTED_PARAMETER) as Boolean)
+                result.success(null)
+            }
+            IS_MUTED->{
+                result.success(player.isMuted)
+            }
             SEEK_TO_METHOD -> {
                 val location = (call.argument<Any>(LOCATION_PARAMETER) as Number?)!!.toInt()
                 player.seekTo(location)
@@ -495,6 +502,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val TEXTURE_ID_PARAMETER = "textureId"
         private const val LOOPING_PARAMETER = "looping"
         private const val VOLUME_PARAMETER = "volume"
+        private const val MUTED_PARAMETER = "muteValue"
         private const val LOCATION_PARAMETER = "location"
         private const val SPEED_PARAMETER = "speed"
         private const val WIDTH_PARAMETER = "width"
@@ -531,6 +539,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val SET_VOLUME_METHOD = "setVolume"
         private const val PLAY_METHOD = "play"
         private const val PAUSE_METHOD = "pause"
+        private const val MUTE_METHOD = "mute"
+        private const val IS_MUTED = "isMuted"
         private const val SEEK_TO_METHOD = "seekTo"
         private const val POSITION_METHOD = "position"
         private const val ABSOLUTE_POSITION_METHOD = "absolutePosition"

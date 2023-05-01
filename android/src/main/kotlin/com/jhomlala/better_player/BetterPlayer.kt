@@ -532,6 +532,12 @@ internal class BetterPlayer(
     fun pause() {
         exoPlayer?.playWhenReady = false
     }
+    fun mute(value: Boolean){
+        exoPlayer?.isDeviceMuted = value
+    }
+    val isMuted: Boolean
+        get() = exoPlayer?.isDeviceMuted?:false
+
 
     fun setLooping(value: Boolean) {
         exoPlayer?.repeatMode = if (value) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF

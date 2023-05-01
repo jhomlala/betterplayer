@@ -106,6 +106,16 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('pause() has not been implemented.');
   }
 
+  /// Mute the video .
+  Future<void> mute(int? textureId, bool value) {
+    throw UnimplementedError('mute() has not been implemented.');
+  }
+
+  /// isMuted the video
+  Future<bool?> isMuted(int? textureId) {
+    throw UnimplementedError('isMuted() has not been implemented.');
+  }
+
   /// Sets the volume to a range between 0.0 and 1.0.
   Future<void> setVolume(int? textureId, double volume) {
     throw UnimplementedError('setVolume() has not been implemented.');
@@ -452,6 +462,8 @@ enum VideoEventType {
 
   /// The video is set to pause
   pause,
+
+  mute,
 
   /// The video is set to given to position
   seek,
