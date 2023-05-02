@@ -435,6 +435,18 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _applyPlayPause();
   }
 
+  /// Mute or unmute the audio.
+  Future<void> setMute(bool mute) async {
+    await _applyMute(mute);
+  }
+
+  Future<bool> isMuted() async {
+    if (!_created || _isDisposed) {
+      return false;
+    }
+    return await _videoPlayerPlatform.isMuted(_textureId) ?? false;
+  }
+
   /// Sets whether or not the video should loop after playing once. See also
   /// [VideoPlayerValue.isLooping].
   Future<void> setLooping(bool looping) async {
@@ -487,6 +499,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     } else {
       await _videoPlayerPlatform.pause(_textureId);
     }
+  }
+
+  Future<void> _applyMute(bool value) async {
+    if (!_created || _isDisposed) {
+      return;
+    }
+    await _videoPlayerPlatform.mute(_textureId, value);
   }
 
   Future<void> _applyVolume() async {

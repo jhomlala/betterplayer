@@ -624,6 +624,14 @@ class BetterPlayerController {
     }
   }
 
+  /// Mute or unMute the player.
+  Future<void> mute(bool value) async {
+    if (videoPlayerController == null) {
+      throw StateError("The data source has not been initialized");
+    }
+    await videoPlayerController!.setMute(value);
+  }
+
   ///Enables/disables looping (infinity playback) mode.
   Future<void> setLooping(bool looping) async {
     if (videoPlayerController == null) {
