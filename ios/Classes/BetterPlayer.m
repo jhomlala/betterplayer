@@ -690,7 +690,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)willStartPictureInPicture: (bool) willStart
 {
-    self._willStartpictureInPicture = willStart;
+    self._willStartPictureInPicture = willStart;
     if (willStart) {
         if(!_pipController) {
             [self preparePictureInPicture:CGRectZero];
