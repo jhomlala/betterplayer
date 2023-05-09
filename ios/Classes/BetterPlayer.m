@@ -40,6 +40,9 @@ AVPictureInPictureController *_pipController;
     BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
     self._betterPlayerView = playerView;
+    if (!_pipController) {
+        [self setupPipController];
+    }
     return playerView;
 }
 
@@ -501,7 +504,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _stalledCount = 0;
     _isStalledCheckStarted = false;
     _isPlaying = true;
-    [self updatePlayingState];
 }
 
 - (void)pause {
@@ -722,11 +724,15 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
-
+    if (_eventSink != nil) {
+        _eventSink(@{@"event" : @"exitingPIP"});
+    }
 }
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
-
+    if (_eventSink != nil) {
+        _eventSink(@{@"event" : @"enteringPIP"});
+    }
 }
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController failedToStartPictureInPictureWithError:(NSError *)error {
@@ -799,6 +805,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)dispose {
+    _pipController = nil;
     [self pause];
     [self disposeSansEventChannel];
     [_eventChannel setStreamHandler:nil];
