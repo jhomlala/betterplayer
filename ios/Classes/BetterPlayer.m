@@ -40,7 +40,7 @@ AVPictureInPictureController *_pipController;
     BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
     self._betterPlayerView = playerView;
-    if (!_pipController) {
+    if (!_pipController && self._willStartPictureInPicture) {
         [self setupPipController];
     }
     return playerView;
@@ -504,6 +504,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _stalledCount = 0;
     _isStalledCheckStarted = false;
     _isPlaying = true;
+    if (!self._willStartPictureInPicture) {
+        [self updatePlayingState];
+    }
 }
 
 - (void)pause {
@@ -687,6 +690,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)willStartPictureInPicture: (bool) willStart
 {
+    self._willStartPictureInPicture = willStart;
     if (willStart) {
         if(!_pipController) {
             [self preparePictureInPicture:CGRectZero];

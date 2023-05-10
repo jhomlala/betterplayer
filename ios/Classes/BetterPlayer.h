@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) bool _pictureInPicture;
 @property(nonatomic) bool _observersAdded;
 @property(nonatomic) int stalledCount;
+@property(nonatomic) bool _willStartPictureInPicture;
 @property(nonatomic) bool isStalledCheckStarted;
 @property(nonatomic) float playerRate;
 @property(nonatomic) int overriddenDuration;
