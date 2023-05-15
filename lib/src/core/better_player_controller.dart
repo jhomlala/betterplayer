@@ -432,6 +432,8 @@ class BetterPlayerController {
         return VideoFormat.hls;
       case BetterPlayerVideoFormat.ss:
         return VideoFormat.ss;
+      case BetterPlayerVideoFormat.mp4:
+        return VideoFormat.mp4;
       case BetterPlayerVideoFormat.other:
         return VideoFormat.other;
     }
@@ -599,8 +601,8 @@ class BetterPlayerController {
   }
 
   ///Enables/disables full screen mode based on current fullscreen state.
-  void toggleFullScreen() {
-    _isFullScreen = !_isFullScreen;
+  void toggleFullScreen({bool? forceValue}) {
+    _isFullScreen = forceValue ?? !_isFullScreen;
     if (_isFullScreen) {
       _postControllerEvent(BetterPlayerControllerEvent.openFullscreen);
     } else {

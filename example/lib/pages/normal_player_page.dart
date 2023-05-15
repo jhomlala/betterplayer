@@ -28,6 +28,9 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     _betterPlayerDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.forBiggerBlazesUrl,
+      videoExtension: 'mp4',
+      videoFormat: BetterPlayerVideoFormat.mp4,
+      cacheConfiguration: BetterPlayerCacheConfiguration(useCache: true),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(_betterPlayerDataSource);

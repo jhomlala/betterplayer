@@ -257,6 +257,8 @@ class DataSource {
         return 'hls';
       case VideoFormat.dash:
         return 'dash';
+      case VideoFormat.mp4:
+        return 'mp4';
       case VideoFormat.other:
         return 'other';
       default:
@@ -359,6 +361,7 @@ enum VideoFormat {
 
   /// Smooth Streaming.
   ss,
+  mp4,
 
   /// Any format other than the other ones defined in this enum.
   other
