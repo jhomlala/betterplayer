@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'dart:math';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
@@ -165,7 +166,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     if (controlsConfiguration.showControls) {
       BetterPlayerTheme? playerTheme = controlsConfiguration.playerTheme;
       if (playerTheme == null) {
-        if (Platform.isAndroid) {
+        if (defaultTargetPlatform == TargetPlatform.android) {
           playerTheme = BetterPlayerTheme.material;
         } else {
           playerTheme = BetterPlayerTheme.cupertino;
