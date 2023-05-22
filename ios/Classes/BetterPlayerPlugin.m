@@ -400,6 +400,7 @@ bool _remoteCommandsInitialized = false;
             result(nil);
         } else if ([@"setupAutomaticPictureInPictureTransition" isEqualToString:call.method]){
             [player willStartPictureInPicture:[argsMap[@"willStartPIP"] boolValue]];
+            result(nil);
         } else if ([@"enablePictureInPicture" isEqualToString:call.method]){
             double left = [argsMap[@"left"] doubleValue];
             double top = [argsMap[@"top"] doubleValue];
