@@ -5,6 +5,7 @@ import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 ///Base class for both material and cupertino controls
@@ -445,7 +446,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showModalBottomSheet(List<Widget> children) {
-    Platform.isAndroid
+    kIsWeb || Platform.isAndroid
         ? _showMaterialBottomSheet(children)
         : _showCupertinoModalBottomSheet(children);
   }
