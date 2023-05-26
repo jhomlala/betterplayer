@@ -12,11 +12,9 @@ packages:
   better_player_web:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: e19597c4263e89fc4fe97e572920e76771212064
-      url: "https://github.com/SairamVemula/better_player_web.git"
-    source: git
+      path: "../better_player_web"
+      relative: true
+    source: path
     version: "0.0.1"
   boolean_selector:
     dependency: transitive

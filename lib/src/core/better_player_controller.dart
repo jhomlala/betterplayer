@@ -466,6 +466,7 @@ class BetterPlayerController {
           licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
           certificateUrl:
               _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
+          drmType: _betterPlayerDataSource?.drmConfiguration?.drmType,
           drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
           activityName:
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
@@ -1247,6 +1248,7 @@ class BetterPlayerController {
       sourceType: DataSourceType.network,
       uri: betterPlayerDataSource.url,
       useCache: true,
+      drmType: betterPlayerDataSource.drmConfiguration?.drmType,
       headers: betterPlayerDataSource.headers,
       maxCacheSize: cacheConfig.maxCacheSize,
       maxCacheFileSize: cacheConfig.maxCacheFileSize,

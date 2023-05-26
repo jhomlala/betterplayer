@@ -32,6 +32,10 @@ dev_dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+    
+# dependency_overrides:
+#   better_player_web:
+#     path: ../better_player_web
 
 flutter:
   plugin:
