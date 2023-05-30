@@ -435,6 +435,18 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
 
+        case 'playInPIPTapped':
+          return VideoEvent(
+            eventType: VideoEventType.playInPIPTapped,
+            key: key,
+          );
+
+        case 'pauseInPIPTapped':
+          return VideoEvent(
+            eventType: VideoEventType.pauseInPIPTapped,
+            key: key,
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,
