@@ -111,13 +111,11 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 if (event == Lifecycle.Event.ON_PAUSE)
                     if (this.showPictureInPictureAutomatically && this.activity?.isInPictureInPictureMode != true) {
                         this.playerForPictureInPicture?.setupMediaSession(flutterState!!.applicationContext)
-                        val params =
-                            PictureInPictureParams.Builder()
-                                .setAspectRatio(PIP_ASPECT_RATIO)
-                                .setSourceRectHint(Rect())
-                                .setActions(pipRemoteActions)
-                                .build()
-                        this.activity?.enterPictureInPictureMode(params)
+                        this.activity?.enterPictureInPictureMode(
+                            createPictureInPictureParams(
+                                pipRemoteActions
+                            )
+                        )
                     }
             }
         })
@@ -162,14 +160,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                         PipActions.PLAY.rawValue
                     )
                 )
-
             }
-            val params = PictureInPictureParams.Builder()
-                .setAspectRatio(PIP_ASPECT_RATIO)
-                .setSourceRectHint(Rect())
-                .setActions(pipRemoteActions)
-                .build()
-            activity?.setPictureInPictureParams(params)
+            activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
         }
     }
 
@@ -511,6 +503,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             videoPlayers.valueAt(index).disposeRemoteNotifications()
         }
     }
+
     @Suppress("UNCHECKED_CAST")
     private fun <T> getParameter(parameters: Map<String, Any?>?, key: String, defaultValue: T): T {
         if (parameters?.containsKey(key) == true) {
@@ -534,35 +527,38 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     ) {
         playerForPictureInPicture = player
         showPictureInPictureAutomatically = willStartPIP
-        // `setAutoEnterEnabled` only available from Build.VERSION_CODES.S(Android12)
+        player.setupMediaSession(flutterState!!.applicationContext)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            player.setupMediaSession(flutterState!!.applicationContext)
-            val params = PictureInPictureParams.Builder()
-                .setAspectRatio(PIP_ASPECT_RATIO)
-                .setSourceRectHint(Rect())
-                .setAutoEnterEnabled(willStartPIP)
-                .setActions(pipRemoteActions)
-                .build()
-            activity?.setPictureInPictureParams(params)
+            activity?.setPictureInPictureParams(
+                createPictureInPictureParams(
+                    pipRemoteActions,
+                    willStartPIP
+                )
+            )
         }
     }
 
-    private fun updatePictureInPictureParams(
-        willStartPIP: Boolean,
-        actions: ArrayList<RemoteAction>
-    ) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val params = PictureInPictureParams.Builder()
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createPictureInPictureParams(
+        actions: List<RemoteAction>,
+        willAutoEnter: Boolean? = null
+    ): PictureInPictureParams {
+        val params: PictureInPictureParams
+        if (willAutoEnter != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            params = PictureInPictureParams.Builder()
                 .setAspectRatio(PIP_ASPECT_RATIO)
                 .setSourceRectHint(Rect())
-                .setAutoEnterEnabled(willStartPIP)
+                .setAutoEnterEnabled(willAutoEnter) // `setAutoEnterEnabled` only available from Build.VERSION_CODES.S(Android12)
                 .setActions(actions)
                 .build()
-
-            activity?.setPictureInPictureParams(params)
         } else {
-            showPictureInPictureAutomatically = willStartPIP
+            params = PictureInPictureParams.Builder()
+                .setAspectRatio(PIP_ASPECT_RATIO)
+                .setSourceRectHint(Rect())
+                .setActions(actions)
+                .build()
         }
+        return params
     }
 
     private fun enablePictureInPicture(player: BetterPlayer) {
