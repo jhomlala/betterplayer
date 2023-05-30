@@ -537,7 +537,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     ///When player is playing, pause video, seek to new position and start again. This will prevent issues with seekbar jumps.
     bool wasPlaying = _isPlaying;
     if (wasPlaying){
-        [_player pause];
+        if (self._willStartPictureInPicture) {
+            // Prevent player pause if has pip mode
+            _player.rate = 0.1;
+        } else {
+            [_player pause];
+        }
     }
 
     [_player seekToTime:CMTimeMake(location, 1000)
