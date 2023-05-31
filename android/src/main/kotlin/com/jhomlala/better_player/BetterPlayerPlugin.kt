@@ -146,33 +146,42 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             pipRemoteActions.clear()
-            if (isPlaying) {
-                pipRemoteActions.add(
-                    createRemoteAction(
-                        R.drawable.better_player_pause_24dp,
-                        PipActions.PAUSE.rawValue
+            val context = flutterState?.applicationContext
+            context?.let {
+                if (isPlaying) {
+                    pipRemoteActions.add(
+                        createRemoteAction(
+                            context,
+                            R.drawable.better_player_pause_24dp,
+                            PipActions.PAUSE.rawValue
+                        )
                     )
-                )
-            } else {
-                pipRemoteActions.add(
-                    createRemoteAction(
-                        R.drawable.better_player_play_arrow_24dp,
-                        PipActions.PLAY.rawValue
+                } else {
+                    pipRemoteActions.add(
+                        createRemoteAction(
+                            context,
+                            R.drawable.better_player_play_arrow_24dp,
+                            PipActions.PLAY.rawValue
+                        )
                     )
-                )
+                }
             }
             activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createRemoteAction(@DrawableRes iconResId: Int, controlType: Int): RemoteAction {
+    private fun createRemoteAction(
+        context: Context,
+        @DrawableRes iconResId: Int,
+        controlType: Int
+    ): RemoteAction {
         return RemoteAction(
-            Icon.createWithResource(flutterState!!.applicationContext, iconResId),
+            Icon.createWithResource(context, iconResId),
             "",
             "",
             PendingIntent.getBroadcast(
-                flutterState!!.applicationContext,
+                context,
                 controlType,
                 Intent(DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
                     EXTRA_ACTION_TYPE,
