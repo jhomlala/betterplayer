@@ -27,6 +27,7 @@ int _seekPosition;
     _isInitialized = false;
     _isPlaying = false;
     _disposed = false;
+    _seekPosition = -1;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     
@@ -71,6 +72,7 @@ int _seekPosition;
     _isInitialized = false;
     _isPlaying = false;
     _disposed = false;
+    _seekPosition = -1;
     _failedCount = 0;
     _key = nil;
     if (_player.currentItem == nil) {
