@@ -122,7 +122,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     // To handle action while in picture-in-picture mode.
-    private val broadcastReceiver = object : BroadcastReceiver() {
+    private val broadcastReceiverForPIPAction = object : BroadcastReceiver() {
         // Called when an item is clicked.
         override fun onReceive(context: Context?, intent: Intent?) {
             if (intent == null || intent.action != DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION) {
@@ -141,7 +141,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     // Custom listener for exoPlayer event.
     // To change action in PIP mode based on playing status.
-    private val onIsPlayingChangedListener = object : Player.Listener {
+    private val playerEventListenerForIsPlayingChanged = object : Player.Listener {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
@@ -217,11 +217,11 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 }
                 val player = BetterPlayer(
                     flutterState?.applicationContext!!, eventChannel, handle,
-                    customDefaultLoadControl, result, onIsPlayingChangedListener
+                    customDefaultLoadControl, result, playerEventListenerForIsPlayingChanged
                 )
                 videoPlayers.put(handle.id(), player)
                 this.activity?.registerReceiver(
-                    broadcastReceiver,
+                    broadcastReceiverForPIPAction,
                     IntentFilter(DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION)
                 )
             }
@@ -596,7 +596,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
         setupAutomaticPictureInPictureTransition(false, player)
-        this.activity?.unregisterReceiver(broadcastReceiver)
+        this.activity?.unregisterReceiver(broadcastReceiverForPIPAction)
         stopPipHandler()
     }
 
