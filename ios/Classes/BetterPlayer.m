@@ -17,6 +17,7 @@ static void* presentationSizeContext = &presentationSizeContext;
 void (^__strong _Nonnull _restoreUserInterfaceForPIPStopCompletionHandler)(BOOL);
 API_AVAILABLE(ios(9.0))
 AVPictureInPictureController *_pipController;
+int _seekPosition;
 #endif
 
 @implementation BetterPlayer
@@ -512,7 +513,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (int64_t)position {
-    return [BetterPlayerTimeUtils FLTCMTimeToMillis:([_player currentTime])];
+    // Return seek position when seeking, fix seekbar jumps
+    return _seekPosition != -1 ? (int64_t) _seekPosition : [BetterPlayerTimeUtils FLTCMTimeToMillis:([_player currentTime])];
 }
 
 - (int64_t)absolutePosition {
@@ -544,13 +546,20 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
             [_player pause];
         }
     }
+    
+    _seekPosition = location;
 
+    [_player.currentItem cancelPendingSeeks];
     [_player seekToTime:CMTimeMake(location, 1000)
         toleranceBefore:kCMTimeZero
          toleranceAfter:kCMTimeZero
       completionHandler:^(BOOL finished){
-        if (wasPlaying){
-            _player.rate = _playerRate;
+        if (finished) {
+            _seekPosition = -1;
+            
+            if (wasPlaying) {
+                _player.rate = _playerRate;
+            }
         }
     }];
 }
