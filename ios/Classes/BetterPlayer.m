@@ -38,9 +38,6 @@ int _seekPosition;
     BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
     self._betterPlayerView = playerView;
-    if (!_pipController && self._willStartPictureInPicture) {
-        [self setupPipController];
-    }
     return playerView;
 }
 
@@ -684,24 +681,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 }
 
-- (void)preparePictureInPicture: (CGRect) frame
-{
-    if(_player)
-    {
-        // Create new controller passing reference to the AVPlayerLayer
-        self._playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-        UIViewController* vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-        self._playerLayer.frame = frame;
-        self._playerLayer.needsDisplayOnBoundsChange = YES;
-        [vc.view.layer addSublayer:self._playerLayer];
-        vc.view.layer.needsDisplayOnBoundsChange = YES;
-        if (@available(iOS 9.0, *)) {
-            _pipController = NULL;
-        }
-        [self setupPipController];
-    }
-}
-
 - (void)willStartPictureInPicture: (bool) willStart
 {
     self._willStartPictureInPicture = willStart;
@@ -710,7 +689,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (willStart) {
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
                        dispatch_get_main_queue(), ^{
-            [self preparePictureInPicture:CGRectZero];
+            [self setupPipController];
         });
     }
 }
