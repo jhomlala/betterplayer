@@ -66,10 +66,10 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
           _willSwitchToPIPLayout = false;
         });
       } else if (event.betterPlayerEventType ==
-          BetterPlayerEventType.playInPIPTapped) {
+          BetterPlayerEventType.tapPlayButtonInPIP) {
         _betterPlayerController.play();
       } else if (event.betterPlayerEventType ==
-          BetterPlayerEventType.pauseInPIPTapped) {
+          BetterPlayerEventType.tapPauseButtonInPIP) {
         _betterPlayerController.pause();
       }
     };

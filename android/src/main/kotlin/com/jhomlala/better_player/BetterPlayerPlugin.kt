@@ -130,10 +130,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             }
             when (intent.getIntExtra(EXTRA_ACTION_TYPE, 0)) {
                 PipActions.PLAY.rawValue -> {
-                    playerForPictureInPicture?.playInPIPTapped()
+                    playerForPictureInPicture?.tapPlayButtonInPIP()
                 }
                 PipActions.PAUSE.rawValue -> {
-                    playerForPictureInPicture?.pauseInPIPTapped()
+                    playerForPictureInPicture?.tapPauseButtonInPIP()
                 }
             }
         }

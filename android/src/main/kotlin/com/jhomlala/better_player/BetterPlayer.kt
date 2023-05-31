@@ -539,15 +539,15 @@ internal class BetterPlayer(
         exoPlayer?.playWhenReady = false
     }
 
-    fun playInPIPTapped() {
+    fun tapPlayButtonInPIP() {
         val event: MutableMap<String, Any?> = HashMap()
-        event["event"] = "playInPIPTapped"
+        event["event"] = "tapPlayButtonInPIP"
         eventSink.success(event)
     }
 
-    fun pauseInPIPTapped() {
+    fun tapPauseButtonInPIP() {
         val event: MutableMap<String, Any?> = HashMap()
-        event["event"] = "pauseInPIPTapped"
+        event["event"] = "tapPauseButtonInPIP"
         eventSink.success(event)
     }
 

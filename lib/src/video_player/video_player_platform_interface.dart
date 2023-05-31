@@ -478,10 +478,10 @@ enum VideoEventType {
   exitingPIP,
 
   /// When tap custom play button in Picture in picture mode
-  playInPIPTapped,
+  tapPlayButtonInPIP,
 
   /// When tap custom pause button in Picture in picture mode
-  pauseInPIPTapped,
+  tapPauseButtonInPIP,
 
   /// An unknown event has been received.
   unknown,
