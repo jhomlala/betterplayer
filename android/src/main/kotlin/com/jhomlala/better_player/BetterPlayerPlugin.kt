@@ -541,22 +541,15 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         actions: List<RemoteAction>,
         willAutoEnter: Boolean? = null
     ): PictureInPictureParams {
-        val params: PictureInPictureParams
+        var pipParamsBuilder = PictureInPictureParams.Builder()
+            .setAspectRatio(PIP_ASPECT_RATIO)
+            .setSourceRectHint(Rect())
+            .setActions(actions)
         if (willAutoEnter != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            params = PictureInPictureParams.Builder()
-                .setAspectRatio(PIP_ASPECT_RATIO)
-                .setSourceRectHint(Rect())
-                .setAutoEnterEnabled(willAutoEnter) // `setAutoEnterEnabled` only available from Build.VERSION_CODES.S(Android12)
-                .setActions(actions)
-                .build()
-        } else {
-            params = PictureInPictureParams.Builder()
-                .setAspectRatio(PIP_ASPECT_RATIO)
-                .setSourceRectHint(Rect())
-                .setActions(actions)
-                .build()
+            // `setAutoEnterEnabled` only available from Build.VERSION_CODES.S(Android12)
+            pipParamsBuilder.setAutoEnterEnabled(willAutoEnter)
         }
-        return params
+        return pipParamsBuilder.build()
     }
 
     private fun enablePictureInPicture(player: BetterPlayer) {
