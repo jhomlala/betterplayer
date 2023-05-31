@@ -197,9 +197,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             return
         }
         when (call.method) {
-            INIT_METHOD -> {
-                disposeAllPlayers()
-            }
+            INIT_METHOD -> disposeAllPlayers()
             CREATE_METHOD -> {
                 val handle = flutterState!!.textureRegistry!!.createSurfaceTexture()
                 val eventChannel = EventChannel(
