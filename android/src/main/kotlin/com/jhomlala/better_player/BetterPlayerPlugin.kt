@@ -149,14 +149,14 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             if (isPlaying) {
                 pipRemoteActions.add(
                     createRemoteAction(
-                        R.drawable.ic_pause_24dp,
+                        R.drawable.better_player_pause_24dp,
                         PipActions.PAUSE.rawValue
                     )
                 )
             } else {
                 pipRemoteActions.add(
                     createRemoteAction(
-                        R.drawable.ic_play_arrow_24dp,
+                        R.drawable.better_player_play_arrow_24dp,
                         PipActions.PLAY.rawValue
                     )
                 )
