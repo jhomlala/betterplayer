@@ -1195,6 +1195,16 @@ class BetterPlayerController {
       case VideoEventType.exitingPIP:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.exitingPIP));
         break;
+
+      case VideoEventType.tapPlayButtonInPIP:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.tapPlayButtonInPIP));
+        break;
+
+      case VideoEventType.tapPauseButtonInPIP:
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.tapPauseButtonInPIP));
+        break;
+
       default:
 
         ///TODO: Handle when needed

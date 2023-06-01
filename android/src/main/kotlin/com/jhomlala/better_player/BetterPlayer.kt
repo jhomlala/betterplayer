@@ -70,7 +70,8 @@ internal class BetterPlayer(
     private val eventChannel: EventChannel,
     private val textureEntry: SurfaceTextureEntry,
     customDefaultLoadControl: CustomDefaultLoadControl?,
-    result: MethodChannel.Result
+    result: MethodChannel.Result,
+    private val customPlayerEventListener: Player.Listener
 ) {
     private val exoPlayer: ExoPlayer?
     private val eventSink = QueuingEventSink()
@@ -493,6 +494,9 @@ internal class BetterPlayer(
                 eventSink.error("VideoError", "Video player had error $error", "")
             }
         })
+        // Add event listener given from BetterPlayerPlugin too.
+        exoPlayer?.addListener(customPlayerEventListener)
+
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()
         result.success(reply)
@@ -533,6 +537,18 @@ internal class BetterPlayer(
 
     fun pause() {
         exoPlayer?.playWhenReady = false
+    }
+
+    fun tapPlayButtonInPIP() {
+        val event: MutableMap<String, Any?> = HashMap()
+        event["event"] = "tapPlayButtonInPIP"
+        eventSink.success(event)
+    }
+
+    fun tapPauseButtonInPIP() {
+        val event: MutableMap<String, Any?> = HashMap()
+        event["event"] = "tapPauseButtonInPIP"
+        eventSink.success(event)
     }
 
     fun setLooping(value: Boolean) {
