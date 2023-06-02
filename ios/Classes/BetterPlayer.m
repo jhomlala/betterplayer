@@ -330,21 +330,23 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
     if ([path isEqualToString:@"rate"]) {
         if (@available(iOS 10.0, *)) {
+            NSLog(@"_playerStatus %ld", (long)_player.timeControlStatus);
             if (_pipController.pictureInPictureActive == true){
-                if (_lastAvPlayerTimeControlStatus != [NSNull null] && _lastAvPlayerTimeControlStatus == _player.timeControlStatus){
+                if (_lastAvPlayerTimeControlStatus == _player.timeControlStatus){
                     return;
                 }
 
+                _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+                
                 if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused){
-                    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+                    NSLog(@"AVPlayerTimeControlStatusPaused");
                     if (_eventSink != nil) {
                       _eventSink(@{@"event" : @"pause"});
                     }
                     return;
 
-                }
-                if (_player.timeControlStatus == AVPlayerTimeControlStatusPlaying){
-                    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+                } else {
+                    NSLog(@"AVPlayerTimeControlStatusPlaying");
                     if (_eventSink != nil) {
                       _eventSink(@{@"event" : @"play"});
                     }
@@ -406,7 +408,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         }
     } else if (context == playbackLikelyToKeepUpContext) {
         if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
-            [self updatePlayingState];
+            if (_pipController.pictureInPictureActive == false) {
+                [self updatePlayingState];
+            }
             if (_eventSink != nil) {
                 _eventSink(@{@"event" : @"bufferingEnd", @"key" : _key});
             }
@@ -429,7 +433,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (!self._observersAdded){
         [self addObservers:[_player currentItem]];
     }
-
+    NSLog(@"updatePlayingState %@", _isPlaying ? @"playing" : @"pause");
     if (_isPlaying) {
         if (@available(iOS 10.0, *)) {
             [_player playImmediatelyAtRate:1.0];
@@ -501,9 +505,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _stalledCount = 0;
     _isStalledCheckStarted = false;
     _isPlaying = true;
-    if (!self._willStartPictureInPicture) {
-        [self updatePlayingState];
-    }
+    [self updatePlayingState];
 }
 
 - (void)pause {
@@ -732,6 +734,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
+    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"enteringPIP"});
     }
