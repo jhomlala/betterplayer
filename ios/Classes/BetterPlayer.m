@@ -330,23 +330,20 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
     if ([path isEqualToString:@"rate"]) {
         if (@available(iOS 10.0, *)) {
-            NSLog(@"_playerStatus %ld", (long)_player.timeControlStatus);
             if (_pipController.pictureInPictureActive == true){
-                if (_lastAvPlayerTimeControlStatus == _player.timeControlStatus){
+                if (_lastAvPlayerTimeControlStatus != [NSNull null] && _lastAvPlayerTimeControlStatus == _player.timeControlStatus){
                     return;
                 }
-
-                _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
                 
-                if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused){
-                    NSLog(@"AVPlayerTimeControlStatusPaused");
+                if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused) {
+                    _lastAvPlayerTimeControlStatus = AVPlayerTimeControlStatusPaused;
                     if (_eventSink != nil) {
                       _eventSink(@{@"event" : @"pause"});
                     }
+                    
                     return;
-
                 } else {
-                    NSLog(@"AVPlayerTimeControlStatusPlaying");
+                    _lastAvPlayerTimeControlStatus = AVPlayerTimeControlStatusPlaying;
                     if (_eventSink != nil) {
                       _eventSink(@{@"event" : @"play"});
                     }
@@ -734,7 +731,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
-    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+    // When change to PIP mode, need to correct control status
+    _lastAvPlayerTimeControlStatus = AVPlayerTimeControlStatusPlaying;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"enteringPIP"});
     }
