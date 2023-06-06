@@ -17,6 +17,7 @@ static void* presentationSizeContext = &presentationSizeContext;
 void (^__strong _Nonnull _restoreUserInterfaceForPIPStopCompletionHandler)(BOOL);
 API_AVAILABLE(ios(9.0))
 AVPictureInPictureController *_pipController;
+int _seekPosition;
 #endif
 
 @implementation BetterPlayer
@@ -26,12 +27,10 @@ AVPictureInPictureController *_pipController;
     _isInitialized = false;
     _isPlaying = false;
     _disposed = false;
+    _seekPosition = -1;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
-    ///Fix for loading large videos
-    if (@available(iOS 10.0, *)) {
-        _player.automaticallyWaitsToMinimizeStalling = false;
-    }
+    
     self._observersAdded = false;
     return self;
 }
@@ -40,9 +39,6 @@ AVPictureInPictureController *_pipController;
     BetterPlayerView *playerView = [[BetterPlayerView alloc] initWithFrame:CGRectZero];
     playerView.player = _player;
     self._betterPlayerView = playerView;
-    if (!_pipController && self._willStartPictureInPicture) {
-        [self setupPipController];
-    }
     return playerView;
 }
 
@@ -76,6 +72,7 @@ AVPictureInPictureController *_pipController;
     _isInitialized = false;
     _isPlaying = false;
     _disposed = false;
+    _seekPosition = -1;
     _failedCount = 0;
     _key = nil;
     if (_player.currentItem == nil) {
@@ -515,7 +512,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (int64_t)position {
-    return [BetterPlayerTimeUtils FLTCMTimeToMillis:([_player currentTime])];
+    // Return seek position when seeking, fix seekbar jumps
+    return _seekPosition != -1 ? (int64_t) _seekPosition : [BetterPlayerTimeUtils FLTCMTimeToMillis:([_player currentTime])];
 }
 
 - (int64_t)absolutePosition {
@@ -540,15 +538,27 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     ///When player is playing, pause video, seek to new position and start again. This will prevent issues with seekbar jumps.
     bool wasPlaying = _isPlaying;
     if (wasPlaying){
-        [_player pause];
+        if (self._willStartPictureInPicture) {
+            // PIP doesn't work if player pauses, so when seeking we make the player play but with minimum speed
+            _player.rate = 0.1;
+        } else {
+            [_player pause];
+        }
     }
+    
+    _seekPosition = location;
 
+    [_player.currentItem cancelPendingSeeks];
     [_player seekToTime:CMTimeMake(location, 1000)
         toleranceBefore:kCMTimeZero
          toleranceAfter:kCMTimeZero
       completionHandler:^(BOOL finished){
-        if (wasPlaying){
-            _player.rate = _playerRate;
+        if (finished) {
+            _seekPosition = -1;
+            
+            if (wasPlaying) {
+                _player.rate = _playerRate;
+            }
         }
     }];
 }
@@ -673,33 +683,18 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 }
 
-- (void)preparePictureInPicture: (CGRect) frame
-{
-    if(_player)
-    {
-        // Create new controller passing reference to the AVPlayerLayer
-        self._playerLayer = [AVPlayerLayer playerLayerWithPlayer:_player];
-        UIViewController* vc = [[[UIApplication sharedApplication] keyWindow] rootViewController];
-        self._playerLayer.frame = frame;
-        self._playerLayer.needsDisplayOnBoundsChange = YES;
-        [vc.view.layer addSublayer:self._playerLayer];
-        vc.view.layer.needsDisplayOnBoundsChange = YES;
-        if (@available(iOS 9.0, *)) {
-            _pipController = NULL;
-        }
-        [self setupPipController];
-    }
-}
-
 - (void)willStartPictureInPicture: (bool) willStart
 {
     self._willStartPictureInPicture = willStart;
+    _pipController = nil;
+    
     if (willStart) {
-        if(!_pipController) {
-            [self preparePictureInPicture:CGRectZero];
-        }
-    } else {
-        _pipController = nil;
+        // "0.2 seconds" is a magic number. But it is the same as the library's code. https://github.com/jhomlala/betterplayer/blob/f6a77cf6fbb515f01aa9fb459b2ee739de3e724c/ios/Classes/BetterPlayer.m#L647
+        // It is waiting to release the previous _pipController.
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{
+            [self setupPipController];
+        });
     }
 }
 
