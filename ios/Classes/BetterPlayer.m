@@ -335,15 +335,15 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                     return;
                 }
                 
+                _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+                
                 if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused) {
-                    _lastAvPlayerTimeControlStatus = AVPlayerTimeControlStatusPaused;
                     if (_eventSink != nil) {
                       _eventSink(@{@"event" : @"pause"});
                     }
                     
                     return;
                 } else {
-                    _lastAvPlayerTimeControlStatus = AVPlayerTimeControlStatusPlaying;
                     if (_eventSink != nil) {
                       _eventSink(@{@"event" : @"play"});
                     }
@@ -732,7 +732,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
     // When change to PIP mode, need to correct control status
-    _lastAvPlayerTimeControlStatus = AVPlayerTimeControlStatusPlaying;
+    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"enteringPIP"});
     }
