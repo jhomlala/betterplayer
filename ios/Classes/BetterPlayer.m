@@ -432,6 +432,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
     NSLog(@"updatePlayingState %@", _isPlaying ? @"playing" : @"pause");
     if (_isPlaying) {
+        if (_pipController.pictureInPictureActive == true
+            && _player.timeControlStatus != AVPlayerTimeControlStatusPaused
+            && _player.rate == _playerRate) {
+            return;
+        }
         if (@available(iOS 10.0, *)) {
             [_player playImmediatelyAtRate:1.0];
             _player.rate = _playerRate;
