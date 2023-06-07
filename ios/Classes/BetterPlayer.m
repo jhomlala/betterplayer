@@ -334,17 +334,16 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 if (_lastAvPlayerTimeControlStatus != [NSNull null] && _lastAvPlayerTimeControlStatus == _player.timeControlStatus){
                     return;
                 }
-
-                if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused){
-                    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+                
+                _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+                
+                if (_player.timeControlStatus == AVPlayerTimeControlStatusPaused) {
                     if (_eventSink != nil) {
                       _eventSink(@{@"event" : @"pause"});
                     }
+                    
                     return;
-
-                }
-                if (_player.timeControlStatus == AVPlayerTimeControlStatusPlaying){
-                    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
+                } else {
                     if (_eventSink != nil) {
                       _eventSink(@{@"event" : @"play"});
                     }
@@ -406,7 +405,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         }
     } else if (context == playbackLikelyToKeepUpContext) {
         if ([[_player currentItem] isPlaybackLikelyToKeepUp]) {
-            [self updatePlayingState];
+            if (_pipController.pictureInPictureActive == false) {
+                [self updatePlayingState];
+            }
             if (_eventSink != nil) {
                 _eventSink(@{@"event" : @"bufferingEnd", @"key" : _key});
             }
@@ -429,8 +430,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (!self._observersAdded){
         [self addObservers:[_player currentItem]];
     }
-
+    NSLog(@"updatePlayingState %@", _isPlaying ? @"playing" : @"pause");
     if (_isPlaying) {
+        if (_pipController.pictureInPictureActive == true
+            && _player.timeControlStatus != AVPlayerTimeControlStatusPaused
+            && _player.rate == _playerRate) {
+            return;
+        }
         if (@available(iOS 10.0, *)) {
             [_player playImmediatelyAtRate:1.0];
             _player.rate = _playerRate;
@@ -501,9 +507,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _stalledCount = 0;
     _isStalledCheckStarted = false;
     _isPlaying = true;
-    if (!self._willStartPictureInPicture) {
-        [self updatePlayingState];
-    }
+    [self updatePlayingState];
 }
 
 - (void)pause {
@@ -732,6 +736,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStartPictureInPicture:(AVPictureInPictureController *)pictureInPictureController {
+    // When change to PIP mode, need to correct control status
+    _lastAvPlayerTimeControlStatus = _player.timeControlStatus;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"enteringPIP"});
     }
