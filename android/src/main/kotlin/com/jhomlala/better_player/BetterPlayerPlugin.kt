@@ -550,7 +550,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         actions: List<RemoteAction>,
         willAutoEnter: Boolean? = null
     ): PictureInPictureParams {
-        var pipParamsBuilder = PictureInPictureParams.Builder()
+        val pipParamsBuilder = PictureInPictureParams.Builder()
             .setAspectRatio(PIP_ASPECT_RATIO)
             .setSourceRectHint(Rect())
             .setActions(actions)
