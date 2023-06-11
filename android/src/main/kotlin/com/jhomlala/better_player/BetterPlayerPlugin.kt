@@ -118,6 +118,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                         )
                     }
             }
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                this.activity?.unregisterReceiver(broadcastReceiverForPIPAction)
+            }
         })
     }
 
