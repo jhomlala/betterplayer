@@ -55,6 +55,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var showPictureInPictureAutomatically: Boolean = false
     private val pipRemoteActions: ArrayList<RemoteAction> = ArrayList()
 
+    // To handle action while in picture-in-picture mode.
+    private var broadcastReceiverForPIPAction: BroadcastReceiver? = null
+
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         val loader = FlutterLoader()
         flutterState = FlutterState(
@@ -119,26 +122,47 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     }
             }
             if (event == Lifecycle.Event.ON_DESTROY) {
-                this.activity?.unregisterReceiver(broadcastReceiverForPIPAction)
+                unregisterBroadcastReceiverForPIPAction()
             }
         })
     }
 
-    // To handle action while in picture-in-picture mode.
-    private val broadcastReceiverForPIPAction = object : BroadcastReceiver() {
-        // Called when an item is clicked.
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent == null || intent.action != DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION) {
-                return
-            }
-            when (intent.getIntExtra(EXTRA_ACTION_TYPE, 0)) {
-                PipActions.PLAY.rawValue -> {
-                    playerForPictureInPicture?.tapPlayButtonInPIP()
+    private fun initBroadcastReceiverForPIPActionIfNeeded() {
+        if (broadcastReceiverForPIPAction != null) {
+            // Just in case, return if already initialized.
+            return
+        }
+        broadcastReceiverForPIPAction = object : BroadcastReceiver() {
+            // Called when an item is clicked.
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent == null || intent.action != DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION) {
+                    return
                 }
-                PipActions.PAUSE.rawValue -> {
-                    playerForPictureInPicture?.tapPauseButtonInPIP()
+                when (intent.getIntExtra(EXTRA_ACTION_TYPE, 0)) {
+                    PipActions.PLAY.rawValue -> {
+                        playerForPictureInPicture?.tapPlayButtonInPIP()
+                    }
+                    PipActions.PAUSE.rawValue -> {
+                        playerForPictureInPicture?.tapPauseButtonInPIP()
+                    }
                 }
             }
+        }
+    }
+
+    private fun registerBroadcastReceiverForPIPAction() {
+        initBroadcastReceiverForPIPActionIfNeeded()
+        this.activity?.registerReceiver(
+            broadcastReceiverForPIPAction,
+            IntentFilter(DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION)
+        )
+    }
+
+    private fun unregisterBroadcastReceiverForPIPAction() {
+        // To avoid `Receiver not registered` exception, check it was registered by doing null check.
+        broadcastReceiverForPIPAction?.let {
+            this.activity?.unregisterReceiver(broadcastReceiverForPIPAction)
+            broadcastReceiverForPIPAction = null
         }
     }
 
@@ -232,10 +256,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     customDefaultLoadControl, result, playerEventListenerForIsPlayingChanged
                 )
                 videoPlayers.put(handle.id(), player)
-                this.activity?.registerReceiver(
-                    broadcastReceiverForPIPAction,
-                    IntentFilter(DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION)
-                )
+                registerBroadcastReceiverForPIPAction()
             }
             PRE_CACHE_METHOD -> preCache(call, result)
             STOP_PRE_CACHE_METHOD -> stopPreCache(call, result)
@@ -601,7 +622,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
         setupAutomaticPictureInPictureTransition(false, player)
-        this.activity?.unregisterReceiver(broadcastReceiverForPIPAction)
+        unregisterBroadcastReceiverForPIPAction()
         stopPipHandler()
     }
 
