@@ -549,7 +549,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         result(nil);
     } else if (speed < 0 || speed > 3.0) {
         result([FlutterError errorWithCode:@"unsupported_speed"
-                                   message:@"Speed must be >= 0.0 and <= 2.0"
+                                   message:@"Speed must be >= 0.0 and <= 3.0"
                                    details:nil]);
     } else if ((speed > 1.0 && _player.currentItem.canPlayFastForward) ||
                (speed < 1.0 && _player.currentItem.canPlaySlowForward)) {
