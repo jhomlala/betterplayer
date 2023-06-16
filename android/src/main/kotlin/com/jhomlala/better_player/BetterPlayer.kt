@@ -312,6 +312,9 @@ internal class BetterPlayer(
 
             exoPlayer?.let {
                 setPlayer(ForwardingPlayer(exoPlayer))
+                setUsePlayPauseActions(true) // 再生停止のみにする
+                setUseFastForwardAction(false)
+                setUseRewindAction(false)
                 setUseNextAction(false)
                 setUsePreviousAction(false)
                 setUseStopAction(false)
@@ -322,7 +325,10 @@ internal class BetterPlayer(
             }
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        // この部分があるとAndroid13にて再生/停止ボタンが表示されない
+        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+            && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S
+        ) {
             refreshHandler = Handler(Looper.getMainLooper())
             refreshRunnable = Runnable {
                 val playbackState: PlaybackStateCompat = if (exoPlayer?.isPlaying == true) {
@@ -341,6 +347,28 @@ internal class BetterPlayer(
             }
             refreshHandler?.postDelayed(refreshRunnable!!, 0)
         }
+
+        // ここでコールバック設定すると動く
+        mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
+            override fun onSeekTo(pos: Long) {
+                Log.d("onSeekTo","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                sendSeekToEvent(pos)
+                super.onSeekTo(pos)
+            }
+
+            override fun onPlay() {
+                Log.d("onPlay","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                tapPlayButtonInPIP()
+                super.onPlay()
+            }
+
+            override fun onPause() {
+                Log.d("onPause","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                tapPauseButtonInPIP()
+                super.onPause()
+            }
+        })
+
         exoPlayerEventListener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 mediaSession?.setMetadata(

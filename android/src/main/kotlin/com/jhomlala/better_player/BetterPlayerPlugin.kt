@@ -558,7 +558,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     ) {
         playerForPictureInPicture = player
         showPictureInPictureAutomatically = willStartPIP
-        player.setupMediaSession(flutterState!!.applicationContext)
+//        player.setupMediaSession(flutterState!!.applicationContext) // ここでsetupMediaSession しない方が、Android13のシークバーが表示できる
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             activity?.setPictureInPictureParams(
                 createPictureInPictureParams(
