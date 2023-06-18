@@ -12,55 +12,46 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import com.jhomlala.better_player.DataSourceUtils.getUserAgent
-import com.jhomlala.better_player.DataSourceUtils.isHTTP
-import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
-import io.flutter.plugin.common.EventChannel
-import io.flutter.view.TextureRegistry.SurfaceTextureEntry
-import io.flutter.plugin.common.MethodChannel
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import android.support.v4.media.session.MediaSessionCompat
-import com.google.android.exoplayer2.drm.DrmSessionManager
-import androidx.work.WorkManager
-import androidx.work.WorkInfo
-import com.google.android.exoplayer2.drm.HttpMediaDrmCallback
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
-import com.google.android.exoplayer2.drm.FrameworkMediaDrm
-import com.google.android.exoplayer2.drm.UnsupportedDrmException
-import com.google.android.exoplayer2.drm.DummyExoMediaDrm
-import com.google.android.exoplayer2.drm.LocalMediaDrmCallback
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ClippingMediaSource
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback
-import androidx.work.OneTimeWorkRequest
-import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v4.media.MediaMetadataCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.Surface
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Observer
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.drm.*
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.ClippingMediaSource
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import io.flutter.plugin.common.EventChannel.EventSink
-import androidx.work.Data
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.drm.DrmSessionManagerProvider
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
+import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionOverride
+import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.google.android.exoplayer2.ui.PlayerNotificationManager.*
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.util.Util
+import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
+import com.jhomlala.better_player.DataSourceUtils.getUserAgent
+import com.jhomlala.better_player.DataSourceUtils.isHTTP
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.EventChannel.EventSink
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.view.TextureRegistry.SurfaceTextureEntry
 import java.io.File
-import java.lang.Exception
-import java.lang.IllegalStateException
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -306,9 +297,72 @@ internal class BetterPlayer(
         playerNotificationManager = PlayerNotificationManager.Builder(
             context, NOTIFICATION_ID,
             playerNotificationChannelName!!
-        ).setMediaDescriptionAdapter(mediaDescriptionAdapter).build()
+        ).setMediaDescriptionAdapter(mediaDescriptionAdapter)
+            .setCustomActionReceiver( // カスタムのボタンを設定できるが, Android13では効かない
+                object : CustomActionReceiver {
+                    override fun createCustomActions(
+                        context: Context,
+                        instanceId: Int
+                    ): MutableMap<String, NotificationCompat.Action> {
+                        return mutableMapOf(
+                            Pair(
+                                BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION + BetterPlayerPlugin.Companion.PipActions.PLAY.name,
+                                NotificationCompat.Action(
+                                    R.drawable.better_player_play_arrow_24dp, "",
+                                    PendingIntent.getBroadcast(
+                                        context,
+//                                    controlType,
+                                        BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue,
+                                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
+                                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
+//                                        controlType
+                                            BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue
+                                        ),
+                                        PendingIntent.FLAG_IMMUTABLE
+                                    )
+                                )
+                            ),
+                            Pair(
+                                BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION + BetterPlayerPlugin.Companion.PipActions.PAUSE.name,
+                                NotificationCompat.Action(
+                                    R.drawable.better_player_pause_24dp, "",
+                                    PendingIntent.getBroadcast(
+                                        context,
+                                        BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue,
+                                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
+                                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
+                                            BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue
+                                        ),
+                                        PendingIntent.FLAG_IMMUTABLE
+                                    )
+                                )
+                            )
+                        )
+                    }
 
-        playerNotificationManager?.apply {
+                    override fun getCustomActions(player: Player): MutableList<String> {
+                        val customActions: MutableList<String> = ArrayList()
+                        if (player.playWhenReady) {
+                            customActions.add(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION + BetterPlayerPlugin.Companion.PipActions.PAUSE.name)
+                        } else {
+                            customActions.add(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION + BetterPlayerPlugin.Companion.PipActions.PLAY.name)
+                        }
+
+                        return customActions
+                    }
+
+                    override fun onCustomAction(player: Player, action: String, intent: Intent) {
+                        Log.d("NFCDEV", "onCustomAction action: " + action)
+                    }
+                }
+            )
+
+            .setSmallIconResourceId(R.drawable.exo_media_action_repeat_one) // アプリアイコン設定したいが、できるか？
+            .build()
+
+// setShowActionsInCompactView を設定したいが、可能か？
+// https://developer.android.com/training/notify-user/expanded?hl=ja
+        //  Play/Pauseボタンが表示されるようにPlayerNotificationManagerのgetActionIndicesForCompactViewで設定されているが、変更できない？
 
             exoPlayer?.let {
                 setPlayer(ForwardingPlayer(exoPlayer))
