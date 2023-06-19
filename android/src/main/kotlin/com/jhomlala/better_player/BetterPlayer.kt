@@ -311,11 +311,9 @@ internal class BetterPlayer(
                                     R.drawable.better_player_play_arrow_24dp, "",
                                     PendingIntent.getBroadcast(
                                         context,
-//                                    controlType,
                                         BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue,
                                         Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
                                             BetterPlayerPlugin.EXTRA_ACTION_TYPE,
-//                                        controlType
                                             BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue
                                         ),
                                         PendingIntent.FLAG_IMMUTABLE
@@ -741,7 +739,41 @@ internal class BetterPlayer(
             return mediaSession
         }
         return null
+    }
 
+    // https://developers.cyberagent.co.jp/blog/archives/31631/ の`ExoPlayerとの同期`
+    fun setMediaSessionCollback() {
+        mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
+
+            override fun onSeekTo(pos: Long) {
+                Log.d("onSeekTo", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                sendSeekToEvent(pos)
+                super.onSeekTo(pos)
+            }
+
+            override fun onPlay() {
+                Log.d("onPlay", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                tapPlayButtonInPIP()
+                super.onPlay()
+            }
+
+            override fun onPause() {
+                Log.d("onPause", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+                tapPauseButtonInPIP()
+                super.onPause()
+            }
+
+            override fun onStop() {
+                mediaSession?.isActive = false
+                super.onStop()
+            }
+
+//            override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
+//                val intentAction = mediaButtonEvent.action
+//                Log.d("onMediaButtonEvent", intentAction.toString())
+//                return super.onMediaButtonEvent(mediaButtonEvent)
+//            }
+        })
     }
 
     fun onPictureInPictureStatusChanged(inPip: Boolean) {

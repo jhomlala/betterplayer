@@ -113,7 +113,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             if (Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 if (event == Lifecycle.Event.ON_PAUSE)
                     if (this.showPictureInPictureAutomatically && this.activity?.isInPictureInPictureMode != true) {
-                        this.playerForPictureInPicture?.setupMediaSession(flutterState!!.applicationContext)
+//                        this.playerForPictureInPicture?.setupMediaSession(flutterState!!.applicationContext)
                         this.activity?.enterPictureInPictureMode(
                             createPictureInPictureParams(
                                 pipRemoteActions
@@ -123,6 +123,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             }
             if (event == Lifecycle.Event.ON_DESTROY) {
                 unregisterBroadcastReceiverForPIPAction()
+                stopNotificationService()
             }
         })
     }
@@ -296,7 +297,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             PLAY_METHOD -> {
-                setupNotification(player)
+                playerForPictureInPicture = player
+                setupNotification(player) // PLAY_METHOD での実行で良いのか？
                 player.play()
                 result.success(null)
             }
@@ -511,21 +513,67 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 removeOtherNotificationListeners()
                 val showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false)
                 if (showNotification) {
-                    val title = getParameter(dataSource, TITLE_PARAMETER, "")
-                    val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
-                    val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
-                    val notificationChannelName =
-                        getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
-                    val activityName =
-                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
-                    betterPlayer.setupPlayerNotification(
-                        flutterState?.applicationContext!!,
-                        title, author, imageUrl, notificationChannelName, activityName
-                    )
+//                    val title = getParameter(dataSource, TITLE_PARAMETER, "")
+//                    val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
+//                    val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
+//                    val notificationChannelName =
+//                        getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
+//                    val activityName =
+//                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
+
+//                    // ここで通知設定している
+//                    betterPlayer.setupPlayerNotification(
+//                        flutterState?.applicationContext!!,
+//                        title, author, imageUrl, notificationChannelName, activityName
+//                    )
+
+                    startNotificationService(dataSource)
+                    betterPlayer.setMediasessionCollback()
                 }
             }
         } catch (exception: Exception) {
             Log.e(TAG, "SetupNotification failed", exception)
+        }
+    }
+
+    ///TODO: Call this method via channel after remote notification start
+    private fun startNotificationService(dataSource: Map<String, Any?>) {
+        val mediasession = playerForPictureInPicture?.setupMediaSession(flutterState!!.applicationContext)
+        val context = flutterState?.applicationContext
+        context?.let {
+            try {
+                val intent = Intent(context, NotificationService::class.java)
+                intent.putExtra(
+                    ACTIVITY_NAME_PARAMETER,
+                    getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
+                )
+                intent.putExtra(MEDIA_SESSION_TOKEN_PARAMETER, mediasession?.sessionToken)
+                intent.putExtra(TITLE_PARAMETER, getParameter(dataSource, TITLE_PARAMETER, ""))
+                intent.putExtra(AUTHOR_PARAMETER, getParameter(dataSource, AUTHOR_PARAMETER, ""))
+                intent.putExtra(IMAGE_URL_PARAMETER, getParameter(dataSource, IMAGE_URL_PARAMETER, ""))
+                intent.putExtra(NOTIFICATION_CHANNEL_NAME_PARAMETER, getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, ""))
+
+                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
+                    activity?.startForegroundService(intent)
+                } else {
+                    activity?.startService(intent)
+                }
+            } catch (exception: Exception) {
+                Log.e(TAG, "startNotificationService failed", exception)
+            }
+        }
+    }
+
+    ///TODO: Call this method via channel after remote notification stop
+    private fun stopNotificationService() {
+        val context = flutterState?.applicationContext
+        context?.let {
+            try {
+                val intent = Intent(context, NotificationService::class.java)
+                activity?.stopService(intent)
+            } catch (exception: Exception) {
+                Log.e(TAG, "stopNotificationService failed", exception)
+            }
         }
     }
 
@@ -618,6 +666,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun dispose(player: BetterPlayer, textureId: Long) {
+        stopNotificationService()
         player.dispose()
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
@@ -682,10 +731,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val HEIGHT_PARAMETER = "height"
         private const val BITRATE_PARAMETER = "bitrate"
         private const val SHOW_NOTIFICATION_PARAMETER = "showNotification"
-        private const val TITLE_PARAMETER = "title"
-        private const val AUTHOR_PARAMETER = "author"
-        private const val IMAGE_URL_PARAMETER = "imageUrl"
-        private const val NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName"
         private const val OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration"
         private const val NAME_PARAMETER = "name"
         private const val INDEX_PARAMETER = "index"
@@ -694,6 +739,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val DRM_CLEARKEY_PARAMETER = "clearKey"
         private const val MIX_WITH_OTHERS_PARAMETER = "mixWithOthers"
         private const val WILL_START_PIP = "willStartPIP"
+        const val TITLE_PARAMETER = "title"
+        const val AUTHOR_PARAMETER = "author"
+        const val IMAGE_URL_PARAMETER = "imageUrl"
+        const val NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName"
         const val URL_PARAMETER = "url"
         const val PRE_CACHE_SIZE_PARAMETER = "preCacheSize"
         const val MAX_CACHE_SIZE_PARAMETER = "maxCacheSize"
@@ -706,6 +755,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         const val BUFFER_FOR_PLAYBACK_MS = "bufferForPlaybackMs"
         const val BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = "bufferForPlaybackAfterRebufferMs"
         const val CACHE_KEY_PARAMETER = "cacheKey"
+        const val MEDIA_SESSION_TOKEN_PARAMETER = "mediaSessionToken"
         private const val INIT_METHOD = "init"
         private const val CREATE_METHOD = "create"
         private const val SET_DATA_SOURCE_METHOD = "setDataSource"
@@ -736,6 +786,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION = "better_player.nfc_ch_app/pip_custom_action"
         private const val EXTRA_ACTION_TYPE = "extra_action_type"
         private enum class PipActions(val rawValue: Int) {
+        const val DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION =
             PLAY(1),
             PAUSE(2)
         }
