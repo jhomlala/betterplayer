@@ -399,6 +399,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return;
     }
 
+    _seekPosition = null;
+
     value = VideoPlayerValue(
       duration: null,
       isLooping: value.isLooping,
