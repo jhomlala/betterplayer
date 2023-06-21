@@ -520,15 +520,17 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 //                        getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
 //                    val activityName =
 //                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
-
+//
 //                    // ここで通知設定している
 //                    betterPlayer.setupPlayerNotification(
 //                        flutterState?.applicationContext!!,
 //                        title, author, imageUrl, notificationChannelName, activityName
 //                    )
 
-                    startNotificationService(dataSource)
-                    betterPlayer.setMediasessionCollback()
+                    startNotificationService(dataSource, betterPlayer)
+                    betterPlayer.setupPlayerEventHanlerForNotification(flutterState!!.applicationContext)
+                    // NOTE: Not so sure why but setting call back needs to be done after notification setting. Otherwise not called.
+                    betterPlayer.setMediaSessionCollback()
                 }
             }
         } catch (exception: Exception) {
@@ -537,8 +539,14 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     ///TODO: Call this method via channel after remote notification start
-    private fun startNotificationService(dataSource: Map<String, Any?>) {
-        val mediasession = playerForPictureInPicture?.setupMediaSession(flutterState!!.applicationContext)
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun startNotificationService(
+        dataSource: Map<String, Any?>,
+        betterPlayer: BetterPlayer
+    ) {
+        val mediaSession =
+            betterPlayer.setupMediaSession(flutterState!!.applicationContext)
+
         val context = flutterState?.applicationContext
         context?.let {
             try {
@@ -547,17 +555,22 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     ACTIVITY_NAME_PARAMETER,
                     getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
                 )
-                intent.putExtra(MEDIA_SESSION_TOKEN_PARAMETER, mediasession?.sessionToken)
+                mediaSession?.let {
+                    intent.putExtra(MEDIA_SESSION_TOKEN_PARAMETER, mediaSession?.sessionToken)
+                }
+
                 intent.putExtra(TITLE_PARAMETER, getParameter(dataSource, TITLE_PARAMETER, ""))
                 intent.putExtra(AUTHOR_PARAMETER, getParameter(dataSource, AUTHOR_PARAMETER, ""))
-                intent.putExtra(IMAGE_URL_PARAMETER, getParameter(dataSource, IMAGE_URL_PARAMETER, ""))
-                intent.putExtra(NOTIFICATION_CHANNEL_NAME_PARAMETER, getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, ""))
+                intent.putExtra(
+                    IMAGE_URL_PARAMETER,
+                    getParameter(dataSource, IMAGE_URL_PARAMETER, "")
+                )
+                intent.putExtra(
+                    NOTIFICATION_CHANNEL_NAME_PARAMETER,
+                    getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, "")
+                )
 
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-                    activity?.startForegroundService(intent)
-                } else {
-                    activity?.startService(intent)
-                }
+                activity?.startForegroundService(intent)
             } catch (exception: Exception) {
                 Log.e(TAG, "startNotificationService failed", exception)
             }
@@ -783,10 +796,11 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private val PIP_ASPECT_RATIO = Rational(16, 9)
 
         /** For custom action in PIP mode  */
-        private const val DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION = "better_player.nfc_ch_app/pip_custom_action"
-        private const val EXTRA_ACTION_TYPE = "extra_action_type"
-        private enum class PipActions(val rawValue: Int) {
         const val DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION =
+            "better_player.nfc_ch_app/pip_custom_action"
+        const val EXTRA_ACTION_TYPE = "extra_action_type"
+
+        enum class PipActions(val rawValue: Int) {
             PLAY(1),
             PAUSE(2)
         }

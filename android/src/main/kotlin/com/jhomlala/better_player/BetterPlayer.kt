@@ -741,6 +741,67 @@ internal class BetterPlayer(
         return null
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
+    fun setupPlayerEventHanlerForNotification(context: Context) {
+        notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+            val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
+                .setMediaSession(mediaSession?.sessionToken)
+            mediaStyle.setShowActionsInCompactView(0)
+            exoPlayer?.addListener(object : Player.Listener {
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    val notificationBuilder =
+                        NotificationCompat.Builder(context, NOTIFICATION_ID.toString())
+                    if (isPlaying) {
+                        notificationBuilder
+                            .addAction(
+                                NotificationCompat.Action.Builder(
+                                    R.drawable.better_player_pause_24dp,
+                                    "",
+                                    PendingIntent.getBroadcast(
+                                        context,
+                                        BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue,
+                                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
+                                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
+                                            BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue
+                                        ),
+                                        PendingIntent.FLAG_IMMUTABLE
+                                    )
+                                ).build()
+                            )
+                    } else {
+                        notificationBuilder
+                            .addAction(
+                                NotificationCompat.Action.Builder(
+                                    R.drawable.better_player_play_arrow_24dp,
+                                    "",
+                                    PendingIntent.getBroadcast(
+                                        context,
+                                        BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue,
+                                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
+                                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
+                                            BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue
+                                        ),
+                                        PendingIntent.FLAG_IMMUTABLE
+                                    )
+                                ).build()
+                            )
+                    }
+                    notificationBuilder.setStyle(mediaStyle)
+                    notificationBuilder.setContentTitle(LocalDateTime.now().toString()) // TODO:
+                    notificationBuilder.setSmallIcon(R.drawable.exo_media_action_repeat_one) // TODO:
+                    notificationManager?.notify(
+                        foregroundNotificationId,
+                        notificationBuilder.build()
+                    )
+                }
+            }
+            )
+        }
+    }
+
     // https://developers.cyberagent.co.jp/blog/archives/31631/ の`ExoPlayerとの同期`
     fun setMediaSessionCollback() {
         mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
