@@ -74,7 +74,7 @@ internal class BetterPlayer(
     private var refreshHandler: Handler? = null
     private var refreshRunnable: Runnable? = null
     private var exoPlayerEventListener: Player.Listener? = null
-    private var bitmap: Bitmap? = null // 通知のLargeIconに使われている。
+    private var bitmap: Bitmap? = null
     private var mediaSession: MediaSessionCompat? = null
     private var drmSessionManager: DrmSessionManager? = null
     private val workManager: WorkManager
@@ -222,7 +222,6 @@ internal class BetterPlayer(
                 return author
             }
 
-            // これがないと画像は表示されない
             override fun getCurrentLargeIcon(
                 player: Player,
                 callback: BitmapCallback
