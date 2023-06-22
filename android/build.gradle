@@ -63,6 +63,8 @@ android {
         implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
         implementation "androidx.annotation:annotation:$annotationVersion"
         implementation "androidx.work:work-runtime:$workVersion"
+        implementation "androidx.media:media:1.6.0"
+        implementation 'com.squareup.picasso:picasso:2.71828'
     }
 }
 
