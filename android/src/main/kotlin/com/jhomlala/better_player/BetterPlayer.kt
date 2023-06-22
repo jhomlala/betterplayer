@@ -803,9 +803,9 @@ internal class BetterPlayer(
     }
 
     // https://developers.cyberagent.co.jp/blog/archives/31631/ の`ExoPlayerとの同期`
-    fun setMediaSessionCollback() {
+    // Only work if it is more than Android 13
+    fun setMediaSessionCallback() {
         mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
-
             override fun onSeekTo(pos: Long) {
                 Log.d("onSeekTo", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 sendSeekToEvent(pos)
@@ -906,8 +906,11 @@ internal class BetterPlayer(
         if (mappedTrackInfo != null) {
             val builder = trackSelector.parameters.buildUpon()
                 .setRendererDisabled(rendererIndex, false)
-                .addOverride(TrackSelectionOverride(mappedTrackInfo.getTrackGroups(rendererIndex)
-                    .get(groupIndex), rendererIndex)
+                .addOverride(
+                    TrackSelectionOverride(
+                        mappedTrackInfo.getTrackGroups(rendererIndex)
+                            .get(groupIndex), rendererIndex
+                    )
                 )
                 .build()
 

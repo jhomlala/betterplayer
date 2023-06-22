@@ -8,7 +8,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.jhomlala.better_player.BetterPlayerPlugin
 import com.jhomlala.better_player.NotificationService
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -24,12 +23,11 @@ class MainActivity : FlutterActivity() {
 //        startNotificationService()
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        BetterPlayerPlugin.notificationBuilder.observe(this) {
+
+        NotificationService.notificationBuilderInNotificationService.observeForever {
             it?.let {
                 updateNotification(it)
-//startNotificationService()
             }
-
         }
     }
     override fun onStop() {
@@ -58,15 +56,24 @@ class MainActivity : FlutterActivity() {
             })
     }
 
+    // Update Notification to reflect actions set in BetterPlayerPlugin based on player status.
+    private fun updateNotification(notificationBuilder: NotificationCompat.Builder) {
+        // Set small icon because available in app side.
+        notificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
+        notificationManager?.notify(NotificationService.foregroundNotificationId, notificationBuilder.build())
+    }
+
 //    ///TODO: Call this method via channel after remote notification start
 //    private fun startNotificationService() {
 //        try {
 //            val intent = Intent(this, BetterPlayerService::class.java)
+//
 //            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
 //                startForegroundService(intent)
 //            } else {
 //                startService(intent)
 //            }
+//
 //        } catch (exception: Exception) {
 //        }
 //    }

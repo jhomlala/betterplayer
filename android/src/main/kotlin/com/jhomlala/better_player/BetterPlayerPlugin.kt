@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 package com.jhomlala.better_player
 
-import android.annotation.SuppressLint
 import android.app.*
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -16,7 +15,6 @@ import android.graphics.drawable.Icon
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import android.util.LongSparseArray
 import android.util.Rational
@@ -184,19 +182,18 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             val context = flutterState?.applicationContext
             context?.let {
                 var pendingIntent: PendingIntent? = null
-
                 var notificationAction: NotificationCompat.Action? = null
                 if (isPlaying) {
                     pendingIntent = createPendingIntent(context, PipActions.PAUSE.rawValue)
                     pipRemoteActions.add(
                         createRemoteAction(
                             context,
-                            R.drawable.better_player_pause_24dp,
+                            R.drawable.exo_notification_pause,
                             pendingIntent
                         )
                     )
                     notificationAction = NotificationCompat.Action(
-                        com.google.android.exoplayer2.ui.R.drawable.exo_notification_pause, "",
+                        R.drawable.exo_notification_pause, "",
                         pendingIntent
                     )
                 } else {
@@ -204,35 +201,20 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     pipRemoteActions.add(
                         createRemoteAction(
                             context,
-                            R.drawable.better_player_play_arrow_24dp,
+//                            R.drawable.better_player_play_arrow_24dp,
+                            R.drawable.exo_notification_play,
                             pendingIntent
                         )
                     )
                     notificationAction = NotificationCompat.Action(
-                        com.google.android.exoplayer2.ui.R.drawable.exo_notification_play, "",
+                        R.drawable.exo_notification_play, "",
                         pendingIntent
                     )
                 }
-                updateNotificationBuilder(notificationAction)
+                listOf(notificationAction).also { pendingActions.value = it }
             }
             activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
         }
-    }
-
-    private fun updateNotificationBuilder(
-        notificationAction: NotificationCompat.Action?
-    ) {
-        val notifBuilder = notificationBuilder.value
-        notifBuilder?.let {
-            notifBuilder.clearActions()
-            notifBuilder.addAction(notificationAction)
-            notificationBuilder.value = notifBuilder
-        }
-    }
-
-    @SuppressLint("RestrictedApi")
-    fun NotificationCompat.Builder.clearActions() {
-        mActions.clear()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -251,27 +233,27 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createRemoteAction(
-        context: Context,
-        @DrawableRes iconResId: Int,
-        controlType: Int
-    ): RemoteAction {
-        return RemoteAction(
-            Icon.createWithResource(context, iconResId),
-            "",
-            "",
-            PendingIntent.getBroadcast(
-                context,
-                controlType,
-                Intent(DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
-                    EXTRA_ACTION_TYPE,
-                    controlType
-                ),
-                PendingIntent.FLAG_IMMUTABLE
-            )
-        )
-    }
+//    @RequiresApi(Build.VERSION_CODES.O)
+//    private fun createRemoteAction(
+//        context: Context,
+//        @DrawableRes iconResId: Int,
+//        controlType: Int
+//    ): RemoteAction {
+//        return RemoteAction(
+//            Icon.createWithResource(context, iconResId),
+//            "",
+//            "",
+//            PendingIntent.getBroadcast(
+//                context,
+//                controlType,
+//                Intent(DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
+//                    EXTRA_ACTION_TYPE,
+//                    controlType
+//                ),
+//                PendingIntent.FLAG_IMMUTABLE
+//            )
+//        )
+//    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createRemoteAction(
@@ -569,6 +551,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun setupNotification(betterPlayer: BetterPlayer) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // No-op for not target OS version. To suppress the warning.
             return
         }
         try {
@@ -599,9 +582,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 //                    )
 
                     startNotificationService(dataSource, betterPlayer)
-//                    betterPlayer.setupPlayerEventHanlerForNotification(flutterState!!.applicationContext)
-                    // NOTE: Not so sure why but setting call back needs to be done after notification setting. Otherwise not called.
-                    betterPlayer.setMediaSessionCollback()
+                    // For Android 13 and more
+                    // NOTE: Not so sure why but setting call back needs to be done after notification setting.
+                    // Otherwise the callback was not called.
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
+                        betterPlayer.setMediaSessionCallback()
+                    }
                 }
             }
         } catch (exception: Exception) {
@@ -609,7 +595,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         }
     }
 
-    ///TODO: Call this method via channel after remote notification start
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startNotificationService(
         dataSource: Map<String, Any?>,
@@ -620,90 +605,89 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             val mediaSession = betterPlayer.setupMediaSession(context)
 
             try {
-//                val intent = Intent(context, NotificationService::class.java)
-//                intent.putExtra(
-//                    ACTIVITY_NAME_PARAMETER,
-//                    getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
-//                )
-//                mediaSession?.let {
-//                    intent.putExtra(MEDIA_SESSION_TOKEN_PARAMETER, mediaSession.sessionToken)
-//                }
-//
-//                intent.putExtra(TITLE_PARAMETER, getParameter(dataSource, TITLE_PARAMETER, ""))
-//                intent.putExtra(AUTHOR_PARAMETER, getParameter(dataSource, AUTHOR_PARAMETER, ""))
-//                intent.putExtra(
-//                    IMAGE_URL_PARAMETER,
-//                    getParameter(dataSource, IMAGE_URL_PARAMETER, "")
-//                )
-//                intent.putExtra(
-//                    NOTIFICATION_CHANNEL_NAME_PARAMETER,
-//                    getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, "")
-//                )
-//                activity?.startForegroundService(intent)
+                val intent = Intent(context, NotificationService::class.java)
+                intent.putExtra(
+                    ACTIVITY_NAME_PARAMETER,
+                    getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
+                )
+                mediaSession?.let {
+                    intent.putExtra(MEDIA_SESSION_TOKEN_PARAMETER, mediaSession.sessionToken)
+                }
+
+                intent.putExtra(TITLE_PARAMETER, getParameter(dataSource, TITLE_PARAMETER, ""))
+                intent.putExtra(AUTHOR_PARAMETER, getParameter(dataSource, AUTHOR_PARAMETER, ""))
+                intent.putExtra(
+                    IMAGE_URL_PARAMETER,
+                    getParameter(dataSource, IMAGE_URL_PARAMETER, "")
+                )
+                intent.putExtra(
+                    NOTIFICATION_CHANNEL_NAME_PARAMETER,
+                    getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, "")
+                )
+                activity?.startForegroundService(intent)
 // ここでnotificationBuilder に設定する？
 
-                val title = getParameter(dataSource, TITLE_PARAMETER, "")
-                val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
-                val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
-                val notificationChannelName =
-                    getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
-                val activityName =
-                    getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
-
-                val channelId =
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationChannelName != null) {
-                        createNotificationChannel(
-                            context,
-                            NotificationService.notificationId.toString(),
-                            notificationChannelName
-                        )
-                    } else {
-                        ""
-                    }
-
-                //  set MediaSession's token
-                val mediaStyle =
-                    androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession?.sessionToken)
-                val notificationIntent = Intent()
-                val packageName = context.packageName!!
-                notificationIntent.setClassName(
-                    packageName,
-                    "$packageName.$activityName"
-                )
-                notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
-                        or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                val pendingIntent = PendingIntent.getActivity(
-                    context, 0,
-                    notificationIntent,
-                    PendingIntent.FLAG_IMMUTABLE
-                )
-
-                val playAction: NotificationCompat.Action =
-                    NotificationCompat.Action.Builder(
-                        R.drawable.exo_notification_play,
-                        "",
-                        createPendingIntent(context, PipActions.PLAY.rawValue)
-                    ).build()
-
-                val notificationBuilder2 = NotificationCompat.Builder(context, channelId)
-                    .setContentTitle(title)
-                    .setContentText(author)
-                    .setStyle(mediaStyle)
-                    .addAction(playAction)
-//            .setLargeIcon(imageBitmap.) // TODO:
-
-                    .setPriority(NotificationCompat.PRIORITY_MIN)
-                    .setContentIntent(pendingIntent)
-                mediaStyle.setShowActionsInCompactView(0)
-
-                notificationBuilder.value = notificationBuilder2
+//                val title = getParameter(dataSource, TITLE_PARAMETER, "")
+//                val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
+//                val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
+//                val notificationChannelName =
+//                    getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
+//                val activityName =
+//                    getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
+//
+//                val channelId =
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationChannelName != null) {
+//                        createNotificationChannel(
+//                            context,
+//                            NotificationService.notificationId.toString(),
+//                            notificationChannelName
+//                        )
+//                    } else {
+//                        ""
+//                    }
+//
+//                //  set MediaSession's token
+//                val mediaStyle =
+//                    androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession?.sessionToken)
+//                val notificationIntent = Intent()
+//                val packageName = context.packageName!!
+//                notificationIntent.setClassName(
+//                    packageName,
+//                    "$packageName.$activityName"
+//                )
+//                notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
+//                        or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+//                val pendingIntent = PendingIntent.getActivity(
+//                    context, 0,
+//                    notificationIntent,
+//                    PendingIntent.FLAG_IMMUTABLE
+//                )
+//
+//                val playAction: NotificationCompat.Action =
+//                    NotificationCompat.Action.Builder(
+//                        R.drawable.exo_notification_play,
+//                        "",
+//                        createPendingIntent(context, PipActions.PLAY.rawValue)
+//                    ).build()
+//
+//                val notificationBuilder2 = NotificationCompat.Builder(context, channelId)
+//                    .setContentTitle(title)
+//                    .setContentText(author)
+//                    .setStyle(mediaStyle)
+//                    .addAction(playAction)
+////            .setLargeIcon(imageBitmap.) // TODO:
+//
+//                    .setPriority(NotificationCompat.PRIORITY_MIN)
+//                    .setContentIntent(pendingIntent)
+//                mediaStyle.setShowActionsInCompactView(0)
+//
+//                notificationBuilder.value = notificationBuilder2
             } catch (exception: Exception) {
                 Log.e(TAG, "startNotificationService failed", exception)
             }
         }
     }
 
-    ///TODO: Call this method via channel after remote notification stop
     private fun stopNotificationService() {
         val context = flutterState?.applicationContext
         context?.let {
@@ -822,7 +806,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun dispose(player: BetterPlayer, textureId: Long) {
-        notificationBuilder.value = null
+//        notificationBuilder.value = null
+        pendingActions.value = null
         stopNotificationService()
         player.dispose()
         videoPlayers.remove(textureId)
@@ -949,6 +934,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             PAUSE(2)
         }
 
-        var notificationBuilder: MutableLiveData<NotificationCompat.Builder?> = MutableLiveData()
+//        var notificationBuilder: MutableLiveData<NotificationCompat.Builder?> = MutableLiveData()
+        // Observed by NotificationService and update action in notification.
+        var pendingActions: MutableLiveData<List<NotificationCompat.Action>?> = MutableLiveData()
+
     }
 }

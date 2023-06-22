@@ -4,76 +4,79 @@ import android.annotation.SuppressLint
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MIN
-import com.google.android.exoplayer2.ui.R.drawable.exo_notification_pause
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import com.google.android.exoplayer2.ui.R
 import com.jhomlala.better_player.BetterPlayerPlugin.Companion.ACTIVITY_NAME_PARAMETER
 import com.jhomlala.better_player.BetterPlayerPlugin.Companion.AUTHOR_PARAMETER
 import com.jhomlala.better_player.BetterPlayerPlugin.Companion.IMAGE_URL_PARAMETER
 import com.jhomlala.better_player.BetterPlayerPlugin.Companion.MEDIA_SESSION_TOKEN_PARAMETER
 import com.jhomlala.better_player.BetterPlayerPlugin.Companion.NOTIFICATION_CHANNEL_NAME_PARAMETER
 import com.jhomlala.better_player.BetterPlayerPlugin.Companion.TITLE_PARAMETER
-import com.jhomlala.better_player.R.drawable.exo_notification_play
+import com.squareup.picasso.Picasso
+import com.squareup.picasso.Target
 
 class NotificationService : Service() {
-//    private var notificationManager: NotificationManager? = null
+    private var notificationBuilder: NotificationCompat.Builder? = null
+
+//    @SuppressLint("RestrictedApi")
+//    fun NotificationCompat.Builder.clearActions() {
+//        mActions.clear()
+//    }
 
     companion object {
+        var notificationBuilderInNotificationService: MutableLiveData<NotificationCompat.Builder?> =
+            MutableLiveData()
         const val notificationId = 20772077
         const val foregroundNotificationId = 20772078
-        private const val TAG = "BetterPlayer"
-//        enum class NotificationActions(val rawValue: androidx.core.app.NotificationCompat.Action) {
-//            PLAY_ACTION(
-//                androidx.core.app.NotificationCompat.Action.Builder(
-//                    R.drawable.better_player_play_arrow_24dp,
-//                    "",
-//                    PendingIntent.getBroadcast(
-//                        this, // context があるので定数にはできない
-//                        BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue,
-//                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
-//                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
-//                            BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue
-//                        ),
-//                        PendingIntent.FLAG_IMMUTABLE
-//                    )
-//                ).build()
-//            ),
-//            PAUSE_ACTION(
-//                androidx.core.app.NotificationCompat.Action.Builder(
-//                    R.drawable.better_player_pause_24dp,
-//                    "",
-//                    PendingIntent.getBroadcast(
-//                        this,
-//                        BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue,
-//                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
-//                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
-//                            BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue
-//                        ),
-//                        PendingIntent.FLAG_IMMUTABLE
-//                    )
-//                ).build()
-//            )
-//        }
     }
 
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
-    @SuppressLint("PrivateResource")
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    // Observe update of notification action.
+    private val notificationActionListObserver =
+        Observer<List<NotificationCompat.Action>?> { actions ->
+            actions?.map {
+                notificationBuilder?.clearActions()
+                notificationBuilder?.addAction(it)
+            }
+            notificationBuilderInNotificationService.value = notificationBuilder
+        }
 
+    // Load image.
+    private var imageDownloadHandler: Target = object : Target {
+        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+            // Use as setLargeIcon on notification.
+            notificationBuilder?.setLargeIcon(bitmap)
+            notificationBuilderInNotificationService.value = notificationBuilder
+        }
+
+        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
+
+        override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {}
+    }
+
+    @SuppressLint("PrivateResource")
+    @RequiresApi(Build.VERSION_CODES.M)
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val title = intent?.getStringExtra(TITLE_PARAMETER)
-        val auther = intent?.getStringExtra(AUTHOR_PARAMETER)
+        val author = intent?.getStringExtra(AUTHOR_PARAMETER)
         val imageUrl = intent?.getStringExtra(IMAGE_URL_PARAMETER)
         val notificationChannelName = intent?.getStringExtra(NOTIFICATION_CHANNEL_NAME_PARAMETER)
         val activityName = intent?.getStringExtra(ACTIVITY_NAME_PARAMETER)
         val packageName = this.applicationContext.packageName
-//        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        BetterPlayerPlugin.pendingActions.observeForever(notificationActionListObserver)
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationChannelName != null) {
@@ -101,54 +104,30 @@ class NotificationService : Service() {
             PendingIntent.FLAG_IMMUTABLE
         )
 
+        // PAUSE as a Default Action
         val pauseAction: NotificationCompat.Action =
             NotificationCompat.Action.Builder(
-                exo_notification_pause,
+                R.drawable.exo_notification_pause,
                 "",
                 createPendingIntent(BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue)
             )
                 .build()
 
-        val playAction: NotificationCompat.Action =
-            NotificationCompat.Action.Builder(
-                exo_notification_play,
-                "",
-                createPendingIntent(BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue)
-            )
-                .build()
+        Picasso.get().load(imageUrl).into(imageDownloadHandler)
 
-//        val imageBitmap = Picasso.get().load(imageUrl).into(object: com.squareup.picasso.Target() {
-//            override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-//                Log.d(TAG, "Getting ready to get the image")
-//                //Here you should place a loading gif in the ImageView
-//                //while image is being obtained.
-//            }
-//
-//            override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-//                Log.e(TAG, "The image was not obtained");
-//            }
-//
-//            override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-//                Log.d(TAG, "The image was obtained correctly");
-//            }
-//        })
-
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+        val notificationBuilder2 = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
-//            .setContentTitle("At service " + LocalDateTime.now().toString()) // TODO: Delete
-            .setContentText(auther)
+            .setContentText(author)
             .setStyle(mediaStyle)
-            .addAction(playAction)
             .addAction(pauseAction)
-//            .setLargeIcon(imageBitmap.) // TODO:
-            .setSmallIcon(R.drawable.exo_media_action_repeat_all) // TODO: Use app icon
-
+            .setSmallIcon(R.drawable.exo_notification_small_icon) // TODO: Use app icon
             .setPriority(PRIORITY_MIN)
-//            .setOngoing(true)
             .setContentIntent(pendingIntent)
         mediaStyle.setShowActionsInCompactView(0)
 
-        startForeground(foregroundNotificationId, notificationBuilder.build())
+        notificationBuilder = notificationBuilder2
+        startForeground(foregroundNotificationId, notificationBuilder?.build())
+
         return START_NOT_STICKY
     }
 
@@ -165,6 +144,7 @@ class NotificationService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
+        BetterPlayerPlugin.pendingActions.removeObserver(notificationActionListObserver)
         try {
             val notificationManager =
                 getSystemService(
@@ -178,6 +158,7 @@ class NotificationService : Service() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.M)
     private fun createPendingIntent(actionId: Int): PendingIntent {
         return PendingIntent.getBroadcast(
             this,

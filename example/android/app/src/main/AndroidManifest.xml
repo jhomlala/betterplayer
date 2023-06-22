@@ -23,12 +23,12 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-        <service
-            android:name=".BetterPlayerService"
-            android:stopWithTask="false" />
-        
+<!--        <service-->
+<!--            android:name=".BetterPlayerService"-->
+<!--            android:stopWithTask="false" />-->
     </application>
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 </manifest>

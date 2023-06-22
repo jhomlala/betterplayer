@@ -4,11 +4,5 @@
     <service
         android:name=".NotificationService"
         android:stopWithTask="false" />
-<!--        <receiver android:name=".CustomMediaButtonReceiver"-->
-<!--            android:exported="false">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MEDIA_BUTTON" />-->
-<!--            </intent-filter>-->
-<!--        </receiver>-->
     </application>
 </manifest>
