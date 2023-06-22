@@ -17,7 +17,6 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.Surface
-import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Observer
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
@@ -75,7 +74,7 @@ internal class BetterPlayer(
     private var refreshHandler: Handler? = null
     private var refreshRunnable: Runnable? = null
     private var exoPlayerEventListener: Player.Listener? = null
-    private var bitmap: Bitmap? = null
+    private var bitmap: Bitmap? = null // 通知のLargeIconに使われている。
     private var mediaSession: MediaSessionCompat? = null
     private var drmSessionManager: DrmSessionManager? = null
     private val workManager: WorkManager
@@ -223,6 +222,7 @@ internal class BetterPlayer(
                 return author
             }
 
+            // これがないと画像は表示されない
             override fun getCurrentLargeIcon(
                 player: Player,
                 callback: BitmapCallback
@@ -297,76 +297,11 @@ internal class BetterPlayer(
         playerNotificationManager = PlayerNotificationManager.Builder(
             context, NOTIFICATION_ID,
             playerNotificationChannelName!!
-        ).setMediaDescriptionAdapter(mediaDescriptionAdapter)
-            .setCustomActionReceiver( // カスタムのボタンを設定できるが, Android13では効かない
-                object : CustomActionReceiver {
-                    override fun createCustomActions(
-                        context: Context,
-                        instanceId: Int
-                    ): MutableMap<String, NotificationCompat.Action> {
-                        return mutableMapOf(
-                            Pair(
-                                BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION + BetterPlayerPlugin.Companion.PipActions.PLAY.name,
-                                NotificationCompat.Action(
-                                    R.drawable.better_player_play_arrow_24dp, "",
-                                    PendingIntent.getBroadcast(
-                                        context,
-                                        BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue,
-                                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
-                                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
-                                            BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue
-                                        ),
-                                        PendingIntent.FLAG_IMMUTABLE
-                                    )
-                                )
-                            ),
-                            Pair(
-                                BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION + BetterPlayerPlugin.Companion.PipActions.PAUSE.name,
-                                NotificationCompat.Action(
-                                    R.drawable.better_player_pause_24dp, "",
-                                    PendingIntent.getBroadcast(
-                                        context,
-                                        BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue,
-                                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
-                                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
-                                            BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue
-                                        ),
-                                        PendingIntent.FLAG_IMMUTABLE
-                                    )
-                                )
-                            )
-                        )
-                    }
+        ).setMediaDescriptionAdapter(mediaDescriptionAdapter).build()
 
-                    override fun getCustomActions(player: Player): MutableList<String> {
-                        val customActions: MutableList<String> = ArrayList()
-                        if (player.playWhenReady) {
-                            customActions.add(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION + BetterPlayerPlugin.Companion.PipActions.PAUSE.name)
-                        } else {
-                            customActions.add(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION + BetterPlayerPlugin.Companion.PipActions.PLAY.name)
-                        }
-
-                        return customActions
-                    }
-
-                    override fun onCustomAction(player: Player, action: String, intent: Intent) {
-                        Log.d("NFCDEV", "onCustomAction action: " + action)
-                    }
-                }
-            )
-
-            .setSmallIconResourceId(R.drawable.exo_media_action_repeat_one) // アプリアイコン設定したいが、できるか？
-            .build()
-
-// setShowActionsInCompactView を設定したいが、可能か？
-// https://developer.android.com/training/notify-user/expanded?hl=ja
-        //  Play/Pauseボタンが表示されるようにPlayerNotificationManagerのgetActionIndicesForCompactViewで設定されているが、変更できない？
-
+        playerNotificationManager?.apply {
             exoPlayer?.let {
                 setPlayer(ForwardingPlayer(exoPlayer))
-                setUsePlayPauseActions(true) // 再生停止のみにする
-                setUseFastForwardAction(false)
-                setUseRewindAction(false)
                 setUseNextAction(false)
                 setUsePreviousAction(false)
                 setUseStopAction(false)
@@ -377,8 +312,8 @@ internal class BetterPlayer(
             }
         }
 
-        // この部分があるとAndroid13にて再生/停止ボタンが表示されない
-        if ( Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
             && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S
         ) {
             refreshHandler = Handler(Looper.getMainLooper())
@@ -399,27 +334,6 @@ internal class BetterPlayer(
             }
             refreshHandler?.postDelayed(refreshRunnable!!, 0)
         }
-
-        // ここでコールバック設定すると動く
-        mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
-            override fun onSeekTo(pos: Long) {
-                Log.d("onSeekTo","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-                sendSeekToEvent(pos)
-                super.onSeekTo(pos)
-            }
-
-            override fun onPlay() {
-                Log.d("onPlay","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-                tapPlayButtonInPIP()
-                super.onPlay()
-            }
-
-            override fun onPause() {
-                Log.d("onPause","aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-                tapPauseButtonInPIP()
-                super.onPause()
-            }
-        })
 
         exoPlayerEventListener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -741,67 +655,6 @@ internal class BetterPlayer(
         return null
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
-    fun setupPlayerEventHanlerForNotification(context: Context) {
-        notificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
-            val mediaStyle = androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSession?.sessionToken)
-            mediaStyle.setShowActionsInCompactView(0)
-            exoPlayer?.addListener(object : Player.Listener {
-                override fun onIsPlayingChanged(isPlaying: Boolean) {
-                    super.onIsPlayingChanged(isPlaying)
-                    val notificationBuilder =
-                        NotificationCompat.Builder(context, NOTIFICATION_ID.toString())
-                    if (isPlaying) {
-                        notificationBuilder
-                            .addAction(
-                                NotificationCompat.Action.Builder(
-                                    R.drawable.better_player_pause_24dp,
-                                    "",
-                                    PendingIntent.getBroadcast(
-                                        context,
-                                        BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue,
-                                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
-                                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
-                                            BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue
-                                        ),
-                                        PendingIntent.FLAG_IMMUTABLE
-                                    )
-                                ).build()
-                            )
-                    } else {
-                        notificationBuilder
-                            .addAction(
-                                NotificationCompat.Action.Builder(
-                                    R.drawable.better_player_play_arrow_24dp,
-                                    "",
-                                    PendingIntent.getBroadcast(
-                                        context,
-                                        BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue,
-                                        Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
-                                            BetterPlayerPlugin.EXTRA_ACTION_TYPE,
-                                            BetterPlayerPlugin.Companion.PipActions.PLAY.rawValue
-                                        ),
-                                        PendingIntent.FLAG_IMMUTABLE
-                                    )
-                                ).build()
-                            )
-                    }
-                    notificationBuilder.setStyle(mediaStyle)
-                    notificationBuilder.setContentTitle(LocalDateTime.now().toString()) // TODO:
-                    notificationBuilder.setSmallIcon(R.drawable.exo_media_action_repeat_one) // TODO:
-                    notificationManager?.notify(
-                        foregroundNotificationId,
-                        notificationBuilder.build()
-                    )
-                }
-            }
-            )
-        }
-    }
-
     // https://developers.cyberagent.co.jp/blog/archives/31631/ の`ExoPlayerとの同期`
     // Only work if it is more than Android 13
     fun setMediaSessionCallback() {
@@ -825,6 +678,7 @@ internal class BetterPlayer(
             }
 
             override fun onStop() {
+                Log.d("onStop", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 mediaSession?.isActive = false
                 super.onStop()
             }
