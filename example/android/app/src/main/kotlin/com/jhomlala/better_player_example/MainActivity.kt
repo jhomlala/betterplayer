@@ -4,8 +4,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.Observer
 import com.jhomlala.better_player.NotificationService
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -16,27 +16,23 @@ class MainActivity : FlutterActivity() {
     var eventSink: EventChannel.EventSink? = null
     private var notificationManager: NotificationManager? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-//        startNotificationService()
-
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        NotificationService.notificationBuilder.observeForever {
+    // Observe update of notification action.
+    private val notificationBuilderObserver =
+        Observer<NotificationCompat.Builder?> {
             it?.let {
                 updateNotification(it)
             }
         }
-    }
-    override fun onStop() {
-        super.onStop()
-        Log.d("NFCDEV", "onStop")
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        NotificationService.notificationBuilder.observeForever(notificationBuilderObserver)
     }
 
     override fun onDestroy() {
+        NotificationService.notificationBuilder.removeObserver(notificationBuilderObserver)
         super.onDestroy()
-        Log.d("NFCDEV", "onDestroy")
-//        stopNotificationService()
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
@@ -60,31 +56,6 @@ class MainActivity : FlutterActivity() {
         notificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
         notificationManager?.notify(NotificationService.foregroundNotificationId, notificationBuilder.build())
     }
-
-//    ///TODO: Call this method via channel after remote notification start
-//    private fun startNotificationService() {
-//        try {
-//            val intent = Intent(this, BetterPlayerService::class.java)
-//
-//            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O) {
-//                startForegroundService(intent)
-//            } else {
-//                startService(intent)
-//            }
-//
-//        } catch (exception: Exception) {
-//        }
-//    }
-//
-//    ///TODO: Call this method via channel after remote notification stop
-//    private fun stopNotificationService() {
-//        try {
-//            val intent = Intent(this, BetterPlayerService::class.java)
-//            stopService(intent)
-//        } catch (exception: Exception) {
-//
-//        }
-//    }
 
     override fun onPictureInPictureModeChanged(
         isInPictureInPictureMode: Boolean,
