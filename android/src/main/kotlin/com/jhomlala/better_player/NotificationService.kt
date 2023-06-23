@@ -71,7 +71,9 @@ class NotificationService : Service() {
         val activityName = intent?.getStringExtra(ACTIVITY_NAME_PARAMETER)
         val packageName = this.applicationContext.packageName
 
-        BetterPlayerPlugin.notificationActions.observeForever(notificationActionListObserver)
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+            BetterPlayerPlugin.notificationActions.observeForever(notificationActionListObserver)
+        }
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationChannelName != null) {
@@ -114,10 +116,15 @@ class NotificationService : Service() {
             .setContentTitle(title)
             .setContentText(author)
             .setStyle(mediaStyle)
-            .addAction(pauseAction)
+
             .setSmallIcon(R.drawable.exo_notification_small_icon) // TODO: Use app icon
             .setPriority(PRIORITY_MIN)
             .setContentIntent(pendingIntent)
+        
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+            notificationBuilder2.addAction(pauseAction)
+        }
+
         mediaStyle.setShowActionsInCompactView(0)
 
         _notificationBuilder = notificationBuilder2
@@ -139,7 +146,10 @@ class NotificationService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        BetterPlayerPlugin.notificationActions.removeObserver(notificationActionListObserver)
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+            BetterPlayerPlugin.notificationActions.removeObserver(notificationActionListObserver)
+        }
+
         try {
             val notificationManager =
                 getSystemService(
