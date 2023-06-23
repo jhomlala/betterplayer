@@ -112,7 +112,7 @@ class NotificationService : Service() {
 
         Picasso.get().load(imageUrl).into(imageDownloadHandler)
 
-        val notificationBuilder2 = NotificationCompat.Builder(this, channelId)
+        _notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(author)
             .setStyle(mediaStyle)
@@ -120,15 +120,15 @@ class NotificationService : Service() {
             .setSmallIcon(R.drawable.exo_notification_small_icon) // TODO: Use app icon
             .setPriority(PRIORITY_MIN)
             .setContentIntent(pendingIntent)
-        
+
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
-            notificationBuilder2.addAction(pauseAction)
+            _notificationBuilder?.addAction(pauseAction)
         }
 
         mediaStyle.setShowActionsInCompactView(0)
 
-        _notificationBuilder = notificationBuilder2
         startForeground(foregroundNotificationId, _notificationBuilder?.build())
+        notificationBuilder.value = _notificationBuilder
 
         return START_NOT_STICKY
     }
