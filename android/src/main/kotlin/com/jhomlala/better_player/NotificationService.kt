@@ -25,15 +25,10 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 
 class NotificationService : Service() {
-    private var notificationBuilder: NotificationCompat.Builder? = null
-
-//    @SuppressLint("RestrictedApi")
-//    fun NotificationCompat.Builder.clearActions() {
-//        mActions.clear()
-//    }
+    private var _notificationBuilder: NotificationCompat.Builder? = null
 
     companion object {
-        var notificationBuilderInNotificationService: MutableLiveData<NotificationCompat.Builder?> =
+        var notificationBuilder: MutableLiveData<NotificationCompat.Builder?> =
             MutableLiveData()
         const val notificationId = 20772077
         const val foregroundNotificationId = 20772078
@@ -46,19 +41,19 @@ class NotificationService : Service() {
     // Observe update of notification action.
     private val notificationActionListObserver =
         Observer<List<NotificationCompat.Action>?> { actions ->
-            actions?.map {
-                notificationBuilder?.clearActions()
-                notificationBuilder?.addAction(it)
+            actions?.map { action ->
+                _notificationBuilder?.clearActions()
+                _notificationBuilder?.addAction(action)
             }
-            notificationBuilderInNotificationService.value = notificationBuilder
+            notificationBuilder.value = _notificationBuilder
         }
 
     // Load image.
     private var imageDownloadHandler: Target = object : Target {
         override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
             // Use as setLargeIcon on notification.
-            notificationBuilder?.setLargeIcon(bitmap)
-            notificationBuilderInNotificationService.value = notificationBuilder
+            _notificationBuilder?.setLargeIcon(bitmap)
+            notificationBuilder.value = _notificationBuilder
         }
 
         override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
@@ -76,7 +71,7 @@ class NotificationService : Service() {
         val activityName = intent?.getStringExtra(ACTIVITY_NAME_PARAMETER)
         val packageName = this.applicationContext.packageName
 
-        BetterPlayerPlugin.pendingActions.observeForever(notificationActionListObserver)
+        BetterPlayerPlugin.notificationActions.observeForever(notificationActionListObserver)
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationChannelName != null) {
@@ -125,8 +120,8 @@ class NotificationService : Service() {
             .setContentIntent(pendingIntent)
         mediaStyle.setShowActionsInCompactView(0)
 
-        notificationBuilder = notificationBuilder2
-        startForeground(foregroundNotificationId, notificationBuilder?.build())
+        _notificationBuilder = notificationBuilder2
+        startForeground(foregroundNotificationId, _notificationBuilder?.build())
 
         return START_NOT_STICKY
     }
@@ -144,7 +139,7 @@ class NotificationService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        BetterPlayerPlugin.pendingActions.removeObserver(notificationActionListObserver)
+        BetterPlayerPlugin.notificationActions.removeObserver(notificationActionListObserver)
         try {
             val notificationManager =
                 getSystemService(

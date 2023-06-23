@@ -2,9 +2,7 @@ package com.jhomlala.better_player_example
 
 import android.app.NotificationManager
 import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.core.app.NotificationCompat
@@ -24,7 +22,7 @@ class MainActivity : FlutterActivity() {
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        NotificationService.notificationBuilderInNotificationService.observeForever {
+        NotificationService.notificationBuilder.observeForever {
             it?.let {
                 updateNotification(it)
             }
