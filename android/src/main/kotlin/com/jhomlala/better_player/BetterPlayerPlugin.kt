@@ -173,45 +173,31 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private val playerEventListenerForIsPlayingChanged = object : Player.Listener {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onIsPlayingChanged(isPlaying: Boolean) {
-            Log.d(
-                "NFCDEV",
-                "playerEventListenerForIsPlayingChanged isPlaying: " + isPlaying.toString()
-            )
             super.onIsPlayingChanged(isPlaying)
             pipRemoteActions.clear()
             val context = flutterState?.applicationContext
             context?.let {
-                var pendingIntent: PendingIntent? = null
-                var notificationAction: NotificationCompat.Action? = null
+                val pendingIntent: PendingIntent?
+                val buttonImageResourceId: Int?
                 if (isPlaying) {
-                    pendingIntent = createPendingIntent(context, PipActions.PAUSE.rawValue)
-                    pipRemoteActions.add(
-                        createRemoteAction(
-                            context,
-                            R.drawable.exo_notification_pause,
-                            pendingIntent
-                        )
-                    )
-                    notificationAction = NotificationCompat.Action(
-                        R.drawable.exo_notification_pause, "",
-                        pendingIntent
-                    )
+                    pendingIntent = createPendingIntent(PipActions.PAUSE.rawValue)
+                    buttonImageResourceId = R.drawable.exo_notification_pause
                 } else {
-                    pendingIntent = createPendingIntent(context, PipActions.PLAY.rawValue)
-                    pipRemoteActions.add(
-                        createRemoteAction(
-                            context,
-//                            R.drawable.better_player_play_arrow_24dp,
-                            R.drawable.exo_notification_play,
-                            pendingIntent
-                        )
-                    )
-                    notificationAction = NotificationCompat.Action(
-                        R.drawable.exo_notification_play, "",
+                    pendingIntent = createPendingIntent(PipActions.PLAY.rawValue)
+                    buttonImageResourceId = R.drawable.exo_notification_play
+                }
+                pipRemoteActions.add(
+                    createRemoteAction(
+                        context,
+                        buttonImageResourceId,
                         pendingIntent
                     )
-                }
-                listOf(notificationAction).also { pendingActions.value = it }
+                )
+                val notificationAction = NotificationCompat.Action(
+                    buttonImageResourceId, "",
+                    pendingIntent
+                )
+                notificationActions.value = listOf(notificationAction)
             }
             activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
         }
@@ -219,11 +205,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createPendingIntent(
-        context: Context,
         controlType: Int
     ): PendingIntent {
         return PendingIntent.getBroadcast(
-            context,
+            flutterState?.applicationContext,
             controlType,
             Intent(DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
                 EXTRA_ACTION_TYPE,
@@ -807,7 +792,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun dispose(player: BetterPlayer, textureId: Long) {
 //        notificationBuilder.value = null
-        pendingActions.value = null
+        notificationActions.value = null
         stopNotificationService()
         player.dispose()
         videoPlayers.remove(textureId)
@@ -934,9 +919,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             PAUSE(2)
         }
 
-//        var notificationBuilder: MutableLiveData<NotificationCompat.Builder?> = MutableLiveData()
-        // Observed by NotificationService and update action in notification.
-        var pendingActions: MutableLiveData<List<NotificationCompat.Action>?> = MutableLiveData()
+        // This value is observed by NotificationService and update action in notification.
+        var notificationActions: MutableLiveData<List<NotificationCompat.Action>?> = MutableLiveData()
 
     }
 }
