@@ -13,9 +13,9 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-  path_provider: ^2.0.10
-  visibility_detector: ^0.3.3
-  collection: ^1.16.0
+  path_provider: ^2.0.15
+  visibility_detector: ^0.4.0+2
+  collection: ^1.17.1
 
 dev_dependencies:
   flutter_test:
