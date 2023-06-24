@@ -1,43 +1,54 @@
 package com.jhomlala.better_player_example
 
-import android.app.NotificationManager
-import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
-import androidx.core.app.NotificationCompat
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.Observer
-import com.jhomlala.better_player.NotificationService
+import com.jhomlala.better_player.BetterPlayerPlugin
+import com.jhomlala.better_player.NotificationParameter
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 
 class MainActivity : FlutterActivity() {
+
     private lateinit var channel: EventChannel
     var eventSink: EventChannel.EventSink? = null
-    private var notificationManager: NotificationManager? = null
 
-    // Observe update of notification action.
-    private val notificationBuilderObserver =
-        Observer<NotificationCompat.Builder?> {
-            it?.let {
-                updateNotification(it)
+    @RequiresApi(Build.VERSION_CODES.O)
+    private var notificationParameterObserver =
+        Observer<NotificationParameter?>
+        { parameter ->
+            if (parameter != null) {
+                startNotificationService(parameter)
+            } else {
+                stopNotificationService()
             }
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        NotificationService.notificationBuilder.observeForever(notificationBuilderObserver)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            BetterPlayerPlugin.notificationParameter.observeForever(notificationParameterObserver)
+        }
     }
 
     override fun onDestroy() {
-        NotificationService.notificationBuilder.removeObserver(notificationBuilderObserver)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            BetterPlayerPlugin.notificationParameter.removeObserver(notificationParameterObserver)
+        }
+        stopNotificationService()
         super.onDestroy()
     }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        channel = EventChannel(flutterEngine.dartExecutor.binaryMessenger, "better_player.nfc_ch_app/pip_status_event_channel")
+        channel = EventChannel(
+            flutterEngine.dartExecutor.binaryMessenger,
+            "better_player.nfc_ch_app/pip_status_event_channel"
+        )
         channel.setStreamHandler(
             object : EventChannel.StreamHandler {
                 override fun onListen(arguments: Any?, events: EventChannel.EventSink) {
@@ -50,11 +61,42 @@ class MainActivity : FlutterActivity() {
             })
     }
 
-    // Update Notification to reflect actions set in BetterPlayerPlugin based on player status.
-    private fun updateNotification(notificationBuilder: NotificationCompat.Builder) {
-        // Set small icon because available in app side.
-        notificationBuilder.setSmallIcon(R.mipmap.ic_launcher)
-        notificationManager?.notify(NotificationService.foregroundNotificationId, notificationBuilder.build())
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun startNotificationService(notificationParameter: NotificationParameter) {
+        val intent = Intent(this, BetterPlayerNotificationService::class.java)
+        intent.putExtra(
+            BetterPlayerPlugin.TITLE_PARAMETER, notificationParameter.title
+        )
+        intent.putExtra(
+            BetterPlayerPlugin.AUTHOR_PARAMETER, notificationParameter.author
+        )
+        intent.putExtra(
+            BetterPlayerPlugin.IMAGE_URL_PARAMETER,
+            notificationParameter.imageUrl
+        )
+        intent.putExtra(
+            BetterPlayerPlugin.NOTIFICATION_CHANNEL_NAME_PARAMETER,
+            notificationParameter.notificationChannelName
+        )
+        intent.putExtra(
+            BetterPlayerPlugin.ACTIVITY_NAME_PARAMETER,
+            notificationParameter.activityName
+        )
+
+        intent.putExtra(
+            BetterPlayerPlugin.MEDIA_SESSION_TOKEN_PARAMETER,
+            notificationParameter.mediaSessionToken
+        )
+        intent.putExtra(
+            BetterPlayerNotificationService.SMALL_ICON_RESOURCE_ID,
+            R.mipmap.ic_launcher
+        )
+        startForegroundService(intent)
+    }
+
+    private fun stopNotificationService() {
+        val intent = Intent(this, BetterPlayerNotificationService::class.java)
+        stopService(intent)
     }
 
     override fun onPictureInPictureModeChanged(

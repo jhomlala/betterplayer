@@ -1,7 +1,10 @@
-package com.jhomlala.better_player
+package com.jhomlala.better_player_example
 
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -12,27 +15,20 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationCompat.PRIORITY_MIN
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.ui.R
-import com.jhomlala.better_player.BetterPlayerPlugin.Companion.ACTIVITY_NAME_PARAMETER
-import com.jhomlala.better_player.BetterPlayerPlugin.Companion.AUTHOR_PARAMETER
-import com.jhomlala.better_player.BetterPlayerPlugin.Companion.IMAGE_URL_PARAMETER
-import com.jhomlala.better_player.BetterPlayerPlugin.Companion.MEDIA_SESSION_TOKEN_PARAMETER
-import com.jhomlala.better_player.BetterPlayerPlugin.Companion.NOTIFICATION_CHANNEL_NAME_PARAMETER
-import com.jhomlala.better_player.BetterPlayerPlugin.Companion.TITLE_PARAMETER
+import com.jhomlala.better_player.BetterPlayerPlugin
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 
-class NotificationService2 : Service() {
-    private var _notificationBuilder: NotificationCompat.Builder? = null
+class BetterPlayerNotificationService: Service() {
+    private var notificationBuilder: NotificationCompat.Builder? = null
+    private var notificationManager: NotificationManager? = null
 
     companion object {
-        var notificationBuilder: MutableLiveData<NotificationCompat.Builder?> =
-            MutableLiveData()
-        const val notificationId = 20772077
-        const val foregroundNotificationId = 20772078
+        const val NOTIFICATION_ID = 20772077
+        const val FOREGROUND_NOTIFICATION_ID = 20772078
+        const val SMALL_ICON_RESOURCE_ID = "smallIconResourceId"
     }
 
     override fun onBind(intent: Intent?): IBinder? {
@@ -43,19 +39,18 @@ class NotificationService2 : Service() {
     private val notificationActionListObserver =
         Observer<List<NotificationCompat.Action>?> { actions ->
             actions?.map { action ->
-                _notificationBuilder?.clearActions()
-                _notificationBuilder?.addAction(action)
+                notificationBuilder?.clearActions()
+                notificationBuilder?.addAction(action)
             }
-            notificationBuilder.value = _notificationBuilder
+            updateNotification()
         }
 
     // Load image.
     private var imageDownloadHandler: Target = object : Target {
         override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-            Log.d("NotificationService", "onBitmapLoaded")
             // Use as setLargeIcon on notification.
-            _notificationBuilder?.setLargeIcon(bitmap)
-            notificationBuilder.value = _notificationBuilder
+            notificationBuilder?.setLargeIcon(bitmap)
+            updateNotification()
         }
 
         override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
@@ -68,27 +63,26 @@ class NotificationService2 : Service() {
     @SuppressLint("PrivateResource")
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val title = intent?.getStringExtra(TITLE_PARAMETER)
-        val author = intent?.getStringExtra(AUTHOR_PARAMETER)
-        val imageUrl = intent?.getStringExtra(IMAGE_URL_PARAMETER)
-        val notificationChannelName = intent?.getStringExtra(NOTIFICATION_CHANNEL_NAME_PARAMETER)
-        val activityName = intent?.getStringExtra(ACTIVITY_NAME_PARAMETER)
-        val packageName = this.applicationContext.packageName
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
-            BetterPlayerPlugin.notificationActions.observeForever(notificationActionListObserver)
-        }
+        val title = intent?.getStringExtra(BetterPlayerPlugin.TITLE_PARAMETER)
+        val author = intent?.getStringExtra(BetterPlayerPlugin.AUTHOR_PARAMETER)
+        val imageUrl = intent?.getStringExtra(BetterPlayerPlugin.IMAGE_URL_PARAMETER)
+        val notificationChannelName = intent?.getStringExtra(BetterPlayerPlugin.NOTIFICATION_CHANNEL_NAME_PARAMETER)
+        val activityName = intent?.getStringExtra(BetterPlayerPlugin.ACTIVITY_NAME_PARAMETER)
+        val packageName = this.applicationContext.packageName
+        val smallIconResourceId = intent?.getIntExtra(SMALL_ICON_RESOURCE_ID, 0)
 
         val channelId =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationChannelName != null) {
-                createNotificationChannel(notificationId.toString(), notificationChannelName)
+                createNotificationChannel(NOTIFICATION_ID.toString(), notificationChannelName)
             } else {
                 ""
             }
 
         //  set MediaSession's token
         val sessionToken =
-            intent?.getParcelableExtra<MediaSessionCompat.Token>(MEDIA_SESSION_TOKEN_PARAMETER)
+            intent?.getParcelableExtra<MediaSessionCompat.Token>(BetterPlayerPlugin.MEDIA_SESSION_TOKEN_PARAMETER)
         val mediaStyle =
             androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(sessionToken)
 
@@ -116,26 +110,32 @@ class NotificationService2 : Service() {
 
         Picasso.get().load(imageUrl).into(imageDownloadHandler)
 
-        _notificationBuilder = NotificationCompat.Builder(this, channelId)
+        notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(author)
             .setStyle(mediaStyle)
+            .setSmallIcon(smallIconResourceId ?: 0)
 
-            .setSmallIcon(R.drawable.exo_notification_small_icon) // TODO: Use app icon
-//            .setSmallIcon(android.R.color.transparent)
-            .setPriority(PRIORITY_MIN)
+            .setPriority(NotificationCompat.PRIORITY_MIN)
             .setContentIntent(pendingIntent)
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
-            _notificationBuilder?.addAction(pauseAction)
+            notificationBuilder?.addAction(pauseAction)
         }
 
         mediaStyle.setShowActionsInCompactView(0)
-        Log.d("NotificationService", "startForeground")
-        startForeground(foregroundNotificationId, _notificationBuilder?.build())
-        notificationBuilder.value = _notificationBuilder
+        startForeground(FOREGROUND_NOTIFICATION_ID, notificationBuilder?.build())
+
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
+            BetterPlayerPlugin.notificationActions.observeForever(notificationActionListObserver)
+        }
 
         return START_NOT_STICKY
+    }
+
+    // Update Notification to reflect actions set in BetterPlayerPlugin based on player status.
+    private fun updateNotification() {
+        notificationManager?.notify(FOREGROUND_NOTIFICATION_ID, notificationBuilder?.build())
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -160,7 +160,7 @@ class NotificationService2 : Service() {
                 getSystemService(
                     Context.NOTIFICATION_SERVICE
                 ) as NotificationManager
-            notificationManager.cancel(foregroundNotificationId)
+            notificationManager.cancel(FOREGROUND_NOTIFICATION_ID)
         } catch (exception: Exception) {
 
         } finally {
@@ -180,5 +180,4 @@ class NotificationService2 : Service() {
             PendingIntent.FLAG_IMMUTABLE
         )
     }
-
 }

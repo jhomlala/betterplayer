@@ -123,7 +123,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             }
             if (event == Lifecycle.Event.ON_DESTROY) {
                 unregisterBroadcastReceiverForPIPAction()
-                stopNotificationService()
+//                stopNotificationService()
+                notificationParameter.value = null
             }
         })
     }
@@ -588,28 +589,47 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         val context = flutterState?.applicationContext
         context?.let {
             val mediaSession = betterPlayer.setupMediaSession(context)
+            mediaSession?.let {
+                notificationParameter.value = NotificationParameter(
+                    title = getParameter(dataSource, TITLE_PARAMETER, ""),
+                    author = getParameter(dataSource, AUTHOR_PARAMETER, ""),
+                    imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, ""),
+                    notificationChannelName = getParameter(
+                        dataSource,
+                        NOTIFICATION_CHANNEL_NAME_PARAMETER,
+                        ""
+                    ),
+                    activityName = getParameter(
+                        dataSource,
+                        ACTIVITY_NAME_PARAMETER,
+                        "MainActivity"
+                    ),
+                    mediaSessionToken = mediaSession.sessionToken
+                )
+            }
+//            try {
+//                val intent = Intent(context, NotificationService::class.java)
+//                intent.putExtra(
+//                    ACTIVITY_NAME_PARAMETER,
+//                    getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
+//                )
+//                mediaSession?.let {
+//                    intent.putExtra(MEDIA_SESSION_TOKEN_PARAMETER, mediaSession.sessionToken)
+//                }
+//
+//                intent.putExtra(TITLE_PARAMETER, getParameter(dataSource, TITLE_PARAMETER, ""))
+//                intent.putExtra(AUTHOR_PARAMETER, getParameter(dataSource, AUTHOR_PARAMETER, ""))
+//                intent.putExtra(
+//                    IMAGE_URL_PARAMETER,
+//                    getParameter(dataSource, IMAGE_URL_PARAMETER, "")
+//                )
+//                intent.putExtra(
+//                    NOTIFICATION_CHANNEL_NAME_PARAMETER,
+//                    getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, "")
+//                )
+//                activity?.startForegroundService(intent)
 
-            try {
-                val intent = Intent(context, NotificationService::class.java)
-                intent.putExtra(
-                    ACTIVITY_NAME_PARAMETER,
-                    getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
-                )
-                mediaSession?.let {
-                    intent.putExtra(MEDIA_SESSION_TOKEN_PARAMETER, mediaSession.sessionToken)
-                }
 
-                intent.putExtra(TITLE_PARAMETER, getParameter(dataSource, TITLE_PARAMETER, ""))
-                intent.putExtra(AUTHOR_PARAMETER, getParameter(dataSource, AUTHOR_PARAMETER, ""))
-                intent.putExtra(
-                    IMAGE_URL_PARAMETER,
-                    getParameter(dataSource, IMAGE_URL_PARAMETER, "")
-                )
-                intent.putExtra(
-                    NOTIFICATION_CHANNEL_NAME_PARAMETER,
-                    getParameter(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, "")
-                )
-                activity?.startForegroundService(intent)
 // ここでnotificationBuilder に設定する？
 
 //                val title = getParameter(dataSource, TITLE_PARAMETER, "")
@@ -667,45 +687,28 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 //                mediaStyle.setShowActionsInCompactView(0)
 //
 //                notificationBuilder.value = notificationBuilder2
-            } catch (exception: Exception) {
-                Log.e(TAG, "startNotificationService failed", exception)
-            }
+//            } catch (exception: Exception) {
+//                Log.e(TAG, "startNotificationService failed", exception)
+//            }
         }
     }
-
-    private fun stopNotificationService() {
-        val context = flutterState?.applicationContext
-        context?.let {
-            try {
-                val intent = Intent(context, NotificationService::class.java)
-                activity?.stopService(intent)
-            } catch (exception: Exception) {
-                Log.e(TAG, "stopNotificationService failed", exception)
-            }
-        }
-    }
+//
+//    private fun stopNotificationService() {
+//        val context = flutterState?.applicationContext
+//        context?.let {
+//            try {
+//                val intent = Intent(context, NotificationService::class.java)
+//                activity?.stopService(intent)
+//            } catch (exception: Exception) {
+//                Log.e(TAG, "stopNotificationService failed", exception)
+//            }
+//        }
+//    }
 
     private fun removeOtherNotificationListeners() {
         for (index in 0 until videoPlayers.size()) {
             videoPlayers.valueAt(index).disposeRemoteNotifications()
         }
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(
-        context: Context,
-        channelId: String,
-        channelName: String
-    ): String {
-        val channel = NotificationChannel(
-            channelId, // Should be unique in App
-            channelName, // Will be shown in Setting app
-            NotificationManager.IMPORTANCE_LOW
-        )
-        val service = context.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        service.createNotificationChannel(channel)
-        return channelId
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -793,7 +796,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private fun dispose(player: BetterPlayer, textureId: Long) {
 //        notificationBuilder.value = null
         notificationActions.value = null
-        stopNotificationService()
+//        stopNotificationService()
+        notificationParameter.value = null
         player.dispose()
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
@@ -920,7 +924,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         }
 
         // This value is observed by NotificationService and update action in notification.
-        var notificationActions: MutableLiveData<List<NotificationCompat.Action>?> = MutableLiveData()
+        var notificationActions: MutableLiveData<List<NotificationCompat.Action>?> =
+            MutableLiveData()
+        var notificationParameter: MutableLiveData<NotificationParameter?> = MutableLiveData()
 
     }
 }
