@@ -532,15 +532,15 @@ internal class BetterPlayer(
         exoPlayer?.playWhenReady = false
     }
 
-    fun tapPlayButtonInPIP() {
+    fun tapExternalPlayButton() {
         val event: MutableMap<String, Any?> = HashMap()
-        event["event"] = "tapPlayButtonInPIP"
+        event["event"] = "tapExternalPlayButton"
         eventSink.success(event)
     }
 
-    fun tapPauseButtonInPIP() {
+    fun tapExternalPauseButton() {
         val event: MutableMap<String, Any?> = HashMap()
-        event["event"] = "tapPauseButtonInPIP"
+        event["event"] = "tapExternalPauseButton"
         eventSink.success(event)
     }
 
@@ -653,7 +653,7 @@ internal class BetterPlayer(
         }
         return null
     }
-
+    
     // Only work if it is more than Android 13
     fun setMediaSessionCallback() {
         mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
@@ -663,12 +663,12 @@ internal class BetterPlayer(
             }
 
             override fun onPlay() {
-                tapPlayButtonInPIP()
+                tapExternalPlayButton()
                 super.onPlay()
             }
 
             override fun onPause() {
-                tapPauseButtonInPIP()
+                tapExternalPauseButton()
                 super.onPause()
             }
         })

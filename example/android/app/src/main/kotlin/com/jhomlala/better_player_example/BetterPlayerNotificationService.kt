@@ -104,7 +104,7 @@ class BetterPlayerNotificationService: Service() {
             NotificationCompat.Action.Builder(
                 R.drawable.exo_notification_pause,
                 "",
-                createPendingIntent(BetterPlayerPlugin.Companion.PipActions.PAUSE.rawValue)
+                createPendingIntent(BetterPlayerPlugin.Companion.CustomActions.PAUSE.rawValue)
             )
                 .build()
 
@@ -173,7 +173,7 @@ class BetterPlayerNotificationService: Service() {
         return PendingIntent.getBroadcast(
             this,
             actionId,
-            Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
+            Intent(BetterPlayerPlugin.DW_NFC_BETTER_PLAYER_CUSTOM_ACTION).putExtra(
                 BetterPlayerPlugin.EXTRA_ACTION_TYPE,
                 actionId
             ),
