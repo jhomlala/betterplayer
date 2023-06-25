@@ -1,8 +1,3 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.jhomlala.better_player">
-    <application>
-    <service
-        android:name=".NotificationService"
-        android:stopWithTask="false" />
-    </application>
 </manifest>
