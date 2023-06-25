@@ -21,6 +21,7 @@ class MainActivity : FlutterActivity() {
     private var notificationParameterObserver =
         Observer<NotificationParameter?>
         { parameter ->
+            Log.d("NFCDEV", "notificationParameterObserver param: " + parameter.toString())
             if (parameter != null) {
                 startNotificationService(parameter)
             } else {
@@ -63,6 +64,7 @@ class MainActivity : FlutterActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startNotificationService(notificationParameter: NotificationParameter) {
+        Log.d("NFCDEV", "MainActivity startNotificationService param: " + parameter.toString())
         val intent = Intent(this, BetterPlayerNotificationService::class.java)
         intent.putExtra(
             BetterPlayerPlugin.TITLE_PARAMETER, notificationParameter.title

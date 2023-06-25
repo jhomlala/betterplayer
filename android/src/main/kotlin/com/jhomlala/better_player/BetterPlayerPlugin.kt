@@ -590,6 +590,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         context?.let {
             val mediaSession = betterPlayer.setupMediaSession(context)
             mediaSession?.let {
+                Log.d("NFCDEV", "BetterPlayerNotification startNotificationService")
                 notificationParameter.value = NotificationParameter(
                     title = getParameter(dataSource, TITLE_PARAMETER, ""),
                     author = getParameter(dataSource, AUTHOR_PARAMETER, ""),
