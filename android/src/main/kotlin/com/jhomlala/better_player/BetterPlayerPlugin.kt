@@ -3,10 +3,12 @@
 // found in the LICENSE file.
 package com.jhomlala.better_player
 
-import android.app.*
+import android.app.Activity
+import android.app.PendingIntent
+import android.app.PictureInPictureParams
+import android.app.RemoteAction
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Context.*
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -113,7 +115,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             if (Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 if (event == Lifecycle.Event.ON_PAUSE)
                     if (this.showPictureInPictureAutomatically && this.activity?.isInPictureInPictureMode != true) {
-//                        this.playerForPictureInPicture?.setupMediaSession(flutterState!!.applicationContext)
                         this.activity?.enterPictureInPictureMode(
                             createPictureInPictureParams(
                                 pipRemoteActions
@@ -136,7 +137,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         broadcastReceiverForPIPAction = object : BroadcastReceiver() {
             // Called when an item is clicked.
             override fun onReceive(context: Context?, intent: Intent?) {
-                Log.d("NFCDEV", "broadcastReceiverForPIPAction onReceive action: " + intent?.action)
                 if (intent == null || intent.action != DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION) {
                     return
                 }
@@ -526,6 +526,19 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 removeOtherNotificationListeners()
                 val showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false)
                 if (showNotification) {
+                    // ↓ Comment out original lines to custom the button in Notification Media Controls
+//                    val title = getParameter(dataSource, TITLE_PARAMETER, "")
+//                    val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
+//                    val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
+//                    val notificationChannelName =
+//                        getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
+//                    val activityName =
+//                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
+//                    betterPlayer.setupPlayerNotification(
+//                        flutterState?.applicationContext!!,
+//                        title, author, imageUrl, notificationChannelName, activityName
+                    // ↑ Comment out original lines to custom the button in Notification Media Controls
+
                     setupNotificationParameter(dataSource, betterPlayer)
                     // For Android 13 and older
                     // NOTE: Not so sure why but setting call back needs to be done after notification setting.
@@ -548,7 +561,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         context?.let {
             val mediaSession = betterPlayer.setupMediaSession(context)
             mediaSession?.let {
-                Log.d("NFCDEV", "BetterPlayerNotification startNotificationService")
                 notificationParameter.value = NotificationParameter(
                     title = getParameter(dataSource, TITLE_PARAMETER, ""),
                     author = getParameter(dataSource, AUTHOR_PARAMETER, ""),
@@ -598,7 +610,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     ) {
         playerForPictureInPicture = player
         showPictureInPictureAutomatically = willStartPIP
-//        player.setupMediaSession(flutterState!!.applicationContext) // ここでsetupMediaSession しない方が、Android13のシークバーが表示できる
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             activity?.setPictureInPictureParams(
                 createPictureInPictureParams(
@@ -657,7 +668,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         }
     }
 
-    private fun dispose(player: BetterPlayer, textureId: Long) { l
+    private fun dispose(player: BetterPlayer, textureId: Long) {
         notificationActions.value = null
         notificationParameter.value = null
         player.dispose()

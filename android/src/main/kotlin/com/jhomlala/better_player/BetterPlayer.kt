@@ -654,39 +654,23 @@ internal class BetterPlayer(
         return null
     }
 
-    // https://developers.cyberagent.co.jp/blog/archives/31631/ の`ExoPlayerとの同期`
     // Only work if it is more than Android 13
     fun setMediaSessionCallback() {
         mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
             override fun onSeekTo(pos: Long) {
-                Log.d("onSeekTo", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 sendSeekToEvent(pos)
                 super.onSeekTo(pos)
             }
 
             override fun onPlay() {
-                Log.d("onPlay", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 tapPlayButtonInPIP()
                 super.onPlay()
             }
 
             override fun onPause() {
-                Log.d("onPause", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
                 tapPauseButtonInPIP()
                 super.onPause()
             }
-
-            override fun onStop() {
-                Log.d("onStop", "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-                mediaSession?.isActive = false
-                super.onStop()
-            }
-
-//            override fun onMediaButtonEvent(mediaButtonEvent: Intent): Boolean {
-//                val intentAction = mediaButtonEvent.action
-//                Log.d("onMediaButtonEvent", intentAction.toString())
-//                return super.onMediaButtonEvent(mediaButtonEvent)
-//            }
         })
     }
 

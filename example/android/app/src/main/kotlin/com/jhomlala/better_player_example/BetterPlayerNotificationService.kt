@@ -56,7 +56,7 @@ class BetterPlayerNotificationService: Service() {
         override fun onPrepareLoad(placeHolderDrawable: Drawable?) {}
 
         override fun onBitmapFailed(e: Exception?, errorDrawable: Drawable?) {
-            Log.d("NFCDEV", "NotificationService onBitmapFailed e: " + e?.localizedMessage)
+            Log.d("Picasso", "onBitmapFailed e: " + e?.localizedMessage)
         }
     }
 
@@ -124,7 +124,6 @@ class BetterPlayerNotificationService: Service() {
         }
 
         mediaStyle.setShowActionsInCompactView(0)
-        Log.d("NFCDEV", "NotificationService startForeground")
         startForeground(FOREGROUND_NOTIFICATION_ID, notificationBuilder?.build())
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
@@ -136,7 +135,6 @@ class BetterPlayerNotificationService: Service() {
 
     // Update Notification to reflect actions set in BetterPlayerPlugin based on player status.
     private fun updateNotification() {
-        Log.d("NFCDEV", "NotificationService updateNotification")
         notificationManager?.notify(FOREGROUND_NOTIFICATION_ID, notificationBuilder?.build())
     }
 
