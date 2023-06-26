@@ -87,7 +87,7 @@ bool _remoteCommandsInitialized = false;
 
 - (void) setupRemoteNotification :(BetterPlayer*) player{
     _notificationPlayer = player;
-    [self stopOtherUpdateListener:player];
+    [self stopAllUpdateListener:player];
     NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
     BOOL showNotification = false;
     id showNotificationObject = [dataSource objectForKey:@"showNotification"];
@@ -167,7 +167,6 @@ bool _remoteCommandsInitialized = false;
                 MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
                 CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
                 int64_t millis = [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
-                [_notificationPlayer seekTo: millis];
                 _notificationPlayer.eventSink(@{@"event" : @"seek", @"position": @(millis)});
             }
             return MPRemoteCommandHandlerStatusSuccess;
@@ -261,13 +260,8 @@ bool _remoteCommandsInitialized = false;
     [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo =  @{};
 }
 
-- (void) stopOtherUpdateListener: (BetterPlayer*) player{
-    NSString* currentPlayerTextureId = [self getTextureId:player];
+- (void) stopAllUpdateListener: (BetterPlayer*) player{
     for (NSString* textureId in _timeObserverIdDict.allKeys) {
-        if (currentPlayerTextureId == textureId){
-            continue;
-        }
-
         id timeObserverId = [_timeObserverIdDict objectForKey:textureId];
         BetterPlayer* playerToRemoveListener = [_players objectForKey:textureId];
         [playerToRemoveListener.player removeTimeObserver: timeObserverId];
