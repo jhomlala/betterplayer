@@ -60,6 +60,7 @@ flutter {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
     implementation "androidx.multidex:multidex:$multidexVersion"
-    implementation 'com.squareup.picasso:picasso:2.71828'
+    // NOTE: Warning will appear but can ignore it. https://github.com/square/picasso/issues/2179
+    implementation "com.squareup.picasso:picasso:2.8"
     implementation "androidx.media:media:1.6.0"
 }
