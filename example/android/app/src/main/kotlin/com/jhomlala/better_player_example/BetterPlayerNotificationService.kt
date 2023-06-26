@@ -23,7 +23,6 @@ import com.squareup.picasso.Target
 
 class BetterPlayerNotificationService: Service() {
     private var notificationBuilder: NotificationCompat.Builder? = null
-    private var notificationManager: NotificationManager? = null
 
     companion object {
         const val NOTIFICATION_ID = 20772077
@@ -63,7 +62,6 @@ class BetterPlayerNotificationService: Service() {
     @SuppressLint("PrivateResource")
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val title = intent?.getStringExtra(BetterPlayerPlugin.TITLE_PARAMETER)
         val author = intent?.getStringExtra(BetterPlayerPlugin.AUTHOR_PARAMETER)
@@ -135,7 +133,8 @@ class BetterPlayerNotificationService: Service() {
 
     // Update Notification to reflect actions set in BetterPlayerPlugin based on player status.
     private fun updateNotification() {
-        notificationManager?.notify(FOREGROUND_NOTIFICATION_ID, notificationBuilder?.build())
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.notify(FOREGROUND_NOTIFICATION_ID, notificationBuilder?.build())
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
