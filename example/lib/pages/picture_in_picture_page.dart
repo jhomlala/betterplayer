@@ -28,13 +28,14 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.elephantDreamVideoUrl,
+      Constants.phantomVideoUrl,
       notificationConfiguration: BetterPlayerNotificationConfiguration(
-          showNotification: true,
-          title: 'Text title',
-          author: 'Test author',
-          imageUrl: 'https://www.gstatic.com/webp/gallery/1.sm.jpg',
-          notificationChannelName: "メディアコントロール用"),
+        showNotification: true,
+        title: 'Text title',
+        author: 'Test author',
+        imageUrl: Constants.catImageUrl,
+        notificationChannelName: "メディアコントロール用",
+      ),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
