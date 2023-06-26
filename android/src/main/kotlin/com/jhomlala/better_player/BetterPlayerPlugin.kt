@@ -25,6 +25,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.Player
 import com.jhomlala.better_player.BetterPlayerCache.releaseCache
@@ -124,7 +125,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             }
             if (event == Lifecycle.Event.ON_DESTROY) {
                 unregisterBroadcastReceiverForPIPAction()
-                notificationParameter.value = null
+                _notificationParameter.value = null
             }
         })
     }
@@ -197,7 +198,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     buttonImageResourceId, "",
                     pendingIntent
                 )
-                notificationActions.value = listOf(notificationAction)
+                _notificationActions.value = listOf(notificationAction)
             }
             activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
         }
@@ -561,7 +562,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         context?.let {
             val mediaSession = betterPlayer.setupMediaSession(context)
             mediaSession?.let {
-                notificationParameter.value = NotificationParameter(
+                _notificationParameter.value = NotificationParameter(
                     title = getParameter(dataSource, TITLE_PARAMETER, ""),
                     author = getParameter(dataSource, AUTHOR_PARAMETER, ""),
                     imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, ""),
@@ -669,8 +670,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun dispose(player: BetterPlayer, textureId: Long) {
-        notificationActions.value = null
-        notificationParameter.value = null
+        _notificationParameter.value = null
         player.dispose()
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
@@ -797,9 +797,11 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         }
 
         // Will be observed to show notification.
-        var notificationParameter: MutableLiveData<NotificationParameter?> = MutableLiveData()
+        private var _notificationParameter: MutableLiveData<NotificationParameter?> = MutableLiveData()
+        val notificationParameter: LiveData<NotificationParameter?> get() = _notificationParameter
         // Will be observed to update action in notification.
-        var notificationActions: MutableLiveData<List<NotificationCompat.Action>?> =
+        private var _notificationActions: MutableLiveData<List<NotificationCompat.Action>?> =
             MutableLiveData()
+        val notificationActions: LiveData<List<NotificationCompat.Action>?> get() = _notificationActions
     }
 }
