@@ -311,7 +311,8 @@ internal class BetterPlayer(
             }
         }
 
-
+        // It looks this process only needed before Android 12 (S)
+        // If do in Android 13, the buttons in notification become strange.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP
             && Build.VERSION.SDK_INT <= Build.VERSION_CODES.S
         ) {
@@ -333,7 +334,6 @@ internal class BetterPlayer(
             }
             refreshHandler?.postDelayed(refreshRunnable!!, 0)
         }
-
         exoPlayerEventListener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 mediaSession?.setMetadata(
