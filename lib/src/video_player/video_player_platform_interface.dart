@@ -477,10 +477,10 @@ enum VideoEventType {
   /// will stop Picture in picture
   exitingPIP,
 
-  /// When tap custom play button from outside the app (e.g. PIP, NOtification)
+  /// When tap custom play button from outside the app (e.g. PIP, Notification)
   tapExternalPlayButton,
 
-  /// When tap custom pause button from outside the app (e.g. PIP, NOtification)
+  /// When tap custom pause button from outside the app (e.g. PIP, Notification)
   tapExternalPauseButton,
 
   /// An unknown event has been received.

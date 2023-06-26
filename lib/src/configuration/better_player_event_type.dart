@@ -28,6 +28,6 @@ enum BetterPlayerEventType {
   setDuration,
   enteringPIP, // Fire when start PIP by tap button in UI and close app.
   exitingPIP, // Fire when start PIP by tap button in UI and open app from PIP.
-  tapExternalPlayButton, // Android only. Fire when tap play button from outside the app (e.g. PIP, NOtification).
-  tapExternalPauseButton, // Android only. Fire when tap pause button from outside the app (e.g. PIP, NOtification).
+  tapExternalPlayButton, // Android only. Fire when tap play button from outside the app (e.g. PIP, Notification).
+  tapExternalPauseButton, // Android only. Fire when tap pause button from outside the app (e.g. PIP, Notification).
 }
