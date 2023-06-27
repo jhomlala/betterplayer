@@ -106,8 +106,6 @@ class BetterPlayerNotificationService: Service() {
             )
                 .build()
 
-        Picasso.get().load(imageUrl).into(imageDownloadHandler)
-
         notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title)
             .setContentText(author)
@@ -123,6 +121,9 @@ class BetterPlayerNotificationService: Service() {
 
         mediaStyle.setShowActionsInCompactView(0)
         startForeground(FOREGROUND_NOTIFICATION_ID, notificationBuilder?.build())
+
+        // Load large icon.
+        Picasso.get().load(imageUrl).into(imageDownloadHandler)
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.S) {
             BetterPlayerPlugin.notificationActions.observeForever(notificationActionListObserver)
