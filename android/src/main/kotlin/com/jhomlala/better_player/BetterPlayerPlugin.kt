@@ -58,9 +58,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var showPictureInPictureAutomatically: Boolean = false
     private val pipRemoteActions: ArrayList<RemoteAction> = ArrayList()
 
-    // To handle action while in picture-in-picture mode.
-    private var broadcastReceiverForExternalAction: BroadcastReceiver? = null
-
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         val loader = FlutterLoader()
         flutterState = FlutterState(
@@ -130,31 +127,25 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         })
     }
 
-    private fun initBroadcastReceiverForExternalActionIfNeeded() {
-        if (broadcastReceiverForExternalAction != null) {
-            // Just in case, return if already initialized.
-            return
-        }
-        broadcastReceiverForExternalAction = object : BroadcastReceiver() {
-            // Called when an item is clicked.
-            override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent == null || intent.action != DW_NFC_BETTER_PLAYER_CUSTOM_ACTION) {
-                    return
+    // To handle action while from outside the app.
+    private val broadcastReceiverForExternalAction = object : BroadcastReceiver() {
+        // Called when an item is clicked.
+        override fun onReceive(context: Context?, intent: Intent?) {
+            if (intent == null || intent.action != DW_NFC_BETTER_PLAYER_CUSTOM_ACTION) {
+                return
+            }
+            when (intent.getIntExtra(EXTRA_ACTION_TYPE, 0)) {
+                CustomActions.PLAY.rawValue -> {
+                    currentPlayer?.tapExternalPlayButton()
                 }
-                when (intent.getIntExtra(EXTRA_ACTION_TYPE, 0)) {
-                    CustomActions.PLAY.rawValue -> {
-                        currentPlayer?.tapExternalPlayButton()
-                    }
-                    CustomActions.PAUSE.rawValue -> {
-                        currentPlayer?.tapExternalPauseButton()
-                    }
+                CustomActions.PAUSE.rawValue -> {
+                    currentPlayer?.tapExternalPauseButton()
                 }
             }
         }
     }
 
     private fun registerBroadcastReceiverForExternalAction() {
-        initBroadcastReceiverForExternalActionIfNeeded()
         this.activity?.registerReceiver(
             broadcastReceiverForExternalAction,
             IntentFilter(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION)
@@ -162,10 +153,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun unregisterBroadcastReceiverForPIPAction() {
-        // To avoid `Receiver not registered` exception, check it was registered by doing null check.
-        broadcastReceiverForExternalAction?.let {
+        try {
             this.activity?.unregisterReceiver(broadcastReceiverForExternalAction)
-            broadcastReceiverForExternalAction = null
+        } catch (e: Exception) {
+            Log.d(TAG, "Error on unregisterReceiver. " + e.localizedMessage)
         }
     }
 
