@@ -176,8 +176,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             pipRemoteActions.clear()
-            val context = flutterState?.applicationContext
-            context?.let {
+            flutterState?.applicationContext?.let {context ->
                 val pendingIntent: PendingIntent?
                 val buttonImageResourceId: Int?
                 if (isPlaying) {
@@ -545,8 +544,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         dataSource: Map<String, Any?>,
         betterPlayer: BetterPlayer
     ) {
-        val context = flutterState?.applicationContext
-        context?.let {
+        flutterState?.applicationContext?.let { context ->
             val mediaSession = betterPlayer.setupMediaSession(context)
             mediaSession?.let {
                 _notificationParameter.value = NotificationParameter(
