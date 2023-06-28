@@ -180,10 +180,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 val pendingIntent: PendingIntent?
                 val buttonImageResourceId: Int?
                 if (isPlaying) {
-                    pendingIntent = createPendingIntent(CustomActions.PAUSE.rawValue)
+                    pendingIntent = createPendingIntentWithCustomAction(CustomActions.PAUSE)
                     buttonImageResourceId = R.drawable.exo_notification_pause
                 } else {
-                    pendingIntent = createPendingIntent(CustomActions.PLAY.rawValue)
+                    pendingIntent = createPendingIntentWithCustomAction(CustomActions.PLAY)
                     buttonImageResourceId = R.drawable.exo_notification_play
                 }
                 pipRemoteActions.add(
@@ -204,15 +204,15 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createPendingIntent(
-        controlType: Int
+    private fun createPendingIntentWithCustomAction(
+        customAction: CustomActions
     ): PendingIntent {
         return PendingIntent.getBroadcast(
             flutterState?.applicationContext,
-            controlType,
+            customAction.rawValue,
             Intent(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION).putExtra(
                 EXTRA_ACTION_TYPE,
-                controlType
+                customAction.rawValue
             ),
             PendingIntent.FLAG_IMMUTABLE
         )
