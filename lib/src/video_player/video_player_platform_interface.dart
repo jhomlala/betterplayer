@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+
 import 'method_channel_video_player.dart';
 
 /// The interface that implementations of video_player must implement.
@@ -225,6 +226,7 @@ class DataSource {
     this.maxCacheFileSize = _maxCacheFileSize,
     this.cacheKey,
     this.showNotification = false,
+    this.shouldClearPreviousNotificationInfo = true,
     this.title,
     this.author,
     this.imageUrl,
@@ -291,6 +293,8 @@ class DataSource {
   final String? cacheKey;
 
   final bool? showNotification;
+
+  final bool? shouldClearPreviousNotificationInfo;
 
   final String? title;
 

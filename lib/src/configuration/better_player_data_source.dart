@@ -90,9 +90,7 @@ class BetterPlayerDataSource {
     this.resolutions,
     this.cacheConfiguration,
     this.notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(
-      showNotification: false,
-    ),
+        const BetterPlayerNotificationConfiguration(),
     this.overriddenDuration,
     this.videoFormat,
     this.videoExtension,
@@ -119,7 +117,7 @@ class BetterPlayerDataSource {
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(showNotification: false),
+        const BetterPlayerNotificationConfiguration(),
     Duration? overriddenDuration,
     BetterPlayerVideoFormat? videoFormat,
     BetterPlayerDrmConfiguration? drmConfiguration,
@@ -156,7 +154,8 @@ class BetterPlayerDataSource {
     bool? useAsmsTracks,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
-    BetterPlayerNotificationConfiguration? notificationConfiguration,
+    BetterPlayerNotificationConfiguration? notificationConfiguration =
+        const BetterPlayerNotificationConfiguration(),
     Duration? overriddenDuration,
     Widget? placeholder,
   }) {
@@ -168,8 +167,7 @@ class BetterPlayerDataSource {
       useAsmsTracks: useAsmsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration =
-          const BetterPlayerNotificationConfiguration(showNotification: false),
+      notificationConfiguration: notificationConfiguration,
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,
     );
@@ -185,7 +183,8 @@ class BetterPlayerDataSource {
     bool? useAsmsTracks,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
-    BetterPlayerNotificationConfiguration? notificationConfiguration,
+    BetterPlayerNotificationConfiguration? notificationConfiguration =
+        const BetterPlayerNotificationConfiguration(),
     Duration? overriddenDuration,
     Widget? placeholder,
   }) {
@@ -199,8 +198,7 @@ class BetterPlayerDataSource {
       useAsmsTracks: useAsmsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration =
-          const BetterPlayerNotificationConfiguration(showNotification: false),
+      notificationConfiguration: notificationConfiguration,
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,
     );
@@ -219,7 +217,7 @@ class BetterPlayerDataSource {
     Map<String, String>? resolutions,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(showNotification: false),
+        const BetterPlayerNotificationConfiguration(),
     Duration? overriddenDuration,
     BetterPlayerVideoFormat? videoFormat,
     String? videoExtension,

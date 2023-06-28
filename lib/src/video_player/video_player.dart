@@ -5,6 +5,7 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:io';
+
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -288,6 +289,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String dataSource, {
     String? package,
     bool? showNotification,
+    bool? shouldClearPreviousNotificationInfo,
     String? title,
     String? author,
     String? imageUrl,
@@ -301,6 +303,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         asset: dataSource,
         package: package,
         showNotification: showNotification,
+        shouldClearPreviousNotificationInfo:
+            shouldClearPreviousNotificationInfo,
         title: title,
         author: author,
         imageUrl: imageUrl,
@@ -328,6 +332,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     int? maxCacheFileSize,
     String? cacheKey,
     bool? showNotification,
+    bool? shouldClearPreviousNotificationInfo,
     String? title,
     String? author,
     String? imageUrl,
@@ -351,6 +356,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         maxCacheFileSize: maxCacheFileSize,
         cacheKey: cacheKey,
         showNotification: showNotification,
+        shouldClearPreviousNotificationInfo:
+            shouldClearPreviousNotificationInfo,
         title: title,
         author: author,
         imageUrl: imageUrl,
@@ -372,6 +379,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// `'file://${file.path}'`.
   Future<void> setFileDataSource(File file,
       {bool? showNotification,
+      bool? shouldClearPreviousNotificationInfo,
       String? title,
       String? author,
       String? imageUrl,
@@ -384,6 +392,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.file,
           uri: 'file://${file.path}',
           showNotification: showNotification,
+          shouldClearPreviousNotificationInfo:
+              shouldClearPreviousNotificationInfo,
           title: title,
           author: author,
           imageUrl: imageUrl,

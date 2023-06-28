@@ -270,14 +270,6 @@ bool _remoteCommandsInitialized = false;
 
 }
 
-// Refactor this function when there is more than 1 offline video
-- (BOOL)isPipPlanLimitedVideo: (BetterPlayer*) player{
-    NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
-    NSString* uri = dataSource[@"uri"];
-
-    return [uri rangeOfString:@"file://"].location != NSNotFound;
-}
-
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
 
 
@@ -312,8 +304,13 @@ bool _remoteCommandsInitialized = false;
             NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
             NSString* videoExtension = dataSource[@"videoExtension"];
             
-            // Keep old NotificationData while PipPlanLimitedVideo is playing
-            if (![self isPipPlanLimitedVideo:player]) {
+            BOOL shouldClearPreviousNotificationInfo = true;
+            id shouldClearPreviousNotificationInfoObject = [dataSource objectForKey:@"shouldClearPreviousNotificationInfo"];
+            if (shouldClearPreviousNotificationInfoObject != [NSNull null]) {
+                shouldClearPreviousNotificationInfo = [[dataSource objectForKey:@"shouldClearPreviousNotificationInfo"] boolValue];
+            }
+
+            if (shouldClearPreviousNotificationInfo) {
                 [self disposeNotificationData:player];
             }
 
