@@ -527,21 +527,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 removeOtherNotificationListeners()
                 val showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false)
                 if (showNotification) {
-                    // ↓ Comment out original lines to custom the button in Notification Media Controls
-//                    val title = getParameter(dataSource, TITLE_PARAMETER, "")
-//                    val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
-//                    val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
-//                    val notificationChannelName =
-//                        getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
-//                    val activityName =
-//                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
-//                    betterPlayer.setupPlayerNotification(
-//                        flutterState?.applicationContext!!,
-//                        title, author, imageUrl, notificationChannelName, activityName
-                    // ↑ Comment out original lines to custom the button in Notification Media Controls
-
                     setupNotificationParameter(dataSource, betterPlayer)
-                    // For Android 13 and older
+                    // For Android 13 or later.
                     // NOTE: Not so sure why but setting call back needs to be done after notification setting.
                     // Otherwise the callback was not called.
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
