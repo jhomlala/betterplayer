@@ -176,7 +176,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             pipRemoteActions.clear()
-            flutterState?.applicationContext?.let {context ->
+            flutterState?.applicationContext?.let { context ->
                 val pendingIntent: PendingIntent?
                 val buttonImageResourceId: Int?
                 if (isPlaying) {
