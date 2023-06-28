@@ -483,7 +483,7 @@ enum VideoEventType {
   /// When tap custom pause button in Picture in picture mode
   tapPauseButtonInPIP,
 
-  /// When video reach end of duraion in looping mode
+  /// When video reaches end of duration in looping mode (IOS only)
   finishedPlayInLooping,
 
   /// An unknown event has been received.
