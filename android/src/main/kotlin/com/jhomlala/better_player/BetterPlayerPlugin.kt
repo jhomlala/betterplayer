@@ -528,9 +528,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 if (showNotification) {
                     setupNotificationParameter(dataSource, betterPlayer)
                     // For Android 13 or later.
-                    // NOTE: Not so sure why but setting call back needs to be done after notification setting.
-                    // Otherwise the callback was not called.
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
+                        // NOTE: Not so sure why but setting call back needs to be done after notification setting.
+                        // Otherwise the callback was not called.
                         betterPlayer.setMediaSessionCallback()
                     }
                 }
