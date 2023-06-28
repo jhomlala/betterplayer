@@ -1204,6 +1204,10 @@ class BetterPlayerController {
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.tapPauseButtonInPIP));
         break;
+      case VideoEventType.finishedPlayInLooping:
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.finishedPlayInLooping));
+        break;
 
       default:
 
