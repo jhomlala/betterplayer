@@ -7,6 +7,9 @@ class BetterPlayerNotificationConfiguration {
   ///Using for clear notification info of previous video. Used only in iOS.
   final bool? shouldClearPreviousNotificationInfo;
 
+  ///Is playback position changing enabled, used in controls notification.
+  final bool? enableChangePlaybackPosition;
+
   ///Title of the given data source, used in controls notification
   final String? title;
 
@@ -26,6 +29,7 @@ class BetterPlayerNotificationConfiguration {
   const BetterPlayerNotificationConfiguration({
     this.showNotification = false,
     this.shouldClearPreviousNotificationInfo = true,
+    this.enableChangePlaybackPosition = true,
     this.title,
     this.author,
     this.imageUrl,

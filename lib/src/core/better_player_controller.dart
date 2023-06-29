@@ -457,6 +457,8 @@ class BetterPlayerController {
               ?.notificationConfiguration?.showNotification,
           shouldClearPreviousNotificationInfo: _betterPlayerDataSource
               ?.notificationConfiguration?.shouldClearPreviousNotificationInfo,
+          enableChangePlaybackPosition: _betterPlayerDataSource
+              ?.notificationConfiguration?.enableChangePlaybackPosition,
           title: _betterPlayerDataSource?.notificationConfiguration?.title,
           author: _betterPlayerDataSource?.notificationConfiguration?.author,
           imageUrl:
@@ -492,6 +494,8 @@ class BetterPlayerController {
             shouldClearPreviousNotificationInfo: _betterPlayerDataSource
                 ?.notificationConfiguration
                 ?.shouldClearPreviousNotificationInfo,
+            enableChangePlaybackPosition: _betterPlayerDataSource
+                ?.notificationConfiguration?.enableChangePlaybackPosition,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
             imageUrl:
@@ -514,6 +518,8 @@ class BetterPlayerController {
               shouldClearPreviousNotificationInfo: _betterPlayerDataSource
                   ?.notificationConfiguration
                   ?.shouldClearPreviousNotificationInfo,
+              enableChangePlaybackPosition: _betterPlayerDataSource
+                  ?.notificationConfiguration?.enableChangePlaybackPosition,
               title: _betterPlayerDataSource?.notificationConfiguration?.title,
               author:
                   _betterPlayerDataSource?.notificationConfiguration?.author,
