@@ -111,6 +111,8 @@ bool _remoteCommandsInitialized = false;
         [self setupRemoteCommandNotification: player, title, author, imageUrl];
         [self setupUpdateListener: player, title, author, imageUrl];
     } else if (isExtraVideo) {
+        // In this case, control center is still alive with old setting
+        // so we need to setup it again with extra video setting
         [self setupRemoteCommands: player isExtraVideo: isExtraVideo];
     }
 }
