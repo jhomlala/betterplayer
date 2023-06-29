@@ -22,8 +22,11 @@ import android.util.LongSparseArray
 import android.util.Rational
 import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.Player
 import com.jhomlala.better_player.BetterPlayerCache.releaseCache
 import io.flutter.embedding.engine.loader.FlutterLoader
@@ -51,7 +54,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var activity: Activity? = null
     private var pipHandler: Handler? = null
     private var pipRunnable: Runnable? = null
-    private var playerForPictureInPicture: BetterPlayer? = null
+    private var currentPlayer: BetterPlayer? = null
     private var showPictureInPictureAutomatically: Boolean = false
     private val pipRemoteActions: ArrayList<RemoteAction> = ArrayList()
 
@@ -110,7 +113,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             if (Build.VERSION_CODES.Q <= Build.VERSION.SDK_INT && Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
                 if (event == Lifecycle.Event.ON_PAUSE)
                     if (this.showPictureInPictureAutomatically && this.activity?.isInPictureInPictureMode != true) {
-                        this.playerForPictureInPicture?.setupMediaSession(flutterState!!.applicationContext)
                         this.activity?.enterPictureInPictureMode(
                             createPictureInPictureParams(
                                 pipRemoteActions
@@ -118,77 +120,106 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                         )
                     }
             }
+            if (event == Lifecycle.Event.ON_DESTROY) {
+                unregisterBroadcastReceiverForExternalAction()
+                _notificationParameter.value = null
+            }
         })
     }
 
-    // To handle action while in picture-in-picture mode.
-    private val broadcastReceiverForPIPAction = object : BroadcastReceiver() {
+    // To handle action while from outside the app.
+    private val broadcastReceiverForExternalAction = object : BroadcastReceiver() {
         // Called when an item is clicked.
         override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent == null || intent.action != DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION) {
+            if (intent == null || intent.action != DW_NFC_BETTER_PLAYER_CUSTOM_ACTION) {
                 return
             }
             when (intent.getIntExtra(EXTRA_ACTION_TYPE, 0)) {
-                PipActions.PLAY.rawValue -> {
-                    playerForPictureInPicture?.tapPlayButtonInPIP()
+                CustomActions.PLAY.rawValue -> {
+                    currentPlayer?.tapExternalPlayButton()
                 }
-                PipActions.PAUSE.rawValue -> {
-                    playerForPictureInPicture?.tapPauseButtonInPIP()
+                CustomActions.PAUSE.rawValue -> {
+                    currentPlayer?.tapExternalPauseButton()
                 }
             }
         }
     }
 
+    private fun registerBroadcastReceiverForExternalAction() {
+        this.activity?.registerReceiver(
+            broadcastReceiverForExternalAction,
+            IntentFilter(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION)
+        )
+    }
+
+    private fun unregisterBroadcastReceiverForExternalAction() {
+        try {
+            this.activity?.unregisterReceiver(broadcastReceiverForExternalAction)
+        } catch (e: Exception) {
+            Log.d(TAG, "Error on unregisterReceiver. " + e.localizedMessage)
+        }
+    }
+
     // Custom listener for exoPlayer event.
-    // To change action in PIP mode based on playing status.
+    // To change action in PIP mode or Notification based on playing status.
     private val playerEventListenerForIsPlayingChanged = object : Player.Listener {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             pipRemoteActions.clear()
-            val context = flutterState?.applicationContext
-            context?.let {
+            flutterState?.applicationContext?.let { context ->
+                val pendingIntent: PendingIntent?
+                val buttonImageResourceId: Int?
                 if (isPlaying) {
-                    pipRemoteActions.add(
-                        createRemoteAction(
-                            context,
-                            R.drawable.better_player_pause_24dp,
-                            PipActions.PAUSE.rawValue
-                        )
-                    )
+                    pendingIntent = createPendingIntentWithCustomAction(CustomActions.PAUSE)
+                    buttonImageResourceId = R.drawable.exo_notification_pause
                 } else {
-                    pipRemoteActions.add(
-                        createRemoteAction(
-                            context,
-                            R.drawable.better_player_play_arrow_24dp,
-                            PipActions.PLAY.rawValue
-                        )
-                    )
+                    pendingIntent = createPendingIntentWithCustomAction(CustomActions.PLAY)
+                    buttonImageResourceId = R.drawable.exo_notification_play
                 }
+                pipRemoteActions.add(
+                    createRemoteAction(
+                        context,
+                        buttonImageResourceId,
+                        pendingIntent
+                    )
+                )
+                val notificationAction = NotificationCompat.Action(
+                    buttonImageResourceId, "",
+                    pendingIntent
+                )
+                _notificationActions.value = listOf(notificationAction)
             }
             activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    private fun createPendingIntentWithCustomAction(
+        customAction: CustomActions
+    ): PendingIntent {
+        return PendingIntent.getBroadcast(
+            flutterState?.applicationContext,
+            customAction.rawValue,
+            Intent(DW_NFC_BETTER_PLAYER_CUSTOM_ACTION).putExtra(
+                EXTRA_ACTION_TYPE,
+                customAction.rawValue
+            ),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun createRemoteAction(
         context: Context,
         @DrawableRes iconResId: Int,
-        controlType: Int
+        pendingIntent: PendingIntent
     ): RemoteAction {
         return RemoteAction(
             Icon.createWithResource(context, iconResId),
             "",
             "",
-            PendingIntent.getBroadcast(
-                context,
-                controlType,
-                Intent(DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION).putExtra(
-                    EXTRA_ACTION_TYPE,
-                    controlType
-                ),
-                PendingIntent.FLAG_IMMUTABLE
-            )
+            pendingIntent
         )
     }
 
@@ -228,11 +259,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     flutterState?.applicationContext!!, eventChannel, handle,
                     customDefaultLoadControl, result, playerEventListenerForIsPlayingChanged
                 )
+
                 videoPlayers.put(handle.id(), player)
-                this.activity?.registerReceiver(
-                    broadcastReceiverForPIPAction,
-                    IntentFilter(DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION)
-                )
+                registerBroadcastReceiverForExternalAction()
             }
             PRE_CACHE_METHOD -> preCache(call, result)
             STOP_PRE_CACHE_METHOD -> stopPreCache(call, result)
@@ -474,6 +503,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun setupNotification(betterPlayer: BetterPlayer) {
+        currentPlayer = betterPlayer
         try {
             val textureId = getTextureId(betterPlayer)
             if (textureId != null) {
@@ -487,21 +517,44 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 removeOtherNotificationListeners()
                 val showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false)
                 if (showNotification) {
-                    val title = getParameter(dataSource, TITLE_PARAMETER, "")
-                    val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
-                    val imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, "")
-                    val notificationChannelName =
-                        getParameter<String?>(dataSource, NOTIFICATION_CHANNEL_NAME_PARAMETER, null)
-                    val activityName =
-                        getParameter(dataSource, ACTIVITY_NAME_PARAMETER, "MainActivity")
-                    betterPlayer.setupPlayerNotification(
-                        flutterState?.applicationContext!!,
-                        title, author, imageUrl, notificationChannelName, activityName
-                    )
+                    setupNotificationParameter(dataSource, betterPlayer)
+                    // For Android 13 or later.
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
+                        // NOTE: Not so sure why but setting call back needs to be done after notification setting.
+                        // Otherwise the callback was not called.
+                        betterPlayer.setMediaSessionCallback()
+                    }
                 }
             }
         } catch (exception: Exception) {
             Log.e(TAG, "SetupNotification failed", exception)
+        }
+    }
+
+    private fun setupNotificationParameter(
+        dataSource: Map<String, Any?>,
+        betterPlayer: BetterPlayer
+    ) {
+        flutterState?.applicationContext?.let { context ->
+            val mediaSession = betterPlayer.setupMediaSession(context)
+            mediaSession?.let {
+                _notificationParameter.value = NotificationParameter(
+                    title = getParameter(dataSource, TITLE_PARAMETER, ""),
+                    author = getParameter(dataSource, AUTHOR_PARAMETER, ""),
+                    imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, ""),
+                    notificationChannelName = getParameter(
+                        dataSource,
+                        NOTIFICATION_CHANNEL_NAME_PARAMETER,
+                        ""
+                    ),
+                    activityName = getParameter(
+                        dataSource,
+                        ACTIVITY_NAME_PARAMETER,
+                        "MainActivity"
+                    ),
+                    mediaSessionToken = mediaSession.sessionToken
+                )
+            }
         }
     }
 
@@ -532,9 +585,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         willStartPIP: Boolean,
         player: BetterPlayer
     ) {
-        playerForPictureInPicture = player
+        currentPlayer = player
         showPictureInPictureAutomatically = willStartPIP
-        player.setupMediaSession(flutterState!!.applicationContext)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             activity?.setPictureInPictureParams(
                 createPictureInPictureParams(
@@ -550,7 +602,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         actions: List<RemoteAction>,
         willAutoEnter: Boolean? = null
     ): PictureInPictureParams {
-        var pipParamsBuilder = PictureInPictureParams.Builder()
+        val pipParamsBuilder = PictureInPictureParams.Builder()
             .setAspectRatio(PIP_ASPECT_RATIO)
             .setSourceRectHint(Rect())
             .setActions(actions)
@@ -594,11 +646,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun dispose(player: BetterPlayer, textureId: Long) {
+        _notificationParameter.value = null
         player.dispose()
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
         setupAutomaticPictureInPictureTransition(false, player)
-        this.activity?.unregisterReceiver(broadcastReceiverForPIPAction)
+        unregisterBroadcastReceiverForExternalAction()
         stopPipHandler()
     }
 
@@ -658,10 +711,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val HEIGHT_PARAMETER = "height"
         private const val BITRATE_PARAMETER = "bitrate"
         private const val SHOW_NOTIFICATION_PARAMETER = "showNotification"
-        private const val TITLE_PARAMETER = "title"
-        private const val AUTHOR_PARAMETER = "author"
-        private const val IMAGE_URL_PARAMETER = "imageUrl"
-        private const val NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName"
         private const val OVERRIDDEN_DURATION_PARAMETER = "overriddenDuration"
         private const val NAME_PARAMETER = "name"
         private const val INDEX_PARAMETER = "index"
@@ -670,6 +719,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val DRM_CLEARKEY_PARAMETER = "clearKey"
         private const val MIX_WITH_OTHERS_PARAMETER = "mixWithOthers"
         private const val WILL_START_PIP = "willStartPIP"
+        const val TITLE_PARAMETER = "title"
+        const val AUTHOR_PARAMETER = "author"
+        const val IMAGE_URL_PARAMETER = "imageUrl"
+        const val NOTIFICATION_CHANNEL_NAME_PARAMETER = "notificationChannelName"
         const val URL_PARAMETER = "url"
         const val PRE_CACHE_SIZE_PARAMETER = "preCacheSize"
         const val MAX_CACHE_SIZE_PARAMETER = "maxCacheSize"
@@ -682,6 +735,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         const val BUFFER_FOR_PLAYBACK_MS = "bufferForPlaybackMs"
         const val BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS = "bufferForPlaybackAfterRebufferMs"
         const val CACHE_KEY_PARAMETER = "cacheKey"
+        const val MEDIA_SESSION_TOKEN_PARAMETER = "mediaSessionToken"
         private const val INIT_METHOD = "init"
         private const val CREATE_METHOD = "create"
         private const val SET_DATA_SOURCE_METHOD = "setDataSource"
@@ -708,12 +762,22 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val STOP_PRE_CACHE_METHOD = "stopPreCache"
         private val PIP_ASPECT_RATIO = Rational(16, 9)
 
-        /** For custom action in PIP mode  */
-        private const val DW_NFC_BETTER_PLAYER_CUSTOM_PIP_ACTION = "better_player.nfc_ch_app/pip_custom_action"
-        private const val EXTRA_ACTION_TYPE = "extra_action_type"
-        private enum class PipActions(val rawValue: Int) {
+        /** For custom action from outside the app */
+        const val DW_NFC_BETTER_PLAYER_CUSTOM_ACTION =
+            "better_player.nfc_ch_app/custom_action"
+        const val EXTRA_ACTION_TYPE = "extra_action_type"
+
+        enum class CustomActions(val rawValue: Int) {
             PLAY(1),
             PAUSE(2)
         }
+
+        // Will be observed to show notification.
+        private var _notificationParameter: MutableLiveData<NotificationParameter?> = MutableLiveData()
+        val notificationParameter: LiveData<NotificationParameter?> get() = _notificationParameter
+        // Will be observed to update action in notification.
+        private var _notificationActions: MutableLiveData<List<NotificationCompat.Action>?> =
+            MutableLiveData()
+        val notificationActions: LiveData<List<NotificationCompat.Action>?> get() = _notificationActions
     }
 }

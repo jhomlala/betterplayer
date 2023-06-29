@@ -1196,13 +1196,14 @@ class BetterPlayerController {
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.exitingPIP));
         break;
 
-      case VideoEventType.tapPlayButtonInPIP:
-        _postEvent(BetterPlayerEvent(BetterPlayerEventType.tapPlayButtonInPIP));
+      case VideoEventType.tapExternalPlayButton:
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.tapExternalPlayButton));
         break;
 
-      case VideoEventType.tapPauseButtonInPIP:
+      case VideoEventType.tapExternalPauseButton:
         _postEvent(
-            BetterPlayerEvent(BetterPlayerEventType.tapPauseButtonInPIP));
+            BetterPlayerEvent(BetterPlayerEventType.tapExternalPauseButton));
         break;
 
       default:
