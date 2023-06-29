@@ -5,7 +5,7 @@ class BetterPlayerNotificationConfiguration {
   final bool? showNotification;
 
   ///Using for clear notification info of previous video. Used only in iOS.
-  final bool? shouldClearPreviousNotificationInfo;
+  final bool? isExtraVideo;
 
   ///Title of the given data source, used in controls notification
   final String? title;
@@ -25,7 +25,7 @@ class BetterPlayerNotificationConfiguration {
 
   const BetterPlayerNotificationConfiguration({
     this.showNotification = false,
-    this.shouldClearPreviousNotificationInfo = true,
+    this.isExtraVideo = false,
     this.title,
     this.author,
     this.imageUrl,

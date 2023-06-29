@@ -94,15 +94,24 @@ bool _remoteCommandsInitialized = false;
     if (showNotificationObject != [NSNull null]) {
         showNotification = [[dataSource objectForKey:@"showNotification"] boolValue];
     }
+
+    BOOL isExtraVideo = false;
+    id isExtraVideoObject = [dataSource objectForKey:@"isExtraVideo"];
+    if (isExtraVideoObject != [NSNull null]) {
+        isExtraVideo = [[dataSource objectForKey:@"isExtraVideo"] boolValue];
+    }
+
     NSString* title = dataSource[@"title"];
     NSString* author = dataSource[@"author"];
     NSString* imageUrl = dataSource[@"imageUrl"];
 
     if (showNotification){
         [self setRemoteCommandsNotificationActive];
-        [self setupRemoteCommands: player];
+        [self setupRemoteCommands: player isExtraVideo: isExtraVideo];
         [self setupRemoteCommandNotification: player, title, author, imageUrl];
         [self setupUpdateListener: player, title, author, imageUrl];
+    } else if (isExtraVideo) {
+        [self setupRemoteCommands: player isExtraVideo: isExtraVideo];
     }
 }
 
@@ -120,7 +129,7 @@ bool _remoteCommandsInitialized = false;
 }
 
 
-- (void) setupRemoteCommands:(BetterPlayer*)player  {
+- (void) setupRemoteCommands:(BetterPlayer*)player isExtraVideo:(BOOL)isExtraVideo {
     if (_remoteCommandsInitialized){
         return;
     }
@@ -131,7 +140,7 @@ bool _remoteCommandsInitialized = false;
     [commandCenter.nextTrackCommand setEnabled:NO];
     [commandCenter.previousTrackCommand setEnabled:NO];
     if (@available(iOS 9.1, *)) {
-        [commandCenter.changePlaybackPositionCommand setEnabled:YES];
+        [commandCenter.changePlaybackPositionCommand setEnabled: isExtraVideo ? NO : YES];
     }
 
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
@@ -304,18 +313,17 @@ bool _remoteCommandsInitialized = false;
             NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
             NSString* videoExtension = dataSource[@"videoExtension"];
             
-            BOOL shouldClearPreviousNotificationInfo = true;
-            id shouldClearPreviousNotificationInfoObject = [dataSource objectForKey:@"shouldClearPreviousNotificationInfo"];
-            if (shouldClearPreviousNotificationInfoObject != [NSNull null]) {
-                shouldClearPreviousNotificationInfo = [[dataSource objectForKey:@"shouldClearPreviousNotificationInfo"] boolValue];
+            BOOL isExtraVideo = false;
+            id isExtraVideoObject = [dataSource objectForKey:@"isExtraVideo"];
+            if (isExtraVideoObject != [NSNull null]) {
+                isExtraVideo = [[dataSource objectForKey:@"isExtraVideo"] boolValue];
             }
 
-            if (shouldClearPreviousNotificationInfo) {
+            if (isExtraVideo) {
+                // this command will make [setupRemoteCommands] work again and disable commandCenter.changePlaybackPositionCommand for extra video
+                _remoteCommandsInitialized = false;
+            } else {
                 [self disposeNotificationData:player];
-            } else if (@available(iOS 9.1, *)) {
-                // Disable seek in Control center while pip plan limited is playing
-                MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
-                [commandCenter.changePlaybackPositionCommand setEnabled:NO];
             }
 
             int overriddenDuration = 0;

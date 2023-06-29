@@ -289,7 +289,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String dataSource, {
     String? package,
     bool? showNotification,
-    bool? shouldClearPreviousNotificationInfo,
+    bool? isExtraVideo,
     String? title,
     String? author,
     String? imageUrl,
@@ -303,8 +303,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         asset: dataSource,
         package: package,
         showNotification: showNotification,
-        shouldClearPreviousNotificationInfo:
-            shouldClearPreviousNotificationInfo,
+        isExtraVideo: isExtraVideo,
         title: title,
         author: author,
         imageUrl: imageUrl,
@@ -332,7 +331,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     int? maxCacheFileSize,
     String? cacheKey,
     bool? showNotification,
-    bool? shouldClearPreviousNotificationInfo,
+    bool? isExtraVideo,
     String? title,
     String? author,
     String? imageUrl,
@@ -356,8 +355,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         maxCacheFileSize: maxCacheFileSize,
         cacheKey: cacheKey,
         showNotification: showNotification,
-        shouldClearPreviousNotificationInfo:
-            shouldClearPreviousNotificationInfo,
+        isExtraVideo: isExtraVideo,
         title: title,
         author: author,
         imageUrl: imageUrl,
@@ -379,7 +377,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// `'file://${file.path}'`.
   Future<void> setFileDataSource(File file,
       {bool? showNotification,
-      bool? shouldClearPreviousNotificationInfo,
+      bool? isExtraVideo,
       String? title,
       String? author,
       String? imageUrl,
@@ -392,8 +390,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.file,
           uri: 'file://${file.path}',
           showNotification: showNotification,
-          shouldClearPreviousNotificationInfo:
-              shouldClearPreviousNotificationInfo,
+          isExtraVideo: isExtraVideo,
           title: title,
           author: author,
           imageUrl: imageUrl,

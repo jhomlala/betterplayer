@@ -455,8 +455,8 @@ class BetterPlayerController {
           cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
           showNotification: _betterPlayerDataSource
               ?.notificationConfiguration?.showNotification,
-          shouldClearPreviousNotificationInfo: _betterPlayerDataSource
-              ?.notificationConfiguration?.shouldClearPreviousNotificationInfo,
+          isExtraVideo:
+              _betterPlayerDataSource?.notificationConfiguration?.isExtraVideo,
           title: _betterPlayerDataSource?.notificationConfiguration?.title,
           author: _betterPlayerDataSource?.notificationConfiguration?.author,
           imageUrl:
@@ -489,9 +489,8 @@ class BetterPlayerController {
             File(betterPlayerDataSource.url),
             showNotification: _betterPlayerDataSource
                 ?.notificationConfiguration?.showNotification,
-            shouldClearPreviousNotificationInfo: _betterPlayerDataSource
-                ?.notificationConfiguration
-                ?.shouldClearPreviousNotificationInfo,
+            isExtraVideo: _betterPlayerDataSource
+                ?.notificationConfiguration?.isExtraVideo,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
             imageUrl:
@@ -511,9 +510,8 @@ class BetterPlayerController {
           await videoPlayerController?.setFileDataSource(file,
               showNotification: _betterPlayerDataSource
                   ?.notificationConfiguration?.showNotification,
-              shouldClearPreviousNotificationInfo: _betterPlayerDataSource
-                  ?.notificationConfiguration
-                  ?.shouldClearPreviousNotificationInfo,
+              isExtraVideo: _betterPlayerDataSource
+                  ?.notificationConfiguration?.isExtraVideo,
               title: _betterPlayerDataSource?.notificationConfiguration?.title,
               author:
                   _betterPlayerDataSource?.notificationConfiguration?.author,

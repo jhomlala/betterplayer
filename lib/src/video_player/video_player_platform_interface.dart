@@ -226,7 +226,7 @@ class DataSource {
     this.maxCacheFileSize = _maxCacheFileSize,
     this.cacheKey,
     this.showNotification = false,
-    this.shouldClearPreviousNotificationInfo = true,
+    this.isExtraVideo = false,
     this.title,
     this.author,
     this.imageUrl,
@@ -294,7 +294,7 @@ class DataSource {
 
   final bool? showNotification;
 
-  final bool? shouldClearPreviousNotificationInfo;
+  final bool? isExtraVideo;
 
   final String? title;
 

@@ -67,8 +67,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'maxCacheSize': 0,
           'maxCacheFileSize': 0,
           'showNotification': dataSource.showNotification,
-          'shouldClearPreviousNotificationInfo':
-              dataSource.shouldClearPreviousNotificationInfo,
+          'isExtraVideo': dataSource.isExtraVideo,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
@@ -88,8 +87,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'maxCacheFileSize': dataSource.maxCacheFileSize,
           'cacheKey': dataSource.cacheKey,
           'showNotification': dataSource.showNotification,
-          'shouldClearPreviousNotificationInfo':
-              dataSource.shouldClearPreviousNotificationInfo,
+          'isExtraVideo': dataSource.isExtraVideo,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
@@ -111,8 +109,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'maxCacheSize': 0,
           'maxCacheFileSize': 0,
           'showNotification': dataSource.showNotification,
-          'shouldClearPreviousNotificationInfo':
-              dataSource.shouldClearPreviousNotificationInfo,
+          'isExtraVideo': dataSource.isExtraVideo,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
