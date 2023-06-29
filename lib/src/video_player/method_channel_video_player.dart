@@ -87,7 +87,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'maxCacheFileSize': dataSource.maxCacheFileSize,
           'cacheKey': dataSource.cacheKey,
           'showNotification': dataSource.showNotification,
-          'isExtraVideo': dataSource.isExtraVideo,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,

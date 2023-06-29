@@ -76,12 +76,16 @@ class BetterPlayerDataSource {
   ///platform.
   final BetterPlayerBufferingConfiguration bufferingConfiguration;
 
+  ///Currently using for PiP plan limited video. Used only in iOS.
+  final bool? isExtraVideo;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
     this.bytes,
     this.subtitles,
     this.liveStream = false,
+    this.isExtraVideo = false,
     this.headers,
     this.useAsmsSubtitles = true,
     this.useAsmsTracks = true,
@@ -90,7 +94,9 @@ class BetterPlayerDataSource {
     this.resolutions,
     this.cacheConfiguration,
     this.notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(),
+        const BetterPlayerNotificationConfiguration(
+      showNotification: false,
+    ),
     this.overriddenDuration,
     this.videoFormat,
     this.videoExtension,
@@ -117,7 +123,7 @@ class BetterPlayerDataSource {
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(),
+        const BetterPlayerNotificationConfiguration(showNotification: false),
     Duration? overriddenDuration,
     BetterPlayerVideoFormat? videoFormat,
     BetterPlayerDrmConfiguration? drmConfiguration,
@@ -152,10 +158,10 @@ class BetterPlayerDataSource {
     List<BetterPlayerSubtitlesSource>? subtitles,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
+    bool? isExtraVideo,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
-    BetterPlayerNotificationConfiguration? notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(),
+    BetterPlayerNotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
   }) {
@@ -165,9 +171,11 @@ class BetterPlayerDataSource {
       subtitles: subtitles,
       useAsmsSubtitles: useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks,
+      isExtraVideo: isExtraVideo,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration,
+      notificationConfiguration: notificationConfiguration =
+          const BetterPlayerNotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,
     );
@@ -181,10 +189,10 @@ class BetterPlayerDataSource {
     List<BetterPlayerSubtitlesSource>? subtitles,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
+    bool? isExtraVideo,
     Map<String, String>? qualities,
     BetterPlayerCacheConfiguration? cacheConfiguration,
-    BetterPlayerNotificationConfiguration? notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(),
+    BetterPlayerNotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
   }) {
@@ -196,9 +204,11 @@ class BetterPlayerDataSource {
       subtitles: subtitles,
       useAsmsSubtitles: useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks,
+      isExtraVideo: isExtraVideo,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration,
+      notificationConfiguration: notificationConfiguration =
+          const BetterPlayerNotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,
     );
@@ -210,6 +220,7 @@ class BetterPlayerDataSource {
     List<int>? bytes,
     List<BetterPlayerSubtitlesSource>? subtitles,
     bool? liveStream,
+    bool? isExtraVideo,
     Map<String, String>? headers,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
@@ -217,7 +228,7 @@ class BetterPlayerDataSource {
     Map<String, String>? resolutions,
     BetterPlayerCacheConfiguration? cacheConfiguration,
     BetterPlayerNotificationConfiguration? notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(),
+        const BetterPlayerNotificationConfiguration(showNotification: false),
     Duration? overriddenDuration,
     BetterPlayerVideoFormat? videoFormat,
     String? videoExtension,
@@ -232,6 +243,7 @@ class BetterPlayerDataSource {
       bytes: bytes ?? this.bytes,
       subtitles: subtitles ?? this.subtitles,
       liveStream: liveStream ?? this.liveStream,
+      isExtraVideo: isExtraVideo ?? this.isExtraVideo,
       headers: headers ?? this.headers,
       useAsmsSubtitles: useAsmsSubtitles ?? this.useAsmsSubtitles,
       useAsmsTracks: useAsmsTracks ?? this.useAsmsTracks,
