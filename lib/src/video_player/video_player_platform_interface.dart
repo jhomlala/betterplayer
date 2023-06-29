@@ -227,7 +227,6 @@ class DataSource {
     this.cacheKey,
     this.showNotification = false,
     this.shouldClearPreviousNotificationInfo = true,
-    this.enableChangePlaybackPosition = true,
     this.title,
     this.author,
     this.imageUrl,
@@ -296,8 +295,6 @@ class DataSource {
   final bool? showNotification;
 
   final bool? shouldClearPreviousNotificationInfo;
-
-  final bool? enableChangePlaybackPosition;
 
   final String? title;
 

@@ -65,7 +65,6 @@ class MockVideoPlayerController extends VideoPlayerController {
     String? cacheKey,
     bool? showNotification,
     bool? shouldClearPreviousNotificationInfo,
-    bool? enableChangePlaybackPosition,
     String? title,
     String? author,
     String? imageUrl,

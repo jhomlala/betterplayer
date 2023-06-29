@@ -131,13 +131,7 @@ bool _remoteCommandsInitialized = false;
     [commandCenter.nextTrackCommand setEnabled:NO];
     [commandCenter.previousTrackCommand setEnabled:NO];
     if (@available(iOS 9.1, *)) {
-        BOOL enableChangePlaybackPosition = true;
-        NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
-        id enableChangePlaybackPositionObject = [dataSource objectForKey:@"enableChangePlaybackPosition"];
-        if (enableChangePlaybackPositionObject != [NSNull null]) {
-            enableChangePlaybackPosition = [[dataSource objectForKey:@"enableChangePlaybackPosition"] boolValue];
-        }
-        [commandCenter.changePlaybackPositionCommand setEnabled:enableChangePlaybackPosition ? YES : NO];
+        [commandCenter.changePlaybackPositionCommand setEnabled:YES];
     }
 
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
@@ -318,11 +312,10 @@ bool _remoteCommandsInitialized = false;
 
             if (shouldClearPreviousNotificationInfo) {
                 [self disposeNotificationData:player];
-            }
-            // If [disposeNotificationData] hasn't been called, [setupRemoteCommands] won't do any thing.
-            // so we can't set [commandCenter.changePlaybackPositionCommand setEnabled:<new datasource value>]
-            else {
-                _remoteCommandsInitialized = false;
+            } else if (@available(iOS 9.1, *)) {
+                // Disable seek in Control center while pip plan limited is playing
+                MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+                [commandCenter.changePlaybackPositionCommand setEnabled:NO];
             }
 
             int overriddenDuration = 0;

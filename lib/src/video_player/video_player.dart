@@ -290,7 +290,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? package,
     bool? showNotification,
     bool? shouldClearPreviousNotificationInfo,
-    bool? enableChangePlaybackPosition,
     String? title,
     String? author,
     String? imageUrl,
@@ -306,7 +305,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         showNotification: showNotification,
         shouldClearPreviousNotificationInfo:
             shouldClearPreviousNotificationInfo,
-        enableChangePlaybackPosition: enableChangePlaybackPosition,
         title: title,
         author: author,
         imageUrl: imageUrl,
@@ -335,7 +333,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String? cacheKey,
     bool? showNotification,
     bool? shouldClearPreviousNotificationInfo,
-    bool? enableChangePlaybackPosition,
     String? title,
     String? author,
     String? imageUrl,
@@ -361,7 +358,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         showNotification: showNotification,
         shouldClearPreviousNotificationInfo:
             shouldClearPreviousNotificationInfo,
-        enableChangePlaybackPosition: enableChangePlaybackPosition,
         title: title,
         author: author,
         imageUrl: imageUrl,
@@ -384,7 +380,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> setFileDataSource(File file,
       {bool? showNotification,
       bool? shouldClearPreviousNotificationInfo,
-      bool? enableChangePlaybackPosition,
       String? title,
       String? author,
       String? imageUrl,
@@ -399,7 +394,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           showNotification: showNotification,
           shouldClearPreviousNotificationInfo:
               shouldClearPreviousNotificationInfo,
-          enableChangePlaybackPosition: enableChangePlaybackPosition,
           title: title,
           author: author,
           imageUrl: imageUrl,

@@ -69,8 +69,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'showNotification': dataSource.showNotification,
           'shouldClearPreviousNotificationInfo':
               dataSource.shouldClearPreviousNotificationInfo,
-          'enableChangePlaybackPosition':
-              dataSource.enableChangePlaybackPosition,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
@@ -92,8 +90,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'showNotification': dataSource.showNotification,
           'shouldClearPreviousNotificationInfo':
               dataSource.shouldClearPreviousNotificationInfo,
-          'enableChangePlaybackPosition':
-              dataSource.enableChangePlaybackPosition,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
@@ -117,8 +113,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'showNotification': dataSource.showNotification,
           'shouldClearPreviousNotificationInfo':
               dataSource.shouldClearPreviousNotificationInfo,
-          'enableChangePlaybackPosition':
-              dataSource.enableChangePlaybackPosition,
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
