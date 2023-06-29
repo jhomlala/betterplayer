@@ -121,7 +121,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     }
             }
             if (event == Lifecycle.Event.ON_DESTROY) {
-                unregisterBroadcastReceiverForPIPAction()
+                unregisterBroadcastReceiverForExternalAction()
                 _notificationParameter.value = null
             }
         })
@@ -152,7 +152,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         )
     }
 
-    private fun unregisterBroadcastReceiverForPIPAction() {
+    private fun unregisterBroadcastReceiverForExternalAction() {
         try {
             this.activity?.unregisterReceiver(broadcastReceiverForExternalAction)
         } catch (e: Exception) {
@@ -651,7 +651,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
         setupAutomaticPictureInPictureTransition(false, player)
-        unregisterBroadcastReceiverForPIPAction()
+        unregisterBroadcastReceiverForExternalAction()
         stopPipHandler()
     }
 
