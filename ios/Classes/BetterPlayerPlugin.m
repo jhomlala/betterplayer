@@ -312,6 +312,10 @@ bool _remoteCommandsInitialized = false;
 
             if (shouldClearPreviousNotificationInfo) {
                 [self disposeNotificationData:player];
+            } else if (@available(iOS 9.1, *)) {
+                // Disable seek in Control center while pip plan limited is playing
+                MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+                [commandCenter.changePlaybackPositionCommand setEnabled:NO];
             }
 
             int overriddenDuration = 0;
