@@ -24,10 +24,18 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       handleLifecycle: false,
+      autoPlay: true,
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.elephantDreamVideoUrl,
+      Constants.phantomVideoUrl,
+      notificationConfiguration: BetterPlayerNotificationConfiguration(
+        showNotification: true,
+        title: 'Text title',
+        author: 'Test author',
+        imageUrl: Constants.catImageUrl,
+        notificationChannelName: "メディアコントロール用",
+      ),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -66,10 +74,10 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
           _willSwitchToPIPLayout = false;
         });
       } else if (event.betterPlayerEventType ==
-          BetterPlayerEventType.tapPlayButtonInPIP) {
+          BetterPlayerEventType.tapExternalPlayButton) {
         _betterPlayerController.play();
       } else if (event.betterPlayerEventType ==
-          BetterPlayerEventType.tapPauseButtonInPIP) {
+          BetterPlayerEventType.tapExternalPauseButton) {
         _betterPlayerController.pause();
       }
     };

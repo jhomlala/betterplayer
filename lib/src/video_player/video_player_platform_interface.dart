@@ -477,11 +477,11 @@ enum VideoEventType {
   /// will stop Picture in picture
   exitingPIP,
 
-  /// When tap custom play button in Picture in picture mode
-  tapPlayButtonInPIP,
+  /// When tap custom play button from outside the app (e.g. PIP, Notification)
+  tapExternalPlayButton,
 
-  /// When tap custom pause button in Picture in picture mode
-  tapPauseButtonInPIP,
+  /// When tap custom pause button from outside the app (e.g. PIP, Notification)
+  tapExternalPauseButton,
 
   /// When video reaches end of duration in looping mode (IOS only)
   finishedPlayInLooping,
