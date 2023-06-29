@@ -114,6 +114,9 @@ int _seekPosition;
     if (_isLooping) {
         AVPlayerItem* p = [notification object];
         [p seekToTime:kCMTimeZero completionHandler:nil];
+        if (_eventSink) {
+            _eventSink(@{@"event" : @"finishedPlayInLooping", @"key" : _key});
+        }
     } else {
         if (_eventSink) {
             _eventSink(@{@"event" : @"completed", @"key" : _key});

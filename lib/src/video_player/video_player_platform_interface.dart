@@ -483,6 +483,9 @@ enum VideoEventType {
   /// When tap custom pause button from outside the app (e.g. PIP, Notification)
   tapExternalPauseButton,
 
+  /// When video reaches end of duration in looping mode (IOS only)
+  finishedPlayInLooping,
+
   /// An unknown event has been received.
   unknown,
 }

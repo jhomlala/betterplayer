@@ -447,6 +447,12 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
 
+        case 'finishedPlayInLooping':
+          return VideoEvent(
+            eventType: VideoEventType.finishedPlayInLooping,
+            key: key,
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,
