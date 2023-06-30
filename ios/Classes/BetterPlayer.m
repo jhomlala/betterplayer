@@ -136,8 +136,6 @@ int _seekPosition;
     }
 }
 
-
-
 static inline CGFloat radiansToDegrees(CGFloat radians) {
     // Input range [-pi, pi] or [-180, 180]
     CGFloat degrees = GLKMathRadiansToDegrees((float)radians);
