@@ -5,6 +5,7 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:io';
+
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -288,6 +289,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String dataSource, {
     String? package,
     bool? showNotification,
+    bool? isExtraVideo,
     String? title,
     String? author,
     String? imageUrl,
@@ -301,6 +303,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         asset: dataSource,
         package: package,
         showNotification: showNotification,
+        isExtraVideo: isExtraVideo,
         title: title,
         author: author,
         imageUrl: imageUrl,
@@ -372,6 +375,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// `'file://${file.path}'`.
   Future<void> setFileDataSource(File file,
       {bool? showNotification,
+      bool? isExtraVideo,
       String? title,
       String? author,
       String? imageUrl,
@@ -384,6 +388,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.file,
           uri: 'file://${file.path}',
           showNotification: showNotification,
+          isExtraVideo: isExtraVideo,
           title: title,
           author: author,
           imageUrl: imageUrl,

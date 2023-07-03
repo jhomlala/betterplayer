@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
@@ -486,6 +487,7 @@ class BetterPlayerController {
             File(betterPlayerDataSource.url),
             showNotification: _betterPlayerDataSource
                 ?.notificationConfiguration?.showNotification,
+            isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
             imageUrl:
@@ -505,6 +507,7 @@ class BetterPlayerController {
           await videoPlayerController?.setFileDataSource(file,
               showNotification: _betterPlayerDataSource
                   ?.notificationConfiguration?.showNotification,
+              isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
               title: _betterPlayerDataSource?.notificationConfiguration?.title,
               author:
                   _betterPlayerDataSource?.notificationConfiguration?.author,

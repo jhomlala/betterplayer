@@ -87,22 +87,33 @@ bool _remoteCommandsInitialized = false;
 
 - (void) setupRemoteNotification :(BetterPlayer*) player{
     _notificationPlayer = player;
-    [self stopOtherUpdateListener:player];
+    [self stopAllUpdateListener:player];
     NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
     BOOL showNotification = false;
     id showNotificationObject = [dataSource objectForKey:@"showNotification"];
     if (showNotificationObject != [NSNull null]) {
         showNotification = [[dataSource objectForKey:@"showNotification"] boolValue];
     }
+
+    BOOL isExtraVideo = false;
+    id isExtraVideoObject = [dataSource objectForKey:@"isExtraVideo"];
+    if (isExtraVideoObject != [NSNull null]) {
+        isExtraVideo = [[dataSource objectForKey:@"isExtraVideo"] boolValue];
+    }
+
     NSString* title = dataSource[@"title"];
     NSString* author = dataSource[@"author"];
     NSString* imageUrl = dataSource[@"imageUrl"];
 
     if (showNotification){
         [self setRemoteCommandsNotificationActive];
-        [self setupRemoteCommands: player];
+        [self setupRemoteCommands: player isExtraVideo: isExtraVideo];
         [self setupRemoteCommandNotification: player, title, author, imageUrl];
         [self setupUpdateListener: player, title, author, imageUrl];
+    } else if (isExtraVideo) {
+        // In this case, control center is still alive with old setting
+        // so we need to setup it again with extra video setting
+        [self setupRemoteCommands: player isExtraVideo: isExtraVideo];
     }
 }
 
@@ -120,7 +131,7 @@ bool _remoteCommandsInitialized = false;
 }
 
 
-- (void) setupRemoteCommands:(BetterPlayer*)player  {
+- (void) setupRemoteCommands:(BetterPlayer*)player isExtraVideo:(BOOL)isExtraVideo {
     if (_remoteCommandsInitialized){
         return;
     }
@@ -131,7 +142,7 @@ bool _remoteCommandsInitialized = false;
     [commandCenter.nextTrackCommand setEnabled:NO];
     [commandCenter.previousTrackCommand setEnabled:NO];
     if (@available(iOS 9.1, *)) {
-        [commandCenter.changePlaybackPositionCommand setEnabled:YES];
+        [commandCenter.changePlaybackPositionCommand setEnabled: isExtraVideo ? NO : YES];
     }
 
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
@@ -167,7 +178,6 @@ bool _remoteCommandsInitialized = false;
                 MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
                 CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
                 int64_t millis = [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
-                [_notificationPlayer seekTo: millis];
                 _notificationPlayer.eventSink(@{@"event" : @"seek", @"position": @(millis)});
             }
             return MPRemoteCommandHandlerStatusSuccess;
@@ -261,13 +271,8 @@ bool _remoteCommandsInitialized = false;
     [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo =  @{};
 }
 
-- (void) stopOtherUpdateListener: (BetterPlayer*) player{
-    NSString* currentPlayerTextureId = [self getTextureId:player];
+- (void) stopAllUpdateListener: (BetterPlayer*) player{
     for (NSString* textureId in _timeObserverIdDict.allKeys) {
-        if (currentPlayerTextureId == textureId){
-            continue;
-        }
-
         id timeObserverId = [_timeObserverIdDict objectForKey:textureId];
         BetterPlayer* playerToRemoveListener = [_players objectForKey:textureId];
         [playerToRemoveListener.player removeTimeObserver: timeObserverId];
@@ -275,7 +280,6 @@ bool _remoteCommandsInitialized = false;
     [_timeObserverIdDict removeAllObjects];
 
 }
-
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
 
@@ -311,6 +315,19 @@ bool _remoteCommandsInitialized = false;
             NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
             NSString* videoExtension = dataSource[@"videoExtension"];
             
+            BOOL isExtraVideo = false;
+            id isExtraVideoObject = [dataSource objectForKey:@"isExtraVideo"];
+            if (isExtraVideoObject != [NSNull null]) {
+                isExtraVideo = [[dataSource objectForKey:@"isExtraVideo"] boolValue];
+            }
+
+            if (isExtraVideo) {
+                // this command will make [setupRemoteCommands] work again and disable commandCenter.changePlaybackPositionCommand for extra video
+                _remoteCommandsInitialized = false;
+            } else {
+                [self disposeNotificationData:player];
+            }
+
             int overriddenDuration = 0;
             if ([dataSource objectForKey:@"overriddenDuration"] != [NSNull null]){
                 overriddenDuration = [dataSource[@"overriddenDuration"] intValue];
