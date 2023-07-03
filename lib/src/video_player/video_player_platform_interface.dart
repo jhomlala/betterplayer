@@ -490,6 +490,9 @@ enum VideoEventType {
   /// When video reaches end of duration in looping mode (IOS only)
   finishedPlayInLooping,
 
+  /// When player has an error which can't play to end time
+  failedToPlayToEndTime,
+
   /// An unknown event has been received.
   unknown,
 }

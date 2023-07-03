@@ -64,6 +64,10 @@ int _seekPosition;
                                                  selector:@selector(itemDidPlayToEndTime:)
                                                      name:AVPlayerItemDidPlayToEndTimeNotification
                                                    object:item];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(itemFailedToPlayToEndTime:)
+                                                     name:AVPlayerItemFailedToPlayToEndTimeNotification
+                                                   object:item];
         self._observersAdded = true;
     }
 }
@@ -126,6 +130,11 @@ int _seekPosition;
     }
 }
 
+- (void)itemFailedToPlayToEndTime:(NSNotification*)notification {
+    if (_eventSink) {
+        _eventSink(@{@"event" : @"failedToPlayToEndTime", @"key" : _key});
+    }
+}
 
 static inline CGFloat radiansToDegrees(CGFloat radians) {
     // Input range [-pi, pi] or [-180, 180]

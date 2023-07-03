@@ -457,6 +457,12 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
 
+        case 'failedToPlayToEndTime':
+          return VideoEvent(
+            eventType: VideoEventType.failedToPlayToEndTime,
+            key: key,
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,
