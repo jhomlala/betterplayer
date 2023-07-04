@@ -101,19 +101,25 @@ bool _remoteCommandsInitialized = false;
         isExtraVideo = [[dataSource objectForKey:@"isExtraVideo"] boolValue];
     }
 
+    BOOL isLiveStream = false;
+    id isLiveStreamObject = [dataSource objectForKey:@"isLiveStream"];
+    if (isLiveStreamObject != [NSNull null]) {
+        isLiveStream = [[dataSource objectForKey:@"isLiveStream"] boolValue];
+    }
+
     NSString* title = dataSource[@"title"];
     NSString* author = dataSource[@"author"];
     NSString* imageUrl = dataSource[@"imageUrl"];
 
     if (showNotification){
         [self setRemoteCommandsNotificationActive];
-        [self setupRemoteCommands: player isExtraVideo: isExtraVideo];
-        [self setupRemoteCommandNotification: player, title, author, imageUrl];
-        [self setupUpdateListener: player, title, author, imageUrl];
+        [self setupRemoteCommands: player isExtraVideo: isExtraVideo isLiveStream: isLiveStream];
+        [self setupRemoteCommandNotification: player, title, author, imageUrl, isLiveStream];
+        [self setupUpdateListener: player, title, author, imageUrl, isLiveStream];
     } else if (isExtraVideo) {
         // In this case, control center is still alive with old setting
         // so we need to setup it again with extra video setting
-        [self setupRemoteCommands: player isExtraVideo: isExtraVideo];
+        [self setupRemoteCommands: player isExtraVideo: isExtraVideo isLiveStream: isLiveStream];
     }
 }
 
@@ -131,7 +137,7 @@ bool _remoteCommandsInitialized = false;
 }
 
 
-- (void) setupRemoteCommands:(BetterPlayer*)player isExtraVideo:(BOOL)isExtraVideo {
+- (void) setupRemoteCommands:(BetterPlayer*)player isExtraVideo:(BOOL)isExtraVideo isLiveStream:(BOOL)isLiveStream {
     if (_remoteCommandsInitialized){
         return;
     }
@@ -142,7 +148,7 @@ bool _remoteCommandsInitialized = false;
     [commandCenter.nextTrackCommand setEnabled:NO];
     [commandCenter.previousTrackCommand setEnabled:NO];
     if (@available(iOS 9.1, *)) {
-        [commandCenter.changePlaybackPositionCommand setEnabled: isExtraVideo ? NO : YES];
+        [commandCenter.changePlaybackPositionCommand setEnabled: isLiveStream || isExtraVideo ? NO : YES];
     }
 
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
@@ -186,7 +192,7 @@ bool _remoteCommandsInitialized = false;
     _remoteCommandsInitialized = true;
 }
 
-- (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl{
+- (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl, BOOL isLiveStream {
     float positionInSeconds = player.position /1000;
     float durationInSeconds = player.duration/ 1000;
 
@@ -196,6 +202,7 @@ bool _remoteCommandsInitialized = false;
                                                   MPNowPlayingInfoPropertyElapsedPlaybackTime: [ NSNumber numberWithFloat : positionInSeconds],
                                                   MPMediaItemPropertyPlaybackDuration: [NSNumber numberWithFloat:durationInSeconds],
                                                   MPNowPlayingInfoPropertyPlaybackRate: @1,
+                                                  MPNowPlayingInfoPropertyIsLiveStream: [NSNumber numberWithBool:isLiveStream],
     } mutableCopy];
 
     if (imageUrl != [NSNull null]){
@@ -245,9 +252,9 @@ bool _remoteCommandsInitialized = false;
     return key;
 }
 
-- (void) setupUpdateListener:(BetterPlayer*)player,NSString* title, NSString* author,NSString* imageUrl  {
+- (void) setupUpdateListener:(BetterPlayer*)player, NSString* title, NSString* author, NSString* imageUrl, BOOL isLiveStream {
     id _timeObserverId = [player.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time){
-        [self setupRemoteCommandNotification:player, title, author, imageUrl];
+        [self setupRemoteCommandNotification:player, title, author, imageUrl, isLiveStream];
     }];
 
     NSString* key =  [self getTextureId:player];

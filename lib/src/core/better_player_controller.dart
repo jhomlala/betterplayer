@@ -453,6 +453,7 @@ class BetterPlayerController {
               _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
                   0,
           cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
+          isLiveStream: _betterPlayerDataSource?.liveStream,
           showNotification: _betterPlayerDataSource
               ?.notificationConfiguration?.showNotification,
           title: _betterPlayerDataSource?.notificationConfiguration?.title,

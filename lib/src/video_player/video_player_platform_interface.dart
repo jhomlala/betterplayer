@@ -227,6 +227,7 @@ class DataSource {
     this.cacheKey,
     this.showNotification = false,
     this.isExtraVideo = false,
+    this.isLiveStream = false,
     this.title,
     this.author,
     this.imageUrl,
@@ -295,6 +296,8 @@ class DataSource {
   final bool? showNotification;
 
   final bool? isExtraVideo;
+
+  final bool? isLiveStream;
 
   final String? title;
 
