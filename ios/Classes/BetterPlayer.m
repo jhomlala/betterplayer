@@ -30,9 +30,10 @@ AVPictureInPictureController *_pipController;
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     ///Fix for loading large videos
     if (@available(iOS 10.0, *)) {
-        _player.automaticallyWaitsToMinimizeStalling = true;
+        _player.automaticallyWaitsToMinimizeStalling = false;
     }
     self._observersAdded = false;
+    _bufferDuration = 0;
     return self;
 }
 
@@ -230,8 +231,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 
     if (@available(iOS 10.0, *)) {
-        NSTimeInterval bufferingTime = 4.0;
-        [item setPreferredForwardBufferDuration:bufferingTime];
+        [item setPreferredForwardBufferDuration:_bufferDuration];
     }
     return [self setDataSourcePlayerItem:item withKey:key];
 }
@@ -542,6 +542,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)setIsLooping:(bool)isLooping {
     _isLooping = isLooping;
+}
+
+- (void)setBufferDuration:(NSTimeInterval)bufferDuration {
+    _bufferDuration = bufferDuration;
 }
 
 - (void)setVolume:(double)volume {

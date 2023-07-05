@@ -290,6 +290,14 @@ bool _remoteCommandsInitialized = false;
         result(nil);
     } else if ([@"create" isEqualToString:call.method]) {
         BetterPlayer* player = [[BetterPlayer alloc] initWithFrame:CGRectZero];
+        NSDictionary *argsMap = call.arguments;
+        
+        if ([argsMap objectForKey:@"maxBufferMs"] != [NSNull null]){
+            NSNumber *parseNumber = argsMap[@"maxBufferMs"];
+            float maxBufferMs = [parseNumber floatValue] / 1000;
+            [player setBufferDuration:maxBufferMs];
+        }
+
         [self onPlayerSetup:player result:result];
     } else {
         NSDictionary* argsMap = call.arguments;

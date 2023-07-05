@@ -25,6 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, readonly) bool isPlaying;
 @property(nonatomic) bool isLooping;
 @property(nonatomic, readonly) bool isInitialized;
+@property(nonatomic, readonly) NSTimeInterval bufferDuration;
 @property(nonatomic, readonly) NSString* key;
 @property(nonatomic, readonly) int failedCount;
 @property(nonatomic) AVPlayerLayer* _playerLayer;
@@ -38,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
+- (void)setBufferDuration:(NSTimeInterval)bufferDuration;
 - (void)updatePlayingState;
 - (int64_t) duration;
 - (int64_t) position;
