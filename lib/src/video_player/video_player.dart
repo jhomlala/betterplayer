@@ -331,6 +331,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     int? maxCacheFileSize,
     String? cacheKey,
     bool? showNotification,
+    bool? isLiveStream,
     String? title,
     String? author,
     String? imageUrl,
@@ -347,6 +348,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       DataSource(
         sourceType: DataSourceType.network,
         uri: dataSource,
+        isLiveStream: isLiveStream,
         formatHint: formatHint,
         headers: headers,
         useCache: useCache,

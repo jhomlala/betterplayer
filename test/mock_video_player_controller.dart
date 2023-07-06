@@ -64,6 +64,7 @@ class MockVideoPlayerController extends VideoPlayerController {
     int? maxCacheFileSize,
     String? cacheKey,
     bool? showNotification,
+    bool? isLiveStream,
     String? title,
     String? author,
     String? imageUrl,
