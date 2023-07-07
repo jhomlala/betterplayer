@@ -28,7 +28,7 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
     );
     BetterPlayerDataSource dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.phantomVideoUrl,
+      Constants.elephantDreamStreamUrl,
       notificationConfiguration: BetterPlayerNotificationConfiguration(
         showNotification: true,
         title: 'Text title',
@@ -50,12 +50,19 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
           'betterPlayerEventType: ${event.betterPlayerEventType}, event.parameters: ${event.parameters.toString()}');
 
       if (event.betterPlayerEventType == BetterPlayerEventType.play) {
+        if (_willSwitchToPIPLayout) {
+          return;
+        }
         _betterPlayerController.setupAutomaticPictureInPictureTransition(
             willStartPIP: true);
+
         setState(() {
           _shouldStartPIP = true;
         });
       } else if (event.betterPlayerEventType == BetterPlayerEventType.pause) {
+        if (_willSwitchToPIPLayout) {
+          return;
+        }
         _betterPlayerController.setupAutomaticPictureInPictureTransition(
             willStartPIP: false);
         setState(() {
