@@ -249,6 +249,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _stalledCount = 0;
     _isStalledCheckStarted = false;
     _playerRate = 1;
+    
+    // Prevent pip change to black screen when play video from notification center
+    // When add video output to player item, maybe it makes player item high priority
+    // and player still generates frame when not visible
+    AVPlayerItemVideoOutput* playerItemVideoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:@{(id)kCVPixelBufferPixelFormatTypeKey: @(kCVPixelFormatType_32ARGB)}];
+    [item addOutput: playerItemVideoOutput];
+    
     [_player replaceCurrentItemWithPlayerItem:item];
 
     if (!@available(iOS 16.0, *)) {
