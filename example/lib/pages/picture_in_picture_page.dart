@@ -15,7 +15,7 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
   GlobalKey _betterPlayerKey = GlobalKey();
   late bool _shouldStartPIP = false;
   // Whether need to switch to PIP layout. Only used in Android.
-  late bool _willSwitchToPIPLayout = false;
+  late bool _isPiPMode = false;
 
   @override
   void initState() {
@@ -50,35 +50,33 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
           'betterPlayerEventType: ${event.betterPlayerEventType}, event.parameters: ${event.parameters.toString()}');
 
       if (event.betterPlayerEventType == BetterPlayerEventType.play) {
-        if (_willSwitchToPIPLayout) {
-          return;
-        }
-        _betterPlayerController.setupAutomaticPictureInPictureTransition(
-            willStartPIP: true);
+        if (Platform.isAndroid || !_isPiPMode) {
+          _betterPlayerController.setupAutomaticPictureInPictureTransition(
+              willStartPIP: true);
 
-        setState(() {
-          _shouldStartPIP = true;
-        });
-      } else if (event.betterPlayerEventType == BetterPlayerEventType.pause) {
-        if (_willSwitchToPIPLayout) {
-          return;
+          setState(() {
+            _shouldStartPIP = true;
+          });
         }
-        _betterPlayerController.setupAutomaticPictureInPictureTransition(
-            willStartPIP: false);
-        setState(() {
-          _shouldStartPIP = false;
-        });
+      } else if (event.betterPlayerEventType == BetterPlayerEventType.pause) {
+        if (Platform.isAndroid || !_isPiPMode) {
+          _betterPlayerController.setupAutomaticPictureInPictureTransition(
+              willStartPIP: false);
+          setState(() {
+            _shouldStartPIP = false;
+          });
+        }
       } else if (event.betterPlayerEventType ==
           BetterPlayerEventType.enteringPIP) {
         _betterPlayerController.setControlsEnabled(false);
         setState(() {
-          _willSwitchToPIPLayout = true;
+          _isPiPMode = true;
         });
       } else if (event.betterPlayerEventType ==
           BetterPlayerEventType.exitingPIP) {
         _betterPlayerController.setControlsEnabled(true);
         setState(() {
-          _willSwitchToPIPLayout = false;
+          _isPiPMode = false;
         });
       } else if (event.betterPlayerEventType ==
           BetterPlayerEventType.tapExternalPlayButton) {
@@ -102,7 +100,7 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
   @override
   Widget build(BuildContext context) {
     // Show on only BetterPlayerView for android.
-    if (Platform.isAndroid && _willSwitchToPIPLayout) {
+    if (Platform.isAndroid && _isPiPMode) {
       return AspectRatio(
         aspectRatio: 16 / 9,
         child: BetterPlayer(
