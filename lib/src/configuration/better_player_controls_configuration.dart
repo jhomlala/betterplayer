@@ -165,14 +165,14 @@ class BetterPlayerControlsConfiguration {
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
     this.iconsColor = Colors.white,
-    this.playIcon = Icons.play_arrow_outlined,
-    this.pauseIcon = Icons.pause_outlined,
-    this.muteIcon = Icons.volume_up_outlined,
-    this.unMuteIcon = Icons.volume_off_outlined,
-    this.fullscreenEnableIcon = Icons.fullscreen_outlined,
-    this.fullscreenDisableIcon = Icons.fullscreen_exit_outlined,
-    this.skipBackIcon = Icons.replay_10_outlined,
-    this.skipForwardIcon = Icons.forward_10_outlined,
+    this.playIcon = Icon(Icons.play_arrow_outlined),
+    this.pauseIcon = Icon(Icons.pause_outlined),
+    this.muteIcon = Icon(Icons.volume_up_outlined),
+    this.unMuteIcon = Icon(Icons.volume_off_outlined),
+    this.fullscreenEnableIcon = Icon(Icons.fullscreen_outlined),
+    this.fullscreenDisableIcon = Icon(Icons.fullscreen_exit_outlined),
+    this.skipBackIcon = Icon(Icons.replay_10_outlined),
+    this.skipForwardIcon = Icon(Icons.forward_10_outlined),
     this.enableFullscreen = true,
     this.enableMute = true,
     this.enableProgressText = true,
@@ -226,16 +226,16 @@ class BetterPlayerControlsConfiguration {
         progressBarBackgroundColor: Colors.white70);
   }
 
-  factory BetterPlayerControlsConfiguration.cupertino() {
-    return const BetterPlayerControlsConfiguration(
-      fullscreenEnableIcon: CupertinoIcons.arrow_up_left_arrow_down_right,
-      fullscreenDisableIcon: CupertinoIcons.arrow_down_right_arrow_up_left,
-      playIcon: CupertinoIcons.play_arrow_solid,
-      pauseIcon: CupertinoIcons.pause_solid,
-      skipBackIcon: CupertinoIcons.gobackward_15,
-      skipForwardIcon: CupertinoIcons.goforward_15,
-    );
-  }
+  // factory BetterPlayerControlsConfiguration.cupertino() {
+  //   return const BetterPlayerControlsConfiguration(
+  //     fullscreenEnableIcon: CupertinoIcons.arrow_up_left_arrow_down_right,
+  //     fullscreenDisableIcon: CupertinoIcons.arrow_down_right_arrow_up_left,
+  //     playIcon: CupertinoIcons.play_arrow_solid,
+  //     pauseIcon: CupertinoIcons.pause_solid,
+  //     skipBackIcon: CupertinoIcons.gobackward_15,
+  //     skipForwardIcon: CupertinoIcons.goforward_15,
+  //   );
+  // }
 
   ///Setup BetterPlayerControlsConfiguration based on Theme options.
   factory BetterPlayerControlsConfiguration.theme(ThemeData theme) {
