@@ -201,9 +201,18 @@ bool _remoteCommandsInitialized = false;
                                                   MPMediaItemPropertyTitle: title,
                                                   MPNowPlayingInfoPropertyElapsedPlaybackTime: [ NSNumber numberWithFloat : positionInSeconds],
                                                   MPMediaItemPropertyPlaybackDuration: [NSNumber numberWithFloat:durationInSeconds],
-                                                  MPNowPlayingInfoPropertyPlaybackRate: @1,
+                                                  MPNowPlayingInfoPropertyPlaybackRate: positionInSeconds >= durationInSeconds -1 ? @0 : @1,
                                                   MPNowPlayingInfoPropertyIsLiveStream: [NSNumber numberWithBool:isLiveStream],
     } mutableCopy];
+
+    if (positionInSeconds >= durationInSeconds -1) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{
+            [nowPlayingInfoDict setObject:[NSNumber numberWithFloat:durationInSeconds]
+                                forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+            [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
+        });
+    }
 
     if (imageUrl != [NSNull null]){
         NSString* key =  [self getTextureId:player];
