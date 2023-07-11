@@ -259,13 +259,9 @@ class _BetterPlayerCupertinoControlsState
             ),
             decoration: BoxDecoration(color: backgroundColor),
             child: Center(
-              child: Icon(
-                _betterPlayerController!.isFullScreen
-                    ? _controlsConfiguration.fullscreenDisableIcon
-                    : _controlsConfiguration.fullscreenEnableIcon,
-                color: iconColor,
-                size: iconSize,
-              ),
+              child: _betterPlayerController!.isFullScreen
+                  ? _controlsConfiguration.fullscreenDisableIcon
+                  : _controlsConfiguration.fullscreenEnableIcon,
             ),
           ),
         ),
@@ -367,13 +363,9 @@ class _BetterPlayerCupertinoControlsState
               padding: EdgeInsets.symmetric(
                 horizontal: buttonPadding,
               ),
-              child: Icon(
-                (_latestValue != null && _latestValue!.volume > 0)
-                    ? _controlsConfiguration.muteIcon
-                    : _controlsConfiguration.unMuteIcon,
-                color: iconColor,
-                size: iconSize,
-              ),
+              child: (_latestValue != null && _latestValue!.volume > 0)
+                  ? _controlsConfiguration.muteIcon
+                  : _controlsConfiguration.unMuteIcon,
             ),
           ),
         ),
@@ -392,13 +384,9 @@ class _BetterPlayerCupertinoControlsState
         height: barHeight,
         color: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 6),
-        child: Icon(
-          controller.value.isPlaying
-              ? _controlsConfiguration.pauseIcon
-              : _controlsConfiguration.playIcon,
-          color: iconColor,
-          size: barHeight * 0.6,
-        ),
+        child: controller.value.isPlaying
+            ? _controlsConfiguration.pauseIcon
+            : _controlsConfiguration.playIcon,
       ),
     );
   }
@@ -444,11 +432,7 @@ class _BetterPlayerCupertinoControlsState
         padding: const EdgeInsets.symmetric(
           horizontal: 8,
         ),
-        child: Icon(
-          _controlsConfiguration.skipBackIcon,
-          color: iconColor,
-          size: barHeight * 0.4,
-        ),
+        child: _controlsConfiguration.skipBackIcon,
       ),
     );
   }
@@ -461,11 +445,7 @@ class _BetterPlayerCupertinoControlsState
         color: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 6),
         margin: const EdgeInsets.only(right: 8.0),
-        child: Icon(
-          _controlsConfiguration.skipForwardIcon,
-          color: iconColor,
-          size: barHeight * 0.4,
-        ),
+        child: _controlsConfiguration.skipForwardIcon,
       ),
     );
   }

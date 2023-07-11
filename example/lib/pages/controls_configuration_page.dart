@@ -17,7 +17,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
         BetterPlayerControlsConfiguration(
       controlBarColor: Colors.indigoAccent.withAlpha(200),
       iconsColor: Colors.lightGreen,
-      playIcon: Icons.forward,
+      playIcon: Icon(Icons.forward),
       progressBarPlayedColor: Colors.grey,
       progressBarHandleColor: Colors.lightGreen,
       enableSkips: false,
