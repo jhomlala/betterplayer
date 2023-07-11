@@ -16,28 +16,28 @@ class BetterPlayerControlsConfiguration {
   final Color iconsColor;
 
   ///Icon of play
-  final IconData playIcon;
+  final Widget playIcon;
 
   ///Icon of pause
-  final IconData pauseIcon;
+  final Widget pauseIcon;
 
   ///Icon of mute
-  final IconData muteIcon;
+  final Widget muteIcon;
 
   ///Icon of unmute
-  final IconData unMuteIcon;
+  final Widget unMuteIcon;
 
   ///Icon of fullscreen mode enable
-  final IconData fullscreenEnableIcon;
+  final Widget fullscreenEnableIcon;
 
   ///Icon of fullscreen mode disable
-  final IconData fullscreenDisableIcon;
+  final Widget fullscreenDisableIcon;
 
   ///Cupertino only icon, icon of skip
-  final IconData skipBackIcon;
+  final Widget skipBackIcon;
 
   ///Cupertino only icon, icon of forward
-  final IconData skipForwardIcon;
+  final Widget skipForwardIcon;
 
   ///Flag used to enable/disable fullscreen
   final bool enableFullscreen;
