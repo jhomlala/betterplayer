@@ -195,18 +195,26 @@ bool _remoteCommandsInitialized = false;
 - (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl, BOOL isLiveStream {
     float positionInSeconds = player.position /1000;
     float durationInSeconds = player.duration/ 1000;
-
+    BOOL isPlayingTheLastSecond = positionInSeconds >= durationInSeconds -1;
 
     NSMutableDictionary * nowPlayingInfoDict = [@{MPMediaItemPropertyArtist: author,
                                                   MPMediaItemPropertyTitle: title,
                                                   MPNowPlayingInfoPropertyElapsedPlaybackTime: [ NSNumber numberWithFloat : positionInSeconds],
                                                   MPMediaItemPropertyPlaybackDuration: [NSNumber numberWithFloat:durationInSeconds],
-                                                  MPNowPlayingInfoPropertyPlaybackRate: positionInSeconds >= durationInSeconds -1 ? @0 : @1,
+                                                  // Because the progress bar can auto jump to the last seek/pause/play position after reaching the end of video
+                                                  // (its default behavior can auto update the progress)
+                                                  // We need to set playback rate of Control center = 0 to stop that progress.
+                                                  MPNowPlayingInfoPropertyPlaybackRate: isPlayingTheLastSecond ? @0 : @1,
                                                   MPNowPlayingInfoPropertyIsLiveStream: [NSNumber numberWithBool:isLiveStream],
     } mutableCopy];
 
-    if (positionInSeconds >= durationInSeconds -1) {
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.5 * NSEC_PER_SEC)),
+    // The position always stop at "-0:01",
+    // and the progress bar is also stopped at this time(the playback rate already set to 0),
+    // so we need to update the progress bar manually
+    if (isPlayingTheLastSecond) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
+                                    // Delay 0.5s for better animation
+                                    (int64_t)(0.5 * NSEC_PER_SEC)),
                        dispatch_get_main_queue(), ^{
             [nowPlayingInfoDict setObject:[NSNumber numberWithFloat:durationInSeconds]
                                 forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
