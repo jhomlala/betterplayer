@@ -193,9 +193,14 @@ bool _remoteCommandsInitialized = false;
 }
 
 - (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl, BOOL isLiveStream {
+    // This function is always called double times at the end of video due to the default behavior of AVPlayer
+    // This check is used to prevent the latest call.
+    if( player.position >= player.duration - 500){
+        return;
+    }
     float positionInSeconds = player.position /1000;
     float durationInSeconds = player.duration/ 1000;
-    BOOL isPlayingTheLastSecond = positionInSeconds >= durationInSeconds -1;
+    BOOL isPlayingTheLastSecond = player.position >= player.duration -1000;
 
     NSMutableDictionary * nowPlayingInfoDict = [@{MPMediaItemPropertyArtist: author,
                                                   MPMediaItemPropertyTitle: title,
