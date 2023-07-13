@@ -383,15 +383,9 @@ class _BetterPlayerMaterialControlsState
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                if (_controlsConfiguration.enableSkips)
-                  Expanded(child: _buildSkipButton())
-                else
-                  const SizedBox(),
-                Expanded(child: _buildReplayButton(_controller!)),
-                if (_controlsConfiguration.enableSkips)
-                  Expanded(child: _buildForwardButton())
-                else
-                  const SizedBox(),
+                if (_controlsConfiguration.enableSkips) Expanded(child: _buildSkipButton()) else const SizedBox(),
+                if (_controlsConfiguration.enableReplayButton) Expanded(child: _buildReplayButton(_controller!)),
+                if (_controlsConfiguration.enableSkips) Expanded(child: _buildForwardButton()) else const SizedBox(),
               ],
             ),
     );
