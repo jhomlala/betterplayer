@@ -163,6 +163,15 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     // Custom listener for exoPlayer event.
     // To change action in PIP mode or Notification based on playing status.
     private val playerEventListenerForIsPlayingChanged = object : Player.Listener {
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            super.onPlaybackStateChanged(playbackState)
+            Log.d("NFCDEV", "onPlaybackStateChanged : " + playbackState.toString())
+
+            if (playbackState == Player.STATE_ENDED) {
+                Log.d("NFCDEV", "playbackEnded : ")
+            }
+        }
+
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
