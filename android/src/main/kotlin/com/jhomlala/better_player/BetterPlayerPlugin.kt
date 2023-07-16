@@ -526,6 +526,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun setupNotification(betterPlayer: BetterPlayer) {
+        Log.d("NFCDEV", "setupNotification")
         currentPlayer = betterPlayer
         try {
             val textureId = getTextureId(betterPlayer)
