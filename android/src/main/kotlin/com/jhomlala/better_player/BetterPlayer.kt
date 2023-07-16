@@ -629,6 +629,7 @@ internal class BetterPlayer(
      */
     @SuppressLint("InlinedApi")
     fun setupMediaSession(context: Context?): MediaSessionCompat? {
+        Log.d("NFCDEV", "setupMediaSession")
         mediaSession?.release()
         context?.let {
 
@@ -645,6 +646,7 @@ internal class BetterPlayer(
                     super.onSeekTo(pos)
                 }
             })
+            Log.d("NFCDEV", "setting mediaSession.isActive = true")
             mediaSession.isActive = true
             val mediaSessionConnector = MediaSessionConnector(mediaSession)
             mediaSessionConnector.setPlayer(exoPlayer)
@@ -653,15 +655,16 @@ internal class BetterPlayer(
         }
         return null
     }
-    
+
     fun deactivateMediaSession() {
+        Log.d("NFCDEV", "deactivateMediaSession")
         val playbackState = PlaybackStateCompat.Builder()
             .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
             .setState(PlaybackStateCompat.STATE_STOPPED, position, 1.0f)
             .build()
         mediaSession?.setPlaybackState(playbackState)
-//        mediaSession?.isActive = false
-        mediaSession?.release()
+        mediaSession?.isActive = false
+//        mediaSession?.release()
     }
 
     // Only work if it is more than Android 13
