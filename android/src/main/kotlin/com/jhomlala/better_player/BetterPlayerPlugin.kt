@@ -160,15 +160,25 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun removeExternalPlayButton() {
+        pipRemoteActions.clear()
+        activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
+        _notificationActions.value = listOf()
+    }
+
     // Custom listener for exoPlayer event.
     // To change action in PIP mode or Notification based on playing status.
     private val playerEventListenerForIsPlayingChanged = object : Player.Listener {
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onPlaybackStateChanged(playbackState: Int) {
             super.onPlaybackStateChanged(playbackState)
             Log.d("NFCDEV", "onPlaybackStateChanged : " + playbackState.toString())
 
             if (playbackState == Player.STATE_ENDED) {
+                // 生放送終了時にはSTATE_ENDED とならない。新しいmethod channel を作って番組終了をトリガーする処理が必要と思われる
                 Log.d("NFCDEV", "playbackEnded : ")
+                removeExternalPlayButton()
             }
         }
 
