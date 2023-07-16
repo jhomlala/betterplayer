@@ -190,6 +190,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             pipRemoteActions.clear()
+            Log.d("NFCDEV", "onIsPlayingChanged isPlaying: " + isPlaying.toString())
             flutterState?.applicationContext?.let { context ->
                 val pendingIntent: PendingIntent?
                 val buttonImageResourceId: Int?
