@@ -162,9 +162,13 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun removeExternalPlayButton() {
-        pipRemoteActions.clear()
-        activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
+        
+//        pipRemoteActions.clear()
+//        activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
+
         _notificationActions.value = listOf()
+
+        currentPlayer?.deactivateMediaSession()
     }
 
     // Custom listener for exoPlayer event.

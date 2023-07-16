@@ -654,6 +654,16 @@ internal class BetterPlayer(
         return null
     }
     
+    fun deactivateMediaSession() {
+        val playbackState = PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+            .setState(PlaybackStateCompat.STATE_STOPPED, position, 1.0f)
+            .build()
+        mediaSession?.setPlaybackState(playbackState)
+//        mediaSession?.isActive = false
+        mediaSession?.release()
+    }
+
     // Only work if it is more than Android 13
     fun setMediaSessionCallback() {
         mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
