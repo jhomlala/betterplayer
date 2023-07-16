@@ -659,12 +659,12 @@ internal class BetterPlayer(
     fun deactivateMediaSession() {
         Log.d("NFCDEV", "deactivateMediaSession")
         val playbackState = PlaybackStateCompat.Builder()
-            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-            .setState(PlaybackStateCompat.STATE_STOPPED, position, 1.0f)
+//            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+            .setState(PlaybackStateCompat.STATE_PAUSED, position, 1.0f)
             .build()
         mediaSession?.setPlaybackState(playbackState)
-        mediaSession?.isActive = false
-//        mediaSession?.release()
+//        mediaSession?.isActive = false
+        mediaSession?.release()
     }
 
     // Only work if it is more than Android 13
