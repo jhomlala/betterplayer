@@ -606,6 +606,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _textureId, width, height, bitrate);
   }
 
+  Future<void> broadcastEnded() async {
+    await _videoPlayerPlatform.broadcastEnded(
+      textureId: textureId,
+    );
+  }
+
   Future<void> setupAutomaticPictureInPictureTransition(
       {bool? willStartPIP}) async {
     await _videoPlayerPlatform.setupAutomaticPictureInPictureTransition(

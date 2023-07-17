@@ -344,6 +344,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 player.pause()
                 result.success(null)
             }
+            BROADCAST_ENDED -> {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    removeExternalPlayButton()
+                }
+                result.success(null)
+            }
             SEEK_TO_METHOD -> {
                 val location = (call.argument<Any>(LOCATION_PARAMETER) as Number?)!!.toInt()
                 player.seekTo(location)
@@ -781,6 +787,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val SET_VOLUME_METHOD = "setVolume"
         private const val PLAY_METHOD = "play"
         private const val PAUSE_METHOD = "pause"
+        private const val BROADCAST_ENDED = "broadcastEnded"
         private const val SEEK_TO_METHOD = "seekTo"
         private const val POSITION_METHOD = "position"
         private const val ABSOLUTE_POSITION_METHOD = "absolutePosition"
