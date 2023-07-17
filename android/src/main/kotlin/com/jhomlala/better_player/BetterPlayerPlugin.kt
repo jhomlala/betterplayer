@@ -57,6 +57,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var currentPlayer: BetterPlayer? = null
     private var showPictureInPictureAutomatically: Boolean = false
     private val pipRemoteActions: ArrayList<RemoteAction> = ArrayList()
+    private var didEndPlayback: Boolean = false
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         val loader = FlutterLoader()
@@ -162,10 +163,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun removeExternalPlayButton() {
-        
-//        pipRemoteActions.clear()
-//        activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
-
+        // Remove button on pip
+        pipRemoteActions.clear()
+        activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
+        // Remove button on notification
         _notificationActions.value = listOf()
 
         currentPlayer?.deactivateMediaSession()
@@ -182,7 +183,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             if (playbackState == Player.STATE_ENDED) {
                 // 生放送終了時にはSTATE_ENDED とならない。新しいmethod channel を作って番組終了をトリガーする処理が必要と思われる
                 Log.d("NFCDEV", "playbackEnded : ")
-                removeExternalPlayButton()
+//                removeExternalPlayButton()
+                didEndPlayback = true
             }
         }
 
@@ -190,17 +192,23 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             pipRemoteActions.clear()
-            Log.d("NFCDEV", "onIsPlayingChanged isPlaying: " + isPlaying.toString())
-            flutterState?.applicationContext?.let { context ->
-                val pendingIntent: PendingIntent?
-                val buttonImageResourceId: Int?
-                if (isPlaying) {
-                    pendingIntent = createPendingIntentWithCustomAction(CustomActions.PAUSE)
-                    buttonImageResourceId = R.drawable.exo_notification_pause
-                } else {
-                    pendingIntent = createPendingIntentWithCustomAction(CustomActions.PLAY)
-                    buttonImageResourceId = R.drawable.exo_notification_play
-                }
+            // NOTE: `onIsPlayingChanged()` is executed after `onPlaybackStateChanged() at the end of video`.
+            if (didEndPlayback && !isPlaying) {
+                removeExternalPlayButton()
+                return
+            } else {
+                Log.d("NFCDEV", "onIsPlayingChanged isPlaying: " + isPlaying.toString())
+                flutterState?.applicationContext?.let { context ->
+                    val pendingIntent: PendingIntent?
+                    val buttonImageResourceId: Int?
+                    if (isPlaying) {
+                        didEndPlayback = false
+                        pendingIntent = createPendingIntentWithCustomAction(CustomActions.PAUSE)
+                        buttonImageResourceId = R.drawable.exo_notification_pause
+                    } else {
+                        pendingIntent = createPendingIntentWithCustomAction(CustomActions.PLAY)
+                        buttonImageResourceId = R.drawable.exo_notification_play
+                    }
                 pipRemoteActions.add(
                     createRemoteAction(
                         context,
@@ -208,13 +216,14 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                         pendingIntent
                     )
                 )
-                val notificationAction = NotificationCompat.Action(
-                    buttonImageResourceId, "",
-                    pendingIntent
-                )
-                _notificationActions.value = listOf(notificationAction)
+                    val notificationAction = NotificationCompat.Action(
+                        buttonImageResourceId, "",
+                        pendingIntent
+                    )
+                    _notificationActions.value = listOf(notificationAction)
+                }
+                activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
             }
-            activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
         }
     }
 
@@ -535,6 +544,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 val dataSource = dataSources[textureId]
                 //Don't setup notification for the same source.
                 if (textureId == currentNotificationTextureId && currentNotificationDataSource != null && dataSource != null && currentNotificationDataSource === dataSource) {
+//                    flutterState?.applicationContext?.let { context ->
+//                        betterPlayer.setupMediaSession(context)
+//                    }
+                    betterPlayer.activateMediaSession()
                     return
                 }
                 currentNotificationDataSource = dataSource

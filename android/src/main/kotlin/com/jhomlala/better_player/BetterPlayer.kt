@@ -82,6 +82,7 @@ internal class BetterPlayer(
     private val customDefaultLoadControl: CustomDefaultLoadControl =
         customDefaultLoadControl ?: CustomDefaultLoadControl()
     private var lastSendBufferedPosition = 0L
+    private var mediaSessionConnector: MediaSessionConnector? = null
 
     init {
         val loadBuilder = DefaultLoadControl.Builder()
@@ -648,23 +649,33 @@ internal class BetterPlayer(
             })
             Log.d("NFCDEV", "setting mediaSession.isActive = true")
             mediaSession.isActive = true
-            val mediaSessionConnector = MediaSessionConnector(mediaSession)
-            mediaSessionConnector.setPlayer(exoPlayer)
+            mediaSessionConnector = MediaSessionConnector(mediaSession)
+            mediaSessionConnector?.setPlayer(exoPlayer)
+
             this.mediaSession = mediaSession
             return mediaSession
         }
         return null
     }
 
+    fun activateMediaSession() {
+        if (mediaSession?.isActive == false) {
+            mediaSession?.isActive = true
+            mediaSessionConnector?.setPlayer(exoPlayer)
+        }
+    }
+
     fun deactivateMediaSession() {
         Log.d("NFCDEV", "deactivateMediaSession")
         val playbackState = PlaybackStateCompat.Builder()
-//            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-            .setState(PlaybackStateCompat.STATE_PAUSED, position, 1.0f)
+            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+//                    .setState(PlaybackStateCompat.STATE_PAUSED, position, 1.0f)
+            .setState(PlaybackStateCompat.STATE_STOPPED, position, 1.0f)
             .build()
         mediaSession?.setPlaybackState(playbackState)
-//        mediaSession?.isActive = false
-        mediaSession?.release()
+        mediaSession?.isActive = false
+        mediaSessionConnector?.setPlayer(null)
+//        mediaSession?.release() // Android13だとこれを実行しないとがないと通知のボタンが消えない？
     }
 
     // Only work if it is more than Android 13
