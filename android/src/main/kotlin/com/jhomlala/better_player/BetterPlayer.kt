@@ -667,15 +667,16 @@ internal class BetterPlayer(
 
     fun deactivateMediaSession() {
         Log.d("NFCDEV", "deactivateMediaSession")
+        mediaSession?.isActive = false
+        mediaSessionConnector?.setPlayer(null)
+    }
+
+    fun setAsPlaybackStoppedToMediaSession() {
         val playbackState = PlaybackStateCompat.Builder()
             .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
-//                    .setState(PlaybackStateCompat.STATE_PAUSED, position, 1.0f)
             .setState(PlaybackStateCompat.STATE_STOPPED, position, 1.0f)
             .build()
         mediaSession?.setPlaybackState(playbackState)
-        mediaSession?.isActive = false
-        mediaSessionConnector?.setPlayer(null)
-//        mediaSession?.release() // Android13だとこれを実行しないとがないと通知のボタンが消えない？
     }
 
     // Only work if it is more than Android 13
@@ -695,6 +696,7 @@ internal class BetterPlayer(
                 tapExternalPauseButton()
                 super.onPause()
             }
+
         })
     }
 

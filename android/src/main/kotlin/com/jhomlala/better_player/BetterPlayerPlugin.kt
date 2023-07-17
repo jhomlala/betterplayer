@@ -167,8 +167,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         pipRemoteActions.clear()
         activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
         // Remove button on notification
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
+            currentPlayer?.setAsPlaybackStoppedToMediaSession()
+        }
         _notificationActions.value = listOf()
-
         currentPlayer?.deactivateMediaSession()
     }
 
