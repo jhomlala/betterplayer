@@ -658,7 +658,7 @@ internal class BetterPlayer(
         return null
     }
 
-    fun activateMediaSession() {
+    fun activateMediaSessionIfNeeded() {
         if (mediaSession?.isActive == false) {
             mediaSession?.isActive = true
             mediaSessionConnector?.setPlayer(exoPlayer)
