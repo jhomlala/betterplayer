@@ -138,6 +138,11 @@ abstract class VideoPlayerPlatform {
     throw UnimplementedError('getAbsolutePosition() has not been implemented.');
   }
 
+  /// To  process when broadcast ended.
+  Future<void> broadcastEnded({int? textureId}) {
+    throw UnimplementedError('broadcastEnded() has not been implemented.');
+  }
+
   ///Set up auto PiP transition.
   Future<void> setupAutomaticPictureInPictureTransition({
     int? textureId,

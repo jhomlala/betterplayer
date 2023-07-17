@@ -1056,6 +1056,15 @@ class BetterPlayerController {
     return _overriddenFit ?? betterPlayerConfiguration.fit;
   }
 
+  /// To handle process when broadcast ended.
+  Future<void>? broadcastEnded() async {
+    if (videoPlayerController == null) {
+      throw StateError("The data source has not been initialized");
+    }
+
+    videoPlayerController?.broadcastEnded();
+  }
+
   ///Set up to start Picture in Picture automatically when close app.
   ///When device is not supported, PiP mode won't be open.
   Future<void>? setupAutomaticPictureInPictureTransition(
