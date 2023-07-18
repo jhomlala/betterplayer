@@ -175,7 +175,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         currentPlayer?.deactivateMediaSession()
     }
 
-    private fun setAsVideoEnded() {
+    private fun setAsVideoPlaybackEnded() {
         removeExternalPlayButton()
         didEndPlayback = true
     }
@@ -191,7 +191,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             if (playbackState == Player.STATE_ENDED) {
                 // 生放送終了時にはSTATE_ENDED とならない。新しいmethod channel を作って番組終了をトリガーする処理が必要と思われる
                 Log.d("NFCDEV", "playbackEnded : ")
-                setAsVideoEnded()
+                setAsVideoPlaybackEnded()
             }
         }
 
@@ -201,7 +201,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             Log.d("NFCDEV", "onIsPlayingChanged isPlaying: " + isPlaying.toString())
             // NOTE: `onIsPlayingChanged()` is executed after `onPlaybackStateChanged() at the end of video`.
             if (didEndPlayback) {
-//                removeExternalPlayButton()
                 return
             } else {
                 pipRemoteActions.clear()
@@ -209,7 +208,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     val pendingIntent: PendingIntent?
                     val buttonImageResourceId: Int?
                     if (isPlaying) {
-                        didEndPlayback = false
                         pendingIntent = createPendingIntentWithCustomAction(CustomActions.PAUSE)
                         buttonImageResourceId = R.drawable.exo_notification_pause
                     } else {
@@ -342,6 +340,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             PLAY_METHOD -> {
+                didEndPlayback = false
                 setupNotification(player)
                 player.play()
                 result.success(null)
@@ -351,11 +350,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             BROADCAST_ENDED -> {
-//                didEndPlayback = true
-//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//                    removeExternalPlayButton()
-//                }
-                setAsVideoEnded()
+                setAsVideoPlaybackEnded()
                 result.success(null)
             }
             SEEK_TO_METHOD -> {
