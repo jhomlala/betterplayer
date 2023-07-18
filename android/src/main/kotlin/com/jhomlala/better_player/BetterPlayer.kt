@@ -668,9 +668,10 @@ internal class BetterPlayer(
         mediaSessionConnector?.setPlayer(null)
     }
 
+    // Only needed for Android 13 or later
     fun setAsPlaybackStoppedToMediaSession() {
         val playbackState = PlaybackStateCompat.Builder()
-            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+//            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
             .setState(PlaybackStateCompat.STATE_STOPPED, position, 1.0f)
             .build()
         mediaSession?.setPlaybackState(playbackState)
