@@ -694,7 +694,6 @@ internal class BetterPlayer(
                 tapExternalPauseButton()
                 super.onPause()
             }
-
         })
     }
 
