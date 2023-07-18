@@ -57,7 +57,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var currentPlayer: BetterPlayer? = null
     private var showPictureInPictureAutomatically: Boolean = false
     private val pipRemoteActions: ArrayList<RemoteAction> = ArrayList()
-    private var didEndPlayback: Boolean = false
+    private var isVideoPlaybackEnded: Boolean = false
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         val loader = FlutterLoader()
@@ -177,7 +177,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun setAsVideoPlaybackEnded() {
         removeExternalPlayButton()
-        didEndPlayback = true
+        isVideoPlaybackEnded = true
     }
 
     // Custom listener for exoPlayer event.
@@ -196,7 +196,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             super.onIsPlayingChanged(isPlaying)
             // NOTE: `onIsPlayingChanged()` is executed after `onPlaybackStateChanged() at the end of video`.
             // So skip process when playback was over.
-            if (didEndPlayback) {
+            if (isVideoPlaybackEnded) {
                 return
             } else {
                 pipRemoteActions.clear()
@@ -335,7 +335,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             PLAY_METHOD -> {
-                didEndPlayback = false
+                isVideoPlaybackEnded = false
                 setupNotification(player)
                 player.play()
                 result.success(null)
