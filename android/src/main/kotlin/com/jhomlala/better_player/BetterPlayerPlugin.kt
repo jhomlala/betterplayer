@@ -160,18 +160,24 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             Log.d(TAG, "Error on unregisterReceiver. " + e.localizedMessage)
         }
     }
-
-    @RequiresApi(Build.VERSION_CODES.O)
+    
     private fun removeExternalPlayButton() {
         // Remove button on pip
         pipRemoteActions.clear()
-        activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
+        }
         // Remove button on notification
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
             currentPlayer?.setAsPlaybackStoppedToMediaSession()
         }
         _notificationActions.value = listOf()
         currentPlayer?.deactivateMediaSession()
+    }
+
+    private fun setAsVideoEnded() {
+        removeExternalPlayButton()
+        didEndPlayback = true
     }
 
     // Custom listener for exoPlayer event.
@@ -185,21 +191,20 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             if (playbackState == Player.STATE_ENDED) {
                 // 生放送終了時にはSTATE_ENDED とならない。新しいmethod channel を作って番組終了をトリガーする処理が必要と思われる
                 Log.d("NFCDEV", "playbackEnded : ")
-//                removeExternalPlayButton()
-                didEndPlayback = true
+                setAsVideoEnded()
             }
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
+            Log.d("NFCDEV", "onIsPlayingChanged isPlaying: " + isPlaying.toString())
             pipRemoteActions.clear()
             // NOTE: `onIsPlayingChanged()` is executed after `onPlaybackStateChanged() at the end of video`.
-            if (didEndPlayback && !isPlaying) {
-                removeExternalPlayButton()
+            if (didEndPlayback) {
+//                removeExternalPlayButton()
                 return
             } else {
-                Log.d("NFCDEV", "onIsPlayingChanged isPlaying: " + isPlaying.toString())
                 flutterState?.applicationContext?.let { context ->
                     val pendingIntent: PendingIntent?
                     val buttonImageResourceId: Int?
@@ -345,10 +350,11 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             BROADCAST_ENDED -> {
-                didEndPlayback = true
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    removeExternalPlayButton()
-                }
+//                didEndPlayback = true
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//                    removeExternalPlayButton()
+//                }
+                setAsVideoEnded()
                 result.success(null)
             }
             SEEK_TO_METHOD -> {
