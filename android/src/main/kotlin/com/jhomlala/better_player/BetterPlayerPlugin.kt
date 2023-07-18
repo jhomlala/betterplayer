@@ -199,12 +199,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
             Log.d("NFCDEV", "onIsPlayingChanged isPlaying: " + isPlaying.toString())
-            pipRemoteActions.clear()
             // NOTE: `onIsPlayingChanged()` is executed after `onPlaybackStateChanged() at the end of video`.
             if (didEndPlayback) {
 //                removeExternalPlayButton()
                 return
             } else {
+                pipRemoteActions.clear()
                 flutterState?.applicationContext?.let { context ->
                     val pendingIntent: PendingIntent?
                     val buttonImageResourceId: Int?
@@ -229,7 +229,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     )
                     _notificationActions.value = listOf(notificationAction)
                 }
-                Log.d("NFCDEV", "setPictureInPictureParams")
+                Log.d("NFCDEV", "setPictureInPictureParams  isPlaying: " + isPlaying.toString())
                 activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
             }
         }
