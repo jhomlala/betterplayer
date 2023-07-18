@@ -310,10 +310,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             BROADCAST_ENDED -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    removeExternalPlayButton()
-                }
-                result.success(null)
+                // TODO: implement
             }
             SEEK_TO_METHOD -> {
                 val location = (call.argument<Any>(LOCATION_PARAMETER) as Number?)!!.toInt()
