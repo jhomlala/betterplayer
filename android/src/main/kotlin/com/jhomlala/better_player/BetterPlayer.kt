@@ -656,16 +656,17 @@ internal class BetterPlayer(
         return null
     }
 
-    fun activateMediaSessionIfNeeded() {
-        if (mediaSession?.isActive == false) {
-            mediaSession?.isActive = true
-            mediaSessionConnector?.setPlayer(exoPlayer)
-        }
-    }
 
     fun deactivateMediaSession() {
         mediaSession?.isActive = false
         mediaSessionConnector?.setPlayer(null)
+    }
+
+    fun reactivateMediaSessionIfNeeded() {
+        if (mediaSession?.isActive == false) {
+            mediaSession?.isActive = true
+            mediaSessionConnector?.setPlayer(exoPlayer)
+        }
     }
 
     // Only needed for Android 13 or later

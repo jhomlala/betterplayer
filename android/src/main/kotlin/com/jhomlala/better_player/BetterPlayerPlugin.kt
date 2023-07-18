@@ -547,17 +547,17 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             val textureId = getTextureId(betterPlayer)
             if (textureId != null) {
                 val dataSource = dataSources[textureId]
-                //Don't setup notification for the same source.
-                if (textureId == currentNotificationTextureId && currentNotificationDataSource != null && dataSource != null && currentNotificationDataSource === dataSource) {
-                    // In case replay video after once ended, activate media session.
-                    betterPlayer.activateMediaSessionIfNeeded()
-                    return
-                }
-                currentNotificationDataSource = dataSource
-                currentNotificationTextureId = textureId
-                removeOtherNotificationListeners()
                 val showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false)
                 if (showNotification) {
+                    //Don't setup notification for the same source.
+                    if (textureId == currentNotificationTextureId && currentNotificationDataSource != null && dataSource != null && currentNotificationDataSource === dataSource) {
+                        // In case replay video after once ended, reactivate media session.
+                        betterPlayer.reactivateMediaSessionIfNeeded()
+                        return
+                    }
+                    currentNotificationDataSource = dataSource
+                    currentNotificationTextureId = textureId
+                    removeOtherNotificationListeners()
                     setupNotificationParameter(dataSource, betterPlayer)
                     // For Android 13 or later.
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
