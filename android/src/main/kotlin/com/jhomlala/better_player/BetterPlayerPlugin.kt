@@ -345,6 +345,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             BROADCAST_ENDED -> {
+                didEndPlayback = true
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     removeExternalPlayButton()
                 }
