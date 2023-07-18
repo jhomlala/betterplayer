@@ -186,11 +186,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onPlaybackStateChanged(playbackState: Int) {
             super.onPlaybackStateChanged(playbackState)
-            Log.d("NFCDEV", "onPlaybackStateChanged : " + playbackState.toString())
-
             if (playbackState == Player.STATE_ENDED) {
-                // 生放送終了時にはSTATE_ENDED とならない。新しいmethod channel を作って番組終了をトリガーする処理が必要と思われる
-                Log.d("NFCDEV", "playbackEnded : ")
                 setAsVideoPlaybackEnded()
             }
         }
@@ -198,8 +194,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
-            Log.d("NFCDEV", "onIsPlayingChanged isPlaying: " + isPlaying.toString())
             // NOTE: `onIsPlayingChanged()` is executed after `onPlaybackStateChanged() at the end of video`.
+            // So skip process when playback was over.
             if (didEndPlayback) {
                 return
             } else {
@@ -227,7 +223,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                     )
                     _notificationActions.value = listOf(notificationAction)
                 }
-                Log.d("NFCDEV", "setPictureInPictureParams  isPlaying: " + isPlaying.toString())
                 activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
             }
         }
@@ -547,7 +542,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun setupNotification(betterPlayer: BetterPlayer) {
-        Log.d("NFCDEV", "setupNotification")
         currentPlayer = betterPlayer
         try {
             val textureId = getTextureId(betterPlayer)

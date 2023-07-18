@@ -630,7 +630,6 @@ internal class BetterPlayer(
      */
     @SuppressLint("InlinedApi")
     fun setupMediaSession(context: Context?): MediaSessionCompat? {
-        Log.d("NFCDEV", "setupMediaSession")
         mediaSession?.release()
         context?.let {
 
@@ -647,7 +646,6 @@ internal class BetterPlayer(
                     super.onSeekTo(pos)
                 }
             })
-            Log.d("NFCDEV", "setting mediaSession.isActive = true")
             mediaSession.isActive = true
             mediaSessionConnector = MediaSessionConnector(mediaSession)
             mediaSessionConnector?.setPlayer(exoPlayer)
@@ -666,7 +664,6 @@ internal class BetterPlayer(
     }
 
     fun deactivateMediaSession() {
-        Log.d("NFCDEV", "deactivateMediaSession")
         mediaSession?.isActive = false
         mediaSessionConnector?.setPlayer(null)
     }
