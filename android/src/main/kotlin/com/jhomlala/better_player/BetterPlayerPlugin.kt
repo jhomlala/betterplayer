@@ -160,7 +160,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             Log.d(TAG, "Error on unregisterReceiver. " + e.localizedMessage)
         }
     }
-    
+
     private fun removeExternalPlayButton() {
         // Remove button on pip
         pipRemoteActions.clear()
@@ -216,19 +216,20 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                         pendingIntent = createPendingIntentWithCustomAction(CustomActions.PLAY)
                         buttonImageResourceId = R.drawable.exo_notification_play
                     }
-                pipRemoteActions.add(
-                    createRemoteAction(
-                        context,
-                        buttonImageResourceId,
-                        pendingIntent
+                    pipRemoteActions.add(
+                        createRemoteAction(
+                            context,
+                            buttonImageResourceId,
+                            pendingIntent
+                        )
                     )
-                )
                     val notificationAction = NotificationCompat.Action(
                         buttonImageResourceId, "",
                         pendingIntent
                     )
                     _notificationActions.value = listOf(notificationAction)
                 }
+                Log.d("NFCDEV", "setPictureInPictureParams")
                 activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
             }
         }
