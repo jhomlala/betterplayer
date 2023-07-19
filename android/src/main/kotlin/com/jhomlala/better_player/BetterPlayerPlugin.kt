@@ -334,6 +334,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             PLAY_METHOD -> {
+                currentPlayer = player
                 isVideoPlaybackEnded = false
                 setupNotification(player)
                 player.play()
@@ -371,7 +372,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             }
             SETUP_AUTOMATIC_PICTURE_IN_PICTURE_TRANSITION -> {
                 val willStartPIP = call.argument<Boolean?>(WILL_START_PIP)!!
-                setupAutomaticPictureInPictureTransition(willStartPIP, player)
+                setupAutomaticPictureInPictureTransition(willStartPIP)
                 result.success(null)
             }
             ENABLE_PICTURE_IN_PICTURE_METHOD -> {
@@ -541,7 +542,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun setupNotification(betterPlayer: BetterPlayer) {
-        currentPlayer = betterPlayer
         try {
             val textureId = getTextureId(betterPlayer)
             if (textureId != null) {
@@ -623,9 +623,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun setupAutomaticPictureInPictureTransition(
         willStartPIP: Boolean,
-        player: BetterPlayer
     ) {
-        currentPlayer = player
         showPictureInPictureAutomatically = willStartPIP
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             activity?.setPictureInPictureParams(
@@ -686,11 +684,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun dispose(player: BetterPlayer, textureId: Long) {
+        currentPlayer = null
         _notificationParameter.value = null
         player.dispose()
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
-        setupAutomaticPictureInPictureTransition(false, player)
+        setupAutomaticPictureInPictureTransition(false)
         unregisterBroadcastReceiverForExternalAction()
         stopPipHandler()
     }
