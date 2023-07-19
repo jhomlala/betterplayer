@@ -57,6 +57,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var currentPlayer: BetterPlayer? = null
     private var showPictureInPictureAutomatically: Boolean = false
     private val pipRemoteActions: ArrayList<RemoteAction> = ArrayList()
+    private var isVideoPlaybackEnded: Boolean = false
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         val loader = FlutterLoader()
@@ -160,12 +161,44 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         }
     }
 
+    private fun removeExternalPlayButton() {
+        // Remove button on pip
+        pipRemoteActions.clear()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
+        }
+        // Remove button on notification
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
+            currentPlayer?.setAsPlaybackStoppedToMediaSession()
+        }
+        _notificationActions.value = listOf()
+        currentPlayer?.deactivateMediaSession()
+    }
+
+    private fun setAsVideoPlaybackEnded() {
+        removeExternalPlayButton()
+        isVideoPlaybackEnded = true
+    }
+
     // Custom listener for exoPlayer event.
     // To change action in PIP mode or Notification based on playing status.
     private val playerEventListenerForIsPlayingChanged = object : Player.Listener {
         @RequiresApi(Build.VERSION_CODES.O)
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            super.onPlaybackStateChanged(playbackState)
+            if (playbackState == Player.STATE_ENDED) {
+                setAsVideoPlaybackEnded()
+            }
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
         override fun onIsPlayingChanged(isPlaying: Boolean) {
             super.onIsPlayingChanged(isPlaying)
+            // NOTE: `onIsPlayingChanged()` is executed after `onPlaybackStateChanged() at the end of video`.
+            // So skip process when playback was over.
+            if (isVideoPlaybackEnded) {
+                return
+            }
             pipRemoteActions.clear()
             flutterState?.applicationContext?.let { context ->
                 val pendingIntent: PendingIntent?
@@ -301,6 +334,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             PLAY_METHOD -> {
+                currentPlayer = player
+                isVideoPlaybackEnded = false
                 setupNotification(player)
                 player.play()
                 result.success(null)
@@ -310,7 +345,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 result.success(null)
             }
             BROADCAST_ENDED -> {
-                // TODO: implement
+                setAsVideoPlaybackEnded()
+                result.success(null)
             }
             SEEK_TO_METHOD -> {
                 val location = (call.argument<Any>(LOCATION_PARAMETER) as Number?)!!.toInt()
@@ -336,7 +372,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             }
             SETUP_AUTOMATIC_PICTURE_IN_PICTURE_TRANSITION -> {
                 val willStartPIP = call.argument<Boolean?>(WILL_START_PIP)!!
-                setupAutomaticPictureInPictureTransition(willStartPIP, player)
+                setupAutomaticPictureInPictureTransition(willStartPIP)
                 result.success(null)
             }
             ENABLE_PICTURE_IN_PICTURE_METHOD -> {
@@ -506,20 +542,20 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun setupNotification(betterPlayer: BetterPlayer) {
-        currentPlayer = betterPlayer
         try {
-            val textureId = getTextureId(betterPlayer)
-            if (textureId != null) {
+            getTextureId(betterPlayer)?.let { textureId ->
                 val dataSource = dataSources[textureId]
-                //Don't setup notification for the same source.
-                if (textureId == currentNotificationTextureId && currentNotificationDataSource != null && dataSource != null && currentNotificationDataSource === dataSource) {
-                    return
-                }
-                currentNotificationDataSource = dataSource
-                currentNotificationTextureId = textureId
-                removeOtherNotificationListeners()
                 val showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false)
                 if (showNotification) {
+                    //Don't setup notification for the same source.
+                    if (textureId == currentNotificationTextureId && currentNotificationDataSource != null && dataSource != null && currentNotificationDataSource === dataSource) {
+                        // In case replay video after once ended, reactivate media session.
+                        betterPlayer.reactivateMediaSessionIfNeeded()
+                        return
+                    }
+                    currentNotificationDataSource = dataSource
+                    currentNotificationTextureId = textureId
+                    removeOtherNotificationListeners()
                     setupNotificationParameter(dataSource, betterPlayer)
                     // For Android 13 or later.
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.S) {
@@ -586,9 +622,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun setupAutomaticPictureInPictureTransition(
         willStartPIP: Boolean,
-        player: BetterPlayer
     ) {
-        currentPlayer = player
         showPictureInPictureAutomatically = willStartPIP
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             activity?.setPictureInPictureParams(
@@ -649,11 +683,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun dispose(player: BetterPlayer, textureId: Long) {
+        currentPlayer = null
         _notificationParameter.value = null
         player.dispose()
         videoPlayers.remove(textureId)
         dataSources.remove(textureId)
-        setupAutomaticPictureInPictureTransition(false, player)
+        setupAutomaticPictureInPictureTransition(false)
         unregisterBroadcastReceiverForExternalAction()
         stopPipHandler()
     }

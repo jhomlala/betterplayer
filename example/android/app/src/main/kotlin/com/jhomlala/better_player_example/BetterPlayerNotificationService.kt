@@ -23,6 +23,8 @@ import com.squareup.picasso.Target
 
 class BetterPlayerNotificationService: Service() {
     private var notificationBuilder: NotificationCompat.Builder? = null
+    private var mediaSessionToken: MediaSessionCompat.Token? = null
+
 
     companion object {
         const val NOTIFICATION_ID = 20772077
@@ -37,10 +39,16 @@ class BetterPlayerNotificationService: Service() {
     // Observe update of notification action.
     private val notificationActionListObserver =
         Observer<List<NotificationCompat.Action>?> { actions ->
+            notificationBuilder?.clearActions()
             actions?.map { action ->
-                notificationBuilder?.clearActions()
                 notificationBuilder?.addAction(action)
             }
+            val mediaStyle =
+                androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSessionToken)
+            if (actions.isNotEmpty()) {
+                mediaStyle.setShowActionsInCompactView(actions.size - 1)
+            }
+            notificationBuilder?.setStyle(mediaStyle)
             updateNotification()
         }
 
@@ -79,10 +87,10 @@ class BetterPlayerNotificationService: Service() {
             }
 
         //  set MediaSession's token
-        val sessionToken =
+        mediaSessionToken =
             intent?.getParcelableExtra<MediaSessionCompat.Token>(BetterPlayerPlugin.MEDIA_SESSION_TOKEN_PARAMETER)
         val mediaStyle =
-            androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(sessionToken)
+            androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSessionToken)
 
         val notificationIntent = Intent()
         notificationIntent.setClassName(

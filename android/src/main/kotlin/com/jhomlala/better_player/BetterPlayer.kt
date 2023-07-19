@@ -82,6 +82,7 @@ internal class BetterPlayer(
     private val customDefaultLoadControl: CustomDefaultLoadControl =
         customDefaultLoadControl ?: CustomDefaultLoadControl()
     private var lastSendBufferedPosition = 0L
+    private var mediaSessionConnector: MediaSessionConnector? = null
 
     init {
         val loadBuilder = DefaultLoadControl.Builder()
@@ -646,14 +647,37 @@ internal class BetterPlayer(
                 }
             })
             mediaSession.isActive = true
-            val mediaSessionConnector = MediaSessionConnector(mediaSession)
-            mediaSessionConnector.setPlayer(exoPlayer)
+            mediaSessionConnector = MediaSessionConnector(mediaSession)
+            mediaSessionConnector?.setPlayer(exoPlayer)
+
             this.mediaSession = mediaSession
             return mediaSession
         }
         return null
     }
-    
+
+
+    fun deactivateMediaSession() {
+        mediaSession?.isActive = false
+        mediaSessionConnector?.setPlayer(null)
+    }
+
+    fun reactivateMediaSessionIfNeeded() {
+        if (mediaSession?.isActive == false) {
+            mediaSession?.isActive = true
+            mediaSessionConnector?.setPlayer(exoPlayer)
+        }
+    }
+
+    // Only needed for Android 13 or later
+    fun setAsPlaybackStoppedToMediaSession() {
+        val playbackState = PlaybackStateCompat.Builder()
+            .setActions(PlaybackStateCompat.ACTION_SEEK_TO)
+            .setState(PlaybackStateCompat.STATE_STOPPED, position, 1.0f)
+            .build()
+        mediaSession?.setPlaybackState(playbackState)
+    }
+
     // Only work if it is more than Android 13
     fun setMediaSessionCallback() {
         mediaSession?.setCallback(object : MediaSessionCompat.Callback() {
