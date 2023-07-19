@@ -198,33 +198,32 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             // So skip process when playback was over.
             if (isVideoPlaybackEnded) {
                 return
-            } else {
-                pipRemoteActions.clear()
-                flutterState?.applicationContext?.let { context ->
-                    val pendingIntent: PendingIntent?
-                    val buttonImageResourceId: Int?
-                    if (isPlaying) {
-                        pendingIntent = createPendingIntentWithCustomAction(CustomActions.PAUSE)
-                        buttonImageResourceId = R.drawable.exo_notification_pause
-                    } else {
-                        pendingIntent = createPendingIntentWithCustomAction(CustomActions.PLAY)
-                        buttonImageResourceId = R.drawable.exo_notification_play
-                    }
-                    pipRemoteActions.add(
-                        createRemoteAction(
-                            context,
-                            buttonImageResourceId,
-                            pendingIntent
-                        )
-                    )
-                    val notificationAction = NotificationCompat.Action(
-                        buttonImageResourceId, "",
+            }
+            pipRemoteActions.clear()
+            flutterState?.applicationContext?.let { context ->
+                val pendingIntent: PendingIntent?
+                val buttonImageResourceId: Int?
+                if (isPlaying) {
+                    pendingIntent = createPendingIntentWithCustomAction(CustomActions.PAUSE)
+                    buttonImageResourceId = R.drawable.exo_notification_pause
+                } else {
+                    pendingIntent = createPendingIntentWithCustomAction(CustomActions.PLAY)
+                    buttonImageResourceId = R.drawable.exo_notification_play
+                }
+                pipRemoteActions.add(
+                    createRemoteAction(
+                        context,
+                        buttonImageResourceId,
                         pendingIntent
                     )
-                    _notificationActions.value = listOf(notificationAction)
-                }
-                activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
+                )
+                val notificationAction = NotificationCompat.Action(
+                    buttonImageResourceId, "",
+                    pendingIntent
+                )
+                _notificationActions.value = listOf(notificationAction)
             }
+            activity?.setPictureInPictureParams(createPictureInPictureParams(pipRemoteActions))
         }
     }
 
