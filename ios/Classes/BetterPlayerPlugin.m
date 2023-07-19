@@ -193,17 +193,39 @@ bool _remoteCommandsInitialized = false;
 }
 
 - (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl, BOOL isLiveStream {
-    float positionInSeconds = player.position /1000;
-    float durationInSeconds = player.duration/ 1000;
-
+    // This function is always called double times at the end of video due to the default behavior of AVPlayer
+    // This check is used to prevent the latest call.
+    if (player.position >= player.duration - 500) {
+        return;
+    }
+    float positionInSeconds = player.position / 1000;
+    float durationInSeconds = player.duration / 1000;
+    BOOL isPlayingTheLastSecond = player.position >= player.duration - 1000;
 
     NSMutableDictionary * nowPlayingInfoDict = [@{MPMediaItemPropertyArtist: author,
                                                   MPMediaItemPropertyTitle: title,
                                                   MPNowPlayingInfoPropertyElapsedPlaybackTime: [ NSNumber numberWithFloat : positionInSeconds],
                                                   MPMediaItemPropertyPlaybackDuration: [NSNumber numberWithFloat:durationInSeconds],
-                                                  MPNowPlayingInfoPropertyPlaybackRate: @1,
+                                                  // Because the progress bar can auto jump to the last seek/pause/play position after reaching the end of video
+                                                  // (its default behavior can auto update the progress)
+                                                  // We need to set playback rate of Control center = 0 to stop that progress.
+                                                  MPNowPlayingInfoPropertyPlaybackRate: isPlayingTheLastSecond ? @0 : @1,
                                                   MPNowPlayingInfoPropertyIsLiveStream: [NSNumber numberWithBool:isLiveStream],
     } mutableCopy];
+
+    // The position always stop at "-0:01",
+    // and the progress bar is also stopped at this time(the playback rate already set to 0),
+    // so we need to update the progress bar manually
+    if (isPlayingTheLastSecond) {
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW,
+                                    // Delay 0.5s for better animation
+                                    (int64_t)(0.5 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{
+            [nowPlayingInfoDict setObject:[NSNumber numberWithFloat:durationInSeconds]
+                                forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+            [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
+        });
+    }
 
     if (imageUrl != [NSNull null]){
         NSString* key =  [self getTextureId:player];
