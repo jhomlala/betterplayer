@@ -770,6 +770,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
 }
 
+- (void)setIsDisplayPipButtons:(BOOL) isDisplay {
+    [_pipController setValue:[NSNumber numberWithInt:isDisplay ? 0 : 1] forKey:@"controlsStyle"];
+}
+
 - (void) setAudioTrack:(NSString*) name index:(int) index{
     AVMediaSelectionGroup *audioSelectionGroup = [[[_player currentItem] asset] mediaSelectionGroupForMediaCharacteristic: AVMediaCharacteristicAudible];
     NSArray* options = audioSelectionGroup.options;

@@ -85,6 +85,31 @@ bool _remoteCommandsInitialized = false;
     result(@{@"textureId" : @(textureId)});
 }
 
+- (void)addObservers:(BetterPlayer*) player {
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(itemDidPlayToEndTime:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:[player player].currentItem];
+}
+
+- (void)itemDidPlayToEndTime:(NSNotification*) notification {
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
+                   dispatch_get_main_queue(), ^{
+        // clear nowPlayingInfo
+        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = @{};
+
+        // Inactive Play/pause button in control center
+        MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+        [commandCenter.togglePlayPauseCommand setEnabled:NO];
+        [commandCenter.playCommand setEnabled:NO];
+        [commandCenter.pauseCommand setEnabled:NO];
+        _remoteCommandsInitialized = false;
+
+        // hide PiP buttons
+        [_notificationPlayer setIsDisplayPipButtons:false];
+    });
+}
+
 - (void) setupRemoteNotification :(BetterPlayer*) player{
     _notificationPlayer = player;
     [self stopAllUpdateListener:player];
@@ -329,6 +354,7 @@ bool _remoteCommandsInitialized = false;
         int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
         BetterPlayer* player = _players[@(textureId)];
         if ([@"setDataSource" isEqualToString:call.method]) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
             [player clear];
             // This call will clear cached frame because we will return transparent frame
 
@@ -389,8 +415,10 @@ bool _remoteCommandsInitialized = false;
             } else {
                 result(FlutterMethodNotImplemented);
             }
+            [self addObservers:player];
             result(nil);
         } else if ([@"dispose" isEqualToString:call.method]) {
+            [[NSNotificationCenter defaultCenter] removeObserver:self];
             [player clear];
             [self disposeNotificationData:player];
             [self setRemoteCommandsNotificationNotActive];
@@ -415,6 +443,9 @@ bool _remoteCommandsInitialized = false;
                 [[AVAudioSession sharedInstance] setActive:NO withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation error:nil];
             }
             result(nil);
+        } else if ([@"broadcastEnded" isEqualToString:call.method]) {
+            [self itemDidPlayToEndTime:nil];
+            result(nil);
         } else if ([@"setLooping" isEqualToString:call.method]) {
             [player setIsLooping:[argsMap[@"looping"] boolValue]];
             result(nil);
@@ -423,6 +454,7 @@ bool _remoteCommandsInitialized = false;
             result(nil);
         } else if ([@"play" isEqualToString:call.method]) {
             [self setupRemoteNotification:player];
+            [player setIsDisplayPipButtons:true];
             [player play];
             result(nil);
         } else if ([@"position" isEqualToString:call.method]) {
@@ -431,6 +463,13 @@ bool _remoteCommandsInitialized = false;
             result(@([player absolutePosition]));
         } else if ([@"seekTo" isEqualToString:call.method]) {
             [player seekTo:[argsMap[@"location"] intValue]];
+
+            // re-enable PiP and Control center buttons
+            [player setIsDisplayPipButtons:true];
+            MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+            [commandCenter.togglePlayPauseCommand setEnabled:YES];
+            [commandCenter.playCommand setEnabled:YES];
+            [commandCenter.pauseCommand setEnabled:YES];
             result(nil);
         } else if ([@"pause" isEqualToString:call.method]) {
             [player pause];

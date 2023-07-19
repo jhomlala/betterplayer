@@ -57,6 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPictureInPicture:(BOOL)pictureInPicture;
 - (void)disablePictureInPicture;
 - (void)willStartPictureInPicture:(bool)willStart;
+- (void)setIsDisplayPipButtons:(BOOL) isDisplay;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;
 
