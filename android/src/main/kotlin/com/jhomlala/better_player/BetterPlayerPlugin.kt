@@ -543,8 +543,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun setupNotification(betterPlayer: BetterPlayer) {
         try {
-            val textureId = getTextureId(betterPlayer)
-            if (textureId != null) {
+            getTextureId(betterPlayer)?.let { textureId ->
                 val dataSource = dataSources[textureId]
                 val showNotification = getParameter(dataSource, SHOW_NOTIFICATION_PARAMETER, false)
                 if (showNotification) {
