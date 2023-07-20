@@ -94,6 +94,11 @@ bool _isCommandCenterButtonsEnabled = true;
 }
 
 - (void)itemDidPlayToEndTime:(NSNotification*) notification {
+    // Delay 1 second for users to see the video is finished.
+    // - Without this delay, the progress bar will run like "-0:01" then everything disappear.
+    // - With this delay, the progress bar will run like "-0:01" then "-0:00"
+    // and Pause button switched to Play button(it mean the player had stopped)
+    // then clear all info.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
                    dispatch_get_main_queue(), ^{
         // clear nowPlayingInfo
