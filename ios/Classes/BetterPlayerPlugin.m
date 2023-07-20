@@ -18,6 +18,7 @@ CacheManager* _cacheManager;
 int texturesCount = -1;
 BetterPlayer* _notificationPlayer;
 bool _remoteCommandsInitialized = false;
+bool _isCommandCenterButtonsEnabled = true;
 
 
 #pragma mark - FlutterPlugin protocol
@@ -103,7 +104,7 @@ bool _remoteCommandsInitialized = false;
         [commandCenter.togglePlayPauseCommand setEnabled:NO];
         [commandCenter.playCommand setEnabled:NO];
         [commandCenter.pauseCommand setEnabled:NO];
-        _remoteCommandsInitialized = false;
+        _isCommandCenterButtonsEnabled = false;
 
         // hide PiP buttons
         [_notificationPlayer setIsDisplayPipButtons:false];
@@ -163,7 +164,7 @@ bool _remoteCommandsInitialized = false;
 
 
 - (void) setupRemoteCommands:(BetterPlayer*)player isExtraVideo:(BOOL)isExtraVideo isLiveStream:(BOOL)isLiveStream {
-    if (_remoteCommandsInitialized){
+    if (_remoteCommandsInitialized && _isCommandCenterButtonsEnabled){
         return;
     }
     MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
@@ -172,6 +173,7 @@ bool _remoteCommandsInitialized = false;
     [commandCenter.pauseCommand setEnabled:YES];
     [commandCenter.nextTrackCommand setEnabled:NO];
     [commandCenter.previousTrackCommand setEnabled:NO];
+    _isCommandCenterButtonsEnabled = true;
     if (@available(iOS 9.1, *)) {
         [commandCenter.changePlaybackPositionCommand setEnabled: isLiveStream || isExtraVideo ? NO : YES];
     }
@@ -464,12 +466,14 @@ bool _remoteCommandsInitialized = false;
         } else if ([@"seekTo" isEqualToString:call.method]) {
             [player seekTo:[argsMap[@"location"] intValue]];
 
-            // re-enable PiP and Control center buttons
-            [player setIsDisplayPipButtons:true];
-            MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
-            [commandCenter.togglePlayPauseCommand setEnabled:YES];
-            [commandCenter.playCommand setEnabled:YES];
-            [commandCenter.pauseCommand setEnabled:YES];
+            if(!_isCommandCenterButtonsEnabled){
+                [player setIsDisplayPipButtons:true];
+                MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+                [commandCenter.togglePlayPauseCommand setEnabled:YES];
+                [commandCenter.playCommand setEnabled:YES];
+                [commandCenter.pauseCommand setEnabled:YES];
+                _isCommandCenterButtonsEnabled = true;
+            }
             result(nil);
         } else if ([@"pause" isEqualToString:call.method]) {
             [player pause];
