@@ -98,18 +98,22 @@ bool _isCommandCenterButtonsEnabled = true;
     // - Without this delay, the progress bar will run like "-0:01" then everything disappear.
     // - With this delay, the progress bar will run like "-0:01" then "-0:00"
     // and Pause button switched to Play button(it mean the player had stopped)
-    // then clear all info.
+    // then clear all buttons and progress bar.
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)),
                    dispatch_get_main_queue(), ^{
-        // clear nowPlayingInfo
-        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = @{};
-
-        // Inactive Play/pause button in control center
+        // Disable Play/pause/seek in control center
         MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+        [commandCenter.changePlaybackPositionCommand setEnabled:NO];
         [commandCenter.togglePlayPauseCommand setEnabled:NO];
         [commandCenter.playCommand setEnabled:NO];
         [commandCenter.pauseCommand setEnabled:NO];
         _isCommandCenterButtonsEnabled = false;
+
+        // Must set those Properties with 0 to make progress bar look like it is disabled.
+        NSMutableDictionary * currentNowPlayingInfoDict = [[MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo mutableCopy];
+        [currentNowPlayingInfoDict setObject:@0 forKey:MPMediaItemPropertyPlaybackDuration];
+        [currentNowPlayingInfoDict setObject:@0 forKey:MPNowPlayingInfoPropertyIsLiveStream];
+        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = currentNowPlayingInfoDict;
 
         // hide PiP buttons
         [_notificationPlayer setIsDisplayPipButtons:false];
@@ -126,17 +130,7 @@ bool _isCommandCenterButtonsEnabled = true;
         showNotification = [[dataSource objectForKey:@"showNotification"] boolValue];
     }
 
-    BOOL isExtraVideo = false;
-    id isExtraVideoObject = [dataSource objectForKey:@"isExtraVideo"];
-    if (isExtraVideoObject != [NSNull null]) {
-        isExtraVideo = [[dataSource objectForKey:@"isExtraVideo"] boolValue];
-    }
-
-    BOOL isLiveStream = false;
-    id isLiveStreamObject = [dataSource objectForKey:@"isLiveStream"];
-    if (isLiveStreamObject != [NSNull null]) {
-        isLiveStream = [[dataSource objectForKey:@"isLiveStream"] boolValue];
-    }
+    BOOL isExtraVideo = [self isExtraVideo:player];
 
     NSString* title = dataSource[@"title"];
     NSString* author = dataSource[@"author"];
@@ -144,13 +138,13 @@ bool _isCommandCenterButtonsEnabled = true;
 
     if (showNotification){
         [self setRemoteCommandsNotificationActive];
-        [self setupRemoteCommands: player isExtraVideo: isExtraVideo isLiveStream: isLiveStream];
-        [self setupRemoteCommandNotification: player, title, author, imageUrl, isLiveStream];
-        [self setupUpdateListener: player, title, author, imageUrl, isLiveStream];
+        [self setupRemoteCommands: player];
+        [self setupRemoteCommandNotification: player, title, author, imageUrl];
+        [self setupUpdateListener: player, title, author, imageUrl];
     } else if (isExtraVideo) {
         // In this case, control center is still alive with old setting
         // so we need to setup it again with extra video setting
-        [self setupRemoteCommands: player isExtraVideo: isExtraVideo isLiveStream: isLiveStream];
+        [self setupRemoteCommands: player];
     }
 }
 
@@ -168,7 +162,7 @@ bool _isCommandCenterButtonsEnabled = true;
 }
 
 
-- (void) setupRemoteCommands:(BetterPlayer*)player isExtraVideo:(BOOL)isExtraVideo isLiveStream:(BOOL)isLiveStream {
+- (void) setupRemoteCommands:(BetterPlayer*) player {
     if (_remoteCommandsInitialized && _isCommandCenterButtonsEnabled){
         return;
     }
@@ -180,6 +174,9 @@ bool _isCommandCenterButtonsEnabled = true;
     [commandCenter.previousTrackCommand setEnabled:NO];
     _isCommandCenterButtonsEnabled = true;
     if (@available(iOS 9.1, *)) {
+        BOOL isLiveStream = [self isLiveStream:player];
+        BOOL isExtraVideo = [self isExtraVideo:player];
+
         [commandCenter.changePlaybackPositionCommand setEnabled: isLiveStream || isExtraVideo ? NO : YES];
     }
 
@@ -224,7 +221,7 @@ bool _isCommandCenterButtonsEnabled = true;
     _remoteCommandsInitialized = true;
 }
 
-- (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl, BOOL isLiveStream {
+- (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl {
     // This function is always called double times at the end of video due to the default behavior of AVPlayer
     // This check is used to prevent the latest call.
     if (player.position >= player.duration - 500) {
@@ -233,6 +230,7 @@ bool _isCommandCenterButtonsEnabled = true;
     float positionInSeconds = player.position / 1000;
     float durationInSeconds = player.duration / 1000;
     BOOL isPlayingTheLastSecond = player.position >= player.duration - 1000;
+    BOOL isLiveStream = [self isLiveStream:player];
 
     NSMutableDictionary * nowPlayingInfoDict = [@{MPMediaItemPropertyArtist: author,
                                                   MPMediaItemPropertyTitle: title,
@@ -298,7 +296,27 @@ bool _isCommandCenterButtonsEnabled = true;
     }
 }
 
+- (BOOL) isExtraVideo:(BetterPlayer*) player {
+    NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
 
+    BOOL isExtraVideo = false;
+    id isExtraVideoObject = [dataSource objectForKey:@"isExtraVideo"];
+    if (isExtraVideoObject != [NSNull null]) {
+        isExtraVideo = [[dataSource objectForKey:@"isExtraVideo"] boolValue];
+    }
+    return isExtraVideo;
+}
+
+- (BOOL) isLiveStream:(BetterPlayer*) player {
+    NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:player]];
+
+    BOOL isLiveStream = false;
+    id isLiveStreamObject = [dataSource objectForKey:@"isLiveStream"];
+    if (isLiveStreamObject != [NSNull null]) {
+        isLiveStream = [[dataSource objectForKey:@"isLiveStream"] boolValue];
+    }
+    return isLiveStream;
+}
 
 - (NSString*) getTextureId: (BetterPlayer*) player{
     NSArray* temp = [_players allKeysForObject: player];
@@ -306,9 +324,9 @@ bool _isCommandCenterButtonsEnabled = true;
     return key;
 }
 
-- (void) setupUpdateListener:(BetterPlayer*)player, NSString* title, NSString* author, NSString* imageUrl, BOOL isLiveStream {
+- (void) setupUpdateListener:(BetterPlayer*)player, NSString* title, NSString* author, NSString* imageUrl {
     id _timeObserverId = [player.player addPeriodicTimeObserverForInterval:CMTimeMake(1, 1) queue:NULL usingBlock:^(CMTime time){
-        [self setupRemoteCommandNotification:player, title, author, imageUrl, isLiveStream];
+        [self setupRemoteCommandNotification:player, title, author, imageUrl];
     }];
 
     NSString* key =  [self getTextureId:player];
@@ -377,13 +395,7 @@ bool _isCommandCenterButtonsEnabled = true;
             NSNumber* maxCacheSize = dataSource[@"maxCacheSize"];
             NSString* videoExtension = dataSource[@"videoExtension"];
             
-            BOOL isExtraVideo = false;
-            id isExtraVideoObject = [dataSource objectForKey:@"isExtraVideo"];
-            if (isExtraVideoObject != [NSNull null]) {
-                isExtraVideo = [[dataSource objectForKey:@"isExtraVideo"] boolValue];
-            }
-
-            if (isExtraVideo) {
+            if ([self isExtraVideo:player]) {
                 // this command will make [setupRemoteCommands] work again and disable commandCenter.changePlaybackPositionCommand for extra video
                 _remoteCommandsInitialized = false;
             } else {
@@ -471,9 +483,13 @@ bool _isCommandCenterButtonsEnabled = true;
         } else if ([@"seekTo" isEqualToString:call.method]) {
             [player seekTo:[argsMap[@"location"] intValue]];
 
-            if(!_isCommandCenterButtonsEnabled){
+            if (!_isCommandCenterButtonsEnabled) {
+                BOOL isExtraVideo = [self isExtraVideo:player];
+                BOOL isLiveStream = [self isLiveStream:player];
+
                 [player setIsDisplayPipButtons:true];
                 MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+                [commandCenter.changePlaybackPositionCommand setEnabled: isLiveStream || isExtraVideo ? NO : YES];
                 [commandCenter.togglePlayPauseCommand setEnabled:YES];
                 [commandCenter.playCommand setEnabled:YES];
                 [commandCenter.pauseCommand setEnabled:YES];
