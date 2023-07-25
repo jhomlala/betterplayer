@@ -17,6 +17,7 @@ NSMutableDictionary*  _artworkImageDict;
 CacheManager* _cacheManager;
 int texturesCount = -1;
 BetterPlayer* _notificationPlayer;
+bool _isLoadingCommandCenterImage = false;
 bool _remoteCommandsInitialized = false;
 bool _isCommandCenterButtonsEnabled = true;
 
@@ -224,7 +225,7 @@ bool _isCommandCenterButtonsEnabled = true;
 - (void) setupRemoteCommandNotification:(BetterPlayer*)player, NSString* title, NSString* author , NSString* imageUrl {
     // This function is always called double times at the end of video due to the default behavior of AVPlayer
     // This check is used to prevent the latest call.
-    if (player.position >= player.duration - 500) {
+    if (player.duration != 0 && player.position >= player.duration - 500) {
         return;
     }
     float positionInSeconds = player.position / 1000;
@@ -267,8 +268,16 @@ bool _isCommandCenterButtonsEnabled = true;
                 [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
 
             } else {
+                // In this case, the image hasn't been cached yet, so just displaying other info immediately
+                // then update the image later after it is loaded
+                [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
+
+                if(_isLoadingCommandCenterImage){
+                    return;
+                }
                 dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
                 dispatch_async(queue, ^{
+                    _isLoadingCommandCenterImage = true;
                     @try{
                         UIImage * tempArtworkImage = nil;
                         if ([imageUrl rangeOfString:@"http"].location == NSNotFound){
@@ -277,17 +286,23 @@ bool _isCommandCenterButtonsEnabled = true;
                             NSURL *nsImageUrl =[NSURL URLWithString:imageUrl];
                             tempArtworkImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:nsImageUrl]];
                         }
-                        if(tempArtworkImage)
-                        {
+
+                        NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:_notificationPlayer]];
+                        NSString* currentImageUrl = dataSource[@"imageUrl"];
+
+                        if(tempArtworkImage && [imageUrl isEqualToString: currentImageUrl])                        {
                             MPMediaItemArtwork* artworkImage = [[MPMediaItemArtwork alloc] initWithImage: tempArtworkImage];
                             [_artworkImageDict setObject:artworkImage forKey:key];
-                            [nowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
+
+                            NSMutableDictionary * currentNowPlayingInfoDict = [[MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo mutableCopy];
+                            [currentNowPlayingInfoDict setObject:artworkImage forKey:MPMediaItemPropertyArtwork];
+                            [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = currentNowPlayingInfoDict;
                         }
-                        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfoDict;
                     }
                     @catch(NSException *exception) {
 
                     }
+                    _isLoadingCommandCenterImage = false;
                 });
             }
         }
@@ -338,6 +353,7 @@ bool _isCommandCenterButtonsEnabled = true;
     if (player == _notificationPlayer){
         _notificationPlayer = NULL;
         _remoteCommandsInitialized = false;
+        _isLoadingCommandCenterImage = false;
     }
     NSString* key =  [self getTextureId:player];
     id _timeObserverId = _timeObserverIdDict[key];
