@@ -400,6 +400,7 @@ class VideoEvent {
     this.size,
     this.buffered,
     this.position,
+    this.wasPlaying,
   });
 
   /// The type of the event.
@@ -428,6 +429,9 @@ class VideoEvent {
   ///Seek position
   final Duration? position;
 
+  /// Only used if [eventType] is [VideoEventType.exitingPIP].
+  final bool? wasPlaying;
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -437,6 +441,7 @@ class VideoEvent {
             eventType == other.eventType &&
             duration == other.duration &&
             size == other.size &&
+            wasPlaying == other.wasPlaying &&
             listEquals(buffered, other.buffered);
   }
 
@@ -445,7 +450,8 @@ class VideoEvent {
       eventType.hashCode ^
       duration.hashCode ^
       size.hashCode ^
-      buffered.hashCode;
+      buffered.hashCode ^
+      wasPlaying.hashCode;
 }
 
 /// Type of the event.
