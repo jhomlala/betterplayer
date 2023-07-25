@@ -22,6 +22,7 @@ class BetterPlayerController {
   static const String _speedParameter = "speed";
   static const String _dataSourceParameter = "dataSource";
   static const String _authorizationHeader = "Authorization";
+  static const String _wasPlayingParameter = "wasPlaying";
 
   ///General configuration used in controller instance.
   final BetterPlayerConfiguration betterPlayerConfiguration;
@@ -1206,7 +1207,12 @@ class BetterPlayerController {
         break;
 
       case VideoEventType.exitingPIP:
-        _postEvent(BetterPlayerEvent(BetterPlayerEventType.exitingPIP));
+        _postEvent(BetterPlayerEvent(
+          BetterPlayerEventType.exitingPIP,
+          parameters: <String, dynamic>{
+            _wasPlayingParameter: event.wasPlaying,
+          },
+        ));
         break;
 
       case VideoEventType.tapExternalPlayButton:
