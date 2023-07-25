@@ -749,13 +749,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
+    bool wasPlaying = _isPlaying;
     if (_eventSink != nil) {
-        bool wasPlaying = _isPlaying;
-        if (_eventSink != nil) {
-            _eventSink(@{@"event" : @"exitingPIP",
-                         @"wasPlaying" : @(wasPlaying),
-                       });
-        }
+        _eventSink(@{@"event" : @"exitingPIP",
+                     @"wasPlaying" : @(wasPlaying),
+                   });
     }
 }
 
