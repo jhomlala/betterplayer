@@ -256,8 +256,11 @@ bool _remoteCommandsInitialized = false;
                             NSURL *nsImageUrl =[NSURL URLWithString:imageUrl];
                             tempArtworkImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:nsImageUrl]];
                         }
-                        if(tempArtworkImage)
-                        {
+
+                        NSDictionary* dataSource = [_dataSourceDict objectForKey:[self getTextureId:_notificationPlayer]];
+                        NSString* currentImageUrl = dataSource[@"imageUrl"];
+
+                        if(tempArtworkImage && [imageUrl isEqualToString: currentImageUrl])                        {
                             MPMediaItemArtwork* artworkImage = [[MPMediaItemArtwork alloc] initWithImage: tempArtworkImage];
                             [_artworkImageDict setObject:artworkImage forKey:key];
 
