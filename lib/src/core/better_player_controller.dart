@@ -489,6 +489,7 @@ class BetterPlayerController {
             File(betterPlayerDataSource.url),
             showNotification: _betterPlayerDataSource
                 ?.notificationConfiguration?.showNotification,
+            isLiveStream: _betterPlayerDataSource?.liveStream,
             isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
@@ -509,6 +510,7 @@ class BetterPlayerController {
           await videoPlayerController?.setFileDataSource(file,
               showNotification: _betterPlayerDataSource
                   ?.notificationConfiguration?.showNotification,
+              isLiveStream: _betterPlayerDataSource?.liveStream,
               isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
               title: _betterPlayerDataSource?.notificationConfiguration?.title,
               author:

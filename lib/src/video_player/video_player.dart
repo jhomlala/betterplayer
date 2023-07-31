@@ -289,6 +289,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     String dataSource, {
     String? package,
     bool? showNotification,
+    bool? isLiveStream,
     bool? isExtraVideo,
     String? title,
     String? author,
@@ -303,6 +304,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         asset: dataSource,
         package: package,
         showNotification: showNotification,
+        isLiveStream: isLiveStream,
         isExtraVideo: isExtraVideo,
         title: title,
         author: author,
@@ -377,6 +379,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// `'file://${file.path}'`.
   Future<void> setFileDataSource(File file,
       {bool? showNotification,
+      bool? isLiveStream,
       bool? isExtraVideo,
       String? title,
       String? author,
@@ -390,6 +393,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           sourceType: DataSourceType.file,
           uri: 'file://${file.path}',
           showNotification: showNotification,
+          isLiveStream: isLiveStream,
           isExtraVideo: isExtraVideo,
           title: title,
           author: author,
