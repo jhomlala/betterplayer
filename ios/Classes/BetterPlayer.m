@@ -27,12 +27,12 @@ int _seekPosition;
     _isInitialized = false;
     _isPlaying = false;
     _disposed = false;
+    _isLiveStream = false;
     _seekPosition = -1;
     _player = [[AVPlayer alloc] init];
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     
     self._observersAdded = false;
-    self._isLiveStream = false;
     return self;
 }
 
@@ -673,7 +673,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
             }
             _pipController.delegate = self;
-            [self setIsHidedPipSeekButtons:self._isLiveStream];
+            [self setPipSeekButtonsHidden:_isLiveStream];
         }
     } else {
         // Fallback on earlier versions
@@ -775,8 +775,12 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
 }
 
-- (void)setIsHidedPipSeekButtons:(BOOL) isHided {
-    _pipController.requiresLinearPlayback = isHided;
+- (void)setIsLiveStream:(BOOL) isLiveStream {
+    _isLiveStream = isLiveStream;
+}
+
+- (void)setPipSeekButtonsHidden:(BOOL) isHidden {
+    _pipController.requiresLinearPlayback = isHidden;
 }
 
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay {
