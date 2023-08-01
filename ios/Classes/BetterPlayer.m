@@ -32,6 +32,7 @@ int _seekPosition;
     _player.actionAtItemEnd = AVPlayerActionAtItemEndNone;
     
     self._observersAdded = false;
+    self._isLiveStream = false;
     return self;
 }
 
@@ -672,6 +673,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                 _pipController.canStartPictureInPictureAutomaticallyFromInline = true;
             }
             _pipController.delegate = self;
+            [self setIsHidedPipSeekButtons:self._isLiveStream];
         }
     } else {
         // Fallback on earlier versions
@@ -771,6 +773,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL))completionHandler {
     [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
+}
+
+- (void)setIsHidedPipSeekButtons:(BOOL) isHided {
+    _pipController.requiresLinearPlayback = isHided;
 }
 
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay {
