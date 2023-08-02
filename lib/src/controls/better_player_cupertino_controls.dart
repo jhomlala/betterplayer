@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
@@ -346,11 +347,11 @@ class _BetterPlayerCupertinoControlsState
       onTap: () {
         cancelAndRestartTimer();
 
-        if (_latestValue!.volume == 0) {
+        if (VideoVolume.lastVolume == 0) {
           controller!.setVolume(_latestVolume ?? 0.5);
         } else {
-          _latestVolume = controller!.value.volume;
-          controller.setVolume(0.0);
+          _latestVolume = VideoVolume.lastVolume;
+          controller!.setVolume(0.0);
         }
       },
       child: AnimatedOpacity(
@@ -368,7 +369,7 @@ class _BetterPlayerCupertinoControlsState
                 horizontal: buttonPadding,
               ),
               child: Icon(
-                (_latestValue != null && _latestValue!.volume > 0)
+                (_latestValue != null && VideoVolume.lastVolume > 0)
                     ? _controlsConfiguration.muteIcon
                     : _controlsConfiguration.unMuteIcon,
                 color: iconColor,

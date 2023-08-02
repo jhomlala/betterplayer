@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
@@ -8,7 +9,6 @@ import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
-
 // Flutter imports:
 import 'package:flutter/material.dart';
 
@@ -515,10 +515,10 @@ class _BetterPlayerMaterialControlsState
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         cancelAndRestartTimer();
-        if (_latestValue!.volume == 0) {
+        if (VideoVolume.lastVolume == 0) {
           _betterPlayerController!.setVolume(_latestVolume ?? 0.5);
         } else {
-          _latestVolume = controller!.value.volume;
+          _latestVolume = VideoVolume.lastVolume;
           _betterPlayerController!.setVolume(0.0);
         }
       },
@@ -530,7 +530,7 @@ class _BetterPlayerMaterialControlsState
             height: _controlsConfiguration.controlBarHeight,
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Icon(
-              (_latestValue != null && _latestValue!.volume > 0)
+              (_latestValue != null && VideoVolume.lastVolume > 0)
                   ? _controlsConfiguration.muteIcon
                   : _controlsConfiguration.unMuteIcon,
               color: _controlsConfiguration.iconsColor,
