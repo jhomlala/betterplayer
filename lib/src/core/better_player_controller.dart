@@ -1068,6 +1068,15 @@ class BetterPlayerController {
     videoPlayerController?.broadcastEnded();
   }
 
+  /// To handle process when limited plan video ended.
+  Future<void>? limitedPlanVideoReachEnd() async {
+    if (videoPlayerController == null) {
+      throw StateError("The data source has not been initialized");
+    }
+
+    videoPlayerController?.limitedPlanVideoReachEnd();
+  }
+
   ///Set up to start Picture in Picture automatically when close app.
   ///When device is not supported, PiP mode won't be open.
   Future<void>? setupAutomaticPictureInPictureTransition(
