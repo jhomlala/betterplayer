@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) bool _observersAdded;
 @property(nonatomic) int stalledCount;
 @property(nonatomic) bool _willStartPictureInPicture;
+@property(nonatomic) bool isLiveStream;
 @property(nonatomic) bool isStalledCheckStarted;
 @property(nonatomic) float playerRate;
 @property(nonatomic) int overriddenDuration;
@@ -57,6 +58,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setPictureInPicture:(BOOL)pictureInPicture;
 - (void)disablePictureInPicture;
 - (void)willStartPictureInPicture:(bool)willStart;
+- (void)setIsLiveStream:(BOOL) isLiveStream;
+- (void)setPipSeekButtonsHidden:(BOOL) isHidden;
 - (void)setIsDisplayPipButtons:(BOOL) isDisplay;
 - (int64_t)absolutePosition;
 - (int64_t) FLTCMTimeToMillis:(CMTime) time;

@@ -417,6 +417,10 @@ bool _isCommandCenterButtonsEnabled = true;
             } else {
                 [self disposeNotificationData:player];
             }
+            
+            BOOL isLiveStream = [self isLiveStream:player];
+            [player setPipSeekButtonsHidden:isLiveStream];
+            [player setIsLiveStream:isLiveStream];
 
             int overriddenDuration = 0;
             if ([dataSource objectForKey:@"overriddenDuration"] != [NSNull null]){
