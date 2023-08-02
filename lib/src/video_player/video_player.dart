@@ -5,6 +5,7 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:io';
+
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,18 @@ final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
 // This will clear all open videos on the platform when a full restart is
 // performed.
   ..init();
+
+class VideoVolume {
+  VideoVolume._();
+
+  static double? _lastVolume;
+
+  static double get lastVolume => _lastVolume ?? 1.0;
+
+  static set lastVolume(double volume) {
+    _lastVolume = volume;
+  }
+}
 
 /// The duration, current position, buffering state, error state and settings
 /// of a [VideoPlayerController].
@@ -29,7 +42,6 @@ class VideoPlayerValue {
     this.isPlaying = false,
     this.isLooping = false,
     this.isBuffering = false,
-    this.volume = 1.0,
     this.speed = 1.0,
     this.errorDescription,
     this.isPip = false,
@@ -67,9 +79,6 @@ class VideoPlayerValue {
 
   /// True if the video is currently buffering.
   final bool isBuffering;
-
-  /// The current volume of the playback.
-  final double volume;
 
   /// The current speed of the playback
   final double speed;
@@ -118,7 +127,6 @@ class VideoPlayerValue {
     bool? isPlaying,
     bool? isLooping,
     bool? isBuffering,
-    double? volume,
     String? errorDescription,
     double? speed,
     bool? isPip,
@@ -132,7 +140,6 @@ class VideoPlayerValue {
       isPlaying: isPlaying ?? this.isPlaying,
       isLooping: isLooping ?? this.isLooping,
       isBuffering: isBuffering ?? this.isBuffering,
-      volume: volume ?? this.volume,
       speed: speed ?? this.speed,
       errorDescription: errorDescription ?? this.errorDescription,
       isPip: isPip ?? this.isPip,
@@ -151,7 +158,6 @@ class VideoPlayerValue {
         'isPlaying: $isPlaying, '
         'isLooping: $isLooping, '
         'isBuffering: $isBuffering, '
-        'volume: $volume, '
         'errorDescription: $errorDescription)';
   }
 }
@@ -398,7 +404,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     value = VideoPlayerValue(
       duration: null,
       isLooping: value.isLooping,
-      volume: value.volume,
     );
 
     if (!_creatingCompleter.isCompleted) await _creatingCompleter.future;
@@ -493,7 +498,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!_created || _isDisposed) {
       return;
     }
-    await _videoPlayerPlatform.setVolume(_textureId, value.volume);
+    await _videoPlayerPlatform.setVolume(_textureId, VideoVolume.lastVolume);
   }
 
   Future<void> _applySpeed() async {
@@ -561,7 +566,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [volume] indicates a value between 0.0 (silent) and 1.0 (full volume) on a
   /// linear scale.
   Future<void> setVolume(double volume) async {
-    value = value.copyWith(volume: volume.clamp(0.0, 1.0));
+    VideoVolume.lastVolume = volume.clamp(0.0, 1.0);
     await _applyVolume();
   }
 

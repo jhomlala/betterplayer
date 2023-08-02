@@ -45,7 +45,7 @@ class MockVideoPlayerController extends VideoPlayerController {
 
   @override
   Future<void> setVolume(double volume) async {
-    this.volume = volume;
+    VideoVolume.lastVolume = volume;
   }
 
   @override
