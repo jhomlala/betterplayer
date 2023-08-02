@@ -454,7 +454,7 @@ class BetterPlayerController {
               _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
                   0,
           cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
-          isLiveStream: _betterPlayerDataSource?.liveStream,
+          isLiveStream: _betterPlayerDataSource?.isLiveStream,
           showNotification: _betterPlayerDataSource
               ?.notificationConfiguration?.showNotification,
           title: _betterPlayerDataSource?.notificationConfiguration?.title,
@@ -489,7 +489,7 @@ class BetterPlayerController {
             File(betterPlayerDataSource.url),
             showNotification: _betterPlayerDataSource
                 ?.notificationConfiguration?.showNotification,
-            isLiveStream: _betterPlayerDataSource?.liveStream,
+            isLiveStream: _betterPlayerDataSource?.isLiveStream,
             isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
@@ -510,7 +510,7 @@ class BetterPlayerController {
           await videoPlayerController?.setFileDataSource(file,
               showNotification: _betterPlayerDataSource
                   ?.notificationConfiguration?.showNotification,
-              isLiveStream: _betterPlayerDataSource?.liveStream,
+              isLiveStream: _betterPlayerDataSource?.isLiveStream,
               isExtraVideo: _betterPlayerDataSource?.isExtraVideo,
               title: _betterPlayerDataSource?.notificationConfiguration?.title,
               author:
@@ -836,7 +836,7 @@ class BetterPlayerController {
       BetterPlayerUtils.log("The data source has not been initialized");
       throw StateError("The data source has not been initialized");
     }
-    return _betterPlayerDataSource!.liveStream == true;
+    return _betterPlayerDataSource!.isLiveStream == true;
   }
 
   ///Flag which determines whenever player data source has been initialized.

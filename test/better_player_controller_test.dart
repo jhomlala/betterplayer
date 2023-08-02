@@ -399,7 +399,7 @@ void main() {
         betterPlayerMockController.setupDataSource(BetterPlayerDataSource(
             BetterPlayerDataSourceType.network,
             BetterPlayerTestUtils.forBiggerBlazesUrl,
-            liveStream: true));
+            isLiveStream: true));
         final videoPlayerController =
             BetterPlayerTestUtils.setupMockVideoPlayerControler();
         betterPlayerMockController.videoPlayerController =
