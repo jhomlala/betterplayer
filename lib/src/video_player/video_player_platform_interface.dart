@@ -407,6 +407,7 @@ class VideoEvent {
     this.buffered,
     this.position,
     this.wasPlaying,
+    this.isRestorePIPButtonPressed,
   });
 
   /// The type of the event.
