@@ -752,6 +752,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
     bool wasPlaying = _isPlaying;
+    bool isRestorePIPButtonPressed = _isRestorePIPButtonPressed;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"exitingPIP",
                      @"wasPlaying" : @(wasPlaying),
