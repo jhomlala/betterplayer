@@ -457,6 +457,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             eventType: VideoEventType.exitingPIP,
             key: key,
             wasPlaying: map['wasPlaying'] as bool?,
+            isRestorePIPButtonPressed: map['isRestorePIPButtonPressed'] as bool?,
           );
 
         case 'tapExternalPlayButton':

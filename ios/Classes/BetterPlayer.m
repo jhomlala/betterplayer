@@ -755,7 +755,9 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"exitingPIP",
                      @"wasPlaying" : @(wasPlaying),
+                     @"isRestorePIPButtonPressed" : @(isRestorePIPButtonPressed),
                    });
+        _isRestorePIPButtonPressed = false;
     }
 }
 
@@ -773,6 +775,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL))completionHandler {
     [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
+    _isRestorePIPButtonPressed = true;
 }
 
 - (void)setIsLiveStream:(BOOL) isLiveStream {

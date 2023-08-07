@@ -23,6 +23,7 @@ class BetterPlayerController {
   static const String _dataSourceParameter = "dataSource";
   static const String _authorizationHeader = "Authorization";
   static const String _wasPlayingParameter = "wasPlaying";
+  static const String _isRestorePIPButtonPressedParameter = "isRestorePIPButtonPressed";
 
   ///General configuration used in controller instance.
   final BetterPlayerConfiguration betterPlayerConfiguration;
@@ -1222,6 +1223,7 @@ class BetterPlayerController {
           BetterPlayerEventType.exitingPIP,
           parameters: <String, dynamic>{
             _wasPlayingParameter: event.wasPlaying,
+            _isRestorePIPButtonPressedParameter: event.isRestorePIPButtonPressed,
           },
         ));
         break;
