@@ -407,7 +407,7 @@ class VideoEvent {
     this.buffered,
     this.position,
     this.wasPlaying,
-    this.isRestorePIPButtonPressed,
+    this.isBackToAppButtonPressed,
   });
 
   /// The type of the event.
@@ -440,7 +440,7 @@ class VideoEvent {
   final bool? wasPlaying;
 
   /// Only used if [eventType] is [VideoEventType.exitingPIP].
-  final bool? isRestorePIPButtonPressed;
+  final bool? isBackToAppButtonPressed;
 
   @override
   bool operator ==(Object other) {
@@ -452,7 +452,7 @@ class VideoEvent {
             duration == other.duration &&
             size == other.size &&
             wasPlaying == other.wasPlaying &&
-            isRestorePIPButtonPressed == other.isRestorePIPButtonPressed &&
+            isBackToAppButtonPressed == other.isBackToAppButtonPressed &&
             listEquals(buffered, other.buffered);
   }
 
@@ -463,7 +463,7 @@ class VideoEvent {
       size.hashCode ^
       buffered.hashCode ^
       wasPlaying.hashCode ^
-      isRestorePIPButtonPressed.hashCode;
+      isBackToAppButtonPressed.hashCode;
 }
 
 /// Type of the event.
