@@ -737,6 +737,13 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         }
     }
 }
+
+- (void)disablePictureInPictureManually
+{
+    _isBackToAppButtonPressed = true;
+    _isDisablePIPManually = true;
+    [self disablePictureInPicture];
+}
 #endif
 
 #if TARGET_OS_IOS
@@ -776,7 +783,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL))completionHandler {
     [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
-    _isBackToAppButtonPressed = true;
+    if (_isDisablePIPManually) {
+        _isDisablePIPManually = false;
+    } else {
+        _isBackToAppButtonPressed = true;
+    }
 }
 
 - (void)setIsLiveStream:(BOOL) isLiveStream {

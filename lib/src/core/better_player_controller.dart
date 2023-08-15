@@ -1159,6 +1159,14 @@ class BetterPlayerController {
     return videoPlayerController!.disablePictureInPicture();
   }
 
+  ///Disable Picture in Picture mode if it's enabled.
+  Future<void>? disablePictureInPictureManually() {
+    if (videoPlayerController == null) {
+      throw StateError("The data source has not been initialized");
+    }
+    return videoPlayerController!.disablePictureInPictureManually();
+  }
+
   // ignore: use_setters_to_change_properties
   ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
   void setBetterPlayerGlobalKey(GlobalKey betterPlayerGlobalKey) {

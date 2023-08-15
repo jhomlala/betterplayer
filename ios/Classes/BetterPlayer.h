@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) int overriddenDuration;
 @property(nonatomic) AVPlayerTimeControlStatus lastAvPlayerTimeControlStatus;
 @property(nonatomic) bool isBackToAppButtonPressed;
+@property(nonatomic) bool isDisablePIPManually;
 - (void)play;
 - (void)pause;
 - (void)setIsLooping:(bool)isLooping;
@@ -58,6 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void) enablePictureInPicture: (CGRect) frame;
 - (void)setPictureInPicture:(BOOL)pictureInPicture;
 - (void)disablePictureInPicture;
+- (void)disablePictureInPictureManually;
 - (void)willStartPictureInPicture:(bool)willStart;
 - (void)setIsLiveStream:(BOOL) isLiveStream;
 - (void)setPipSeekButtonsHidden:(BOOL) isHidden;
