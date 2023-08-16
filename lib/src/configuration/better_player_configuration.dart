@@ -44,9 +44,6 @@ class BetterPlayerConfiguration {
   /// Defines if the player will start in fullscreen when play is pressed
   final bool fullScreenByDefault;
 
-  /// Defines if the player will sleep in fullscreen or not
-  final bool allowedScreenSleep;
-
   /// Defines aspect ratio which will be used in fullscreen
   final double? fullScreenAspectRatio;
 
@@ -129,7 +126,6 @@ class BetterPlayerConfiguration {
     this.placeholderOnTop = true,
     this.overlay,
     this.errorBuilder,
-    this.allowedScreenSleep = true,
     this.fullScreenAspectRatio,
     this.deviceOrientationsOnFullScreen = const [
       DeviceOrientation.landscapeLeft,
@@ -201,7 +197,6 @@ class BetterPlayerConfiguration {
       placeholderOnTop: placeholderOnTop ?? this.placeholderOnTop,
       overlay: overlay ?? this.overlay,
       errorBuilder: errorBuilder ?? this.errorBuilder,
-      allowedScreenSleep: allowedScreenSleep ?? this.allowedScreenSleep,
       fullScreenAspectRatio:
           fullScreenAspectRatio ?? this.fullScreenAspectRatio,
       deviceOrientationsOnFullScreen:
