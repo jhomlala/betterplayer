@@ -552,6 +552,9 @@ bool _isCommandCenterButtonsEnabled = true;
         } else if ([@"disablePictureInPicture" isEqualToString:call.method]){
             [player disablePictureInPicture];
             [player setPictureInPicture:false];
+        } else if ([@"disablePictureInPictureManually" isEqualToString:call.method]){
+            [player disablePictureInPictureManually];
+            [player setPictureInPicture:false];
         } else if ([@"setAudioTrack" isEqualToString:call.method]){
             NSString* name = argsMap[@"name"];
             int index = [argsMap[@"index"] intValue];

@@ -295,6 +295,16 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> disablePictureInPictureManually(int? textureId) {
+    return _channel.invokeMethod<bool>(
+      'disablePictureInPictureManually',
+      <String, dynamic>{
+        'textureId': textureId,
+      },
+    );
+  }
+
+  @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) {
     return _channel.invokeMethod<void>(
       'setAudioTrack',

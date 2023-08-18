@@ -171,6 +171,13 @@ abstract class VideoPlayerPlatform {
         'disablePictureInPicture() has not been implemented.');
   }
 
+  ///Disables PiP mode Manually
+  ///Use only for iOS
+  Future<void> disablePictureInPictureManually(int? textureId) {
+    throw UnimplementedError(
+        'disablePictureInPicture() has not been implemented.');
+  }
+
   Future<bool?> isPictureInPictureEnabled(int? textureId) {
     throw UnimplementedError(
         'isPictureInPictureEnabled() has not been implemented.');
