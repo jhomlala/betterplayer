@@ -1160,6 +1160,7 @@ class BetterPlayerController {
   }
 
   ///Disable Picture in Picture mode if it's enabled.
+  ///Use only for iOS
   Future<void>? disablePictureInPictureManually() {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
