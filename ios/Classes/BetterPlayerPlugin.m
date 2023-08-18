@@ -155,13 +155,17 @@ bool _isCommandCenterButtonsEnabled = true;
 }
 
 - (void) setRemoteCommandsNotificationNotActive{
-    if ([_players count] == 0) {
-        [[AVAudioSession sharedInstance] setActive:false error:nil];
-    }
-
+    [[AVAudioSession sharedInstance] setActive:false error:nil];
     [[UIApplication sharedApplication] endReceivingRemoteControlEvents];
 }
 
+- (void) removeCommandCenterTargetHandlers{
+    MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+    [commandCenter.togglePlayPauseCommand removeTarget:nil];
+    [commandCenter.playCommand removeTarget:nil];
+    [commandCenter.pauseCommand removeTarget:nil];
+    [commandCenter.changePlaybackPositionCommand removeTarget:nil];
+}
 
 - (void) setupRemoteCommands:(BetterPlayer*) player {
     if (_remoteCommandsInitialized && _isCommandCenterButtonsEnabled){
@@ -181,6 +185,9 @@ bool _isCommandCenterButtonsEnabled = true;
         [commandCenter.changePlaybackPositionCommand setEnabled: isLiveStream || isExtraVideo ? NO : YES];
     }
 
+    // Remove old target handlers
+    [self removeCommandCenterTargetHandlers];
+    
     [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
         if (_notificationPlayer != [NSNull null]){
             if (_notificationPlayer.isPlaying){
@@ -460,6 +467,8 @@ bool _isCommandCenterButtonsEnabled = true;
             [[NSNotificationCenter defaultCenter] removeObserver:self];
             [player clear];
             [self disposeNotificationData:player];
+            // Remove all target handler before deactive Command center
+            [self removeCommandCenterTargetHandlers];
             [self setRemoteCommandsNotificationNotActive];
             [_players removeObjectForKey:@(textureId)];
             // If the Flutter contains https://github.com/flutter/engine/pull/12695,
