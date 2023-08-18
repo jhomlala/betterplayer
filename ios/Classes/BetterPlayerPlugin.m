@@ -14,7 +14,6 @@
 NSMutableDictionary* _dataSourceDict;
 NSMutableDictionary*  _timeObserverIdDict;
 NSMutableDictionary*  _artworkImageDict;
-NSMutableDictionary*  _commandCenterTargetIdDict;
 CacheManager* _cacheManager;
 int texturesCount = -1;
 BetterPlayer* _notificationPlayer;
@@ -43,7 +42,6 @@ bool _isCommandCenterButtonsEnabled = true;
     _timeObserverIdDict = [NSMutableDictionary dictionary];
     _artworkImageDict = [NSMutableDictionary dictionary];
     _dataSourceDict = [NSMutableDictionary dictionary];
-    _commandCenterTargetIdDict = [NSMutableDictionary dictionary];
     _cacheManager = [[CacheManager alloc] init];
     [_cacheManager setup];
     return self;
@@ -163,11 +161,10 @@ bool _isCommandCenterButtonsEnabled = true;
 
 - (void) removeCommandCenterTargetHandlers{
     MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
-    [commandCenter.togglePlayPauseCommand removeTarget:_commandCenterTargetIdDict[@"togglePlayPauseCommand"]];
-    [commandCenter.playCommand removeTarget:_commandCenterTargetIdDict[@"playCommand"]];
-    [commandCenter.pauseCommand removeTarget:_commandCenterTargetIdDict[@"pauseCommand"]];
-    [commandCenter.changePlaybackPositionCommand removeTarget:_commandCenterTargetIdDict[@"changePlaybackPositionCommand"]];
-    [_commandCenterTargetIdDict removeAllObjects];
+    [commandCenter.togglePlayPauseCommand removeTarget:nil];
+    [commandCenter.playCommand removeTarget:nil];
+    [commandCenter.pauseCommand removeTarget:nil];
+    [commandCenter.changePlaybackPositionCommand removeTarget:nil];
 }
 
 - (void) setupRemoteCommands:(BetterPlayer*) player {
@@ -191,7 +188,7 @@ bool _isCommandCenterButtonsEnabled = true;
     // Remove old target handlers
     [self removeCommandCenterTargetHandlers];
     
-    id togglePlayPauseCommandTargetId = [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+    [commandCenter.togglePlayPauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
         if (_notificationPlayer != [NSNull null]){
             if (_notificationPlayer.isPlaying){
                 _notificationPlayer.eventSink(@{@"event" : @"play"});
@@ -202,14 +199,14 @@ bool _isCommandCenterButtonsEnabled = true;
         return MPRemoteCommandHandlerStatusSuccess;
     }];
 
-    id playCommandTargetId = [commandCenter.playCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+    [commandCenter.playCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
         if (_notificationPlayer != [NSNull null]){
             _notificationPlayer.eventSink(@{@"event" : @"play"});
         }
         return MPRemoteCommandHandlerStatusSuccess;
     }];
 
-    id pauseCommandTargetId = [commandCenter.pauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+    [commandCenter.pauseCommand addTargetWithHandler: ^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
         if (_notificationPlayer != [NSNull null]){
             _notificationPlayer.eventSink(@{@"event" : @"pause"});
         }
@@ -219,7 +216,7 @@ bool _isCommandCenterButtonsEnabled = true;
 
 
     if (@available(iOS 9.1, *)) {
-        id changePlaybackPositionCommandId = [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+        [commandCenter.changePlaybackPositionCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
             if (_notificationPlayer != [NSNull null]){
                 MPChangePlaybackPositionCommandEvent * playbackEvent = (MPChangePlaybackRateCommandEvent * ) event;
                 CMTime time = CMTimeMake(playbackEvent.positionTime, 1);
@@ -228,12 +225,7 @@ bool _isCommandCenterButtonsEnabled = true;
             }
             return MPRemoteCommandHandlerStatusSuccess;
         }];
-        [_commandCenterTargetIdDict setObject:changePlaybackPositionCommandId forKey:@"changePlaybackPositionCommand"];
     }
-    [_commandCenterTargetIdDict setObject:togglePlayPauseCommandTargetId forKey:@"togglePlayPauseCommand"];
-    [_commandCenterTargetIdDict setObject:playCommandTargetId forKey:@"playCommand"];
-    [_commandCenterTargetIdDict setObject:pauseCommandTargetId forKey:@"pauseCommand"];
-
     _remoteCommandsInitialized = true;
 }
 
