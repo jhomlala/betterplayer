@@ -657,19 +657,24 @@ internal class BetterPlayer(
             mediaSessionConnector = MediaSessionConnector(mediaSession)
             mediaSessionConnector?.apply {
                 setPlayer(exoPlayer)
-                setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
-                    // For LIVE and Samsung devices with android 11
-                    override fun getMediaDescription(
-                        player: Player,
-                        windowIndex: Int
-                    ): MediaDescriptionCompat {
-                        val extra = Bundle()
-                        extra.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, author)
-                        extra.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
-                        return MediaDescriptionCompat.Builder().setExtras(extra)
-                           .build()
-                    }
-                })
+                if (Build.MANUFACTURER == "samsung" && Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+                    // LIVE
+                    // Samsung devices with android 11 
+                    // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
+                    setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
+                        // For LIVE and Samsung devices with android 11
+                        override fun getMediaDescription(
+                            player: Player,
+                            windowIndex: Int
+                        ): MediaDescriptionCompat {
+                            val extra = Bundle()
+                            extra.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, author)
+                            extra.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                            return MediaDescriptionCompat.Builder().setExtras(extra)
+                                .build()
+                        }
+                    })
+                }
             }
             this.mediaSession = mediaSession
             return mediaSession

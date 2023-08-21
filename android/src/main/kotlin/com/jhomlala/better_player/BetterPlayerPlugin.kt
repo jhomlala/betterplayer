@@ -583,8 +583,10 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
             val mediaSession = betterPlayer.setupMediaSession(context, title = title, author = author)
             mediaSession?.let {
-                if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                    // For VOD and Samsung devices with android 11
+                if (Build.MANUFACTURER == "samsung" && Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+                    // VOD
+                    // Samsung devices with android 11 
+                    // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
                     it.setMetadata(
                         MediaMetadataCompat.Builder()
                             .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
