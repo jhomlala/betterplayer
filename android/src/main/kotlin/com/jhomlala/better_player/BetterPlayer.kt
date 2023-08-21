@@ -658,6 +658,7 @@ internal class BetterPlayer(
             mediaSessionConnector?.apply {
                 setPlayer(exoPlayer)
                 setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
+                    // For LIVE and Samsung devices with android 11
                     override fun getMediaDescription(
                         player: Player,
                         windowIndex: Int

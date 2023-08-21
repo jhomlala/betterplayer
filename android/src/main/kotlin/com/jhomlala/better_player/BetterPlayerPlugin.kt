@@ -584,6 +584,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
             val mediaSession = betterPlayer.setupMediaSession(context, title = title, author = author)
             mediaSession?.let {
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                    // For VOD and Samsung devices with android 11
                     it.setMetadata(
                         MediaMetadataCompat.Builder()
                             .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
