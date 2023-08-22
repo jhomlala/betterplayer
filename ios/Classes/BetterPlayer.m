@@ -765,6 +765,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
                      @"wasPlaying" : @(wasPlaying),
                      @"isBackToAppButtonPressed" : @(isBackToAppButtonPressed),
                    });
+        _isDisablePIPManually = false;
         _isBackToAppButtonPressed = false;
     }
 }
@@ -783,10 +784,11 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL))completionHandler {
     [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
-    if (_isDisablePIPManually) {
-        _isDisablePIPManually = false;
-    } else {
+    if (!_isDisablePIPManually) {
         _isBackToAppButtonPressed = true;
+         if (_eventSink != nil) {
+            _eventSink(@{@"event" : @"isBackToAppButtonPressed"});
+        }
     }
 }
 

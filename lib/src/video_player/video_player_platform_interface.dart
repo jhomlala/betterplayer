@@ -528,6 +528,9 @@ enum VideoEventType {
 
   /// An unknown event has been received.
   unknown,
+  
+  /// back to app button ( right button in pip mode) was pressed (iOS only)
+  isBackToAppButtonPressed,
 }
 
 /// Describes a discrete segment of time within a video using a [start] and

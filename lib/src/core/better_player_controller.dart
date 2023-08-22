@@ -23,7 +23,8 @@ class BetterPlayerController {
   static const String _dataSourceParameter = "dataSource";
   static const String _authorizationHeader = "Authorization";
   static const String _wasPlayingParameter = "wasPlaying";
-  static const String _isBackToAppButtonPressedParameter = "isBackToAppButtonPressed";
+  static const String _isBackToAppButtonPressedParameter =
+      "isBackToAppButtonPressed";
 
   ///General configuration used in controller instance.
   final BetterPlayerConfiguration betterPlayerConfiguration;
@@ -1253,6 +1254,10 @@ class BetterPlayerController {
       case VideoEventType.failedToPlayToEndTime:
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.failedToPlayToEndTime));
+        break;
+      case VideoEventType.isBackToAppButtonPressed:
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.isBackToAppButtonPressed));
         break;
 
       default:
