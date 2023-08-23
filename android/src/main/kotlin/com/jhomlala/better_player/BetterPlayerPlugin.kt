@@ -30,7 +30,6 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.jhomlala.better_player.BetterPlayerCache.releaseCache
 import io.flutter.embedding.engine.loader.FlutterLoader
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -61,7 +60,6 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var showPictureInPictureAutomatically: Boolean = false
     private val pipRemoteActions: ArrayList<RemoteAction> = ArrayList()
     private var isVideoPlaybackEnded: Boolean = false
-    private var mediaSessionConnector : MediaSessionConnector? = null
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         val loader = FlutterLoader()
