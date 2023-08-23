@@ -775,7 +775,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL))completionHandler {
     [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
     if (_eventSink != nil) {
-        _eventSink(@{@"event" : @"isBackToAppButtonPressed"});
+        _eventSink(@{@"event" : @"pressedBackToAppButton"});
     }
 }
 

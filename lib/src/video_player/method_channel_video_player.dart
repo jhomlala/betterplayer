@@ -482,9 +482,9 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             eventType: VideoEventType.failedToPlayToEndTime,
             key: key,
           );
-        case 'isBackToAppButtonPressed':
+        case 'pressedBackToAppButton':
           return VideoEvent(
-            eventType: VideoEventType.isBackToAppButtonPressed,
+            eventType: VideoEventType.pressedBackToAppButton,
             key: key,
           );
 
