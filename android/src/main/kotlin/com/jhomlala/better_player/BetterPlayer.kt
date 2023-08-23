@@ -10,8 +10,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
@@ -26,6 +28,7 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
 import com.google.android.exoplayer2.drm.*
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ClippingMediaSource
 import com.google.android.exoplayer2.source.MediaSource
@@ -629,7 +632,11 @@ internal class BetterPlayer(
      * @return - configured MediaSession instance
      */
     @SuppressLint("InlinedApi")
-    fun setupMediaSession(context: Context?): MediaSessionCompat? {
+    fun setupMediaSession(
+        context: Context?,
+        title: String = "",
+        author: String = ""
+    ): MediaSessionCompat? {
         mediaSession?.release()
         context?.let {
 
@@ -648,8 +655,26 @@ internal class BetterPlayer(
             })
             mediaSession.isActive = true
             mediaSessionConnector = MediaSessionConnector(mediaSession)
-            mediaSessionConnector?.setPlayer(exoPlayer)
-
+            mediaSessionConnector?.apply {
+                setPlayer(exoPlayer)
+                if (Build.MANUFACTURER.lowercase() == "samsung" && Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+                    // LIVE
+                    // Samsung devices with android 11 
+                    // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
+                    setQueueNavigator(object : TimelineQueueNavigator(mediaSession) {
+                        override fun getMediaDescription(
+                            player: Player,
+                            windowIndex: Int
+                        ): MediaDescriptionCompat {
+                            val extra = Bundle()
+                            extra.putString(MediaMetadataCompat.METADATA_KEY_ARTIST, author)
+                            extra.putString(MediaMetadataCompat.METADATA_KEY_TITLE, title)
+                            return MediaDescriptionCompat.Builder().setExtras(extra)
+                                .build()
+                        }
+                    })
+                }
+            }
             this.mediaSession = mediaSession
             return mediaSession
         }

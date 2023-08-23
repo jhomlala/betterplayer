@@ -14,9 +14,11 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.graphics.drawable.Icon
+import android.media.MediaMetadata
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import android.util.LongSparseArray
 import android.util.Rational
@@ -575,11 +577,24 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         betterPlayer: BetterPlayer
     ) {
         flutterState?.applicationContext?.let { context ->
-            val mediaSession = betterPlayer.setupMediaSession(context)
+            val title = getParameter(dataSource, TITLE_PARAMETER, "")
+            val author = getParameter(dataSource, AUTHOR_PARAMETER, "")
+            val mediaSession = betterPlayer.setupMediaSession(context, title = title, author = author)
             mediaSession?.let {
+                if (Build.MANUFACTURER.lowercase() == "samsung" && Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+                    // VOD
+                    // Samsung devices with android 11 
+                    // https://dw-ml-nfc.atlassian.net/browse/DAF-4294
+                    it.setMetadata(
+                        MediaMetadataCompat.Builder()
+                            .putString(MediaMetadata.METADATA_KEY_ARTIST, author)
+                            .putString(MediaMetadata.METADATA_KEY_TITLE, title)
+                            .build()
+                    )
+                }
                 _notificationParameter.value = NotificationParameter(
-                    title = getParameter(dataSource, TITLE_PARAMETER, ""),
-                    author = getParameter(dataSource, AUTHOR_PARAMETER, ""),
+                    title = title,
+                    author = author,
                     imageUrl = getParameter(dataSource, IMAGE_URL_PARAMETER, ""),
                     notificationChannelName = getParameter(
                         dataSource,
