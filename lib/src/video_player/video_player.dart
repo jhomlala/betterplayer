@@ -640,10 +640,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     await _videoPlayerPlatform.disablePictureInPicture(textureId);
   }
 
-  Future<void> disablePictureInPictureManually() async {
-    await _videoPlayerPlatform.disablePictureInPictureManually(textureId);
-  }
-
   void _updatePosition(Duration? position, {DateTime? absolutePosition}) {
     value = value.copyWith(position: _seekPosition ?? position);
     if (_seekPosition == null) {

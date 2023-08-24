@@ -738,12 +738,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 }
 
-- (void)disablePictureInPictureManually
-{
-    _isBackToAppButtonPressed = true;
-    _isDisablePIPManually = true;
-    [self disablePictureInPicture];
-}
 #endif
 
 #if TARGET_OS_IOS
@@ -759,13 +753,10 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureControllerWillStopPictureInPicture:(AVPictureInPictureController *)pictureInPictureController  API_AVAILABLE(ios(9.0)){
     bool wasPlaying = _isPlaying;
-    bool isBackToAppButtonPressed = _isBackToAppButtonPressed;
     if (_eventSink != nil) {
         _eventSink(@{@"event" : @"exitingPIP",
                      @"wasPlaying" : @(wasPlaying),
-                     @"isBackToAppButtonPressed" : @(isBackToAppButtonPressed),
                    });
-        _isBackToAppButtonPressed = false;
     }
 }
 
@@ -783,10 +774,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 
 - (void)pictureInPictureController:(AVPictureInPictureController *)pictureInPictureController restoreUserInterfaceForPictureInPictureStopWithCompletionHandler:(void (^)(BOOL))completionHandler {
     [self setRestoreUserInterfaceForPIPStopCompletionHandler: true];
-    if (_isDisablePIPManually) {
-        _isDisablePIPManually = false;
-    } else {
-        _isBackToAppButtonPressed = true;
+    if (_eventSink != nil) {
+        _eventSink(@{@"event" : @"pressedBackToAppButton"});
     }
 }
 

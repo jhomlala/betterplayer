@@ -171,13 +171,6 @@ abstract class VideoPlayerPlatform {
         'disablePictureInPicture() has not been implemented.');
   }
 
-  ///Disables PiP mode Manually
-  ///Use only for iOS
-  Future<void> disablePictureInPictureManually(int? textureId) {
-    throw UnimplementedError(
-        'disablePictureInPicture() has not been implemented.');
-  }
-
   Future<bool?> isPictureInPictureEnabled(int? textureId) {
     throw UnimplementedError(
         'isPictureInPictureEnabled() has not been implemented.');
@@ -414,7 +407,6 @@ class VideoEvent {
     this.buffered,
     this.position,
     this.wasPlaying,
-    this.isBackToAppButtonPressed,
   });
 
   /// The type of the event.
@@ -446,9 +438,6 @@ class VideoEvent {
   /// Only used if [eventType] is [VideoEventType.exitingPIP].
   final bool? wasPlaying;
 
-  /// Only used if [eventType] is [VideoEventType.exitingPIP].
-  final bool? isBackToAppButtonPressed;
-
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -459,7 +448,6 @@ class VideoEvent {
             duration == other.duration &&
             size == other.size &&
             wasPlaying == other.wasPlaying &&
-            isBackToAppButtonPressed == other.isBackToAppButtonPressed &&
             listEquals(buffered, other.buffered);
   }
 
@@ -469,8 +457,7 @@ class VideoEvent {
       duration.hashCode ^
       size.hashCode ^
       buffered.hashCode ^
-      wasPlaying.hashCode ^
-      isBackToAppButtonPressed.hashCode;
+      wasPlaying.hashCode;
 }
 
 /// Type of the event.
@@ -528,6 +515,9 @@ enum VideoEventType {
 
   /// An unknown event has been received.
   unknown,
+  
+  /// back to app button ( right button in pip mode) was pressed (iOS only)
+  pressedBackToAppButton,
 }
 
 /// Describes a discrete segment of time within a video using a [start] and

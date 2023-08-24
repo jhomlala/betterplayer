@@ -295,16 +295,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> disablePictureInPictureManually(int? textureId) {
-    return _channel.invokeMethod<bool>(
-      'disablePictureInPictureManually',
-      <String, dynamic>{
-        'textureId': textureId,
-      },
-    );
-  }
-
-  @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) {
     return _channel.invokeMethod<void>(
       'setAudioTrack',
@@ -467,7 +457,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             eventType: VideoEventType.exitingPIP,
             key: key,
             wasPlaying: map['wasPlaying'] as bool?,
-            isBackToAppButtonPressed: map['isBackToAppButtonPressed'] as bool?,
           );
 
         case 'tapExternalPlayButton':
@@ -491,6 +480,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
         case 'failedToPlayToEndTime':
           return VideoEvent(
             eventType: VideoEventType.failedToPlayToEndTime,
+            key: key,
+          );
+        case 'pressedBackToAppButton':
+          return VideoEvent(
+            eventType: VideoEventType.pressedBackToAppButton,
             key: key,
           );
 

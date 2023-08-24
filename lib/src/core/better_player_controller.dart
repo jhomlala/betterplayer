@@ -23,7 +23,6 @@ class BetterPlayerController {
   static const String _dataSourceParameter = "dataSource";
   static const String _authorizationHeader = "Authorization";
   static const String _wasPlayingParameter = "wasPlaying";
-  static const String _isBackToAppButtonPressedParameter = "isBackToAppButtonPressed";
 
   ///General configuration used in controller instance.
   final BetterPlayerConfiguration betterPlayerConfiguration;
@@ -1159,15 +1158,6 @@ class BetterPlayerController {
     return videoPlayerController!.disablePictureInPicture();
   }
 
-  ///Disable Picture in Picture mode if it's enabled.
-  ///Use only for iOS
-  Future<void>? disablePictureInPictureManually() {
-    if (videoPlayerController == null) {
-      throw StateError("The data source has not been initialized");
-    }
-    return videoPlayerController!.disablePictureInPictureManually();
-  }
-
   // ignore: use_setters_to_change_properties
   ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
   void setBetterPlayerGlobalKey(GlobalKey betterPlayerGlobalKey) {
@@ -1232,7 +1222,6 @@ class BetterPlayerController {
           BetterPlayerEventType.exitingPIP,
           parameters: <String, dynamic>{
             _wasPlayingParameter: event.wasPlaying,
-            _isBackToAppButtonPressedParameter: event.isBackToAppButtonPressed,
           },
         ));
         break;
@@ -1253,6 +1242,10 @@ class BetterPlayerController {
       case VideoEventType.failedToPlayToEndTime:
         _postEvent(
             BetterPlayerEvent(BetterPlayerEventType.failedToPlayToEndTime));
+        break;
+      case VideoEventType.pressedBackToAppButton:
+        _postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.pressedBackToAppButton));
         break;
 
       default:
