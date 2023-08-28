@@ -360,6 +360,9 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 player.sendBufferingUpdate(false)
             }
             ABSOLUTE_POSITION_METHOD -> result.success(player.absolutePosition)
+            GET_DURATION_METHOD -> {
+                result.success(player.getDuration())
+            }
             SET_SPEED_METHOD -> {
                 player.setSpeed(call.argument(SPEED_PARAMETER)!!)
                 result.success(null)
@@ -799,6 +802,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         private const val BROADCAST_ENDED = "broadcastEnded"
         private const val SEEK_TO_METHOD = "seekTo"
         private const val POSITION_METHOD = "position"
+        private const val GET_DURATION_METHOD = "getDuration"
         private const val ABSOLUTE_POSITION_METHOD = "absolutePosition"
         private const val SET_SPEED_METHOD = "setSpeed"
         private const val SET_TRACK_PARAMETERS_METHOD = "setTrackParameters"

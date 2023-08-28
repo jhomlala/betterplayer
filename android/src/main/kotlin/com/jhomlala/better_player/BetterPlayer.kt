@@ -623,7 +623,7 @@ internal class BetterPlayer(
         }
     }
 
-    private fun getDuration(): Long = exoPlayer?.duration ?: 0L
+    fun getDuration(): Long = exoPlayer?.duration ?: 0L
 
     /**
      * Create media session which will be used in notifications, pip mode.
