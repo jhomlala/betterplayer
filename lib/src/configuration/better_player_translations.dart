@@ -137,4 +137,19 @@ class BetterPlayerTranslations {
         overflowMenuQuality: "Calidad",
         qualityAuto: "Automática",
       );
+
+  factory BetterPlayerTranslations.persian() => BetterPlayerTranslations(
+      languageCode: "fa",
+      generalDefaultError: "ویدیو نمیتواند پخش شود",
+      generalNone: "خالی",
+      generalDefault: "پیش فرض",
+      generalRetry: "تلاش دوباره",
+      playlistLoadingNextVideo: "بارگزاری ویدیو بعدی",
+      controlsLive: "زنده",
+      controlsNextVideoIn: "ویدیو بعدی",
+      overflowMenuPlaybackSpeed: "سرعت پخش",
+      overflowMenuSubtitles: "زیرنویس",
+      overflowMenuQuality: "کیفیت",
+      overflowMenuAudioTracks: "صدا",
+      qualityAuto: "خودکار");
 }
