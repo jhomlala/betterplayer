@@ -44,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)updatePlayingState;
 - (int64_t) duration;
 - (int64_t) position;
+- (int64_t) getDvrDuration;
 
 - (instancetype)initWithFrame:(CGRect)frame;
 - (void)setMixWithOthers:(bool)mixWithOthers;

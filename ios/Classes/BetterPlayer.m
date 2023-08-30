@@ -547,7 +547,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 - (int64_t)duration {
     CMTime time;
     if (@available(iOS 13, *)) {
-        time =  [[_player currentItem] duration];
+        time =  [[_player currentItem] duration]; // NOTE: This value is always 0 when playing live streming include DVR mode.
     } else {
         time =  [[[_player currentItem] asset] duration];
     }
@@ -556,6 +556,30 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     }
 
     return [BetterPlayerTimeUtils FLTCMTimeToMillis:(time)];
+}
+
+// Get DVR video duration. (This is not work for Live point mode.)
+// Reference: https://stackoverflow.com/a/44941053/3769374
+- (int64_t)getDvrDuration {
+    CMTimeRange seekableRange = [_player.currentItem.seekableTimeRanges.lastObject CMTimeRangeValue];
+
+    // TODO: Delete log
+    CGFloat currentTime = CMTimeGetSeconds(_player.currentTime);
+    NSLog(@"NFCDEV currentTime %.2f", currentTime);
+    
+    CGFloat seekableStart = CMTimeGetSeconds(seekableRange.start);
+    CGFloat seekableDuration = CMTimeGetSeconds(seekableRange.duration);
+    CGFloat livePosition = seekableStart + seekableDuration;
+    NSLog(@"NFCDEV seekableDuration: %.2f", seekableDuration);
+    NSLog(@"NFCDEV seekableStart: %.2f", (seekableStart));
+    NSLog(@"NFCDEV seekableRange.start + seekableRange.duration  f: %lld", [BetterPlayerTimeUtils FLTCMTimeToMillis:(CMTimeAdd(seekableRange.start, seekableRange.duration))]);
+    
+    CGFloat secondsBehindLive = currentTime - seekableDuration - seekableStart;
+    NSLog(@"NFCDEV secondsBehindLive: %.2f", (secondsBehindLive));
+    // TODO: Delete log
+
+//    return [BetterPlayerTimeUtils FLTCMTimeToMillis:(CMTimeAdd(seekableRange.start, seekableRange.duration))]; // seekableRange.startは配信終了後、アーカイブ自動公開だと0以外になりうる？
+    return [BetterPlayerTimeUtils FLTCMTimeToMillis:(seekableRange.duration)];
 }
 
 - (void)seekTo:(int)location {
