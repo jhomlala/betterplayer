@@ -421,7 +421,7 @@ internal class BetterPlayer(
                 .setDrmSessionManagerProvider(drmSessionManagerProvider)
                 .createMediaSource(mediaItem)
             C.TYPE_HLS -> HlsMediaSource.Factory(mediaDataSourceFactory)
-                .setDrmSessionManagerProvider(drmSessionManagerProvider)
+//                .setDrmSessionManagerProvider(drmSessionManagerProvider)
                 .createMediaSource(mediaItem)
             C.TYPE_OTHER -> ProgressiveMediaSource.Factory(
                 mediaDataSourceFactory,
@@ -544,18 +544,18 @@ internal class BetterPlayer(
     }
 
     fun setTrackParameters(width: Int, height: Int, bitrate: Int) {
-        val parametersBuilder = trackSelector.buildUponParameters()
-        if (width != 0 && height != 0) {
-            parametersBuilder.setMaxVideoSize(width, height)
-        }
-        if (bitrate != 0) {
-            parametersBuilder.setMaxVideoBitrate(bitrate)
-        }
-        if (width == 0 && height == 0 && bitrate == 0) {
-            parametersBuilder.clearVideoSizeConstraints()
-            parametersBuilder.setMaxVideoBitrate(Int.MAX_VALUE)
-        }
-        trackSelector.setParameters(parametersBuilder)
+//        val parametersBuilder = trackSelector.buildUponParameters()
+//        if (width != 0 && height != 0) {
+//            parametersBuilder.setMaxVideoSize(width, height)
+//        }
+//        if (bitrate != 0) {
+//            parametersBuilder.setMaxVideoBitrate(bitrate)
+//        }
+//        if (width == 0 && height == 0 && bitrate == 0) {
+//            parametersBuilder.clearVideoSizeConstraints()
+//            parametersBuilder.setMaxVideoBitrate(Int.MAX_VALUE)
+//        }
+//        trackSelector.setParameters(parametersBuilder)
     }
 
     fun seekTo(location: Int) {
