@@ -1,6 +1,7 @@
 package com.jhomlala.better_player
 
 import android.content.Context
+import androidx.media3.datasource.DataSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.FileDataSource
@@ -13,7 +14,7 @@ internal class CacheDataSourceFactory(
     private val maxCacheSize: Long,
     private val maxFileSize: Long,
     upstreamDataSource: DataSource.Factory?
-) : DataSource.Factory {
+) : DataSource.Factory, DataSource.Factory {
     private var defaultDatasourceFactory: DefaultDataSource.Factory? = null
     override fun createDataSource(): CacheDataSource {
         val betterPlayerCache = BetterPlayerCache.createCache(context, maxCacheSize)

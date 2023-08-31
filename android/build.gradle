@@ -2,13 +2,13 @@ group 'com.jhomlala.better_player.better_player'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.exoPlayerVersion = "2.17.1"
-    ext.lifecycleVersion = "2.4.0-beta01"
-    ext.annotationVersion = "1.2.0"
-    ext.workVersion = "2.7.0"
+    ext.exoPlayerVersion = "2.19.1"
+    ext.lifecycleVersion = "2.6.0"
+//    ext.annotationVersion = "1.2.0"
+//    ext.workVersion = "2.7.0"
     ext.coreVersion = "1.6.0"
-    ext.gradleVersion = "7.0.2"
-    ext.kotlinVersion = "1.5.31"
+    ext.gradleVersion = "7.2.2"
+    ext.kotlinVersion = "1.8.22"
 
     repositories {
         google()
@@ -16,7 +16,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.0'
+        classpath "com.android.tools.build:gradle:$gradleVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
@@ -32,7 +32,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    compileSdk 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -52,17 +52,27 @@ android {
     }
 
     dependencies {
-        implementation "com.google.android.exoplayer:exoplayer-core:$exoPlayerVersion"
-        implementation "com.google.android.exoplayer:exoplayer-hls:$exoPlayerVersion"
-        implementation "com.google.android.exoplayer:exoplayer-dash:$exoPlayerVersion"
-        implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:$exoPlayerVersion"
-        implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
-        implementation "com.google.android.exoplayer:extension-mediasession:$exoPlayerVersion"
+//        implementation "com.google.android.exoplayer:exoplayer-core:$exoPlayerVersion"
+//        implementation "com.google.android.exoplayer:exoplayer-hls:$exoPlayerVersion"
+//        implementation "com.google.android.exoplayer:exoplayer-dash:$exoPlayerVersion"
+//        implementation "com.google.android.exoplayer:exoplayer-smoothstreaming:$exoPlayerVersion"
+//        implementation "com.google.android.exoplayer:exoplayer-ui:$exoPlayerVersion"
+//        implementation "com.google.android.exoplayer:extension-mediasession:$exoPlayerVersion"
         implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
         implementation "androidx.lifecycle:lifecycle-common:$lifecycleVersion"
         implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
-        implementation "androidx.annotation:annotation:$annotationVersion"
-        implementation "androidx.work:work-runtime:$workVersion"
+        implementation "androidx.annotation:annotation:1.6.0"
+        implementation "androidx.work:work-runtime:2.8.1"
+        implementation "androidx.media3:media3-session:1.1.1"
+        implementation "androidx.media3:exoplayer-core:1.1.1"
+        implementation "androidx.media3:media3-exoplayer-hls:1.1.1"
+        implementation "androidx.media3:media3-exoplayer-dash:1.1.1"
+        implementation "androidx.media3:media3-ui:1.1.1"
+        implementation "androidx.media3:media3-exoplayer-smoothstreaming:1.1.1"
+        implementation "androidx.media3:media3-exoplayer:1.1.1"
+        implementation "androidx.legacy:legacy-support-v4:1.0.0"
+
+
     }
 }
 
