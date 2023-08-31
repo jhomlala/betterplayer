@@ -2,9 +2,9 @@ package com.jhomlala.better_player
 
 import android.content.Context
 import android.util.Log
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import androidx.media3.database.ExoDatabaseProvider
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.datasource.cache.SimpleCache
 import java.io.File
 import java.lang.Exception
 

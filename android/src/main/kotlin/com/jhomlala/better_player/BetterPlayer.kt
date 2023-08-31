@@ -200,6 +200,7 @@ internal class BetterPlayer(
         } else {
             exoPlayer?.setMediaSource(mediaSource)
         }
+//        exoPlayer?.videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING;
         exoPlayer?.prepare()
         result.success(null)
     }
@@ -546,16 +547,18 @@ internal class BetterPlayer(
 
     fun setTrackParameters(width: Int, height: Int, bitrate: Int) {
         val parametersBuilder = trackSelector.buildUponParameters()
-        if (width != 0 && height != 0) {
+        if (width == 0 && height == 0) {
+            parametersBuilder.clearVideoSizeConstraints()
+        }else{
             parametersBuilder.setMaxVideoSize(width, height)
         }
-        if (bitrate != 0) {
+
+        if (bitrate == 0) {
+            parametersBuilder.setMaxVideoBitrate(Int.MAX_VALUE)
+        }else{
             parametersBuilder.setMaxVideoBitrate(bitrate)
         }
-        if (width == 0 && height == 0 && bitrate == 0) {
-            parametersBuilder.clearVideoSizeConstraints()
-            parametersBuilder.setMaxVideoBitrate(Int.MAX_VALUE)
-        }
+
         trackSelector.setParameters(parametersBuilder)
     }
 
