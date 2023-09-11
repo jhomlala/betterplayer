@@ -219,8 +219,6 @@ class DataSource {
     this.title,
     this.author,
     this.imageUrl,
-    this.skipForwardTimeInMilliseconds,
-    this.skipBackwardTimeInMilliseconds,
     this.notificationChannelName,
     this.overriddenDuration,
     this.licenseUrl,
@@ -290,10 +288,6 @@ class DataSource {
   final String? author;
 
   final String? imageUrl;
-
-  final int? skipForwardTimeInMilliseconds;
-
-  final int? skipBackwardTimeInMilliseconds;
 
   final String? notificationChannelName;
 
