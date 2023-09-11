@@ -68,10 +68,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
-          'skipForwardTimeInMilliseconds':
-              dataSource.skipForwardTimeInMilliseconds,
-          'skipBackwardTimeInMilliseconds':
-              dataSource.skipBackwardTimeInMilliseconds,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
           'activityName': dataSource.activityName
@@ -91,10 +87,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
-          'skipForwardTimeInMilliseconds':
-              dataSource.skipForwardTimeInMilliseconds,
-          'skipBackwardTimeInMilliseconds':
-              dataSource.skipBackwardTimeInMilliseconds,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
           'licenseUrl': dataSource.licenseUrl,
@@ -116,10 +108,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'title': dataSource.title,
           'author': dataSource.author,
           'imageUrl': dataSource.imageUrl,
-          'skipForwardTimeInMilliseconds':
-              dataSource.skipForwardTimeInMilliseconds,
-          'skipBackwardTimeInMilliseconds':
-              dataSource.skipBackwardTimeInMilliseconds,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
           'activityName': dataSource.activityName,

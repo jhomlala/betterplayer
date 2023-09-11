@@ -13,12 +13,6 @@ class BetterPlayerNotificationConfiguration {
   ///Image of the video, used in controls notification
   final String? imageUrl;
 
-  ///Time for skip forward, used in controls notification
-  final int? skipForwardTimeInMilliseconds;
-
-  ///Time for skip backward, used in controls notification
-  final int? skipBackwardTimeInMilliseconds;
-
   ///Name of the notification channel. Used only in Android.
   final String? notificationChannelName;
 
@@ -33,7 +27,5 @@ class BetterPlayerNotificationConfiguration {
     this.imageUrl,
     this.notificationChannelName,
     this.activityName,
-    this.skipForwardTimeInMilliseconds = 10000,
-    this.skipBackwardTimeInMilliseconds = 10000,
   });
 }
