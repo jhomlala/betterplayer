@@ -66,6 +66,8 @@ class MockVideoPlayerController extends VideoPlayerController {
     String? title,
     String? author,
     String? imageUrl,
+    int? skipForwardTimeInMilliseconds,
+    int? skipBackwardTimeInMilliseconds,
     String? notificationChannelName,
     Duration? overriddenDuration,
     String? licenseUrl,
