@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
@@ -199,6 +200,9 @@ class _BetterPlayerMaterialControlsState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    if(_controlsConfiguration.showExitButton)
+                      _buildExitButton(),
+                    const Spacer(),
                     if (_controlsConfiguration.enablePip)
                       _buildPipButtonWrapperWidget(
                           controlsNotVisible, _onPlayerHide)
@@ -731,8 +735,18 @@ class _BetterPlayerMaterialControlsState
     }
 
     return CircularProgressIndicator(
-      valueColor:
-          AlwaysStoppedAnimation<Color>(_controlsConfiguration.loadingColor),
+      valueColor: AlwaysStoppedAnimation<Color>(_controlsConfiguration.loadingColor),
     );
   }
+
+  Widget _buildExitButton() => GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          _betterPlayerController!.postEvent(BetterPlayerEvent(BetterPlayerEventType.close));
+        },
+        child: Padding(
+          padding: EdgeInsets.only(left: 16.0, top: 8.0, bottom: 8.0),
+          child: Center(child: Icon(_controlsConfiguration.exitIcon)),
+        ),
+      );
 }
