@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 ///of controls. Used in BetterPlayerConfiguration. Configuration applies only
 ///for player displayed in app, not in notification or PiP mode.
 class BetterPlayerControlsConfiguration {
+  ///Icon of exit button
+  final IconData exitIcon;
+
   ///Color of the control bars
   final Color controlBarColor;
 
@@ -116,6 +119,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to show/hide audio tracks
   final bool enableAudioTracks;
 
+  ///Flag used to show/hide exit button
+  final bool showExitButton;
+
   ///Custom items of overflow menu
   final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
 
@@ -216,7 +222,9 @@ class BetterPlayerControlsConfiguration {
     this.backgroundColor = Colors.black,
     this.overflowModalColor = Colors.white,
     this.overflowModalTextColor = Colors.black,
-    this.enableReplayButton = true
+    this.enableReplayButton = true,
+    this.exitIcon = Icons.close,
+    this.showExitButton = false,
   });
 
   factory BetterPlayerControlsConfiguration.white() {
