@@ -8,6 +8,7 @@ import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -465,6 +466,7 @@ class BetterPlayerController {
           licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
           certificateUrl:
               _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
+          drmType: _betterPlayerDataSource?.drmConfiguration?.drmType,
           drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
           activityName:
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
@@ -1246,6 +1248,7 @@ class BetterPlayerController {
       sourceType: DataSourceType.network,
       uri: betterPlayerDataSource.url,
       useCache: true,
+      drmType: betterPlayerDataSource.drmConfiguration?.drmType,
       headers: betterPlayerDataSource.headers,
       maxCacheSize: cacheConfig.maxCacheSize,
       maxCacheFileSize: cacheConfig.maxCacheFileSize,

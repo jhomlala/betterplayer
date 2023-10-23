@@ -6,6 +6,7 @@
 import 'dart:async';
 
 // Flutter imports:
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -223,6 +224,7 @@ class DataSource {
     this.overriddenDuration,
     this.licenseUrl,
     this.certificateUrl,
+    this.drmType,
     this.drmHeaders,
     this.activityName,
     this.clearKey,
@@ -296,6 +298,8 @@ class DataSource {
   final String? licenseUrl;
 
   final String? certificateUrl;
+
+  final BetterPlayerDrmType? drmType;
 
   final Map<String, String>? drmHeaders;
 

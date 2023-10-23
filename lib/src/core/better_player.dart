@@ -3,6 +3,7 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -149,9 +150,11 @@ class _BetterPlayerState extends State<BetterPlayer>
       _isFullScreen = true;
       controller
           .postEvent(BetterPlayerEvent(BetterPlayerEventType.openFullscreen));
-      await _pushFullScreenWidget(context);
+      //TODO for Web do nothing native video Elemet Api should be used for now
+      kIsWeb ? null : await _pushFullScreenWidget(context);
     } else if (_isFullScreen) {
-      Navigator.of(context, rootNavigator: true).pop();
+      //TODO for Web do nothing native video Elemet Api should be used for now
+      kIsWeb ? null : Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
       controller
           .postEvent(BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
