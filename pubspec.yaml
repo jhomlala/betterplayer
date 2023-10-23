@@ -25,6 +25,7 @@ dependencies:
   better_player_web:
     git: https://github.com/SairamVemula/better_player_web.git
     # path: ../better_player_web
+  universal_io: ^2.2.2
 
 dev_dependencies:
   lint: ^1.8.2
