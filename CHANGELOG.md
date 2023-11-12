@@ -2,6 +2,7 @@
 * Updated ExoPlayer version to 2.19.1
 * Updated Kotlin version to 1.8.22.
 * Replaced wakelock with wakelock_plus.
+* Updated dependencies.
 
 ## 0.0.83
 * Updated dependencies
