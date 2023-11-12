@@ -26,20 +26,16 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
 
-    lintOptions {
-        disable 'InvalidPackage'
-    }
-
     defaultConfig {
         applicationId "com.jhomlala.better_player_example"
         minSdkVersion 16
-        targetSdkVersion 31
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         multiDexEnabled true
@@ -50,6 +46,9 @@ android {
         release {
             signingConfig signingConfigs.debug
         }
+    }
+    lint {
+        disable 'InvalidPackage'
     }
 }
 

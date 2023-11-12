@@ -1,3 +1,7 @@
+## 0.1.0
+* Updated ExoPlayer version to 2.19.1
+* Updated Kotlin version to 1.8.22.
+
 ## 0.0.83
 * Updated dependencies
 * Fixed Flutter 3.0 issues

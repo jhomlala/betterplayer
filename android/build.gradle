@@ -2,13 +2,13 @@ group 'com.jhomlala.better_player.better_player'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.exoPlayerVersion = "2.17.1"
+    ext.exoPlayerVersion = "2.19.1"
     ext.lifecycleVersion = "2.4.0-beta01"
     ext.annotationVersion = "1.2.0"
     ext.workVersion = "2.7.0"
     ext.coreVersion = "1.6.0"
     ext.gradleVersion = "7.0.2"
-    ext.kotlinVersion = "1.5.31"
+    ext.kotlinVersion = "1.8.22"
 
     repositories {
         google()
@@ -32,7 +32,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -68,4 +68,5 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    implementation 'androidx.media3:media3-common:1.1.1'
 }
