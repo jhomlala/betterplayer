@@ -263,13 +263,18 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
       if (definedName != null && definedName.length > 0) {
         tracksParameters[definedName] = track;
       } else {
-        if (track.width != 0 && track.height != 0 && track.bitrate != 0) {
+        if (track.width == 0 || track.height == 0) {
+          if ((track.bitrate ?? 0) > 0) {
+            String offeredName = BetterPlayerUtils.formatBitrate(track.bitrate ?? 0);
+            tracksParameters[offeredName] = track;
+          }
+        } else {
           String offeredName = _buildQualityNameWithResolutionOnlyHeader(track);
           if (tracksParameters.containsKey(offeredName)) {
             final BetterPlayerAsmsTrack firstTrack = tracksParameters[offeredName]!;
             tracksParameters.remove(offeredName);
-            tracksParameters[_buildQualityNameHeaderWithResolutionAndBitrate(firstTrack)];
-            tracksParameters[_buildQualityNameHeaderWithResolutionAndBitrate(track)];
+            tracksParameters[_buildQualityNameWithResolutionOnlyHeader(firstTrack)];
+            tracksParameters[_buildQualityNameWithResolutionOnlyHeader(track)];
           } else {
             tracksParameters[offeredName] = track;
           }
@@ -304,12 +309,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget> extends State
   }
 
   String _buildQualityNameWithResolutionOnlyHeader(BetterPlayerAsmsTrack track) => "${track.width}x${track.height}";
-
-  String _buildQualityNameHeaderWithResolutionAndBitrate(BetterPlayerAsmsTrack track) =>
-      "${track.width}x${track.height}  ${track.bitrate}";
-
-  String _buildAutoQualityNameHeaderWithBitrate(BetterPlayerAsmsTrack track) =>
-      "${betterPlayerController!.translations.qualityAuto} ${track.bitrate}";
 
   Widget _buildTrackRow(BetterPlayerAsmsTrack track, final String name) {
     final BetterPlayerAsmsTrack? selectedTrack = betterPlayerController!.betterPlayerAsmsTrack;
