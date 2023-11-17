@@ -1,10 +1,13 @@
 import 'dart:async';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 
 class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
+  final bool isContentLive;
+
   BetterPlayerMaterialVideoProgressBar(
     this.controller,
     this.betterPlayerController, {
@@ -14,7 +17,9 @@ class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
     this.onDragUpdate,
     this.onTapDown,
     Key? key,
-  })  : colors = colors ?? BetterPlayerProgressColors(),
+  })
+      : colors = colors ?? BetterPlayerProgressColors(),
+        isContentLive = betterPlayerController?.isLiveStream() ?? false,
         super(key: key);
 
   final VideoPlayerController? controller;
@@ -31,8 +36,7 @@ class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
   }
 }
 
-class _VideoProgressBarState
-    extends State<BetterPlayerMaterialVideoProgressBar> {
+class _VideoProgressBarState extends State<BetterPlayerMaterialVideoProgressBar> {
   _VideoProgressBarState() {
     listener = () {
       if (mounted) setState(() {});
@@ -44,8 +48,7 @@ class _VideoProgressBarState
 
   VideoPlayerController? get controller => widget.controller;
 
-  BetterPlayerController? get betterPlayerController =>
-      widget.betterPlayerController;
+  BetterPlayerController? get betterPlayerController => widget.betterPlayerController;
 
   bool shouldPlayAfterDragEnd = false;
   Duration? lastSeek;
@@ -66,8 +69,8 @@ class _VideoProgressBarState
 
   @override
   Widget build(BuildContext context) {
-    final bool enableProgressBarDrag = betterPlayerController!
-        .betterPlayerConfiguration.controlsConfiguration.enableProgressBarDrag;
+    final bool enableProgressBarDrag =
+        betterPlayerController!.betterPlayerConfiguration.controlsConfiguration.enableProgressBarDrag;
 
     return GestureDetector(
       onHorizontalDragStart: (DragStartDetails details) {
@@ -129,6 +132,7 @@ class _VideoProgressBarState
             painter: _ProgressBarPainter(
               _getValue(),
               widget.colors,
+              widget.isContentLive,
             ),
           ),
         ),
@@ -185,10 +189,11 @@ class _VideoProgressBarState
 }
 
 class _ProgressBarPainter extends CustomPainter {
-  _ProgressBarPainter(this.value, this.colors);
+  _ProgressBarPainter(this.value, this.colors, this.isContentLive);
 
   VideoPlayerValue value;
   BetterPlayerProgressColors colors;
+  bool isContentLive;
 
   @override
   bool shouldRepaint(CustomPainter painter) {
@@ -212,47 +217,79 @@ class _ProgressBarPainter extends CustomPainter {
     if (!value.initialized) {
       return;
     }
-    double playedPartPercent =
-        value.position.inMilliseconds / value.duration!.inMilliseconds;
-    if (playedPartPercent.isNaN) {
-      playedPartPercent = 0;
-    }
-    final double playedPart =
-        playedPartPercent > 1 ? size.width : playedPartPercent * size.width;
-    for (final DurationRange range in value.buffered) {
-      double start = range.startFraction(value.duration!) * size.width;
-      if (start.isNaN) {
-        start = 0;
-      }
-      double end = range.endFraction(value.duration!) * size.width;
-      if (end.isNaN) {
-        end = 0;
-      }
+
+    if (isContentLive) {
+      final double liveProgress = _getLiveContentProgress(size);
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromPoints(
-            Offset(start, size.height / 2),
-            Offset(end, size.height / 2 + height),
+            Offset(size.width, size.height / 2),
+            Offset(size.width - size.width * liveProgress, size.height / 2 + height),
           ),
           const Radius.circular(4.0),
         ),
-        colors.bufferedPaint,
+        colors.playedPaint,
+      );
+
+      final double indicatorPosition = size.width - size.width * liveProgress;
+      canvas.drawCircle(
+        Offset(indicatorPosition, size.height / 2 + height / 2),
+        height * 3,
+        colors.handlePaint,
+      );
+    } else {
+      double playedPartPercent = value.position.inMilliseconds / value.duration!.inMilliseconds;
+      if (playedPartPercent.isNaN) {
+        playedPartPercent = 0;
+      }
+      final double playedPart = playedPartPercent > 1 ? size.width : playedPartPercent * size.width;
+
+      for (final DurationRange range in value.buffered) {
+        double start = range.startFraction(value.duration!) * size.width;
+        if (start.isNaN) {
+          start = 0;
+        }
+        double end = range.endFraction(value.duration!) * size.width;
+        if (end.isNaN) {
+          end = 0;
+        }
+        canvas.drawRRect(
+          RRect.fromRectAndRadius(
+            Rect.fromPoints(
+              Offset(start, size.height / 2),
+              Offset(end, size.height / 2 + height),
+            ),
+            const Radius.circular(4.0),
+          ),
+          colors.bufferedPaint,
+        );
+      }
+
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromPoints(
+            Offset(0.0, size.height / 2),
+            Offset(playedPart, size.height / 2 + height),
+          ),
+          const Radius.circular(4.0),
+        ),
+        colors.playedPaint,
+      );
+
+      canvas.drawCircle(
+        Offset(playedPart, size.height / 2 + height / 2),
+        height * 3,
+        colors.handlePaint,
       );
     }
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromPoints(
-          Offset(0.0, size.height / 2),
-          Offset(playedPart, size.height / 2 + height),
-        ),
-        const Radius.circular(4.0),
-      ),
-      colors.playedPaint,
-    );
-    canvas.drawCircle(
-      Offset(playedPart, size.height / 2 + height / 2),
-      height * 3,
-      colors.handlePaint,
-    );
+  }
+
+  double _getLiveContentProgress(Size size) {
+    final double tapPosition =
+        size.width - size.width * (value.position.inMilliseconds / value.duration!.inMilliseconds);
+    final double liveProgress = tapPosition / size.width;
+
+    //Ensure that the liveProgress is within the valid range <0, 1>
+    return liveProgress.clamp(0.0, 1.0);
   }
 }

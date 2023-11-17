@@ -1,13 +1,8 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
-import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
-import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
-import 'package:better_player/src/controls/better_player_progress_colors.dart';
-import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 // Flutter imports:
@@ -294,34 +289,15 @@ class _BetterPlayerMaterialControlsState
               flex: 75,
               child: Row(
                 children: [
-                  if (_controlsConfiguration.enablePlayPause)
-                    _buildPlayPause(_controller!)
-                  else
-                    const SizedBox(),
-                  if (_betterPlayerController!.isLiveStream())
-                    _buildLiveWidget()
-                  else
-                    _controlsConfiguration.enableProgressText
-                        ? Expanded(child: _buildPosition())
-                        : const SizedBox(),
+                  if (_controlsConfiguration.enablePlayPause) _buildPlayPause(_controller!) else const SizedBox(),
+                  _controlsConfiguration.enableProgressText ? Expanded(child: _buildPosition()) : const SizedBox(),
                   const Spacer(),
-                  if (_controlsConfiguration.enableMute)
-                    _buildMuteButton(_controller)
-                  else
-                    const SizedBox(),
-                  if (_controlsConfiguration.enableFullscreen)
-                    _buildExpandButton()
-                  else
-                    const SizedBox(),
+                  if (_controlsConfiguration.enableMute) _buildMuteButton(_controller) else const SizedBox(),
+                  if (_controlsConfiguration.enableFullscreen) _buildExpandButton() else const SizedBox(),
                 ],
               ),
             ),
-            if (_betterPlayerController!.isLiveStream())
-              const SizedBox()
-            else
-              _controlsConfiguration.enableProgressBar
-                  ? _buildProgressBar()
-                  : const SizedBox(),
+            _controlsConfiguration.enableProgressBar ? _buildProgressBar() : const SizedBox(),
           ],
         ),
       ),
@@ -382,16 +358,14 @@ class _BetterPlayerMaterialControlsState
       color: _controlsConfiguration.controlBarColor,
       width: double.infinity,
       height: double.infinity,
-      child: _betterPlayerController?.isLiveStream() == true
-          ? const SizedBox()
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                if (_controlsConfiguration.enableSkips) Expanded(child: _buildSkipButton()) else const SizedBox(),
-                if (_controlsConfiguration.enableReplayButton) Expanded(child: _buildReplayButton(_controller!)),
-                if (_controlsConfiguration.enableSkips) Expanded(child: _buildForwardButton()) else const SizedBox(),
-              ],
-            ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          if (_controlsConfiguration.enableSkips) Expanded(child: _buildSkipButton()) else const SizedBox(),
+          if (_controlsConfiguration.enableReplayButton) Expanded(child: _buildReplayButton(_controller!)),
+          if (_controlsConfiguration.enableSkips) Expanded(child: _buildForwardButton()) else const SizedBox(),
+        ],
+      ),
     );
   }
 
@@ -683,8 +657,7 @@ class _BetterPlayerMaterialControlsState
           isLoading(_controller!.value)) {
         setState(() {
           _latestValue = _controller!.value;
-          if (isVideoFinished(_latestValue) &&
-              _betterPlayerController?.isLiveStream() == false) {
+          if (isVideoFinished(_latestValue)) {
             changePlayerControlsNotVisible(false);
           }
         });
