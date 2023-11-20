@@ -657,7 +657,7 @@ class _BetterPlayerMaterialControlsState
           isLoading(_controller!.value)) {
         setState(() {
           _latestValue = _controller!.value;
-          if (isVideoFinished(_latestValue)) {
+          if (isVideoFinished(_latestValue) && _betterPlayerController?.isLiveStream() == false) {
             changePlayerControlsNotVisible(false);
           }
         });
