@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
@@ -572,7 +573,7 @@ class BetterPlayerController {
       }
     }
 
-    final startAt = betterPlayerConfiguration.startAt;
+    final startAt = isLiveStream() ? videoPlayerController!.value.duration : betterPlayerConfiguration.startAt;
     if (startAt != null) {
       seekTo(startAt);
     }
@@ -645,6 +646,7 @@ class BetterPlayerController {
 
   ///Move player to specific position/moment of the video.
   Future<void> seekTo(Duration moment) async {
+    BetterPlayerUtils.log("seekTo (s): ${moment.inSeconds}");
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
@@ -654,8 +656,8 @@ class BetterPlayerController {
 
     await videoPlayerController!.seekTo(moment);
 
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo,
-        parameters: <String, dynamic>{_durationParameter: moment}));
+    _postEvent(
+        BetterPlayerEvent(BetterPlayerEventType.seekTo, parameters: <String, dynamic>{_durationParameter: moment}));
 
     final Duration? currentDuration = videoPlayerController!.value.duration;
     if (currentDuration == null) {
