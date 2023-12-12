@@ -76,6 +76,10 @@ class BetterPlayerDataSource {
   ///platform.
   final BetterPlayerBufferingConfiguration bufferingConfiguration;
 
+  ///Defines content expected from OTT DASH streaming.
+  ///Would be overridden if manifests declares mimeType tag inside AdaptationSet
+  final ExpectedContentType expectedContentType;
+
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -89,8 +93,7 @@ class BetterPlayerDataSource {
     this.asmsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
-    this.notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(
+    this.notificationConfiguration = const BetterPlayerNotificationConfiguration(
       showNotification: false,
     ),
     this.overriddenDuration,
@@ -99,11 +102,10 @@ class BetterPlayerDataSource {
     this.drmConfiguration,
     this.placeholder,
     this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
+    this.expectedContentType = ExpectedContentType.video,
   }) : assert(
-            (type == BetterPlayerDataSourceType.network ||
-                    type == BetterPlayerDataSourceType.file) ||
-                (type == BetterPlayerDataSourceType.memory &&
-                    bytes?.isNotEmpty == true),
+            (type == BetterPlayerDataSourceType.network || type == BetterPlayerDataSourceType.file) ||
+                (type == BetterPlayerDataSourceType.memory && bytes?.isNotEmpty == true),
             "Url can't be null in network or file data source | bytes can't be null when using memory data source");
 
   ///Factory method to build network data source which uses url as data source
@@ -124,28 +126,28 @@ class BetterPlayerDataSource {
     BetterPlayerVideoFormat? videoFormat,
     BetterPlayerDrmConfiguration? drmConfiguration,
     Widget? placeholder,
-    BetterPlayerBufferingConfiguration bufferingConfiguration =
-        const BetterPlayerBufferingConfiguration(),
-  }) {
-    return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      url,
-      subtitles: subtitles,
-      liveStream: liveStream,
-      headers: headers,
-      useAsmsSubtitles: useAsmsSubtitles,
-      useAsmsTracks: useAsmsTracks,
-      useAsmsAudioTracks: useAsmsAudioTracks,
-      resolutions: qualities,
-      cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration,
-      overriddenDuration: overriddenDuration,
-      videoFormat: videoFormat,
-      drmConfiguration: drmConfiguration,
-      placeholder: placeholder,
-      bufferingConfiguration: bufferingConfiguration,
-    );
-  }
+    BetterPlayerBufferingConfiguration bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
+    ExpectedContentType expectedContentType = ExpectedContentType.video,
+  }) =>
+      BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network,
+        url,
+        subtitles: subtitles,
+        liveStream: liveStream,
+        headers: headers,
+        useAsmsSubtitles: useAsmsSubtitles,
+        useAsmsTracks: useAsmsTracks,
+        useAsmsAudioTracks: useAsmsAudioTracks,
+        resolutions: qualities,
+        cacheConfiguration: cacheConfiguration,
+        notificationConfiguration: notificationConfiguration,
+        overriddenDuration: overriddenDuration,
+        videoFormat: videoFormat,
+        drmConfiguration: drmConfiguration,
+        placeholder: placeholder,
+        bufferingConfiguration: bufferingConfiguration,
+        expectedContentType: expectedContentType,
+      );
 
   ///Factory method to build file data source which uses url as data source.
   ///Bytes parameter is not used in this data source.
@@ -159,21 +161,22 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
-  }) {
-    return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.file,
-      url,
-      subtitles: subtitles,
-      useAsmsSubtitles: useAsmsSubtitles,
-      useAsmsTracks: useAsmsTracks,
-      resolutions: qualities,
-      cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration =
-          const BetterPlayerNotificationConfiguration(showNotification: false),
-      overriddenDuration: overriddenDuration,
-      placeholder: placeholder,
-    );
-  }
+    ExpectedContentType expectedContentType = ExpectedContentType.video,
+  }) =>
+      BetterPlayerDataSource(
+        BetterPlayerDataSourceType.file,
+        url,
+        subtitles: subtitles,
+        useAsmsSubtitles: useAsmsSubtitles,
+        useAsmsTracks: useAsmsTracks,
+        resolutions: qualities,
+        cacheConfiguration: cacheConfiguration,
+        notificationConfiguration: notificationConfiguration =
+            const BetterPlayerNotificationConfiguration(showNotification: false),
+        overriddenDuration: overriddenDuration,
+        placeholder: placeholder,
+        expectedContentType: expectedContentType,
+      );
 
   ///Factory method to build network data source which uses bytes as data source.
   ///Url parameter is not used in this data source.
@@ -188,23 +191,24 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
-  }) {
-    return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.memory,
-      "",
-      videoExtension: videoExtension,
-      bytes: bytes,
-      subtitles: subtitles,
-      useAsmsSubtitles: useAsmsSubtitles,
-      useAsmsTracks: useAsmsTracks,
-      resolutions: qualities,
-      cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration =
-          const BetterPlayerNotificationConfiguration(showNotification: false),
-      overriddenDuration: overriddenDuration,
-      placeholder: placeholder,
-    );
-  }
+    ExpectedContentType expectedContentType = ExpectedContentType.video,
+  }) =>
+      BetterPlayerDataSource(
+        BetterPlayerDataSourceType.memory,
+        "",
+        videoExtension: videoExtension,
+        bytes: bytes,
+        subtitles: subtitles,
+        useAsmsSubtitles: useAsmsSubtitles,
+        useAsmsTracks: useAsmsTracks,
+        resolutions: qualities,
+        cacheConfiguration: cacheConfiguration,
+        notificationConfiguration: notificationConfiguration =
+            const BetterPlayerNotificationConfiguration(showNotification: false),
+        overriddenDuration: overriddenDuration,
+        placeholder: placeholder,
+        expectedContentType: expectedContentType,
+      );
 
   BetterPlayerDataSource copyWith({
     BetterPlayerDataSourceType? type,
@@ -225,30 +229,30 @@ class BetterPlayerDataSource {
     String? videoExtension,
     BetterPlayerDrmConfiguration? drmConfiguration,
     Widget? placeholder,
-    BetterPlayerBufferingConfiguration? bufferingConfiguration =
-        const BetterPlayerBufferingConfiguration(),
-  }) {
-    return BetterPlayerDataSource(
-      type ?? this.type,
-      url ?? this.url,
-      bytes: bytes ?? this.bytes,
-      subtitles: subtitles ?? this.subtitles,
-      liveStream: liveStream ?? this.liveStream,
-      headers: headers ?? this.headers,
-      useAsmsSubtitles: useAsmsSubtitles ?? this.useAsmsSubtitles,
-      useAsmsTracks: useAsmsTracks ?? this.useAsmsTracks,
-      useAsmsAudioTracks: useAsmsAudioTracks ?? this.useAsmsAudioTracks,
-      resolutions: resolutions ?? this.resolutions,
-      cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
-      notificationConfiguration:
-          notificationConfiguration ?? this.notificationConfiguration,
-      overriddenDuration: overriddenDuration ?? this.overriddenDuration,
-      videoFormat: videoFormat ?? this.videoFormat,
-      videoExtension: videoExtension ?? this.videoExtension,
-      drmConfiguration: drmConfiguration ?? this.drmConfiguration,
-      placeholder: placeholder ?? this.placeholder,
-      bufferingConfiguration:
-          bufferingConfiguration ?? this.bufferingConfiguration,
-    );
-  }
+    BetterPlayerBufferingConfiguration? bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
+    ExpectedContentType? expectedContentType,
+  }) =>
+      BetterPlayerDataSource(
+        type ?? this.type,
+        url ?? this.url,
+        bytes: bytes ?? this.bytes,
+        subtitles: subtitles ?? this.subtitles,
+        liveStream: liveStream ?? this.liveStream,
+        headers: headers ?? this.headers,
+        useAsmsSubtitles: useAsmsSubtitles ?? this.useAsmsSubtitles,
+        useAsmsTracks: useAsmsTracks ?? this.useAsmsTracks,
+        useAsmsAudioTracks: useAsmsAudioTracks ?? this.useAsmsAudioTracks,
+        resolutions: resolutions ?? this.resolutions,
+        cacheConfiguration: cacheConfiguration ?? this.cacheConfiguration,
+        notificationConfiguration: notificationConfiguration ?? this.notificationConfiguration,
+        overriddenDuration: overriddenDuration ?? this.overriddenDuration,
+        videoFormat: videoFormat ?? this.videoFormat,
+        videoExtension: videoExtension ?? this.videoExtension,
+        drmConfiguration: drmConfiguration ?? this.drmConfiguration,
+        placeholder: placeholder ?? this.placeholder,
+        bufferingConfiguration: bufferingConfiguration ?? this.bufferingConfiguration,
+        expectedContentType: expectedContentType ?? this.expectedContentType,
+      );
 }
+
+enum ExpectedContentType { video, audioOnly }
