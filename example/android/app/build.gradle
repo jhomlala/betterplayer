@@ -38,7 +38,7 @@ android {
 
     defaultConfig {
         applicationId "com.jhomlala.better_player_example"
-        minSdkVersion 16
+        minSdkVersion flutter.minSdkVersion
         targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
