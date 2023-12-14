@@ -65,12 +65,12 @@ class _BetterPlayerMaterialControlsState
   ///Builds main widget of the controls.
   Widget _buildMainWidget() {
     _wasLoading = isLoading(_latestValue);
-    if (_latestValue?.hasError == true) {
-      return Container(
-        color: Colors.black,
-        child: _buildErrorWidget(),
-      );
-    }
+    // if (_latestValue?.hasError == true) {
+    //   return Container(
+    //     color: Colors.black,
+    //     child: _buildErrorWidget(),
+    //   );
+    // }
     return GestureDetector(
       onTap: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
@@ -108,6 +108,13 @@ class _BetterPlayerMaterialControlsState
             ),
             Positioned(bottom: 0, left: 0, right: 0, child: _buildBottomBar()),
             _buildNextVideoWidget(),
+            _latestValue?.hasError == true
+                ? Center(
+                    child: Container(
+                    color: Colors.black,
+                    child: _buildErrorWidget(),
+                  ))
+                : SizedBox(),
           ],
         ),
       ),

@@ -65,12 +65,12 @@ class _BetterPlayerCupertinoControlsState
   Widget _buildMainWidget() {
     _betterPlayerController = BetterPlayerController.of(context);
 
-    if (_latestValue?.hasError == true) {
-      return Container(
-        color: Colors.black,
-        child: _buildErrorWidget(),
-      );
-    }
+    // if (_latestValue?.hasError == true) {
+    //   return Container(
+    //     color: Colors.black,
+    //     child: _buildErrorWidget(),
+    //   );
+    // }
 
     _betterPlayerController = BetterPlayerController.of(context);
     _controller = _betterPlayerController!.videoPlayerController;
@@ -91,10 +91,22 @@ class _BetterPlayerCupertinoControlsState
         barHeight,
         buttonPadding,
       ),
-      if (_wasLoading)
-        Expanded(child: Center(child: _buildLoadingWidget()))
-      else
-        _buildHitArea(),
+      Stack(
+        fit: StackFit.expand,
+        children: [
+          if (_wasLoading)
+            Center(child: _buildLoadingWidget())
+          else
+            _buildHitArea(),
+          _latestValue?.hasError == true
+              ? Center(
+                  child: Container(
+                  color: Colors.black,
+                  child: _buildErrorWidget(),
+                ))
+              : SizedBox(),
+        ],
+      ),
       _buildNextVideoWidget(),
       _buildBottomBar(
         backgroundColor,
@@ -273,25 +285,23 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-  Expanded _buildHitArea() {
-    return Expanded(
-      child: GestureDetector(
-        onTap: _latestValue != null && _latestValue!.isPlaying
-            ? () {
-                if (controlsNotVisible == true) {
-                  cancelAndRestartTimer();
-                } else {
-                  _hideTimer?.cancel();
-                  changePlayerControlsNotVisible(true);
-                }
-              }
-            : () {
+  Widget _buildHitArea() {
+    return GestureDetector(
+      onTap: _latestValue != null && _latestValue!.isPlaying
+          ? () {
+              if (controlsNotVisible == true) {
+                cancelAndRestartTimer();
+              } else {
                 _hideTimer?.cancel();
-                changePlayerControlsNotVisible(false);
-              },
-        child: Container(
-          color: Colors.transparent,
-        ),
+                changePlayerControlsNotVisible(true);
+              }
+            }
+          : () {
+              _hideTimer?.cancel();
+              changePlayerControlsNotVisible(false);
+            },
+      child: Container(
+        color: Colors.transparent,
       ),
     );
   }
