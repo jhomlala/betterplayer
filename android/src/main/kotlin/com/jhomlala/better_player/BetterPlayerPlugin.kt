@@ -4,6 +4,7 @@
 package com.jhomlala.better_player
 
 import android.app.Activity
+import android.app.AppOpsManager
 import android.app.PictureInPictureParams
 import android.content.Context
 import android.content.pm.PackageManager
@@ -13,19 +14,17 @@ import android.os.Looper
 import android.util.Log
 import android.util.LongSparseArray
 import com.jhomlala.better_player.BetterPlayerCache.releaseCache
-import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.embedding.engine.plugins.activity.ActivityAware
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.loader.FlutterLoader
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.EventChannel
+import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.BinaryMessenger
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.view.TextureRegistry
-import java.lang.Exception
-import java.util.HashMap
 
 /**
  * Android platform implementation of the VideoPlayerPlugin.
@@ -400,19 +399,34 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         return defaultValue
     }
 
-
-    private fun isPictureInPictureSupported(): Boolean {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && activity != null && activity!!.packageManager
+    private fun isPictureInPictureSupported(): Boolean =
+        activity != null && activity!!.packageManager
             .hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+                && hasPictureInPicturePermission(activity!!)
+
+    private fun hasPictureInPicturePermission(context: Context): Boolean {
+        val appOps = context.getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            appOps.unsafeCheckOpNoThrow(
+                AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+                android.os.Process.myUid(),
+                context.packageName
+            ) == AppOpsManager.MODE_ALLOWED
+        } else {
+            appOps.checkOpNoThrow(
+                AppOpsManager.OPSTR_PICTURE_IN_PICTURE,
+                android.os.Process.myUid(),
+                context.packageName
+            ) == AppOpsManager.MODE_ALLOWED
+        }
     }
 
     private fun enablePictureInPicture(player: BetterPlayer) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            player.setupMediaSession(flutterState!!.applicationContext)
-            activity!!.enterPictureInPictureMode(PictureInPictureParams.Builder().build())
-            startPictureInPictureListenerTimer(player)
-            player.onPictureInPictureStatusChanged(true)
-        }
+        if (!isPictureInPictureSupported()) return
+        player.setupMediaSession(flutterState!!.applicationContext)
+        activity!!.enterPictureInPictureMode(PictureInPictureParams.Builder().build())
+        startPictureInPictureListenerTimer(player)
+        player.onPictureInPictureStatusChanged(true)
     }
 
     private fun disablePictureInPicture(player: BetterPlayer) {
@@ -423,19 +437,17 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     }
 
     private fun startPictureInPictureListenerTimer(player: BetterPlayer) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            pipHandler = Handler(Looper.getMainLooper())
-            pipRunnable = Runnable {
-                if (activity!!.isInPictureInPictureMode) {
-                    pipHandler!!.postDelayed(pipRunnable!!, 100)
-                } else {
-                    player.onPictureInPictureStatusChanged(false)
-                    player.disposeMediaSession()
-                    stopPipHandler()
-                }
+        pipHandler = Handler(Looper.getMainLooper())
+        pipRunnable = Runnable {
+            if (activity!!.isInPictureInPictureMode && hasPictureInPicturePermission(activity!!)) {
+                pipHandler!!.postDelayed(pipRunnable!!, 100)
+            } else {
+                player.onPictureInPictureStatusChanged(false)
+                player.disposeMediaSession()
+                stopPipHandler()
             }
-            pipHandler!!.post(pipRunnable!!)
         }
+        pipHandler!!.post(pipRunnable!!)
     }
 
     private fun dispose(player: BetterPlayer, textureId: Long) {

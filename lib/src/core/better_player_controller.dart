@@ -1070,17 +1070,21 @@ class BetterPlayerController {
       throw StateError("The data source has not been initialized");
     }
 
-    final bool isPipSupported =
-        (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
+    final bool isPipSupported = (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
 
-    if (isPipSupported) {
+    final bool canEnablePictureInPicture = (isPlaying() ?? false) &&
+        (isVideoInitialized() ?? false) &&
+        (videoPlayerController?.value.duration != null && videoPlayerController!.value.duration!.inMilliseconds >= 0) &&
+        ((await videoPlayerController?.position)?.inMilliseconds ?? 0) > 0 &&
+        !(videoPlayerController?.value.hasError ?? true);
+
+    if (isPipSupported && canEnablePictureInPicture) {
       _wasInFullScreenBeforePiP = _isFullScreen;
       _wasControlsEnabledBeforePiP = _controlsEnabled;
       setControlsEnabled(false);
       if (Platform.isAndroid) {
         _wasInFullScreenBeforePiP = _isFullScreen;
-        await videoPlayerController?.enablePictureInPicture(
-            left: 0, top: 0, width: 0, height: 0);
+        await videoPlayerController?.enablePictureInPicture(left: 0, top: 0, width: 0, height: 0);
         enterFullScreen();
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
         return;
@@ -1106,7 +1110,7 @@ class BetterPlayerController {
       }
     } else {
       BetterPlayerUtils.log(
-          "Picture in picture is not supported in this device. If you're "
+          "Picture in picture is not supported in this device or video has not started playing. If you're "
           "using Android, please check if you're using activity v2 "
           "embedding.");
     }
