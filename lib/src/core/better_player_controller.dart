@@ -573,7 +573,15 @@ class BetterPlayerController {
       }
     }
 
-    final startAt = isLiveStream() ? videoPlayerController!.value.duration : betterPlayerConfiguration.startAt;
+    Duration? startAt;
+    if (isLiveStream()) {
+      startAt = videoPlayerController?.value.duration;
+      if (startAt != null && startAt.inSeconds > 3) {
+        startAt = startAt - const Duration(seconds: 3);
+      }
+    } else {
+      startAt = betterPlayerConfiguration.startAt;
+    }
     if (startAt != null) {
       seekTo(startAt);
     }
