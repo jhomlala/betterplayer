@@ -471,7 +471,7 @@ class BetterPlayerController {
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
           clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
           videoExtension: _betterPlayerDataSource!.videoExtension,
-        );
+          isLive: isLiveStream());
 
         break;
       case BetterPlayerDataSourceType.file:
@@ -573,17 +573,11 @@ class BetterPlayerController {
       }
     }
 
-    Duration? startAt;
-    if (isLiveStream()) {
-      startAt = videoPlayerController?.value.duration;
-      if (startAt != null && startAt.inSeconds > 3) {
-        startAt = startAt - const Duration(seconds: 3);
+    if (!isLiveStream()) {
+      Duration? startAt = betterPlayerConfiguration.startAt;
+      if (startAt != null) {
+        seekTo(startAt);
       }
-    } else {
-      startAt = betterPlayerConfiguration.startAt;
-    }
-    if (startAt != null) {
-      seekTo(startAt);
     }
   }
 
