@@ -227,6 +227,7 @@ class DataSource {
     this.activityName,
     this.clearKey,
     this.videoExtension,
+    this.isLive = false,
   }) : assert(uri == null || asset == null);
 
   /// Describes the type of data source this [VideoPlayerController]
@@ -323,6 +324,8 @@ class DataSource {
 
     return result!;
   }
+
+  final bool isLive;
 
   @override
   String toString() {

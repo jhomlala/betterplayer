@@ -9,7 +9,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.MediaMetadataCompat
@@ -122,13 +121,15 @@ internal class BetterPlayer(
         licenseUrl: String?,
         drmHeaders: Map<String, String>?,
         cacheKey: String?,
-        clearKey: String?
+        clearKey: String?,
+        isLive: Boolean
     ) {
         this.key = key
         isInitialized = false
+
         val uri = Uri.parse(dataSource)
-        var dataSourceFactory: DataSource.Factory?
         val userAgent = getUserAgent(headers)
+
         if (licenseUrl != null && licenseUrl.isNotEmpty()) {
             val httpMediaDrmCallback =
                 HttpMediaDrmCallback(licenseUrl, DefaultHttpDataSource.Factory())
@@ -137,62 +138,64 @@ internal class BetterPlayer(
                     httpMediaDrmCallback.setKeyRequestProperty(drmKey, drmValue)
                 }
             }
-            if (Util.SDK_INT < 18) {
-                Log.e(TAG, "Protected content not supported on API levels below 18")
-                drmSessionManager = null
-            } else {
-                val drmSchemeUuid = Util.getDrmUuid("widevine")
-                if (drmSchemeUuid != null) {
-                    drmSessionManager = DefaultDrmSessionManager.Builder()
-                        .setUuidAndExoMediaDrmProvider(
-                            drmSchemeUuid
-                        ) { uuid: UUID? ->
-                            try {
-                                val mediaDrm = FrameworkMediaDrm.newInstance(uuid!!)
-                                // Force L3.
-                                mediaDrm.setPropertyString("securityLevel", "L3")
-                                return@setUuidAndExoMediaDrmProvider mediaDrm
-                            } catch (e: UnsupportedDrmException) {
-                                return@setUuidAndExoMediaDrmProvider DummyExoMediaDrm()
-                            }
+            val drmSchemeUuid = Util.getDrmUuid("widevine")
+            if (drmSchemeUuid != null) {
+                drmSessionManager = DefaultDrmSessionManager.Builder()
+                    .setUuidAndExoMediaDrmProvider(
+                        drmSchemeUuid
+                    ) { uuid: UUID? ->
+                        try {
+                            val mediaDrm = FrameworkMediaDrm.newInstance(uuid!!)
+                            // Force L3.
+                            mediaDrm.setPropertyString("securityLevel", "L3")
+                            return@setUuidAndExoMediaDrmProvider mediaDrm
+                        } catch (e: UnsupportedDrmException) {
+                            return@setUuidAndExoMediaDrmProvider DummyExoMediaDrm()
                         }
-                        .setMultiSession(false)
-                        .build(httpMediaDrmCallback)
-                }
+                    }
+                    .setMultiSession(false)
+                    .build(httpMediaDrmCallback)
             }
         } else if (clearKey != null && clearKey.isNotEmpty()) {
-            drmSessionManager = if (Util.SDK_INT < 18) {
-                Log.e(TAG, "Protected content not supported on API levels below 18")
-                null
-            } else {
-                DefaultDrmSessionManager.Builder()
-                    .setUuidAndExoMediaDrmProvider(
-                        C.CLEARKEY_UUID,
-                        FrameworkMediaDrm.DEFAULT_PROVIDER
-                    ).build(LocalMediaDrmCallback(clearKey.toByteArray()))
-            }
+            drmSessionManager = DefaultDrmSessionManager.Builder()
+                .setUuidAndExoMediaDrmProvider(C.CLEARKEY_UUID, FrameworkMediaDrm.DEFAULT_PROVIDER)
+                .build(LocalMediaDrmCallback(clearKey.toByteArray()))
         } else {
             drmSessionManager = null
         }
+
+        var dataSourceFactory: DataSource.Factory?
         if (isHTTP(uri)) {
             dataSourceFactory = getDataSourceFactory(userAgent, headers)
             if (useCache && maxCacheSize > 0 && maxCacheFileSize > 0) {
                 dataSourceFactory = CacheDataSourceFactory(
-                    context,
-                    maxCacheSize,
-                    maxCacheFileSize,
-                    dataSourceFactory
+                    context = context,
+                    maxCacheSize = maxCacheSize,
+                    maxFileSize = maxCacheFileSize,
+                    upstreamDataSource = dataSourceFactory
                 )
             }
         } else {
             dataSourceFactory = DefaultDataSource.Factory(context)
         }
-        val mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, cacheKey, context)
+
+        val mediaSource = buildMediaSource(
+            uri = uri,
+            mediaDataSourceFactory = dataSourceFactory,
+            formatHint = formatHint,
+            cacheKey = cacheKey,
+            context = context
+        )
+
         if (overriddenDuration != 0L) {
             val clippingMediaSource = ClippingMediaSource(mediaSource, 0, overriddenDuration * 1000)
             exoPlayer?.setMediaSource(clippingMediaSource)
         } else {
             exoPlayer?.setMediaSource(mediaSource)
+        }
+
+        if (isLive) {
+            exoPlayer?.seekToDefaultPosition()
         }
         exoPlayer?.prepare()
         result.success(null)
@@ -285,19 +288,17 @@ internal class BetterPlayer(
         }
         var playerNotificationChannelName = notificationChannelName
         if (notificationChannelName == null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                val importance = NotificationManager.IMPORTANCE_LOW
-                val channel = NotificationChannel(
-                    DEFAULT_NOTIFICATION_CHANNEL,
-                    DEFAULT_NOTIFICATION_CHANNEL, importance
-                )
-                channel.description = DEFAULT_NOTIFICATION_CHANNEL
-                val notificationManager = context.getSystemService(
-                    NotificationManager::class.java
-                )
-                notificationManager.createNotificationChannel(channel)
-                playerNotificationChannelName = DEFAULT_NOTIFICATION_CHANNEL
-            }
+            val importance = NotificationManager.IMPORTANCE_LOW
+            val channel = NotificationChannel(
+                DEFAULT_NOTIFICATION_CHANNEL,
+                DEFAULT_NOTIFICATION_CHANNEL, importance
+            )
+            channel.description = DEFAULT_NOTIFICATION_CHANNEL
+            val notificationManager = context.getSystemService(
+                NotificationManager::class.java
+            )
+            notificationManager.createNotificationChannel(channel)
+            playerNotificationChannelName = DEFAULT_NOTIFICATION_CHANNEL
         }
 
         playerNotificationManager = PlayerNotificationManager.Builder(
@@ -348,7 +349,10 @@ internal class BetterPlayer(
         exoPlayerEventListener?.let { exoPlayerEventListener ->
             exoPlayer?.addListener(exoPlayerEventListener)
         }
-        exoPlayer?.seekTo(0)
+
+        if (exoPlayer?.isCurrentMediaItemLive != true) {
+            exoPlayer?.seekTo(0)
+        }
     }
 
     fun disposeRemoteNotifications() {
@@ -389,16 +393,21 @@ internal class BetterPlayer(
                 else -> -1
             }
         }
-        val mediaItemBuilder = MediaItem.Builder()
-        mediaItemBuilder.setUri(uri)
-        if (cacheKey != null && cacheKey.isNotEmpty()) {
-            mediaItemBuilder.setCustomCacheKey(cacheKey)
-        }
-        val mediaItem = mediaItemBuilder.build()
-        var drmSessionManagerProvider: DrmSessionManagerProvider? = null
-        drmSessionManager?.let { drmSessionManager ->
-            drmSessionManagerProvider = DrmSessionManagerProvider { drmSessionManager }
-        }
+
+        val mediaItem = MediaItem.Builder()
+            .setUri(uri)
+            .apply {
+                if (cacheKey != null && cacheKey.isNotEmpty()) {
+                    setCustomCacheKey(cacheKey)
+                }
+            }
+            .build()
+
+        val drmSessionManagerProvider: DrmSessionManagerProvider? =
+            drmSessionManager?.let { drmSessionManager ->
+                DrmSessionManagerProvider { drmSessionManager }
+            }
+
         return when (type) {
             C.CONTENT_TYPE_SS -> SsMediaSource.Factory(
                 DefaultSsChunkSource.Factory(mediaDataSourceFactory),
@@ -406,7 +415,7 @@ internal class BetterPlayer(
             )
                 .apply {
                     if (drmSessionManagerProvider != null) {
-                        setDrmSessionManagerProvider(drmSessionManagerProvider!!)
+                        setDrmSessionManagerProvider(drmSessionManagerProvider)
                     }
                 }
                 .createMediaSource(mediaItem)
@@ -416,14 +425,14 @@ internal class BetterPlayer(
             )
                 .apply {
                     if (drmSessionManagerProvider != null) {
-                        setDrmSessionManagerProvider(drmSessionManagerProvider!!)
+                        setDrmSessionManagerProvider(drmSessionManagerProvider)
                     }
                 }
                 .createMediaSource(mediaItem)
             C.CONTENT_TYPE_HLS -> HlsMediaSource.Factory(mediaDataSourceFactory)
                 .apply {
                     if (drmSessionManagerProvider != null) {
-                        setDrmSessionManagerProvider(drmSessionManagerProvider!!)
+                        setDrmSessionManagerProvider(drmSessionManagerProvider)
                     }
                 }
                 .createMediaSource(mediaItem)
@@ -433,7 +442,7 @@ internal class BetterPlayer(
             )
                 .apply {
                     if (drmSessionManagerProvider != null) {
-                        setDrmSessionManagerProvider(drmSessionManagerProvider!!)
+                        setDrmSessionManagerProvider(drmSessionManagerProvider)
                     }
                 }
                 .createMediaSource(mediaItem)
