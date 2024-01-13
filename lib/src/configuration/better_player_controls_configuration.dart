@@ -203,7 +203,7 @@ class BetterPlayerControlsConfiguration {
     this.enableBackButton = true,
     this.enableGestureController = true,
     this.enableVolumeSlider = true,
-    this.enableBrightnessSlider = true,
+    this.enableBrightnessSlider = false,
     this.progressBarPlayedColor = Colors.red,
     this.progressBarHandleColor = const Color.fromARGB(255, 247, 47, 33),
     this.progressBarBufferedColor = Colors.white70,
