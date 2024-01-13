@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
-import 'package:better_player/src/controls/Better_player_volume_brightness_widget.dart';
+import 'package:better_player/src/controls/Better_player_volume_brightness_material_widget.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
-import 'package:better_player/src/controls/better_player_seek_to_view_widget.dart';
+import 'package:better_player/src/controls/better_player_seek_to_view_material_widget.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/models/show_slider_values.dart';
@@ -104,27 +104,8 @@ class _BetterPlayerMaterialControlsState
       },
       onVerticalDragUpdate: _onVerticalDragUpdate,
       onVerticalDragEnd: _onVerticalDragEnd,
-      onHorizontalDragStart: (details) {
-        wasPlayong = betterPlayerController!.isPlaying() ?? false;
-        videoDuration = betterPlayerController!
-            .videoPlayerController!.value.duration!.inMilliseconds;
-        videoPosition = betterPlayerController!
-            .videoPlayerController!.value.position.inMilliseconds;
-        betterPlayerController!.pause();
-        if (volumeBrightnessViewTimer != null)
-          volumeBrightnessViewTimer!.cancel();
-      },
-      onHorizontalDragEnd: (details) {
-        if (wasPlayong) {
-          betterPlayerController!.play();
-        }
-        if (videoPosition != null)
-          betterPlayerController!
-              .seekTo(Duration(milliseconds: videoPosition ?? 0));
-        volumeBrightnessViewTimer = Timer(Duration(milliseconds: 1000), () {
-          seekToPositionValue.add(null);
-        });
-      },
+      onHorizontalDragStart: _onHorizontalDragStart,
+      onHorizontalDragEnd: _onHorizontalDragEnd,
       onHorizontalDragUpdate: _onHorizontalDragUpdate,
       child: AbsorbPointer(
         absorbing: controlsNotVisible,
@@ -142,12 +123,12 @@ class _BetterPlayerMaterialControlsState
               child: _buildTopBar(),
             ),
             Positioned(bottom: 0, left: 0, right: 0, child: _buildBottomBar()),
-            VolumeBrightnessWidget(
+            VolumeBrightnessMaterialWidget(
               value: gestureStreamValue,
               showSlider: showSlider,
             ),
             _buildNextVideoWidget(),
-            SeekToViewWidget(value: seekToPositionValue),
+            SeekToViewMaterialWidget(value: seekToPositionValue),
           ],
         ),
       ),
@@ -801,6 +782,16 @@ class _BetterPlayerMaterialControlsState
     }
   }
 
+  void _onHorizontalDragStart(DragStartDetails details) {
+    wasPlayong = betterPlayerController!.isPlaying() ?? false;
+    videoDuration = betterPlayerController!
+        .videoPlayerController!.value.duration!.inMilliseconds;
+    videoPosition = betterPlayerController!
+        .videoPlayerController!.value.position.inMilliseconds;
+    betterPlayerController!.pause();
+    if (volumeBrightnessViewTimer != null) volumeBrightnessViewTimer!.cancel();
+  }
+
   void _onHorizontalDragUpdate(DragUpdateDetails d) {
     final delta = d.delta.dx;
     final res = delta * 1000;
@@ -813,6 +804,18 @@ class _BetterPlayerMaterialControlsState
             ((videoPosition ?? 0) - result).clamp(0, videoDuration ?? 0);
     });
     seekToPositionValue.add(videoPosition);
+  }
+
+  _onHorizontalDragEnd(DragEndDetails details) {
+    if (wasPlayong) {
+      betterPlayerController!.play();
+    }
+    if (videoPosition != null)
+      betterPlayerController!
+          .seekTo(Duration(milliseconds: videoPosition ?? 0));
+    volumeBrightnessViewTimer = Timer(Duration(milliseconds: 1000), () {
+      seekToPositionValue.add(null);
+    });
   }
 
   void _onVerticalDragUpdate(DragUpdateDetails d) {

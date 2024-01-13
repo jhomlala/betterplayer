@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-class SeekToViewWidget extends StatefulWidget {
+class SeekToViewCupertinoWidget extends StatefulWidget {
   final StreamController<int?> value;
-  const SeekToViewWidget({Key? key, required this.value}) : super(key: key);
+  const SeekToViewCupertinoWidget({Key? key, required this.value})
+      : super(key: key);
 
   @override
-  State<SeekToViewWidget> createState() => _SeekToViewWidgetState();
+  State<SeekToViewCupertinoWidget> createState() =>
+      _SeekToViewCupertinoWidgetState();
 }
 
-class _SeekToViewWidgetState extends State<SeekToViewWidget> {
+class _SeekToViewCupertinoWidgetState extends State<SeekToViewCupertinoWidget> {
   @override
   void initState() {
     super.initState();
@@ -63,6 +65,10 @@ class _SeekToViewWidgetState extends State<SeekToViewWidget> {
     String formattedHours = hours.toString().padLeft(2, '0');
     String formattedMinutes = remainingMinutes.toString().padLeft(2, '0');
     String formattedSeconds = remainingSeconds.toString().padLeft(2, '0');
+    // if (seconds < 3600) {
+    //   return "${formattedMinutes}:${formattedSeconds}";
+    // }
+    // return "$formattedHours:$formattedMinutes:$formattedSeconds";
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.center,

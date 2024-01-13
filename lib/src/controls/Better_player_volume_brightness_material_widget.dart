@@ -2,18 +2,20 @@ import 'dart:async';
 import 'package:better_player/src/models/show_slider_values.dart';
 import 'package:flutter/material.dart';
 
-class VolumeBrightnessWidget extends StatefulWidget {
+class VolumeBrightnessMaterialWidget extends StatefulWidget {
   final StreamController<double?> value;
   final StreamController<ShowSliderValues?> showSlider;
-  const VolumeBrightnessWidget(
+  const VolumeBrightnessMaterialWidget(
       {Key? key, required this.value, required this.showSlider})
       : super(key: key);
 
   @override
-  State<VolumeBrightnessWidget> createState() => _VolumeBrightnessWidgetState();
+  State<VolumeBrightnessMaterialWidget> createState() =>
+      _VolumeBrightnessMaterialWidgetState();
 }
 
-class _VolumeBrightnessWidgetState extends State<VolumeBrightnessWidget> {
+class _VolumeBrightnessMaterialWidgetState
+    extends State<VolumeBrightnessMaterialWidget> {
   int textValue = 0;
   double sliderValue = 0;
   double value = 0;
