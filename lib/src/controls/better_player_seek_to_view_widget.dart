@@ -25,14 +25,16 @@ class _SeekToViewWidgetState extends State<SeekToViewWidget> {
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 60),
               child: Align(
                 alignment: Alignment.center,
-                child: Text(
-                  "${formatDigitalClock(Duration(milliseconds: snapshot.data ?? 0).inSeconds)}",
-                  style: TextStyle(
-                      fontSize: 40,
-                      color: const Color.fromARGB(255, 242, 242, 242),
-                      fontFamily: "teko",
-                      fontWeight: FontWeight.w600),
-                ),
+                child: formatDigitalClock(
+                    Duration(milliseconds: snapshot.data ?? 0).inSeconds),
+                // Text(
+                //   "${formatDigitalClock(Duration(milliseconds: snapshot.data ?? 0).inSeconds)}",
+                //   style: TextStyle(
+                //       fontSize: 40,
+                //       color: const Color.fromARGB(255, 242, 242, 242),
+                //       fontFamily: "teko",
+                //       fontWeight: FontWeight.w600),
+                // ),
               ),
             );
           } else {
@@ -41,14 +43,60 @@ class _SeekToViewWidgetState extends State<SeekToViewWidget> {
         });
   }
 
-  String formatDigitalClock(int seconds) {
+  // String formatDigitalClock(int seconds) {
+  //   int hours = seconds ~/ 3600;
+  //   int remainingMinutes = (seconds % 3600) ~/ 60;
+  //   int remainingSeconds = seconds % 60;
+  //   String formattedHours = hours.toString().padLeft(2, '0');
+  //   String formattedMinutes = remainingMinutes.toString().padLeft(2, '0');
+  //   String formattedSeconds = remainingSeconds.toString().padLeft(2, '0');
+  //   if (seconds < 3600) {
+  //     return "${formattedMinutes}:${formattedSeconds}";
+  //   }
+  //   return "$formattedHours:$formattedMinutes:$formattedSeconds";
+  // }
+
+  Widget formatDigitalClock(int seconds) {
     int hours = seconds ~/ 3600;
     int remainingMinutes = (seconds % 3600) ~/ 60;
     int remainingSeconds = seconds % 60;
     String formattedHours = hours.toString().padLeft(2, '0');
     String formattedMinutes = remainingMinutes.toString().padLeft(2, '0');
     String formattedSeconds = remainingSeconds.toString().padLeft(2, '0');
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (seconds > 3600) clockValue(formattedHours),
+        if (seconds > 3600) clockValueIndicator("H "),
+        if (seconds > 3600) clockValue(": "),
+        clockValue(formattedMinutes),
+        clockValueIndicator("M "),
+        clockValue(": ${formattedSeconds}"),
+        clockValueIndicator("S "),
+      ],
+    );
+  }
 
-    return "$formattedHours:$formattedMinutes:$formattedSeconds";
+  Text clockValue(String value) {
+    return Text(
+      value,
+      style: TextStyle(
+          fontSize: 40,
+          color: const Color.fromARGB(255, 242, 242, 242),
+          fontFamily: "teko",
+          fontWeight: FontWeight.w600),
+    );
+  }
+
+  Text clockValueIndicator(String value) {
+    return Text(
+      value,
+      style: TextStyle(
+          fontSize: 10,
+          color: Colors.white54,
+          fontFamily: "teko",
+          fontWeight: FontWeight.w500),
+    );
   }
 }
