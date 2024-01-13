@@ -1,6 +1,6 @@
 class ShowSliderValues {
-  final bool isLeft;
+  final bool showLeft;
   final double value;
 
-  ShowSliderValues({required this.isLeft, required this.value});
+  ShowSliderValues({required this.showLeft, required this.value});
 }

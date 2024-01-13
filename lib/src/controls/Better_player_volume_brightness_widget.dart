@@ -39,12 +39,13 @@ class _VolumeBrightnessWidgetState extends State<VolumeBrightnessWidget> {
           value = snapshot.data != null ? snapshot.data!.value : 0;
           if (snapshot.hasData) {
             ShowSliderValues data =
-                snapshot.data ?? ShowSliderValues(isLeft: true, value: 0);
+                snapshot.data ?? ShowSliderValues(showLeft: true, value: 0);
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 30, vertical: 60),
               child: Align(
-                alignment:
-                    data.isLeft ? Alignment.centerLeft : Alignment.centerRight,
+                alignment: data.showLeft
+                    ? Alignment.centerLeft
+                    : Alignment.centerRight,
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -75,7 +76,7 @@ class _VolumeBrightnessWidgetState extends State<VolumeBrightnessWidget> {
                       ),
                       SizedBox(height: 10),
                       Icon(
-                        data.isLeft ? Icons.volume_up : Icons.brightness_4,
+                        data.showLeft ? Icons.volume_up : Icons.brightness_4,
                         color: Colors.white,
                       )
                     ]),

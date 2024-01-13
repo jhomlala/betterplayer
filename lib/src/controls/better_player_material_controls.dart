@@ -102,7 +102,6 @@ class _BetterPlayerMaterialControlsState
 
         cancelAndRestartTimer();
       },
-      onVerticalDragStart: _onVerticalDragStart,
       onVerticalDragUpdate: _onVerticalDragUpdate,
       onVerticalDragEnd: _onVerticalDragEnd,
       onHorizontalDragStart: (details) {
@@ -802,32 +801,12 @@ class _BetterPlayerMaterialControlsState
     }
   }
 
-  void _onVerticalDragStart(DragStartDetails d) async {
-    if (volumeBrightnessViewTimer != null) {
-      volumeBrightnessViewTimer!.cancel();
-    }
-    if (d.localPosition.dx > (viewSize!.width / 3 + (viewSize!.width / 3))) {
-      if (betterPlayerControlsConfiguration.enableGestureController &&
-          betterPlayerControlsConfiguration.enableVolumeSlider) {
-        showSlider.add(ShowSliderValues(isLeft: true, value: 0));
-      }
-    } else if (d.localPosition.dx < viewSize!.width / 3) {
-      if (betterPlayerControlsConfiguration.enableGestureController &&
-          betterPlayerControlsConfiguration.enableBrightnessSlider) {
-        defaultSliderData =
-            betterPlayerController!.videoPlayerController!.value.volume;
-        showSlider
-            .add(ShowSliderValues(isLeft: false, value: defaultSliderData));
-      }
-    }
-  }
-
   void _onHorizontalDragUpdate(DragUpdateDetails d) {
     final delta = d.delta.dx;
     final res = delta * 1000;
 
     final int result = -(res.clamp(-200, 200)).round();
-    print(result);
+
     setState(() {
       if (videoDuration != null)
         videoPosition =
@@ -837,20 +816,37 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _onVerticalDragUpdate(DragUpdateDetails d) {
-    final delta = d.delta.dy;
-    final res = delta / 1.7;
-    final double result = res.clamp(-1.0, 1.0);
-    updateAndSetData(result, d);
+    if (volumeBrightnessViewTimer != null) {
+      volumeBrightnessViewTimer!.cancel();
+    }
+    showSlider.add(null);
+    if (d.localPosition.dx > (viewSize!.width / 3 + (viewSize!.width / 3))) {
+      if (betterPlayerControlsConfiguration.enableGestureController &&
+          betterPlayerControlsConfiguration.enableVolumeSlider) {
+        showSlider.add(ShowSliderValues(showLeft: true, value: 0));
+
+        betterPlayerController!.videoPlayerController!
+            .setVolume(getSlideValueData(d) / 100);
+      }
+    } else if (d.localPosition.dx < viewSize!.width / 3) {
+      if (betterPlayerControlsConfiguration.enableGestureController &&
+          betterPlayerControlsConfiguration.enableBrightnessSlider) {
+        defaultSliderData =
+            betterPlayerController!.videoPlayerController!.value.volume;
+        showSlider
+            .add(ShowSliderValues(showLeft: false, value: defaultSliderData));
+      }
+    }
   }
 
-  void updateAndSetData(final double a, DragUpdateDetails d) {
-    defaultSliderData = (defaultSliderData - a);
-    double finalSliderData = defaultSliderData.clamp(0, 100);
+  double getSlideValueData(DragUpdateDetails d) {
+    final delta = d.delta.dy;
+    final res = delta / 1.7;
+    final double a = res.clamp(-1.0, 1.0);
+    defaultSliderData = (defaultSliderData - a).clamp(0, 100);
+    final double finalSliderData = defaultSliderData;
     gestureStreamValue.add(finalSliderData);
-    if (d.localPosition.dx > (viewSize!.width / 3 + (viewSize!.width / 3)))
-      betterPlayerController!.videoPlayerController!
-          .setVolume(finalSliderData / 100);
-    if (d.localPosition.dx < viewSize!.width / 3) ;
+    return finalSliderData;
   }
 
   void _onVerticalDragEnd(DragEndDetails a) async {

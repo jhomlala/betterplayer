@@ -38,3 +38,4 @@ export 'src/subtitles/better_player_subtitles_source.dart';
 export 'src/subtitles/better_player_subtitles_source_type.dart';
 
 export 'src/video_player/video_player.dart' show VideoPlayerValue;
+// export 'package:video_player/video_player.dart' show VideoPlayerValue;
