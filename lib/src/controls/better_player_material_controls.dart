@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/Better_player_volume_brightness_widget.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
+import 'package:better_player/src/controls/better_player_seek_to_view_widget.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/models/show_slider_values.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 
 // Flutter imports:
@@ -43,7 +46,17 @@ class _BetterPlayerMaterialControlsState
   VideoPlayerController? _controller;
   BetterPlayerController? _betterPlayerController;
   StreamSubscription? _controlsVisibilityStreamSubscription;
-
+  Timer? volumeBrightnessViewTimer;
+  double defaultSliderData = 100;
+  int? videoDuration;
+  int? videoPosition;
+  Size? viewSize;
+  bool wasPlayong = false;
+  final StreamController<double?> gestureStreamValue =
+      StreamController<double?>();
+  final StreamController<ShowSliderValues?> showSlider =
+      StreamController<ShowSliderValues?>();
+  final StreamController<int?> seekToPositionValue = StreamController<int?>();
   BetterPlayerControlsConfiguration get _controlsConfiguration =>
       widget.controlsConfiguration;
 
@@ -59,6 +72,8 @@ class _BetterPlayerMaterialControlsState
 
   @override
   Widget build(BuildContext context) {
+    viewSize = Size(
+        MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
     return buildLTRDirectionality(_buildMainWidget());
   }
 
@@ -84,13 +99,34 @@ class _BetterPlayerMaterialControlsState
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
           BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
         }
+
         cancelAndRestartTimer();
       },
-      onLongPress: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
-        }
+      onVerticalDragStart: _onVerticalDragStart,
+      onVerticalDragUpdate: _onVerticalDragUpdate,
+      onVerticalDragEnd: _onVerticalDragEnd,
+      onHorizontalDragStart: (details) {
+        wasPlayong = betterPlayerController!.isPlaying() ?? false;
+        videoDuration = betterPlayerController!
+            .videoPlayerController!.value.duration!.inMilliseconds;
+        videoPosition = betterPlayerController!
+            .videoPlayerController!.value.position.inMilliseconds;
+        betterPlayerController!.pause();
+        if (volumeBrightnessViewTimer != null)
+          volumeBrightnessViewTimer!.cancel();
       },
+      onHorizontalDragEnd: (details) {
+        if (wasPlayong) {
+          betterPlayerController!.play();
+        }
+        if (videoPosition != null)
+          betterPlayerController!
+              .seekTo(Duration(milliseconds: videoPosition ?? 0));
+        volumeBrightnessViewTimer = Timer(Duration(milliseconds: 1000), () {
+          seekToPositionValue.add(null);
+        });
+      },
+      onHorizontalDragUpdate: _onHorizontalDragUpdate,
       child: AbsorbPointer(
         absorbing: controlsNotVisible,
         child: Stack(
@@ -107,7 +143,12 @@ class _BetterPlayerMaterialControlsState
               child: _buildTopBar(),
             ),
             Positioned(bottom: 0, left: 0, right: 0, child: _buildBottomBar()),
+            VolumeBrightnessWidget(
+              value: gestureStreamValue,
+              showSlider: showSlider,
+            ),
             _buildNextVideoWidget(),
+            SeekToViewWidget(value: seekToPositionValue),
           ],
         ),
       ),
@@ -116,6 +157,9 @@ class _BetterPlayerMaterialControlsState
 
   @override
   void dispose() {
+    gestureStreamValue.close();
+    showSlider.close();
+    seekToPositionValue.close();
     _dispose();
     super.dispose();
   }
@@ -188,6 +232,7 @@ class _BetterPlayerMaterialControlsState
     }
 
     return Container(
+      margin: EdgeInsets.only(left: 5, right: 5, top: 5),
       child: (_controlsConfiguration.enableOverflowMenu)
           ? AnimatedOpacity(
               opacity: controlsNotVisible ? 0.0 : 1.0,
@@ -197,14 +242,37 @@ class _BetterPlayerMaterialControlsState
                 height: _controlsConfiguration.controlBarHeight,
                 width: double.infinity,
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if (_controlsConfiguration.enablePip)
-                      _buildPipButtonWrapperWidget(
-                          controlsNotVisible, _onPlayerHide)
-                    else
-                      const SizedBox(),
-                    _buildMoreButton(),
+                    Container(
+                      child: Row(children: [
+                        if (_controlsConfiguration.enableBackButton)
+                          _buildBackButton(context)
+                        else
+                          const SizedBox(),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        _videoTitle(),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                      ]),
+                    ),
+                    Container(
+                      child: Row(children: [
+                        if (_controlsConfiguration.enablePip)
+                          _buildPipButtonWrapperWidget(
+                              controlsNotVisible, _onPlayerHide)
+                        else
+                          const SizedBox(),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        _buildMoreButton(),
+                      ]),
+                    )
                   ],
                 ),
               ),
@@ -273,6 +341,42 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
+  Widget _buildBackButton(BuildContext context) {
+    return BetterPlayerMaterialClickableWidget(
+      onTap: () {
+        Navigator.pop(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          _controlsConfiguration.backButtonIcon,
+          color: _controlsConfiguration.iconsColor,
+        ),
+      ),
+    );
+  }
+
+  //Video Title
+  Widget _videoTitle() {
+    return Container(
+      width: MediaQuery.of(context).size.width * .6,
+      child: Text(
+        betterPlayerController!.betterPlayerConfiguration.videoTitle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style:
+            betterPlayerController!.betterPlayerConfiguration.videoTitleStyle ??
+                TextStyle(
+                    color: betterPlayerController!
+                        .betterPlayerControlsConfiguration.textColor,
+                    fontSize: (betterPlayerController!.isFullScreen) ? 22 : 16,
+                    fontWeight: (betterPlayerController!.isFullScreen)
+                        ? FontWeight.w400
+                        : FontWeight.w500),
+      ),
+    );
+  }
+
   Widget _buildBottomBar() {
     if (!betterPlayerController!.controlsEnabled) {
       return const SizedBox();
@@ -282,10 +386,20 @@ class _BetterPlayerMaterialControlsState
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
       child: Container(
-        height: _controlsConfiguration.controlBarHeight + 20.0,
+        margin: EdgeInsets.only(
+            bottom: _betterPlayerController!.isFullScreen ? 20 : 0,
+            left: _betterPlayerController!.isFullScreen ? 20 : 5,
+            right: _betterPlayerController!.isFullScreen ? 20 : 5),
+        height: _controlsConfiguration.controlBarHeight,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
+            if (_betterPlayerController!.isLiveStream())
+              const SizedBox()
+            else
+              _controlsConfiguration.enableProgressBar
+                  ? _buildProgressBar()
+                  : const SizedBox(),
             Expanded(
               flex: 75,
               child: Row(
@@ -312,12 +426,6 @@ class _BetterPlayerMaterialControlsState
                 ],
               ),
             ),
-            if (_betterPlayerController!.isLiveStream())
-              const SizedBox()
-            else
-              _controlsConfiguration.enableProgressBar
-                  ? _buildProgressBar()
-                  : const SizedBox(),
           ],
         ),
       ),
@@ -692,6 +800,64 @@ class _BetterPlayerMaterialControlsState
         });
       }
     }
+  }
+
+  void _onVerticalDragStart(DragStartDetails d) async {
+    if (volumeBrightnessViewTimer != null) {
+      volumeBrightnessViewTimer!.cancel();
+    }
+    if (d.localPosition.dx > (viewSize!.width / 3 + (viewSize!.width / 3))) {
+      if (betterPlayerControlsConfiguration.enableGestureController &&
+          betterPlayerControlsConfiguration.enableVolumeSlider) {
+        showSlider.add(ShowSliderValues(isLeft: true, value: 0));
+      }
+    } else if (d.localPosition.dx < viewSize!.width / 3) {
+      if (betterPlayerControlsConfiguration.enableGestureController &&
+          betterPlayerControlsConfiguration.enableBrightnessSlider) {
+        defaultSliderData =
+            betterPlayerController!.videoPlayerController!.value.volume;
+        showSlider
+            .add(ShowSliderValues(isLeft: false, value: defaultSliderData));
+      }
+    }
+  }
+
+  void _onHorizontalDragUpdate(DragUpdateDetails d) {
+    final delta = d.delta.dx;
+    final res = delta * 1000;
+
+    final int result = -(res.clamp(-200, 200)).round();
+    print(result);
+    setState(() {
+      if (videoDuration != null)
+        videoPosition =
+            ((videoPosition ?? 0) - result).clamp(0, videoDuration ?? 0);
+    });
+    seekToPositionValue.add(videoPosition);
+  }
+
+  void _onVerticalDragUpdate(DragUpdateDetails d) {
+    final delta = d.delta.dy;
+    final res = delta / 1.7;
+    final double result = res.clamp(-1.0, 1.0);
+    updateAndSetData(result, d);
+  }
+
+  void updateAndSetData(final double a, DragUpdateDetails d) {
+    defaultSliderData = (defaultSliderData - a);
+    double finalSliderData = defaultSliderData.clamp(0, 100);
+    gestureStreamValue.add(finalSliderData);
+    if (d.localPosition.dx > (viewSize!.width / 3 + (viewSize!.width / 3)))
+      betterPlayerController!.videoPlayerController!
+          .setVolume(finalSliderData / 100);
+    if (d.localPosition.dx < viewSize!.width / 3) ;
+  }
+
+  void _onVerticalDragEnd(DragEndDetails a) async {
+    volumeBrightnessViewTimer = Timer(Duration(milliseconds: 1000), () {
+      showSlider.add(null);
+      gestureStreamValue.add(null);
+    });
   }
 
   Widget _buildProgressBar() {

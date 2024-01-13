@@ -60,6 +60,22 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to enable skip forward and skip back
   final bool enableSkips;
 
+  ///Flag used to enable/disable Back Button
+  final bool enableBackButton;
+
+  ///Flag used to enable/disable Dragable GestureController
+  final bool enableGestureController;
+
+  ///Flag used to enable/disable Volume Slider
+  ///
+  ///None: Won't work if Dragable GestureController is set to disable
+  final bool enableVolumeSlider;
+
+  ///Flag used to enable/disable Brightness Slider
+  ///
+  ///None: Won't work if Dragable GestureController is set to disable
+  final bool enableBrightnessSlider;
+
   ///Progress bar played color
   final Color progressBarPlayedColor;
 
@@ -137,6 +153,9 @@ class BetterPlayerControlsConfiguration {
   ///Icon of the audios menu item from overflow menu
   final IconData audioTracksIcon;
 
+  ///Icon of the Top Bar Back Button
+  final IconData backButtonIcon;
+
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
 
@@ -181,8 +200,12 @@ class BetterPlayerControlsConfiguration {
     this.enablePlayPause = true,
     this.enableSkips = true,
     this.enableAudioTracks = true,
-    this.progressBarPlayedColor = Colors.white,
-    this.progressBarHandleColor = Colors.white,
+    this.enableBackButton = true,
+    this.enableGestureController = true,
+    this.enableVolumeSlider = true,
+    this.enableBrightnessSlider = true,
+    this.progressBarPlayedColor = Colors.red,
+    this.progressBarHandleColor = const Color.fromARGB(255, 247, 47, 33),
     this.progressBarBufferedColor = Colors.white70,
     this.progressBarBackgroundColor = Colors.white60,
     this.controlsHideTime = const Duration(milliseconds: 300),
@@ -205,6 +228,7 @@ class BetterPlayerControlsConfiguration {
     this.qualitiesIcon = Icons.hd_outlined,
     this.subtitlesIcon = Icons.closed_caption_outlined,
     this.audioTracksIcon = Icons.audiotrack_outlined,
+    this.backButtonIcon = Icons.arrow_back_ios_rounded,
     this.overflowMenuIconsColor = Colors.black,
     this.forwardSkipTimeInMilliseconds = 10000,
     this.backwardSkipTimeInMilliseconds = 10000,

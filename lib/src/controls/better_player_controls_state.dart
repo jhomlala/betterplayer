@@ -463,13 +463,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Container(
+              margin: EdgeInsets.only(bottom: 20),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               decoration: BoxDecoration(
                 color: betterPlayerControlsConfiguration.overflowModalColor,
-                /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24.0),
-                    topRight: Radius.circular(24.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
               ),
               child: Column(
                 children: children,
@@ -488,18 +486,18 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       useRootNavigator:
           betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
               false,
+      constraints: BoxConstraints(maxWidth: 350),
       builder: (context) {
         return SafeArea(
           top: false,
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Container(
+              margin: EdgeInsets.only(bottom: 20),
               padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
               decoration: BoxDecoration(
                 color: betterPlayerControlsConfiguration.overflowModalColor,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(24.0),
-                    topRight: Radius.circular(24.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(20)),
               ),
               child: Column(
                 children: children,

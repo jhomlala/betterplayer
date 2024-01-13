@@ -38,7 +38,7 @@ class _BetterPlayerCupertinoControlsState
   Timer? _expandCollapseTimer;
   Timer? _initTimer;
   bool _wasLoading = false;
-
+  bool isPipSupported = false;
   VideoPlayerController? _controller;
   BetterPlayerController? _betterPlayerController;
   StreamSubscription? _controlsVisibilityStreamSubscription;
@@ -334,6 +334,69 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
+  Container _videoTitle(
+    Color backgroundColor,
+    Color iconColor,
+    double barHeight,
+    double iconSize,
+    double buttonPadding,
+  ) {
+    return Container(
+      child: AnimatedOpacity(
+        opacity: controlsNotVisible ? 0.0 : 1.0,
+        duration: _controlsConfiguration.controlsHideTime,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: backgroundColor,
+            ),
+            child: Container(
+                height: barHeight,
+                padding: EdgeInsets.symmetric(
+                  horizontal: buttonPadding,
+                ),
+                child: Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width *
+                        ((_controlsConfiguration.enablePip &&
+                                _controlsConfiguration.enableMute &&
+                                _controlsConfiguration.enableOverflowMenu)
+                            ? ((_betterPlayerController!.isFullScreen)
+                                ? 0.6
+                                : isPipSupported
+                                    ? 0.4
+                                    : 0.6)
+                            : ((_betterPlayerController!.isFullScreen)
+                                ? 0.7
+                                : isPipSupported
+                                    ? 0.5
+                                    : 0.7)),
+                    child: Text(
+                      betterPlayerController!
+                          .betterPlayerConfiguration.videoTitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: betterPlayerController!
+                              .betterPlayerConfiguration.videoTitleStyle ??
+                          TextStyle(
+                              color: betterPlayerController!
+                                  .betterPlayerControlsConfiguration.textColor,
+                              fontSize: (betterPlayerController!.isFullScreen)
+                                  ? 22
+                                  : 16,
+                              fontWeight: (betterPlayerController!.isFullScreen)
+                                  ? FontWeight.w400
+                                  : FontWeight.w500),
+                    ),
+                  ),
+                )),
+          ),
+        ),
+      ),
+    );
+  }
+
   GestureDetector _buildMuteButton(
     VideoPlayerController? controller,
     Color backgroundColor,
@@ -489,56 +552,73 @@ class _BetterPlayerCupertinoControlsState
         left: marginSize,
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          if (_controlsConfiguration.enableFullscreen)
-            _buildExpandButton(
-              backgroundColor,
-              iconColor,
-              barHeight,
-              iconSize,
-              buttonPadding,
-            )
-          else
-            const SizedBox(),
-          const SizedBox(
-            width: 4,
-          ),
-          if (_controlsConfiguration.enablePip)
-            _buildPipButton(
-              backgroundColor,
-              iconColor,
-              barHeight,
-              iconSize,
-              buttonPadding,
-            )
-          else
-            const SizedBox(),
-          const Spacer(),
-          if (_controlsConfiguration.enableMute)
-            _buildMuteButton(
-              _controller,
-              backgroundColor,
-              iconColor,
-              barHeight,
-              iconSize,
-              buttonPadding,
-            )
-          else
-            const SizedBox(),
-          const SizedBox(
-            width: 4,
-          ),
-          if (_controlsConfiguration.enableOverflowMenu)
-            _buildMoreButton(
-              _controller,
-              backgroundColor,
-              iconColor,
-              barHeight,
-              iconSize,
-              buttonPadding,
-            )
-          else
-            const SizedBox(),
+          Row(children: [
+            if (_controlsConfiguration.enableFullscreen)
+              _buildExpandButton(
+                backgroundColor,
+                iconColor,
+                barHeight,
+                iconSize,
+                buttonPadding,
+              )
+            else
+              const SizedBox(),
+            const SizedBox(
+              width: 4,
+            ),
+          ]),
+          (betterPlayerController!.betterPlayerConfiguration.videoTitle != "")
+              ? _videoTitle(
+                  backgroundColor,
+                  iconColor,
+                  barHeight,
+                  iconSize,
+                  buttonPadding,
+                )
+              : SizedBox(),
+          Row(children: [
+            if (_controlsConfiguration.enablePip)
+              _buildPipButton(
+                backgroundColor,
+                iconColor,
+                barHeight,
+                iconSize,
+                buttonPadding,
+              )
+            else
+              const SizedBox(),
+            if (_controlsConfiguration.enableMute)
+              _buildMuteButton(
+                _controller,
+                backgroundColor,
+                iconColor,
+                barHeight,
+                iconSize,
+                buttonPadding,
+              )
+            else
+              const SizedBox(),
+            const SizedBox(
+              width: 4,
+            ),
+            if (_controlsConfiguration.enableOverflowMenu)
+              _buildMoreButton(
+                _controller,
+                backgroundColor,
+                iconColor,
+                barHeight,
+                iconSize,
+                buttonPadding,
+              )
+            else
+              const SizedBox(),
+            const SizedBox(
+              width: 4,
+            ),
+          ])
         ],
       ),
     );
@@ -768,7 +848,7 @@ class _BetterPlayerCupertinoControlsState
     return FutureBuilder<bool>(
       future: _betterPlayerController!.isPictureInPictureSupported(),
       builder: (context, snapshot) {
-        final isPipSupported = snapshot.data ?? false;
+        isPipSupported = snapshot.data ?? false;
         if (isPipSupported &&
             _betterPlayerController!.betterPlayerGlobalKey != null) {
           return GestureDetector(

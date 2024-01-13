@@ -27,6 +27,7 @@ class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
 
   @override
   _VideoProgressBarState createState() {
+    
     return _VideoProgressBarState();
   }
 }

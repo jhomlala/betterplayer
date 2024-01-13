@@ -6,6 +6,11 @@ import 'package:flutter/services.dart';
 ///Master configuration which contains children that configure specific part
 ///of player.
 class BetterPlayerConfiguration {
+  /// This Video Title Will show in Top Bar.
+  ///
+  /// Note: Try not to use video title if your Player Theme set to Cupertino
+  final String videoTitle;
+
   /// Play the video as soon as it's displayed
   final bool autoPlay;
 
@@ -25,6 +30,9 @@ class BetterPlayerConfiguration {
   ///
   /// Will fallback to fitting within the space allowed.
   final double? aspectRatio;
+
+  ///
+  final TextStyle? videoTitleStyle;
 
   /// The placeholder is displayed underneath the Video before it is initialized
   /// or played.
@@ -119,6 +127,8 @@ class BetterPlayerConfiguration {
   final bool useRootNavigator;
 
   const BetterPlayerConfiguration({
+    this.videoTitle = "",
+    this.videoTitleStyle,
     this.aspectRatio,
     this.autoPlay = false,
     this.startAt,
@@ -135,6 +145,7 @@ class BetterPlayerConfiguration {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ],
+    
     this.systemOverlaysAfterFullScreen = SystemUiOverlay.values,
     this.deviceOrientationsAfterFullScreen = const [
       DeviceOrientation.portraitUp,

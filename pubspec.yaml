@@ -38,3 +38,11 @@ flutter:
         pluginClass: BetterPlayerPlugin
       ios:
         pluginClass: BetterPlayerPlugin
+  fonts:
+    - family: teko
+      fonts:
+        - asset: fonts/Teko-Bold.ttf
+        - asset: fonts/Teko-Light.ttf
+        - asset: fonts/Teko-Medium.ttf
+        - asset: fonts/Teko-Regular.ttf
+        - asset: fonts/Teko-SemiBold.ttf

@@ -97,19 +97,28 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
           .betterPlayerConfiguration.controlsConfiguration.backgroundColor,
       child: AspectRatio(
         aspectRatio: aspectRatio,
-        child: _buildPlayerWithControls(betterPlayerController, context),
+        child: _buildPlayerWithControls(
+            betterPlayerController, context, aspectRatio),
       ),
     );
-
+    final expandedContainer = Container(
+      width: double.infinity,
+      color: betterPlayerController
+          .betterPlayerConfiguration.controlsConfiguration.backgroundColor,
+      child: _buildPlayerWithControls(
+          betterPlayerController, context, aspectRatio),
+    );
     if (betterPlayerController.betterPlayerConfiguration.expandToFill) {
-      return Center(child: innerContainer);
+      return SafeArea(child: expandedContainer);
     } else {
-      return innerContainer;
+      return Center(child: innerContainer);
     }
   }
 
   Container _buildPlayerWithControls(
-      BetterPlayerController betterPlayerController, BuildContext context) {
+      BetterPlayerController betterPlayerController,
+      BuildContext context,
+      double aspectRatio) {
     final configuration = betterPlayerController.betterPlayerConfiguration;
     var rotation = configuration.rotation;
 
@@ -132,10 +141,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
           if (placeholderOnTop) _buildPlaceholder(betterPlayerController),
           Transform.rotate(
             angle: rotation * pi / 180,
-            child: _BetterPlayerVideoFitWidget(
-              betterPlayerController,
-              betterPlayerController.getFit(),
-            ),
+            child: _BetterPlayerVideoFitWidget(betterPlayerController,
+                betterPlayerController.getFit(), aspectRatio),
           ),
           betterPlayerController.betterPlayerConfiguration.overlay ??
               Container(),
@@ -209,12 +216,14 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 class _BetterPlayerVideoFitWidget extends StatefulWidget {
   const _BetterPlayerVideoFitWidget(
     this.betterPlayerController,
-    this.boxFit, {
+    this.boxFit,
+    this.aspectRatio, {
     Key? key,
   }) : super(key: key);
 
   final BetterPlayerController betterPlayerController;
   final BoxFit boxFit;
+  final double aspectRatio;
 
   @override
   _BetterPlayerVideoFitWidgetState createState() =>
@@ -298,22 +307,32 @@ class _BetterPlayerVideoFitWidgetState
   @override
   Widget build(BuildContext context) {
     if (_initialized && _started) {
-      return Center(
-        child: ClipRect(
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            child: FittedBox(
-              fit: widget.boxFit,
-              child: SizedBox(
-                width: controller!.value.size?.width ?? 0,
-                height: controller!.value.size?.height ?? 0,
-                child: VideoPlayer(controller),
-              ),
+      final container = ClipRect(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: FittedBox(
+            fit: widget.boxFit,
+            child: SizedBox(
+              width: controller!.value.size?.width ?? 0,
+              height: controller!.value.size?.height ?? 0,
+              child: VideoPlayer(controller),
             ),
           ),
         ),
       );
+
+      if (widget
+          .betterPlayerController.betterPlayerConfiguration.expandToFill) {
+        return Center(
+          child: AspectRatio(
+            aspectRatio: widget.aspectRatio,
+            child: container,
+          ),
+        );
+      } else {
+        return container;
+      }
     } else {
       return const SizedBox();
     }
