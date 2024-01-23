@@ -6,9 +6,7 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
   final void Function() onTap;
 
   const BetterPlayerMaterialClickableWidget({
-    Key? key,
-    required this.onTap,
-    required this.child,
+    required this.onTap, required this.child, Key? key,
   }) : super(key: key);
 
   @override

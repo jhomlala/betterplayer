@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 ///Widget which is used to inherit BetterPlayerController through widget tree.
 class BetterPlayerControllerProvider extends InheritedWidget {
   const BetterPlayerControllerProvider({
-    Key? key,
-    required this.controller,
-    required Widget child,
+    required this.controller, required Widget child, Key? key,
   }) : super(key: key, child: child);
 
   final BetterPlayerController controller;

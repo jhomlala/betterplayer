@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/video_player/video_player.dart';
-import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 
 class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
@@ -66,7 +65,7 @@ class _VideoProgressBarState
 
   @override
   Widget build(BuildContext context) {
-    final bool enableProgressBarDrag = betterPlayerController!
+    final enableProgressBarDrag = betterPlayerController!
         .betterPlayerConfiguration.controlsConfiguration.enableProgressBarDrag;
 
     return GestureDetector(
@@ -156,14 +155,14 @@ class _VideoProgressBarState
     }
   }
 
-  void seekToRelativePosition(Offset globalPosition) async {
-    final RenderObject? renderObject = context.findRenderObject();
+  Future<void> seekToRelativePosition(Offset globalPosition) async {
+    final renderObject = context.findRenderObject();
     if (renderObject != null) {
       final box = renderObject as RenderBox;
-      final Offset tapPos = box.globalToLocal(globalPosition);
-      final double relative = tapPos.dx / box.size.width;
+      final tapPos = box.globalToLocal(globalPosition);
+      final relative = tapPos.dx / box.size.width;
       if (relative > 0) {
-        final Duration position = controller!.value.duration! * relative;
+        final position = controller!.value.duration! * relative;
         lastSeek = position;
         await betterPlayerController!.seekTo(position);
         onFinishedLastSeek();
@@ -202,29 +201,29 @@ class _ProgressBarPainter extends CustomPainter {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromPoints(
-          Offset(0.0, size.height / 2),
+          Offset(0, size.height / 2),
           Offset(size.width, size.height / 2 + height),
         ),
-        const Radius.circular(4.0),
+        const Radius.circular(4),
       ),
       colors.backgroundPaint,
     );
     if (!value.initialized) {
       return;
     }
-    double playedPartPercent =
+    var playedPartPercent =
         value.position.inMilliseconds / value.duration!.inMilliseconds;
     if (playedPartPercent.isNaN) {
       playedPartPercent = 0;
     }
-    final double playedPart =
+    final playedPart =
         playedPartPercent > 1 ? size.width : playedPartPercent * size.width;
-    for (final DurationRange range in value.buffered) {
-      double start = range.startFraction(value.duration!) * size.width;
+    for (final range in value.buffered) {
+      var start = range.startFraction(value.duration!) * size.width;
       if (start.isNaN) {
         start = 0;
       }
-      double end = range.endFraction(value.duration!) * size.width;
+      var end = range.endFraction(value.duration!) * size.width;
       if (end.isNaN) {
         end = 0;
       }
@@ -234,7 +233,7 @@ class _ProgressBarPainter extends CustomPainter {
             Offset(start, size.height / 2),
             Offset(end, size.height / 2 + height),
           ),
-          const Radius.circular(4.0),
+          const Radius.circular(4),
         ),
         colors.bufferedPaint,
       );
@@ -242,10 +241,10 @@ class _ProgressBarPainter extends CustomPainter {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromPoints(
-          Offset(0.0, size.height / 2),
+          Offset(0, size.height / 2),
           Offset(playedPart, size.height / 2 + height),
         ),
-        const Radius.circular(4.0),
+        const Radius.circular(4),
       ),
       colors.playedPaint,
     );

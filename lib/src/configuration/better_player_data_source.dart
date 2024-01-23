@@ -1,12 +1,11 @@
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
+import 'package:better_player/src/configuration/better_player_cache_configuration.dart';
 import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_drm_configuration.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 import 'package:flutter/widgets.dart';
-
-import 'better_player_cache_configuration.dart';
 
 ///Representation of data source which will be played in Better Player. Allows
 ///to setup all necessary configuration connected to video source.
@@ -104,7 +103,7 @@ class BetterPlayerDataSource {
                     type == BetterPlayerDataSourceType.file) ||
                 (type == BetterPlayerDataSourceType.memory &&
                     bytes?.isNotEmpty == true),
-            "Url can't be null in network or file data source | bytes can't be null when using memory data source");
+            "Url can't be null in network or file data source | bytes can't be null when using memory data source",);
 
   ///Factory method to build network data source which uses url as data source
   ///Bytes parameter is not used in this data source.
@@ -191,7 +190,7 @@ class BetterPlayerDataSource {
   }) {
     return BetterPlayerDataSource(
       BetterPlayerDataSourceType.memory,
-      "",
+      '',
       videoExtension: videoExtension,
       bytes: bytes,
       subtitles: subtitles,

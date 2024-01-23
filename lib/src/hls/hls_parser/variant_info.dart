@@ -42,5 +42,5 @@ class VariantInfo {
 
   @override
   int get hashCode => hashValues(
-      bitrate, videoGroupId, audioGroupId, subtitleGroupId, captionGroupId);
+      bitrate, videoGroupId, audioGroupId, subtitleGroupId, captionGroupId,);
 }

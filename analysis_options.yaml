@@ -1,22 +1,34 @@
-#include: package:lint/analysis_options_package.yaml
-
-analyzer:
-  strong-mode:
-    implicit-dynamic: false
+include: package:very_good_analysis/analysis_options.yaml
 
 linter:
   rules:
-    close_sinks: true
-    sort_constructors_first: false
-    avoid_classes_with_only_static_members: false
-    avoid_void_async: false
-    avoid_positional_boolean_parameters: false
+    avoid_print: false
+    avoid_final_parameters: false
     avoid_function_literals_in_foreach_calls: false
+    avoid_positional_boolean_parameters: false
+    flutter_style_todos: false
     prefer_constructors_over_static_methods: false
-    sort_unnamed_constructors_first: false
-    sized_box_for_whitespace: false
-    invalid_dependency: false
+    public_member_api_docs: false
+    sort_constructors_first: false
     sort_pub_dependencies: false
-    avoid_unnecessary_containers: false
+    use_build_context_synchronously: false
+    use_if_null_to_convert_nulls_to_bools: false
     use_setters_to_change_properties: false
+    
+    
+    
+
+
+
+
+  
+
+    
+    
+
+
+    
+
+    
+
 

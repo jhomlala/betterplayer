@@ -33,7 +33,7 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
     this.betterPlayerListVideoPlayerController,
     Key? key,
   })  : assert(playFraction >= 0.0 && playFraction <= 1.0,
-            "Play fraction can't be null and must be between 0.0 and 1.0"),
+            "Play fraction can't be null and must be between 0.0 and 1.0",),
         super(key: key);
 
   @override
@@ -79,22 +79,22 @@ class _BetterPlayerListVideoPlayerState
       aspectRatio: _betterPlayerController!.getAspectRatio() ??
           BetterPlayerUtils.calculateAspectRatio(context),
       child: BetterPlayer(
-        key: Key("${_getUniqueKey()}_player"),
+        key: Key('${_getUniqueKey()}_player'),
         controller: _betterPlayerController!,
       ),
     );
   }
 
-  void onVisibilityChanged(double visibleFraction) async {
-    final bool? isPlaying = _betterPlayerController!.isPlaying();
-    final bool? initialized = _betterPlayerController!.isVideoInitialized();
+  Future<void> onVisibilityChanged(double visibleFraction) async {
+    final isPlaying = _betterPlayerController!.isPlaying();
+    final initialized = _betterPlayerController!.isVideoInitialized();
     if (visibleFraction >= widget.playFraction) {
       if (widget.autoPlay && initialized! && !isPlaying! && !_isDisposing) {
-        _betterPlayerController!.play();
+        await _betterPlayerController!.play();
       }
     } else {
       if (widget.autoPause && initialized! && isPlaying! && !_isDisposing) {
-        _betterPlayerController!.pause();
+        await _betterPlayerController!.pause();
       }
     }
   }

@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 
 class SchemeData {
   SchemeData({
-//    @required this.uuid,
+required this.mimeType, //    @required this.uuid,
     this.licenseServerUrl,
-    required this.mimeType,
     this.data,
     this.requiresSecureDecryption,
   });
@@ -54,5 +53,5 @@ class SchemeData {
       licenseServerUrl,
       mimeType,
       data,
-      requiresSecureDecryption);
+      requiresSecureDecryption,);
 }

@@ -11,10 +11,7 @@ class BetterPlayerPlaylist extends StatefulWidget {
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
 
   const BetterPlayerPlaylist({
-    Key? key,
-    required this.betterPlayerDataSourceList,
-    required this.betterPlayerConfiguration,
-    required this.betterPlayerPlaylistConfiguration,
+    required this.betterPlayerDataSourceList, required this.betterPlayerConfiguration, required this.betterPlayerPlaylistConfiguration, Key? key,
   }) : super(key: key);
 
   @override
@@ -38,7 +35,7 @@ class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
         widget.betterPlayerDataSourceList,
         betterPlayerConfiguration: widget.betterPlayerConfiguration,
         betterPlayerPlaylistConfiguration:
-            widget.betterPlayerPlaylistConfiguration);
+            widget.betterPlayerPlaylistConfiguration,);
     super.initState();
   }
 

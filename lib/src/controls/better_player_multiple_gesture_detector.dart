@@ -8,8 +8,7 @@ class BetterPlayerMultipleGestureDetector extends InheritedWidget {
   final void Function()? onLongPress;
 
   const BetterPlayerMultipleGestureDetector({
-    Key? key,
-    required Widget child,
+    required Widget child, Key? key,
     this.onTap,
     this.onDoubleTap,
     this.onLongPress,

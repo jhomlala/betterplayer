@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:async';
+
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'video_player_platform_interface.dart';
 
 const MethodChannel _channel = MethodChannel('better_player_channel');
 
@@ -70,7 +71,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'imageUrl': dataSource.imageUrl,
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName
+          'activityName': dataSource.activityName,
         };
         break;
       case DataSourceType.network:
@@ -111,7 +112,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'notificationChannelName': dataSource.notificationChannelName,
           'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
           'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey
+          'clearKey': dataSource.clearKey,
         };
         break;
     }
@@ -176,7 +177,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> setTrackParameters(
-      int? textureId, int? width, int? height, int? bitrate) {
+    int? textureId,
+    int? width,
+    int? height,
+    int? bitrate,
+  ) {
     return _channel.invokeMethod<void>(
       'setTrackParameters',
       <String, dynamic>{
@@ -202,16 +207,17 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<Duration> getPosition(int? textureId) async {
     return Duration(
-        milliseconds: await _channel.invokeMethod<int>(
-              'position',
-              <String, dynamic>{'textureId': textureId},
-            ) ??
-            0);
+      milliseconds: await _channel.invokeMethod<int>(
+            'position',
+            <String, dynamic>{'textureId': textureId},
+          ) ??
+          0,
+    );
   }
 
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
-    final int milliseconds = await _channel.invokeMethod<int>(
+    final milliseconds = await _channel.invokeMethod<int>(
           'absolutePosition',
           <String, dynamic>{'textureId': textureId},
         ) ??
@@ -223,8 +229,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> enablePictureInPicture(int? textureId, double? top, double? left,
-      double? width, double? height) async {
+  Future<void> enablePictureInPicture(
+    int? textureId,
+    double? top,
+    double? left,
+    double? width,
+    double? height,
+  ) async {
     return _channel.invokeMethod<void>(
       'enablePictureInPicture',
       <String, dynamic>{
@@ -290,7 +301,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) {
-    final Map<String, dynamic> dataSourceDescription = <String, dynamic>{
+    final dataSourceDescription = <String, dynamic>{
       'key': dataSource.key,
       'uri': dataSource.uri,
       'certificateUrl': dataSource.certificateUrl,
@@ -326,27 +337,27 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       if (event is Map) {
         map = event;
       }
-      final String? eventType = map["event"] as String?;
-      final String? key = map["key"] as String?;
+      final eventType = map['event'] as String?;
+      final key = map['key'] as String?;
       switch (eventType) {
         case 'initialized':
           double width = 0;
           double height = 0;
 
           try {
-            if (map.containsKey("width")) {
-              final num widthNum = map["width"] as num;
+            if (map.containsKey('width')) {
+              final widthNum = map['width'] as num;
               width = widthNum.toDouble();
             }
-            if (map.containsKey("height")) {
-              final num heightNum = map["height"] as num;
+            if (map.containsKey('height')) {
+              final heightNum = map['height'] as num;
               height = heightNum.toDouble();
             }
           } catch (exception) {
             BetterPlayerUtils.log(exception.toString());
           }
 
-          final Size size = Size(width, height);
+          final size = Size(width, height);
 
           return VideoEvent(
             eventType: VideoEventType.initialized,
@@ -360,7 +371,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
         case 'bufferingUpdate':
-          final List<dynamic> values = map['values'] as List;
+          final values = map['values'] as List;
 
           return VideoEvent(
             eventType: VideoEventType.bufferingUpdate,
@@ -436,7 +447,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   DurationRange _toDurationRange(dynamic value) {
-    final List<dynamic> pair = value as List;
+    final pair = value as List;
     return DurationRange(
       Duration(milliseconds: pair[0] as int),
       Duration(milliseconds: pair[1] as int),

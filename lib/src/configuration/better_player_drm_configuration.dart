@@ -26,5 +26,5 @@ class BetterPlayerDrmConfiguration {
       this.licenseUrl,
       this.certificateUrl,
       this.headers,
-      this.clearKey});
+      this.clearKey,});
 }

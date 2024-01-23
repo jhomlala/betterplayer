@@ -101,7 +101,7 @@ class _BetterPlayerCupertinoControlsState
         iconColor,
         barHeight,
       ),
-    ]);
+    ],);
     return GestureDetector(
       onTap: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
@@ -126,7 +126,7 @@ class _BetterPlayerCupertinoControlsState
       child: AbsorbPointer(
           absorbing: controlsNotVisible,
           child:
-              isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn),
+              isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,),
     );
   }
 
@@ -146,11 +146,11 @@ class _BetterPlayerCupertinoControlsState
 
   @override
   void didChangeDependencies() {
-    final _oldController = _betterPlayerController;
+    final oldController = _betterPlayerController;
     _betterPlayerController = BetterPlayerController.of(context);
     _controller = _betterPlayerController!.videoPlayerController;
 
-    if (_oldController != _betterPlayerController) {
+    if (oldController != _betterPlayerController) {
       _dispose();
       _initialize();
     }
@@ -218,7 +218,7 @@ class _BetterPlayerCupertinoControlsState
                       if (_controlsConfiguration.enableProgressText)
                         _buildRemaining()
                       else
-                        const SizedBox()
+                        const SizedBox(),
                     ],
                   ),
           ),
@@ -233,7 +233,7 @@ class _BetterPlayerCupertinoControlsState
         _betterPlayerController!.translations.controlsLive,
         style: TextStyle(
             color: _controlsConfiguration.liveTextColor,
-            fontWeight: FontWeight.bold),
+            fontWeight: FontWeight.bold,),
       ),
     );
   }
@@ -305,14 +305,12 @@ class _BetterPlayerCupertinoControlsState
     double buttonPadding,
   ) {
     return GestureDetector(
-      onTap: () {
-        onShowMoreClicked();
-      },
+      onTap: onShowMoreClicked,
       child: AnimatedOpacity(
         opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(10),
           child: Container(
             decoration: BoxDecoration(
               color: backgroundColor,
@@ -350,14 +348,14 @@ class _BetterPlayerCupertinoControlsState
           controller!.setVolume(_latestVolume ?? 0.5);
         } else {
           _latestVolume = controller!.value.volume;
-          controller.setVolume(0.0);
+          controller.setVolume(0);
         }
       },
       child: AnimatedOpacity(
         opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: _controlsConfiguration.controlsHideTime,
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(10),
           child: Container(
             decoration: BoxDecoration(
               color: backgroundColor,
@@ -408,12 +406,12 @@ class _BetterPlayerCupertinoControlsState
         _latestValue != null ? _latestValue!.position : const Duration();
 
     return Padding(
-      padding: const EdgeInsets.only(right: 12.0),
+      padding: const EdgeInsets.only(right: 12),
       child: Text(
         BetterPlayerUtils.formatDuration(position),
         style: TextStyle(
           color: _controlsConfiguration.textColor,
-          fontSize: 12.0,
+          fontSize: 12,
         ),
       ),
     );
@@ -425,11 +423,11 @@ class _BetterPlayerCupertinoControlsState
         : const Duration();
 
     return Padding(
-      padding: const EdgeInsets.only(right: 12.0),
+      padding: const EdgeInsets.only(right: 12),
       child: Text(
         '-${BetterPlayerUtils.formatDuration(position)}',
         style:
-            TextStyle(color: _controlsConfiguration.textColor, fontSize: 12.0),
+            TextStyle(color: _controlsConfiguration.textColor, fontSize: 12),
       ),
     );
   }
@@ -440,7 +438,7 @@ class _BetterPlayerCupertinoControlsState
       child: Container(
         height: barHeight,
         color: Colors.transparent,
-        margin: const EdgeInsets.only(left: 10.0),
+        margin: const EdgeInsets.only(left: 10),
         padding: const EdgeInsets.symmetric(
           horizontal: 8,
         ),
@@ -460,7 +458,7 @@ class _BetterPlayerCupertinoControlsState
         height: barHeight,
         color: Colors.transparent,
         padding: const EdgeInsets.symmetric(horizontal: 6),
-        margin: const EdgeInsets.only(right: 8.0),
+        margin: const EdgeInsets.only(right: 8),
         child: Icon(
           _controlsConfiguration.skipForwardIcon,
           color: iconColor,
@@ -565,7 +563,7 @@ class _BetterPlayerCupertinoControlsState
                 child: Padding(
                   padding: const EdgeInsets.all(12),
                   child: Text(
-                    "${_betterPlayerController!.translations.controlsNextVideoIn} $time ...",
+                    '${_betterPlayerController!.translations.controlsNextVideoIn} $time ...',
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
@@ -615,16 +613,14 @@ class _BetterPlayerCupertinoControlsState
     changePlayerControlsNotVisible(true);
     _betterPlayerController!.toggleFullScreen();
     _expandCollapseTimer = Timer(_controlsConfiguration.controlsHideTime, () {
-      setState(() {
-        cancelAndRestartTimer();
-      });
+      setState(cancelAndRestartTimer);
     });
   }
 
   Widget _buildProgressBar() {
     return Expanded(
       child: Padding(
-        padding: const EdgeInsets.only(right: 12.0),
+        padding: const EdgeInsets.only(right: 12),
         child: BetterPlayerCupertinoVideoProgressBar(
           _controller,
           _betterPlayerController,
@@ -642,14 +638,14 @@ class _BetterPlayerCupertinoControlsState
               handleColor: _controlsConfiguration.progressBarHandleColor,
               bufferedColor: _controlsConfiguration.progressBarBufferedColor,
               backgroundColor:
-                  _controlsConfiguration.progressBarBackgroundColor),
+                  _controlsConfiguration.progressBarBackgroundColor,),
         ),
       ),
     );
   }
 
   void _onPlayPause() {
-    bool isFinished = false;
+    var isFinished = false;
 
     if (_latestValue?.position != null && _latestValue?.duration != null) {
       isFinished = _latestValue!.position >= _latestValue!.duration!;
@@ -715,7 +711,7 @@ class _BetterPlayerCupertinoControlsState
       return errorBuilder(
           context,
           _betterPlayerController!
-              .videoPlayerController!.value.errorDescription);
+              .videoPlayerController!.value.errorDescription,);
     } else {
       final textStyle = TextStyle(color: _controlsConfiguration.textColor);
       return Center(
@@ -740,7 +736,7 @@ class _BetterPlayerCupertinoControlsState
                   _betterPlayerController!.translations.generalRetry,
                   style: textStyle.copyWith(fontWeight: FontWeight.bold),
                 ),
-              )
+              ),
           ],
         ),
       );
@@ -774,7 +770,7 @@ class _BetterPlayerCupertinoControlsState
           return GestureDetector(
             onTap: () {
               betterPlayerController!.enablePictureInPicture(
-                  betterPlayerController!.betterPlayerGlobalKey!);
+                  betterPlayerController!.betterPlayerGlobalKey!,);
             },
             child: AnimatedOpacity(
               opacity: controlsNotVisible ? 0.0 : 1.0,

@@ -1,8 +1,8 @@
-import 'drm_init_data.dart';
-import 'format.dart';
-import 'playlist.dart';
-import 'rendition.dart';
-import 'variant.dart';
+import 'package:better_player/src/hls/hls_parser/drm_init_data.dart';
+import 'package:better_player/src/hls/hls_parser/format.dart';
+import 'package:better_player/src/hls/hls_parser/playlist.dart';
+import 'package:better_player/src/hls/hls_parser/rendition.dart';
+import 'package:better_player/src/hls/hls_parser/variant.dart';
 
 class HlsMasterPlaylist extends HlsPlaylist {
   HlsMasterPlaylist({
@@ -19,12 +19,12 @@ class HlsMasterPlaylist extends HlsPlaylist {
     this.variableDefinitions = const {}, // ignore: always_specify_types
     this.sessionKeyDrmInitData = const [], // ignore: always_specify_types
   })  : mediaPlaylistUrls = _getMediaPlaylistUrls(
-            variants, [videos, audios, subtitles, closedCaptions]),
+            variants, [videos, audios, subtitles, closedCaptions],),
         // ignore: always_specify_types
         super(
             baseUri: baseUri,
             tags: tags,
-            hasIndependentSegments: hasIndependentSegments);
+            hasIndependentSegments: hasIndependentSegments,);
 
   /// All of the media playlist URLs referenced by the playlist.
   final List<Uri?> mediaPlaylistUrls;
@@ -59,7 +59,7 @@ class HlsMasterPlaylist extends HlsPlaylist {
   final List<DrmInitData> sessionKeyDrmInitData;
 
   static List<Uri?> _getMediaPlaylistUrls(
-      List<Variant> variants, List<List<Rendition>> renditionList) {
+      List<Variant> variants, List<List<Rendition>> renditionList,) {
     final uriList = <Uri?>[];
     variants.forEach((element) {
       uriList.add(element.url);

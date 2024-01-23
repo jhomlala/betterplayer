@@ -7,5 +7,5 @@ class BetterPlayerMockController extends BetterPlayerController {
         const BetterPlayerPlaylistConfiguration(),
   }) : super(betterPlayerConfiguration,
             betterPlayerPlaylistConfiguration:
-                betterPlayerPlaylistConfiguration);
+                betterPlayerPlaylistConfiguration,);
 }

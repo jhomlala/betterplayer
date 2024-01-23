@@ -1,6 +1,6 @@
 buildscript {
-    ext.kotlinVersion = "1.5.31"
-    ext.gradleVersion = "7.0.2"
+    ext.kotlinVersion = "1.8.22"
+    ext.gradleVersion = "7.3.1"
     ext.multidexVersion = "2.0.1"
     repositories {
         google()
@@ -28,6 +28,6 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
-task clean(type: Delete) {
+task register("clean", ) {
     delete rootProject.buildDir
 }
