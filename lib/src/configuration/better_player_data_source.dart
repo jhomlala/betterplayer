@@ -76,10 +76,6 @@ class BetterPlayerDataSource {
   ///platform.
   final BetterPlayerBufferingConfiguration bufferingConfiguration;
 
-  ///Defines content expected from OTT DASH streaming.
-  ///Would be overridden if manifests declares mimeType tag inside AdaptationSet
-  final ExpectedContentType expectedContentType;
-
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -102,7 +98,6 @@ class BetterPlayerDataSource {
     this.drmConfiguration,
     this.placeholder,
     this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
-    this.expectedContentType = ExpectedContentType.video,
   }) : assert(
             (type == BetterPlayerDataSourceType.network || type == BetterPlayerDataSourceType.file) ||
                 (type == BetterPlayerDataSourceType.memory && bytes?.isNotEmpty == true),
@@ -127,7 +122,6 @@ class BetterPlayerDataSource {
     BetterPlayerDrmConfiguration? drmConfiguration,
     Widget? placeholder,
     BetterPlayerBufferingConfiguration bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
-    ExpectedContentType expectedContentType = ExpectedContentType.video,
   }) =>
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
@@ -146,7 +140,6 @@ class BetterPlayerDataSource {
         drmConfiguration: drmConfiguration,
         placeholder: placeholder,
         bufferingConfiguration: bufferingConfiguration,
-        expectedContentType: expectedContentType,
       );
 
   ///Factory method to build file data source which uses url as data source.
@@ -161,7 +154,6 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
-    ExpectedContentType expectedContentType = ExpectedContentType.video,
   }) =>
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.file,
@@ -175,7 +167,6 @@ class BetterPlayerDataSource {
             const BetterPlayerNotificationConfiguration(showNotification: false),
         overriddenDuration: overriddenDuration,
         placeholder: placeholder,
-        expectedContentType: expectedContentType,
       );
 
   ///Factory method to build network data source which uses bytes as data source.
@@ -191,7 +182,6 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
-    ExpectedContentType expectedContentType = ExpectedContentType.video,
   }) =>
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.memory,
@@ -207,7 +197,6 @@ class BetterPlayerDataSource {
             const BetterPlayerNotificationConfiguration(showNotification: false),
         overriddenDuration: overriddenDuration,
         placeholder: placeholder,
-        expectedContentType: expectedContentType,
       );
 
   BetterPlayerDataSource copyWith({
@@ -230,7 +219,6 @@ class BetterPlayerDataSource {
     BetterPlayerDrmConfiguration? drmConfiguration,
     Widget? placeholder,
     BetterPlayerBufferingConfiguration? bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
-    ExpectedContentType? expectedContentType,
   }) =>
       BetterPlayerDataSource(
         type ?? this.type,
@@ -251,8 +239,5 @@ class BetterPlayerDataSource {
         drmConfiguration: drmConfiguration ?? this.drmConfiguration,
         placeholder: placeholder ?? this.placeholder,
         bufferingConfiguration: bufferingConfiguration ?? this.bufferingConfiguration,
-        expectedContentType: expectedContentType ?? this.expectedContentType,
       );
 }
-
-enum ExpectedContentType { video, audioOnly }

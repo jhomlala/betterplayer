@@ -36,6 +36,7 @@ import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.ClippingMediaSource
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
@@ -689,18 +690,18 @@ internal class BetterPlayer(
                         for (groupElementIndex in 0 until group.length) {
                             val label = group.getFormat(groupElementIndex).label
                             if (name == label && index == groupIndex) {
-                                setAudioTrack(rendererIndex, groupIndex)
+                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex)
                                 return
                             }
 
                             ///Fallback option
                             if (!hasStrangeAudioTrack && hasElementWithoutLabel && index == groupIndex) {
-                                setAudioTrack(rendererIndex, groupIndex)
+                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex)
                                 return
                             }
                             ///Fallback option
                             if (hasStrangeAudioTrack && name == label) {
-                                setAudioTrack(rendererIndex, groupIndex)
+                                setAudioTrack(rendererIndex, groupIndex, groupElementIndex)
                                 return
                             }
                         }
@@ -712,17 +713,16 @@ internal class BetterPlayer(
         }
     }
 
-    private fun setAudioTrack(rendererIndex: Int, groupIndex: Int) {
+    private fun setAudioTrack(rendererIndex: Int, groupIndex: Int, groupElementIndex: Int) {
         val mappedTrackInfo = trackSelector.currentMappedTrackInfo
         if (mappedTrackInfo != null) {
+            val trackGroup = mappedTrackInfo.getTrackGroups(rendererIndex).get(groupIndex)
+            val trackSelectionOverride = TrackSelectionOverride(trackGroup, listOf(groupElementIndex))
+
             val builder = trackSelector.parameters.buildUpon()
+                .clearOverrides()
                 .setRendererDisabled(rendererIndex, false)
-                .addOverride(
-                    TrackSelectionOverride(
-                        mappedTrackInfo.getTrackGroups(rendererIndex)
-                            .get(groupIndex), rendererIndex
-                    )
-                )
+                .addOverride(trackSelectionOverride)
                 .build()
 
             trackSelector.parameters = builder
