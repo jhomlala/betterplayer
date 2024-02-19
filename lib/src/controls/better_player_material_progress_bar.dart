@@ -5,8 +5,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 
-import '../core/better_player_utils.dart';
-
 class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
   final bool isContentLive;
 
@@ -126,16 +124,13 @@ class _VideoProgressBarState extends State<BetterPlayerMaterialVideoProgressBar>
         }
       },
       child: Center(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height / 2,
           width: MediaQuery.of(context).size.width,
-          color: Colors.transparent,
           child: CustomPaint(
-            painter: _ProgressBarPainter(
-              _getValue(),
-              widget.colors,
-              widget.isContentLive,
-            ),
+            painter: widget.isContentLive
+                ? _LiveProgressbarPainter(_getValue(), widget.colors)
+                : _ProgressBarPainter(_getValue(), widget.colors),
           ),
         ),
       ),
@@ -198,12 +193,10 @@ class _ProgressBarPainter extends CustomPainter {
 
   final VideoPlayerValue _value;
   final BetterPlayerProgressColors _colors;
-  final bool _isContentLive;
 
   _ProgressBarPainter(
     this._value,
-    this._colors,
-    this._isContentLive, {
+    this._colors, {
     double progressBarHeightPx = 2,
     double indicatorScaleFactor = 3,
     double roundRadius = 4,
@@ -218,12 +211,7 @@ class _ProgressBarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     _drawProgressBarBackground(canvas, size);
-
-    if (_isContentLive) {
-      _drawLiveContent(canvas, size);
-    } else {
-      _drawNonLiveContent(canvas, size);
-    }
+    _drawActualProgressBar(canvas, size);
   }
 
   void _drawProgressBarBackground(Canvas canvas, Size size) {
@@ -233,34 +221,11 @@ class _ProgressBarPainter extends CustomPainter {
       0.0,
       size.height / 2,
       size.width,
-      size.height / 2 + _progressBarHeightPx,
-    );
-  }
-
-  void _drawLiveContent(Canvas canvas, Size size) {
-    final double liveProgress = _getLiveContentProgress();
-    BetterPlayerUtils.log("drawLiveContent, liveProgress: $liveProgress");
-
-    final double indicatorPosition = size.width * liveProgress;
-
-    _drawLinearProgressBar(
-      canvas,
-      _colors.playedPaint,
-      indicatorPosition,
       size.height / 2,
-      size.width,
-      size.height / 2 + _progressBarHeightPx,
-    );
-
-    _drawProgressIndicator(
-      canvas,
-      _colors.handlePaint,
-      Offset(indicatorPosition, size.height / 2 + _progressBarHeightPx / 2),
-      _progressBarHeightPx * _indicatorScaleFactor,
     );
   }
 
-  void _drawNonLiveContent(Canvas canvas, Size size) {
+  void _drawActualProgressBar(Canvas canvas, Size size) {
     double playedPartPercent = _value.position.inMilliseconds / _value.duration!.inMilliseconds;
     if (playedPartPercent.isNaN) {
       playedPartPercent = 0;
@@ -331,6 +296,51 @@ class _ProgressBarPainter extends CustomPainter {
         Radius.circular(_roundRadius),
       ),
       _colors.playedPaint,
+    );
+  }
+}
+
+class _LiveProgressbarPainter extends _ProgressBarPainter {
+  _LiveProgressbarPainter(
+    VideoPlayerValue value,
+    BetterPlayerProgressColors colors,
+  ) : super(value, colors);
+
+  @override
+  void _drawActualProgressBar(Canvas canvas, Size size) {
+    _drawLiveContent(canvas, size);
+  }
+
+  void _drawLiveContent(Canvas canvas, Size size) {
+    final double liveProgress = _getLiveContentProgress();
+
+    final double indicatorPosition = size.width * liveProgress;
+
+    // below draws right side of the progress bar
+    _drawLinearProgressBar(
+      canvas,
+      _colors.playedPaint,
+      indicatorPosition,
+      size.height / 2,
+      size.width,
+      size.height / 2 + _progressBarHeightPx / 2,
+    );
+
+    // below draws right side of progress the bar
+    _drawLinearProgressBar(
+      canvas,
+      _colors.playedPaint,
+      0.0,
+      size.height / 2,
+      indicatorPosition,
+      size.height / 2 + _progressBarHeightPx,
+    );
+
+    _drawProgressIndicator(
+      canvas,
+      _colors.handlePaint,
+      Offset(indicatorPosition, size.height / 2 + _progressBarHeightPx / 2),
+      _progressBarHeightPx * _indicatorScaleFactor,
     );
   }
 

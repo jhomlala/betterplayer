@@ -195,9 +195,6 @@ internal class BetterPlayer(
             exoPlayer?.setMediaSource(mediaSource)
         }
 
-        if (isLive) {
-            exoPlayer?.seekToDefaultPosition()
-        }
         exoPlayer?.prepare()
         result.success(null)
     }

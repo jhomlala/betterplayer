@@ -684,11 +684,11 @@ class _BetterPlayerMaterialControlsState
             cancelAndRestartTimer();
           },
           colors: BetterPlayerProgressColors(
-              playedColor: _controlsConfiguration.progressBarPlayedColor,
-              handleColor: _controlsConfiguration.progressBarHandleColor,
-              bufferedColor: _controlsConfiguration.progressBarBufferedColor,
-              backgroundColor:
-                  _controlsConfiguration.progressBarBackgroundColor),
+            playedColor: _controlsConfiguration.progressBarPlayedColor,
+            handleColor: _controlsConfiguration.progressBarHandleColor,
+            bufferedColor: _controlsConfiguration.progressBarBufferedColor,
+            backgroundColor: _controlsConfiguration.progressBarBackgroundColor,
+          ),
         ),
       ),
     );
