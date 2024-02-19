@@ -57,6 +57,9 @@ class BetterPlayerControlsConfiguration {
   ///Flag used to enable/disable progress bar drag
   final bool enableProgressBarDrag;
 
+  ///Value used to show hide progress bar based on video duration
+  final Duration minimumDurationToEnableProgressbar;
+
   ///Flag used to enable/disable play-pause
   final bool enablePlayPause;
 
@@ -225,7 +228,7 @@ class BetterPlayerControlsConfiguration {
     this.enableReplayButton = true,
     this.exitIcon = Icons.close,
     this.showExitButton = false,
-  });
+    this.minimumDurationToEnableProgressbar = Duration.zero});
 
   factory BetterPlayerControlsConfiguration.white() {
     return const BetterPlayerControlsConfiguration(

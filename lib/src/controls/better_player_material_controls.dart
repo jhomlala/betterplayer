@@ -297,20 +297,24 @@ class _BetterPlayerMaterialControlsState
                 ],
               ),
             ),
-            _controlsConfiguration.enableProgressBar ? _buildProgressBar() : const SizedBox(),
+            if (_controlsConfiguration.enableProgressBar && _isContentLongEnoughToShowProgressBar())
+              _buildProgressBar()
+            else
+              const SizedBox(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildLiveWidget() {
-    return Text(
-      _betterPlayerController!.translations.controlsLive,
-      style: TextStyle(
-          color: _controlsConfiguration.liveTextColor,
-          fontWeight: FontWeight.bold),
-    );
+  bool _isContentLongEnoughToShowProgressBar() {
+    if (!betterPlayerController!.isLiveStream()) {
+      return true;
+    }
+
+    final Duration contentDuration = _controller?.value.duration ?? Duration.zero;
+
+    return contentDuration >= _controlsConfiguration.minimumDurationToEnableProgressbar;
   }
 
   Widget _buildExpandButton() {

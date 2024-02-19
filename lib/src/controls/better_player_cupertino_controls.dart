@@ -212,14 +212,11 @@ class _BetterPlayerCupertinoControlsState
                         _buildPosition()
                       else
                         const SizedBox(),
-                      if (_controlsConfiguration.enableProgressBar)
+                      if (_controlsConfiguration.enableProgressBar && _isContentLongEnoughToShowProgressBar())
                         _buildProgressBar()
                       else
                         const SizedBox(),
-                      if (_controlsConfiguration.enableProgressText)
-                        _buildRemaining()
-                      else
-                        const SizedBox()
+                      if (_controlsConfiguration.enableProgressText) _buildRemaining() else const SizedBox()
                     ],
                   ),
           ),
@@ -228,13 +225,20 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
+  bool _isContentLongEnoughToShowProgressBar() {
+    if (!betterPlayerController!.isLiveStream()) {
+      return true;
+    }
+    final Duration contentDuration = _controller?.value.duration ?? Duration.zero;
+
+    return contentDuration >= _controlsConfiguration.minimumDurationToEnableProgressbar;
+  }
+
   Widget _buildLiveWidget() {
     return Expanded(
       child: Text(
         _betterPlayerController!.translations.controlsLive,
-        style: TextStyle(
-            color: _controlsConfiguration.liveTextColor,
-            fontWeight: FontWeight.bold),
+        style: TextStyle(color: _controlsConfiguration.liveTextColor, fontWeight: FontWeight.bold),
       ),
     );
   }
