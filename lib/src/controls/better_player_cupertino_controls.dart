@@ -5,6 +5,7 @@ import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
+import 'package:better_player/src/controls/progress_bar_utils.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -208,18 +209,15 @@ class _BetterPlayerCupertinoControlsState
                         _buildSkipForward(iconColor, barHeight)
                       else
                         const SizedBox(),
-                      if (_controlsConfiguration.enableProgressText)
-                        _buildPosition()
-                      else
-                        const SizedBox(),
-                      if (_controlsConfiguration.enableProgressBar)
-                        _buildProgressBar()
-                      else
-                        const SizedBox(),
-                      if (_controlsConfiguration.enableProgressText)
-                        _buildRemaining()
-                      else
-                        const SizedBox()
+                      if (_controlsConfiguration.enableProgressText) _buildPosition() else const SizedBox(),
+                      ProgressbarUtils.canShowProgressbar(
+                        _controlsConfiguration,
+                        betterPlayerController!,
+                        _controller,
+                      )
+                          ? _buildProgressBar()
+                          : const SizedBox.shrink(),
+                      if (_controlsConfiguration.enableProgressText) _buildRemaining() else const SizedBox()
                     ],
                   ),
           ),
@@ -232,9 +230,7 @@ class _BetterPlayerCupertinoControlsState
     return Expanded(
       child: Text(
         _betterPlayerController!.translations.controlsLive,
-        style: TextStyle(
-            color: _controlsConfiguration.liveTextColor,
-            fontWeight: FontWeight.bold),
+        style: TextStyle(color: _controlsConfiguration.liveTextColor, fontWeight: FontWeight.bold),
       ),
     );
   }
