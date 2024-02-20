@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
+import 'package:better_player/src/controls/progress_bar_utils.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 // Flutter imports:
@@ -297,24 +298,17 @@ class _BetterPlayerMaterialControlsState
                 ],
               ),
             ),
-            if (_controlsConfiguration.enableProgressBar && _isContentLongEnoughToShowProgressBar())
-              _buildProgressBar()
-            else
-              const SizedBox(),
+            ProgressbarUtils.canShowProgressbar(
+              _controlsConfiguration,
+              betterPlayerController!,
+              _controller,
+            )
+                ? _buildProgressBar()
+                : const SizedBox.shrink(),
           ],
         ),
       ),
     );
-  }
-
-  bool _isContentLongEnoughToShowProgressBar() {
-    if (!betterPlayerController!.isLiveStream()) {
-      return true;
-    }
-
-    final Duration contentDuration = _controller?.value.duration ?? Duration.zero;
-
-    return contentDuration >= _controlsConfiguration.minimumDurationToEnableProgressbar;
   }
 
   Widget _buildExpandButton() {
