@@ -28,7 +28,7 @@ NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
  ** It returns CKC.
  ** ---------------------------------------*/
 - (NSData *)getContentKeyAndLeaseExpiryFromKeyServerModuleWithRequest:(NSData*)requestBytes and:(NSString *)assetId and:(NSString *)customParams and:(NSError *)errorOut {
-    NSData * decodedData;
+    NSData * ckc;
     NSURLResponse * response;
     
     NSURL * finalLicenseURL;
@@ -50,18 +50,16 @@ NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
     [request setHTTPBody:requestBytes];
     
     @try {
-        decodedData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+        NSData * decodedData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+        //MGR: response is a json with base64 encoded CKC
+        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:decodedData options:0 error:nil];
+        NSString *encodedCkc = [json objectForKey: @"CkcMessage"];
+        ckc = [[NSData alloc] initWithBase64EncodedString:encodedCkc options:0];
+        NSLog(@"Received CKC %d", ckc.length);
     }
     @catch (NSException* excp) {
-        NSLog(@"SDK Error, SDK responded with Error: (error)");
+        NSLog(@"FairPlay Error, SDK responded with error");
     }
-
-    //MGR: response is a json with base64 encoded CKC
-    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:decodedData options:0 error:nil];
-    NSString *encodedCkc = [json objectForKey: @"CkcMessage"];
-    NSData *ckc = [[NSData alloc] initWithBase64EncodedString:encodedCkc options:0];
-    NSLog(@"Received CKC %d", ckc.length);
-
     return ckc;
 }
 
