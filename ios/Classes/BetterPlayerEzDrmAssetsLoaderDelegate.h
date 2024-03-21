@@ -10,8 +10,6 @@
 
 @property(readonly, nonatomic) NSURL* certificateURL;
 @property(readonly, nonatomic) NSURL* licenseURL;
-@property(readonly, nonatomic) NSDictionary* drmHeaders;
-//MGR: accept drmHeaders from flutter
-- (instancetype)init:(NSURL *)certificateURL withLicenseURL:(NSURL *)licenseURL withDrmHeaders:(NSDictionary*)drmHeaders;
+- (instancetype)init:(NSURL *)certificateURL withLicenseURL:(NSURL *)licenseURL;
 
 @end
