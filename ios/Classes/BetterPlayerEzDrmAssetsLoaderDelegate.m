@@ -10,10 +10,13 @@ NSString *_assetId;
 
 NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
 
-- (instancetype)init:(NSURL *)certificateURL withLicenseURL:(NSURL *)licenseURL{
+//MGR: accept drmHeaders from flutter
+- (instancetype)init:(NSURL *)certificateURL withLicenseURL:(NSURL *)licenseURL withDrmHeaders:(NSDictionary*)drmHeaders {
     self = [super init];
     _certificateURL = certificateURL;
     _licenseURL = licenseURL;
+    //MGR: store drmHeaders received from flutter DRM configuration
+    _drmHeaders = drmHeaders;
     return self;
 }
 
@@ -25,7 +28,7 @@ NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
  ** It returns CKC.
  ** ---------------------------------------*/
 - (NSData *)getContentKeyAndLeaseExpiryFromKeyServerModuleWithRequest:(NSData*)requestBytes and:(NSString *)assetId and:(NSString *)customParams and:(NSError *)errorOut {
-    NSData * decodedData;
+    NSData * ckc;
     NSURLResponse * response;
     
     NSURL * finalLicenseURL;
@@ -34,20 +37,30 @@ NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
     } else {
         finalLicenseURL = [[NSURL alloc] initWithString: DEFAULT_LICENSE_SERVER_URL];
     }
-    NSURL * ksmURL = [[NSURL alloc] initWithString: [NSString stringWithFormat:@"%@%@%@",finalLicenseURL,assetId,customParams]];
-    
+    //NSURL * ksmURL = [[NSURL alloc] initWithString: [NSString stringWithFormat:@"%@%@%@",finalLicenseURL,assetId,customParams]];
+    //MGR: appending data to URL causes 404 so skip this part; content ID is part of preAuthorization header
+    NSURL * ksmURL = [[NSURL alloc] initWithString: [NSString stringWithFormat:@"%@",finalLicenseURL]];
+
     NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:ksmURL];
     [request setHTTPMethod:@"POST"];
     [request setValue:@"application/octet-stream" forHTTPHeaderField:@"Content-type"];
+    //MGR: set Authorization and PreAuthorization headers in license request
+    for(id key in _drmHeaders)
+                [request setValue: [_drmHeaders objectForKey:key] forHTTPHeaderField: key];
     [request setHTTPBody:requestBytes];
     
     @try {
-        decodedData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+        NSData * decodedData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+        //MGR: response is a json with base64 encoded CKC
+        NSDictionary *json = [NSJSONSerialization JSONObjectWithData:decodedData options:0 error:nil];
+        NSString *encodedCkc = [json objectForKey: @"CkcMessage"];
+        ckc = [[NSData alloc] initWithBase64EncodedString:encodedCkc options:0];
+        NSLog(@"Received CKC %d", ckc.length);
     }
     @catch (NSException* excp) {
-        NSLog(@"SDK Error, SDK responded with Error: (error)");
+        NSLog(@"FairPlay Error, SDK responded with error");
     }
-    return decodedData;
+    return ckc;
 }
 
 /*------------------------------------------
@@ -60,7 +73,23 @@ NSString * DEFAULT_LICENSE_SERVER_URL = @"https://fps.ezdrm.com/api/licenses/";
  ** ---------------------------------------*/
 - (NSData *)getAppCertificate:(NSString *) String {
     NSData * certificate = nil;
-    certificate = [NSData dataWithContentsOfURL:_certificateURL];
+    NSURLResponse * response;
+    // certificate = [NSData dataWithContentsOfURL:_certificateURL];
+    //MGR: get the certificate from server using DRM headers
+    NSURL * certURL = [[NSURL alloc] initWithString: [NSString stringWithFormat:@"%@",_certificateURL]];
+    NSMutableURLRequest * request = [[NSMutableURLRequest alloc] initWithURL:certURL];
+    [request setHTTPMethod:@"GET"];
+    //MGR: it is enough to pass Authorization header but be generous and pass all DRM headers :-)
+    for(id key in _drmHeaders)
+        [request setValue: [_drmHeaders objectForKey:key] forHTTPHeaderField: key];
+
+    @try {
+        certificate = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:nil];
+    }
+    @catch (NSException* excp) {
+        NSLog(@"SDK Error, SDK responded with Error: (error)");
+    }
+    NSLog(@"Received Certificate %d", certificate.length);
     return certificate;
 }
 
