@@ -13,5 +13,11 @@ enum BetterPlayerControllerEvent {
   setupDataSource,
 
   //Video has started.
-  play
+  play,
+
+  //Show skip intro button
+  showSkipIntro,
+
+  //Hide skip intro button
+  hideSkipIntro
 }

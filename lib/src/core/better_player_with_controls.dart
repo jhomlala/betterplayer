@@ -12,8 +12,12 @@ import 'package:flutter/material.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
   final BetterPlayerController? controller;
+  final Widget? skipButton;
+  final int? skipDuration;
 
-  const BetterPlayerWithControls({Key? key, this.controller}) : super(key: key);
+  const BetterPlayerWithControls(
+      {Key? key, this.controller, this.skipButton, this.skipDuration})
+      : super(key: key);
 
   @override
   _BetterPlayerWithControlsState createState() =>
@@ -147,6 +151,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
           ),
           if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
           _buildControls(context, betterPlayerController),
+          _buildSkipIntroButton(betterPlayerController),
         ],
       ),
     );
@@ -157,6 +162,20 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         betterPlayerController.betterPlayerConfiguration.placeholder ??
         Container();
   }
+
+  Widget _buildSkipIntroButton(BetterPlayerController betterPlayerController) =>
+      Positioned(
+        bottom: 100,
+        right: 20,
+        child: betterPlayerController.showSkipIntro
+            ? GestureDetector(
+                onTap: () {
+                  betterPlayerController
+                      .seekTo(Duration(milliseconds: widget.skipDuration!));
+                },
+                child: widget.skipButton)
+            : SizedBox.shrink(),
+      );
 
   Widget _buildControls(
     BuildContext context,

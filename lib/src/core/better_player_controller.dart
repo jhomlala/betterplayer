@@ -64,6 +64,10 @@ class BetterPlayerController {
   ///Flag used to store full screen mode state.
   bool get isFullScreen => _isFullScreen;
 
+  bool _showSkipIntro = false;
+
+  bool get showSkipIntro => _showSkipIntro;
+
   ///Time when last progress event was sent
   int _lastPositionSelection = 0;
 
@@ -443,35 +447,35 @@ class BetterPlayerController {
     switch (betterPlayerDataSource.type) {
       case BetterPlayerDataSourceType.network:
         await videoPlayerController?.setNetworkDataSource(
-          betterPlayerDataSource.url,
-          headers: _getHeaders(),
-          useCache:
-              _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
-          maxCacheSize:
-              _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
-          maxCacheFileSize:
-              _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
-                  0,
-          cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
-          showNotification: _betterPlayerDataSource
-              ?.notificationConfiguration?.showNotification,
-          title: _betterPlayerDataSource?.notificationConfiguration?.title,
-          author: _betterPlayerDataSource?.notificationConfiguration?.author,
-          imageUrl:
-              _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
-          notificationChannelName: _betterPlayerDataSource
-              ?.notificationConfiguration?.notificationChannelName,
-          overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-          formatHint: _getVideoFormat(_betterPlayerDataSource!.videoFormat),
-          licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
-          certificateUrl:
-              _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
-          drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
-          activityName:
-              _betterPlayerDataSource?.notificationConfiguration?.activityName,
-          clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
-          videoExtension: _betterPlayerDataSource!.videoExtension,
-          isLive: isLiveStream());
+            betterPlayerDataSource.url,
+            headers: _getHeaders(),
+            useCache:
+                _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
+            maxCacheSize:
+                _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
+            maxCacheFileSize:
+                _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
+                    0,
+            cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
+            showNotification: _betterPlayerDataSource
+                ?.notificationConfiguration?.showNotification,
+            title: _betterPlayerDataSource?.notificationConfiguration?.title,
+            author: _betterPlayerDataSource?.notificationConfiguration?.author,
+            imageUrl:
+                _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+            notificationChannelName: _betterPlayerDataSource
+                ?.notificationConfiguration?.notificationChannelName,
+            overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
+            formatHint: _getVideoFormat(_betterPlayerDataSource!.videoFormat),
+            licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
+            certificateUrl:
+                _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
+            drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
+            activityName: _betterPlayerDataSource
+                ?.notificationConfiguration?.activityName,
+            clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
+            videoExtension: _betterPlayerDataSource!.videoExtension,
+            isLive: isLiveStream());
 
         break;
       case BetterPlayerDataSourceType.file:
@@ -627,6 +631,20 @@ class BetterPlayerController {
     }
   }
 
+  ///Show skipIntroButton
+  Future<void> showSkipIntroButton() async {
+    _showSkipIntro = true;
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.showSkipIntro));
+    _postControllerEvent(BetterPlayerControllerEvent.showSkipIntro);
+  }
+
+  ///Hide skipIntroButton
+  Future<void> hideSkipIntroButton() async {
+    _showSkipIntro = false;
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.hideSkipIntro));
+    _postControllerEvent(BetterPlayerControllerEvent.hideSkipIntro);
+  }
+
   ///Enables/disables looping (infinity playback) mode.
   Future<void> setLooping(bool looping) async {
     if (videoPlayerController == null) {
@@ -658,8 +676,8 @@ class BetterPlayerController {
 
     await videoPlayerController!.seekTo(moment);
 
-    _postEvent(
-        BetterPlayerEvent(BetterPlayerEventType.seekTo, parameters: <String, dynamic>{_durationParameter: moment}));
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo,
+        parameters: <String, dynamic>{_durationParameter: moment}));
 
     final Duration? currentDuration = videoPlayerController!.value.duration;
     if (currentDuration == null) {
@@ -1064,11 +1082,13 @@ class BetterPlayerController {
       throw StateError("The data source has not been initialized");
     }
 
-    final bool isPipSupported = (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
+    final bool isPipSupported =
+        (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
 
     final bool canEnablePictureInPicture = (isPlaying() ?? false) &&
         (isVideoInitialized() ?? false) &&
-        (videoPlayerController?.value.duration != null && videoPlayerController!.value.duration!.inMilliseconds >= 0) &&
+        (videoPlayerController?.value.duration != null &&
+            videoPlayerController!.value.duration!.inMilliseconds >= 0) &&
         ((await videoPlayerController?.position)?.inMilliseconds ?? 0) > 0 &&
         !(videoPlayerController?.value.hasError ?? true);
 
@@ -1078,7 +1098,8 @@ class BetterPlayerController {
       setControlsEnabled(false);
       if (Platform.isAndroid) {
         _wasInFullScreenBeforePiP = _isFullScreen;
-        await videoPlayerController?.enablePictureInPicture(left: 0, top: 0, width: 0, height: 0);
+        await videoPlayerController?.enablePictureInPicture(
+            left: 0, top: 0, width: 0, height: 0);
         enterFullScreen();
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
         return;
