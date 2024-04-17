@@ -196,7 +196,7 @@ class _BetterPlayerMaterialControlsState
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    if(_controlsConfiguration.showExitButton)
+                    if (_controlsConfiguration.showExitButton)
                       _buildExitButton(),
                     const Spacer(),
                     if (_controlsConfiguration.enablePip)
@@ -290,11 +290,22 @@ class _BetterPlayerMaterialControlsState
               flex: 75,
               child: Row(
                 children: [
-                  if (_controlsConfiguration.enablePlayPause) _buildPlayPause(_controller!) else const SizedBox(),
-                  _controlsConfiguration.enableProgressText ? Expanded(child: _buildPosition()) : const SizedBox(),
+                  if (_controlsConfiguration.enablePlayPause)
+                    _buildPlayPause(_controller!)
+                  else
+                    const SizedBox(),
+                  _controlsConfiguration.enableProgressText
+                      ? Expanded(child: _buildPosition())
+                      : const SizedBox(),
                   const Spacer(),
-                  if (_controlsConfiguration.enableMute) _buildMuteButton(_controller) else const SizedBox(),
-                  if (_controlsConfiguration.enableFullscreen) _buildExpandButton() else const SizedBox(),
+                  if (_controlsConfiguration.enableMute)
+                    _buildMuteButton(_controller)
+                  else
+                    const SizedBox(),
+                  if (_controlsConfiguration.enableFullscreen)
+                    _buildExpandButton()
+                  else
+                    const SizedBox(),
                 ],
               ),
             ),
@@ -359,9 +370,16 @@ class _BetterPlayerMaterialControlsState
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          if (_controlsConfiguration.enableSkips) Expanded(child: _buildSkipButton()) else const SizedBox(),
-          if (_controlsConfiguration.enableReplayButton) Expanded(child: _buildReplayButton(_controller!)),
-          if (_controlsConfiguration.enableSkips) Expanded(child: _buildForwardButton()) else const SizedBox(),
+          if (_controlsConfiguration.enableSkips)
+            Expanded(child: _buildSkipButton())
+          else
+            const SizedBox(),
+          if (_controlsConfiguration.enableReplayButton)
+            Expanded(child: _buildReplayButton(_controller!)),
+          if (_controlsConfiguration.enableSkips)
+            Expanded(child: _buildForwardButton())
+          else
+            const SizedBox(),
         ],
       ),
     );
@@ -655,7 +673,8 @@ class _BetterPlayerMaterialControlsState
           isLoading(_controller!.value)) {
         setState(() {
           _latestValue = _controller!.value;
-          if (isVideoFinished(_latestValue) && _betterPlayerController?.isLiveStream() == false) {
+          if (isVideoFinished(_latestValue) &&
+              _betterPlayerController?.isLiveStream() == false) {
             changePlayerControlsNotVisible(false);
           }
         });
@@ -706,14 +725,16 @@ class _BetterPlayerMaterialControlsState
     }
 
     return CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(_controlsConfiguration.loadingColor),
+      valueColor:
+          AlwaysStoppedAnimation<Color>(_controlsConfiguration.loadingColor),
     );
   }
 
   Widget _buildExitButton() => GestureDetector(
         behavior: HitTestBehavior.translucent,
         onTap: () {
-          _betterPlayerController!.postEvent(BetterPlayerEvent(BetterPlayerEventType.close));
+          _betterPlayerController!
+              .postEvent(BetterPlayerEvent(BetterPlayerEventType.close));
         },
         child: Padding(
           padding: EdgeInsets.only(left: 16.0, top: 8.0, bottom: 8.0),

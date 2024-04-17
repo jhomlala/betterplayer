@@ -150,6 +150,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
           ),
           if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
           _buildControls(context, betterPlayerController),
+          _buildPlayNextWidget(context, betterPlayerController),
           _buildSkipIntroButton(betterPlayerController),
         ],
       ),
@@ -162,6 +163,28 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         Container();
   }
 
+  Widget _buildPlayNextWidget(BuildContext context,
+          BetterPlayerController betterPlayerController) =>
+      Positioned(
+        bottom: 100,
+        right: 20,
+        child: betterPlayerController.isNextVideo
+            ? betterPlayerController.betterPlayerPlayNextVideoConfiguration !=
+                    null
+                ? betterPlayerController.betterPlayerPlayNextVideoConfiguration!
+                    .playNextBuilder(
+                        _progressPlayNextVideo(betterPlayerController))
+                : SizedBox.shrink()
+            : SizedBox.shrink(),
+      );
+
+  double _progressPlayNextVideo(BetterPlayerController betterPlayerController) {
+    final currentPosition = betterPlayerController
+        .videoPlayerController!.value.position.inMilliseconds;
+    final showBeforeEndMillis = betterPlayerController
+        .betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis;
+    final timeEndVideo = betterPlayerController
+        .videoPlayerController!.value.duration!.inMilliseconds;
   Widget _buildSkipIntroButton(BetterPlayerController betterPlayerController) {
     return Positioned(
       bottom: 100,
@@ -204,6 +227,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       return 0.0;
     }
 
+    return (currentPosition >= showBeforeEndMillis)
+        ? currentPosition / timeEndVideo
     return (currentPosition >= skipIntroShowMillis)
         ? currentPosition / skipIntroHideMillis
         : 0.0;
