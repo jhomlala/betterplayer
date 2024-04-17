@@ -9,9 +9,10 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 ///Widget which uses provided controller to render video player.
 class BetterPlayer extends StatefulWidget {
-  const BetterPlayer(
-      {Key? key, required this.controller, this.skipDuration, this.skipButton})
-      : super(key: key);
+  const BetterPlayer({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   factory BetterPlayer.network(
     String url, {
@@ -38,8 +39,6 @@ class BetterPlayer extends StatefulWidget {
       );
 
   final BetterPlayerController controller;
-  final int? skipDuration;
-  final Widget? skipButton;
 
   @override
   _BetterPlayerState createState() {
@@ -130,7 +129,7 @@ class _BetterPlayerState extends State<BetterPlayer>
     super.didUpdateWidget(oldWidget);
   }
 
-  void onControllerEvent(BetterPlayerControllerEvent event) async {
+  void onControllerEvent(BetterPlayerControllerEvent event) {
     switch (event) {
       case BetterPlayerControllerEvent.openFullscreen:
         onFullScreenChanged();
@@ -262,8 +261,6 @@ class _BetterPlayerState extends State<BetterPlayer>
           widget.controller.onPlayerVisibilityChanged(info.visibleFraction),
       child: BetterPlayerWithControls(
         controller: widget.controller,
-        skipDuration: widget.skipDuration,
-        skipButton: widget.skipButton,
       ),
     );
   }

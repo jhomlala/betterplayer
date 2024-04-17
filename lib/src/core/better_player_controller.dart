@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
+import 'package:better_player/src/configuration/better_player_skip_intro_configuration.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
@@ -45,6 +46,8 @@ class BetterPlayerController {
 
   ///Controls configuration
   late BetterPlayerControlsConfiguration _betterPlayerControlsConfiguration;
+
+  final BetterPlayerSkipIntroConfiguration? betterPlayerSkipIntroConfiguration;
 
   ///Controls configuration
   BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
@@ -218,6 +221,7 @@ class BetterPlayerController {
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
+    this.betterPlayerSkipIntroConfiguration,
     BetterPlayerDataSource? betterPlayerDataSource,
   }) {
     this._betterPlayerControlsConfiguration =
@@ -634,6 +638,7 @@ class BetterPlayerController {
   ///Show skipIntroButton
   Future<void> showSkipIntroButton() async {
     _showSkipIntro = true;
+
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.showSkipIntro));
     _postControllerEvent(BetterPlayerControllerEvent.showSkipIntro);
   }
@@ -641,6 +646,7 @@ class BetterPlayerController {
   ///Hide skipIntroButton
   Future<void> hideSkipIntroButton() async {
     _showSkipIntro = false;
+
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.hideSkipIntro));
     _postControllerEvent(BetterPlayerControllerEvent.hideSkipIntro);
   }
@@ -817,6 +823,21 @@ class BetterPlayerController {
 
     if (_betterPlayerSubtitlesSource?.asmsIsSegmented == true) {
       _loadAsmsSubtitlesSegments(currentVideoPlayerValue.position);
+    }
+
+    if (betterPlayerSkipIntroConfiguration != null) {
+      if (currentVideoPlayerValue.position.inMilliseconds >=
+              betterPlayerSkipIntroConfiguration!
+                  .skipIntroDetails.skipIntroShowMillis &&
+          currentVideoPlayerValue.position.inMilliseconds <
+              betterPlayerSkipIntroConfiguration!
+                  .skipIntroDetails.skipIntroHideMillis) {
+        showSkipIntroButton();
+      } else if (currentVideoPlayerValue.position.inMilliseconds >=
+          betterPlayerSkipIntroConfiguration!
+              .skipIntroDetails.skipIntroHideMillis) {
+        hideSkipIntroButton();
+      }
     }
 
     final int now = DateTime.now().millisecondsSinceEpoch;

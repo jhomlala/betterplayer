@@ -12,12 +12,11 @@ import 'package:flutter/material.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
   final BetterPlayerController? controller;
-  final Widget? skipButton;
-  final int? skipDuration;
 
-  const BetterPlayerWithControls(
-      {Key? key, this.controller, this.skipButton, this.skipDuration})
-      : super(key: key);
+  const BetterPlayerWithControls({
+    Key? key,
+    this.controller,
+  }) : super(key: key);
 
   @override
   _BetterPlayerWithControlsState createState() =>
@@ -163,19 +162,29 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         Container();
   }
 
-  Widget _buildSkipIntroButton(BetterPlayerController betterPlayerController) =>
-      Positioned(
-        bottom: 100,
-        right: 20,
-        child: betterPlayerController.showSkipIntro
-            ? GestureDetector(
-                onTap: () {
+  Widget _buildSkipIntroButton(BetterPlayerController betterPlayerController) {
+    return Positioned(
+      bottom: 100,
+      right: 20,
+      child: betterPlayerController.showSkipIntro
+          ? GestureDetector(
+              onTap: () {
+                if (betterPlayerController.betterPlayerSkipIntroConfiguration !=
+                    null) {
+                  final skipIntroSeekToMillis = betterPlayerController
+                      .betterPlayerSkipIntroConfiguration!
+                      .skipIntroDetails
+                      .skipIntroSeekToMillis;
+
                   betterPlayerController
-                      .seekTo(Duration(milliseconds: widget.skipDuration!));
-                },
-                child: widget.skipButton)
-            : SizedBox.shrink(),
-      );
+                      .seekTo(Duration(milliseconds: skipIntroSeekToMillis));
+                }
+              },
+              child: betterPlayerController.betterPlayerSkipIntroConfiguration!
+                  .skipIntroBuilder())
+          : SizedBox.shrink(),
+    );
+  }
 
   Widget _buildControls(
     BuildContext context,
