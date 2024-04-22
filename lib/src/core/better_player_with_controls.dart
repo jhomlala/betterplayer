@@ -198,16 +198,15 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         .betterPlayerSkipIntroConfiguration!
         .skipIntroDetails
         .skipIntroHideMillis;
+    final videoController = betterPlayerController.videoPlayerController;
 
-    if (betterPlayerController.videoPlayerController!.value.initialized) {
-      if (currentPosition >= skipIntroShowMillis) {
-        return currentPosition / skipIntroHideMillis;
-      } else {
-        return 0;
-      }
-    } else {
-      return 0;
+    if (!(videoController?.value.initialized ?? false)) {
+      return 0.0;
     }
+
+    return (currentPosition >= skipIntroShowMillis)
+        ? currentPosition / skipIntroHideMillis
+        : 0.0;
   }
 
   Widget _buildControls(
