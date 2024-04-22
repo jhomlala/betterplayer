@@ -864,6 +864,9 @@ class BetterPlayerController {
       if (currentVideoPlayerValue.position.inMilliseconds >=
           betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis) {
         showNextVideoButton();
+      }
+    }
+  }
 
   void _displaySkipIntroButton(VideoPlayerValue currentVideoPlayerValue) {
     if (betterPlayerSkipIntroConfiguration != null) {

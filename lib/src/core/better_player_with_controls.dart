@@ -178,13 +178,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             : SizedBox.shrink(),
       );
 
-  double _progressPlayNextVideo(BetterPlayerController betterPlayerController) {
-    final currentPosition = betterPlayerController
-        .videoPlayerController!.value.position.inMilliseconds;
-    final showBeforeEndMillis = betterPlayerController
-        .betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis;
-    final timeEndVideo = betterPlayerController
-        .videoPlayerController!.value.duration!.inMilliseconds;
   Widget _buildSkipIntroButton(BetterPlayerController betterPlayerController) {
     return Positioned(
       bottom: 100,
@@ -210,6 +203,24 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     );
   }
 
+  double _progressPlayNextVideo(BetterPlayerController betterPlayerController) {
+    final currentPosition = betterPlayerController
+        .videoPlayerController!.value.position.inMilliseconds;
+    final showBeforeEndMillis = betterPlayerController
+        .betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis;
+    final timeEndVideo = betterPlayerController
+        .videoPlayerController!.value.duration!.inMilliseconds;
+    final videoController = betterPlayerController.videoPlayerController;
+
+    if (!(videoController?.value.initialized ?? false)) {
+      return 0.0;
+    }
+
+    return (currentPosition >= showBeforeEndMillis)
+        ? currentPosition / timeEndVideo
+        : 0.0;
+  }
+
   double _progressOfSkipIntro(BetterPlayerController betterPlayerController) {
     final skipIntroShowMillis = betterPlayerController
         .betterPlayerSkipIntroConfiguration!
@@ -227,8 +238,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       return 0.0;
     }
 
-    return (currentPosition >= showBeforeEndMillis)
-        ? currentPosition / timeEndVideo
     return (currentPosition >= skipIntroShowMillis)
         ? currentPosition / skipIntroHideMillis
         : 0.0;
