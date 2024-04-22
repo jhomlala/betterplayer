@@ -150,6 +150,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
           ),
           if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
           _buildControls(context, betterPlayerController),
+          _buildPlayNextWidget(context, betterPlayerController),
           _buildSkipIntroButton(betterPlayerController),
         ],
       ),
@@ -161,6 +162,21 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         betterPlayerController.betterPlayerConfiguration.placeholder ??
         Container();
   }
+
+  Widget _buildPlayNextWidget(BuildContext context,
+          BetterPlayerController betterPlayerController) =>
+      Positioned(
+        bottom: 100,
+        right: 20,
+        child: betterPlayerController.isNextVideo
+            ? betterPlayerController.betterPlayerPlayNextVideoConfiguration !=
+                    null
+                ? betterPlayerController.betterPlayerPlayNextVideoConfiguration!
+                    .playNextBuilder(
+                        _progressPlayNextVideo(betterPlayerController))
+                : SizedBox.shrink()
+            : SizedBox.shrink(),
+      );
 
   Widget _buildSkipIntroButton(BetterPlayerController betterPlayerController) {
     return Positioned(
@@ -185,6 +201,24 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
                       _progressOfSkipIntro(betterPlayerController)))
           : SizedBox.shrink(),
     );
+  }
+
+  double _progressPlayNextVideo(BetterPlayerController betterPlayerController) {
+    final currentPosition = betterPlayerController
+        .videoPlayerController!.value.position.inMilliseconds;
+    final showBeforeEndMillis = betterPlayerController
+        .betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis;
+    final timeEndVideo = betterPlayerController
+        .videoPlayerController!.value.duration!.inMilliseconds;
+    final videoController = betterPlayerController.videoPlayerController;
+
+    if (!(videoController?.value.initialized ?? false)) {
+      return 0.0;
+    }
+
+    return (currentPosition >= showBeforeEndMillis)
+        ? currentPosition / timeEndVideo
+        : 0.0;
   }
 
   double _progressOfSkipIntro(BetterPlayerController betterPlayerController) {

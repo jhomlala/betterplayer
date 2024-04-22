@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
+import 'package:better_player/src/configuration/better_player_play_next_video_configuration.dart';
 import 'package:better_player/src/configuration/better_player_skip_intro_configuration.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
@@ -47,6 +48,8 @@ class BetterPlayerController {
   ///Controls configuration
   late BetterPlayerControlsConfiguration _betterPlayerControlsConfiguration;
 
+  final BetterPlayerPlayNextVideoConfiguration?
+      betterPlayerPlayNextVideoConfiguration;
   final BetterPlayerSkipIntroConfiguration? betterPlayerSkipIntroConfiguration;
 
   ///Controls configuration
@@ -67,6 +70,11 @@ class BetterPlayerController {
   ///Flag used to store full screen mode state.
   bool get isFullScreen => _isFullScreen;
 
+  ///Flag used to store next video
+  bool _isNextVideo = false;
+
+  ///Flag used to store next video
+  bool get isNextVideo => _isNextVideo;
   bool _showSkipIntro = false;
 
   bool get showSkipIntro => _showSkipIntro;
@@ -221,6 +229,7 @@ class BetterPlayerController {
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
+    this.betterPlayerPlayNextVideoConfiguration,
     this.betterPlayerSkipIntroConfiguration,
     BetterPlayerDataSource? betterPlayerDataSource,
   }) {
@@ -666,8 +675,15 @@ class BetterPlayerController {
       throw StateError("The data source has not been initialized");
     }
 
-    await videoPlayerController!.pause();
+    await videoPlayerController?.pause();
     _postEvent(BetterPlayerEvent(BetterPlayerEventType.pause));
+  }
+
+  Future<void> showNextVideoButton() async {
+    _isNextVideo = true;
+
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.playNextVideo));
+    _postControllerEvent(BetterPlayerControllerEvent.playNextVideo);
   }
 
   ///Move player to specific position/moment of the video.
@@ -825,6 +841,7 @@ class BetterPlayerController {
       _loadAsmsSubtitlesSegments(currentVideoPlayerValue.position);
     }
 
+    _displayPlayNextButton(currentVideoPlayerValue);
     _displaySkipIntroButton(currentVideoPlayerValue);
 
     final int now = DateTime.now().millisecondsSinceEpoch;
@@ -839,6 +856,15 @@ class BetterPlayerController {
           },
         ),
       );
+    }
+  }
+
+  void _displayPlayNextButton(VideoPlayerValue currentVideoPlayerValue) {
+    if (betterPlayerPlayNextVideoConfiguration != null) {
+      if (currentVideoPlayerValue.position.inMilliseconds >=
+          betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis) {
+        showNextVideoButton();
+      }
     }
   }
 
