@@ -181,9 +181,24 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
                 }
               },
               child: betterPlayerController.betterPlayerSkipIntroConfiguration!
-                  .skipIntroBuilder())
+                  .skipIntroBuilder(
+                      _progressOfSkipIntro(betterPlayerController)))
           : SizedBox.shrink(),
     );
+  }
+
+  double _progressOfSkipIntro(BetterPlayerController betterPlayerController) {
+    if (betterPlayerController.betterPlayerSkipIntroConfiguration!
+            .skipIntroDetails.skipIntroShowMillis <=
+        betterPlayerController
+            .videoPlayerController!.value.position.inMilliseconds) {
+      return betterPlayerController
+              .videoPlayerController!.value.position.inMilliseconds /
+          betterPlayerController.betterPlayerSkipIntroConfiguration!
+              .skipIntroDetails.skipIntroHideMillis;
+    } else {
+      return 0;
+    }
   }
 
   Widget _buildControls(

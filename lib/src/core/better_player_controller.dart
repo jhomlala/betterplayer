@@ -825,20 +825,7 @@ class BetterPlayerController {
       _loadAsmsSubtitlesSegments(currentVideoPlayerValue.position);
     }
 
-    if (betterPlayerSkipIntroConfiguration != null) {
-      if (currentVideoPlayerValue.position.inMilliseconds >=
-              betterPlayerSkipIntroConfiguration!
-                  .skipIntroDetails.skipIntroShowMillis &&
-          currentVideoPlayerValue.position.inMilliseconds <
-              betterPlayerSkipIntroConfiguration!
-                  .skipIntroDetails.skipIntroHideMillis) {
-        showSkipIntroButton();
-      } else if (currentVideoPlayerValue.position.inMilliseconds >=
-          betterPlayerSkipIntroConfiguration!
-              .skipIntroDetails.skipIntroHideMillis) {
-        hideSkipIntroButton();
-      }
-    }
+    _displaySkipIntroButton(currentVideoPlayerValue);
 
     final int now = DateTime.now().millisecondsSinceEpoch;
     if (now - _lastPositionSelection > 500) {
@@ -852,6 +839,23 @@ class BetterPlayerController {
           },
         ),
       );
+    }
+  }
+
+  void _displaySkipIntroButton(VideoPlayerValue currentVideoPlayerValue) {
+    if (betterPlayerSkipIntroConfiguration != null) {
+      if (currentVideoPlayerValue.position.inMilliseconds >=
+              betterPlayerSkipIntroConfiguration!
+                  .skipIntroDetails.skipIntroShowMillis &&
+          currentVideoPlayerValue.position.inMilliseconds <
+              betterPlayerSkipIntroConfiguration!
+                  .skipIntroDetails.skipIntroHideMillis) {
+        showSkipIntroButton();
+      } else if (currentVideoPlayerValue.position.inMilliseconds >=
+          betterPlayerSkipIntroConfiguration!
+              .skipIntroDetails.skipIntroHideMillis) {
+        hideSkipIntroButton();
+      }
     }
   }
 

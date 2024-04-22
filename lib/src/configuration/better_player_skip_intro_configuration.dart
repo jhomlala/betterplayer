@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class BetterPlayerSkipIntroConfiguration {
   final BetterPlayerSkipIntroDetails skipIntroDetails;
-  final Widget Function() skipIntroBuilder;
+  final Widget Function(double progress) skipIntroBuilder;
 
   BetterPlayerSkipIntroConfiguration({
     required this.skipIntroDetails,
