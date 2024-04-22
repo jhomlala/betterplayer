@@ -851,7 +851,7 @@ class BetterPlayerController {
               betterPlayerSkipIntroConfiguration!
                   .skipIntroDetails.skipIntroHideMillis) {
         showSkipIntroButton();
-      } else if (currentVideoPlayerValue.position.inMilliseconds >=
+      } else if (currentVideoPlayerValue.position.inMilliseconds >
           betterPlayerSkipIntroConfiguration!
               .skipIntroDetails.skipIntroHideMillis) {
         hideSkipIntroButton();

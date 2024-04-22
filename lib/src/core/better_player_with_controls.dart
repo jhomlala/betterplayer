@@ -188,14 +188,23 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   }
 
   double _progressOfSkipIntro(BetterPlayerController betterPlayerController) {
-    if (betterPlayerController.betterPlayerSkipIntroConfiguration!
-            .skipIntroDetails.skipIntroShowMillis <=
-        betterPlayerController
-            .videoPlayerController!.value.position.inMilliseconds) {
-      return betterPlayerController
-              .videoPlayerController!.value.position.inMilliseconds /
-          betterPlayerController.betterPlayerSkipIntroConfiguration!
-              .skipIntroDetails.skipIntroHideMillis;
+    final skipIntroShowMillis = betterPlayerController
+        .betterPlayerSkipIntroConfiguration!
+        .skipIntroDetails
+        .skipIntroShowMillis;
+    final currentPosition = betterPlayerController
+        .videoPlayerController!.value.position.inMilliseconds;
+    final skipIntroHideMillis = betterPlayerController
+        .betterPlayerSkipIntroConfiguration!
+        .skipIntroDetails
+        .skipIntroHideMillis;
+
+    if (betterPlayerController.videoPlayerController!.value.initialized) {
+      if (currentPosition >= skipIntroShowMillis) {
+        return currentPosition / skipIntroHideMillis;
+      } else {
+        return 0;
+      }
     } else {
       return 0;
     }
