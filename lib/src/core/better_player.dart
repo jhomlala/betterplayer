@@ -9,7 +9,10 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 ///Widget which uses provided controller to render video player.
 class BetterPlayer extends StatefulWidget {
-  const BetterPlayer({Key? key, required this.controller}) : super(key: key);
+  const BetterPlayer({
+    Key? key,
+    required this.controller,
+  }) : super(key: key);
 
   factory BetterPlayer.network(
     String url, {

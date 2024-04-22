@@ -13,7 +13,10 @@ import 'package:flutter/material.dart';
 class BetterPlayerWithControls extends StatefulWidget {
   final BetterPlayerController? controller;
 
-  const BetterPlayerWithControls({Key? key, this.controller}) : super(key: key);
+  const BetterPlayerWithControls({
+    Key? key,
+    this.controller,
+  }) : super(key: key);
 
   @override
   _BetterPlayerWithControlsState createState() =>
@@ -147,6 +150,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
           ),
           if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
           _buildControls(context, betterPlayerController),
+          _buildSkipIntroButton(betterPlayerController),
         ],
       ),
     );
@@ -156,6 +160,53 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     return betterPlayerController.betterPlayerDataSource!.placeholder ??
         betterPlayerController.betterPlayerConfiguration.placeholder ??
         Container();
+  }
+
+  Widget _buildSkipIntroButton(BetterPlayerController betterPlayerController) {
+    return Positioned(
+      bottom: 100,
+      right: 20,
+      child: betterPlayerController.showSkipIntro
+          ? GestureDetector(
+              onTap: () {
+                if (betterPlayerController.betterPlayerSkipIntroConfiguration !=
+                    null) {
+                  final skipIntroSeekToMillis = betterPlayerController
+                      .betterPlayerSkipIntroConfiguration!
+                      .skipIntroDetails
+                      .skipIntroSeekToMillis;
+
+                  betterPlayerController
+                      .seekTo(Duration(milliseconds: skipIntroSeekToMillis));
+                }
+              },
+              child: betterPlayerController.betterPlayerSkipIntroConfiguration!
+                  .skipIntroBuilder(
+                      _progressOfSkipIntro(betterPlayerController)))
+          : SizedBox.shrink(),
+    );
+  }
+
+  double _progressOfSkipIntro(BetterPlayerController betterPlayerController) {
+    final skipIntroShowMillis = betterPlayerController
+        .betterPlayerSkipIntroConfiguration!
+        .skipIntroDetails
+        .skipIntroShowMillis;
+    final currentPosition = betterPlayerController
+        .videoPlayerController!.value.position.inMilliseconds;
+    final skipIntroHideMillis = betterPlayerController
+        .betterPlayerSkipIntroConfiguration!
+        .skipIntroDetails
+        .skipIntroHideMillis;
+    final videoController = betterPlayerController.videoPlayerController;
+
+    if (!(videoController?.value.initialized ?? false)) {
+      return 0.0;
+    }
+
+    return (currentPosition >= skipIntroShowMillis)
+        ? currentPosition / skipIntroHideMillis
+        : 0.0;
   }
 
   Widget _buildControls(
