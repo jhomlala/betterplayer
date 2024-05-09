@@ -206,10 +206,14 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   double _progressPlayNextVideo(BetterPlayerController betterPlayerController) {
     final currentPosition = betterPlayerController
         .videoPlayerController!.value.position.inMilliseconds;
-    final showBeforeEndMillis = betterPlayerController
-        .betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis;
     final timeEndVideo = betterPlayerController
         .videoPlayerController!.value.duration!.inMilliseconds;
+    final showBeforeEndMillis = timeEndVideo -
+        betterPlayerController
+            .betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis;
+    final autoSwitchToNextMillis = timeEndVideo -
+        betterPlayerController
+            .betterPlayerPlayNextVideoConfiguration!.autoSwitchToNextMillis;
     final videoController = betterPlayerController.videoPlayerController;
 
     if (!(videoController?.value.initialized ?? false)) {
@@ -217,7 +221,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     }
 
     return (currentPosition >= showBeforeEndMillis)
-        ? currentPosition / timeEndVideo
+        ? currentPosition / autoSwitchToNextMillis
         : 0.0;
   }
 

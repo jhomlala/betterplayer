@@ -862,7 +862,8 @@ class BetterPlayerController {
   void _displayPlayNextButton(VideoPlayerValue currentVideoPlayerValue) {
     if (betterPlayerPlayNextVideoConfiguration != null) {
       if (currentVideoPlayerValue.position.inMilliseconds >=
-          betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis) {
+          (videoPlayerController!.value.duration!.inMilliseconds -
+              betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis)) {
         showNextVideoButton();
       }
     }
