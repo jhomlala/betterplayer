@@ -298,6 +298,7 @@ class _BetterPlayerMaterialControlsState
                       ? Expanded(child: _buildPosition())
                       : const SizedBox(),
                   const Spacer(),
+                  _buildAirplayButton(),
                   if (_controlsConfiguration.enableMute)
                     _buildMuteButton(_controller)
                   else
@@ -502,6 +503,13 @@ class _BetterPlayerMaterialControlsState
       },
     );
   }
+
+  Widget _buildAirplayButton() => AnimatedOpacity(
+        opacity: controlsNotVisible ? 0.0 : 1.0,
+        duration: _controlsConfiguration.controlsHideTime,
+        child: _betterPlayerController
+            ?.betterPLayerAirplayConfiguration?.airplayButton,
+      );
 
   Widget _buildMuteButton(
     VideoPlayerController? controller,
