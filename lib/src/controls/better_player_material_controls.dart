@@ -6,8 +6,10 @@ import 'package:better_player/src/controls/better_player_material_progress_bar.d
 import 'package:better_player/src/controls/progress_bar_utils.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
+import 'package:flutter/foundation.dart';
 // Flutter imports:
 import 'package:flutter/material.dart';
+import 'package:flutter_to_airplay/flutter_to_airplay.dart';
 
 class BetterPlayerMaterialControls extends StatefulWidget {
   ///Callback used to send information if player bar is hidden or not
@@ -298,7 +300,8 @@ class _BetterPlayerMaterialControlsState
                       ? Expanded(child: _buildPosition())
                       : const SizedBox(),
                   const Spacer(),
-                  _buildAirplayButton(),
+                  if (defaultTargetPlatform == TargetPlatform.iOS)
+                    _buildAirplayButton(),
                   if (_controlsConfiguration.enableMute)
                     _buildMuteButton(_controller)
                   else
@@ -504,12 +507,38 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-  Widget _buildAirplayButton() => AnimatedOpacity(
-        opacity: controlsNotVisible ? 0.0 : 1.0,
-        duration: _controlsConfiguration.controlsHideTime,
-        child: _betterPlayerController
-            ?.betterPLayerAirplayConfiguration?.airplayButton,
-      );
+  Widget _buildAirplayButton() {
+    final airplayConfig =
+        _betterPlayerController?.betterPLayerAirplayConfiguration;
+
+    return AnimatedOpacity(
+      opacity: controlsNotVisible ? 0.0 : 1.0,
+      duration: _controlsConfiguration.controlsHideTime,
+      child: SizedBox(
+        height: airplayConfig?.airplayButtonSize,
+        width: airplayConfig?.airplayButtonSize,
+        child: Stack(
+          children: [
+            IconButton(
+              onPressed: null,
+              icon: Icon(
+                airplayConfig?.airplayIcon,
+                color: airplayConfig?.airplayButtonColor,
+              ),
+              iconSize: airplayConfig?.airplayButtonSize,
+            ),
+            AirPlayRoutePickerView(
+              tintColor: Colors.transparent,
+              activeTintColor: Colors.transparent,
+              backgroundColor: Colors.transparent,
+              height: airplayConfig!.airplayButtonSize,
+              width: airplayConfig.airplayButtonSize,
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildMuteButton(
     VideoPlayerController? controller,
