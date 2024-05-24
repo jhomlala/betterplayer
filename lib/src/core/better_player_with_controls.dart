@@ -168,7 +168,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       Positioned(
         bottom: 100,
         right: 20,
-        child: betterPlayerController.isNextVideo
+        child: betterPlayerController.showNextVideo
             ? betterPlayerController.betterPlayerPlayNextVideoConfiguration !=
                     null
                 ? betterPlayerController.betterPlayerPlayNextVideoConfiguration!
@@ -211,7 +211,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     final showBeforeEndMillis = timeEndVideo -
         betterPlayerController
             .betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis;
-    final autoSwitchToNextMillis = timeEndVideo -
+    final hidePlayNextButton = timeEndVideo -
+        betterPlayerController
+            .betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis +
         betterPlayerController
             .betterPlayerPlayNextVideoConfiguration!.autoSwitchToNextMillis;
     final videoController = betterPlayerController.videoPlayerController;
@@ -221,7 +223,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     }
 
     return (currentPosition >= showBeforeEndMillis)
-        ? currentPosition / autoSwitchToNextMillis
+        ? currentPosition / hidePlayNextButton
         : 0.0;
   }
 
