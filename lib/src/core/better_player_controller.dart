@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/configuration/better_player_airplay_configuration.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/configuration/better_player_play_next_video_configuration.dart';
 import 'package:better_player/src/configuration/better_player_skip_intro_configuration.dart';
@@ -51,6 +52,8 @@ class BetterPlayerController {
   final BetterPlayerPlayNextVideoConfiguration?
       betterPlayerPlayNextVideoConfiguration;
   final BetterPlayerSkipIntroConfiguration? betterPlayerSkipIntroConfiguration;
+
+  final BetterPLayerAirplayConfiguration? betterPLayerAirplayConfiguration;
 
   ///Controls configuration
   BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
@@ -231,6 +234,7 @@ class BetterPlayerController {
     this.betterPlayerPlaylistConfiguration,
     this.betterPlayerPlayNextVideoConfiguration,
     this.betterPlayerSkipIntroConfiguration,
+    this.betterPLayerAirplayConfiguration,
     BetterPlayerDataSource? betterPlayerDataSource,
   }) {
     this._betterPlayerControlsConfiguration =
