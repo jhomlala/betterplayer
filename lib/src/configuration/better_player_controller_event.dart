@@ -15,8 +15,11 @@ enum BetterPlayerControllerEvent {
   //Video has started.
   play,
 
-  //Play next video
-  playNextVideo,
+  //Show play next video
+  showPlayNextVideo,
+
+  //Hide play next video
+  hidePlayNextVideo,
 
   //Show skip intro button
   showSkipIntro,

@@ -26,7 +26,8 @@ enum BetterPlayerEventType {
   bufferingEnd,
   changedPlaylistItem,
   close,
-  playNextVideo,
+  showPlayNextVideo,
+  hidePlayNextVideo,
   showSkipIntro,
   hideSkipIntro
 }

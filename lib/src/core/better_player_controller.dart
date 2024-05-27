@@ -74,10 +74,10 @@ class BetterPlayerController {
   bool get isFullScreen => _isFullScreen;
 
   ///Flag used to store next video
-  bool _isNextVideo = false;
+  bool _showNextVideoButton = false;
 
   ///Flag used to store next video
-  bool get isNextVideo => _isNextVideo;
+  bool get showNextVideo => _showNextVideoButton;
   bool _showSkipIntro = false;
 
   bool get showSkipIntro => _showSkipIntro;
@@ -684,10 +684,17 @@ class BetterPlayerController {
   }
 
   Future<void> showNextVideoButton() async {
-    _isNextVideo = true;
+    _showNextVideoButton = true;
 
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.playNextVideo));
-    _postControllerEvent(BetterPlayerControllerEvent.playNextVideo);
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.showPlayNextVideo));
+    _postControllerEvent(BetterPlayerControllerEvent.showPlayNextVideo);
+  }
+
+  Future<void> hideNextVideoButton() async {
+    _showNextVideoButton = false;
+
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.hidePlayNextVideo));
+    _postControllerEvent(BetterPlayerControllerEvent.hidePlayNextVideo);
   }
 
   ///Move player to specific position/moment of the video.
@@ -865,10 +872,21 @@ class BetterPlayerController {
 
   void _displayPlayNextButton(VideoPlayerValue currentVideoPlayerValue) {
     if (betterPlayerPlayNextVideoConfiguration != null) {
-      if (currentVideoPlayerValue.position.inMilliseconds >=
-          (videoPlayerController!.value.duration!.inMilliseconds -
-              betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis)) {
+      if ((currentVideoPlayerValue.position.inMilliseconds >=
+              (videoPlayerController!.value.duration!.inMilliseconds -
+                  betterPlayerPlayNextVideoConfiguration!
+                      .showBeforeEndMillis)) &&
+          currentVideoPlayerValue.position.inMilliseconds <
+              (videoPlayerController!.value.duration!.inMilliseconds -
+                  betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis +
+                  betterPlayerPlayNextVideoConfiguration!
+                      .autoSwitchToNextMillis)) {
         showNextVideoButton();
+      } else if (currentVideoPlayerValue.position.inMilliseconds >
+          (videoPlayerController!.value.duration!.inMilliseconds -
+              betterPlayerPlayNextVideoConfiguration!.showBeforeEndMillis +
+              betterPlayerPlayNextVideoConfiguration!.autoSwitchToNextMillis)) {
+        hideNextVideoButton();
       }
     }
   }
