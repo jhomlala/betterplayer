@@ -248,7 +248,11 @@ class BetterPlayerController {
       videoPlayerController = VideoPlayerController(
           bufferingConfiguration:
               betterPlayerDataSource.bufferingConfiguration);
-      videoPlayerController?.addListener(_onVideoPlayerChanged);
+      if (_disposed) {
+        await videoPlayerController?.dispose();
+      } else {
+        videoPlayerController?.addListener(_onVideoPlayerChanged);
+      }
     }
 
     ///Clear asms tracks
@@ -1260,7 +1264,7 @@ class BetterPlayerController {
   ///cache started for given [betterPlayerDataSource] then it will be ignored.
   Future<void> stopPreCache(
       BetterPlayerDataSource betterPlayerDataSource) async {
-    return VideoPlayerController?.stopPreCache(betterPlayerDataSource.url,
+    return VideoPlayerController.stopPreCache(betterPlayerDataSource.url,
         betterPlayerDataSource.cacheConfiguration?.key);
   }
 
