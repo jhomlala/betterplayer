@@ -249,7 +249,11 @@ class BetterPlayerController {
           bufferingConfiguration:
               betterPlayerDataSource.bufferingConfiguration);
       if (_disposed) {
-        await videoPlayerController?.dispose();
+        try {
+          await videoPlayerController?.dispose();
+        } on Exception catch (e) {
+          //
+        }
       } else {
         videoPlayerController?.addListener(_onVideoPlayerChanged);
       }
