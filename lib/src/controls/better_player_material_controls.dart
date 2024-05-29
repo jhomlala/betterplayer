@@ -514,27 +514,30 @@ class _BetterPlayerMaterialControlsState
     return AnimatedOpacity(
       opacity: controlsNotVisible ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
-      child: SizedBox(
-        height: airplayConfig?.airplayButtonSize,
-        width: airplayConfig?.airplayButtonSize,
-        child: Stack(
-          children: [
-            IconButton(
-              onPressed: null,
-              icon: Icon(
-                airplayConfig?.airplayIcon,
-                color: airplayConfig?.airplayButtonColor,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 12, right: 20),
+        child: SizedBox(
+          height: airplayConfig?.airplayButtonSize,
+          width: airplayConfig?.airplayButtonSize,
+          child: Stack(
+            children: [
+              IconButton(
+                onPressed: null,
+                icon: Icon(
+                  airplayConfig?.airplayIcon,
+                  color: airplayConfig?.airplayButtonColor,
+                ),
+                iconSize: airplayConfig?.airplayButtonSize,
               ),
-              iconSize: airplayConfig?.airplayButtonSize,
-            ),
-            AirPlayRoutePickerView(
-              tintColor: Colors.transparent,
-              activeTintColor: Colors.transparent,
-              backgroundColor: Colors.transparent,
-              height: airplayConfig!.airplayButtonSize,
-              width: airplayConfig.airplayButtonSize,
-            )
-          ],
+              AirPlayRoutePickerView(
+                tintColor: Colors.transparent,
+                activeTintColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                height: airplayConfig!.airplayButtonSize,
+                width: airplayConfig.airplayButtonSize,
+              )
+            ],
+          ),
         ),
       ),
     );
