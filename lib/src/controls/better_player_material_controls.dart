@@ -284,7 +284,7 @@ class _BetterPlayerMaterialControlsState
       duration: _controlsConfiguration.controlsHideTime,
       onEnd: _onPlayerHide,
       child: Container(
-        height: _controlsConfiguration.controlBarHeight + 20.0,
+        height: _controlsConfiguration.controlBarHeight + 30.0,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -313,6 +313,7 @@ class _BetterPlayerMaterialControlsState
                 ],
               ),
             ),
+            //SizedBox(height: 16),
             ProgressbarUtils.canShowProgressbar(
               _controlsConfiguration,
               betterPlayerController!,
@@ -320,6 +321,7 @@ class _BetterPlayerMaterialControlsState
             )
                 ? _buildProgressBar()
                 : const SizedBox.shrink(),
+            SizedBox(height: 32),
           ],
         ),
       ),
@@ -515,27 +517,33 @@ class _BetterPlayerMaterialControlsState
       opacity: controlsNotVisible ? 0.0 : 1.0,
       duration: _controlsConfiguration.controlsHideTime,
       child: Padding(
-        padding: const EdgeInsets.only(bottom: 12, right: 20),
+        padding: const EdgeInsets.only(right: 12),
         child: SizedBox(
           height: airplayConfig?.airplayButtonSize,
           width: airplayConfig?.airplayButtonSize,
           child: Stack(
+            fit: StackFit.expand,
             children: [
-              IconButton(
-                onPressed: null,
-                icon: Icon(
-                  airplayConfig?.airplayIcon,
-                  color: airplayConfig?.airplayButtonColor,
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Icon(
+                    airplayConfig?.airplayIcon,
+                    color: airplayConfig?.airplayButtonColor,
+                    size: airplayConfig?.airplayButtonSize,
+                  ),
                 ),
-                iconSize: airplayConfig?.airplayButtonSize,
               ),
-              AirPlayRoutePickerView(
-                tintColor: Colors.transparent,
-                activeTintColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
-                height: airplayConfig!.airplayButtonSize,
-                width: airplayConfig.airplayButtonSize,
-              )
+              Positioned.fill(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: AirPlayRoutePickerView(
+                    tintColor: Colors.transparent,
+                    activeTintColor: Colors.transparent,
+                    backgroundColor: Colors.transparent,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
