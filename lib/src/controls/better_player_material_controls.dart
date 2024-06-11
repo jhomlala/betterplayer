@@ -296,6 +296,10 @@ class _BetterPlayerMaterialControlsState
                     _buildPlayPause(_controller!)
                   else
                     const SizedBox(),
+                  if (betterPlayerController
+                          ?.betterPlayerConfiguration.videoTitle !=
+                      null)
+                    _buildVideoTitle(),
                   _controlsConfiguration.enableProgressText
                       ? Expanded(child: _buildPosition())
                       : const SizedBox(),
@@ -506,6 +510,26 @@ class _BetterPlayerMaterialControlsState
           return const SizedBox();
         }
       },
+    );
+  }
+
+  Widget _buildVideoTitle() {
+    final videoTitle =
+        _betterPlayerController?.betterPlayerConfiguration.videoTitle ?? '';
+
+    return AnimatedOpacity(
+      opacity: controlsNotVisible ? 0.0 : 1.0,
+      duration: _controlsConfiguration.controlsHideTime,
+      child: Padding(
+        padding: EdgeInsets.only(
+          right: 16,
+          left: !_controlsConfiguration.enablePlayPause ? 16 : 0,
+        ),
+        child: Text(
+          videoTitle,
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+        ),
+      ),
     );
   }
 
