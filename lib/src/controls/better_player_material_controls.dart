@@ -297,7 +297,7 @@ class _BetterPlayerMaterialControlsState
                   else
                     const SizedBox(),
                   if (betterPlayerController
-                          ?.betterPlayerConfiguration.videoTitle !=
+                          ?.betterPlayerConfiguration.videoTitleText !=
                       null)
                     _buildVideoTitle(),
                   _controlsConfiguration.enableProgressText
@@ -515,7 +515,7 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildVideoTitle() {
     final videoTitle =
-        _betterPlayerController?.betterPlayerConfiguration.videoTitle ?? '';
+        _betterPlayerController?.betterPlayerConfiguration.videoTitleText ?? '';
 
     return AnimatedOpacity(
       opacity: controlsNotVisible ? 0.0 : 1.0,
@@ -527,6 +527,8 @@ class _BetterPlayerMaterialControlsState
         ),
         child: Text(
           videoTitle,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
           style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
         ),
       ),
