@@ -115,6 +115,9 @@ class BetterPlayerConfiguration {
   ///Default value is false.
   final bool useRootNavigator;
 
+  ///Defines title of video
+  final String? videoTitleText;
+
   const BetterPlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
@@ -152,6 +155,7 @@ class BetterPlayerConfiguration {
     this.autoDispose = true,
     this.expandToFill = true,
     this.useRootNavigator = false,
+    this.videoTitleText,
   });
 
   BetterPlayerConfiguration copyWith({

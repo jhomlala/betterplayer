@@ -296,8 +296,12 @@ class _BetterPlayerMaterialControlsState
                     _buildPlayPause(_controller!)
                   else
                     const SizedBox(),
+                  if (betterPlayerController
+                          ?.betterPlayerConfiguration.videoTitleText !=
+                      null)
+                    Expanded(flex: 4, child: _buildVideoTitle()),
                   _controlsConfiguration.enableProgressText
-                      ? Expanded(child: _buildPosition())
+                      ? Expanded(flex: 6, child: _buildPosition())
                       : const SizedBox(),
                   const Spacer(),
                   if (defaultTargetPlatform == TargetPlatform.iOS)
@@ -506,6 +510,28 @@ class _BetterPlayerMaterialControlsState
           return const SizedBox();
         }
       },
+    );
+  }
+
+  Widget _buildVideoTitle() {
+    final videoTitle =
+        _betterPlayerController?.betterPlayerConfiguration.videoTitleText ?? '';
+
+    return AnimatedOpacity(
+      opacity: controlsNotVisible ? 0.0 : 1.0,
+      duration: _controlsConfiguration.controlsHideTime,
+      child: Padding(
+        padding: EdgeInsets.only(
+          right: 16,
+          left: !_controlsConfiguration.enablePlayPause ? 16 : 0,
+        ),
+        child: Text(
+          videoTitle,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+        ),
+      ),
     );
   }
 
