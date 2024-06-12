@@ -299,9 +299,9 @@ class _BetterPlayerMaterialControlsState
                   if (betterPlayerController
                           ?.betterPlayerConfiguration.videoTitleText !=
                       null)
-                    _buildVideoTitle(),
+                    Expanded(flex: 4, child: _buildVideoTitle()),
                   _controlsConfiguration.enableProgressText
-                      ? Expanded(child: _buildPosition())
+                      ? Expanded(flex: 6, child: _buildPosition())
                       : const SizedBox(),
                   const Spacer(),
                   if (defaultTargetPlatform == TargetPlatform.iOS)
