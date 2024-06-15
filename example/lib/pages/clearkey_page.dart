@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 
-import 'package:better_player_example/constants.dart';
-import 'package:better_player_example/utils.dart';
+import 'package:example/constants.dart';
+import 'package:example/utils.dart';
 
 class ClearKeyPage extends StatefulWidget {
   @override

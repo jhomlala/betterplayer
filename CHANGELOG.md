@@ -1,6 +1,13 @@
+## 0.0.84
+* [BREAKING_CHANGE] Updated min. Flutter version to 3.3.0 and min. Dart version to 3.0.0.
+* Recreated example project.
+* Replaced wakelock with wakelock plus.
+* Updated other dependencies.
+* Updated metadata.
+
 ## 0.0.83
-* Updated dependencies
-* Fixed Flutter 3.0 issues
+* Updated dependencies.
+* Fixed Flutter 3.0 issues.
 
 ## 0.0.82
 * Updated ExoPlayer version to 2.17.1.
@@ -563,7 +570,7 @@ setBetterPlayerGlobalKey.
 * Updated documentation.
 
 ## 0.0.2
-* Moved example project from better_player_example to example.
+* Moved example project from example to example.
 
 ## 0.0.1
 * Initial release.
