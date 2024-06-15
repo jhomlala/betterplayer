@@ -137,4 +137,19 @@ class BetterPlayerTranslations {
         overflowMenuQuality: "Calidad",
         qualityAuto: "Automática",
       );
+
+  factory BetterPlayerTranslations.portuguese() => BetterPlayerTranslations(
+      languageCode: "pt",
+      generalDefaultError: "Não foi possível reproduzir o vídeo",
+      generalNone: "Nenhum",
+      generalDefault: "Padrão",
+      generalRetry: "Tentar novamente",
+      controlsLive: "AO VIVO",
+      playlistLoadingNextVideo: "Carregando próximo vídeo",
+      controlsNextVideoIn: "Próximo vídeo em",
+      overflowMenuPlaybackSpeed: "Velocidade de reprodução",
+      overflowMenuSubtitles: "Legendas",
+      overflowMenuQuality: "Qualidade",
+      qualityAuto: "Automática",
+      overflowMenuAudioTracks: "Áudio");
 }
