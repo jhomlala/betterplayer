@@ -7,7 +7,7 @@
 [![pub package](https://img.shields.io/github/license/jhomlala/betterplayer.svg?style=flat)](https://github.com/jhomlala/betterplayer)
 [![pub package](https://img.shields.io/badge/platform-flutter-blue.svg)](https://github.com/jhomlala/betterplayer)
 
-Advanced video player based on video_player and Chewie. It's solves many typical use cases and it's easy to run.
+Advanced video player. It solves many typical use cases and it's easy to run.
 
 <table>
    <tr>

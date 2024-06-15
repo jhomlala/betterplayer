@@ -4,7 +4,7 @@
 
 ```yaml
 dependencies:
-  better_player: ^0.0.83
+  better_player: ^0.0.84
 ```
 
 2. Install it
