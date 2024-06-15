@@ -17,6 +17,7 @@ dependencies:
   collection: ^1.18.0
 
 dev_dependencies:
+  very_good_analysis: ^5.1.0
   flutter_test:
     sdk: flutter
 

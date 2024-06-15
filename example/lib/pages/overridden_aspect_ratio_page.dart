@@ -3,6 +3,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class OverriddenAspectRatioPage extends StatefulWidget {
+  const OverriddenAspectRatioPage({super.key});
+
   @override
   _OverriddenAspectRatioPageState createState() =>
       _OverriddenAspectRatioPageState();
@@ -13,16 +15,16 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
-      fit: BoxFit.fill,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
+    final dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.forBiggerBlazesUrl,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
-    _betterPlayerController.setOverriddenAspectRatio(1.0);
+    _betterPlayerController.setOverriddenAspectRatio(1);
     super.initState();
   }
 
@@ -30,20 +32,20 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Overridden aspect ratio"),
+        title: const Text('Overridden aspect ratio'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Player with different rotation and fit.",
+              'Player with different rotation and fit.',
               style: TextStyle(fontSize: 16),
             ),
           ),
           AspectRatio(
-            aspectRatio: 1.0,
+            aspectRatio: 1,
             child: BetterPlayer(controller: _betterPlayerController),
           ),
         ],

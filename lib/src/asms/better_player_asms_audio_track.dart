@@ -1,5 +1,14 @@
 ///Representation of HLS / DASH audio track
 class BetterPlayerAsmsAudioTrack {
+  BetterPlayerAsmsAudioTrack({
+    this.id,
+    this.segmentAlignment,
+    this.label,
+    this.language,
+    this.url,
+    this.mimeType,
+  });
+
   ///Audio index in DASH xml or Id of track inside HLS playlist
   final int? id;
 
@@ -17,12 +26,4 @@ class BetterPlayerAsmsAudioTrack {
 
   ///mimeType of the audio track
   final String? mimeType;
-
-  BetterPlayerAsmsAudioTrack(
-      {this.id,
-      this.segmentAlignment,
-      this.label,
-      this.language,
-      this.url,
-      this.mimeType});
 }

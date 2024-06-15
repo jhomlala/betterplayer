@@ -7,8 +7,8 @@ class MockVideoPlayerController extends VideoPlayerController {
   }
 
   bool isLoopingState = false;
-  double volume = 0.0;
-  double speed = 1.0;
+  double volume = 0;
+  double speed = 1;
 
   @override
   Future<void> play() async {

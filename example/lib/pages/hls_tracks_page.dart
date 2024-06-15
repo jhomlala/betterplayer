@@ -3,6 +3,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class HlsTracksPage extends StatefulWidget {
+  const HlsTracksPage({super.key});
+
   @override
   _HlsTracksPageState createState() => _HlsTracksPageState();
 }
@@ -12,15 +14,13 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+    final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.hlsTestStreamUrl,
-      useAsmsSubtitles: true,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
@@ -31,16 +31,16 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("HLS tracks"),
+        title: const Text('HLS tracks'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Player with HLS stream which loads tracks from HLS."
-              " You can choose tracks by using overflow menu (3 dots in right corner).",
+              'Player with HLS stream which loads tracks from HLS.'
+              ' You can choose tracks by using overflow menu (3 dots in right corner).',
               style: TextStyle(fontSize: 16),
             ),
           ),

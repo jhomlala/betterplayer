@@ -21,7 +21,7 @@ dependencies:
   xml: ^6.5.0
 
 dev_dependencies:
-  lint: ^2.3.0
+  very_good_analysis: ^5.1.0
   flutter_test:
     sdk: flutter
   flutter_localizations:

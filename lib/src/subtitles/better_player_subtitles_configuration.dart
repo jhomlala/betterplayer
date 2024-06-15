@@ -4,6 +4,20 @@ import 'package:flutter/material.dart';
 ///Configuration of subtitles - colors/padding/font. Used in
 ///BetterPlayerConfiguration.
 class BetterPlayerSubtitlesConfiguration {
+  const BetterPlayerSubtitlesConfiguration({
+    this.fontSize = 14,
+    this.fontColor = Colors.white,
+    this.outlineEnabled = true,
+    this.outlineColor = Colors.black,
+    this.outlineSize = 2.0,
+    this.fontFamily = 'Roboto',
+    this.leftPadding = 8.0,
+    this.rightPadding = 8.0,
+    this.bottomPadding = 20.0,
+    this.alignment = Alignment.center,
+    this.backgroundColor = Colors.transparent,
+  });
+
   ///Subtitle font size
   final double fontSize;
 
@@ -36,18 +50,4 @@ class BetterPlayerSubtitlesConfiguration {
 
   ///Background color of the subtitle
   final Color backgroundColor;
-
-  const BetterPlayerSubtitlesConfiguration({
-    this.fontSize = 14,
-    this.fontColor = Colors.white,
-    this.outlineEnabled = true,
-    this.outlineColor = Colors.black,
-    this.outlineSize = 2.0,
-    this.fontFamily = "Roboto",
-    this.leftPadding = 8.0,
-    this.rightPadding = 8.0,
-    this.bottomPadding = 20.0,
-    this.alignment = Alignment.center,
-    this.backgroundColor = Colors.transparent,
-  });
 }

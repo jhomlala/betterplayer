@@ -1,5 +1,19 @@
 /// Represents HLS / DASH track which can be played within player
 class BetterPlayerAsmsTrack {
+  BetterPlayerAsmsTrack(
+    this.id,
+    this.width,
+    this.height,
+    this.bitrate,
+    this.frameRate,
+    this.codecs,
+    this.mimeType,
+  );
+
+  factory BetterPlayerAsmsTrack.defaultTrack() {
+    return BetterPlayerAsmsTrack('', 0, 0, 0, 0, '', '');
+  }
+
   ///Id of the track
   final String? id;
 
@@ -20,20 +34,6 @@ class BetterPlayerAsmsTrack {
 
   ///mimeType of the video track
   final String? mimeType;
-
-  BetterPlayerAsmsTrack(
-    this.id,
-    this.width,
-    this.height,
-    this.bitrate,
-    this.frameRate,
-    this.codecs,
-    this.mimeType,
-  );
-
-  factory BetterPlayerAsmsTrack.defaultTrack() {
-    return BetterPlayerAsmsTrack('', 0, 0, 0, 0, '', '');
-  }
 
   @override
   // ignore: unnecessary_overrides

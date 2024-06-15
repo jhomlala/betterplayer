@@ -1,4 +1,4 @@
-import 'util.dart';
+import 'package:better_player/src/hls/hls_parser/util.dart';
 
 class MimeTypes {
   static const String baseTypeVideo = 'video';
@@ -125,7 +125,7 @@ class MimeTypes {
   }
 
   static String? getMediaMimeType(String codecValue) {
-    String codec = codecValue;
+    var codec = codecValue;
 
     codec = codec.trim().toLowerCase();
     if (codec.startsWith('avc1') || codec.startsWith('avc3')) {
@@ -152,12 +152,12 @@ class MimeTypes {
     if (codec.startsWith('mp4a')) {
       String? mimeType;
       if (codec.startsWith('mp4a.')) {
-        final String objectTypeString = codec.substring(5);
+        final objectTypeString = codec.substring(5);
         if (objectTypeString.length >= 2) {
           try {
-            final String objectTypeHexString =
+            final objectTypeHexString =
                 objectTypeString.substring(0, 2).toUpperCase();
-            final int objectTypeInt = int.parse(objectTypeHexString, radix: 16);
+            final objectTypeInt = int.parse(objectTypeHexString, radix: 16);
             mimeType = _getMimeTypeFromMp4ObjectType(objectTypeInt);
           } on FormatException {
             //do nothing
@@ -243,7 +243,7 @@ class MimeTypes {
 
   static String? getTopLevelType(String? mimeType) {
     if (mimeType == null) return null;
-    final int indexOfSlash = mimeType.indexOf('/');
+    final indexOfSlash = mimeType.indexOf('/');
     if (indexOfSlash == -1) return null;
     return mimeType.substring(0, indexOfSlash);
   }

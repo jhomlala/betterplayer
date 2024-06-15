@@ -4,6 +4,19 @@ import 'package:flutter/material.dart';
 
 ///Special version of Better Player which is used to play video in list view.
 class BetterPlayerListVideoPlayer extends StatefulWidget {
+  const BetterPlayerListVideoPlayer(
+    this.dataSource, {
+    this.configuration = const BetterPlayerConfiguration(),
+    this.playFraction = 0.6,
+    this.autoPlay = true,
+    this.autoPause = true,
+    this.betterPlayerListVideoPlayerController,
+    super.key,
+  }) : assert(
+          playFraction >= 0.0 && playFraction <= 1.0,
+          "Play fraction can't be null and must be between 0.0 and 1.0",
+        );
+
   ///Video to show
   final BetterPlayerDataSource dataSource;
 
@@ -23,18 +36,6 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
 
   final BetterPlayerListVideoPlayerController?
       betterPlayerListVideoPlayerController;
-
-  const BetterPlayerListVideoPlayer(
-    this.dataSource, {
-    this.configuration = const BetterPlayerConfiguration(),
-    this.playFraction = 0.6,
-    this.autoPlay = true,
-    this.autoPause = true,
-    this.betterPlayerListVideoPlayerController,
-    Key? key,
-  })  : assert(playFraction >= 0.0 && playFraction <= 1.0,
-            "Play fraction can't be null and must be between 0.0 and 1.0"),
-        super(key: key);
 
   @override
   _BetterPlayerListVideoPlayerState createState() =>
@@ -79,15 +80,15 @@ class _BetterPlayerListVideoPlayerState
       aspectRatio: _betterPlayerController!.getAspectRatio() ??
           BetterPlayerUtils.calculateAspectRatio(context),
       child: BetterPlayer(
-        key: Key("${_getUniqueKey()}_player"),
+        key: Key('${_getUniqueKey()}_player'),
         controller: _betterPlayerController!,
       ),
     );
   }
 
-  void onVisibilityChanged(double visibleFraction) async {
-    final bool? isPlaying = _betterPlayerController!.isPlaying();
-    final bool? initialized = _betterPlayerController!.isVideoInitialized();
+  Future<void> onVisibilityChanged(double visibleFraction) async {
+    final isPlaying = _betterPlayerController!.isPlaying();
+    final initialized = _betterPlayerController!.isVideoInitialized();
     if (visibleFraction >= widget.playFraction) {
       if (widget.autoPlay && initialized! && !isPlaying! && !_isDisposing) {
         _betterPlayerController!.play();

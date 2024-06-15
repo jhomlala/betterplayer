@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class NormalPlayerPage extends StatefulWidget {
+  const NormalPlayerPage({super.key});
+
   @override
   _NormalPlayerPageState createState() => _NormalPlayerPageState();
 }
@@ -14,15 +16,14 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       autoPlay: true,
       looping: true,
       deviceOrientationsAfterFullScreen: [
         DeviceOrientation.portraitDown,
-        DeviceOrientation.portraitUp
+        DeviceOrientation.portraitUp,
       ],
     );
     _betterPlayerDataSource = BetterPlayerDataSource(
@@ -38,7 +39,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Normal player page"),
+        title: const Text('Normal player page'),
       ),
       body: Column(
         children: [

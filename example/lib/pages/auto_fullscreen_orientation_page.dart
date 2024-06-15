@@ -3,6 +3,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class AutoFullscreenOrientationPage extends StatefulWidget {
+  const AutoFullscreenOrientationPage({super.key});
+
   @override
   _AutoFullscreenOrientationPageState createState() =>
       _AutoFullscreenOrientationPageState();
@@ -14,13 +16,15 @@ class _AutoFullscreenOrientationPageState
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-            aspectRatio: 16 / 9,
-            fit: BoxFit.contain,
-            autoDetectFullscreenDeviceOrientation: true);
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl);
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
+      aspectRatio: 16 / 9,
+      fit: BoxFit.contain,
+      autoDetectFullscreenDeviceOrientation: true,
+    );
+    final dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.forBiggerBlazesUrl,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -30,16 +34,16 @@ class _AutoFullscreenOrientationPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Auto full screen orientation"),
+        title: const Text('Auto full screen orientation'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Aspect ratio and device orientation on full screen will be "
-              "managed by the BetterPlayer. Click on the fullscreen option.",
+              'Aspect ratio and device orientation on full screen will be '
+              'managed by the BetterPlayer. Click on the fullscreen option.',
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -48,20 +52,22 @@ class _AutoFullscreenOrientationPageState
             child: BetterPlayer(controller: _betterPlayerController),
           ),
           ElevatedButton(
-            child: Text("Play horizontal video"),
+            child: const Text('Play horizontal video'),
             onPressed: () {
-              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.forBiggerBlazesUrl);
+              final dataSource = BetterPlayerDataSource(
+                BetterPlayerDataSourceType.network,
+                Constants.forBiggerBlazesUrl,
+              );
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),
           ElevatedButton(
-            child: Text("Play vertical video"),
+            child: const Text('Play vertical video'),
             onPressed: () async {
-              BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.verticalVideoUrl);
+              final dataSource = BetterPlayerDataSource(
+                BetterPlayerDataSourceType.network,
+                Constants.verticalVideoUrl,
+              );
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),

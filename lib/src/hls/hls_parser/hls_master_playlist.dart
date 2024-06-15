@@ -1,13 +1,13 @@
-import 'drm_init_data.dart';
-import 'format.dart';
-import 'playlist.dart';
-import 'rendition.dart';
-import 'variant.dart';
+import 'package:better_player/src/hls/hls_parser/drm_init_data.dart';
+import 'package:better_player/src/hls/hls_parser/format.dart';
+import 'package:better_player/src/hls/hls_parser/playlist.dart';
+import 'package:better_player/src/hls/hls_parser/rendition.dart';
+import 'package:better_player/src/hls/hls_parser/variant.dart';
 
 class HlsMasterPlaylist extends HlsPlaylist {
   HlsMasterPlaylist({
-    String? baseUri,
-    List<String> tags = const [], // ignore: always_specify_types
+    super.baseUri,
+    super.tags = const [], // ignore: always_specify_types
     this.variants = const [], // ignore: always_specify_types
     this.videos = const [], // ignore: always_specify_types
     this.audios = const [], // ignore: always_specify_types
@@ -15,16 +15,13 @@ class HlsMasterPlaylist extends HlsPlaylist {
     this.closedCaptions = const [], // ignore: always_specify_types
     this.muxedAudioFormat,
     this.muxedCaptionFormats = const [], // ignore: always_specify_types
-    bool hasIndependentSegments = false,
+    super.hasIndependentSegments = false,
     this.variableDefinitions = const {}, // ignore: always_specify_types
     this.sessionKeyDrmInitData = const [], // ignore: always_specify_types
-  })  : mediaPlaylistUrls = _getMediaPlaylistUrls(
-            variants, [videos, audios, subtitles, closedCaptions]),
-        // ignore: always_specify_types
-        super(
-            baseUri: baseUri,
-            tags: tags,
-            hasIndependentSegments: hasIndependentSegments);
+  }) : mediaPlaylistUrls = _getMediaPlaylistUrls(
+          variants,
+          [videos, audios, subtitles, closedCaptions],
+        );
 
   /// All of the media playlist URLs referenced by the playlist.
   final List<Uri?> mediaPlaylistUrls;
@@ -59,16 +56,18 @@ class HlsMasterPlaylist extends HlsPlaylist {
   final List<DrmInitData> sessionKeyDrmInitData;
 
   static List<Uri?> _getMediaPlaylistUrls(
-      List<Variant> variants, List<List<Rendition>> renditionList) {
+    List<Variant> variants,
+    List<List<Rendition>> renditionList,
+  ) {
     final uriList = <Uri?>[];
-    variants.forEach((element) {
+    for (final element in variants) {
       uriList.add(element.url);
-    });
-    renditionList.forEach((element) {
+    }
+    for (final element in renditionList) {
       for (final value in element) {
         uriList.add(value.url);
       }
-    });
+    }
     return uriList;
   }
 }

@@ -3,6 +3,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class NotificationPlayerPage extends StatefulWidget {
+  const NotificationPlayerPage({super.key});
+
   @override
   _NotificationPlayerPageState createState() => _NotificationPlayerPageState();
 }
@@ -12,26 +14,24 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-      handleLifecycle: true,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _setupDataSource();
     super.initState();
   }
 
-  void _setupDataSource() async {
+  Future<void> _setupDataSource() async {
     // String imageUrl = await Utils.getFileUrl(Constants.logo);
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+    final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
       notificationConfiguration: BetterPlayerNotificationConfiguration(
         showNotification: true,
-        title: "Elephant dream",
-        author: "Some author",
+        title: 'Elephant dream',
+        author: 'Some author',
         imageUrl: Constants.catImageUrl,
       ),
     );
@@ -42,15 +42,15 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Notification player"),
+        title: const Text('Notification player'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Click play on player to show notification in status bar.",
+              'Click play on player to show notification in status bar.',
               style: TextStyle(fontSize: 16),
             ),
           ),

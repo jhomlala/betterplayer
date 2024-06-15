@@ -3,6 +3,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class HlsSubtitlesPage extends StatefulWidget {
+  const HlsSubtitlesPage({super.key});
+
   @override
   _HlsSubtitlesPageState createState() => _HlsSubtitlesPageState();
 }
@@ -12,27 +14,10 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
 
   @override
   void initState() {
-    BetterPlayerControlsConfiguration controlsConfiguration =
-        BetterPlayerControlsConfiguration(
+    const controlsConfiguration = BetterPlayerControlsConfiguration(
       controlBarColor: Colors.black26,
-      iconsColor: Colors.white,
-      playIcon: Icons.play_arrow_outlined,
       progressBarPlayedColor: Colors.indigo,
       progressBarHandleColor: Colors.indigo,
-      skipBackIcon: Icons.replay_10_outlined,
-      skipForwardIcon: Icons.forward_10_outlined,
-      backwardSkipTimeInMilliseconds: 10000,
-      forwardSkipTimeInMilliseconds: 10000,
-      enableSkips: true,
-      enableFullscreen: true,
-      enablePip: true,
-      enablePlayPause: true,
-      enableMute: true,
-      enableAudioTracks: true,
-      enableProgressText: true,
-      enableSubtitles: true,
-      showControlsOnInitialize: true,
-      enablePlaybackSpeed: true,
       controlBarHeight: 40,
       loadingColor: Colors.red,
       overflowModalColor: Colors.black54,
@@ -40,17 +25,18 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
       overflowMenuIconsColor: Colors.white,
     );
 
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-            controlsConfiguration: controlsConfiguration,
-            aspectRatio: 16 / 9,
-            fit: BoxFit.contain,
-            subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
-              fontSize: 16.0,
-            ));
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.hlsPlaylistUrl,
-        useAsmsSubtitles: true);
+    final betterPlayerConfiguration = const BetterPlayerConfiguration(
+      controlsConfiguration: controlsConfiguration,
+      aspectRatio: 16 / 9,
+      fit: BoxFit.contain,
+      subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
+        fontSize: 16,
+      ),
+    );
+    final dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.hlsPlaylistUrl,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -60,17 +46,17 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("HLS subtitles"),
+        title: const Text('HLS subtitles'),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                "Player with HLS stream which loads subtitles from HLS."
-                " You can choose subtitles by using overflow menu (3 dots in right corner).",
+                'Player with HLS stream which loads subtitles from HLS.'
+                ' You can choose subtitles by using overflow menu (3 dots in right corner).',
                 style: TextStyle(fontSize: 16),
               ),
             ),

@@ -5,6 +5,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class PlaceholderUntilPlayPage extends StatefulWidget {
+  const PlaceholderUntilPlayPage({super.key});
+
   @override
   _PlaceholderUntilPlayPageState createState() =>
       _PlaceholderUntilPlayPageState();
@@ -12,7 +14,7 @@ class PlaceholderUntilPlayPage extends StatefulWidget {
 
 class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   late BetterPlayerController _betterPlayerController;
-  StreamController<bool> _placeholderStreamController =
+  final StreamController<bool> _placeholderStreamController =
       StreamController.broadcast();
   bool _showPlaceholder = true;
 
@@ -24,13 +26,12 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    final betterPlayerConfiguration = BetterPlayerConfiguration(
       fit: BoxFit.contain,
       placeholder: _buildVideoPlaceholder(),
       showPlaceholderUntilPlay: true,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+    final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
     );
@@ -66,15 +67,15 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Placeholder until play"),
+        title: const Text('Placeholder until play'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Normal player with placeholder shown until video is started.",
+              'Normal player with placeholder shown until video is started.',
               style: TextStyle(fontSize: 16),
             ),
           ),

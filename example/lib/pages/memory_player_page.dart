@@ -6,6 +6,8 @@ import 'package:example/utils.dart';
 import 'package:flutter/material.dart';
 
 class MemoryPlayerPage extends StatefulWidget {
+  const MemoryPlayerPage({super.key});
+
   @override
   _MemoryPlayerPageState createState() => _MemoryPlayerPageState();
 }
@@ -15,8 +17,7 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -26,13 +27,13 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
     super.initState();
   }
 
-  void _setupDataSource() async {
-    var filePath = await Utils.getFileUrl(Constants.fileTestVideoUrl);
-    File file = File(filePath);
+  Future<void> _setupDataSource() async {
+    final filePath = await Utils.getFileUrl(Constants.fileTestVideoUrl);
+    final file = File(filePath);
 
-    List<int> bytes = file.readAsBytesSync().buffer.asUint8List();
-    BetterPlayerDataSource dataSource =
-        BetterPlayerDataSource.memory(bytes, videoExtension: "mp4");
+    final List<int> bytes = file.readAsBytesSync().buffer.asUint8List();
+    final dataSource =
+        BetterPlayerDataSource.memory(bytes, videoExtension: 'mp4');
     _betterPlayerController.setupDataSource(dataSource);
   }
 
@@ -40,16 +41,16 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Memory player"),
+        title: const Text('Memory player'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Memory player with plays video from bytes list. In this example"
-              "file bytes are read to list and then used in player.",
+              'Memory player with plays video from bytes list. In this example'
+              'file bytes are read to list and then used in player.',
               style: TextStyle(fontSize: 16),
             ),
           ),

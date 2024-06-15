@@ -6,14 +6,15 @@ import 'mock_video_player_controller.dart';
 
 class BetterPlayerTestUtils {
   static const String bugBuckBunnyVideoUrl =
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4";
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
   static const String forBiggerBlazesUrl =
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4";
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
   static const String elephantDreamStreamUrl =
-      "http://cdn.theoplayer.com/video/elephants-dream/playlist.m3u8";
+      'http://cdn.theoplayer.com/video/elephants-dream/playlist.m3u8';
 
-  static BetterPlayerMockController setupBetterPlayerMockController(
-      {VideoPlayerController? controller}) {
+  static BetterPlayerMockController setupBetterPlayerMockController({
+    VideoPlayerController? controller,
+  }) {
     final mockController =
         BetterPlayerMockController(const BetterPlayerConfiguration());
     if (controller != null) {

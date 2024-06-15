@@ -2,14 +2,13 @@
 import 'package:flutter/material.dart';
 
 class BetterPlayerMaterialClickableWidget extends StatelessWidget {
-  final Widget child;
-  final void Function() onTap;
-
   const BetterPlayerMaterialClickableWidget({
-    Key? key,
     required this.onTap,
     required this.child,
-  }) : super(key: key);
+    super.key,
+  });
+  final Widget child;
+  final void Function() onTap;
 
   @override
   Widget build(BuildContext context) {

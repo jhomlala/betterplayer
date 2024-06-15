@@ -3,6 +3,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class OverriddenDurationPage extends StatefulWidget {
+  const OverriddenDurationPage({super.key});
+
   @override
   _OverriddenDurationPageState createState() => _OverriddenDurationPageState();
 }
@@ -12,24 +14,22 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-      handleLifecycle: true,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _setupDataSource();
     super.initState();
   }
 
-  void _setupDataSource() async {
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+  Future<void> _setupDataSource() async {
+    final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
 
       ///Play only 10 seconds of this video.
-      overriddenDuration: Duration(seconds: 10),
+      overriddenDuration: const Duration(seconds: 10),
     );
     _betterPlayerController.setupDataSource(dataSource);
   }
@@ -38,16 +38,16 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Overridden duration"),
+        title: const Text('Overridden duration'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Duration of this video is overridden. Now this video will have"
-              " 10 seconds only.",
+              'Duration of this video is overridden. Now this video will have'
+              ' 10 seconds only.',
               style: TextStyle(fontSize: 16),
             ),
           ),

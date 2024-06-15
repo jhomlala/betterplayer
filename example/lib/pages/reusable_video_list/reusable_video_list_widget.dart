@@ -7,16 +7,16 @@ import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class ReusableVideoListWidget extends StatefulWidget {
-  final VideoListData? videoListData;
-  final ReusableVideoListController? videoListController;
-  final Function? canBuildVideo;
-
   const ReusableVideoListWidget({
-    Key? key,
+    super.key,
     this.videoListData,
     this.videoListController,
     this.canBuildVideo,
-  }) : super(key: key);
+  });
+
+  final VideoListData? videoListData;
+  final ReusableVideoListController? videoListController;
+  final Function? canBuildVideo;
 
   @override
   _ReusableVideoListWidgetState createState() =>
@@ -46,10 +46,13 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
     if (controller == null) {
       controller = widget.videoListController!.getBetterPlayerController();
       if (controller != null) {
-        controller!.setupDataSource(BetterPlayerDataSource.network(
+        controller!.setupDataSource(
+          BetterPlayerDataSource.network(
             videoListData!.videoUrl,
             cacheConfiguration:
-                BetterPlayerCacheConfiguration(useCache: true)));
+                const BetterPlayerCacheConfiguration(useCache: true),
+          ),
+        );
         if (!betterPlayerControllerStreamController.isClosed) {
           betterPlayerControllerStreamController.add(controller);
         }
@@ -77,7 +80,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
 
   void onPlayerEvent(BetterPlayerEvent event) {
     if (event.betterPlayerEventType == BetterPlayerEventType.progress) {
-      videoListData!.lastPosition = event.parameters!["progress"] as Duration?;
+      videoListData!.lastPosition = event.parameters!['progress'] as Duration?;
     }
     if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
       if (videoListData!.lastPosition != null) {
@@ -94,24 +97,24 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(8),
+            padding: const EdgeInsets.all(8),
             child: Text(
               videoListData!.videoTitle,
-              style: TextStyle(fontSize: 50),
+              style: const TextStyle(fontSize: 50),
             ),
           ),
           VisibilityDetector(
             key: Key(hashCode.toString() + DateTime.now().toString()),
             onVisibilityChanged: (info) {
-              if (!widget.canBuildVideo!()) {
+              if (!widget.canBuildVideo()) {
                 _timer?.cancel();
                 _timer = null;
-                _timer = Timer(Duration(milliseconds: 500), () {
+                _timer = Timer(const Duration(milliseconds: 500), () {
                   if (info.visibleFraction >= 0.6) {
                     _setupController();
                   } else {
@@ -137,7 +140,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                         )
                       : Container(
                           color: Colors.black,
-                          child: Center(
+                          child: const Center(
                             child: CircularProgressIndicator(
                               valueColor:
                                   AlwaysStoppedAnimation<Color>(Colors.white),
@@ -148,39 +151,41 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
               },
             ),
           ),
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(8),
             child: Text(
                 "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
-                "town. Plainspoken sheriff Roy Scheider, hippie shark "
-                "researcher Richard Dreyfuss, and a squirrely boat captain "
-                "set out to find the beast, but will they escape with their "
+                'town. Plainspoken sheriff Roy Scheider, hippie shark '
+                'researcher Richard Dreyfuss, and a squirrely boat captain '
+                'set out to find the beast, but will they escape with their '
                 "lives? 70's special effects, legendary score, and trademark "
-                "humor set this classic apart."),
+                'humor set this classic apart.'),
           ),
           Center(
-            child: Wrap(children: [
-              ElevatedButton(
-                child: Text("Play"),
-                onPressed: () {
-                  controller!.play();
-                },
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                child: Text("Pause"),
-                onPressed: () {
-                  controller!.pause();
-                },
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                child: Text("Set max volume"),
-                onPressed: () {
-                  controller!.setVolume(1.0);
-                },
-              ),
-            ]),
+            child: Wrap(
+              children: [
+                ElevatedButton(
+                  child: const Text('Play'),
+                  onPressed: () {
+                    controller!.play();
+                  },
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  child: const Text('Pause'),
+                  onPressed: () {
+                    controller!.pause();
+                  },
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  child: const Text('Set max volume'),
+                  onPressed: () {
+                    controller!.setVolume(1);
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),
