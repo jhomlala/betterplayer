@@ -1167,6 +1167,7 @@ class BetterPlayerController {
         !(videoPlayerController?.value.hasError ?? true);
 
     if (isPipSupported && canEnablePictureInPicture) {
+      if (isFullScreen) exitFullScreen();
       _wasInFullScreenBeforePiP = _isFullScreen;
       _wasControlsEnabledBeforePiP = _controlsEnabled;
       setControlsEnabled(false);
@@ -1228,7 +1229,7 @@ class BetterPlayerController {
     final bool isPipSupported =
         (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
 
-    return isPipSupported && !_isFullScreen;
+    return isPipSupported;
   }
 
   ///Handle VideoEvent when remote controls notification / PiP is shown
