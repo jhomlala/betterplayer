@@ -33,6 +33,8 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
         title: "Elephant dream",
         author: "Some author",
         imageUrl: Constants.catImageUrl,
+        skipForwardTimeInMilliseconds: 15000,
+        skipBackwardTimeInMilliseconds: 15000,
       ),
     );
     _betterPlayerController.setupDataSource(dataSource);
