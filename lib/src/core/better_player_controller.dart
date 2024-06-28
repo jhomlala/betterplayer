@@ -13,6 +13,7 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
 ///Class used to control overall Better Player behavior. Main class to change
@@ -991,20 +992,28 @@ class BetterPlayerController {
     if (videoPlayerController == null) {
       throw StateError("The data source has not been initialized");
     }
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedTrack,
-        parameters: <String, dynamic>{
-          "id": track.id,
-          "width": track.width,
-          "height": track.height,
-          "bitrate": track.bitrate,
-          "frameRate": track.frameRate,
-          "codecs": track.codecs,
-          "mimeType": track.mimeType,
-        }));
+    _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedTrack, parameters: <String, dynamic>{
+      "id": track.id,
+      "width": track.width,
+      "height": track.height,
+      "bitrate": track.bitrate,
+      "frameRate": track.frameRate,
+      "codecs": track.codecs,
+      "mimeType": track.mimeType,
+    }));
 
-    videoPlayerController!
-        .setTrackParameters(track.width, track.height, track.bitrate);
-    _betterPlayerAsmsTrack = track;
+    try {
+      videoPlayerController!.setTrackParameters(track.width, track.height, track.bitrate);
+      _betterPlayerAsmsTrack = track;
+    } on PlatformException catch (e) {
+      BetterPlayerUtils.log(e.toString());
+      _postEvent(
+        BetterPlayerEvent(
+          BetterPlayerEventType.exception,
+          parameters: {"exception": e.toString()},
+        ),
+      );
+    }
   }
 
   ///Check if player can be played/paused automatically
