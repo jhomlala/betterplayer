@@ -190,9 +190,20 @@ internal class BetterPlayer(
                     dataSourceFactory
                 )
             }
+            val rewriteMpdFlag = headers?.get("rewriteMpd") == "true"
+            val tokenValue = headers?.get("Authorization")?.removePrefix("Bearer ")
+                ?.trim()
+            if (rewriteMpdFlag || !tokenValue.isNullOrEmpty()) {
+                dataSourceFactory = com.jhomlala.better_player.custom.MyCustomDataSourceFactory(
+                    token = tokenValue,
+                    rewriteMpd = rewriteMpdFlag,
+                    otherHeaders = headers
+                )
+            }
         } else {
             dataSourceFactory = DefaultDataSource.Factory(context)
         }
+
         val mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, cacheKey, context)
         if (overriddenDuration != 0L) {
             val clippingMediaSource = ClippingMediaSource(mediaSource, 0, overriddenDuration * 1000)
