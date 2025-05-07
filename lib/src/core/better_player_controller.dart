@@ -340,6 +340,9 @@ class BetterPlayerController {
           setAudioTrack(_betterPlayerAsmsAudioTracks!.first);
         }
       }
+
+      /// ✅ Post custom event when all ASM data has been parsed
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.dataLoaded));
     }
   }
 

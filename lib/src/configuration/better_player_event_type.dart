@@ -7,6 +7,7 @@ enum BetterPlayerEventType {
   openFullscreen,
   hideFullscreen,
   setVolume,
+  dataLoaded,
   progress,
   finished,
   exception,
