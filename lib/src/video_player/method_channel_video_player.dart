@@ -211,15 +211,32 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
-    final int milliseconds = await _channel.invokeMethod<int>(
-          'absolutePosition',
-          <String, dynamic>{'textureId': textureId},
-        ) ??
-        0;
+    final int? milliseconds = await _channel.invokeMethod<int>(
+      'absolutePosition',
+      <String, dynamic>{'textureId': textureId},
+    );
 
-    if (milliseconds <= 0) return null;
+    // Return null if no valid milliseconds value is received
+    if (milliseconds == null || milliseconds <= 0) {
+      return null;
+    }
 
-    return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+    // Validate milliseconds against DateTime range
+    const int maxMillis = 8640000000000000; // Max valid milliseconds
+    const int minMillis = -8640000000000000; // Min valid milliseconds
+    if (milliseconds < minMillis || milliseconds > maxMillis) {
+      // Log the error for debugging (optional)
+      print('Invalid milliseconds value: $milliseconds. Returning null.');
+      return null; // Or clamp to maxMillis/minMillis if appropriate
+    }
+
+    try {
+      return DateTime.fromMillisecondsSinceEpoch(milliseconds);
+    } catch (e) {
+      // Handle any unexpected errors (optional for extra safety)
+      print('Error creating DateTime: $e');
+      return null;
+    }
   }
 
   @override
