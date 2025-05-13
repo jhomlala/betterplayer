@@ -211,6 +211,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
+    print("Hello this is absolute position method from Custom branch");
     final int? milliseconds = await _channel.invokeMethod<int>(
       'absolutePosition',
       <String, dynamic>{'textureId': textureId},
@@ -226,8 +227,10 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
     const int minMillis = -8640000000000000; // Min valid milliseconds
     if (milliseconds < minMillis || milliseconds > maxMillis) {
       // Log the error for debugging (optional)
+      var milSecond = milliseconds.clamp(minMillis, maxMillis);
       print('Invalid milliseconds value: $milliseconds. Returning null.');
-      return null; // Or clamp to maxMillis/minMillis if appropriate
+      return DateTime.fromMillisecondsSinceEpoch(
+          milSecond); // Or clamp to maxMillis/minMillis if appropriate
     }
 
     try {
