@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import com.google.android.exoplayer2.trackselection.TrackSelection
 import com.jhomlala.better_player.DataSourceUtils.getUserAgent
 import com.jhomlala.better_player.DataSourceUtils.isHTTP
 import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
@@ -740,12 +741,12 @@ internal class BetterPlayer(
         val mappedTrackInfo = trackSelector.currentMappedTrackInfo ?: return null
         for (rendererIndex in 0 until mappedTrackInfo.rendererCount) {
             if (player?.getRendererType(rendererIndex) == C.TRACK_TYPE_VIDEO) {
-                val selection = player.currentTracks.get(rendererIndex)
+                val selection: TrackSelection? = player.currentTrackSelections?.get(rendererIndex)
                 if (selection != null) {
-                    for (i in 0 until selection.length) {
-                        val track = selection.get(i)
-                        if (track != null) {
-                            return track.format
+                    for (i in 0 until selection.length()) {
+                        val format = selection.getFormat(i)
+                        if (format != null) {
+                            return format
                         }
                     }
                 }
