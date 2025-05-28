@@ -484,6 +484,21 @@ internal class BetterPlayer(
             override fun onPlayerError(error: PlaybackException) {
                 eventSink.error("VideoError", "Video player had error $error", "")
             }
+
+            override fun onTracksChanged(tracks: Tracks) {
+                super.onTracksChanged(tracks)
+
+                val videoFormat = getSelectedVideoFormat(exoPlayer)
+                val width = videoFormat?.width ?: 0
+                val height = videoFormat?.height ?: 0
+
+                val event: MutableMap<String, Any> = HashMap()
+                event["event"] = "changedResolution"
+                event["width"] = width
+                event["height"] = height
+
+                eventSink.success(event)
+            }
         })
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()
@@ -719,6 +734,24 @@ internal class BetterPlayer(
 
             trackSelector.setParameters(builder)
         }
+    }
+
+    private fun getSelectedVideoFormat(player: ExoPlayer?): Format? {
+        val mappedTrackInfo = trackSelector.currentMappedTrackInfo ?: return null
+        for (rendererIndex in 0 until mappedTrackInfo.rendererCount) {
+            if (player?.getRendererType(rendererIndex) == C.TRACK_TYPE_VIDEO) {
+                val selection = player.currentTracks.get(rendererIndex)
+                if (selection != null) {
+                    for (i in 0 until selection.length) {
+                        val track = selection.get(i)
+                        if (track != null) {
+                            return track.format
+                        }
+                    }
+                }
+            }
+        }
+        return null
     }
 
     private fun sendSeekToEvent(positionMs: Long) {
