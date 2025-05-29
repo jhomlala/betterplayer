@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import com.google.android.exoplayer2.video.VideoSize
 import com.jhomlala.better_player.DataSourceUtils.getUserAgent
 import com.jhomlala.better_player.DataSourceUtils.isHTTP
 import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
@@ -43,8 +44,6 @@ import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import android.view.Surface
 import androidx.lifecycle.Observer
-import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
@@ -487,21 +486,18 @@ internal class BetterPlayer(
                 eventSink.error("VideoError", "Video player had error $error", "")
             }
 
-            override fun onTracksChanged(
-                trackGroups: TrackGroupArray,
-                trackSelections: TrackSelectionArray
-            ) {
-                // ExoPlayer.videoFormat always holds the currently selected video Format
-                val format = exoPlayer?.videoFormat
-                val width = format?.width  ?: 0
-                val height = format?.height ?: 0
-        
-                // send changedResolution event to Flutter
+            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                val width  = videoSize.width
+                val height = videoSize.height
+
+                // send your changedResolution event:
                 val event: MutableMap<String, Any> = HashMap()
                 event["event"]  = "changedResolution"
                 event["width"]  = width
                 event["height"] = height
                 eventSink.success(event)
+
+                Log.d(TAG, "ABR switched resolution: ${width}x${height}")
             }
         })
         val reply: MutableMap<String, Any> = HashMap()
