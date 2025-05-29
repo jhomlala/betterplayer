@@ -13,8 +13,8 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import com.google.android.exoplayer2.video.VideoListener
-import com.google.android.exoplayer2.video.VideoSize
+import com.google.android.exoplayer2.analytics.AnalyticsListener
+import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 import com.jhomlala.better_player.DataSourceUtils.getUserAgent
 import com.jhomlala.better_player.DataSourceUtils.isHTTP
 import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
@@ -486,49 +486,25 @@ internal class BetterPlayer(
             override fun onPlayerError(error: PlaybackException) {
                 eventSink.error("VideoError", "Video player had error $error", "")
             }
-
-            override fun onVideoSizeChanged(videoSize: VideoSize) {
-                val width  = videoSize.width
-                val height = videoSize.height
-
-                // send your changedResolution event:
-                val event: MutableMap<String, Any> = HashMap()
-                event["event"]  = "changedResolution"
-                event["width"]  = width
-                event["height"] = height
-                eventSink.success(event)
-
-                Log.d(TAG, "ABR switched resolution: ${width}x${height}")
+        })
+        exoPlayer?.addAnalyticsListener(object : AnalyticsListener {
+            override fun onVideoSizeChanged(
+            eventTime: EventTime,
+            width: Int,
+            height: Int,
+            unappliedRotationDegrees: Int,
+            pixelWidthHeightRatio: Float
+            ) {
+            // Build and send your changedResolution event:
+            val payload = hashMapOf<String, Any>(
+                "event"  to "changedResolution",
+                "width"  to width,
+                "height" to height
+            )
+            eventSink.success(payload)
+            Log.d(TAG, "ABR switched resolution -> ${width}x${height}")
             }
         })
-        exoPlayer?.addVideoListener(object : com.google.android.exoplayer2.video.VideoListener {
-            // new ExoPlayer 2.15+ API
-            override fun onVideoSizeChanged(videoSize: VideoSize) {
-                val width  = videoSize.width
-                val height = videoSize.height
-                eventSink.success(mapOf(
-                "event"  to "changedResolution",
-                "width"  to width,
-                "height" to height
-                ))
-                Log.d(TAG, "ABR resolution -> ${width}x${height}")
-            }
-            // legacy API (if you’re on an older ExoPlayer)
-            @Suppress("DEPRECATION")
-            override fun onVideoSizeChanged(
-                width: Int,
-                height: Int,
-                unappliedRotationDegrees: Int,
-                pixelWidthHeightRatio: Float
-            ) {
-                eventSink.success(mapOf(
-                "event"  to "changedResolution",
-                "width"  to width,
-                "height" to height
-                ))
-                Log.d(TAG, "ABR resolution (legacy) -> ${width}x${height}")
-            }
-            })
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()
         result.success(reply)
