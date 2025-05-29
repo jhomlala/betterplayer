@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import com.google.android.exoplayer2.video.VideoSize
 import com.jhomlala.better_player.DataSourceUtils.getUserAgent
 import com.jhomlala.better_player.DataSourceUtils.isHTTP
 import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
@@ -21,7 +22,7 @@ import io.flutter.view.TextureRegistry.SurfaceTextureEntry
 import io.flutter.plugin.common.MethodChannel
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import android.support.v4.media.session.MediaSessionCompat
+import androidx.media.session.MediaSessionCompat
 import com.google.android.exoplayer2.drm.DrmSessionManager
 import androidx.work.WorkManager
 import androidx.work.WorkInfo
@@ -97,8 +98,6 @@ internal class BetterPlayer(
     private var lastSendBufferedPosition = 0L
     private var lastReportedWidth  = 0
     private var lastReportedHeight = 0
-    private var sizePollingHandler: Handler?    = null
-    private var sizePollingRunnable: Runnable?  = null
 
     init {
         val loadBuilder = DefaultLoadControl.Builder()
@@ -446,9 +445,11 @@ internal class BetterPlayer(
             object : EventChannel.StreamHandler {
                 override fun onListen(o: Any?, sink: EventSink) {
                     eventSink.setDelegate(sink)
+                    exoPlayer.addListener(videoSizeListener)
                 }
 
                 override fun onCancel(o: Any?) {
+                    exoPlayer.removeListener(videoSizeListener)
                     eventSink.setDelegate(null)
                 }
             })
@@ -489,34 +490,26 @@ internal class BetterPlayer(
                 eventSink.error("VideoError", "Video player had error $error", "")
             }
         })
-        lastReportedWidth  = 0
-        lastReportedHeight = 0
-        sizePollingHandler = Handler(Looper.getMainLooper())
-        sizePollingRunnable = object : Runnable {
-            override fun run() {
-                val format = exoPlayer?.videoFormat
-                if (format != null) {
-                    val w = format.width  ?: 0
-                    val h = format.height ?: 0
-                    if (w != lastReportedWidth || h != lastReportedHeight) {
-                        lastReportedWidth  = w
-                        lastReportedHeight = h
-                        // fire the changedResolution event
-                        eventSink.success(mapOf(
-                        "event"  to "changedResolution",
-                        "width"  to w,
-                        "height" to h
-                        ))
-                        Log.d(TAG, "Polled ABR resolution -> ${w}x${h}")
-                    }
-                }
-                sizePollingHandler?.postDelayed(this, 500)
-            }
-        }
-        sizePollingHandler?.postDelayed(sizePollingRunnable!!, 500)
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()
         result.success(reply)
+    }
+
+    private val videoSizeListener = object: Player.Listener {
+        override fun onVideoSizeChanged(videoSize: VideoSize) {
+            val w = videoSize.width
+            val h = videoSize.height
+            if (w != lastReportedWidth || h != lastReportedHeight) {
+            lastReportedWidth  = w
+            lastReportedHeight = h
+            eventSink.success(mapOf(
+                "event"  to "changedResolution",
+                "width"  to w,
+                "height" to h
+            ))
+            Log.d(TAG, "Resolution changed -> ${w}x${h}")
+            }
+        }
     }
 
     fun sendBufferingUpdate(isFromBufferingStart: Boolean) {
@@ -768,9 +761,6 @@ internal class BetterPlayer(
         if (isInitialized) {
             exoPlayer?.stop()
         }
-        sizePollingHandler?.removeCallbacks(sizePollingRunnable!!)
-        sizePollingHandler = null
-        sizePollingRunnable = null
         textureEntry.release()
         eventChannel.setStreamHandler(null)
         surface?.release()
