@@ -13,8 +13,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import com.google.android.exoplayer2.analytics.AnalyticsListener
-import com.google.android.exoplayer2.analytics.AnalyticsListener.EventTime
 import com.jhomlala.better_player.DataSourceUtils.getUserAgent
 import com.jhomlala.better_player.DataSourceUtils.isHTTP
 import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
@@ -97,6 +95,10 @@ internal class BetterPlayer(
     private val customDefaultLoadControl: CustomDefaultLoadControl =
         customDefaultLoadControl ?: CustomDefaultLoadControl()
     private var lastSendBufferedPosition = 0L
+    private var lastReportedWidth  = 0
+    private var lastReportedHeight = 0
+    private var sizePollingHandler: Handler?    = null
+    private var sizePollingRunnable: Runnable?  = null
 
     init {
         val loadBuilder = DefaultLoadControl.Builder()
@@ -487,24 +489,31 @@ internal class BetterPlayer(
                 eventSink.error("VideoError", "Video player had error $error", "")
             }
         })
-        exoPlayer?.addAnalyticsListener(object : AnalyticsListener {
-            override fun onVideoSizeChanged(
-            eventTime: EventTime,
-            width: Int,
-            height: Int,
-            unappliedRotationDegrees: Int,
-            pixelWidthHeightRatio: Float
-            ) {
-            // Build and send your changedResolution event:
-            val payload = hashMapOf<String, Any>(
-                "event"  to "changedResolution",
-                "width"  to width,
-                "height" to height
-            )
-            eventSink.success(payload)
-            Log.d(TAG, "ABR switched resolution -> ${width}x${height}")
+        lastReportedWidth  = 0
+        lastReportedHeight = 0
+        sizePollingHandler = Handler(Looper.getMainLooper())
+        sizePollingRunnable = object : Runnable {
+            override fun run() {
+                val format = exoPlayer?.videoFormat
+                if (format != null) {
+                    val w = format.width  ?: 0
+                    val h = format.height ?: 0
+                    if (w != lastReportedWidth || h != lastReportedHeight) {
+                        lastReportedWidth  = w
+                        lastReportedHeight = h
+                        // fire the changedResolution event
+                        eventSink.success(mapOf(
+                        "event"  to "changedResolution",
+                        "width"  to w,
+                        "height" to h
+                        ))
+                        Log.d(TAG, "Polled ABR resolution -> ${w}x${h}")
+                    }
+                }
+                sizePollingHandler?.postDelayed(this, 500)
             }
-        })
+        }
+        sizePollingHandler?.postDelayed(sizePollingRunnable!!, 500)
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()
         result.success(reply)
@@ -759,6 +768,9 @@ internal class BetterPlayer(
         if (isInitialized) {
             exoPlayer?.stop()
         }
+        sizePollingHandler?.removeCallbacks(sizePollingRunnable!!)
+        sizePollingHandler = null
+        sizePollingRunnable = null
         textureEntry.release()
         eventChannel.setStreamHandler(null)
         surface?.release()
