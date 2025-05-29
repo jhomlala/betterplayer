@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
+import com.google.android.exoplayer2.video.VideoListener
 import com.google.android.exoplayer2.video.VideoSize
 import com.jhomlala.better_player.DataSourceUtils.getUserAgent
 import com.jhomlala.better_player.DataSourceUtils.isHTTP
@@ -500,6 +501,34 @@ internal class BetterPlayer(
                 Log.d(TAG, "ABR switched resolution: ${width}x${height}")
             }
         })
+        exoPlayer?.addVideoListener(object : com.google.android.exoplayer2.video.VideoListener {
+            // new ExoPlayer 2.15+ API
+            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                val width  = videoSize.width
+                val height = videoSize.height
+                eventSink.success(mapOf(
+                "event"  to "changedResolution",
+                "width"  to width,
+                "height" to height
+                ))
+                Log.d(TAG, "ABR resolution -> ${width}x${height}")
+            }
+            // legacy API (if you’re on an older ExoPlayer)
+            @Suppress("DEPRECATION")
+            override fun onVideoSizeChanged(
+                width: Int,
+                height: Int,
+                unappliedRotationDegrees: Int,
+                pixelWidthHeightRatio: Float
+            ) {
+                eventSink.success(mapOf(
+                "event"  to "changedResolution",
+                "width"  to width,
+                "height" to height
+                ))
+                Log.d(TAG, "ABR resolution (legacy) -> ${width}x${height}")
+            }
+            })
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()
         result.success(reply)
