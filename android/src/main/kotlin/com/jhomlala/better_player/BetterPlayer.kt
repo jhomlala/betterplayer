@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -13,58 +12,64 @@ import android.net.Uri
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
-import com.jhomlala.better_player.DataSourceUtils.getUserAgent
-import com.jhomlala.better_player.DataSourceUtils.isHTTP
-import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
-import io.flutter.plugin.common.EventChannel
-import io.flutter.view.TextureRegistry.SurfaceTextureEntry
-import io.flutter.plugin.common.MethodChannel
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import android.support.v4.media.session.MediaSessionCompat
-import com.google.android.exoplayer2.drm.DrmSessionManager
-import androidx.work.WorkManager
-import androidx.work.WorkInfo
-import com.google.android.exoplayer2.drm.HttpMediaDrmCallback
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
-import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
-import com.google.android.exoplayer2.drm.FrameworkMediaDrm
-import com.google.android.exoplayer2.drm.UnsupportedDrmException
-import com.google.android.exoplayer2.drm.DummyExoMediaDrm
-import com.google.android.exoplayer2.drm.LocalMediaDrmCallback
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ClippingMediaSource
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter
-import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback
-import androidx.work.OneTimeWorkRequest
-import android.support.v4.media.session.PlaybackStateCompat
-import android.support.v4.media.MediaMetadataCompat
 import android.util.Log
 import android.view.Surface
 import androidx.lifecycle.Observer
-import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
-import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
+import androidx.media.session.MediaButtonReceiver
+import androidx.media.session.MediaMetadataCompat
+import androidx.media.session.MediaSessionCompat
+import androidx.media.session.PlaybackStateCompat
+import androidx.work.Data
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.PlaybackParameters
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.PlaybackException
+import com.google.android.exoplayer2.Timeline
+import com.google.android.exoplayer2.audio.AudioAttributes
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
+import com.google.android.exoplayer2.drm.DefaultDrmSessionManagerProvider
+import com.google.android.exoplayer2.drm.DrmSessionManager
+import com.google.android.exoplayer2.drm.DrmSessionManagerProvider
+import com.google.android.exoplayer2.drm.DummyExoMediaDrm
+import com.google.android.exoplayer2.drm.FrameworkMediaDrm
+import com.google.android.exoplayer2.drm.HttpMediaDrmCallback
+import com.google.android.exoplayer2.drm.LocalMediaDrmCallback
+import com.google.android.exoplayer2.drm.UnsupportedDrmException
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.ClippingMediaSource
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.dash.DashMediaSource
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource
 import com.google.android.exoplayer2.source.hls.HlsMediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import io.flutter.plugin.common.EventChannel.EventSink
-import androidx.media.session.MediaButtonReceiver
-import androidx.work.Data
-import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.drm.DrmSessionManagerProvider
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector.SelectionOverride
+import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
+import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionOverrides
-import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.google.android.exoplayer2.ui.PlayerNotificationManager.BitmapCallback
+import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescriptionAdapter
 import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
+import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.util.Util
+import com.google.android.exoplayer2.video.VideoSize
+import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
+import com.jhomlala.better_player.DataSourceUtils.getUserAgent
+import com.jhomlala.better_player.DataSourceUtils.isHTTP
+import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.EventChannel.EventSink
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.view.TextureRegistry.SurfaceTextureEntry
+import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.LoadControl
 import java.io.File
-import java.lang.Exception
-import java.lang.IllegalStateException
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -95,6 +100,8 @@ internal class BetterPlayer(
     private val customDefaultLoadControl: CustomDefaultLoadControl =
         customDefaultLoadControl ?: CustomDefaultLoadControl()
     private var lastSendBufferedPosition = 0L
+    private var lastReportedWidth = 0
+    private var lastReportedHeight = 0
 
     init {
         val loadBuilder = DefaultLoadControl.Builder()
@@ -109,6 +116,7 @@ internal class BetterPlayer(
             .setTrackSelector(trackSelector)
             .setLoadControl(loadControl)
             .build()
+        exoPlayer?.addListener(videoSizeListener)
         workManager = WorkManager.getInstance(context)
         workerObserverMap = HashMap()
         setupVideoPlayer(eventChannel, textureEntry, result)
@@ -488,6 +496,27 @@ internal class BetterPlayer(
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()
         result.success(reply)
+    }
+
+    // === VIDEO SIZE LISTENER ===
+    private val videoSizeListener = object : Player.Listener {
+        override fun onVideoSizeChanged(videoSize: VideoSize) {
+            val w = videoSize.width
+            val h = videoSize.height
+            if (w != lastReportedWidth || h != lastReportedHeight) {
+                lastReportedWidth = w
+                lastReportedHeight = h
+                // Send a "changedResolution" event along with new width/height
+                eventSink.success(
+                    mapOf(
+                        "event" to "changedResolution",
+                        "width" to w,
+                        "height" to h
+                    )
+                )
+                Log.d(TAG, "Resolution changed -> ${w}x${h}")
+            }
+        }
     }
 
     fun sendBufferingUpdate(isFromBufferingStart: Boolean) {

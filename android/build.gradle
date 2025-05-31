@@ -52,6 +52,7 @@ android {
     }
 
     dependencies {
+        implementation "androidx.media:media:1.6.0"
         implementation "com.google.android.exoplayer:exoplayer-core:$exoPlayerVersion"
         implementation "com.google.android.exoplayer:exoplayer-hls:$exoPlayerVersion"
         implementation "com.google.android.exoplayer:exoplayer-dash:$exoPlayerVersion"
