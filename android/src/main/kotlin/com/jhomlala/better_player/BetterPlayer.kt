@@ -17,15 +17,16 @@ import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import androidx.lifecycle.Observer
-import androidx.media.MediaButtonReceiver
+import androidx.media.session.MediaButtonReceiver
 import androidx.media.MediaMetadataCompat
-import androidx.media.MediaSessionCompat
-import androidx.media.PlaybackStateCompat
+import androidx.media.session.MediaSessionCompat
+import androidx.media.session.PlaybackStateCompat
 import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.android.exoplayer2.C
+import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.LoadControl
 import com.google.android.exoplayer2.MediaItem
@@ -61,7 +62,6 @@ import com.google.android.exoplayer2.ui.PlayerNotificationManager.MediaDescripti
 import com.google.android.exoplayer2.upstream.DefaultDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.util.Util
 import com.google.android.exoplayer2.video.VideoSize
 import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
@@ -83,7 +83,7 @@ internal class BetterPlayer(
     customDefaultLoadControl: CustomDefaultLoadControl?,
     result: MethodChannel.Result
 ) {
-    // Make exoPlayer non-nullable since we always build it in `init { … }`
+    // ExoPlayer is never null after we build it in init { … }, so make it non-nullable
     private val exoPlayer: ExoPlayer
     private val eventSink = QueuingEventSink()
     private val trackSelector: DefaultTrackSelector = DefaultTrackSelector(context)
@@ -106,7 +106,7 @@ internal class BetterPlayer(
     private var lastReportedWidth = 0
     private var lastReportedHeight = 0
 
-    // We declare and initialize videoSizeListener here so it’s available in `init { … }`
+    // Declare and initialize videoSizeListener before init { … }
     private val videoSizeListener = object : Player.Listener {
         override fun onVideoSizeChanged(videoSize: VideoSize) {
             val w = videoSize.width
@@ -114,7 +114,6 @@ internal class BetterPlayer(
             if (w != lastReportedWidth || h != lastReportedHeight) {
                 lastReportedWidth = w
                 lastReportedHeight = h
-                // Send “changedResolution” event with new width/height
                 eventSink.success(
                     mapOf(
                         "event" to "changedResolution",
@@ -128,7 +127,7 @@ internal class BetterPlayer(
     }
 
     init {
-        // Build a custom DefaultLoadControl using your CustomDefaultLoadControl values
+        // Build a DefaultLoadControl with your CustomDefaultLoadControl settings
         val loadBuilder = DefaultLoadControl.Builder()
         loadBuilder.setBufferDurationsMs(
             this.customDefaultLoadControl.minBufferMs,
@@ -138,13 +137,12 @@ internal class BetterPlayer(
         )
         loadControl = loadBuilder.build()
 
-        // Construct ExoPlayer exactly once
+        // Construct ExoPlayer once
         exoPlayer = ExoPlayer.Builder(context)
             .setTrackSelector(trackSelector)
             .setLoadControl(loadControl)
             .build()
-
-        // Attach our videoSizeListener right away
+        // Attach our videoSizeListener immediately
         exoPlayer.addListener(videoSizeListener)
 
         workManager = WorkManager.getInstance(context)
@@ -153,6 +151,9 @@ internal class BetterPlayer(
         setupVideoPlayer(eventChannel, textureEntry, result)
     }
 
+    /**
+     * Called from the Flutter plugin to set up the player’s data source (formatHint, caching, DRM, etc.).
+     */
     fun setDataSource(
         context: Context,
         key: String?,
@@ -175,7 +176,7 @@ internal class BetterPlayer(
         val uri = Uri.parse(dataSource)
         val userAgent = getUserAgent(headers)
 
-        // Build the appropriate DataSource.Factory (HTTP vs. local)
+        // Build the right DataSource.Factory (HTTP with optional caching, or local)
         val dataSourceFactory: DataSource.Factory = if (isHTTP(uri)) {
             var factory = getDataSourceFactory(userAgent, headers)
             if (useCache && maxCacheSize > 0 && maxCacheFileSize > 0) {
@@ -191,7 +192,7 @@ internal class BetterPlayer(
             DefaultDataSource.Factory(context)
         }
 
-        // DRM session manager setup (Widevine, ClearKey, etc.)
+        // DRM setup if licenseUrl or clearKey is provided
         if (!licenseUrl.isNullOrEmpty()) {
             val httpDrmCallback = HttpMediaDrmCallback(licenseUrl, DefaultHttpDataSource.Factory())
             drmHeaders?.forEach { (drmKey, drmValue) ->
@@ -201,12 +202,12 @@ internal class BetterPlayer(
                 Log.e(TAG, "Protected content not supported on API < 18")
                 null
             } else {
-                val uuid = Util.getDrmUuid("widevine")
-                if (uuid != null) {
+                val widevineUuid = Util.getDrmUuid("widevine")
+                if (widevineUuid != null) {
                     DefaultDrmSessionManager.Builder()
-                        .setUuidAndExoMediaDrmProvider(uuid) { drmUuid ->
+                        .setUuidAndExoMediaDrmProvider(widevineUuid) { uuid ->
                             try {
-                                val mediaDrm = FrameworkMediaDrm.newInstance(drmUuid!!)
+                                val mediaDrm = FrameworkMediaDrm.newInstance(uuid!!)
                                 mediaDrm.setPropertyString("securityLevel", "L3")
                                 mediaDrm
                             } catch (e: UnsupportedDrmException) {
@@ -235,13 +236,13 @@ internal class BetterPlayer(
             drmSessionManager = null
         }
 
-        // Build the MediaSource (HLS, DASH, SmoothStreaming, or “other”)
+        // Build the actual MediaSource (HLS, DASH, SmoothStreaming, or “OTHER”)
         val mediaSource = buildMediaSource(uri, dataSourceFactory, formatHint, cacheKey, context)
 
-        // If the user overridden the duration, wrap in ClippingMediaSource
+        // If an overriddenDuration is provided, wrap in ClippingMediaSource
         if (overriddenDuration != 0L) {
-            val clipping = ClippingMediaSource(mediaSource, 0, overriddenDuration * 1000)
-            exoPlayer.setMediaSource(clipping)
+            val clippingSource = ClippingMediaSource(mediaSource, 0, overriddenDuration * 1000)
+            exoPlayer.setMediaSource(clippingSource)
         } else {
             exoPlayer.setMediaSource(mediaSource)
         }
@@ -250,7 +251,10 @@ internal class BetterPlayer(
         result.success(null)
     }
 
-    private fun setupPlayerNotification(
+    /**
+     * Public so BetterPlayerPlugin can call it.  Shows the notification & media session controls.
+     */
+    fun setupPlayerNotification(
         context: Context,
         title: String,
         author: String?,
@@ -265,9 +269,9 @@ internal class BetterPlayer(
 
             @SuppressLint("UnspecifiedImmutableFlag")
             override fun createCurrentContentIntent(player: Player): PendingIntent? {
-                val packageName = context.applicationContext.packageName
+                val pkg = context.applicationContext.packageName
                 val notificationIntent = Intent().apply {
-                    setClassName(packageName, "$packageName.$activityName")
+                    setClassName(pkg, "$pkg.$activityName")
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 }
                 return PendingIntent.getActivity(
@@ -289,7 +293,7 @@ internal class BetterPlayer(
                 if (imageUrl.isNullOrEmpty()) return null
                 if (bitmap != null) return bitmap
 
-                // Fetch the bitmap via WorkManager
+                // Launch a WorkManager job to fetch the image
                 val imageWorkRequest = OneTimeWorkRequest.Builder(ImageWorker::class.java)
                     .addTag(imageUrl)
                     .setInputData(
@@ -299,6 +303,7 @@ internal class BetterPlayer(
                     )
                     .build()
                 workManager.enqueue(imageWorkRequest)
+
                 val observer = Observer<WorkInfo?> { workInfo ->
                     try {
                         if (workInfo != null && workInfo.state == WorkInfo.State.SUCCEEDED) {
@@ -321,7 +326,7 @@ internal class BetterPlayer(
                             }
                         }
                     } catch (e: Exception) {
-                        Log.e(TAG, "Image fetch error: $e")
+                        Log.e(TAG, "Error fetching image for notification: $e")
                     }
                 }
                 workManager.getWorkInfoByIdLiveData(imageWorkRequest.id)
@@ -332,7 +337,7 @@ internal class BetterPlayer(
             }
         }
 
-        // Create notification channel if needed
+        // Create a notification channel on Oreo+ if none was provided
         var channelName = notificationChannelName
         if (channelName.isNullOrEmpty() && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_LOW
@@ -352,18 +357,22 @@ internal class BetterPlayer(
             context,
             NOTIFICATION_ID,
             channelName!!
-        ).setMediaDescriptionAdapter(mediaDescriptionAdapter)
-         .build().apply {
-            setPlayer(ForwardingPlayer(exoPlayer))
-            setUseNextAction(false)
-            setUsePreviousAction(false)
-            setUseStopAction(false)
-            setupMediaSession(context)?.let { token ->
-                setMediaSessionToken(token.sessionToken)
-            }
-        }
+        )
+            .setMediaDescriptionAdapter(mediaDescriptionAdapter)
+            .build().apply {
+                // Wrap ExoPlayer in a ForwardingPlayer to pass into the NotificationManager
+                setPlayer(ForwardingPlayer(exoPlayer))
+                setUseNextAction(false)
+                setUsePreviousAction(false)
+                setUseStopAction(false)
 
-        // Every second, update the MediaSession’s playback state so the lock-screen icon stays in sync
+                // Attach the MediaSession token
+                setupMediaSession(context)?.let { session ->
+                    setMediaSessionToken(session.sessionToken)
+                }
+            }
+
+        // Every second, update the MediaSession’s playback state so the lock-screen controls stay in sync
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             refreshHandler = Handler(Looper.getMainLooper())
             refreshRunnable = object : Runnable {
@@ -396,7 +405,7 @@ internal class BetterPlayer(
 
         exoPlayerEventListener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
-                // Update metadata (duration) in MediaSession
+                // Update MediaSession metadata (duration) whenever player state changes
                 mediaSession?.setMetadata(
                     MediaMetadataCompat.Builder()
                         .putLong(MediaMetadataCompat.METADATA_KEY_DURATION, getDuration())
@@ -445,7 +454,7 @@ internal class BetterPlayer(
             }
             .build()
 
-        // Provide a DrmSessionManagerProvider if we set up DRM above
+        // Provide a DrmSessionManagerProvider if DRM was set up above
         val drmProvider: DrmSessionManagerProvider? = drmSessionManager?.let { drm ->
             DrmSessionManagerProvider { drm }
         }
@@ -525,7 +534,7 @@ internal class BetterPlayer(
             }
         })
 
-        // Return texture ID
+        // Return the textureId back to Flutter
         result.success(mapOf("textureId" to textureEntry.id()))
     }
 
@@ -670,7 +679,9 @@ internal class BetterPlayer(
         try {
             val mappedTrackInfo = trackSelector.currentMappedTrackInfo ?: return
             for (rendererIndex in 0 until mappedTrackInfo.rendererCount) {
-                if (mappedTrackInfo.getRendererType(rendererIndex) != C.TRACK_TYPE_AUDIO) continue
+                if (mappedTrackInfo.getRendererType(rendererIndex) != C.TRACK_TYPE_AUDIO) {
+                    continue
+                }
                 val groups = mappedTrackInfo.getTrackGroups(rendererIndex)
                 var hasNoLabel = false
                 var hasStrange = false
@@ -765,7 +776,7 @@ internal class BetterPlayer(
         private const val DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION"
         private const val NOTIFICATION_ID = 20772077
 
-        // Clear cache (delete betterPlayerCache folder)
+        // Clear cache by deleting betterPlayerCache folder
         fun clearCache(context: Context?, result: MethodChannel.Result) {
             try {
                 context?.let {
@@ -788,7 +799,7 @@ internal class BetterPlayer(
             }
         }
 
-        // Pre-cache video in background via WorkManager
+        // Precache (enqueue CacheWorker via WorkManager)
         fun preCache(
             context: Context?,
             dataSource: String?,
@@ -818,7 +829,7 @@ internal class BetterPlayer(
             result.success(null)
         }
 
-        // Stop pre-cache (cancel all WorkManager jobs tagged with the URL)
+        // Stop precache (cancel all jobs tagged with the given URL)
         fun stopPreCache(context: Context?, url: String?, result: MethodChannel.Result) {
             if (!url.isNullOrEmpty() && context != null) {
                 WorkManager.getInstance(context).cancelAllWorkByTag(url)
