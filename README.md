@@ -79,8 +79,13 @@ This plugin is based on [Chewie](https://github.com/brianegan/chewie). Chewie is
 ✔️ HTTP Headers support  
 ✔️ BoxFit of video support  
 ✔️ Playback speed support  
-✔️ HLS support (track, subtitles (also segmented), audio track selection)  
-✔️ DASH support (track, subtitles, audio track selection)     
+✔️ HLS support (track, subtitles (also segmented), audio track selection)
+  • **Android:** Fully supported via ExoPlayer
+  • **iOS:** Fully supported and recommended (native AVPlayer)
+✔️ DASH support (track, subtitles, audio track selection)
+  • **Android:** Fully supported via ExoPlayer
+  • **iOS:** Limited native support due to AVPlayer's primary focus on HLS
+    ◦ Note: To play DASH on iOS, consider using a custom media player (e.g., via WebView) that supports MPEG-DASH
 ✔️ Alternative resolution support  
 ✔️ Cache support  
 ✔️ Notifications support  
