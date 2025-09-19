@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 
 class VariantInfo {
-  VariantInfo({
-    this.bitrate,
-    this.videoGroupId,
-    this.audioGroupId,
-    this.subtitleGroupId,
-    this.captionGroupId,
-  });
+  VariantInfo({this.bitrate, this.videoGroupId, this.audioGroupId, this.subtitleGroupId, this.captionGroupId});
 
   /// The bitrate as declared by the EXT-X-STREAM-INF tag. */
   final int? bitrate;
@@ -31,16 +25,11 @@ class VariantInfo {
   @override
   bool operator ==(dynamic other) {
     if (other is VariantInfo) {
-      return other.bitrate == bitrate &&
-          other.videoGroupId == videoGroupId &&
-          other.audioGroupId == audioGroupId &&
-          other.subtitleGroupId == subtitleGroupId &&
-          other.captionGroupId == captionGroupId;
+      return other.bitrate == bitrate && other.videoGroupId == videoGroupId && other.audioGroupId == audioGroupId && other.subtitleGroupId == subtitleGroupId && other.captionGroupId == captionGroupId;
     }
     return false;
   }
 
   @override
-  int get hashCode => hashValues(
-      bitrate, videoGroupId, audioGroupId, subtitleGroupId, captionGroupId);
+  int get hashCode => Object.hash(bitrate, videoGroupId, audioGroupId, subtitleGroupId, captionGroupId);
 }
