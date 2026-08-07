@@ -35,7 +35,9 @@ import androidx.media3.exoplayer.smoothstreaming.SsMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaSession.Token
+import androidx.media3.session.SessionToken
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.MediaSessionCompat.Token
 import androidx.media3.ui.PlayerNotificationManager
 import androidx.media3.ui.PlayerNotificationManager.BitmapCallback
 import androidx.media3.ui.PlayerNotificationManager.MediaDescriptionAdapter
@@ -302,7 +304,7 @@ internal class BetterPlayer(
             }
 
             setupMediaSession(context)?.let {
-                setMediaSessionToken(it.platformToken)
+                setMediaSessionToken(it.sessionCompatToken)
             }
         }
         
@@ -340,7 +342,7 @@ internal class BetterPlayer(
             mediaItemBuilder.setCustomCacheKey(cacheKey)
         }
         val mediaItem = mediaItemBuilder.build()
-        var drmSessionManagerProvider: DrmSessionManagerProvider = DrmSessionManagerProvider.DEFAULT
+        var drmSessionManagerProvider: DrmSessionManagerProvider = DefaultDrmSessionManagerProvider()
         drmSessionManager?.let { drmSessionManager ->
             drmSessionManagerProvider = DrmSessionManagerProvider { drmSessionManager }
         }

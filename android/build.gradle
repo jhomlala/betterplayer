@@ -8,7 +8,7 @@ buildscript {
     ext.workVersion = "2.7.0"
     ext.coreVersion = "1.6.0"
     ext.gradleVersion = "9.5.0"
-    ext.kotlinVersion = "1.9.10"
+    ext.kotlinVersion = "2.2.10"
 
     repositories {
         google()
@@ -16,7 +16,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.3.0'
+        classpath 'com.android.tools.build:gradle:8.7.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
@@ -62,6 +62,7 @@ android {
         implementation "androidx.media3:media3-exoplayer-smoothstreaming:$media3Version"
         implementation "androidx.media3:media3-ui:$media3Version"
         implementation "androidx.media3:media3-session:$media3Version"
+        implementation "androidx.media:media:1.6.0"
         implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycleVersion"
         implementation "androidx.lifecycle:lifecycle-common:$lifecycleVersion"
         implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycleVersion"
