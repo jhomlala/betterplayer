@@ -1,3 +1,14 @@
+## 0.1.0
+* [BREAKING_CHANGE] Migrated Android playback engine from ExoPlayer 2 to AndroidX Media3 (1.1.1).
+* [BREAKING_CHANGE] Updated minimum Flutter version to 3.22.0 and minimum Dart version to 3.4.0.
+* Migrated linter to `very_good_analysis` (VGV).
+* Updated all core and dev dependencies.
+* Updated CI/CD workflows (GitHub Actions).
+* Fixed Kotlin version and updated to 2.2.20.
+* Updated compileSdkVersion to 34.
+* Added `AGENTS.md` for AI-assisted development rules.
+* General analysis, linting, and formatting improvements.
+
 ## 0.0.84
 * [BREAKING_CHANGE] Updated min. Flutter version to 3.3.0 and min. Dart version to 3.0.0.
 * Recreated example project.
