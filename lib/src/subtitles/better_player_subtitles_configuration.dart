@@ -43,7 +43,7 @@ class BetterPlayerSubtitlesConfiguration {
     this.outlineEnabled = true,
     this.outlineColor = Colors.black,
     this.outlineSize = 2.0,
-    this.fontFamily = "Roboto",
+    this.fontFamily = 'Roboto',
     this.leftPadding = 8.0,
     this.rightPadding = 8.0,
     this.bottomPadding = 20.0,

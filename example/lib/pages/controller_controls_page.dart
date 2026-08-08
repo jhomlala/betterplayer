@@ -3,6 +3,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class ControllerControlsPage extends StatefulWidget {
+  const ControllerControlsPage({super.key});
+
   @override
   _ControllerControlsPageState createState() => _ControllerControlsPageState();
 }
@@ -12,13 +14,14 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
+    final dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      Constants.elephantDreamVideoUrl,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -28,16 +31,16 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Controller controls"),
+        title: const Text('Controller controls'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Control player with BetterPlayerController. You can control all"
-              "aspects of player without using UI of player.",
+              'Control player with BetterPlayerController. You can control all'
+              'aspects of player without using UI of player.',
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -48,24 +51,27 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
           Wrap(
             children: [
               TextButton(
-                  child: Text("Play"), onPressed: _betterPlayerController.play),
+                onPressed: _betterPlayerController.play,
+                child: const Text('Play'),
+              ),
               TextButton(
-                  child: Text("Pause"),
-                  onPressed: _betterPlayerController.pause),
+                onPressed: _betterPlayerController.pause,
+                child: const Text('Pause'),
+              ),
               TextButton(
-                child: Text("Hide controls"),
+                child: const Text('Hide controls'),
                 onPressed: () {
                   _betterPlayerController.setControlsVisibility(false);
                 },
               ),
               TextButton(
-                child: Text("Show controls"),
+                child: const Text('Show controls'),
                 onPressed: () {
                   _betterPlayerController.setControlsVisibility(true);
                 },
               ),
             ],
-          )
+          ),
         ],
       ),
     );

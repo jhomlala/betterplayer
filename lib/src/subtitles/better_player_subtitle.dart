@@ -25,7 +25,7 @@ class BetterPlayerSubtitle {
       }
       return BetterPlayerSubtitle._();
     } catch (exception) {
-      BetterPlayerUtils.log("Failed to parse subtitle line: $value");
+      BetterPlayerUtils.log('Failed to parse subtitle line: $value');
       return BetterPlayerSubtitle._();
     }
   }
@@ -38,19 +38,25 @@ class BetterPlayerSubtitle {
       final texts = scanner.sublist(1, scanner.length);
 
       return BetterPlayerSubtitle._(
-          index: -1, start: start, end: end, texts: texts);
+        index: -1,
+        start: start,
+        end: end,
+        texts: texts,
+      );
     } catch (exception) {
-      BetterPlayerUtils.log("Failed to parse subtitle line: $scanner");
+      BetterPlayerUtils.log('Failed to parse subtitle line: $scanner');
       return BetterPlayerSubtitle._();
     }
   }
 
   static BetterPlayerSubtitle _handle3LinesAndMoreSubtitles(
-      List<String> scanner, bool isWebVTT) {
+    List<String> scanner,
+    bool isWebVTT,
+  ) {
     try {
       int? index = -1;
-      List<String> timeSplit = [];
-      int firstLineOfText = 0;
+      var timeSplit = <String>[];
+      var firstLineOfText = 0;
       if (scanner[0].contains(timerSeparator)) {
         timeSplit = scanner[0].split(timerSeparator);
         firstLineOfText = 1;
@@ -64,16 +70,20 @@ class BetterPlayerSubtitle {
       final end = _stringToDuration(timeSplit[1]);
       final texts = scanner.sublist(firstLineOfText, scanner.length);
       return BetterPlayerSubtitle._(
-          index: index, start: start, end: end, texts: texts);
+        index: index,
+        start: start,
+        end: end,
+        texts: texts,
+      );
     } catch (exception) {
-      BetterPlayerUtils.log("Failed to parse subtitle line: $scanner");
+      BetterPlayerUtils.log('Failed to parse subtitle line: $scanner');
       return BetterPlayerSubtitle._();
     }
   }
 
   static Duration _stringToDuration(String value) {
     try {
-      final valueSplit = value.split(" ");
+      final valueSplit = value.split(' ');
       String componentValue;
 
       if (valueSplit.length > 1) {
@@ -85,7 +95,7 @@ class BetterPlayerSubtitle {
       final component = componentValue.split(':');
       // Interpret a missing hour component to mean 00 hours
       if (component.length == 2) {
-        component.insert(0, "00");
+        component.insert(0, '00');
       } else if (component.length != 3) {
         return const Duration();
       }
@@ -97,13 +107,14 @@ class BetterPlayerSubtitle {
       }
 
       final result = Duration(
-          hours: int.tryParse(component[0])!,
-          minutes: int.tryParse(component[1])!,
-          seconds: int.tryParse(secsAndMillsSplit[0])!,
-          milliseconds: int.tryParse(secsAndMillsSplit[1])!);
+        hours: int.tryParse(component[0])!,
+        minutes: int.tryParse(component[1])!,
+        seconds: int.tryParse(secsAndMillsSplit[0])!,
+        milliseconds: int.tryParse(secsAndMillsSplit[1])!,
+      );
       return result;
     } catch (exception) {
-      BetterPlayerUtils.log("Failed to process value: $value");
+      BetterPlayerUtils.log('Failed to process value: $value');
       return const Duration();
     }
   }

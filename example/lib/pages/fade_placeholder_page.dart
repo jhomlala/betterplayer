@@ -5,25 +5,26 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class FadePlaceholderPage extends StatefulWidget {
+  const FadePlaceholderPage({super.key});
+
   @override
   _FadePlaceholderPageState createState() => _FadePlaceholderPageState();
 }
 
 class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
   late BetterPlayerController _betterPlayerController;
-  StreamController<bool> _playController = StreamController.broadcast();
+  final StreamController<bool> _playController = StreamController.broadcast();
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    final betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       placeholder: _buildPlaceholder(),
       showPlaceholderUntilPlay: true,
       placeholderOnTop: false,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+    final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );
@@ -41,9 +42,9 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
     return StreamBuilder<bool>(
       stream: _playController.stream,
       builder: (context, snapshot) {
-        bool showPlaceholder = snapshot.data ?? true;
+        final showPlaceholder = snapshot.data ?? true;
         return AnimatedOpacity(
-          duration: Duration(milliseconds: 500),
+          duration: const Duration(milliseconds: 500),
           opacity: showPlaceholder ? 1.0 : 0.0,
           child: AspectRatio(
             aspectRatio: 16 / 9,
@@ -61,15 +62,15 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Fade placeholder player"),
+        title: const Text('Fade placeholder player'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Normal player with placeholder which fade.",
+              'Normal player with placeholder which fade.',
               style: TextStyle(fontSize: 16),
             ),
           ),

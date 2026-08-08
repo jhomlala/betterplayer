@@ -3,22 +3,23 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class PictureInPicturePage extends StatefulWidget {
+  const PictureInPicturePage({super.key});
+
   @override
   _PictureInPicturePageState createState() => _PictureInPicturePageState();
 }
 
 class _PictureInPicturePageState extends State<PictureInPicturePage> {
   late BetterPlayerController _betterPlayerController;
-  GlobalKey _betterPlayerKey = GlobalKey();
+  final GlobalKey _betterPlayerKey = GlobalKey();
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+    final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
     );
@@ -32,15 +33,15 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Picture in Picture player"),
+        title: const Text('Picture in Picture player'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Example which shows how to use PiP.",
+              'Example which shows how to use PiP.',
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -52,13 +53,13 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
             ),
           ),
           ElevatedButton(
-            child: Text("Show PiP"),
+            child: const Text('Show PiP'),
             onPressed: () {
               _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
             },
           ),
           ElevatedButton(
-            child: Text("Disable PiP"),
+            child: const Text('Disable PiP'),
             onPressed: () async {
               _betterPlayerController.disablePictureInPicture();
             },

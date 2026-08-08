@@ -4,6 +4,8 @@ import 'package:example/pages/custom_controls/custom_controls_widget.dart';
 import 'package:flutter/material.dart';
 
 class ChangePlayerThemePage extends StatefulWidget {
+  const ChangePlayerThemePage({super.key});
+
   @override
   _ChangePlayerThemePageState createState() => _ChangePlayerThemePageState();
 }
@@ -16,12 +18,11 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
   @override
   void initState() {
     super.initState();
-    String url = Constants.bugBuckBunnyVideoUrl;
+    const url = Constants.bugBuckBunnyVideoUrl;
     _dataSource =
         BetterPlayerDataSource(BetterPlayerDataSourceType.network, url);
-    _betterPlayerController = new BetterPlayerController(
+    _betterPlayerController = BetterPlayerController(
       BetterPlayerConfiguration(
-        autoDispose: true,
         controlsConfiguration: BetterPlayerControlsConfiguration(
           playerTheme: _playerTheme,
         ),
@@ -34,17 +35,17 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Change player theme"),
+        title: const Text('Change player theme'),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
             const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                "Player with the possibility to change the theme. Click on "
-                "buttons below to change theme of player.",
+                'Player with the possibility to change the theme. Click on '
+                'buttons below to change theme of player.',
                 style: TextStyle(fontSize: 16),
               ),
             ),
@@ -55,14 +56,13 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 MaterialButton(
-                  child: Text("MATERIAL"),
+                  child: const Text('MATERIAL'),
                   onPressed: () {
                     setState(() {
                       _playerTheme = BetterPlayerTheme.material;
                       _betterPlayerController.pause();
-                      _betterPlayerController = new BetterPlayerController(
+                      _betterPlayerController = BetterPlayerController(
                         BetterPlayerConfiguration(
-                          autoDispose: true,
                           controlsConfiguration:
                               BetterPlayerControlsConfiguration(
                             playerTheme: _playerTheme,
@@ -74,14 +74,13 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                   },
                 ),
                 MaterialButton(
-                  child: Text("CUPERTINO"),
+                  child: const Text('CUPERTINO'),
                   onPressed: () {
                     setState(() {
                       _playerTheme = BetterPlayerTheme.cupertino;
                       _betterPlayerController.pause();
-                      _betterPlayerController = new BetterPlayerController(
+                      _betterPlayerController = BetterPlayerController(
                         BetterPlayerConfiguration(
-                          autoDispose: true,
                           controlsConfiguration:
                               BetterPlayerControlsConfiguration(
                             playerTheme: _playerTheme,
@@ -93,14 +92,13 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                   },
                 ),
                 MaterialButton(
-                  child: Text("CUSTOM"),
+                  child: const Text('CUSTOM'),
                   onPressed: () {
                     setState(() {
                       _playerTheme = BetterPlayerTheme.custom;
                       _betterPlayerController.pause();
-                      _betterPlayerController = new BetterPlayerController(
+                      _betterPlayerController = BetterPlayerController(
                         BetterPlayerConfiguration(
-                          autoDispose: true,
                           controlsConfiguration:
                               BetterPlayerControlsConfiguration(
                             playerTheme: _playerTheme,
@@ -119,7 +117,7 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                   },
                 ),
               ],
-            )
+            ),
           ],
         ),
       ),

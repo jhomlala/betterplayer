@@ -7,22 +7,35 @@
 
 # The following line activates a set of recommended lints for Flutter apps,
 # packages, and plugins designed to encourage good coding practices.
-include: package:flutter_lints/flutter.yaml
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  errors:
+    undefined_lint: ignore
+    strict_raw_type: ignore
+    inference_failure_on_function_return_type: ignore
 
 linter:
-  # The lint rules applied to this project can be customized in the
-  # section below to disable rules from the `package:flutter_lints/flutter.yaml`
-  # included above or to enable additional rules. A list of all available lints
-  # and their documentation is published at https://dart.dev/lints.
-  #
-  # Instead of disabling a lint rule for the entire project in the
-  # section below, it can also be suppressed for a single line of code
-  # or a specific dart file by using the `// ignore: name_of_lint` and
-  # `// ignore_for_file: name_of_lint` syntax on the line or in the file
-  # producing the lint.
   rules:
-    # avoid_print: false  # Uncomment to disable the `avoid_print` rule
-    # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+    avoid_catches_without_on_clauses: false
+    use_setters_to_change_properties: false
+    use_if_null_to_convert_nulls_to_bools: false
+    document_ignores: false
+    one_member_abstracts: false
+    missing_whitespace_between_adjacent_strings: false
+    library_private_types_in_public_api: false
+    unawaited_futures: false
+    cascade_invocations: false
+    use_named_constants: false
+    avoid_print: false
+    strict_raw_type: false
+    sort_pub_dependencies: false
+    inference_failure_on_function_return_type: false
+    avoid_positional_boolean_parameters: false
+    unnecessary_const: false
+    flutter_style_todos: false
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

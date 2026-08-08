@@ -1,15 +1,15 @@
 import 'dart:convert';
 import 'dart:io';
+
+import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/dash/better_player_dash_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
 
-import 'better_player_asms_data_holder.dart';
-
 ///Base helper class for ASMS parsing.
 class BetterPlayerAsmsUtils {
-  static const String _hlsExtension = "m3u8";
-  static const String _dashExtension = "mpd";
+  static const String _hlsExtension = 'm3u8';
+  static const String _dashExtension = 'mpd';
 
   static final HttpClient _httpClient = HttpClient()
     ..connectionTimeout = const Duration(seconds: 5);
@@ -26,7 +26,9 @@ class BetterPlayerAsmsUtils {
 
   ///Parse playlist based on type of stream.
   static Future<BetterPlayerAsmsDataHolder> parse(
-      String data, String masterPlaylistUrl) async {
+    String data,
+    String masterPlaylistUrl,
+  ) async {
     return isDataSourceDash(masterPlaylistUrl)
         ? BetterPlayerDashUtils.parse(data, masterPlaylistUrl)
         : BetterPlayerHlsUtils.parse(data, masterPlaylistUrl);
@@ -45,14 +47,14 @@ class BetterPlayerAsmsUtils {
       }
 
       final response = await request.close();
-      var data = "";
+      var data = '';
       await response.transform(const Utf8Decoder()).listen((content) {
-        data += content.toString();
+        data += content;
       }).asFuture<String?>();
 
       return data;
     } catch (exception) {
-      BetterPlayerUtils.log("GetDataFromUrl failed: $exception");
+      BetterPlayerUtils.log('GetDataFromUrl failed: $exception');
       return null;
     }
   }

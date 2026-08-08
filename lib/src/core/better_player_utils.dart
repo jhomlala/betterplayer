@@ -5,21 +5,21 @@ import 'package:flutter/material.dart';
 class BetterPlayerUtils {
   static String formatBitrate(int bitrate) {
     if (bitrate < 1000) {
-      return "$bitrate bit/s";
+      return '$bitrate bit/s';
     }
     if (bitrate < 1000000) {
       final kbit = (bitrate / 1000).floor();
-      return "~$kbit KBit/s";
+      return '~$kbit KBit/s';
     }
     final mbit = (bitrate / 1000000).floor();
-    return "~$mbit MBit/s";
+    return '~$mbit MBit/s';
   }
 
   static String formatDuration(Duration position) {
     final ms = position.inMilliseconds;
 
-    int seconds = ms ~/ 1000;
-    final int hours = seconds ~/ 3600;
+    var seconds = ms ~/ 1000;
+    final hours = seconds ~/ 3600;
     seconds = seconds % 3600;
     final minutes = seconds ~/ 60;
     seconds = seconds % 60;
