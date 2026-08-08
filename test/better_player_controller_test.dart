@@ -50,7 +50,7 @@ void main() {
               BetterPlayerTestUtils.setupMockVideoPlayerControler();
           betterPlayerController.videoPlayerController = videoPlayerController;
           await Future.delayed(const Duration(seconds: 1), () {});
-          betterPlayerController.play();
+          await betterPlayerController.play();
           expect(betterPlayerController.isPlaying(), true);
         },
       );
@@ -64,10 +64,10 @@ void main() {
               BetterPlayerTestUtils.setupMockVideoPlayerControler();
           betterPlayerController.videoPlayerController = videoPlayerController;
           await Future.delayed(const Duration(seconds: 1), () {});
-          betterPlayerController.play();
-          expect(betterPlayerController.isPlaying(), true);
-          betterPlayerController.pause();
-          expect(betterPlayerController.isPlaying(), false);
+        await betterPlayerController.play();
+        expect(betterPlayerController.isPlaying(), true);
+        await betterPlayerController.pause();
+        expect(betterPlayerController.isPlaying(), false);
         },
       );
 
@@ -80,11 +80,11 @@ void main() {
               BetterPlayerTestUtils.setupMockVideoPlayerControler();
           videoPlayerController.setDuration(const Duration(seconds: 100));
           betterPlayerController.videoPlayerController = videoPlayerController;
-          betterPlayerController.seekTo(const Duration(seconds: 5));
+          await betterPlayerController.seekTo(const Duration(seconds: 5));
           var position =
               await betterPlayerController.videoPlayerController!.position;
           expect(position, const Duration(seconds: 5));
-          betterPlayerController.seekTo(const Duration(seconds: 30));
+          await betterPlayerController.seekTo(const Duration(seconds: 30));
           position =
               await betterPlayerController.videoPlayerController!.position;
           expect(position, const Duration(seconds: 30));
@@ -111,10 +111,10 @@ void main() {
               finishEventCalls += 1;
             }
           });
-          betterPlayerController.seekTo(const Duration(seconds: 5));
+          await betterPlayerController.seekTo(const Duration(seconds: 5));
           await Future.delayed(const Duration(milliseconds: 100), () {});
           expect(seekEventCalls, 1);
-          betterPlayerController.seekTo(const Duration(seconds: 150));
+          await betterPlayerController.seekTo(const Duration(seconds: 150));
           await Future.delayed(const Duration(milliseconds: 100), () {});
           expect(seekEventCalls, 2);
           expect(finishEventCalls, 1);
@@ -189,9 +189,9 @@ void main() {
         betterPlayerMockController.videoPlayerController =
             mockVideoPlayerController;
         expect(mockVideoPlayerController.isLoopingState, false);
-        betterPlayerMockController.setLooping(true);
+        await betterPlayerMockController.setLooping(true);
         expect(mockVideoPlayerController.isLoopingState, true);
-        betterPlayerMockController.setLooping(false);
+        await betterPlayerMockController.setLooping(false);
         expect(mockVideoPlayerController.isLoopingState, false);
       });
 
@@ -309,9 +309,9 @@ void main() {
             .setNetworkDataSource(BetterPlayerTestUtils.bugBuckBunnyVideoUrl);
         betterPlayerMockController.videoPlayerController =
             mockVideoPlayerController;
-        betterPlayerMockController.setVolume(1);
+        await betterPlayerMockController.setVolume(1);
         expect(mockVideoPlayerController.volume, 1.0);
-        betterPlayerMockController.setVolume(0.5);
+        await betterPlayerMockController.setVolume(0.5);
         expect(mockVideoPlayerController.volume, 0.5);
       });
 
@@ -332,10 +332,10 @@ void main() {
               setVolumeCalls += 1;
             }
           });
-          betterPlayerMockController.setVolume(1);
+          await betterPlayerMockController.setVolume(1);
           await Future.delayed(const Duration(milliseconds: 100), () {});
           expect(setVolumeCalls, 1);
-          betterPlayerMockController.setVolume(1);
+          await betterPlayerMockController.setVolume(1);
           await Future.delayed(const Duration(milliseconds: 100), () {});
           expect(setVolumeCalls, 2);
         },
@@ -349,17 +349,17 @@ void main() {
             .setNetworkDataSource(BetterPlayerTestUtils.bugBuckBunnyVideoUrl);
         betterPlayerMockController.videoPlayerController =
             mockVideoPlayerController;
-        betterPlayerMockController.setSpeed(1.1);
+        await betterPlayerMockController.setSpeed(1.1);
         expect(mockVideoPlayerController.speed, 1.1);
-        betterPlayerMockController.setSpeed(0.5);
+        await betterPlayerMockController.setSpeed(0.5);
         expect(mockVideoPlayerController.speed, 0.5);
         expect(
-          () => betterPlayerMockController.setSpeed(2.5),
+          betterPlayerMockController.setSpeed(2.5),
           throwsA(isA<ArgumentError>()),
         );
         expect(mockVideoPlayerController.speed, 0.5);
         expect(
-          () => betterPlayerMockController.setSpeed(0),
+          betterPlayerMockController.setSpeed(0),
           throwsA(isA<ArgumentError>()),
         );
         expect(mockVideoPlayerController.speed, 0.5);
@@ -381,10 +381,10 @@ void main() {
               setSpeedCalls += 1;
             }
           });
-          betterPlayerMockController.setSpeed(1.5);
+          await betterPlayerMockController.setSpeed(1.5);
           await Future.delayed(const Duration(milliseconds: 100), () {});
           expect(setSpeedCalls, 1);
-          betterPlayerMockController.setSpeed(1);
+          await betterPlayerMockController.setSpeed(1);
           await Future.delayed(const Duration(milliseconds: 100), () {});
           expect(setSpeedCalls, 2);
         },
@@ -410,7 +410,7 @@ void main() {
           betterPlayerMockController.isLiveStream,
           throwsA(isA<StateError>()),
         );
-        betterPlayerMockController.setupDataSource(
+        await betterPlayerMockController.setupDataSource(
           BetterPlayerDataSource(
             BetterPlayerDataSourceType.network,
             BetterPlayerTestUtils.forBiggerBlazesUrl,
@@ -441,13 +441,19 @@ void main() {
 
       test('startNextVideoTimer starts next video timer', () async {
         final BetterPlayerController betterPlayerMockController =
-            BetterPlayerTestUtils.setupBetterPlayerMockController();
+            BetterPlayerMockController(
+          const BetterPlayerConfiguration(),
+          betterPlayerPlaylistConfiguration:
+              const BetterPlayerPlaylistConfiguration(
+            nextVideoDelay: Duration(seconds: 2),
+          ),
+        );
         var eventCount = 0;
         betterPlayerMockController.nextVideoTimeStream.listen((event) {
           eventCount += 1;
         });
         betterPlayerMockController.startNextVideoTimer();
-        await Future.delayed(const Duration(milliseconds: 3000), () {});
+        await Future.delayed(const Duration(milliseconds: 2500), () {});
         expect(eventCount, 3);
       });
     },

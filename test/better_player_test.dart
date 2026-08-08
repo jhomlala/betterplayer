@@ -27,7 +27,7 @@ void main() {
       (WidgetTester tester) async {
     await tester.pumpWidget(
       _wrapWidget(
-        BetterPlayer.network(BetterPlayerTestUtils.bugBuckBunnyVideoUrl),
+        BetterPlayer.file(BetterPlayerTestUtils.bugBuckBunnyVideoUrl),
       ),
     );
     expect(
