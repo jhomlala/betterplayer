@@ -4,7 +4,7 @@
 
 ```yaml
 dependencies:
-  better_player: ^0.0.84
+  better_player: ^0.1.0
 ```
 
 2. Install it
@@ -26,8 +26,8 @@ import 'package:better_player/better_player.dart';
 
 5. (Required) Android configuration. 
    You need to change these settings in order to run Better Player on Android:
-* Set compileSdkVersion to *31*.
-* Set kotlin version to *1.5.31*.
+* Set compileSdkVersion to *34*.
+* Set kotlin version to *2.2.20*.
 * Enable multidex.
 
 6. (Optional) Additional iOS configuration
