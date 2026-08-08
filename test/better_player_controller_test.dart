@@ -64,10 +64,10 @@ void main() {
               BetterPlayerTestUtils.setupMockVideoPlayerControler();
           betterPlayerController.videoPlayerController = videoPlayerController;
           await Future.delayed(const Duration(seconds: 1), () {});
-        await betterPlayerController.play();
-        expect(betterPlayerController.isPlaying(), true);
-        await betterPlayerController.pause();
-        expect(betterPlayerController.isPlaying(), false);
+          await betterPlayerController.play();
+          expect(betterPlayerController.isPlaying(), true);
+          await betterPlayerController.pause();
+          expect(betterPlayerController.isPlaying(), false);
         },
       );
 
