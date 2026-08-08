@@ -1,7 +1,7 @@
 # Better Player AI Rules
 
 ## Development Workflow
-- **Post-Implementation Steps**: ALWAYS run the following commands after any code changes or completion of a plan:
+- **Post-Implementation Steps**: If you have changed any Dart code, ALWAYS run the following commands after completion of a plan or task:
   - `dart format .`
   - `flutter analyze .`
 - **Error Resolution**: If `flutter analyze` reports issues, they MUST be fixed immediately before concluding the task.
