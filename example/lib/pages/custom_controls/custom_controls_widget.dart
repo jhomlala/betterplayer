@@ -2,7 +2,6 @@ import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 
 class CustomControlsWidget extends StatefulWidget {
-
   const CustomControlsWidget({
     super.key,
     this.controller,
@@ -75,7 +74,8 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                           setState(() {
                             if (widget.controller!.isPlaying()!) {
                               final rewindDuration = Duration(
-                                  seconds: videoDuration!.inSeconds - 2,);
+                                seconds: videoDuration!.inSeconds - 2,
+                              );
                               if (rewindDuration <
                                   widget.controller!.videoPlayerController!
                                       .value.duration!) {
@@ -115,7 +115,8 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                           setState(() {
                             if (widget.controller!.isPlaying()!) {
                               final forwardDuration = Duration(
-                                  seconds: videoDuration!.inSeconds + 2,);
+                                seconds: videoDuration!.inSeconds + 2,
+                              );
                               if (forwardDuration >
                                   widget.controller!.videoPlayerController!
                                       .value.duration!) {

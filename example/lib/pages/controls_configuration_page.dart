@@ -15,8 +15,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
 
   @override
   void initState() {
-    final controlsConfiguration =
-        BetterPlayerControlsConfiguration(
+    final controlsConfiguration = BetterPlayerControlsConfiguration(
       controlBarColor: Colors.indigoAccent.withAlpha(200),
       iconsColor: Colors.lightGreen,
       playIcon: Icons.forward,
@@ -31,13 +30,15 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
       overflowMenuIconsColor: Colors.white,
     );
 
-    final betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-            aspectRatio: 16 / 9,
-            fit: BoxFit.contain,
-            controlsConfiguration: controlsConfiguration,);
+    final betterPlayerConfiguration = BetterPlayerConfiguration(
+      aspectRatio: 16 / 9,
+      fit: BoxFit.contain,
+      controlsConfiguration: controlsConfiguration,
+    );
     final dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl,);
+      BetterPlayerDataSourceType.network,
+      Constants.elephantDreamVideoUrl,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -68,7 +69,8 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
               setState(() {
                 _betterPlayerController.setBetterPlayerControlsConfiguration(
                   const BetterPlayerControlsConfiguration(
-                      overflowModalColor: Colors.amberAccent,),
+                    overflowModalColor: Colors.amberAccent,
+                  ),
                 );
               });
             },

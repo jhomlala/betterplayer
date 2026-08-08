@@ -12,7 +12,6 @@ class PlaylistPage extends StatefulWidget {
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {
-
   _PlaylistPageState() {
     _betterPlayerConfiguration = const BetterPlayerConfiguration(
       aspectRatio: 1,
@@ -24,10 +23,10 @@ class _PlaylistPageState extends State<PlaylistPage> {
         DeviceOrientation.portraitDown,
       ],
     );
-    _betterPlayerPlaylistConfiguration = const BetterPlayerPlaylistConfiguration(
-      
-    );
+    _betterPlayerPlaylistConfiguration =
+        const BetterPlayerPlaylistConfiguration();
   }
+
   final GlobalKey<BetterPlayerPlaylistState> _betterPlayerPlaylistStateKey =
       GlobalKey();
   final List<BetterPlayerDataSource> _dataSourceList = [];
@@ -37,15 +36,17 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Future<List<BetterPlayerDataSource>> setupData() async {
     _dataSourceList.add(
       BetterPlayerDataSource(
-          BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl,
-          subtitles: BetterPlayerSubtitlesSource.single(
-            type: BetterPlayerSubtitlesSourceType.file,
-            url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
-          ),
-          placeholder: Image.network(
-            Constants.catImageUrl,
-            fit: BoxFit.cover,
-          ),),
+        BetterPlayerDataSourceType.network,
+        Constants.forBiggerBlazesUrl,
+        subtitles: BetterPlayerSubtitlesSource.single(
+          type: BetterPlayerSubtitlesSourceType.file,
+          url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
+        ),
+        placeholder: Image.network(
+          Constants.catImageUrl,
+          fit: BoxFit.cover,
+        ),
+      ),
     );
 
     _dataSourceList.add(
@@ -80,65 +81,71 @@ class _PlaylistPageState extends State<PlaylistPage> {
           if (!snapshot.hasData) {
             return const Text('Building!');
           } else {
-            return ListView(children: [
-              const Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                    'Playlist widget will load automatically next video once current '
-                    "finishes. User can't use player controls when video is changing."),
-              ),
-              AspectRatio(
-                aspectRatio: 1,
-                child: BetterPlayerPlaylist(
-                  key: _betterPlayerPlaylistStateKey,
-                  betterPlayerConfiguration: _betterPlayerConfiguration,
-                  betterPlayerPlaylistConfiguration:
-                      _betterPlayerPlaylistConfiguration,
-                  betterPlayerDataSourceList: snapshot.data!,
+            return ListView(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Text(
+                      'Playlist widget will load automatically next video once current '
+                      "finishes. User can't use player controls when video is changing."),
                 ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _betterPlayerPlaylistController!.setupDataSource(0);
-                },
-                child: const Text('Change to first data source'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _betterPlayerPlaylistController!.setupDataSource(2);
-                },
-                child: const Text('Change to last source'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  print('Currently playing video: ${_betterPlayerPlaylistController!.currentDataSourceIndex}',);
-                },
-                child: const Text('Check currently playing video index'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  _betterPlayerPlaylistController!.betterPlayerController!
-                      .pause();
-                },
-                child: const Text('Pause current video with BetterPlayerController'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  final list = [
-                    BetterPlayerDataSource(
-                      BetterPlayerDataSourceType.network,
-                      Constants.bugBuckBunnyVideoUrl,
-                      placeholder: Image.network(
-                        Constants.catImageUrl,
-                        fit: BoxFit.cover,
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: BetterPlayerPlaylist(
+                    key: _betterPlayerPlaylistStateKey,
+                    betterPlayerConfiguration: _betterPlayerConfiguration,
+                    betterPlayerPlaylistConfiguration:
+                        _betterPlayerPlaylistConfiguration,
+                    betterPlayerDataSourceList: snapshot.data!,
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _betterPlayerPlaylistController!.setupDataSource(0);
+                  },
+                  child: const Text('Change to first data source'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _betterPlayerPlaylistController!.setupDataSource(2);
+                  },
+                  child: const Text('Change to last source'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    print(
+                      'Currently playing video: ${_betterPlayerPlaylistController!.currentDataSourceIndex}',
+                    );
+                  },
+                  child: const Text('Check currently playing video index'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    _betterPlayerPlaylistController!.betterPlayerController!
+                        .pause();
+                  },
+                  child: const Text(
+                    'Pause current video with BetterPlayerController',
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    final list = [
+                      BetterPlayerDataSource(
+                        BetterPlayerDataSourceType.network,
+                        Constants.bugBuckBunnyVideoUrl,
+                        placeholder: Image.network(
+                          Constants.catImageUrl,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
-                  ];
-                  _betterPlayerPlaylistController?.setupDataSourceList(list);
-                },
-                child: const Text('Setup new data source list'),
-              ),
-            ],);
+                    ];
+                    _betterPlayerPlaylistController?.setupDataSourceList(list);
+                  },
+                  child: const Text('Setup new data source list'),
+                ),
+              ],
+            );
           }
         },
       ),

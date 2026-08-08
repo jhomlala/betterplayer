@@ -16,13 +16,15 @@ class _AutoFullscreenOrientationPageState
 
   @override
   void initState() {
-    const betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-            aspectRatio: 16 / 9,
-            fit: BoxFit.contain,
-            autoDetectFullscreenDeviceOrientation: true,);
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
+      aspectRatio: 16 / 9,
+      fit: BoxFit.contain,
+      autoDetectFullscreenDeviceOrientation: true,
+    );
     final dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.forBiggerBlazesUrl,);
+      BetterPlayerDataSourceType.network,
+      Constants.forBiggerBlazesUrl,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -53,8 +55,9 @@ class _AutoFullscreenOrientationPageState
             child: const Text('Play horizontal video'),
             onPressed: () {
               final dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.forBiggerBlazesUrl,);
+                BetterPlayerDataSourceType.network,
+                Constants.forBiggerBlazesUrl,
+              );
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),
@@ -62,8 +65,9 @@ class _AutoFullscreenOrientationPageState
             child: const Text('Play vertical video'),
             onPressed: () async {
               final dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  Constants.verticalVideoUrl,);
+                BetterPlayerDataSourceType.network,
+                Constants.verticalVideoUrl,
+              );
               _betterPlayerController.setupDataSource(dataSource);
             },
           ),

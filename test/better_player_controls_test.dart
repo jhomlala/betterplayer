@@ -29,9 +29,11 @@ void main() {
         ),
       );
       expect(
-          find.byWidgetPredicate(
-              (widget) => widget is BetterPlayerWithControls,),
-          findsOneWidget,);
+        find.byWidgetPredicate(
+          (widget) => widget is BetterPlayerWithControls,
+        ),
+        findsOneWidget,
+      );
     },
   );
 }

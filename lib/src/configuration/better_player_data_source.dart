@@ -99,11 +99,12 @@ class BetterPlayerDataSource {
     this.placeholder,
     this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
   }) : assert(
-            (type == BetterPlayerDataSourceType.network ||
-                    type == BetterPlayerDataSourceType.file) ||
-                (type == BetterPlayerDataSourceType.memory &&
-                    bytes?.isNotEmpty == true),
-            "Url can't be null in network or file data source | bytes can't be null when using memory data source",);
+          (type == BetterPlayerDataSourceType.network ||
+                  type == BetterPlayerDataSourceType.file) ||
+              (type == BetterPlayerDataSourceType.memory &&
+                  bytes?.isNotEmpty == true),
+          "Url can't be null in network or file data source | bytes can't be null when using memory data source",
+        );
 
   ///Factory method to build network data source which uses url as data source
   ///Bytes parameter is not used in this data source.

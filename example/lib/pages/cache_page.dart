@@ -15,8 +15,7 @@ class _CachePageState extends State<CachePage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );

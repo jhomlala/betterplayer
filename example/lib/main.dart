@@ -11,23 +11,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Shortcuts(
-        shortcuts: <LogicalKeySet, Intent>{
-          LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
-        },
-        child: MaterialApp(
-          title: 'Better player demo',
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
-          supportedLocales: const [
-            Locale('en', 'US'),
-            Locale('pl', 'PL'),
-          ],
-          theme: ThemeData(
-            primarySwatch: Colors.green,
-          ),
-          home: const WelcomePage(),
-        ),);
+      shortcuts: <LogicalKeySet, Intent>{
+        LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
+      },
+      child: MaterialApp(
+        title: 'Better player demo',
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('en', 'US'),
+          Locale('pl', 'PL'),
+        ],
+        theme: ThemeData(
+          primarySwatch: Colors.green,
+        ),
+        home: const WelcomePage(),
+      ),
+    );
   }
 }

@@ -197,8 +197,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save subtitles to file, so we can use it later
   Future _saveAssetSubtitleToFile() async {
-    final content =
-        await rootBundle.loadString('assets/example_subtitles.srt');
+    final content = await rootBundle.loadString('assets/example_subtitles.srt');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/example_subtitles.srt');
     file.writeAsString(content);

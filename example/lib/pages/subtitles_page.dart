@@ -15,8 +15,7 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
@@ -28,7 +27,9 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == BetterPlayerEventType.progress) {
-        print('Current subtitle line: ${_betterPlayerController.renderedSubtitle}',);
+        print(
+          'Current subtitle line: ${_betterPlayerController.renderedSubtitle}',
+        );
       }
     });
     _setupDataSource();
@@ -55,21 +56,23 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
       appBar: AppBar(
         title: const Text('Subtitles'),
       ),
-      body: Column(children: [
-        const SizedBox(height: 8),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            'Player with subtitles loaded from file. Subtitles are enabled by default.'
-            ' You can choose subtitles by using overflow menu (3 dots in right corner).',
-            style: TextStyle(fontSize: 16),
+      body: Column(
+        children: [
+          const SizedBox(height: 8),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Player with subtitles loaded from file. Subtitles are enabled by default.'
+              ' You can choose subtitles by using overflow menu (3 dots in right corner).',
+              style: TextStyle(fontSize: 16),
+            ),
           ),
-        ),
-        AspectRatio(
-          aspectRatio: 16 / 9,
-          child: BetterPlayer(controller: _betterPlayerController),
-        ),
-      ],),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: BetterPlayer(controller: _betterPlayerController),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -16,7 +16,9 @@ void main() {
         () => {
           TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
               .setMockMethodCallHandler(
-                  mockMethodChannel.channel, mockMethodChannel.handle,),
+            mockMethodChannel.channel,
+            mockMethodChannel.handle,
+          ),
         },
       );
 
@@ -31,8 +33,10 @@ void main() {
         final betterPlayerMockController =
             BetterPlayerMockController(const BetterPlayerConfiguration());
         await betterPlayerMockController.setupDataSource(
-            BetterPlayerDataSource.network(
-                BetterPlayerTestUtils.forBiggerBlazesUrl,),);
+          BetterPlayerDataSource.network(
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
+          ),
+        );
         expect(betterPlayerMockController.betterPlayerDataSource != null, true);
         expect(betterPlayerMockController.videoPlayerController != null, true);
       });
@@ -118,16 +122,18 @@ void main() {
       );
 
       test('full screen and auto play should work', () async {
-        final betterPlayerMockController =
-            BetterPlayerMockController(
+        final betterPlayerMockController = BetterPlayerMockController(
           const BetterPlayerConfiguration(
-              fullScreenByDefault: true, autoPlay: true,),
+            fullScreenByDefault: true,
+            autoPlay: true,
+          ),
         );
         betterPlayerMockController.videoPlayerController =
             MockVideoPlayerController();
         await betterPlayerMockController.setupDataSource(
           BetterPlayerDataSource.network(
-              BetterPlayerTestUtils.forBiggerBlazesUrl,),
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
+          ),
         );
         await Future.delayed(const Duration(seconds: 1), () {});
         expect(betterPlayerMockController.isFullScreen, true);
@@ -149,7 +155,8 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         await betterPlayerMockController.setupDataSource(
           BetterPlayerDataSource.network(
-              BetterPlayerTestUtils.forBiggerBlazesUrl,),
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
+          ),
         );
         expect(betterPlayerMockController.isFullScreen, false);
         betterPlayerMockController.enterFullScreen();
@@ -161,7 +168,8 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         await betterPlayerMockController.setupDataSource(
           BetterPlayerDataSource.network(
-              BetterPlayerTestUtils.forBiggerBlazesUrl,),
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
+          ),
         );
 
         expect(betterPlayerMockController.isFullScreen, false);
@@ -345,11 +353,15 @@ void main() {
         expect(mockVideoPlayerController.speed, 1.1);
         betterPlayerMockController.setSpeed(0.5);
         expect(mockVideoPlayerController.speed, 0.5);
-        expect(() => betterPlayerMockController.setSpeed(2.5),
-            throwsA(isA<ArgumentError>()),);
+        expect(
+          () => betterPlayerMockController.setSpeed(2.5),
+          throwsA(isA<ArgumentError>()),
+        );
         expect(mockVideoPlayerController.speed, 0.5);
-        expect(() => betterPlayerMockController.setSpeed(0),
-            throwsA(isA<ArgumentError>()),);
+        expect(
+          () => betterPlayerMockController.setSpeed(0),
+          throwsA(isA<ArgumentError>()),
+        );
         expect(mockVideoPlayerController.speed, 0.5);
       });
 
@@ -394,12 +406,17 @@ void main() {
       test('isLiveStream returns valid value', () async {
         final BetterPlayerController betterPlayerMockController =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
-        expect(betterPlayerMockController.isLiveStream,
-            throwsA(isA<StateError>()),);
-        betterPlayerMockController.setupDataSource(BetterPlayerDataSource(
+        expect(
+          betterPlayerMockController.isLiveStream,
+          throwsA(isA<StateError>()),
+        );
+        betterPlayerMockController.setupDataSource(
+          BetterPlayerDataSource(
             BetterPlayerDataSourceType.network,
             BetterPlayerTestUtils.forBiggerBlazesUrl,
-            liveStream: true,),);
+            liveStream: true,
+          ),
+        );
         final videoPlayerController =
             BetterPlayerTestUtils.setupMockVideoPlayerControler();
         betterPlayerMockController.videoPlayerController =
@@ -410,8 +427,10 @@ void main() {
       test('isVideoInitalized returns valid value', () async {
         final BetterPlayerController betterPlayerMockController =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
-        expect(betterPlayerMockController.isVideoInitialized,
-            throwsA(isA<StateError>()),);
+        expect(
+          betterPlayerMockController.isVideoInitialized,
+          throwsA(isA<StateError>()),
+        );
         final videoPlayerController =
             BetterPlayerTestUtils.setupMockVideoPlayerControler();
         betterPlayerMockController.videoPlayerController =

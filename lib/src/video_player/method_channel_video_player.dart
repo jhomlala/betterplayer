@@ -174,7 +174,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> setTrackParameters(
-      int? textureId, int? width, int? height, int? bitrate,) {
+    int? textureId,
+    int? width,
+    int? height,
+    int? bitrate,
+  ) {
     return _channel.invokeMethod<void>(
       'setTrackParameters',
       <String, dynamic>{
@@ -200,11 +204,12 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<Duration> getPosition(int? textureId) async {
     return Duration(
-        milliseconds: await _channel.invokeMethod<int>(
-              'position',
-              <String, dynamic>{'textureId': textureId},
-            ) ??
-            0,);
+      milliseconds: await _channel.invokeMethod<int>(
+            'position',
+            <String, dynamic>{'textureId': textureId},
+          ) ??
+          0,
+    );
   }
 
   @override
@@ -221,8 +226,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> enablePictureInPicture(int? textureId, double? top, double? left,
-      double? width, double? height,) async {
+  Future<void> enablePictureInPicture(
+    int? textureId,
+    double? top,
+    double? left,
+    double? width,
+    double? height,
+  ) async {
     return _channel.invokeMethod<void>(
       'enablePictureInPicture',
       <String, dynamic>{

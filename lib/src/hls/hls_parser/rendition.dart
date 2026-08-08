@@ -1,8 +1,12 @@
 import 'package:better_player/src/hls/hls_parser/format.dart';
 
 class Rendition {
-  Rendition(
-      {required this.format, required this.groupId, required this.name, this.url,});
+  Rendition({
+    required this.format,
+    required this.groupId,
+    required this.name,
+    this.url,
+  });
 
   /// The rendition's url, or null if the tag does not have a URI attribute.
   final Uri? url;

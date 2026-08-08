@@ -13,7 +13,7 @@ class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
     this.onDragUpdate,
     this.onTapDown,
     super.key,
-  })  : colors = colors ?? BetterPlayerProgressColors();
+  }) : colors = colors ?? BetterPlayerProgressColors();
 
   final VideoPlayerController? controller;
   final BetterPlayerController? betterPlayerController;

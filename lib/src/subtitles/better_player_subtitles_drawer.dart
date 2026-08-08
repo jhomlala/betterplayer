@@ -11,7 +11,10 @@ class BetterPlayerSubtitlesDrawer extends StatefulWidget {
   final Stream<bool> playerVisibilityStream;
 
   const BetterPlayerSubtitlesDrawer({
-    required this.subtitles, required this.betterPlayerController, required this.playerVisibilityStream, super.key,
+    required this.subtitles,
+    required this.betterPlayerController,
+    required this.playerVisibilityStream,
+    super.key,
     this.betterPlayerSubtitlesConfiguration,
   });
 
@@ -54,17 +57,19 @@ class _BetterPlayerSubtitlesDrawerState
         .addListener(_updateState);
 
     _outerTextStyle = TextStyle(
-        fontSize: _configuration!.fontSize,
-        fontFamily: _configuration!.fontFamily,
-        foreground: Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = _configuration!.outlineSize
-          ..color = _configuration!.outlineColor,);
+      fontSize: _configuration!.fontSize,
+      fontFamily: _configuration!.fontFamily,
+      foreground: Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = _configuration!.outlineSize
+        ..color = _configuration!.outlineColor,
+    );
 
     _innerTextStyle = TextStyle(
-        fontFamily: _configuration!.fontFamily,
-        color: _configuration!.fontColor,
-        fontSize: _configuration!.fontSize,);
+      fontFamily: _configuration!.fontFamily,
+      color: _configuration!.fontColor,
+      fontSize: _configuration!.fontSize,
+    );
 
     super.initState();
   }
@@ -92,19 +97,19 @@ class _BetterPlayerSubtitlesDrawerState
     final subtitle = _getSubtitleAtCurrentPosition();
     widget.betterPlayerController.renderedSubtitle = subtitle;
     final subtitles = subtitle?.texts ?? [];
-    final textWidgets =
-        subtitles.map(_buildSubtitleTextWidget).toList();
+    final textWidgets = subtitles.map(_buildSubtitleTextWidget).toList();
 
     return Container(
       height: double.infinity,
       width: double.infinity,
       child: Padding(
         padding: EdgeInsets.only(
-            bottom: _playerVisible
-                ? _configuration!.bottomPadding + 30
-                : _configuration!.bottomPadding,
-            left: _configuration!.leftPadding,
-            right: _configuration!.rightPadding,),
+          bottom: _playerVisible
+              ? _configuration!.bottomPadding + 30
+              : _configuration!.bottomPadding,
+          left: _configuration!.leftPadding,
+          right: _configuration!.rightPadding,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: textWidgets,
@@ -119,8 +124,7 @@ class _BetterPlayerSubtitlesDrawerState
     }
 
     final position = _latestValue!.position;
-    for (final subtitle
-        in widget.betterPlayerController.subtitlesLines) {
+    for (final subtitle in widget.betterPlayerController.subtitlesLines) {
       if (subtitle.start! <= position && subtitle.end! >= position) {
         return subtitle;
       }
@@ -129,14 +133,16 @@ class _BetterPlayerSubtitlesDrawerState
   }
 
   Widget _buildSubtitleTextWidget(String subtitleText) {
-    return Row(children: [
-      Expanded(
-        child: Align(
-          alignment: _configuration!.alignment,
-          child: _getTextWithStroke(subtitleText),
+    return Row(
+      children: [
+        Expanded(
+          child: Align(
+            alignment: _configuration!.alignment,
+            child: _getTextWithStroke(subtitleText),
+          ),
         ),
-      ),
-    ],);
+      ],
+    );
   }
 
   Widget _getTextWithStroke(String subtitleText) {

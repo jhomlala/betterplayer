@@ -84,24 +84,26 @@ class _BetterPlayerCupertinoControlsState
     final isFullScreen = _betterPlayerController?.isFullScreen == true;
 
     _wasLoading = isLoading(_latestValue);
-    final controlsColumn = Column(children: <Widget>[
-      _buildTopBar(
-        backgroundColor,
-        iconColor,
-        barHeight,
-        buttonPadding,
-      ),
-      if (_wasLoading)
-        Expanded(child: Center(child: _buildLoadingWidget()))
-      else
-        _buildHitArea(),
-      _buildNextVideoWidget(),
-      _buildBottomBar(
-        backgroundColor,
-        iconColor,
-        barHeight,
-      ),
-    ],);
+    final controlsColumn = Column(
+      children: <Widget>[
+        _buildTopBar(
+          backgroundColor,
+          iconColor,
+          barHeight,
+          buttonPadding,
+        ),
+        if (_wasLoading)
+          Expanded(child: Center(child: _buildLoadingWidget()))
+        else
+          _buildHitArea(),
+        _buildNextVideoWidget(),
+        _buildBottomBar(
+          backgroundColor,
+          iconColor,
+          barHeight,
+        ),
+      ],
+    );
     return GestureDetector(
       onTap: () {
         if (BetterPlayerMultipleGestureDetector.of(context) != null) {
@@ -124,9 +126,9 @@ class _BetterPlayerCupertinoControlsState
         }
       },
       child: AbsorbPointer(
-          absorbing: controlsNotVisible,
-          child:
-              isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,),
+        absorbing: controlsNotVisible,
+        child: isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,
+      ),
     );
   }
 
@@ -232,8 +234,9 @@ class _BetterPlayerCupertinoControlsState
       child: Text(
         _betterPlayerController!.translations.controlsLive,
         style: TextStyle(
-            color: _controlsConfiguration.liveTextColor,
-            fontWeight: FontWeight.bold,),
+          color: _controlsConfiguration.liveTextColor,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -426,8 +429,7 @@ class _BetterPlayerCupertinoControlsState
       padding: const EdgeInsets.only(right: 12),
       child: Text(
         '-${BetterPlayerUtils.formatDuration(position)}',
-        style:
-            TextStyle(color: _controlsConfiguration.textColor, fontSize: 12),
+        style: TextStyle(color: _controlsConfiguration.textColor, fontSize: 12),
       ),
     );
   }
@@ -634,11 +636,11 @@ class _BetterPlayerCupertinoControlsState
             cancelAndRestartTimer();
           },
           colors: BetterPlayerProgressColors(
-              playedColor: _controlsConfiguration.progressBarPlayedColor,
-              handleColor: _controlsConfiguration.progressBarHandleColor,
-              bufferedColor: _controlsConfiguration.progressBarBufferedColor,
-              backgroundColor:
-                  _controlsConfiguration.progressBarBackgroundColor,),
+            playedColor: _controlsConfiguration.progressBarPlayedColor,
+            handleColor: _controlsConfiguration.progressBarHandleColor,
+            bufferedColor: _controlsConfiguration.progressBarBufferedColor,
+            backgroundColor: _controlsConfiguration.progressBarBackgroundColor,
+          ),
         ),
       ),
     );
@@ -709,9 +711,9 @@ class _BetterPlayerCupertinoControlsState
         _betterPlayerController!.betterPlayerConfiguration.errorBuilder;
     if (errorBuilder != null) {
       return errorBuilder(
-          context,
-          _betterPlayerController!
-              .videoPlayerController!.value.errorDescription,);
+        context,
+        _betterPlayerController!.videoPlayerController!.value.errorDescription,
+      );
     } else {
       final textStyle = TextStyle(color: _controlsConfiguration.textColor);
       return Center(
@@ -770,7 +772,8 @@ class _BetterPlayerCupertinoControlsState
           return GestureDetector(
             onTap: () {
               betterPlayerController!.enablePictureInPicture(
-                  betterPlayerController!.betterPlayerGlobalKey!,);
+                betterPlayerController!.betterPlayerGlobalKey!,
+              );
             },
             child: AnimatedOpacity(
               opacity: controlsNotVisible ? 0.0 : 1.0,

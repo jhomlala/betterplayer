@@ -104,10 +104,13 @@ class _BetterPlayerState extends State<BetterPlayer>
     if (_isFullScreen) {
       WakelockPlus.disable();
       _navigatorState.maybePop();
-      SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-          overlays: _betterPlayerConfiguration.systemOverlaysAfterFullScreen,);
+      SystemChrome.setEnabledSystemUIMode(
+        SystemUiMode.manual,
+        overlays: _betterPlayerConfiguration.systemOverlaysAfterFullScreen,
+      );
       SystemChrome.setPreferredOrientations(
-          _betterPlayerConfiguration.deviceOrientationsAfterFullScreen,);
+        _betterPlayerConfiguration.deviceOrientationsAfterFullScreen,
+      );
     }
 
     WidgetsBinding.instance.removeObserver(this);
@@ -164,9 +167,10 @@ class _BetterPlayerState extends State<BetterPlayer>
   }
 
   Widget _buildFullScreenVideo(
-      BuildContext context,
-      Animation<double> animation,
-      BetterPlayerControllerProvider controllerProvider,) {
+    BuildContext context,
+    Animation<double> animation,
+    BetterPlayerControllerProvider controllerProvider,
+  ) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Container(
@@ -178,10 +182,11 @@ class _BetterPlayerState extends State<BetterPlayer>
   }
 
   AnimatedWidget _defaultRoutePageBuilder(
-      BuildContext context,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      BetterPlayerControllerProvider controllerProvider,) {
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    BetterPlayerControllerProvider controllerProvider,
+  ) {
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget? child) {
@@ -196,16 +201,26 @@ class _BetterPlayerState extends State<BetterPlayer>
     Animation<double> secondaryAnimation,
   ) {
     final controllerProvider = BetterPlayerControllerProvider(
-        controller: widget.controller, child: _buildPlayer(),);
+      controller: widget.controller,
+      child: _buildPlayer(),
+    );
 
     final routePageBuilder = _betterPlayerConfiguration.routePageBuilder;
     if (routePageBuilder == null) {
       return _defaultRoutePageBuilder(
-          context, animation, secondaryAnimation, controllerProvider,);
+        context,
+        animation,
+        secondaryAnimation,
+        controllerProvider,
+      );
     }
 
     return routePageBuilder(
-        context, animation, secondaryAnimation, controllerProvider,);
+      context,
+      animation,
+      secondaryAnimation,
+      controllerProvider,
+    );
   }
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
@@ -252,10 +267,13 @@ class _BetterPlayerState extends State<BetterPlayer>
     // so we do not need to check Wakelock.isEnabled.
     WakelockPlus.disable();
 
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
-        overlays: _betterPlayerConfiguration.systemOverlaysAfterFullScreen,);
+    await SystemChrome.setEnabledSystemUIMode(
+      SystemUiMode.manual,
+      overlays: _betterPlayerConfiguration.systemOverlaysAfterFullScreen,
+    );
     await SystemChrome.setPreferredOrientations(
-        _betterPlayerConfiguration.deviceOrientationsAfterFullScreen,);
+      _betterPlayerConfiguration.deviceOrientationsAfterFullScreen,
+    );
   }
 
   Widget _buildPlayer() {
@@ -278,7 +296,8 @@ class _BetterPlayerState extends State<BetterPlayer>
 
 ///Page route builder used in fullscreen mode.
 typedef BetterPlayerRoutePageBuilder = Widget Function(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    BetterPlayerControllerProvider controllerProvider,);
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  BetterPlayerControllerProvider controllerProvider,
+);

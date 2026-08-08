@@ -7,7 +7,8 @@ import 'dart:async';
 import 'dart:io';
 import 'package:better_player/better_player.dart' show VideoPlayerValue;
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
-import 'package:better_player/src/video_player/video_player.dart' show VideoPlayerController, VideoPlayerValue;
+import 'package:better_player/src/video_player/video_player.dart'
+    show VideoPlayerController, VideoPlayerValue;
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -358,27 +359,30 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// This will load the file from the file-URI given by:
   /// `'file://${file.path}'`.
-  Future<void> setFileDataSource(File file,
-      {bool? showNotification,
-      String? title,
-      String? author,
-      String? imageUrl,
-      String? notificationChannelName,
-      Duration? overriddenDuration,
-      String? activityName,
-      String? clearKey,}) {
+  Future<void> setFileDataSource(
+    File file, {
+    bool? showNotification,
+    String? title,
+    String? author,
+    String? imageUrl,
+    String? notificationChannelName,
+    Duration? overriddenDuration,
+    String? activityName,
+    String? clearKey,
+  }) {
     return _setDataSource(
       DataSource(
-          sourceType: DataSourceType.file,
-          uri: 'file://${file.path}',
-          showNotification: showNotification,
-          title: title,
-          author: author,
-          imageUrl: imageUrl,
-          notificationChannelName: notificationChannelName,
-          overriddenDuration: overriddenDuration,
-          activityName: activityName,
-          clearKey: clearKey,),
+        sourceType: DataSourceType.file,
+        uri: 'file://${file.path}',
+        showNotification: showNotification,
+        title: title,
+        author: author,
+        imageUrl: imageUrl,
+        notificationChannelName: notificationChannelName,
+        overriddenDuration: overriddenDuration,
+        activityName: activityName,
+        clearKey: clearKey,
+      ),
     );
   }
 
@@ -578,13 +582,26 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [bitrate] specifies bitrate of the selected track
   Future<void> setTrackParameters(int? width, int? height, int? bitrate) async {
     await _videoPlayerPlatform.setTrackParameters(
-        _textureId, width, height, bitrate,);
+      _textureId,
+      width,
+      height,
+      bitrate,
+    );
   }
 
-  Future<void> enablePictureInPicture(
-      {double? top, double? left, double? width, double? height,}) async {
+  Future<void> enablePictureInPicture({
+    double? top,
+    double? left,
+    double? width,
+    double? height,
+  }) async {
     await _videoPlayerPlatform.enablePictureInPicture(
-        textureId, top, left, width, height,);
+      textureId,
+      top,
+      left,
+      width,
+      height,
+    );
   }
 
   Future<void> disablePictureInPicture() async {
@@ -813,7 +830,7 @@ class VideoProgressIndicator extends StatefulWidget {
     this.allowScrubbing,
     this.padding = const EdgeInsets.only(top: 5),
     super.key,
-  })  : colors = colors ?? VideoProgressColors();
+  }) : colors = colors ?? VideoProgressColors();
 
   /// The [VideoPlayerController] that actually associates a video with this
   /// widget.

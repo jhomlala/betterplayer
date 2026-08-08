@@ -14,8 +14,7 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
 
   @override
   void initState() {
-    const controlsConfiguration =
-        BetterPlayerControlsConfiguration(
+    const controlsConfiguration = BetterPlayerControlsConfiguration(
       controlBarColor: Colors.black26,
       progressBarPlayedColor: Colors.indigo,
       progressBarHandleColor: Colors.indigo,
@@ -26,16 +25,18 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
       overflowMenuIconsColor: Colors.white,
     );
 
-    const betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-            controlsConfiguration: controlsConfiguration,
-            aspectRatio: 16 / 9,
-            fit: BoxFit.contain,
-            subtitlesConfiguration: const BetterPlayerSubtitlesConfiguration(
-              fontSize: 16,
-            ),);
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
+      controlsConfiguration: controlsConfiguration,
+      aspectRatio: 16 / 9,
+      fit: BoxFit.contain,
+      subtitlesConfiguration: const BetterPlayerSubtitlesConfiguration(
+        fontSize: 16,
+      ),
+    );
     final dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.hlsPlaylistUrl,);
+      BetterPlayerDataSourceType.network,
+      Constants.hlsPlaylistUrl,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();

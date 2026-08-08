@@ -27,7 +27,11 @@ class Format {
   }) : language = language?.toLowerCase();
 
   factory Format.createVideoContainerFormat({
-    required String? codecs, required int? width, required int? height, required double? frameRate, String? id,
+    required String? codecs,
+    required int? width,
+    required int? height,
+    required double? frameRate,
+    String? id,
     String? label,
     String? containerMimeType,
     String? sampleMimeType,

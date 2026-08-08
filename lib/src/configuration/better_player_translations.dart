@@ -14,20 +14,21 @@ class BetterPlayerTranslations {
   final String overflowMenuAudioTracks;
   final String qualityAuto;
 
-  BetterPlayerTranslations(
-      {this.languageCode = 'en',
-      this.generalDefaultError = "Video can't be played",
-      this.generalNone = 'None',
-      this.generalDefault = 'Default',
-      this.generalRetry = 'Retry',
-      this.playlistLoadingNextVideo = 'Loading next video',
-      this.controlsLive = 'LIVE',
-      this.controlsNextVideoIn = 'Next video in',
-      this.overflowMenuPlaybackSpeed = 'Playback speed',
-      this.overflowMenuSubtitles = 'Subtitles',
-      this.overflowMenuQuality = 'Quality',
-      this.overflowMenuAudioTracks = 'Audio',
-      this.qualityAuto = 'Auto',});
+  BetterPlayerTranslations({
+    this.languageCode = 'en',
+    this.generalDefaultError = "Video can't be played",
+    this.generalNone = 'None',
+    this.generalDefault = 'Default',
+    this.generalRetry = 'Retry',
+    this.playlistLoadingNextVideo = 'Loading next video',
+    this.controlsLive = 'LIVE',
+    this.controlsNextVideoIn = 'Next video in',
+    this.overflowMenuPlaybackSpeed = 'Playback speed',
+    this.overflowMenuSubtitles = 'Subtitles',
+    this.overflowMenuQuality = 'Quality',
+    this.overflowMenuAudioTracks = 'Audio',
+    this.qualityAuto = 'Auto',
+  });
 
   factory BetterPlayerTranslations.polish() => BetterPlayerTranslations(
         languageCode: 'pl',
@@ -93,19 +94,20 @@ class BetterPlayerTranslations {
       );
 
   factory BetterPlayerTranslations.turkish() => BetterPlayerTranslations(
-      languageCode: 'tr',
-      generalDefaultError: 'Video oynatılamıyor',
-      generalNone: 'Hiçbiri',
-      generalDefault: 'Varsayılan',
-      generalRetry: 'Tekrar Dene',
-      playlistLoadingNextVideo: 'Sonraki video yükleniyor',
-      controlsLive: 'CANLI',
-      controlsNextVideoIn: 'Sonraki video oynatılmadan',
-      overflowMenuPlaybackSpeed: 'Oynatma hızı',
-      overflowMenuSubtitles: 'Altyazı',
-      overflowMenuQuality: 'Kalite',
-      overflowMenuAudioTracks: 'Ses',
-      qualityAuto: 'Otomatik',);
+        languageCode: 'tr',
+        generalDefaultError: 'Video oynatılamıyor',
+        generalNone: 'Hiçbiri',
+        generalDefault: 'Varsayılan',
+        generalRetry: 'Tekrar Dene',
+        playlistLoadingNextVideo: 'Sonraki video yükleniyor',
+        controlsLive: 'CANLI',
+        controlsNextVideoIn: 'Sonraki video oynatılmadan',
+        overflowMenuPlaybackSpeed: 'Oynatma hızı',
+        overflowMenuSubtitles: 'Altyazı',
+        overflowMenuQuality: 'Kalite',
+        overflowMenuAudioTracks: 'Ses',
+        qualityAuto: 'Otomatik',
+      );
 
   factory BetterPlayerTranslations.vietnamese() => BetterPlayerTranslations(
         languageCode: 'vi',

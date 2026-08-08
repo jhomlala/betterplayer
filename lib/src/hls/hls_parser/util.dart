@@ -66,12 +66,13 @@ class LibUtil {
 
     //todo UTCではなくGMT?
     final dateTime = DateTime.utc(
-        int.parse(match.group(1)!),
-        int.parse(match.group(2)!),
-        int.parse(match.group(3)!),
-        int.parse(match.group(4)!),
-        int.parse(match.group(5)!),
-        int.parse(match.group(6)!),);
+      int.parse(match.group(1)!),
+      int.parse(match.group(2)!),
+      int.parse(match.group(3)!),
+      int.parse(match.group(4)!),
+      int.parse(match.group(5)!),
+      int.parse(match.group(6)!),
+    );
     if (match.group(8)?.isNotEmpty == true) {
       //todo ここ実装再検討
     }

@@ -14,7 +14,7 @@ class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
     this.onDragUpdate,
     this.onTapDown,
     super.key,
-  })  : colors = colors ?? BetterPlayerProgressColors();
+  }) : colors = colors ?? BetterPlayerProgressColors();
 
   final VideoPlayerController? controller;
   final BetterPlayerController? betterPlayerController;
@@ -240,9 +240,12 @@ class _ProgressBarPainter extends CustomPainter {
     );
 
     final shadowPath = Path()
-      ..addOval(Rect.fromCircle(
+      ..addOval(
+        Rect.fromCircle(
           center: Offset(playedPart, baseOffset + barHeight / 2),
-          radius: handleHeight,),);
+          radius: handleHeight,
+        ),
+      );
 
     canvas.drawShadow(shadowPath, Colors.black, 0.2, false);
     canvas.drawCircle(

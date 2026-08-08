@@ -14,7 +14,9 @@ import 'package:better_player/src/hls/hls_parser/util.dart';
 ///HLS helper class
 class BetterPlayerHlsUtils {
   static Future<BetterPlayerAsmsDataHolder> parse(
-      String data, String masterPlaylistUrl,) async {
+    String data,
+    String masterPlaylistUrl,
+  ) async {
     var tracks = <BetterPlayerAsmsTrack>[];
     var subtitles = <BetterPlayerAsmsSubtitle>[];
     var audios = <BetterPlayerAsmsAudioTrack>[];
@@ -31,11 +33,16 @@ class BetterPlayerHlsUtils {
       BetterPlayerUtils.log('Exception on hls parse: $exception');
     }
     return BetterPlayerAsmsDataHolder(
-        tracks: tracks, audios: audios, subtitles: subtitles,);
+      tracks: tracks,
+      audios: audios,
+      subtitles: subtitles,
+    );
   }
 
   static Future<List<BetterPlayerAsmsTrack>> parseTracks(
-      String data, String masterPlaylistUrl,) async {
+    String data,
+    String masterPlaylistUrl,
+  ) async {
     final tracks = <BetterPlayerAsmsTrack>[];
     try {
       final parsedPlaylist = await HlsPlaylistParser.create()
@@ -43,8 +50,17 @@ class BetterPlayerHlsUtils {
       if (parsedPlaylist is HlsMasterPlaylist) {
         parsedPlaylist.variants.forEach(
           (variant) {
-            tracks.add(BetterPlayerAsmsTrack('', variant.format.width,
-                variant.format.height, variant.format.bitrate, 0, '', '',),);
+            tracks.add(
+              BetterPlayerAsmsTrack(
+                '',
+                variant.format.width,
+                variant.format.height,
+                variant.format.bitrate,
+                0,
+                '',
+                '',
+              ),
+            );
           },
         );
       }
@@ -60,7 +76,9 @@ class BetterPlayerHlsUtils {
 
   ///Parse subtitles from provided m3u8 url
   static Future<List<BetterPlayerAsmsSubtitle>> parseSubtitles(
-      String data, String masterPlaylistUrl,) async {
+    String data,
+    String masterPlaylistUrl,
+  ) async {
     final subtitles = <BetterPlayerAsmsSubtitle>[];
     try {
       final parsedPlaylist = await HlsPlaylistParser.create()
@@ -88,7 +106,8 @@ class BetterPlayerHlsUtils {
   ///filled segments list which contains start, end and url of subtitles based
   ///on time in playlist.
   static Future<BetterPlayerAsmsSubtitle?> _parseSubtitlesPlaylist(
-      Rendition rendition,) async {
+    Rendition rendition,
+  ) async {
     try {
       final hlsPlaylistParser = HlsPlaylistParser.create();
       final subtitleData =
@@ -146,14 +165,15 @@ class BetterPlayerHlsUtils {
       }
 
       return BetterPlayerAsmsSubtitle(
-          name: rendition.format.label,
-          language: rendition.format.language,
-          url: rendition.url.toString(),
-          realUrls: hlsSubtitlesUrls,
-          isSegmented: isSegmented,
-          segmentsTime: targetDuration,
-          segments: asmsSegments,
-          isDefault: isDefault,);
+        name: rendition.format.label,
+        language: rendition.format.language,
+        url: rendition.url.toString(),
+        realUrls: hlsSubtitlesUrls,
+        isSegmented: isSegmented,
+        segmentsTime: targetDuration,
+        segments: asmsSegments,
+        isDefault: isDefault,
+      );
     } catch (exception) {
       BetterPlayerUtils.log('Failed to process subtitles playlist: $exception');
       return null;
@@ -161,19 +181,23 @@ class BetterPlayerHlsUtils {
   }
 
   static Future<List<BetterPlayerAsmsAudioTrack>> parseLanguages(
-      String data, String masterPlaylistUrl,) async {
+    String data,
+    String masterPlaylistUrl,
+  ) async {
     final audios = <BetterPlayerAsmsAudioTrack>[];
     final parsedPlaylist = await HlsPlaylistParser.create()
         .parseString(Uri.parse(masterPlaylistUrl), data);
     if (parsedPlaylist is HlsMasterPlaylist) {
       for (var index = 0; index < parsedPlaylist.audios.length; index++) {
         final audio = parsedPlaylist.audios[index];
-        audios.add(BetterPlayerAsmsAudioTrack(
-          id: index,
-          label: audio.name,
-          language: audio.format.language,
-          url: audio.url.toString(),
-        ),);
+        audios.add(
+          BetterPlayerAsmsAudioTrack(
+            id: index,
+            label: audio.name,
+            language: audio.format.language,
+            url: audio.url.toString(),
+          ),
+        );
       }
     }
 

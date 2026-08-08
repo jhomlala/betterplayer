@@ -26,8 +26,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
 
   @override
   void initState() {
-    final betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    final betterPlayerConfiguration = BetterPlayerConfiguration(
       fit: BoxFit.contain,
       placeholder: _buildVideoPlaceholder(),
       showPlaceholderUntilPlay: true,

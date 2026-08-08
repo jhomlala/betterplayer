@@ -8,7 +8,8 @@ import 'dart:async';
 // Flutter imports:
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
 import 'package:better_player/src/video_player/method_channel_video_player.dart';
-import 'package:better_player/src/video_player/video_player.dart' show VideoPlayerController;
+import 'package:better_player/src/video_player/video_player.dart'
+    show VideoPlayerController;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -47,7 +48,8 @@ abstract class VideoPlayerPlatform {
         instance._verifyProvidesDefaultImplementations();
       } catch (_) {
         throw AssertionError(
-            'Platform interfaces must not be implemented with `implements`',);
+          'Platform interfaces must not be implemented with `implements`',
+        );
       }
     }
     _instance = instance;
@@ -67,8 +69,9 @@ abstract class VideoPlayerPlatform {
   }
 
   /// Creates an instance of a video player and returns its textureId.
-  Future<int?> create(
-      {BetterPlayerBufferingConfiguration? bufferingConfiguration,}) {
+  Future<int?> create({
+    BetterPlayerBufferingConfiguration? bufferingConfiguration,
+  }) {
     throw UnimplementedError('create() has not been implemented.');
   }
 
@@ -119,7 +122,11 @@ abstract class VideoPlayerPlatform {
 
   /// Sets the video track parameters (used to select quality of the video)
   Future<void> setTrackParameters(
-      int? textureId, int? width, int? height, int? bitrate,) {
+    int? textureId,
+    int? width,
+    int? height,
+    int? bitrate,
+  ) {
     throw UnimplementedError('setTrackParameters() has not been implemented.');
   }
 
@@ -139,21 +146,29 @@ abstract class VideoPlayerPlatform {
   }
 
   ///Enables PiP mode.
-  Future<void> enablePictureInPicture(int? textureId, double? top, double? left,
-      double? width, double? height,) {
+  Future<void> enablePictureInPicture(
+    int? textureId,
+    double? top,
+    double? left,
+    double? width,
+    double? height,
+  ) {
     throw UnimplementedError(
-        'enablePictureInPicture() has not been implemented.',);
+      'enablePictureInPicture() has not been implemented.',
+    );
   }
 
   ///Disables PiP mode.
   Future<void> disablePictureInPicture(int? textureId) {
     throw UnimplementedError(
-        'disablePictureInPicture() has not been implemented.',);
+      'disablePictureInPicture() has not been implemented.',
+    );
   }
 
   Future<bool?> isPictureInPictureEnabled(int? textureId) {
     throw UnimplementedError(
-        'isPictureInPictureEnabled() has not been implemented.',);
+      'isPictureInPictureEnabled() has not been implemented.',
+    );
   }
 
   Future<void> setAudioTrack(int? textureId, String? name, int? index) {

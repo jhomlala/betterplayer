@@ -9,7 +9,9 @@ import 'package:xml/xml.dart';
 ///DASH helper class
 class BetterPlayerDashUtils {
   static Future<BetterPlayerAsmsDataHolder> parse(
-      String data, String masterPlaylistUrl,) async {
+    String data,
+    String masterPlaylistUrl,
+  ) async {
     var tracks = <BetterPlayerAsmsTrack>[];
     final audios = <BetterPlayerAsmsAudioTrack>[];
     final subtitles = <BetterPlayerAsmsSubtitle>[];
@@ -35,7 +37,10 @@ class BetterPlayerDashUtils {
       BetterPlayerUtils.log('Exception on dash parse: $exception');
     }
     return BetterPlayerAsmsDataHolder(
-        tracks: tracks, audios: audios, subtitles: subtitles,);
+      tracks: tracks,
+      audios: audios,
+      subtitles: subtitles,
+    );
   }
 
   static List<BetterPlayerAsmsTrack> parseVideo(XmlElement node) {
@@ -46,24 +51,31 @@ class BetterPlayerDashUtils {
     representations.forEach((representation) {
       final id = representation.getAttribute('id');
       final width = int.parse(representation.getAttribute('width') ?? '0');
-      final height =
-          int.parse(representation.getAttribute('height') ?? '0');
+      final height = int.parse(representation.getAttribute('height') ?? '0');
       final bitrate =
           int.parse(representation.getAttribute('bandwidth') ?? '0');
       final frameRate =
           int.parse(representation.getAttribute('frameRate') ?? '0');
       final codecs = representation.getAttribute('codecs');
       final mimeType = MimeTypes.getMediaMimeType(codecs ?? '');
-      tracks.add(BetterPlayerAsmsTrack(
-          id, width, height, bitrate, frameRate, codecs, mimeType,),);
+      tracks.add(
+        BetterPlayerAsmsTrack(
+          id,
+          width,
+          height,
+          bitrate,
+          frameRate,
+          codecs,
+          mimeType,
+        ),
+      );
     });
 
     return tracks;
   }
 
   static BetterPlayerAsmsAudioTrack parseAudio(XmlElement node, int index) {
-    final segmentAlignmentStr =
-        node.getAttribute('segmentAlignment') ?? '';
+    final segmentAlignmentStr = node.getAttribute('segmentAlignment') ?? '';
     var label = node.getAttribute('label');
     final language = node.getAttribute('lang');
     final mimeType = node.getAttribute('mimeType');
@@ -71,32 +83,33 @@ class BetterPlayerDashUtils {
     label ??= language;
 
     return BetterPlayerAsmsAudioTrack(
-        id: index,
-        segmentAlignment: segmentAlignmentStr.toLowerCase() == 'true',
-        label: label,
-        language: language,
-        mimeType: mimeType,);
+      id: index,
+      segmentAlignment: segmentAlignmentStr.toLowerCase() == 'true',
+      label: label,
+      language: language,
+      mimeType: mimeType,
+    );
   }
 
   static BetterPlayerAsmsSubtitle parseSubtitle(
-      String masterPlaylistUrl, XmlElement node,) {
-    final segmentAlignmentStr =
-        node.getAttribute('segmentAlignment') ?? '';
+    String masterPlaylistUrl,
+    XmlElement node,
+  ) {
+    final segmentAlignmentStr = node.getAttribute('segmentAlignment') ?? '';
     var name = node.getAttribute('label');
     final language = node.getAttribute('lang');
     final mimeType = node.getAttribute('mimeType');
-    var url =
-        node.getElement('Representation')?.getElement('BaseURL')?.text;
+    var url = node.getElement('Representation')?.getElement('BaseURL')?.text;
     if (url?.contains('http') == false) {
       final masterPlaylistUri = Uri.parse(masterPlaylistUrl);
       final pathSegments = <String>[...masterPlaylistUri.pathSegments];
       pathSegments[pathSegments.length - 1] = url!;
       url = Uri(
-              scheme: masterPlaylistUri.scheme,
-              host: masterPlaylistUri.host,
-              port: masterPlaylistUri.port,
-              pathSegments: pathSegments,)
-          .toString();
+        scheme: masterPlaylistUri.scheme,
+        host: masterPlaylistUri.host,
+        port: masterPlaylistUri.port,
+        pathSegments: pathSegments,
+      ).toString();
     }
 
     if (url != null && url.startsWith('//')) {
@@ -106,11 +119,12 @@ class BetterPlayerDashUtils {
     name ??= language;
 
     return BetterPlayerAsmsSubtitle(
-        name: name,
-        language: language,
-        mimeType: mimeType,
-        segmentAlignment: segmentAlignmentStr.toLowerCase() == 'true',
-        url: url,
-        realUrls: [url ?? ''],);
+      name: name,
+      language: language,
+      mimeType: mimeType,
+      segmentAlignment: segmentAlignmentStr.toLowerCase() == 'true',
+      url: url,
+      realUrls: [url ?? ''],
+    );
   }
 }

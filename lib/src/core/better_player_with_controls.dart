@@ -69,8 +69,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   @override
   Widget build(BuildContext context) {
-    final betterPlayerController =
-        BetterPlayerController.of(context);
+    final betterPlayerController = BetterPlayerController.of(context);
 
     double? aspectRatio;
     if (betterPlayerController.isFullScreen) {
@@ -109,7 +108,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   }
 
   Container _buildPlayerWithControls(
-      BetterPlayerController betterPlayerController, BuildContext context,) {
+    BetterPlayerController betterPlayerController,
+    BuildContext context,
+  ) {
     final configuration = betterPlayerController.betterPlayerConfiguration;
     var rotation = configuration.rotation;
 
@@ -175,7 +176,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       if (controlsConfiguration.customControlsBuilder != null &&
           playerTheme == BetterPlayerTheme.custom) {
         return controlsConfiguration.customControlsBuilder!(
-            betterPlayerController, onControlsVisibilityChanged,);
+          betterPlayerController,
+          onControlsVisibilityChanged,
+        );
       } else if (playerTheme == BetterPlayerTheme.material) {
         return _buildMaterialControl();
       } else if (playerTheme == BetterPlayerTheme.cupertino) {
@@ -209,7 +212,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 class _BetterPlayerVideoFitWidget extends StatefulWidget {
   const _BetterPlayerVideoFitWidget(
     this.betterPlayerController,
-    this.boxFit,);
+    this.boxFit,
+  );
 
   final BetterPlayerController betterPlayerController;
   final BoxFit boxFit;

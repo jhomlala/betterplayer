@@ -14,13 +14,14 @@ class _DashPageState extends State<DashPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
     final dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.dashStreamUrl,);
+      BetterPlayerDataSourceType.network,
+      Constants.dashStreamUrl,
+    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();

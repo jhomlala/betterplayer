@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 class SchemeData {
   SchemeData({
-required this.mimeType, //    @required this.uuid,
+    required this.mimeType, //    @required this.uuid,
     this.licenseServerUrl,
     this.data,
     this.requiresSecureDecryption,
@@ -47,9 +47,10 @@ required this.mimeType, //    @required this.uuid,
 
   @override
   int get hashCode => Object.hash(
-      /*uuid, */
-      licenseServerUrl,
-      mimeType,
-      data,
-      requiresSecureDecryption,);
+        /*uuid, */
+        licenseServerUrl,
+        mimeType,
+        data,
+        requiresSecureDecryption,
+      );
 }

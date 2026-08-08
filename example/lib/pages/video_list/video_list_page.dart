@@ -42,27 +42,29 @@ class _VideoListPageState extends State<VideoListPage> {
       appBar: AppBar(title: const Text('Video in list')),
       body: ColoredBox(
         color: Colors.grey,
-        child: Column(children: [
-          TextButton(
-            child: const Text('Update page state'),
-            onPressed: () {
-              setState(() {
-                value++;
-              });
-            },
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: dataList.length,
-              itemBuilder: (context, index) {
-                final videoListData = dataList[index];
-                return VideoListWidget(
-                  videoListData: videoListData,
-                );
+        child: Column(
+          children: [
+            TextButton(
+              child: const Text('Update page state'),
+              onPressed: () {
+                setState(() {
+                  value++;
+                });
               },
             ),
-          ),
-        ],),
+            Expanded(
+              child: ListView.builder(
+                itemCount: dataList.length,
+                itemBuilder: (context, index) {
+                  final videoListData = dataList[index];
+                  return VideoListWidget(
+                    videoListData: videoListData,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

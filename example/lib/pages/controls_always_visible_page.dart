@@ -15,8 +15,7 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -55,11 +54,13 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
             child: BetterPlayer(controller: _betterPlayerController),
           ),
           ElevatedButton(
-              onPressed: () {
-                _betterPlayerController.setControlsAlwaysVisible(
-                    !_betterPlayerController.controlsAlwaysVisible,);
-              },
-              child: const Text('Toggle always visible controls'),),
+            onPressed: () {
+              _betterPlayerController.setControlsAlwaysVisible(
+                !_betterPlayerController.controlsAlwaysVisible,
+              );
+            },
+            child: const Text('Toggle always visible controls'),
+          ),
         ],
       ),
     );

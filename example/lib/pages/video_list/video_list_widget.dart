@@ -3,7 +3,6 @@ import 'package:example/model/video_list_data.dart';
 import 'package:flutter/material.dart';
 
 class VideoListWidget extends StatefulWidget {
-
   const VideoListWidget({super.key, this.videoListData});
   final VideoListData? videoListData;
 
@@ -43,28 +42,33 @@ class _VideoListWidgetState extends State<VideoListWidget> {
             ),
           ),
           AspectRatio(
-              aspectRatio: 1,
-              child: BetterPlayerListVideoPlayer(
-                BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
-                  videoListData!.videoUrl,
-                  notificationConfiguration:
-                      BetterPlayerNotificationConfiguration(
-                          showNotification: false,
-                          title: videoListData!.videoTitle,
-                          author: 'Test',),
-                  bufferingConfiguration: const BetterPlayerBufferingConfiguration(
-                      minBufferMs: 2000,
-                      maxBufferMs: 10000,
-                      bufferForPlaybackMs: 1000,
-                      bufferForPlaybackAfterRebufferMs: 2000,),
+            aspectRatio: 1,
+            child: BetterPlayerListVideoPlayer(
+              BetterPlayerDataSource(
+                BetterPlayerDataSourceType.network,
+                videoListData!.videoUrl,
+                notificationConfiguration:
+                    BetterPlayerNotificationConfiguration(
+                  showNotification: false,
+                  title: videoListData!.videoTitle,
+                  author: 'Test',
                 ),
-                configuration: const BetterPlayerConfiguration(
-                    aspectRatio: 1,),
-                //key: Key(videoListData.hashCode.toString()),
-                playFraction: 0.8,
-                betterPlayerListVideoPlayerController: controller,
-              ),),
+                bufferingConfiguration:
+                    const BetterPlayerBufferingConfiguration(
+                  minBufferMs: 2000,
+                  maxBufferMs: 10000,
+                  bufferForPlaybackMs: 1000,
+                  bufferForPlaybackAfterRebufferMs: 2000,
+                ),
+              ),
+              configuration: const BetterPlayerConfiguration(
+                aspectRatio: 1,
+              ),
+              //key: Key(videoListData.hashCode.toString()),
+              playFraction: 0.8,
+              betterPlayerListVideoPlayerController: controller,
+            ),
+          ),
           const Padding(
             padding: EdgeInsets.all(8),
             child: Text(
@@ -76,28 +80,30 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                 'humor set this classic apart.'),
           ),
           Center(
-            child: Wrap(children: [
-              ElevatedButton(
-                child: const Text('Play'),
-                onPressed: () {
-                  controller!.play();
-                },
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                child: const Text('Pause'),
-                onPressed: () {
-                  controller!.pause();
-                },
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                child: const Text('Set max volume'),
-                onPressed: () {
-                  controller!.setVolume(100);
-                },
-              ),
-            ],),
+            child: Wrap(
+              children: [
+                ElevatedButton(
+                  child: const Text('Play'),
+                  onPressed: () {
+                    controller!.play();
+                  },
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  child: const Text('Pause'),
+                  onPressed: () {
+                    controller!.pause();
+                  },
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  child: const Text('Set max volume'),
+                  onPressed: () {
+                    controller!.setVolume(100);
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),

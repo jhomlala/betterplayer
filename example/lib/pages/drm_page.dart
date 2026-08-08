@@ -16,8 +16,7 @@ class _DrmPageState extends State<DrmPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration =
-        BetterPlayerConfiguration(
+    const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -26,8 +25,9 @@ class _DrmPageState extends State<DrmPage> {
       Constants.tokenEncodedHlsUrl,
       videoFormat: BetterPlayerVideoFormat.hls,
       drmConfiguration: BetterPlayerDrmConfiguration(
-          drmType: BetterPlayerDrmType.token,
-          token: Constants.tokenEncodedHlsToken,),
+        drmType: BetterPlayerDrmType.token,
+        token: Constants.tokenEncodedHlsToken,
+      ),
     );
     _tokenController = BetterPlayerController(betterPlayerConfiguration);
     _tokenController.setupDataSource(tokenDataSource);
@@ -37,9 +37,10 @@ class _DrmPageState extends State<DrmPage> {
       BetterPlayerDataSourceType.network,
       Constants.widevineVideoUrl,
       drmConfiguration: BetterPlayerDrmConfiguration(
-          drmType: BetterPlayerDrmType.widevine,
-          licenseUrl: Constants.widevineLicenseUrl,
-          headers: {'Test': 'Test2'},),
+        drmType: BetterPlayerDrmType.widevine,
+        licenseUrl: Constants.widevineLicenseUrl,
+        headers: {'Test': 'Test2'},
+      ),
     );
     _widevineController.setupDataSource(widevineDataSource);
 

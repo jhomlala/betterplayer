@@ -26,7 +26,9 @@ class BetterPlayerAsmsUtils {
 
   ///Parse playlist based on type of stream.
   static Future<BetterPlayerAsmsDataHolder> parse(
-      String data, String masterPlaylistUrl,) async {
+    String data,
+    String masterPlaylistUrl,
+  ) async {
     return isDataSourceDash(masterPlaylistUrl)
         ? BetterPlayerDashUtils.parse(data, masterPlaylistUrl)
         : BetterPlayerHlsUtils.parse(data, masterPlaylistUrl);

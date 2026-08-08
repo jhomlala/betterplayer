@@ -233,10 +233,14 @@ class BetterPlayerController {
 
   ///Setup new data source in Better Player.
   Future setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
-    postEvent(BetterPlayerEvent(BetterPlayerEventType.setupDataSource,
+    postEvent(
+      BetterPlayerEvent(
+        BetterPlayerEventType.setupDataSource,
         parameters: <String, dynamic>{
           _dataSourceParameter: betterPlayerDataSource,
-        },),);
+        },
+      ),
+    );
     _postControllerEvent(BetterPlayerControllerEvent.setupDataSource);
     _hasCurrentDataSourceStarted = false;
     _hasCurrentDataSourceInitialized = false;
@@ -246,8 +250,8 @@ class BetterPlayerController {
     ///Build videoPlayerController if null
     if (videoPlayerController == null) {
       videoPlayerController = VideoPlayerController(
-          bufferingConfiguration:
-              betterPlayerDataSource.bufferingConfiguration,);
+        bufferingConfiguration: betterPlayerDataSource.bufferingConfiguration,
+      );
       videoPlayerController?.addListener(_onVideoPlayerChanged);
     }
 
@@ -255,8 +259,7 @@ class BetterPlayerController {
     betterPlayerAsmsTracks.clear();
 
     ///Setup subtitles
-    final betterPlayerSubtitlesSourceList =
-        betterPlayerDataSource.subtitles;
+    final betterPlayerSubtitlesSourceList = betterPlayerDataSource.subtitles;
     if (betterPlayerSubtitlesSourceList != null) {
       _betterPlayerSubtitlesSourceList
           .addAll(betterPlayerDataSource.subtitles!);
@@ -285,8 +288,9 @@ class BetterPlayerController {
 
     ///Setup subtitles (none is default)
     setupSubtitleSource(
-        defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last,
-        sourceInitialize: true,);
+      defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last,
+      sourceInitialize: true,
+    );
   }
 
   ///Check if given [betterPlayerDataSource] is HLS / DASH-type data source.
@@ -315,8 +319,7 @@ class BetterPlayerController {
 
       /// Load subtitles
       if (betterPlayerDataSource?.useAsmsSubtitles == true) {
-        final asmsSubtitles =
-            response.subtitles ?? [];
+        final asmsSubtitles = response.subtitles ?? [];
         asmsSubtitles.forEach((BetterPlayerAsmsSubtitle asmsSubtitle) {
           _betterPlayerSubtitlesSourceList.add(
             BetterPlayerSubtitlesSource(
@@ -346,8 +349,10 @@ class BetterPlayerController {
   ///Setup subtitles to be displayed from given subtitle source.
   ///If subtitles source is segmented then don't load videos at start. Videos
   ///will load with just in time policy.
-  Future<void> setupSubtitleSource(BetterPlayerSubtitlesSource subtitlesSource,
-      {bool sourceInitialize = false,}) async {
+  Future<void> setupSubtitleSource(
+    BetterPlayerSubtitlesSource subtitlesSource, {
+    bool sourceInitialize = false,
+  }) async {
     _betterPlayerSubtitlesSource = subtitlesSource;
     subtitlesLines.clear();
     _asmsSegmentsLoaded.clear();
@@ -383,8 +388,9 @@ class BetterPlayerController {
       _asmsSegmentsLoading = true;
       final source = _betterPlayerSubtitlesSource;
       final loadDurationEnd = Duration(
-          milliseconds: position.inMilliseconds +
-              5 * (_betterPlayerSubtitlesSource?.asmsSegmentsTime ?? 5000),);
+        milliseconds: position.inMilliseconds +
+            5 * (_betterPlayerSubtitlesSource?.asmsSegmentsTime ?? 5000),
+      );
 
       final segmentsToLoad = _betterPlayerSubtitlesSource?.asmsSegments
           ?.where((segment) {
@@ -398,11 +404,12 @@ class BetterPlayerController {
       if (segmentsToLoad != null && segmentsToLoad.isNotEmpty) {
         final subtitlesParsed =
             await BetterPlayerSubtitlesFactory.parseSubtitles(
-                BetterPlayerSubtitlesSource(
-          type: _betterPlayerSubtitlesSource!.type,
-          headers: _betterPlayerSubtitlesSource!.headers,
-          urls: segmentsToLoad,
-        ),);
+          BetterPlayerSubtitlesSource(
+            type: _betterPlayerSubtitlesSource!.type,
+            headers: _betterPlayerSubtitlesSource!.headers,
+            urls: segmentsToLoad,
+          ),
+        );
 
         ///Additional check if current source of subtitles is same as source
         ///used to start loading subtitles. It can be different when user
@@ -421,7 +428,8 @@ class BetterPlayerController {
   ///Get VideoFormat from BetterPlayerVideoFormat (adapter method which translates
   ///to video_player supported format).
   VideoFormat? _getVideoFormat(
-      BetterPlayerVideoFormat? betterPlayerVideoFormat,) {
+    BetterPlayerVideoFormat? betterPlayerVideoFormat,
+  ) {
     if (betterPlayerVideoFormat == null) {
       return null;
     }
@@ -482,7 +490,29 @@ class BetterPlayerController {
         }
 
         await videoPlayerController?.setFileDataSource(
-            File(betterPlayerDataSource.url),
+          File(betterPlayerDataSource.url),
+          showNotification: _betterPlayerDataSource
+              ?.notificationConfiguration?.showNotification,
+          title: _betterPlayerDataSource?.notificationConfiguration?.title,
+          author: _betterPlayerDataSource?.notificationConfiguration?.author,
+          imageUrl:
+              _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+          notificationChannelName: _betterPlayerDataSource
+              ?.notificationConfiguration?.notificationChannelName,
+          overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
+          activityName:
+              _betterPlayerDataSource?.notificationConfiguration?.activityName,
+          clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
+        );
+      case BetterPlayerDataSourceType.memory:
+        final file = await _createFile(
+          _betterPlayerDataSource!.bytes!,
+          extension: _betterPlayerDataSource!.videoExtension,
+        );
+
+        if (file.existsSync()) {
+          await videoPlayerController?.setFileDataSource(
+            file,
             showNotification: _betterPlayerDataSource
                 ?.notificationConfiguration?.showNotification,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
@@ -494,26 +524,8 @@ class BetterPlayerController {
             overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
             activityName: _betterPlayerDataSource
                 ?.notificationConfiguration?.activityName,
-            clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,);
-      case BetterPlayerDataSourceType.memory:
-        final file = await _createFile(_betterPlayerDataSource!.bytes!,
-            extension: _betterPlayerDataSource!.videoExtension,);
-
-        if (file.existsSync()) {
-          await videoPlayerController?.setFileDataSource(file,
-              showNotification: _betterPlayerDataSource
-                  ?.notificationConfiguration?.showNotification,
-              title: _betterPlayerDataSource?.notificationConfiguration?.title,
-              author:
-                  _betterPlayerDataSource?.notificationConfiguration?.author,
-              imageUrl:
-                  _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
-              notificationChannelName: _betterPlayerDataSource
-                  ?.notificationConfiguration?.notificationChannelName,
-              overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-              activityName: _betterPlayerDataSource
-                  ?.notificationConfiguration?.activityName,
-              clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,);
+            clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
+          );
           _tempFiles.add(file);
         } else {
           throw ArgumentError("Couldn't create file from memory.");
@@ -521,18 +533,22 @@ class BetterPlayerController {
 
       default:
         throw UnimplementedError(
-            '${betterPlayerDataSource.type} is not implemented',);
+          '${betterPlayerDataSource.type} is not implemented',
+        );
     }
     await _initializeVideo();
   }
 
   ///Create file from provided list of bytes. File will be created in temporary
   ///directory.
-  Future<File> _createFile(List<int> bytes,
-      {String? extension = 'temp',}) async {
+  Future<File> _createFile(
+    List<int> bytes, {
+    String? extension = 'temp',
+  }) async {
     final dir = (await getTemporaryDirectory()).path;
     final temp = File(
-        '$dir/better_player_${DateTime.now().millisecondsSinceEpoch}.$extension',);
+      '$dir/better_player_${DateTime.now().millisecondsSinceEpoch}.$extension',
+    );
     await temp.writeAsBytes(bytes);
     return temp;
   }
@@ -651,8 +667,12 @@ class BetterPlayerController {
 
     await videoPlayerController!.seekTo(moment);
 
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.seekTo,
-        parameters: <String, dynamic>{_durationParameter: moment},),);
+    _postEvent(
+      BetterPlayerEvent(
+        BetterPlayerEventType.seekTo,
+        parameters: <String, dynamic>{_durationParameter: moment},
+      ),
+    );
 
     final currentDuration = videoPlayerController!.value.duration;
     if (currentDuration == null) {
@@ -676,10 +696,12 @@ class BetterPlayerController {
       throw StateError('The data source has not been initialized');
     }
     await videoPlayerController!.setVolume(volume);
-    _postEvent(BetterPlayerEvent(
-      BetterPlayerEventType.setVolume,
-      parameters: <String, dynamic>{_volumeParameter: volume},
-    ),);
+    _postEvent(
+      BetterPlayerEvent(
+        BetterPlayerEventType.setVolume,
+        parameters: <String, dynamic>{_volumeParameter: volume},
+      ),
+    );
   }
 
   ///Set playback speed of video. Allows to set speed value between 0 and 2.
@@ -735,9 +757,11 @@ class BetterPlayerController {
   ///Internal method, used to trigger CONTROLS_VISIBLE or CONTROLS_HIDDEN event
   ///once controls state changed.
   void toggleControlsVisibility(bool isVisible) {
-    _postEvent(isVisible
-        ? BetterPlayerEvent(BetterPlayerEventType.controlsVisible)
-        : BetterPlayerEvent(BetterPlayerEventType.controlsHiddenEnd),);
+    _postEvent(
+      isVisible
+          ? BetterPlayerEvent(BetterPlayerEventType.controlsVisible)
+          : BetterPlayerEvent(BetterPlayerEventType.controlsHiddenEnd),
+    );
   }
 
   ///Send player event. Shouldn't be used manually.
@@ -756,9 +780,8 @@ class BetterPlayerController {
 
   ///Listener used to handle video player changes.
   void _onVideoPlayerChanged() async {
-    final currentVideoPlayerValue =
-        videoPlayerController?.value ??
-            VideoPlayerValue(duration: const Duration());
+    final currentVideoPlayerValue = videoPlayerController?.value ??
+        VideoPlayerValue(duration: const Duration());
 
     if (currentVideoPlayerValue.hasError) {
       _videoPlayerValueOnError ??= currentVideoPlayerValue;
@@ -844,9 +867,11 @@ class BetterPlayerController {
     if (_nextVideoTimer == null) {
       if (betterPlayerPlaylistConfiguration == null) {
         BetterPlayerUtils.log(
-            'BettterPlayerPlaylistConifugration has not been set!',);
+          'BettterPlayerPlaylistConifugration has not been set!',
+        );
         throw StateError(
-            'BettterPlayerPlaylistConifugration has not been set!',);
+          'BettterPlayerPlaylistConifugration has not been set!',
+        );
       }
 
       _nextVideoTime =
@@ -892,7 +917,9 @@ class BetterPlayerController {
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
-    _postEvent(BetterPlayerEvent(BetterPlayerEventType.changedTrack,
+    _postEvent(
+      BetterPlayerEvent(
+        BetterPlayerEventType.changedTrack,
         parameters: <String, dynamic>{
           'id': track.id,
           'width': track.width,
@@ -901,7 +928,9 @@ class BetterPlayerController {
           'frameRate': track.frameRate,
           'codecs': track.codecs,
           'mimeType': track.mimeType,
-        },),);
+        },
+      ),
+    );
 
     videoPlayerController!
         .setTrackParameters(track.width, track.height, track.bitrate);
@@ -927,7 +956,8 @@ class BetterPlayerController {
       return;
     }
     _postEvent(
-        BetterPlayerEvent(BetterPlayerEventType.changedPlayerVisibility),);
+      BetterPlayerEvent(BetterPlayerEventType.changedPlayerVisibility),
+    );
 
     if (_isAutomaticPlayPauseHandled()) {
       if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
@@ -959,10 +989,12 @@ class BetterPlayerController {
     if (wasPlayingBeforeChange) {
       play();
     }
-    _postEvent(BetterPlayerEvent(
-      BetterPlayerEventType.changedResolution,
-      parameters: <String, dynamic>{'url': url},
-    ),);
+    _postEvent(
+      BetterPlayerEvent(
+        BetterPlayerEventType.changedResolution,
+        parameters: <String, dynamic>{'url': url},
+      ),
+    );
   }
 
   ///Setup translations for given locale. In normal use cases it shouldn't be
@@ -972,7 +1004,8 @@ class BetterPlayerController {
     if (locale != null) {
       final languageCode = locale.languageCode;
       translations = betterPlayerConfiguration.translations?.firstWhereOrNull(
-              (translations) => translations.languageCode == languageCode,) ??
+            (translations) => translations.languageCode == languageCode,
+          ) ??
           _getDefaultTranslations(locale);
     } else {
       BetterPlayerUtils.log("Locale is null. Couldn't setup translations.");
@@ -1067,7 +1100,11 @@ class BetterPlayerController {
       if (Platform.isAndroid) {
         _wasInFullScreenBeforePiP = _isFullScreen;
         await videoPlayerController?.enablePictureInPicture(
-            left: 0, top: 0, width: 0, height: 0,);
+          left: 0,
+          top: 0,
+          width: 0,
+          height: 0,
+        );
         enterFullScreen();
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
         return;
@@ -1148,10 +1185,14 @@ class BetterPlayerController {
       case VideoEventType.bufferingStart:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingStart));
       case VideoEventType.bufferingUpdate:
-        _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingUpdate,
+        _postEvent(
+          BetterPlayerEvent(
+            BetterPlayerEventType.bufferingUpdate,
             parameters: <String, dynamic>{
               _bufferedParameter: event.buffered,
-            },),);
+            },
+          ),
+        );
       case VideoEventType.bufferingEnd:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingEnd));
       default:
@@ -1249,15 +1290,19 @@ class BetterPlayerController {
   ///Stop pre cache for given [betterPlayerDataSource]. If there was no pre
   ///cache started for given [betterPlayerDataSource] then it will be ignored.
   Future<void> stopPreCache(
-      BetterPlayerDataSource betterPlayerDataSource,) async {
-    return VideoPlayerController.stopPreCache(betterPlayerDataSource.url,
-        betterPlayerDataSource.cacheConfiguration?.key,);
+    BetterPlayerDataSource betterPlayerDataSource,
+  ) async {
+    return VideoPlayerController.stopPreCache(
+      betterPlayerDataSource.url,
+      betterPlayerDataSource.cacheConfiguration?.key,
+    );
   }
 
   /// Sets the new [betterPlayerControlsConfiguration] instance in the
   /// controller.
   void setBetterPlayerControlsConfiguration(
-      BetterPlayerControlsConfiguration betterPlayerControlsConfiguration,) {
+    BetterPlayerControlsConfiguration betterPlayerControlsConfiguration,
+  ) {
     _betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
   }
 

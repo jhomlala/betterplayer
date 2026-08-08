@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 class ReusableVideoListWidget extends StatefulWidget {
-
   const ReusableVideoListWidget({
     super.key,
     this.videoListData,
@@ -46,10 +45,13 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
     if (controller == null) {
       controller = widget.videoListController!.getBetterPlayerController();
       if (controller != null) {
-        controller!.setupDataSource(BetterPlayerDataSource.network(
+        controller!.setupDataSource(
+          BetterPlayerDataSource.network(
             videoListData!.videoUrl,
             cacheConfiguration:
-                const BetterPlayerCacheConfiguration(useCache: true),),);
+                const BetterPlayerCacheConfiguration(useCache: true),
+          ),
+        );
         if (!betterPlayerControllerStreamController.isClosed) {
           betterPlayerControllerStreamController.add(controller);
         }
@@ -160,28 +162,30 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                 'humor set this classic apart.'),
           ),
           Center(
-            child: Wrap(children: [
-              ElevatedButton(
-                child: const Text('Play'),
-                onPressed: () {
-                  controller!.play();
-                },
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                child: const Text('Pause'),
-                onPressed: () {
-                  controller!.pause();
-                },
-              ),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                child: const Text('Set max volume'),
-                onPressed: () {
-                  controller!.setVolume(1);
-                },
-              ),
-            ],),
+            child: Wrap(
+              children: [
+                ElevatedButton(
+                  child: const Text('Play'),
+                  onPressed: () {
+                    controller!.play();
+                  },
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  child: const Text('Pause'),
+                  onPressed: () {
+                    controller!.pause();
+                  },
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  child: const Text('Set max volume'),
+                  onPressed: () {
+                    controller!.setVolume(1);
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -76,8 +76,10 @@ class BetterPlayerControlsConfiguration {
   final Duration controlsHideTime;
 
   ///Parameter used to build custom controls
-  final Widget Function(BetterPlayerController controller,
-      Function(bool) onPlayerVisibilityChanged,)? customControlsBuilder;
+  final Widget Function(
+    BetterPlayerController controller,
+    Function(bool) onPlayerVisibilityChanged,
+  )? customControlsBuilder;
 
   ///Parameter used to change theme of the player
   final BetterPlayerTheme? playerTheme;
@@ -217,13 +219,14 @@ class BetterPlayerControlsConfiguration {
 
   factory BetterPlayerControlsConfiguration.white() {
     return const BetterPlayerControlsConfiguration(
-        controlBarColor: Colors.white,
-        textColor: Colors.black,
-        iconsColor: Colors.black,
-        progressBarPlayedColor: Colors.black,
-        progressBarHandleColor: Colors.black,
-        progressBarBufferedColor: Colors.black54,
-        progressBarBackgroundColor: Colors.white70,);
+      controlBarColor: Colors.white,
+      textColor: Colors.black,
+      iconsColor: Colors.black,
+      progressBarPlayedColor: Colors.black,
+      progressBarHandleColor: Colors.black,
+      progressBarBufferedColor: Colors.black54,
+      progressBarBackgroundColor: Colors.white70,
+    );
   }
 
   factory BetterPlayerControlsConfiguration.cupertino() {

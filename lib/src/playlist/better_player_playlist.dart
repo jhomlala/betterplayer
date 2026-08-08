@@ -11,7 +11,10 @@ class BetterPlayerPlaylist extends StatefulWidget {
   final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
 
   const BetterPlayerPlaylist({
-    required this.betterPlayerDataSourceList, required this.betterPlayerConfiguration, required this.betterPlayerPlaylistConfiguration, super.key,
+    required this.betterPlayerDataSourceList,
+    required this.betterPlayerConfiguration,
+    required this.betterPlayerPlaylistConfiguration,
+    super.key,
   });
 
   @override
@@ -32,10 +35,11 @@ class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   @override
   void initState() {
     _betterPlayerPlaylistController = BetterPlayerPlaylistController(
-        widget.betterPlayerDataSourceList,
-        betterPlayerConfiguration: widget.betterPlayerConfiguration,
-        betterPlayerPlaylistConfiguration:
-            widget.betterPlayerPlaylistConfiguration,);
+      widget.betterPlayerDataSourceList,
+      betterPlayerConfiguration: widget.betterPlayerConfiguration,
+      betterPlayerPlaylistConfiguration:
+          widget.betterPlayerPlaylistConfiguration,
+    );
     super.initState();
   }
 

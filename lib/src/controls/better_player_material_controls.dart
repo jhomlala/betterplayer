@@ -20,7 +20,9 @@ class BetterPlayerMaterialControls extends StatefulWidget {
   final BetterPlayerControlsConfiguration controlsConfiguration;
 
   const BetterPlayerMaterialControls({
-    required this.onControlsVisibilityChanged, required this.controlsConfiguration, super.key,
+    required this.onControlsVisibilityChanged,
+    required this.controlsConfiguration,
+    super.key,
   });
 
   @override
@@ -146,9 +148,9 @@ class _BetterPlayerMaterialControlsState
         _betterPlayerController!.betterPlayerConfiguration.errorBuilder;
     if (errorBuilder != null) {
       return errorBuilder(
-          context,
-          _betterPlayerController!
-              .videoPlayerController!.value.errorDescription,);
+        context,
+        _betterPlayerController!.videoPlayerController!.value.errorDescription,
+      );
     } else {
       final textStyle = TextStyle(color: _controlsConfiguration.textColor);
       return Center(
@@ -199,7 +201,9 @@ class _BetterPlayerMaterialControlsState
                   children: [
                     if (_controlsConfiguration.enablePip)
                       _buildPipButtonWrapperWidget(
-                          controlsNotVisible, _onPlayerHide,)
+                        controlsNotVisible,
+                        _onPlayerHide,
+                      )
                     else
                       const SizedBox(),
                     _buildMoreButton(),
@@ -215,7 +219,8 @@ class _BetterPlayerMaterialControlsState
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         betterPlayerController!.enablePictureInPicture(
-            betterPlayerController!.betterPlayerGlobalKey!,);
+          betterPlayerController!.betterPlayerGlobalKey!,
+        );
       },
       child: Padding(
         padding: const EdgeInsets.all(8),
@@ -228,7 +233,9 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildPipButtonWrapperWidget(
-      bool hideStuff, void Function() onPlayerHide,) {
+    bool hideStuff,
+    void Function() onPlayerHide,
+  ) {
     return FutureBuilder<bool>(
       future: betterPlayerController!.isPictureInPictureSupported(),
       builder: (context, snapshot) {
@@ -324,8 +331,9 @@ class _BetterPlayerMaterialControlsState
     return Text(
       _betterPlayerController!.translations.controlsLive,
       style: TextStyle(
-          color: _controlsConfiguration.liveTextColor,
-          fontWeight: FontWeight.bold,),
+        color: _controlsConfiguration.liveTextColor,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 
@@ -393,8 +401,10 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-  Widget _buildHitAreaClickableButton(
-      {required void Function() onClicked, Widget? icon,}) {
+  Widget _buildHitAreaClickableButton({
+    required void Function() onClicked,
+    Widget? icon,
+  }) {
     return Container(
       constraints: const BoxConstraints(maxHeight: 80, maxWidth: 80),
       child: BetterPlayerMaterialClickableWidget(
@@ -488,8 +498,9 @@ class _BetterPlayerMaterialControlsState
               alignment: Alignment.bottomRight,
               child: Container(
                 margin: EdgeInsets.only(
-                    bottom: _controlsConfiguration.controlBarHeight + 20,
-                    right: 24,),
+                  bottom: _controlsConfiguration.controlBarHeight + 20,
+                  right: 24,
+                ),
                 decoration: BoxDecoration(
                   color: _controlsConfiguration.controlBarColor,
                   borderRadius: BorderRadius.circular(16),
@@ -574,22 +585,23 @@ class _BetterPlayerMaterialControlsState
           : const EdgeInsets.symmetric(horizontal: 22),
       child: RichText(
         text: TextSpan(
-            text: BetterPlayerUtils.formatDuration(position),
-            style: TextStyle(
-              fontSize: 10,
-              color: _controlsConfiguration.textColor,
-              decoration: TextDecoration.none,
-            ),
-            children: <TextSpan>[
-              TextSpan(
-                text: ' / ${BetterPlayerUtils.formatDuration(duration)}',
-                style: TextStyle(
-                  fontSize: 10,
-                  color: _controlsConfiguration.textColor,
-                  decoration: TextDecoration.none,
-                ),
+          text: BetterPlayerUtils.formatDuration(position),
+          style: TextStyle(
+            fontSize: 10,
+            color: _controlsConfiguration.textColor,
+            decoration: TextDecoration.none,
+          ),
+          children: <TextSpan>[
+            TextSpan(
+              text: ' / ${BetterPlayerUtils.formatDuration(duration)}',
+              style: TextStyle(
+                fontSize: 10,
+                color: _controlsConfiguration.textColor,
+                decoration: TextDecoration.none,
               ),
-            ],),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -707,11 +719,11 @@ class _BetterPlayerMaterialControlsState
             cancelAndRestartTimer();
           },
           colors: BetterPlayerProgressColors(
-              playedColor: _controlsConfiguration.progressBarPlayedColor,
-              handleColor: _controlsConfiguration.progressBarHandleColor,
-              bufferedColor: _controlsConfiguration.progressBarBufferedColor,
-              backgroundColor:
-                  _controlsConfiguration.progressBarBackgroundColor,),
+            playedColor: _controlsConfiguration.progressBarPlayedColor,
+            handleColor: _controlsConfiguration.progressBarHandleColor,
+            bufferedColor: _controlsConfiguration.progressBarBufferedColor,
+            backgroundColor: _controlsConfiguration.progressBarBackgroundColor,
+          ),
         ),
       ),
     );

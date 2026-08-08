@@ -3,7 +3,11 @@ import 'package:better_player/src/hls/hls_parser/drm_init_data.dart';
 class Segment {
   Segment({
     required this.url,
-    required this.fullSegmentEncryptionKeyUri, required this.encryptionIV, required this.byterangeOffset, required this.byterangeLength, this.initializationSegment,
+    required this.fullSegmentEncryptionKeyUri,
+    required this.encryptionIV,
+    required this.byterangeOffset,
+    required this.byterangeLength,
+    this.initializationSegment,
     this.durationUs,
     this.title,
     this.relativeDiscontinuitySequence,
