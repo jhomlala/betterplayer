@@ -1,6 +1,6 @@
-import 'drm_init_data.dart';
-import 'metadata.dart';
-import 'util.dart';
+import 'package:better_player/src/hls/hls_parser/drm_init_data.dart';
+import 'package:better_player/src/hls/hls_parser/metadata.dart';
+import 'package:better_player/src/hls/hls_parser/util.dart';
 
 /// Representation of a media format.
 class Format {
@@ -27,16 +27,12 @@ class Format {
   }) : language = language?.toLowerCase();
 
   factory Format.createVideoContainerFormat({
-    String? id,
+    required String? codecs, required int? width, required int? height, required double? frameRate, String? id,
     String? label,
     String? containerMimeType,
     String? sampleMimeType,
-    required String? codecs,
     int? bitrate,
     int? averageBitrate,
-    required int? width,
-    required int? height,
-    required double? frameRate,
     int selectionFlags = Util.selectionFlagDefault,
     int? roleFlags,
     bool? isDefault,

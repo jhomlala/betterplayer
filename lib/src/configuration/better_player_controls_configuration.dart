@@ -77,7 +77,7 @@ class BetterPlayerControlsConfiguration {
 
   ///Parameter used to build custom controls
   final Widget Function(BetterPlayerController controller,
-      Function(bool) onPlayerVisibilityChanged)? customControlsBuilder;
+      Function(bool) onPlayerVisibilityChanged,)? customControlsBuilder;
 
   ///Parameter used to change theme of the player
   final BetterPlayerTheme? playerTheme;
@@ -223,7 +223,7 @@ class BetterPlayerControlsConfiguration {
         progressBarPlayedColor: Colors.black,
         progressBarHandleColor: Colors.black,
         progressBarBufferedColor: Colors.black54,
-        progressBarBackgroundColor: Colors.white70);
+        progressBarBackgroundColor: Colors.white70,);
   }
 
   factory BetterPlayerControlsConfiguration.cupertino() {

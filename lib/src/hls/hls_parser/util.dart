@@ -3,7 +3,7 @@ import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 
 class LibUtil {
   static bool startsWith(List<int> source, List<int> checker) {
-    for (int i = 0; i < checker.length; i++) {
+    for (var i = 0; i < checker.length; i++) {
       if (source[i] != checker[i]) return false;
     }
 
@@ -45,13 +45,13 @@ class LibUtil {
   }
 
   static int parseXsDateTime(String value) {
-    const String pattern =
-        '(\\d\\d\\d\\d)\\-(\\d\\d)\\-(\\d\\d)[Tt](\\d\\d):(\\d\\d):(\\d\\d)([\\.,](\\d+))?([Zz]|((\\+|\\-)(\\d?\\d):?(\\d\\d)))?';
+    const pattern =
+        r'(\d\d\d\d)\-(\d\d)\-(\d\d)[Tt](\d\d):(\d\d):(\d\d)([\.,](\d+))?([Zz]|((\+|\-)(\d?\d):?(\d\d)))?';
     final List<Match> matchList = RegExp(pattern).allMatches(value).toList();
     if (matchList.isEmpty) {
       throw ParserException('Invalid date/time format: $value');
     }
-    final Match match = matchList[0];
+    final match = matchList[0];
     int timezoneShift;
     if (match.group(9) == null) {
       // No time zone specified.
@@ -65,18 +65,18 @@ class LibUtil {
     }
 
     //todo UTCではなくGMT?
-    final DateTime dateTime = DateTime.utc(
+    final dateTime = DateTime.utc(
         int.parse(match.group(1)!),
         int.parse(match.group(2)!),
         int.parse(match.group(3)!),
         int.parse(match.group(4)!),
         int.parse(match.group(5)!),
-        int.parse(match.group(6)!));
+        int.parse(match.group(6)!),);
     if (match.group(8)?.isNotEmpty == true) {
       //todo ここ実装再検討
     }
 
-    int time = dateTime.millisecondsSinceEpoch;
+    var time = dateTime.millisecondsSinceEpoch;
     if (timezoneShift != 0) {
       time -= timezoneShift * 60000;
     }
@@ -125,7 +125,7 @@ class Util {
 
   static List<String> splitCodecs(String? codecs) => codecs?.isNotEmpty != true
       ? <String>[]
-      : codecs!.trim().split(RegExp('(\\s*,\\s*)'));
+      : codecs!.trim().split(RegExp(r'(\s*,\s*)'));
 
   static bool checkBitPositionIsSet(int number, int bitPosition) {
     if ((number & (1 << (bitPosition - 1))) > 0) {

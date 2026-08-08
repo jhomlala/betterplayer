@@ -3,6 +3,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class ControlsAlwaysVisiblePage extends StatefulWidget {
+  const ControlsAlwaysVisiblePage({super.key});
+
   @override
   _ControlsAlwaysVisiblePageState createState() =>
       _ControlsAlwaysVisiblePageState();
@@ -13,19 +15,18 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
 
   @override
   void initState() {
-    BetterPlayerConfiguration betterPlayerConfiguration =
+    const betterPlayerConfiguration =
         BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-      handleLifecycle: true,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _setupDataSource();
     super.initState();
   }
 
-  void _setupDataSource() async {
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
+  Future<void> _setupDataSource() async {
+    final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
     );
@@ -36,16 +37,16 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Controls always visible"),
+        title: const Text('Controls always visible'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Controls are always visible. Click on button below to"
-              " enable/disable this mode.",
+              'Controls are always visible. Click on button below to'
+              ' enable/disable this mode.',
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -56,9 +57,9 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
           ElevatedButton(
               onPressed: () {
                 _betterPlayerController.setControlsAlwaysVisible(
-                    !(_betterPlayerController.controlsAlwaysVisible));
+                    !_betterPlayerController.controlsAlwaysVisible,);
               },
-              child: Text("Toggle always visible controls"))
+              child: const Text('Toggle always visible controls'),),
         ],
       ),
     );

@@ -3,6 +3,8 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 
 class ControlsConfigurationPage extends StatefulWidget {
+  const ControlsConfigurationPage({super.key});
+
   @override
   _ControlsConfigurationPageState createState() =>
       _ControlsConfigurationPageState();
@@ -13,7 +15,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
 
   @override
   void initState() {
-    BetterPlayerControlsConfiguration controlsConfiguration =
+    final controlsConfiguration =
         BetterPlayerControlsConfiguration(
       controlBarColor: Colors.indigoAccent.withAlpha(200),
       iconsColor: Colors.lightGreen,
@@ -29,13 +31,13 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
       overflowMenuIconsColor: Colors.white,
     );
 
-    BetterPlayerConfiguration betterPlayerConfiguration =
+    final betterPlayerConfiguration =
         BetterPlayerConfiguration(
             aspectRatio: 16 / 9,
             fit: BoxFit.contain,
-            controlsConfiguration: controlsConfiguration);
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl);
+            controlsConfiguration: controlsConfiguration,);
+    final dataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network, Constants.elephantDreamVideoUrl,);
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     super.initState();
@@ -45,15 +47,15 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Controls configuration"),
+        title: const Text('Controls configuration'),
       ),
       body: Column(
         children: [
           const SizedBox(height: 8),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              "Player with customized controls via BetterPlayerControlsConfiguration.",
+              'Player with customized controls via BetterPlayerControlsConfiguration.',
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -65,13 +67,13 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
             onPressed: () {
               setState(() {
                 _betterPlayerController.setBetterPlayerControlsConfiguration(
-                  BetterPlayerControlsConfiguration(
-                      overflowModalColor: Colors.amberAccent),
+                  const BetterPlayerControlsConfiguration(
+                      overflowModalColor: Colors.amberAccent,),
                 );
               });
             },
-            child: Text("Reset settings"),
-          )
+            child: const Text('Reset settings'),
+          ),
         ],
       ),
     );

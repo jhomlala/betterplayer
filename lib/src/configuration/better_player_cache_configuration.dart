@@ -27,5 +27,5 @@ class BetterPlayerCacheConfiguration {
       this.maxCacheSize = 10 * 1024 * 1024,
       this.maxCacheFileSize = 10 * 1024 * 1024,
       this.preCacheSize = 3 * 1024 * 1024,
-      this.key});
+      this.key,});
 }

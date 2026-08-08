@@ -9,6 +9,12 @@
 # packages, and plugins designed to encourage good coding practices.
 include: package:very_good_analysis/analysis_options.yaml
 
+analyzer:
+  errors:
+    undefined_lint: ignore
+    strict_raw_type: ignore
+    inference_failure_on_function_return_type: ignore
+
 linter:
   rules:
     public_member_api_docs: false
@@ -19,6 +25,17 @@ linter:
     document_ignores: false
     one_member_abstracts: false
     missing_whitespace_between_adjacent_strings: false
+    library_private_types_in_public_api: false
+    unawaited_futures: false
+    cascade_invocations: false
+    use_named_constants: false
+    avoid_print: false
+    strict_raw_type: false
+    sort_pub_dependencies: false
+    inference_failure_on_function_return_type: false
+    avoid_positional_boolean_parameters: false
+    unnecessary_const: false
+    flutter_style_todos: false
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

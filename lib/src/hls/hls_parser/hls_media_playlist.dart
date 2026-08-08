@@ -17,14 +17,10 @@ class HlsMediaPlaylist extends HlsPlaylist {
     required this.protectionSchemes,
     required this.segments,
     required this.durationUs,
-    required String baseUri,
-    required List<String> tags,
-    required bool hasIndependentSegments,
-  }) : super(
-          baseUri: baseUri,
-          tags: tags,
-          hasIndependentSegments: hasIndependentSegments,
-        );
+    required String super.baseUri,
+    required super.tags,
+    required super.hasIndependentSegments,
+  });
 
   factory HlsMediaPlaylist.create({
     required int playlistType,
@@ -43,7 +39,7 @@ class HlsMediaPlaylist extends HlsPlaylist {
     required List<String> tags,
     required bool hasIndependentSegments,
   }) {
-    final int? durationUs = segments.isNotEmpty
+    final durationUs = segments.isNotEmpty
         ? segments.last.relativeStartTimeUs ?? 0 + segments.last.durationUs!
         : null;
 

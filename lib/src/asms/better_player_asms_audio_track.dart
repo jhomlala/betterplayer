@@ -24,5 +24,5 @@ class BetterPlayerAsmsAudioTrack {
       this.label,
       this.language,
       this.url,
-      this.mimeType});
+      this.mimeType,});
 }
