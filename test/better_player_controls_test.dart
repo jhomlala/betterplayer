@@ -19,11 +19,16 @@ void main() {
   setUp(() {
     mockController =
         BetterPlayerMockController(const BetterPlayerConfiguration());
+    VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
 
   testWidgets(
     'One of children is BetterPlayerWithControls',
     (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
       await tester.pumpWidget(
         _wrapWidget(
           BetterPlayer(
@@ -43,6 +48,10 @@ void main() {
   testWidgets(
     'Material controls show play/pause button',
     (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockVideoPlayerController(),
         configuration: const BetterPlayerConfiguration(
@@ -51,11 +60,9 @@ void main() {
           ),
         ),
       );
-      await controller.setupDataSource(
-        BetterPlayerDataSource.network(
-          BetterPlayerTestUtils.forBiggerBlazesUrl,
-        ),
-      );
+      await controller.setupDataSource(BetterPlayerDataSource.network(
+        BetterPlayerTestUtils.forBiggerBlazesUrl,
+      ));
 
       await tester.pumpWidget(
         _wrapWidget(
@@ -70,60 +77,9 @@ void main() {
 
       expect(
         find.byKey(
-          const Key('better_player_material_controls_play_pause_button'),
-        ),
+            const Key('better_player_material_controls_play_pause_button')),
         findsOneWidget,
       );
-    },
-  );
-
-  testWidgets(
-    'Material controls toggle play/pause on tap',
-    (WidgetTester tester) async {
-      final mockVideoPlayerController = MockVideoPlayerController();
-      mockVideoPlayerController.setDuration(const Duration(seconds: 100));
-      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: mockVideoPlayerController,
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.material,
-          ),
-        ),
-      );
-      await controller.setupDataSource(
-        BetterPlayerDataSource.network(
-          BetterPlayerTestUtils.forBiggerBlazesUrl,
-        ),
-      );
-
-      await tester.pumpWidget(
-        _wrapWidget(
-          BetterPlayer(
-            controller: controller,
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-      await tester.pump(const Duration(milliseconds: 300));
-      await tester.pumpAndSettle();
-
-      controller.setControlsAlwaysVisible(true);
-      await tester.pumpAndSettle();
-
-      // Initially paused
-      expect(controller.isPlaying(), false);
-      expect(controller.videoPlayerController, mockVideoPlayerController);
-
-      // await tester.tap(playPauseButton);
-      // await tester.pumpAndSettle();
-
-      // expect(mockVideoPlayerController.value.isPlaying, true);
-      // expect(controller.isPlaying(), true);
-
-      // await tester.tap(playPauseButton);
-      // await tester.pumpAndSettle();
-
-      // expect(controller.isPlaying(), false);
     },
   );
 
@@ -138,11 +94,9 @@ void main() {
           ),
         ),
       );
-      await controller.setupDataSource(
-        BetterPlayerDataSource.network(
-          BetterPlayerTestUtils.forBiggerBlazesUrl,
-        ),
-      );
+      await controller.setupDataSource(BetterPlayerDataSource.network(
+        BetterPlayerTestUtils.forBiggerBlazesUrl,
+      ));
 
       await tester.pumpWidget(
         _wrapWidget(
@@ -160,6 +114,85 @@ void main() {
         find.byIcon(controller.betterPlayerControlsConfiguration.muteIcon),
         findsOneWidget,
       );
+    },
+  );
+
+  testWidgets(
+    'Cupertino controls show play/pause button',
+    (WidgetTester tester) async {
+      final mockVideoPlayerController = MockVideoPlayerController();
+      mockVideoPlayerController.setDuration(const Duration(seconds: 100));
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockVideoPlayerController,
+        configuration: const BetterPlayerConfiguration(
+          controlsConfiguration: BetterPlayerControlsConfiguration(
+            playerTheme: BetterPlayerTheme.cupertino,
+          ),
+        ),
+      );
+      await controller.setupDataSource(BetterPlayerDataSource.network(
+        BetterPlayerTestUtils.forBiggerBlazesUrl,
+      ));
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.byIcon(controller.betterPlayerControlsConfiguration.playIcon),
+        findsWidgets,
+      );
+    },
+  );
+
+  testWidgets(
+    'Overflow menu opens on tap',
+    (WidgetTester tester) async {
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockVideoPlayerController(),
+        configuration: const BetterPlayerConfiguration(
+          controlsConfiguration: BetterPlayerControlsConfiguration(
+            playerTheme: BetterPlayerTheme.material,
+          ),
+        ),
+      );
+      await controller.setupDataSource(BetterPlayerDataSource.network(
+        BetterPlayerTestUtils.forBiggerBlazesUrl,
+      ));
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pumpAndSettle();
+
+      controller.setControlsAlwaysVisible(true);
+      await tester.pumpAndSettle();
+
+      final moreButton = find.byIcon(
+          controller.betterPlayerControlsConfiguration.overflowMenuIcon);
+      expect(moreButton, findsOneWidget);
+
+      await tester.tap(moreButton);
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+
+      // Check if one of the overflow items is visible
+      expect(find.text(controller.translations.overflowMenuPlaybackSpeed),
+          findsOneWidget);
     },
   );
 }

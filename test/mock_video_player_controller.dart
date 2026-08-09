@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
@@ -76,6 +77,37 @@ class MockVideoPlayerController extends VideoPlayerController {
     String? videoExtension,
   }) async {
     this.headers = headers;
+    value = value.copyWith(duration: const Duration(seconds: 1));
+  }
+
+  @override
+  Future<void> setFileDataSource(
+    File file, {
+    bool? showNotification,
+    String? title,
+    String? author,
+    String? imageUrl,
+    String? notificationChannelName,
+    Duration? overriddenDuration,
+    String? activityName,
+    String? clearKey,
+  }) async {
+    value = value.copyWith(duration: const Duration(seconds: 1));
+  }
+
+  @override
+  Future<void> setAssetDataSource(
+    String dataSource, {
+    String? package,
+    bool? showNotification,
+    String? title,
+    String? author,
+    String? imageUrl,
+    String? notificationChannelName,
+    Duration? overriddenDuration,
+    String? activityName,
+  }) async {
+    value = value.copyWith(duration: const Duration(seconds: 1));
   }
 
   Map<String, String?>? headers;

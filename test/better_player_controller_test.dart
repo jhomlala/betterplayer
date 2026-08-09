@@ -717,8 +717,50 @@ void main() {
           controller: MockVideoPlayerController(),
         );
         controller.dispose(forceDispose: true);
-        // Accessing after dispose might throw or return default,
-        // we just ensure no crash during dispose.
+      });
+
+      test('postEvent sends event to all listeners', () {
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        var eventCount1 = 0;
+        var eventCount2 = 0;
+        controller.addEventsListener((_) => eventCount1++);
+        controller.addEventsListener((_) => eventCount2++);
+
+        controller.postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.play));
+        expect(eventCount1, 1);
+        expect(eventCount2, 1);
+      });
+
+      test('removeEventsListener removes listener', () {
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        var eventCount = 0;
+        void listener(BetterPlayerEvent event) => eventCount++;
+        controller.addEventsListener(listener);
+        controller.removeEventsListener(listener);
+
+        controller.postEvent(
+            BetterPlayerEvent(BetterPlayerEventType.play));
+        expect(eventCount, 0);
+      });
+
+      testWidgets('BetterPlayerController.of(context) works',
+          (WidgetTester tester) async {
+        final controller = BetterPlayerTestUtils.setupBetterPlayerMockController();
+        await tester.pumpWidget(
+          BetterPlayerControllerProvider(
+            controller: controller,
+            child: Builder(
+              builder: (context) {
+                final found = BetterPlayerController.of(context);
+                expect(found, controller);
+                return const SizedBox();
+              },
+            ),
+          ),
+        );
       });
     },
   );
