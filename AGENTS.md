@@ -1,6 +1,9 @@
 # Better Player AI Rules
 
 ## Development Workflow
+- **Git Hygiene**:
+  - ALWAYS `git fetch origin master` and `git rebase origin/master` before starting any new task to ensure you are working on the latest code.
+  - Ensure your branch history is clean and only contains commits relevant to the current task.
 - **Post-Implementation Steps**: If you have changed any Dart code, ALWAYS run the following commands after completion of a plan or task:
   - `dart format .`
   - `flutter analyze .`
