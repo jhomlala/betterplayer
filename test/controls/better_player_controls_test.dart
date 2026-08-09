@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
+import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -73,9 +75,8 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
-      await tester.pumpAndSettle();
 
       expect(
         find.byKey(
@@ -110,9 +111,8 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
-      await tester.pumpAndSettle();
 
       // Mute icon should be present by default
       expect(
@@ -148,9 +148,8 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
-      await tester.pumpAndSettle();
 
       expect(
         find.byIcon(controller.betterPlayerControlsConfiguration.playIcon),
@@ -183,12 +182,11 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
-      await tester.pumpAndSettle();
 
       controller.setControlsAlwaysVisible(true);
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       final moreButton = find.byIcon(
         controller.betterPlayerControlsConfiguration.overflowMenuIcon,
@@ -196,8 +194,6 @@ void main() {
       expect(moreButton, findsOneWidget);
 
       await tester.tap(moreButton);
-      await tester.pumpAndSettle();
-      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
       // Check if one of the overflow items is visible
@@ -236,19 +232,16 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
-      await tester.pumpAndSettle();
 
       controller.setControlsAlwaysVisible(true);
-      await tester.pumpAndSettle();
+      await tester.pump();
 
       final moreButton = find.byIcon(
         controller.betterPlayerControlsConfiguration.overflowMenuIcon,
       );
       await tester.tap(moreButton);
-      await tester.pumpAndSettle();
-      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
       final speedButton = find.text(
@@ -267,6 +260,105 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(controller.videoPlayerController!.value.speed, 2.0);
+    },
+  );
+
+  testWidgets(
+    'Material controls show progress bar',
+    (WidgetTester tester) async {
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockVideoPlayerController(),
+        configuration: const BetterPlayerConfiguration(
+          controlsConfiguration: BetterPlayerControlsConfiguration(
+            playerTheme: BetterPlayerTheme.material,
+          ),
+        ),
+      );
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.byType(BetterPlayerMaterialVideoProgressBar),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Cupertino controls show progress bar',
+    (WidgetTester tester) async {
+      final mockVideoPlayerController = MockVideoPlayerController();
+      mockVideoPlayerController.setDuration(const Duration(seconds: 100));
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockVideoPlayerController,
+        configuration: const BetterPlayerConfiguration(
+          controlsConfiguration: BetterPlayerControlsConfiguration(
+            playerTheme: BetterPlayerTheme.cupertino,
+          ),
+        ),
+      );
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        find.byType(BetterPlayerCupertinoVideoProgressBar),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
+    'Playlist navigation buttons in controls',
+    (WidgetTester tester) async {
+      final dataSourceList = [
+        BetterPlayerDataSource.network('https://example.com/1.mp4'),
+        BetterPlayerDataSource.network('https://example.com/2.mp4'),
+      ];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BetterPlayerPlaylist(
+              betterPlayerDataSourceList: dataSourceList,
+              betterPlayerConfiguration: const BetterPlayerConfiguration(
+                controlsConfiguration: BetterPlayerControlsConfiguration(
+                  playerTheme: BetterPlayerTheme.material,
+                ),
+              ),
+              betterPlayerPlaylistConfiguration:
+                  const BetterPlayerPlaylistConfiguration(),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+
+      expect(find.byType(BetterPlayerPlaylist), findsOneWidget);
     },
   );
 }

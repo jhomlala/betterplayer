@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/configuration/better_player_controller_event.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -812,6 +813,38 @@ void main() {
 
         controller.postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
         expect(eventCount, 0);
+      });
+
+      test('controllerEventStream emits events', () async {
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        controller.videoPlayerController = MockVideoPlayerController();
+
+        final events = <BetterPlayerControllerEvent>[];
+        controller.controllerEventStream.listen(events.add);
+
+        await controller.setupDataSource(
+          BetterPlayerDataSource.network('url'),
+        );
+        await controller.play();
+        controller.enterFullScreen();
+        controller.exitFullScreen();
+
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+
+        expect(
+          events.contains(BetterPlayerControllerEvent.setupDataSource),
+          true,
+        );
+        expect(events.contains(BetterPlayerControllerEvent.play), true);
+        expect(
+          events.contains(BetterPlayerControllerEvent.openFullscreen),
+          true,
+        );
+        expect(
+          events.contains(BetterPlayerControllerEvent.hideFullscreen),
+          true,
+        );
       });
 
       testWidgets('BetterPlayerController.of(context) works',

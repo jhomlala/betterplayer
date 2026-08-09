@@ -123,5 +123,27 @@ video.m3u8
       expect(holder.tracks!.length, 1);
       expect(holder.tracks![0].width, 0);
     });
+
+    test('parse correctly parses DASH subtitles', () async {
+      const data = '''
+<MPD xmlns="urn:mpeg:dash:schema:mpd:2011">
+  <Period>
+    <AdaptationSet mimeType="text/vtt" lang="es" label="Spanish">
+      <Representation id="3">
+        <BaseURL>subs_es.vtt</BaseURL>
+      </Representation>
+    </AdaptationSet>
+  </Period>
+</MPD>
+''';
+      final holder = await BetterPlayerDashUtils.parse(
+        data,
+        'https://example.com/manifest.mpd',
+      );
+      expect(holder.subtitles!.length, 1);
+      expect(holder.subtitles![0].name, 'Spanish');
+      expect(holder.subtitles![0].language, 'es');
+      expect(holder.subtitles![0].url, 'https://example.com/subs_es.vtt');
+    });
   });
 }

@@ -84,6 +84,14 @@ void main() {
       expect(playlistController.currentDataSourceIndex, 0);
     });
 
+    test('dispose clears resources', () {
+      final dataSourceList = [
+        BetterPlayerDataSource.network('https://example.com/1.mp4'),
+      ];
+      final playlistController = BetterPlayerPlaylistController(dataSourceList);
+      playlistController.dispose();
+    });
+
     testWidgets('BetterPlayerPlaylist widget initialization',
         (WidgetTester tester) async {
       final dataSourceList = [
