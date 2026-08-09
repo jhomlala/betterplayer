@@ -3,6 +3,7 @@
 *.log
 *.pyc
 *.swp
+*.null
 .DS_Store
 .atom/
 .buildlog/
@@ -30,6 +31,7 @@
 .pub-cache/
 .pub/
 build/
+coverage/
 
 # Android related
 **/android/**/gradle-wrapper.jar

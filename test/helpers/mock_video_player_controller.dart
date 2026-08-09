@@ -1,14 +1,20 @@
+import 'dart:io';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 
 class MockVideoPlayerController extends VideoPlayerController {
   MockVideoPlayerController() : super(autoCreate: false) {
-    value = VideoPlayerValue(duration: const Duration());
+    value = VideoPlayerValue(duration: null);
   }
 
   bool isLoopingState = false;
   double volume = 0;
   double speed = 1;
+
+  void emitInitialized() {
+    value = value.copyWith(duration: const Duration(seconds: 1));
+    notifyListeners();
+  }
 
   @override
   Future<void> play() async {
@@ -46,11 +52,13 @@ class MockVideoPlayerController extends VideoPlayerController {
   @override
   Future<void> setVolume(double volume) async {
     this.volume = volume;
+    value = value.copyWith(volume: volume);
   }
 
   @override
   Future<void> setSpeed(double speed) async {
     this.speed = speed;
+    value = value.copyWith(speed: speed);
   }
 
   @override
@@ -74,5 +82,40 @@ class MockVideoPlayerController extends VideoPlayerController {
     String? activityName,
     String? clearKey,
     String? videoExtension,
-  }) async {}
+  }) async {
+    this.headers = headers;
+    value = value.copyWith(duration: const Duration(seconds: 1));
+  }
+
+  @override
+  Future<void> setFileDataSource(
+    File file, {
+    bool? showNotification,
+    String? title,
+    String? author,
+    String? imageUrl,
+    String? notificationChannelName,
+    Duration? overriddenDuration,
+    String? activityName,
+    String? clearKey,
+  }) async {
+    value = value.copyWith(duration: const Duration(seconds: 1));
+  }
+
+  @override
+  Future<void> setAssetDataSource(
+    String dataSource, {
+    String? package,
+    bool? showNotification,
+    String? title,
+    String? author,
+    String? imageUrl,
+    String? notificationChannelName,
+    Duration? overriddenDuration,
+    String? activityName,
+  }) async {
+    value = value.copyWith(duration: const Duration(seconds: 1));
+  }
+
+  Map<String, String?>? headers;
 }

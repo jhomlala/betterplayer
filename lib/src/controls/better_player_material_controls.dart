@@ -341,6 +341,7 @@ class _BetterPlayerMaterialControlsState
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: BetterPlayerMaterialClickableWidget(
+        key: const Key('better_player_material_controls_expand_button'),
         onTap: _onExpandCollapse,
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
@@ -404,10 +405,12 @@ class _BetterPlayerMaterialControlsState
   Widget _buildHitAreaClickableButton({
     required void Function() onClicked,
     Widget? icon,
+    Key? key,
   }) {
     return Container(
       constraints: const BoxConstraints(maxHeight: 80, maxWidth: 80),
       child: BetterPlayerMaterialClickableWidget(
+        key: key,
         onTap: onClicked,
         child: Align(
           child: Container(
@@ -429,6 +432,7 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildSkipButton() {
     return _buildHitAreaClickableButton(
+      key: const Key('better_player_material_controls_skip_back_button'),
       icon: Icon(
         _controlsConfiguration.skipBackIcon,
         size: 24,
@@ -440,6 +444,7 @@ class _BetterPlayerMaterialControlsState
 
   Widget _buildForwardButton() {
     return _buildHitAreaClickableButton(
+      key: const Key('better_player_material_controls_skip_forward_button'),
       icon: Icon(
         _controlsConfiguration.skipForwardIcon,
         size: 24,

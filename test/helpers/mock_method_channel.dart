@@ -11,6 +11,9 @@ class MockMethodChannel {
       _createEventChannel(id);
       return _getCreateResult(id);
     }
+    if (methodCall.method == 'init') {
+      return null;
+    }
     if (methodCall.method == 'setDataSource') {
       //return
     }

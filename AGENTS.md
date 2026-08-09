@@ -1,6 +1,9 @@
 # Better Player AI Rules
 
 ## Development Workflow
+- **Git Hygiene**:
+  - ALWAYS `git fetch origin master` and `git rebase origin/master` before starting any new task to ensure you are working on the latest code.
+  - Ensure your branch history is clean and only contains commits relevant to the current task.
 - **Post-Implementation Steps**: If you have changed any Dart code, ALWAYS run the following commands after completion of a plan or task:
   - `dart format .`
   - `flutter analyze .`
@@ -17,8 +20,15 @@
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
 - **Mocking**: Use `BetterPlayerMockController` and `MockVideoPlayerController` for unit tests.
-- **Verification**: Run `flutter test` to verify changes don't break existing functionality.
+- **Verification**: ALWAYS run tests using the following command to efficiently identify failures and avoid token limit issues:
+  ```powershell
+  $names=@{}; flutter test --machine | ForEach-Object { if ($_ -match '^{.*}$') { $_ | ConvertFrom-Json } } | ForEach-Object { if($_.type -eq "testStart"){$names[$_.test.id]=$_.test.name} elseif($_.type -eq "error"){[PSCustomObject]@{test=$names[$_.testID]; error=$_.error}} } | ConvertTo-Json -Compress
+  ```
 
 ## Project Structure
+- **Test Organization**: The `test/` directory MUST mirror the `lib/src/` directory structure.
+  - Example: `lib/src/core/` -> `test/core/`
+  - Helpers and mocks should be placed in `test/helpers/`.
+  - Test files should be named `<original_file_name>_test.dart` or reflect the component they test.
 - **Artifacts**: Never track the `.artifacts/` directory in Git. It is already added to `.gitignore`.
 - **Example App**: When changing core library code, check if the `example` app needs updates or if its tests/analysis are affected.
