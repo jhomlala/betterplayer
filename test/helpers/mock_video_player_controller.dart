@@ -47,11 +47,13 @@ class MockVideoPlayerController extends VideoPlayerController {
   @override
   Future<void> setVolume(double volume) async {
     this.volume = volume;
+    value = value.copyWith(volume: volume);
   }
 
   @override
   Future<void> setSpeed(double speed) async {
     this.speed = speed;
+    value = value.copyWith(speed: speed);
   }
 
   @override

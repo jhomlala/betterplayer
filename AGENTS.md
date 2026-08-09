@@ -23,5 +23,9 @@
 - **Verification**: Run `flutter test` to verify changes don't break existing functionality.
 
 ## Project Structure
+- **Test Organization**: The `test/` directory MUST mirror the `lib/src/` directory structure.
+  - Example: `lib/src/core/` -> `test/core/`
+  - Helpers and mocks should be placed in `test/helpers/`.
+  - Test files should be named `<original_file_name>_test.dart` or reflect the component they test.
 - **Artifacts**: Never track the `.artifacts/` directory in Git. It is already added to `.gitignore`.
 - **Example App**: When changing core library code, check if the `example` app needs updates or if its tests/analysis are affected.

@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 
-import 'better_player_test_utils.dart';
-import 'mock_video_player_controller.dart';
+import '../helpers/better_player_test_utils.dart';
+import '../helpers/mock_video_player_controller.dart';
 
 void main() {
   late BetterPlayerController controller;

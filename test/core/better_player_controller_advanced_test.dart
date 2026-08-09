@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'better_player_test_utils.dart';
-import 'mock_method_channel.dart';
-import 'mock_video_player_controller.dart';
+import '../helpers/better_player_test_utils.dart';
+import '../helpers/mock_method_channel.dart';
+import '../helpers/mock_video_player_controller.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

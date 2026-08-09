@@ -4,8 +4,8 @@ import 'package:better_player/src/video_player/video_player_platform_interface.d
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'better_player_test_utils.dart';
-import 'mock_video_player_controller.dart';
+import '../helpers/better_player_test_utils.dart';
+import '../helpers/mock_video_player_controller.dart';
 
 class MockControlsState extends BetterPlayerControlsState<StatefulWidget> {
   final BetterPlayerController _controller;

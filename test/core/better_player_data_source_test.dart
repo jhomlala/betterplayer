@@ -29,5 +29,18 @@ void main() {
       expect(newSource.url, 'https://example.com/new.mp4');
       expect(newSource.type, BetterPlayerDataSourceType.network);
     });
+
+    test('memory source assertion works', () {
+      expect(
+        () => BetterPlayerDataSource(BetterPlayerDataSourceType.memory, '',
+            bytes: []),
+        throwsAssertionError,
+      );
+    });
+
+    test('network source factories', () {
+      final source = BetterPlayerDataSource.network('url', liveStream: true);
+      expect(source.liveStream, true);
+    });
   });
 }

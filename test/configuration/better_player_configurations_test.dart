@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,6 +25,24 @@ void main() {
     test('BetterPlayerNotificationConfiguration default values', () {
       const config = BetterPlayerNotificationConfiguration();
       expect(config.showNotification, null);
+    });
+
+    test('BetterPlayerControlsConfiguration factories', () {
+      final white = BetterPlayerControlsConfiguration.white();
+      expect(white.controlBarColor, Colors.white);
+
+      final cupertino = BetterPlayerControlsConfiguration.cupertino();
+      expect(cupertino.playIcon, CupertinoIcons.play_arrow_solid);
+
+      final theme = BetterPlayerControlsConfiguration.theme(ThemeData.light());
+      expect(theme.textColor, ThemeData.light().textTheme.bodySmall?.color);
+    });
+
+    test('BetterPlayerConfiguration copyWith', () {
+      const config = BetterPlayerConfiguration(autoPlay: true);
+      final copied = config.copyWith(autoPlay: false);
+      expect(copied.autoPlay, false);
+      expect(copied.looping, false);
     });
   });
 
