@@ -100,7 +100,9 @@ video.m3u8
 ''';
       final parser = HlsPlaylistParser.create();
       final playlist = await parser.parseString(
-          Uri.parse('https://example.com/master.m3u8'), masterPlaylist);
+        Uri.parse('https://example.com/master.m3u8'),
+        masterPlaylist,
+      );
 
       expect(playlist is HlsMasterPlaylist, true);
       final master = playlist as HlsMasterPlaylist;
@@ -117,12 +119,16 @@ segment1.ts
 ''';
       final parser = HlsPlaylistParser.create();
       final playlist = await parser.parseString(
-          Uri.parse('https://example.com/video.m3u8'), mediaPlaylist);
+        Uri.parse('https://example.com/video.m3u8'),
+        mediaPlaylist,
+      );
 
       expect(playlist is HlsMediaPlaylist, true);
       final media = playlist as HlsMediaPlaylist;
-      expect(media.segments[0].fullSegmentEncryptionKeyUri,
-          'https://priv.example.com/key.php?r=52');
+      expect(
+        media.segments[0].fullSegmentEncryptionKeyUri,
+        'https://priv.example.com/key.php?r=52',
+      );
     });
 
     test('Parse media playlist with init segment', () async {
@@ -135,7 +141,9 @@ segment1.ts
 ''';
       final parser = HlsPlaylistParser.create();
       final playlist = await parser.parseString(
-          Uri.parse('https://example.com/video.m3u8'), mediaPlaylist);
+        Uri.parse('https://example.com/video.m3u8'),
+        mediaPlaylist,
+      );
 
       expect(playlist is HlsMediaPlaylist, true);
       final media = playlist as HlsMediaPlaylist;
@@ -155,26 +163,32 @@ segment2.ts
 ''';
       final parser = HlsPlaylistParser.create();
       final playlist = await parser.parseString(
-          Uri.parse('https://example.com/video.m3u8'), mediaPlaylist);
+        Uri.parse('https://example.com/video.m3u8'),
+        mediaPlaylist,
+      );
 
       final media = playlist as HlsMediaPlaylist;
       expect(media.segments[1].relativeDiscontinuitySequence, 1);
     });
 
     test('Parse master playlist with variable definitions', () async {
-      const masterPlaylist = '''
+      const masterPlaylist = r'''
 #EXTM3U
 #EXT-X-DEFINE:NAME="URL",VALUE="video.m3u8"
 #EXT-X-STREAM-INF:BANDWIDTH=1280000
-{\$URL}
+{$URL}
 ''';
       final parser = HlsPlaylistParser.create();
       final playlist = await parser.parseString(
-          Uri.parse('https://example.com/master.m3u8'), masterPlaylist);
+        Uri.parse('https://example.com/master.m3u8'),
+        masterPlaylist,
+      );
 
       final master = playlist as HlsMasterPlaylist;
       expect(
-          master.variants[0].url.toString(), 'https://example.com/video.m3u8');
+        master.variants[0].url.toString(),
+        'https://example.com/video.m3u8',
+      );
     });
   });
 }

@@ -18,7 +18,7 @@ void main() {
     });
 
     test('BetterPlayerDrmConfiguration default values', () {
-      final config = BetterPlayerDrmConfiguration();
+      const config = BetterPlayerDrmConfiguration();
       expect(config.drmType, null);
     });
 

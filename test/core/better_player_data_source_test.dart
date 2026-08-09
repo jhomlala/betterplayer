@@ -60,7 +60,7 @@ void main() {
         ),
         overriddenDuration: const Duration(seconds: 10),
         videoFormat: BetterPlayerVideoFormat.hls,
-        drmConfiguration: BetterPlayerDrmConfiguration(
+        drmConfiguration: const BetterPlayerDrmConfiguration(
           drmType: BetterPlayerDrmType.clearKey,
         ),
       );

@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source_type.dart';
@@ -35,8 +34,11 @@ class MockHttpHeaders extends Fake implements HttpHeaders {
 class MockHttpClientResponse extends StreamView<List<int>>
     implements HttpClientResponse {
   MockHttpClientResponse()
-      : super(Stream.value(
-            utf8.encode('1\n00:00:01,000 --> 00:00:02,000\nHello\n\n')));
+      : super(
+          Stream.value(
+            utf8.encode('1\n00:00:01,000 --> 00:00:02,000\nHello\n\n'),
+          ),
+        );
 
   @override
   int get statusCode => 200;
@@ -58,8 +60,11 @@ class MockHttpClientResponse extends StreamView<List<int>>
   List<RedirectInfo> get redirects => [];
 
   @override
-  Future<HttpClientResponse> redirect(
-          [String? method, Uri? url, bool? followLoops]) =>
+  Future<HttpClientResponse> redirect([
+    String? method,
+    Uri? url,
+    bool? followLoops,
+  ]) =>
       throw UnimplementedError();
 
   @override
@@ -102,15 +107,18 @@ void main() {
     });
 
     test('parseSubtitles from network', () async {
-      await HttpOverrides.runWithHttpOverrides(() async {
-        final source = BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.network,
-          urls: ['https://example.com/subs.srt'],
-        );
-        final subtitles =
-            await BetterPlayerSubtitlesFactory.parseSubtitles(source);
-        expect(subtitles.length, 1);
-      }, TestHttpOverrides());
+      await HttpOverrides.runWithHttpOverrides(
+        () async {
+          final source = BetterPlayerSubtitlesSource(
+            type: BetterPlayerSubtitlesSourceType.network,
+            urls: ['https://example.com/subs.srt'],
+          );
+          final subtitles =
+              await BetterPlayerSubtitlesFactory.parseSubtitles(source);
+          expect(subtitles.length, 1);
+        },
+        TestHttpOverrides(),
+      );
     });
 
     test('parseSubtitles from file handles non-existent file', () async {
@@ -124,7 +132,6 @@ void main() {
     });
 
     test('parseString handles WebVTT', () {
-      const content = 'WEBVTT\n\n00:00.000 --> 00:01.000\nHello\n\n';
       // _parseString is private, but we can use parseSubtitles with memory
       // to test it.
     });

@@ -60,9 +60,11 @@ void main() {
           ),
         ),
       );
-      await controller.setupDataSource(BetterPlayerDataSource.network(
-        BetterPlayerTestUtils.forBiggerBlazesUrl,
-      ));
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
 
       await tester.pumpWidget(
         _wrapWidget(
@@ -77,7 +79,8 @@ void main() {
 
       expect(
         find.byKey(
-            const Key('better_player_material_controls_play_pause_button')),
+          const Key('better_player_material_controls_play_pause_button'),
+        ),
         findsOneWidget,
       );
     },
@@ -94,9 +97,11 @@ void main() {
           ),
         ),
       );
-      await controller.setupDataSource(BetterPlayerDataSource.network(
-        BetterPlayerTestUtils.forBiggerBlazesUrl,
-      ));
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
 
       await tester.pumpWidget(
         _wrapWidget(
@@ -130,9 +135,11 @@ void main() {
           ),
         ),
       );
-      await controller.setupDataSource(BetterPlayerDataSource.network(
-        BetterPlayerTestUtils.forBiggerBlazesUrl,
-      ));
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
 
       await tester.pumpWidget(
         _wrapWidget(
@@ -163,9 +170,11 @@ void main() {
           ),
         ),
       );
-      await controller.setupDataSource(BetterPlayerDataSource.network(
-        BetterPlayerTestUtils.forBiggerBlazesUrl,
-      ));
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
 
       await tester.pumpWidget(
         _wrapWidget(
@@ -182,7 +191,8 @@ void main() {
       await tester.pumpAndSettle();
 
       final moreButton = find.byIcon(
-          controller.betterPlayerControlsConfiguration.overflowMenuIcon);
+        controller.betterPlayerControlsConfiguration.overflowMenuIcon,
+      );
       expect(moreButton, findsOneWidget);
 
       await tester.tap(moreButton);
@@ -191,8 +201,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Check if one of the overflow items is visible
-      expect(find.text(controller.translations.overflowMenuPlaybackSpeed),
-          findsOneWidget);
+      expect(
+        find.text(controller.translations.overflowMenuPlaybackSpeed),
+        findsOneWidget,
+      );
     },
   );
 
@@ -211,9 +223,11 @@ void main() {
           ),
         ),
       );
-      await controller.setupDataSource(BetterPlayerDataSource.network(
-        BetterPlayerTestUtils.forBiggerBlazesUrl,
-      ));
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
 
       await tester.pumpWidget(
         _wrapWidget(
@@ -230,19 +244,24 @@ void main() {
       await tester.pumpAndSettle();
 
       final moreButton = find.byIcon(
-          controller.betterPlayerControlsConfiguration.overflowMenuIcon);
+        controller.betterPlayerControlsConfiguration.overflowMenuIcon,
+      );
       await tester.tap(moreButton);
       await tester.pumpAndSettle();
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
-      final speedButton =
-          find.text(controller.translations.overflowMenuPlaybackSpeed);
+      final speedButton = find.text(
+        controller.translations.overflowMenuPlaybackSpeed,
+      );
       await tester.tap(speedButton);
       await tester.pumpAndSettle();
 
       final speed2x = find.text('2.0 x');
-      expect(speed2x, findsOneWidget);
+      expect(
+        speed2x,
+        findsOneWidget,
+      );
 
       await tester.tap(speed2x);
       await tester.pumpAndSettle();

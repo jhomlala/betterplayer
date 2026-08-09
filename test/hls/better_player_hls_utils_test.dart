@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
-import 'package:better_player/src/hls/hls_parser/rendition.dart';
 import 'package:better_player/src/hls/hls_parser/format.dart';
+import 'package:better_player/src/hls/hls_parser/rendition.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MockHttpClient extends Fake implements HttpClient {
@@ -39,12 +40,17 @@ class MockHttpHeaders extends Fake implements HttpHeaders {
 
 class MockHttpClientResponse extends StreamView<List<int>>
     implements HttpClientResponse {
-  MockHttpClientResponse() : super(Stream.value(utf8.encode('''
+  MockHttpClientResponse()
+      : super(
+          Stream.value(
+            utf8.encode('''
 #EXTM3U
 #EXT-X-TARGETDURATION:10
 #EXTINF:10.0,
 segment1.vtt
-''')));
+'''),
+          ),
+        );
 
   @override
   int get statusCode => 200;
@@ -66,8 +72,11 @@ segment1.vtt
   List<RedirectInfo> get redirects => [];
 
   @override
-  Future<HttpClientResponse> redirect(
-          [String? method, Uri? url, bool? followLoops]) =>
+  Future<HttpClientResponse> redirect([
+    String? method,
+    Uri? url,
+    bool? followLoops,
+  ]) =>
       throw UnimplementedError();
 
   @override
@@ -101,31 +110,29 @@ void main() {
 
   group('BetterPlayerHlsUtils advanced tests', () {
     test('parseSubtitles handles segmented subtitles', () async {
-      HttpOverrides.runWithHttpOverrides(() async {
-        final rendition = Rendition(
-          url: Uri.parse('https://example.com/subs.m3u8'),
-          format: Format(id: '1', label: 'English'),
-          groupId: 'audio',
-          name: 'English',
-        );
+      await HttpOverrides.runWithHttpOverrides(
+        () async {
+          // This calls _parseSubtitlesPlaylist internally via parseSubtitles
+          // if the master playlist data has subtitles.
+          // But _parseSubtitlesPlaylist is private.
+          // We can test parseSubtitles which calls it.
 
-        // This calls _parseSubtitlesPlaylist internally via parseSubtitles
-        // if the master playlist data has subtitles.
-        // But _parseSubtitlesPlaylist is private.
-        // We can test parseSubtitles which calls it.
-
-        const masterData = '''
+          const masterData = '''
 #EXTM3U
 #EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="English",URI="subs.m3u8"
 #EXT-X-STREAM-INF:BANDWIDTH=1280000,SUBTITLES="subs"
 video.m3u8
 ''';
-        final subtitles = await BetterPlayerHlsUtils.parseSubtitles(
-            masterData, 'https://example.com/master.m3u8');
+          final subtitles = await BetterPlayerHlsUtils.parseSubtitles(
+            masterData,
+            'https://example.com/master.m3u8',
+          );
 
-        expect(subtitles.length, 1);
-        expect(subtitles[0].name, 'English');
-      }, TestHttpOverrides());
+          expect(subtitles.length, 1);
+          expect(subtitles[0].name, 'English');
+        },
+        TestHttpOverrides(),
+      );
     });
   });
 }

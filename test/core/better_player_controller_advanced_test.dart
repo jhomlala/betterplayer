@@ -37,9 +37,11 @@ void main() {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mock,
       );
-      await controller.setupDataSource(BetterPlayerDataSource.network(
-        BetterPlayerTestUtils.forBiggerBlazesUrl,
-      ));
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
 
       // Simulate error
       mock.value = mock.value.copyWith(errorDescription: 'Error');
@@ -49,12 +51,15 @@ void main() {
       expect(controller.videoPlayerController != null, true);
     });
 
-    test('preCache and stopPreCache don\'t crash', () async {
+    test("preCache and stopPreCache don't crash", () async {
       final dataSource = BetterPlayerDataSource.network(
         BetterPlayerTestUtils.forBiggerBlazesUrl,
       );
-      await BetterPlayerController(const BetterPlayerConfiguration())
-          .preCache(dataSource);
+      await BetterPlayerController(
+        const BetterPlayerConfiguration(),
+      ).preCache(
+        dataSource,
+      );
       await BetterPlayerController(const BetterPlayerConfiguration())
           .stopPreCache(dataSource);
       await BetterPlayerController(const BetterPlayerConfiguration())
