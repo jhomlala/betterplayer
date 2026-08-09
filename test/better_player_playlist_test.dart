@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'mock_method_channel.dart';
 
@@ -81,6 +82,29 @@ void main() {
 
       await Future<void>.delayed(const Duration(milliseconds: 500));
       expect(playlistController.currentDataSourceIndex, 0);
+    });
+
+    testWidgets('BetterPlayerPlaylist widget initialization',
+        (WidgetTester tester) async {
+      final dataSourceList = [
+        BetterPlayerDataSource.network('https://example.com/1.mp4'),
+      ];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BetterPlayerPlaylist(
+              betterPlayerDataSourceList: dataSourceList,
+              betterPlayerConfiguration: const BetterPlayerConfiguration(),
+              betterPlayerPlaylistConfiguration:
+                  const BetterPlayerPlaylistConfiguration(),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(BetterPlayerPlaylist), findsOneWidget);
+      expect(find.byType(BetterPlayer), findsOneWidget);
     });
   });
 }

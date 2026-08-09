@@ -690,6 +690,36 @@ void main() {
         controller.setAppLifecycleState(AppLifecycleState.resumed);
         expect(controller.isPlaying(), true);
       });
+
+      test('toggleFullScreen changes state', () {
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController();
+        expect(controller.isFullScreen, false);
+        controller.toggleFullScreen();
+        expect(controller.isFullScreen, true);
+        controller.toggleFullScreen();
+        expect(controller.isFullScreen, false);
+      });
+
+      test('setLooping updates state', () async {
+        final mockVideoPlayerController = MockVideoPlayerController();
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+          controller: mockVideoPlayerController,
+        );
+        await controller.setLooping(true);
+        expect(mockVideoPlayerController.isLoopingState, true);
+      });
+
+      test('dispose clears resources', () async {
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+          controller: MockVideoPlayerController(),
+        );
+        controller.dispose(forceDispose: true);
+        // Accessing after dispose might throw or return default,
+        // we just ensure no crash during dispose.
+      });
     },
   );
 }

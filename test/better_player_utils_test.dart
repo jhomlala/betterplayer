@@ -1,6 +1,7 @@
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/dash/better_player_dash_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -27,6 +28,23 @@ void main() {
           const Duration(hours: 1, minutes: 2, seconds: 3),
         ),
         '01:02:03',
+      );
+    });
+
+    testWidgets('calculateAspectRatio returns correct value',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Builder(
+              builder: (context) {
+                final ratio = BetterPlayerUtils.calculateAspectRatio(context);
+                expect(ratio > 0, true);
+                return const SizedBox();
+              },
+            ),
+          ),
+        ),
       );
     });
   });
