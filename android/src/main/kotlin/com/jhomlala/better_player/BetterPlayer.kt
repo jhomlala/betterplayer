@@ -225,7 +225,7 @@ internal class BetterPlayer(
                 player: Player,
                 callback: BitmapCallback
             ): Bitmap? {
-                if (imageUrl == null) {
+                if (imageUrl.isNullOrEmpty()) {
                     return null
                 }
                 if (bitmap != null) {
