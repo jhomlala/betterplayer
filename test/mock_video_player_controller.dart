@@ -74,5 +74,9 @@ class MockVideoPlayerController extends VideoPlayerController {
     String? activityName,
     String? clearKey,
     String? videoExtension,
-  }) async {}
+  }) async {
+    this.headers = headers;
+  }
+
+  Map<String, String?>? headers;
 }
