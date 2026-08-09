@@ -33,7 +33,8 @@ void main() {
 
     test('DataSource toString', () {
       final source = DataSource(sourceType: DataSourceType.network, uri: 'uri');
-      expect(source.toString().contains('sourceType: DataSourceType.network'), true);
+      expect(source.toString().contains('sourceType: DataSourceType.network'),
+          true);
     });
   });
 
@@ -51,15 +52,18 @@ void main() {
 
   group('DurationRange tests', () {
     test('DurationRange fractions', () {
-      final range = DurationRange(const Duration(seconds: 2), const Duration(seconds: 8));
+      final range =
+          DurationRange(const Duration(seconds: 2), const Duration(seconds: 8));
       final total = const Duration(seconds: 10);
       expect(range.startFraction(total), 0.2);
       expect(range.endFraction(total), 0.8);
     });
 
     test('DurationRange equality', () {
-      final range1 = DurationRange(const Duration(seconds: 1), const Duration(seconds: 2));
-      final range2 = DurationRange(const Duration(seconds: 1), const Duration(seconds: 2));
+      final range1 =
+          DurationRange(const Duration(seconds: 1), const Duration(seconds: 2));
+      final range2 =
+          DurationRange(const Duration(seconds: 1), const Duration(seconds: 2));
       expect(range1 == range2, true);
       expect(range1.hashCode == range2.hashCode, true);
     });

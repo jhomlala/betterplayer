@@ -20,7 +20,10 @@
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
 - **Mocking**: Use `BetterPlayerMockController` and `MockVideoPlayerController` for unit tests.
-- **Verification**: Run `flutter test` to verify changes don't break existing functionality.
+- **Verification**: ALWAYS run tests using the following command to efficiently identify failures and avoid token limit issues:
+  ```powershell
+  $names=@{}; flutter test --machine | ForEach-Object { if ($_ -match '^{.*}$') { $_ | ConvertFrom-Json } } | ForEach-Object { if($_.type -eq "testStart"){$names[$_.test.id]=$_.test.name} elseif($_.type -eq "error"){[PSCustomObject]@{test=$names[$_.testID]; error=$_.error}} } | ConvertTo-Json -Compress
+  ```
 
 ## Project Structure
 - **Test Organization**: The `test/` directory MUST mirror the `lib/src/` directory structure.

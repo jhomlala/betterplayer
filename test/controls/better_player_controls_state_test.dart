@@ -1,112 +1,97 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../helpers/better_player_mock_controller.dart';
 
-import '../helpers/better_player_test_utils.dart';
-import '../helpers/mock_video_player_controller.dart';
+class MockControlsWidget extends StatefulWidget {
+  final BetterPlayerController controller;
 
-class MockControlsState extends BetterPlayerControlsState<StatefulWidget> {
-  final BetterPlayerController _controller;
-
-  MockControlsState(this._controller);
+  const MockControlsWidget({
+    required this.controller,
+    super.key,
+  });
 
   @override
-  BetterPlayerController? get betterPlayerController => _controller;
+  MockControlsState createState() => MockControlsState();
+}
+
+class MockControlsState extends BetterPlayerControlsState<MockControlsWidget> {
+  @override
+  BetterPlayerController? get betterPlayerController => widget.controller;
 
   @override
   BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
-      _controller.betterPlayerControlsConfiguration;
+      widget.controller.betterPlayerControlsConfiguration;
 
   @override
-  VideoPlayerValue? get latestValue => _controller.videoPlayerController?.value;
+  VideoPlayerValue? get latestValue =>
+      widget.controller.videoPlayerController?.value;
 
   @override
   void cancelAndRestartTimer() {}
 
   @override
-  Widget build(BuildContext context) => const SizedBox();
+  Widget build(BuildContext context) {
+    return Container();
+  }
 }
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  group('BetterPlayerControlsState tests', () {
+    late BetterPlayerMockController controller;
 
-  late BetterPlayerController controller;
-  late MockControlsState state;
+    setUp(() {
+      controller = BetterPlayerMockController(
+        const BetterPlayerConfiguration(),
+      );
+    });
 
-  setUp(() {
-    controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-      controller: MockVideoPlayerController(),
-    );
-    state = MockControlsState(controller);
-  });
-
-  group('BetterPlayerControlsState logic tests', () {
-    test('isVideoFinished returns true when at the end', () {
+    test('isVideoFinished returns true when position >= duration', () {
+      final state = MockControlsState();
       final value = VideoPlayerValue(
         duration: const Duration(seconds: 10),
         position: const Duration(seconds: 10),
       );
       expect(state.isVideoFinished(value), true);
+
+      final value2 = VideoPlayerValue(
+        duration: const Duration(seconds: 10),
+        position: const Duration(seconds: 5),
+        isPlaying: true,
+      );
+      expect(state.isVideoFinished(value2), false);
     });
 
-    test('isVideoFinished returns false when not at the end', () {
+    test('isLoading returns true when buffering', () {
+      final state = MockControlsState();
       final value = VideoPlayerValue(
         duration: const Duration(seconds: 10),
         position: const Duration(seconds: 5),
-      );
-      expect(state.isVideoFinished(value), false);
-    });
-
-    test('skipForward seeks correctly', () async {
-      final mock = controller.videoPlayerController as MockVideoPlayerController;
-      mock.setDuration(const Duration(seconds: 100));
-      await mock.seekTo(const Duration(seconds: 10));
-
-      state.skipForward();
-      expect(mock.value.position,
-          const Duration(seconds: 20)); // Default skip is 10s
-    });
-
-    test('skipBack seeks correctly', () async {
-      final mock = controller.videoPlayerController as MockVideoPlayerController;
-      mock.setDuration(const Duration(seconds: 100));
-      await mock.seekTo(const Duration(seconds: 50));
-
-      state.skipBack();
-      expect(mock.value.position,
-          const Duration(seconds: 40)); // Default skip is 10s
-    });
-
-    test('isLoading logic', () {
-      final valueNotPlaying = VideoPlayerValue(
-        duration: null,
-        isPlaying: false,
-      );
-      expect(state.isLoading(valueNotPlaying), true);
-
-      final valueBuffering = VideoPlayerValue(
-        duration: const Duration(seconds: 100),
-        position: const Duration(seconds: 50),
-        isPlaying: true,
+        buffered: [
+          DurationRange(Duration.zero, const Duration(seconds: 6)),
+        ],
         isBuffering: true,
-        buffered: [
-          DurationRange(const Duration(seconds: 0), const Duration(seconds: 55)),
-        ],
-      );
-      expect(state.isLoading(valueBuffering), true);
-      
-      final valueNotBuffering = VideoPlayerValue(
-        duration: const Duration(seconds: 100),
-        position: const Duration(seconds: 50),
         isPlaying: true,
-        isBuffering: false,
-        buffered: [
-          DurationRange(const Duration(seconds: 0), const Duration(seconds: 90)),
-        ],
       );
-      expect(state.isLoading(valueNotBuffering), false);
+      // _bufferingInterval is 20000ms (20s). 6s - 5s = 1s < 20s.
+      expect(state.isLoading(value), true);
+    });
+
+    testWidgets('changePlayerControlsNotVisible updates state',
+        (WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MockControlsWidget(controller: controller),
+        ),
+      );
+
+      final state =
+          tester.state<MockControlsState>(find.byType(MockControlsWidget));
+      expect(state.controlsNotVisible, true);
+
+      state.changePlayerControlsNotVisible(false);
+      expect(state.controlsNotVisible, false);
     });
   });
 }

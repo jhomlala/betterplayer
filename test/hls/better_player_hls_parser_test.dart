@@ -173,7 +173,8 @@ segment2.ts
           Uri.parse('https://example.com/master.m3u8'), masterPlaylist);
 
       final master = playlist as HlsMasterPlaylist;
-      expect(master.variants[0].url.toString(), 'https://example.com/video.m3u8');
+      expect(
+          master.variants[0].url.toString(), 'https://example.com/video.m3u8');
     });
   });
 }

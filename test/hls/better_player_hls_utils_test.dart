@@ -17,7 +17,7 @@ class MockHttpClient extends Fake implements HttpClient {
 
   @override
   bool autoUncompress = true;
-  
+
   @override
   void close({bool force = false}) {}
 }
@@ -39,8 +39,7 @@ class MockHttpHeaders extends Fake implements HttpHeaders {
 
 class MockHttpClientResponse extends StreamView<List<int>>
     implements HttpClientResponse {
-  MockHttpClientResponse()
-      : super(Stream.value(utf8.encode('''
+  MockHttpClientResponse() : super(Stream.value(utf8.encode('''
 #EXTM3U
 #EXT-X-TARGETDURATION:10
 #EXTINF:10.0,
@@ -110,11 +109,11 @@ void main() {
           name: 'English',
         );
 
-        // This calls _parseSubtitlesPlaylist internally via parseSubtitles 
+        // This calls _parseSubtitlesPlaylist internally via parseSubtitles
         // if the master playlist data has subtitles.
         // But _parseSubtitlesPlaylist is private.
         // We can test parseSubtitles which calls it.
-        
+
         const masterData = '''
 #EXTM3U
 #EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="English",URI="subs.m3u8"
@@ -123,7 +122,7 @@ video.m3u8
 ''';
         final subtitles = await BetterPlayerHlsUtils.parseSubtitles(
             masterData, 'https://example.com/master.m3u8');
-        
+
         expect(subtitles.length, 1);
         expect(subtitles[0].name, 'English');
       }, TestHttpOverrides());

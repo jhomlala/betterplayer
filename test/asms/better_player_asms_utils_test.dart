@@ -26,7 +26,11 @@ class MockHttpClientRequest extends Fake implements HttpClientRequest {
 
 class MockHttpHeaders extends Fake implements HttpHeaders {
   @override
-  void add(String name, Object value, {bool preserveHeaderCase = false}) {}
+  void add(
+    String name,
+    Object value, {
+    bool preserveHeaderCase = false,
+  }) {}
 }
 
 class MockHttpClientResponse extends StreamView<List<int>>
@@ -53,8 +57,11 @@ class MockHttpClientResponse extends StreamView<List<int>>
   List<RedirectInfo> get redirects => [];
 
   @override
-  Future<HttpClientResponse> redirect(
-          [String? method, Uri? url, bool? followLoops]) =>
+  Future<HttpClientResponse> redirect([
+    String? method,
+    Uri? url,
+    bool? followLoops,
+  ]) =>
       throw UnimplementedError();
 
   @override
@@ -115,21 +122,28 @@ void main() {
     });
 
     test('getDataFromUrl fetches data', () async {
-      await HttpOverrides.runWithHttpOverrides(() async {
-        final data = await BetterPlayerAsmsUtils.getDataFromUrl(
-            'https://example.com/test.m3u8');
-        expect(data, 'test data');
-      }, TestHttpOverrides());
+      await HttpOverrides.runWithHttpOverrides(
+        () async {
+          final data = await BetterPlayerAsmsUtils.getDataFromUrl(
+            'https://example.com/test.m3u8',
+          );
+          expect(data, 'test data');
+        },
+        TestHttpOverrides(),
+      );
     });
 
     test('getDataFromUrl with headers', () async {
-      await HttpOverrides.runWithHttpOverrides(() async {
-        final data = await BetterPlayerAsmsUtils.getDataFromUrl(
-          'https://example.com/test.m3u8',
-          {'Authorization': 'Bearer test'},
-        );
-        expect(data, 'test data');
-      }, TestHttpOverrides());
+      await HttpOverrides.runWithHttpOverrides(
+        () async {
+          final data = await BetterPlayerAsmsUtils.getDataFromUrl(
+            'https://example.com/test.m3u8',
+            {'Authorization': 'Bearer test'},
+          );
+          expect(data, 'test data');
+        },
+        TestHttpOverrides(),
+      );
     });
   });
 }
