@@ -950,7 +950,7 @@ class BetterPlayerController {
   ///will play again. If there's different handler of visibility then it will be
   ///used. If showNotification is set in data source or handleLifecycle is false
   /// then this logic will be ignored.
-  void onPlayerVisibilityChanged(double visibilityFraction) async {
+  Future<void> onPlayerVisibilityChanged(double visibilityFraction) async {
     _isPlayerVisible = visibilityFraction > 0;
     if (_disposed) {
       return;
@@ -977,7 +977,7 @@ class BetterPlayerController {
   }
 
   ///Set different resolution (quality) for video
-  void setResolution(String url) async {
+  Future<void> setResolution(String url) async {
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
