@@ -4,6 +4,9 @@
 
 #import "BetterPlayerPlugin.h"
 #import <better_player/better_player-Swift.h>
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+#import "FrameUpdater.h"
+#endif
 
 #if !__has_feature(objc_arc)
 #error Code Requires ARC.
@@ -27,13 +30,19 @@ bool _remoteCommandsInitialized = false;
                                 binaryMessenger:[registrar messenger]];
     BetterPlayerPlugin* instance = [[BetterPlayerPlugin alloc] initWithRegistrar:registrar];
     [registrar addMethodCallDelegate:instance channel:channel];
-    //[registrar publish:instance];
+#ifdef BETTER_PLAYER_UIKITVIEW
+    [registrar publish:instance];
+#else
     [registrar registerViewFactory:instance withId:@"com.jhomlala/better_player"];
+#endif
 }
 
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     self = [super init];
     NSAssert(self, @"super init cannot be nil");
+#if !defined(BETTER_PLAYER_UIKITVIEW)
+    _registry = [registrar textures];
+#endif
     _messenger = [registrar messenger];
     _registrar = registrar;
     _players = [NSMutableDictionary dictionaryWithCapacity:1];
@@ -67,13 +76,24 @@ bool _remoteCommandsInitialized = false;
 }
 
 #pragma mark - BetterPlayerPlugin class
+#if !defined(BETTER_PLAYER_FLUTTER_TEXTURE)
 - (int)newTextureId {
     texturesCount += 1;
     return texturesCount;
 }
+#endif
+
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
 - (void)onPlayerSetup:(BetterPlayer*)player
+         frameUpdater:(FrameUpdater*)frameUpdater
                result:(FlutterResult)result {
-    int64_t textureId = [self newTextureId];
+  int64_t textureId = [_registry registerTexture:player];
+  frameUpdater.textureId = textureId;
+#else
+  - (void)onPlayerSetup:(BetterPlayer*)player
+                 result:(FlutterResult)result {
+      int64_t textureId = [self newTextureId];
+#endif
     FlutterEventChannel* eventChannel = [FlutterEventChannel
                                          eventChannelWithName:[NSString stringWithFormat:@"better_player_channel/videoEvents%lld",
                                                                textureId]
@@ -283,14 +303,23 @@ bool _remoteCommandsInitialized = false;
     if ([@"init" isEqualToString:call.method]) {
         // Allow audio playback when the Ring/Silent switch is set to silent
         for (NSNumber* textureId in _players) {
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+            [_registry unregisterTexture:[textureId unsignedIntegerValue]];
+#endif
             [_players[textureId] dispose];
         }
 
         [_players removeAllObjects];
         result(nil);
     } else if ([@"create" isEqualToString:call.method]) {
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+        FrameUpdater* frameUpdater = [[FrameUpdater alloc] initWithRegistry:_registry];
+        BetterPlayer* player = [[BetterPlayer alloc] initWithFrameUpdater:frameUpdater];
+        [self onPlayerSetup:player frameUpdater:frameUpdater result:result];
+#else
         BetterPlayer* player = [[BetterPlayer alloc] initWithFrame:CGRectZero];
         [self onPlayerSetup:player result:result];
+#endif
     } else {
         NSDictionary* argsMap = call.arguments;
         int64_t textureId = ((NSNumber*)argsMap[@"textureId"]).unsignedIntegerValue;
@@ -298,6 +327,9 @@ bool _remoteCommandsInitialized = false;
         if ([@"setDataSource" isEqualToString:call.method]) {
             [player clear];
             // This call will clear cached frame because we will return transparent frame
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+            [_registry textureFrameAvailable:textureId];
+#endif
 
             NSDictionary* dataSource = argsMap[@"dataSource"];
             [_dataSourceDict setObject:dataSource forKey:[self getTextureId:player]];
@@ -348,6 +380,9 @@ bool _remoteCommandsInitialized = false;
             [player clear];
             [self disposeNotificationData:player];
             [self setRemoteCommandsNotificationNotActive];
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+            [_registry unregisterTexture:textureId];
+#endif
             [_players removeObjectForKey:@(textureId)];
             // If the Flutter contains https://github.com/flutter/engine/pull/12695,
             // the `player` is disposed via `onTextureUnregistered` at the right time.

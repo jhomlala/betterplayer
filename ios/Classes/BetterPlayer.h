@@ -11,12 +11,27 @@
 #import "BetterPlayerView.h"
 #import "BetterPlayerEzDrmAssetsLoaderDelegate.h"
 
+// Revert to flutter texture instead of UiKitView since the later has issues with Transform.rotate
+#define BETTER_PLAYER_FLUTTER_TEXTURE
+
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+#import "FrameUpdater.h"
+#endif
+
 NS_ASSUME_NONNULL_BEGIN
 
 @class CacheManager;
 
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+@interface BetterPlayer : NSObject <FlutterTexture, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
+#else
 @interface BetterPlayer : NSObject <FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate>
+#endif
 @property(readonly, nonatomic) AVPlayer* player;
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+@property(readonly, nonatomic) AVPlayerItemVideoOutput* videoOutput;
+@property(readonly, nonatomic) CADisplayLink* displayLink;
+#endif
 @property(readonly, nonatomic) BetterPlayerEzDrmAssetsLoaderDelegate* loaderDelegate;
 @property(nonatomic) FlutterEventChannel* eventChannel;
 @property(nonatomic) FlutterEventSink eventSink;
@@ -26,6 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic) bool isLooping;
 @property(nonatomic, readonly) bool isInitialized;
 @property(nonatomic, readonly) NSString* key;
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+@property(nonatomic, readonly) CVPixelBufferRef prevBuffer;
+#endif
 @property(nonatomic, readonly) int failedCount;
 @property(nonatomic) AVPlayerLayer* _playerLayer;
 @property(nonatomic) bool _pictureInPicture;
@@ -42,7 +60,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (int64_t) duration;
 - (int64_t) position;
 
+#ifdef BETTER_PLAYER_FLUTTER_TEXTURE
+- (instancetype)initWithFrameUpdater:(FrameUpdater*)frameUpdater;
+#else
 - (instancetype)initWithFrame:(CGRect)frame;
+#endif
 - (void)setMixWithOthers:(bool)mixWithOthers;
 - (void)seekTo:(int)location;
 - (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withLicenseUrl:(NSString*)licenseUrl cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration;
