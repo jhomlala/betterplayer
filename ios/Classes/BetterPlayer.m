@@ -134,62 +134,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     return degrees;
 };
 
-- (AVMutableVideoComposition*)getVideoCompositionWithTransform:(CGAffineTransform)transform
-                                                     withAsset:(AVAsset*)asset
-                                                withVideoTrack:(AVAssetTrack*)videoTrack {
-    AVMutableVideoCompositionInstruction* instruction =
-    [AVMutableVideoCompositionInstruction videoCompositionInstruction];
-    instruction.timeRange = CMTimeRangeMake(kCMTimeZero, [asset duration]);
-    AVMutableVideoCompositionLayerInstruction* layerInstruction =
-    [AVMutableVideoCompositionLayerInstruction
-     videoCompositionLayerInstructionWithAssetTrack:videoTrack];
-    [layerInstruction setTransform:_preferredTransform atTime:kCMTimeZero];
-
-    AVMutableVideoComposition* videoComposition = [AVMutableVideoComposition videoComposition];
-    instruction.layerInstructions = @[ layerInstruction ];
-    videoComposition.instructions = @[ instruction ];
-
-    // If in portrait mode, switch the width and height of the video
-    CGFloat width = videoTrack.naturalSize.width;
-    CGFloat height = videoTrack.naturalSize.height;
-    NSInteger rotationDegrees =
-    (NSInteger)round(radiansToDegrees(atan2(_preferredTransform.b, _preferredTransform.a)));
-    if (rotationDegrees == 90 || rotationDegrees == 270) {
-        width = videoTrack.naturalSize.height;
-        height = videoTrack.naturalSize.width;
-    }
-    videoComposition.renderSize = CGSizeMake(width, height);
-
-    float nominalFrameRate = videoTrack.nominalFrameRate;
-    int fps = 30;
-    if (nominalFrameRate > 0) {
-        fps = (int) ceil(nominalFrameRate);
-    }
-    videoComposition.frameDuration = CMTimeMake(1, fps);
-    
-    return videoComposition;
-}
-
-- (CGAffineTransform)fixTransform:(AVAssetTrack*)videoTrack {
-  CGAffineTransform transform = videoTrack.preferredTransform;
-  // TODO(@recastrodiaz): why do we need to do this? Why is the preferredTransform incorrect?
-  // At least 2 user videos show a black screen when in portrait mode if we directly use the
-  // videoTrack.preferredTransform Setting tx to the height of the video instead of 0, properly
-  // displays the video https://github.com/flutter/flutter/issues/17606#issuecomment-413473181
-  NSInteger rotationDegrees = (NSInteger)round(radiansToDegrees(atan2(transform.b, transform.a)));
-  if (rotationDegrees == 90) {
-    transform.tx = videoTrack.naturalSize.height;
-    transform.ty = 0;
-  } else if (rotationDegrees == 180) {
-    transform.tx = videoTrack.naturalSize.width;
-    transform.ty = videoTrack.naturalSize.height;
-  } else if (rotationDegrees == 270) {
-    transform.tx = 0;
-    transform.ty = videoTrack.naturalSize.width;
-  }
-  return transform;
-}
-
 - (void)setDataSourceAsset:(NSString*)asset withKey:(NSString*)key withCertificateUrl:(NSString*)certificateUrl withLicenseUrl:(NSString*)licenseUrl cacheKey:(NSString*)cacheKey cacheManager:(CacheManager*)cacheManager overriddenDuration:(int) overriddenDuration{
     NSString* path = [[NSBundle mainBundle] pathForResource:asset ofType:nil];
     return [self setDataSourceURL:[NSURL fileURLWithPath:path] withKey:key withCertificateUrl:certificateUrl withLicenseUrl:(NSString*)licenseUrl withHeaders: @{} withCache: false cacheKey:cacheKey cacheManager:cacheManager overriddenDuration:overriddenDuration videoExtension: nil];
@@ -237,37 +181,6 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
     _isStalledCheckStarted = false;
     _playerRate = 1;
     [_player replaceCurrentItemWithPlayerItem:item];
-
-    AVAsset* asset = [item asset];
-    void (^assetCompletionHandler)(void) = ^{
-        if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-            NSArray* tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-            if ([tracks count] > 0) {
-                AVAssetTrack* videoTrack = tracks[0];
-                void (^trackCompletionHandler)(void) = ^{
-                    if (self->_disposed) return;
-                    if ([videoTrack statusOfValueForKey:@"preferredTransform"
-                                                  error:nil] == AVKeyValueStatusLoaded) {
-                        // Rotate the video by using a videoComposition and the preferredTransform
-                        self->_preferredTransform = [self fixTransform:videoTrack];
-                        // Note:
-                        // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
-                        // Video composition can only be used with file-based media and is not supported for
-                        // use with media served using HTTP Live Streaming.
-                        AVMutableVideoComposition* videoComposition =
-                        [self getVideoCompositionWithTransform:self->_preferredTransform
-                                                     withAsset:asset
-                                                withVideoTrack:videoTrack];
-                        item.videoComposition = videoComposition;
-                    }
-                };
-                [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
-                                          completionHandler:trackCompletionHandler];
-            }
-        }
-    };
-
-    [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
     [self addObservers:item];
 }
 
