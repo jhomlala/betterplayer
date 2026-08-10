@@ -16,6 +16,9 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Install LCOV
+        run: brew install lcov
+
       - name: Verify formatting
         run: dart format --output=none --set-exit-if-changed .
 
@@ -23,4 +26,25 @@ jobs:
         run: flutter analyze
 
       - name: Run tests
-        run: flutter test
+        run: flutter test --coverage
+
+      - name: Generate HTML Report
+        run: genhtml coverage/lcov.info --output-directory coverage/html
+
+      - name: Upload HTML Report Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-html
+          path: coverage/html
+
+      - name: Add Coverage Summary to Workflow Output
+        run: |
+          echo "## Coverage Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Coverage |" >> $GITHUB_STEP_SUMMARY
+          echo "| --- | --- |" >> $GITHUB_STEP_SUMMARY
+          lcov --summary coverage/lcov.info | grep -E 'lines|functions|branches' | sed 's/^  //' | awk -F': ' '{print "| " $1 " | " $2 " |"}' >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
