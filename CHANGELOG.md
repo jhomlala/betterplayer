@@ -1,3 +1,10 @@
+## 0.2.0
+* [BREAKING_CHANGE] Migrated iOS to Swift Package Manager (SPM). Native source files moved from `ios/Classes` to `ios/better_player/Sources`.
+* [BREAKING_CHANGE] Modernized Android `build.gradle` using the `plugins {}` block. Removed legacy `kotlin-android` apply plugin.
+* Updated `very_good_analysis` to 10.3.0 and addressed new linting rules.
+* Updated `xml` dependency to 7.0.0.
+* Updated `meta` dependency to 1.18.0.
+
 ## 0.1.0
 * [BREAKING_CHANGE] Migrated Android playback engine from ExoPlayer 2 to AndroidX Media3 (1.1.1).
 * [BREAKING_CHANGE] Updated minimum Flutter version to 3.22.0 and minimum Dart version to 3.4.0.
