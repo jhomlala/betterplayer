@@ -1,3 +1,4 @@
+
 ## 0.2.0
 * [BREAKING_CHANGE] Migrated iOS to Swift Package Manager (SPM). Native source files moved from `ios/Classes` to `ios/better_player/Sources`.
 * [BREAKING_CHANGE] Modernized Android `build.gradle` using the `plugins {}` block. Removed legacy `kotlin-android` apply plugin.
