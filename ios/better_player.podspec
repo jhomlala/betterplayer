@@ -3,17 +3,17 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'better_player'
-  s.version          = '0.0.1'
-  s.summary          = 'A new flutter plugin project.'
+  s.version          = '0.2.0'
+  s.summary          = 'Advanced video player with HLS, DASH and caching support.'
   s.description      = <<-DESC
-A new flutter plugin project.
+Advanced video player for Flutter with HLS, DASH and caching support.
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://github.com/jhomlala/betterplayer'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'jhomlala' => 'jhomlala@gmail.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  s.source_files = 'better_player/Sources/**/*'
+  s.public_header_files = 'better_player/Sources/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'Cache', '~> 6.0.0'
   s.dependency 'GCDWebServer'

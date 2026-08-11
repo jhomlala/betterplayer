@@ -1,35 +1,7 @@
-group 'com.jhomlala.better_player.better_player'
-version '1.0-SNAPSHOT'
-
-buildscript {
-    ext.media3Version = "1.1.1"
-    ext.lifecycleVersion = "2.4.0-beta01"
-    ext.annotationVersion = "1.2.0"
-    ext.workVersion = "2.7.0"
-    ext.coreVersion = "1.6.0"
-    ext.gradleVersion = "9.5.0"
-    ext.kotlinVersion = "2.2.20"
-
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.11.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-    }
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
 }
-
-rootProject.allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
 
 android {
     namespace "com.jhomlala.better_player"
@@ -54,6 +26,11 @@ android {
     }
 
     dependencies {
+        def media3Version = "1.1.1"
+        def lifecycleVersion = "2.4.0-beta01"
+        def annotationVersion = "1.2.0"
+        def workVersion = "2.7.0"
+
         implementation "androidx.media3:media3-exoplayer:$media3Version"
         implementation "androidx.media3:media3-datasource:$media3Version"
         implementation "androidx.media3:media3-common:$media3Version"
@@ -69,8 +46,4 @@ android {
         implementation "androidx.annotation:annotation:$annotationVersion"
         implementation "androidx.work:work-runtime:$workVersion"
     }
-}
-
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
 }

@@ -1,16 +1,30 @@
-# example
+# Better Player Example App
 
-Example to showcase use cases of Better Player.
+This example app showcases various use cases and configurations for the Better Player plugin.
+
+## Features covered in example:
+- Basic playback (Network, File, Asset)
+- HLS & DASH streams
+- Playlists
+- Video in a ListView
+- Subtitles & Audio tracks
+- Picture in Picture
+- Caching
+- DRM (Widevine, FairPlay)
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+1. Navigate to the `example` directory:
+   ```bash
+   cd example
+   ```
+2. Fetch dependencies:
+   ```bash
+   flutter pub get
+   ```
+3. Run the application:
+   ```bash
+   flutter run
+   ```
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+For more details on how to use the plugin, check the [Better Player documentation](https://jhomlala.github.io/betterplayer/).

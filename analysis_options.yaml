@@ -34,6 +34,11 @@ linter:
     invalid_dependency: false
     library_private_types_in_public_api: false
     unawaited_futures: false
+    discarded_futures: false
+    avoid_types_on_closure_parameters: false
+    no_literal_bool_comparisons: false
+    unnecessary_ignore: false
+    removed_lint_use: false
     cascade_invocations: false
     use_named_constants: false
     parameter_assignments: false
