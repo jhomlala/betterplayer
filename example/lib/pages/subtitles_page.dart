@@ -39,7 +39,7 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
   Future<void> _setupDataSource() async {
     final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.forBiggerBlazesUrl,
+      Constants.bugBuckBunnyVideoUrl,
       subtitles: BetterPlayerSubtitlesSource.single(
         type: BetterPlayerSubtitlesSourceType.file,
         url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
