@@ -2,7 +2,6 @@
 ## 0.2.1
 * Added `.pubignore` to exclude `media/` directory from the published package.
 * Updated documentation and README links to point to the new media location on GitHub.
-* Updated `AGENTS.md` with Architecture and Changelog guidelines.
 * Updated `README.md` to remove outdated migration information.
 
 ## 0.2.0
