@@ -33,6 +33,9 @@
 - **Artifacts**: Never track the `.artifacts/` directory in Git. It is already added to `.gitignore`.
 - **Example App**: When changing core library code, check if the `example` app needs updates or if its tests/analysis are affected.
 
+## Architecture
+- **Plugin-First Principle**: When working on new features or refactoring existing code, prioritize a **plugin-based architecture**. The goal is to keep the core library lean and extend functionality via plugins rather than purely working within the core.
+
 ## Version Update Workflow
 - When preparing a new release, ALWAYS:
   1. Update the `version` in `pubspec.yaml`.
