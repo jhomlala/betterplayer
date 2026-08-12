@@ -1,6 +1,7 @@
 # Better Player AI Rules
 
 ## Development Workflow
+- **Commit/Push Policy**: NEVER commit or push changes automatically. ALWAYS wait for explicit user approval before performing any Git commit or push operations.
 - **Git Hygiene**:
   - ALWAYS `git fetch origin master` and `git rebase origin/master` before starting any new task to ensure you are working on the latest code.
   - Ensure your branch history is clean and only contains commits relevant to the current task.
@@ -32,6 +33,17 @@
   - Test files should be named `<original_file_name>_test.dart` or reflect the component they test.
 - **Artifacts**: Never track the `.artifacts/` directory in Git. It is already added to `.gitignore`.
 - **Example App**: When changing core library code, check if the `example` app needs updates or if its tests/analysis are affected.
+
+## Architecture
+- **Plugin-First Principle**: When working on new features or refactoring existing code, prioritize a **plugin-based architecture**. The goal is to keep the core library lean and extend functionality via plugins rather than purely working within the core.
+
+## Changelog Guidelines
+- **Labels**: Mark critical or API-breaking changes with the `[BREAKING_CHANGE]` label at the start of the line.
+- **Sections**: Use the following verbs to start entries:
+  - `Added`: for new features.
+  - `Updated`: for changes in existing functionality or dependencies.
+  - `Fixed`: for bug fixes.
+- **Attribution**: If the work was done by a contributor, append `(by @username)` or `(by Name)` to the end of the entry.
 
 ## Version Update Workflow
 - When preparing a new release, ALWAYS:

@@ -1,0 +1,26 @@
+# .pubignore
+# This file is used by 'dart pub publish' to exclude files from the package archive.
+# Unlike .gitignore, files listed here will remain visible on GitHub.
+
+# Exclude media directory used for README and documentation
+media/
+
+# Exclude AI agent rules
+AGENTS.md
+
+# Exclude GitHub configuration and templates
+.github/
+
+# Exclude IDE and build-related files
+.idea/
+.vscode/
+build/
+.dart_tool/
+
+# Exclude package-specific temporary/artifact files
+.artifacts/
+*.null
+coverage/
+
+# Exclude metadata files
+.metadata

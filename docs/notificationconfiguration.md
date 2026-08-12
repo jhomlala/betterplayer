@@ -2,10 +2,10 @@
 <table>
   <tr>
     <td>
-	    <img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/feature/player_notifications/media/android_notification.png">
+	    <img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/android_notification.png">
     </td>
     <td>
-       <img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/feature/player_notifications/media/ios_notification.png">
+       <img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/ios_notification.png">
     </td>
     <td>
   </tr>
