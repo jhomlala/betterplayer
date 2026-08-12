@@ -23,4 +23,3 @@ Advanced video player for Flutter with HLS, DASH and caching support.
   s.platform = :ios, '11.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
 end
-
