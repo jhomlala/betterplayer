@@ -3,6 +3,7 @@
 * Added: `.pubignore` to exclude `media/` and `AGENTS.md` from the published package.
 * Updated: Documentation and README links to point to the new media location on GitHub.
 * Updated: `README.md` to remove outdated migration information.
+* Fixed: `prefer_if_elements_to_conditional_expressions` lint warnings in Material controls.
 
 ## 0.2.0
 * [BREAKING_CHANGE] Updated: iOS to Swift Package Manager (SPM). Native source files moved from `ios/Classes` to `ios/better_player/Sources`.

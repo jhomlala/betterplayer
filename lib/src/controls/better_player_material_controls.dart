@@ -299,10 +299,10 @@ class _BetterPlayerMaterialControlsState
                     const SizedBox(),
                   if (_betterPlayerController!.isLiveStream())
                     _buildLiveWidget()
+                  else if (_controlsConfiguration.enableProgressText)
+                    Expanded(child: _buildPosition())
                   else
-                    _controlsConfiguration.enableProgressText
-                        ? Expanded(child: _buildPosition())
-                        : const SizedBox(),
+                    const SizedBox(),
                   const Spacer(),
                   if (_controlsConfiguration.enableMute)
                     _buildMuteButton(_controller)
@@ -317,10 +317,10 @@ class _BetterPlayerMaterialControlsState
             ),
             if (_betterPlayerController!.isLiveStream())
               const SizedBox()
+            else if (_controlsConfiguration.enableProgressBar)
+              _buildProgressBar()
             else
-              _controlsConfiguration.enableProgressBar
-                  ? _buildProgressBar()
-                  : const SizedBox(),
+              const SizedBox(),
           ],
         ),
       ),
