@@ -5,6 +5,9 @@
 # Exclude media directory used for README and documentation
 media/
 
+# Exclude AI agent rules
+AGENTS.md
+
 # Exclude GitHub configuration and templates
 .github/
 
