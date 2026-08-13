@@ -4,6 +4,7 @@
 * [BREAKING_CHANGE] Migrated Material and Cupertino UI systems to standalone `material_ui` and `cupertino_ui` packages.
 * Updated `compileSdkVersion` to 36 in Android.
 * Updated Kotlin version to 2.3.20 in the example app.
+* Updated Android Gradle Plugin version to 9.0.1 in the example app.
 
 ## 0.2.1
 * Added: `.pubignore` to exclude `media/` and `AGENTS.md` from the published package.
