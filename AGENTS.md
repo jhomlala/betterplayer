@@ -54,3 +54,10 @@
   5. Add a descriptive entry in `CHANGELOG.md`, marking `[BREAKING_CHANGE]` where applicable.
   6. Run `flutter pub get` in both the root directory and the `example` directory to ensure `pubspec.lock` files are updated.
   7. Run `dart format .` and `flutter analyze .` to verify project health.
+
+## Releasing the Plugin
+- Before final publishing, ALWAYS:
+  1. Ensure you are on the `master` branch and have pulled the latest changes from `origin/master`.
+  2. Verify that the version has been correctly bumped in all required locations (see Version Update Workflow).
+  3. Ensure a Git tag corresponding to the new version has been created and pushed (e.g., `git tag v0.4.0` and `git push origin v0.4.0`).
+  4. Perform the final release by calling `flutter pub publish`.
