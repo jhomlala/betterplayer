@@ -3,6 +3,7 @@
 * [BREAKING_CHANGE] Migrated to Flutter 3.47.0.
 * [BREAKING_CHANGE] Migrated Material and Cupertino UI systems to standalone `material_ui` and `cupertino_ui` packages.
 * Updated `compileSdkVersion` to 36 in Android.
+* Updated Kotlin version to 2.3.20 in the example app.
 
 * Fixed: Unreliable video and image URLs in the example app, especially on the Playlist page. Replaced them with stable ones from Google GTV bucket and Lorem Picsum.
 
