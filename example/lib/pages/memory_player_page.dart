@@ -32,17 +32,17 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
     final file = File(filePath);
 
     final List<int> bytes = file.readAsBytesSync().buffer.asUint8List();
-    final dataSource =
-        BetterPlayerDataSource.memory(bytes, videoExtension: 'mp4');
+    final dataSource = BetterPlayerDataSource.memory(
+      bytes,
+      videoExtension: 'mp4',
+    );
     _betterPlayerController.setupDataSource(dataSource);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Memory player'),
-      ),
+      appBar: AppBar(title: const Text('Memory player')),
       body: Column(
         children: [
           const SizedBox(height: 8),

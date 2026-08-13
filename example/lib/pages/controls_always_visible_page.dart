@@ -35,9 +35,7 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Controls always visible'),
-      ),
+      appBar: AppBar(title: const Text('Controls always visible')),
       body: Column(
         children: [
           const SizedBox(height: 8),

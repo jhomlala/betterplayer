@@ -30,9 +30,7 @@ class _RotationAndFitPageState extends State<RotationAndFitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Rotation and fit'),
-      ),
+      appBar: AppBar(title: const Text('Rotation and fit')),
       body: Column(
         children: [
           const SizedBox(height: 8),

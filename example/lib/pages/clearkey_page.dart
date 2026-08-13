@@ -25,12 +25,15 @@ class _ClearKeyState extends State<ClearKeyPage> {
       fit: BoxFit.contain,
     );
     _clearKeyControllerFile = BetterPlayerController(betterPlayerConfiguration);
-    _clearKeyControllerBroken =
-        BetterPlayerController(betterPlayerConfiguration);
-    _clearKeyControllerNetwork =
-        BetterPlayerController(betterPlayerConfiguration);
-    _clearKeyControllerMemory =
-        BetterPlayerController(betterPlayerConfiguration);
+    _clearKeyControllerBroken = BetterPlayerController(
+      betterPlayerConfiguration,
+    );
+    _clearKeyControllerNetwork = BetterPlayerController(
+      betterPlayerConfiguration,
+    );
+    _clearKeyControllerMemory = BetterPlayerController(
+      betterPlayerConfiguration,
+    );
 
     _setupDataSources();
 
@@ -89,8 +92,9 @@ class _ClearKeyState extends State<ClearKeyPage> {
     final clearKeyDataSourceMemory = BetterPlayerDataSource(
       BetterPlayerDataSourceType.memory,
       '',
-      bytes: File(await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl))
-          .readAsBytesSync(),
+      bytes: File(
+        await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
+      ).readAsBytesSync(),
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.clearKey,
         clearKey: BetterPlayerClearKeyUtils.generateKey({
@@ -108,9 +112,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ClearKey DRM'),
-      ),
+      appBar: AppBar(title: const Text('ClearKey DRM')),
       body: SingleChildScrollView(
         child: Column(
           children: [

@@ -30,9 +30,7 @@ class _DashPageState extends State<DashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dash page'),
-      ),
+      appBar: AppBar(title: const Text('Dash page')),
       body: Column(
         children: [
           const SizedBox(height: 8),
