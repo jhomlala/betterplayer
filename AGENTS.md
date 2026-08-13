@@ -38,6 +38,11 @@
 - **Plugin-First Principle**: When working on new features or refactoring existing code, prioritize a **plugin-based architecture**. The goal is to keep the core library lean and extend functionality via plugins rather than purely working within the core.
 - **Proactive Refactoring**: This is a legacy plugin that requires significant effort to align its architecture with modern best practices (e.g., modularization, separation of concerns). Be proactive when refactoring; don't just fix the immediate issue if you see an opportunity to improve the underlying structure and ensure it follows current Android, iOS, and Flutter standards.
 
+## Troubleshooting & Common Fixes
+- **GTV Sample Videos (HTTP 403)**: If GTV sample videos from `storage.googleapis.com` fail with an HTTP 403 Forbidden error (especially on Android), revert to the legacy `commondatastorage.googleapis.com` domain. This endpoint is generally more permissive for public sample assets.
+- **HLS Subtitles**: For HLS streams with WebVTT subtitles, prefer using Apple's Advanced fMP4 Bip-Bop test stream (`https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8`) as it is a reliable reference with correctly declared tracks.
+- **External Subtitles (SRT/VTT)**: When testing external subtitles with MP4 files, ensure the `.srt` or `.vtt` file timings and content correctly match the video source to provide a valid demonstration.
+
 ## Changelog Guidelines
 - **Labels**: Mark critical or API-breaking changes with the `[BREAKING_CHANGE]` label at the start of the line.
 - **Sections**: Use the following verbs to start entries:
@@ -47,7 +52,8 @@
 - **Attribution**: If the work was done by a contributor, append `(by @username)` or `(by Name)` to the end of the entry.
 
 ## Version Update Workflow
-- When preparing a new release, ALWAYS:
+- **Explicit Instruction Only**: NEVER invent, guess, or bump versions (e.g., in `pubspec.yaml`, `podspec`, or `CHANGELOG.md`) without an explicit instruction from the user. All new entries in `CHANGELOG.md` should be placed under a `## Unreleased` header by default.
+- When preparing a new release (ONLY when explicitly asked), ALWAYS:
   1. Update the `version` in `pubspec.yaml`.
   2. Update `s.version` in `ios/better_player.podspec` to match.
   3. Update `docs/install.md` with the new version snippet and any relevant Android/iOS requirement changes.
