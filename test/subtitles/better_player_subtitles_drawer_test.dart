@@ -1,10 +1,11 @@
 import 'dart:async';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../helpers/better_player_test_utils.dart';
 import '../helpers/mock_video_player_controller.dart';

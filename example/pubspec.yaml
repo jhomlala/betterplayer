@@ -4,12 +4,15 @@ publish_to: 'none'
 version: 1.0.0+1
 environment:
   sdk: '>=3.4.1 <4.0.0'
+  flutter: '>=3.47.0'
 
 dependencies:
   better_player:
     path: ../
   flutter:
     sdk: flutter
+  material_ui: ^1.0.0
+  cupertino_ui: ^1.0.0
   flutter_localizations:
     sdk: flutter
   path_provider: ^2.1.3

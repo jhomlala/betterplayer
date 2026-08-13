@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 ///Helper class for GestureDetector used within Better Player. Used to pass
 ///gestures to upper GestureDetectors.

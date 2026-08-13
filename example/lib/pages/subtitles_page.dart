@@ -1,7 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:example/constants.dart';
 import 'package:example/utils.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SubtitlesPage extends StatefulWidget {
   const SubtitlesPage({super.key});
@@ -39,7 +39,7 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
   Future<void> _setupDataSource() async {
     final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.forBiggerBlazesUrl,
+      Constants.bugBuckBunnyVideoUrl,
       subtitles: BetterPlayerSubtitlesSource.single(
         type: BetterPlayerSubtitlesSourceType.file,
         url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),

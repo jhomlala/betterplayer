@@ -1,8 +1,8 @@
 import 'package:better_player/better_player.dart';
 import 'package:example/constants.dart';
 import 'package:example/utils.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});

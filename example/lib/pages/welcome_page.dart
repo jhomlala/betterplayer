@@ -29,8 +29,8 @@ import 'package:example/pages/reusable_video_list/reusable_video_list_page.dart'
 import 'package:example/pages/rotation_and_fit_page.dart';
 import 'package:example/pages/subtitles_page.dart';
 import 'package:example/pages/video_list/video_list_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 
 class WelcomePage extends StatefulWidget {

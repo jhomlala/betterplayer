@@ -1,7 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:example/constants.dart';
 import 'package:example/pages/custom_controls/custom_controls_widget.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ChangePlayerThemePage extends StatefulWidget {
   const ChangePlayerThemePage({super.key});

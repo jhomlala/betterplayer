@@ -1,10 +1,9 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
-import 'package:better_player/src/controls/better_player_material_controls.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_mock_controller.dart';

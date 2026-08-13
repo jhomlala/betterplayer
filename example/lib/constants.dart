@@ -9,34 +9,33 @@ class Constants {
       'https://github.com/tinusneethling/betterplayer/raw/ClearKeySupport/example/assets/testvideo_encrypt.mp4';
   static const String fileExampleSubtitlesUrl = 'example_subtitles.srt';
   static const String hlsTestStreamUrl =
-      'https://mtoczko.github.io/hls-test-streams/test-group/playlist.m3u8';
+      'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
   static const String hlsPlaylistUrl =
-      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
+      'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8';
   static const Map<String, String> exampleResolutionsUrls = {
     'LOW':
-        'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4',
+        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
     'MEDIUM':
-        'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4',
+        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
     'LARGE':
-        'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4',
+        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     'EXTRA_LARGE':
-        'https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4',
+        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
   };
   static const String phantomVideoUrl =
-      'http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8';
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
   static const String elephantDreamVideoUrl =
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4';
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4';
   static const String forBiggerJoyridesVideoUrl =
-      'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4';
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4';
   static const String verticalVideoUrl =
-      'http://www.exit109.com/~dnn/clips/RW20seconds_1.mp4';
+      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4';
   static String logo = 'logo.png';
-  static String placeholderUrl =
-      'https://imgix.bustle.com/uploads/image/2020/8/5/23905b9c-6b8c-47fa-bc0f-434de1d7e9bf-avengers-5.jpg';
+  static String placeholderUrl = 'https://picsum.photos/id/10/1000/1000';
   static String elephantDreamStreamUrl =
-      'http://cdn.theoplayer.com/video/elephants-dream/playlist.m3u8';
+      'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8';
   static String tokenEncodedHlsUrl =
-      'https://amssamples.streaming.mediaservices.windows.net/830584f8-f0c8-4e41-968b-6538b9380aa5/TearsOfSteelTeaser.ism/manifest(format=m3u8-aapl)';
+      'https://demo.unified-streaming.com/k8s/features/stable/video/tears-of-steel/tears-of-steel.ism/.m3u8';
   static String tokenEncodedHlsToken =
       'Bearer=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cm46bWljcm9zb2Z0OmF6dXJlOm1lZGlhc2VydmljZXM6Y29udGVudGtleWlkZW50aWZpZXIiOiI5ZGRhMGJjYy01NmZiLTQxNDMtOWQzMi0zYWI5Y2M2ZWE4MGIiLCJpc3MiOiJodHRwOi8vdGVzdGFjcy5jb20vIiwiYXVkIjoidXJuOnRlc3QiLCJleHAiOjE3MTA4MDczODl9.lJXm5hmkp5ArRIAHqVJGefW2bcTzd91iZphoKDwa6w8';
   static String widevineVideoUrl =
@@ -48,10 +47,9 @@ class Constants {
   static String fairplayCertificateUrl =
       'https://github.com/koldo92/betterplayer/raw/fairplay_ezdrm/example/assets/eleisure.cer';
   static String fairplayLicenseUrl = 'https://fps.ezdrm.com/api/licenses/';
-  static String catImageUrl =
-      'https://img.webmd.com/dtmcms/live/webmd/consumer_assets/site_images/article_thumbnails/other/cat_relaxing_on_patio_other/1800x1200_cat_relaxing_on_patio_other.jpg';
+  static String catImageUrl = 'https://picsum.photos/id/237/1000/1000';
   static String dashStreamUrl =
-      'https://bitmovin-a.akamaihd.net/content/sintel/sintel.mpd';
+      'https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd';
   static String segmentedSubtitlesHlsUrl =
       'https://eng-demo.cablecast.tv/segmented-captions/vod.m3u8';
 }

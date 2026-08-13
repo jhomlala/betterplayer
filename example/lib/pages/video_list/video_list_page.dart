@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:example/constants.dart';
 import 'package:example/model/video_list_data.dart';
 import 'package:example/pages/video_list/video_list_widget.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class VideoListPage extends StatefulWidget {
   const VideoListPage({super.key});
