@@ -6,7 +6,7 @@ class Constants {
   static const String fileTestVideoUrl = 'testvideo.mp4';
   static const String fileTestVideoEncryptUrl = 'testvideo_encrypt.mp4';
   static const String networkTestVideoEncryptUrl =
-      'https://github.com/tinusneethling/betterplayer/raw/ClearKeySupport/example/assets/testvideo_encrypt.mp4';
+      'https://github.com/jhomlala/betterplayer/raw/master/example/assets/testvideo_encrypt.mp4';
   static const String fileExampleSubtitlesUrl = 'example_subtitles.srt';
   static const String hlsTestStreamUrl =
       'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
@@ -45,7 +45,7 @@ class Constants {
   static String fairplayHlsUrl =
       'https://fps.ezdrm.com/demo/hls/BigBuckBunny_320x180.m3u8';
   static String fairplayCertificateUrl =
-      'https://github.com/koldo92/betterplayer/raw/fairplay_ezdrm/example/assets/eleisure.cer';
+      'https://github.com/jhomlala/betterplayer/raw/master/example/assets/eleisure.cer';
   static String fairplayLicenseUrl = 'https://fps.ezdrm.com/api/licenses/';
   static String catImageUrl = 'https://picsum.photos/id/237/1000/1000';
   static String dashStreamUrl =

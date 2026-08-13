@@ -1,6 +1,10 @@
 ## Unreleased
+
+## 0.4.1
 * Fixed: Unreliable video and image URLs in the example app, especially on the Playlist page. Replaced them with stable ones from Google GTV bucket and Lorem Picsum.
 * Fixed: Localization issue by using standard MaterialApp and combining delegates from flutter_localizations and material_ui.
+* Updated: Example pages to use stable constants for video URLs and resolutions.
+* Updated: External subtitles in the example app to match the video content.
 
 ## 0.4.0
 * [BREAKING_CHANGE] Added: Support for Built-in Kotlin.

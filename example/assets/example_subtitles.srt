@@ -1,11 +1,11 @@
 1
 00:00:00.000 --> 00:00:02.000
-Welcome to Better Player
+Welcome to Big Buck Bunny!
 
 2
 00:00:02.000 --> 00:00:06.000
-Hope you enjoy features in your new video player.
+This is an example of external subtitles.
 
 3
 00:00:06.000 --> 00:00:10.000
-Have fun!
+Enjoy the video!
