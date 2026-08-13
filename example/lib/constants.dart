@@ -25,7 +25,7 @@ class Constants {
   static const String phantomVideoUrl =
       'https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4';
   static const String elephantDreamVideoUrl =
-      'https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4';
+      'https://media.xiph.org/video/derf/ElephantsDream/ElephantsDream.mp4';
   static const String forBiggerJoyridesVideoUrl =
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4';
   static const String verticalVideoUrl =
