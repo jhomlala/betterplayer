@@ -45,9 +45,7 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('HLS subtitles'),
-      ),
+      appBar: AppBar(title: const Text('HLS subtitles')),
       body: SingleChildScrollView(
         child: Column(
           children: [

@@ -57,9 +57,7 @@ class _VideoListPageState extends State<VideoListPage> {
                 itemCount: dataList.length,
                 itemBuilder: (context, index) {
                   final videoListData = dataList[index];
-                  return VideoListWidget(
-                    videoListData: videoListData,
-                  );
+                  return VideoListWidget(videoListData: videoListData);
                 },
               ),
             ),

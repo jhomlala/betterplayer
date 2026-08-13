@@ -30,9 +30,7 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Controller controls'),
-      ),
+      appBar: AppBar(title: const Text('Controller controls')),
       body: Column(
         children: [
           const SizedBox(height: 8),

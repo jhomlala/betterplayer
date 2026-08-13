@@ -30,9 +30,7 @@ class _HlsAudioPageState extends State<HlsAudioPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('HLS Audio'),
-      ),
+      appBar: AppBar(title: const Text('HLS Audio')),
       body: Column(
         children: [
           const SizedBox(height: 8),

@@ -47,9 +47,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Controls configuration'),
-      ),
+      appBar: AppBar(title: const Text('Controls configuration')),
       body: Column(
         children: [
           const SizedBox(height: 8),

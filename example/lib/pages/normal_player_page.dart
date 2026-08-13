@@ -38,9 +38,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Normal player page'),
-      ),
+      appBar: AppBar(title: const Text('Normal player page')),
       body: Column(
         children: [
           const SizedBox(height: 8),

@@ -66,9 +66,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Placeholder until play'),
-      ),
+      appBar: AppBar(title: const Text('Placeholder until play')),
       body: Column(
         children: [
           const SizedBox(height: 8),
@@ -81,9 +79,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
           ),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: BetterPlayer(
-              controller: _betterPlayerController,
-            ),
+            child: BetterPlayer(controller: _betterPlayerController),
           ),
         ],
       ),

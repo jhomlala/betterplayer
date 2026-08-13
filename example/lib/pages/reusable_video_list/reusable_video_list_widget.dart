@@ -26,7 +26,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
   VideoListData? get videoListData => widget.videoListData;
   BetterPlayerController? controller;
   StreamController<BetterPlayerController?>
-      betterPlayerControllerStreamController = StreamController.broadcast();
+  betterPlayerControllerStreamController = StreamController.broadcast();
   bool _initialized = false;
   Timer? _timer;
 
@@ -48,8 +48,9 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
         controller!.setupDataSource(
           BetterPlayerDataSource.network(
             videoListData!.videoUrl,
-            cacheConfiguration:
-                const BetterPlayerCacheConfiguration(useCache: true),
+            cacheConfiguration: const BetterPlayerCacheConfiguration(
+              useCache: true,
+            ),
           ),
         );
         if (!betterPlayerControllerStreamController.isClosed) {
@@ -135,15 +136,14 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                 return AspectRatio(
                   aspectRatio: 16 / 9,
                   child: controller != null
-                      ? BetterPlayer(
-                          controller: controller!,
-                        )
+                      ? BetterPlayer(controller: controller!)
                       : const ColoredBox(
                           color: Colors.black,
                           child: Center(
                             child: CircularProgressIndicator(
-                              valueColor:
-                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -154,12 +154,13 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
           const Padding(
             padding: EdgeInsets.all(8),
             child: Text(
-                "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
-                'town. Plainspoken sheriff Roy Scheider, hippie shark '
-                'researcher Richard Dreyfuss, and a squirrely boat captain '
-                'set out to find the beast, but will they escape with their '
-                "lives? 70's special effects, legendary score, and trademark "
-                'humor set this classic apart.'),
+              "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
+              'town. Plainspoken sheriff Roy Scheider, hippie shark '
+              'researcher Richard Dreyfuss, and a squirrely boat captain '
+              'set out to find the beast, but will they escape with their '
+              "lives? 70's special effects, legendary score, and trademark "
+              'humor set this classic apart.',
+            ),
           ),
           Center(
             child: Wrap(

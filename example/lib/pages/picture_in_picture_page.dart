@@ -32,9 +32,7 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Picture in Picture player'),
-      ),
+      appBar: AppBar(title: const Text('Picture in Picture player')),
       body: Column(
         children: [
           const SizedBox(height: 8),
