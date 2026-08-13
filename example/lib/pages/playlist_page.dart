@@ -37,7 +37,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _dataSourceList.add(
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
-        Constants.forBiggerBlazesUrl,
+        Constants.bugBuckBunnyVideoUrl,
         subtitles: BetterPlayerSubtitlesSource.single(
           type: BetterPlayerSubtitlesSourceType.file,
           url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
@@ -49,7 +49,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
     _dataSourceList.add(
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
-        Constants.bugBuckBunnyVideoUrl,
+        Constants.forBiggerBlazesUrl,
         placeholder: Image.network(Constants.catImageUrl, fit: BoxFit.cover),
       ),
     );

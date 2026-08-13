@@ -1,5 +1,5 @@
 ## Unreleased
-* Fixed: Unreliable video and image URLs in the example app with stable CDNs and Google GTV samples.
+* Fixed: Updated example video and image URLs with stable sources.
 * Fixed: Localization issue by using standard MaterialApp and combining delegates from flutter_localizations and material_ui.
 * Updated: External subtitles in the example app to match the video content.
 
