@@ -1,8 +1,8 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
-import 'package:better_player/src/video_player/video_player.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../helpers/better_player_mock_controller.dart';
 import '../helpers/better_player_test_utils.dart';
 import '../helpers/mock_method_channel.dart';

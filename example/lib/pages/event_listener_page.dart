@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:example/constants.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class EventListenerPage extends StatefulWidget {
   const EventListenerPage({super.key});

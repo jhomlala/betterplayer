@@ -1,5 +1,5 @@
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 ///Widget which is used to inherit BetterPlayerController through widget tree.
 class BetterPlayerControllerProvider extends InheritedWidget {

@@ -1,6 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:example/model/video_list_data.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class VideoListWidget extends StatefulWidget {
   const VideoListWidget({super.key, this.videoListData});

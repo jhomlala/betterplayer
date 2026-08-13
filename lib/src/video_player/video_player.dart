@@ -5,13 +5,11 @@
 // Dart imports:
 import 'dart:async';
 import 'dart:io';
-import 'package:better_player/better_player.dart' show VideoPlayerValue;
+
 import 'package:better_player/src/configuration/better_player_buffering_configuration.dart';
-import 'package:better_player/src/video_player/video_player.dart'
-    show VideoPlayerController, VideoPlayerValue;
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
 // This will clear all open videos on the platform when a full restart is

@@ -14,6 +14,14 @@ analyzer:
     undefined_lint: ignore
     strict_raw_type: ignore
     inference_failure_on_function_return_type: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   rules:

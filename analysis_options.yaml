@@ -11,6 +11,14 @@ analyzer:
     unreachable_switch_default: ignore
     unused_import: ignore
     deprecated_member_use: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   rules:
