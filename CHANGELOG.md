@@ -1,6 +1,4 @@
 ## Unreleased
-
-## 0.4.1
 * Fixed: Unreliable video and image URLs in the example app, especially on the Playlist page. Replaced them with stable ones from Google GTV bucket and Lorem Picsum.
 * Fixed: 403 Forbidden error on some Android devices by using `commondatastorage.googleapis.com` for GTV samples.
 * Fixed: Localization issue by using standard MaterialApp and combining delegates from flutter_localizations and material_ui.
