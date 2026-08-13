@@ -13,8 +13,9 @@ void main() {
   });
 
   group('BetterPlayerWithControls tests', () {
-    testWidgets('Renders properly with controller',
-        (WidgetTester tester) async {
+    testWidgets('Renders properly with controller', (
+      WidgetTester tester,
+    ) async {
       final mockVideoPlayerController =
           BetterPlayerTestUtils.setupMockVideoPlayerControler();
       final controller = BetterPlayerMockController(
@@ -41,8 +42,9 @@ void main() {
       expect(find.byType(BetterPlayerWithControls), findsOneWidget);
     });
 
-    testWidgets('Renders placeholder when provided',
-        (WidgetTester tester) async {
+    testWidgets('Renders placeholder when provided', (
+      WidgetTester tester,
+    ) async {
       final mockVideoPlayerController =
           BetterPlayerTestUtils.setupMockVideoPlayerControler();
       final placeholder = Container(key: const Key('placeholder'));

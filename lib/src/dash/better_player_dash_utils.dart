@@ -52,10 +52,12 @@ class BetterPlayerDashUtils {
       final id = representation.getAttribute('id');
       final width = int.parse(representation.getAttribute('width') ?? '0');
       final height = int.parse(representation.getAttribute('height') ?? '0');
-      final bitrate =
-          int.parse(representation.getAttribute('bandwidth') ?? '0');
-      final frameRate =
-          int.parse(representation.getAttribute('frameRate') ?? '0');
+      final bitrate = int.parse(
+        representation.getAttribute('bandwidth') ?? '0',
+      );
+      final frameRate = int.parse(
+        representation.getAttribute('frameRate') ?? '0',
+      );
       final codecs = representation.getAttribute('codecs');
       final mimeType = MimeTypes.getMediaMimeType(codecs ?? '');
       tracks.add(

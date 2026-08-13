@@ -40,22 +40,21 @@ class Format {
     int selectionFlags = Util.selectionFlagDefault,
     int? roleFlags,
     bool? isDefault,
-  }) =>
-      Format(
-        id: id,
-        label: label,
-        selectionFlags: selectionFlags,
-        bitrate: bitrate,
-        averageBitrate: averageBitrate,
-        codecs: codecs,
-        containerMimeType: containerMimeType,
-        sampleMimeType: sampleMimeType,
-        width: width,
-        height: height,
-        frameRate: frameRate,
-        roleFlags: roleFlags,
-        isDefault: isDefault,
-      );
+  }) => Format(
+    id: id,
+    label: label,
+    selectionFlags: selectionFlags,
+    bitrate: bitrate,
+    averageBitrate: averageBitrate,
+    codecs: codecs,
+    containerMimeType: containerMimeType,
+    sampleMimeType: sampleMimeType,
+    width: width,
+    height: height,
+    frameRate: frameRate,
+    roleFlags: roleFlags,
+    isDefault: isDefault,
+  );
 
   /// An identifier for the format, or null if unknown or not applicable.
   final String? id;
@@ -119,23 +118,23 @@ class Format {
   final bool? isDefault;
 
   Format copyWithMetadata(Metadata metadata) => Format(
-        id: id,
-        label: label,
-        selectionFlags: selectionFlags,
-        roleFlags: roleFlags,
-        bitrate: bitrate,
-        averageBitrate: averageBitrate,
-        codecs: codecs,
-        metadata: metadata,
-        containerMimeType: containerMimeType,
-        sampleMimeType: sampleMimeType,
-        drmInitData: drmInitData,
-        subsampleOffsetUs: subsampleOffsetUs,
-        width: width,
-        height: height,
-        frameRate: frameRate,
-        channelCount: channelCount,
-        language: language,
-        accessibilityChannel: accessibilityChannel,
-      );
+    id: id,
+    label: label,
+    selectionFlags: selectionFlags,
+    roleFlags: roleFlags,
+    bitrate: bitrate,
+    averageBitrate: averageBitrate,
+    codecs: codecs,
+    metadata: metadata,
+    containerMimeType: containerMimeType,
+    sampleMimeType: sampleMimeType,
+    drmInitData: drmInitData,
+    subsampleOffsetUs: subsampleOffsetUs,
+    width: width,
+    height: height,
+    frameRate: frameRate,
+    channelCount: channelCount,
+    language: language,
+    accessibilityChannel: accessibilityChannel,
+  );
 }

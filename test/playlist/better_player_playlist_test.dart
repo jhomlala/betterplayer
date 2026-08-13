@@ -12,9 +12,9 @@ void main() {
     () => {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
-        mockMethodChannel.channel,
-        mockMethodChannel.handle,
-      ),
+            mockMethodChannel.channel,
+            mockMethodChannel.handle,
+          ),
     },
   );
 
@@ -50,8 +50,8 @@ void main() {
         dataSourceList,
         betterPlayerPlaylistConfiguration:
             const BetterPlayerPlaylistConfiguration(
-          nextVideoDelay: Duration.zero,
-        ),
+              nextVideoDelay: Duration.zero,
+            ),
       );
 
       // Manually trigger video finished event
@@ -73,8 +73,8 @@ void main() {
         dataSourceList,
         betterPlayerPlaylistConfiguration:
             const BetterPlayerPlaylistConfiguration(
-          nextVideoDelay: Duration.zero,
-        ),
+              nextVideoDelay: Duration.zero,
+            ),
       );
 
       playlistController.betterPlayerController!.postEvent(
@@ -93,8 +93,9 @@ void main() {
       playlistController.dispose();
     });
 
-    testWidgets('BetterPlayerPlaylist widget initialization',
-        (WidgetTester tester) async {
+    testWidgets('BetterPlayerPlaylist widget initialization', (
+      WidgetTester tester,
+    ) async {
       final dataSourceList = [
         BetterPlayerDataSource.network('https://example.com/1.mp4'),
       ];

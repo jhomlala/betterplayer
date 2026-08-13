@@ -17,16 +17,17 @@ void main() {
     () => {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
-        mockMethodChannel.channel,
-        mockMethodChannel.handle,
-      ),
+            mockMethodChannel.channel,
+            mockMethodChannel.handle,
+          ),
     },
   );
 
   group('BetterPlayerListVideoPlayer tests', () {
     testWidgets('Initialization works', (WidgetTester tester) async {
-      final dataSource =
-          BetterPlayerDataSource.network('https://example.com/video.mp4');
+      final dataSource = BetterPlayerDataSource.network(
+        'https://example.com/video.mp4',
+      );
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -40,8 +41,9 @@ void main() {
     });
 
     testWidgets('Controller works correctly', (WidgetTester tester) async {
-      final dataSource =
-          BetterPlayerDataSource.network('https://example.com/video.mp4');
+      final dataSource = BetterPlayerDataSource.network(
+        'https://example.com/video.mp4',
+      );
       final listController = BetterPlayerListVideoPlayerController();
       await tester.pumpWidget(
         MaterialApp(

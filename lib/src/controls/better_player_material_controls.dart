@@ -578,8 +578,9 @@ class _BetterPlayerMaterialControlsState
   }
 
   Widget _buildPosition() {
-    final position =
-        _latestValue != null ? _latestValue!.position : Duration.zero;
+    final position = _latestValue != null
+        ? _latestValue!.position
+        : Duration.zero;
     final duration = _latestValue != null && _latestValue!.duration != null
         ? _latestValue!.duration!
         : Duration.zero;
@@ -636,22 +637,25 @@ class _BetterPlayerMaterialControlsState
       });
     }
 
-    _controlsVisibilityStreamSubscription =
-        _betterPlayerController!.controlsVisibilityStream.listen((state) {
-      changePlayerControlsNotVisible(!state);
-      if (!controlsNotVisible) {
-        cancelAndRestartTimer();
-      }
-    });
+    _controlsVisibilityStreamSubscription = _betterPlayerController!
+        .controlsVisibilityStream
+        .listen((state) {
+          changePlayerControlsNotVisible(!state);
+          if (!controlsNotVisible) {
+            cancelAndRestartTimer();
+          }
+        });
   }
 
   void _onExpandCollapse() {
     changePlayerControlsNotVisible(true);
     _betterPlayerController!.toggleFullScreen();
-    _showAfterExpandCollapseTimer =
-        Timer(_controlsConfiguration.controlsHideTime, () {
-      setState(cancelAndRestartTimer);
-    });
+    _showAfterExpandCollapseTimer = Timer(
+      _controlsConfiguration.controlsHideTime,
+      () {
+        setState(cancelAndRestartTimer);
+      },
+    );
   }
 
   void _onPlayPause() {
@@ -748,8 +752,9 @@ class _BetterPlayerMaterialControlsState
     }
 
     return CircularProgressIndicator(
-      valueColor:
-          AlwaysStoppedAnimation<Color>(_controlsConfiguration.loadingColor),
+      valueColor: AlwaysStoppedAnimation<Color>(
+        _controlsConfiguration.loadingColor,
+      ),
     );
   }
 }

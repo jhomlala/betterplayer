@@ -11,8 +11,9 @@ void main() {
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
 
-  testWidgets('Better Player simple player - network',
-      (WidgetTester tester) async {
+  testWidgets('Better Player simple player - network', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       _wrapWidget(
         BetterPlayer.network(BetterPlayerTestUtils.bugBuckBunnyVideoUrl),
@@ -24,8 +25,9 @@ void main() {
     );
   });
 
-  testWidgets('Better Player simple player - file',
-      (WidgetTester tester) async {
+  testWidgets('Better Player simple player - file', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       _wrapWidget(
         BetterPlayer.file(BetterPlayerTestUtils.bugBuckBunnyVideoUrl),
@@ -38,8 +40,9 @@ void main() {
   });
 
   testWidgets('BetterPlayer - with controller', (WidgetTester tester) async {
-    final betterPlayerController =
-        BetterPlayerMockController(const BetterPlayerConfiguration());
+    final betterPlayerController = BetterPlayerMockController(
+      const BetterPlayerConfiguration(),
+    );
     await tester.pumpWidget(
       _wrapWidget(
         BetterPlayer(

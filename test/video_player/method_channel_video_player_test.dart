@@ -13,13 +13,15 @@ void main() {
     setUp(() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
-              const MethodChannel('better_player_channel'), (methodCall) async {
-        log.add(methodCall);
-        if (methodCall.method == 'create') {
-          return {'textureId': 1};
-        }
-        return null;
-      });
+            const MethodChannel('better_player_channel'),
+            (methodCall) async {
+              log.add(methodCall);
+              if (methodCall.method == 'create') {
+                return {'textureId': 1};
+              }
+              return null;
+            },
+          );
       log.clear();
     });
 
@@ -93,12 +95,14 @@ void main() {
     test('getPosition calls getPosition', () async {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
-              const MethodChannel('better_player_channel'), (methodCall) async {
-        if (methodCall.method == 'position') {
-          return 5000;
-        }
-        return null;
-      });
+            const MethodChannel('better_player_channel'),
+            (methodCall) async {
+              if (methodCall.method == 'position') {
+                return 5000;
+              }
+              return null;
+            },
+          );
       final pos = await player.getPosition(1);
       expect(pos.inSeconds, 5);
     });

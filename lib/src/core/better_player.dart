@@ -16,26 +16,28 @@ class BetterPlayer extends StatefulWidget {
   factory BetterPlayer.network(
     String url, {
     BetterPlayerConfiguration? betterPlayerConfiguration,
-  }) =>
-      BetterPlayer(
-        controller: BetterPlayerController(
-          betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
-          betterPlayerDataSource:
-              BetterPlayerDataSource(BetterPlayerDataSourceType.network, url),
-        ),
-      );
+  }) => BetterPlayer(
+    controller: BetterPlayerController(
+      betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
+      betterPlayerDataSource: BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network,
+        url,
+      ),
+    ),
+  );
 
   factory BetterPlayer.file(
     String url, {
     BetterPlayerConfiguration? betterPlayerConfiguration,
-  }) =>
-      BetterPlayer(
-        controller: BetterPlayerController(
-          betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
-          betterPlayerDataSource:
-              BetterPlayerDataSource(BetterPlayerDataSourceType.file, url),
-        ),
-      );
+  }) => BetterPlayer(
+    controller: BetterPlayerController(
+      betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
+      betterPlayerDataSource: BetterPlayerDataSource(
+        BetterPlayerDataSourceType.file,
+        url,
+      ),
+    ),
+  );
 
   final BetterPlayerController controller;
 
@@ -81,8 +83,8 @@ class _BetterPlayerState extends State<BetterPlayer>
   }
 
   Future<void> _setup() async {
-    _controllerEventSubscription =
-        widget.controller.controllerEventStream.listen(onControllerEvent);
+    _controllerEventSubscription = widget.controller.controllerEventStream
+        .listen(onControllerEvent);
 
     //Default locale
     var locale = const Locale('en', 'US');
@@ -117,8 +119,9 @@ class _BetterPlayerState extends State<BetterPlayer>
     WidgetsBinding.instance.removeObserver(this);
     _controllerEventSubscription?.cancel();
     widget.controller.dispose();
-    VisibilityDetectorController.instance
-        .forget(Key('${widget.controller.hashCode}_key'));
+    VisibilityDetectorController.instance.forget(
+      Key('${widget.controller.hashCode}_key'),
+    );
     super.dispose();
   }
 
@@ -126,8 +129,8 @@ class _BetterPlayerState extends State<BetterPlayer>
   void didUpdateWidget(BetterPlayer oldWidget) {
     if (oldWidget.controller != widget.controller) {
       _controllerEventSubscription?.cancel();
-      _controllerEventSubscription =
-          widget.controller.controllerEventStream.listen(onControllerEvent);
+      _controllerEventSubscription = widget.controller.controllerEventStream
+          .listen(onControllerEvent);
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -148,14 +151,16 @@ class _BetterPlayerState extends State<BetterPlayer>
     final controller = widget.controller;
     if (controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
-      controller
-          .postEvent(BetterPlayerEvent(BetterPlayerEventType.openFullscreen));
+      controller.postEvent(
+        BetterPlayerEvent(BetterPlayerEventType.openFullscreen),
+      );
       await _pushFullScreenWidget(context);
     } else if (_isFullScreen) {
       Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
-      controller
-          .postEvent(BetterPlayerEvent(BetterPlayerEventType.hideFullscreen));
+      controller.postEvent(
+        BetterPlayerEvent(BetterPlayerEventType.hideFullscreen),
+      );
     }
   }
 
@@ -251,7 +256,9 @@ class _BetterPlayerState extends State<BetterPlayer>
       await SystemChrome.setPreferredOrientations(deviceOrientations);
     } else {
       await SystemChrome.setPreferredOrientations(
-        widget.controller.betterPlayerConfiguration
+        widget
+            .controller
+            .betterPlayerConfiguration
             .deviceOrientationsOnFullScreen,
       );
     }
@@ -296,9 +303,10 @@ class _BetterPlayerState extends State<BetterPlayer>
 }
 
 ///Page route builder used in fullscreen mode.
-typedef BetterPlayerRoutePageBuilder = Widget Function(
-  BuildContext context,
-  Animation<double> animation,
-  Animation<double> secondaryAnimation,
-  BetterPlayerControllerProvider controllerProvider,
-);
+typedef BetterPlayerRoutePageBuilder =
+    Widget Function(
+      BuildContext context,
+      Animation<double> animation,
+      Animation<double> secondaryAnimation,
+      BetterPlayerControllerProvider controllerProvider,
+    );

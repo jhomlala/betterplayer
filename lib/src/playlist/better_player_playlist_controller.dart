@@ -30,9 +30,9 @@ class BetterPlayerPlaylistController {
     this.betterPlayerPlaylistConfiguration =
         const BetterPlayerPlaylistConfiguration(),
   }) : assert(
-          _betterPlayerDataSourceList.isNotEmpty,
-          "Better Player data source list can't be empty",
-        ) {
+         _betterPlayerDataSourceList.isNotEmpty,
+         "Better Player data source list can't be empty",
+       ) {
     _setup();
   }
 
@@ -51,12 +51,13 @@ class BetterPlayerPlaylistController {
     _currentDataSourceIndex = initialStartIndex;
     setupDataSource(_currentDataSourceIndex);
     _betterPlayerController!.addEventsListener(_handleEvent);
-    _nextVideoTimeStreamSubscription =
-        _betterPlayerController!.nextVideoTimeStream.listen((time) {
-      if (time != null && time == 0) {
-        _onVideoChange();
-      }
-    });
+    _nextVideoTimeStreamSubscription = _betterPlayerController!
+        .nextVideoTimeStream
+        .listen((time) {
+          if (time != null && time == 0) {
+            _onVideoChange();
+          }
+        });
   }
 
   /// Setup new data source list. Pauses currently played video and init new data
@@ -102,13 +103,15 @@ class BetterPlayerPlaylistController {
   ///in constructor. Index must
   void setupDataSource(int index) {
     assert(
-        index >= 0 && index < _betterPlayerDataSourceList.length,
-        'Index must be greater than 0 and less than size of data source '
-        'list - 1');
+      index >= 0 && index < _betterPlayerDataSourceList.length,
+      'Index must be greater than 0 and less than size of data source '
+      'list - 1',
+    );
     if (index <= _dataSourceLength) {
       _currentDataSourceIndex = index;
-      _betterPlayerController!
-          .setupDataSource(_betterPlayerDataSourceList[index]);
+      _betterPlayerController!.setupDataSource(
+        _betterPlayerDataSourceList[index],
+      );
     }
   }
 

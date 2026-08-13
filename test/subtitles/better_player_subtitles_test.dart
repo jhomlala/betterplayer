@@ -18,8 +18,9 @@ Better Player Subtitles
         type: BetterPlayerSubtitlesSourceType.memory,
         content: srtContent,
       );
-      final subtitles =
-          await BetterPlayerSubtitlesFactory.parseSubtitles(source);
+      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+        source,
+      );
 
       expect(subtitles.length, 2);
       expect(subtitles[0].start, const Duration(seconds: 1));
@@ -41,8 +42,9 @@ Better Player Subtitles VTT
         type: BetterPlayerSubtitlesSourceType.memory,
         content: vttContent,
       );
-      final subtitles =
-          await BetterPlayerSubtitlesFactory.parseSubtitles(source);
+      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+        source,
+      );
 
       expect(subtitles.length, 2);
       expect(subtitles[0].texts!.first, 'Hello World VTT');
@@ -54,8 +56,9 @@ Better Player Subtitles VTT
         type: BetterPlayerSubtitlesSourceType.memory,
         content: invalidContent,
       );
-      final subtitles =
-          await BetterPlayerSubtitlesFactory.parseSubtitles(source);
+      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+        source,
+      );
       expect(subtitles.isEmpty, true);
     });
   });

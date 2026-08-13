@@ -61,8 +61,7 @@ class MockHttpClientResponse extends StreamView<List<int>>
     String? method,
     Uri? url,
     bool? followLoops,
-  ]) =>
-      throw UnimplementedError();
+  ]) => throw UnimplementedError();
 
   @override
   Future<Socket> detachSocket() => throw UnimplementedError();

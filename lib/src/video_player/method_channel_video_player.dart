@@ -204,7 +204,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   @override
   Future<Duration> getPosition(int? textureId) async {
     return Duration(
-      milliseconds: await _channel.invokeMethod<int>(
+      milliseconds:
+          await _channel.invokeMethod<int>(
             'position',
             <String, dynamic>{'textureId': textureId},
           ) ??
@@ -214,7 +215,8 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
-    final milliseconds = await _channel.invokeMethod<int>(
+    final milliseconds =
+        await _channel.invokeMethod<int>(
           'absolutePosition',
           <String, dynamic>{'textureId': textureId},
         ) ??
@@ -327,9 +329,9 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Stream<VideoEvent> videoEventsFor(int? textureId) {
-    return _eventChannelFor(textureId)
-        .receiveBroadcastStream()
-        .map((dynamic event) {
+    return _eventChannelFor(textureId).receiveBroadcastStream().map((
+      dynamic event,
+    ) {
       late Map<dynamic, dynamic> map;
       if (event is Map) {
         map = event;

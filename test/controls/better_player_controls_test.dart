@@ -18,8 +18,9 @@ void main() {
   });
 
   setUp(() {
-    mockController =
-        BetterPlayerMockController(const BetterPlayerConfiguration());
+    mockController = BetterPlayerMockController(
+      const BetterPlayerConfiguration(),
+    );
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
 

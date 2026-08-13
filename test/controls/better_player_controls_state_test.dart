@@ -79,16 +79,18 @@ void main() {
       expect(state.isLoading(value), true);
     });
 
-    testWidgets('changePlayerControlsNotVisible updates state',
-        (WidgetTester tester) async {
+    testWidgets('changePlayerControlsNotVisible updates state', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: MockControlsWidget(controller: controller),
         ),
       );
 
-      final state =
-          tester.state<MockControlsState>(find.byType(MockControlsWidget));
+      final state = tester.state<MockControlsState>(
+        find.byType(MockControlsWidget),
+      );
       expect(state.controlsNotVisible, true);
 
       state.changePlayerControlsNotVisible(false);

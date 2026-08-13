@@ -15,19 +15,19 @@ void main() {
       () => {
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
-          mockMethodChannel.channel,
-          mockMethodChannel.handle,
-        ),
+              mockMethodChannel.channel,
+              mockMethodChannel.handle,
+            ),
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
-          const MethodChannel('plugins.flutter.io/path_provider'),
-          (methodCall) async {
-            if (methodCall.method == 'getTemporaryDirectory') {
-              return '.';
-            }
-            return null;
-          },
-        ),
+              const MethodChannel('plugins.flutter.io/path_provider'),
+              (methodCall) async {
+                if (methodCall.method == 'getTemporaryDirectory') {
+                  return '.';
+                }
+                return null;
+              },
+            ),
       },
     );
 
@@ -59,10 +59,12 @@ void main() {
       ).preCache(
         dataSource,
       );
-      await BetterPlayerController(const BetterPlayerConfiguration())
-          .stopPreCache(dataSource);
-      await BetterPlayerController(const BetterPlayerConfiguration())
-          .clearCache();
+      await BetterPlayerController(
+        const BetterPlayerConfiguration(),
+      ).stopPreCache(dataSource);
+      await BetterPlayerController(
+        const BetterPlayerConfiguration(),
+      ).clearCache();
     });
 
     test('PiP support check', () async {

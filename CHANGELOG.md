@@ -1,4 +1,8 @@
 
+## 0.4.0
+* [BREAKING_CHANGE] Added: Support for Built-in Kotlin.
+* [BREAKING_CHANGE] Updated: Minimum Dart SDK version to 3.12.0.
+
 ## 0.3.0
 * [BREAKING_CHANGE] Migrated to Flutter 3.47.0.
 * [BREAKING_CHANGE] Migrated Material and Cupertino UI systems to standalone `material_ui` and `cupertino_ui` packages.

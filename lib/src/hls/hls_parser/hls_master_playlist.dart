@@ -19,9 +19,9 @@ class HlsMasterPlaylist extends HlsPlaylist {
     this.variableDefinitions = const {}, // ignore: always_specify_types
     this.sessionKeyDrmInitData = const [], // ignore: always_specify_types
   }) : mediaPlaylistUrls = _getMediaPlaylistUrls(
-          variants,
-          [videos, audios, subtitles, closedCaptions],
-        );
+         variants,
+         [videos, audios, subtitles, closedCaptions],
+       );
 
   /// All of the media playlist URLs referenced by the playlist.
   final List<Uri?> mediaPlaylistUrls;

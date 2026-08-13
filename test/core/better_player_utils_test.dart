@@ -31,8 +31,9 @@ void main() {
       );
     });
 
-    testWidgets('calculateAspectRatio returns correct value',
-        (WidgetTester tester) async {
+    testWidgets('calculateAspectRatio returns correct value', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

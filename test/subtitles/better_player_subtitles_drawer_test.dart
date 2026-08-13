@@ -51,8 +51,8 @@ void main() {
     // Update position to 2s
     (controller.videoPlayerController! as MockVideoPlayerController).value =
         controller.videoPlayerController!.value.copyWith(
-      position: const Duration(seconds: 2),
-    );
+          position: const Duration(seconds: 2),
+        );
 
     // Trigger listener
     controller.videoPlayerController!.notifyListeners();
@@ -62,8 +62,9 @@ void main() {
     // expect(find.textContaining('Test Subtitle'), findsNWidgets(2));
   });
 
-  testWidgets('Subtitles are hidden when player not visible',
-      (WidgetTester tester) async {
+  testWidgets('Subtitles are hidden when player not visible', (
+    WidgetTester tester,
+  ) async {
     final subtitle = BetterPlayerSubtitle(
       '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
       false,
@@ -85,8 +86,8 @@ void main() {
 
     (controller.videoPlayerController! as MockVideoPlayerController).value =
         controller.videoPlayerController!.value.copyWith(
-      position: const Duration(seconds: 2),
-    );
+          position: const Duration(seconds: 2),
+        );
     controller.videoPlayerController!.notifyListeners();
     await tester.pump();
 
@@ -99,8 +100,9 @@ void main() {
     expect(find.byType(HtmlWidget), findsNWidgets(2));
   });
 
-  testWidgets('Subtitles with custom configuration',
-      (WidgetTester tester) async {
+  testWidgets('Subtitles with custom configuration', (
+    WidgetTester tester,
+  ) async {
     final subtitle = BetterPlayerSubtitle(
       '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
       false,
@@ -117,9 +119,9 @@ void main() {
             playerVisibilityStream: visibilityStreamController.stream,
             betterPlayerSubtitlesConfiguration:
                 const BetterPlayerSubtitlesConfiguration(
-              outlineEnabled: false,
-              fontColor: Colors.red,
-            ),
+                  outlineEnabled: false,
+                  fontColor: Colors.red,
+                ),
           ),
         ),
       ),
@@ -127,8 +129,8 @@ void main() {
 
     (controller.videoPlayerController! as MockVideoPlayerController).value =
         controller.videoPlayerController!.value.copyWith(
-      position: const Duration(seconds: 2),
-    );
+          position: const Duration(seconds: 2),
+        );
     controller.videoPlayerController!.notifyListeners();
     await tester.pumpAndSettle();
 

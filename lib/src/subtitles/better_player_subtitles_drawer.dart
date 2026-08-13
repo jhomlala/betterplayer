@@ -41,8 +41,9 @@ class _BetterPlayerSubtitlesDrawerState
 
   @override
   void initState() {
-    _visibilityStreamSubscription =
-        widget.playerVisibilityStream.listen((state) {
+    _visibilityStreamSubscription = widget.playerVisibilityStream.listen((
+      state,
+    ) {
       setState(() {
         _playerVisible = state;
       });
@@ -54,8 +55,9 @@ class _BetterPlayerSubtitlesDrawerState
       _configuration = setupDefaultConfiguration();
     }
 
-    widget.betterPlayerController.videoPlayerController!
-        .addListener(_updateState);
+    widget.betterPlayerController.videoPlayerController!.addListener(
+      _updateState,
+    );
 
     _outerTextStyle = TextStyle(
       fontSize: _configuration!.fontSize,
@@ -77,8 +79,9 @@ class _BetterPlayerSubtitlesDrawerState
 
   @override
   void dispose() {
-    widget.betterPlayerController.videoPlayerController!
-        .removeListener(_updateState);
+    widget.betterPlayerController.videoPlayerController!.removeListener(
+      _updateState,
+    );
     _visibilityStreamSubscription.cancel();
     super.dispose();
   }
