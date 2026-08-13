@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
       },
       child: MaterialApp(
-        title: 'Better player demo',
+        title: 'Better Player Example',
         // ignore: prefer_const_literals_to_create_immutables
         localizationsDelegates: [
           ...GlobalMaterialLocalizations.delegates,
