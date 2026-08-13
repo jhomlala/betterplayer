@@ -18,7 +18,7 @@ class BetterPlayerConfiguration {
   /// When the video playback runs  into an error, you can build a custom
   /// error message.
   final Widget Function(BuildContext context, String? errorMessage)?
-      errorBuilder;
+  errorBuilder;
 
   /// The Aspect Ratio of the Video. Important to get the correct size of the
   /// video!
@@ -208,7 +208,8 @@ class BetterPlayerConfiguration {
           deviceOrientationsOnFullScreen ?? this.deviceOrientationsOnFullScreen,
       systemOverlaysAfterFullScreen:
           systemOverlaysAfterFullScreen ?? this.systemOverlaysAfterFullScreen,
-      deviceOrientationsAfterFullScreen: deviceOrientationsAfterFullScreen ??
+      deviceOrientationsAfterFullScreen:
+          deviceOrientationsAfterFullScreen ??
           this.deviceOrientationsAfterFullScreen,
       routePageBuilder: routePageBuilder ?? this.routePageBuilder,
       eventListener: eventListener ?? this.eventListener,
@@ -218,12 +219,13 @@ class BetterPlayerConfiguration {
           controlsConfiguration ?? this.controlsConfiguration,
       fit: fit ?? this.fit,
       rotation: rotation ?? this.rotation,
-      playerVisibilityChangedBehavior: playerVisibilityChangedBehavior ??
+      playerVisibilityChangedBehavior:
+          playerVisibilityChangedBehavior ??
           this.playerVisibilityChangedBehavior,
       translations: translations ?? this.translations,
       autoDetectFullscreenDeviceOrientation:
           autoDetectFullscreenDeviceOrientation ??
-              this.autoDetectFullscreenDeviceOrientation,
+          this.autoDetectFullscreenDeviceOrientation,
       handleLifecycle: handleLifecycle ?? this.handleLifecycle,
       autoDispose: autoDispose ?? this.autoDispose,
       expandToFill: expandToFill ?? this.expandToFill,

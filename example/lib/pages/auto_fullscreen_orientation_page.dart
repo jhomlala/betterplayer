@@ -33,9 +33,7 @@ class _AutoFullscreenOrientationPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Auto full screen orientation'),
-      ),
+      appBar: AppBar(title: const Text('Auto full screen orientation')),
       body: Column(
         children: [
           const SizedBox(height: 8),

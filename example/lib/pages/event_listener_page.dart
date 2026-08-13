@@ -50,9 +50,7 @@ class _EventListenerPageState extends State<EventListenerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Event listener'),
-      ),
+      appBar: AppBar(title: const Text('Event listener')),
       body: Column(
         children: [
           const SizedBox(height: 8),
@@ -80,8 +78,10 @@ class _EventListenerPageState extends State<EventListenerPage> {
                         (event) => Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Event: ${event.betterPlayerEventType} '
-                                'parameters: ${event.parameters ?? <String, dynamic>{}}'),
+                            Text(
+                              'Event: ${event.betterPlayerEventType} '
+                              'parameters: ${event.parameters ?? <String, dynamic>{}}',
+                            ),
                             const Divider(),
                           ],
                         ),

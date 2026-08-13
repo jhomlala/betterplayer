@@ -37,9 +37,7 @@ class _CachePageState extends State<CachePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cache'),
-      ),
+      appBar: AppBar(title: const Text('Cache')),
       body: Column(
         children: [
           const SizedBox(height: 8),

@@ -14,9 +14,7 @@ class _BasicPlayerPageState extends State<BasicPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Basic player'),
-      ),
+      appBar: AppBar(title: const Text('Basic player')),
       body: Column(
         children: [
           const SizedBox(height: 8),
@@ -29,9 +27,7 @@ class _BasicPlayerPageState extends State<BasicPlayerPage> {
           ),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: BetterPlayer.network(
-              Constants.forBiggerBlazesUrl,
-            ),
+            child: BetterPlayer.network(Constants.forBiggerBlazesUrl),
           ),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),

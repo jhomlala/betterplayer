@@ -46,7 +46,8 @@ class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
   @override
   Widget build(BuildContext context) {
     return AspectRatio(
-      aspectRatio: _betterPlayerController!.getAspectRatio() ??
+      aspectRatio:
+          _betterPlayerController!.getAspectRatio() ??
           BetterPlayerUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         controller: _betterPlayerController!,

@@ -56,15 +56,14 @@ class BetterPlayerSubtitlesSource {
     String? content,
     bool? selectedByDefault,
     Map<String, String>? headers,
-  }) =>
-      [
-        BetterPlayerSubtitlesSource(
-          type: type,
-          name: name,
-          urls: [url],
-          content: content,
-          selectedByDefault: selectedByDefault,
-          headers: headers,
-        ),
-      ];
+  }) => [
+    BetterPlayerSubtitlesSource(
+      type: type,
+      name: name,
+      urls: [url],
+      content: content,
+      selectedByDefault: selectedByDefault,
+      headers: headers,
+    ),
+  ];
 }

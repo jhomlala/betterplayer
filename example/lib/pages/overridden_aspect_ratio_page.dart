@@ -31,9 +31,7 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Overridden aspect ratio'),
-      ),
+      appBar: AppBar(title: const Text('Overridden aspect ratio')),
       body: Column(
         children: [
           const SizedBox(height: 8),

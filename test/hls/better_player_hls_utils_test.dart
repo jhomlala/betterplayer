@@ -41,16 +41,16 @@ class MockHttpHeaders extends Fake implements HttpHeaders {
 class MockHttpClientResponse extends StreamView<List<int>>
     implements HttpClientResponse {
   MockHttpClientResponse()
-      : super(
-          Stream.value(
-            utf8.encode('''
+    : super(
+        Stream.value(
+          utf8.encode('''
 #EXTM3U
 #EXT-X-TARGETDURATION:10
 #EXTINF:10.0,
 segment1.vtt
 '''),
-          ),
-        );
+        ),
+      );
 
   @override
   int get statusCode => 200;
@@ -76,8 +76,7 @@ segment1.vtt
     String? method,
     Uri? url,
     bool? followLoops,
-  ]) =>
-      throw UnimplementedError();
+  ]) => throw UnimplementedError();
 
   @override
   Future<Socket> detachSocket() => throw UnimplementedError();

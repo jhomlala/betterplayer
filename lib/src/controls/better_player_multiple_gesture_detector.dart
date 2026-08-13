@@ -16,8 +16,10 @@ class BetterPlayerMultipleGestureDetector extends InheritedWidget {
   });
 
   static BetterPlayerMultipleGestureDetector? of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<
-        BetterPlayerMultipleGestureDetector>();
+    return context
+        .dependOnInheritedWidgetOfExactType<
+          BetterPlayerMultipleGestureDetector
+        >();
   }
 
   @override

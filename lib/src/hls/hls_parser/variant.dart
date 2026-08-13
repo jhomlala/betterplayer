@@ -30,11 +30,11 @@ class Variant {
 
   /// Returns a copy of this instance with the given {@link Format}.
   Variant copyWithFormat(Format format) => Variant(
-        url: url,
-        format: format,
-        videoGroupId: videoGroupId,
-        audioGroupId: audioGroupId,
-        subtitleGroupId: subtitleGroupId,
-        captionGroupId: captionGroupId,
-      );
+    url: url,
+    format: format,
+    videoGroupId: videoGroupId,
+    audioGroupId: audioGroupId,
+    subtitleGroupId: subtitleGroupId,
+    captionGroupId: captionGroupId,
+  );
 }

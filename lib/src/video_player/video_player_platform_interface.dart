@@ -362,7 +362,7 @@ enum DataSourceType {
   network,
 
   /// The video was loaded off of the local filesystem.
-  file
+  file,
 }
 
 /// The file format of the given video.
@@ -377,7 +377,7 @@ enum VideoFormat {
   ss,
 
   /// Any format other than the other ones defined in this enum.
-  other
+  other,
 }
 
 /// Event emitted from the platform implementation.

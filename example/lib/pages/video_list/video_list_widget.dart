@@ -49,21 +49,19 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                 videoListData!.videoUrl,
                 notificationConfiguration:
                     BetterPlayerNotificationConfiguration(
-                  showNotification: false,
-                  title: videoListData!.videoTitle,
-                  author: 'Test',
-                ),
+                      showNotification: false,
+                      title: videoListData!.videoTitle,
+                      author: 'Test',
+                    ),
                 bufferingConfiguration:
                     const BetterPlayerBufferingConfiguration(
-                  minBufferMs: 2000,
-                  maxBufferMs: 10000,
-                  bufferForPlaybackMs: 1000,
-                  bufferForPlaybackAfterRebufferMs: 2000,
-                ),
+                      minBufferMs: 2000,
+                      maxBufferMs: 10000,
+                      bufferForPlaybackMs: 1000,
+                      bufferForPlaybackAfterRebufferMs: 2000,
+                    ),
               ),
-              configuration: const BetterPlayerConfiguration(
-                aspectRatio: 1,
-              ),
+              configuration: const BetterPlayerConfiguration(aspectRatio: 1),
               //key: Key(videoListData.hashCode.toString()),
               playFraction: 0.8,
               betterPlayerListVideoPlayerController: controller,
@@ -72,12 +70,13 @@ class _VideoListWidgetState extends State<VideoListWidget> {
           const Padding(
             padding: EdgeInsets.all(8),
             child: Text(
-                "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
-                'town. Plainspoken sheriff Roy Scheider, hippie shark '
-                'researcher Richard Dreyfuss, and a squirrely boat captain '
-                'set out to find the beast, but will they escape with their '
-                "lives? 70's special effects, legendary score, and trademark "
-                'humor set this classic apart.'),
+              "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
+              'town. Plainspoken sheriff Roy Scheider, hippie shark '
+              'researcher Richard Dreyfuss, and a squirrely boat captain '
+              'set out to find the beast, but will they escape with their '
+              "lives? 70's special effects, legendary score, and trademark "
+              'humor set this classic apart.',
+            ),
           ),
           Center(
             child: Wrap(

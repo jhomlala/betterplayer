@@ -4,8 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('BetterPlayerDataSource tests', () {
     test('Network factory', () {
-      final source =
-          BetterPlayerDataSource.network('https://example.com/video.mp4');
+      final source = BetterPlayerDataSource.network(
+        'https://example.com/video.mp4',
+      );
       expect(source.type, BetterPlayerDataSourceType.network);
       expect(source.url, 'https://example.com/video.mp4');
     });

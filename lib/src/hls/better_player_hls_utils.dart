@@ -45,8 +45,10 @@ class BetterPlayerHlsUtils {
   ) async {
     final tracks = <BetterPlayerAsmsTrack>[];
     try {
-      final parsedPlaylist = await HlsPlaylistParser.create()
-          .parseString(Uri.parse(masterPlaylistUrl), data);
+      final parsedPlaylist = await HlsPlaylistParser.create().parseString(
+        Uri.parse(masterPlaylistUrl),
+        data,
+      );
       if (parsedPlaylist is HlsMasterPlaylist) {
         parsedPlaylist.variants.forEach(
           (variant) {
@@ -81,8 +83,10 @@ class BetterPlayerHlsUtils {
   ) async {
     final subtitles = <BetterPlayerAsmsSubtitle>[];
     try {
-      final parsedPlaylist = await HlsPlaylistParser.create()
-          .parseString(Uri.parse(masterPlaylistUrl), data);
+      final parsedPlaylist = await HlsPlaylistParser.create().parseString(
+        Uri.parse(masterPlaylistUrl),
+        data,
+      );
 
       if (parsedPlaylist is HlsMasterPlaylist) {
         for (final element in parsedPlaylist.subtitles) {
@@ -110,14 +114,17 @@ class BetterPlayerHlsUtils {
   ) async {
     try {
       final hlsPlaylistParser = HlsPlaylistParser.create();
-      final subtitleData =
-          await BetterPlayerAsmsUtils.getDataFromUrl(rendition.url.toString());
+      final subtitleData = await BetterPlayerAsmsUtils.getDataFromUrl(
+        rendition.url.toString(),
+      );
       if (subtitleData == null) {
         return null;
       }
 
-      final parsedSubtitle =
-          await hlsPlaylistParser.parseString(rendition.url, subtitleData);
+      final parsedSubtitle = await hlsPlaylistParser.parseString(
+        rendition.url,
+        subtitleData,
+      );
       final hlsMediaPlaylist = parsedSubtitle as HlsMediaPlaylist;
       final hlsSubtitlesUrls = <String>[];
 
@@ -160,8 +167,10 @@ class BetterPlayerHlsUtils {
       var isDefault = false;
 
       if (rendition.format.selectionFlags != null) {
-        isDefault =
-            Util.checkBitPositionIsSet(rendition.format.selectionFlags!, 1);
+        isDefault = Util.checkBitPositionIsSet(
+          rendition.format.selectionFlags!,
+          1,
+        );
       }
 
       return BetterPlayerAsmsSubtitle(
@@ -185,8 +194,10 @@ class BetterPlayerHlsUtils {
     String masterPlaylistUrl,
   ) async {
     final audios = <BetterPlayerAsmsAudioTrack>[];
-    final parsedPlaylist = await HlsPlaylistParser.create()
-        .parseString(Uri.parse(masterPlaylistUrl), data);
+    final parsedPlaylist = await HlsPlaylistParser.create().parseString(
+      Uri.parse(masterPlaylistUrl),
+      data,
+    );
     if (parsedPlaylist is HlsMasterPlaylist) {
       for (var index = 0; index < parsedPlaylist.audios.length; index++) {
         final audio = parsedPlaylist.audios[index];

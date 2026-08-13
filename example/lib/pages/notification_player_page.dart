@@ -41,9 +41,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notification player'),
-      ),
+      appBar: AppBar(title: const Text('Notification player')),
       body: Column(
         children: [
           const SizedBox(height: 8),

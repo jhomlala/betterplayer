@@ -405,8 +405,9 @@ class _BetterPlayerCupertinoControlsState
   }
 
   Widget _buildPosition() {
-    final position =
-        _latestValue != null ? _latestValue!.position : const Duration();
+    final position = _latestValue != null
+        ? _latestValue!.position
+        : const Duration();
 
     return Padding(
       padding: const EdgeInsets.only(right: 12),
@@ -601,14 +602,15 @@ class _BetterPlayerCupertinoControlsState
         changePlayerControlsNotVisible(false);
       });
     }
-    _controlsVisibilityStreamSubscription =
-        _betterPlayerController!.controlsVisibilityStream.listen((state) {
-      changePlayerControlsNotVisible(!state);
+    _controlsVisibilityStreamSubscription = _betterPlayerController!
+        .controlsVisibilityStream
+        .listen((state) {
+          changePlayerControlsNotVisible(!state);
 
-      if (!controlsNotVisible) {
-        cancelAndRestartTimer();
-      }
-    });
+          if (!controlsNotVisible) {
+            cancelAndRestartTimer();
+          }
+        });
   }
 
   void _onExpandCollapse() {
@@ -751,8 +753,9 @@ class _BetterPlayerCupertinoControlsState
     }
 
     return CircularProgressIndicator(
-      valueColor:
-          AlwaysStoppedAnimation<Color>(_controlsConfiguration.loadingColor),
+      valueColor: AlwaysStoppedAnimation<Color>(
+        _controlsConfiguration.loadingColor,
+      ),
     );
   }
 

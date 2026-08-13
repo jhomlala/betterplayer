@@ -34,11 +34,11 @@ class MockHttpHeaders extends Fake implements HttpHeaders {
 class MockHttpClientResponse extends StreamView<List<int>>
     implements HttpClientResponse {
   MockHttpClientResponse()
-      : super(
-          Stream.value(
-            utf8.encode('1\n00:00:01,000 --> 00:00:02,000\nHello\n\n'),
-          ),
-        );
+    : super(
+        Stream.value(
+          utf8.encode('1\n00:00:01,000 --> 00:00:02,000\nHello\n\n'),
+        ),
+      );
 
   @override
   int get statusCode => 200;
@@ -64,8 +64,7 @@ class MockHttpClientResponse extends StreamView<List<int>>
     String? method,
     Uri? url,
     bool? followLoops,
-  ]) =>
-      throw UnimplementedError();
+  ]) => throw UnimplementedError();
 
   @override
   Future<Socket> detachSocket() => throw UnimplementedError();
@@ -100,8 +99,9 @@ void main() {
         type: BetterPlayerSubtitlesSourceType.memory,
         content: '1\n00:00:01,000 --> 00:00:02,000\nHello\n\n',
       );
-      final subtitles =
-          await BetterPlayerSubtitlesFactory.parseSubtitles(source);
+      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+        source,
+      );
       expect(subtitles.length, 1);
       expect(subtitles[0].texts![0], 'Hello');
     });
@@ -113,8 +113,9 @@ void main() {
             type: BetterPlayerSubtitlesSourceType.network,
             urls: ['https://example.com/subs.srt'],
           );
-          final subtitles =
-              await BetterPlayerSubtitlesFactory.parseSubtitles(source);
+          final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+            source,
+          );
           expect(subtitles.length, 1);
         },
         TestHttpOverrides(),
@@ -126,8 +127,9 @@ void main() {
         type: BetterPlayerSubtitlesSourceType.file,
         urls: ['non_existent_file.srt'],
       );
-      final subtitles =
-          await BetterPlayerSubtitlesFactory.parseSubtitles(source);
+      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+        source,
+      );
       expect(subtitles.length, 0);
     });
 

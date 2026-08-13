@@ -20,8 +20,10 @@ class HlsTrackMetadataEntry {
     if (other is HlsTrackMetadataEntry) {
       return other.groupId == groupId &&
           other.name == name &&
-          const ListEquality<VariantInfo>()
-              .equals(other.variantInfos, variantInfos);
+          const ListEquality<VariantInfo>().equals(
+            other.variantInfos,
+            variantInfos,
+          );
     }
     return false;
   }

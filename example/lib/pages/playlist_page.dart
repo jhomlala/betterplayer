@@ -42,10 +42,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
           type: BetterPlayerSubtitlesSourceType.file,
           url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
         ),
-        placeholder: Image.network(
-          Constants.catImageUrl,
-          fit: BoxFit.cover,
-        ),
+        placeholder: Image.network(Constants.catImageUrl, fit: BoxFit.cover),
       ),
     );
 
@@ -53,10 +50,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
         Constants.bugBuckBunnyVideoUrl,
-        placeholder: Image.network(
-          Constants.catImageUrl,
-          fit: BoxFit.cover,
-        ),
+        placeholder: Image.network(Constants.catImageUrl, fit: BoxFit.cover),
       ),
     );
     _dataSourceList.add(
@@ -72,9 +66,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Playlist'),
-      ),
+      appBar: AppBar(title: const Text('Playlist')),
       body: FutureBuilder<List<BetterPlayerDataSource>>(
         future: setupData(),
         builder: (context, snapshot) {
@@ -86,8 +78,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 const Padding(
                   padding: EdgeInsets.all(8),
                   child: Text(
-                      'Playlist widget will load automatically next video once current '
-                      "finishes. User can't use player controls when video is changing."),
+                    'Playlist widget will load automatically next video once current '
+                    "finishes. User can't use player controls when video is changing.",
+                  ),
                 ),
                 AspectRatio(
                   aspectRatio: 1,
@@ -154,5 +147,6 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
   BetterPlayerPlaylistController? get _betterPlayerPlaylistController =>
       _betterPlayerPlaylistStateKey
-          .currentState!.betterPlayerPlaylistController;
+          .currentState!
+          .betterPlayerPlaylistController;
 }

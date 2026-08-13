@@ -62,9 +62,7 @@ class _DrmPageState extends State<DrmPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('DRM player'),
-      ),
+      appBar: AppBar(title: const Text('DRM player')),
       body: SingleChildScrollView(
         child: Column(
           children: [

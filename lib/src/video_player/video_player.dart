@@ -12,8 +12,8 @@ import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
-// This will clear all open videos on the platform when a full restart is
-// performed.
+  // This will clear all open videos on the platform when a full restart is
+  // performed.
   ..init();
 
 /// The duration, current position, buffering state, error state and settings
@@ -42,7 +42,7 @@ class VideoPlayerValue {
   /// Returns an instance with a `null` [Duration] and the given
   /// [errorDescription].
   VideoPlayerValue.erroneous(String errorDescription)
-      : this(duration: null, errorDescription: errorDescription);
+    : this(duration: null, errorDescription: errorDescription);
 
   /// The total duration of the video.
   ///
@@ -399,8 +399,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     _initializingCompleter = Completer<void>();
 
-    await VideoPlayerPlatform.instance
-        .setDataSource(_textureId, dataSourceDescription);
+    await VideoPlayerPlatform.instance.setDataSource(
+      _textureId,
+      dataSourceDescription,
+    );
     return _initializingCompleter.future;
   }
 
@@ -971,11 +973,12 @@ class ClosedCaption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTextStyle = textStyle ??
+    final effectiveTextStyle =
+        textStyle ??
         DefaultTextStyle.of(context).style.copyWith(
-              fontSize: 36,
-              color: Colors.white,
-            );
+          fontSize: 36,
+          color: Colors.white,
+        );
 
     if (text == null) {
       return const SizedBox.shrink();

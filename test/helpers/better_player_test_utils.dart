@@ -25,8 +25,9 @@ class BetterPlayerTestUtils {
 
   static MockVideoPlayerController setupMockVideoPlayerControler() {
     final mockVideoPlayerController = MockVideoPlayerController();
-    mockVideoPlayerController
-        .setNetworkDataSource(BetterPlayerTestUtils.forBiggerBlazesUrl);
+    mockVideoPlayerController.setNetworkDataSource(
+      BetterPlayerTestUtils.forBiggerBlazesUrl,
+    );
     return mockVideoPlayerController;
   }
 }

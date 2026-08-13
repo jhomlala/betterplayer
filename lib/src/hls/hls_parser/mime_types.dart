@@ -157,8 +157,9 @@ class MimeTypes {
         final objectTypeString = codec.substring(5);
         if (objectTypeString.length >= 2) {
           try {
-            final objectTypeHexString =
-                objectTypeString.substring(0, 2).toUpperCase();
+            final objectTypeHexString = objectTypeString
+                .substring(0, 2)
+                .toUpperCase();
             final objectTypeInt = int.parse(objectTypeHexString, radix: 16);
             mimeType = _getMimeTypeFromMp4ObjectType(objectTypeInt);
           } on FormatException {

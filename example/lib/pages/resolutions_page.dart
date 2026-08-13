@@ -31,9 +31,7 @@ class _ResolutionsPageState extends State<ResolutionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Resolutions'),
-      ),
+      appBar: AppBar(title: const Text('Resolutions')),
       body: Column(
         children: [
           const SizedBox(height: 8),
