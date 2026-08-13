@@ -25,7 +25,7 @@ class _EventListenerPageState extends State<EventListenerPage> {
     );
     final dataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
-      Constants.elephantDreamVideoUrl,
+      Constants.bugBuckBunnyVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
