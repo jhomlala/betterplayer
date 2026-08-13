@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: const [Locale('en', 'US'), Locale('pl', 'PL')],
         theme: ThemeData(primarySwatch: Colors.green),
