@@ -1,6 +1,6 @@
 class Constants {
   static const String bugBuckBunnyVideoUrl =
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+      'https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4';
   static const String forBiggerBlazesUrl =
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4';
   static const String fileTestVideoUrl = 'testvideo.mp4';
@@ -23,7 +23,7 @@ class Constants {
         'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
   };
   static const String phantomVideoUrl =
-      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+      'https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4';
   static const String elephantDreamVideoUrl =
       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4';
   static const String forBiggerJoyridesVideoUrl =
