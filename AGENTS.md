@@ -49,6 +49,7 @@
   - `Added`: for new features.
   - `Updated`: for changes in existing functionality or dependencies.
   - `Fixed`: for bug fixes.
+- **Consolidation**: For repetitive or similar work (e.g., updating multiple links in examples, fixing multiple small UI issues), consolidate into a single concise entry rather than listing every minor change.
 - **Attribution**: If the work was done by a contributor, append `(by @username)` or `(by Name)` to the end of the entry.
 
 ## Version Update Workflow
