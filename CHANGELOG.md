@@ -5,8 +5,6 @@
 * Updated `compileSdkVersion` to 36 in Android.
 * Updated Kotlin version to 2.3.20 in the example app.
 
-* Fixed: Unreliable video and image URLs in the example app, especially on the Playlist page. Replaced them with stable ones from Google GTV bucket and Lorem Picsum.
-
 ## 0.2.1
 * Added: `.pubignore` to exclude `media/` and `AGENTS.md` from the published package.
 * Updated: Documentation and README links to point to the new media location on GitHub.
