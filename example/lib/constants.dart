@@ -1,7 +1,8 @@
 class Constants {
   static const String bugBuckBunnyVideoUrl =
       'https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4';
-  static const String forBiggerBlazesUrl = 'https://lorem.video/720p.mp4';
+  static const String forBiggerBlazesUrl =
+      'https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4';
   static const String fileTestVideoUrl = 'testvideo.mp4';
   static const String fileTestVideoEncryptUrl = 'testvideo_encrypt.mp4';
   static const String networkTestVideoEncryptUrl =
@@ -26,7 +27,7 @@ class Constants {
   static const String forBiggerJoyridesVideoUrl =
       'https://lorem.video/cat_720p.mp4';
   static const String verticalVideoUrl =
-      'https://storage.googleapis.com/cloud-samples-data/generative-ai/video/pixel8.mp4';
+      'https://shotstack-assets.s3.ap-southeast-2.amazonaws.com/examples/vertical.mp4';
   static String logo = 'logo.png';
   static String placeholderUrl = 'https://picsum.photos/id/10/1000/1000';
   static String elephantDreamStreamUrl =
