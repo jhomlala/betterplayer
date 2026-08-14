@@ -48,7 +48,7 @@ class Constants {
       'https://fps.ezdrm.com/api/licenses/auth?px=A552CE&assetID=01234567-89AB-CDEF-0123-456789ABCDEF';
   static String catImageUrl = 'https://picsum.photos/id/237/1000/1000';
   static String dashStreamUrl =
-      'https://bitmovin-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd';
+      'https://storage.googleapis.com/shaka-demo-assets/angel-one/dash.mpd';
   static String segmentedSubtitlesHlsUrl =
       'https://eng-demo.cablecast.tv/segmented-captions/vod.m3u8';
 }
