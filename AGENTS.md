@@ -52,7 +52,7 @@
 - When preparing a new release (ONLY when explicitly asked), ALWAYS:
   1. Update the `version` in `pubspec.yaml`.
   2. Update `s.version` in `ios/better_player.podspec` to match.
-  3. Update `docs/install.md` with the new version snippet and any relevant Android/iOS requirement changes.
+  3. Update `doc/install.md` with the new version snippet and any relevant Android/iOS requirement changes.
   4. Update `environment` SDK constraints in `example/pubspec.yaml` if they need to match the new library requirements.
   5. Add a descriptive entry in `CHANGELOG.md`, marking `[BREAKING_CHANGE]` where applicable.
   6. Run `flutter pub get` in both the root directory and the `example` directory to ensure `pubspec.lock` files are updated.

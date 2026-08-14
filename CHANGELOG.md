@@ -1,4 +1,6 @@
 ## 0.4.2
+* Fixed: Restricted logo size on the documentation website to prevent it from being too large.
+* Updated: Renamed documentation directory from `docs` to `doc`.
 * Updated: Replaced legacy PNG logo with a modern, concentric SVG identity across the library, documentation, and example app.
 * Updated: Generated new Android and iOS launcher icons for the example app using the modern identity.
 * Updated: Refactored README.md to a professional standard with categorized features and a quick start guide.
@@ -96,7 +98,7 @@
 * Added onTapDown handle for material and cupertino progress bar to handle show and hide of controls.
 * Fixed crash related to Android 12.
 * Fixed issue with full url of subtitle for HLS data source.
-* Fixed install page from docs.
+* Fixed install page from doc.
 * Fixed one of the showcase images.
 * Fixed video in list example.
 
