@@ -28,7 +28,7 @@ class Constants {
       'https://lorem.video/cat_720p.mp4';
   static const String verticalVideoUrl =
       'https://raw.githubusercontent.com/KazKozDev/auto-vertical-reframe/main/assets/demo_vertical.mp4';
-  static String logo = 'logo.png';
+  static String logo = 'logo.svg';
   static String placeholderUrl = 'https://picsum.photos/id/10/1000/1000';
   static String elephantDreamStreamUrl =
       'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8';
