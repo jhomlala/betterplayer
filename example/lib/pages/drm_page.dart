@@ -23,10 +23,13 @@ class _DrmPageState extends State<DrmPage> {
     final tokenDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.tokenEncodedHlsUrl,
-      videoFormat: BetterPlayerVideoFormat.hls,
+      videoFormat: BetterPlayerVideoFormat.dash,
       drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.token,
-        token: Constants.tokenEncodedHlsToken,
+        drmType: BetterPlayerDrmType.widevine,
+        licenseUrl: 'https://drm-widevine-licensing.axtest.net/AcquireLicense',
+        headers: {
+          'X-AxDRM-Message': Constants.tokenEncodedHlsToken,
+        },
       ),
     );
     _tokenController = BetterPlayerController(betterPlayerConfiguration);
@@ -70,7 +73,7 @@ class _DrmPageState extends State<DrmPage> {
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               child: Text(
-                'Auth token based DRM.',
+                'Widevine - license token based DRM (Axinom). Works only for Android.',
                 style: TextStyle(fontSize: 16),
               ),
             ),

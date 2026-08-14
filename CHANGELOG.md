@@ -1,5 +1,6 @@
 ## Unreleased
 * Fixed: Updated example video and image URLs with stable sources.
+* Fixed: Updated DRM test streams (Widevine, FairPlay, and Token-based) in the example app with stable working mirrors.
 * Fixed: Localization issue by using standard MaterialApp and combining delegates from flutter_localizations and material_ui.
 * Updated: External subtitles in the example app to match the video content.
 
