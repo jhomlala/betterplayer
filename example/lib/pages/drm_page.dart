@@ -27,9 +27,7 @@ class _DrmPageState extends State<DrmPage> {
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.widevine,
         licenseUrl: 'https://drm-widevine-licensing.axtest.net/AcquireLicense',
-        headers: {
-          'X-AxDRM-Message': Constants.tokenEncodedHlsToken,
-        },
+        headers: {'X-AxDRM-Message': Constants.tokenEncodedHlsToken},
       ),
     );
     _tokenController = BetterPlayerController(betterPlayerConfiguration);

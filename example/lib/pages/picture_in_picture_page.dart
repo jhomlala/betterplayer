@@ -54,7 +54,9 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
             ElevatedButton(
               child: const Text('Show PiP'),
               onPressed: () {
-                _betterPlayerController.enablePictureInPicture(_betterPlayerKey);
+                _betterPlayerController.enablePictureInPicture(
+                  _betterPlayerKey,
+                );
               },
             ),
             ElevatedButton(
