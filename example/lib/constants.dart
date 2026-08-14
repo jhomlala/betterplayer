@@ -1,8 +1,7 @@
 class Constants {
   static const String bugBuckBunnyVideoUrl =
       'https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4';
-  static const String forBiggerBlazesUrl =
-      'https://cdn.jsdelivr.net/gh/akash-paliwal/ExoPlayer-Demo/ForBiggerBlazes.mp4';
+  static const String forBiggerBlazesUrl = 'https://lorem.video/720p.mp4';
   static const String fileTestVideoUrl = 'testvideo.mp4';
   static const String fileTestVideoEncryptUrl = 'testvideo_encrypt.mp4';
   static const String networkTestVideoEncryptUrl =
@@ -22,14 +21,11 @@ class Constants {
     'EXTRA_LARGE':
         'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/1080/Big_Buck_Bunny_1080_10s_10MB.mp4',
   };
-  static const String phantomVideoUrl =
-      'https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4';
-  static const String elephantDreamVideoUrl =
-      'https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4';
+  static const String phantomVideoUrl = 'https://lorem.video/bunny_720p.mp4';
+  static const String elephantDreamVideoUrl = 'https://lorem.video/720p.mp4';
   static const String forBiggerJoyridesVideoUrl =
-      'https://cdn.jsdelivr.net/gh/lucpotage/video-demo@master/video/ForBiggerJoyrides.mp4';
-  static const String verticalVideoUrl =
-      'https://cdn.jsdelivr.net/gh/lucpotage/video-demo@master/video/ForBiggerJoyrides.mp4';
+      'https://lorem.video/cat_720p.mp4';
+  static const String verticalVideoUrl = 'https://lorem.video/720p.mp4';
   static String logo = 'logo.png';
   static String placeholderUrl = 'https://picsum.photos/id/10/1000/1000';
   static String elephantDreamStreamUrl =
