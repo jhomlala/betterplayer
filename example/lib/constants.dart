@@ -25,7 +25,8 @@ class Constants {
   static const String elephantDreamVideoUrl = 'https://lorem.video/720p.mp4';
   static const String forBiggerJoyridesVideoUrl =
       'https://lorem.video/cat_720p.mp4';
-  static const String verticalVideoUrl = 'https://lorem.video/720p.mp4';
+  static const String verticalVideoUrl =
+      'https://storage.googleapis.com/cloud-samples-data/generative-ai/video/pixel8.mp4';
   static String logo = 'logo.png';
   static String placeholderUrl = 'https://picsum.photos/id/10/1000/1000';
   static String elephantDreamStreamUrl =

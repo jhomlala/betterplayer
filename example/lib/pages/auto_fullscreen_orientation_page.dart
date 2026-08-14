@@ -51,12 +51,13 @@ class _AutoFullscreenOrientationPageState
           ),
           ElevatedButton(
             child: const Text('Play horizontal video'),
-            onPressed: () {
+            onPressed: () async {
               final dataSource = BetterPlayerDataSource(
                 BetterPlayerDataSourceType.network,
                 Constants.forBiggerBlazesUrl,
               );
-              _betterPlayerController.setupDataSource(dataSource);
+              await _betterPlayerController.setupDataSource(dataSource);
+              _betterPlayerController.enterFullScreen();
             },
           ),
           ElevatedButton(
@@ -66,7 +67,8 @@ class _AutoFullscreenOrientationPageState
                 BetterPlayerDataSourceType.network,
                 Constants.verticalVideoUrl,
               );
-              _betterPlayerController.setupDataSource(dataSource);
+              await _betterPlayerController.setupDataSource(dataSource);
+              _betterPlayerController.enterFullScreen();
             },
           ),
         ],
