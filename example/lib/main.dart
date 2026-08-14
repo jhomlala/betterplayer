@@ -1,8 +1,8 @@
 import 'package:example/pages/welcome_page.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'
-    hide GlobalMaterialLocalizations;
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart' as m3;
 
 void main() => runApp(const MyApp());
 
@@ -16,10 +16,11 @@ class MyApp extends StatelessWidget {
         LogicalKeySet(LogicalKeyboardKey.select): const ActivateIntent(),
       },
       child: MaterialApp(
-        title: 'Better player demo',
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
+        title: 'Better Player Example',
+        // ignore: prefer_const_literals_to_create_immutables
+        localizationsDelegates: [
+          ...GlobalMaterialLocalizations.delegates,
+          m3.GlobalMaterialLocalizations.delegate,
         ],
         supportedLocales: const [Locale('en', 'US'), Locale('pl', 'PL')],
         theme: ThemeData(primarySwatch: Colors.green),

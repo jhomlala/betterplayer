@@ -18,7 +18,7 @@ class _VideoListPageState extends State<VideoListPage> {
     Constants.bugBuckBunnyVideoUrl,
     Constants.forBiggerBlazesUrl,
     Constants.forBiggerJoyridesVideoUrl,
-    Constants.elephantDreamVideoUrl,
+    Constants.phantomVideoUrl,
   ];
   List<VideoListData> dataList = [];
   int value = 0;

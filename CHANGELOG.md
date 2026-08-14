@@ -1,3 +1,13 @@
+## Unreleased
+
+## 0.4.1
+* Fixed: Updated example video and image URLs with stable sources.
+* Fixed: Updated DRM test streams (Widevine, FairPlay, and Token-based) in the example app with stable working mirrors.
+* Fixed: Localization issue by using standard MaterialApp and combining delegates from flutter_localizations and material_ui.
+* Updated: External subtitles in the example app to match the video content.
+* Fixed: Enable Picture-in-Picture support in the example app's AndroidManifest.xml.
+* Fixed: Layout overflow issues in multiple example pages by adding scrolling support.
+* Fixed: Robustness of Picture-in-Picture mode activation and deactivation on Android.
 
 ## 0.4.0
 * [BREAKING_CHANGE] Added: Support for Built-in Kotlin.
@@ -41,8 +51,8 @@
 * Updated metadata.
 
 ## 0.0.83
-* Updated dependencies.
-* Fixed Flutter 3.0 issues.
+* Updated dependencies
+* Fixed Flutter 3.0 issues
 
 ## 0.0.82
 * Updated ExoPlayer version to 2.17.1.
