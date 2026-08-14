@@ -27,7 +27,7 @@ class Constants {
   static const String forBiggerJoyridesVideoUrl =
       'https://lorem.video/cat_720p.mp4';
   static const String verticalVideoUrl =
-      'https://shotstack-assets.s3.ap-southeast-2.amazonaws.com/examples/vertical.mp4';
+      'https://raw.githubusercontent.com/KazKozDev/auto-vertical-reframe/main/assets/demo_vertical.mp4';
   static String logo = 'logo.png';
   static String placeholderUrl = 'https://picsum.photos/id/10/1000/1000';
   static String elephantDreamStreamUrl =
