@@ -34,44 +34,46 @@ class _AutoFullscreenOrientationPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Auto full screen orientation')),
-      body: Column(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Aspect ratio and device orientation on full screen will be '
-              'managed by the BetterPlayer. Click on the fullscreen option.',
-              style: TextStyle(fontSize: 16),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Aspect ratio and device orientation on full screen will be '
+                'managed by the BetterPlayer. Click on the fullscreen option.',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
-          ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-          ElevatedButton(
-            child: const Text('Play horizontal video'),
-            onPressed: () async {
-              final dataSource = BetterPlayerDataSource(
-                BetterPlayerDataSourceType.network,
-                Constants.forBiggerBlazesUrl,
-              );
-              await _betterPlayerController.setupDataSource(dataSource);
-              _betterPlayerController.enterFullScreen();
-            },
-          ),
-          ElevatedButton(
-            child: const Text('Play vertical video'),
-            onPressed: () async {
-              final dataSource = BetterPlayerDataSource(
-                BetterPlayerDataSourceType.network,
-                Constants.verticalVideoUrl,
-              );
-              await _betterPlayerController.setupDataSource(dataSource);
-              _betterPlayerController.enterFullScreen();
-            },
-          ),
-        ],
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(controller: _betterPlayerController),
+            ),
+            ElevatedButton(
+              child: const Text('Play horizontal video'),
+              onPressed: () async {
+                final dataSource = BetterPlayerDataSource(
+                  BetterPlayerDataSourceType.network,
+                  Constants.forBiggerBlazesUrl,
+                );
+                await _betterPlayerController.setupDataSource(dataSource);
+                _betterPlayerController.enterFullScreen();
+              },
+            ),
+            ElevatedButton(
+              child: const Text('Play vertical video'),
+              onPressed: () async {
+                final dataSource = BetterPlayerDataSource(
+                  BetterPlayerDataSourceType.network,
+                  Constants.verticalVideoUrl,
+                );
+                await _betterPlayerController.setupDataSource(dataSource);
+                _betterPlayerController.enterFullScreen();
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
