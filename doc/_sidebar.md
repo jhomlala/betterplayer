@@ -1,4 +1,4 @@
-<!-- docs/_sidebar.md -->
+<!-- doc/_sidebar.md -->
 * Introduction
     * [Home](home.md)
     * [Install](install.md)
