@@ -409,6 +409,11 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun enablePictureInPicture(player: BetterPlayer) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            activity?.let {
+                if (it.isInPictureInPictureMode) {
+                    return
+                }
+            }
             player.setupMediaSession(flutterState!!.applicationContext)
             activity!!.enterPictureInPictureMode(PictureInPictureParams.Builder().build())
             startPictureInPictureListenerTimer(player)
@@ -418,15 +423,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
 
     private fun disablePictureInPicture(player: BetterPlayer) {
         stopPipHandler()
-        activity?.let {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && it.isInPictureInPictureMode) {
-                val intent = Intent(it, it.javaClass)
-                intent.flags = Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                it.startActivity(intent)
-                player.onPictureInPictureStatusChanged(false)
-                player.disposeMediaSession()
-            }
-        }
+        player.onPictureInPictureStatusChanged(false)
+        player.disposeMediaSession()
     }
 
     private fun startPictureInPictureListenerTimer(player: BetterPlayer) {
