@@ -62,5 +62,6 @@
 - Before final publishing, ALWAYS:
   1. Ensure you are on the `master` branch and have pulled the latest changes from `origin/master`.
   2. Verify that the version has been correctly bumped in all required locations (see Version Update Workflow).
-  3. Ensure a Git tag corresponding to the new version has been created and pushed (e.g., `git tag 0.4.0` and `git push origin 0.4.0`). DO NOT use the `v` prefix for tags.
-  4. Perform the final release by calling `flutter pub publish`.
+  3. NEVER change `CHANGELOG.md` during the release process itself. It must be finalized beforehand.
+  4. Ensure a Git tag corresponding to the new version has been created and pushed (e.g., `git tag 0.4.1` and `git push origin 0.4.1`). DO NOT use the `v` prefix for tags.
+  5. Perform the final release by calling `flutter pub publish`.

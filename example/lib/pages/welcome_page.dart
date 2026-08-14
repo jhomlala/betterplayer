@@ -30,6 +30,7 @@ import 'package:example/pages/rotation_and_fit_page.dart';
 import 'package:example/pages/subtitles_page.dart';
 import 'package:example/pages/video_list/video_list_page.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -59,7 +60,7 @@ class _WelcomePageState extends State<WelcomePage> {
         child: ListView(
           children: [
             const SizedBox(height: 8),
-            Image.asset('assets/logo.png', height: 200, width: 200),
+            SvgPicture.asset('assets/logo.svg', height: 200, width: 200),
             const Text(
               'Welcome to Better Player example app. Click on any element below to see example.',
               style: TextStyle(fontSize: 16),
@@ -92,11 +93,11 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget('Resolutions', () {
         _navigateToPage(const ResolutionsPage());
       }),
-      _buildExampleElementWidget('HLS subtitles', () {
-        _navigateToPage(const HlsSubtitlesPage());
-      }),
       _buildExampleElementWidget('HLS tracks', () {
         _navigateToPage(const HlsTracksPage());
+      }),
+      _buildExampleElementWidget('HLS subtitles', () {
+        _navigateToPage(const HlsSubtitlesPage());
       }),
       _buildExampleElementWidget('HLS Audio', () {
         _navigateToPage(const HlsAudioPage());
@@ -107,7 +108,7 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget('Playlist', () {
         _navigateToPage(const PlaylistPage());
       }),
-      _buildExampleElementWidget('Video in list', () {
+      _buildExampleElementWidget('Video list', () {
         _navigateToPage(const VideoListPage());
       }),
       _buildExampleElementWidget('Rotation and fit', () {
@@ -128,6 +129,18 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget('Notifications player', () {
         _navigateToPage(const NotificationPlayerPage());
       }),
+      _buildExampleElementWidget('Picture in Picture', () {
+        _navigateToPage(const PictureInPicturePage());
+      }),
+      _buildExampleElementWidget('DRM', () {
+        _navigateToPage(const DrmPage());
+      }),
+      _buildExampleElementWidget('ClearKey DRM', () {
+        _navigateToPage(const ClearKeyPage());
+      }),
+      _buildExampleElementWidget('Dash', () {
+        _navigateToPage(const DashPage());
+      }),
       _buildExampleElementWidget('Reusable video list', () {
         _navigateToPage(const ReusableVideoListPage());
       }),
@@ -143,20 +156,8 @@ class _WelcomePageState extends State<WelcomePage> {
       _buildExampleElementWidget('Overridden duration', () {
         _navigateToPage(const OverriddenDurationPage());
       }),
-      _buildExampleElementWidget('Picture in Picture', () {
-        _navigateToPage(const PictureInPicturePage());
-      }),
       _buildExampleElementWidget('Controls always visible', () {
         _navigateToPage(const ControlsAlwaysVisiblePage());
-      }),
-      _buildExampleElementWidget('DRM', () {
-        _navigateToPage(const DrmPage());
-      }),
-      _buildExampleElementWidget('ClearKey DRM', () {
-        _navigateToPage(const ClearKeyPage());
-      }),
-      _buildExampleElementWidget('DASH', () {
-        _navigateToPage(const DashPage());
       }),
     ];
   }
@@ -179,11 +180,9 @@ class _WelcomePageState extends State<WelcomePage> {
     );
   }
 
-  Future _navigateToPage(Widget routeWidget) {
-    return Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => routeWidget),
-    );
+  Future _navigateToPage(Widget page) async {
+    final route = MaterialPageRoute<void>(builder: (context) => page);
+    await Navigator.push(context, route);
   }
 
   ///Save subtitles to file, so we can use it later
@@ -191,7 +190,7 @@ class _WelcomePageState extends State<WelcomePage> {
     final content = await rootBundle.loadString('assets/example_subtitles.srt');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/example_subtitles.srt');
-    file.writeAsString(content);
+    await file.writeAsString(content);
   }
 
   ///Save video to file, so we can use it later
@@ -199,16 +198,15 @@ class _WelcomePageState extends State<WelcomePage> {
     final content = await rootBundle.load('assets/testvideo.mp4');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/testvideo.mp4');
-    file.writeAsBytesSync(content.buffer.asUint8List());
+    await file.writeAsBytes(content.buffer.asUint8List());
   }
 
+  ///Save video to file, so we can use it later
   Future _saveAssetEncryptVideoToFile() async {
-    final content = await rootBundle.load(
-      'assets/${Constants.fileTestVideoEncryptUrl}',
-    );
+    final content = await rootBundle.load('assets/testvideo_encrypt.mp4');
     final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/${Constants.fileTestVideoEncryptUrl}');
-    file.writeAsBytesSync(content.buffer.asUint8List());
+    final file = File('${directory.path}/testvideo_encrypt.mp4');
+    await file.writeAsBytes(content.buffer.asUint8List());
   }
 
   ///Save logo to file, so we can use it later
@@ -216,6 +214,6 @@ class _WelcomePageState extends State<WelcomePage> {
     final content = await rootBundle.load('assets/${Constants.logo}');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/${Constants.logo}');
-    file.writeAsBytesSync(content.buffer.asUint8List());
+    await file.writeAsBytes(content.buffer.asUint8List());
   }
 }

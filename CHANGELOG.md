@@ -1,4 +1,7 @@
-## Unreleased
+## 0.4.2
+* Updated: Replaced legacy PNG logo with a modern, concentric SVG identity across the library, documentation, and example app.
+* Updated: Generated new Android and iOS launcher icons for the example app using the modern identity.
+* Updated: Refactored README.md to a professional standard with categorized features and a quick start guide.
 
 ## 0.4.1
 * Fixed: Updated example video and image URLs with stable sources.
@@ -8,6 +11,10 @@
 * Fixed: Enable Picture-in-Picture support in the example app's AndroidManifest.xml.
 * Fixed: Layout overflow issues in multiple example pages by adding scrolling support.
 * Fixed: Robustness of Picture-in-Picture mode activation and deactivation on Android.
+
+## 0.4.0
+* [BREAKING_CHANGE] Added: Support for Built-in Kotlin.
+* [BREAKING_CHANGE] Updated: Minimum Dart SDK version to 3.12.0.
 
 ## 0.4.0
 * [BREAKING_CHANGE] Added: Support for Built-in Kotlin.
