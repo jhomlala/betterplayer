@@ -222,6 +222,7 @@ class _BetterPlayerMaterialControlsState
           betterPlayerController!.betterPlayerGlobalKey!,
         );
       },
+      semanticsLabel: _betterPlayerController!.translations.controlsPipLabel,
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Icon(
@@ -266,6 +267,7 @@ class _BetterPlayerMaterialControlsState
   Widget _buildMoreButton() {
     return BetterPlayerMaterialClickableWidget(
       onTap: onShowMoreClicked,
+      semanticsLabel: _betterPlayerController!.translations.overflowMenuLabel,
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Icon(
@@ -343,6 +345,9 @@ class _BetterPlayerMaterialControlsState
       child: BetterPlayerMaterialClickableWidget(
         key: const Key('better_player_material_controls_expand_button'),
         onTap: _onExpandCollapse,
+        semanticsLabel: _betterPlayerController!.isFullScreen
+            ? _betterPlayerController!.translations.controlsExitFullscreenLabel
+            : _betterPlayerController!.translations.controlsFullscreenLabel,
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
           duration: _controlsConfiguration.controlsHideTime,
@@ -406,12 +411,14 @@ class _BetterPlayerMaterialControlsState
     required void Function() onClicked,
     Widget? icon,
     Key? key,
+    String? semanticsLabel,
   }) {
     return Container(
       constraints: const BoxConstraints(maxHeight: 80, maxWidth: 80),
       child: BetterPlayerMaterialClickableWidget(
         key: key,
         onTap: onClicked,
+        semanticsLabel: semanticsLabel,
         child: Align(
           child: Container(
             decoration: BoxDecoration(
@@ -439,6 +446,8 @@ class _BetterPlayerMaterialControlsState
         color: _controlsConfiguration.iconsColor,
       ),
       onClicked: skipBack,
+      semanticsLabel:
+          _betterPlayerController!.translations.controlsSkipBackwardLabel,
     );
   }
 
@@ -451,12 +460,24 @@ class _BetterPlayerMaterialControlsState
         color: _controlsConfiguration.iconsColor,
       ),
       onClicked: skipForward,
+      semanticsLabel:
+          _betterPlayerController!.translations.controlsSkipForwardLabel,
     );
   }
 
   Widget _buildReplayButton(VideoPlayerController controller) {
     final isFinished = isVideoFinished(_latestValue);
+    final isPlaying = controller.value.isPlaying;
+
+    var semanticsLabel = isPlaying
+        ? _betterPlayerController!.translations.controlsPauseLabel
+        : _betterPlayerController!.translations.controlsPlayLabel;
+    if (isFinished) {
+      semanticsLabel = _betterPlayerController!.translations.controlsPlayLabel;
+    }
+
     return _buildHitAreaClickableButton(
+      semanticsLabel: semanticsLabel,
       icon: isFinished
           ? Icon(
               Icons.replay,
@@ -464,7 +485,7 @@ class _BetterPlayerMaterialControlsState
               color: _controlsConfiguration.iconsColor,
             )
           : Icon(
-              controller.value.isPlaying
+              isPlaying
                   ? _controlsConfiguration.pauseIcon
                   : _controlsConfiguration.playIcon,
               size: 42,
@@ -540,6 +561,9 @@ class _BetterPlayerMaterialControlsState
           _betterPlayerController!.setVolume(0);
         }
       },
+      semanticsLabel: (_latestValue != null && _latestValue!.volume > 0)
+          ? _betterPlayerController!.translations.controlsMuteLabel
+          : _betterPlayerController!.translations.controlsUnmuteLabel,
       child: AnimatedOpacity(
         opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: _controlsConfiguration.controlsHideTime,
@@ -563,6 +587,9 @@ class _BetterPlayerMaterialControlsState
     return BetterPlayerMaterialClickableWidget(
       key: const Key('better_player_material_controls_play_pause_button'),
       onTap: _onPlayPause,
+      semanticsLabel: controller.value.isPlaying
+          ? _betterPlayerController!.translations.controlsPauseLabel
+          : _betterPlayerController!.translations.controlsPlayLabel,
       child: Container(
         height: double.infinity,
         margin: const EdgeInsets.symmetric(horizontal: 4),

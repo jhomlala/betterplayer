@@ -136,6 +136,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ) {
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,
+      semanticsLabel: name,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         child: Row(
@@ -178,6 +179,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         Navigator.of(context).pop();
         betterPlayerController!.setSpeed(value);
       },
+      semanticsLabel: '$value x',
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
@@ -258,11 +260,17 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         (subtitlesSource.type == BetterPlayerSubtitlesSourceType.none &&
             subtitlesSource.type == selectedSourceType!.type);
 
+    final name = subtitlesSource.type == BetterPlayerSubtitlesSourceType.none
+        ? betterPlayerController!.translations.generalNone
+        : subtitlesSource.name ??
+              betterPlayerController!.translations.generalDefault;
+
     return BetterPlayerMaterialClickableWidget(
       onTap: () {
         Navigator.of(context).pop();
         betterPlayerController!.setupSubtitleSource(subtitlesSource);
       },
+      semanticsLabel: name,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
@@ -277,10 +285,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             ),
             const SizedBox(width: 16),
             Text(
-              subtitlesSource.type == BetterPlayerSubtitlesSourceType.none
-                  ? betterPlayerController!.translations.generalNone
-                  : subtitlesSource.name ??
-                        betterPlayerController!.translations.generalDefault,
+              name,
               style: _getOverflowMenuElementTextStyle(isSelected),
             ),
           ],
@@ -348,6 +353,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         Navigator.of(context).pop();
         betterPlayerController!.setTrack(track);
       },
+      semanticsLabel: trackName,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
@@ -379,6 +385,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         Navigator.of(context).pop();
         betterPlayerController!.setResolution(url);
       },
+      semanticsLabel: name,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(
@@ -440,6 +447,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         Navigator.of(context).pop();
         betterPlayerController!.setAudioTrack(audioTrack);
       },
+      semanticsLabel: audioTrack.label,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(

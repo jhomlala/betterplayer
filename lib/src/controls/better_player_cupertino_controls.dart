@@ -250,24 +250,31 @@ class _BetterPlayerCupertinoControlsState
   ) {
     return GestureDetector(
       onTap: _onExpandCollapse,
-      child: AnimatedOpacity(
-        opacity: controlsNotVisible ? 0.0 : 1.0,
-        duration: _controlsConfiguration.controlsHideTime,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            height: barHeight,
-            padding: EdgeInsets.symmetric(
-              horizontal: buttonPadding,
-            ),
-            decoration: BoxDecoration(color: backgroundColor),
-            child: Center(
-              child: Icon(
-                _betterPlayerController!.isFullScreen
-                    ? _controlsConfiguration.fullscreenDisableIcon
-                    : _controlsConfiguration.fullscreenEnableIcon,
-                color: iconColor,
-                size: iconSize,
+      child: Semantics(
+        label: _betterPlayerController!.isFullScreen
+            ? _betterPlayerController!.translations.controlsExitFullscreenLabel
+            : _betterPlayerController!.translations.controlsFullscreenLabel,
+        button: true,
+        onTap: _onExpandCollapse,
+        child: AnimatedOpacity(
+          opacity: controlsNotVisible ? 0.0 : 1.0,
+          duration: _controlsConfiguration.controlsHideTime,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              height: barHeight,
+              padding: EdgeInsets.symmetric(
+                horizontal: buttonPadding,
+              ),
+              decoration: BoxDecoration(color: backgroundColor),
+              child: Center(
+                child: Icon(
+                  _betterPlayerController!.isFullScreen
+                      ? _controlsConfiguration.fullscreenDisableIcon
+                      : _controlsConfiguration.fullscreenEnableIcon,
+                  color: iconColor,
+                  size: iconSize,
+                ),
               ),
             ),
           ),
@@ -309,24 +316,29 @@ class _BetterPlayerCupertinoControlsState
   ) {
     return GestureDetector(
       onTap: onShowMoreClicked,
-      child: AnimatedOpacity(
-        opacity: controlsNotVisible ? 0.0 : 1.0,
-        duration: _controlsConfiguration.controlsHideTime,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            decoration: BoxDecoration(
-              color: backgroundColor,
-            ),
+      child: Semantics(
+        label: _betterPlayerController!.translations.overflowMenuLabel,
+        button: true,
+        onTap: onShowMoreClicked,
+        child: AnimatedOpacity(
+          opacity: controlsNotVisible ? 0.0 : 1.0,
+          duration: _controlsConfiguration.controlsHideTime,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
             child: Container(
-              height: barHeight,
-              padding: EdgeInsets.symmetric(
-                horizontal: buttonPadding,
+              decoration: BoxDecoration(
+                color: backgroundColor,
               ),
-              child: Icon(
-                _controlsConfiguration.overflowMenuIcon,
-                color: iconColor,
-                size: iconSize,
+              child: Container(
+                height: barHeight,
+                padding: EdgeInsets.symmetric(
+                  horizontal: buttonPadding,
+                ),
+                child: Icon(
+                  _controlsConfiguration.overflowMenuIcon,
+                  color: iconColor,
+                  size: iconSize,
+                ),
               ),
             ),
           ),
@@ -343,6 +355,11 @@ class _BetterPlayerCupertinoControlsState
     double iconSize,
     double buttonPadding,
   ) {
+    final isMuted = _latestValue != null && _latestValue!.volume == 0;
+    final semanticsLabel = isMuted
+        ? _betterPlayerController!.translations.controlsUnmuteLabel
+        : _betterPlayerController!.translations.controlsMuteLabel;
+
     return GestureDetector(
       onTap: () {
         cancelAndRestartTimer();
@@ -354,26 +371,40 @@ class _BetterPlayerCupertinoControlsState
           controller.setVolume(0);
         }
       },
-      child: AnimatedOpacity(
-        opacity: controlsNotVisible ? 0.0 : 1.0,
-        duration: _controlsConfiguration.controlsHideTime,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Container(
-            decoration: BoxDecoration(
-              color: backgroundColor,
-            ),
+      child: Semantics(
+        label: semanticsLabel,
+        button: true,
+        onTap: () {
+          cancelAndRestartTimer();
+
+          if (_latestValue!.volume == 0) {
+            controller!.setVolume(_latestVolume ?? 0.5);
+          } else {
+            _latestVolume = controller!.value.volume;
+            controller.setVolume(0);
+          }
+        },
+        child: AnimatedOpacity(
+          opacity: controlsNotVisible ? 0.0 : 1.0,
+          duration: _controlsConfiguration.controlsHideTime,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
             child: Container(
-              height: barHeight,
-              padding: EdgeInsets.symmetric(
-                horizontal: buttonPadding,
+              decoration: BoxDecoration(
+                color: backgroundColor,
               ),
-              child: Icon(
-                (_latestValue != null && _latestValue!.volume > 0)
-                    ? _controlsConfiguration.muteIcon
-                    : _controlsConfiguration.unMuteIcon,
-                color: iconColor,
-                size: iconSize,
+              child: Container(
+                height: barHeight,
+                padding: EdgeInsets.symmetric(
+                  horizontal: buttonPadding,
+                ),
+                child: Icon(
+                  (_latestValue != null && _latestValue!.volume > 0)
+                      ? _controlsConfiguration.muteIcon
+                      : _controlsConfiguration.unMuteIcon,
+                  color: iconColor,
+                  size: iconSize,
+                ),
               ),
             ),
           ),
@@ -389,16 +420,23 @@ class _BetterPlayerCupertinoControlsState
   ) {
     return GestureDetector(
       onTap: _onPlayPause,
-      child: Container(
-        height: barHeight,
-        color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 6),
-        child: Icon(
-          controller.value.isPlaying
-              ? _controlsConfiguration.pauseIcon
-              : _controlsConfiguration.playIcon,
-          color: iconColor,
-          size: barHeight * 0.6,
+      child: Semantics(
+        label: controller.value.isPlaying
+            ? _betterPlayerController!.translations.controlsPauseLabel
+            : _betterPlayerController!.translations.controlsPlayLabel,
+        button: true,
+        onTap: _onPlayPause,
+        child: Container(
+          height: barHeight,
+          color: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          child: Icon(
+            controller.value.isPlaying
+                ? _controlsConfiguration.pauseIcon
+                : _controlsConfiguration.playIcon,
+            color: iconColor,
+            size: barHeight * 0.6,
+          ),
         ),
       ),
     );
@@ -438,17 +476,22 @@ class _BetterPlayerCupertinoControlsState
   GestureDetector _buildSkipBack(Color iconColor, double barHeight) {
     return GestureDetector(
       onTap: skipBack,
-      child: Container(
-        height: barHeight,
-        color: Colors.transparent,
-        margin: const EdgeInsets.only(left: 10),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 8,
-        ),
-        child: Icon(
-          _controlsConfiguration.skipBackIcon,
-          color: iconColor,
-          size: barHeight * 0.4,
+      child: Semantics(
+        label: _betterPlayerController!.translations.controlsSkipBackwardLabel,
+        button: true,
+        onTap: skipBack,
+        child: Container(
+          height: barHeight,
+          color: Colors.transparent,
+          margin: const EdgeInsets.only(left: 10),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 8,
+          ),
+          child: Icon(
+            _controlsConfiguration.skipBackIcon,
+            color: iconColor,
+            size: barHeight * 0.4,
+          ),
         ),
       ),
     );
@@ -457,15 +500,20 @@ class _BetterPlayerCupertinoControlsState
   GestureDetector _buildSkipForward(Color iconColor, double barHeight) {
     return GestureDetector(
       onTap: skipForward,
-      child: Container(
-        height: barHeight,
-        color: Colors.transparent,
-        padding: const EdgeInsets.symmetric(horizontal: 6),
-        margin: const EdgeInsets.only(right: 8),
-        child: Icon(
-          _controlsConfiguration.skipForwardIcon,
-          color: iconColor,
-          size: barHeight * 0.4,
+      child: Semantics(
+        label: _betterPlayerController!.translations.controlsSkipForwardLabel,
+        button: true,
+        onTap: skipForward,
+        child: Container(
+          height: barHeight,
+          color: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          margin: const EdgeInsets.only(right: 8),
+          child: Icon(
+            _controlsConfiguration.skipForwardIcon,
+            color: iconColor,
+            size: barHeight * 0.4,
+          ),
         ),
       ),
     );
@@ -778,25 +826,34 @@ class _BetterPlayerCupertinoControlsState
                 betterPlayerController!.betterPlayerGlobalKey!,
               );
             },
-            child: AnimatedOpacity(
-              opacity: controlsNotVisible ? 0.0 : 1.0,
-              duration: _controlsConfiguration.controlsHideTime,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Container(
-                  height: barHeight,
-                  padding: EdgeInsets.only(
-                    left: buttonPadding,
-                    right: buttonPadding,
-                  ),
-                  decoration: BoxDecoration(
-                    color: backgroundColor.withValues(alpha: 0.5),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      _controlsConfiguration.pipMenuIcon,
-                      color: iconColor,
-                      size: iconSize,
+            child: Semantics(
+              label: _betterPlayerController!.translations.controlsPipLabel,
+              button: true,
+              onTap: () {
+                betterPlayerController!.enablePictureInPicture(
+                  betterPlayerController!.betterPlayerGlobalKey!,
+                );
+              },
+              child: AnimatedOpacity(
+                opacity: controlsNotVisible ? 0.0 : 1.0,
+                duration: _controlsConfiguration.controlsHideTime,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Container(
+                    height: barHeight,
+                    padding: EdgeInsets.only(
+                      left: buttonPadding,
+                      right: buttonPadding,
+                    ),
+                    decoration: BoxDecoration(
+                      color: backgroundColor.withValues(alpha: 0.5),
+                    ),
+                    child: Center(
+                      child: Icon(
+                        _controlsConfiguration.pipMenuIcon,
+                        color: iconColor,
+                        size: iconSize,
+                      ),
                     ),
                   ),
                 ),

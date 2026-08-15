@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:example/constants.dart';
 import 'package:example/pages/welcome_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -22,7 +23,7 @@ class BetterPlayerExample extends StatelessWidget {
           children: [
             const SizedBox(height: 8),
             BetterPlayer.network(
-              'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+              Constants.bugBuckBunnyVideoUrl,
               betterPlayerConfiguration: const BetterPlayerConfiguration(
                 aspectRatio: 16 / 9,
               ),

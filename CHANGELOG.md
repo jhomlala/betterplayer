@@ -1,5 +1,8 @@
-## Unreleased
+## 0.4.3
 * Updated: Comprehensive documentation overhaul for professional tone, grammar, and typos across all project documentation.
+* Fixed: Documentation alert rendering by adding `docsify-plugin-flexible-alerts` plugin.
+* Added: Advanced accessibility support with localized labels and interactive semantics for controls and progress bar.
+* Fixed: Example app home page video URL.
 
 ## 0.4.2
 * Fixed: Restricted logo size on the documentation website to prevent it from being too large.
