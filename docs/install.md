@@ -8,7 +8,7 @@ Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  better_player: ^0.4.2
+  better_player: ^0.4.3
 ```
 
 ## 2. Install Package
