@@ -1,40 +1,38 @@
-## Playlist player usage
-Playlist is a one of the Better Player widgets which allows to configure list of videos which will be played one after another.
-Once video finishes, there's interval time (customizable) after which next video will be played. This interval time is displayed in
-player UI and it's skippable.
+# Playlist Support
 
-To use playlist, you need to create dataset with multiple videos:
+Better Player includes a specialized `BetterPlayerPlaylist` widget designed to play a sequence of videos one after another.
+
+## Key Features
+*   **Automatic Transition**: Seamlessly switches to the next video when the current one finishes.
+*   **Skippable Intervals**: A customizable delay between videos, displayed in the player UI and skippable by the user.
+
+## Implementation Workflow
+
+### 1. Create a Data Set
+Prepare a list of `BetterPlayerDataSource` objects:
+
 ```dart
-  List<BetterPlayerDataSource> createDataSet() {
-    List dataSourceList = List<BetterPlayerDataSource>();
-    dataSourceList.add(
-      BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      ),
-    );
-    dataSourceList.add(
-      BetterPlayerDataSource(BetterPlayerDataSourceType.network,
-          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"),
-    );
-    dataSourceList.add(
-      BetterPlayerDataSource(BetterPlayerDataSourceType.network,
-          "http://sample.vodobox.com/skate_phantom_flex_4k/skate_phantom_flex_4k.m3u8"),
-    );
-    return dataSourceList;
-  }
+List<BetterPlayerDataSource> createDataSet() {
+  return [
+    BetterPlayerDataSource(BetterPlayerDataSourceType.network, "url1"),
+    BetterPlayerDataSource(BetterPlayerDataSourceType.network, "url2"),
+    BetterPlayerDataSource(BetterPlayerDataSourceType.network, "url3"),
+  ];
+}
 ```
 
-Then create `BetterPlayerPlaylist` widget:
+### 2. Integrate the Playlist Widget
+Pass the data set and configuration objects to the `BetterPlayerPlaylist` widget:
+
 ```dart
 @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: BetterPlayerPlaylist(
-          betterPlayerConfiguration: BetterPlayerConfiguration(),
-          betterPlayerPlaylistConfiguration: const BetterPlayerPlaylistConfiguration(),
-          betterPlayerDataSourceList: dataSourceList),
-    );
-  }
+Widget build(BuildContext context) {
+  return AspectRatio(
+    aspectRatio: 16 / 9,
+    child: BetterPlayerPlaylist(
+        betterPlayerConfiguration: BetterPlayerConfiguration(),
+        betterPlayerPlaylistConfiguration: const BetterPlayerPlaylistConfiguration(),
+        betterPlayerDataSourceList: dataSourceList),
+  );
+}
 ```

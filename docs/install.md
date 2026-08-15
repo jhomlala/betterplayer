@@ -1,38 +1,54 @@
-## Install
+# Installation and Configuration
 
-1. Add this to your **pubspec.yaml** file:
+Follow these steps to integrate Better Player into your Flutter application.
+
+## 1. Add Dependency
+
+Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
   better_player: ^0.4.2
 ```
 
-2. Install it
+## 2. Install Package
+
+Run the following command in your terminal to fetch the package:
 
 ```bash
-$ flutter pub get
+flutter pub get
 ```
 
-3. Import it
+## 3. Import Package
+
+Import the library into your Dart code:
 
 ```dart
 import 'package:better_player/better_player.dart';
 ```
 
-4. (Required) iOS configuration 
-   You need to change these settings in order to run Better Player on iOS:
-* Set deployment info of your project to **min. iOS 11.0 version**.
-* Set Swift 5 version.
+## 4. Platform-Specific Configuration
 
-5. (Required) Android configuration. 
-   You need to change these settings in order to run Better Player on Android:
-* Set compileSdkVersion to *36*.
-* Use Flutter 3.44.0 or higher (for Built-in Kotlin support).
-* Enable multidex.
+### iOS Configuration (Required)
 
-6. (Optional) Additional iOS configuration
+To ensure Better Player functions correctly on iOS, apply the following settings:
 
-Add this into your `info.plist` file to support full screen rotation (Better Player will rotate screen to horizontal position when full screen is enabled):
+*   **Deployment Target**: Set the minimum iOS deployment version to **11.0**.
+*   **Swift Version**: Ensure your project is configured to use **Swift 5**.
+
+### Android Configuration (Required)
+
+Apply the following settings for Android support:
+
+*   **SDK Version**: Set `compileSdkVersion` to **36**.
+*   **Flutter Version**: Use **Flutter 3.44.0** or higher (required for built-in Kotlin support).
+*   **MultiDex**: Ensure MultiDex is enabled in your project.
+
+## 5. Additional Configurations (Optional)
+
+### iOS Fullscreen Rotation
+
+To support automatic screen rotation when entering fullscreen mode, add the following key to your `Info.plist` file:
 
 ```xml
 <key>UISupportedInterfaceOrientations</key>

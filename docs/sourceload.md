@@ -1,14 +1,19 @@
-## Source load
-You can check whether your data source has been loaded successfully by checking result of the future method of `setupDataSource` in `BetterPlayerController`:
+# Data Source Loading
+
+To ensure a smooth user experience, you can programmatically verify if a data source has been loaded successfully. This is handled by monitoring the `Future` returned by the `setupDataSource` method.
+
+## Handling Load Results
 
 ```dart
 betterPlayerController!.setupDataSource(source)
 .then((response) {
-  // Source loaded successfully
-  videoLoading = false;
+  // Data source loaded successfully
+  setState(() {
+    videoLoading = false;
+  });
 })
 .catchError((error) async {
-  // Source did not load, url might be invalid
-  inspect(error);
+  // Failed to load data source (e.g., invalid URL)
+  print("Failed to load video: $error");
 });
 ```

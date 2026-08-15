@@ -1,147 +1,66 @@
-## Subtitles source
-Subtitles can be configured from 3 different sources: file, network and memory. Subtitles source is passed in `BetterPlayerDataSource`:
+# Subtitle Configuration
 
-Network subtitles:
+Better Player provides comprehensive support for subtitles, allowing you to load them from various sources and customize their appearance.
+
+## Subtitle Sources
+
+Subtitles can be loaded from **Network**, **File**, or **Memory** sources. You can also provide multiple subtitle tracks for a single video.
+
+### Example: Network Subtitles
 ```dart
 var dataSource = BetterPlayerDataSource(
     BetterPlayerDataSourceType.network,
-    "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "video_url",
     subtitles: BetterPlayerSubtitlesSource.single(
         type: BetterPlayerSubtitlesSourceType.network,
-        url: "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
+        url: "https://example.com/subtitles.srt"
     ),
 );
 ```
 
-File subtitles:
-```dart
-var dataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.file,
-    "${directory.path}/testvideo.mp4",
-    subtitles: BetterPlayerSubtitlesSource.single(
-        type: BetterPlayerSubtitlesSourceType.file,
-        url: "${directory.path}/example_subtitles.srt",
-    ),
-);
-```
-
-You can pass multiple subtitles for one video:
-
+### Example: Multiple Subtitle Tracks
 ```dart
 var dataSource = BetterPlayerDataSource(
     BetterPlayerDataSourceType.network,
-    "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
-    liveStream: false,
-    useAsmsSubtitles: true,
-    hlsTrackNames: ["Low quality", "Not so low quality", "Medium quality"],
+    "hls_url",
     subtitles: [
         BetterPlayerSubtitlesSource(
           type: BetterPlayerSubtitlesSourceType.network,
-          name: "EN",
-          urls: [
-            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
-          ],
+          name: "English",
+          urls: ["url_en"],
         ),
-
         BetterPlayerSubtitlesSource(
           type: BetterPlayerSubtitlesSourceType.network,
-          name: "DE",
-          urls: [
-            "https://dl.dropboxusercontent.com/s/71nzjo2ux3evxqk/example_subtitles.srt"
-          ],
+          name: "German",
+          urls: ["url_de"],
         ),
     ],
 );
 ```
 
+## Styling & Customization
 
-Possible `BetterPlayerSubtitlesSource` configuration options:
-```dart
-///Source type
-final BetterPlayerSubtitlesSourceType? type;
-
-///Name of the subtitles, default value is "Default subtitles"
-final String? name;
-
-///Url of the subtitles, used with file or network subtitles
-final List<String?>? urls;
-
-///Content of subtitles, used when type is memory
-final String? content;
-
-///Subtitles selected by default, without user interaction
-final bool? selectedByDefault;
-
-///Additional headers used in HTTP request. Works only for
-/// [BetterPlayerSubtitlesSourceType.memory] source type.
-final Map<String, String>? headers;
-
-///Is ASMS segmented source (more than 1 subtitle file). This shouldn't be
-///configured manually.
-final bool? asmsIsSegmented;
-
-///Max. time between segments in milliseconds. This shouldn't be configured
-/// manually.
-final int? asmsSegmentsTime;
-
-///List of segments (start,end,url of the segment). This shouldn't be
-///configured manually.
-final List<BetterPlayerAsmsSubtitleSegment>? asmsSegments;
-```
-
-
-## Subtitles configuration
-
-Subtitles can be configured with `BetterPlayerSubtitlesConfiguration` class. Instance of this configuration should be passed to `BetterPlayerConfiguration`.
+The appearance of subtitles is controlled via `BetterPlayerSubtitlesConfiguration`.
 
 ```dart
 var betterPlayerConfiguration = BetterPlayerConfiguration(
     subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
         fontSize: 20,
-        fontColor: Colors.green,
+        fontColor: Colors.white,
+        outlineEnabled: true,
+        outlineColor: Colors.black,
+        alignment: Alignment.bottomCenter,
     ),
 );
 ```
 
-Possible configuration options:
-```dart
-///Subtitle font size
-final double fontSize;
+### Parameters
+*   **`fontSize`**, **`fontColor`**, **`fontFamily`**: Basic text styling.
+*   **`outlineEnabled`**, **`outlineColor`**, **`outlineSize`**: Text border styling for better legibility.
+*   **`leftPadding`**, **`rightPadding`**, **`bottomPadding`**: Adjust subtitle positioning.
+*   **`alignment`**: The alignment of the subtitle text on the screen.
+*   **`backgroundColor`**: The background color of the subtitle text box.
+*   **`selectedByDefault`**: Whether to enable subtitles automatically.
 
-///Subtitle font color
-final Color fontColor;
-
-///Enable outline (border) of the text
-final bool outlineEnabled;
-
-///Color of the outline stroke
-final Color outlineColor;
-
-///Outline stroke size
-final double outlineSize;
-
-///Font family of the subtitle
-final String fontFamily;
-
-///Left padding of the subtitle
-final double leftPadding;
-
-///Right padding of the subtitle
-final double rightPadding;
-
-///Bottom padding of the subtitle
-final double bottomPadding;
-
-///Alignment of the subtitle
-final Alignment alignment;
-
-///Background color of the subtitle
-final Color backgroundColor;
-
-///Subtitles selected by default, without user interaction
-final bool selectedByDefault;
-```
-
-## Current subtitle
-
-To get currently displayed subtitle, use `renderedSubtitle` in `BetterPlayerController`.
+## Accessing Current Subtitles
+To retrieve the text of the currently displayed subtitle, use the `renderedSubtitle` property on the `BetterPlayerController`.

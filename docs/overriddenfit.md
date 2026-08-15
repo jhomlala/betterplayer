@@ -1,8 +1,10 @@
-## Overriden aspect ratio
+# Overridden BoxFit
 
-You can override `BetterPlayerConfiguration`'s `fit` parameter in runtime with `setOverridenFit`
-method from `betterPlayerController`.
+You can dynamically override the `fit` parameter defined in `BetterPlayerConfiguration` during runtime using the `setOverriddenFit` method.
+
+## Implementation Example
 
 ```dart
+// Changes the video fit to 'contain'
 betterPlayerController.setOverriddenFit(BoxFit.contain);
 ```

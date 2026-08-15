@@ -1,24 +1,19 @@
-## Playlist configuration
+# Playlist Configuration
 
-Customize `BetterPlayerPlaylist` widget behavior with `BetterPlayerPlaylistConfiguration`. Instance of `BetterPlayerPlaylistConfiguration` should be passed to `BetterPlayerPlaylist`.
+You can customize the behavior of the `BetterPlayerPlaylist` widget using the `BetterPlayerPlaylistConfiguration` class.
 
+## Implementation Example
 
 ```dart
 var betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
     loopVideos: false,
     nextVideoDelay: Duration(milliseconds: 5000),
+    initialStartIndex: 0,
 );
 ```
 
-Possible configuration options:
-```dart
-///How long user should wait for next video
-final Duration nextVideoDelay;
+## Configuration Parameters
 
-///Should videos be looped
-final bool loopVideos;
-
-///Index of video that will start on playlist start. Id must be less than
-///elements in data source list. Default is 0.
-final int initialStartIndex;
-```
+*   **`nextVideoDelay`**: The duration the user must wait before the next video in the playlist starts automatically.
+*   **`loopVideos`**: Determines if the playlist should restart from the beginning after the last video finishes.
+*   **`initialStartIndex`**: The index of the video that should start playing when the playlist is initialized.

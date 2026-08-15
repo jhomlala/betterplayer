@@ -1,22 +1,24 @@
-## Multiple gesture detector
+# Handling Multiple Gestures
 
-If you need to wrap `BetterPlayer` widget with `GestureDetector` widget then you need to use `BetterPlayerMultipleGestureDetector`.
+In scenarios where you need to wrap the `BetterPlayer` widget with a `GestureDetector`, you should use `BetterPlayerMultipleGestureDetector`. This ensures that gestures are correctly propagated and do not conflict with the player's internal gesture handling.
+
+## Implementation Example
 
 ```dart
 BetterPlayerMultipleGestureDetector(
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer(controller: _betterPlayerController),
-            ),
-            onTap: () {
-              print("Tap!");
-            },
-          ),
+    child: AspectRatio(
+      aspectRatio: 16 / 9,
+      child: BetterPlayer(controller: _betterPlayerController),
+    ),
+    onTap: () {
+      print("Outer Tap Detected!");
+    },
+);
 ```
 
-Supported gestures:
-* `onTap`
-* `onDoubleTap`
-* `onLongPress`
+## Supported Gestures
+*   `onTap`
+*   `onDoubleTap`
+*   `onLongPress`
 
-If you need to have different gestures than mentioned above then you can use default `GestureDetector`.
+For any other gesture types, you can continue to use the standard Flutter `GestureDetector`.

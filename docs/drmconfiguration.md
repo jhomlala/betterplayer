@@ -1,14 +1,21 @@
-## DRM configuration
-To configure DRM for your data source, use drmConfiguration parameter. 
-Supported DRMs:
+# DRM Configuration
 
-* Token based (authorization header): Android/iOS
-* Widevine (licensue url + headers): Android
-* Fairplay EZDRM (certificate url, license url): iOS
+Better Player provides robust support for Digital Rights Management (DRM) to protect your video content. DRM is configured using the `drmConfiguration` parameter within the `BetterPlayerDataSource`.
 
-Additional DRM types may be added in the future.
+## Supported DRM Types
 
-Token based:
+Currently, Better Player supports the following DRM mechanisms:
+
+*   **Token-Based (Authorization Header)**: Supported on both Android and iOS.
+*   **Widevine (License URL + Headers)**: Supported on Android.
+*   **FairPlay EZDRM (Certificate URL + License URL)**: Supported on iOS.
+*   **ClearKey**: Supported on Android.
+
+---
+
+### Token-Based DRM
+Used when the license is retrieved via a simple authorization token.
+
 ```dart
 BetterPlayerDataSource dataSource = BetterPlayerDataSource(
     BetterPlayerDataSourceType.network,
@@ -19,21 +26,25 @@ BetterPlayerDataSource dataSource = BetterPlayerDataSource(
         token: "Bearer=token",
     ),
 );
-````
+```
 
-Widevine (license url based):
+### Widevine DRM (Android)
+Used for license retrieval based on a license URL.
+
 ```dart
 BetterPlayerDataSource _widevineDataSource = BetterPlayerDataSource(
     BetterPlayerDataSourceType.network,
     "url",
     drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.widevine,
-        licenseUrl:"licenseUrl",
-        headers: {"header": "value"}
+        licenseUrl: "https://your-license-server.com/license",
+        headers: {"Authorization": "Bearer token"}
     ),
 );
 ```
-Fairplay:
+
+### FairPlay DRM (iOS)
+Requires a certificate URL and a license URL.
 
 ```dart
 BetterPlayerDataSource _fairplayDataSource = BetterPlayerDataSource(
@@ -47,11 +58,15 @@ BetterPlayerDataSource _fairplayDataSource = BetterPlayerDataSource(
 );
 ```
 
-ClearKey (only supported in Android):
+---
 
-A ClearKey MP4 file can be generated with MP4Box as follow:
+### ClearKey DRM (Android)
 
-- Create drm_file.xml with the following contents.
+ClearKey content can be generated using tools like [MP4Box](https://gpac.wp.imt.fr/). 
+
+#### 1. Generate Protected Content
+Create a `drm_file.xml` with your key specifications:
+
 ```xml
 <GPACDRM type="CENC AES-CTR">
   <DRMInfo type="pssh" version="1">
@@ -62,28 +77,28 @@ A ClearKey MP4 file can be generated with MP4Box as follow:
   <CrypTrack IV_size="8" first_IV="0xbb5738fe08f11341" isEncrypted="1" saiSavedBox="senc" trackID="1">
     <key KID="f3c5e0361e6654b28f8049c778b23946" value="a4631a153a443df9eed0593043db7519"/>
   </CrypTrack>
-   <CrypTrack IV_size="8" first_IV="0xbb5738fe08f11341" isEncrypted="1" saiSavedBox="senc" trackID="2">
-    <key KID="f3c5e0361e6654b28f8049c778b23946" value="a4631a153a443df9eed0593043db7519"/>
-  </CrypTrack>
-
 </GPACDRM>
-
-
 ```
-- Create the mp4 container using  [MP4Box](https://gpac.wp.imt.fr/)
-  - MP4Box -crypt drm_file.xml  testvideo.mp4  -out testvideo_encrypt_tmp.mp4
-  - MP4Box -frag 240000 testvideo_encrypt_tmp.mp4 -out testvideo_encrypt.mp4 (need to create multi segment mp4 file as ExoPlayer does not read the pssh block on a single segment mp4 file)
-```dart
 
-    var _clearKeyDataSourceFile = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.file,
-      await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
-      drmConfiguration: BetterPlayerDrmConfiguration(
-          drmType: BetterPlayerDrmType.clearKey,
-          clearKey: BetterPlayerClearKeyUtils.generate({
-            "f3c5e0361e6654b28f8049c778b23946":
-                "a4631a153a443df9eed0593043db7519",
-            "abba271e8bcf552bbd2e86a434a9a5d9":
-                "69eaa802a6763af979e8d1940fb88392"
-          })),
-    );
+Run the following MP4Box commands:
+```bash
+# Encrypt the video
+MP4Box -crypt drm_file.xml testvideo.mp4 -out testvideo_encrypt_tmp.mp4
+
+# Fragment the video (Required for ExoPlayer to read pssh blocks)
+MP4Box -frag 240000 testvideo_encrypt_tmp.mp4 -out testvideo_encrypt.mp4
+```
+
+#### 2. Configure ClearKey in Data Source
+```dart
+var _clearKeyDataSource = BetterPlayerDataSource(
+  BetterPlayerDataSourceType.file,
+  await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
+  drmConfiguration: BetterPlayerDrmConfiguration(
+      drmType: BetterPlayerDrmType.clearKey,
+      clearKey: BetterPlayerClearKeyUtils.generate({
+        "f3c5e0361e6654b28f8049c778b23946": "a4631a153a443df9eed0593043db7519",
+      })
+  ),
+);
+```

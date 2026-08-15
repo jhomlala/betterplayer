@@ -1,8 +1,11 @@
-## Buffering configuration
-Buffering of the video can be configurd with `BetterPlayerBufferingConfiguration` class. It allows to setup better buffering experience or setup custom load settings. Currently available only in Android.
+# Buffering Configuration
 
+You can fine-tune the video buffering behavior using the `BetterPlayerBufferingConfiguration` class. This allows you to optimize the playback experience based on network conditions or specific application requirements.
 
-`BetterPlayerBufferingConfiguration` should be used within `BetterPlayerDataSource`:
+> [!NOTE]
+> Buffering configuration is currently available only on Android.
+
+## Implementation Example
 
 ```dart
 BetterPlayerDataSource _betterPlayerDataSource = BetterPlayerDataSource(
@@ -17,22 +20,9 @@ BetterPlayerDataSource _betterPlayerDataSource = BetterPlayerDataSource(
     );
 ```
 
-Possible configuration options:
-```dart
-///The default minimum duration of media that the player will attempt to
-///ensure is buffered at all times, in milliseconds.
-final int minBufferMs;
+## Configuration Options
 
-///The default maximum duration of media that the player will attempt to
-///buffer, in milliseconds.
-final int maxBufferMs;
-
-///The default duration of media that must be buffered for playback to start
-///or resume following a user action such as a seek, in milliseconds.
-final int bufferForPlaybackMs;
-
-///The default duration of media that must be buffered for playback to resume
-///after a rebuffer, in milliseconds. A rebuffer is defined to be caused by
-///buffer depletion rather than a user action.
-final int bufferForPlaybackAfterRebufferMs;
-```
+*   **`minBufferMs`**: The minimum duration of media (in milliseconds) the player will attempt to keep buffered at all times.
+*   **`maxBufferMs`**: The maximum duration of media (in milliseconds) the player will attempt to buffer.
+*   **`bufferForPlaybackMs`**: The duration of media that must be buffered before playback starts or resumes after a user action (like seeking).
+*   **`bufferForPlaybackAfterRebufferMs`**: The duration of media required to resume playback after an automatic rebuffer (caused by buffer depletion).

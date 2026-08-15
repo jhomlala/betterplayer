@@ -1,71 +1,81 @@
-## General player usage
+# General Player Usage
 
-### Basic usage
-There are 2 basic methods which you can use to setup Better Player:
+This guide provides an overview of the core components and common patterns for using Better Player in your Flutter application.
+
+## Quick Start Factory Methods
+
+For rapid integration, Better Player offers simplified factory methods for common data source types. These methods are ideal for basic playback scenarios.
+
+### Methods
+*   `BetterPlayer.network(url, configuration)`: For streaming videos over a network.
+*   `BetterPlayer.file(url, configuration)`: For playing local video files.
+
+### Basic Implementation Example
 ```dart
-BetterPlayer.network(url, configuration)
-BetterPlayer.file(url, configuration)
-```
-There methods setup basic configuration for you and allows you to start using player in few seconds.
-Here is an example:
-```dart
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Example player"),
-      ),
-      body: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: BetterPlayer.network(
-          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          betterPlayerConfiguration: BetterPlayerConfiguration(
-            aspectRatio: 16 / 9,
-          ),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text("Simple Player"),
+    ),
+    body: AspectRatio(
+      aspectRatio: 16 / 9,
+      child: BetterPlayer.network(
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        betterPlayerConfiguration: BetterPlayerConfiguration(
+          aspectRatio: 16 / 9,
         ),
       ),
-    );
-  }
-```
-In this example, we're just showing video from url with aspect ratio = 16/9.
-Better Player has many more configuration options which are described in next pages.
-
-
-### Normal usage
-When you want have more configuration options then you need to create `BetterPlayerDataSource` and `BetterPlayerController`. `BetterPlayerDataSource` describes
-source of your video. With `BetterPlayerDataSource` you will provide all important informations like url of video, type of video, subtitles source and more.
-`BetterPlayerController` is a Flutter convention to have a manager class to control instance of video widget. With `BetterPlayerController` you will be able to
-change behavior of the video widget, for example start or stop video, change volume and more.
-
-
-Create `BetterPlayerDataSource` and `BetterPlayerController`. You should do it in initState of your widget:
-```dart
-BetterPlayerController _betterPlayerController;
-
-  @override
-  void initState() {
-    super.initState();
-    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-    _betterPlayerController = BetterPlayerController(
-        BetterPlayerConfiguration(),
-        betterPlayerDataSource: betterPlayerDataSource);
-  }
-````
-
-Create `BetterPlayer` widget wrapped in `AspectRatio` widget:
-```dart
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: BetterPlayer(
-        controller: _betterPlayerController,
-      ),
-    );
-  }
+    ),
+  );
+}
 ```
 
-## Example project
-Check [Example project](https://github.com/jhomlala/betterplayer/tree/master/example) which shows how to use Better Player in different scenarios.
+## Advanced Controller-Based Usage
+
+For production applications, using `BetterPlayerController` is the recommended approach. This allows for deep customization and fine-grained control over the playback experience.
+
+### Key Components
+
+*   **BetterPlayerDataSource**: Encapsulates all information regarding the media source, such as the URL, video format, subtitles, and headers.
+*   **BetterPlayerController**: Manages the state and behavior of the player. It serves as the primary interface for interacting with the video engine.
+
+### Implementation Workflow
+
+#### 1. Controller Initialization
+Initialize the controller and data source within your widget's `initState` to ensure proper lifecycle management:
+
+```dart
+late BetterPlayerController _betterPlayerController;
+
+@override
+void initState() {
+  super.initState();
+  
+  BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+      
+  _betterPlayerController = BetterPlayerController(
+      BetterPlayerConfiguration(),
+      betterPlayerDataSource: betterPlayerDataSource);
+}
+```
+
+#### 2. Widget Integration
+Display the player using the `BetterPlayer` widget, typically wrapped in an `AspectRatio` to maintain the desired dimensions:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return AspectRatio(
+    aspectRatio: 16 / 9,
+    child: BetterPlayer(
+      controller: _betterPlayerController,
+    ),
+  );
+}
+```
+
+## Explore More
+Better Player supports a wide range of advanced configurations, including playlists, DRM, and custom controls. Explore the subsequent sections of the documentation or the [Example Project](https://github.com/jhomlala/betterplayer/tree/master/example) for detailed implementation details.

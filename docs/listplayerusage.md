@@ -1,26 +1,42 @@
-## List player usage
+# Video Playback in Lists
 
-`BetterPlayerListViewPlayer` is one of the Better Player which has special function: to help displaying videos in list.
+The `BetterPlayerListVideoPlayer` is a specialized component designed for seamless video integration within scrollable lists. It provides automatic playback management based on the visibility of the video on the screen.
 
-`BetterPlayerListViewPlayer` will auto play/pause video once video is visible on screen with `playFraction`. `playFraction` describes percent of video that must be visibile to play video. If playFraction is 0.8 then 80% of video height must be visible on screen to automatically play the video.
+## Automatic Playback with `playFraction`
+
+The `BetterPlayerListVideoPlayer` automatically toggles between play and pause states based on its visibility threshold, defined by the `playFraction` parameter. 
+
+The `playFraction` value (ranging from 0.0 to 1.0) represents the percentage of the video height that must be visible within the viewport to trigger playback. For example, a `playFraction` of `0.8` requires 80% of the video to be visible before it starts playing.
+
+### Basic Implementation
 
 ```dart
- @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: BetterPlayerListVideoPlayer(
-        BetterPlayerDataSource(
-            BetterPlayerDataSourceType.network, videoListData.videoUrl),
-        key: Key(videoListData.hashCode.toString()),
-        playFraction: 0.8,
-      ),
-    );
-  }
+@override
+Widget build(BuildContext context) {
+  return AspectRatio(
+    aspectRatio: 16 / 9,
+    child: BetterPlayerListVideoPlayer(
+      BetterPlayerDataSource(
+          BetterPlayerDataSourceType.network, videoListData.videoUrl),
+      key: Key(videoListData.hashCode.toString()),
+      playFraction: 0.8,
+    ),
+  );
+}
 ```
 
-You can control `BetterPlayerListViewPlayer` with `BetterPlayerListViewPlayerController`. You need to pass `BetterPlayerListViewPlayerController` to `BetterPlayerListVideoPlayer`. See more in example app.
+## Advanced List Management
 
-`BetterPlayerListViewPlayer` is good solution if you know that your list will be not too long. If you know that your list of videos will be long then you need to recycle `BetterPlayerController` instances. This is required because each creation of `BetterPlayerController` requires a lot of resources of the device. You need to remember that there are some devices which allows to create 2-3 instances of `BetterPlayerController` due to low hardware specification. To handle problem like this, you should use **recycle/reusable** techniques, where you will create 2-3 instances of `BetterPlayerController` and simply reuse them in list cell. See reusable video list example here: https://github.com/jhomlala/betterplayer/tree/master/example/lib/pages/reusable_video_list
+For more granular control, you can utilize the `BetterPlayerListViewPlayerController`. Refer to the [Example App](https://github.com/jhomlala/betterplayer/tree/master/example) for a comprehensive demonstration.
 
-To resolve random OOM issues, try to lower values in `bufferingConfiguration` in `BetterPlayerDataSource`.
+### Performance Optimization: Controller Recycling
+
+While the standard `BetterPlayerListVideoPlayer` is suitable for shorter lists, we recommend implementing a **recycling** or **reusable** strategy for long lists.
+
+Creating multiple instances of `BetterPlayerController` is resource-intensive. On devices with limited hardware specifications, creating more than 2-3 instances simultaneously can lead to performance degradation or Out-of-Memory (OOM) errors.
+
+#### Recommendation:
+Implement a pattern where a small pool of `BetterPlayerController` instances (e.g., 2-3) is reused across list items as they scroll into view.
+
+*   **Reusable Video List Example**: [View Code](https://github.com/jhomlala/betterplayer/tree/master/example/lib/pages/reusable_video_list)
+*   **Buffer Tuning**: If you encounter random OOM issues, consider reducing the values within the `bufferingConfiguration` of your `BetterPlayerDataSource`.
