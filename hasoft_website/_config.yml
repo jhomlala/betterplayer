@@ -1,0 +1,26 @@
+title: Hasoft.pl
+email: contact@hasoft.pl
+description: >-
+  Official website of Hasoft, developer of Better Player, Alice, and Catcher Flutter packages.
+baseurl: ""
+url: "https://hasoft.pl"
+author: jhomlala
+
+# Build settings
+theme: minima
+plugins:
+  - jekyll-feed
+
+# Dark mode custom settings
+dark_mode: true
+
+collections:
+  pages:
+    output: true
+    permalink: /:name/
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"

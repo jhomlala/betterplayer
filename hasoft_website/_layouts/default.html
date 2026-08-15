@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page.title }} | Hasoft.pl</title>
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="{{ '/' | relative_url }}" class="logo">Hasoft</a>
+                <div>
+                    <a href="{{ '/better_player' | relative_url }}">Better Player</a>
+                    <a href="{{ '/alice' | relative_url }}">Alice</a>
+                    <a href="{{ '/catcher' | relative_url }}">Catcher</a>
+                    <a href="{{ '/articles' | relative_url }}">Articles</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {{ content }}
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; {{ site.time | date: '%Y' }} Hasoft. All rights reserved.</p>
+            <p>Developing high-quality Flutter packages for the community.</p>
+        </div>
+    </footer>
+</body>
+</html>
