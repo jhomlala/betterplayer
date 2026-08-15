@@ -1,5 +1,6 @@
 ## Unreleased
 * Updated: Comprehensive documentation overhaul for professional tone, grammar, and typos across all project documentation.
+* Removed: `hasoft_website` directory from the repository.
 
 ## 0.4.2
 * Fixed: Restricted logo size on the documentation website to prevent it from being too large.
