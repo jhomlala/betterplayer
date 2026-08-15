@@ -88,6 +88,26 @@ Widget build(BuildContext context) {
 }
 ```
 
+## Pro Tips
+
+### Accessing the Controller via Context
+In deep widget trees, you can access the `BetterPlayerController` from any descendant widget of `BetterPlayer` using the `InheritedWidget` pattern. This is useful for building custom UI overlays:
+
+```dart
+BetterPlayerController controller = BetterPlayerController.of(context);
+```
+
+### Source-Specific Placeholders
+While you can define a global placeholder in `BetterPlayerConfiguration`, you can also provide a specific placeholder for each `BetterPlayerDataSource`. The source-specific placeholder will take precedence:
+
+```dart
+BetterPlayerDataSource(
+  BetterPlayerDataSourceType.network,
+  "url",
+  placeholder: Image.asset("assets/video_thumbnail.png"),
+)
+```
+
 ## Advanced Examples
 
 For more complex scenarios, such as playlists, caching, or custom controls, please refer to the [Example Project](https://github.com/jhomlala/betterplayer/tree/master/example).

@@ -40,5 +40,9 @@ BetterPlayerDataSource dataSource = BetterPlayerDataSource(
 ### Background Playback
 To allow playback to continue after the user leaves the application, ensure `handleLifecycle` is set to `false` in your `BetterPlayerConfiguration`.
 
-### Android Service Cleanup
-On Android, we recommend implementing a service to ensure notifications are properly removed if the application is killed unexpectedly. Refer to the `BetterPlayerService` in the [Example Project](https://github.com/jhomlala/betterplayer/blob/feature/player_notifications/example/android/app/src/main/kotlin/com/jhomlala/example/BetterPlayerService.kt) for a reference implementation.
+> [!TIP]
+> Setting `handleLifecycle: false` is essential for audio-only apps or video apps that support background audio, as it prevents the system from automatically pausing playback when the app is minimized.
+
+### Custom Activity Name (Android)
+By default, Better Player tries to launch the main activity when the notification is tapped. If your app has a specific entry point or you want to route the user to a specific screen, provide the `activityName` (e.g., `"com.your.package.MainActivity"`).
+

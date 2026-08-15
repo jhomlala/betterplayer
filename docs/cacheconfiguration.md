@@ -26,6 +26,9 @@ BetterPlayerDataSource _betterPlayerDataSource = BetterPlayerDataSource(
 *   **`maxCacheFileSize`**: (Android only) The maximum size allowed for an individual cached file in bytes.
 *   **`key`**: A unique identifier used to persist and reuse cached data across application sessions.
 
+> [!IMPORTANT]
+> On Android, providing a unique `key` is essential if you want the cached data to be available after the application is closed and reopened. Without a key, the cache may be treated as session-only.
+
 ## Cache Management
 
 ### Clear All Cache

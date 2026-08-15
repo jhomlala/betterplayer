@@ -43,12 +43,16 @@ Below is a detailed list of available options within `BetterPlayerConfiguration`
 *   **`autoDetectFullscreenAspectRatio`**: Automatically determines the fullscreen aspect ratio.
 *   **`routePageBuilder`**: A custom `RoutePageBuilder` for the fullscreen view.
 
+> [!TIP]
+> Enabling `autoDetectFullscreenDeviceOrientation` is highly recommended for apps with mixed content. It automatically switches to portrait fullscreen for vertical videos and landscape for horizontal ones, providing a superior user experience with zero manual logic.
+
 ### Advanced Features
 *   **`subtitlesConfiguration`**: Defines the styling and behavior of subtitles.
 *   **`controlsConfiguration`**: Deep customization of the player's UI controls.
-*   **`rotation`**: Rotates the video box by a specific degree (0, 90, 180, 270).
+*   **`rotation`**: Rotates the video box by a specific degree (0, 90, 180, 270). This is useful for correcting the orientation of user-uploaded videos.
 *   **`translations`**: A list of `BetterPlayerTranslations` for localized UI strings.
 *   **`eventListener`**: A callback function that receives all `BetterPlayerEvent` notifications.
+*   **`errorBuilder`**: A function that returns a custom widget when an error occurs. Use this to provide branded error messages or localized recovery instructions.
 *   **`playerVisibilityChangedBehavior`**: A callback to handle behavior changes based on player visibility.
 *   **`autoDispose`**: If enabled (default: true), automatically disposes of the controller when the widget is destroyed.
 *   **`useRootNavigator`**: Determines if the root navigator should be used for opening new pages (e.g., fullscreen).
