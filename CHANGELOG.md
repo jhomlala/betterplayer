@@ -1,3 +1,6 @@
+## Unreleased
+* Updated: Comprehensive documentation overhaul for professional tone, grammar, and typos across all project documentation.
+
 ## 0.4.2
 * Fixed: Restricted logo size on the documentation website to prevent it from being too large.
 * Updated: Replaced legacy PNG logo with a modern, concentric SVG identity across the library, documentation, and example app.
