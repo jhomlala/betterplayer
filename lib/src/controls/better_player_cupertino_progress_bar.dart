@@ -117,20 +117,60 @@ class _VideoProgressBarState
           widget.onTapDown!();
         }
       },
-      child: Center(
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          color: Colors.transparent,
-          child: CustomPaint(
-            painter: _ProgressBarPainter(
-              _getValue(),
-              widget.colors,
+      child: Semantics(
+        label: betterPlayerController!.translations.progressBarLabel,
+        value: _getSemanticsValue(),
+        increasedValue: _getSemanticsValue(relative: 0.1),
+        decreasedValue: _getSemanticsValue(relative: -0.1),
+        container: true,
+        slider: true,
+        onIncrease: () {
+          _seekRelative(0.1);
+        },
+        onDecrease: () {
+          _seekRelative(-0.1);
+        },
+        child: Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.transparent,
+            child: CustomPaint(
+              painter: _ProgressBarPainter(
+                _getValue(),
+                widget.colors,
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  String _getSemanticsValue({double relative = 0}) {
+    final value = _getValue();
+    if (!value.initialized) {
+      return '0%';
+    }
+    final duration = value.duration?.inMilliseconds ?? 0;
+    final position = value.position.inMilliseconds;
+    if (duration == 0) {
+      return '0%';
+    }
+
+    final currentPercent = position / duration;
+    final targetPercent = (currentPercent + relative).clamp(0.0, 1.0);
+
+    return '${(targetPercent * 100).round()}%';
+  }
+
+  void _seekRelative(double relative) {
+    final duration = controller?.value.duration;
+    if (duration != null) {
+      final position = controller?.value.position;
+      final newPosition = position! + duration * relative;
+      betterPlayerController?.seekTo(newPosition);
+    }
   }
 
   void _setupUpdateBlockTimer() {

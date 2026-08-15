@@ -10,6 +10,7 @@ class MockVideoPlayerController extends VideoPlayerController {
   bool isLoopingState = false;
   double volume = 0;
   double speed = 1;
+  Duration? lastSeekPosition;
 
   void emitInitialized() {
     value = value.copyWith(duration: const Duration(seconds: 1));
@@ -43,6 +44,7 @@ class MockVideoPlayerController extends VideoPlayerController {
 
   @override
   Future<void> seekTo(Duration? position) async {
+    lastSeekPosition = position;
     value = value.copyWith(position: position);
   }
 

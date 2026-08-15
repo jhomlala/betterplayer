@@ -4,10 +4,12 @@ import 'package:material_ui/material_ui.dart';
 class BetterPlayerMaterialClickableWidget extends StatelessWidget {
   final Widget child;
   final void Function() onTap;
+  final String? semanticsLabel;
 
   const BetterPlayerMaterialClickableWidget({
     required this.onTap,
     required this.child,
+    this.semanticsLabel,
     super.key,
   });
 
@@ -21,7 +23,11 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        child: child,
+        child: Semantics(
+          label: semanticsLabel,
+          button: true,
+          child: child,
+        ),
       ),
     );
   }

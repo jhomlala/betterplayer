@@ -14,6 +14,19 @@ class BetterPlayerTranslations {
   final String overflowMenuAudioTracks;
   final String qualityAuto;
 
+  /// Accessibility labels
+  final String controlsPlayLabel;
+  final String controlsPauseLabel;
+  final String controlsMuteLabel;
+  final String controlsUnmuteLabel;
+  final String controlsFullscreenLabel;
+  final String controlsExitFullscreenLabel;
+  final String controlsSkipForwardLabel;
+  final String controlsSkipBackwardLabel;
+  final String progressBarLabel;
+  final String overflowMenuLabel;
+  final String controlsPipLabel;
+
   BetterPlayerTranslations({
     this.languageCode = 'en',
     this.generalDefaultError = "Video can't be played",
@@ -28,6 +41,17 @@ class BetterPlayerTranslations {
     this.overflowMenuQuality = 'Quality',
     this.overflowMenuAudioTracks = 'Audio',
     this.qualityAuto = 'Auto',
+    this.controlsPlayLabel = 'Play',
+    this.controlsPauseLabel = 'Pause',
+    this.controlsMuteLabel = 'Mute',
+    this.controlsUnmuteLabel = 'Unmute',
+    this.controlsFullscreenLabel = 'Enter fullscreen',
+    this.controlsExitFullscreenLabel = 'Exit fullscreen',
+    this.controlsSkipForwardLabel = 'Skip forward',
+    this.controlsSkipBackwardLabel = 'Skip backward',
+    this.progressBarLabel = 'Video progress',
+    this.overflowMenuLabel = 'More options',
+    this.controlsPipLabel = 'Picture-in-Picture',
   });
 
   factory BetterPlayerTranslations.polish() => BetterPlayerTranslations(
@@ -43,6 +67,17 @@ class BetterPlayerTranslations {
     overflowMenuQuality: 'Jakość',
     overflowMenuAudioTracks: 'Dźwięk',
     qualityAuto: 'Automatycznie',
+    controlsPlayLabel: 'Odtwórz',
+    controlsPauseLabel: 'Wstrzymaj',
+    controlsMuteLabel: 'Wycisz',
+    controlsUnmuteLabel: 'Wyłącz wyciszenie',
+    controlsFullscreenLabel: 'Pełny ekran',
+    controlsExitFullscreenLabel: 'Wyjdź z pełnego ekranu',
+    controlsSkipForwardLabel: 'Do przodu',
+    controlsSkipBackwardLabel: 'Do tyłu',
+    progressBarLabel: 'Pasek postępu',
+    overflowMenuLabel: 'Więcej opcji',
+    controlsPipLabel: 'Obraz w obrazie',
   );
 
   factory BetterPlayerTranslations.chinese() => BetterPlayerTranslations(
@@ -59,6 +94,17 @@ class BetterPlayerTranslations {
     overflowMenuQuality: '质量',
     overflowMenuAudioTracks: '音訊',
     qualityAuto: '汽車',
+    controlsPlayLabel: '播放',
+    controlsPauseLabel: '暫停',
+    controlsMuteLabel: '靜音',
+    controlsUnmuteLabel: '取消靜音',
+    controlsFullscreenLabel: '全屏',
+    controlsExitFullscreenLabel: '退出全屏',
+    controlsSkipForwardLabel: '快進',
+    controlsSkipBackwardLabel: '快退',
+    progressBarLabel: '視頻進度',
+    overflowMenuLabel: '更多選項',
+    controlsPipLabel: '畫中畫',
   );
 
   factory BetterPlayerTranslations.hindi() => BetterPlayerTranslations(
@@ -75,6 +121,17 @@ class BetterPlayerTranslations {
     overflowMenuQuality: 'गुणवत्ता',
     overflowMenuAudioTracks: 'ऑडियो',
     qualityAuto: 'ऑटो',
+    controlsPlayLabel: 'प्ले करें',
+    controlsPauseLabel: 'पॉज करें',
+    controlsMuteLabel: 'म्यूट करें',
+    controlsUnmuteLabel: 'अनम्यूट करें',
+    controlsFullscreenLabel: 'पूर्ण स्क्रीन करें',
+    controlsExitFullscreenLabel: 'पूर्ण स्क्रीन से बाहर निकलें',
+    controlsSkipForwardLabel: 'आगे बढ़ें',
+    controlsSkipBackwardLabel: 'पीछे हटें',
+    progressBarLabel: 'वीडियो प्रगति',
+    overflowMenuLabel: 'अधिक विकल्प',
+    controlsPipLabel: 'पिक्चर-इन-पिक्चर',
   );
 
   factory BetterPlayerTranslations.arabic() => BetterPlayerTranslations(
@@ -90,7 +147,18 @@ class BetterPlayerTranslations {
     overflowMenuSubtitles: 'الترجمة',
     overflowMenuQuality: 'الجودة',
     overflowMenuAudioTracks: 'الصوت',
-    qualityAuto: 'ऑटो',
+    qualityAuto: 'أوتوماتيكي',
+    controlsPlayLabel: 'تشغيل',
+    controlsPauseLabel: 'إيقاف مؤقت',
+    controlsMuteLabel: 'كتم الصوت',
+    controlsUnmuteLabel: 'إلغاء كتم الصوت',
+    controlsFullscreenLabel: 'ملء الشاشة',
+    controlsExitFullscreenLabel: 'خروج من ملء الشاشة',
+    controlsSkipForwardLabel: 'تقديم',
+    controlsSkipBackwardLabel: 'تأخير',
+    progressBarLabel: 'تقدم الفيديو',
+    overflowMenuLabel: 'المزيد من الخيارات',
+    controlsPipLabel: 'صورة داخل صورة',
   );
 
   factory BetterPlayerTranslations.turkish() => BetterPlayerTranslations(
@@ -107,6 +175,17 @@ class BetterPlayerTranslations {
     overflowMenuQuality: 'Kalite',
     overflowMenuAudioTracks: 'Ses',
     qualityAuto: 'Otomatik',
+    controlsPlayLabel: 'Oynat',
+    controlsPauseLabel: 'Duraklat',
+    controlsMuteLabel: 'Sessiz',
+    controlsUnmuteLabel: 'Sesi Aç',
+    controlsFullscreenLabel: 'Tam Ekran',
+    controlsExitFullscreenLabel: 'Tam Ekrandan Çık',
+    controlsSkipForwardLabel: 'İleri Atla',
+    controlsSkipBackwardLabel: 'Geri Atla',
+    progressBarLabel: 'Video İlerlemesi',
+    overflowMenuLabel: 'Daha Fazla Seçenek',
+    controlsPipLabel: 'Resim içinde Resim',
   );
 
   factory BetterPlayerTranslations.vietnamese() => BetterPlayerTranslations(
@@ -123,6 +202,17 @@ class BetterPlayerTranslations {
     overflowMenuQuality: 'Chất lượng',
     overflowMenuAudioTracks: 'Âm thanh',
     qualityAuto: 'Tự động',
+    controlsPlayLabel: 'Phát',
+    controlsPauseLabel: 'Tạm dừng',
+    controlsMuteLabel: 'Tắt tiếng',
+    controlsUnmuteLabel: 'Bật tiếng',
+    controlsFullscreenLabel: 'Toàn màn hình',
+    controlsExitFullscreenLabel: 'Thoát toàn màn hình',
+    controlsSkipForwardLabel: 'Tua tới',
+    controlsSkipBackwardLabel: 'Tua lùi',
+    progressBarLabel: 'Tiến trình video',
+    overflowMenuLabel: 'Thêm tùy chọn',
+    controlsPipLabel: 'Hình trong hình',
   );
 
   factory BetterPlayerTranslations.spanish() => BetterPlayerTranslations(
@@ -138,5 +228,16 @@ class BetterPlayerTranslations {
     overflowMenuSubtitles: 'Subtítulos',
     overflowMenuQuality: 'Calidad',
     qualityAuto: 'Automática',
+    controlsPlayLabel: 'Reproducir',
+    controlsPauseLabel: 'Pausar',
+    controlsMuteLabel: 'Silenciar',
+    controlsUnmuteLabel: 'Activar sonido',
+    controlsFullscreenLabel: 'Pantalla completa',
+    controlsExitFullscreenLabel: 'Salir de pantalla completa',
+    controlsSkipForwardLabel: 'Adelantar',
+    controlsSkipBackwardLabel: 'Retroceder',
+    progressBarLabel: 'Barra de progreso',
+    overflowMenuLabel: 'Menú de opciones',
+    controlsPipLabel: 'Imagen en imagen',
   );
 }
