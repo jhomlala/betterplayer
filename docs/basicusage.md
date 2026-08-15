@@ -1,69 +1,113 @@
-## Example project
-Check [Example project](https://github.com/jhomlala/betterplayer/tree/master/example) which shows how to use Better Player in different scenarios.
+# Basic Usage Guide
 
-### Basic usage
-There are 2 basic methods which you can use to setup Better Player:
+Better Player provides multiple ways to integrate video playback, ranging from quick setups to highly customizable implementations.
+
+## Quick Start Methods
+
+For simple use cases, you can use the static factory methods provided by the `BetterPlayer` class. These methods handle the basic configuration automatically, allowing you to display a video within seconds.
+
+### Network Source
 ```dart
 BetterPlayer.network(url, configuration)
+```
+
+### File Source
+```dart
 BetterPlayer.file(url, configuration)
 ```
-There methods setup basic configuration for you and allows you to start using player in few seconds.
-Here is an example:
+
+### Implementation Example
+
+The following example demonstrates how to display a video from a URL with a fixed 16:9 aspect ratio:
+
 ```dart
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Example player"),
-      ),
-      body: AspectRatio(
-        aspectRatio: 16 / 9,
-        child: BetterPlayer.network(
-          "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-          betterPlayerConfiguration: BetterPlayerConfiguration(
-            aspectRatio: 16 / 9,
-          ),
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: Text("Basic Player Example"),
+    ),
+    body: AspectRatio(
+      aspectRatio: 16 / 9,
+      child: BetterPlayer.network(
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        betterPlayerConfiguration: BetterPlayerConfiguration(
+          aspectRatio: 16 / 9,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 ```
-In this example, we're just showing video from url with aspect ratio = 16/9.
-Better Player has many more configuration options which are described in next pages.
 
+## Standard Implementation
 
-### Normal usage
-When you want have more configuration options then you need to create `BetterPlayerDataSource` and `BetterPlayerController`. `BetterPlayerDataSource` describes
-source of your video. With `BetterPlayerDataSource` you will provide all important informations like url of video, type of video, subtitles source and more.
-`BetterPlayerController` is a Flutter convention to have a manager class to control instance of video widget. With `BetterPlayerController` you will be able to
-change behavior of the video widget, for example start or stop video, change volume and more.
+For advanced use cases requiring more granular control, you should manually create a `BetterPlayerDataSource` and a `BetterPlayerController`.
 
+### Core Components
 
-Create `BetterPlayerDataSource` and `BetterPlayerController`. You should do it in initState of your widget:
+1.  **BetterPlayerDataSource**: Defines the source of the video, including the URL, source type, subtitle tracks, and additional metadata.
+2.  **BetterPlayerController**: Acts as the central management hub for the player instance. It allows you to programmatically control playback (start, stop, seek), adjust volume, and monitor events.
+
+### Step 1: Initialize the Controller
+
+We recommend initializing the `BetterPlayerController` within the `initState` method of your `StatefulWidget`:
+
 ```dart
-BetterPlayerController _betterPlayerController;
+late BetterPlayerController _betterPlayerController;
 
-  @override
-  void initState() {
-    super.initState();
-    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-    _betterPlayerController = BetterPlayerController(
-        BetterPlayerConfiguration(),
-        betterPlayerDataSource: betterPlayerDataSource);
-  }
-````
-
-Create `BetterPlayer` widget wrapped in `AspectRatio` widget:
-```dart
-  @override
-  Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: BetterPlayer(
-        controller: _betterPlayerController,
-      ),
-    );
-  }
+@override
+void initState() {
+  super.initState();
+  
+  // Define the data source
+  BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.network,
+      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
+  
+  // Initialize the controller with the data source and configuration
+  _betterPlayerController = BetterPlayerController(
+      BetterPlayerConfiguration(),
+      betterPlayerDataSource: betterPlayerDataSource);
+}
 ```
+
+### Step 2: Integrate the Widget
+
+Wrap the `BetterPlayer` widget in an `AspectRatio` to ensure correct layout:
+
+```dart
+@override
+Widget build(BuildContext context) {
+  return AspectRatio(
+    aspectRatio: 16 / 9,
+    child: BetterPlayer(
+      controller: _betterPlayerController,
+    ),
+  );
+}
+```
+
+## Pro Tips
+
+### Accessing the Controller via Context
+In deep widget trees, you can access the `BetterPlayerController` from any descendant widget of `BetterPlayer` using the `InheritedWidget` pattern. This is useful for building custom UI overlays:
+
+```dart
+BetterPlayerController controller = BetterPlayerController.of(context);
+```
+
+### Source-Specific Placeholders
+While you can define a global placeholder in `BetterPlayerConfiguration`, you can also provide a specific placeholder for each `BetterPlayerDataSource`. The source-specific placeholder will take precedence:
+
+```dart
+BetterPlayerDataSource(
+  BetterPlayerDataSourceType.network,
+  "url",
+  placeholder: Image.asset("assets/video_thumbnail.png"),
+)
+```
+
+## Advanced Examples
+
+For more complex scenarios, such as playlists, caching, or custom controls, please refer to the [Example Project](https://github.com/jhomlala/betterplayer/tree/master/example).

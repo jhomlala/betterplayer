@@ -1,6 +1,10 @@
-## Overriden aspect ratio
+# Overridden Aspect Ratio
 
-You can override `BetterPlayerConfiguration`'s `aspectRatio` parameter in runtime with `setOverridenAspectRatio` method from `betterPlayerController`.
+You can dynamically override the aspect ratio defined in `BetterPlayerConfiguration` during runtime.
+
+## Implementation Example
+
 ```dart
+// Sets the player aspect ratio to 1:1
 betterPlayerController.setOverriddenAspectRatio(1.0);
 ```

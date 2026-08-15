@@ -1,51 +1,49 @@
-## Picture in Picture configuration
-Picture in Picture is not supported on all devices.
+# Picture-in-Picture (PiP) Configuration
 
-Requirements:
-* iOS: iOS version greater than 14.0
-* Android: Android version greater than 8.0, enough RAM, v2 Flutter android embedding
+Picture-in-Picture (PiP) allows users to continue watching videos in a small, floating window while interacting with other parts of the application or system.
 
-Each OS provides method to check if given device supports PiP. If device doesn't support PiP, then
-error will be printed in console.
+## Requirements & Support
 
-Check if PiP is supported in given device:
+PiP support varies significantly by device and operating system version:
+*   **iOS**: Requires iOS 14.0 or higher.
+*   **Android**: Requires Android 8.0 or higher, sufficient RAM, and the v2 Flutter Android embedding.
+
+### Verification
+You can programmatically check if the current device supports PiP:
 ```dart
-_betterPlayerController.isPictureInPictureSupported();
+bool isSupported = await _betterPlayerController.isPictureInPictureSupported();
 ```
 
-To show PiP mode call this method:
+## Implementation
 
-```dart
-_betterPlayerController.enablePictureInPicture(_betterPlayerKey);
-```
-`_betterPlayerKey` is a key which is used in BetterPlayer widget:
+### 1. Enable PiP Mode
+To trigger PiP mode, call the `enablePictureInPicture` method, passing the `GlobalKey` associated with your `BetterPlayer` widget:
 
 ```dart
 GlobalKey _betterPlayerKey = GlobalKey();
-...
-    AspectRatio(
-        aspectRatio: 16 / 9,
-        child: BetterPlayer(
-            controller: _betterPlayerController,
-            key: _betterPlayerKey,
-        ),
-    ),
+
+// In your build method:
+BetterPlayer(
+    controller: _betterPlayerController,
+    key: _betterPlayerKey,
+)
+
+// To trigger PiP:
+_betterPlayerController.enablePictureInPicture(_betterPlayerKey);
 ```
 
-To hide PiP mode call this method:
+### 2. Disable PiP Mode
 ```dart
-betterPlayerController.disablePictureInPicture();
+_betterPlayerController.disablePictureInPicture();
 ```
 
-PiP menu item is enabled as default in both Material and Cuperino controls. You can disable it with
-`BetterPlayerControlsConfiguration`'s variable: `enablePip`. You can change PiP control menu icon with
-`pipMenuIcon` variable in `BetterPlayerControlsConfiguration`.
+## UI Configuration
 
-Warning:
-Both Android and iOS PiP versions are in very early stage. There can be bugs and small issues. Please
-make sure that you've checked state of the PiP in Better Player before moving it to the production.
+PiP is enabled by default in both Material and Cupertino controls. You can toggle this feature using the `enablePip` flag in `BetterPlayerControlsConfiguration`. Additionally, you can customize the menu icon using the `pipMenuIcon` property.
 
-Known limitations:
-Android: When PiP is enabled, Better Player will open full screen mode to play video correctly. When
-user disables PiP, Better Player will back to the previous settings and for a half of second your device
-will have incorrect orientation.
+## Important Limitations
+
+> [!WARNING]
+> PiP functionality is in an early stage. We recommend thorough testing before deploying to production.
+
+*   **Android**: Enabling PiP will automatically switch the player to fullscreen mode. Disabling PiP may cause a brief orientation flicker as the device returns to its previous settings.

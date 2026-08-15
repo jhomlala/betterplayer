@@ -1,5 +1,8 @@
-## General configuration
-To setup general options of Better Player you need to create `BetterPlayerConfiguration` instance. You will use this object during creation of `BetterPlayerController`.
+# General Configuration
+
+The `BetterPlayerConfiguration` class serves as the primary way to define the behavior and appearance of the player. This configuration object is passed to the `BetterPlayerController` during its initialization.
+
+## Implementation Example
 
 ```dart
 var betterPlayerConfiguration = BetterPlayerConfiguration(
@@ -9,115 +12,47 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
 );
 ```
 
-Possible configuration options which you can find in `BetterPlayerConfiguration`:
-```dart
-/// Play the video as soon as it's displayed
-final bool autoPlay;
+## Configuration Parameters
 
-/// Start video at a certain position
-final Duration startAt;
+Below is a detailed list of available options within `BetterPlayerConfiguration`:
 
-/// Whether or not the video should loop
-final bool looping;
+### Playback Options
+*   **`autoPlay`**: Automatically start video playback once the widget is displayed.
+*   **`startAt`**: Begin video playback at a specific timestamp.
+*   **`looping`**: Determines if the video should restart automatically after finishing.
+*   **`handleLifecycle`**: If enabled (default: true), automatically pauses the video when the app is minimized and resumes it when the app returns to the foreground.
 
-/// Weather or not to show the controls when initializing the widget.
-final bool showControlsOnInitialize;
+### UI & Presentation
+*   **`aspectRatio`**: The primary aspect ratio of the video player. This is crucial for correct layout.
+*   **`fit`**: Defines how the video should be fitted within the player box (e.g., `BoxFit.contain`, `BoxFit.cover`).
+*   **`placeholder`**: A widget displayed while the video is initializing or before playback starts.
+*   **`showPlaceholderUntilPlay`**: Keep the placeholder visible until the play button is pressed.
+*   **`placeholderOnTop`**: If true, the placeholder is placed on top of the video stack.
+*   **`overlay`**: A widget placed between the video and the player controls.
+*   **`showControlsOnInitialize`**: Determines if controls should be visible when the widget is first initialized.
+*   **`expandToFill`**: If true, the player will expand to fill the available space.
 
-/// When the video playback runs  into an error, you can build a custom
-/// error message.
-final Widget Function(BuildContext context, String errorMessage) errorBuilder;
+### Fullscreen Management
+*   **`fullScreenByDefault`**: Automatically enter fullscreen mode when playback begins.
+*   **`allowedScreenSleep`**: Controls whether the device screen is allowed to sleep while in fullscreen mode.
+*   **`fullScreenAspectRatio`**: The aspect ratio used specifically for fullscreen mode.
+*   **`deviceOrientationsOnFullScreen`**: The set of allowed device orientations when entering fullscreen.
+*   **`deviceOrientationsAfterFullScreen`**: The allowed device orientations after exiting fullscreen.
+*   **`systemOverlaysAfterFullScreen`**: Defines which system overlays are visible after exiting fullscreen.
+*   **`autoDetectFullscreenDeviceOrientation`**: If enabled, automatically determines the orientation based on the video's aspect ratio.
+*   **`autoDetectFullscreenAspectRatio`**: Automatically determines the fullscreen aspect ratio.
+*   **`routePageBuilder`**: A custom `RoutePageBuilder` for the fullscreen view.
 
-/// The Aspect Ratio of the Video. Important to get the correct size of the
-/// video!
-///
-/// Will fallback to fitting within the space allowed.
-final double aspectRatio;
+> [!TIP]
+> Enabling `autoDetectFullscreenDeviceOrientation` is highly recommended for apps with mixed content. It automatically switches to portrait fullscreen for vertical videos and landscape for horizontal ones, providing a superior user experience with zero manual logic.
 
-/// The placeholder is displayed underneath the Video before it is initialized
-/// or played.
-final Widget placeholder;
-
-/// Should the placeholder be shown until play is pressed
-final bool showPlaceholderUntilPlay;
-
-/// Placeholder position of player stack. If false, then placeholder will be
-/// displayed on the bottom, so user need to hide it manually. Default is
-/// true.
-final bool placeholderOnTop;
-
-/// A widget which is placed between the video and the controls
-final Widget overlay;
-
-/// Defines if the player will start in fullscreen when play is pressed
-final bool fullScreenByDefault;
-
-/// Defines if the player will sleep in fullscreen or not
-final bool allowedScreenSleep;
-
-/// Defines aspect ratio which will be used in fullscreen
-final double fullScreenAspectRatio;
-
-/// Defines the set of allowed device orientations on entering fullscreen
-final List<DeviceOrientation> deviceOrientationsOnFullScreen;
-
-/// Defines the system overlays visible after exiting fullscreen
-final List<SystemUiOverlay> systemOverlaysAfterFullScreen;
-
-/// Defines the set of allowed device orientations after exiting fullscreen
-final List<DeviceOrientation> deviceOrientationsAfterFullScreen;
-
-/// Defines a custom RoutePageBuilder for the fullscreen
-final BetterPlayerRoutePageBuilder routePageBuilder;
-
-/// Defines a event listener where video player events will be send
-final Function(BetterPlayerEvent) eventListener;
-
-///Defines subtitles configuration
-final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
-
-///Defines controls configuration
-final BetterPlayerControlsConfiguration controlsConfiguration;
-
-///Defines fit of the video, allows to fix video stretching, see possible
-///values here: https://api.flutter.dev/flutter/painting/BoxFit-class.html
-final BoxFit fit;
-
-///Defines rotation of the video in degrees. Default value is 0. Can be 0, 90, 180, 270.
-///Angle will rotate only video box, controls will be in the same place.
-final double rotation;
-    
-///Defines function which will react on player visibility changed
-final Function(double visibilityFraction) playerVisibilityChangedBehavior;
-
-///Defines translations used in player. If null, then default english translations
-///will be used.
-final List<BetterPlayerTranslations> translations;
-
-///Defines if player should auto detect full screen device orientation based
-///on aspect ratio of the video. If aspect ratio of the video is < 1 then
-///video will played in full screen in portrait mode. If aspect ratio is >= 1
-///then video will be played horizontally. If this parameter is true, then
-///[deviceOrientationsOnFullScreen] and [fullScreenAspectRatio] value will be
-/// ignored.
-final bool autoDetectFullscreenDeviceOrientation;
-
-///Defines if player should auto detect full screen aspect ration of the video.
-///If [deviceOrientationsOnFullScreen] is true this is done automaticaly also.
-final bool autoDetectFullscreenAspectRatio;
-
-///Defines flag which enables/disables lifecycle handling (pause on app closed,
-///play on app resumed). Default value is true.
-final bool handleLifecycle;
-
-///Defines flag which enabled/disabled auto dispose on BetterPlayer dispose.
-///Default value is true.
-final bool autoDispose;
-
-///Flag which causes to player expand to fill all remaining space. Set to false
-///to use minimum constraints
-final bool expandToFill;
-
-///Flag which causes to player use the root navigator to open new pages.
-///Default value is false.
-final bool useRootNavigator;
-```
+### Advanced Features
+*   **`subtitlesConfiguration`**: Defines the styling and behavior of subtitles.
+*   **`controlsConfiguration`**: Deep customization of the player's UI controls.
+*   **`rotation`**: Rotates the video box by a specific degree (0, 90, 180, 270). This is useful for correcting the orientation of user-uploaded videos.
+*   **`translations`**: A list of `BetterPlayerTranslations` for localized UI strings.
+*   **`eventListener`**: A callback function that receives all `BetterPlayerEvent` notifications.
+*   **`errorBuilder`**: A function that returns a custom widget when an error occurs. Use this to provide branded error messages or localized recovery instructions.
+*   **`playerVisibilityChangedBehavior`**: A callback to handle behavior changes based on player visibility.
+*   **`autoDispose`**: If enabled (default: true), automatically disposes of the controller when the widget is destroyed.
+*   **`useRootNavigator`**: Determines if the root navigator should be used for opening new pages (e.g., fullscreen).

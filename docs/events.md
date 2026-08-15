@@ -1,37 +1,35 @@
-## Events
-You can listen to video player events like:
-```dart
-  initialized,
-  play,
-  pause,
-  seekTo,
-  openFullscreen,
-  hideFullscreen,
-  setVolume,
-  progress,
-  finished,
-  exception,
-  controlsVisible,
-  controlsHiddenStart,
-  controlsHiddenEnd,
-  setSpeed,
-  changedSubtitles,
-  changedTrack,
-  changedPlayerVisibility,
-  changedResolution,
-  pipStart,
-  pipStop,
-  setupDataSource,
-  bufferingStart,
-  bufferingUpdate,
-  bufferingEnd,
-  changedPlaylistItem
-```
+# Event Listening
 
-After creating `BetterPlayerController` you can add event listener this way:
+Better Player allows you to monitor a wide range of player events, enabling you to react to playback changes programmatically.
+
+## Available Event Types
+
+You can listen for the following `BetterPlayerEventType` values:
+
+*   `initialized`: The video player has successfully initialized.
+*   `play`, `pause`: Playback state has changed.
+*   `seekTo`: The player has sought to a new position.
+*   `openFullscreen`, `hideFullscreen`: Fullscreen state has changed.
+*   `setVolume`, `setSpeed`: Audio or playback speed settings have been modified.
+*   `progress`: Periodic update of the current playback position.
+*   `finished`: The video has reached the end.
+*   `exception`: An error occurred during playback.
+*   `controlsVisible`, `controlsHiddenStart`, `controlsHiddenEnd`: Visibility of the player UI has changed.
+*   `changedSubtitles`, `changedTrack`, `changedResolution`, `changedAudioTracks`: Media stream settings have been updated.
+*   `pipStart`, `pipStop`: Picture-in-Picture mode state has changed.
+*   `setupDataSource`: A new data source is being configured.
+*   `bufferingStart`, `bufferingUpdate`, `bufferingEnd`: The player's buffering status has changed.
+*   `changedPlaylistItem`: The current item in a playlist has changed.
+
+## Adding an Event Listener
+
+Once you have initialized your `BetterPlayerController`, you can attach a listener as follows:
+
 ```dart
-_betterPlayerController.addEventsListener((event){
-    print("Better player event: ${event.betterPlayerEventType}");
+_betterPlayerController.addEventsListener((event) {
+    print("Better Player Event: ${event.betterPlayerEventType}");
 });
 ```
-Your event listener will be removed on dispose time automatically.
+
+> [!NOTE]
+> Event listeners are automatically removed when the `BetterPlayerController` is disposed.

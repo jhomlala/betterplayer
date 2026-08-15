@@ -1,51 +1,48 @@
-## Notification configuration
-<table>
-  <tr>
-    <td>
-	    <img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/android_notification.png">
-    </td>
-    <td>
-       <img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/ios_notification.png">
-    </td>
-    <td>
-  </tr>
- </table>
+# Notification Configuration
 
-To setup player notification use `notificationConfiguration` parameter in `BetterPlayerDataSource`.
+Better Player supports native platform notifications, allowing users to control playback from their device's lock screen or notification area.
+
+<table align="center">
+  <tr>
+    <td><img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/android_notification.png"><br>Android</td>
+    <td><img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/ios_notification.png"><br>iOS</td>
+  </tr>
+</table>
+
+## Implementation
+
+Notifications are configured using the `notificationConfiguration` parameter within the `BetterPlayerDataSource`.
 
 ```dart
 BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      Constants.elephantDreamVideoUrl,
-      notificationConfiguration: BetterPlayerNotificationConfiguration(
+    BetterPlayerDataSourceType.network,
+    Constants.elephantDreamVideoUrl,
+    notificationConfiguration: BetterPlayerNotificationConfiguration(
         showNotification: true,
-        title: "Elephant dream",
-        author: "Some author",
-        imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/African_Bush_Elephant.jpg/1200px-African_Bush_Elephant.jpg",
-        activityName: "MainActivity",
-      ),
-    );
+        title: "Elephant's Dream",
+        author: "Blender Foundation",
+        imageUrl: "https://example.com/poster.jpg",
+        activityName: "MainActivity", // Android only
+    ),
+);
 ```
 
-There are 3 majors parameters here:
-`title` - name of the resource, shown in first line;
-`author` - author of the resource, shown in second line;
-`imageUrl` - image of the resource (optional). Can be both link to external image or internal file;
-`activityName` - name of activity used to open application back on notification click; used only for Activity;
+## Configuration Parameters
 
-If `showNotification` is set as true and no title and author is provided, then empty notification will be
-displayed.
+*   **`showNotification`**: Enables or disables the notification feature.
+*   **`title`**: The primary text displayed in the notification (e.g., video title).
+*   **`author`**: The secondary text displayed in the notification (e.g., artist or channel).
+*   **`imageUrl`**: The thumbnail image displayed in the notification (supports both network URLs and local files).
+*   **`activityName`**: (Android only) The name of the activity to open when the notification is clicked.
 
-User can control the player with notification buttons (i.e. play/pause, seek). When notification feature
-is used when there are more players at the same time, then last player will be used. Notification will
-be shown after play for the first time.
+## Advanced Considerations
 
-To play resource after leaving the app, set `handleLifecycle` as false in your `BetterPlayerConfiguration`.
+### Background Playback
+To allow playback to continue after the user leaves the application, ensure `handleLifecycle` is set to `false` in your `BetterPlayerConfiguration`.
 
-Important note for android:
-You need to add special service in android native code. Service will simply destroy all remaining notifications. 
-This service need to be used to handle situation when app is killed without proper player destroying. 
-Check `BetterPlayerService` in example project to see how to add this service to your app.
-https://github.com/jhomlala/betterplayer/blob/feature/player_notifications/example/android/app/src/main/kotlin/com/jhomlala/example/BetterPlayerService.kt
+> [!TIP]
+> Setting `handleLifecycle: false` is essential for audio-only apps or video apps that support background audio, as it prevents the system from automatically pausing playback when the app is minimized.
 
-Here is an example of player with notification: https://github.com/jhomlala/betterplayer/blob/feature/player_notifications/example/lib/pages/notification_player_page.dart
+### Custom Activity Name (Android)
+By default, Better Player tries to launch the main activity when the notification is tapped. If your app has a specific entry point or you want to route the user to a specific screen, provide the `activityName` (e.g., `"com.your.package.MainActivity"`).
+

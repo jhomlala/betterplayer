@@ -1,86 +1,47 @@
-## Data source configuration 
-Define source for one video in your app with `BetterPlayerDataSource`. 
+# Data Source Configuration
 
-There are 3 types of data sources:
-* Network - data source which uses url to play video from external resources
-* File - data source which uses url to play video from internal resources
-* Memory - data source which uses list of bytes to play video from memory
-```dart
-    var dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-      subtitles: BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.file,
-        url: "${directory.path}/example_subtitles.srt",
-      ),
-      headers: {"header":"my_custom_header"}
-    );
-```
+The `BetterPlayerDataSource` class defines all necessary information for a single video source within your application.
 
-You can use type specific factories to build your data source.
-Use `BetterPlayerDataSource.network` to build network data source, `BetterPlayerDataSource.file` to build file data source and `BetterPlayerDataSource.memory` to build memory data source.
+## Source Types
 
-Possible configuration options:
-```dart
-///Type of source of video
-final BetterPlayerDataSourceType type;
+Better Player supports three primary source types:
+1.  **Network**: Streams video from an external URL.
+2.  **File**: Plays a video file stored locally on the device.
+3.  **Memory**: Plays a video from a byte array.
 
-///Url of the video
-final String url;
+### Factory Methods
+We recommend using the provided factory methods for initialization:
+*   `BetterPlayerDataSource.network(url, ...)`
+*   `BetterPlayerDataSource.file(url, ...)`
+*   `BetterPlayerDataSource.memory(bytes, ...)`
 
-///Subtitles configuration
-///You can pass here multiple subtitles
-final List<BetterPlayerSubtitlesSource> subtitles;
+## Configuration Parameters
 
-///Flag to determine if current data source is live stream
-final bool liveStream;
+### Core Parameters
+*   **`type`**: The `BetterPlayerDataSourceType` (Network, File, or Memory).
+*   **`url`**: The path or URL of the video source.
+*   **`subtitles`**: A list of `BetterPlayerSubtitlesSource` objects.
+*   **`headers`**: A map of custom HTTP headers for network requests.
+*   **`bytes`**: The byte array for memory sources.
 
-/// Custom headers for player
-final Map<String, String> headers;
+> [!TIP]
+> When using `BetterPlayerDataSource.memory`, providing a `videoExtension` (e.g., `"mp4"`) is highly recommended. It helps the underlying player engine correctly identify the media type when the byte stream is processed.
 
-///Should player use hls / dash subtitles (ASMS - Adaptive Streaming Media Sources).
-final bool useAsmsSubtitles;
+### Adaptive Streaming (ASMS)
+*   **`useAsmsSubtitles`**: Enables HLS/DASH manifest-based subtitles.
+*   **`useAsmsTracks`**: Enables HLS/DASH manifest-based video tracks.
+*   **`useAsmsAudioTracks`**: Enables HLS/DASH manifest-based audio tracks.
+*   **`hlsTrackNames`**: Custom names for HLS tracks.
 
-///Should player use hls / dash tracks
-final bool useAsmsTracks;
+> [!TIP]
+> You can programmatically control adaptive tracks. Use `controller.betterPlayerAsmsTracks` to retrieve available qualities and `controller.setTrack(track)` to force a specific one. For multi-language content, use `controller.betterPlayerAsmsAudioTracks` and `controller.setAudioTrack(audioTrack)`.
 
-///Should player use hls / dash audio tracks
-final bool useAsmsAudioTracks;
-
-///List of strings that represents tracks names.
-///If empty, then better player will choose name based on track parameters
-final List<String> hlsTrackNames;
-
-///Optional, alternative resolutions for non-hls video. Used to setup
-///different qualities for video.
-///Data should be in given format:
-///{"360p": "url", "540p": "url2" }
-final Map<String, String> resolutions;
-
-///Optional cache configuration, used only for network data sources
-final BetterPlayerCacheConfiguration cacheConfiguration;
-
-///List of bytes, used only in memory player
-final List<int> bytes;
-
-///Configuration of remote controls notification
-final BetterPlayerNotificationConfiguration notificationConfiguration;
-
-///Duration which will be returned instead of original duration
-final Duration overriddenDuration;
-
-///Video format hint when data source url has not valid extension.
-final BetterPlayerVideoFormat videoFormat;
-
-///Extension of video without dot. Used only in memory data source.
-final String videoExtension;
-
-///Configuration of content protection
-final BetterPlayerDrmConfiguration drmConfiguration;
-
-///Placeholder widget which will be shown until video load or play. This
-///placeholder may be useful if you want to show placeholder before each video
-///in playlist. Otherwise, you should use placeholder from
-/// BetterPlayerConfiguration.
-final Widget placeholder;
-```
+### Features & Metadata
+*   **`liveStream`**: Flag indicating the source is a live stream.
+*   **`resolutions`**: Alternative resolutions for standard video files.
+*   **`cacheConfiguration`**: Caching settings for network sources.
+*   **`notificationConfiguration`**: Settings for native platform notifications.
+*   **`overriddenDuration`**: A custom duration to return instead of the actual video length.
+*   **`videoFormat`**: A hint for the video format (e.g., `.m3u8`, `.mp4`).
+*   **`drmConfiguration`**: Digital Rights Management settings.
+*   **`placeholder`**: A source-specific placeholder widget.

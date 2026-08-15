@@ -1,14 +1,19 @@
-## Custom element in overflow menu
-You can use `BetterPlayerControlsConfiguration` to add custom element to the overflow menu:
+# Custom Overflow Menu Items
+
+You can extend the player's overflow menu by adding custom elements using the `BetterPlayerControlsConfiguration`.
+
+## Implementation Example
 
 ```dart
 controlsConfiguration: BetterPlayerControlsConfiguration(
-            overflowMenuCustomItems: [
-                BetterPlayerOverflowMenuItem(
-                    Icons.account_circle_rounded,
-                    "Custom element",
-                    () => print("Click!"),
-                )
-            ],
-        ),
+    overflowMenuCustomItems: [
+        BetterPlayerOverflowMenuItem(
+            Icons.account_circle_rounded,
+            "User Profile",
+            () => print("Custom Action Executed!"),
+        )
+    ],
+),
 ```
+
+Custom items will appear alongside the standard playback speed, subtitles, and quality options.

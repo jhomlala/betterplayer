@@ -1,3 +1,6 @@
+## Unreleased
+* Updated: Comprehensive documentation overhaul for professional tone, grammar, and typos across all project documentation.
+
 ## 0.4.2
 * Fixed: Restricted logo size on the documentation website to prevent it from being too large.
 * Updated: Replaced legacy PNG logo with a modern, concentric SVG identity across the library, documentation, and example app.
@@ -12,18 +15,6 @@
 * Fixed: Enable Picture-in-Picture support in the example app's AndroidManifest.xml.
 * Fixed: Layout overflow issues in multiple example pages by adding scrolling support.
 * Fixed: Robustness of Picture-in-Picture mode activation and deactivation on Android.
-
-## 0.4.0
-* [BREAKING_CHANGE] Added: Support for Built-in Kotlin.
-* [BREAKING_CHANGE] Updated: Minimum Dart SDK version to 3.12.0.
-
-## 0.4.0
-* [BREAKING_CHANGE] Added: Support for Built-in Kotlin.
-* [BREAKING_CHANGE] Updated: Minimum Dart SDK version to 3.12.0.
-
-## 0.4.0
-* [BREAKING_CHANGE] Added: Support for Built-in Kotlin.
-* [BREAKING_CHANGE] Updated: Minimum Dart SDK version to 3.12.0.
 
 ## 0.4.0
 * [BREAKING_CHANGE] Added: Support for Built-in Kotlin.

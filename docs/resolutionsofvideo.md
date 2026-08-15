@@ -1,19 +1,20 @@
+# Video Resolutions
 
-## Resolutions of the video
-You can setup video with different resolutions. Use resolutions parameter in data source. This should be used
-only for normal videos (non-hls, non-dash) to setup different qualities of the original video.
+For standard video formats (non-HLS, non-DASH), you can provide multiple URLs corresponding to different quality levels (e.g., 720p, 1080p). This allows users to manually select their preferred resolution.
+
+## Implementation Example
 
 ```dart
-var dataSource = BetterPlayerDataSource(BetterPlayerDataSourceType.network,
-    "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
+var dataSource = BetterPlayerDataSource(
+    BetterPlayerDataSourceType.network,
+    "https://example.com/video_720p.mp4",
     resolutions: {
-        "LOW":
-            "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_480_1_5MG.mp4",
-        "MEDIUM":
-            "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_640_3MG.mp4",
-        "LARGE":
-            "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1280_10MG.mp4",
-        "EXTRA_LARGE":
-            "https://file-examples-com.github.io/uploads/2017/04/file_example_MP4_1920_18MG.mp4"
-    });
+        "360p": "https://example.com/video_360p.mp4",
+        "720p": "https://example.com/video_720p.mp4",
+        "1080p": "https://example.com/video_1080p.mp4",
+    },
+);
 ```
+
+> [!NOTE]
+> For adaptive streaming formats like HLS and DASH, Better Player automatically detects and handles resolution switching based on the manifest file.

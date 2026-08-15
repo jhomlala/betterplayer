@@ -1,7 +1,8 @@
-## Cache configuration
-Define cache configuration with `BetterPlayerCacheConfiguration` for given data source. Cache works only for network data sources.
+# Cache Configuration
 
-`BetterPlayerCacheConfiguration` should be used in `BetterPlayerDataSource`:
+Better Player provides a powerful caching system for network-based data sources to improve playback performance and reduce bandwidth usage. Caching is configured using the `BetterPlayerCacheConfiguration` class within the `BetterPlayerDataSource`.
+
+## Basic Configuration
 
 ```dart
 BetterPlayerDataSource _betterPlayerDataSource = BetterPlayerDataSource(
@@ -12,53 +13,48 @@ BetterPlayerDataSource _betterPlayerDataSource = BetterPlayerDataSource(
         preCacheSize: 10 * 1024 * 1024,
         maxCacheSize: 10 * 1024 * 1024,
         maxCacheFileSize: 10 * 1024 * 1024,
-
-        ///Android only option to use cached video between app sessions
-        key: "testCacheKey",
+        /// (Android only) Key to persist cache between application sessions
+        key: "uniqueCacheKey",
       ),
     );
 ```
 
-```dart
-///Enable cache for network data source
-final bool useCache;
+## Configuration Parameters
 
-/// The maximum cache size to keep on disk in bytes.
-/// Android only option.
-final int maxCacheSize;
+*   **`useCache`**: Enables or disables caching for the data source.
+*   **`maxCacheSize`**: (Android only) The maximum total size of the cache on disk in bytes.
+*   **`maxCacheFileSize`**: (Android only) The maximum size allowed for an individual cached file in bytes.
+*   **`key`**: A unique identifier used to persist and reuse cached data across application sessions.
 
-/// The maximum size of each individual file in bytes.
-/// Android only option.
-final int maxCacheFileSize;
+> [!IMPORTANT]
+> On Android, providing a unique `key` is essential if you want the cached data to be available after the application is closed and reopened. Without a key, the cache may be treated as session-only.
 
-///Cache key to re-use same cached data between app sessions.
-final String? key;
-```
+## Cache Management
 
-Clear all cached data:
+### Clear All Cache
+To remove all cached data from the device:
 ```dart
 betterPlayerController.clearCache();
 ```
 
-Start pre cache before playing video:
+### Pre-Caching
+You can start downloading a video into the cache before playback begins:
 ```dart
 betterPlayerController.preCache(_betterPlayerDataSource);
 ```
 
-Stop running pre cache:
+### Stop Pre-Caching
+To cancel an ongoing pre-caching operation:
 ```dart
 betterPlayerController.stopPreCache(_betterPlayerDataSource);
 ```
 
-On Android both HLS and non-HLS data sources will work in the same way (by using ExoPlayer internal cache mechanism). On iOS
-for HLS stream [HLSCachingReverseProxyServer](https://github.com/StyleShare/HLSCachingReverseProxyServer) is being used,
-and for other sources [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) is being used.
+## Platform Support
 
-See table below to check which cache options are available on given platform:
+The underlying implementation varies by platform. Android uses ExoPlayer's internal caching mechanism. On iOS, [HLSCachingReverseProxyServer](https://github.com/StyleShare/HLSCachingReverseProxyServer) is used for HLS streams, and [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) is used for other formats.
 
-|      Feature      | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS |
-|:-----------------:|:-----------:|:---------------:|:-------:|:-----------:|
-| Normal item cache |      ✓      |        ✓        |    ✓    |      ✓      |
-|     Pre cache     |      ✓      |        ✓        |    x    |      ✓      |
-|     Stop cache    |      ✓      |        ✓        |    x    |      ✓      |
-
+| Feature | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS |
+| :--- | :---: | :---: | :---: | :---: |
+| **Normal Caching** | ✓ | ✓ | ✓ | ✓ |
+| **Pre-Caching** | ✓ | ✓ | x | ✓ |
+| **Stop Caching** | ✓ | ✓ | x | ✓ |

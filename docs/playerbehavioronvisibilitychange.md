@@ -1,11 +1,16 @@
-## Player behavior on visibility change
-You can change player behavior if player is not visible by using `playerVisibilityChangedBehavior` option from `BetterPlayerConfiguration`.
-Here is an example for player used in list:
+# Visibility-Based Behavior
+
+Better Player allows you to automatically manage playback states based on the player's visibility within the viewport. This is achieved using the `playerVisibilityChangedBehavior` property.
+
+## Implementation Example (List Usage)
+
+The following example demonstrates how to automatically play or pause a video based on its visibility threshold:
 
 ```dart
 void onVisibilityChanged(double visibleFraction) async {
-    bool isPlaying = await _betterPlayerController.isPlaying();
-    bool initialized = _betterPlayerController.isVideoInitialized();
+    bool isPlaying = await _betterPlayerController.isPlaying() ?? false;
+    bool initialized = _betterPlayerController.isVideoInitialized() ?? false;
+    
     if (visibleFraction >= widget.playFraction) {
       if (widget.autoPlay && initialized && !isPlaying && !_isDisposing) {
         _betterPlayerController.play();
@@ -18,4 +23,5 @@ void onVisibilityChanged(double visibleFraction) async {
 }
 ```
 
-Player behavior works in the basis of `VisibilityDetector` (it uses `visibilityFraction`, which is value from 0.0 to 1.0 that describes how much given widget is on the viewport). So if value 0.0, player is not visible, so we need to pause the video. If the `visibilityFraction` is 1.0, we need to play it again.
+## Mechanism
+This feature operates using a `VisibilityDetector`. The `visibilityFraction` is a value between `0.0` (completely hidden) and `1.0` (fully visible) that describes the extent to which the widget is visible within the viewport.
