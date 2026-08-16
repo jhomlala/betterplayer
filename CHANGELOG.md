@@ -1,5 +1,6 @@
 ## Unreleased
 * Fixed: Android duration sometimes reporting zero for VOD streams by handling ExoPlayer's `C.TIME_UNSET` value and delaying the `initialized` event until a valid duration is available via `onTimelineChanged`.
+* Fixed: Video aspect ratio not scaling correctly based on the video's actual aspect ratio when no aspect ratio is configured.
 
 ## 0.6.0
 * [BREAKING_CHANGE] Updated: Changed Android package name, namespace, and bundle ID to `pl.hasoft.better_player`.
