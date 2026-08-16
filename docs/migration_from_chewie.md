@@ -21,7 +21,7 @@ dependencies:
   # video_player: ^x.y.z
   
   # Add this line:
-  better_player: ^latest_version
+  better_player: ^0.6.0
 ```
 
 Run `flutter pub get` in your terminal to fetch the packages.
