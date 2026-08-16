@@ -3,7 +3,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'better_player'
-  s.version          = '0.4.3'
+  s.version          = '0.5.0'
   s.summary          = 'Advanced video player with HLS, DASH and caching support.'
   s.description      = <<-DESC
 Advanced video player for Flutter with HLS, DASH and caching support.
