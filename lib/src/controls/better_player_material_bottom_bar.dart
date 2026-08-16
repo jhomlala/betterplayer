@@ -58,6 +58,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                       controller: controller,
                       controlsConfiguration: controlsConfiguration,
                       onPlayPause: onPlayPause,
+                      latestValue: latestValue,
                     )
                   else
                     const SizedBox(),
@@ -122,19 +123,22 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
   final BetterPlayerController controller;
   final BetterPlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onPlayPause;
+  final VideoPlayerValue? latestValue;
 
   const _BetterPlayerMaterialPlayPauseButton({
     required this.controller,
     required this.controlsConfiguration,
     required this.onPlayPause,
+    required this.latestValue,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isPlaying = latestValue?.isPlaying ?? false;
     return BetterPlayerMaterialClickableWidget(
       key: const Key('better_player_material_controls_play_pause_button'),
       onTap: onPlayPause,
-      semanticsLabel: controller.videoPlayerController!.value.isPlaying
+      semanticsLabel: isPlaying
           ? controller.translations.controlsPauseLabel
           : controller.translations.controlsPlayLabel,
       child: Container(
@@ -142,7 +146,7 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
         margin: const EdgeInsets.symmetric(horizontal: 4),
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Icon(
-          controller.videoPlayerController!.value.isPlaying
+          isPlaying
               ? controlsConfiguration.pauseIcon
               : controlsConfiguration.playIcon,
           color: controlsConfiguration.iconsColor,

@@ -71,6 +71,7 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                           onPlayPause: onPlayPause,
                           iconColor: iconColor,
                           barHeight: barHeight,
+                          latestValue: latestValue,
                         )
                       else
                         const SizedBox(),
@@ -103,6 +104,7 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                           onPlayPause: onPlayPause,
                           iconColor: iconColor,
                           barHeight: barHeight,
+                          latestValue: latestValue,
                         )
                       else
                         const SizedBox(),
@@ -158,6 +160,7 @@ class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
   final VoidCallback onPlayPause;
   final Color iconColor;
   final double barHeight;
+  final VideoPlayerValue? latestValue;
 
   const _BetterPlayerCupertinoPlayPauseButton({
     required this.controller,
@@ -165,11 +168,12 @@ class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
     required this.onPlayPause,
     required this.iconColor,
     required this.barHeight,
+    required this.latestValue,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isPlaying = controller.videoPlayerController!.value.isPlaying;
+    final isPlaying = latestValue?.isPlaying ?? false;
     return GestureDetector(
       onTap: onPlayPause,
       child: Semantics(
