@@ -70,6 +70,7 @@ internal class BetterPlayer(
     private val trackSelector: DefaultTrackSelector = DefaultTrackSelector(context)
     private val loadControl: LoadControl
     private var isInitialized = false
+    private var isInitializedSent = false
     private var surface: Surface? = null
     private var key: String? = null
     private var playerNotificationManager: PlayerNotificationManager? = null
@@ -118,6 +119,7 @@ internal class BetterPlayer(
     ) {
         this.key = key
         isInitialized = false
+        isInitializedSent = false
         val uri = Uri.parse(dataSource)
         var dataSourceFactory: DataSource.Factory?
         val userAgent = getUserAgent(headers)
@@ -423,6 +425,12 @@ internal class BetterPlayer(
             override fun onPlayerError(error: PlaybackException) {
                 eventSink.error("VideoError", "Video player had error $error", "")
             }
+
+            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                if (isInitialized && !isInitializedSent) {
+                    sendInitialized()
+                }
+            }
         })
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()
@@ -511,10 +519,16 @@ internal class BetterPlayer(
 
     private fun sendInitialized() {
         if (isInitialized) {
+            val isLive = exoPlayer?.isCurrentMediaItemDynamic ?: false
+            val duration = getDuration()
+            if (!isLive && duration == 0L) {
+                return
+            }
+            isInitializedSent = true
             val event: MutableMap<String, Any?> = HashMap()
             event["event"] = "initialized"
             event["key"] = key
-            event["duration"] = getDuration()
+            event["duration"] = duration
             
             val videoSize = exoPlayer?.videoSize
             if (videoSize != null && videoSize != VideoSize.UNKNOWN) {
@@ -532,7 +546,10 @@ internal class BetterPlayer(
         }
     }
 
-    private fun getDuration(): Long = exoPlayer?.duration ?: 0L
+    private fun getDuration(): Long {
+        val duration = exoPlayer?.duration ?: 0L
+        return if (duration == C.TIME_UNSET) 0L else duration
+    }
 
     @SuppressLint("InlinedApi")
     fun setupMediaSession(context: Context?): MediaSession? {

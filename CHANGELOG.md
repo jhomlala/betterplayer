@@ -1,3 +1,6 @@
+## Unreleased
+* Fixed: Android duration sometimes reporting zero for VOD streams by handling ExoPlayer's `C.TIME_UNSET` value and delaying the `initialized` event until a valid duration is available via `onTimelineChanged`.
+
 ## 0.6.0
 * [BREAKING_CHANGE] Updated: Changed Android package name, namespace, and bundle ID to `pl.hasoft.better_player`.
 * Added: Comprehensive migration guides for transitioning from `video_player` and `chewie` to `better_player`.
@@ -544,7 +547,7 @@ setBetterPlayerGlobalKey.
 
 ## 0.0.23
 * General bug fixes.
-* Added playerVisibilityChangedBehavior in BetterPlayerConfiguration.
+* Added player visibilityChangedBehavior in BetterPlayerConfiguration.
 * Changed player behavior when player is not visible in viewport: if player was playing before leaving viewport it will be paused and if user views player again it will start playing automatically.
 * Added BetterPlayer.network and BetterPlayer.file methods.
 * Changed iOS & Android native classes name to prevent conflict issues with video_player.
