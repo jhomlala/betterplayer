@@ -1,4 +1,4 @@
-package com.jhomlala.better_player
+package pl.hasoft.better_player
 
 import android.content.Context
 import androidx.annotation.OptIn

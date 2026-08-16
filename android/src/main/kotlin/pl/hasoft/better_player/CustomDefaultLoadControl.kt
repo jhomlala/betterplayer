@@ -1,4 +1,4 @@
-package com.jhomlala.better_player
+package pl.hasoft.better_player
 
 import androidx.media3.exoplayer.DefaultLoadControl
 
