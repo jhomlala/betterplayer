@@ -104,6 +104,13 @@ BetterPlayer(controller: _controller)
 
 ---
 
+## 🔄 Migration Guides
+Switching from another package? Check out our step-by-step migration guides:
+* 🚀 [Migrating from `video_player`](https://jhomlala.github.io/betterplayer/#/migration_from_video_player)
+* 🚀 [Migrating from `chewie`](https://jhomlala.github.io/betterplayer/#/migration_from_chewie)
+
+---
+
 ## 📖 Resources
 * 📄 [Official Documentation](https://jhomlala.github.io/betterplayer/)
 * 📱 [Example Application](https://github.com/jhomlala/betterplayer/tree/master/example)
