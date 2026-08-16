@@ -402,7 +402,7 @@ internal class BetterPlayer(
                         eventSink.success(event)
                     }
                     Player.STATE_READY -> {
-                        if (!isInitialized) {
+                        if (!isInitializedSent) {
                             isInitialized = true
                             sendInitialized()
                         }
