@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/subtitles/better_player_subtitle.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
+import 'package:better_player/src/subtitles/better_player_subtitles_drawer_item.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerSubtitlesDrawer extends StatefulWidget {
@@ -101,7 +101,14 @@ class _BetterPlayerSubtitlesDrawerState
     final subtitle = _getSubtitleAtCurrentPosition();
     widget.betterPlayerController.renderedSubtitle = subtitle;
     final subtitles = subtitle?.texts ?? [];
-    final textWidgets = subtitles.map(_buildSubtitleTextWidget).toList();
+    final textWidgets = subtitles.map((subtitleText) {
+      return BetterPlayerSubtitlesDrawerItem(
+        subtitleText: subtitleText,
+        configuration: _configuration!,
+        innerTextStyle: _innerTextStyle,
+        outerTextStyle: _outerTextStyle,
+      );
+    }).toList();
 
     return Container(
       height: double.infinity,
@@ -134,41 +141,6 @@ class _BetterPlayerSubtitlesDrawerState
       }
     }
     return null;
-  }
-
-  Widget _buildSubtitleTextWidget(String subtitleText) {
-    return Row(
-      children: [
-        Expanded(
-          child: Align(
-            alignment: _configuration!.alignment,
-            child: _getTextWithStroke(subtitleText),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _getTextWithStroke(String subtitleText) {
-    return ColoredBox(
-      color: _configuration!.backgroundColor,
-      child: Stack(
-        children: [
-          if (_configuration!.outlineEnabled)
-            _buildHtmlWidget(subtitleText, _outerTextStyle)
-          else
-            const SizedBox(),
-          _buildHtmlWidget(subtitleText, _innerTextStyle),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHtmlWidget(String text, TextStyle textStyle) {
-    return HtmlWidget(
-      text,
-      textStyle: textStyle,
-    );
   }
 
   BetterPlayerSubtitlesConfiguration setupDefaultConfiguration() {

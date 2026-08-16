@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
+import 'package:better_player/src/core/better_player_full_screen_video.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
 import 'package:flutter/services.dart';
@@ -168,22 +169,7 @@ class _BetterPlayerState extends State<BetterPlayer>
   Widget build(BuildContext context) {
     return BetterPlayerControllerProvider(
       controller: widget.controller,
-      child: _buildPlayer(),
-    );
-  }
-
-  Widget _buildFullScreenVideo(
-    BuildContext context,
-    Animation<double> animation,
-    BetterPlayerControllerProvider controllerProvider,
-  ) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Container(
-        alignment: Alignment.center,
-        color: Colors.black,
-        child: controllerProvider,
-      ),
+      child: _BetterPlayerVideoWithVisibility(controller: widget.controller),
     );
   }
 
@@ -196,7 +182,9 @@ class _BetterPlayerState extends State<BetterPlayer>
     return AnimatedBuilder(
       animation: animation,
       builder: (BuildContext context, Widget? child) {
-        return _buildFullScreenVideo(context, animation, controllerProvider);
+        return BetterPlayerFullScreenVideo(
+          controllerProvider: controllerProvider,
+        );
       },
     );
   }
@@ -208,7 +196,7 @@ class _BetterPlayerState extends State<BetterPlayer>
   ) {
     final controllerProvider = BetterPlayerControllerProvider(
       controller: widget.controller,
-      child: _buildPlayer(),
+      child: _BetterPlayerVideoWithVisibility(controller: widget.controller),
     );
 
     final routePageBuilder = _betterPlayerConfiguration.routePageBuilder;
@@ -284,21 +272,26 @@ class _BetterPlayerState extends State<BetterPlayer>
     );
   }
 
-  Widget _buildPlayer() {
-    return VisibilityDetector(
-      key: Key('${widget.controller.hashCode}_key'),
-      onVisibilityChanged: (VisibilityInfo info) =>
-          widget.controller.onPlayerVisibilityChanged(info.visibleFraction),
-      child: BetterPlayerWithControls(
-        controller: widget.controller,
-      ),
-    );
-  }
-
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     widget.controller.setAppLifecycleState(state);
+  }
+}
+
+class _BetterPlayerVideoWithVisibility extends StatelessWidget {
+  final BetterPlayerController controller;
+
+  const _BetterPlayerVideoWithVisibility({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return VisibilityDetector(
+      key: Key('${controller.hashCode}_key'),
+      onVisibilityChanged: (VisibilityInfo info) =>
+          controller.onPlayerVisibilityChanged(info.visibleFraction),
+      child: BetterPlayerWithControls(controller: controller),
+    );
   }
 }
 

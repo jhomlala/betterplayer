@@ -20,7 +20,7 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
     final betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-      placeholder: _buildPlaceholder(),
+      placeholder: _FadePlaceholder(playStream: _playController.stream),
       showPlaceholderUntilPlay: true,
       placeholderOnTop: false,
     );
@@ -36,23 +36,6 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
       }
     });
     super.initState();
-  }
-
-  Widget _buildPlaceholder() {
-    return StreamBuilder<bool>(
-      stream: _playController.stream,
-      builder: (context, snapshot) {
-        final showPlaceholder = snapshot.data ?? true;
-        return AnimatedOpacity(
-          duration: const Duration(milliseconds: 500),
-          opacity: showPlaceholder ? 1.0 : 0.0,
-          child: AspectRatio(
-            aspectRatio: 16 / 9,
-            child: Image.network(Constants.catImageUrl, fit: BoxFit.fill),
-          ),
-        );
-      },
-    );
   }
 
   @override
@@ -75,6 +58,30 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _FadePlaceholder extends StatelessWidget {
+  const _FadePlaceholder({required this.playStream});
+
+  final Stream<bool> playStream;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<bool>(
+      stream: playStream,
+      builder: (context, snapshot) {
+        final showPlaceholder = snapshot.data ?? true;
+        return AnimatedOpacity(
+          duration: const Duration(milliseconds: 500),
+          opacity: showPlaceholder ? 1.0 : 0.0,
+          child: AspectRatio(
+            aspectRatio: 16 / 9,
+            child: Image.network(Constants.catImageUrl, fit: BoxFit.fill),
+          ),
+        );
+      },
     );
   }
 }

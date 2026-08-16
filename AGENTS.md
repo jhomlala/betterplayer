@@ -17,6 +17,9 @@
   - Prefer single quotes over double quotes.
   - Require trailing commas for multi-line arguments and collections.
   - Maintain the existing suppressions in `analysis_options.yaml` for specific project needs (e.g., `public_member_api_docs: false`).
+  - **Named Parameters**: Use named parameters for all functions, methods, and constructors if:
+    - They have 2 or more parameters.
+    - They have only 1 parameter and that parameter is a `bool`.
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
