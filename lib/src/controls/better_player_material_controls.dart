@@ -192,6 +192,9 @@ class _BetterPlayerMaterialControlsState
 
   void _onMute() {
     cancelAndRestartTimer();
+    if (_latestValue == null) {
+      return;
+    }
     if (_latestValue!.volume == 0) {
       _betterPlayerController!.setVolume(_latestVolume ?? 0.5);
     } else {

@@ -228,7 +228,7 @@ class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
           height: barHeight,
           color: Colors.transparent,
           margin: EdgeInsets.only(left: isBack ? 10 : 0, right: isBack ? 0 : 8),
-          padding: const EdgeInsets.symmetric(horizontal: 8),
+          padding: EdgeInsets.symmetric(horizontal: isBack ? 8 : 6),
           child: Icon(
             icon,
             color: iconColor,

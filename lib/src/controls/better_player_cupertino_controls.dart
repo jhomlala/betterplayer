@@ -205,6 +205,9 @@ class _BetterPlayerCupertinoControlsState
 
   void _onMute() {
     cancelAndRestartTimer();
+    if (_latestValue == null) {
+      return;
+    }
 
     if (_latestValue!.volume == 0) {
       _controller!.setVolume(_latestVolume ?? 0.5);

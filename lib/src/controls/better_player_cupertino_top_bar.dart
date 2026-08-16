@@ -174,7 +174,7 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
   }
 }
 
-class _BetterPlayerCupertinoPipButton extends StatelessWidget {
+class _BetterPlayerCupertinoPipButton extends StatefulWidget {
   final BetterPlayerController controller;
   final BetterPlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
@@ -196,35 +196,60 @@ class _BetterPlayerCupertinoPipButton extends StatelessWidget {
   });
 
   @override
+  State<_BetterPlayerCupertinoPipButton> createState() =>
+      _BetterPlayerCupertinoPipButtonState();
+}
+
+class _BetterPlayerCupertinoPipButtonState
+    extends State<_BetterPlayerCupertinoPipButton> {
+  late Future<bool> _isPipSupportedFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _isPipSupportedFuture = widget.controller.isPictureInPictureSupported();
+  }
+
+  @override
+  void didUpdateWidget(covariant _BetterPlayerCupertinoPipButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      _isPipSupportedFuture = widget.controller.isPictureInPictureSupported();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: controller.isPictureInPictureSupported(),
+      future: _isPipSupportedFuture,
       builder: (context, snapshot) {
         final isPipSupported = snapshot.data ?? false;
-        if (isPipSupported && controller.betterPlayerGlobalKey != null) {
+        if (isPipSupported && widget.controller.betterPlayerGlobalKey != null) {
           return GestureDetector(
-            onTap: () => controller.enablePictureInPicture(
-              controller.betterPlayerGlobalKey!,
+            onTap: () => widget.controller.enablePictureInPicture(
+              widget.controller.betterPlayerGlobalKey!,
             ),
             child: Semantics(
-              label: controller.translations.controlsPipLabel,
+              label: widget.controller.translations.controlsPipLabel,
               button: true,
               child: AnimatedOpacity(
-                opacity: controlsNotVisible ? 0.0 : 1.0,
-                duration: controlsConfiguration.controlsHideTime,
+                opacity: widget.controlsNotVisible ? 0.0 : 1.0,
+                duration: widget.controlsConfiguration.controlsHideTime,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
-                    height: barHeight,
-                    padding: EdgeInsets.symmetric(horizontal: buttonPadding),
+                    height: widget.barHeight,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: widget.buttonPadding,
+                    ),
                     decoration: BoxDecoration(
-                      color: backgroundColor.withValues(alpha: 0.5),
+                      color: widget.backgroundColor.withValues(alpha: 0.5),
                     ),
                     child: Center(
                       child: Icon(
-                        controlsConfiguration.pipMenuIcon,
-                        color: iconColor,
-                        size: iconSize,
+                        widget.controlsConfiguration.pipMenuIcon,
+                        color: widget.iconColor,
+                        size: widget.iconSize,
                       ),
                     ),
                   ),

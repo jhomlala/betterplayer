@@ -60,7 +60,7 @@ class BetterPlayerMaterialTopBar extends StatelessWidget {
   }
 }
 
-class _BetterPlayerMaterialPipButtonWrapper extends StatelessWidget {
+class _BetterPlayerMaterialPipButtonWrapper extends StatefulWidget {
   final BetterPlayerController controller;
   final BetterPlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
@@ -74,33 +74,59 @@ class _BetterPlayerMaterialPipButtonWrapper extends StatelessWidget {
   });
 
   @override
+  State<_BetterPlayerMaterialPipButtonWrapper> createState() =>
+      _BetterPlayerMaterialPipButtonWrapperState();
+}
+
+class _BetterPlayerMaterialPipButtonWrapperState
+    extends State<_BetterPlayerMaterialPipButtonWrapper> {
+  late Future<bool> _isPipSupportedFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _isPipSupportedFuture = widget.controller.isPictureInPictureSupported();
+  }
+
+  @override
+  void didUpdateWidget(
+    covariant _BetterPlayerMaterialPipButtonWrapper oldWidget,
+  ) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.controller != widget.controller) {
+      _isPipSupportedFuture = widget.controller.isPictureInPictureSupported();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: controller.isPictureInPictureSupported(),
+      future: _isPipSupportedFuture,
       builder: (context, snapshot) {
         final isPipSupported = snapshot.data ?? false;
-        if (isPipSupported && controller.betterPlayerGlobalKey != null) {
+        if (isPipSupported && widget.controller.betterPlayerGlobalKey != null) {
           return AnimatedOpacity(
-            opacity: controlsNotVisible ? 0.0 : 1.0,
-            duration: controlsConfiguration.controlsHideTime,
-            onEnd: onPlayerHide,
+            opacity: widget.controlsNotVisible ? 0.0 : 1.0,
+            duration: widget.controlsConfiguration.controlsHideTime,
+            onEnd: widget.onPlayerHide,
             child: Container(
-              height: controlsConfiguration.controlBarHeight,
+              height: widget.controlsConfiguration.controlBarHeight,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   BetterPlayerMaterialClickableWidget(
                     onTap: () {
-                      controller.enablePictureInPicture(
-                        controller.betterPlayerGlobalKey!,
+                      widget.controller.enablePictureInPicture(
+                        widget.controller.betterPlayerGlobalKey!,
                       );
                     },
-                    semanticsLabel: controller.translations.controlsPipLabel,
+                    semanticsLabel:
+                        widget.controller.translations.controlsPipLabel,
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: Icon(
-                        controlsConfiguration.pipMenuIcon,
-                        color: controlsConfiguration.iconsColor,
+                        widget.controlsConfiguration.pipMenuIcon,
+                        color: widget.controlsConfiguration.iconsColor,
                       ),
                     ),
                   ),
