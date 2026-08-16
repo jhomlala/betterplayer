@@ -1,3 +1,6 @@
+## Unreleased
+* Updated: Changed Android package name, namespace, and bundle ID to `pl.hasoft.better_player`.
+
 ## 0.5.0
 * Updated: Major architectural refactor of player controls and UI components. Helper build methods (`_buildWidget()`) were replaced with dedicated Flutter `Widget` classes for improved modularity, performance, and maintainability.
 * Added: New granular widgets for Material and Cupertino controls, including top/bottom bars, hit areas, and status overlays.

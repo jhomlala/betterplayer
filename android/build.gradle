@@ -9,7 +9,7 @@ kotlin {
 }
 
 android {
-    namespace "com.jhomlala.better_player"
+    namespace "pl.hasoft.better_player"
     compileSdkVersion 36
 
     compileOptions {

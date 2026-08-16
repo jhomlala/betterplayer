@@ -1,4 +1,4 @@
-package com.jhomlala.better_player
+package pl.hasoft.better_player
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -45,9 +45,9 @@ import androidx.work.Data
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
-import com.jhomlala.better_player.DataSourceUtils.getUserAgent
-import com.jhomlala.better_player.DataSourceUtils.isHTTP
+import pl.hasoft.better_player.DataSourceUtils.getDataSourceFactory
+import pl.hasoft.better_player.DataSourceUtils.getUserAgent
+import pl.hasoft.better_player.DataSourceUtils.isHTTP
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.EventChannel.EventSink
 import io.flutter.plugin.common.MethodChannel

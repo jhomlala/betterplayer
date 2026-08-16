@@ -1,11 +1,11 @@
-package com.jhomlala.better_player
+package pl.hasoft.better_player
 
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import com.jhomlala.better_player.DataSourceUtils.isHTTP
-import com.jhomlala.better_player.DataSourceUtils.getUserAgent
-import com.jhomlala.better_player.DataSourceUtils.getDataSourceFactory
+import pl.hasoft.better_player.DataSourceUtils.isHTTP
+import pl.hasoft.better_player.DataSourceUtils.getUserAgent
+import pl.hasoft.better_player.DataSourceUtils.getDataSourceFactory
 import androidx.work.WorkerParameters
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
