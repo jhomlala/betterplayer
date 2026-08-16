@@ -1,5 +1,8 @@
-## Unreleased
-* Updated: Changed Android package name, namespace, and bundle ID to `pl.hasoft.better_player`.
+## 0.6.0
+* [BREAKING_CHANGE] Updated: Changed Android package name, namespace, and bundle ID to `pl.hasoft.better_player`.
+* Added: Comprehensive migration guides for transitioning from `video_player` and `chewie` to `better_player`.
+* Updated: Enhanced dark mode alert colors for documentation tips and important notes.
+* Updated: Added direct links to migration guides in README.md and documentation sidebar.
 
 ## 0.5.0
 * Updated: Major architectural refactor of player controls and UI components. Helper build methods (`_buildWidget()`) were replaced with dedicated Flutter `Widget` classes for improved modularity, performance, and maintainability.

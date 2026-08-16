@@ -71,6 +71,34 @@
     section.cover blockquote > .buttons > a:hover {
       color: var(--theme-color, #42b983);
     }
+
+    /* Flexible Alerts styling improvements */
+    .markdown-section .alert.tip {
+      background-color: #f0fdf4 !important;
+      border-color: #22c55e !important;
+      color: #166534 !important;
+    }
+    .markdown-section .alert.important {
+      background-color: #fef2f2 !important;
+      border-color: #ef4444 !important;
+      color: #991b1b !important;
+    }
+
+    /* Dark mode overrides for alerts to prevent blindingly bright colors */
+    body.dark .markdown-section .alert.tip,
+    body[data-theme="dark"] .markdown-section .alert.tip,
+    .darkmode .markdown-section .alert.tip {
+      background-color: rgba(6, 78, 59, 0.4) !important;
+      border-color: #059669 !important;
+      color: #a7f3d0 !important;
+    }
+    body.dark .markdown-section .alert.important,
+    body[data-theme="dark"] .markdown-section .alert.important,
+    .darkmode .markdown-section .alert.important {
+      background-color: rgba(127, 29, 29, 0.4) !important;
+      border-color: #dc2626 !important;
+      color: #fecaca !important;
+    }
   </style>
 
 </head>

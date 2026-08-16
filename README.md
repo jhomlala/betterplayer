@@ -64,7 +64,7 @@ Better Player is a powerful video player for Flutter, built on top of the offici
 Add Better Player to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  better_player: ^latest_version
+  better_player: ^0.6.0
 ```
 
 ### 2. Basic Usage
@@ -101,6 +101,13 @@ BetterPlayerController _controller = BetterPlayerController(
 
 BetterPlayer(controller: _controller)
 ```
+
+---
+
+## 🔄 Migration Guides
+Switching from another package? Check out our step-by-step migration guides:
+* 🚀 [Migrating from `video_player`](https://jhomlala.github.io/betterplayer/#/migration_from_video_player)
+* 🚀 [Migrating from `chewie`](https://jhomlala.github.io/betterplayer/#/migration_from_chewie)
 
 ---
 

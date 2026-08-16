@@ -2,6 +2,8 @@
 * Introduction
     * [Introduction](home.md)
     * [Installation](install.md)
+    * [Migrating from video_player](migration_from_video_player.md)
+    * [Migrating from chewie](migration_from_chewie.md)
     * [General Player Usage](generalplayerusage.md)
     * [Playlist Player Usage](playlistplayerusage.md)
     * [List Player Usage](listplayerusage.md)
