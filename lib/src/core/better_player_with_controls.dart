@@ -136,7 +136,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       child: Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
-          if (placeholderOnTop) _buildPlaceholder(betterPlayerController),
+          if (placeholderOnTop)
+            BetterPlayerPlaceholder(controller: betterPlayerController),
           Transform.rotate(
             angle: rotation * pi / 180,
             child: _BetterPlayerVideoFitWidget(
@@ -145,30 +146,60 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             ),
           ),
           betterPlayerController.betterPlayerConfiguration.overlay ??
-              Container(),
+              const SizedBox(),
           BetterPlayerSubtitlesDrawer(
             betterPlayerController: betterPlayerController,
             betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
             subtitles: betterPlayerController.subtitlesLines,
             playerVisibilityStream: playerVisibilityStreamController.stream,
           ),
-          if (!placeholderOnTop) _buildPlaceholder(betterPlayerController),
-          _buildControls(context, betterPlayerController),
+          if (!placeholderOnTop)
+            BetterPlayerPlaceholder(controller: betterPlayerController),
+          BetterPlayerControlsSelectionWidget(
+            controller: betterPlayerController,
+            onControlsVisibilityChanged: onControlsVisibilityChanged,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildPlaceholder(BetterPlayerController betterPlayerController) {
-    return betterPlayerController.betterPlayerDataSource!.placeholder ??
-        betterPlayerController.betterPlayerConfiguration.placeholder ??
-        Container();
+  void onControlsVisibilityChanged(bool state) {
+    playerVisibilityStreamController.add(state);
   }
+}
 
-  Widget _buildControls(
-    BuildContext context,
-    BetterPlayerController betterPlayerController,
-  ) {
+///Widget which renders placeholder on top of the video.
+class BetterPlayerPlaceholder extends StatelessWidget {
+  const BetterPlayerPlaceholder({
+    required this.controller,
+    super.key,
+  });
+
+  final BetterPlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return controller.betterPlayerDataSource?.placeholder ??
+        controller.betterPlayerConfiguration.placeholder ??
+        const SizedBox();
+  }
+}
+
+///Widget which determines which controls should be used.
+class BetterPlayerControlsSelectionWidget extends StatelessWidget {
+  const BetterPlayerControlsSelectionWidget({
+    required this.controller,
+    required this.onControlsVisibilityChanged,
+    super.key,
+  });
+
+  final BetterPlayerController controller;
+  final Function(bool) onControlsVisibilityChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final controlsConfiguration = controller.betterPlayerControlsConfiguration;
     if (controlsConfiguration.showControls) {
       var playerTheme = controlsConfiguration.playerTheme;
       if (playerTheme == null) {
@@ -182,35 +213,23 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       if (controlsConfiguration.customControlsBuilder != null &&
           playerTheme == BetterPlayerTheme.custom) {
         return controlsConfiguration.customControlsBuilder!(
-          betterPlayerController,
+          controller,
           onControlsVisibilityChanged,
         );
       } else if (playerTheme == BetterPlayerTheme.material) {
-        return _buildMaterialControl();
+        return BetterPlayerMaterialControls(
+          onControlsVisibilityChanged: onControlsVisibilityChanged,
+          controlsConfiguration: controlsConfiguration,
+        );
       } else if (playerTheme == BetterPlayerTheme.cupertino) {
-        return _buildCupertinoControl();
+        return BetterPlayerCupertinoControls(
+          onControlsVisibilityChanged: onControlsVisibilityChanged,
+          controlsConfiguration: controlsConfiguration,
+        );
       }
     }
 
     return const SizedBox();
-  }
-
-  Widget _buildMaterialControl() {
-    return BetterPlayerMaterialControls(
-      onControlsVisibilityChanged: onControlsVisibilityChanged,
-      controlsConfiguration: controlsConfiguration,
-    );
-  }
-
-  Widget _buildCupertinoControl() {
-    return BetterPlayerCupertinoControls(
-      onControlsVisibilityChanged: onControlsVisibilityChanged,
-      controlsConfiguration: controlsConfiguration,
-    );
-  }
-
-  void onControlsVisibilityChanged(bool state) {
-    playerVisibilityStreamController.add(state);
   }
 }
 

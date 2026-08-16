@@ -75,109 +75,119 @@ class _WelcomePageState extends State<WelcomePage> {
 
   List<Widget> buildExampleElementWidgets() {
     return [
-      _buildExampleElementWidget('Basic player', () {
-        _navigateToPage(const BasicPlayerPage());
-      }),
-      _buildExampleElementWidget('Normal player', () {
-        _navigateToPage(const NormalPlayerPage());
-      }),
-      _buildExampleElementWidget('Controls configuration', () {
-        _navigateToPage(const ControlsConfigurationPage());
-      }),
-      _buildExampleElementWidget('Event listener', () {
-        _navigateToPage(const EventListenerPage());
-      }),
-      _buildExampleElementWidget('Subtitles', () {
-        _navigateToPage(const SubtitlesPage());
-      }),
-      _buildExampleElementWidget('Resolutions', () {
-        _navigateToPage(const ResolutionsPage());
-      }),
-      _buildExampleElementWidget('HLS tracks', () {
-        _navigateToPage(const HlsTracksPage());
-      }),
-      _buildExampleElementWidget('HLS subtitles', () {
-        _navigateToPage(const HlsSubtitlesPage());
-      }),
-      _buildExampleElementWidget('HLS Audio', () {
-        _navigateToPage(const HlsAudioPage());
-      }),
-      _buildExampleElementWidget('Cache', () {
-        _navigateToPage(const CachePage());
-      }),
-      _buildExampleElementWidget('Playlist', () {
-        _navigateToPage(const PlaylistPage());
-      }),
-      _buildExampleElementWidget('Video list', () {
-        _navigateToPage(const VideoListPage());
-      }),
-      _buildExampleElementWidget('Rotation and fit', () {
-        _navigateToPage(const RotationAndFitPage());
-      }),
-      _buildExampleElementWidget('Memory player', () {
-        _navigateToPage(const MemoryPlayerPage());
-      }),
-      _buildExampleElementWidget('Controller controls', () {
-        _navigateToPage(const ControllerControlsPage());
-      }),
-      _buildExampleElementWidget('Auto fullscreen orientation', () {
-        _navigateToPage(const AutoFullscreenOrientationPage());
-      }),
-      _buildExampleElementWidget('Overridden aspect ratio', () {
-        _navigateToPage(const OverriddenAspectRatioPage());
-      }),
-      _buildExampleElementWidget('Notifications player', () {
-        _navigateToPage(const NotificationPlayerPage());
-      }),
-      _buildExampleElementWidget('Picture in Picture', () {
-        _navigateToPage(const PictureInPicturePage());
-      }),
-      _buildExampleElementWidget('DRM', () {
-        _navigateToPage(const DrmPage());
-      }),
-      _buildExampleElementWidget('ClearKey DRM', () {
-        _navigateToPage(const ClearKeyPage());
-      }),
-      _buildExampleElementWidget('Dash', () {
-        _navigateToPage(const DashPage());
-      }),
-      _buildExampleElementWidget('Reusable video list', () {
-        _navigateToPage(const ReusableVideoListPage());
-      }),
-      _buildExampleElementWidget('Fade placeholder', () {
-        _navigateToPage(const FadePlaceholderPage());
-      }),
-      _buildExampleElementWidget('Placeholder until play', () {
-        _navigateToPage(const PlaceholderUntilPlayPage());
-      }),
-      _buildExampleElementWidget('Change player theme', () {
-        _navigateToPage(const ChangePlayerThemePage());
-      }),
-      _buildExampleElementWidget('Overridden duration', () {
-        _navigateToPage(const OverriddenDurationPage());
-      }),
-      _buildExampleElementWidget('Controls always visible', () {
-        _navigateToPage(const ControlsAlwaysVisiblePage());
-      }),
-    ];
-  }
-
-  Widget _buildExampleElementWidget(String name, Function onClicked) {
-    return Material(
-      child: InkWell(
-        onTap: onClicked as void Function()?,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Text(name, style: const TextStyle(fontSize: 16)),
-            ),
-            const Divider(),
-          ],
-        ),
+      _WelcomePageItem(
+        name: 'Basic player',
+        onClicked: () => _navigateToPage(const BasicPlayerPage()),
       ),
-    );
+      _WelcomePageItem(
+        name: 'Normal player',
+        onClicked: () => _navigateToPage(const NormalPlayerPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Controls configuration',
+        onClicked: () => _navigateToPage(const ControlsConfigurationPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Event listener',
+        onClicked: () => _navigateToPage(const EventListenerPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Subtitles',
+        onClicked: () => _navigateToPage(const SubtitlesPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Resolutions',
+        onClicked: () => _navigateToPage(const ResolutionsPage()),
+      ),
+      _WelcomePageItem(
+        name: 'HLS tracks',
+        onClicked: () => _navigateToPage(const HlsTracksPage()),
+      ),
+      _WelcomePageItem(
+        name: 'HLS subtitles',
+        onClicked: () => _navigateToPage(const HlsSubtitlesPage()),
+      ),
+      _WelcomePageItem(
+        name: 'HLS Audio',
+        onClicked: () => _navigateToPage(const HlsAudioPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Cache',
+        onClicked: () => _navigateToPage(const CachePage()),
+      ),
+      _WelcomePageItem(
+        name: 'Playlist',
+        onClicked: () => _navigateToPage(const PlaylistPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Video list',
+        onClicked: () => _navigateToPage(const VideoListPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Rotation and fit',
+        onClicked: () => _navigateToPage(const RotationAndFitPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Memory player',
+        onClicked: () => _navigateToPage(const MemoryPlayerPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Controller controls',
+        onClicked: () => _navigateToPage(const ControllerControlsPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Auto fullscreen orientation',
+        onClicked: () => _navigateToPage(const AutoFullscreenOrientationPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Overridden aspect ratio',
+        onClicked: () => _navigateToPage(const OverriddenAspectRatioPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Notifications player',
+        onClicked: () => _navigateToPage(const NotificationPlayerPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Picture in Picture',
+        onClicked: () => _navigateToPage(const PictureInPicturePage()),
+      ),
+      _WelcomePageItem(
+        name: 'DRM',
+        onClicked: () => _navigateToPage(const DrmPage()),
+      ),
+      _WelcomePageItem(
+        name: 'ClearKey DRM',
+        onClicked: () => _navigateToPage(const ClearKeyPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Dash',
+        onClicked: () => _navigateToPage(const DashPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Reusable video list',
+        onClicked: () => _navigateToPage(const ReusableVideoListPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Fade placeholder',
+        onClicked: () => _navigateToPage(const FadePlaceholderPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Placeholder until play',
+        onClicked: () => _navigateToPage(const PlaceholderUntilPlayPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Change player theme',
+        onClicked: () => _navigateToPage(const ChangePlayerThemePage()),
+      ),
+      _WelcomePageItem(
+        name: 'Overridden duration',
+        onClicked: () => _navigateToPage(const OverriddenDurationPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Controls always visible',
+        onClicked: () => _navigateToPage(const ControlsAlwaysVisiblePage()),
+      ),
+    ];
   }
 
   Future _navigateToPage(Widget page) async {
@@ -215,5 +225,31 @@ class _WelcomePageState extends State<WelcomePage> {
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/${Constants.logo}');
     await file.writeAsBytes(content.buffer.asUint8List());
+  }
+}
+
+class _WelcomePageItem extends StatelessWidget {
+  const _WelcomePageItem({required this.name, required this.onClicked});
+
+  final String name;
+  final VoidCallback onClicked;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: InkWell(
+        onTap: onClicked,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(name, style: const TextStyle(fontSize: 16)),
+            ),
+            const Divider(),
+          ],
+        ),
+      ),
+    );
   }
 }

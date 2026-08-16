@@ -1,0 +1,127 @@
+import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/controls/better_player_clickable_widget.dart';
+import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:material_ui/material_ui.dart';
+
+class BetterPlayerOverflowMenu extends StatelessWidget {
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onPlaybackSpeedClicked;
+  final VoidCallback onSubtitlesClicked;
+  final VoidCallback onQualitiesClicked;
+  final VoidCallback onAudioTracksClicked;
+
+  const BetterPlayerOverflowMenu({
+    required this.controller,
+    required this.controlsConfiguration,
+    required this.onPlaybackSpeedClicked,
+    required this.onSubtitlesClicked,
+    required this.onQualitiesClicked,
+    required this.onAudioTracksClicked,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final translations = controller.translations;
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          if (controlsConfiguration.enablePlaybackSpeed)
+            BetterPlayerOverflowMenuItemWidget(
+              icon: controlsConfiguration.playbackSpeedIcon,
+              name: translations.overflowMenuPlaybackSpeed,
+              onTap: onPlaybackSpeedClicked,
+              controlsConfiguration: controlsConfiguration,
+            ),
+          if (controlsConfiguration.enableSubtitles)
+            BetterPlayerOverflowMenuItemWidget(
+              icon: controlsConfiguration.subtitlesIcon,
+              name: translations.overflowMenuSubtitles,
+              onTap: onSubtitlesClicked,
+              controlsConfiguration: controlsConfiguration,
+            ),
+          if (controlsConfiguration.enableQualities)
+            BetterPlayerOverflowMenuItemWidget(
+              icon: controlsConfiguration.qualitiesIcon,
+              name: translations.overflowMenuQuality,
+              onTap: onQualitiesClicked,
+              controlsConfiguration: controlsConfiguration,
+            ),
+          if (controlsConfiguration.enableAudioTracks)
+            BetterPlayerOverflowMenuItemWidget(
+              icon: controlsConfiguration.audioTracksIcon,
+              name: translations.overflowMenuAudioTracks,
+              onTap: onAudioTracksClicked,
+              controlsConfiguration: controlsConfiguration,
+            ),
+          if (controlsConfiguration.overflowMenuCustomItems.isNotEmpty)
+            ...controlsConfiguration.overflowMenuCustomItems.map(
+              (customItem) => BetterPlayerOverflowMenuItemWidget(
+                icon: customItem.icon,
+                name: customItem.title,
+                onTap: () {
+                  Navigator.of(context).pop();
+                  customItem.onClicked.call();
+                },
+                controlsConfiguration: controlsConfiguration,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
+  final IconData icon;
+  final String name;
+  final VoidCallback onTap;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool isSelected;
+
+  const BetterPlayerOverflowMenuItemWidget({
+    required this.icon,
+    required this.name,
+    required this.onTap,
+    required this.controlsConfiguration,
+    this.isSelected = false,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BetterPlayerMaterialClickableWidget(
+      onTap: onTap,
+      semanticsLabel: name,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+        child: Row(
+          children: [
+            const SizedBox(width: 8),
+            Icon(
+              icon,
+              color: controlsConfiguration.overflowMenuIconsColor,
+            ),
+            const SizedBox(width: 16),
+            Text(
+              name,
+              style: _getOverflowMenuElementTextStyle(isSelected),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  TextStyle _getOverflowMenuElementTextStyle(bool isSelected) {
+    return TextStyle(
+      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+      color: isSelected
+          ? controlsConfiguration.overflowModalTextColor
+          : controlsConfiguration.overflowModalTextColor.withValues(
+              alpha: 0.7,
+            ),
+    );
+  }
+}

@@ -8,7 +8,7 @@ Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  better_player: ^0.4.3
+  better_player: ^0.5.0
 ```
 
 ## 2. Install Package
@@ -41,7 +41,7 @@ To ensure Better Player functions correctly on iOS, apply the following settings
 Apply the following settings for Android support:
 
 *   **SDK Version**: Set `compileSdkVersion` to **36**.
-*   **Flutter Version**: Use **Flutter 3.44.0** or higher (required for built-in Kotlin support).
+*   **Flutter Version**: Use **Flutter 3.47.0** or higher (required for latest architectural improvements).
 *   **MultiDex**: Ensure MultiDex is enabled in your project.
 
 ## 5. Additional Configurations (Optional)

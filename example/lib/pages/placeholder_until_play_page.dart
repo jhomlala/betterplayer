@@ -28,7 +28,10 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   void initState() {
     final betterPlayerConfiguration = BetterPlayerConfiguration(
       fit: BoxFit.contain,
-      placeholder: _buildVideoPlaceholder(),
+      placeholder: _VideoPlaceholder(
+        placeholderStream: _placeholderStreamController.stream,
+        showPlaceholder: _showPlaceholder,
+      ),
       showPlaceholderUntilPlay: true,
     );
     final dataSource = BetterPlayerDataSource(
@@ -48,19 +51,6 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   void _setPlaceholderVisibleState(bool hidden) {
     _placeholderStreamController.add(hidden);
     _showPlaceholder = hidden;
-  }
-
-  ///_placeholderStreamController is used only to refresh video placeholder
-  ///widget.
-  Widget _buildVideoPlaceholder() {
-    return StreamBuilder<bool>(
-      stream: _placeholderStreamController.stream,
-      builder: (context, snapshot) {
-        return _showPlaceholder
-            ? Image.network(Constants.placeholderUrl)
-            : const SizedBox();
-      },
-    );
   }
 
   @override
@@ -83,6 +73,28 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _VideoPlaceholder extends StatelessWidget {
+  const _VideoPlaceholder({
+    required this.placeholderStream,
+    required this.showPlaceholder,
+  });
+
+  final Stream<bool> placeholderStream;
+  final bool showPlaceholder;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<bool>(
+      stream: placeholderStream,
+      builder: (context, snapshot) {
+        return (snapshot.data ?? showPlaceholder)
+            ? Image.network(Constants.placeholderUrl)
+            : const SizedBox();
+      },
     );
   }
 }
