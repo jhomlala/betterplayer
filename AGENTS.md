@@ -9,6 +9,10 @@
   - `dart format .`
   - `flutter analyze .`
 - **Error Resolution**: If `flutter analyze` reports issues, they MUST be fixed immediately before concluding the task.
+- **PR Completeness**: Before considering a task or bug fix finished, ensure the work is ready to be merged. This includes:
+  - Adding a relevant entry to `CHANGELOG.md` under the `## Unreleased` header (following the Changelog Guidelines).
+  - Ensuring all tests pass and `flutter analyze` is clean.
+  - Providing clear verification steps and, for bugs, the reproduction data source.
 
 ## Code Style & Linting
 - **Standard**: Follow `package:very_good_analysis`.
@@ -40,6 +44,14 @@
 ## Architecture
 - **Plugin-First Principle**: When working on new features or refactoring existing code, prioritize a **plugin-based architecture**. The goal is to keep the core library lean and extend functionality via plugins rather than purely working within the core.
 - **Proactive Refactoring**: This is a legacy plugin that requires significant effort to align its architecture with modern best practices (e.g., modularization, separation of concerns). Be proactive when refactoring; don't just fix the immediate issue if you see an opportunity to improve the underlying structure and ensure it follows current Android, iOS, and Flutter standards.
+
+## Bug Handling
+- **Research**: Before proposing a fix or new feature, ALWAYS explore the `example/` app and `doc/` directory. They often contain usage patterns, configurations, or existing implementations that can guide the solution or serve as a baseline for a reproduction case. Leverage the entire codebase to find similar implementations before reinventing the wheel.
+- **Classification**: Evaluate if a reported bug is a defect in the code or a misunderstanding. If it can be handled by explaining the behavior or pointing to an existing example in the `example/` app, do that instead of changing the code. In such cases, answer the ticket clearly and close it.
+- **Surgical Refactoring**: For real bugs, be brave in refactoring legacy code to ensure a robust fix. However, stay focused: the fix should be like surgery—refactor where necessary but do not touch unrelated areas.
+- **Reproduction**: ALWAYS provide a reproducible data source (e.g., a specific URL or asset) so the reviewer can check the solution. You may add a temporary example for verification which should be removed before finishing the task.
+- **Testing**: Every bug fix MUST include appropriate Dart tests. Do not add tests for the native part.
+- **Verification**: In every PR or implementation plan, include clear steps to verify the solution.
 
 ## Changelog Guidelines
 - **Labels**: Mark critical or API-breaking changes with the `[BREAKING_CHANGE]` label at the start of the line.
