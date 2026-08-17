@@ -3,7 +3,7 @@
 # Unlike .gitignore, files listed here will remain visible on GitHub.
 
 # Exclude media directory used for README and documentation
-media/
+assets/media/
 
 # Exclude AI agent rules
 AGENTS.md

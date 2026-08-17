@@ -4,6 +4,14 @@ version: 0.6.0
 homepage: https://github.com/jhomlala/betterplayer
 documentation: https://jhomlala.github.io/betterplayer/
 
+screenshots:
+  - description: 'Better Player Logo'
+    path: assets/pub/logo.png
+  - description: 'Player Controls'
+    path: assets/pub/controls.png
+  - description: 'Settings Menu'
+    path: assets/pub/settings.png
+
 environment:
   sdk: "^3.12.0"
   flutter: ">=3.47.0"

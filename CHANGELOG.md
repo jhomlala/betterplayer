@@ -1,4 +1,5 @@
 ## Unreleased
+* Updated: Reorganized media files into `assets/media/` and added `assets/pub/` for pub.dev screenshots and logo.
 * Fixed: Android duration sometimes reporting zero for VOD streams by handling ExoPlayer's `C.TIME_UNSET` value and delaying the `initialized` event until a valid duration is available via `onTimelineChanged`.
 * Fixed: Video aspect ratio not scaling correctly based on the video's actual aspect ratio when no aspect ratio is configured.
 * Added: Unit tests for video aspect ratio priority and duration initialization.

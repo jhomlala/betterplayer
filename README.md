@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/logo.png" width="250px">
+<img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/logo.png" width="250px">
 </p>
 
 # Better Player
@@ -17,10 +17,10 @@ Better Player is a powerful video player for Flutter, built on top of the offici
 
 <table align="center">
    <tr>
-      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/1.png"></td>
-      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/3.png"></td>
-      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/7.png"></td>
-      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/9.png"></td>
+      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/1.png"></td>
+      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/3.png"></td>
+      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/7.png"></td>
+      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/9.png"></td>
    </tr>
    <tr align="center">
       <td><b>Default Controls</b></td>
