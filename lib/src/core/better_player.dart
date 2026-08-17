@@ -64,6 +64,9 @@ class _BetterPlayerState extends State<BetterPlayer>
   ///Subscription for controller events
   StreamSubscription? _controllerEventSubscription;
 
+  ///Last known orientation used for auto fullscreen on landscape feature.
+  Orientation? _lastOrientation;
+
   @override
   void initState() {
     super.initState();
@@ -169,8 +172,33 @@ class _BetterPlayerState extends State<BetterPlayer>
   Widget build(BuildContext context) {
     return BetterPlayerControllerProvider(
       controller: widget.controller,
-      child: _BetterPlayerVideoWithVisibility(controller: widget.controller),
+      child: _betterPlayerConfiguration.autoFullScreenOnLandscape
+          ? OrientationBuilder(
+              builder: (context, orientation) {
+                if (orientation != _lastOrientation) {
+                  _lastOrientation = orientation;
+                  _onOrientationChanged(orientation);
+                }
+                return _BetterPlayerVideoWithVisibility(
+                  controller: widget.controller,
+                );
+              },
+            )
+          : _BetterPlayerVideoWithVisibility(controller: widget.controller),
     );
+  }
+
+  void _onOrientationChanged(Orientation orientation) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final controller = widget.controller;
+      if (orientation == Orientation.landscape && !controller.isFullScreen) {
+        controller.enterFullScreen();
+      } else if (orientation == Orientation.portrait &&
+          controller.isFullScreen) {
+        controller.exitFullScreen();
+      }
+    });
   }
 
   AnimatedWidget _defaultRoutePageBuilder(
