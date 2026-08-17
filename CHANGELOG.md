@@ -1,5 +1,5 @@
 ## Unreleased
-* Updated: Internal development guidelines in `AGENTS.md` to improve bug handling, PR completeness, and proactive research using examples and documentation.
+* Updated: Internal development guidelines in `AGENTS.md` to improve bug handling, PR completeness, branch naming conventions, and proactive research.
 
 ## 0.6.0
 * [BREAKING_CHANGE] Updated: Changed Android package name, namespace, and bundle ID to `pl.hasoft.better_player`.

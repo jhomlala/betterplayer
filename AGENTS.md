@@ -5,6 +5,13 @@
 - **Git Hygiene**:
   - ALWAYS `git fetch origin master` and `git rebase origin/master` before starting any new task to ensure you are working on the latest code.
   - Ensure your branch history is clean and only contains commits relevant to the current task.
+  - Use standard branch naming conventions based on the task type:
+    - `feat/` for new features.
+    - `fix/` or `bugfix/` for bug fixes.
+    - `docs/` for documentation updates.
+    - `refactor/` for code refactoring.
+    - `test/` for adding or updating tests.
+    - `chore/` for maintenance tasks or dependency updates.
 - **Post-Implementation Steps**: If you have changed any Dart code, ALWAYS run the following commands in BOTH the root directory and the `example` directory after completion of a plan or task:
   - `dart format .`
   - `flutter analyze .`
