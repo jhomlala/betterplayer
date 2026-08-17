@@ -53,12 +53,12 @@
 - **Plugin-First Principle**: When working on new features or refactoring existing code, prioritize a **plugin-based architecture**. The goal is to keep the core library lean and extend functionality via plugins rather than purely working within the core.
 - **Proactive Refactoring**: This is a legacy plugin that requires significant effort to align its architecture with modern best practices (e.g., modularization, separation of concerns). Be proactive when refactoring; don't just fix the immediate issue if you see an opportunity to improve the underlying structure and ensure it follows current Android, iOS, and Flutter standards.
 
-## Bug Handling
+## GitHub Issues (Bugs & Features)
 - **Research**: Before proposing a fix or new feature, ALWAYS explore the `example/` app and `doc/` directory. They often contain usage patterns, configurations, or existing implementations that can guide the solution or serve as a baseline for a reproduction case. Leverage the entire codebase to find similar implementations before reinventing the wheel.
-- **Classification**: Evaluate if a reported bug is a defect in the code or a misunderstanding. If it can be handled by explaining the behavior or pointing to an existing example in the `example/` app, do that instead of changing the code. In such cases, answer the ticket clearly and close it.
-- **Surgical Refactoring**: For real bugs, be brave in refactoring legacy code to ensure a robust fix. However, stay focused: the fix should be like surgery—refactor where necessary but do not touch unrelated areas.
-- **Reproduction**: ALWAYS provide a reproducible data source (e.g., a specific URL or asset) so the reviewer can check the solution. You may add a temporary example for verification which should be removed before finishing the task.
-- **Testing**: Every bug fix MUST include appropriate Dart tests. Do not add tests for the native part.
+- **Classification**: Evaluate if a reported issue is a valid defect/request or a misunderstanding. If it can be handled by explaining the behavior or pointing to an existing example in the `example/` app, do that instead of changing the code. In such cases, answer the ticket clearly and close it.
+- **Surgical Refactoring**: For real bugs or complex features, be brave in refactoring legacy code to ensure a robust implementation. However, stay focused: the change should be like surgery—refactor where necessary but do not touch unrelated areas.
+- **Reproduction & Verification**: ALWAYS provide a reproducible data source (e.g., a specific URL or asset) so the reviewer can check the solution. For features, provide a clear example demonstrating the new functionality.
+- **Testing**: Every bug fix or new feature MUST include appropriate Dart tests. Do not add tests for the native part.
 - **Verification**: In every PR or implementation plan, include clear steps to verify the solution.
 
 ## Changelog Guidelines
