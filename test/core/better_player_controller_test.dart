@@ -571,6 +571,51 @@ void main() {
         expect(controller.getAspectRatio(), 16 / 9);
       });
 
+      test('getAspectRatio priority order: overridden aspect ratio', () {
+        final controller = BetterPlayerMockController(
+          const BetterPlayerConfiguration(aspectRatio: 1),
+        );
+        final mockVideoPlayerController = MockVideoPlayerController();
+        mockVideoPlayerController.setAspectRatio(2);
+        controller.videoPlayerController = mockVideoPlayerController;
+
+        controller.setOverriddenAspectRatio(16 / 9);
+        expect(controller.getAspectRatio(), 16 / 9);
+      });
+
+      test('getAspectRatio priority order: configuration aspect ratio', () {
+        final controller = BetterPlayerMockController(
+          const BetterPlayerConfiguration(aspectRatio: 16 / 9),
+        );
+        final mockVideoPlayerController = MockVideoPlayerController();
+        mockVideoPlayerController.setAspectRatio(2);
+        controller.videoPlayerController = mockVideoPlayerController;
+
+        expect(controller.getAspectRatio(), 16 / 9);
+      });
+
+      test('getAspectRatio priority order: video player aspect ratio', () {
+        final controller = BetterPlayerMockController(
+          const BetterPlayerConfiguration(),
+        );
+        final mockVideoPlayerController = MockVideoPlayerController();
+        mockVideoPlayerController.setAspectRatio(16 / 9);
+        controller.videoPlayerController = mockVideoPlayerController;
+
+        expect(controller.getAspectRatio(), 16 / 9);
+      });
+
+      test('getAspectRatio returns null when size is null and no override', () {
+        final controller = BetterPlayerMockController(
+          const BetterPlayerConfiguration(),
+        );
+        final mockVideoPlayerController = MockVideoPlayerController();
+        // Size is null by default in MockVideoPlayerController constructor (VideoPlayerValue(duration: null))
+        controller.videoPlayerController = mockVideoPlayerController;
+
+        expect(controller.getAspectRatio(), null);
+      });
+
       test('setOverriddenFit updates fit', () {
         final controller =
             BetterPlayerTestUtils.setupBetterPlayerMockController();

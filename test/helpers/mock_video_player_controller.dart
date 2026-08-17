@@ -1,6 +1,8 @@
 import 'dart:io';
+
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
+import 'package:material_ui/material_ui.dart';
 
 class MockVideoPlayerController extends VideoPlayerController {
   MockVideoPlayerController() : super(autoCreate: false) {
@@ -40,6 +42,10 @@ class MockVideoPlayerController extends VideoPlayerController {
 
   void setDuration(Duration duration) {
     value = value.copyWith(duration: duration);
+  }
+
+  void setAspectRatio(double aspectRatio) {
+    value = value.copyWith(size: Size(aspectRatio, 1));
   }
 
   @override
