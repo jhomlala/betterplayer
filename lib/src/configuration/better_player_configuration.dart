@@ -118,6 +118,11 @@ class BetterPlayerConfiguration {
   ///Default value is false.
   final bool useRootNavigator;
 
+  ///Defines if player should automatically enter fullscreen when the device is
+  ///rotated to landscape orientation and exit fullscreen when rotated back to
+  ///portrait. Default value is false.
+  final bool autoFullscreenOnLandscape;
+
   const BetterPlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
@@ -156,6 +161,7 @@ class BetterPlayerConfiguration {
     this.autoDispose = true,
     this.expandToFill = true,
     this.useRootNavigator = false,
+    this.autoFullscreenOnLandscape = false,
   });
 
   BetterPlayerConfiguration copyWith({
@@ -188,6 +194,7 @@ class BetterPlayerConfiguration {
     bool? autoDispose,
     bool? expandToFill,
     bool? useRootNavigator,
+    bool? autoFullscreenOnLandscape,
   }) {
     return BetterPlayerConfiguration(
       aspectRatio: aspectRatio ?? this.aspectRatio,
@@ -230,6 +237,8 @@ class BetterPlayerConfiguration {
       autoDispose: autoDispose ?? this.autoDispose,
       expandToFill: expandToFill ?? this.expandToFill,
       useRootNavigator: useRootNavigator ?? this.useRootNavigator,
+      autoFullscreenOnLandscape:
+          autoFullscreenOnLandscape ?? this.autoFullscreenOnLandscape,
     );
   }
 }

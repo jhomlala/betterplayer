@@ -1,4 +1,5 @@
 ## Unreleased
+* Added: `autoFullscreenOnLandscape` option in `BetterPlayerConfiguration` to automatically enter fullscreen when the device is rotated to landscape orientation and exit when rotated back to portrait.
 * Fixed: Android duration sometimes reporting zero for VOD streams by handling ExoPlayer's `C.TIME_UNSET` value and delaying the `initialized` event until a valid duration is available via `onTimelineChanged`.
 
 ## 0.6.0

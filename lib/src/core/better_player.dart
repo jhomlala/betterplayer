@@ -55,6 +55,9 @@ class _BetterPlayerState extends State<BetterPlayer>
 
   bool _isFullScreen = false;
 
+  ///Flag to track if fullscreen was triggered by auto landscape detection
+  bool _autoFullscreenActive = false;
+
   ///State of navigator on widget created
   late NavigatorState _navigatorState;
 
@@ -141,6 +144,10 @@ class _BetterPlayerState extends State<BetterPlayer>
       case BetterPlayerControllerEvent.openFullscreen:
         onFullScreenChanged();
       case BetterPlayerControllerEvent.hideFullscreen:
+        // If fullscreen is hidden externally (e.g. user pressed exit button),
+        // reset the auto fullscreen flag so subsequent orientation changes
+        // are handled correctly.
+        _autoFullscreenActive = false;
         onFullScreenChanged();
       default:
         setState(() {});
@@ -276,6 +283,26 @@ class _BetterPlayerState extends State<BetterPlayer>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     widget.controller.setAppLifecycleState(state);
+  }
+
+  @override
+  void didChangeMetrics() {
+    super.didChangeMetrics();
+    if (!_initialized ||
+        !mounted ||
+        !_betterPlayerConfiguration.autoFullscreenOnLandscape) {
+      return;
+    }
+    final view = View.of(context);
+    final size = view.physicalSize / view.devicePixelRatio;
+    final isLandscape = size.width > size.height;
+    if (isLandscape && !_isFullScreen) {
+      _autoFullscreenActive = true;
+      widget.controller.enterFullScreen();
+    } else if (!isLandscape && _isFullScreen && _autoFullscreenActive) {
+      _autoFullscreenActive = false;
+      widget.controller.exitFullScreen();
+    }
   }
 }
 
