@@ -3,6 +3,10 @@ name: Quality Gate
 on:
   push:
 
+permissions:
+  contents: read
+  actions: read
+
 jobs:
   format:
     runs-on: macos-latest
