@@ -435,7 +435,7 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (void)onReadyToPlay {
-    if (_eventSink && !_isInitialized && _key) {
+    if (_eventSink && _key) {
         if (!_player.currentItem) {
             return;
         }
@@ -467,6 +467,19 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         CGAffineTransform prefTrans = track.assetTrack.preferredTransform;
         CGSize realSize = CGSizeApplyAffineTransform(naturalSize, prefTrans);
 
+        CGFloat finalWidth = fabs(realSize.width) ? : width;
+        CGFloat finalHeight = fabs(realSize.height) ? : height;
+
+        if (_isInitialized){
+            _eventSink(@{
+                @"event" : @"changedSize",
+                @"width" : @(finalWidth),
+                @"height" : @(finalHeight),
+                @"key" : _key
+            });
+            return;
+        }
+
         int64_t duration = [BetterPlayerTimeUtils FLTCMTimeToMillis:(_player.currentItem.asset.duration)];
         if (_overriddenDuration > 0 && duration > _overriddenDuration){
             _player.currentItem.forwardPlaybackEndTime = CMTimeMake(_overriddenDuration/1000, 1);
@@ -477,8 +490,8 @@ static inline CGFloat radiansToDegrees(CGFloat radians) {
         _eventSink(@{
             @"event" : @"initialized",
             @"duration" : @([self duration]),
-            @"width" : @(fabs(realSize.width) ? : width),
-            @"height" : @(fabs(realSize.height) ? : height),
+            @"width" : @(finalWidth),
+            @"height" : @(finalHeight),
             @"key" : _key
         });
     }

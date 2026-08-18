@@ -1,4 +1,5 @@
 ## Unreleased
+* Fixed: Video container does not resize when resolution changes dynamically (e.g., in DASH/HLS adaptive streams). Added `changedSize` event for both Android and iOS to update player dimensions during playback.
 
 ## 0.6.1
 * Added: Example demonstrating auto-fullscreen on rotation using `OrientationBuilder`.

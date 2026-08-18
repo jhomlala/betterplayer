@@ -49,6 +49,8 @@ class Constants {
   static String catImageUrl = 'https://picsum.photos/id/237/1000/1000';
   static String dashStreamUrl =
       'https://livesim.dashif.org/livesim/testpic_2s/multi_subs.mpd';
+  static String dashBigBuckBunnyUrl =
+      'https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd';
   static String segmentedSubtitlesHlsUrl =
       'https://eng-demo.cablecast.tv/segmented-captions/vod.m3u8';
 }

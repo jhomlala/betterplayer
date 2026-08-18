@@ -32,6 +32,7 @@
   - **Named Parameters**: Use named parameters for all functions, methods, and constructors if:
     - They have 2 or more parameters.
     - They have only 1 parameter and that parameter is a `bool`.
+  - **Widget Creation**: NEVER create widgets using helper methods (e.g., `Widget _buildSomething()`). ALWAYS create them as separate `StatelessWidget` or `StatefulWidget` classes, or define the widget tree directly within the `build` method. This ensures better performance, cleaner code, and correct lifecycle management.
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
@@ -56,7 +57,11 @@
 ## GitHub Issues (Bugs & Features)
 - **Research**: Before proposing a fix or new feature, ALWAYS explore the `example/` app and `doc/` directory. They often contain usage patterns, configurations, or existing implementations that can guide the solution or serve as a baseline for a reproduction case. Leverage the entire codebase to find similar implementations before reinventing the wheel.
 - **Classification**: Evaluate if a reported issue is a valid defect/request or a misunderstanding. Not all requests should be handled. Be rather negative on adding new things to the main code; instead, favor documentation and examples to show how the user can achieve their goal. Only add new features to the core player if the addition is valid, critical, and "really good." If adding a requested feature or fixing a non-critical bug risks affecting multiple components or destabilizing the library, skip it. Priority is **stability over feature perfection**. If it can be handled by explaining the behavior or pointing to an existing example in the `example/` app, do that instead of changing the code. In such cases, answer the ticket clearly and close it.
-- **Surgical Refactoring**: For real bugs or complex features, be brave in refactoring legacy code to ensure a robust implementation. However, stay focused: the change should be like surgery—refactor where necessary but do not touch unrelated areas.
+- **Surgical Refactoring**: For real bugs or complex features, be brave in refactoring legacy code to ensure a robust implementation. However, stay focused: the change should be like surgery—refactor where necessary but do not touch unrelated areas. Prioritize reusing existing infrastructure (listeners, event channels, controllers) over adding new boilerplate or architectural layers.
+- **Plan Analysis**: Every implementation plan for a GitHub issue MUST include an explicit analysis of:
+  - **Necessity**: Why is this change required for the project?
+  - **Criticality**: What is the impact if this is not fixed or implemented?
+  - **Surgical Nature**: How does this change minimize boilerplate and reuse existing code?
 - **Reproduction & Verification**: ALWAYS provide a reproducible data source (e.g., a specific URL or asset) so the reviewer can check the solution. For features, provide a clear example demonstrating the new functionality.
 - **Testing**: Every bug fix or new feature MUST include appropriate Dart tests. Do not add tests for the native part.
 - **Verification**: In every PR or implementation plan, include clear steps to verify the solution.

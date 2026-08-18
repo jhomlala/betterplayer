@@ -340,29 +340,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       final key = map['key'] as String?;
       switch (eventType) {
         case 'initialized':
-          double width = 0;
-          double height = 0;
-
-          try {
-            if (map.containsKey('width')) {
-              final widthNum = map['width'] as num;
-              width = widthNum.toDouble();
-            }
-            if (map.containsKey('height')) {
-              final heightNum = map['height'] as num;
-              height = heightNum.toDouble();
-            }
-          } catch (exception) {
-            BetterPlayerUtils.log(exception.toString());
-          }
-
-          final size = Size(width, height);
-
           return VideoEvent(
             eventType: VideoEventType.initialized,
             key: key,
             duration: Duration(milliseconds: map['duration'] as int),
-            size: size,
+            size: _parseSize(map),
           );
         case 'completed':
           return VideoEvent(
@@ -419,6 +401,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
 
+        case 'changedSize':
+          return VideoEvent(
+            eventType: VideoEventType.changedSize,
+            key: key,
+            size: _parseSize(map),
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,
@@ -451,5 +440,22 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       Duration(milliseconds: pair[0] as int),
       Duration(milliseconds: pair[1] as int),
     );
+  }
+
+  Size? _parseSize(Map<dynamic, dynamic> map) {
+    try {
+      if (map.containsKey('width') && map.containsKey('height')) {
+        final widthNum = map['width'] as num;
+        final heightNum = map['height'] as num;
+        final width = widthNum.toDouble();
+        final height = heightNum.toDouble();
+        if (width > 0 && height > 0) {
+          return Size(width, height);
+        }
+      }
+    } catch (exception) {
+      BetterPlayerUtils.log(exception.toString());
+    }
+    return null;
   }
 }
