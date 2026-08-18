@@ -1,7 +1,7 @@
-## Unreleased
+## 0.7.0
 * Fixed: Improved error handling for DASH streams on iOS by providing a descriptive Dart-side exception instead of a generic native error (AVPlayer does not support DASH).
 * Updated: Documentation to clarify that DASH and Smooth Streaming are currently Android-only features.
-* Fixed: Video container does not resize when resolution changes dynamically (e.g., in DASH/HLS adaptive streams). Added `changedSize` event for both Android and iOS to update player dimensions during playback.
+* Added: `changedSize` event for both Android and iOS to update player dimensions during playback, fixing the issue where video container does not resize when resolution changes dynamically.
 * Fixed: DASH live streams with sliding windows jumping or looping back on Android. Improved native DASH live configuration and correctly marked example streams as live.
 
 ## 0.6.1
