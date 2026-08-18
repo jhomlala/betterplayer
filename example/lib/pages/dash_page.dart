@@ -11,6 +11,7 @@ class DashPage extends StatefulWidget {
 
 class _DashPageState extends State<DashPage> {
   late BetterPlayerController _betterPlayerController;
+  late BetterPlayerController _betterPlayerController2;
 
   @override
   void initState() {
@@ -18,34 +19,83 @@ class _DashPageState extends State<DashPage> {
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      Constants.dashStreamUrl,
-    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(dataSource);
+    _betterPlayerController.setupDataSource(
+      BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network,
+        Constants.dashStreamUrl,
+      ),
+    );
+
+    _betterPlayerController2 = BetterPlayerController(
+      betterPlayerConfiguration,
+    );
+    _betterPlayerController2.setupDataSource(
+      BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network,
+        Constants.dashBigBuckBunnyUrl,
+      ),
+    );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _betterPlayerController.dispose();
+    _betterPlayerController2.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Dash page')),
-      body: Column(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Player with DASH audio tracks, subtitles and tracks.',
-              style: TextStyle(fontSize: 16),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Player 1: Default DASH stream',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
             ),
-          ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-        ],
+            _buildResolutionText(_betterPlayerController),
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(controller: _betterPlayerController),
+            ),
+            const SizedBox(height: 24),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                'Player 2: Big Buck Bunny',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ),
+            _buildResolutionText(_betterPlayerController2),
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(controller: _betterPlayerController2),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResolutionText(BetterPlayerController controller) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: ValueListenableBuilder(
+        valueListenable: controller.videoPlayerController!,
+        builder: (context, value, child) {
+          return Text(
+            'Resolution: ${value.size?.width.toInt() ?? 0}x${value.size?.height.toInt() ?? 0}',
+            style: const TextStyle(fontSize: 14),
+          );
+        },
       ),
     );
   }

@@ -478,6 +478,9 @@ enum VideoEventType {
   /// Picture in picture mode has been dismissed
   pipStop,
 
+  /// The video size has changed.
+  changedSize,
+
   /// An unknown event has been received.
   unknown,
 }

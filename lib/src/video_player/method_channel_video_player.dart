@@ -419,6 +419,31 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
             key: key,
           );
 
+        case 'changedSize':
+          double width = 0;
+          double height = 0;
+
+          try {
+            if (map.containsKey('width')) {
+              final widthNum = map['width'] as num;
+              width = widthNum.toDouble();
+            }
+            if (map.containsKey('height')) {
+              final heightNum = map['height'] as num;
+              height = heightNum.toDouble();
+            }
+          } catch (exception) {
+            BetterPlayerUtils.log(exception.toString());
+          }
+
+          final size = Size(width, height);
+
+          return VideoEvent(
+            eventType: VideoEventType.changedSize,
+            key: key,
+            size: size,
+          );
+
         default:
           return VideoEvent(
             eventType: VideoEventType.unknown,

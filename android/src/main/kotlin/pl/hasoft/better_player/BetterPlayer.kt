@@ -431,6 +431,24 @@ internal class BetterPlayer(
                     sendInitialized()
                 }
             }
+
+            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                if (isInitialized && isInitializedSent) {
+                    var width = videoSize.width
+                    var height = videoSize.height
+                    val rotationDegrees = videoSize.unappliedRotationDegrees
+                    if (rotationDegrees == 90 || rotationDegrees == 270) {
+                        width = videoSize.height
+                        height = videoSize.width
+                    }
+                    val event: MutableMap<String, Any?> = HashMap()
+                    event["event"] = "changedSize"
+                    event["width"] = width
+                    event["height"] = height
+                    event["key"] = key
+                    eventSink.success(event)
+                }
+            }
         })
         val reply: MutableMap<String, Any> = HashMap()
         reply["textureId"] = textureEntry.id()

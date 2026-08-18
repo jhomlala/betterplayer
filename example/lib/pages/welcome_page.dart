@@ -141,7 +141,7 @@ class _WelcomePageState extends State<WelcomePage> {
         onClicked: () => _navigateToPage(const AutoFullscreenOrientationPage()),
       ),
       _WelcomePageItem(
-        name: 'Auto fullscreen on rotation (Example)',
+        name: 'Auto fullscreen on rotation',
         onClicked: () =>
             _navigateToPage(const AutoFullscreenOnRotationExamplePage()),
       ),
