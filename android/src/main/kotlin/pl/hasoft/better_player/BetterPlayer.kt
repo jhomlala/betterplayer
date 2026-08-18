@@ -343,6 +343,11 @@ internal class BetterPlayer(
         if (cacheKey != null && cacheKey.isNotEmpty()) {
             mediaItemBuilder.setCustomCacheKey(cacheKey)
         }
+        mediaItemBuilder.setLiveConfiguration(
+            MediaItem.LiveConfiguration.Builder()
+                .setTargetOffsetMs(30000)
+                .build()
+        )
         val mediaItem = mediaItemBuilder.build()
         var drmSessionManagerProvider: DrmSessionManagerProvider = DefaultDrmSessionManagerProvider()
         drmSessionManager?.let { drmSessionManager ->

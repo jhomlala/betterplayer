@@ -1,5 +1,6 @@
 ## Unreleased
 * Fixed: Video container does not resize when resolution changes dynamically (e.g., in DASH/HLS adaptive streams). Added `changedSize` event for both Android and iOS to update player dimensions during playback.
+* Fixed: DASH live streams with sliding windows jumping or looping back on Android. Improved native DASH live configuration and correctly marked example streams as live.
 
 ## 0.6.1
 * Added: Example demonstrating auto-fullscreen on rotation using `OrientationBuilder`.
@@ -554,7 +555,7 @@ setBetterPlayerGlobalKey.
 
 ## 0.0.23
 * General bug fixes.
-* Added playerVisibilityChangedBehavior in BetterPlayerConfiguration.
+* Added player visibility changed behavior in BetterPlayerConfiguration.
 * Changed player behavior when player is not visible in viewport: if player was playing before leaving viewport it will be paused and if user views player again it will start playing automatically.
 * Added BetterPlayer.network and BetterPlayer.file methods.
 * Changed iOS & Android native classes name to prevent conflict issues with video_player.
