@@ -340,23 +340,21 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
       final key = map['key'] as String?;
       switch (eventType) {
         case 'initialized':
-          double width = 0;
-          double height = 0;
+          Size? size;
 
           try {
-            if (map.containsKey('width')) {
+            if (map.containsKey('width') && map.containsKey('height')) {
               final widthNum = map['width'] as num;
-              width = widthNum.toDouble();
-            }
-            if (map.containsKey('height')) {
               final heightNum = map['height'] as num;
-              height = heightNum.toDouble();
+              final width = widthNum.toDouble();
+              final height = heightNum.toDouble();
+              if (width > 0 && height > 0) {
+                size = Size(width, height);
+              }
             }
           } catch (exception) {
             BetterPlayerUtils.log(exception.toString());
           }
-
-          final size = Size(width, height);
 
           return VideoEvent(
             eventType: VideoEventType.initialized,
@@ -420,23 +418,21 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           );
 
         case 'changedSize':
-          double width = 0;
-          double height = 0;
+          Size? size;
 
           try {
-            if (map.containsKey('width')) {
+            if (map.containsKey('width') && map.containsKey('height')) {
               final widthNum = map['width'] as num;
-              width = widthNum.toDouble();
-            }
-            if (map.containsKey('height')) {
               final heightNum = map['height'] as num;
-              height = heightNum.toDouble();
+              final width = widthNum.toDouble();
+              final height = heightNum.toDouble();
+              if (width > 0 && height > 0) {
+                size = Size(width, height);
+              }
             }
           } catch (exception) {
             BetterPlayerUtils.log(exception.toString());
           }
-
-          final size = Size(width, height);
 
           return VideoEvent(
             eventType: VideoEventType.changedSize,
