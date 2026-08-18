@@ -32,6 +32,7 @@
   - **Named Parameters**: Use named parameters for all functions, methods, and constructors if:
     - They have 2 or more parameters.
     - They have only 1 parameter and that parameter is a `bool`.
+  - **Widget Creation**: NEVER create widgets using helper methods (e.g., `Widget _buildSomething()`). ALWAYS create them as separate `StatelessWidget` or `StatefulWidget` classes, or define the widget tree directly within the `build` method. This ensures better performance, cleaner code, and correct lifecycle management.
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).

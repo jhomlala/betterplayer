@@ -61,7 +61,7 @@ class _DashPageState extends State<DashPage> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-            _buildResolutionText(_betterPlayerController),
+            _ResolutionText(controller: _betterPlayerController),
             AspectRatio(
               aspectRatio: 16 / 9,
               child: BetterPlayer(controller: _betterPlayerController),
@@ -74,7 +74,7 @@ class _DashPageState extends State<DashPage> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-            _buildResolutionText(_betterPlayerController2),
+            _ResolutionText(controller: _betterPlayerController2),
             AspectRatio(
               aspectRatio: 16 / 9,
               child: BetterPlayer(controller: _betterPlayerController2),
@@ -84,8 +84,15 @@ class _DashPageState extends State<DashPage> {
       ),
     );
   }
+}
 
-  Widget _buildResolutionText(BetterPlayerController controller) {
+class _ResolutionText extends StatelessWidget {
+  const _ResolutionText({required this.controller});
+
+  final BetterPlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: ValueListenableBuilder(
