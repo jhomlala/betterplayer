@@ -67,6 +67,7 @@
 - **Verification**: In every PR or implementation plan, include clear steps to verify the solution.
 
 ## Changelog Guidelines
+- **Content Policy**: Entries in `CHANGELOG.md` MUST ONLY be for the plugin itself (features, fixes, updates). DO NOT include DevOps, infrastructure, or CI/CD changes (e.g., workflow updates, script optimizations).
 - **Labels**: Mark critical or API-breaking changes with the `[BREAKING_CHANGE]` label at the start of the line.
 - **Sections**: Use the following verbs to start entries:
   - `Added`: for new features.
