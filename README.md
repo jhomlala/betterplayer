@@ -35,7 +35,7 @@ Better Player is a powerful video player for Flutter, built on top of the offici
 ## 🚀 Key Features
 
 ### 🎬 Advanced Playback
-* **Adaptive Streaming**: Full support for **HLS**, **DASH**, and **Smooth Streaming** with track selection.
+* **Adaptive Streaming**: Full support for **HLS** (Android & iOS), **DASH** (Android), and **Smooth Streaming** (Android) with track selection.
 * **Resolution Control**: Easy switching between alternative video resolutions.
 * **Smart Caching**: Seamlessly cache videos for high-performance offline playback.
 * **Customizable UI**: Refactored controls that are highly customizable via configuration.

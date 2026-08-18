@@ -8,6 +8,7 @@ import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:better_player/src/video_player/video_player_platform_interface.dart';
 import 'package:collection/collection.dart' show IterableExtension;
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -241,6 +242,23 @@ class BetterPlayerController {
         },
       ),
     );
+
+    if (defaultTargetPlatform == TargetPlatform.iOS &&
+        (BetterPlayerAsmsUtils.isDataSourceDash(betterPlayerDataSource.url) ||
+            betterPlayerDataSource.videoFormat ==
+                BetterPlayerVideoFormat.dash)) {
+      _postEvent(
+        BetterPlayerEvent(
+          BetterPlayerEventType.exception,
+          parameters: <String, dynamic>{
+            'exception':
+                'DASH streams are not supported on iOS platform. Please use HLS instead.',
+          },
+        ),
+      );
+      return;
+    }
+
     _postControllerEvent(BetterPlayerControllerEvent.setupDataSource);
     _hasCurrentDataSourceStarted = false;
     _hasCurrentDataSourceInitialized = false;
