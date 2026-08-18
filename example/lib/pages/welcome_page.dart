@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:example/constants.dart';
+import 'package:example/pages/auto_fullscreen_on_rotation_example_page.dart';
 import 'package:example/pages/auto_fullscreen_orientation_page.dart';
 import 'package:example/pages/basic_player_page.dart';
 import 'package:example/pages/cache_page.dart';
@@ -138,6 +139,11 @@ class _WelcomePageState extends State<WelcomePage> {
       _WelcomePageItem(
         name: 'Auto fullscreen orientation',
         onClicked: () => _navigateToPage(const AutoFullscreenOrientationPage()),
+      ),
+      _WelcomePageItem(
+        name: 'Auto fullscreen on rotation (Example)',
+        onClicked: () =>
+            _navigateToPage(const AutoFullscreenOnRotationExamplePage()),
       ),
       _WelcomePageItem(
         name: 'Overridden aspect ratio',
