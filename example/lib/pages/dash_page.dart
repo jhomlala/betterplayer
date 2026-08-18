@@ -19,11 +19,13 @@ class _DashPageState extends State<DashPage> {
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
+
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(
       BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
         Constants.dashStreamUrl,
+        liveStream: true,
       ),
     );
 
