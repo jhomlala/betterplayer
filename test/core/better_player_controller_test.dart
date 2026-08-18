@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -904,6 +905,36 @@ void main() {
           events.contains(BetterPlayerControllerEvent.hideFullscreen),
           true,
         );
+      });
+
+      test('setupDataSource emits exception for DASH on iOS', () async {
+        final previousPlatform = debugDefaultTargetPlatformOverride;
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        try {
+          final controller = BetterPlayerMockController(
+            const BetterPlayerConfiguration(),
+          );
+          BetterPlayerEvent? exceptionEvent;
+          controller.addEventsListener((event) {
+            if (event.betterPlayerEventType ==
+                BetterPlayerEventType.exception) {
+              exceptionEvent = event;
+            }
+          });
+
+          await controller.setupDataSource(
+            BetterPlayerDataSource.network('https://example.com/video.mpd'),
+          );
+
+          expect(exceptionEvent != null, true);
+          expect(
+            exceptionEvent?.parameters?['exception'],
+            'DASH streams are not supported on iOS platform. Please use HLS instead.',
+          );
+          expect(controller.videoPlayerController, null);
+        } finally {
+          debugDefaultTargetPlatformOverride = previousPlatform;
+        }
       });
 
       testWidgets('BetterPlayerController.of(context) works', (

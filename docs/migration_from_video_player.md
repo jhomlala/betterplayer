@@ -180,5 +180,5 @@ Now that you are using `better_player`, you can easily enable advanced features 
   );
   ```
 - **Subtitles**: Add SRT or WebVTT subtitles effortlessly via `BetterPlayerSubtitlesSource`.
-- **HLS / DASH Adaptive Streaming**: Pass adaptive streaming URLs directly into `BetterPlayerDataSourceType.network`.
+- **HLS / DASH Adaptive Streaming**: Pass adaptive streaming URLs directly into `BetterPlayerDataSourceType.network`. Note: DASH is currently only supported on Android.
 - **Picture-in-Picture (PiP)**: Enable PiP support with built-in controls and state listeners.
