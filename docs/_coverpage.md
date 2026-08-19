@@ -1,4 +1,4 @@
-![logo](https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/logo.png)
+![logo](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/logo.png)
 
 # Better Player 
 > An advanced, highly customizable video player for Flutter.
