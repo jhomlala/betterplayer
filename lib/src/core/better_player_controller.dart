@@ -286,17 +286,14 @@ class BetterPlayerController {
       );
     }
 
-    Future? asmsFuture;
+    final setupFutures = <Future<dynamic>>[
+      _setupDataSource(betterPlayerDataSource),
+    ];
     if (_isDataSourceAsms(betterPlayerDataSource)) {
-      asmsFuture = _setupAsmsDataSource(betterPlayerDataSource);
+      setupFutures.add(_setupAsmsDataSource(betterPlayerDataSource));
     }
+    await Future.wait(setupFutures);
 
-    ///Process data source
-    await _setupDataSource(betterPlayerDataSource);
-
-    if (asmsFuture != null) {
-      await asmsFuture;
-    }
     _setupSubtitles();
     setTrack(BetterPlayerAsmsTrack.defaultTrack());
   }
