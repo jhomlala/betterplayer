@@ -418,8 +418,8 @@ class BetterPlayerController {
 
       final segmentsToLoad = _betterPlayerSubtitlesSource?.asmsSegments
           ?.where((segment) {
-            return segment.startTime > position &&
-                segment.endTime < loadDurationEnd &&
+            return segment.endTime > position &&
+                segment.startTime < loadDurationEnd &&
                 !_asmsSegmentsLoaded.contains(segment.realUrl);
           })
           .map((segment) => segment.realUrl)
