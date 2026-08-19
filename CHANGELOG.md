@@ -1,4 +1,4 @@
-## Unreleased
+## 0.7.1
 * Fixed: HLS ABR video sizing issues (small video in corner) on Android TV and other platforms by making UI components reactive to resolution changes reported by the native layer.
 * Fixed: Broken image links in the documentation by updating the paths to `assets/media/`.
 * Fixed: Audio tracks returning null immediately after data source setup by awaiting ASMS parsing and improving track state management.
