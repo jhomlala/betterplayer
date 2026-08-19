@@ -319,9 +319,7 @@ class _BetterPlayerVideoFitWidgetState
     switch (event) {
       case BetterPlayerControllerEvent.play:
         if (!_started) {
-          setState(() {
-            _updateStartedFlag();
-          });
+          setState(_updateStartedFlag);
         }
       case BetterPlayerControllerEvent.setupDataSource:
         setState(() {
