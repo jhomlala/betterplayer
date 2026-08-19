@@ -1,4 +1,5 @@
 ## Unreleased
+* Fixed: Broken image links in the documentation by updating the paths to `assets/media/`.
 * Fixed: Audio tracks returning null immediately after data source setup by awaiting ASMS parsing and improving track state management.
 * Fixed: Embedded HLS/ASMS subtitles not being rendered due to incorrect segment timing and JIT loading logic.
 

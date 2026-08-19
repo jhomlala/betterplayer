@@ -4,8 +4,8 @@ Better Player supports native platform notifications, allowing users to control 
 
 <table align="center">
   <tr>
-    <td><img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/android_notification.png"><br>Android</td>
-    <td><img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/media/ios_notification.png"><br>iOS</td>
+    <td><img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/android_notification.png"><br>Android</td>
+    <td><img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/ios_notification.png"><br>iOS</td>
   </tr>
 </table>
 
