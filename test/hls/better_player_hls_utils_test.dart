@@ -48,6 +48,8 @@ class MockHttpClientResponse extends StreamView<List<int>>
 #EXT-X-TARGETDURATION:10
 #EXTINF:10.0,
 segment1.vtt
+#EXTINF:10.0,
+segment2.vtt
 '''),
         ),
       );
@@ -129,6 +131,21 @@ video.m3u8
 
           expect(subtitles.length, 1);
           expect(subtitles[0].name, 'English');
+          expect(subtitles[0].isSegmented, true);
+          expect(subtitles[0].segments?.length, 2);
+          expect(subtitles[0].segments?[0].startTime, Duration.zero);
+          expect(
+            subtitles[0].segments?[0].endTime,
+            const Duration(seconds: 10),
+          );
+          expect(
+            subtitles[0].segments?[1].startTime,
+            const Duration(seconds: 10),
+          );
+          expect(
+            subtitles[0].segments?[1].endTime,
+            const Duration(seconds: 20),
+          );
         },
         TestHttpOverrides(),
       );

@@ -148,7 +148,6 @@ class BetterPlayerHlsUtils {
         if (isSegmented) {
           final nextMicroSecondsFromStart =
               microSecondsFromStart + segment.durationUs!;
-          microSecondsFromStart = nextMicroSecondsFromStart;
           asmsSegments.add(
             BetterPlayerAsmsSubtitleSegment(
               Duration(microseconds: microSecondsFromStart),
@@ -156,6 +155,7 @@ class BetterPlayerHlsUtils {
               realUrl,
             ),
           );
+          microSecondsFromStart = nextMicroSecondsFromStart;
         }
       }
 

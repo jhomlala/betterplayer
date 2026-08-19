@@ -1,3 +1,6 @@
+## Unreleased
+* Fixed: Embedded HLS/ASMS subtitles not being rendered due to incorrect segment timing and JIT loading logic.
+
 ## 0.7.0
 * Fixed: Improved error handling for DASH streams on iOS by providing a descriptive Dart-side exception instead of a generic native error (AVPlayer does not support DASH).
 * Updated: Documentation to clarify that DASH and Smooth Streaming are currently Android-only features.
