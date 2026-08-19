@@ -74,5 +74,133 @@ void main() {
 
       expect(find.byKey(const Key('placeholder')), findsOneWidget);
     });
+
+    testWidgets('Updates aspect ratio when video size changes', (
+      WidgetTester tester,
+    ) async {
+      final mockVideoPlayerController =
+          BetterPlayerTestUtils.setupMockVideoPlayerControler();
+      final controller = BetterPlayerMockController(
+        const BetterPlayerConfiguration(),
+      );
+      controller.videoPlayerController = mockVideoPlayerController;
+
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network('url'),
+      );
+
+      // Initial size (default mock might have a certain size or null)
+      mockVideoPlayerController.value = mockVideoPlayerController.value
+          .copyWith(
+            size: const Size(1280, 720),
+            duration: const Duration(seconds: 1),
+          );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BetterPlayerControllerProvider(
+            controller: controller,
+            child: BetterPlayerWithControls(
+              controller: controller,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Verify initial AspectRatio
+      final initialAspectRatio = tester
+          .widget<AspectRatio>(find.byType(AspectRatio))
+          .aspectRatio;
+      expect(initialAspectRatio, 1280 / 720);
+
+      // Change video size
+      mockVideoPlayerController.value = mockVideoPlayerController.value
+          .copyWith(size: const Size(1920, 1080));
+      mockVideoPlayerController.notifyListeners();
+
+      await tester.pump();
+
+      // Verify updated AspectRatio
+      final updatedAspectRatio = tester
+          .widget<AspectRatio>(find.byType(AspectRatio))
+          .aspectRatio;
+      expect(updatedAspectRatio, 1920 / 1080);
+
+      // Change video size to something different
+      mockVideoPlayerController.value = mockVideoPlayerController.value
+          .copyWith(size: const Size(720, 1280));
+      mockVideoPlayerController.notifyListeners();
+
+      await tester.pump();
+
+      final portraitAspectRatio = tester
+          .widget<AspectRatio>(find.byType(AspectRatio))
+          .aspectRatio;
+      expect(portraitAspectRatio, 720 / 1280);
+    });
+
+    testWidgets('Updates video fit widget when video size changes', (
+      WidgetTester tester,
+    ) async {
+      final mockVideoPlayerController =
+          BetterPlayerTestUtils.setupMockVideoPlayerControler();
+      final controller = BetterPlayerMockController(
+        const BetterPlayerConfiguration(),
+      );
+      controller.videoPlayerController = mockVideoPlayerController;
+
+      await controller.setupDataSource(
+        BetterPlayerDataSource.network('url'),
+      );
+
+      mockVideoPlayerController.value = mockVideoPlayerController.value
+          .copyWith(
+            size: const Size(1280, 720),
+            duration: const Duration(seconds: 1),
+          );
+
+      // We need to trigger play for the fit widget to show (it depends on _started)
+      controller.play();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: BetterPlayerControllerProvider(
+            controller: controller,
+            child: BetterPlayerWithControls(
+              controller: controller,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      // Verify initial SizedBox size inside FittedBox
+      var sizedBox = tester.widget<SizedBox>(
+        find.descendant(
+          of: find.byType(FittedBox),
+          matching: find.byType(SizedBox),
+        ),
+      );
+      expect(sizedBox.width, 1280);
+      expect(sizedBox.height, 720);
+
+      // Change video size
+      mockVideoPlayerController.value = mockVideoPlayerController.value
+          .copyWith(size: const Size(1920, 1080));
+      mockVideoPlayerController.notifyListeners();
+
+      await tester.pump();
+
+      // Verify updated SizedBox size
+      sizedBox = tester.widget<SizedBox>(
+        find.descendant(
+          of: find.byType(FittedBox),
+          matching: find.byType(SizedBox),
+        ),
+      );
+      expect(sizedBox.width, 1920);
+      expect(sizedBox.height, 1080);
+    });
   });
 }
