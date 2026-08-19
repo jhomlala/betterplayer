@@ -33,12 +33,14 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   bool _initialized = false;
 
   StreamSubscription? _controllerEventSubscription;
+  VideoPlayerController? _videoPlayerController;
 
   @override
   void initState() {
     playerVisibilityStreamController.add(true);
     _controllerEventSubscription = widget.controller!.controllerEventStream
         .listen(_onControllerChanged);
+    _setupVideoPlayerControllerListener();
     super.initState();
   }
 
@@ -48,14 +50,30 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       _controllerEventSubscription?.cancel();
       _controllerEventSubscription = widget.controller!.controllerEventStream
           .listen(_onControllerChanged);
+      _setupVideoPlayerControllerListener();
     }
     super.didUpdateWidget(oldWidget);
+  }
+
+  void _setupVideoPlayerControllerListener() {
+    if (_videoPlayerController != widget.controller!.videoPlayerController) {
+      _videoPlayerController?.removeListener(_onVideoPlayerChanged);
+      _videoPlayerController = widget.controller!.videoPlayerController;
+      _videoPlayerController?.addListener(_onVideoPlayerChanged);
+    }
+  }
+
+  void _onVideoPlayerChanged() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
     playerVisibilityStreamController.close();
     _controllerEventSubscription?.cancel();
+    _videoPlayerController?.removeListener(_onVideoPlayerChanged);
     super.dispose();
   }
 
@@ -63,6 +81,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     setState(() {
       if (!_initialized) {
         _initialized = true;
+      }
+      if (event == BetterPlayerControllerEvent.setupDataSource) {
+        _setupVideoPlayerControllerListener();
       }
     });
   }
@@ -254,12 +275,9 @@ class _BetterPlayerVideoFitWidgetState
       widget.betterPlayerController.videoPlayerController;
 
   bool _initialized = false;
-
-  VoidCallback? _initializedListener;
-
   bool _started = false;
-
   StreamSubscription? _controllerEventSubscription;
+  VideoPlayerController? _videoPlayerController;
 
   @override
   void initState() {
@@ -273,40 +291,22 @@ class _BetterPlayerVideoFitWidgetState
       _started = widget.betterPlayerController.hasCurrentDataSourceStarted;
     }
 
-    _initialize();
+    _initialized = controller?.value.initialized ?? false;
+    _setupControllerEventSubscription();
+    _setupVideoPlayerControllerListener();
   }
 
   @override
   void didUpdateWidget(_BetterPlayerVideoFitWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.betterPlayerController.videoPlayerController != controller) {
-      if (_initializedListener != null) {
-        oldWidget.betterPlayerController.videoPlayerController!.removeListener(
-          _initializedListener!,
-        );
-      }
-      _initialized = false;
-      _initialize();
+    if (oldWidget.betterPlayerController != widget.betterPlayerController) {
+      _setupControllerEventSubscription();
     }
+    _setupVideoPlayerControllerListener();
   }
 
-  void _initialize() {
-    if (controller?.value.initialized == false) {
-      _initializedListener = () {
-        if (!mounted) {
-          return;
-        }
-
-        if (_initialized != controller!.value.initialized) {
-          _initialized = controller!.value.initialized;
-          setState(() {});
-        }
-      };
-      controller!.addListener(_initializedListener!);
-    } else {
-      _initialized = true;
-    }
-
+  void _setupControllerEventSubscription() {
+    _controllerEventSubscription?.cancel();
     _controllerEventSubscription = widget
         .betterPlayerController
         .controllerEventStream
@@ -322,9 +322,32 @@ class _BetterPlayerVideoFitWidgetState
           if (event == BetterPlayerControllerEvent.setupDataSource) {
             setState(() {
               _started = false;
+              _initialized = false;
+              _setupVideoPlayerControllerListener();
             });
           }
         });
+  }
+
+  void _setupVideoPlayerControllerListener() {
+    if (_videoPlayerController != controller) {
+      _videoPlayerController?.removeListener(_onVideoPlayerChanged);
+      _videoPlayerController = controller;
+      _videoPlayerController?.addListener(_onVideoPlayerChanged);
+    }
+  }
+
+  void _onVideoPlayerChanged() {
+    if (!mounted) {
+      return;
+    }
+    if (controller?.value.initialized != _initialized) {
+      setState(() {
+        _initialized = controller?.value.initialized ?? false;
+      });
+    } else {
+      setState(() {});
+    }
   }
 
   @override
@@ -353,11 +376,7 @@ class _BetterPlayerVideoFitWidgetState
 
   @override
   void dispose() {
-    if (_initializedListener != null) {
-      widget.betterPlayerController.videoPlayerController!.removeListener(
-        _initializedListener!,
-      );
-    }
+    _videoPlayerController?.removeListener(_onVideoPlayerChanged);
     _controllerEventSubscription?.cancel();
     super.dispose();
   }

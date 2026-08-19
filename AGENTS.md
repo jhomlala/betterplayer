@@ -63,7 +63,7 @@
   - **Criticality**: What is the impact if this is not fixed or implemented?
   - **Surgical Nature**: How does this change minimize boilerplate and reuse existing code?
 - **Reproduction & Verification**: ALWAYS provide a reproducible data source (e.g., a specific URL or asset) so the reviewer can check the solution. For features, provide a clear example demonstrating the new functionality.
-- **Testing**: Every bug fix or new feature MUST include appropriate Dart tests. Do not add tests for the native part.
+- **Testing**: Every bug fix or new feature MUST include appropriate Dart tests. Do not add tests for the native part. When dealing with core player state changes, ensure tests verify UI reactivity (e.g., aspect ratio or layout updates when video size changes).
 - **Verification**: In every PR or implementation plan, include clear steps to verify the solution.
 
 ## Changelog Guidelines
