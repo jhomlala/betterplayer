@@ -38,8 +38,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   @override
   void initState() {
     playerVisibilityStreamController.add(true);
-    _controllerEventSubscription = widget.controller!.controllerEventStream
-        .listen(_onControllerChanged);
+    _setupControllerEventSubscription();
     _setupVideoPlayerControllerListener();
     super.initState();
   }
@@ -47,14 +46,21 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   @override
   void didUpdateWidget(BetterPlayerWithControls oldWidget) {
     if (oldWidget.controller != widget.controller) {
-      _controllerEventSubscription?.cancel();
-      _controllerEventSubscription = widget.controller!.controllerEventStream
-          .listen(_onControllerChanged);
+      _setupControllerEventSubscription();
       _setupVideoPlayerControllerListener();
     }
     super.didUpdateWidget(oldWidget);
   }
 
+  void _setupControllerEventSubscription() {
+    _controllerEventSubscription?.cancel();
+    _controllerEventSubscription = widget.controller!.controllerEventStream
+        .listen(_onControllerChanged);
+  }
+
+  /// Sets up a listener for the [VideoPlayerController].
+  /// This is required to react to resolution changes (HLS ABR) and update
+  /// the aspect ratio of the player (Issue #768).
   void _setupVideoPlayerControllerListener() {
     if (_videoPlayerController != widget.controller!.videoPlayerController) {
       _videoPlayerController?.removeListener(_onVideoPlayerChanged);
@@ -94,20 +100,15 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
     double? aspectRatio;
     if (betterPlayerController.isFullScreen) {
-      if (betterPlayerController
-              .betterPlayerConfiguration
-              .autoDetectFullscreenDeviceOrientation ||
-          betterPlayerController
-              .betterPlayerConfiguration
-              .autoDetectFullscreenAspectRatio) {
+      final config = betterPlayerController.betterPlayerConfiguration;
+      if (config.autoDetectFullscreenDeviceOrientation ||
+          config.autoDetectFullscreenAspectRatio) {
         aspectRatio =
             betterPlayerController.videoPlayerController?.value.aspectRatio ??
             1.0;
       } else {
         aspectRatio =
-            betterPlayerController
-                .betterPlayerConfiguration
-                .fullScreenAspectRatio ??
+            config.fullScreenAspectRatio ??
             BetterPlayerUtils.calculateAspectRatio(context);
       }
     } else {
@@ -282,15 +283,7 @@ class _BetterPlayerVideoFitWidgetState
   @override
   void initState() {
     super.initState();
-    if (!widget
-        .betterPlayerController
-        .betterPlayerConfiguration
-        .showPlaceholderUntilPlay) {
-      _started = true;
-    } else {
-      _started = widget.betterPlayerController.hasCurrentDataSourceStarted;
-    }
-
+    _updateStartedFlag();
     _initialized = controller?.value.initialized ?? false;
     _setupControllerEventSubscription();
     _setupVideoPlayerControllerListener();
@@ -298,11 +291,20 @@ class _BetterPlayerVideoFitWidgetState
 
   @override
   void didUpdateWidget(_BetterPlayerVideoFitWidget oldWidget) {
-    super.didUpdateWidget(oldWidget);
     if (oldWidget.betterPlayerController != widget.betterPlayerController) {
       _setupControllerEventSubscription();
     }
     _setupVideoPlayerControllerListener();
+    super.didUpdateWidget(oldWidget);
+  }
+
+  void _updateStartedFlag() {
+    final config = widget.betterPlayerController.betterPlayerConfiguration;
+    if (!config.showPlaceholderUntilPlay) {
+      _started = true;
+    } else {
+      _started = widget.betterPlayerController.hasCurrentDataSourceStarted;
+    }
   }
 
   void _setupControllerEventSubscription() {
@@ -310,25 +312,31 @@ class _BetterPlayerVideoFitWidgetState
     _controllerEventSubscription = widget
         .betterPlayerController
         .controllerEventStream
-        .listen((event) {
-          if (event == BetterPlayerControllerEvent.play) {
-            if (!_started) {
-              setState(() {
-                _started =
-                    widget.betterPlayerController.hasCurrentDataSourceStarted;
-              });
-            }
-          }
-          if (event == BetterPlayerControllerEvent.setupDataSource) {
-            setState(() {
-              _started = false;
-              _initialized = false;
-              _setupVideoPlayerControllerListener();
-            });
-          }
-        });
+        .listen(_onControllerEvent);
   }
 
+  void _onControllerEvent(BetterPlayerControllerEvent event) {
+    switch (event) {
+      case BetterPlayerControllerEvent.play:
+        if (!_started) {
+          setState(() {
+            _updateStartedFlag();
+          });
+        }
+      case BetterPlayerControllerEvent.setupDataSource:
+        setState(() {
+          _started = false;
+          _initialized = false;
+          _setupVideoPlayerControllerListener();
+        });
+      default:
+        break;
+    }
+  }
+
+  /// Sets up a listener for the [VideoPlayerController].
+  /// This is required to react to resolution changes (HLS ABR) and update
+  /// the video dimensions inside FittedBox (Issue #768).
   void _setupVideoPlayerControllerListener() {
     if (_videoPlayerController != controller) {
       _videoPlayerController?.removeListener(_onVideoPlayerChanged);
@@ -341,9 +349,10 @@ class _BetterPlayerVideoFitWidgetState
     if (!mounted) {
       return;
     }
-    if (controller?.value.initialized != _initialized) {
+    final isInitialized = controller?.value.initialized ?? false;
+    if (isInitialized != _initialized) {
       setState(() {
-        _initialized = controller?.value.initialized ?? false;
+        _initialized = isInitialized;
       });
     } else {
       setState(() {});
