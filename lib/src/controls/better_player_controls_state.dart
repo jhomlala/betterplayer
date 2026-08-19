@@ -269,7 +269,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final children = <Widget>[];
     final selectedAsmsAudioTrack =
         betterPlayerController!.betterPlayerAsmsAudioTrack;
-    if (asmsTracks != null) {
+    if (asmsTracks.isNotEmpty) {
       for (var index = 0; index < asmsTracks.length; index++) {
         final isSelected =
             selectedAsmsAudioTrack != null &&
