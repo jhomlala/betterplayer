@@ -206,7 +206,7 @@ class BetterPlayerHlsUtils {
             id: index,
             label: audio.name,
             language: audio.format.language,
-            url: audio.url.toString(),
+            url: audio.url?.toString(),
           ),
         );
       }

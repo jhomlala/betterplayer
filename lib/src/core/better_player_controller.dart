@@ -175,10 +175,10 @@ class BetterPlayerController {
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
 
   ///List of all possible audio tracks returned from ASMS stream
-  List<BetterPlayerAsmsAudioTrack>? _betterPlayerAsmsAudioTracks;
+  List<BetterPlayerAsmsAudioTrack> _betterPlayerAsmsAudioTracks = [];
 
   ///List of all possible audio tracks returned from ASMS stream
-  List<BetterPlayerAsmsAudioTrack>? get betterPlayerAsmsAudioTracks =>
+  List<BetterPlayerAsmsAudioTrack> get betterPlayerAsmsAudioTracks =>
       _betterPlayerAsmsAudioTracks;
 
   ///Selected ASMS audio track
@@ -275,6 +275,8 @@ class BetterPlayerController {
 
     ///Clear asms tracks
     betterPlayerAsmsTracks.clear();
+    _betterPlayerAsmsAudioTracks.clear();
+    _betterPlayerAsmsAudioTrack = null;
 
     ///Setup subtitles
     final betterPlayerSubtitlesSourceList = betterPlayerDataSource.subtitles;
@@ -284,16 +286,18 @@ class BetterPlayerController {
       );
     }
 
+    Future? asmsFuture;
     if (_isDataSourceAsms(betterPlayerDataSource)) {
-      _setupAsmsDataSource(betterPlayerDataSource).then((dynamic value) {
-        _setupSubtitles();
-      });
-    } else {
-      _setupSubtitles();
+      asmsFuture = _setupAsmsDataSource(betterPlayerDataSource);
     }
 
     ///Process data source
     await _setupDataSource(betterPlayerDataSource);
+
+    if (asmsFuture != null) {
+      await asmsFuture;
+    }
+    _setupSubtitles();
     setTrack(BetterPlayerAsmsTrack.defaultTrack());
   }
 
@@ -323,7 +327,7 @@ class BetterPlayerController {
   ///Configure HLS / DASH data source based on provided data source and configuration.
   ///This method configures tracks, subtitles and audio tracks from given
   ///master playlist.
-  Future _setupAsmsDataSource(BetterPlayerDataSource source) async {
+  Future<void> _setupAsmsDataSource(BetterPlayerDataSource source) async {
     final data = await BetterPlayerAsmsUtils.getDataFromUrl(
       betterPlayerDataSource!.url,
       _getHeaders(),
@@ -361,8 +365,8 @@ class BetterPlayerController {
       if (betterPlayerDataSource?.useAsmsAudioTracks == true &&
           _isDataSourceAsms(betterPlayerDataSource!)) {
         _betterPlayerAsmsAudioTracks = response.audios ?? [];
-        if (_betterPlayerAsmsAudioTracks?.isNotEmpty == true) {
-          setAudioTrack(_betterPlayerAsmsAudioTracks!.first);
+        if (_betterPlayerAsmsAudioTracks.isNotEmpty) {
+          setAudioTrack(_betterPlayerAsmsAudioTracks.first);
         }
       }
     }
