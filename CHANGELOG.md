@@ -1,5 +1,4 @@
 ## Unreleased
-- Updated documentation alert box styling with a modern color palette for all alert types.
 
 ## 0.7.1
 * Fixed: HLS ABR video sizing issues (small video in corner) on Android TV and other platforms by making UI components reactive to resolution changes reported by the native layer.
