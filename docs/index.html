@@ -73,66 +73,119 @@
     }
 
     /* Flexible Alerts styling improvements - Light Mode */
-    .markdown-section .alert.info {
+    .markdown-section div.alert.info {
       background-color: #f0f9ff !important;
-      border-color: #0ea5e9 !important;
+      border-left-color: #0ea5e9 !important;
       color: #0369a1 !important;
     }
-    .markdown-section .alert.tip {
+    .markdown-section div.alert.info .title, .markdown-section div.alert.info p {
+      color: #0369a1 !important;
+    }
+
+    .markdown-section div.alert.tip {
       background-color: #f0fdf4 !important;
-      border-color: #22c55e !important;
+      border-left-color: #22c55e !important;
       color: #166534 !important;
     }
-    .markdown-section .alert.important {
+    .markdown-section div.alert.tip .title, .markdown-section div.alert.tip p {
+      color: #166534 !important;
+    }
+
+    .markdown-section div.alert.important {
       background-color: #f5f2ff !important;
-      border-color: #8250df !important;
+      border-left-color: #8250df !important;
       color: #5e35b1 !important;
     }
-    .markdown-section .alert.warning {
+    .markdown-section div.alert.important .title, .markdown-section div.alert.important p {
+      color: #5e35b1 !important;
+    }
+
+    .markdown-section div.alert.warning {
       background-color: #fffbeb !important;
-      border-color: #f59e0b !important;
+      border-left-color: #f59e0b !important;
       color: #a16207 !important;
     }
-    .markdown-section .alert.attention {
+    .markdown-section div.alert.warning .title, .markdown-section div.alert.warning p {
+      color: #a16207 !important;
+    }
+
+    .markdown-section div.alert.attention {
       background-color: #fef2f2 !important;
-      border-color: #ef4444 !important;
+      border-left-color: #ef4444 !important;
+      color: #991b1b !important;
+    }
+    .markdown-section div.alert.attention .title, .markdown-section div.alert.attention p {
       color: #991b1b !important;
     }
 
-    /* Dark mode overrides for alerts to prevent blindingly bright colors */
-    body.dark .markdown-section .alert.info,
-    body[data-theme="dark"] .markdown-section .alert.info,
-    .darkmode .markdown-section .alert.info {
+    /* Dark mode overrides for alerts */
+    body.dark .markdown-section div.alert.info,
+    body[data-theme="dark"] .markdown-section div.alert.info,
+    .darkmode .markdown-section div.alert.info {
       background-color: rgba(7, 89, 133, 0.2) !important;
-      border-color: #38bdf8 !important;
+      border-left-color: #38bdf8 !important;
       color: #bae6fd !important;
     }
-    body.dark .markdown-section .alert.tip,
-    body[data-theme="dark"] .markdown-section .alert.tip,
-    .darkmode .markdown-section .alert.tip {
+    body.dark .markdown-section div.alert.info .title,
+    body.dark .markdown-section div.alert.info p,
+    body[data-theme="dark"] .markdown-section div.alert.info .title,
+    body[data-theme="dark"] .markdown-section div.alert.info p {
+      color: #bae6fd !important;
+    }
+
+    body.dark .markdown-section div.alert.tip,
+    body[data-theme="dark"] .markdown-section div.alert.tip,
+    .darkmode .markdown-section div.alert.tip {
       background-color: rgba(20, 83, 45, 0.2) !important;
-      border-color: #4ade80 !important;
+      border-left-color: #4ade80 !important;
       color: #bbf7d0 !important;
     }
-    body.dark .markdown-section .alert.important,
-    body[data-theme="dark"] .markdown-section .alert.important,
-    .darkmode .markdown-section .alert.important {
+    body.dark .markdown-section div.alert.tip .title,
+    body.dark .markdown-section div.alert.tip p,
+    body[data-theme="dark"] .markdown-section div.alert.tip .title,
+    body[data-theme="dark"] .markdown-section div.alert.tip p {
+      color: #bbf7d0 !important;
+    }
+
+    body.dark .markdown-section div.alert.important,
+    body[data-theme="dark"] .markdown-section div.alert.important,
+    .darkmode .markdown-section div.alert.important {
       background-color: rgba(130, 80, 223, 0.15) !important;
-      border-color: #a371f7 !important;
+      border-left-color: #a371f7 !important;
       color: #d2a8ff !important;
     }
-    body.dark .markdown-section .alert.warning,
-    body[data-theme="dark"] .markdown-section .alert.warning,
-    .darkmode .markdown-section .alert.warning {
+    body.dark .markdown-section div.alert.important .title,
+    body.dark .markdown-section div.alert.important p,
+    body[data-theme="dark"] .markdown-section div.alert.important .title,
+    body[data-theme="dark"] .markdown-section div.alert.important p {
+      color: #d2a8ff !important;
+    }
+
+    body.dark .markdown-section div.alert.warning,
+    body[data-theme="dark"] .markdown-section div.alert.warning,
+    .darkmode .markdown-section div.alert.warning {
       background-color: rgba(120, 53, 15, 0.2) !important;
-      border-color: #fbbf24 !important;
+      border-left-color: #fbbf24 !important;
       color: #fde68a !important;
     }
-    body.dark .markdown-section .alert.attention,
-    body[data-theme="dark"] .markdown-section .alert.attention,
-    .darkmode .markdown-section .alert.attention {
+    body.dark .markdown-section div.alert.warning .title,
+    body.dark .markdown-section div.alert.warning p,
+    body[data-theme="dark"] .markdown-section div.alert.warning .title,
+    body[data-theme="dark"] .markdown-section div.alert.warning p {
+      color: #fde68a !important;
+    }
+
+    body.dark .markdown-section div.alert.attention,
+    body[data-theme="dark"] .markdown-section div.alert.attention,
+    .darkmode .markdown-section div.alert.attention {
       background-color: rgba(127, 29, 29, 0.2) !important;
-      border-color: #f87171 !important;
+      border-left-color: #f87171 !important;
+      color: #fecaca !important;
+    }
+    body.dark .markdown-section div.alert.attention .title,
+    body.dark .markdown-section div.alert.attention p,
+    body[data-theme="dark"] .markdown-section div.alert.attention .title,
+    body[data-theme="dark"] .markdown-section div.alert.attention p {
       color: #fecaca !important;
     }
   </style>
