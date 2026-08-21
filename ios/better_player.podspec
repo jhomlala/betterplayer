@@ -12,8 +12,8 @@ Advanced video player for Flutter with HLS, DASH and caching support.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'jhomlala' => 'jhomlala@gmail.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'betterplayer/Sources/**/*'
-  s.public_header_files = 'betterplayer/Sources/**/*.h'
+  s.source_files = 'better_player/Sources/**/*'
+  s.public_header_files = 'better_player/Sources/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'Cache', '~> 6.0.0'
   s.dependency 'GCDWebServer'

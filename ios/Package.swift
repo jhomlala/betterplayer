@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "betterplayer",
+    name: "better_player",
     platforms: [
         .iOS(.v13)
     ],
@@ -21,7 +21,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Cache", package: "Cache")
             ],
-            path: "Sources/better_player_swift"
+            path: "better_player/Sources/better_player_swift"
         ),
         .target(
             name: "better_player_objc",
@@ -31,7 +31,7 @@ let package = Package(
                 .product(name: "HLSCachingReverseProxyServer", package: "HLSCachingReverseProxyServer"),
                 .product(name: "PINCache", package: "PINCache")
             ],
-            path: "Sources/better_player",
+            path: "better_player/Sources/better_player",
             publicHeadersPath: "include"
         )
     ]
