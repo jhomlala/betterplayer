@@ -14,6 +14,8 @@ jobs:
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: better_player
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -23,16 +25,19 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd better_player
           flutter pub get
           cd example
           flutter pub get
 
       - name: Enable Swift Package Manager
-        run: flutter config --enable-swift-package-manager
+        run: |
+          cd better_player
+          flutter config --enable-swift-package-manager
 
       - name: Build Example App
         run: |
-          cd example
+          cd better_player/example
           flutter build ios --simulator --debug --no-codesign
 
       - name: Install Maestro
@@ -55,16 +60,17 @@ jobs:
       - name: Install App
         run: |
           # Path for Flutter debug simulator builds
-          APP_PATH="example/build/ios/iphonesimulator/Runner.app"
+          APP_PATH="better_player/example/build/ios/iphonesimulator/Runner.app"
           if [ ! -d "$APP_PATH" ]; then
             echo "App not found at $APP_PATH"
-            ls -R example/build/ios/
+            ls -R better_player/example/build/ios/
             exit 1
           fi
           xcrun simctl install booted "$APP_PATH"
 
       - name: Run Maestro
         run: |
+          cd better_player
           maestro test maestro/ios_flow.yaml
 
       - name: Upload Maestro Artifacts
