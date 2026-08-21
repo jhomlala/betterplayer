@@ -8,7 +8,7 @@ Pod::Spec.new do |s|
   s.description      = <<-DESC
 Advanced video player for Flutter with HLS, DASH and caching support.
                        DESC
-  s.homepage         = 'https://github.com/jhomlala/betterplayer'
+  s.homepage         = 'https://github.com/jhomlala/better_player'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'jhomlala' => 'jhomlala@gmail.com' }
   s.source           = { :path => '.' }
