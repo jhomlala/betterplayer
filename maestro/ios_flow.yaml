@@ -2,6 +2,7 @@ appId: pl.hasoft.example
 ---
 - launchApp
 - assertVisible: "Better Player Example"
-- assertVisible: "Open Full Showcase"
 - tapOn: "Open Full Showcase"
-- assertVisible: "Welcome to Better Player"
+- scrollUntilVisible:
+    element: "Basic player"
+- assertVisible: "Basic player"
