@@ -1,5 +1,4 @@
 ## Unreleased
-* Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.
 * Updated: Migrated iOS implementation to Swift.
 
 ## 0.7.1
