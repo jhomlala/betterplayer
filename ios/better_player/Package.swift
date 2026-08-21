@@ -2,12 +2,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "betterplayer",
+    name: "better_player",
     platforms: [
         .iOS("13.0")
     ],
     products: [
-        .library(name: "betterplayer", targets: ["betterplayer"])
+        .library(name: "better-player", targets: ["better_player"])
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
@@ -18,7 +18,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "betterplayer",
+            name: "better_player",
             dependencies: [
                 .product(name: "FlutterFramework", package: "FlutterFramework"),
                 .product(name: "Cache", package: "Cache"),
