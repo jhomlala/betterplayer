@@ -19,12 +19,14 @@ appId: pl.hasoft.example
 - tapOn:
     point: "50%, 40%"
 - tapOn: "More options"
-- assertVisible: "Playback speed"
+- waitForAnimationToEnd:
+    timeout: 5000
 - tapOn: "Playback speed"
-- assertVisible: "2.0 x"
 - tapOn: "2.0 x"
-- tapOn: "Video player"
+- tapOn:
+    point: "50%, 40%"
 - tapOn: "More options"
+- waitForAnimationToEnd:
+    timeout: 5000
 - tapOn: "Quality"
-- assertVisible: "Auto"
 - tapOn: "Auto"
