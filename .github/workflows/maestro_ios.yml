@@ -23,6 +23,33 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Cache Pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Cache Maestro
+        uses: actions/cache@v4
+        with:
+          path: ~/.maestro
+          key: ${{ runner.os }}-maestro
+          restore-keys: |
+            ${{ runner.os }}-maestro-
+
+      - name: Cache SPM dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            better_player/example/ios/.swiftpm
+            better_player/example/ios/SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('better_player/ios/better_player/Package.swift') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
       - name: Install dependencies
         run: |
           cd better_player
@@ -42,7 +69,9 @@ jobs:
 
       - name: Install Maestro
         run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
+          if [ ! -d "$HOME/.maestro/bin" ]; then
+            curl -Ls "https://get.maestro.mobile.dev" | bash
+          fi
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
       - name: Boot Simulator
