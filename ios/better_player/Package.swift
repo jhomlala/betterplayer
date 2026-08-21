@@ -7,7 +7,7 @@ let package = Package(
         .iOS("13.0")
     ],
     products: [
-        .library(name: "better-player", targets: ["better_player"])
+        .library(name: "better-player", targets: ["better_player_objc"])
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
@@ -21,12 +21,20 @@ let package = Package(
             name: "better_player",
             dependencies: [
                 .product(name: "FlutterFramework", package: "FlutterFramework"),
-                .product(name: "Cache", package: "Cache"),
+                .product(name: "Cache", package: "Cache")
+            ],
+            path: "Sources/better_player"
+        ),
+        .target(
+            name: "better_player_objc",
+            dependencies: [
+                "better_player",
+                .product(name: "FlutterFramework", package: "FlutterFramework"),
                 .product(name: "GCDWebServer", package: "GCDWebServer"),
                 .product(name: "HLSCachingReverseProxyServer", package: "HLSCachingReverseProxyServer"),
                 .product(name: "PINCache", package: "PINCache")
             ],
-            path: "Sources/better_player",
+            path: "Sources/better_player_objc",
             cSettings: [
                 .headerSearchPath("include/better_player")
             ]
