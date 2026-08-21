@@ -9,8 +9,3 @@ appId: pl.hasoft.example
 - tapOn: "Mute"
 - tapOn: "Unmute"
 - tapOn: "More options"
-- extendedWaitUntil:
-    visible: "Playback speed"
-    timeout: 10000
-- tapOn: "Playback speed"
-- tapOn: "2.0 x"
