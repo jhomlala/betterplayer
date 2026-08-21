@@ -1,0 +1,11 @@
+appId: pl.hasoft.example
+---
+- launchApp
+- assertVisible: "Better Player Example"
+# Tap the player area on the first screen to show controls
+- tapOn:
+    point: "50%, 30%"
+- tapOn: "Play"
+- tapOn: "Mute"
+- tapOn: "Unmute"
+- tapOn: "More options"

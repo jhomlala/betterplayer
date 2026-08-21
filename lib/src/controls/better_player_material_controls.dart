@@ -77,85 +77,95 @@ class _BetterPlayerMaterialControlsState
         ),
       );
     }
-    return GestureDetector(
-      onTap: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
-        }
-        controlsNotVisible
-            ? cancelAndRestartTimer()
-            : changePlayerControlsNotVisible(true);
-      },
-      onDoubleTap: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
-        }
-        cancelAndRestartTimer();
-      },
-      onLongPress: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
-        }
-      },
-      child: AbsorbPointer(
-        absorbing: controlsNotVisible,
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            if (_wasLoading)
-              Center(
-                child: BetterPlayerMaterialLoadingWidget(
+    return Semantics(
+      label: 'Video player',
+      container: true,
+      button: true,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
+          }
+          controlsNotVisible
+              ? cancelAndRestartTimer()
+              : changePlayerControlsNotVisible(true);
+        },
+        onDoubleTap: () {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(
+              context,
+            )!.onDoubleTap?.call();
+          }
+          cancelAndRestartTimer();
+        },
+        onLongPress: () {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(
+              context,
+            )!.onLongPress?.call();
+          }
+        },
+        child: AbsorbPointer(
+          absorbing: controlsNotVisible,
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              if (_wasLoading)
+                Center(
+                  child: BetterPlayerMaterialLoadingWidget(
+                    controlsConfiguration: _controlsConfiguration,
+                  ),
+                )
+              else
+                BetterPlayerMaterialHitArea(
+                  controller: _betterPlayerController!,
                   controlsConfiguration: _controlsConfiguration,
+                  controlsNotVisible: controlsNotVisible,
+                  onSkipBack: skipBack,
+                  onSkipForward: skipForward,
+                  onReplay: _onReplay,
+                  latestValue: _latestValue,
+                  isVideoFinished: isVideoFinished(_latestValue),
                 ),
-              )
-            else
-              BetterPlayerMaterialHitArea(
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: BetterPlayerMaterialTopBar(
+                  controller: _betterPlayerController!,
+                  controlsConfiguration: _controlsConfiguration,
+                  controlsNotVisible: controlsNotVisible,
+                  onPlayerHide: _onPlayerHide,
+                  onShowMoreClicked: onShowMoreClicked,
+                ),
+              ),
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: BetterPlayerMaterialBottomBar(
+                  controller: _betterPlayerController!,
+                  controlsConfiguration: _controlsConfiguration,
+                  controlsNotVisible: controlsNotVisible,
+                  onPlayerHide: _onPlayerHide,
+                  onPlayPause: _onPlayPause,
+                  onMute: _onMute,
+                  onExpandCollapse: _onExpandCollapse,
+                  onProgressBarDragStart: () {
+                    _hideTimer?.cancel();
+                  },
+                  onProgressBarDragEnd: _startHideTimer,
+                  onProgressBarTapDown: cancelAndRestartTimer,
+                  latestValue: _latestValue,
+                ),
+              ),
+              BetterPlayerMaterialNextVideoWidget(
                 controller: _betterPlayerController!,
                 controlsConfiguration: _controlsConfiguration,
-                controlsNotVisible: controlsNotVisible,
-                onSkipBack: skipBack,
-                onSkipForward: skipForward,
-                onReplay: _onReplay,
-                latestValue: _latestValue,
-                isVideoFinished: isVideoFinished(_latestValue),
               ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: BetterPlayerMaterialTopBar(
-                controller: _betterPlayerController!,
-                controlsConfiguration: _controlsConfiguration,
-                controlsNotVisible: controlsNotVisible,
-                onPlayerHide: _onPlayerHide,
-                onShowMoreClicked: onShowMoreClicked,
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: BetterPlayerMaterialBottomBar(
-                controller: _betterPlayerController!,
-                controlsConfiguration: _controlsConfiguration,
-                controlsNotVisible: controlsNotVisible,
-                onPlayerHide: _onPlayerHide,
-                onPlayPause: _onPlayPause,
-                onMute: _onMute,
-                onExpandCollapse: _onExpandCollapse,
-                onProgressBarDragStart: () {
-                  _hideTimer?.cancel();
-                },
-                onProgressBarDragEnd: _startHideTimer,
-                onProgressBarTapDown: cancelAndRestartTimer,
-                latestValue: _latestValue,
-              ),
-            ),
-            BetterPlayerMaterialNextVideoWidget(
-              controller: _betterPlayerController!,
-              controlsConfiguration: _controlsConfiguration,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

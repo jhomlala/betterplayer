@@ -3,23 +3,20 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'better_player'
-  s.version          = '0.7.1'
+  s.version          = '0.8.0'
   s.summary          = 'Advanced video player with HLS, DASH and caching support.'
   s.description      = <<-DESC
 Advanced video player for Flutter with HLS, DASH and caching support.
                        DESC
-  s.homepage         = 'https://github.com/jhomlala/betterplayer'
+  s.homepage         = 'https://github.com/jhomlala/better_player'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'jhomlala' => 'jhomlala@gmail.com' }
   s.source           = { :path => '.' }
   s.source_files = 'better_player/Sources/**/*'
-  s.public_header_files = 'better_player/Sources/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'Cache', '~> 6.0.0'
-  s.dependency 'GCDWebServer'
-  s.dependency 'HLSCachingReverseProxyServer'
-  s.dependency 'PINCache'
-  
-  s.platform = :ios, '11.0'
+
+  s.platform = :ios, '13.0'
+  s.swift_version = '5.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'VALID_ARCHS[sdk=iphonesimulator*]' => 'x86_64' }
 end

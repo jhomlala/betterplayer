@@ -29,6 +29,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
         children: [
           if (controlsConfiguration.enablePlaybackSpeed)
             BetterPlayerOverflowMenuItemWidget(
+              key: const Key('better_player_overflow_menu_playback_speed'),
               icon: controlsConfiguration.playbackSpeedIcon,
               name: translations.overflowMenuPlaybackSpeed,
               onTap: onPlaybackSpeedClicked,
@@ -36,6 +37,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
             ),
           if (controlsConfiguration.enableSubtitles)
             BetterPlayerOverflowMenuItemWidget(
+              key: const Key('better_player_overflow_menu_subtitles'),
               icon: controlsConfiguration.subtitlesIcon,
               name: translations.overflowMenuSubtitles,
               onTap: onSubtitlesClicked,
@@ -43,6 +45,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
             ),
           if (controlsConfiguration.enableQualities)
             BetterPlayerOverflowMenuItemWidget(
+              key: const Key('better_player_overflow_menu_qualities'),
               icon: controlsConfiguration.qualitiesIcon,
               name: translations.overflowMenuQuality,
               onTap: onQualitiesClicked,
@@ -50,6 +53,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
             ),
           if (controlsConfiguration.enableAudioTracks)
             BetterPlayerOverflowMenuItemWidget(
+              key: const Key('better_player_overflow_menu_audio_tracks'),
               icon: controlsConfiguration.audioTracksIcon,
               name: translations.overflowMenuAudioTracks,
               onTap: onAudioTracksClicked,
