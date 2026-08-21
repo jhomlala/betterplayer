@@ -242,7 +242,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
             let videoExtInternal = videoExtension
             item = cacheManager.getCachingPlayerItemForNormalPlayback(url, cacheKey: cacheKeyInternal, videoExtension: videoExtInternal, headers: headers as [NSObject: AnyObject]) ?? AVPlayerItem(url: url)
         } else {
-            let asset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": finalHeaders])
+            let asset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
             if let certificateUrl = certificateUrl, !certificateUrl.isEmpty {
                 let certURL = URL(string: certificateUrl)
                 let licURL = licenseUrl.flatMap { URL(string: $0) }
