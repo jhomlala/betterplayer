@@ -1,18 +1,31 @@
-import Foundation
-import AVFoundation
+// Better Player Swift implementation
 
+import AVFoundation
+import Foundation
+
+/// A delegate for AVAssetResourceLoader that handles EZDRM license requests.
 public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoaderDelegate {
+
+    /// The URL for the application's DRM certificate.
     public let certificateURL: URL
+
+    /// The optional URL for the DRM license server.
     public let licenseURL: URL?
 
     private var assetId: String = ""
     private let defaultLicenseServerURL = URL(string: "https://fps.ezdrm.com/api/licenses/")!
 
+    /// Initializes a new instance of the loader delegate.
+    /// - Parameters:
+    ///   - certificateURL: The URL for the DRM certificate.
+    ///   - licenseURL: The optional URL for the license server.
     public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) {
         self.certificateURL = certificateURL
         self.licenseURL = licenseURL
         super.init()
     }
+
+    // MARK: - Private Methods
 
     private func getContentKeyAndLeaseExpiryFromKeyServerModule(request spc: Data, assetId: String, customParams: String) -> Data? {
         let finalLicenseURL = licenseURL ?? defaultLicenseServerURL
@@ -36,6 +49,8 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
     private func getAppCertificate() throws -> Data {
         return try Data(contentsOf: certificateURL)
     }
+
+    // MARK: - AVAssetResourceLoaderDelegate
 
     public func resourceLoader(_ resourceLoader: AVAssetResourceLoader, shouldWaitForLoadingOfRequestedResource loadingRequest: AVAssetResourceLoadingRequest) -> Bool {
         guard let assetURI = loadingRequest.request.url else { return false }

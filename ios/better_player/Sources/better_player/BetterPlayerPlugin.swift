@@ -1,11 +1,16 @@
-import Foundation
-import Flutter
+// Better Player Swift implementation
+
 import AVFoundation
 import AVKit
-import UIKit
+import Flutter
+import Foundation
 import MediaPlayer
+import UIKit
 
+/// The main plugin class for Better Player on iOS.
+/// Handles method calls from Flutter and manages player instances.
 public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFactory {
+
     private let messenger: FlutterBinaryMessenger
     private var players: [Int64: BetterPlayer] = [:]
     private let registrar: FlutterPluginRegistrar
@@ -14,9 +19,11 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
     private var timeObserverIdDict: [Int64: Any] = [:]
     private var artworkImageDict: [Int64: MPMediaItemArtwork] = [:]
     private var cacheManager: CacheManager
-    private var texturesCount: Int64 = -1
+    private var lastTextureId: Int64 = -1
     private var notificationPlayer: BetterPlayer?
     private var remoteCommandsInitialized = false
+
+    // MARK: - Initialization
 
     init(registrar: FlutterPluginRegistrar) {
         self.messenger = registrar.messenger()
@@ -26,6 +33,7 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         self.cacheManager.setup()
     }
 
+    /// Registers the plugin with the given registrar.
     @objc public static func register(with registrar: FlutterPluginRegistrar) {
         let channel = FlutterMethodChannel(name: "better_player_channel", binaryMessenger: registrar.messenger())
         let instance = BetterPlayerPlugin(registrar: registrar)
@@ -33,23 +41,32 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         registrar.register(instance, withId: "com.jhomlala/better_player")
     }
 
-    public func createArgsCodec() -> (FlutterMessageCodec & NSObjectProtocol) { FlutterStandardMessageCodec.sharedInstance() }
+    // MARK: - FlutterPlatformViewFactory
+
+    public func createArgsCodec() -> (FlutterMessageCodec & NSObjectProtocol) {
+        return FlutterStandardMessageCodec.sharedInstance()
+    }
 
     public func create(withFrame frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?) -> FlutterPlatformView {
-        guard let dict = args as? [String: Any], let textureId = (dict["textureId"] as? NSNumber)?.int64Value, let player = players[textureId] else {
+        guard let dict = args as? [String: Any],
+              let textureId = (dict["textureId"] as? NSNumber)?.int64Value,
+              let player = players[textureId] else {
             return BetterPlayer()
         }
         return player
     }
 
-    private func newTextureId() -> Int64 {
-        texturesCount += 1
-        return texturesCount
+    // MARK: - Private Helper Methods
+
+    private func generateNextTextureId() -> Int64 {
+        lastTextureId += 1
+        return lastTextureId
     }
 
     private func onPlayerSetup(_ player: BetterPlayer, result: FlutterResult) {
-        let textureId = newTextureId()
-        let eventChannel = FlutterEventChannel(name: "better_player_channel/videoEvents\(textureId)", binaryMessenger: messenger)
+        let textureId = generateNextTextureId()
+        let eventChannelName = "better_player_channel/videoEvents\(textureId)"
+        let eventChannel = FlutterEventChannel(name: eventChannelName, binaryMessenger: messenger)
         player.setMixWithOthers(false)
         eventChannel.setStreamHandler(player)
         player.eventChannel = eventChannel
@@ -57,14 +74,18 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         result(["textureId": NSNumber(value: textureId)])
     }
 
+    // MARK: - Remote Notification Setup
+
     private func setupRemoteNotification(_ player: BetterPlayer) {
         notificationPlayer = player
-        stopOtherUpdateListener(player)
+        stopOtherUpdateListeners(player)
         guard let dataSource = dataSourceDict[keyForPlayer(player)] else { return }
+
         let showNotification = (dataSource["showNotification"] as? NSNumber)?.boolValue ?? false
         let title = dataSource["title"] as? String
         let author = dataSource["author"] as? String
         let imageUrl = dataSource["imageUrl"] as? String
+
         if showNotification {
             setRemoteCommandsNotificationActive()
             setupRemoteCommands(player)
@@ -93,29 +114,40 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         commandCenter.pauseCommand.isEnabled = true
         commandCenter.nextTrackCommand.isEnabled = false
         commandCenter.previousTrackCommand.isEnabled = false
+
         if #available(iOS 9.1, *) {
             commandCenter.changePlaybackPositionCommand.isEnabled = true
         }
 
         commandCenter.togglePlayPauseCommand.addTarget { [weak self] _ in
             guard let self = self, let player = self.notificationPlayer else { return .commandFailed }
-            if player.isPlaying { player.eventSink?(["event": "play"]) } else { player.eventSink?(["event": "pause"]) }
+            if player.isPlaying {
+                player.eventSink?(["event": "play"])
+            } else {
+                player.eventSink?(["event": "pause"])
+            }
             return .success
         }
 
         commandCenter.playCommand.addTarget { [weak self] _ in
             guard let self = self, let player = self.notificationPlayer else { return .commandFailed }
-            player.eventSink?(["event": "play"]) ; return .success
+            player.eventSink?(["event": "play"])
+            return .success
         }
 
         commandCenter.pauseCommand.addTarget { [weak self] _ in
             guard let self = self, let player = self.notificationPlayer else { return .commandFailed }
-            player.eventSink?(["event": "pause"]) ; return .success
+            player.eventSink?(["event": "pause"])
+            return .success
         }
 
         if #available(iOS 9.1, *) {
             commandCenter.changePlaybackPositionCommand.addTarget { [weak self] event in
-                guard let self = self, let player = self.notificationPlayer, let playbackEvent = event as? MPChangePlaybackPositionCommandEvent else { return .commandFailed }
+                guard let self = self,
+                      let player = self.notificationPlayer,
+                      let playbackEvent = event as? MPChangePlaybackPositionCommandEvent else {
+                    return .commandFailed
+                }
                 let time = CMTimeMakeWithSeconds(playbackEvent.positionTime, preferredTimescale: 1)
                 let millis = BetterPlayerTimeUtils.cmTimeToMillis(time)
                 player.seekTo(Int(millis))
@@ -147,7 +179,9 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
                     guard let self = self else { return }
                     var tempImage: UIImage?
                     if imageUrl.contains("http") {
-                        if let url = URL(string: imageUrl), let data = try? Data(contentsOf: url) { tempImage = UIImage(data: data) }
+                        if let url = URL(string: imageUrl), let data = try? Data(contentsOf: url) {
+                            tempImage = UIImage(data: data)
+                        }
                     } else {
                         tempImage = UIImage(contentsOfFile: imageUrl)
                     }
@@ -165,7 +199,9 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
     }
 
     private func keyForPlayer(_ player: BetterPlayer) -> Int64 {
-        for (key, value) in players where value === player { return key }
+        for (key, value) in players where value === player {
+            return key
+        }
         return -1
     }
 
@@ -184,12 +220,15 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
             remoteCommandsInitialized = false
         }
         let key = keyForPlayer(player)
-        if let id = timeObserverIdDict[key] { player.player.removeTimeObserver(id); timeObserverIdDict.removeValue(forKey: key) }
+        if let id = timeObserverIdDict[key] {
+            player.player.removeTimeObserver(id)
+            timeObserverIdDict.removeValue(forKey: key)
+        }
         artworkImageDict.removeValue(forKey: key)
         MPNowPlayingInfoCenter.default().nowPlayingInfo = [:]
     }
 
-    private func stopOtherUpdateListener(_ player: BetterPlayer) {
+    private func stopOtherUpdateListeners(_ player: BetterPlayer) {
         let currentPlayerKey = keyForPlayer(player)
         for (textureId, timeObserver) in timeObserverIdDict where textureId != currentPlayerKey {
             if let playerToRemoveListener = players[textureId] {
@@ -200,7 +239,9 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
     }
 }
 
+// MARK: - Method Call Handling
 extension BetterPlayerPlugin {
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         if call.method == "init" {
             for (_, player) in players { player.dispose() }
@@ -214,7 +255,9 @@ extension BetterPlayerPlugin {
             return
         }
 
-        guard let argsMap = call.arguments as? [String: Any], let textureId = (argsMap["textureId"] as? NSNumber)?.int64Value, let player = players[textureId] else {
+        guard let argsMap = call.arguments as? [String: Any],
+              let textureId = (argsMap["textureId"] as? NSNumber)?.int64Value,
+              let player = players[textureId] else {
             result(FlutterMethodNotImplemented)
             return
         }
@@ -258,28 +301,42 @@ extension BetterPlayerPlugin {
             disposeNotificationData(player)
             setRemoteCommandsNotificationNotActive()
             players.removeValue(forKey: textureId)
-            if players.isEmpty { try? AVAudioSession.sharedInstance().setActive(false, options: [.notifyOthersOnDeactivation]) }
+            if players.isEmpty {
+                try? AVAudioSession.sharedInstance().setActive(false, options: [.notifyOthersOnDeactivation])
+            }
             result(nil)
         case "setLooping":
-            if let looping = (argsMap["looping"] as? NSNumber)?.boolValue { player.isLooping = looping }
+            if let looping = (argsMap["looping"] as? NSNumber)?.boolValue {
+                player.isLooping = looping
+            }
             result(nil)
         case "setVolume":
-            if let vol = (argsMap["volume"] as? NSNumber)?.doubleValue { player.setVolume(vol) }
+            if let vol = (argsMap["volume"] as? NSNumber)?.doubleValue {
+                player.setVolume(vol)
+            }
             result(nil)
         case "play":
             setupRemoteNotification(player)
-            player.play(); result(nil)
+            player.play()
+            result(nil)
         case "position":
             result(NSNumber(value: player.position()))
         case "absolutePosition":
             result(NSNumber(value: player.absolutePosition()))
         case "seekTo":
-            if let location = (argsMap["location"] as? NSNumber)?.intValue { player.seekTo(location) }
+            if let location = (argsMap["location"] as? NSNumber)?.intValue {
+                player.seekTo(location)
+            }
             result(nil)
         case "pause":
-            player.pause(); result(nil)
+            player.pause()
+            result(nil)
         case "setSpeed":
-            if let speed = (argsMap["speed"] as? NSNumber)?.doubleValue { player.setSpeed(speed, result: result) } else { result(nil) }
+            if let speed = (argsMap["speed"] as? NSNumber)?.doubleValue {
+                player.setSpeed(speed, result: result)
+            } else {
+                result(nil)
+            }
         case "setTrackParameters":
             let width = (argsMap["width"] as? NSNumber)?.intValue ?? 0
             let height = (argsMap["height"] as? NSNumber)?.intValue ?? 0
@@ -295,11 +352,14 @@ extension BetterPlayerPlugin {
             result(nil)
         case "isPictureInPictureSupported":
             if #available(iOS 9.0, *), AVPictureInPictureController.isPictureInPictureSupported() {
-                result(NSNumber(value: true)); return
+                result(NSNumber(value: true))
+                return
             }
             result(NSNumber(value: false))
         case "disablePictureInPicture":
-            player.disablePictureInPicture(); player.setPictureInPicture(false); result(nil)
+            player.disablePictureInPicture()
+            player.setPictureInPicture(false)
+            result(nil)
         case "setAudioTrack":
             let name = argsMap["name"] as? String ?? ""
             let index = (argsMap["index"] as? NSNumber)?.intValue ?? 0
@@ -326,7 +386,8 @@ extension BetterPlayerPlugin {
             }
             result(nil)
         case "clearCache":
-            cacheManager.clearCache(); result(nil)
+            cacheManager.clearCache()
+            result(nil)
         case "stopPreCache":
             let urlArg = argsMap["url"] as? String
             let cacheKey = argsMap["cacheKey"] as? String
@@ -345,14 +406,10 @@ extension BetterPlayerPlugin {
                 return
             }
             let aspectRatio: AVLayerVideoGravity = switch(aspectRatioValue) {
-            case "aspect":
-                    .resizeAspect
-            case "fill":
-                    .resizeAspectFill
-            case "stretch":
-                    .resize
+            case "aspect": .resizeAspect
+            case "fill": .resizeAspectFill
+            case "stretch": .resize
             default: .resizeAspect
-
             }
             player.setAspectRatio(aspectRatio)
             result(nil)
