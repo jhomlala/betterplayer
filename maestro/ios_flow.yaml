@@ -7,13 +7,17 @@ appId: pl.hasoft.example
     element: "Basic player"
 - tapOn: "Basic player"
 - assertVisible: "Basic player"
-- tapOn: "Video player"
+- tapOn:
+    point: "50%, 40%"
 - tapOn: "Play"
-- tapOn: "Video player"
+- tapOn:
+    point: "50%, 40%"
 - tapOn: "Mute"
-- tapOn: "Video player"
+- tapOn:
+    point: "50%, 40%"
 - tapOn: "Unmute"
-- tapOn: "Video player"
+- tapOn:
+    point: "50%, 40%"
 - tapOn: "More options"
 - assertVisible: "Playback speed"
 - tapOn: "Playback speed"

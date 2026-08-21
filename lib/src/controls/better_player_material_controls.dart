@@ -80,7 +80,9 @@ class _BetterPlayerMaterialControlsState
     return Semantics(
       label: 'Video player',
       container: true,
+      button: true,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: () {
           if (BetterPlayerMultipleGestureDetector.of(context) != null) {
             BetterPlayerMultipleGestureDetector.of(context)!.onTap?.call();
