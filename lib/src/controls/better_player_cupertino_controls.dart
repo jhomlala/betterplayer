@@ -175,6 +175,7 @@ class _BetterPlayerCupertinoControlsState
         absorbing: controlsNotVisible,
         child: isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,
       ),
+    ),
     );
   }
 

@@ -161,6 +161,7 @@ class _BetterPlayerMaterialControlsState
           ],
         ),
       ),
+    ),
     );
   }
 

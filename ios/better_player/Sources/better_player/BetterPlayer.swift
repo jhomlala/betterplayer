@@ -235,14 +235,12 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     /// Sets the data source from a URL.
     public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
         self.overriddenDuration = 0
-        var finalHeaders = headers
-        if finalHeaders["dummy"] == nil {} // keep dictionary type stable
 
         let item: AVPlayerItem
         if useCache {
-            let _cacheKey = cacheKey
-            let _videoExt = videoExtension
-            item = cacheManager.getCachingPlayerItemForNormalPlayback(url, cacheKey: _cacheKey, videoExtension: _videoExt, headers: finalHeaders as NSDictionary as! [NSObject: AnyObject]) ?? AVPlayerItem(url: url)
+            let cacheKeyInternal = cacheKey
+            let videoExtInternal = videoExtension
+            item = cacheManager.getCachingPlayerItemForNormalPlayback(url, cacheKey: cacheKeyInternal, videoExtension: videoExtInternal, headers: headers as [NSObject: AnyObject]) ?? AVPlayerItem(url: url)
         } else {
             let asset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": finalHeaders])
             if let certificateUrl = certificateUrl, !certificateUrl.isEmpty {
@@ -362,7 +360,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
                 var values: [[NSNumber]] = []
                 for rangeValue in item.loadedTimeRanges {
                     let range = rangeValue.timeRangeValue
-                    var start = NSNumber(value: BetterPlayerTimeUtils.cmTimeToMillis(range.start))
+                    let start = NSNumber(value: BetterPlayerTimeUtils.cmTimeToMillis(range.start))
                     var end = NSNumber(value: BetterPlayerTimeUtils.cmTimeToMillis(range.start) + BetterPlayerTimeUtils.cmTimeToMillis(range.duration))
                     if let endTime = player.currentItem?.forwardPlaybackEndTime, !CMTIME_IS_INVALID(endTime) {
                         let endTimeMs = BetterPlayerTimeUtils.cmTimeToMillis(endTime)

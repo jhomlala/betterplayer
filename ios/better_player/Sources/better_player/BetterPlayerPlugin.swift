@@ -30,7 +30,6 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         self.registrar = registrar
         self.cacheManager = CacheManager()
         super.init()
-        self.cacheManager.setup()
     }
 
     /// Registers the plugin with the given registrar.
@@ -379,7 +378,7 @@ extension BetterPlayerPlugin {
             if let urlArg = urlArg, let url = URL(string: urlArg) {
                 if cacheManager.isPreCacheSupported(url: url, videoExtension: videoExtension) {
                     cacheManager.setMaxCacheSize(maxCacheSize)
-                    cacheManager.preCacheURL(url, cacheKey: cacheKey, videoExtension: videoExtension, withHeaders: headers as NSDictionary as! [NSObject: AnyObject]) { _ in }
+                    cacheManager.preCacheURL(url, cacheKey: cacheKey, videoExtension: videoExtension, withHeaders: headers as [NSObject: AnyObject]) { _ in }
                 } else {
                     NSLog("Pre cache is not supported for given data source.")
                 }
