@@ -1,0 +1,62 @@
+name: Maestro iOS flow
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  maestro:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install dependencies
+        run: |
+          flutter pub get
+          cd example
+          flutter pub get
+
+      - name: Build Example App
+        run: |
+          cd example
+          flutter build ios --simulator --debug --no-codesign
+
+      - name: Install Maestro
+        run: |
+          curl -Ls "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Boot Simulator
+        run: |
+          # Use the first available iPhone simulator
+          DEVICE_UUID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F '[()]' '{print $2}')
+          if [ -z "$DEVICE_UUID" ]; then
+            echo "No iPhone simulator found"
+            exit 1
+          fi
+          echo "Booting device $DEVICE_UUID"
+          xcrun simctl boot $DEVICE_UUID
+          xcrun simctl bootstatus $DEVICE_UUID -b
+
+      - name: Install App
+        run: |
+          # Path for Flutter debug simulator builds
+          APP_PATH="example/build/ios/iphonesimulator/Runner.app"
+          if [ ! -d "$APP_PATH" ]; then
+            echo "App not found at $APP_PATH"
+            ls -R example/build/ios/
+            exit 1
+          fi
+          xcrun simctl install booted "$APP_PATH"
+
+      - name: Run Maestro
+        run: |
+          maestro test maestro/ios_flow.yaml

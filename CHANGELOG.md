@@ -1,4 +1,5 @@
 ## Unreleased
+* Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.
 
 ## 0.7.1
 * Fixed: HLS ABR video sizing issues (small video in corner) on Android TV and other platforms by making UI components reactive to resolution changes reported by the native layer.
