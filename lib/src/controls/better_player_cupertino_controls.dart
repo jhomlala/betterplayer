@@ -159,23 +159,29 @@ class _BetterPlayerCupertinoControlsState
               ? cancelAndRestartTimer()
               : changePlayerControlsNotVisible(true);
         },
-      onDoubleTap: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onDoubleTap?.call();
-        }
-        cancelAndRestartTimer();
-        _onPlayPause();
-      },
-      onLongPress: () {
-        if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-          BetterPlayerMultipleGestureDetector.of(context)!.onLongPress?.call();
-        }
-      },
-      child: AbsorbPointer(
-        absorbing: controlsNotVisible,
-        child: isFullScreen ? SafeArea(child: controlsColumn) : controlsColumn,
+        onDoubleTap: () {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(
+              context,
+            )!.onDoubleTap?.call();
+          }
+          cancelAndRestartTimer();
+          _onPlayPause();
+        },
+        onLongPress: () {
+          if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+            BetterPlayerMultipleGestureDetector.of(
+              context,
+            )!.onLongPress?.call();
+          }
+        },
+        child: AbsorbPointer(
+          absorbing: controlsNotVisible,
+          child: isFullScreen
+              ? SafeArea(child: controlsColumn)
+              : controlsColumn,
+        ),
       ),
-    ),
     );
   }
 
