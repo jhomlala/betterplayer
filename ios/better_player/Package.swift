@@ -7,36 +7,41 @@ let package = Package(
         .iOS("13.0")
     ],
     products: [
-        .library(name: "better-player", targets: ["better_player_objc"])
+        .library(name: "better-player", targets: ["better_player"])
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
-        .package(url: "https://github.com/hyperoslo/Cache", from: "6.0.0"),
-        .package(url: "https://github.com/yene/GCDWebServer", from: "3.5.7"),
-        .package(url: "https://github.com/StyleShare/HLSCachingReverseProxyServer", from: "0.2.0"),
-        .package(url: "https://github.com/pinterest/PINCache", from: "3.0.0")
+        .package(url: "https://github.com/hyperoslo/Cache", from: "6.0.0")
     ],
     targets: [
+        .target(
+            name: "GCDWebServer",
+            path: "Sources/GCDWebServer"
+        ),
+        .target(
+            name: "PINCache",
+            path: "Sources/PINCache"
+        ),
+        .target(
+            name: "HLSCachingReverseProxyServer",
+            dependencies: [
+                "GCDWebServer",
+                "PINCache"
+            ],
+            path: "Sources/HLSCachingReverseProxyServer"
+        ),
         .target(
             name: "better_player",
             dependencies: [
                 .product(name: "FlutterFramework", package: "FlutterFramework"),
-                .product(name: "Cache", package: "Cache")
+                .product(name: "Cache", package: "Cache"),
+                "GCDWebServer",
+                "PINCache",
+                "HLSCachingReverseProxyServer"
             ],
-            path: "Sources/better_player"
-        ),
-        .target(
-            name: "better_player_objc",
-            dependencies: [
-                "better_player",
-                .product(name: "FlutterFramework", package: "FlutterFramework"),
-                .product(name: "GCDWebServer", package: "GCDWebServer"),
-                .product(name: "HLSCachingReverseProxyServer", package: "HLSCachingReverseProxyServer"),
-                .product(name: "PINCache", package: "PINCache")
-            ],
-            path: "Sources/better_player_objc",
-            cSettings: [
-                .headerSearchPath("include/better_player")
+            path: "Sources/better_player",
+            resources: [
+                .process("PrivacyInfo.xcprivacy")
             ]
         )
     ]
