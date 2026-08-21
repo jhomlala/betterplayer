@@ -7,26 +7,24 @@ appId: pl.hasoft.example
     element: "Basic player"
 - tapOn: "Basic player"
 - assertVisible: "Basic player"
-- tapOn:
-    point: "50%, 40%"
+# Tap the player area to show controls
+- tapOn: "Video player"
 - tapOn: "Play"
-- tapOn:
-    point: "50%, 40%"
+- tapOn: "Video player"
 - tapOn: "Mute"
-- tapOn:
-    point: "50%, 40%"
+- tapOn: "Video player"
 - tapOn: "Unmute"
-- tapOn:
-    point: "50%, 40%"
+- tapOn: "Video player"
 - tapOn: "More options"
-- waitForAnimationToEnd:
-    timeout: 5000
+- extendedWaitUntil:
+    visible: "Playback speed"
+    timeout: 10000
 - tapOn: "Playback speed"
 - tapOn: "2.0 x"
-- tapOn:
-    point: "50%, 40%"
+- tapOn: "Video player"
 - tapOn: "More options"
-- waitForAnimationToEnd:
-    timeout: 5000
+- extendedWaitUntil:
+    visible: "Quality"
+    timeout: 10000
 - tapOn: "Quality"
 - tapOn: "Auto"
