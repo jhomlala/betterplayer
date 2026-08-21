@@ -4,4 +4,5 @@ appId: pl.hasoft.example
 - assertVisible: "Better Player Example"
 - assertVisible: "Open Full Showcase"
 - tapOn: "Open Full Showcase"
+- waitForVisible: "Welcome to Better Player example app"
 - assertVisible: "Welcome to Better Player example app"

@@ -24,6 +24,9 @@ jobs:
           cd example
           flutter pub get
 
+      - name: Disable Swift Package Manager
+        run: flutter config --no-enable-swift-package-manager
+
       - name: Build Example App
         run: |
           cd example
