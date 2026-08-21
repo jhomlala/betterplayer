@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "better_player",
+    name: "betterplayer",
     platforms: [
         .iOS(.v13)
     ],
