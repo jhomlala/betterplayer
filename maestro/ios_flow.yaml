@@ -2,12 +2,7 @@ appId: pl.hasoft.example
 ---
 - launchApp
 - assertVisible: "Better Player Example"
-- tapOn: "Open Full Showcase"
-- scrollUntilVisible:
-    element: "Basic player"
-- tapOn: "Basic player"
-- assertVisible: "Basic player"
-# Tap once to show controls
+# Tap the player area on the first screen to show controls
 - tapOn: "Video player"
 - tapOn: "Play"
 - tapOn: "Mute"
@@ -18,10 +13,3 @@ appId: pl.hasoft.example
     timeout: 10000
 - tapOn: "Playback speed"
 - tapOn: "2.0 x"
-- tapOn: "Video player"
-- tapOn: "More options"
-- extendedWaitUntil:
-    visible: "Quality"
-    timeout: 10000
-- tapOn: "Quality"
-- tapOn: "Auto"
