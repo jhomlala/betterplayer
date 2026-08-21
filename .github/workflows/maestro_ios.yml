@@ -60,3 +60,10 @@ jobs:
       - name: Run Maestro
         run: |
           maestro test maestro/ios_flow.yaml
+
+      - name: Upload Maestro Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-debug-artifacts
+          path: ~/.maestro/tests/
