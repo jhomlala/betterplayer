@@ -177,7 +177,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier:
-              'better_player_overflow_menu_subtitles_${subtitlesSource.type.name}',
+              'better_player_overflow_menu_subtitles_${subtitlesSource.type?.name ?? 'none'}',
         );
       }).toList(),
     );
