@@ -1,4 +1,5 @@
 ## Unreleased
+* Updated: Modernized example app iOS configuration, adopted the `@main` entry point, and integrated `UIScene` lifecycle support.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.

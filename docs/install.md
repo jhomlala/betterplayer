@@ -33,7 +33,7 @@ import 'package:better_player/better_player.dart';
 
 To ensure Better Player functions correctly on iOS, apply the following settings:
 
-*   **Deployment Target**: Set the minimum iOS deployment version to **11.0**.
+*   **Deployment Target**: Set the minimum iOS deployment version to **13.0**.
 *   **Swift Version**: Ensure your project is configured to use **Swift 5**.
 
 ### Android Configuration (Required)
