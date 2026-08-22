@@ -27,7 +27,6 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       ],
       controlsConfiguration: BetterPlayerControlsConfiguration(
         playerTheme: BetterPlayerTheme.cupertino,
-          showControls: true
       ),
     );
     _betterPlayerDataSource = BetterPlayerDataSource(

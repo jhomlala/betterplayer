@@ -41,12 +41,9 @@ Always prefer `id` selectors over text or coordinates for stability.
   - assertVisible:
       id: "better_player_material_controls_play_pause_button"
   ```
-- **Handling Overlays**: Controls often auto-hide. Use a tap on the video area to ensure controls are visible before interacting.
-  ```yaml
-  - tapOn:
-      id: "better_player_cupertino_video_area"
-  - tapOn:
-      id: "better_player_cupertino_controls_play_pause_button"
+- **Handling Overlays**: To ensure controls are always available for interaction during E2E tests, it is recommended to enable `setControlsAlwaysVisible(true)` in the `BetterPlayerController` configuration. This eliminates the need for redundant taps on the video area to reveal controls.
+  ```dart
+  _betterPlayerController.setControlsAlwaysVisible(true);
   ```
 - **Waiting**: Use `extendedWaitUntil` if a video takes time to load.
   ```yaml

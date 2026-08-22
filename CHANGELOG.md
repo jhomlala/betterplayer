@@ -1,6 +1,5 @@
 ## Unreleased
-* Updated: Modernized example app iOS configuration, adopted the `@main` entry point, and integrated `UIScene` lifecycle support.
-* Updated: Optimized CI workflow to boot the iOS Simulator in parallel with the app build process for faster E2E testing.
+* Added: Maestro E2E testing suite and CI optimizations for iOS.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.
