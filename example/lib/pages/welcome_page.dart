@@ -78,119 +78,148 @@ class _WelcomePageState extends State<WelcomePage> {
     return [
       _WelcomePageItem(
         name: 'Basic player',
+        identifier: 'welcome_page_item_basic_player',
         onClicked: () => _navigateToPage(const BasicPlayerPage()),
       ),
       _WelcomePageItem(
         name: 'Normal player',
+        identifier: 'welcome_page_item_normal_player',
         onClicked: () => _navigateToPage(const NormalPlayerPage()),
       ),
       _WelcomePageItem(
         name: 'Controls configuration',
+        identifier: 'welcome_page_item_controls_configuration',
         onClicked: () => _navigateToPage(const ControlsConfigurationPage()),
       ),
       _WelcomePageItem(
         name: 'Event listener',
+        identifier: 'welcome_page_item_event_listener',
         onClicked: () => _navigateToPage(const EventListenerPage()),
       ),
       _WelcomePageItem(
         name: 'Subtitles',
+        identifier: 'welcome_page_item_subtitles',
         onClicked: () => _navigateToPage(const SubtitlesPage()),
       ),
       _WelcomePageItem(
         name: 'Resolutions',
+        identifier: 'welcome_page_item_resolutions',
         onClicked: () => _navigateToPage(const ResolutionsPage()),
       ),
       _WelcomePageItem(
         name: 'HLS tracks',
+        identifier: 'welcome_page_item_hls_tracks',
         onClicked: () => _navigateToPage(const HlsTracksPage()),
       ),
       _WelcomePageItem(
         name: 'HLS subtitles',
+        identifier: 'welcome_page_item_hls_subtitles',
         onClicked: () => _navigateToPage(const HlsSubtitlesPage()),
       ),
       _WelcomePageItem(
         name: 'HLS Audio',
+        identifier: 'welcome_page_item_hls_audio',
         onClicked: () => _navigateToPage(const HlsAudioPage()),
       ),
       _WelcomePageItem(
         name: 'Cache',
+        identifier: 'welcome_page_item_cache',
         onClicked: () => _navigateToPage(const CachePage()),
       ),
       _WelcomePageItem(
         name: 'Playlist',
+        identifier: 'welcome_page_item_playlist',
         onClicked: () => _navigateToPage(const PlaylistPage()),
       ),
       _WelcomePageItem(
         name: 'Video list',
+        identifier: 'welcome_page_item_video_list',
         onClicked: () => _navigateToPage(const VideoListPage()),
       ),
       _WelcomePageItem(
         name: 'Rotation and fit',
+        identifier: 'welcome_page_item_rotation_and_fit',
         onClicked: () => _navigateToPage(const RotationAndFitPage()),
       ),
       _WelcomePageItem(
         name: 'Memory player',
+        identifier: 'welcome_page_item_memory_player',
         onClicked: () => _navigateToPage(const MemoryPlayerPage()),
       ),
       _WelcomePageItem(
         name: 'Controller controls',
+        identifier: 'welcome_page_item_controller_controls',
         onClicked: () => _navigateToPage(const ControllerControlsPage()),
       ),
       _WelcomePageItem(
         name: 'Auto fullscreen orientation',
+        identifier: 'welcome_page_item_auto_fullscreen_orientation',
         onClicked: () => _navigateToPage(const AutoFullscreenOrientationPage()),
       ),
       _WelcomePageItem(
         name: 'Auto fullscreen on rotation',
+        identifier: 'welcome_page_item_auto_fullscreen_on_rotation',
         onClicked: () =>
             _navigateToPage(const AutoFullscreenOnRotationExamplePage()),
       ),
       _WelcomePageItem(
         name: 'Overridden aspect ratio',
+        identifier: 'welcome_page_item_overridden_aspect_ratio',
         onClicked: () => _navigateToPage(const OverriddenAspectRatioPage()),
       ),
       _WelcomePageItem(
         name: 'Notifications player',
+        identifier: 'welcome_page_item_notifications_player',
         onClicked: () => _navigateToPage(const NotificationPlayerPage()),
       ),
       _WelcomePageItem(
         name: 'Picture in Picture',
+        identifier: 'welcome_page_item_picture_in_picture',
         onClicked: () => _navigateToPage(const PictureInPicturePage()),
       ),
       _WelcomePageItem(
         name: 'DRM',
+        identifier: 'welcome_page_item_drm',
         onClicked: () => _navigateToPage(const DrmPage()),
       ),
       _WelcomePageItem(
         name: 'ClearKey DRM',
+        identifier: 'welcome_page_item_clearkey_drm',
         onClicked: () => _navigateToPage(const ClearKeyPage()),
       ),
       _WelcomePageItem(
         name: 'Dash',
+        identifier: 'welcome_page_item_dash',
         onClicked: () => _navigateToPage(const DashPage()),
       ),
       _WelcomePageItem(
         name: 'Reusable video list',
+        identifier: 'welcome_page_item_reusable_video_list',
         onClicked: () => _navigateToPage(const ReusableVideoListPage()),
       ),
       _WelcomePageItem(
         name: 'Fade placeholder',
+        identifier: 'welcome_page_item_fade_placeholder',
         onClicked: () => _navigateToPage(const FadePlaceholderPage()),
       ),
       _WelcomePageItem(
         name: 'Placeholder until play',
+        identifier: 'welcome_page_item_placeholder_until_play',
         onClicked: () => _navigateToPage(const PlaceholderUntilPlayPage()),
       ),
       _WelcomePageItem(
         name: 'Change player theme',
+        identifier: 'welcome_page_item_change_player_theme',
         onClicked: () => _navigateToPage(const ChangePlayerThemePage()),
       ),
       _WelcomePageItem(
         name: 'Overridden duration',
+        identifier: 'welcome_page_item_overridden_duration',
         onClicked: () => _navigateToPage(const OverriddenDurationPage()),
       ),
       _WelcomePageItem(
         name: 'Controls always visible',
+        identifier: 'welcome_page_item_controls_always_visible',
         onClicked: () => _navigateToPage(const ControlsAlwaysVisiblePage()),
       ),
     ];
@@ -235,20 +264,25 @@ class _WelcomePageState extends State<WelcomePage> {
 }
 
 class _WelcomePageItem extends StatelessWidget {
-  const _WelcomePageItem({required this.name, required this.onClicked});
+  const _WelcomePageItem({
+    required this.name,
+    required this.identifier,
+    required this.onClicked,
+  });
 
   final String name;
+  final String identifier;
   final VoidCallback onClicked;
 
   @override
   Widget build(BuildContext context) {
-    final identifier =
-        'welcome_page_item_${name.toLowerCase().replaceAll(' ', '_')}';
-    return Material(
-      child: InkWell(
-        onTap: onClicked,
-        child: Semantics(
-          identifier: identifier,
+    return Semantics(
+      identifier: identifier,
+      container: true,
+      button: true,
+      child: Material(
+        child: InkWell(
+          onTap: onClicked,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
