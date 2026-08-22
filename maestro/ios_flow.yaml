@@ -69,7 +69,6 @@ appId: pl.hasoft.example
     timeout: 5000
 - tapOn:
     id: "better_player_cupertino_controls_expand_button"
-- sleep: 2000
 
 # Seeking (middle of the video)
 - extendedWaitUntil:
