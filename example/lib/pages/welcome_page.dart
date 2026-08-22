@@ -242,18 +242,23 @@ class _WelcomePageItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final identifier =
+        'welcome_page_item_${name.toLowerCase().replaceAll(' ', '_')}';
     return Material(
       child: InkWell(
         onTap: onClicked,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Text(name, style: const TextStyle(fontSize: 16)),
-            ),
-            const Divider(),
-          ],
+        child: Semantics(
+          identifier: identifier,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(name, style: const TextStyle(fontSize: 16)),
+              ),
+              const Divider(),
+            ],
+          ),
         ),
       ),
     );

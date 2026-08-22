@@ -4,12 +4,8 @@ appId: pl.hasoft.example
 - assertVisible: "Better Player Example"
 
 # Navigate to Normal Player
-- tapOn: "Normal player"
-- extendedWaitUntil:
-    visible: "Normal player page"
-    timeout: 5000
-
-# Wait for video to load and start (autoPlay is true)
+- tapOn:
+    id: "welcome_page_item_normal_player"
 - extendedWaitUntil:
     visible:
       id: "better_player_cupertino_video_area"
