@@ -196,5 +196,43 @@ void main() {
         'better_player_overflow_menu_quality_1',
       );
     });
+
+    testWidgets(
+      'Non-ASMS (normal MP4) resolution has quality_auto identifier when children empty',
+      (WidgetTester tester) async {
+        controller.setTracks([]);
+        controller.setDataSource(BetterPlayerDataSource.network('video.mp4'));
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: MockControlsWidget(controller: controller),
+          ),
+        );
+
+        final state = tester.state<MockControlsState>(
+          find.byType(MockControlsWidget),
+        );
+
+        state.showQualities();
+        await tester.pumpAndSettle();
+
+        // For normal MP4 without multiple resolutions, the fallback is "Auto"
+        final autoItem = find.byWidgetPredicate(
+          (widget) =>
+              widget is BetterPlayerSelectionListItemWidget &&
+              widget.label == controller.translations.qualityAuto,
+        );
+
+        expect(autoItem, findsOneWidget);
+
+        final widget = tester.widget<BetterPlayerSelectionListItemWidget>(
+          autoItem,
+        );
+        expect(
+          widget.semanticsIdentifier,
+          'better_player_overflow_menu_quality_auto',
+        );
+      },
+    );
   });
 }
