@@ -71,6 +71,10 @@ appId: pl.hasoft.example
     id: "better_player_cupertino_controls_expand_button"
 
 # Seeking (middle of the video)
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_progress_bar"
+    timeout: 5000
 - tapOn:
     id: "better_player_cupertino_progress_bar"
 
