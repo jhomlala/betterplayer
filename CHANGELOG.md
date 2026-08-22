@@ -6,6 +6,7 @@
 * Added: Data source selection buttons in the E2E example app to support testing different formats (MP4, HLS).
 * Added: Dedicated Maestro E2E flow for HLS testing on iOS.
 * Updated: CI/CD workflow to run all Maestro E2E tests in the `maestro/` directory and trigger on refactor/feat branches.
+* Fixed: Missing semantic identifier for the "Auto" quality option in HLS/ASMS streams, which caused E2E test failures.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.

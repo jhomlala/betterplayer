@@ -214,6 +214,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
       final selectedTrack = betterPlayerController!.betterPlayerAsmsTrack;
       final isSelected = selectedTrack != null && selectedTrack == track;
+      final isAutoTrack = track.width == 0 && track.height == 0 && track.bitrate == 0;
 
       children.add(
         BetterPlayerSelectionListItemWidget(
@@ -224,7 +225,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.setTrack(track);
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
-          semanticsIdentifier: 'better_player_overflow_menu_quality_$index',
+          semanticsIdentifier: isAutoTrack
+              ? 'better_player_overflow_menu_quality_auto'
+              : 'better_player_overflow_menu_quality_$index',
         ),
       );
     }
