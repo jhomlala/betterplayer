@@ -1,5 +1,6 @@
 ## Unreleased
 * Added: Maestro E2E testing suite and CI optimizations for iOS.
+* Fixed: Controls visibility state not being respected during fullscreen transitions, causing E2E test failures.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.

@@ -45,7 +45,7 @@ Always prefer `id` selectors over text or coordinates for stability.
   ```dart
   _betterPlayerController.setControlsAlwaysVisible(true);
   ```
-- **Waiting**: Use `extendedWaitUntil` if a video takes time to load.
+- **Waiting**: Use `extendedWaitUntil` if a video takes time to load. For fullscreen transitions, add a `sleep` (e.g., `sleep: 2000`) before asserting elements in the new layout to allow orientation changes to settle.
   ```yaml
   - extendedWaitUntil:
       visible:

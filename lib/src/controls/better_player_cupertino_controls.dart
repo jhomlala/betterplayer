@@ -243,6 +243,7 @@ class _BetterPlayerCupertinoControlsState
   }
 
   Future<void> _initialize() async {
+    controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
     _controller!.addListener(_updateState);
 
     _updateState();
