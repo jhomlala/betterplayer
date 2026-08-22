@@ -3,7 +3,18 @@ appId: pl.hasoft.example
 - launchApp
 - assertVisible: "Better Player Example"
 
+# Navigate to Welcome Page
+- tapOn: "Open Full Showcase"
+- extendedWaitUntil:
+    visible:
+      id: "welcome_page_item_normal_player"
+    timeout: 5000
+
 # Navigate to Normal Player
+- scrollUntilVisible:
+    element:
+      id: "welcome_page_item_normal_player"
+    direction: DOWN
 - tapOn:
     id: "welcome_page_item_normal_player"
 - extendedWaitUntil:
