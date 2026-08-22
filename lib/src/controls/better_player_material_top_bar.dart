@@ -122,6 +122,8 @@ class _BetterPlayerMaterialPipButtonWrapperState
                     },
                     semanticsLabel:
                         widget.controller.translations.controlsPipLabel,
+                    semanticsIdentifier:
+                        'better_player_material_controls_pip_button',
                     child: Padding(
                       padding: const EdgeInsets.all(8),
                       child: Icon(
@@ -158,6 +160,7 @@ class _BetterPlayerMaterialMoreButton extends StatelessWidget {
     return BetterPlayerMaterialClickableWidget(
       onTap: onShowMoreClicked,
       semanticsLabel: controller.translations.overflowMenuLabel,
+      semanticsIdentifier: 'better_player_material_controls_more_button',
       child: Padding(
         padding: const EdgeInsets.all(8),
         child: Icon(

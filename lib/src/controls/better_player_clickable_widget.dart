@@ -5,11 +5,13 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
   final Widget child;
   final void Function() onTap;
   final String? semanticsLabel;
+  final String? semanticsIdentifier;
 
   const BetterPlayerMaterialClickableWidget({
     required this.onTap,
     required this.child,
     this.semanticsLabel,
+    this.semanticsIdentifier,
     super.key,
   });
 
@@ -25,6 +27,7 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
         onTap: onTap,
         child: Semantics(
           label: semanticsLabel,
+          identifier: semanticsIdentifier,
           button: true,
           child: child,
         ),

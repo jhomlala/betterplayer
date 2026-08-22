@@ -96,6 +96,8 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
                       onClicked: onSkipBack,
                       semanticsLabel:
                           controller.translations.controlsSkipBackwardLabel,
+                      semanticsIdentifier:
+                          'better_player_material_controls_skip_back_button',
                     ),
                   )
                 else
@@ -123,6 +125,8 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
                       onClicked: onSkipForward,
                       semanticsLabel:
                           controller.translations.controlsSkipForwardLabel,
+                      semanticsIdentifier:
+                          'better_player_material_controls_skip_forward_button',
                     ),
                   )
                 else
@@ -137,11 +141,13 @@ class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
   final VoidCallback onClicked;
   final Widget icon;
   final String? semanticsLabel;
+  final String? semanticsIdentifier;
 
   const _BetterPlayerMaterialHitAreaClickableButton({
     required this.onClicked,
     required this.icon,
     this.semanticsLabel,
+    this.semanticsIdentifier,
     super.key,
   });
 
@@ -152,6 +158,7 @@ class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
       child: BetterPlayerMaterialClickableWidget(
         onTap: onClicked,
         semanticsLabel: semanticsLabel,
+        semanticsIdentifier: semanticsIdentifier,
         child: Align(
           child: Container(
             decoration: BoxDecoration(
@@ -199,6 +206,7 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
 
     return _BetterPlayerMaterialHitAreaClickableButton(
       semanticsLabel: semanticsLabel,
+      semanticsIdentifier: 'better_player_material_controls_replay_button',
       icon: isVideoFinished
           ? Icon(
               Icons.replay,
