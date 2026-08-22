@@ -80,7 +80,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         },
         onQualitiesClicked: () {
           Navigator.of(context).pop();
-          _showQualitiesSelectionWidget();
+          showQualitiesSelectionWidget();
         },
         onAudioTracksClicked: () {
           Navigator.of(context).pop();
@@ -186,7 +186,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Build both track and resolution selection
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
-  void _showQualitiesSelectionWidget() {
+  void showQualitiesSelectionWidget() {
     // HLS / DASH
     final asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
@@ -196,7 +196,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       final track = asmsTracks[index];
 
       String? preferredName;
-      if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
+      if ((track.width ?? 0) == 0 &&
+          (track.height ?? 0) == 0 &&
+          (track.bitrate ?? 0) == 0) {
         preferredName = betterPlayerController!.translations.qualityAuto;
       } else {
         preferredName = asmsTrackNames.length > index
@@ -215,7 +217,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       final selectedTrack = betterPlayerController!.betterPlayerAsmsTrack;
       final isSelected = selectedTrack != null && selectedTrack == track;
       final isAutoTrack =
-          track.width == 0 && track.height == 0 && track.bitrate == 0;
+          preferredName == betterPlayerController!.translations.qualityAuto;
 
       children.add(
         BetterPlayerSelectionListItemWidget(
