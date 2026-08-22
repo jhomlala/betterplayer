@@ -1,6 +1,8 @@
 ## Unreleased
 * Added: Maestro E2E testing suite and CI optimizations for iOS.
 * Fixed: Controls visibility state not being respected during fullscreen transitions, causing E2E test failures.
+* Updated: Maestro E2E test flow to move fullscreen verification to the end and remove exit fullscreen check.
+* Updated: `rules/maestro.md` to strictly forbid the use of the `sleep` command in favor of conditional waiting.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.

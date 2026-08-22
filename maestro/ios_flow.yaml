@@ -47,17 +47,6 @@ appId: pl.hasoft.example
 - tapOn:
     id: "better_player_overflow_menu_quality_auto"
 
-# Fullscreen toggle
-- tapOn:
-    id: "better_player_cupertino_controls_expand_button"
-- extendedWaitUntil:
-    visible:
-      id: "better_player_cupertino_video_area"
-    timeout: 5000
-- tapOn:
-    id: "better_player_cupertino_controls_expand_button"
-- sleep: 2000
-
 # Seeking (middle of the video)
 - extendedWaitUntil:
     visible:
@@ -65,3 +54,11 @@ appId: pl.hasoft.example
     timeout: 5000
 - tapOn:
     id: "better_player_cupertino_progress_bar"
+
+# Fullscreen test
+- tapOn:
+    id: "better_player_cupertino_controls_expand_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_video_area"
+    timeout: 10000
