@@ -214,7 +214,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
       final selectedTrack = betterPlayerController!.betterPlayerAsmsTrack;
       final isSelected = selectedTrack != null && selectedTrack == track;
-      final isAutoTrack = track.width == 0 && track.height == 0 && track.bitrate == 0;
+      final isAutoTrack =
+          track.width == 0 && track.height == 0 && track.bitrate == 0;
 
       children.add(
         BetterPlayerSelectionListItemWidget(

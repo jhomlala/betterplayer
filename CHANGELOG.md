@@ -6,6 +6,8 @@
 * Added: Data source selection buttons in the E2E example app to support testing different formats (MP4, HLS).
 * Added: Dedicated Maestro E2E flow for HLS testing on iOS.
 * Updated: CI/CD workflow to run all Maestro E2E tests in the `maestro/` directory and trigger on refactor/feat branches.
+* Updated: CI/CD workflow to avoid redundant runs when a Pull Request is open for Maestro-related branches.
+* Updated: Applied standard Dart formatting to `better_player_controls_state.dart`.
 * Fixed: Missing semantic identifier for the "Auto" quality option in HLS/ASMS streams, which caused E2E test failures.
 
 ## 0.8.0
