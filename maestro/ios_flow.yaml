@@ -37,10 +37,18 @@ appId: pl.hasoft.example
 # Skip testing (15s forward, 15s back)
 - tapOn:
     id: "better_player_cupertino_video_area"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_controls_skip_forward_button"
+    timeout: 5000
 - tapOn:
     id: "better_player_cupertino_controls_skip_forward_button"
 - tapOn:
     id: "better_player_cupertino_video_area"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_controls_skip_back_button"
+    timeout: 5000
 - tapOn:
     id: "better_player_cupertino_controls_skip_back_button"
 
