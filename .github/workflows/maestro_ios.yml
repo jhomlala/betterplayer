@@ -62,11 +62,6 @@ jobs:
           cd better_player
           flutter config --enable-swift-package-manager
 
-      - name: Build Example App
-        run: |
-          cd better_player/example
-          flutter build ios --simulator --debug --no-codesign
-
       - name: Install Maestro
         run: |
           if [ ! -d "$HOME/.maestro/bin" ]; then
@@ -74,7 +69,7 @@ jobs:
           fi
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Boot Simulator
+      - name: Start Simulator Boot
         run: |
           # Use the first available iPhone simulator
           DEVICE_UUID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F '[()]' '{print $2}')
@@ -82,8 +77,18 @@ jobs:
             echo "No iPhone simulator found"
             exit 1
           fi
-          echo "Booting device $DEVICE_UUID"
+          echo "DEVICE_UUID=$DEVICE_UUID" >> $GITHUB_ENV
+          echo "Booting device $DEVICE_UUID in background"
           xcrun simctl boot $DEVICE_UUID
+
+      - name: Build Example App
+        run: |
+          cd better_player/example
+          flutter build ios --simulator --debug --no-codesign
+
+      - name: Wait for Simulator Boot
+        run: |
+          echo "Waiting for device $DEVICE_UUID to boot..."
           xcrun simctl bootstatus $DEVICE_UUID -b
 
       - name: Install App
