@@ -50,6 +50,11 @@
 - **Artifacts**: Never track the `.artifacts/` directory in Git. It is already added to `.gitignore`.
 - **Example App**: When changing core library code, check if the `example` app needs updates or if its tests/analysis are affected.
 
+## E2E Testing (Maestro)
+- **Rules Reference**: ALWAYS follow the guidelines in [rules/maestro.md](file:///C:/Users/jhoml/betterplayer/rules/maestro.md) when writing or updating E2E tests.
+- **Stability First**: Prioritize using `Semantics(identifier: ...)` in Flutter and `id` selectors in Maestro. Avoid text-based selectors or hardcoded coordinates.
+- **iOS Focus**: Ensure all E2E flows are verified on the iOS Simulator, as this is the primary focus for E2E reliability.
+
 ## Architecture
 - **Plugin-First Principle**: When working on new features or refactoring existing code, prioritize a **plugin-based architecture**. The goal is to keep the core library lean and extend functionality via plugins rather than purely working within the core.
 - **Proactive Refactoring**: This is a legacy plugin that requires significant effort to align its architecture with modern best practices (e.g., modularization, separation of concerns). Be proactive when refactoring; don't just fix the immediate issue if you see an opportunity to improve the underlying structure and ensure it follows current Android, iOS, and Flutter standards.

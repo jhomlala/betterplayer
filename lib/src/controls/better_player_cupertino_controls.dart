@@ -149,6 +149,7 @@ class _BetterPlayerCupertinoControlsState
     );
     return Semantics(
       label: 'Video player',
+      identifier: 'better_player_cupertino_video_area',
       container: true,
       button: true,
       child: GestureDetector(

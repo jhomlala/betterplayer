@@ -79,6 +79,7 @@ class _BetterPlayerMaterialControlsState
     }
     return Semantics(
       label: 'Video player',
+      identifier: 'better_player_material_video_area',
       container: true,
       button: true,
       child: GestureDetector(

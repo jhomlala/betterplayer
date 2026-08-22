@@ -34,6 +34,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
               name: translations.overflowMenuPlaybackSpeed,
               onTap: onPlaybackSpeedClicked,
               controlsConfiguration: controlsConfiguration,
+              semanticsIdentifier: 'better_player_overflow_menu_playback_speed',
             ),
           if (controlsConfiguration.enableSubtitles)
             BetterPlayerOverflowMenuItemWidget(
@@ -42,6 +43,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
               name: translations.overflowMenuSubtitles,
               onTap: onSubtitlesClicked,
               controlsConfiguration: controlsConfiguration,
+              semanticsIdentifier: 'better_player_overflow_menu_subtitles',
             ),
           if (controlsConfiguration.enableQualities)
             BetterPlayerOverflowMenuItemWidget(
@@ -50,6 +52,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
               name: translations.overflowMenuQuality,
               onTap: onQualitiesClicked,
               controlsConfiguration: controlsConfiguration,
+              semanticsIdentifier: 'better_player_overflow_menu_quality',
             ),
           if (controlsConfiguration.enableAudioTracks)
             BetterPlayerOverflowMenuItemWidget(
@@ -58,6 +61,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
               name: translations.overflowMenuAudioTracks,
               onTap: onAudioTracksClicked,
               controlsConfiguration: controlsConfiguration,
+              semanticsIdentifier: 'better_player_overflow_menu_audio_tracks',
             ),
           if (controlsConfiguration.overflowMenuCustomItems.isNotEmpty)
             ...controlsConfiguration.overflowMenuCustomItems.map(
@@ -69,6 +73,8 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
                   customItem.onClicked.call();
                 },
                 controlsConfiguration: controlsConfiguration,
+                semanticsIdentifier:
+                    'better_player_overflow_menu_custom_item_${customItem.title.toLowerCase().replaceAll(' ', '_')}',
               ),
             ),
         ],
@@ -83,6 +89,7 @@ class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
   final VoidCallback onTap;
   final BetterPlayerControlsConfiguration controlsConfiguration;
   final bool isSelected;
+  final String? semanticsIdentifier;
 
   const BetterPlayerOverflowMenuItemWidget({
     required this.icon,
@@ -90,6 +97,7 @@ class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
     required this.onTap,
     required this.controlsConfiguration,
     this.isSelected = false,
+    this.semanticsIdentifier,
     super.key,
   });
 
@@ -98,6 +106,7 @@ class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,
       semanticsLabel: name,
+      semanticsIdentifier: semanticsIdentifier,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
         child: Row(

@@ -147,6 +147,7 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
         label: controller.isFullScreen
             ? controller.translations.controlsExitFullscreenLabel
             : controller.translations.controlsFullscreenLabel,
+        identifier: 'better_player_cupertino_controls_expand_button',
         button: true,
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
@@ -231,6 +232,7 @@ class _BetterPlayerCupertinoPipButtonState
             ),
             child: Semantics(
               label: widget.controller.translations.controlsPipLabel,
+              identifier: 'better_player_cupertino_controls_pip_button',
               button: true,
               child: AnimatedOpacity(
                 opacity: widget.controlsNotVisible ? 0.0 : 1.0,
@@ -301,6 +303,7 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
       onTap: onMute,
       child: Semantics(
         label: semanticsLabel,
+        identifier: 'better_player_cupertino_controls_mute_button',
         button: true,
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
@@ -357,6 +360,7 @@ class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
       onTap: onShowMoreClicked,
       child: Semantics(
         label: controller.translations.overflowMenuLabel,
+        identifier: 'better_player_cupertino_controls_more_button',
         button: true,
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,

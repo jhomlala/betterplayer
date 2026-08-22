@@ -2,10 +2,110 @@ appId: pl.hasoft.example
 ---
 - launchApp
 - assertVisible: "Better Player Example"
-# Tap the player area on the first screen to show controls
+
+# Navigate to Welcome Page
+- tapOn: "Open Full Showcase"
+- extendedWaitUntil:
+    visible:
+      id: "welcome_page_item_normal_player"
+    timeout: 5000
+
+# Navigate to Normal Player
+- scrollUntilVisible:
+    element:
+      id: "welcome_page_item_normal_player"
+    direction: DOWN
 - tapOn:
-    point: "50%, 30%"
-- tapOn: "Play"
-- tapOn: "Mute"
-- tapOn: "Unmute"
-- tapOn: "More options"
+    id: "welcome_page_item_normal_player"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_video_area"
+    timeout: 10000
+
+# Tap to show controls
+- tapOn:
+    id: "better_player_cupertino_video_area"
+
+# Play/Pause toggle
+- tapOn:
+    id: "better_player_cupertino_controls_play_pause_button"
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- tapOn:
+    id: "better_player_cupertino_controls_play_pause_button"
+
+# Skip testing (15s forward, 15s back)
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_controls_skip_forward_button"
+    timeout: 5000
+- tapOn:
+    id: "better_player_cupertino_controls_skip_forward_button"
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_controls_skip_back_button"
+    timeout: 5000
+- tapOn:
+    id: "better_player_cupertino_controls_skip_back_button"
+
+# Mute/Unmute
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- tapOn:
+    id: "better_player_cupertino_controls_mute_button"
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- tapOn:
+    id: "better_player_cupertino_controls_mute_button"
+
+# Speed Selection test (2.0x)
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- tapOn:
+    id: "better_player_cupertino_controls_more_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_playback_speed"
+    timeout: 5000
+- tapOn:
+    id: "better_player_overflow_menu_playback_speed"
+- tapOn:
+    id: "better_player_overflow_menu_speed_2.0"
+
+# Quality Selection test (Auto)
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- tapOn:
+    id: "better_player_cupertino_controls_more_button"
+- tapOn:
+    id: "better_player_overflow_menu_quality"
+- tapOn:
+    id: "better_player_overflow_menu_quality_auto"
+
+# Fullscreen toggle
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- tapOn:
+    id: "better_player_cupertino_controls_expand_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_video_area"
+    timeout: 5000
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- tapOn:
+    id: "better_player_cupertino_controls_expand_button"
+
+# Seeking (middle of the video)
+- tapOn:
+    id: "better_player_cupertino_video_area"
+- tapOn:
+    id: "better_player_cupertino_progress_bar"
+
+# Finish and cleanup
+- back
+- assertVisible: "Better Player Example"

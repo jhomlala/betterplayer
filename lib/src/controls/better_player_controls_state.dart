@@ -103,6 +103,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.setSpeed(speed);
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier: 'better_player_overflow_menu_speed_$speed',
         );
       }).toList(),
     );
@@ -175,6 +176,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.setupSubtitleSource(subtitlesSource);
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier:
+              'better_player_overflow_menu_subtitles_${subtitlesSource.type?.name ?? 'none'}',
         );
       }).toList(),
     );
@@ -221,6 +224,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.setTrack(track);
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier: 'better_player_overflow_menu_quality_$index',
         ),
       );
     }
@@ -256,6 +260,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             );
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier: 'better_player_overflow_menu_quality_auto',
         ),
       );
     }
