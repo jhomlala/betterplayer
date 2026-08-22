@@ -63,6 +63,11 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     super.dispose();
   }
 
+  void _setupDataSource(String url, BetterPlayerDataSourceType type) {
+    final betterPlayerDataSource = BetterPlayerDataSource(type, url);
+    _betterPlayerController.setupDataSource(betterPlayerDataSource);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,6 +78,32 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
           AspectRatio(
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
+          ),
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            children: [
+              Semantics(
+                identifier: 'better_player_e2e_setup_mp4',
+                child: ElevatedButton(
+                  onPressed: () => _setupDataSource(
+                    Constants.bugBuckBunnyVideoUrl,
+                    BetterPlayerDataSourceType.network,
+                  ),
+                  child: const Text('MP4'),
+                ),
+              ),
+              Semantics(
+                identifier: 'better_player_e2e_setup_hls',
+                child: ElevatedButton(
+                  onPressed: () => _setupDataSource(
+                    Constants.hlsTestStreamUrl,
+                    BetterPlayerDataSourceType.network,
+                  ),
+                  child: const Text('HLS'),
+                ),
+              ),
+            ],
           ),
         ],
       ),
