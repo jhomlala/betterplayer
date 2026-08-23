@@ -2,7 +2,12 @@ appId: pl.hasoft.example
 ---
 - launchApp:
     clearState: true
-- assertVisible: "Better Player Example"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 30000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
 
 # Wait for video area
 - extendedWaitUntil:

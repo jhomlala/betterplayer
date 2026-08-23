@@ -3,7 +3,6 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:material_ui/material_ui.dart' as m3;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,12 +14,14 @@ class BetterPlayerE2EApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      localizationsDelegates: [
-        ...GlobalMaterialLocalizations.delegates,
-        m3.GlobalMaterialLocalizations.delegate,
+    return MaterialApp(
+      theme: ThemeData.light(),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
-      home: E2EPlayerPage(),
+      home: const E2EPlayerPage(),
     );
   }
 }
@@ -49,13 +50,17 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         DeviceOrientation.portraitUp,
       ],
     );
-    final betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      Constants.bugBuckBunnyVideoUrl,
-    );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(betterPlayerDataSource);
-    _betterPlayerController.setControlsAlwaysVisible(true);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final betterPlayerDataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network,
+        Constants.bugBuckBunnyVideoUrl,
+      );
+      _betterPlayerController.setupDataSource(betterPlayerDataSource);
+      _betterPlayerController.setControlsAlwaysVisible(true);
+    });
+
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
         setState(() {
@@ -104,7 +109,12 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Better Player Example')),
+      appBar: AppBar(
+        title: Semantics(
+          identifier: 'better_player_e2e_app_bar_title',
+          child: const Text('Better Player Example'),
+        ),
+      ),
       body: Column(
         children: [
           const SizedBox(height: 8),
