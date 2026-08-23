@@ -79,17 +79,36 @@ jobs:
             ~/.android/adb*
           key: avd-${{ matrix.api-level }}-${{ runner.os }}
 
-      - name: Run Emulator and Build App
-        uses: reactivecircus/android-emulator-runner@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: google_atd
-          arch: x86_64
-          profile: pixel
-          disable-animations: true
-          force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          script: bash better_player/maestro/android/ci_build_and_test.sh
+      - name: Setup Android SDK and Emulator
+        run: |
+          # Ensure KVM permissions
+          sudo chmod 666 /dev/kvm
+          
+          # Install system image
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-${{ matrix.api-level }};google_atd;x86_64"
+          
+          # Create AVD if not exists
+          if [ ! -f "$HOME/.android/avd/test.avd/config.ini" ]; then
+            echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n test -k "system-images;android-${{ matrix.api-level }};google_atd;x86_64" --force --device "pixel"
+          fi
+
+      - name: Launch Emulator and Build App
+        run: |
+          # Launch emulator in background
+          $ANDROID_HOME/emulator/emulator -avd test -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -accel on &
+          EMU_PID=$!
+          
+          # Start build in background
+          cd better_player/example && flutter build apk --debug --target lib/main_e2e.dart &
+          BUILD_PID=$!
+          
+          # Pass PIDs to the script
+          export BUILD_PID=$BUILD_PID
+          export EMU_PID=$EMU_PID
+          
+          # Return to root and run the sync script
+          cd ../..
+          bash better_player/maestro/android/ci_build_and_test.sh
 
       - name: Upload Maestro Artifacts
         if: always()

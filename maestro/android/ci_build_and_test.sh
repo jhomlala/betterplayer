@@ -4,13 +4,30 @@ set -e
 # We are in the root directory (where better_player/ is checked out)
 cd better_player
 
-# Start build in background
-echo "Starting Flutter build in background..."
-(cd example && flutter build apk --debug --target lib/main_e2e.dart) &
-BUILD_PID=$!
+# Build APK in background if not already started, or just wait for it
+# In the new workflow, we might start it before calling this script
+if [ -z "$BUILD_PID" ]; then
+    echo "Starting Flutter build in background..."
+    (cd example && flutter build apk --debug --target lib/main_e2e.dart) &
+    BUILD_PID=$!
+fi
 
-# The emulator runner handles the boot wait, but we need to wait for our build
-echo "Waiting for build to finish (PID: $BUILD_PID)..."
+echo "Waiting for Android Emulator to boot..."
+# Wait for adb to see the device
+until adb shell getprop sys.boot_completed 2>/dev/null | grep -q "1"; do
+  echo "Emulator is still booting..."
+  sleep 5
+done
+
+echo "Emulator booted!"
+
+# Disable animations for faster testing
+echo "Disabling animations..."
+adb shell settings put global window_animation_scale 0.0
+adb shell settings put global transition_animation_scale 0.0
+adb shell settings put global animator_duration_scale 0.0
+
+echo "Waiting for Flutter build to finish (PID: $BUILD_PID)..."
 wait $BUILD_PID
 
 APK_PATH="example/build/app/outputs/flutter-apk/app-debug.apk"
