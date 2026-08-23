@@ -27,3 +27,32 @@
 * Added: Example demonstrating auto-fullscreen on rotation using `OrientationBuilder`.
 * Updated: Reorganized media files into `assets/media/` and added `assets/pub/` for pub.dev screenshots and logo.
 * Fixed: Android duration sometimes reporting zero for VOD streams by handling ExoPlayer's `C.TIME_UNSET` value and delaying the `initialized` event until a valid duration is available via `onTimelineChanged`.
+
+## 0.6.0
+* Added: `BetterPlayerPlaylist` widget for playlist support.
+* Added: `BetterPlayerPlaylistConfiguration` for playlist behavior customization.
+* Added: Support for HLS audio track selection.
+* Added: `betterPlayerAsmsAudioTracks` to `BetterPlayerController` to expose available audio tracks.
+* Added: `setAudioTrack` to `BetterPlayerController` to programmatically set audio track.
+* Fixed: Android native-side duration reporting issues when loading VOD/Live streams.
+* Updated: `better_player_controls_state.dart` to support new audio track selection widget.
+* Fixed: Issues with `better_player_list_video_player` when items are removed/reordered.
+
+## 0.5.0
+* Added: Picture-in-Picture (PiP) support for Android.
+* Added: Custom HTTP headers support for `BetterPlayerDataSource`.
+* Added: Better error reporting for native-side video player initialization.
+* Fixed: Issue where controls were not hidden properly on Android after playback starts.
+* Updated: `better_player_video_format.dart` with support for DASH, HLS, and Smooth Streaming.
+
+## 0.4.0
+* Added: Initial HLS/DASH manifest parsing support.
+* Added: `betterPlayerAsmsTracks` to `BetterPlayerController` to expose video quality variants.
+* Added: `setTrack` to `BetterPlayerController` for manual quality switching.
+* Fixed: Initial subtitle selection logic.
+
+## 0.3.0
+* Added: Initial version of Better Player.
+* Added: Support for network and file data sources.
+* Added: Basic controls for Play/Pause, Seek, Fullscreen, Mute.
+* Added: Aspect ratio and fit configuration.
