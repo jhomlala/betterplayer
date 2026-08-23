@@ -43,11 +43,23 @@ appId: pl.hasoft.example
 - tapOn:
     id: "better_player_overflow_menu_speed_2.0"
 
-# Quality Selection test (Auto)
+# Quality Selection test (Verify Auto + 5 additional qualities)
 - tapOn:
     id: "better_player_cupertino_controls_more_button"
 - tapOn:
     id: "better_player_overflow_menu_quality"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_auto"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_1"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_2"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_3"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_4"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_5"
 - tapOn:
     id: "better_player_overflow_menu_quality_auto"
 
