@@ -75,7 +75,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           BetterPlayerUtils.log('onPlaybackSpeedClicked');
           Navigator.of(context).pop();
           Future.delayed(
-            const Duration(milliseconds: 300),
+            const Duration(milliseconds: 500),
             _showSpeedChooserWidget,
           );
         },
@@ -83,7 +83,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           BetterPlayerUtils.log('onSubtitlesClicked');
           Navigator.of(context).pop();
           Future.delayed(
-            const Duration(milliseconds: 300),
+            const Duration(milliseconds: 500),
             _showSubtitlesSelectionWidget,
           );
         },
@@ -91,7 +91,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           BetterPlayerUtils.log('onQualitiesClicked');
           Navigator.of(context).pop();
           Future.delayed(
-            const Duration(milliseconds: 300),
+            const Duration(milliseconds: 500),
             showQualitiesSelectionWidget,
           );
         },
