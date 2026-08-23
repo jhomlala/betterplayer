@@ -77,41 +77,25 @@ jobs:
             ~/.android/adb*
           key: avd-${{ matrix.api-level }}-${{ runner.os }}
 
-      - name: Setup Android SDK and Emulator
-        run: |
-          # Ensure KVM permissions
-          sudo chmod 666 /dev/kvm
-          
-          # Install system image
-          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-${{ matrix.api-level }};google_atd;x86_64"
-          
-          # Force create AVD to ensure it's fresh and correctly located
-          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n test -k "system-images;android-${{ matrix.api-level }};google_atd;x86_64" --force
-
       - name: Fetch dependencies
         run: |
           flutter pub get
           cd example && flutter pub get
 
-      - name: Launch Emulator and Build App
+      - name: Build App
         run: |
-          # Launch emulator in background
-          # Use -no-snapshot-load to ensure it doesn't try to load a broken state
-          $ANDROID_HOME/emulator/emulator -avd test -no-window -gpu swiftshader -noaudio -no-boot-anim -accel on -memory 3072 -no-snapshot-save -no-snapshot-load &
-          EMU_PID=$!
-          
-          # Start build in background (use subshell to avoid changing directory of main shell)
-          (cd example && flutter build apk --debug --target lib/main_e2e.dart) &
-          BUILD_PID=$!
-          
-          # Pass PIDs to the script
-          export BUILD_PID=$BUILD_PID
-          export EMU_PID=$EMU_PID
-          
-          # Debug: show current directory and files
-          pwd
-          ls -R maestro/android/
-          bash maestro/android/ci_build_and_test.sh
+          cd example && flutter build apk --debug --target lib/main_e2e.dart
+
+      - name: Run Maestro Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_atd
+          arch: x86_64
+          force-avd-creation: false
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim
+          script: maestro test maestro/android/
 
       - name: Upload Maestro Artifacts
         if: always()

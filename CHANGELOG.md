@@ -1,4 +1,5 @@
 ## Unreleased
+* Updated: Optimized Android E2E CI workflow using `android-emulator-runner` for improved stability.
 * Added: Maestro E2E HLS flow testing suite for Android.
 * Added: Maestro E2E testing suite and CI integration for Android (covering Material controls).
 * Added: Maestro E2E testing suite and CI integration for iOS (covering Cupertino controls and MP4, HLS flows).
