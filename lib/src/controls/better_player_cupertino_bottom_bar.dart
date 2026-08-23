@@ -180,6 +180,7 @@ class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
         label: isPlaying
             ? controller.translations.controlsPauseLabel
             : controller.translations.controlsPlayLabel,
+        identifier: 'better_player_cupertino_controls_play_pause_button',
         button: true,
         child: Container(
           height: barHeight,
@@ -223,6 +224,9 @@ class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
       onTap: onSkip,
       child: Semantics(
         label: semanticsLabel,
+        identifier: isBack
+            ? 'better_player_cupertino_controls_skip_back_button'
+            : 'better_player_cupertino_controls_skip_forward_button',
         button: true,
         child: Container(
           height: barHeight,
@@ -279,9 +283,15 @@ class _BetterPlayerCupertinoPositionWidget extends StatelessWidget {
         : Duration.zero;
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: Text(
-        BetterPlayerUtils.formatDuration(position),
-        style: TextStyle(color: controlsConfiguration.textColor, fontSize: 12),
+      child: Semantics(
+        identifier: 'better_player_cupertino_controls_position_text',
+        child: Text(
+          BetterPlayerUtils.formatDuration(position),
+          style: TextStyle(
+            color: controlsConfiguration.textColor,
+            fontSize: 12,
+          ),
+        ),
       ),
     );
   }
@@ -303,9 +313,15 @@ class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
         : Duration.zero;
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: Text(
-        '-${BetterPlayerUtils.formatDuration(remaining)}',
-        style: TextStyle(color: controlsConfiguration.textColor, fontSize: 12),
+      child: Semantics(
+        identifier: 'better_player_cupertino_controls_remaining_text',
+        child: Text(
+          '-${BetterPlayerUtils.formatDuration(remaining)}',
+          style: TextStyle(
+            color: controlsConfiguration.textColor,
+            fontSize: 12,
+          ),
+        ),
       ),
     );
   }

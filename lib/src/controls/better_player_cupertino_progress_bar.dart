@@ -119,6 +119,7 @@ class _VideoProgressBarState
       },
       child: Semantics(
         label: betterPlayerController!.translations.progressBarLabel,
+        identifier: 'better_player_cupertino_progress_bar',
         value: _getSemanticsValue(),
         increasedValue: _getSemanticsValue(relative: 0.1),
         decreasedValue: _getSemanticsValue(relative: -0.1),

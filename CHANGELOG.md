@@ -1,4 +1,10 @@
 ## Unreleased
+* Added: Maestro E2E testing suite and CI integration for iOS (covering MP4, HLS flows, and player controls).
+* Added: Semantic identifiers across player controls and UI components for robust E2E testing.
+* Fixed: Race condition when launching sub-menus (quality, speed, etc.) from the overflow menu on iOS.
+* Fixed: Missing semantic identifiers for resolution selection items in normal MP4 videos and robust HLS auto quality detection.
+* Refactored: Replaced widget helper methods in controls with dedicated stateless widgets (`BetterPlayerVideoAreaSemantics`) to adhere to architecture standards.
+* Updated: Documentation (`docs/drmconfiguration.md`) to explicitly note that DRM playback requires a physical device.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.
@@ -234,7 +240,7 @@
 ## 0.0.68
 * Added support for segmented subtitles.
 * Added new fields in in BetterPlayerSubtitlesSource: `asmsIsSegmented`, `asmsSegmentsTime` and ` asmsSegments`. These fields shouldn't be configured
-manually.
+  manually.
 * Fixed parsing VTT subtitle timestamps with no hour component (by https://github.com/trms-alex).
 * Fixed parsing VTT subtitles when there's no subtitles in the file (by https://github.com/trms-alex).
 * Added ES translations (by https://github.com/koldo92).
@@ -347,8 +353,8 @@ manually.
 ## 0.0.54
 * Refactored BetterPlayerPlaylist feature.
 * Added new BetterPlayerPlaylistController which is accessible from BetterPlayerPlaylist's current
-state. Playlist video can be changed with setupDataSource method and current video index can be
-accessed with currentDataSourceIndex getter.
+  state. Playlist video can be changed with setupDataSource method and current video index can be
+  accessed with currentDataSourceIndex getter.
 * Fixed iOS availableDuration index issue.
 * Added arabic translations (by https://github.com/mohamed-Etman).
 * Added headers to HLS data request (by https://github.com/mohamed-Etman).
@@ -417,7 +423,7 @@ accessed with currentDataSourceIndex getter.
 * Added Picture in Picture support.
 * Added new parameters in BetterPlayerControlsConfiguration: pipMenuIcon and enablePip.
 * Added new methods in BetterPlayerController: enablePictureInPicture, disablePictureInPicture, isPictureInPictureSupported,
-setBetterPlayerGlobalKey.
+  setBetterPlayerGlobalKey.
 * Added Picture in Picture icon in player controls.
 * Added Picture in Picture example.
 * Updated ExoPlayer version.
@@ -456,7 +462,7 @@ setBetterPlayerGlobalKey.
 * Increased size of cupertino buttons
 * Fixed setControlsEnabled in cupertino/material player
 * [BREAKING_CHANGE] Removed startAt, looping, placeholder, overlay, fullScreenByDefault,
- allowedScreenSleep, systemOverlaysAfterFullScreen, deviceOrientationsAfterFullScreen from BetterPlayerController
+  allowedScreenSleep, systemOverlaysAfterFullScreen, deviceOrientationsAfterFullScreen from BetterPlayerController
 
 ## 0.0.40
 * Exposed VideoPlayerValue in export

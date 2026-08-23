@@ -4,7 +4,6 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_overflow_menu.dart';
 import 'package:better_player/src/controls/better_player_selection_list_item_widget.dart';
-import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
@@ -66,25 +65,42 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void onShowMoreClicked() {
+    BetterPlayerUtils.log('onShowMoreClicked');
     _showModalBottomSheet([
       BetterPlayerOverflowMenu(
         controller: betterPlayerController!,
         controlsConfiguration: betterPlayerControlsConfiguration,
         onPlaybackSpeedClicked: () {
+          BetterPlayerUtils.log('onPlaybackSpeedClicked');
           Navigator.of(context).pop();
-          _showSpeedChooserWidget();
+          Future.delayed(
+            const Duration(milliseconds: 500),
+            _showSpeedChooserWidget,
+          );
         },
         onSubtitlesClicked: () {
+          BetterPlayerUtils.log('onSubtitlesClicked');
           Navigator.of(context).pop();
-          _showSubtitlesSelectionWidget();
+          Future.delayed(
+            const Duration(milliseconds: 500),
+            _showSubtitlesSelectionWidget,
+          );
         },
         onQualitiesClicked: () {
+          BetterPlayerUtils.log('onQualitiesClicked');
           Navigator.of(context).pop();
-          _showQualitiesSelectionWidget();
+          Future.delayed(
+            const Duration(milliseconds: 500),
+            showQualitiesSelectionWidget,
+          );
         },
         onAudioTracksClicked: () {
+          BetterPlayerUtils.log('onAudioTracksClicked');
           Navigator.of(context).pop();
-          _showAudioTracksSelectionWidget();
+          Future.delayed(
+            const Duration(milliseconds: 300),
+            _showAudioTracksSelectionWidget,
+          );
         },
       ),
     ]);
@@ -103,6 +119,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.setSpeed(speed);
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier: 'better_player_overflow_menu_speed_$speed',
         );
       }).toList(),
     );
@@ -175,6 +192,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.setupSubtitleSource(subtitlesSource);
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier:
+              'better_player_overflow_menu_subtitles_${subtitlesSource.type?.name ?? 'none'}',
         );
       }).toList(),
     );
@@ -183,17 +202,21 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Build both track and resolution selection
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
-  void _showQualitiesSelectionWidget() {
+  void showQualitiesSelectionWidget() {
+    BetterPlayerUtils.log('showQualitiesSelectionWidget started');
     // HLS / DASH
     final asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
     final asmsTracks = betterPlayerController!.betterPlayerAsmsTracks;
+    BetterPlayerUtils.log('ASMS Tracks: ${asmsTracks.length}');
     final children = <Widget>[];
     for (var index = 0; index < asmsTracks.length; index++) {
       final track = asmsTracks[index];
 
       String? preferredName;
-      if (track.height == 0 && track.width == 0 && track.bitrate == 0) {
+      if ((track.width ?? 0) == 0 &&
+          (track.height ?? 0) == 0 &&
+          (track.bitrate ?? 0) == 0) {
         preferredName = betterPlayerController!.translations.qualityAuto;
       } else {
         preferredName = asmsTrackNames.length > index
@@ -211,6 +234,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
       final selectedTrack = betterPlayerController!.betterPlayerAsmsTrack;
       final isSelected = selectedTrack != null && selectedTrack == track;
+      final isAutoTrack =
+          preferredName == betterPlayerController!.translations.qualityAuto;
 
       children.add(
         BetterPlayerSelectionListItemWidget(
@@ -221,6 +246,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.setTrack(track);
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier: isAutoTrack
+              ? 'better_player_overflow_menu_quality_auto'
+              : 'better_player_overflow_menu_quality_$index',
         ),
       );
     }
@@ -228,6 +256,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     // normal videos
     final resolutions =
         betterPlayerController!.betterPlayerDataSource!.resolutions;
+    BetterPlayerUtils.log('Resolutions: ${resolutions?.length ?? 0}');
+    var resolutionIndex = 0;
     resolutions?.forEach((key, value) {
       final isSelected =
           value == betterPlayerController!.betterPlayerDataSource!.url;
@@ -240,11 +270,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.setResolution(value);
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier:
+              'better_player_overflow_menu_quality_$resolutionIndex',
         ),
       );
+      resolutionIndex++;
     });
 
     if (children.isEmpty) {
+      BetterPlayerUtils.log('Quality children empty, adding Auto fallback');
       children.add(
         BetterPlayerSelectionListItemWidget(
           label: betterPlayerController!.translations.qualityAuto,
@@ -256,10 +290,14 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             );
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier: 'better_player_overflow_menu_quality_auto',
         ),
       );
     }
 
+    BetterPlayerUtils.log(
+      'Showing qualities menu with ${children.length} items',
+    );
     _showModalBottomSheet(children);
   }
 
@@ -311,6 +349,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showModalBottomSheet(List<Widget> children) {
+    BetterPlayerUtils.log('Showing bottom sheet with ${children.length} items');
     Platform.isAndroid
         ? _showMaterialBottomSheet(children)
         : _showCupertinoModalBottomSheet(children);

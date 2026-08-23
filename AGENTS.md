@@ -50,6 +50,11 @@
 - **Artifacts**: Never track the `.artifacts/` directory in Git. It is already added to `.gitignore`.
 - **Example App**: When changing core library code, check if the `example` app needs updates or if its tests/analysis are affected.
 
+## E2E Testing (Maestro)
+- **Rules Reference**: ALWAYS follow the guidelines in [rules/maestro.md](file:///C:/Users/jhoml/betterplayer/rules/maestro.md) when writing or updating E2E tests.
+- **Stability First**: Prioritize using `Semantics(identifier: ...)` in Flutter and `id` selectors in Maestro. Avoid text-based selectors or hardcoded coordinates.
+- **iOS Focus**: Ensure all E2E flows are verified on the iOS Simulator, as this is the primary focus for E2E reliability.
+
 ## Architecture
 - **Plugin-First Principle**: When working on new features or refactoring existing code, prioritize a **plugin-based architecture**. The goal is to keep the core library lean and extend functionality via plugins rather than purely working within the core.
 - **Proactive Refactoring**: This is a legacy plugin that requires significant effort to align its architecture with modern best practices (e.g., modularization, separation of concerns). Be proactive when refactoring; don't just fix the immediate issue if you see an opportunity to improve the underlying structure and ensure it follows current Android, iOS, and Flutter standards.
@@ -68,12 +73,13 @@
 
 ## Changelog Guidelines
 - **Content Policy**: Entries in `CHANGELOG.md` MUST ONLY be for the plugin itself (features, fixes, updates). DO NOT include DevOps, infrastructure, or CI/CD changes (e.g., workflow updates, script optimizations).
+- **History Preservation**: NEVER remove historical entries from `CHANGELOG.md`. Keep the complete history intact.
+- **Grouping**: Always group related or repetitive changes under a single concise entry in `## Unreleased` to avoid bloating.
 - **Labels**: Mark critical or API-breaking changes with the `[BREAKING_CHANGE]` label at the start of the line.
 - **Sections**: Use the following verbs to start entries:
   - `Added`: for new features.
   - `Updated`: for changes in existing functionality or dependencies.
   - `Fixed`: for bug fixes.
-- **Consolidation**: For repetitive or similar work (e.g., updating multiple links in examples, fixing multiple small UI issues), consolidate into a single concise entry in `CHANGELOG.md` rather than listing every minor change. Avoid adding new entries for every iteration of a fix.
 - **Attribution**: If the work was done by a contributor, append `(by @username)` or `(by Name)` to the end of the entry.
 
 ## Version Update Workflow

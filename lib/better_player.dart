@@ -26,6 +26,7 @@ export 'src/controls/better_player_progress_colors.dart';
 export 'src/core/better_player.dart';
 export 'src/core/better_player_controller.dart';
 export 'src/core/better_player_controller_provider.dart';
+export 'src/core/better_player_utils.dart';
 export 'src/list/better_player_list_video_player.dart';
 export 'src/list/better_player_list_video_player_controller.dart';
 export 'src/playlist/better_player_playlist.dart';

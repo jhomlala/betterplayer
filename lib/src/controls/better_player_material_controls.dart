@@ -9,6 +9,7 @@ import 'package:better_player/src/controls/better_player_material_middle_row.dar
 import 'package:better_player/src/controls/better_player_material_next_video_widget.dart';
 import 'package:better_player/src/controls/better_player_material_top_bar.dart';
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
+import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 
@@ -69,18 +70,19 @@ class _BetterPlayerMaterialControlsState
   Widget _buildMainWidget() {
     _wasLoading = isLoading(_latestValue);
     if (_latestValue?.hasError == true) {
-      return ColoredBox(
-        color: Colors.black,
-        child: BetterPlayerMaterialErrorWidget(
-          controller: _betterPlayerController!,
-          controlsConfiguration: _controlsConfiguration,
+      return BetterPlayerVideoAreaSemantics(
+        semanticsIdentifier: 'better_player_material_video_area',
+        child: ColoredBox(
+          color: Colors.black,
+          child: BetterPlayerMaterialErrorWidget(
+            controller: _betterPlayerController!,
+            controlsConfiguration: _controlsConfiguration,
+          ),
         ),
       );
     }
-    return Semantics(
-      label: 'Video player',
-      container: true,
-      button: true,
+    return BetterPlayerVideoAreaSemantics(
+      semanticsIdentifier: 'better_player_material_video_area',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
@@ -241,6 +243,7 @@ class _BetterPlayerMaterialControlsState
   }
 
   Future<void> _initialize() async {
+    controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
     _controller!.addListener(_updateState);
 
     _updateState();

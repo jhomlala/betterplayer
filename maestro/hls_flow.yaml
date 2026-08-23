@@ -3,11 +3,15 @@ appId: pl.hasoft.example
 - launchApp
 - assertVisible: "Better Player Example"
 
+# Setup HLS Data Source
+- tapOn:
+    id: "better_player_e2e_setup_hls"
+
 # Wait for video area
 - extendedWaitUntil:
     visible:
       id: "better_player_cupertino_video_area"
-    timeout: 10000
+    timeout: 15000
 
 # Play/Pause toggle
 - tapOn:
@@ -39,19 +43,23 @@ appId: pl.hasoft.example
 - tapOn:
     id: "better_player_overflow_menu_speed_2.0"
 
-# Quality Selection test (Auto)
+# Quality Selection test (Verify Auto + 5 additional qualities)
 - tapOn:
     id: "better_player_cupertino_controls_more_button"
-- extendedWaitUntil:
-    visible:
-      id: "better_player_overflow_menu_quality"
-    timeout: 5000
 - tapOn:
     id: "better_player_overflow_menu_quality"
-- extendedWaitUntil:
-    visible:
-      id: "better_player_overflow_menu_quality_auto"
-    timeout: 10000
+- assertVisible:
+    id: "better_player_overflow_menu_quality_auto"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_1"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_2"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_3"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_4"
+- assertVisible:
+    id: "better_player_overflow_menu_quality_5"
 - tapOn:
     id: "better_player_overflow_menu_quality_auto"
 

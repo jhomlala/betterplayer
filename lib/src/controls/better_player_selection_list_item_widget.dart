@@ -7,12 +7,14 @@ class BetterPlayerSelectionListItemWidget extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
   final BetterPlayerControlsConfiguration controlsConfiguration;
+  final String? semanticsIdentifier;
 
   const BetterPlayerSelectionListItemWidget({
     required this.label,
     required this.isSelected,
     required this.onTap,
     required this.controlsConfiguration,
+    this.semanticsIdentifier,
     super.key,
   });
 
@@ -21,6 +23,7 @@ class BetterPlayerSelectionListItemWidget extends StatelessWidget {
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,
       semanticsLabel: label,
+      semanticsIdentifier: semanticsIdentifier,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         child: Row(

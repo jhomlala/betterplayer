@@ -1,5 +1,4 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:material_ui/material_ui.dart';
 
 ///Special version of Better Player which is used to play video in list view.

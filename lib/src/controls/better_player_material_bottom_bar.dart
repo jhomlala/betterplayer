@@ -141,6 +141,7 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
       semanticsLabel: isPlaying
           ? controller.translations.controlsPauseLabel
           : controller.translations.controlsPlayLabel,
+      semanticsIdentifier: 'better_player_material_controls_play_pause_button',
       child: Container(
         height: double.infinity,
         margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -178,6 +179,7 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
       semanticsLabel: (latestValue != null && latestValue!.volume > 0)
           ? controller.translations.controlsMuteLabel
           : controller.translations.controlsUnmuteLabel,
+      semanticsIdentifier: 'better_player_material_controls_mute_button',
       child: AnimatedOpacity(
         opacity: controlsNotVisible ? 0.0 : 1.0,
         duration: controlsConfiguration.controlsHideTime,
@@ -221,6 +223,7 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
         semanticsLabel: controller.isFullScreen
             ? controller.translations.controlsExitFullscreenLabel
             : controller.translations.controlsFullscreenLabel,
+        semanticsIdentifier: 'better_player_material_controls_expand_button',
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
           duration: controlsConfiguration.controlsHideTime,
