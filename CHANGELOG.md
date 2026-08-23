@@ -1,4 +1,5 @@
 ## Unreleased
+* Added: E2E test for iOS remote notifications.
 * Added: Maestro E2E testing suite and CI integration for iOS (covering MP4, HLS flows, and player controls).
 * Added: Semantic identifiers across player controls and UI components for robust E2E testing.
 * Fixed: Race condition when launching sub-menus (quality, speed, etc.) from the overflow menu on iOS.

@@ -1,0 +1,28 @@
+appId: pl.hasoft.example
+---
+- launchApp
+- assertVisible: "Better Player Example"
+
+# Navigate to Notification Player
+- tapOn: "Notifications player"
+
+# Start playback (the player is autoPlay: false or controlled)
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_video_area"
+    timeout: 10000
+
+# Trigger play to show notification
+- tapOn:
+    id: "better_player_cupertino_controls_play_pause_button"
+
+# Swipe down from the very top of the screen to open notifications
+- swipe:
+    start: "50%, 0%"
+    end: "50%, 60%"
+
+# Verify the media card shows the correct video/audio track title
+- assertVisible: "Elephant dream"
+
+# Tap the native play/pause button inside the notification card
+- tapOn: "Pause"
