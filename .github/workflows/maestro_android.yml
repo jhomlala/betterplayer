@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   maestro:
-    runs-on: macos-14
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         api-level: [34]
@@ -41,10 +41,12 @@ jobs:
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
-          target: google_apis
-          arch: arm64-v8a
+          target: google_atd
+          arch: x86_64
           profile: pixel
           disable-animations: true
+          force-avd-creation: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           script: |
             adb install better_player/example/build/app/outputs/flutter-apk/app-debug.apk
             cd better_player
