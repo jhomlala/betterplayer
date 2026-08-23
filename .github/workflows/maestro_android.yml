@@ -85,10 +85,18 @@ jobs:
           # Install system image
           echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-${{ matrix.api-level }};google_atd;x86_64"
           
-          # Create AVD if not exists
+          # Create AVD if not exists or broken
           if ! $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd | grep -q "test"; then
+            echo "Creating new AVD 'test'..."
             echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n test -k "system-images;android-${{ matrix.api-level }};google_atd;x86_64" --force --device "pixel"
+          else
+            echo "AVD 'test' already exists."
           fi
+
+      - name: Fetch dependencies
+        run: |
+          flutter pub get
+          cd example && flutter pub get
 
       - name: Launch Emulator and Build App
         run: |

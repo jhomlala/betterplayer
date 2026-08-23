@@ -3,8 +3,8 @@ set -e
 
 # The script assumes it is run from the repository root.
 # If not, we try to find the root based on the script location.
-SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" \u0026\u0026 pwd )"
-REPO_ROOT="$( cd "$SCRIPT_DIR/../.." \u0026\u0026 pwd )"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_ROOT="$( cd "$SCRIPT_DIR/../.." && pwd )"
 
 if [ "$PWD" != "$REPO_ROOT" ]; then
     echo "Changing directory to repository root: $REPO_ROOT"
