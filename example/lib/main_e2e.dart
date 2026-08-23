@@ -3,6 +3,7 @@ import 'package:example/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart' as m3;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,9 +18,8 @@ class BetterPlayerE2EApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData.light(),
       localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
+        m3.GlobalMaterialLocalizations.delegate,
       ],
       home: const E2EPlayerPage(),
     );
