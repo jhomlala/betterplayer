@@ -41,11 +41,11 @@ class Constants {
   static String widevineLicenseUrl =
       'https://cwip-shaka-proxy.appspot.com/no_auth';
   static String fairplayHlsUrl =
-      'https://livesim2.dashif.org/livesim2/drm_EZDRM-1-key-cbcs/testpic_2s/Manifest.m3u8';
+      'https://fps.ezdrm.com/demo/video/ezdrm.m3u8';
   static String fairplayCertificateUrl =
-      'https://na-fps.ezdrm.com/demo/video/eleisure.cer';
+      'https://fps.ezdrm.com/demo/video/eleisure.cer';
   static String fairplayLicenseUrl =
-      'https://fps.ezdrm.com/api/licenses/auth?px=A552CE&assetID=01234567-89AB-CDEF-0123-456789ABCDEF';
+      'https://fps.ezdrm.com/api/licenses/09cc0377-6dd4-40cb-b09d-b582236e70fe';
   static String catImageUrl = 'https://picsum.photos/id/237/1000/1000';
   static String dashStreamUrl =
       'https://livesim.dashif.org/livesim/testpic_2s/multi_subs.mpd';

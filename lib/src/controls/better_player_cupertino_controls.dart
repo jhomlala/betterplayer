@@ -9,6 +9,7 @@ import 'package:better_player/src/controls/better_player_cupertino_loading_widge
 import 'package:better_player/src/controls/better_player_cupertino_next_video_widget.dart';
 import 'package:better_player/src/controls/better_player_cupertino_top_bar.dart';
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
+import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -70,16 +71,18 @@ class _BetterPlayerCupertinoControlsState
     _betterPlayerController = BetterPlayerController.of(context);
 
     if (_latestValue?.hasError == true) {
-      return ColoredBox(
-        color: Colors.black,
-        child: BetterPlayerCupertinoErrorWidget(
-          controller: _betterPlayerController!,
-          controlsConfiguration: _controlsConfiguration,
+      return BetterPlayerVideoAreaSemantics(
+        semanticsIdentifier: 'better_player_cupertino_video_area',
+        child: ColoredBox(
+          color: Colors.black,
+          child: BetterPlayerCupertinoErrorWidget(
+            controller: _betterPlayerController!,
+            controlsConfiguration: _controlsConfiguration,
+          ),
         ),
       );
     }
 
-    _betterPlayerController = BetterPlayerController.of(context);
     _controller = _betterPlayerController!.videoPlayerController;
     final backgroundColor = _controlsConfiguration.controlBarColor;
     final iconColor = _controlsConfiguration.iconsColor;
@@ -88,7 +91,6 @@ class _BetterPlayerCupertinoControlsState
         ? _controlsConfiguration.controlBarHeight
         : _controlsConfiguration.controlBarHeight + 10;
     const buttonPadding = 10.0;
-    final isFullScreen = _betterPlayerController?.isFullScreen == true;
 
     _wasLoading = isLoading(_latestValue);
     final controlsColumn = Column(
@@ -147,11 +149,10 @@ class _BetterPlayerCupertinoControlsState
         ),
       ],
     );
-    return Semantics(
-      label: 'Video player',
-      identifier: 'better_player_cupertino_video_area',
-      container: true,
-      button: true,
+
+    final isFullScreenSafe = _betterPlayerController?.isFullScreen == true;
+    return BetterPlayerVideoAreaSemantics(
+      semanticsIdentifier: 'better_player_cupertino_video_area',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () {
@@ -180,13 +181,15 @@ class _BetterPlayerCupertinoControlsState
         },
         child: AbsorbPointer(
           absorbing: controlsNotVisible,
-          child: isFullScreen
+          child: isFullScreenSafe
               ? SafeArea(child: controlsColumn)
               : controlsColumn,
         ),
       ),
     );
   }
+
+
 
   @override
   void dispose() {
