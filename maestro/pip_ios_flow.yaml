@@ -1,0 +1,14 @@
+appId: pl.hasoft.example
+---
+- launchApp
+- assertVisible: "Better Player Example"
+
+# Wait for video area
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_video_area"
+    timeout: 10000
+
+# Tap on PiP button
+- tapOn:
+    id: "better_player_cupertino_controls_pip_button"
