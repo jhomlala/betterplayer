@@ -1,6 +1,7 @@
 appId: pl.hasoft.example
 ---
-- launchApp
+- launchApp:
+    clearState: true
 - assertVisible: "Better Player Example"
 
 # Setup HLS Data Source
@@ -46,10 +47,22 @@ appId: pl.hasoft.example
 # Quality Selection test (Verify Auto + 5 additional qualities)
 - tapOn:
     id: "better_player_cupertino_controls_more_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_quality"
+    timeout: 5000
 - tapOn:
     id: "better_player_overflow_menu_quality"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_quality_auto"
+    timeout: 5000
 - assertVisible:
     id: "better_player_overflow_menu_quality_auto"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_quality_1"
+    timeout: 5000
 - assertVisible:
     id: "better_player_overflow_menu_quality_1"
 - assertVisible:

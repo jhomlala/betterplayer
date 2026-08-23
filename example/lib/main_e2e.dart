@@ -45,9 +45,6 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         DeviceOrientation.portraitDown,
         DeviceOrientation.portraitUp,
       ],
-      controlsConfiguration: BetterPlayerControlsConfiguration(
-        playerTheme: BetterPlayerTheme.cupertino,
-      ),
     );
     final betterPlayerDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
