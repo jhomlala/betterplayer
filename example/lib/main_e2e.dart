@@ -52,6 +52,12 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     final betterPlayerDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
       Constants.bugBuckBunnyVideoUrl,
+      notificationConfiguration: BetterPlayerNotificationConfiguration(
+        showNotification: true,
+        title: 'Elephant dream',
+        author: 'Some author',
+        imageUrl: Constants.catImageUrl,
+      ),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(betterPlayerDataSource);

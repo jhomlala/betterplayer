@@ -3,9 +3,6 @@ appId: pl.hasoft.example
 - launchApp
 - assertVisible: "Better Player Example"
 
-# Navigate to Notification Player
-- tapOn: "Notifications player"
-
 # Start playback (the player is autoPlay: false or controlled)
 - extendedWaitUntil:
     visible:
