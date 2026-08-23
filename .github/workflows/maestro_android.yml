@@ -21,8 +21,6 @@ jobs:
         api-level: [30]
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: better_player
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -87,10 +85,18 @@ jobs:
           # Install system image
           echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-${{ matrix.api-level }};google_atd;x86_64"
           
-          # Create AVD if not exists
-          if [ ! -f "$HOME/.android/avd/test.avd/config.ini" ]; then
+          # Create AVD if not exists or broken
+          if ! $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd | grep -q "test"; then
+            echo "Creating new AVD 'test'..."
             echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n test -k "system-images;android-${{ matrix.api-level }};google_atd;x86_64" --force --device "pixel"
+          else
+            echo "AVD 'test' already exists."
           fi
+
+      - name: Fetch dependencies
+        run: |
+          flutter pub get
+          cd example && flutter pub get
 
       - name: Launch Emulator and Build App
         run: |
@@ -99,7 +105,7 @@ jobs:
           EMU_PID=$!
           
           # Start build in background
-          cd better_player/example && flutter build apk --debug --target lib/main_e2e.dart &
+          cd example && flutter build apk --debug --target lib/main_e2e.dart &
           BUILD_PID=$!
           
           # Pass PIDs to the script
@@ -107,11 +113,11 @@ jobs:
           export EMU_PID=$EMU_PID
           
           # Return to root and run the sync script
-          cd ../..
+          cd ..
           # Debug: show current directory and files
           pwd
-          ls -R better_player/maestro/android/
-          bash better_player/maestro/android/ci_build_and_test.sh
+          ls -R maestro/android/
+          bash maestro/android/ci_build_and_test.sh
 
       - name: Upload Maestro Artifacts
         if: always()

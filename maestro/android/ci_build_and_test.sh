@@ -1,8 +1,15 @@
 #!/bin/bash
 set -e
 
-# We are in the root directory (where better_player/ is checked out)
-cd better_player
+# The script assumes it is run from the repository root.
+# If not, we try to find the root based on the script location.
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPO_ROOT="$( cd "$SCRIPT_DIR/../.." && pwd )"
+
+if [ "$PWD" != "$REPO_ROOT" ]; then
+    echo "Changing directory to repository root: $REPO_ROOT"
+    cd "$REPO_ROOT"
+fi
 
 # Build APK in background if not already started, or just wait for it
 # In the new workflow, we might start it before calling this script
