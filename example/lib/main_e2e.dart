@@ -5,7 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:material_ui/material_ui.dart' as m3;
 
-void main() => runApp(const BetterPlayerE2EApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const BetterPlayerE2EApp());
+}
 
 class BetterPlayerE2EApp extends StatelessWidget {
   const BetterPlayerE2EApp({super.key});

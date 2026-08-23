@@ -21,6 +21,15 @@ done
 
 echo "Emulator booted!"
 
+# Wait for system to settle
+echo "Waiting for system UI and package manager to settle (30s)..."
+sleep 30
+
+# Ensure screen is unlocked
+echo "Unlocking screen..."
+adb shell input keyevent 82
+adb shell wm dismiss-keyguard
+
 # Disable animations for faster testing
 echo "Disabling animations..."
 adb shell settings put global window_animation_scale 0.0

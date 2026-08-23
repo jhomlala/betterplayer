@@ -94,8 +94,8 @@ jobs:
 
       - name: Launch Emulator and Build App
         run: |
-          # Launch emulator in background
-          $ANDROID_HOME/emulator/emulator -avd test -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -accel on &
+          # Launch emulator in background with more RAM and stable GPU
+          $ANDROID_HOME/emulator/emulator -avd test -no-window -gpu swiftshader -noaudio -no-boot-anim -accel on -memory 3072 -no-snapshot-save &
           EMU_PID=$!
           
           # Start build in background
