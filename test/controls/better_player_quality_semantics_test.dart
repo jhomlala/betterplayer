@@ -233,5 +233,68 @@ void main() {
         );
       },
     );
+
+    testWidgets(
+      'Non-ASMS (normal MP4) with multiple resolutions has index-based semantics identifier',
+      (WidgetTester tester) async {
+        controller.setTracks([]);
+        controller.setDataSource(
+          BetterPlayerDataSource.network(
+            'video.mp4',
+            qualities: {
+              'LOW': 'low.mp4',
+              'HIGH': 'high.mp4',
+            },
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: MockControlsWidget(controller: controller),
+          ),
+        );
+
+        final state = tester.state<MockControlsState>(
+          find.byType(MockControlsWidget),
+        );
+
+        state.showQualities();
+        await tester.pumpAndSettle();
+
+        // Find the "LOW" item (index 0)
+        final lowItem = find.byWidgetPredicate(
+          (widget) =>
+              widget is BetterPlayerSelectionListItemWidget &&
+              widget.label == 'LOW',
+        );
+
+        expect(lowItem, findsOneWidget);
+
+        final lowWidget = tester.widget<BetterPlayerSelectionListItemWidget>(
+          lowItem,
+        );
+        expect(
+          lowWidget.semanticsIdentifier,
+          'better_player_overflow_menu_quality_0',
+        );
+
+        // Find the "HIGH" item (index 1)
+        final highItem = find.byWidgetPredicate(
+          (widget) =>
+              widget is BetterPlayerSelectionListItemWidget &&
+              widget.label == 'HIGH',
+        );
+
+        expect(highItem, findsOneWidget);
+
+        final highWidget = tester.widget<BetterPlayerSelectionListItemWidget>(
+          highItem,
+        );
+        expect(
+          highWidget.semanticsIdentifier,
+          'better_player_overflow_menu_quality_1',
+        );
+      },
+    );
   });
 }

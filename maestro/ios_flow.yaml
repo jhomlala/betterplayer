@@ -44,6 +44,10 @@ appId: pl.hasoft.example
     id: "better_player_cupertino_controls_more_button"
 - tapOn:
     id: "better_player_overflow_menu_quality"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_quality_auto"
+    timeout: 5000
 - tapOn:
     id: "better_player_overflow_menu_quality_auto"
 

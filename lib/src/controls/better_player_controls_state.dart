@@ -72,19 +72,31 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         controlsConfiguration: betterPlayerControlsConfiguration,
         onPlaybackSpeedClicked: () {
           Navigator.of(context).pop();
-          _showSpeedChooserWidget();
+          Future.delayed(
+            const Duration(milliseconds: 300),
+            _showSpeedChooserWidget,
+          );
         },
         onSubtitlesClicked: () {
           Navigator.of(context).pop();
-          _showSubtitlesSelectionWidget();
+          Future.delayed(
+            const Duration(milliseconds: 300),
+            _showSubtitlesSelectionWidget,
+          );
         },
         onQualitiesClicked: () {
           Navigator.of(context).pop();
-          showQualitiesSelectionWidget();
+          Future.delayed(
+            const Duration(milliseconds: 300),
+            showQualitiesSelectionWidget,
+          );
         },
         onAudioTracksClicked: () {
           Navigator.of(context).pop();
-          _showAudioTracksSelectionWidget();
+          Future.delayed(
+            const Duration(milliseconds: 300),
+            _showAudioTracksSelectionWidget,
+          );
         },
       ),
     ]);
@@ -238,6 +250,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     // normal videos
     final resolutions =
         betterPlayerController!.betterPlayerDataSource!.resolutions;
+    var resolutionIndex = 0;
     resolutions?.forEach((key, value) {
       final isSelected =
           value == betterPlayerController!.betterPlayerDataSource!.url;
@@ -250,8 +263,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.setResolution(value);
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
+          semanticsIdentifier:
+              'better_player_overflow_menu_quality_$resolutionIndex',
         ),
       );
+      resolutionIndex++;
     });
 
     if (children.isEmpty) {

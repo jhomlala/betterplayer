@@ -12,6 +12,9 @@
 * Added: Semantic identifiers for duration and remaining time widgets in Cupertino controls (`better_player_cupertino_controls_position_text`, `better_player_cupertino_controls_remaining_text`).
 * Added: Dedicated Maestro E2E flow for DRM (FairPlay) testing on iOS.
 * Updated: `hls_flow.yaml` to verify the presence of "Auto" and additional quality options.
+* Fixed: Race condition when launching sub-menus (quality, speed, etc.) from the overflow menu on iOS.
+* Updated: `ios_flow.yaml` with more robust quality selection verification.
+* Fixed: Missing semantic identifiers for resolution selection items in normal MP4 videos.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.
