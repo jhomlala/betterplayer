@@ -2,7 +2,7 @@ name: Maestro iOS flow
 
 on:
   push:
-    branches: [ master, 'refactor/maestro-*', 'feat/maestro-*' ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -16,11 +16,6 @@ permissions:
 jobs:
   maestro:
     runs-on: macos-14
-    if: |
-      github.event_name == 'push' ||
-      (github.event_name == 'pull_request' &&
-       !startsWith(github.head_ref, 'refactor/maestro-') &&
-       !startsWith(github.head_ref, 'feat/maestro-'))
     steps:
       - uses: actions/checkout@v4
         with:
