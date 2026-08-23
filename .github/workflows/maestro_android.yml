@@ -85,13 +85,8 @@ jobs:
           # Install system image
           echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "system-images;android-${{ matrix.api-level }};google_atd;x86_64"
           
-          # Create AVD if not exists or broken
-          if ! $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager list avd | grep -q "test"; then
-            echo "Creating new AVD 'test'..."
-            echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n test -k "system-images;android-${{ matrix.api-level }};google_atd;x86_64" --force --device "pixel"
-          else
-            echo "AVD 'test' already exists."
-          fi
+          # Force create AVD to ensure it's fresh and correctly located
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd -n test -k "system-images;android-${{ matrix.api-level }};google_atd;x86_64" --force
 
       - name: Fetch dependencies
         run: |
@@ -100,20 +95,19 @@ jobs:
 
       - name: Launch Emulator and Build App
         run: |
-          # Launch emulator in background with more RAM and stable GPU
-          $ANDROID_HOME/emulator/emulator -avd test -no-window -gpu swiftshader -noaudio -no-boot-anim -accel on -memory 3072 -no-snapshot-save &
+          # Launch emulator in background
+          # Use -no-snapshot-load to ensure it doesn't try to load a broken state
+          $ANDROID_HOME/emulator/emulator -avd test -no-window -gpu swiftshader -noaudio -no-boot-anim -accel on -memory 3072 -no-snapshot-save -no-snapshot-load &
           EMU_PID=$!
           
-          # Start build in background
-          cd example && flutter build apk --debug --target lib/main_e2e.dart &
+          # Start build in background (use subshell to avoid changing directory of main shell)
+          (cd example && flutter build apk --debug --target lib/main_e2e.dart) &
           BUILD_PID=$!
           
           # Pass PIDs to the script
           export BUILD_PID=$BUILD_PID
           export EMU_PID=$EMU_PID
           
-          # Return to root and run the sync script
-          cd ..
           # Debug: show current directory and files
           pwd
           ls -R maestro/android/

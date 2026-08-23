@@ -44,7 +44,10 @@ adb shell settings put global transition_animation_scale 0.0
 adb shell settings put global animator_duration_scale 0.0
 
 echo "Waiting for Flutter build to finish (PID: $BUILD_PID)..."
-wait $BUILD_PID
+if ! wait $BUILD_PID; then
+    echo "Error: Flutter build failed!"
+    exit 1
+fi
 
 APK_PATH="example/build/app/outputs/flutter-apk/app-debug.apk"
 if [ ! -f "$APK_PATH" ]; then
