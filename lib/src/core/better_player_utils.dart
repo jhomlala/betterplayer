@@ -56,8 +56,13 @@ class BetterPlayerUtils {
     return width > height ? width / height : height / width;
   }
 
+  /// Flag to enable/disable persistent logging. Can be toggled for E2E testing.
+  static bool enableLogging = !kReleaseMode;
+
   static void log(String logMessage) {
-    // ignore: avoid_print
-    print('[BetterPlayer] $logMessage');
+    if (enableLogging) {
+      // ignore: avoid_print
+      print('[BetterPlayer] $logMessage');
+    }
   }
 }

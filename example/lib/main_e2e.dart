@@ -56,6 +56,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(betterPlayerDataSource);
     _betterPlayerController.setControlsAlwaysVisible(true);
+    BetterPlayerUtils.enableLogging = true;
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
         setState(() {

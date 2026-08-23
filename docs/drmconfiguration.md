@@ -9,6 +9,8 @@ Currently, Better Player supports the following DRM mechanisms:
 *   **Token-Based (Authorization Header)**: Supported on both Android and iOS.
 *   **Widevine (License URL + Headers)**: Supported on Android.
 *   **FairPlay EZDRM (Certificate URL + License URL)**: Supported on iOS.
+    > [!IMPORTANT]
+    > **Real Device Required**: DRM playback (Widevine and FairPlay) typically requires a physical device. Playback on emulators or simulators is not supported and may fail with protocol errors.
 *   **ClearKey**: Supported on Android.
 
 ---
