@@ -108,6 +108,9 @@ jobs:
           
           # Return to root and run the sync script
           cd ../..
+          # Debug: show current directory and files
+          pwd
+          ls -R better_player/maestro/android/
           bash better_player/maestro/android/ci_build_and_test.sh
 
       - name: Upload Maestro Artifacts
