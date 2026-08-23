@@ -73,12 +73,13 @@
 
 ## Changelog Guidelines
 - **Content Policy**: Entries in `CHANGELOG.md` MUST ONLY be for the plugin itself (features, fixes, updates). DO NOT include DevOps, infrastructure, or CI/CD changes (e.g., workflow updates, script optimizations).
+- **History Preservation**: NEVER remove historical entries from `CHANGELOG.md`. Keep the complete history intact.
+- **Grouping**: Always group related or repetitive changes under a single concise entry in `## Unreleased` to avoid bloating.
 - **Labels**: Mark critical or API-breaking changes with the `[BREAKING_CHANGE]` label at the start of the line.
 - **Sections**: Use the following verbs to start entries:
   - `Added`: for new features.
   - `Updated`: for changes in existing functionality or dependencies.
   - `Fixed`: for bug fixes.
-- **Consolidation**: For repetitive or similar work (e.g., updating multiple links in examples, fixing multiple small UI issues), consolidate into a single concise entry in `CHANGELOG.md` rather than listing every minor change. Avoid adding new entries for every iteration of a fix.
 - **Attribution**: If the work was done by a contributor, append `(by @username)` or `(by Name)` to the end of the entry.
 
 ## Version Update Workflow
