@@ -57,8 +57,7 @@ class BetterPlayerUtils {
   }
 
   static void log(String logMessage) {
-    if (!kReleaseMode) {
-      debugPrint('[BetterPlayer] $logMessage');
-    }
+    // ignore: avoid_print
+    print('[BetterPlayer] $logMessage');
   }
 }

@@ -1,4 +1,5 @@
 // Flutter imports:
+import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialClickableWidget extends StatelessWidget {
@@ -24,7 +25,10 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       color: Colors.transparent,
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          BetterPlayerUtils.log('Tapped on: $semanticsIdentifier ($semanticsLabel)');
+          onTap();
+        },
         child: Semantics(
           label: semanticsLabel,
           identifier: semanticsIdentifier,
