@@ -25,9 +25,6 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
         DeviceOrientation.portraitDown,
         DeviceOrientation.portraitUp,
       ],
-      controlsConfiguration: BetterPlayerControlsConfiguration(
-        playerTheme: BetterPlayerTheme.cupertino,
-      ),
     );
     _betterPlayerDataSource = BetterPlayerDataSource(
       BetterPlayerDataSourceType.network,
@@ -35,7 +32,6 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(_betterPlayerDataSource);
-    _betterPlayerController.setControlsAlwaysVisible(true);
     super.initState();
   }
 

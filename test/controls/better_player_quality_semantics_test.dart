@@ -1,5 +1,4 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_selection_list_item_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
