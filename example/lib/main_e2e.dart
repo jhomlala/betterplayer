@@ -63,8 +63,16 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     super.dispose();
   }
 
-  void _setupDataSource(String url, BetterPlayerDataSourceType type) {
-    final betterPlayerDataSource = BetterPlayerDataSource(type, url);
+  void _setupDataSource(
+    String url,
+    BetterPlayerDataSourceType type, {
+    BetterPlayerDrmConfiguration? drmConfiguration,
+  }) {
+    final betterPlayerDataSource = BetterPlayerDataSource(
+      type,
+      url,
+      drmConfiguration: drmConfiguration,
+    );
     _betterPlayerController.setupDataSource(betterPlayerDataSource);
   }
 
@@ -101,6 +109,21 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                     BetterPlayerDataSourceType.network,
                   ),
                   child: const Text('HLS'),
+                ),
+              ),
+              Semantics(
+                identifier: 'better_player_e2e_setup_drm',
+                child: ElevatedButton(
+                  onPressed: () => _setupDataSource(
+                    Constants.fairplayHlsUrl,
+                    BetterPlayerDataSourceType.network,
+                    drmConfiguration: BetterPlayerDrmConfiguration(
+                      drmType: BetterPlayerDrmType.fairplay,
+                      licenseUrl: Constants.fairplayLicenseUrl,
+                      certificateUrl: Constants.fairplayCertificateUrl,
+                    ),
+                  ),
+                  child: const Text('DRM'),
                 ),
               ),
             ],

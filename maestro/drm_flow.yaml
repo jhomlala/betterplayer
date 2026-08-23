@@ -1,0 +1,25 @@
+appId: pl.hasoft.example
+---
+- launchApp
+- assertVisible: "Better Player Example"
+
+# Setup DRM Data Source (FairPlay)
+- tapOn:
+    id: "better_player_e2e_setup_drm"
+
+# Check video area renders
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_video_area"
+    timeout: 20000
+
+# Check controls are visible
+- assertVisible:
+    id: "better_player_cupertino_controls_play_pause_button"
+
+# Verify data source is loaded (duration is not -00:00)
+- extendedWaitUntil:
+    notVisible:
+      id: "better_player_cupertino_controls_remaining_text"
+      text: "-00:00"
+    timeout: 15000

@@ -9,6 +9,8 @@
 * Updated: CI/CD workflow to avoid redundant runs when a Pull Request is open for Maestro-related branches.
 * Updated: Applied standard Dart formatting to `better_player_controls_state.dart`.
 * Fixed: Refactored "Auto" quality detection in HLS/ASMS streams to be more robust, ensuring the `better_player_overflow_menu_quality_auto` semantic identifier is correctly applied.
+* Added: Semantic identifiers for duration and remaining time widgets in Cupertino controls (`better_player_cupertino_controls_position_text`, `better_player_cupertino_controls_remaining_text`).
+* Added: Dedicated Maestro E2E flow for DRM (FairPlay) testing on iOS.
 * Updated: `hls_flow.yaml` to verify the presence of "Auto" and additional quality options.
 
 ## 0.8.0

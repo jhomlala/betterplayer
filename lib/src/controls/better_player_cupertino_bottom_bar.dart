@@ -283,9 +283,15 @@ class _BetterPlayerCupertinoPositionWidget extends StatelessWidget {
         : Duration.zero;
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: Text(
-        BetterPlayerUtils.formatDuration(position),
-        style: TextStyle(color: controlsConfiguration.textColor, fontSize: 12),
+      child: Semantics(
+        identifier: 'better_player_cupertino_controls_position_text',
+        child: Text(
+          BetterPlayerUtils.formatDuration(position),
+          style: TextStyle(
+            color: controlsConfiguration.textColor,
+            fontSize: 12,
+          ),
+        ),
       ),
     );
   }
@@ -307,9 +313,15 @@ class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
         : Duration.zero;
     return Padding(
       padding: const EdgeInsets.only(right: 12),
-      child: Text(
-        '-${BetterPlayerUtils.formatDuration(remaining)}',
-        style: TextStyle(color: controlsConfiguration.textColor, fontSize: 12),
+      child: Semantics(
+        identifier: 'better_player_cupertino_controls_remaining_text',
+        child: Text(
+          '-${BetterPlayerUtils.formatDuration(remaining)}',
+          style: TextStyle(
+            color: controlsConfiguration.textColor,
+            fontSize: 12,
+          ),
+        ),
       ),
     );
   }
