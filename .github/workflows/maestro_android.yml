@@ -10,12 +10,15 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  MAESTRO_CLI_NO_ANALYTICS: 1
+
 jobs:
   maestro:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        api-level: [34]
+        api-level: [30]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -33,17 +36,50 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Cache Pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache Maestro
+        uses: actions/cache@v4
+        with:
+          path: ~/.maestro
+          key: ${{ runner.os }}-maestro
+          restore-keys: |
+            ${{ runner.os }}-maestro-
+
       - name: Install Maestro
         run: |
-          curl -Ls "https://get.maestro.mobile.dev" | bash
+          if [ ! -d "$HOME/.maestro/bin" ]; then
+            curl -Ls "https://get.maestro.mobile.dev" | bash
+          fi
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: Build Example App
-        run: |
-          cd better_player/example
-          flutter build apk --debug --target lib/main_e2e.dart
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}-${{ runner.os }}
 
-      - name: Run Emulator
+      - name: Run Emulator and Build App
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: ${{ matrix.api-level }}
@@ -51,9 +87,25 @@ jobs:
           arch: x86_64
           profile: pixel
           disable-animations: true
-          force-avd-creation: true
+          force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           script: |
+            # Build APK in background while emulator is booting (or just finishing boot)
+            (cd better_player/example && flutter build apk --debug --target lib/main_e2e.dart) &
+            BUILD_PID=$!
+            
+            # Wait for boot to complete (runner does this, but we ensure we wait for build)
+            echo "Waiting for build to finish..."
+            wait $BUILD_PID
+            
+            # Install and test
             adb install better_player/example/build/app/outputs/flutter-apk/app-debug.apk
             cd better_player
             maestro test maestro/android/
+
+      - name: Upload Maestro Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-android-debug-artifacts
+          path: ~/.maestro/tests/
