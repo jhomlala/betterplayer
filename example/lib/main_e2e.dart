@@ -89,6 +89,15 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     _betterPlayerController.setupDataSource(betterPlayerDataSource);
   }
 
+  Widget _buildDebugLine(String label, String? value) {
+    return Text(
+      '$label: ${value ?? 'N/A'}',
+      style: const TextStyle(fontSize: 9, fontFamily: 'Courier'),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,29 +114,54 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
               padding: const EdgeInsets.all(8),
               child: Semantics(
                 identifier: 'better_player_e2e_error_text',
-                child: Column(
-                  children: [
-                    Text(
-                      'Error: $_errorDescription',
-                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'DataSource: ${_betterPlayerController.betterPlayerDataSource?.url}',
-                      style: const TextStyle(fontSize: 10),
-                    ),
-                    Text(
-                      'DRM: ${_betterPlayerController.betterPlayerDataSource?.drmConfiguration?.drmType}',
-                      style: const TextStyle(fontSize: 10),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Status: Init: ${_betterPlayerController.videoPlayerController?.value.initialized}, '
-                      'Buffering: ${_betterPlayerController.videoPlayerController?.value.isBuffering}, '
-                      'Playing: ${_betterPlayerController.videoPlayerController?.value.isPlaying}',
-                      style: const TextStyle(fontSize: 10, color: Colors.blue),
-                    ),
-                  ],
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    border: Border.all(color: Colors.red),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Error: $_errorDescription',
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                      if (_errorDescription?.contains('1718449215') ?? false)
+                        const Text(
+                          'HINT: FairPlay Handshake Error (Likely Simulator or Certificate issue)',
+                          style: TextStyle(
+                            color: Colors.deepOrange,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      const SizedBox(height: 8),
+                      _buildDebugLine('URL', _betterPlayerController.betterPlayerDataSource?.url),
+                      _buildDebugLine(
+                        'Cert',
+                        _betterPlayerController
+                            .betterPlayerDataSource?.drmConfiguration?.certificateUrl,
+                      ),
+                      _buildDebugLine(
+                        'License',
+                        _betterPlayerController
+                            .betterPlayerDataSource?.drmConfiguration?.licenseUrl,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Status: Init: ${_betterPlayerController.videoPlayerController?.value.initialized}, '
+                        'Buffering: ${_betterPlayerController.videoPlayerController?.value.isBuffering}, '
+                        'Playing: ${_betterPlayerController.videoPlayerController?.value.isPlaying}',
+                        style: const TextStyle(fontSize: 10, color: Colors.blue),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
