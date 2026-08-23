@@ -89,19 +89,7 @@ jobs:
           disable-animations: true
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          script: |
-            # Build APK in background while emulator is booting (or just finishing boot)
-            (cd better_player/example && flutter build apk --debug --target lib/main_e2e.dart) &
-            BUILD_PID=$!
-            
-            # Wait for boot to complete (runner does this, but we ensure we wait for build)
-            echo "Waiting for build to finish..."
-            wait $BUILD_PID
-            
-            # Install and test
-            adb install better_player/example/build/app/outputs/flutter-apk/app-debug.apk
-            cd better_player
-            maestro test maestro/android/
+          script: bash -c "(cd better_player/example && flutter build apk --debug --target lib/main_e2e.dart) & BUILD_PID=\$!; echo \"Waiting for build to finish (PID:\$BUILD_PID)...\"; wait \$BUILD_PID; if [ ! -f better_player/example/build/app/outputs/flutter-apk/app-debug.apk ]; then echo \"APK not found!\"; exit 1; fi; adb install better_player/example/build/app/outputs/flutter-apk/app-debug.apk; cd better_player && maestro test maestro/android/"
 
       - name: Upload Maestro Artifacts
         if: always()
