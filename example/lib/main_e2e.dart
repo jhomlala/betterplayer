@@ -31,6 +31,7 @@ class E2EPlayerPage extends StatefulWidget {
 
 class _E2EPlayerPageState extends State<E2EPlayerPage> {
   late BetterPlayerController _betterPlayerController;
+  String? _errorDescription;
 
   @override
   void initState() {
@@ -55,6 +56,18 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(betterPlayerDataSource);
     _betterPlayerController.setControlsAlwaysVisible(true);
+    _betterPlayerController.addEventsListener((event) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
+        setState(() {
+          _errorDescription =
+              _betterPlayerController.videoPlayerController?.value.errorDescription;
+        });
+      } else if (event.betterPlayerEventType == BetterPlayerEventType.setupDataSource) {
+        setState(() {
+          _errorDescription = null;
+        });
+      }
+    });
   }
 
   @override
@@ -87,6 +100,17 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
           ),
+          if (_errorDescription != null)
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Semantics(
+                identifier: 'better_player_e2e_error_text',
+                child: Text(
+                  'Error: $_errorDescription',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 8,
