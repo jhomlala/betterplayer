@@ -105,9 +105,29 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
               padding: const EdgeInsets.all(8),
               child: Semantics(
                 identifier: 'better_player_e2e_error_text',
-                child: Text(
-                  'Error: $_errorDescription',
-                  style: const TextStyle(color: Colors.red),
+                child: Column(
+                  children: [
+                    Text(
+                      'Error: $_errorDescription',
+                      style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'DataSource: ${_betterPlayerController.betterPlayerDataSource?.url}',
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                    Text(
+                      'DRM: ${_betterPlayerController.betterPlayerDataSource?.drmConfiguration?.drmType}',
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Status: Init: ${_betterPlayerController.videoPlayerController?.value.initialized}, '
+                      'Buffering: ${_betterPlayerController.videoPlayerController?.value.isBuffering}, '
+                      'Playing: ${_betterPlayerController.videoPlayerController?.value.isPlaying}',
+                      style: const TextStyle(fontSize: 10, color: Colors.blue),
+                    ),
+                  ],
                 ),
               ),
             ),
