@@ -89,7 +89,7 @@ jobs:
           disable-animations: true
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          script: bash -c "(cd better_player/example && flutter build apk --debug --target lib/main_e2e.dart) & BUILD_PID=\$!; echo \"Waiting for build to finish (PID:\$BUILD_PID)...\"; wait \$BUILD_PID; if [ ! -f better_player/example/build/app/outputs/flutter-apk/app-debug.apk ]; then echo \"APK not found!\"; exit 1; fi; adb install better_player/example/build/app/outputs/flutter-apk/app-debug.apk; cd better_player && maestro test maestro/android/"
+          script: bash better_player/maestro/android/ci_build_and_test.sh
 
       - name: Upload Maestro Artifacts
         if: always()
