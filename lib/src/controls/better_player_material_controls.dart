@@ -173,8 +173,6 @@ class _BetterPlayerMaterialControlsState
     );
   }
 
-
-
   @override
   void dispose() {
     _dispose();

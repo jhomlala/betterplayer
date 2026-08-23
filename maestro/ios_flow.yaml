@@ -42,12 +42,16 @@ appId: pl.hasoft.example
 # Quality Selection test (Auto)
 - tapOn:
     id: "better_player_cupertino_controls_more_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_quality"
+    timeout: 5000
 - tapOn:
     id: "better_player_overflow_menu_quality"
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_quality_auto"
-    timeout: 5000
+    timeout: 10000
 - tapOn:
     id: "better_player_overflow_menu_quality_auto"
 

@@ -189,8 +189,6 @@ class _BetterPlayerCupertinoControlsState
     );
   }
 
-
-
   @override
   void dispose() {
     _dispose();

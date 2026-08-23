@@ -10,8 +10,9 @@
 * Updated: Applied standard Dart formatting to `better_player_controls_state.dart`.
 * Fixed: Refactored "Auto" quality detection in HLS/ASMS streams to be more robust, ensuring the `better_player_overflow_menu_quality_auto` semantic identifier is correctly applied.
 * Added: Semantic identifiers for duration and remaining time widgets in Cupertino controls (`better_player_cupertino_controls_position_text`, `better_player_cupertino_controls_remaining_text`).
-* Added: Dedicated Maestro E2E flow for DRM (FairPlay) testing on iOS.
 * Updated: `hls_flow.yaml` to verify the presence of "Auto" and additional quality options.
+* Removed: DRM (FairPlay) E2E example and flow as it is incompatible with iOS Simulator environments.
+* Fixed: Race condition when launching sub-menus (quality, speed, etc.) from the overflow menu on iOS.
 * Fixed: Race condition when launching sub-menus (quality, speed, etc.) from the overflow menu on iOS.
 * Updated: `ios_flow.yaml` with more robust quality selection verification.
 * Fixed: Missing semantic identifiers for resolution selection items in normal MP4 videos.
