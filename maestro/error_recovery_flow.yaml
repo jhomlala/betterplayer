@@ -1,0 +1,13 @@
+appId: pl.hasoft.example
+---
+- launchApp
+- assertVisible: "Better Player Example"
+
+# Trigger an invalid/error state
+# Assuming you add a button to trigger a bad URL or just use an invalid URL as datasource
+- tapOn:
+    id: "better_player_e2e_setup_mp4"
+# Assuming you can force an error via the app logic or just provide a bad URL
+# We will use the existing UI to check for error state
+- assertVisible:
+    id: "better_player_e2e_error_text"

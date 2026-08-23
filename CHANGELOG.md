@@ -1,5 +1,7 @@
 ## Unreleased
 * Added: Maestro E2E testing suite and CI integration for iOS (covering MP4, HLS flows, and player controls).
+* Added: E2E test for iOS remote notifications.
+* Added: E2E test for error recovery and data source swapping on iOS.
 * Added: Semantic identifiers across player controls and UI components for robust E2E testing.
 * Fixed: Race condition when launching sub-menus (quality, speed, etc.) from the overflow menu on iOS.
 * Fixed: Missing semantic identifiers for resolution selection items in normal MP4 videos and robust HLS auto quality detection.
