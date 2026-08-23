@@ -95,7 +95,14 @@ jobs:
           force-avd-creation: false
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim
-          script: maestro test maestro/android/
+          script: |
+            APK_PATH="example/build/app/outputs/flutter-apk/app-debug.apk"
+            if [ ! -f "$APK_PATH" ]; then
+              echo "Error: APK not found at $APK_PATH"
+              exit 1
+            fi
+            adb install "$APK_PATH"
+            maestro test maestro/android/
 
       - name: Upload Maestro Artifacts
         if: always()
