@@ -4,7 +4,6 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_overflow_menu.dart';
 import 'package:better_player/src/controls/better_player_selection_list_item_widget.dart';
-import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
@@ -296,7 +295,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       );
     }
 
-    BetterPlayerUtils.log('Showing qualities menu with ${children.length} items');
+    BetterPlayerUtils.log(
+      'Showing qualities menu with ${children.length} items',
+    );
     _showModalBottomSheet(children);
   }
 

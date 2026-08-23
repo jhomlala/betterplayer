@@ -59,10 +59,13 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
         setState(() {
-          _errorDescription =
-              _betterPlayerController.videoPlayerController?.value.errorDescription;
+          _errorDescription = _betterPlayerController
+              .videoPlayerController
+              ?.value
+              .errorDescription;
         });
-      } else if (event.betterPlayerEventType == BetterPlayerEventType.setupDataSource) {
+      } else if (event.betterPlayerEventType ==
+          BetterPlayerEventType.setupDataSource) {
         setState(() {
           _errorDescription = null;
         });
@@ -133,12 +136,18 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      _buildDebugLine('URL', _betterPlayerController.betterPlayerDataSource?.url),
+                      _buildDebugLine(
+                        'URL',
+                        _betterPlayerController.betterPlayerDataSource?.url,
+                      ),
                       Text(
                         'Status: Init: ${_betterPlayerController.videoPlayerController?.value.initialized}, '
                         'Buffering: ${_betterPlayerController.videoPlayerController?.value.isBuffering}, '
                         'Playing: ${_betterPlayerController.videoPlayerController?.value.isPlaying}',
-                        style: const TextStyle(fontSize: 10, color: Colors.blue),
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.blue,
+                        ),
                       ),
                     ],
                   ),
