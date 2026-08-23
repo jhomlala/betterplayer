@@ -12,3 +12,13 @@ appId: pl.hasoft.example
 # Tap on PiP button
 - tapOn:
     id: "better_player_cupertino_controls_pip_button"
+
+# Press home button to force the app to background (triggering automatic PiP)
+- pressKey: Home
+
+# Assert the existence of the iOS system PiP windows/buttons
+# Note: System strings can vary slightly by iOS version, but common ones include:
+- assertVisible:
+    text: "Pause" # The overlay pause button
+- assertVisible:
+    text: "Close" # The 'X' button to dismiss the PiP window
