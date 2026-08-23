@@ -13,6 +13,9 @@ appId: pl.hasoft.example
 - tapOn:
     id: "better_player_cupertino_controls_pip_button"
 
+- waitForAnimationToEnd:
+    timeout: 5000
+
 # Press home button to force the app to background (triggering automatic PiP)
 - pressKey: Home
 
