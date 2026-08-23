@@ -94,8 +94,15 @@ jobs:
           arch: x86_64
           force-avd-creation: false
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 3072
-          script: adb install example/build/app/outputs/flutter-apk/app-debug.apk && maestro test maestro/android/
+          emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 4096 -cache-size 2048
+          script: |
+            # Wait for package manager to be ready
+            until adb shell pm list packages > /dev/null 2>&1; do
+              echo "Waiting for package manager..."
+              sleep 5
+            done
+            adb install example/build/app/outputs/flutter-apk/app-debug.apk
+            maestro test maestro/android/
 
       - name: Upload Maestro Artifacts
         if: always()

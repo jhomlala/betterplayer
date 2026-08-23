@@ -5,7 +5,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_app_bar_title"
-    timeout: 30000
+    timeout: 60000
 - assertVisible:
     id: "better_player_e2e_app_bar_title"
 
