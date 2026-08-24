@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkbetterplayer_docs||=[]).push([[742],{7153(e){e.exports=JSON.parse('{"name":"docusaurus-plugin-content-docs","id":"default"}')}}]);
