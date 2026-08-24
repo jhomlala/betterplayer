@@ -103,6 +103,7 @@ class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("E2E: Building BetterPlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)");
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,
       semanticsLabel: name,

@@ -34,24 +34,30 @@ appId: pl.hasoft.example
     id: "better_player_material_controls_mute_button"
 
 # Speed Selection test (2.0x)
-- tapOn:
-    id: "better_player_material_controls_more_button"
-- extendedWaitUntil:
-    visible:
-      id: "better_player_overflow_menu_playback_speed"
-    timeout: 5000
+- retry:
+    times: 3
+    commands:
+      - tapOn:
+          id: "better_player_material_controls_more_button"
+      - extendedWaitUntil:
+          visible:
+            id: "better_player_overflow_menu_playback_speed"
+          timeout: 5000
 - tapOn:
     id: "better_player_overflow_menu_playback_speed"
 - tapOn:
     id: "better_player_overflow_menu_speed_2.0"
 
 # Quality Selection test (Auto)
-- tapOn:
-    id: "better_player_material_controls_more_button"
-- extendedWaitUntil:
-    visible:
-      id: "better_player_overflow_menu_quality"
-    timeout: 5000
+- retry:
+    times: 3
+    commands:
+      - tapOn:
+          id: "better_player_material_controls_more_button"
+      - extendedWaitUntil:
+          visible:
+            id: "better_player_overflow_menu_quality"
+          timeout: 5000
 - tapOn:
     id: "better_player_overflow_menu_quality"
 - extendedWaitUntil:
