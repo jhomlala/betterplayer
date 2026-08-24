@@ -65,7 +65,7 @@ jobs:
         run: if [ ! -d "$HOME/.maestro/bin" ]; then curl -Ls "https://get.maestro.mobile.dev" | bash; fi; echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
       - name: Setup Android SDK and Emulator
-        run: sudo chmod 666 /dev/kvm; sudo gpasswd -a $USER kvm
+        run: sudo chmod 666 /dev/kvm
 
       - name: Fetch dependencies
         run: flutter pub get; cd example; flutter pub get
@@ -81,7 +81,7 @@ jobs:
           arch: x86_64
           force-avd-creation: false
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 4096 -cache-size 2048
+          emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 4096 -cache-size 2048 -accel on
           script: until adb shell pm list packages > /dev/null 2>&1; do echo "Waiting for package manager..."; sleep 5; done; adb shell input keyevent 82; adb install example/build/app/outputs/flutter-apk/app-debug.apk; maestro test maestro/android/
 
       - name: Upload Maestro Artifacts
