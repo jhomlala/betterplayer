@@ -1,4 +1,5 @@
 ## Unreleased
+* Fixed: Documentation CI failure by correcting the publish directory path.
 * Fixed: Documentation CI failure by updating Node.js to version 20.
 * Fixed: Documentation CI failure by adding missing `package-lock.json` file.
 * Refactored: Renamed Docusaurus documentation files to snake_case and updated their internal IDs for better consistency and URL structure.
