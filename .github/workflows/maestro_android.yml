@@ -68,15 +68,11 @@ jobs:
           fi
           echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
-      - name: AVD cache
-        uses: actions/cache@v4
-        id: avd-cache
-        with:
-          path: |
-            ~/.android/avd/*
-            ~/.android/adb*
-          key: avd-${{ matrix.api-level }}-${{ runner.os }}
-
+      - name: Setup Android SDK and Emulator
+        run: |
+          # Ensure KVM permissions
+          sudo chmod 666 /dev/kvm
+          
       - name: Fetch dependencies
         run: |
           flutter pub get
@@ -95,7 +91,18 @@ jobs:
           force-avd-creation: false
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 4096 -cache-size 2048
-          script: until adb shell pm list packages > /dev/null 2>&1; do echo "Waiting for package manager..."; sleep 5; done; adb install example/build/app/outputs/flutter-apk/app-debug.apk && maestro test maestro/android/
+          script: |
+            # Wait for package manager to be ready
+            until adb shell pm list packages > /dev/null 2>&1; do
+              echo "Waiting for package manager..."
+              sleep 5
+            done
+            # Ensure screen is unlocked
+            adb shell input keyevent 82
+            adb install example/build/app/outputs/flutter-apk/app-debug.apk
+            # Wait for app to be fully recognized by the system
+            sleep 10
+            maestro test maestro/android/
 
       - name: Upload Maestro Artifacts
         if: always()
