@@ -14,6 +14,6 @@ betterPlayerController!.setupDataSource(source)
 })
 .catchError((error) async {
   // Failed to load data source (e.g., invalid URL)
-  print("Failed to load video: $error");
+  BetterPlayerUtils.log("Failed to load video: $error");
 });
 ```

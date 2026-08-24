@@ -10,7 +10,7 @@ controlsConfiguration: BetterPlayerControlsConfiguration(
         BetterPlayerOverflowMenuItem(
             Icons.account_circle_rounded,
             "User Profile",
-            () => print("Custom Action Executed!"),
+            () => BetterPlayerUtils.log("Custom Action Executed!"),
         )
     ],
 ),
