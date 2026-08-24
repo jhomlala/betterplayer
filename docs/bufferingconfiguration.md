@@ -1,10 +1,16 @@
+---
+id: bufferingconfiguration
+title: Buffering Configuration
+---
+
 # Buffering Configuration
 
 You can fine-tune the video buffering behavior using the `BetterPlayerBufferingConfiguration` class. This allows you to optimize the playback experience based on network conditions or specific application requirements.
 
-> [!NOTE]
-> Buffering configuration is currently available only on Android.
+:::note
+Buffering configuration is currently available only on Android.
 
+:::
 ## Implementation Example
 
 ```dart

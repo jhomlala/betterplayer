@@ -1,3 +1,8 @@
+---
+id: playlistconfiguration
+title: Playlist Configuration
+---
+
 # Playlist Configuration
 
 You can customize the behavior of the `BetterPlayerPlaylist` widget using the `BetterPlayerPlaylistConfiguration` class.

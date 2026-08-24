@@ -1,3 +1,8 @@
+---
+id: datasourceconfiguration
+title: Data Source Configuration
+---
+
 # Data Source Configuration
 
 The `BetterPlayerDataSource` class defines all necessary information for a single video source within your application.
@@ -24,18 +29,20 @@ We recommend using the provided factory methods for initialization:
 *   **`headers`**: A map of custom HTTP headers for network requests.
 *   **`bytes`**: The byte array for memory sources.
 
-> [!TIP]
-> When using `BetterPlayerDataSource.memory`, providing a `videoExtension` (e.g., `"mp4"`) is highly recommended. It helps the underlying player engine correctly identify the media type when the byte stream is processed.
+:::tip
+When using `BetterPlayerDataSource.memory`, providing a `videoExtension` (e.g., `"mp4"`) is highly recommended. It helps the underlying player engine correctly identify the media type when the byte stream is processed.
 
+:::
 ### Adaptive Streaming (ASMS)
 *   **`useAsmsSubtitles`**: Enables HLS/DASH manifest-based subtitles.
 *   **`useAsmsTracks`**: Enables HLS/DASH manifest-based video tracks.
 *   **`useAsmsAudioTracks`**: Enables HLS/DASH manifest-based audio tracks.
 *   **`hlsTrackNames`**: Custom names for HLS tracks.
 
-> [!TIP]
-> You can programmatically control adaptive tracks. Use `controller.betterPlayerAsmsTracks` to retrieve available qualities and `controller.setTrack(track)` to force a specific one. For multi-language content, use `controller.betterPlayerAsmsAudioTracks` and `controller.setAudioTrack(audioTrack)`.
+:::tip
+You can programmatically control adaptive tracks. Use `controller.betterPlayerAsmsTracks` to retrieve available qualities and `controller.setTrack(track)` to force a specific one. For multi-language content, use `controller.betterPlayerAsmsAudioTracks` and `controller.setAudioTrack(audioTrack)`.
 
+:::
 ### Features & Metadata
 *   **`liveStream`**: Flag indicating the source is a live stream.
 *   **`resolutions`**: Alternative resolutions for standard video files.

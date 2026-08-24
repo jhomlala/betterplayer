@@ -1,3 +1,8 @@
+---
+id: events
+title: Event Listening
+---
+
 # Event Listening
 
 Better Player allows you to monitor a wide range of player events, enabling you to react to playback changes programmatically.
@@ -31,5 +36,6 @@ _betterPlayerController.addEventsListener((event) {
 });
 ```
 
-> [!NOTE]
-> Event listeners are automatically removed when the `BetterPlayerController` is disposed.
+:::note
+Event listeners are automatically removed when the `BetterPlayerController` is disposed.
+:::

@@ -1,3 +1,8 @@
+---
+id: generalconfiguration
+title: General Configuration
+---
+
 # General Configuration
 
 The `BetterPlayerConfiguration` class serves as the primary way to define the behavior and appearance of the player. This configuration object is passed to the `BetterPlayerController` during its initialization.
@@ -43,9 +48,10 @@ Below is a detailed list of available options within `BetterPlayerConfiguration`
 *   **`autoDetectFullscreenAspectRatio`**: Automatically determines the fullscreen aspect ratio.
 *   **`routePageBuilder`**: A custom `RoutePageBuilder` for the fullscreen view.
 
-> [!TIP]
-> Enabling `autoDetectFullscreenDeviceOrientation` is highly recommended for apps with mixed content. It automatically switches to portrait fullscreen for vertical videos and landscape for horizontal ones, providing a superior user experience with zero manual logic.
+:::tip
+Enabling `autoDetectFullscreenDeviceOrientation` is highly recommended for apps with mixed content. It automatically switches to portrait fullscreen for vertical videos and landscape for horizontal ones, providing a superior user experience with zero manual logic.
 
+:::
 ### Advanced Features
 *   **`subtitlesConfiguration`**: Defines the styling and behavior of subtitles.
 *   **`controlsConfiguration`**: Deep customization of the player's UI controls.

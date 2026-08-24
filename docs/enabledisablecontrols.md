@@ -1,3 +1,8 @@
+---
+id: enabledisablecontrols
+title: Toggle Controls
+---
+
 # Toggle Controls
 
 Better Player allows you to programmatically manage the visibility and behavior of the player controls at runtime.

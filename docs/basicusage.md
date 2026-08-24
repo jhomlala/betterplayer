@@ -1,3 +1,8 @@
+---
+id: basicusage
+title: basicusage
+---
+
 # Basic Usage Guide
 
 Better Player provides multiple ways to integrate video playback, ranging from quick setups to highly customizable implementations.

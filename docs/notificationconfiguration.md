@@ -1,13 +1,15 @@
+---
+id: notificationconfiguration
+title: Notification Configuration
+---
+
 # Notification Configuration
 
 Better Player supports native platform notifications, allowing users to control playback from their device's lock screen or notification area.
 
-<table align="center">
-  <tr>
-    <td><img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/android_notification.png"><br>Android</td>
-    <td><img width="250px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/ios_notification.png"><br>iOS</td>
-  </tr>
-</table>
+| Android | iOS |
+| :---: | :---: |
+| ![Android Notification](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/android_notification.png) | ![iOS Notification](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/ios_notification.png) |
 
 ## Implementation
 
@@ -40,9 +42,9 @@ BetterPlayerDataSource dataSource = BetterPlayerDataSource(
 ### Background Playback
 To allow playback to continue after the user leaves the application, ensure `handleLifecycle` is set to `false` in your `BetterPlayerConfiguration`.
 
-> [!TIP]
-> Setting `handleLifecycle: false` is essential for audio-only apps or video apps that support background audio, as it prevents the system from automatically pausing playback when the app is minimized.
+:::tip
+Setting `handleLifecycle: false` is essential for audio-only apps or video apps that support background audio, as it prevents the system from automatically pausing playback when the app is minimized.
+:::
 
 ### Custom Activity Name (Android)
 By default, Better Player tries to launch the main activity when the notification is tapped. If your app has a specific entry point or you want to route the user to a specific screen, provide the `activityName` (e.g., `"com.your.package.MainActivity"`).
-

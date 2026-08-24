@@ -1,3 +1,8 @@
+---
+id: playlistplayerusage
+title: Playlist Player Usage
+---
+
 # Playlist Support
 
 Better Player includes a specialized `BetterPlayerPlaylist` widget designed to play a sequence of videos one after another.

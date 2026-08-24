@@ -1,3 +1,8 @@
+---
+id: overriddenduration
+title: Overridden Duration
+---
+
 # Overridden Duration
 
 The `overriddenDuration` parameter allows you to define a custom end point for video playback. This is particularly useful for scenarios where you want to present only a specific segment of a longer video.
