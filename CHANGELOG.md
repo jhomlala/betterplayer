@@ -1,8 +1,6 @@
 ## Unreleased
 * Updated: Optimized Android E2E CI workflow using `android-emulator-runner` for improved stability.
-* Added: Maestro E2E HLS flow testing suite for Android.
-* Added: Maestro E2E testing suite and CI integration for Android (covering Material controls).
-* Added: Maestro E2E testing suite and CI integration for iOS (covering Cupertino controls and MP4, HLS flows).
+* Added: Maestro E2E testing suites and CI integration for Android (covering HLS and Material controls) and iOS (covering Cupertino controls and MP4, HLS flows).
 * Added: Semantic identifiers across player controls and UI components for robust E2E testing.
 * Fixed: Race condition when launching sub-menus (quality, speed, etc.) from the overflow menu on iOS.
 * Fixed: Missing semantic identifiers for resolution selection items in normal MP4 videos and robust HLS auto quality detection.
