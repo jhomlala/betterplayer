@@ -1,3 +1,8 @@
+---
+id: install
+title: Installation
+---
+
 # Installation and Configuration
 
 Follow these steps to integrate Better Player into your Flutter application.

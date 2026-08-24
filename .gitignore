@@ -74,6 +74,8 @@ coverage/
 
 # Artifacts
 .artifacts/
+node_modules/
+.docusaurus/
 
 # Exceptions to above rules.
 !**/ios/**/default.mode1v3
