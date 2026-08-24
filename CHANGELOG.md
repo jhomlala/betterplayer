@@ -1,11 +1,10 @@
 ## Unreleased
-* Updated: Optimized Android E2E CI workflow using `android-emulator-runner` for improved stability.
-* Added: Maestro E2E testing suites and CI integration for Android (covering HLS and Material controls) and iOS (covering Cupertino controls and MP4, HLS flows).
+* Added: Maestro E2E testing suite and CI integration for Android and iOS.
 * Added: Semantic identifiers across player controls and UI components for robust E2E testing.
-* Fixed: Race condition when launching sub-menus (quality, speed, etc.) from the overflow menu on iOS.
-* Fixed: Missing semantic identifiers for resolution selection items in normal MP4 videos and robust HLS auto quality detection.
-* Refactored: Replaced widget helper methods in controls with dedicated stateless widgets (`BetterPlayerVideoAreaSemantics`) to adhere to architecture standards.
-* Updated: Documentation (`docs/drmconfiguration.md`) to explicitly note that DRM playback requires a physical device.
+* Fixed: Race condition when launching sub-menus on iOS.
+* Fixed: Missing semantic identifiers for resolution selection items and improved HLS quality detection.
+* Refactored: Replaced widget helper methods in controls with dedicated stateless widgets (`BetterPlayerVideoAreaSemantics`).
+* Updated: Documentation (`docs/drmconfiguration.md`) regarding DRM playback.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.
@@ -96,7 +95,6 @@
 * Updated: CI/CD workflows (GitHub Actions).
 * Updated: Kotlin version to 2.2.20.
 * Updated: compileSdkVersion to 34.
-* Updated: General analysis, linting, and formatting improvements.
 
 ## 0.0.84
 * [BREAKING_CHANGE] Updated min. Flutter version to 3.3.0 and min. Dart version to 3.0.0.

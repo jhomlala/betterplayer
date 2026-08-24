@@ -197,6 +197,16 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   child: const Text('HLS'),
                 ),
               ),
+              Semantics(
+                identifier: 'better_player_e2e_setup_error',
+                child: ElevatedButton(
+                  onPressed: () => _setupDataSource(
+                    'https://invalid.url.com/video.mp4',
+                    BetterPlayerDataSourceType.network,
+                  ),
+                  child: const Text('Invalid'),
+                ),
+              ),
             ],
           ),
         ],

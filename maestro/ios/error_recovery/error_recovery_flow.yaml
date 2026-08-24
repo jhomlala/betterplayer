@@ -1,0 +1,15 @@
+appId: pl.hasoft.example
+---
+- launchApp
+- assertVisible: "Better Player Example"
+
+# Trigger an invalid/error state
+- tapOn:
+    id: "better_player_e2e_setup_error"
+# We will use the existing UI to check for error state
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_error_text"
+    timeout: 10000
+- assertVisible:
+    id: "better_player_e2e_error_text"
