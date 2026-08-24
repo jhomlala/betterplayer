@@ -1,6 +1,7 @@
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:better_player/src/core/better_player_utils.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerOverflowMenu extends StatelessWidget {
@@ -29,7 +30,6 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
         children: [
           if (controlsConfiguration.enablePlaybackSpeed)
             BetterPlayerOverflowMenuItemWidget(
-              key: const Key('better_player_overflow_menu_playback_speed'),
               icon: controlsConfiguration.playbackSpeedIcon,
               name: translations.overflowMenuPlaybackSpeed,
               onTap: onPlaybackSpeedClicked,
@@ -103,6 +103,9 @@ class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BetterPlayerUtils.log(
+      'E2E: Building BetterPlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
+    );
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,
       semanticsLabel: name,

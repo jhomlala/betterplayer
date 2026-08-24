@@ -1,39 +1,45 @@
 appId: pl.hasoft.example
 ---
-- launchApp
-- assertVisible: "Better Player Example"
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
 
 # Wait for video area
 - extendedWaitUntil:
     visible:
-      id: "better_player_cupertino_video_area"
+      id: "better_player_material_video_area"
     timeout: 10000
 
 # Play/Pause toggle
 - tapOn:
-    id: "better_player_cupertino_controls_play_pause_button"
+    id: "better_player_material_controls_play_pause_button"
 - tapOn:
-    id: "better_player_cupertino_controls_play_pause_button"
+    id: "better_player_material_controls_play_pause_button"
 
 # Skip testing (15s forward, 15s back)
 - tapOn:
-    id: "better_player_cupertino_controls_skip_forward_button"
+    id: "better_player_material_controls_skip_forward_button"
 - tapOn:
-    id: "better_player_cupertino_controls_skip_back_button"
+    id: "better_player_material_controls_skip_back_button"
 
 # Mute/Unmute
 - tapOn:
-    id: "better_player_cupertino_controls_mute_button"
+    id: "better_player_material_controls_mute_button"
 - tapOn:
-    id: "better_player_cupertino_controls_mute_button"
+    id: "better_player_material_controls_mute_button"
 
 # Speed Selection test (2.0x)
 - tapOn:
-    id: "better_player_cupertino_controls_more_button"
+    id: "better_player_material_controls_more_button"
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_playback_speed"
-    timeout: 5000
+    timeout: 20000
 - tapOn:
     id: "better_player_overflow_menu_playback_speed"
 - tapOn:
@@ -41,11 +47,11 @@ appId: pl.hasoft.example
 
 # Quality Selection test (Auto)
 - tapOn:
-    id: "better_player_cupertino_controls_more_button"
+    id: "better_player_material_controls_more_button"
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_quality"
-    timeout: 5000
+    timeout: 10000
 - tapOn:
     id: "better_player_overflow_menu_quality"
 - extendedWaitUntil:
@@ -58,15 +64,15 @@ appId: pl.hasoft.example
 # Seeking (middle of the video)
 - extendedWaitUntil:
     visible:
-      id: "better_player_cupertino_progress_bar"
+      id: "better_player_material_progress_bar"
     timeout: 5000
 - tapOn:
-    id: "better_player_cupertino_progress_bar"
+    id: "better_player_material_progress_bar"
 
 # Fullscreen test
 - tapOn:
-    id: "better_player_cupertino_controls_expand_button"
+    id: "better_player_material_controls_expand_button"
 - extendedWaitUntil:
     visible:
-      id: "better_player_cupertino_video_area"
+      id: "better_player_material_video_area"
     timeout: 10000

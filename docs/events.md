@@ -27,7 +27,7 @@ Once you have initialized your `BetterPlayerController`, you can attach a listen
 
 ```dart
 _betterPlayerController.addEventsListener((event) {
-    print("Better Player Event: ${event.betterPlayerEventType}");
+    BetterPlayerUtils.log("Better Player Event: ${event.betterPlayerEventType}");
 });
 ```
 
