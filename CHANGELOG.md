@@ -1,12 +1,10 @@
-## Unreleased
-* Updated: Excluded Node.js dependencies and documentation build artifacts from the package distribution.
-
 ## 0.8.1
 * Added: Semantic identifiers across player controls, UI components, and resolution selection items for robust E2E testing.
 * Fixed: Race condition when launching sub-menus on iOS.
 * Updated: Improved HLS quality detection.
 * Updated: Refactored player controls by replacing widget helper methods with dedicated stateless widgets for improved performance and maintainability.
 * Updated: Documentation regarding DRM playback.
+* Updated: Excluded Node.js dependencies and documentation build artifacts from the package distribution.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.
