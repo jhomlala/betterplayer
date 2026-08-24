@@ -1,3 +1,8 @@
+---
+id: controlsconfiguration
+title: Controls Configuration
+---
+
 # Controls Configuration
 
 The user interface (UI) of the player can be extensively customized using the `BetterPlayerControlsConfiguration` class. This configuration is passed to the `BetterPlayerConfiguration` instance.

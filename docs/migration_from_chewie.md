@@ -1,3 +1,8 @@
+---
+id: migration_from_chewie
+title: Migrating from chewie
+---
+
 # Migrating from `chewie`
 
 While `chewie` is a popular video player controller wrapper for Flutter's official `video_player`, applications often outgrow its capabilities when requiring advanced features such as robust video caching, seamless HLS/DASH track selection, built-in multi-format subtitle support (SRT/WebVTT), Picture-in-Picture (PiP), and optimized `ListView` video playback.

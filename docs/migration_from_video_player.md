@@ -1,3 +1,8 @@
+---
+id: migration_from_video_player
+title: Migrating from video_player
+---
+
 # Migrating from `video_player`
 
 While Flutter's official `video_player` plugin provides a low-level primitive for video playback, building a production-ready media experience often requires implementing custom controls, caching, subtitles, HLS/DASH adaptive streaming, Picture-in-Picture (PiP), and list view optimizations from scratch.

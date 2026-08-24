@@ -1,3 +1,8 @@
+---
+id: subtitlesconfiguration
+title: Subtitles Configuration
+---
+
 # Subtitle Configuration
 
 Better Player provides comprehensive support for subtitles, allowing you to load them from various sources and customize their appearance.

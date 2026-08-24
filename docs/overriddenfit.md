@@ -1,3 +1,8 @@
+---
+id: overriddenfit
+title: Overridden BoxFit
+---
+
 # Overridden BoxFit
 
 You can dynamically override the `fit` parameter defined in `BetterPlayerConfiguration` during runtime using the `setOverriddenFit` method.

@@ -1,3 +1,8 @@
+---
+id: pictureinpictureconfiguration
+title: Picture-in-Picture Configuration
+---
+
 # Picture-in-Picture (PiP) Configuration
 
 Picture-in-Picture (PiP) allows users to continue watching videos in a small, floating window while interacting with other parts of the application or system.
@@ -43,7 +48,8 @@ PiP is enabled by default in both Material and Cupertino controls. You can toggl
 
 ## Important Limitations
 
-> [!WARNING]
-> PiP functionality is in an early stage. We recommend thorough testing before deploying to production.
+:::warning
+PiP functionality is in an early stage. We recommend thorough testing before deploying to production.
 
 *   **Android**: Enabling PiP will automatically switch the player to fullscreen mode. Disabling PiP may cause a brief orientation flicker as the device returns to its previous settings.
+:::

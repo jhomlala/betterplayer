@@ -1,3 +1,8 @@
+---
+id: playerbehavioronvisibilitychange
+title: Visibility-Based Behavior
+---
+
 # Visibility-Based Behavior
 
 Better Player allows you to automatically manage playback states based on the player's visibility within the viewport. This is achieved using the `playerVisibilityChangedBehavior` property.

@@ -1,3 +1,8 @@
+---
+id: multiplegesturedetector
+title: Multiple Gesture Detector
+---
+
 # Handling Multiple Gestures
 
 In scenarios where you need to wrap the `BetterPlayer` widget with a `GestureDetector`, you should use `BetterPlayerMultipleGestureDetector`. This ensures that gestures are correctly propagated and do not conflict with the player's internal gesture handling.

@@ -1,3 +1,8 @@
+---
+id: overriddenaspectratio
+title: Overridden Aspect Ratio
+---
+
 # Overridden Aspect Ratio
 
 You can dynamically override the aspect ratio defined in `BetterPlayerConfiguration` during runtime.

@@ -1,3 +1,8 @@
+---
+id: mixaudiowithothers
+title: Audio Mixing
+---
+
 # Background Audio Mixing
 
 By default, Better Player will interrupt audio from other applications when playback begins. You can modify this behavior to allow Better Player's audio to mix with other active audio sources.

@@ -1,3 +1,8 @@
+---
+id: translationsconfiguration
+title: Translations Configuration
+---
+
 # Internationalization & Translations
 
 Better Player allows you to localize all UI strings using the `BetterPlayerTranslations` class.

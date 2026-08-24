@@ -1,3 +1,8 @@
+---
+id: generalplayerusage
+title: General Player Usage
+---
+
 # General Player Usage
 
 This guide provides an overview of the core components and common patterns for using Better Player in your Flutter application.

@@ -1,3 +1,8 @@
+---
+id: listplayerusage
+title: List Player Usage
+---
+
 # Video Playback in Lists
 
 The `BetterPlayerListVideoPlayer` is a specialized component designed for seamless video integration within scrollable lists. It provides automatic playback management based on the visibility of the video on the screen.

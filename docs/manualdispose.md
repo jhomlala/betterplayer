@@ -1,3 +1,8 @@
+---
+id: manualdispose
+title: Manual Disposal
+---
+
 # Manual Disposal Management
 
 By default, Better Player automatically manages the disposal of the `BetterPlayerController` when the `BetterPlayer` widget is removed from the widget tree (i.e., when its `dispose` method is called by the Flutter framework).

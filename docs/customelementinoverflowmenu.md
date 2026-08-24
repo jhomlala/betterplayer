@@ -1,3 +1,8 @@
+---
+id: customelementinoverflowmenu
+title: Custom Overflow Menu Items
+---
+
 # Custom Overflow Menu Items
 
 You can extend the player's overflow menu by adding custom elements using the `BetterPlayerControlsConfiguration`.

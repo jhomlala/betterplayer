@@ -1,3 +1,8 @@
+---
+id: drmconfiguration
+title: DRM Configuration
+---
+
 # DRM Configuration
 
 Better Player provides robust support for Digital Rights Management (DRM) to protect your video content. DRM is configured using the `drmConfiguration` parameter within the `BetterPlayerDataSource`.

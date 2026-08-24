@@ -1,3 +1,8 @@
+---
+id: resolutionsofvideo
+title: Video Resolutions
+---
+
 # Video Resolutions
 
 For standard video formats (non-HLS, non-DASH), you can provide multiple URLs corresponding to different quality levels (e.g., 720p, 1080p). This allows users to manually select their preferred resolution.
@@ -16,5 +21,6 @@ var dataSource = BetterPlayerDataSource(
 );
 ```
 
-> [!NOTE]
-> For adaptive streaming formats like HLS and DASH, Better Player automatically detects and handles resolution switching based on the manifest file.
+:::note
+For adaptive streaming formats like HLS and DASH, Better Player automatically detects and handles resolution switching based on the manifest file.
+:::
