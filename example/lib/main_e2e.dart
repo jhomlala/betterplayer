@@ -18,7 +18,11 @@ class BetterPlayerE2EApp extends StatelessWidget {
     BetterPlayerUtils.log('E2E: Building BetterPlayerE2EApp');
     return MaterialApp(
       theme: ThemeData.light(),
-      localizationsDelegates: const [...GlobalMaterialLocalizations.delegates],
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       home: const E2EPlayerPage(),
     );
   }
