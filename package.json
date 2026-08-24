@@ -4,12 +4,12 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
-    "swizzle": "docusaurus swizzle",
-    "deploy": "docusaurus deploy",
-    "serve": "docusaurus serve",
-    "clear": "docusaurus clear"
+    "start": "docusaurus start docs",
+    "build": "docusaurus build docs",
+    "swizzle": "docusaurus swizzle docs",
+    "deploy": "docusaurus deploy docs",
+    "serve": "docusaurus serve docs",
+    "clear": "docusaurus clear docs"
   },
   "dependencies": {
     "@docusaurus/core": "^3.10.2",
