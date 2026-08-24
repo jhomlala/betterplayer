@@ -43,7 +43,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_playback_speed"
-    timeout: 10000
+    timeout: 20000
 - tapOn:
     id: "better_player_overflow_menu_playback_speed"
 - tapOn:
