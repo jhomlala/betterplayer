@@ -24,3 +24,16 @@ coverage/
 
 # Exclude metadata files
 .metadata
+
+# Exclude Node.js related files
+node_modules/
+package.json
+package-lock.json
+.docusaurus/
+docs/
+static/
+
+# Exclude E2E testing and rules
+maestro/
+.maestro/
+rules/
