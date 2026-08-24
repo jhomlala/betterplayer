@@ -30,7 +30,6 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
         children: [
           if (controlsConfiguration.enablePlaybackSpeed)
             BetterPlayerOverflowMenuItemWidget(
-              key: const Key('better_player_overflow_menu_playback_speed'),
               icon: controlsConfiguration.playbackSpeedIcon,
               name: translations.overflowMenuPlaybackSpeed,
               onTap: onPlaybackSpeedClicked,
