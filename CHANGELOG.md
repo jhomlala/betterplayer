@@ -1,14 +1,9 @@
-## Unreleased
-* Fixed: Documentation CI failure by correcting the publish directory path.
-* Fixed: Documentation CI failure by updating Node.js to version 20.
-* Fixed: Documentation CI failure by adding missing `package-lock.json` file.
-* Refactored: Renamed Docusaurus documentation files to snake_case and updated their internal IDs for better consistency and URL structure.
-* Added: Maestro E2E testing suite and CI integration for Android and iOS.
-* Added: Semantic identifiers across player controls and UI components for robust E2E testing.
+## 0.8.1
+* Added: Semantic identifiers across player controls, UI components, and resolution selection items for robust E2E testing.
 * Fixed: Race condition when launching sub-menus on iOS.
-* Fixed: Missing semantic identifiers for resolution selection items and improved HLS quality detection.
-* Refactored: Replaced widget helper methods in controls with dedicated stateless widgets (`BetterPlayerVideoAreaSemantics`).
-* Updated: Documentation (`docs/drmconfiguration.md`) regarding DRM playback.
+* Updated: Improved HLS quality detection.
+* Updated: Refactored player controls by replacing widget helper methods with dedicated stateless widgets for improved performance and maintainability.
+* Updated: Documentation regarding DRM playback.
 
 ## 0.8.0
 * Added: Maestro E2E flows for iOS and integrated them into GitHub Actions.
