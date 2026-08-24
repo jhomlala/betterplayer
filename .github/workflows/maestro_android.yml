@@ -62,25 +62,16 @@ jobs:
             ${{ runner.os }}-maestro-
 
       - name: Install Maestro
-        run: |
-          if [ ! -d "$HOME/.maestro/bin" ]; then
-            curl -Ls "https://get.maestro.mobile.dev" | bash
-          fi
-          echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+        run: if [ ! -d "$HOME/.maestro/bin" ]; then curl -Ls "https://get.maestro.mobile.dev" | bash; fi; echo "$HOME/.maestro/bin" >> $GITHUB_PATH
 
       - name: Setup Android SDK and Emulator
-        run: |
-          # Ensure KVM permissions
-          sudo chmod 666 /dev/kvm
+        run: sudo chmod 666 /dev/kvm
           
       - name: Fetch dependencies
-        run: |
-          flutter pub get
-          cd example && flutter pub get
+        run: flutter pub get; cd example; flutter pub get
 
       - name: Build App
-        run: |
-          cd example && flutter build apk --debug --target lib/main_e2e.dart
+        run: cd example; flutter build apk --debug --target lib/main_e2e.dart
 
       - name: Run Maestro Tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -91,18 +82,7 @@ jobs:
           force-avd-creation: false
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 4096 -cache-size 2048
-          script: |
-            # Wait for package manager to be ready
-            until adb shell pm list packages > /dev/null 2>&1; do
-              echo "Waiting for package manager..."
-              sleep 5
-            done
-            # Ensure screen is unlocked
-            adb shell input keyevent 82
-            adb install example/build/app/outputs/flutter-apk/app-debug.apk
-            # Wait for app to be fully recognized by the system
-            sleep 10
-            maestro test maestro/android/
+          script: until adb shell pm list packages > /dev/null 2>&1; do echo "Waiting for package manager..."; sleep 5; done; adb shell input keyevent 82; adb install example/build/app/outputs/flutter-apk/app-debug.apk; sleep 10; maestro test maestro/android/
 
       - name: Upload Maestro Artifacts
         if: always()

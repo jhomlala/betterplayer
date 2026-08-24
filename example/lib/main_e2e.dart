@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() {
+  debugPrint("E2E: Starting main()");
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const BetterPlayerE2EApp());
 }
@@ -14,6 +15,7 @@ class BetterPlayerE2EApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("E2E: Building BetterPlayerE2EApp");
     return MaterialApp(
       theme: ThemeData.light(),
       localizationsDelegates: const [
@@ -37,6 +39,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 
   @override
   void initState() {
+    debugPrint("E2E: initState starting");
     super.initState();
     const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
@@ -51,6 +54,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      debugPrint("E2E: postFrameCallback - setting up data source");
       final betterPlayerDataSource = BetterPlayerDataSource(
         BetterPlayerDataSourceType.network,
         Constants.bugBuckBunnyVideoUrl,
@@ -60,7 +64,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     });
 
     _betterPlayerController.addEventsListener((event) {
+      debugPrint("E2E: Event received: ${event.betterPlayerEventType}");
       if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
+        debugPrint("E2E: Exception event: ${event.parameters}");
         setState(() {
           _errorDescription = _betterPlayerController
               .videoPlayerController
@@ -69,6 +75,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         });
       } else if (event.betterPlayerEventType ==
           BetterPlayerEventType.setupDataSource) {
+        debugPrint("E2E: setupDataSource event");
         setState(() {
           _errorDescription = null;
         });
@@ -106,6 +113,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("E2E: E2EPlayerPage build()");
     return Scaffold(
       appBar: AppBar(
         title: Semantics(
