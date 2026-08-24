@@ -8,9 +8,6 @@ on:
       - 'docs/**'
       - 'package.json'
       - 'package-lock.json'
-      - 'docusaurus.config.js'
-      - 'sidebars.js'
-      - 'src/**'
       - '.github/workflows/deploy-docs.yml'
 
 permissions:

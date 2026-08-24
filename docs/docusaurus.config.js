@@ -25,7 +25,7 @@ const config = {
       ({
         docs: {
           routeBasePath: '/',
-          path: 'docs',
+          path: '.',
           sidebarPath: require.resolve('./sidebars.js'),
           editUrl: 'https://github.com/jhomlala/betterplayer/tree/master/',
         },
