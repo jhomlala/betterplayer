@@ -109,11 +109,11 @@ jobs:
       - name: Run Maestro
         run: |
           cd better_player
-          maestro test maestro/
+          maestro test maestro/ios/
 
       - name: Upload Maestro Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: maestro-debug-artifacts
+          name: maestro-ios-debug-artifacts
           path: ~/.maestro/tests/

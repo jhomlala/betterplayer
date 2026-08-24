@@ -1,0 +1,95 @@
+name: Maestro Android flow
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MAESTRO_CLI_NO_ANALYTICS: 1
+
+jobs:
+  maestro:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        api-level: [30]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Cache Pub dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pub-
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache Maestro
+        uses: actions/cache@v4
+        with:
+          path: ~/.maestro
+          key: ${{ runner.os }}-maestro
+          restore-keys: |
+            ${{ runner.os }}-maestro-
+
+      - name: Install Maestro
+        run: if [ ! -d "$HOME/.maestro/bin" ]; then curl -Ls "https://get.maestro.mobile.dev" | bash; fi; echo "$HOME/.maestro/bin" >> $GITHUB_PATH
+
+      - name: Setup Android SDK and Emulator
+        run: sudo chmod 666 /dev/kvm
+
+      - name: Fetch dependencies
+        run: flutter pub get; cd example; flutter pub get
+
+      - name: Build App
+        run: cd example; flutter build apk --debug --target lib/main_e2e.dart
+
+      - name: Run Maestro Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: google_atd
+          arch: x86_64
+          force-avd-creation: false
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 4096 -cache-size 2048 -accel on
+          script: until adb shell pm list packages > /dev/null 2>&1; do echo "Waiting for package manager..."; sleep 5; done; adb shell input keyevent 82; adb install example/build/app/outputs/flutter-apk/app-debug.apk; maestro test maestro/android/
+
+      - name: Upload Maestro Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-android-debug-artifacts
+          path: ~/.maestro/tests/

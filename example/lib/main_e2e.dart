@@ -5,13 +5,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:material_ui/material_ui.dart' as m3;
 
-void main() => runApp(const BetterPlayerE2EApp());
+void main() {
+  BetterPlayerUtils.log('E2E: Starting main()');
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const BetterPlayerE2EApp());
+}
 
 class BetterPlayerE2EApp extends StatelessWidget {
   const BetterPlayerE2EApp({super.key});
 
   @override
   Widget build(BuildContext context) {
+    BetterPlayerUtils.log('E2E: Building BetterPlayerE2EApp');
     return const MaterialApp(
       localizationsDelegates: [
         ...GlobalMaterialLocalizations.delegates,
@@ -35,6 +40,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 
   @override
   void initState() {
+    BetterPlayerUtils.log('E2E: initState starting');
     super.initState();
     const betterPlayerConfiguration = BetterPlayerConfiguration(
       aspectRatio: 16 / 9,
@@ -45,19 +51,25 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         DeviceOrientation.portraitDown,
         DeviceOrientation.portraitUp,
       ],
-      controlsConfiguration: BetterPlayerControlsConfiguration(
-        playerTheme: BetterPlayerTheme.cupertino,
-      ),
-    );
-    final betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      Constants.bugBuckBunnyVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(betterPlayerDataSource);
-    _betterPlayerController.setControlsAlwaysVisible(true);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      BetterPlayerUtils.log('E2E: postFrameCallback - setting up data source');
+      final betterPlayerDataSource = BetterPlayerDataSource(
+        BetterPlayerDataSourceType.network,
+        Constants.bugBuckBunnyVideoUrl,
+      );
+      _betterPlayerController.setupDataSource(betterPlayerDataSource);
+      _betterPlayerController.setControlsAlwaysVisible(true);
+    });
+
     _betterPlayerController.addEventsListener((event) {
+      BetterPlayerUtils.log(
+        'E2E: Event received: ${event.betterPlayerEventType}',
+      );
       if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
+        BetterPlayerUtils.log('E2E: Exception event: ${event.parameters}');
         setState(() {
           _errorDescription = _betterPlayerController
               .videoPlayerController
@@ -66,6 +78,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         });
       } else if (event.betterPlayerEventType ==
           BetterPlayerEventType.setupDataSource) {
+        BetterPlayerUtils.log('E2E: setupDataSource event');
         setState(() {
           _errorDescription = null;
         });
@@ -103,8 +116,14 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
+    BetterPlayerUtils.log('E2E: E2EPlayerPage build()');
     return Scaffold(
-      appBar: AppBar(title: const Text('Better Player Example')),
+      appBar: AppBar(
+        title: Semantics(
+          identifier: 'better_player_e2e_app_bar_title',
+          child: const Text('Better Player Example'),
+        ),
+      ),
       body: Column(
         children: [
           const SizedBox(height: 8),
