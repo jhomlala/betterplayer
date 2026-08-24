@@ -35,7 +35,7 @@ appId: pl.hasoft.example
 
 # Speed Selection test (2.0x)
 - retry:
-    times: 3
+    maxRetries: 3
     commands:
       - tapOn:
           id: "better_player_material_controls_more_button"
@@ -50,7 +50,7 @@ appId: pl.hasoft.example
 
 # Quality Selection test (Auto)
 - retry:
-    times: 3
+    maxRetries: 3
     commands:
       - tapOn:
           id: "better_player_material_controls_more_button"
