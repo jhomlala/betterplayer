@@ -1,5 +1,5 @@
 ---
-id: controlsconfiguration
+id: controls_configuration
 title: Controls Configuration
 ---
 

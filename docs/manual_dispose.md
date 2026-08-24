@@ -1,5 +1,5 @@
 ---
-id: manualdispose
+id: manual_dispose
 title: Manual Disposal
 ---
 

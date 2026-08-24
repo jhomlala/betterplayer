@@ -1,5 +1,5 @@
 ---
-id: drmconfiguration
+id: drm_configuration
 title: DRM Configuration
 ---
 

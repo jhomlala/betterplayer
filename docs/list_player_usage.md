@@ -1,5 +1,5 @@
 ---
-id: listplayerusage
+id: list_player_usage
 title: List Player Usage
 ---
 

@@ -1,5 +1,5 @@
 ---
-id: playerbehavioronvisibilitychange
+id: player_behavior_on_visibility_change
 title: Visibility-Based Behavior
 ---
 

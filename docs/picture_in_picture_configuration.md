@@ -1,5 +1,5 @@
 ---
-id: pictureinpictureconfiguration
+id: picture_in_picture_configuration
 title: Picture-in-Picture Configuration
 ---
 

@@ -1,5 +1,5 @@
 ---
-id: notificationconfiguration
+id: notification_configuration
 title: Notification Configuration
 ---
 

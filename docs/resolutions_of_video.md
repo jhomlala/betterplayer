@@ -1,5 +1,5 @@
 ---
-id: resolutionsofvideo
+id: resolutions_of_video
 title: Video Resolutions
 ---
 

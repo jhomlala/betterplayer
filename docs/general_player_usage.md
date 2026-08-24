@@ -1,5 +1,5 @@
 ---
-id: generalplayerusage
+id: general_player_usage
 title: General Player Usage
 ---
 

@@ -1,5 +1,5 @@
 ---
-id: mixaudiowithothers
+id: mix_audio_with_others
 title: Audio Mixing
 ---
 

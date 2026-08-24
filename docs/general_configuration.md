@@ -1,5 +1,5 @@
 ---
-id: generalconfiguration
+id: general_configuration
 title: General Configuration
 ---
 

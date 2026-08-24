@@ -1,5 +1,5 @@
 ---
-id: subtitlesconfiguration
+id: subtitles_configuration
 title: Subtitles Configuration
 ---
 

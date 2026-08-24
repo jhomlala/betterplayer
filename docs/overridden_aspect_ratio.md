@@ -1,5 +1,5 @@
 ---
-id: overriddenaspectratio
+id: overridden_aspect_ratio
 title: Overridden Aspect Ratio
 ---
 

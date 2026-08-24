@@ -1,5 +1,5 @@
 ---
-id: datasourceconfiguration
+id: data_source_configuration
 title: Data Source Configuration
 ---
 

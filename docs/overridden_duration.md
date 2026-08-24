@@ -1,5 +1,5 @@
 ---
-id: overriddenduration
+id: overridden_duration
 title: Overridden Duration
 ---
 

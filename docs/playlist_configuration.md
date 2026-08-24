@@ -1,5 +1,5 @@
 ---
-id: playlistconfiguration
+id: playlist_configuration
 title: Playlist Configuration
 ---
 

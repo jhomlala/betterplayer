@@ -1,5 +1,5 @@
 ---
-id: overriddenfit
+id: overridden_fit
 title: Overridden BoxFit
 ---
 

@@ -1,5 +1,5 @@
 ---
-id: enabledisablecontrols
+id: enable_disable_controls
 title: Toggle Controls
 ---
 

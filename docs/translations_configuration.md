@@ -1,5 +1,5 @@
 ---
-id: translationsconfiguration
+id: translations_configuration
 title: Translations Configuration
 ---
 

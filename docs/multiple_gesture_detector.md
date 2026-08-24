@@ -1,5 +1,5 @@
 ---
-id: multiplegesturedetector
+id: multiple_gesture_detector
 title: Multiple Gesture Detector
 ---
 

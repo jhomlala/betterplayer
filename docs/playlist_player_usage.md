@@ -1,5 +1,5 @@
 ---
-id: playlistplayerusage
+id: playlist_player_usage
 title: Playlist Player Usage
 ---
 

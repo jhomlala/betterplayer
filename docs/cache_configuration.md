@@ -1,5 +1,5 @@
 ---
-id: cacheconfiguration
+id: cache_configuration
 title: Cache Configuration
 ---
 

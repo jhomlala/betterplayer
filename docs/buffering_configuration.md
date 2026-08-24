@@ -1,5 +1,5 @@
 ---
-id: bufferingconfiguration
+id: buffering_configuration
 title: Buffering Configuration
 ---
 

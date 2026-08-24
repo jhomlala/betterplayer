@@ -2,7 +2,7 @@
 const config = {
   title: 'Better Player',
   tagline: 'Advanced video player for Flutter',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/logo.png',
 
   url: 'https://jhomlala.github.io',
   baseUrl: '/betterplayer/',

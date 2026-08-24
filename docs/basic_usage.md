@@ -1,6 +1,6 @@
 ---
-id: basicusage
-title: basicusage
+id: basic_usage
+title: Basic Usage
 ---
 
 # Basic Usage Guide

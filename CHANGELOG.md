@@ -1,4 +1,5 @@
 ## Unreleased
+* Refactored: Renamed Docusaurus documentation files to snake_case and updated their internal IDs for better consistency and URL structure.
 * Added: Maestro E2E testing suite and CI integration for Android and iOS.
 * Added: Semantic identifiers across player controls and UI components for robust E2E testing.
 * Fixed: Race condition when launching sub-menus on iOS.
