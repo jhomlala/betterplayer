@@ -164,7 +164,6 @@ class MimeTypes {
             mimeType = _getMimeTypeFromMp4ObjectType(objectTypeInt);
           } on FormatException {
             //do nothing
-            //print(ignored);
           }
         }
       }
