@@ -9,6 +9,7 @@ import UIKit
 
 /// The main plugin class for Better Player on iOS.
 /// Handles method calls from Flutter and manages player instances.
+@objc(BetterPlayerPlugin)
 public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFactory {
 
     private let messenger: FlutterBinaryMessenger
