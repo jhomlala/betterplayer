@@ -1,3 +1,6 @@
+## Unreleased
+* Added: Federated plugin refactoring plan for splitting the monolithic package into platform-specific implementations.
+
 ## 0.8.1
 * Added: Semantic identifiers across player controls, UI components, and resolution selection items for robust E2E testing.
 * Fixed: Race condition when launching sub-menus on iOS.
