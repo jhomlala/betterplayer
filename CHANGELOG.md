@@ -1,7 +1,7 @@
 ## Unreleased
 * Added: Swift Package Manager (SPM) support for `better_player_ios`.
 * Added: Federated plugin refactoring into platform-specific packages (`better_player`, `better_player_platform_interface`, `better_player_android`, `better_player_ios`) using Flutter Workspaces.
-* Fixed: iOS build failure (Module 'better_player_ios' not found) due to misconfigured Package.swift.
+* Fixed: iOS build failure (Module 'better_player_ios' not found) by adding Podfile to example and improving plugin registration.
 * Fixed: iOS build error due to redundant module imports in HLSCachingReverseProxyServer.
 
 ## 0.8.1

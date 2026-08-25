@@ -9,6 +9,8 @@ environment:
 dependencies:
   better_player:
     path: ../
+  better_player_ios:
+    path: ../../better_player_ios
   flutter:
     sdk: flutter
   material_ui: ^1.0.0
