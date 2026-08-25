@@ -13,8 +13,7 @@ iOS implementation of the better_player plugin.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'BetterPlayer' => 'email@example.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'ios/Sources/better_player/**/*'
-  s.public_header_files = 'ios/Sources/better_player/**/*.h'
+  s.source_files = 'ios/Sources/**/*.swift'
   s.dependency 'Flutter'
   s.platform = :ios, '13.0'
 
