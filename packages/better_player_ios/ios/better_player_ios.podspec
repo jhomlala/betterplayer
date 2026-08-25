@@ -2,17 +2,17 @@
 # To learn more about a Podspec see http://guides.cocoapods.org/syntax/podspec.html
 #
 Pod::Spec.new do |s|
-  s.name             = 'better_player'
-  s.version          = '0.8.1'
-  s.summary          = 'Advanced video player with HLS, DASH and caching support.'
+  s.name             = 'better_player_ios'
+  s.version          = '1.0.0'
+  s.summary          = 'iOS implementation of the better_player plugin.'
   s.description      = <<-DESC
-Advanced video player for Flutter with HLS, DASH and caching support.
+iOS implementation of the better_player plugin.
                        DESC
   s.homepage         = 'https://github.com/jhomlala/better_player'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'jhomlala' => 'jhomlala@gmail.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'better_player/Sources/**/*'
+  s.source_files = 'Sources/**/*'
   s.dependency 'Flutter'
   s.dependency 'Cache', '~> 6.0.0'
 
