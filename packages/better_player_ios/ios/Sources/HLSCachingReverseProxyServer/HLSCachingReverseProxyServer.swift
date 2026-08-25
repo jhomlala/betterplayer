@@ -1,6 +1,4 @@
 import Foundation
-import GCDWebServer
-import PINCache
 
 public final class HLSCachingReverseProxyServer {
     public init(webServer: GCDWebServer, urlSession: URLSession, cache: PINCache) {

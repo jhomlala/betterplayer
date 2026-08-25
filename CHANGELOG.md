@@ -1,5 +1,6 @@
 ## Unreleased
 * Added: Federated plugin refactoring into platform-specific packages (`better_player`, `better_player_platform_interface`, `better_player_android`, `better_player_ios`) using Flutter Workspaces.
+* Fixed: iOS build error due to redundant module imports in HLSCachingReverseProxyServer.
 
 ## 0.8.1
 * Added: Semantic identifiers across player controls, UI components, and resolution selection items for robust E2E testing.
