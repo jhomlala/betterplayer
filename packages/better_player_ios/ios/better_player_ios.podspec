@@ -10,10 +10,10 @@ Pod::Spec.new do |s|
 iOS implementation of the better_player plugin.
                        DESC
   s.homepage         = 'https://github.com/jhomlala/betterplayer'
-  s.license          = { :file => '../LICENSE' }
+  s.license          = { :file => '../../LICENSE' }
   s.author           = { 'BetterPlayer' => 'email@example.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'ios/Sources/**/*.swift'
+  s.source_files = 'Sources/**/*.swift'
   s.dependency 'Flutter'
   s.dependency 'Cache', '~> 6.0.0'
   s.platform = :ios, '13.0'

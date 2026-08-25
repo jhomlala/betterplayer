@@ -20,7 +20,7 @@ let package = Package(
             ],
             path: "Sources",
             resources: [
-                .process("better_player/PrivacyInfo.xcprivacy")
+                .process("better_player_ios/PrivacyInfo.xcprivacy")
             ]
         )
     ]

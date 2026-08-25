@@ -1,4 +1,5 @@
 ## Unreleased
+* Updated: Reorganized `better_player_ios` structure to follow standard Flutter plugin conventions.
 * Added: Swift Package Manager (SPM) support for `better_player_ios`.
 * Added: Federated plugin refactoring into platform-specific packages (`better_player`, `better_player_platform_interface`, `better_player_android`, `better_player_ios`) using Flutter Workspaces.
 * Fixed: iOS build failure (Module 'better_player_ios' not found) by migrating example to Swift Package Manager and improving plugin registration.
