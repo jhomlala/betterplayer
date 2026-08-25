@@ -73,15 +73,19 @@ jobs:
         run: |
           LCOV_FILES=$(find packages -name lcov.info)
           if [ -n "$LCOV_FILES" ]; then
-            genhtml $LCOV_FILES --output-directory coverage/html
             mkdir -p coverage
-            # Concatenate all lcov.info files into one for subsequent steps
+            # Clear or create the merged lcov file
+            echo -n > coverage/lcov.info
+
             for f in $LCOV_FILES; do
               # Add package prefix to file paths in lcov.info
               pkg_dir=$(dirname $(dirname $f))
               perl -pi -e "s|SF:lib/|SF:$pkg_dir/lib/|g" $f
               cat "$f" >> coverage/lcov.info
             done
+
+            # Run genhtml on the merged and fixed lcov.info
+            genhtml coverage/lcov.info --output-directory coverage/html
           else
             echo "No coverage info found."
             mkdir -p coverage/html
