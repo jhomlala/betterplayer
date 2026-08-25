@@ -86,21 +86,21 @@
   - `Fixed`: for bug fixes.
 - **Attribution**: If the work was done by a contributor, append `(by @username)` or `(by Name)` to the end of the entry.
 
-## Version Update Workflow
-- **Explicit Instruction Only**: NEVER invent, guess, or bump versions (e.g., in `pubspec.yaml`, `podspec`, or `CHANGELOG.md`) without an explicit instruction from the user. All new entries in `CHANGELOG.md` should be placed under a `## Unreleased` header by default.
-- When preparing a new release (ONLY when explicitly asked), ALWAYS:
-  1. Update the `version` in `pubspec.yaml`.
-  2. Update `s.version` in `ios/better_player.podspec` to match.
-  3. Update `doc/install.md` with the new version snippet and any relevant Android/iOS requirement changes.
-  4. Update `environment` SDK constraints in `example/pubspec.yaml` if they need to match the new library requirements.
-  5. Add a descriptive entry in `CHANGELOG.md`, marking `[BREAKING_CHANGE]` where applicable.
-  6. Run `flutter pub get` in both the root directory and the `example` directory to ensure `pubspec.lock` files are updated.
-  7. Run `dart format .` and `flutter analyze .` to verify project health.
-
-## Releasing the Plugin
-- Before final publishing, ALWAYS:
-  1. Ensure you are on the `master` branch and have pulled the latest changes from `origin/master`.
-  2. Verify that the version has been correctly bumped in all required locations (see Version Update Workflow).
-  3. NEVER change `CHANGELOG.md` during the release process itself. It must be finalized beforehand.
-  4. Ensure a Git tag corresponding to the new version has been created and pushed (e.g., `git tag 0.4.1` and `git push origin 0.4.1`). DO NOT use the `v` prefix for tags.
-  5. Perform the final release by calling `flutter pub publish`.
+## Release Management
+- **Preparation**: When asked to "Prepare a release for version X.Y.Z", the AI must:
+  1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml`, `packages/better_player_android/pubspec.yaml`, `packages/better_player_ios/pubspec.yaml`, and `packages/better_player_platform_interface/pubspec.yaml`.
+  2. Update `s.version = 'X.Y.Z'` in `packages/better_player_ios/ios/better_player_ios.podspec`.
+  3. Update `better_player: ^X.Y.Z` in the installation snippet of `docs/install.md`.
+  4. Move all entries from `## Unreleased` to a new `## X.Y.Z` header in `CHANGELOG.md` (omit the date).
+  5. Run `flutter pub get` in the root directory.
+  6. Run `dart format .` and `flutter analyze .`.
+- **Internal Release (`publish_to: none`)**:
+  - If any core package has `publish_to: none`, the "release" is strictly a version bump and Git tag.
+  - DO NOT run `flutter pub publish` unless explicitly instructed AND `publish_to: none` is removed.
+  - The AI should remind the user to create a Git tag (e.g., `git tag X.Y.Z`) after merging the release PR.
+- **Public Release**:
+  - Only proceed with `flutter pub publish` if:
+    1. The version is correctly bumped in all locations.
+    2. `CHANGELOG.md` is finalized.
+    3. The user provides explicit approval for publishing.
+    4. `publish_to: none` is not present in the target package.
