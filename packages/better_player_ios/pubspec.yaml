@@ -22,4 +22,3 @@ flutter:
       ios:
         pluginClass: BetterPlayerPlugin
         dartPluginClass: BetterPlayerIOS
-        swiftPackage: true
