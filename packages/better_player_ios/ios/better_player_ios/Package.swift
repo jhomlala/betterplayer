@@ -7,7 +7,7 @@ let package = Package(
         .iOS("13.0")
     ],
     products: [
-        .library(name: "better_player_ios", targets: ["better_player_ios"])
+        .library(name: "better-player-ios", targets: ["better_player_ios"])
     ],
     dependencies: [
         .package(url: "https://github.com/hyperoslo/Cache", from: "6.0.0")
