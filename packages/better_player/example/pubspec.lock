@@ -32,7 +32,7 @@ packages:
     source: path
     version: "1.0.0"
   better_player_ios:
-    dependency: "direct main"
+    dependency: transitive
     description:
       path: "../../better_player_ios"
       relative: true
