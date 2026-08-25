@@ -15,33 +15,14 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "GCDWebServer",
-            path: "Sources/GCDWebServer"
-        ),
-        .target(
-            name: "PINCache",
-            path: "Sources/PINCache"
-        ),
-        .target(
-            name: "HLSCachingReverseProxyServer",
-            dependencies: [
-                "GCDWebServer",
-                "PINCache"
-            ],
-            path: "Sources/HLSCachingReverseProxyServer"
-        ),
-        .target(
             name: "better_player_ios",
             dependencies: [
                 .product(name: "FlutterFramework", package: "FlutterFramework"),
-                .product(name: "Cache", package: "Cache"),
-                "GCDWebServer",
-                "PINCache",
-                "HLSCachingReverseProxyServer"
+                .product(name: "Cache", package: "Cache")
             ],
-            path: "Sources/better_player",
+            path: "Sources",
             resources: [
-                .process("PrivacyInfo.xcprivacy")
+                .process("better_player/PrivacyInfo.xcprivacy")
             ]
         )
     ]

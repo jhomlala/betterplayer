@@ -1,4 +1,5 @@
 ## Unreleased
+* Added: Swift Package Manager (SPM) support for `better_player_ios`.
 * Added: Federated plugin refactoring into platform-specific packages (`better_player`, `better_player_platform_interface`, `better_player_android`, `better_player_ios`) using Flutter Workspaces.
 * Fixed: iOS build error due to redundant module imports in HLSCachingReverseProxyServer.
 
