@@ -1,5 +1,5 @@
 ## Unreleased
-* Added: Federated plugin refactoring plan for splitting the monolithic package into platform-specific implementations.
+* Added: Federated plugin refactoring into platform-specific packages (`better_player`, `better_player_platform_interface`, `better_player_android`, `better_player_ios`) using Flutter Workspaces.
 
 ## 0.8.1
 * Added: Semantic identifiers across player controls, UI components, and resolution selection items for robust E2E testing.
