@@ -48,9 +48,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            better_player/example/ios/.swiftpm
-            better_player/example/ios/SourcePackages
-          key: ${{ runner.os }}-spm-${{ hashFiles('better_player/ios/better_player/Package.swift') }}
+            better_player/packages/better_player/example/ios/.swiftpm
+            better_player/packages/better_player/example/ios/SourcePackages
+          key: ${{ runner.os }}-spm-${{ hashFiles('better_player/packages/better_player_ios/ios/better_player.podspec') }}
           restore-keys: |
             ${{ runner.os }}-spm-
 
@@ -58,7 +58,7 @@ jobs:
         run: |
           cd better_player
           flutter pub get
-          cd example
+          cd packages/better_player/example
           flutter pub get
 
       - name: Enable Swift Package Manager
@@ -87,7 +87,7 @@ jobs:
 
       - name: Build Example App
         run: |
-          cd better_player/example
+          cd better_player/packages/better_player/example
           flutter build ios --simulator --debug --no-codesign --target lib/main_e2e.dart
 
       - name: Wait for Simulator Boot
@@ -98,10 +98,10 @@ jobs:
       - name: Install App
         run: |
           # Path for Flutter debug simulator builds
-          APP_PATH="better_player/example/build/ios/iphonesimulator/Runner.app"
+          APP_PATH="better_player/packages/better_player/example/build/ios/iphonesimulator/Runner.app"
           if [ ! -d "$APP_PATH" ]; then
             echo "App not found at $APP_PATH"
-            ls -R better_player/example/build/ios/
+            ls -R better_player/packages/better_player/example/build/ios/
             exit 1
           fi
           xcrun simctl install booted "$APP_PATH"

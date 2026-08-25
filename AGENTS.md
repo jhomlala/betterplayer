@@ -13,9 +13,10 @@
     - `refactor/` for code refactoring.
     - `test/` for adding or updating tests.
     - `chore/` for maintenance tasks or dependency updates.
-- **Post-Implementation Steps**: If you have changed any Dart code, ALWAYS run the following commands in BOTH the root directory and the `example` directory after completion of a plan or task:
+- **Post-Implementation Steps**: If you have changed any Dart code, ALWAYS run the following commands in the workspace root after completion of a plan or task:
   - `dart format .`
   - `flutter analyze .`
+  - Ensure all packages in `packages/` are consistent.
 - **Error Resolution**: If `flutter analyze` reports issues, they MUST be fixed immediately before concluding the task.
 - **PR Completeness**: Before considering a task or bug fix finished, ensure the work is ready to be merged. This includes:
   - Adding a relevant entry to `CHANGELOG.md` under the `## Unreleased` header (following the Changelog Guidelines).
@@ -38,9 +39,11 @@
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
 - **Mocking**: Use `BetterPlayerMockController` and `MockVideoPlayerController` for unit tests.
-- **Verification**: ALWAYS run tests using the following command to efficiently identify failures and avoid token limit issues:
+- **Verification**: ALWAYS run tests using the following command at the workspace root or within the relevant package directory to efficiently identify failures and avoid token limit issues:
+  - Use `flutter test` within a specific package directory (e.g., `cd packages/better_player; flutter test`).
+  - For workspace-wide testing, use:
   ```powershell
-  $names=@{}; flutter test --machine | ForEach-Object { if ($_ -match '^{.*}$') { $_ | ConvertFrom-Json } } | ForEach-Object { if($_.type -eq "testStart"){$names[$_.test.id]=$_.test.name} elseif($_.type -eq "error"){[PSCustomObject]@{test=$names[$_.testID]; error=$_.error}} } | ConvertTo-Json -Compress
+  $names=@{}; Get-ChildItem -Path packages -Directory | ForEach-Object { cd $_.FullName; if (Test-Path test) { flutter test --machine | ForEach-Object { if ($_ -match '^{.*}$') { $_ | ConvertFrom-Json } } | ForEach-Object { if($_.type -eq "testStart"){$names[$_.test.id]=$_.test.name} elseif($_.type -eq "error"){[PSCustomObject]@{test=$names[$_.testID]; error=$_.error; package=$_.FullName}} } } }; cd ../.. | ConvertTo-Json -Compress
   ```
 
 ## Project Structure

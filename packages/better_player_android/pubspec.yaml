@@ -1,0 +1,24 @@
+name: better_player_android
+resolution: workspace
+description: Android implementation of the better_player plugin.
+version: 1.0.0
+homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_android
+
+environment:
+  sdk: "^3.12.0"
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  better_player_platform_interface:
+    path: ../better_player_platform_interface
+
+flutter:
+  plugin:
+    implements: better_player
+    platforms:
+      android:
+        package: pl.hasoft.better_player
+        pluginClass: BetterPlayerPlugin
+        dartPluginClass: BetterPlayerAndroid
