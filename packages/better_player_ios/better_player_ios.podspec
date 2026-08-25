@@ -15,6 +15,7 @@ iOS implementation of the better_player plugin.
   s.source           = { :path => '.' }
   s.source_files = 'ios/Sources/**/*.swift'
   s.dependency 'Flutter'
+  s.dependency 'Cache', '~> 6.0.0'
   s.platform = :ios, '13.0'
 
   # Flutter.framework does not contain a i386 slice.
