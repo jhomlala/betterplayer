@@ -27,7 +27,6 @@ linter:
     avoid_catches_without_on_clauses: false
     use_setters_to_change_properties: false
     document_ignores: false
-    one_member_abstracts: false
     missing_whitespace_between_adjacent_strings: false
     close_sinks: true
     sort_constructors_first: false

@@ -65,17 +65,27 @@ jobs:
           for dir in packages/*; do
             if [ -d "$dir/test" ]; then
               echo "Testing $dir..."
-              cd $dir
-              flutter test --coverage
-              cd ../..
+              (cd "$dir" && flutter test --coverage)
             fi
           done
-          # Combine coverage if needed, or just use the main one
-          # For now, we expect tests primarily in better_player
-          cp packages/better_player/coverage/lcov.info coverage/lcov.info || true
 
       - name: Generate HTML Report
-        run: genhtml coverage/lcov.info --output-directory coverage/html
+        run: |
+          LCOV_FILES=$(find packages -name lcov.info)
+          if [ -n "$LCOV_FILES" ]; then
+            genhtml $LCOV_FILES --output-directory coverage/html
+            mkdir -p coverage
+            # Concatenate all lcov.info files into one for subsequent steps
+            for f in $LCOV_FILES; do
+              # Add package prefix to file paths in lcov.info
+              pkg_dir=$(dirname $(dirname $f))
+              perl -pi -e "s|SF:lib/|SF:$pkg_dir/lib/|g" $f
+              cat "$f" >> coverage/lcov.info
+            done
+          else
+            echo "No coverage info found."
+            mkdir -p coverage/html
+          fi
 
       - name: Upload HTML Report Artifact
         uses: actions/upload-artifact@v4

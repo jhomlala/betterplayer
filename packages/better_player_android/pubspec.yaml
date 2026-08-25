@@ -1,4 +1,5 @@
 name: better_player_android
+publish_to: none
 resolution: workspace
 description: Android implementation of the better_player plugin.
 version: 1.0.0

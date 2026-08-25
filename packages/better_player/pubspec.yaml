@@ -1,4 +1,5 @@
 name: better_player
+publish_to: none
 resolution: workspace
 description: Advanced video player. It solves many typical use cases and it's easy to run.
 version: 1.0.0

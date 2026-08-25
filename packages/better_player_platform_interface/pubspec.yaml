@@ -1,4 +1,5 @@
 name: better_player_platform_interface
+publish_to: none
 resolution: workspace
 description: A common platform interface for the better_player plugin.
 version: 1.0.0
@@ -13,3 +14,7 @@ dependencies:
     sdk: flutter
   plugin_platform_interface: ^2.1.8
   meta: ^1.18.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
