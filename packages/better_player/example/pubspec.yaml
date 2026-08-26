@@ -25,6 +25,14 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+dependency_overrides:
+  better_player_platform_interface:
+    path: ../../better_player_platform_interface
+  better_player_android:
+    path: ../../better_player_android
+  better_player_ios:
+    path: ../../better_player_ios
+
 flutter:
   assets:
     - assets/

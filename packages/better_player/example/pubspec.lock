@@ -25,21 +25,21 @@ packages:
     source: path
     version: "1.0.0"
   better_player_android:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       path: "../../better_player_android"
       relative: true
     source: path
     version: "1.0.0"
   better_player_ios:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       path: "../../better_player_ios"
       relative: true
     source: path
     version: "1.0.0"
   better_player_platform_interface:
-    dependency: transitive
+    dependency: "direct overridden"
     description:
       path: "../../better_player_platform_interface"
       relative: true
