@@ -1,30 +1,30 @@
 ---
-id: migration_to_federated
-title: Migrating to v1.0.0 (Federated Architecture)
+id: migration_to_1.x.x
+title: Migrating to v1.x.x (Federated Architecture)
 ---
 
-# Migrating to Better Player 1.0.0
+# Migrating to Better Player 1.x.x
 
-Better Player 1.0.0 introduces a **federated plugin architecture** similar to how the official ideo_player plugin is structured. This splits the single etter_player package into smaller, specialized packages:
-- etter_player (App-facing interface)
-- etter_player_platform_interface (Common abstractions and interfaces)
-- etter_player_android (Android implementation)
-- etter_player_ios (iOS implementation)
+Better Player 1.x.x introduces a **federated plugin architecture** similar to how the official  ideo_player plugin is structured. This splits the single  etter_player package into smaller, specialized packages:
+-  etter_player (App-facing interface)
+-  etter_player_platform_interface (Common abstractions and interfaces)
+-  etter_player_android (Android implementation)
+-  etter_player_ios (iOS implementation)
 
 This architectural shift improves performance, enables easier platform-specific optimizations, and lays the groundwork for web and desktop support in the future!
 
-For most users, **migration requires very few changes**, as the core API surfaces (BetterPlayer, BetterPlayerController, etc.) remain intact. However, because some underlying models were deduplicated and shifted to the etter_player_platform_interface, there are a few minor breaking changes to be aware of.
+For most users, **migration requires very few changes**, as the core API surfaces (BetterPlayer, BetterPlayerController, etc.) remain intact. However, because some underlying models were deduplicated and shifted to the  etter_player_platform_interface, there are a few minor breaking changes to be aware of.
 
 ## 1. Update Dependencies
 
-Update your pubspec.yaml to use version 1.0.0:
+Update your pubspec.yaml to use version 1.x.x:
 
 `yaml
 dependencies:
-  better_player: ^1.0.0
+  better_player: ^1.x.x
 `
 
-Because of the federated architecture, you **do not** need to explicitly include etter_player_android, etter_player_ios, or etter_player_platform_interface in your pubspec.yaml. The main etter_player package will transitively pull in everything you need!
+Because of the federated architecture, you **do not** need to explicitly include  etter_player_android,  etter_player_ios, or  etter_player_platform_interface in your pubspec.yaml. The main  etter_player package will transitively pull in everything you need!
 
 ## 2. API Name Changes
 
@@ -49,7 +49,7 @@ BetterPlayerDataSource(
 )
 `
 
-**After (1.0.0):**
+**After (1.x.x):**
 `dart
 BetterPlayerDataSource(
     DataSourceType.network,

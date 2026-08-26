@@ -16,7 +16,7 @@ const sidebars = {
       type: 'category',
       label: 'Migrations',
       items: [
-        'migration_to_federated',
+        'migration_to_1.x.x',
         'migration_from_video_player',
         'migration_from_chewie',
       ],
