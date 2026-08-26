@@ -1,4 +1,4 @@
-name: example
+name: better_player_internal_example
 resolution: workspace
 description: "Example to showcase use cases of Better Player."
 publish_to: 'none'
@@ -13,6 +13,7 @@ dependencies:
   flutter:
     sdk: flutter
 
+  path_provider: any
 dev_dependencies:
   very_good_analysis: ^10.3.0
   flutter_test:
