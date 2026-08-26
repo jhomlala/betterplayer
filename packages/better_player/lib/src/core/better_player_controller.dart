@@ -1149,7 +1149,7 @@ class BetterPlayerController {
       _wasInFullScreenBeforePiP = _isFullScreen;
       _wasControlsEnabledBeforePiP = _controlsEnabled;
       setControlsEnabled(false);
-      if (Platform.isAndroid) {
+      if (defaultTargetPlatform == TargetPlatform.android) {
         _wasInFullScreenBeforePiP = _isFullScreen;
         await videoPlayerController?.enablePictureInPicture(
           left: 0,
@@ -1161,7 +1161,7 @@ class BetterPlayerController {
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
         return;
       }
-      if (Platform.isIOS) {
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
         final renderBox =
             betterPlayerGlobalKey.currentContext!.findRenderObject()
                 as RenderBox?;

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
