@@ -10,12 +10,12 @@ class BetterPlayerExample extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      localizationsDelegates: const [
+    return const MaterialApp(
+      localizationsDelegates: [
         ...GlobalMaterialLocalizations.delegates,
         m3.GlobalMaterialLocalizations.delegate,
       ],
-      home: const WelcomePage(),
+      home: WelcomePage(),
     );
   }
 }
