@@ -1,5 +1,4 @@
 name: better_player
-publish_to: none
 resolution: workspace
 description: Advanced video player. It solves many typical use cases and it's easy to run.
 version: 1.0.0
@@ -13,12 +12,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  better_player_platform_interface:
-    path: ../better_player_platform_interface
-  better_player_android:
-    path: ../better_player_android
-  better_player_ios:
-    path: ../better_player_ios
+  better_player_platform_interface: ^1.0.0
+  better_player_android: ^1.0.0
+  better_player_ios: ^1.0.0
   material_ui: ^1.0.0
   cupertino_ui: ^1.0.0
   cupertino_icons: ^1.0.8

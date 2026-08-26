@@ -1,5 +1,4 @@
 name: better_player_platform_interface
-publish_to: none
 resolution: workspace
 description: A common platform interface for the better_player plugin.
 version: 1.0.0
