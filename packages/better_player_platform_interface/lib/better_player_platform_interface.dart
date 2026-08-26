@@ -1,12 +1,12 @@
 export 'package:better_player_platform_interface/src/method_channel_video_player.dart';
 export 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 export 'package:better_player_platform_interface/src/models/cache_configuration.dart';
-export 'package:better_player_platform_interface/src/models/notification_configuration.dart';
-export 'package:better_player_platform_interface/src/models/drm_configuration.dart';
-export 'package:better_player_platform_interface/src/models/drm_type.dart';
 export 'package:better_player_platform_interface/src/models/data_source.dart';
 export 'package:better_player_platform_interface/src/models/data_source_type.dart';
+export 'package:better_player_platform_interface/src/models/drm_configuration.dart';
+export 'package:better_player_platform_interface/src/models/drm_type.dart';
 export 'package:better_player_platform_interface/src/models/duration_range.dart';
+export 'package:better_player_platform_interface/src/models/notification_configuration.dart';
 export 'package:better_player_platform_interface/src/models/video_event.dart';
 export 'package:better_player_platform_interface/src/models/video_event_type.dart';
 export 'package:better_player_platform_interface/src/models/video_format.dart';

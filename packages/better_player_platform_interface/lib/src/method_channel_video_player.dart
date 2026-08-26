@@ -360,7 +360,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   /// Converts [dataSource] to a map that can be sent to the platform side.
   @protected
   Map<String, dynamic> dataSourceToMap(DataSource dataSource) {
-    Map<String, dynamic> map = <String, dynamic>{
+    final map = <String, dynamic>{
       'key': dataSource.key,
       'useCache': false,
       'maxCacheSize': 0,
@@ -382,7 +382,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'asset': dataSource.asset,
           'package': dataSource.package,
         });
-        break;
       case DataSourceType.network:
         map.addAll(<String, dynamic>{
           'uri': dataSource.uri,
@@ -399,7 +398,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'clearKey': dataSource.drmConfiguration?.clearKey,
           'videoExtension': dataSource.videoExtension,
         });
-        break;
       case DataSourceType.file:
       case DataSourceType.memory:
         map.addAll(<String, dynamic>{
@@ -407,7 +405,6 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'formatHint': dataSource.rawFormalHint,
           'clearKey': dataSource.drmConfiguration?.clearKey,
         });
-        break;
     }
     return map;
   }

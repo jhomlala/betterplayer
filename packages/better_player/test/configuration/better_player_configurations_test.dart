@@ -1,4 +1,3 @@
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player/better_player.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';

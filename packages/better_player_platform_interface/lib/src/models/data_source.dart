@@ -1,8 +1,8 @@
-import 'package:better_player_platform_interface/src/models/data_source_type.dart';
-import 'package:better_player_platform_interface/src/models/video_format.dart';
 import 'package:better_player_platform_interface/src/models/cache_configuration.dart';
-import 'package:better_player_platform_interface/src/models/notification_configuration.dart';
+import 'package:better_player_platform_interface/src/models/data_source_type.dart';
 import 'package:better_player_platform_interface/src/models/drm_configuration.dart';
+import 'package:better_player_platform_interface/src/models/notification_configuration.dart';
+import 'package:better_player_platform_interface/src/models/video_format.dart';
 
 /// Description of the data source used to create an instance of
 /// the video player.

@@ -133,7 +133,7 @@ void main() {
           sourceType: DataSourceType.network,
           uri: 'https://example.com/video.mp4',
           headers: {'Authorization': 'Bearer token'},
-          cacheConfiguration: CacheConfiguration(
+          cacheConfiguration: const CacheConfiguration(
             useCache: true,
             maxCacheSize: 1000,
             maxCacheFileSize: 100,
