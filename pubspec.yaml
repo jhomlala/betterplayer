@@ -6,3 +6,5 @@ workspace:
   - packages/better_player_android
   - packages/better_player_ios
   - packages/better_player_platform_interface
+  - packages/better_player_example
+  - packages/better_player/example
