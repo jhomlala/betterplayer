@@ -7,6 +7,7 @@ const sidebars = {
       items: [
         'home',
         'install',
+        'migration_to_federated',
         'migration_from_video_player',
         'migration_from_chewie',
         'general_player_usage',

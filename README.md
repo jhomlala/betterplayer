@@ -64,7 +64,7 @@ Better Player is a powerful video player for Flutter, built on top of the offici
 Add Better Player to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  better_player: ^0.7.0
+  better_player: ^1.0.0
 ```
 
 ### 2. Basic Usage
@@ -94,7 +94,7 @@ For full control, use the `BetterPlayerController`:
 BetterPlayerController _controller = BetterPlayerController(
     const BetterPlayerConfiguration(),
     betterPlayerDataSource: BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
+        DataSourceType.network,
         "https://example.com/video.mp4",
     ),
 );
