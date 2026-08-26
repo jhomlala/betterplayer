@@ -18,13 +18,13 @@ class BetterPlayerIOS extends MethodChannelVideoPlayer {
   }
 
   @override
-  Future<void> setDataSource(int? textureId, DataSource dataSource) async {
+  Map<String, dynamic> dataSourceToMap(DataSource dataSource) {
     if (dataSource.uri?.contains('.mpd') == true ||
         dataSource.formatHint == VideoFormat.dash) {
       throw Exception(
         'DASH streams are not supported on iOS platform. Please use HLS instead.',
       );
     }
-    return super.setDataSource(textureId, dataSource);
+    return super.dataSourceToMap(dataSource);
   }
 }

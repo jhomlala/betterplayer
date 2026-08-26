@@ -1,4 +1,5 @@
 ## Unreleased
+* Updated: Extracted `dataSourceToMap` in `MethodChannelVideoPlayer` to allow platform-specific `DataSource` mapping, improving modularity and extensibility of the federated plugin.
 * Updated: Refactored federated plugin architecture to improve separation of concerns between core and platform implementation packages.
 * Fixed: Restored Picture-in-Picture logic and corrected platform view identifiers.
 * Fixed: Compilation error and lint warnings in `BetterPlayerAsmsUtils`.

@@ -105,5 +105,60 @@ void main() {
       final pos = await player.getPosition(1);
       expect(pos.inSeconds, 5);
     });
+
+    group('setDataSource and preCache tests', () {
+      test('setDataSource network source correctly maps data', () async {
+        final dataSource = DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.mp4',
+          headers: {'Authorization': 'Bearer token'},
+          useCache: true,
+          maxCacheSize: 1000,
+          maxCacheFileSize: 100,
+        );
+
+        await player.setDataSource(1, dataSource);
+
+        expect(log.length, 1);
+        expect(log[0].method, 'setDataSource');
+        final args = log[0].arguments;
+        expect(args['textureId'], 1);
+        final dsMap = args['dataSource'];
+        expect(dsMap['uri'], 'https://example.com/video.mp4');
+        expect(dsMap['headers'], {'Authorization': 'Bearer token'});
+        expect(dsMap['useCache'], true);
+        expect(dsMap['maxCacheSize'], 1000);
+      });
+
+      test('setDataSource asset source correctly maps data', () async {
+        final dataSource = DataSource(
+          sourceType: DataSourceType.asset,
+          asset: 'assets/video.mp4',
+          package: 'my_package',
+        );
+
+        await player.setDataSource(1, dataSource);
+
+        final dsMap = log[0].arguments['dataSource'];
+        expect(dsMap['asset'], 'assets/video.mp4');
+        expect(dsMap['package'], 'my_package');
+        expect(dsMap['useCache'], false);
+      });
+
+      test('preCache correctly adds preCacheSize', () async {
+        final dataSource = DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.mp4',
+        );
+
+        await player.preCache(dataSource, 5000);
+
+        expect(log.length, 1);
+        expect(log[0].method, 'preCache');
+        final dsMap = log[0].arguments['dataSource'];
+        expect(dsMap['uri'], 'https://example.com/video.mp4');
+        expect(dsMap['preCacheSize'], 5000);
+      });
+    });
   });
 }

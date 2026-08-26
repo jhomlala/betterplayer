@@ -7,7 +7,6 @@ import 'package:better_player_platform_interface/src/models/video_event.dart';
 import 'package:better_player_platform_interface/src/models/video_event_type.dart';
 import 'package:better_player_platform_interface/src/utils/better_player_utils.dart';
 import 'package:better_player_platform_interface/src/video_player_platform_interface.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
@@ -56,72 +55,13 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
-    Map<String, dynamic>? dataSourceDescription;
-    switch (dataSource.sourceType) {
-      case DataSourceType.asset:
-        dataSourceDescription = <String, dynamic>{
-          'key': dataSource.key,
-          'asset': dataSource.asset,
-          'package': dataSource.package,
-          'useCache': false,
-          'maxCacheSize': 0,
-          'maxCacheFileSize': 0,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName,
-        };
-      case DataSourceType.network:
-        dataSourceDescription = <String, dynamic>{
-          'key': dataSource.key,
-          'uri': dataSource.uri,
-          'formatHint': dataSource.rawFormalHint,
-          'headers': dataSource.headers,
-          'useCache': dataSource.useCache,
-          'maxCacheSize': dataSource.maxCacheSize,
-          'maxCacheFileSize': dataSource.maxCacheFileSize,
-          'cacheKey': dataSource.cacheKey,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'licenseUrl': dataSource.licenseUrl,
-          'certificateUrl': dataSource.certificateUrl,
-          'drmHeaders': dataSource.drmHeaders,
-          'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey,
-          'videoExtension': dataSource.videoExtension,
-        };
-      case DataSourceType.file:
-        dataSourceDescription = <String, dynamic>{
-          'key': dataSource.key,
-          'uri': dataSource.uri,
-          'useCache': false,
-          'maxCacheSize': 0,
-          'maxCacheFileSize': 0,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey,
-        };
-    }
     await _channel.invokeMethod<void>(
       'setDataSource',
       <String, dynamic>{
         'textureId': textureId,
-        'dataSource': dataSourceDescription,
+        'dataSource': dataSourceToMap(dataSource),
       },
     );
-    return;
   }
 
   @override
@@ -301,17 +241,11 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) {
-    final dataSourceDescription = <String, dynamic>{
-      'key': dataSource.key,
-      'uri': dataSource.uri,
-      'certificateUrl': dataSource.certificateUrl,
-      'headers': dataSource.headers,
-      'maxCacheSize': dataSource.maxCacheSize,
-      'maxCacheFileSize': dataSource.maxCacheFileSize,
-      'preCacheSize': preCacheSize,
-      'cacheKey': dataSource.cacheKey,
-      'videoExtension': dataSource.videoExtension,
-    };
+    final dataSourceDescription = dataSourceToMap(
+      dataSource,
+    );
+    dataSourceDescription['preCacheSize'] = preCacheSize;
+
     return _channel.invokeMethod<void>(
       'preCache',
       <String, dynamic>{
@@ -421,6 +355,67 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildView(int? textureId) {
     return Texture(textureId: textureId!);
+  }
+
+  /// Converts [dataSource] to a map that can be sent to the platform side.
+  @protected
+  Map<String, dynamic> dataSourceToMap(DataSource dataSource) {
+    switch (dataSource.sourceType) {
+      case DataSourceType.asset:
+        return <String, dynamic>{
+          'key': dataSource.key,
+          'asset': dataSource.asset,
+          'package': dataSource.package,
+          'useCache': false,
+          'maxCacheSize': 0,
+          'maxCacheFileSize': 0,
+          'showNotification': dataSource.showNotification,
+          'title': dataSource.title,
+          'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
+          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+          'activityName': dataSource.activityName,
+        };
+      case DataSourceType.network:
+        return <String, dynamic>{
+          'key': dataSource.key,
+          'uri': dataSource.uri,
+          'headers': dataSource.headers,
+          'useCache': dataSource.useCache,
+          'maxCacheSize': dataSource.maxCacheSize,
+          'maxCacheFileSize': dataSource.maxCacheFileSize,
+          'cacheKey': dataSource.cacheKey,
+          'showNotification': dataSource.showNotification,
+          'title': dataSource.title,
+          'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
+          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+          'licenseUrl': dataSource.licenseUrl,
+          'certificateUrl': dataSource.certificateUrl,
+          'drmHeaders': dataSource.drmHeaders,
+          'activityName': dataSource.activityName,
+          'clearKey': dataSource.clearKey,
+          'videoExtension': dataSource.videoExtension,
+        };
+      case DataSourceType.file:
+        return <String, dynamic>{
+          'key': dataSource.key,
+          'uri': dataSource.uri,
+          'useCache': false,
+          'maxCacheSize': 0,
+          'maxCacheFileSize': 0,
+          'showNotification': dataSource.showNotification,
+          'title': dataSource.title,
+          'author': dataSource.author,
+          'imageUrl': dataSource.imageUrl,
+          'notificationChannelName': dataSource.notificationChannelName,
+          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+          'activityName': dataSource.activityName,
+          'clearKey': dataSource.clearKey,
+        };
+    }
   }
 
   EventChannel _eventChannelFor(int? textureId) {

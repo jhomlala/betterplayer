@@ -11,4 +11,13 @@ class BetterPlayerAndroid extends MethodChannelVideoPlayer {
   Widget buildView(int? textureId) {
     return Texture(textureId: textureId!);
   }
+
+  @override
+  Map<String, dynamic> dataSourceToMap(DataSource dataSource) {
+    final map = super.dataSourceToMap(dataSource);
+    if (dataSource.sourceType == DataSourceType.network) {
+      map['formatHint'] = dataSource.rawFormalHint;
+    }
+    return map;
+  }
 }
