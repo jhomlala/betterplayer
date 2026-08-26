@@ -1,0 +1,49 @@
+# This file configures the analyzer, which statically analyzes Dart code to
+# check for errors, warnings, and lints.
+#
+# The issues identified by the analyzer are surfaced in the UI of Dart-enabled
+# IDEs (https://dart.dev/tools#ides-and-editors). The analyzer can also be
+# invoked from the command line by running `flutter analyze`.
+
+# The following line activates a set of recommended lints for Flutter apps,
+# packages, and plugins designed to encourage good coding practices.
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  errors:
+    undefined_lint: ignore
+    strict_raw_type: ignore
+    inference_failure_on_function_return_type: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
+
+linter:
+  rules:
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+    avoid_catches_without_on_clauses: false
+    use_setters_to_change_properties: false
+    document_ignores: false
+    one_member_abstracts: false
+    missing_whitespace_between_adjacent_strings: false
+    library_private_types_in_public_api: false
+    unawaited_futures: false
+    discarded_futures: false
+    cascade_invocations: false
+    use_named_constants: false
+    avoid_print: false
+    strict_raw_type: false
+    sort_pub_dependencies: false
+    inference_failure_on_function_return_type: false
+    avoid_positional_boolean_parameters: false
+    unnecessary_const: false
+    flutter_style_todos: false
+
+# Additional information about this file can be found at
+# https://dart.dev/guides/language/analysis-options

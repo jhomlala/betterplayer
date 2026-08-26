@@ -1,7 +1,7 @@
 name: better_player_ios
 resolution: workspace
 description: iOS implementation of the better_player plugin.
-version: 1.0.0
+version: 1.0.1
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_ios
 
 environment:
@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  better_player_platform_interface: ^1.0.0
+  better_player_platform_interface: ^1.0.1
 
 dev_dependencies:
   flutter_test:

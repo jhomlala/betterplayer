@@ -1,4 +1,9 @@
 ## Unreleased
+- none.
+
+## 1.0.1
+* Add thin examples to platform packages and decoupled example app.
+
 
 ## 1.0.0
 * Updated: Refactored architecture to a federated plugin model, delegating native implementations to `better_player_android` and `better_player_ios`.

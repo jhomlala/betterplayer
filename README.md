@@ -64,7 +64,7 @@ Better Player is a powerful video player for Flutter, built on top of the offici
 Add Better Player to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  better_player: ^1.0.0
+  better_player: ^1.0.1
 ```
 
 ### 2. Basic Usage
