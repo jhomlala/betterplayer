@@ -148,9 +148,6 @@ class BetterPlayerController {
   ///Overridden fit which will be used instead of fit passed in configuration.
   BoxFit? _overriddenFit;
 
-  ///Was Picture in Picture opened.
-  bool _wasInPipMode = false;
-
   ///Was player in fullscreen before Picture in Picture opened.
   bool _wasInFullScreenBeforePiP = false;
 
@@ -241,30 +238,16 @@ class BetterPlayerController {
       ),
     );
 
-    if (defaultTargetPlatform == TargetPlatform.iOS &&
-        (BetterPlayerAsmsUtils.isDataSourceDash(betterPlayerDataSource.url) ||
-            betterPlayerDataSource.videoFormat ==
-                BetterPlayerVideoFormat.dash)) {
-      _postEvent(
-        BetterPlayerEvent(
-          BetterPlayerEventType.exception,
-          parameters: <String, dynamic>{
-            'exception':
-                'DASH streams are not supported on iOS platform. Please use HLS instead.',
-          },
-        ),
-      );
-      return;
-    }
-
     _postControllerEvent(BetterPlayerControllerEvent.setupDataSource);
     _hasCurrentDataSourceStarted = false;
     _hasCurrentDataSourceInitialized = false;
     _betterPlayerDataSource = betterPlayerDataSource;
     _betterPlayerSubtitlesSourceList.clear();
 
+    final createdNewController = videoPlayerController == null;
+
     ///Build videoPlayerController if null
-    if (videoPlayerController == null) {
+    if (createdNewController) {
       videoPlayerController = VideoPlayerController(
         bufferingConfiguration: betterPlayerDataSource.bufferingConfiguration,
       );
@@ -290,7 +273,23 @@ class BetterPlayerController {
     if (_isDataSourceAsms(betterPlayerDataSource)) {
       setupFutures.add(_setupAsmsDataSource(betterPlayerDataSource));
     }
-    await Future.wait(setupFutures);
+    try {
+      await Future.wait(setupFutures);
+    } catch (exception) {
+      if (createdNewController) {
+        videoPlayerController?.dispose();
+        videoPlayerController = null;
+      }
+      _postEvent(
+        BetterPlayerEvent(
+          BetterPlayerEventType.exception,
+          parameters: <String, dynamic>{
+            'exception': exception.toString().replaceFirst('Exception: ', ''),
+          },
+        ),
+      );
+      return;
+    }
 
     _setupSubtitles();
     setTrack(BetterPlayerAsmsTrack.defaultTrack());
@@ -832,19 +831,6 @@ class BetterPlayerController {
       _hasCurrentDataSourceInitialized = true;
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.initialized));
     }
-    if (currentVideoPlayerValue.isPip) {
-      _wasInPipMode = true;
-    } else if (_wasInPipMode) {
-      _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStop));
-      _wasInPipMode = false;
-      if (!_wasInFullScreenBeforePiP) {
-        exitFullScreen();
-      }
-      if (_wasControlsEnabledBeforePiP) {
-        setControlsEnabled(true);
-      }
-      videoPlayerController?.refresh();
-    }
 
     if (_betterPlayerSubtitlesSource?.asmsIsSegmented == true) {
       _loadAsmsSubtitlesSegments(currentVideoPlayerValue.position);
@@ -1144,42 +1130,23 @@ class BetterPlayerController {
         (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
 
     if (isPipSupported) {
-      _wasInFullScreenBeforePiP = _isFullScreen;
-      _wasControlsEnabledBeforePiP = _controlsEnabled;
-      setControlsEnabled(false);
-      if (Platform.isAndroid) {
-        _wasInFullScreenBeforePiP = _isFullScreen;
-        await videoPlayerController?.enablePictureInPicture(
-          left: 0,
-          top: 0,
-          width: 0,
-          height: 0,
+      final renderBox =
+          betterPlayerGlobalKey.currentContext!.findRenderObject()
+              as RenderBox?;
+      if (renderBox == null) {
+        BetterPlayerUtils.log(
+          "Can't show PiP. RenderBox is null. Did you provide valid global"
+          ' key?',
         );
-        enterFullScreen();
-        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
-        return;
+        return videoPlayerController?.enablePictureInPicture();
       }
-      if (Platform.isIOS) {
-        final renderBox =
-            betterPlayerGlobalKey.currentContext!.findRenderObject()
-                as RenderBox?;
-        if (renderBox == null) {
-          BetterPlayerUtils.log(
-            "Can't show PiP. RenderBox is null. Did you provide valid global"
-            ' key?',
-          );
-          return;
-        }
-        final position = renderBox.localToGlobal(Offset.zero);
-        return videoPlayerController?.enablePictureInPicture(
-          left: position.dx,
-          top: position.dy,
-          width: renderBox.size.width,
-          height: renderBox.size.height,
-        );
-      } else {
-        BetterPlayerUtils.log('Unsupported PiP in current platform.');
-      }
+      final position = renderBox.localToGlobal(Offset.zero);
+      return videoPlayerController?.enablePictureInPicture(
+        left: position.dx,
+        top: position.dy,
+        width: renderBox.size.width,
+        height: renderBox.size.height,
+      );
     } else {
       BetterPlayerUtils.log(
         "Picture in picture is not supported in this device. If you're "
@@ -1248,6 +1215,20 @@ class BetterPlayerController {
         );
       case VideoEventType.bufferingEnd:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingEnd));
+      case VideoEventType.pipStart:
+        _wasInFullScreenBeforePiP = _isFullScreen;
+        _wasControlsEnabledBeforePiP = _controlsEnabled;
+        setControlsEnabled(false);
+        enterFullScreen();
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
+      case VideoEventType.pipStop:
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStop));
+        if (!_wasInFullScreenBeforePiP) {
+          exitFullScreen();
+        }
+        if (_wasControlsEnabledBeforePiP) {
+          setControlsEnabled(true);
+        }
       default:
 
         ///TODO: Handle when needed

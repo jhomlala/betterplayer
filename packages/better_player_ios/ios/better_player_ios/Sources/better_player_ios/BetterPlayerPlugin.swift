@@ -38,7 +38,7 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         let channel = FlutterMethodChannel(name: "better_player_channel", binaryMessenger: registrar.messenger())
         let instance = BetterPlayerPlugin(registrar: registrar)
         registrar.addMethodCallDelegate(instance, channel: channel)
-        registrar.register(instance, withId: "com.jhomlala/better_player")
+        registrar.register(instance, withId: "pl.hasoft.better_player")
     }
 
     // MARK: - FlutterPlatformViewFactory

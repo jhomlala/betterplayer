@@ -350,7 +350,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   void _showModalBottomSheet(List<Widget> children) {
     BetterPlayerUtils.log('Showing bottom sheet with ${children.length} items');
-    Platform.isAndroid
+    defaultTargetPlatform == TargetPlatform.android
         ? _showMaterialBottomSheet(children)
         : _showCupertinoModalBottomSheet(children);
   }

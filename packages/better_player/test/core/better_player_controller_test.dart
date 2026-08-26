@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/better_player_controller_event.dart';
+import 'package:better_player_ios/better_player_ios.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -910,6 +911,8 @@ void main() {
       test('setupDataSource emits exception for DASH on iOS', () async {
         final previousPlatform = debugDefaultTargetPlatformOverride;
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        final previousInstance = VideoPlayerPlatform.instance;
+        VideoPlayerPlatform.instance = BetterPlayerIOS();
         try {
           final controller = BetterPlayerMockController(
             const BetterPlayerConfiguration(),
@@ -934,6 +937,7 @@ void main() {
           expect(controller.videoPlayerController, null);
         } finally {
           debugDefaultTargetPlatformOverride = previousPlatform;
+          VideoPlayerPlatform.instance = previousInstance;
         }
       });
 

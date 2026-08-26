@@ -224,7 +224,7 @@ class BetterPlayerControlsSelectionWidget extends StatelessWidget {
     if (controlsConfiguration.showControls) {
       var playerTheme = controlsConfiguration.playerTheme;
       if (playerTheme == null) {
-        if (Platform.isAndroid) {
+        if (defaultTargetPlatform == TargetPlatform.android) {
           playerTheme = BetterPlayerTheme.material;
         } else {
           playerTheme = BetterPlayerTheme.cupertino;

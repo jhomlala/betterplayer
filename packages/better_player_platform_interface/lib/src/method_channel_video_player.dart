@@ -420,15 +420,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Widget buildView(int? textureId) {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
-      return UiKitView(
-        viewType: 'com.jhomlala/better_player',
-        creationParamsCodec: const StandardMessageCodec(),
-        creationParams: {'textureId': textureId!},
-      );
-    } else {
-      return Texture(textureId: textureId!);
-    }
+    return Texture(textureId: textureId!);
   }
 
   EventChannel _eventChannelFor(int? textureId) {
