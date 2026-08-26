@@ -1,7 +1,9 @@
+## Unreleased
+- none.
+
 ## 1.0.1
 * Add thin examples to platform packages and decoupled example app.
 
-## Unreleased
 
 ## 1.0.0
 * Added: Established as the central platform interface package for the federated plugin architecture.

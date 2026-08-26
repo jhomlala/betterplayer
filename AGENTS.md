@@ -78,6 +78,7 @@
 ## Changelog Guidelines
 - **Content Policy**: Entries in `CHANGELOG.md` MUST ONLY be for the plugin itself (features, fixes, updates). DO NOT include DevOps, infrastructure, or CI/CD changes (e.g., workflow updates, script optimizations).
 - **History Preservation**: NEVER remove historical entries from `CHANGELOG.md`. Keep the complete history intact.
+- **Unreleased Section**: The `## Unreleased` header MUST ALWAYS be at the very top of the changelog file. If there are no unreleased changes, it should contain a single entry: `- none.`.
 - **Grouping**: Always group related or repetitive changes under a single concise entry in `## Unreleased` to avoid bloating.
 - **Labels**: Mark critical or API-breaking changes with the `[BREAKING_CHANGE]` label at the start of the line.
 - **Sections**: Use the following verbs to start entries:
@@ -91,7 +92,7 @@
   1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml`, `packages/better_player_android/pubspec.yaml`, `packages/better_player_ios/pubspec.yaml`, and `packages/better_player_platform_interface/pubspec.yaml`.
   2. Update `s.version = 'X.Y.Z'` in `packages/better_player_ios/ios/better_player_ios.podspec`.
   3. Update `better_player: ^X.Y.Z` in the installation snippet of `docs/install.md`.
-  4. Move all entries from `## Unreleased` to a new `## X.Y.Z` header in `CHANGELOG.md` (omit the date).
+  4. Move all entries from `## Unreleased` to a new `## X.Y.Z` header in `CHANGELOG.md` (omit the date). Ensure a new `## Unreleased` header is left at the very top with `- none.`.
   5. Run `flutter pub get` in the root directory.
   6. Run `dart format .` and `flutter analyze .`.
 - **Internal Release (`publish_to: none`)**:
