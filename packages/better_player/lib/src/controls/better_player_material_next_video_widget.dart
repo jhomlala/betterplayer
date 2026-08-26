@@ -4,7 +4,6 @@ import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialNextVideoWidget extends StatelessWidget {
-
   const BetterPlayerMaterialNextVideoWidget({
     required this.controller,
     required this.controlsConfiguration,

@@ -5,7 +5,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialHitArea extends StatelessWidget {
-
   const BetterPlayerMaterialHitArea({
     required this.controller,
     required this.controlsConfiguration,
@@ -52,7 +51,6 @@ class BetterPlayerMaterialHitArea extends StatelessWidget {
 }
 
 class BetterPlayerMaterialMiddleRow extends StatelessWidget {
-
   const BetterPlayerMaterialMiddleRow({
     required this.controller,
     required this.controlsConfiguration,
@@ -138,7 +136,6 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
-
   const _BetterPlayerMaterialHitAreaClickableButton({
     required this.onClicked,
     required this.icon,
@@ -179,7 +176,6 @@ class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialReplayButton extends StatelessWidget {
-
   const _BetterPlayerMaterialReplayButton({
     required this.controller,
     required this.controlsConfiguration,

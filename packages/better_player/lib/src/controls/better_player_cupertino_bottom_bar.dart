@@ -7,7 +7,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoBottomBar extends StatelessWidget {
-
   const BetterPlayerCupertinoBottomBar({
     required this.controller,
     required this.controlsConfiguration,
@@ -155,7 +154,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
-
   const _BetterPlayerCupertinoPlayPauseButton({
     required this.controller,
     required this.controlsConfiguration,
@@ -200,7 +198,6 @@ class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
-
   const _BetterPlayerCupertinoSkipButton({
     required this.controller,
     required this.onSkip,
@@ -245,7 +242,6 @@ class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoLiveWidget extends StatelessWidget {
-
   const _BetterPlayerCupertinoLiveWidget({
     required this.controller,
     required this.controlsConfiguration,
@@ -268,7 +264,6 @@ class _BetterPlayerCupertinoLiveWidget extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoPositionWidget extends StatelessWidget {
-
   const _BetterPlayerCupertinoPositionWidget({
     required this.controlsConfiguration,
     required this.latestValue,
@@ -298,7 +293,6 @@ class _BetterPlayerCupertinoPositionWidget extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
-
   const _BetterPlayerCupertinoRemainingWidget({
     required this.controlsConfiguration,
     required this.latestValue,
@@ -328,7 +322,6 @@ class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoProgressBarWrapper extends StatelessWidget {
-
   const _BetterPlayerCupertinoProgressBarWrapper({
     required this.controller,
     required this.controlsConfiguration,

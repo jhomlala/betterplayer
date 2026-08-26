@@ -1,6 +1,5 @@
 ///Class used to hold translations for all features within Better Player
 class BetterPlayerTranslations {
-
   BetterPlayerTranslations({
     this.languageCode = 'en',
     this.generalDefaultError = "Video can't be played",

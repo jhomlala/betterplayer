@@ -97,9 +97,7 @@ class HlsPlaylistParser {
   static const String regexpGroupId = 'GROUP-ID="(.+?)"';
   static const String regexpCharacteristics = 'CHARACTERISTICS="(.+?)"';
   static const String regexpInStreamId = r'INSTREAM-ID="((?:CC|SERVICE)\d+)"';
-  static final String
-  regexpAutoSelect =
-  _compileBooleanAttrPattern(
+  static final String regexpAutoSelect = _compileBooleanAttrPattern(
     'AUTOSELECT',
   );
 
@@ -184,22 +182,19 @@ class HlsPlaylistParser {
   ) {
     final tags = <String>[];
     final mediaTags = <String>[];
-    final sessionKeyDrmInitData =
-        <DrmInitData>[];
+    final sessionKeyDrmInitData = <DrmInitData>[];
     final variants = <Variant>[];
     final videos = <Rendition>[];
     final audios = <Rendition>[];
     final subtitles = <Rendition>[];
     final closedCaptions = <Rendition>[];
-    final urlToVariantInfos =
-        <Uri, List<VariantInfo>>{};
+    final urlToVariantInfos = <Uri, List<VariantInfo>>{};
     Format? muxedAudioFormat;
     var noClosedCaptions = false;
     var hasIndependentSegmentsTag = false;
     List<Format>? muxedCaptionFormats;
 
-    final variableDefinitions =
-        <String?, String>{};
+    final variableDefinitions = <String?, String>{};
 
     while (extraLines.moveNext()) {
       final line = extraLines.current;
@@ -601,8 +596,10 @@ class HlsPlaylistParser {
 
     return value?.replaceAllMapped(
       RegExp(regexpVariableReference),
-      (match) => variableDefinitions![match.group(1)] ??= value!
-          .substring(match.start, match.end),
+      (match) => variableDefinitions![match.group(1)] ??= value!.substring(
+        match.start,
+        match.end,
+      ),
     );
   }
 
@@ -782,8 +779,7 @@ class HlsPlaylistParser {
     int? segmentMediaSequence = 0;
     int? segmentDurationUs;
     String? segmentTitle;
-    final currentSchemeDatas =
-        <String?, SchemeData>{};
+    final currentSchemeDatas = <String?, SchemeData>{};
     DrmInitData? cachedDrmInitData;
     String? encryptionScheme;
     DrmInitData? playlistProtectionSchemes;

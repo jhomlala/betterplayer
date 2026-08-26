@@ -16,12 +16,12 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialControls extends StatefulWidget {
-
   const BetterPlayerMaterialControls({
     required this.onControlsVisibilityChanged,
     required this.controlsConfiguration,
     super.key,
   });
+
   ///Callback used to send information if player bar is hidden or not
   final Function(bool visbility) onControlsVisibilityChanged;
 

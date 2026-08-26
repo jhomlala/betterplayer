@@ -1,7 +1,6 @@
 ///Configuration of notification which is displayed once user moves app to
 ///background.
 class NotificationConfiguration {
-
   const NotificationConfiguration({
     this.showNotification,
     this.title,
@@ -10,6 +9,7 @@ class NotificationConfiguration {
     this.notificationChannelName,
     this.activityName,
   });
+
   ///Is player controls notification enabled
   final bool? showNotification;
 

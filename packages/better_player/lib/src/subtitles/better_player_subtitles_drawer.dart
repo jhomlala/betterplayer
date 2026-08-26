@@ -6,7 +6,6 @@ import 'package:better_player/src/subtitles/better_player_subtitles_drawer_item.
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerSubtitlesDrawer extends StatefulWidget {
-
   const BetterPlayerSubtitlesDrawer({
     required this.subtitles,
     required this.betterPlayerController,

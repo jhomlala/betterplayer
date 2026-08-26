@@ -3,7 +3,6 @@ import 'package:material_ui/material_ui.dart';
 
 ///Special version of Better Player which is used to play video in list view.
 class BetterPlayerListVideoPlayer extends StatefulWidget {
-
   const BetterPlayerListVideoPlayer(
     this.dataSource, {
     this.configuration = const BetterPlayerConfiguration(),
@@ -16,6 +15,7 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
          playFraction >= 0.0 && playFraction <= 1.0,
          "Play fraction can't be null and must be between 0.0 and 1.0",
        );
+
   ///Video to show
   final BetterPlayerDataSource dataSource;
 

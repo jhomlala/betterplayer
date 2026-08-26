@@ -5,7 +5,6 @@ import 'package:flutter/widgets.dart';
 ///Representation of data source which will be played in Better Player. Allows
 ///to setup all necessary configuration connected to video source.
 class BetterPlayerDataSource {
-
   BetterPlayerDataSource(
     this.type,
     this.url, {
@@ -133,6 +132,7 @@ class BetterPlayerDataSource {
       placeholder: placeholder,
     );
   }
+
   ///Type of source of video
   final DataSourceType type;
 

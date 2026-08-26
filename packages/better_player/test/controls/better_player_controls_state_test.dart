@@ -5,7 +5,6 @@ import 'package:material_ui/material_ui.dart';
 import '../helpers/better_player_mock_controller.dart';
 
 class MockControlsWidget extends StatefulWidget {
-
   const MockControlsWidget({
     required this.controller,
     super.key,

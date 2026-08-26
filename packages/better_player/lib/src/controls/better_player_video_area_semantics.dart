@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerVideoAreaSemantics extends StatelessWidget {
-
   const BetterPlayerVideoAreaSemantics({
     required this.child,
     required this.semanticsIdentifier,

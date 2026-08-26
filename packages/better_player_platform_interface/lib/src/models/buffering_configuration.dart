@@ -1,7 +1,6 @@
 /// Configuration class used to setup better buffering experience or setup custom
 /// load settings. Currently used only in Android.
 class BufferingConfiguration {
-
   const BufferingConfiguration({
     this.minBufferMs = defaultMinBufferMs,
     this.maxBufferMs = defaultMaxBufferMs,
@@ -9,6 +8,7 @@ class BufferingConfiguration {
     this.bufferForPlaybackAfterRebufferMs =
         defaultBufferForPlaybackAfterRebufferMs,
   });
+
   /// Constants values are from the offical exoplayer documentation
   /// https://exoplayer.dev/doc/reference/constant-values.html#com.google.android.exoplayer2.DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS
   static const defaultMinBufferMs = 25000;

@@ -11,7 +11,6 @@ import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
-
   const BetterPlayerWithControls({super.key, this.controller});
   final BetterPlayerController? controller;
 

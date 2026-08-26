@@ -4,7 +4,6 @@ import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialTopBar extends StatelessWidget {
-
   const BetterPlayerMaterialTopBar({
     required this.controller,
     required this.controlsConfiguration,
@@ -61,7 +60,6 @@ class BetterPlayerMaterialTopBar extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialPipButtonWrapper extends StatefulWidget {
-
   const _BetterPlayerMaterialPipButtonWrapper({
     required this.controller,
     required this.controlsConfiguration,
@@ -145,7 +143,6 @@ class _BetterPlayerMaterialPipButtonWrapperState
 }
 
 class _BetterPlayerMaterialMoreButton extends StatelessWidget {
-
   const _BetterPlayerMaterialMoreButton({
     required this.controller,
     required this.controlsConfiguration,

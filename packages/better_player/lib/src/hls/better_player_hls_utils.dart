@@ -51,18 +51,18 @@ class BetterPlayerHlsUtils {
       );
       if (parsedPlaylist is HlsMasterPlaylist) {
         for (final variant in parsedPlaylist.variants) {
-            tracks.add(
-              BetterPlayerAsmsTrack(
-                '',
-                variant.format.width,
-                variant.format.height,
-                variant.format.bitrate,
-                0,
-                '',
-                '',
-              ),
-            );
-          }
+          tracks.add(
+            BetterPlayerAsmsTrack(
+              '',
+              variant.format.width,
+              variant.format.height,
+              variant.format.bitrate,
+              0,
+              '',
+              '',
+            ),
+          );
+        }
       }
 
       if (tracks.isNotEmpty) {

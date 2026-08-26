@@ -3,7 +3,6 @@
 ///maxCacheFileSize > 0. On iOS maxCacheSize and maxCacheFileSize take no effect,
 ///so useCache is used only.
 class CacheConfiguration {
-
   const CacheConfiguration({
     this.useCache = false,
     this.maxCacheSize = 10 * 1024 * 1024,
@@ -11,6 +10,7 @@ class CacheConfiguration {
     this.preCacheSize = 3 * 1024 * 1024,
     this.key,
   });
+
   ///Enable cache for network data source
   final bool useCache;
 

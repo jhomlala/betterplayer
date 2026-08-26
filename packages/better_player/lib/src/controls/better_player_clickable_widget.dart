@@ -3,7 +3,6 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialClickableWidget extends StatelessWidget {
-
   const BetterPlayerMaterialClickableWidget({
     required this.onTap,
     required this.child,

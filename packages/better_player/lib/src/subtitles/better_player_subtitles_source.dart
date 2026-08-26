@@ -5,7 +5,6 @@ import 'package:better_player/src/subtitles/better_player_subtitles_source_type.
 ///Representation of subtitles source. Used to define subtitles in Better
 /// Player.
 class BetterPlayerSubtitlesSource {
-
   BetterPlayerSubtitlesSource({
     this.type,
     this.name = 'Default subtitles',
@@ -17,6 +16,7 @@ class BetterPlayerSubtitlesSource {
     this.asmsSegmentsTime,
     this.asmsSegments,
   });
+
   ///Source type
   final BetterPlayerSubtitlesSourceType? type;
 

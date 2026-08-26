@@ -28,7 +28,6 @@ class BetterPlayerMockControllerWithTracks extends BetterPlayerMockController {
 }
 
 class MockControlsWidget extends StatefulWidget {
-
   const MockControlsWidget({
     required this.controller,
     super.key,

@@ -3,7 +3,6 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerSubtitlesDrawerItem extends StatelessWidget {
-
   const BetterPlayerSubtitlesDrawerItem({
     required this.subtitleText,
     required this.configuration,

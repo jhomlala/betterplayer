@@ -2,7 +2,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoHitArea extends StatelessWidget {
-
   const BetterPlayerCupertinoHitArea({
     required this.latestValue,
     required this.controlsNotVisible,

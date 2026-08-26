@@ -3,7 +3,6 @@ import 'package:better_player/better_player.dart';
 
 ///Controller used to manage playlist player.
 class BetterPlayerPlaylistController {
-
   BetterPlayerPlaylistController(
     this._betterPlayerDataSourceList, {
     this.betterPlayerConfiguration = const BetterPlayerConfiguration(),
@@ -15,6 +14,7 @@ class BetterPlayerPlaylistController {
        ) {
     _setup();
   }
+
   ///List of data sources set for playlist.
   final List<BetterPlayerDataSource> _betterPlayerDataSourceList;
 

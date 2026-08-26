@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 ///Master configuration which contains children that configure specific part
 ///of player.
 class BetterPlayerConfiguration {
-
   const BetterPlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
@@ -46,6 +45,7 @@ class BetterPlayerConfiguration {
     this.expandToFill = true,
     this.useRootNavigator = false,
   });
+
   /// Play the video as soon as it's displayed
   final bool autoPlay;
 

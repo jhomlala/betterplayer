@@ -5,7 +5,6 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerOverflowMenu extends StatelessWidget {
-
   const BetterPlayerOverflowMenu({
     required this.controller,
     required this.controlsConfiguration,
@@ -84,7 +83,6 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
 }
 
 class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
-
   const BetterPlayerOverflowMenuItemWidget({
     required this.icon,
     required this.name,

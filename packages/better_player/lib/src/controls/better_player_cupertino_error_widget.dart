@@ -4,7 +4,6 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoErrorWidget extends StatelessWidget {
-
   const BetterPlayerCupertinoErrorWidget({
     required this.controller,
     required this.controlsConfiguration,

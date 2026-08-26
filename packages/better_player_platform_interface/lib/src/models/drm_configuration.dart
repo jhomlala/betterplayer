@@ -2,7 +2,6 @@ import 'package:better_player_platform_interface/src/models/drm_type.dart';
 
 ///Configuration of DRM used to protect data source
 class DrmConfiguration {
-
   const DrmConfiguration({
     this.drmType,
     this.token,
@@ -11,6 +10,7 @@ class DrmConfiguration {
     this.headers,
     this.clearKey,
   });
+
   ///Type of DRM
   final DrmType? drmType;
 

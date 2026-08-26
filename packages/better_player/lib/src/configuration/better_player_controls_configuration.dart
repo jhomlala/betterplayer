@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 ///of controls. Used in BetterPlayerConfiguration. Configuration applies only
 ///for player displayed in app, not in notification or PiP mode.
 class BetterPlayerControlsConfiguration {
-
   const BetterPlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
@@ -91,6 +90,7 @@ class BetterPlayerControlsConfiguration {
       iconsColor: theme.buttonTheme.colorScheme?.primary ?? Colors.white,
     );
   }
+
   ///Color of the control bars
   final Color controlBarColor;
 

@@ -2,7 +2,6 @@ import 'package:better_player/src/asms/better_player_asms_subtitle_segment.dart'
 
 ///Representation of HLS / DASH subtitle element.
 class BetterPlayerAsmsSubtitle {
-
   BetterPlayerAsmsSubtitle({
     this.language,
     this.name,
@@ -15,6 +14,7 @@ class BetterPlayerAsmsSubtitle {
     this.segments,
     this.isDefault,
   });
+
   ///Language of the subtitle
   final String? language;
 

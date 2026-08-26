@@ -5,7 +5,6 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoTopBar extends StatelessWidget {
-
   const BetterPlayerCupertinoTopBar({
     required this.controller,
     required this.controlsConfiguration,
@@ -117,7 +116,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
-
   const _BetterPlayerCupertinoExpandButton({
     required this.controller,
     required this.controlsConfiguration,
@@ -176,7 +174,6 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoPipButton extends StatefulWidget {
-
   const _BetterPlayerCupertinoPipButton({
     required this.controller,
     required this.controlsConfiguration,
@@ -268,7 +265,6 @@ class _BetterPlayerCupertinoPipButtonState
 }
 
 class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
-
   const _BetterPlayerCupertinoMuteButton({
     required this.controller,
     required this.controlsConfiguration,
@@ -332,7 +328,6 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
-
   const _BetterPlayerCupertinoMoreButton({
     required this.controller,
     required this.controlsConfiguration,

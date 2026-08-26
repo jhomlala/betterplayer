@@ -1,11 +1,11 @@
 ///Additional configuration used in Better Player Playlist player.
 class BetterPlayerPlaylistConfiguration {
-
   const BetterPlayerPlaylistConfiguration({
     this.nextVideoDelay = const Duration(milliseconds: 3000),
     this.loopVideos = true,
     this.initialStartIndex = 0,
   });
+
   ///How long user should wait for next video
   final Duration nextVideoDelay;
 

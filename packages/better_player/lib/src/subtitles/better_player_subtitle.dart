@@ -1,7 +1,6 @@
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 
 class BetterPlayerSubtitle {
-
   factory BetterPlayerSubtitle(String value, bool isWebVTT) {
     try {
       final scanner = value.split('\n');

@@ -8,7 +8,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialBottomBar extends StatelessWidget {
-
   const BetterPlayerMaterialBottomBar({
     required this.controller,
     required this.controlsConfiguration,
@@ -120,7 +119,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
-
   const _BetterPlayerMaterialPlayPauseButton({
     required this.controller,
     required this.controlsConfiguration,
@@ -158,7 +156,6 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialMuteButton extends StatelessWidget {
-
   const _BetterPlayerMaterialMuteButton({
     required this.controller,
     required this.controlsConfiguration,
@@ -201,7 +198,6 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
-
   const _BetterPlayerMaterialFullscreenButton({
     required this.controller,
     required this.controlsConfiguration,
@@ -246,7 +242,6 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
-
   const _BetterPlayerMaterialLiveWidget({
     required this.controller,
     required this.controlsConfiguration,
@@ -267,7 +262,6 @@ class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
-
   const _BetterPlayerMaterialPositionWidget({
     required this.controller,
     required this.controlsConfiguration,
@@ -315,7 +309,6 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
-
   const _BetterPlayerMaterialProgressBarWrapper({
     required this.controller,
     required this.controlsConfiguration,

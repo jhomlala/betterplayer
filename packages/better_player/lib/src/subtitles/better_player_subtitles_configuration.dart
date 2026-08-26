@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 ///Configuration of subtitles - colors/padding/font. Used in
 ///BetterPlayerConfiguration.
 class BetterPlayerSubtitlesConfiguration {
-
   const BetterPlayerSubtitlesConfiguration({
     this.fontSize = 14,
     this.fontColor = Colors.white,
@@ -18,6 +17,7 @@ class BetterPlayerSubtitlesConfiguration {
     this.alignment = Alignment.center,
     this.backgroundColor = Colors.transparent,
   });
+
   ///Subtitle font size
   final double fontSize;
 

@@ -29,7 +29,6 @@ final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
 ///
 /// After [dispose] all further calls are ignored.
 class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
-
   /// Constructs a [VideoPlayerController] and creates video controller on platform side.
   VideoPlayerController({
     this.bufferingConfiguration = const BufferingConfiguration(),
