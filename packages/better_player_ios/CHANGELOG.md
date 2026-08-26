@@ -1,8 +1,5 @@
 ## Unreleased
-* Updated: Added package-specific `analysis_options.yaml` inheriting from root.
-* Updated: Enhanced unit tests for `BetterPlayerIOS`, adding tests for `registerWith` and `buildView`.
-* Fixed: Correctly store data source information in `dataSourceDict` during `setDataSource` to enable remote notification (lock screen) controls.
-* Updated: Overrode `dataSourceToMap` to explicitly block DASH streams on iOS with a descriptive exception, improving error feedback.
 
 ## 1.0.0
-* Updated: Migrated to federated plugin.
+* Updated: Extracted iOS native code from the core package into a standalone federated plugin package (`better_player_ios`).
+* Fixed: Restored remote notification (lock screen) controls by correctly storing data source information.

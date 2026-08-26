@@ -1,20 +1,10 @@
 ## Unreleased
-* Updated: Added package-specific `analysis_options.yaml` inheriting from root.
-* [BREAKING_CHANGE] Renamed `BetterPlayerUtils` to `BetterPlayerUiUtils` for UI-related utility methods (`formatBitrate`, `formatDuration`, `calculateAspectRatio`).
-* Updated: Logging functionality now uses `BetterPlayerUtils.log` from `package:better_player_platform_interface`, which is now exported by `package:better_player`.
-* [BREAKING_CHANGE] Deleted `BetterPlayerDataSourceType` and `BetterPlayerVideoFormat` enums. Use `DataSourceType` and `VideoFormat` from `package:better_player_platform_interface`.
-* Updated: Renamed `isPictureInPictureEnabled` to `isPictureInPictureSupported` across the platform interface and core controller for clarity.
-* Fixed: Corrected missing method channel success response for `setMixWithOthers` on Android, preventing hangs.
-* Fixed: Restored remote notification (lock screen) functionality on iOS by ensuring data source info is correctly stored.
-* Updated: Extracted `dataSourceToMap` in `MethodChannelVideoPlayer` to allow platform-specific `DataSource` mapping, improving modularity and extensibility of the federated plugin.
-* Updated: Refactored federated plugin architecture to improve separation of concerns between core and platform implementation packages.
-* Fixed: Restored Picture-in-Picture logic and corrected platform view identifiers.
-* Fixed: Compilation error and lint warnings in `BetterPlayerAsmsUtils`.
-* Fixed: `MaterialLocalizations` error in `BetterPlayerControlsState` tests by ensuring correct package imports.
-* Updated: Refactored `BetterPlayerAsmsUtils.getDataFromUrl` for improved type safety and code clarity.
 
 ## 1.0.0
-* Updated: Migrated to federated plugin.
+* Updated: Refactored architecture to a federated plugin model, delegating native implementations to `better_player_android` and `better_player_ios`.
+* [BREAKING_CHANGE] Replaced internal models and utilities with centralized ones from `better_player_platform_interface` (e.g., deleted `BetterPlayerDataSourceType`, renamed `BetterPlayerUtils` to `BetterPlayerUiUtils`).
+* Updated: Renamed `isPictureInPictureEnabled` to `isPictureInPictureSupported` across the platform interface and core controller.
+* Fixed: Restored Picture-in-Picture logic, remote notification functionalities, and various lint/compilation issues across the codebase.
 
 ## 0.8.1
 * Added: Semantic identifiers across player controls, UI components, and resolution selection items for robust E2E testing.
