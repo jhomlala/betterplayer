@@ -1,3 +1,4 @@
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -37,9 +38,9 @@ void main() {
     });
   });
 
-  group('BetterPlayerBufferingConfiguration tests', () {
+  group('BufferingConfiguration tests', () {
     test('Default values', () {
-      const config = BetterPlayerBufferingConfiguration();
+      const config = BufferingConfiguration();
       expect(config.minBufferMs, 25000);
       expect(config.maxBufferMs, 6553600);
       expect(config.bufferForPlaybackMs, 3000);
@@ -47,18 +48,18 @@ void main() {
     });
   });
 
-  group('BetterPlayerCacheConfiguration tests', () {
+  group('CacheConfiguration tests', () {
     test('Default values', () {
-      const config = BetterPlayerCacheConfiguration();
+      const config = CacheConfiguration();
       expect(config.useCache, false);
       expect(config.maxCacheSize, 10 * 1024 * 1024);
       expect(config.maxCacheFileSize, 10 * 1024 * 1024);
     });
   });
 
-  group('BetterPlayerNotificationConfiguration tests', () {
+  group('NotificationConfiguration tests', () {
     test('Default values', () {
-      const config = BetterPlayerNotificationConfiguration();
+      const config = NotificationConfiguration();
       expect(config.showNotification, null);
     });
   });

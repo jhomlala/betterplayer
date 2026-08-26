@@ -95,7 +95,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   void _setupDataSource(
     String url,
     DataSourceType type, {
-    BetterPlayerDrmConfiguration? drmConfiguration,
+    DrmConfiguration? drmConfiguration,
   }) {
     final betterPlayerDataSource = BetterPlayerDataSource(
       type,

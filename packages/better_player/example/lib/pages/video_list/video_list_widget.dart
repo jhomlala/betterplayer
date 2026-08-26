@@ -47,19 +47,17 @@ class _VideoListWidgetState extends State<VideoListWidget> {
               BetterPlayerDataSource(
                 DataSourceType.network,
                 videoListData!.videoUrl,
-                notificationConfiguration:
-                    BetterPlayerNotificationConfiguration(
-                      showNotification: false,
-                      title: videoListData!.videoTitle,
-                      author: 'Test',
-                    ),
-                bufferingConfiguration:
-                    const BetterPlayerBufferingConfiguration(
-                      minBufferMs: 2000,
-                      maxBufferMs: 10000,
-                      bufferForPlaybackMs: 1000,
-                      bufferForPlaybackAfterRebufferMs: 2000,
-                    ),
+                notificationConfiguration: NotificationConfiguration(
+                  showNotification: false,
+                  title: videoListData!.videoTitle,
+                  author: 'Test',
+                ),
+                bufferingConfiguration: const BufferingConfiguration(
+                  minBufferMs: 2000,
+                  maxBufferMs: 10000,
+                  bufferForPlaybackMs: 1000,
+                  bufferForPlaybackAfterRebufferMs: 2000,
+                ),
               ),
               configuration: const BetterPlayerConfiguration(aspectRatio: 1),
               //key: Key(videoListData.hashCode.toString()),

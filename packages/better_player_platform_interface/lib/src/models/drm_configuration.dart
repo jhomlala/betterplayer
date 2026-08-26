@@ -1,9 +1,9 @@
-import 'package:better_player/src/configuration/better_player_drm_type.dart';
+import 'package:better_player_platform_interface/src/models/drm_type.dart';
 
 ///Configuration of DRM used to protect data source
-class BetterPlayerDrmConfiguration {
+class DrmConfiguration {
   ///Type of DRM
-  final BetterPlayerDrmType? drmType;
+  final DrmType? drmType;
 
   ///Parameter used only for token encrypted DRMs
   final String? token;
@@ -20,7 +20,7 @@ class BetterPlayerDrmConfiguration {
   ///Additional headers send with auth request, used only for WIDEVINE DRM
   final Map<String, String>? headers;
 
-  const BetterPlayerDrmConfiguration({
+  const DrmConfiguration({
     this.drmType,
     this.token,
     this.licenseUrl,

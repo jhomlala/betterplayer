@@ -29,11 +29,11 @@ final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
 ///
 /// After [dispose] all further calls are ignored.
 class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
-  final BetterPlayerBufferingConfiguration bufferingConfiguration;
+  final BufferingConfiguration bufferingConfiguration;
 
   /// Constructs a [VideoPlayerController] and creates video controller on platform side.
   VideoPlayerController({
-    this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
+    this.bufferingConfiguration = const BufferingConfiguration(),
     bool autoCreate = true,
   }) : super(VideoPlayerValue(duration: null)) {
     if (autoCreate) {
@@ -150,13 +150,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         sourceType: DataSourceType.asset,
         asset: dataSource,
         package: package,
-        showNotification: showNotification,
-        title: title,
-        author: author,
-        imageUrl: imageUrl,
-        notificationChannelName: notificationChannelName,
+        notificationConfiguration: NotificationConfiguration(
+          showNotification: showNotification,
+          title: title,
+          author: author,
+          imageUrl: imageUrl,
+          notificationChannelName: notificationChannelName,
+          activityName: activityName,
+        ),
         overriddenDuration: overriddenDuration,
-        activityName: activityName,
       ),
     );
   }
@@ -196,21 +198,27 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         uri: dataSource,
         formatHint: formatHint,
         headers: headers,
-        useCache: useCache,
-        maxCacheSize: maxCacheSize,
-        maxCacheFileSize: maxCacheFileSize,
-        cacheKey: cacheKey,
-        showNotification: showNotification,
-        title: title,
-        author: author,
-        imageUrl: imageUrl,
-        notificationChannelName: notificationChannelName,
+        cacheConfiguration: CacheConfiguration(
+          useCache: useCache,
+          maxCacheSize: maxCacheSize ?? 0,
+          maxCacheFileSize: maxCacheFileSize ?? 0,
+          key: cacheKey,
+        ),
+        notificationConfiguration: NotificationConfiguration(
+          showNotification: showNotification,
+          title: title,
+          author: author,
+          imageUrl: imageUrl,
+          notificationChannelName: notificationChannelName,
+          activityName: activityName,
+        ),
         overriddenDuration: overriddenDuration,
-        licenseUrl: licenseUrl,
-        certificateUrl: certificateUrl,
-        drmHeaders: drmHeaders,
-        activityName: activityName,
-        clearKey: clearKey,
+        drmConfiguration: DrmConfiguration(
+          licenseUrl: licenseUrl,
+          certificateUrl: certificateUrl,
+          headers: drmHeaders,
+          clearKey: clearKey,
+        ),
         videoExtension: videoExtension,
       ),
     );
@@ -234,15 +242,19 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _setDataSource(
       DataSource(
         sourceType: DataSourceType.file,
-        uri: 'file://${file.path}',
-        showNotification: showNotification,
-        title: title,
-        author: author,
-        imageUrl: imageUrl,
-        notificationChannelName: notificationChannelName,
+        uri: 'file://',
+        notificationConfiguration: NotificationConfiguration(
+          showNotification: showNotification,
+          title: title,
+          author: author,
+          imageUrl: imageUrl,
+          notificationChannelName: notificationChannelName,
+          activityName: activityName,
+        ),
         overriddenDuration: overriddenDuration,
-        activityName: activityName,
-        clearKey: clearKey,
+        drmConfiguration: DrmConfiguration(
+          clearKey: clearKey,
+        ),
       ),
     );
   }

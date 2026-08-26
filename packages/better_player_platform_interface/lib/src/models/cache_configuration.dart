@@ -2,7 +2,7 @@
 ///To enable cache on Android, useCache must be true and maxCacheSize > 0 and
 ///maxCacheFileSize > 0. On iOS maxCacheSize and maxCacheFileSize take no effect,
 ///so useCache is used only.
-class BetterPlayerCacheConfiguration {
+class CacheConfiguration {
   ///Enable cache for network data source
   final bool useCache;
 
@@ -22,7 +22,7 @@ class BetterPlayerCacheConfiguration {
   ///Cache key to re-use same cached data between app sessions.
   final String? key;
 
-  const BetterPlayerCacheConfiguration({
+  const CacheConfiguration({
     this.useCache = false,
     this.maxCacheSize = 10 * 1024 * 1024,
     this.maxCacheFileSize = 10 * 1024 * 1024,

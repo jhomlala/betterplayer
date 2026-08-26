@@ -44,8 +44,8 @@ class _ClearKeyState extends State<ClearKeyPage> {
     final clearKeyDataSourceFile = BetterPlayerDataSource(
       DataSourceType.file,
       await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
-      drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.clearKey,
+      drmConfiguration: DrmConfiguration(
+        drmType: DrmType.clearKey,
         clearKey: BetterPlayerClearKeyUtils.generateKey({
           'f3c5e0361e6654b28f8049c778b23946':
               'a4631a153a443df9eed0593043db7519',
@@ -60,8 +60,8 @@ class _ClearKeyState extends State<ClearKeyPage> {
     final clearKeyDataSourceBroken = BetterPlayerDataSource(
       DataSourceType.file,
       await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
-      drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.clearKey,
+      drmConfiguration: DrmConfiguration(
+        drmType: DrmType.clearKey,
         clearKey: BetterPlayerClearKeyUtils.generateKey({
           'f3c5e0361e6654b28f8049c778b23946':
               'a4631a153a443df9eed0593043d11111',
@@ -76,8 +76,8 @@ class _ClearKeyState extends State<ClearKeyPage> {
     final clearKeyDataSourceNetwork = BetterPlayerDataSource(
       DataSourceType.network,
       Constants.networkTestVideoEncryptUrl,
-      drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.clearKey,
+      drmConfiguration: DrmConfiguration(
+        drmType: DrmType.clearKey,
         clearKey: BetterPlayerClearKeyUtils.generateKey({
           'f3c5e0361e6654b28f8049c778b23946':
               'a4631a153a443df9eed0593043db7519',
@@ -95,8 +95,8 @@ class _ClearKeyState extends State<ClearKeyPage> {
       bytes: File(
         await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
       ).readAsBytesSync(),
-      drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.clearKey,
+      drmConfiguration: DrmConfiguration(
+        drmType: DrmType.clearKey,
         clearKey: BetterPlayerClearKeyUtils.generateKey({
           'f3c5e0361e6654b28f8049c778b23946':
               'a4631a153a443df9eed0593043db7519',

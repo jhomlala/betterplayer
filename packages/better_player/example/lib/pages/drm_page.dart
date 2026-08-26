@@ -24,8 +24,8 @@ class _DrmPageState extends State<DrmPage> {
       DataSourceType.network,
       Constants.tokenEncodedHlsUrl,
       videoFormat: VideoFormat.dash,
-      drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.widevine,
+      drmConfiguration: DrmConfiguration(
+        drmType: DrmType.widevine,
         licenseUrl: 'https://drm-widevine-licensing.axtest.net/AcquireLicense',
         headers: {'X-AxDRM-Message': Constants.tokenEncodedHlsToken},
       ),
@@ -37,8 +37,8 @@ class _DrmPageState extends State<DrmPage> {
     final widevineDataSource = BetterPlayerDataSource(
       DataSourceType.network,
       Constants.widevineVideoUrl,
-      drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.widevine,
+      drmConfiguration: DrmConfiguration(
+        drmType: DrmType.widevine,
         licenseUrl: Constants.widevineLicenseUrl,
         headers: {'Test': 'Test2'},
       ),
@@ -49,8 +49,8 @@ class _DrmPageState extends State<DrmPage> {
     final fairplayDataSource = BetterPlayerDataSource(
       DataSourceType.network,
       Constants.fairplayHlsUrl,
-      drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.fairplay,
+      drmConfiguration: DrmConfiguration(
+        drmType: DrmType.fairplay,
         certificateUrl: Constants.fairplayCertificateUrl,
         licenseUrl: Constants.fairplayLicenseUrl,
       ),

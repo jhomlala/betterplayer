@@ -1,6 +1,3 @@
-import 'package:better_player/src/configuration/better_player_cache_configuration.dart';
-import 'package:better_player/src/configuration/better_player_drm_configuration.dart';
-import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/widgets.dart';
@@ -43,13 +40,13 @@ class BetterPlayerDataSource {
   final Map<String, String>? resolutions;
 
   ///Optional cache configuration, used only for network data sources
-  final BetterPlayerCacheConfiguration? cacheConfiguration;
+  final CacheConfiguration? cacheConfiguration;
 
   ///List of bytes, used only in memory player
   final List<int>? bytes;
 
   ///Configuration of remote controls notification
-  final BetterPlayerNotificationConfiguration? notificationConfiguration;
+  final NotificationConfiguration? notificationConfiguration;
 
   ///Duration which will be returned instead of original duration
   final Duration? overriddenDuration;
@@ -61,7 +58,7 @@ class BetterPlayerDataSource {
   final String? videoExtension;
 
   ///Configuration of content protection
-  final BetterPlayerDrmConfiguration? drmConfiguration;
+  final DrmConfiguration? drmConfiguration;
 
   ///Placeholder widget which will be shown until video load or play. This
   ///placeholder may be useful if you want to show placeholder before each video
@@ -71,7 +68,7 @@ class BetterPlayerDataSource {
 
   ///Configuration of video buffering. Currently only supported in Android
   ///platform.
-  final BetterPlayerBufferingConfiguration bufferingConfiguration;
+  final BufferingConfiguration bufferingConfiguration;
 
   BetterPlayerDataSource(
     this.type,
@@ -86,16 +83,15 @@ class BetterPlayerDataSource {
     this.asmsTrackNames,
     this.resolutions,
     this.cacheConfiguration,
-    this.notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(
-          showNotification: false,
-        ),
+    this.notificationConfiguration = const NotificationConfiguration(
+      showNotification: false,
+    ),
     this.overriddenDuration,
     this.videoFormat,
     this.videoExtension,
     this.drmConfiguration,
     this.placeholder,
-    this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
+    this.bufferingConfiguration = const BufferingConfiguration(),
   }) : assert(
          (type == DataSourceType.network || type == DataSourceType.file) ||
              (type == DataSourceType.memory && bytes?.isNotEmpty == true),
@@ -113,15 +109,15 @@ class BetterPlayerDataSource {
     bool? useAsmsTracks,
     bool? useAsmsAudioTracks,
     Map<String, String>? qualities,
-    BetterPlayerCacheConfiguration? cacheConfiguration,
-    BetterPlayerNotificationConfiguration notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(showNotification: false),
+    CacheConfiguration? cacheConfiguration,
+    NotificationConfiguration notificationConfiguration =
+        const NotificationConfiguration(showNotification: false),
     Duration? overriddenDuration,
     VideoFormat? videoFormat,
-    BetterPlayerDrmConfiguration? drmConfiguration,
+    DrmConfiguration? drmConfiguration,
     Widget? placeholder,
-    BetterPlayerBufferingConfiguration bufferingConfiguration =
-        const BetterPlayerBufferingConfiguration(),
+    BufferingConfiguration bufferingConfiguration =
+        const BufferingConfiguration(),
   }) {
     return BetterPlayerDataSource(
       DataSourceType.network,
@@ -151,8 +147,8 @@ class BetterPlayerDataSource {
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
     Map<String, String>? qualities,
-    BetterPlayerCacheConfiguration? cacheConfiguration,
-    BetterPlayerNotificationConfiguration? notificationConfiguration,
+    CacheConfiguration? cacheConfiguration,
+    NotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
   }) {
@@ -165,7 +161,7 @@ class BetterPlayerDataSource {
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration =
-          const BetterPlayerNotificationConfiguration(showNotification: false),
+          const NotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,
     );
@@ -180,8 +176,8 @@ class BetterPlayerDataSource {
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
     Map<String, String>? qualities,
-    BetterPlayerCacheConfiguration? cacheConfiguration,
-    BetterPlayerNotificationConfiguration? notificationConfiguration,
+    CacheConfiguration? cacheConfiguration,
+    NotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     Widget? placeholder,
   }) {
@@ -196,7 +192,7 @@ class BetterPlayerDataSource {
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
       notificationConfiguration: notificationConfiguration =
-          const BetterPlayerNotificationConfiguration(showNotification: false),
+          const NotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,
     );
@@ -213,16 +209,16 @@ class BetterPlayerDataSource {
     bool? useAsmsTracks,
     bool? useAsmsAudioTracks,
     Map<String, String>? resolutions,
-    BetterPlayerCacheConfiguration? cacheConfiguration,
-    BetterPlayerNotificationConfiguration? notificationConfiguration =
-        const BetterPlayerNotificationConfiguration(showNotification: false),
+    CacheConfiguration? cacheConfiguration,
+    NotificationConfiguration? notificationConfiguration =
+        const NotificationConfiguration(showNotification: false),
     Duration? overriddenDuration,
     VideoFormat? videoFormat,
     String? videoExtension,
-    BetterPlayerDrmConfiguration? drmConfiguration,
+    DrmConfiguration? drmConfiguration,
     Widget? placeholder,
-    BetterPlayerBufferingConfiguration? bufferingConfiguration =
-        const BetterPlayerBufferingConfiguration(),
+    BufferingConfiguration? bufferingConfiguration =
+        const BufferingConfiguration(),
   }) {
     return BetterPlayerDataSource(
       type ?? this.type,

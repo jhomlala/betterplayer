@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:better_player_platform_interface/src/models/better_player_buffering_configuration.dart';
+import 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 import 'package:better_player_platform_interface/src/models/data_source.dart';
 import 'package:better_player_platform_interface/src/models/data_source_type.dart';
 import 'package:better_player_platform_interface/src/models/duration_range.dart';
@@ -29,7 +29,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<int?> create({
-    BetterPlayerBufferingConfiguration? bufferingConfiguration,
+    BufferingConfiguration? bufferingConfiguration,
   }) async {
     late final Map<String, dynamic>? response;
     if (bufferingConfiguration == null) {
@@ -360,63 +360,56 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
   /// Converts [dataSource] to a map that can be sent to the platform side.
   @protected
   Map<String, dynamic> dataSourceToMap(DataSource dataSource) {
+    Map<String, dynamic> map = <String, dynamic>{
+      'key': dataSource.key,
+      'useCache': false,
+      'maxCacheSize': 0,
+      'maxCacheFileSize': 0,
+      'showNotification':
+          dataSource.notificationConfiguration?.showNotification ?? false,
+      'title': dataSource.notificationConfiguration?.title,
+      'author': dataSource.notificationConfiguration?.author,
+      'imageUrl': dataSource.notificationConfiguration?.imageUrl,
+      'notificationChannelName':
+          dataSource.notificationConfiguration?.notificationChannelName,
+      'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
+      'activityName': dataSource.notificationConfiguration?.activityName,
+    };
+
     switch (dataSource.sourceType) {
       case DataSourceType.asset:
-        return <String, dynamic>{
-          'key': dataSource.key,
+        map.addAll(<String, dynamic>{
           'asset': dataSource.asset,
           'package': dataSource.package,
-          'useCache': false,
-          'maxCacheSize': 0,
-          'maxCacheFileSize': 0,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName,
-        };
+        });
+        break;
       case DataSourceType.network:
-        return <String, dynamic>{
-          'key': dataSource.key,
+        map.addAll(<String, dynamic>{
           'uri': dataSource.uri,
+          'formatHint': dataSource.rawFormalHint,
           'headers': dataSource.headers,
-          'useCache': dataSource.useCache,
-          'maxCacheSize': dataSource.maxCacheSize,
-          'maxCacheFileSize': dataSource.maxCacheFileSize,
-          'cacheKey': dataSource.cacheKey,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'licenseUrl': dataSource.licenseUrl,
-          'certificateUrl': dataSource.certificateUrl,
-          'drmHeaders': dataSource.drmHeaders,
-          'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey,
+          'useCache': dataSource.cacheConfiguration?.useCache ?? false,
+          'maxCacheSize': dataSource.cacheConfiguration?.maxCacheSize ?? 0,
+          'maxCacheFileSize':
+              dataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
+          'cacheKey': dataSource.cacheConfiguration?.key,
+          'licenseUrl': dataSource.drmConfiguration?.licenseUrl,
+          'certificateUrl': dataSource.drmConfiguration?.certificateUrl,
+          'drmHeaders': dataSource.drmConfiguration?.headers,
+          'clearKey': dataSource.drmConfiguration?.clearKey,
           'videoExtension': dataSource.videoExtension,
-        };
+        });
+        break;
       case DataSourceType.file:
       case DataSourceType.memory:
-        return <String, dynamic>{
-          'key': dataSource.key,
+        map.addAll(<String, dynamic>{
           'uri': dataSource.uri,
-          'useCache': false,
-          'maxCacheSize': 0,
-          'maxCacheFileSize': 0,
-          'showNotification': dataSource.showNotification,
-          'title': dataSource.title,
-          'author': dataSource.author,
-          'imageUrl': dataSource.imageUrl,
-          'notificationChannelName': dataSource.notificationChannelName,
-          'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-          'activityName': dataSource.activityName,
-          'clearKey': dataSource.clearKey,
-        };
+          'formatHint': dataSource.rawFormalHint,
+          'clearKey': dataSource.drmConfiguration?.clearKey,
+        });
+        break;
     }
+    return map;
   }
 
   EventChannel _eventChannelFor(int? textureId) {

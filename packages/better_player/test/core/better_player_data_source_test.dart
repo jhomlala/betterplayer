@@ -52,17 +52,17 @@ void main() {
         useAsmsTracks: false,
         useAsmsAudioTracks: false,
         qualities: {'720p': 'url720'},
-        cacheConfiguration: const BetterPlayerCacheConfiguration(
+        cacheConfiguration: const CacheConfiguration(
           useCache: true,
         ),
-        notificationConfiguration: const BetterPlayerNotificationConfiguration(
+        notificationConfiguration: const NotificationConfiguration(
           showNotification: true,
           title: 'title',
         ),
         overriddenDuration: const Duration(seconds: 10),
         videoFormat: VideoFormat.hls,
-        drmConfiguration: const BetterPlayerDrmConfiguration(
-          drmType: BetterPlayerDrmType.clearKey,
+        drmConfiguration: const DrmConfiguration(
+          drmType: DrmType.clearKey,
         ),
       );
 
@@ -79,7 +79,7 @@ void main() {
       expect(source.notificationConfiguration?.title, 'title');
       expect(source.overriddenDuration?.inSeconds, 10);
       expect(source.videoFormat, VideoFormat.hls);
-      expect(source.drmConfiguration?.drmType, BetterPlayerDrmType.clearKey);
+      expect(source.drmConfiguration?.drmType, DrmType.clearKey);
     });
 
     test('File factory with all parameters', () {
@@ -91,10 +91,10 @@ void main() {
         useAsmsSubtitles: false,
         useAsmsTracks: false,
         qualities: {'720p': 'url720'},
-        cacheConfiguration: const BetterPlayerCacheConfiguration(
+        cacheConfiguration: const CacheConfiguration(
           useCache: true,
         ),
-        notificationConfiguration: const BetterPlayerNotificationConfiguration(
+        notificationConfiguration: const NotificationConfiguration(
           showNotification: false,
         ),
         overriddenDuration: const Duration(seconds: 10),
@@ -119,10 +119,10 @@ void main() {
         useAsmsSubtitles: false,
         useAsmsTracks: false,
         qualities: {'720p': 'url720'},
-        cacheConfiguration: const BetterPlayerCacheConfiguration(
+        cacheConfiguration: const CacheConfiguration(
           useCache: true,
         ),
-        notificationConfiguration: const BetterPlayerNotificationConfiguration(
+        notificationConfiguration: const NotificationConfiguration(
           showNotification: false,
         ),
         overriddenDuration: const Duration(seconds: 10),

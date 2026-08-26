@@ -1288,8 +1288,7 @@ class BetterPlayerController {
   ///DRM headers if available.
   Map<String, String?> _getHeaders() {
     final headers = betterPlayerDataSource!.headers ?? {};
-    if (betterPlayerDataSource?.drmConfiguration?.drmType ==
-            BetterPlayerDrmType.token &&
+    if (betterPlayerDataSource?.drmConfiguration?.drmType == DrmType.token &&
         betterPlayerDataSource?.drmConfiguration?.token != null) {
       headers[_authorizationHeader] =
           betterPlayerDataSource!.drmConfiguration!.token!;
@@ -1299,7 +1298,7 @@ class BetterPlayerController {
 
   ///PreCache a video. On Android, the future succeeds when
   ///the requested size, specified in
-  ///[BetterPlayerCacheConfiguration.preCacheSize], is downloaded or when the
+  ///[CacheConfiguration.preCacheSize], is downloaded or when the
   ///complete file is downloaded if the file is smaller than the requested size.
   ///On iOS, the whole file will be downloaded, since [maxCacheFileSize] is
   ///currently not supported on iOS. On iOS, the video format must be in this
@@ -1307,16 +1306,18 @@ class BetterPlayerController {
   Future<void> preCache(BetterPlayerDataSource betterPlayerDataSource) async {
     final cacheConfig =
         betterPlayerDataSource.cacheConfiguration ??
-        const BetterPlayerCacheConfiguration(useCache: true);
+        const CacheConfiguration(useCache: true);
 
     final dataSource = DataSource(
       sourceType: DataSourceType.network,
       uri: betterPlayerDataSource.url,
-      useCache: true,
       headers: betterPlayerDataSource.headers,
-      maxCacheSize: cacheConfig.maxCacheSize,
-      maxCacheFileSize: cacheConfig.maxCacheFileSize,
-      cacheKey: cacheConfig.key,
+      cacheConfiguration: CacheConfiguration(
+        useCache: true,
+        maxCacheSize: cacheConfig.maxCacheSize,
+        maxCacheFileSize: cacheConfig.maxCacheFileSize,
+        key: cacheConfig.key,
+      ),
       videoExtension: betterPlayerDataSource.videoExtension,
     );
 

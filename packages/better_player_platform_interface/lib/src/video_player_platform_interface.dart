@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:better_player_platform_interface/src/method_channel_video_player.dart';
-import 'package:better_player_platform_interface/src/models/better_player_buffering_configuration.dart';
+import 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 import 'package:better_player_platform_interface/src/models/data_source.dart';
 import 'package:better_player_platform_interface/src/models/video_event.dart';
 import 'package:flutter/foundation.dart';
@@ -53,7 +53,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
   /// Creates an instance of a video player and returns its textureId.
   Future<int?> create({
-    BetterPlayerBufferingConfiguration? bufferingConfiguration,
+    BufferingConfiguration? bufferingConfiguration,
   }) {
     throw UnimplementedError('create() has not been implemented.');
   }

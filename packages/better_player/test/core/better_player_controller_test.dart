@@ -718,8 +718,8 @@ void main() {
       test('DRM configuration adds token to headers', () async {
         final dataSource = BetterPlayerDataSource.network(
           'https://example.com/video.mp4',
-          drmConfiguration: const BetterPlayerDrmConfiguration(
-            drmType: BetterPlayerDrmType.token,
+          drmConfiguration: const DrmConfiguration(
+            drmType: DrmType.token,
             token: 'Bearer test_token',
           ),
         );

@@ -1,3 +1,4 @@
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player/better_player.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -5,25 +6,25 @@ import 'package:material_ui/material_ui.dart';
 
 void main() {
   group('BetterPlayer Configuration tests', () {
-    test('BetterPlayerBufferingConfiguration default values', () {
-      const config = BetterPlayerBufferingConfiguration();
+    test('BufferingConfiguration default values', () {
+      const config = BufferingConfiguration();
       expect(config.minBufferMs, 25000);
       expect(config.maxBufferMs, 6553600);
     });
 
-    test('BetterPlayerCacheConfiguration default values', () {
-      const config = BetterPlayerCacheConfiguration();
+    test('CacheConfiguration default values', () {
+      const config = CacheConfiguration();
       expect(config.useCache, false);
       expect(config.maxCacheSize, 10 * 1024 * 1024);
     });
 
-    test('BetterPlayerDrmConfiguration default values', () {
-      const config = BetterPlayerDrmConfiguration();
+    test('DrmConfiguration default values', () {
+      const config = DrmConfiguration();
       expect(config.drmType, null);
     });
 
-    test('BetterPlayerNotificationConfiguration default values', () {
-      const config = BetterPlayerNotificationConfiguration();
+    test('NotificationConfiguration default values', () {
+      const config = NotificationConfiguration();
       expect(config.showNotification, null);
     });
 

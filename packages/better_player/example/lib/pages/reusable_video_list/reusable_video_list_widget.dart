@@ -48,9 +48,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
         controller!.setupDataSource(
           BetterPlayerDataSource.network(
             videoListData!.videoUrl,
-            cacheConfiguration: const BetterPlayerCacheConfiguration(
-              useCache: true,
-            ),
+            cacheConfiguration: const CacheConfiguration(useCache: true),
           ),
         );
         if (!betterPlayerControllerStreamController.isClosed) {

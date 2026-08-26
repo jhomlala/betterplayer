@@ -22,7 +22,7 @@ class _CachePageState extends State<CachePage> {
     _betterPlayerDataSource = BetterPlayerDataSource(
       DataSourceType.network,
       Constants.phantomVideoUrl,
-      cacheConfiguration: const BetterPlayerCacheConfiguration(
+      cacheConfiguration: const CacheConfiguration(
         useCache: true,
         preCacheSize: 10 * 1024 * 1024,
 

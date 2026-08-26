@@ -133,9 +133,11 @@ void main() {
           sourceType: DataSourceType.network,
           uri: 'https://example.com/video.mp4',
           headers: {'Authorization': 'Bearer token'},
-          useCache: true,
-          maxCacheSize: 1000,
-          maxCacheFileSize: 100,
+          cacheConfiguration: CacheConfiguration(
+            useCache: true,
+            maxCacheSize: 1000,
+            maxCacheFileSize: 100,
+          ),
         );
 
         await player.setDataSource(1, dataSource);

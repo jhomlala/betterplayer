@@ -1,15 +1,12 @@
 import 'package:better_player_platform_interface/src/models/data_source_type.dart';
 import 'package:better_player_platform_interface/src/models/video_format.dart';
+import 'package:better_player_platform_interface/src/models/cache_configuration.dart';
+import 'package:better_player_platform_interface/src/models/notification_configuration.dart';
+import 'package:better_player_platform_interface/src/models/drm_configuration.dart';
 
 /// Description of the data source used to create an instance of
 /// the video player.
 class DataSource {
-  /// The maximum cache size to keep on disk in bytes.
-  static const int _maxCacheSize = 100 * 1024 * 1024;
-
-  /// The maximum size of each individual file in bytes.
-  static const int _maxCacheFileSize = 10 * 1024 * 1024;
-
   /// Constructs an instance of [DataSource].
   ///
   /// The [sourceType] is always required.
@@ -31,21 +28,10 @@ class DataSource {
     this.asset,
     this.package,
     this.headers,
-    this.useCache = false,
-    this.maxCacheSize = _maxCacheSize,
-    this.maxCacheFileSize = _maxCacheFileSize,
-    this.cacheKey,
-    this.showNotification = false,
-    this.title,
-    this.author,
-    this.imageUrl,
-    this.notificationChannelName,
+    this.cacheConfiguration,
+    this.notificationConfiguration,
+    this.drmConfiguration,
     this.overriddenDuration,
-    this.licenseUrl,
-    this.certificateUrl,
-    this.drmHeaders,
-    this.activityName,
-    this.clearKey,
     this.videoExtension,
   }) : assert(uri == null || asset == null);
 
@@ -93,35 +79,13 @@ class DataSource {
 
   final Map<String, String?>? headers;
 
-  final bool useCache;
+  final CacheConfiguration? cacheConfiguration;
 
-  final int? maxCacheSize;
+  final NotificationConfiguration? notificationConfiguration;
 
-  final int? maxCacheFileSize;
-
-  final String? cacheKey;
-
-  final bool? showNotification;
-
-  final String? title;
-
-  final String? author;
-
-  final String? imageUrl;
-
-  final String? notificationChannelName;
+  final DrmConfiguration? drmConfiguration;
 
   final Duration? overriddenDuration;
-
-  final String? licenseUrl;
-
-  final String? certificateUrl;
-
-  final Map<String, String>? drmHeaders;
-
-  final String? activityName;
-
-  final String? clearKey;
 
   final String? videoExtension;
 
@@ -146,10 +110,9 @@ class DataSource {
 
   @override
   String toString() {
-    return 'DataSource{sourceType: $sourceType, uri: $uri certificateUrl: $certificateUrl, formatHint:'
-        ' $formatHint, asset: $asset, package: $package, headers: $headers,'
-        ' useCache: $useCache,maxCacheSize: $maxCacheSize, maxCacheFileSize: '
-        '$maxCacheFileSize, showNotification: $showNotification, title: $title,'
-        ' author: $author}';
+    return 'DataSource{sourceType: $sourceType, uri: $uri, formatHint: $formatHint, '
+        'asset: $asset, package: $package, headers: $headers, '
+        'cacheConfiguration: $cacheConfiguration, notificationConfiguration: $notificationConfiguration, '
+        'drmConfiguration: $drmConfiguration}';
   }
 }
