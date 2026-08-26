@@ -94,7 +94,7 @@ For full control, use the `BetterPlayerController`:
 BetterPlayerController _controller = BetterPlayerController(
     const BetterPlayerConfiguration(),
     betterPlayerDataSource: BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
+        DataSourceType.network,
         "https://example.com/video.mp4",
     ),
 );

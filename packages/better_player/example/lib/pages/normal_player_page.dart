@@ -27,7 +27,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
       ],
     );
     _betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.bugBuckBunnyVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

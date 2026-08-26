@@ -79,7 +79,7 @@ class _BetterPlayerListVideoPlayerState
     return AspectRatio(
       aspectRatio:
           _betterPlayerController!.getAspectRatio() ??
-          BetterPlayerUtils.calculateAspectRatio(context),
+          BetterPlayerUiUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         key: Key('${_getUniqueKey()}_player'),
         controller: _betterPlayerController!,

@@ -1,8 +1,6 @@
 import 'package:better_player/src/configuration/better_player_cache_configuration.dart';
-import 'package:better_player/src/configuration/better_player_data_source_type.dart';
 import 'package:better_player/src/configuration/better_player_drm_configuration.dart';
 import 'package:better_player/src/configuration/better_player_notification_configuration.dart';
-import 'package:better_player/src/configuration/better_player_video_format.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/widgets.dart';
@@ -11,7 +9,7 @@ import 'package:flutter/widgets.dart';
 ///to setup all necessary configuration connected to video source.
 class BetterPlayerDataSource {
   ///Type of source of video
-  final BetterPlayerDataSourceType type;
+  final DataSourceType type;
 
   ///Url of the video
   final String url;
@@ -57,7 +55,7 @@ class BetterPlayerDataSource {
   final Duration? overriddenDuration;
 
   ///Video format hint when data source url has not valid extension.
-  final BetterPlayerVideoFormat? videoFormat;
+  final VideoFormat? videoFormat;
 
   ///Extension of video without dot.
   final String? videoExtension;
@@ -99,10 +97,8 @@ class BetterPlayerDataSource {
     this.placeholder,
     this.bufferingConfiguration = const BetterPlayerBufferingConfiguration(),
   }) : assert(
-         (type == BetterPlayerDataSourceType.network ||
-                 type == BetterPlayerDataSourceType.file) ||
-             (type == BetterPlayerDataSourceType.memory &&
-                 bytes?.isNotEmpty == true),
+         (type == DataSourceType.network || type == DataSourceType.file) ||
+             (type == DataSourceType.memory && bytes?.isNotEmpty == true),
          "Url can't be null in network or file data source | bytes can't be null when using memory data source",
        );
 
@@ -121,14 +117,14 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration notificationConfiguration =
         const BetterPlayerNotificationConfiguration(showNotification: false),
     Duration? overriddenDuration,
-    BetterPlayerVideoFormat? videoFormat,
+    VideoFormat? videoFormat,
     BetterPlayerDrmConfiguration? drmConfiguration,
     Widget? placeholder,
     BetterPlayerBufferingConfiguration bufferingConfiguration =
         const BetterPlayerBufferingConfiguration(),
   }) {
     return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       url,
       subtitles: subtitles,
       liveStream: liveStream,
@@ -161,7 +157,7 @@ class BetterPlayerDataSource {
     Widget? placeholder,
   }) {
     return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.file,
+      DataSourceType.file,
       url,
       subtitles: subtitles,
       useAsmsSubtitles: useAsmsSubtitles,
@@ -190,7 +186,7 @@ class BetterPlayerDataSource {
     Widget? placeholder,
   }) {
     return BetterPlayerDataSource(
-      BetterPlayerDataSourceType.memory,
+      DataSourceType.memory,
       '',
       videoExtension: videoExtension,
       bytes: bytes,
@@ -207,7 +203,7 @@ class BetterPlayerDataSource {
   }
 
   BetterPlayerDataSource copyWith({
-    BetterPlayerDataSourceType? type,
+    DataSourceType? type,
     String? url,
     List<int>? bytes,
     List<BetterPlayerSubtitlesSource>? subtitles,
@@ -221,7 +217,7 @@ class BetterPlayerDataSource {
     BetterPlayerNotificationConfiguration? notificationConfiguration =
         const BetterPlayerNotificationConfiguration(showNotification: false),
     Duration? overriddenDuration,
-    BetterPlayerVideoFormat? videoFormat,
+    VideoFormat? videoFormat,
     String? videoExtension,
     BetterPlayerDrmConfiguration? drmConfiguration,
     Widget? placeholder,

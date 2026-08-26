@@ -1,30 +1,30 @@
-import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/core/better_player_ui_utils.dart';
 import 'package:better_player/src/dash/better_player_dash_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  group('BetterPlayerUtils tests', () {
+  group('BetterPlayerUiUtils tests', () {
     test('formatBitrate formats correctly', () {
-      expect(BetterPlayerUtils.formatBitrate(500), '500 bit/s');
-      expect(BetterPlayerUtils.formatBitrate(1500), '~1 KBit/s');
-      expect(BetterPlayerUtils.formatBitrate(2500000), '~2 MBit/s');
+      expect(BetterPlayerUiUtils.formatBitrate(500), '500 bit/s');
+      expect(BetterPlayerUiUtils.formatBitrate(1500), '~1 KBit/s');
+      expect(BetterPlayerUiUtils.formatBitrate(2500000), '~2 MBit/s');
     });
 
     test('formatDuration formats correctly', () {
       expect(
-        BetterPlayerUtils.formatDuration(const Duration(seconds: 5)),
+        BetterPlayerUiUtils.formatDuration(const Duration(seconds: 5)),
         '00:05',
       );
       expect(
-        BetterPlayerUtils.formatDuration(
+        BetterPlayerUiUtils.formatDuration(
           const Duration(minutes: 1, seconds: 30),
         ),
         '01:30',
       );
       expect(
-        BetterPlayerUtils.formatDuration(
+        BetterPlayerUiUtils.formatDuration(
           const Duration(hours: 1, minutes: 2, seconds: 3),
         ),
         '01:02:03',
@@ -39,7 +39,7 @@ void main() {
           home: Scaffold(
             body: Builder(
               builder: (context) {
-                final ratio = BetterPlayerUtils.calculateAspectRatio(context);
+                final ratio = BetterPlayerUiUtils.calculateAspectRatio(context);
                 expect(ratio > 0, true);
                 return const SizedBox();
               },

@@ -26,7 +26,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
   Future<void> _setupDataSource() async {
     // String imageUrl = await Utils.getFileUrl(Constants.logo);
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.elephantDreamVideoUrl,
       notificationConfiguration: BetterPlayerNotificationConfiguration(
         showNotification: true,

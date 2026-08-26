@@ -3,7 +3,7 @@ import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/core/better_player_ui_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -292,7 +292,7 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
           : const EdgeInsets.symmetric(horizontal: 22),
       child: RichText(
         text: TextSpan(
-          text: BetterPlayerUtils.formatDuration(position),
+          text: BetterPlayerUiUtils.formatDuration(position),
           style: TextStyle(
             fontSize: 10,
             color: controlsConfiguration.textColor,
@@ -300,7 +300,7 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
           ),
           children: <TextSpan>[
             TextSpan(
-              text: ' / ${BetterPlayerUtils.formatDuration(duration)}',
+              text: ' / ${BetterPlayerUiUtils.formatDuration(duration)}',
               style: TextStyle(
                 fontSize: 10,
                 color: controlsConfiguration.textColor,

@@ -23,7 +23,7 @@ class _DashPageState extends State<DashPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
+        DataSourceType.network,
         Constants.dashStreamUrl,
         liveStream: true,
       ),
@@ -34,7 +34,7 @@ class _DashPageState extends State<DashPage> {
     );
     _betterPlayerController2.setupDataSource(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
+        DataSourceType.network,
         Constants.dashBigBuckBunnyUrl,
       ),
     );

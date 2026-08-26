@@ -19,7 +19,7 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
       fit: BoxFit.contain,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.elephantDreamVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

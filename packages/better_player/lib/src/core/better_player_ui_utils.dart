@@ -2,7 +2,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
-class BetterPlayerUtils {
+class BetterPlayerUiUtils {
   static String formatBitrate(int bitrate) {
     if (bitrate < 1000) {
       return '$bitrate bit/s';
@@ -54,15 +54,5 @@ class BetterPlayerUtils {
     final height = size.height;
 
     return width > height ? width / height : height / width;
-  }
-
-  /// Flag to enable/disable persistent logging. Can be toggled for E2E testing.
-  static bool enableLogging = !kReleaseMode;
-
-  static void log(String logMessage) {
-    if (enableLogging) {
-      // ignore: avoid_print
-      print('[BetterPlayer] $logMessage');
-    }
   }
 }

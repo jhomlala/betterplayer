@@ -19,7 +19,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
       fit: BoxFit.contain,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.hlsTestStreamUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

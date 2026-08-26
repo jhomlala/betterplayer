@@ -47,7 +47,7 @@ class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
     return AspectRatio(
       aspectRatio:
           _betterPlayerController!.getAspectRatio() ??
-          BetterPlayerUtils.calculateAspectRatio(context),
+          BetterPlayerUiUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         controller: _betterPlayerController!,
       ),

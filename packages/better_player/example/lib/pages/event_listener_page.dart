@@ -24,7 +24,7 @@ class _EventListenerPageState extends State<EventListenerPage> {
       fit: BoxFit.contain,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.bugBuckBunnyVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

@@ -45,7 +45,7 @@ class _VideoListWidgetState extends State<VideoListWidget> {
             aspectRatio: 1,
             child: BetterPlayerListVideoPlayer(
               BetterPlayerDataSource(
-                BetterPlayerDataSourceType.network,
+                DataSourceType.network,
                 videoListData!.videoUrl,
                 notificationConfiguration:
                     BetterPlayerNotificationConfiguration(

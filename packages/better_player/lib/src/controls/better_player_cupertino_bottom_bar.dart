@@ -2,7 +2,7 @@ import 'package:better_player/src/configuration/better_player_controls_configura
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
 import 'package:better_player/src/controls/better_player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/core/better_player_utils.dart';
+import 'package:better_player/src/core/better_player_ui_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -286,7 +286,7 @@ class _BetterPlayerCupertinoPositionWidget extends StatelessWidget {
       child: Semantics(
         identifier: 'better_player_cupertino_controls_position_text',
         child: Text(
-          BetterPlayerUtils.formatDuration(position),
+          BetterPlayerUiUtils.formatDuration(position),
           style: TextStyle(
             color: controlsConfiguration.textColor,
             fontSize: 12,
@@ -316,7 +316,7 @@ class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
       child: Semantics(
         identifier: 'better_player_cupertino_controls_remaining_text',
         child: Text(
-          '-${BetterPlayerUtils.formatDuration(remaining)}',
+          '-${BetterPlayerUiUtils.formatDuration(remaining)}',
           style: TextStyle(
             color: controlsConfiguration.textColor,
             fontSize: 12,

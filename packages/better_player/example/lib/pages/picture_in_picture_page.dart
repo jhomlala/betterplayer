@@ -20,7 +20,7 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
       fit: BoxFit.contain,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.elephantDreamVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

@@ -35,7 +35,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
       showPlaceholderUntilPlay: true,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.elephantDreamVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

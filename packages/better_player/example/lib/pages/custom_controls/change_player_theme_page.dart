@@ -19,10 +19,7 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
   void initState() {
     super.initState();
     const url = Constants.bugBuckBunnyVideoUrl;
-    _dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      url,
-    );
+    _dataSource = BetterPlayerDataSource(DataSourceType.network, url);
     _betterPlayerController = BetterPlayerController(
       BetterPlayerConfiguration(
         controlsConfiguration: BetterPlayerControlsConfiguration(

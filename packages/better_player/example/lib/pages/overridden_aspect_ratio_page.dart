@@ -19,7 +19,7 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
       aspectRatio: 16 / 9,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

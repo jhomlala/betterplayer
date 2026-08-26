@@ -519,7 +519,7 @@ void main() {
         );
         await betterPlayerMockController.setupDataSource(
           BetterPlayerDataSource(
-            BetterPlayerDataSourceType.network,
+            DataSourceType.network,
             BetterPlayerTestUtils.forBiggerBlazesUrl,
             liveStream: true,
           ),

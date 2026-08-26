@@ -36,7 +36,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
       controlsConfiguration: controlsConfiguration,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.bugBuckBunnyVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

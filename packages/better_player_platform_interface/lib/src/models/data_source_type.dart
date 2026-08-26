@@ -11,4 +11,7 @@ enum DataSourceType {
 
   /// The video was loaded off of the local filesystem.
   file,
+
+  /// The video was loaded from the memory.
+  memory,
 }

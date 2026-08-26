@@ -22,7 +22,7 @@ class _AutoFullscreenOrientationPageState
       autoDetectFullscreenDeviceOrientation: true,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
@@ -54,7 +54,7 @@ class _AutoFullscreenOrientationPageState
               child: const Text('Play horizontal video'),
               onPressed: () async {
                 final dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
+                  DataSourceType.network,
                   Constants.forBiggerBlazesUrl,
                 );
                 await _betterPlayerController.setupDataSource(dataSource);
@@ -65,7 +65,7 @@ class _AutoFullscreenOrientationPageState
               child: const Text('Play vertical video'),
               onPressed: () async {
                 final dataSource = BetterPlayerDataSource(
-                  BetterPlayerDataSourceType.network,
+                  DataSourceType.network,
                   Constants.verticalVideoUrl,
                 );
                 await _betterPlayerController.setupDataSource(dataSource);

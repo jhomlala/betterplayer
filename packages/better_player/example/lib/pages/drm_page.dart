@@ -21,9 +21,9 @@ class _DrmPageState extends State<DrmPage> {
       fit: BoxFit.contain,
     );
     final tokenDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.tokenEncodedHlsUrl,
-      videoFormat: BetterPlayerVideoFormat.dash,
+      videoFormat: VideoFormat.dash,
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.widevine,
         licenseUrl: 'https://drm-widevine-licensing.axtest.net/AcquireLicense',
@@ -35,7 +35,7 @@ class _DrmPageState extends State<DrmPage> {
 
     _widevineController = BetterPlayerController(betterPlayerConfiguration);
     final widevineDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.widevineVideoUrl,
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.widevine,
@@ -47,7 +47,7 @@ class _DrmPageState extends State<DrmPage> {
 
     _fairplayController = BetterPlayerController(betterPlayerConfiguration);
     final fairplayDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.fairplayHlsUrl,
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.fairplay,

@@ -20,7 +20,7 @@ class _CachePageState extends State<CachePage> {
       fit: BoxFit.contain,
     );
     _betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.phantomVideoUrl,
       cacheConfiguration: const BetterPlayerCacheConfiguration(
         useCache: true,

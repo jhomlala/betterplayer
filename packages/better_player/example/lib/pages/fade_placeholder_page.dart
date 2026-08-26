@@ -25,7 +25,7 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
       placeholderOnTop: false,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

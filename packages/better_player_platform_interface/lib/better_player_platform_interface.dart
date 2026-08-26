@@ -6,5 +6,6 @@ export 'package:better_player_platform_interface/src/models/duration_range.dart'
 export 'package:better_player_platform_interface/src/models/video_event.dart';
 export 'package:better_player_platform_interface/src/models/video_event_type.dart';
 export 'package:better_player_platform_interface/src/models/video_format.dart';
+export 'package:better_player_platform_interface/src/models/video_player_value.dart';
 export 'package:better_player_platform_interface/src/utils/better_player_utils.dart';
 export 'package:better_player_platform_interface/src/video_player_platform_interface.dart';

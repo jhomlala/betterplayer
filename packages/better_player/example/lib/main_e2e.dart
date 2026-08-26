@@ -57,7 +57,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       BetterPlayerUtils.log('E2E: postFrameCallback - setting up data source');
       final betterPlayerDataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
+        DataSourceType.network,
         Constants.bugBuckBunnyVideoUrl,
       );
       _betterPlayerController.setupDataSource(betterPlayerDataSource);
@@ -94,7 +94,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 
   void _setupDataSource(
     String url,
-    BetterPlayerDataSourceType type, {
+    DataSourceType type, {
     BetterPlayerDrmConfiguration? drmConfiguration,
   }) {
     final betterPlayerDataSource = BetterPlayerDataSource(
@@ -182,7 +182,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 child: ElevatedButton(
                   onPressed: () => _setupDataSource(
                     Constants.bugBuckBunnyVideoUrl,
-                    BetterPlayerDataSourceType.network,
+                    DataSourceType.network,
                   ),
                   child: const Text('MP4'),
                 ),
@@ -192,7 +192,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 child: ElevatedButton(
                   onPressed: () => _setupDataSource(
                     Constants.hlsTestStreamUrl,
-                    BetterPlayerDataSourceType.network,
+                    DataSourceType.network,
                   ),
                   child: const Text('HLS'),
                 ),
@@ -202,7 +202,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 child: ElevatedButton(
                   onPressed: () => _setupDataSource(
                     'https://invalid.url.com/video.mp4',
-                    BetterPlayerDataSourceType.network,
+                    DataSourceType.network,
                   ),
                   child: const Text('Invalid'),
                 ),

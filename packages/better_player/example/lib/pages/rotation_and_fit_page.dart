@@ -19,7 +19,7 @@ class _RotationAndFitPageState extends State<RotationAndFitPage> {
       rotation: 90,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

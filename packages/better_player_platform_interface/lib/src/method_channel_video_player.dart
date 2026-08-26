@@ -400,6 +400,7 @@ class MethodChannelVideoPlayer extends VideoPlayerPlatform {
           'videoExtension': dataSource.videoExtension,
         };
       case DataSourceType.file:
+      case DataSourceType.memory:
         return <String, dynamic>{
           'key': dataSource.key,
           'uri': dataSource.uri,

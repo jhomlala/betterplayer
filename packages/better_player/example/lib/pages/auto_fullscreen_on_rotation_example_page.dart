@@ -23,7 +23,7 @@ class _AutoFullscreenOnRotationExamplePageState
       fit: BoxFit.contain,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

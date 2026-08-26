@@ -317,9 +317,9 @@ class BetterPlayerController {
   ///Check if given [betterPlayerDataSource] is HLS / DASH-type data source.
   bool _isDataSourceAsms(BetterPlayerDataSource betterPlayerDataSource) =>
       (BetterPlayerAsmsUtils.isDataSourceHls(betterPlayerDataSource.url) ||
-          betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.hls) ||
+          betterPlayerDataSource.videoFormat == VideoFormat.hls) ||
       (BetterPlayerAsmsUtils.isDataSourceDash(betterPlayerDataSource.url) ||
-          betterPlayerDataSource.videoFormat == BetterPlayerVideoFormat.dash);
+          betterPlayerDataSource.videoFormat == VideoFormat.dash);
 
   ///Configure HLS / DASH data source based on provided data source and configuration.
   ///This method configures tracks, subtitles and audio tracks from given
@@ -450,30 +450,10 @@ class BetterPlayerController {
     }
   }
 
-  ///Get VideoFormat from BetterPlayerVideoFormat (adapter method which translates
-  ///to video_player supported format).
-  VideoFormat? _getVideoFormat(
-    BetterPlayerVideoFormat? betterPlayerVideoFormat,
-  ) {
-    if (betterPlayerVideoFormat == null) {
-      return null;
-    }
-    switch (betterPlayerVideoFormat) {
-      case BetterPlayerVideoFormat.dash:
-        return VideoFormat.dash;
-      case BetterPlayerVideoFormat.hls:
-        return VideoFormat.hls;
-      case BetterPlayerVideoFormat.ss:
-        return VideoFormat.ss;
-      case BetterPlayerVideoFormat.other:
-        return VideoFormat.other;
-    }
-  }
-
   ///Internal method which invokes videoPlayerController source setup.
   Future _setupDataSource(BetterPlayerDataSource betterPlayerDataSource) async {
     switch (betterPlayerDataSource.type) {
-      case BetterPlayerDataSourceType.network:
+      case DataSourceType.network:
         await videoPlayerController?.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: _getHeaders(),
@@ -496,7 +476,7 @@ class BetterPlayerController {
               ?.notificationConfiguration
               ?.notificationChannelName,
           overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-          formatHint: _getVideoFormat(_betterPlayerDataSource!.videoFormat),
+          formatHint: _betterPlayerDataSource!.videoFormat,
           licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
           certificateUrl:
               _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
@@ -507,7 +487,7 @@ class BetterPlayerController {
           videoExtension: _betterPlayerDataSource!.videoExtension,
         );
 
-      case BetterPlayerDataSourceType.file:
+      case DataSourceType.file:
         final file = File(betterPlayerDataSource.url);
         if (!file.existsSync()) {
           BetterPlayerUtils.log(
@@ -534,7 +514,7 @@ class BetterPlayerController {
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
           clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
         );
-      case BetterPlayerDataSourceType.memory:
+      case DataSourceType.memory:
         final file = await _createFile(
           _betterPlayerDataSource!.bytes!,
           extension: _betterPlayerDataSource!.videoExtension,

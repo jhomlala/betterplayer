@@ -1,4 +1,8 @@
 ## Unreleased
+* Updated: Added package-specific `analysis_options.yaml` inheriting from root.
+* [BREAKING_CHANGE] Renamed `BetterPlayerUtils` to `BetterPlayerUiUtils` for UI-related utility methods (`formatBitrate`, `formatDuration`, `calculateAspectRatio`).
+* Updated: Logging functionality now uses `BetterPlayerUtils.log` from `package:better_player_platform_interface`, which is now exported by `package:better_player`.
+* [BREAKING_CHANGE] Deleted `BetterPlayerDataSourceType` and `BetterPlayerVideoFormat` enums. Use `DataSourceType` and `VideoFormat` from `package:better_player_platform_interface`.
 * Updated: Renamed `isPictureInPictureEnabled` to `isPictureInPictureSupported` across the platform interface and core controller for clarity.
 * Fixed: Corrected missing method channel success response for `setMixWithOthers` on Android, preventing hangs.
 * Fixed: Restored remote notification (lock screen) functionality on iOS by ensuring data source info is correctly stored.

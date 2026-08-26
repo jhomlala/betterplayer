@@ -19,7 +19,7 @@ class _HlsAudioPageState extends State<HlsAudioPage> {
       fit: BoxFit.contain,
     );
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.elephantDreamStreamUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

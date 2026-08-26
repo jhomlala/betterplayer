@@ -36,7 +36,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Future<List<BetterPlayerDataSource>> setupData() async {
     _dataSourceList.add(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
+        DataSourceType.network,
         Constants.bugBuckBunnyVideoUrl,
         subtitles: BetterPlayerSubtitlesSource.single(
           type: BetterPlayerSubtitlesSourceType.file,
@@ -48,14 +48,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
     _dataSourceList.add(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
+        DataSourceType.network,
         Constants.forBiggerBlazesUrl,
         placeholder: Image.network(Constants.catImageUrl, fit: BoxFit.cover),
       ),
     );
     _dataSourceList.add(
       BetterPlayerDataSource(
-        BetterPlayerDataSourceType.network,
+        DataSourceType.network,
         Constants.forBiggerJoyridesVideoUrl,
       ),
     );
@@ -125,7 +125,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                   onPressed: () {
                     final list = [
                       BetterPlayerDataSource(
-                        BetterPlayerDataSourceType.network,
+                        DataSourceType.network,
                         Constants.bugBuckBunnyVideoUrl,
                         placeholder: Image.network(
                           Constants.catImageUrl,

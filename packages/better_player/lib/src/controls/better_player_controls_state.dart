@@ -231,7 +231,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       final mimeType = (track.mimeType ?? '').replaceAll('video/', '');
       final trackName =
           preferredName ??
-          '${width}x$height ${BetterPlayerUtils.formatBitrate(bitrate)} $mimeType';
+          '${width}x$height ${BetterPlayerUiUtils.formatBitrate(bitrate)} $mimeType';
 
       final selectedTrack = betterPlayerController!.betterPlayerAsmsTrack;
       final isSelected = selectedTrack != null && selectedTrack == track;

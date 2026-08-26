@@ -25,7 +25,7 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
 
   Future<void> _setupDataSource() async {
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.elephantDreamVideoUrl,
 
       ///Play only 10 seconds of this video.

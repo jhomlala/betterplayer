@@ -26,7 +26,7 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
 
   Future<void> _setupDataSource() async {
     final dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.elephantDreamVideoUrl,
     );
     _betterPlayerController.setupDataSource(dataSource);

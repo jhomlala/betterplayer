@@ -42,7 +42,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
 
   Future<void> _setupDataSources() async {
     final clearKeyDataSourceFile = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.file,
+      DataSourceType.file,
       await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.clearKey,
@@ -58,7 +58,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
     _clearKeyControllerFile.setupDataSource(clearKeyDataSourceFile);
 
     final clearKeyDataSourceBroken = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.file,
+      DataSourceType.file,
       await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.clearKey,
@@ -74,7 +74,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
     _clearKeyControllerBroken.setupDataSource(clearKeyDataSourceBroken);
 
     final clearKeyDataSourceNetwork = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.networkTestVideoEncryptUrl,
       drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.clearKey,
@@ -90,7 +90,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
     _clearKeyControllerNetwork.setupDataSource(clearKeyDataSourceNetwork);
 
     final clearKeyDataSourceMemory = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.memory,
+      DataSourceType.memory,
       '',
       bytes: File(
         await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
