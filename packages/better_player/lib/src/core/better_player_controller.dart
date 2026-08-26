@@ -13,6 +13,19 @@ import 'package:path_provider/path_provider.dart';
 ///Class used to control overall Better Player behavior. Main class to change
 ///state of Better Player.
 class BetterPlayerController {
+
+  BetterPlayerController(
+    this.betterPlayerConfiguration, {
+    this.betterPlayerPlaylistConfiguration,
+    BetterPlayerDataSource? betterPlayerDataSource,
+  }) {
+    _betterPlayerControlsConfiguration =
+        betterPlayerConfiguration.controlsConfiguration;
+    _eventListeners.add(eventListener);
+    if (betterPlayerDataSource != null) {
+      setupDataSource(betterPlayerDataSource);
+    }
+  }
   static const String _durationParameter = 'duration';
   static const String _progressParameter = 'progress';
   static const String _bufferedParameter = 'buffered';
@@ -209,19 +222,6 @@ class BetterPlayerController {
   ///Currently displayed [BetterPlayerSubtitle].
   BetterPlayerSubtitle? renderedSubtitle;
 
-  BetterPlayerController(
-    this.betterPlayerConfiguration, {
-    this.betterPlayerPlaylistConfiguration,
-    BetterPlayerDataSource? betterPlayerDataSource,
-  }) {
-    _betterPlayerControlsConfiguration =
-        betterPlayerConfiguration.controlsConfiguration;
-    _eventListeners.add(eventListener);
-    if (betterPlayerDataSource != null) {
-      setupDataSource(betterPlayerDataSource);
-    }
-  }
-
   ///Get BetterPlayerController from context. Used in InheritedWidget.
   static BetterPlayerController of(BuildContext context) {
     final betterPLayerControllerProvider = context
@@ -343,7 +343,7 @@ class BetterPlayerController {
       /// Load subtitles
       if (betterPlayerDataSource?.useAsmsSubtitles == true) {
         final asmsSubtitles = response.subtitles ?? [];
-        asmsSubtitles.forEach((BetterPlayerAsmsSubtitle asmsSubtitle) {
+        for (final asmsSubtitle in asmsSubtitles) {
           _betterPlayerSubtitlesSourceList.add(
             BetterPlayerSubtitlesSource(
               type: BetterPlayerSubtitlesSourceType.network,
@@ -355,7 +355,7 @@ class BetterPlayerController {
               selectedByDefault: asmsSubtitle.isDefault,
             ),
           );
-        });
+        }
       }
 
       ///Load audio tracks
@@ -793,7 +793,7 @@ class BetterPlayerController {
   }
 
   ///Listener used to handle video player changes.
-  void _onVideoPlayerChanged() async {
+  Future<void> _onVideoPlayerChanged() async {
     final currentVideoPlayerValue =
         videoPlayerController?.value ??
         VideoPlayerValue(duration: const Duration());
@@ -1073,7 +1073,6 @@ class BetterPlayerController {
     }
   }
 
-  // ignore: use_setters_to_change_properties
   ///Setup overridden aspect ratio.
   void setOverriddenAspectRatio(double aspectRatio) {
     _overriddenAspectRatio = aspectRatio;
@@ -1101,7 +1100,6 @@ class BetterPlayerController {
     return null;
   }
 
-  // ignore: use_setters_to_change_properties
   ///Setup overridden fit.
   void setOverriddenFit(BoxFit fit) {
     _overriddenFit = fit;
@@ -1179,7 +1177,6 @@ class BetterPlayerController {
     return videoPlayerController!.disablePictureInPicture();
   }
 
-  // ignore: use_setters_to_change_properties
   ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
   void setBetterPlayerGlobalKey(GlobalKey betterPlayerGlobalKey) {
     _betterPlayerGlobalKey = betterPlayerGlobalKey;
@@ -1198,7 +1195,7 @@ class BetterPlayerController {
   }
 
   ///Handle VideoEvent when remote controls notification / PiP is shown
-  void _handleVideoEvent(VideoEvent event) async {
+  Future<void> _handleVideoEvent(VideoEvent event) async {
     switch (event.eventType) {
       case VideoEventType.play:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
@@ -1373,7 +1370,9 @@ class BetterPlayerController {
       _controllerEventStreamController.close();
 
       ///Delete files async
-      _tempFiles.forEach((file) => file.delete());
+      for (final file in _tempFiles) {
+        file.delete();
+      }
     }
   }
 }

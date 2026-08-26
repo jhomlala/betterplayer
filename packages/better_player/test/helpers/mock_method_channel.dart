@@ -38,14 +38,14 @@ class MockMethodChannel {
   void _createEventChannel(int id) {
     final eventChannel = MethodChannel('better_player_channel/videoEvents$id');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(eventChannel, (MethodCall methodCall) async {
+        .setMockMethodCallHandler(eventChannel, (methodCall) async {
           TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
               .handlePlatformMessage(
                 'better_player_channel/videoEvents$id',
                 const StandardMethodCodec().encodeSuccessEnvelope(
                   _getInitResult(),
                 ),
-                (ByteData? data) {},
+                (data) {},
               );
           return null;
         });

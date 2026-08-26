@@ -146,7 +146,6 @@ class _BetterPlayerState extends State<BetterPlayer>
     }
   }
 
-  // ignore: avoid_void_async
   Future<void> onFullScreenChanged() async {
     final controller = widget.controller;
     if (controller.isFullScreen && !_isFullScreen) {
@@ -180,7 +179,7 @@ class _BetterPlayerState extends State<BetterPlayer>
   ) {
     return AnimatedBuilder(
       animation: animation,
-      builder: (BuildContext context, Widget? child) {
+      builder: (context, child) {
         return BetterPlayerFullScreenVideo(
           controllerProvider: controllerProvider,
         );
@@ -224,8 +223,7 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
-    if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation ==
-        true) {
+    if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation) {
       final aspectRatio =
           widget.controller.videoPlayerController?.value.aspectRatio ?? 1.0;
       List<DeviceOrientation> deviceOrientations;
@@ -279,15 +277,15 @@ class _BetterPlayerState extends State<BetterPlayer>
 }
 
 class _BetterPlayerVideoWithVisibility extends StatelessWidget {
-  final BetterPlayerController controller;
 
   const _BetterPlayerVideoWithVisibility({required this.controller});
+  final BetterPlayerController controller;
 
   @override
   Widget build(BuildContext context) {
     return VisibilityDetector(
       key: Key('${controller.hashCode}_key'),
-      onVisibilityChanged: (VisibilityInfo info) =>
+      onVisibilityChanged: (info) =>
           controller.onPlayerVisibilityChanged(info.visibleFraction),
       child: BetterPlayerWithControls(controller: controller),
     );

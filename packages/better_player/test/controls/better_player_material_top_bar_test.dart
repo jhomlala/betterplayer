@@ -31,7 +31,7 @@ void main() {
   }
 
   testWidgets('Material top bar shows more button', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       wrapWidget(
@@ -49,7 +49,7 @@ void main() {
   });
 
   testWidgets('Material top bar triggers onShowMoreClicked', (
-    WidgetTester tester,
+    tester,
   ) async {
     var showMoreTriggered = false;
     await tester.pumpWidget(
@@ -71,7 +71,7 @@ void main() {
   });
 
   testWidgets('Material top bar shows PiP button when enabled and supported', (
-    WidgetTester tester,
+    tester,
   ) async {
     // Note: BetterPlayerController.isPictureInPictureSupported() is hardcoded
     // to return false in some environments or based on platform.

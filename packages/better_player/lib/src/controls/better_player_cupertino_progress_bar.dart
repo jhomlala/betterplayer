@@ -69,7 +69,7 @@ class _VideoProgressBarState
         .betterPlayerControlsConfiguration
         .enableProgressBarDrag;
     return GestureDetector(
-      onHorizontalDragStart: (DragStartDetails details) {
+      onHorizontalDragStart: (details) {
         if (!controller!.value.initialized || !enableProgressBarDrag) {
           return;
         }
@@ -82,7 +82,7 @@ class _VideoProgressBarState
           widget.onDragStart!();
         }
       },
-      onHorizontalDragUpdate: (DragUpdateDetails details) {
+      onHorizontalDragUpdate: (details) {
         if (!controller!.value.initialized || !enableProgressBarDrag) {
           return;
         }
@@ -92,7 +92,7 @@ class _VideoProgressBarState
           widget.onDragUpdate!();
         }
       },
-      onHorizontalDragEnd: (DragEndDetails details) {
+      onHorizontalDragEnd: (details) {
         if (!enableProgressBarDrag) {
           return;
         }
@@ -106,7 +106,7 @@ class _VideoProgressBarState
           widget.onDragEnd!();
         }
       },
-      onTapDown: (TapDownDetails details) {
+      onTapDown: (details) {
         if (!controller!.value.initialized || !enableProgressBarDrag) {
           return;
         }
@@ -194,7 +194,7 @@ class _VideoProgressBarState
     }
   }
 
-  void seekToRelativePosition(Offset globalPosition) async {
+  Future<void> seekToRelativePosition(Offset globalPosition) async {
     final renderObject = context.findRenderObject();
     if (renderObject != null) {
       final box = renderObject as RenderBox;

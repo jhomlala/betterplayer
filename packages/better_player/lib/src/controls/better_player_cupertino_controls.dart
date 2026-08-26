@@ -11,22 +11,21 @@ import 'package:better_player/src/controls/better_player_cupertino_top_bar.dart'
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/core/better_player_ui_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoControls extends StatefulWidget {
-  ///Callback used to send information if player bar is hidden or not
-  final Function(bool visbility) onControlsVisibilityChanged;
-
-  ///Controls config
-  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   const BetterPlayerCupertinoControls({
     required this.onControlsVisibilityChanged,
     required this.controlsConfiguration,
     super.key,
   });
+  ///Callback used to send information if player bar is hidden or not
+  final Function(bool visbility) onControlsVisibilityChanged;
+
+  ///Controls config
+  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   @override
   State<StatefulWidget> createState() {

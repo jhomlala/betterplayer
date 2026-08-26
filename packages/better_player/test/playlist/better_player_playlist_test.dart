@@ -94,7 +94,7 @@ void main() {
     });
 
     testWidgets('BetterPlayerPlaylist widget initialization', (
-      WidgetTester tester,
+      tester,
     ) async {
       final dataSourceList = [
         BetterPlayerDataSource.network('https://example.com/1.mp4'),

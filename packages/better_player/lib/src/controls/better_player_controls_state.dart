@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_overflow_menu.dart';
 import 'package:better_player/src/controls/better_player_selection_list_item_widget.dart';
 import 'package:collection/collection.dart' show IterableExtension;
@@ -136,7 +135,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       final position = latestValue.position;
 
       Duration? bufferedEndPosition;
-      if (latestValue.buffered.isNotEmpty == true) {
+      if (latestValue.buffered.isNotEmpty) {
         bufferedEndPosition = latestValue.buffered.last.end;
       }
 

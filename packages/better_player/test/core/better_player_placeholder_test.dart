@@ -31,7 +31,7 @@ void main() {
   }
 
   testWidgets('Placeholder shows widget from data source', (
-    WidgetTester tester,
+    tester,
   ) async {
     const placeholder = Text('DataSource Placeholder');
     mockController.setupDataSource(
@@ -51,7 +51,7 @@ void main() {
   });
 
   testWidgets('Placeholder shows widget from configuration as fallback', (
-    WidgetTester tester,
+    tester,
   ) async {
     const placeholder = Text('Config Placeholder');
     final controller = BetterPlayerMockController(
@@ -68,7 +68,7 @@ void main() {
   });
 
   testWidgets('Placeholder shows nothing when not provided', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       wrapWidget(

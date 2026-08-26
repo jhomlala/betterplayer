@@ -6,10 +6,6 @@ import 'package:better_player/src/subtitles/better_player_subtitles_drawer_item.
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerSubtitlesDrawer extends StatefulWidget {
-  final List<BetterPlayerSubtitle> subtitles;
-  final BetterPlayerController betterPlayerController;
-  final BetterPlayerSubtitlesConfiguration? betterPlayerSubtitlesConfiguration;
-  final Stream<bool> playerVisibilityStream;
 
   const BetterPlayerSubtitlesDrawer({
     required this.subtitles,
@@ -18,6 +14,10 @@ class BetterPlayerSubtitlesDrawer extends StatefulWidget {
     super.key,
     this.betterPlayerSubtitlesConfiguration,
   });
+  final List<BetterPlayerSubtitle> subtitles;
+  final BetterPlayerController betterPlayerController;
+  final BetterPlayerSubtitlesConfiguration? betterPlayerSubtitlesConfiguration;
+  final Stream<bool> playerVisibilityStream;
 
   @override
   _BetterPlayerSubtitlesDrawerState createState() =>
@@ -110,9 +110,7 @@ class _BetterPlayerSubtitlesDrawerState
       );
     }).toList();
 
-    return Container(
-      height: double.infinity,
-      width: double.infinity,
+    return SizedBox.expand(
       child: Padding(
         padding: EdgeInsets.only(
           bottom: _playerVisible

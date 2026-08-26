@@ -7,17 +7,17 @@ import 'package:better_player/src/hls/hls_parser/variant.dart';
 class HlsMasterPlaylist extends HlsPlaylist {
   HlsMasterPlaylist({
     super.baseUri,
-    super.tags = const [], // ignore: always_specify_types
-    this.variants = const [], // ignore: always_specify_types
-    this.videos = const [], // ignore: always_specify_types
-    this.audios = const [], // ignore: always_specify_types
-    this.subtitles = const [], // ignore: always_specify_types
-    this.closedCaptions = const [], // ignore: always_specify_types
+    super.tags = const [],
+    this.variants = const [],
+    this.videos = const [],
+    this.audios = const [],
+    this.subtitles = const [],
+    this.closedCaptions = const [],
     this.muxedAudioFormat,
-    this.muxedCaptionFormats = const [], // ignore: always_specify_types
+    this.muxedCaptionFormats = const [],
     super.hasIndependentSegments = false,
-    this.variableDefinitions = const {}, // ignore: always_specify_types
-    this.sessionKeyDrmInitData = const [], // ignore: always_specify_types
+    this.variableDefinitions = const {},
+    this.sessionKeyDrmInitData = const [],
   }) : mediaPlaylistUrls = _getMediaPlaylistUrls(
          variants,
          [videos, audios, subtitles, closedCaptions],
@@ -60,14 +60,14 @@ class HlsMasterPlaylist extends HlsPlaylist {
     List<List<Rendition>> renditionList,
   ) {
     final uriList = <Uri?>[];
-    variants.forEach((element) {
+    for (final element in variants) {
       uriList.add(element.url);
-    });
-    renditionList.forEach((element) {
+    }
+    for (final element in renditionList) {
       for (final value in element) {
         uriList.add(value.url);
       }
-    });
+    }
     return uriList;
   }
 }

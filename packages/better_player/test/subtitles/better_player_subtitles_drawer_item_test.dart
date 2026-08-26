@@ -13,7 +13,7 @@ void main() {
   }
 
   testWidgets('Subtitles drawer item renders text', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       wrapWidget(
@@ -33,7 +33,7 @@ void main() {
 
   testWidgets(
     'Subtitles drawer item renders HTML text twice when outline enabled',
-    (WidgetTester tester) async {
+    (tester) async {
       await tester.pumpWidget(
         wrapWidget(
           const BetterPlayerSubtitlesDrawerItem(

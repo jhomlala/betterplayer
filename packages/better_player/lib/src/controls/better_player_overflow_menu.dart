@@ -5,12 +5,6 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerOverflowMenu extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onPlaybackSpeedClicked;
-  final VoidCallback onSubtitlesClicked;
-  final VoidCallback onQualitiesClicked;
-  final VoidCallback onAudioTracksClicked;
 
   const BetterPlayerOverflowMenu({
     required this.controller,
@@ -21,6 +15,12 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
     required this.onAudioTracksClicked,
     super.key,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onPlaybackSpeedClicked;
+  final VoidCallback onSubtitlesClicked;
+  final VoidCallback onQualitiesClicked;
+  final VoidCallback onAudioTracksClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -84,12 +84,6 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
 }
 
 class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
-  final IconData icon;
-  final String name;
-  final VoidCallback onTap;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool isSelected;
-  final String? semanticsIdentifier;
 
   const BetterPlayerOverflowMenuItemWidget({
     required this.icon,
@@ -100,6 +94,12 @@ class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
     this.semanticsIdentifier,
     super.key,
   });
+  final IconData icon;
+  final String name;
+  final VoidCallback onTap;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool isSelected;
+  final String? semanticsIdentifier;
 
   @override
   Widget build(BuildContext context) {

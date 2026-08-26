@@ -26,7 +26,7 @@ void main() {
 
   testWidgets(
     'One of children is BetterPlayerWithControls',
-    (WidgetTester tester) async {
+    (tester) async {
       tester.view.physicalSize = const Size(1024, 768);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
@@ -49,7 +49,7 @@ void main() {
 
   testWidgets(
     'Material controls show play/pause button',
-    (WidgetTester tester) async {
+    (tester) async {
       tester.view.physicalSize = const Size(1024, 768);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
@@ -89,7 +89,7 @@ void main() {
 
   testWidgets(
     'Material controls show mute button if enabled',
-    (WidgetTester tester) async {
+    (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockVideoPlayerController(),
         configuration: const BetterPlayerConfiguration(
@@ -124,7 +124,7 @@ void main() {
 
   testWidgets(
     'Cupertino controls show play/pause button',
-    (WidgetTester tester) async {
+    (tester) async {
       final mockVideoPlayerController = MockVideoPlayerController();
       mockVideoPlayerController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
@@ -160,7 +160,7 @@ void main() {
 
   testWidgets(
     'Overflow menu opens on tap',
-    (WidgetTester tester) async {
+    (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockVideoPlayerController(),
         configuration: const BetterPlayerConfiguration(
@@ -206,7 +206,7 @@ void main() {
 
   testWidgets(
     'Playback speed can be changed via overflow menu',
-    (WidgetTester tester) async {
+    (tester) async {
       tester.view.physicalSize = const Size(1024, 768);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
@@ -265,7 +265,7 @@ void main() {
 
   testWidgets(
     'Material controls show progress bar',
-    (WidgetTester tester) async {
+    (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockVideoPlayerController(),
         configuration: const BetterPlayerConfiguration(
@@ -298,7 +298,7 @@ void main() {
 
   testWidgets(
     'Cupertino controls show progress bar',
-    (WidgetTester tester) async {
+    (tester) async {
       final mockVideoPlayerController = MockVideoPlayerController();
       mockVideoPlayerController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
@@ -333,7 +333,7 @@ void main() {
 
   testWidgets(
     'Playlist navigation buttons in controls',
-    (WidgetTester tester) async {
+    (tester) async {
       final dataSourceList = [
         BetterPlayerDataSource.network('https://example.com/1.mp4'),
         BetterPlayerDataSource.network('https://example.com/2.mp4'),

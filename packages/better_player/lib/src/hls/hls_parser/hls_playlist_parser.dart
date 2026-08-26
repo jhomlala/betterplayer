@@ -98,15 +98,13 @@ class HlsPlaylistParser {
   static const String regexpCharacteristics = 'CHARACTERISTICS="(.+?)"';
   static const String regexpInStreamId = r'INSTREAM-ID="((?:CC|SERVICE)\d+)"';
   static final String
-  regexpAutoSelect = // ignore: non_constant_identifier_names
+  regexpAutoSelect =
   _compileBooleanAttrPattern(
     'AUTOSELECT',
   );
 
-  // ignore: non_constant_identifier_names
   static final String regexpDefault = _compileBooleanAttrPattern('DEFAULT');
 
-  // ignore: non_constant_identifier_names
   static final String regexpForced = _compileBooleanAttrPattern('FORCED');
   static const String regexpValue = 'VALUE="(.+?)"';
   static const String regexpImport = 'IMPORT="(.+?)"';
@@ -121,7 +119,7 @@ class HlsPlaylistParser {
 
   Future<HlsPlaylist> parse(Uri? uri, List<String> inputLineList) async {
     final lineList = inputLineList
-        .where((line) => line.trim().isNotEmpty) // ignore: always_specify_types
+        .where((line) => line.trim().isNotEmpty)
         .toList();
 
     if (!_checkPlaylistHeader(lineList[0])) {
@@ -184,24 +182,24 @@ class HlsPlaylistParser {
     Iterator<String> extraLines,
     String baseUri,
   ) {
-    final tags = <String>[]; // ignore: always_specify_types
-    final mediaTags = <String>[]; // ignore: always_specify_types
+    final tags = <String>[];
+    final mediaTags = <String>[];
     final sessionKeyDrmInitData =
-        <DrmInitData>[]; // ignore: always_specify_types
-    final variants = <Variant>[]; // ignore: always_specify_types
-    final videos = <Rendition>[]; // ignore: always_specify_types
-    final audios = <Rendition>[]; // ignore: always_specify_types
-    final subtitles = <Rendition>[]; // ignore: always_specify_types
-    final closedCaptions = <Rendition>[]; // ignore: always_specify_types
+        <DrmInitData>[];
+    final variants = <Variant>[];
+    final videos = <Rendition>[];
+    final audios = <Rendition>[];
+    final subtitles = <Rendition>[];
+    final closedCaptions = <Rendition>[];
     final urlToVariantInfos =
-        <Uri, List<VariantInfo>>{}; // ignore: always_specify_types
+        <Uri, List<VariantInfo>>{};
     Format? muxedAudioFormat;
     var noClosedCaptions = false;
     var hasIndependentSegmentsTag = false;
     List<Format>? muxedCaptionFormats;
 
     final variableDefinitions =
-        <String?, String>{}; // ignore: always_specify_types
+        <String?, String>{};
 
     while (extraLines.moveNext()) {
       final line = extraLines.current;
@@ -251,7 +249,7 @@ class HlsPlaylistParser {
           final drmInitData = DrmInitData(
             schemeType: scheme,
             schemeData: [schemeData],
-          ); // ignore: always_specify_types
+          );
           sessionKeyDrmInitData.add(drmInitData);
         }
       } else if (line.startsWith(tagStreamInf)) {
@@ -353,7 +351,7 @@ class HlsPlaylistParser {
 
         var variantInfosForUrl = urlToVariantInfos[uri];
         if (variantInfosForUrl == null) {
-          variantInfosForUrl = []; // ignore: always_specify_types
+          variantInfosForUrl = [];
           urlToVariantInfos[uri] = variantInfosForUrl;
         }
 
@@ -370,8 +368,8 @@ class HlsPlaylistParser {
     }
 
     // TODO: Don't deduplicate variants by URL.
-    final deduplicatedVariants = <Variant>[]; // ignore: always_specify_types
-    final urlsInDeduplicatedVariants = <Uri>{}; // ignore: always_specify_types
+    final deduplicatedVariants = <Variant>[];
+    final urlsInDeduplicatedVariants = <Uri>{};
     for (var i = 0; i < variants.length; i++) {
       final variant = variants[i];
       if (urlsInDeduplicatedVariants.add(variant.url)) {
@@ -386,8 +384,7 @@ class HlsPlaylistParser {
       }
     }
 
-    // ignore: always_specify_types
-    mediaTags.forEach((line) {
+    for (final line in mediaTags) {
       final groupId = _parseStringAttr(
         source: line,
         pattern: regexpGroupId,
@@ -549,8 +546,8 @@ class HlsPlaylistParser {
               mimeType = MimeTypes.applicationCea708;
               accessibilityChannel = int.parse(instreamId.substring(7));
             }
-            muxedCaptionFormats ??= []; // ignore: always_specify_types
-            muxedCaptionFormats!.add(
+            muxedCaptionFormats ??= [];
+            muxedCaptionFormats.add(
               Format(
                 id: formatId,
                 label: name,
@@ -566,11 +563,11 @@ class HlsPlaylistParser {
         default:
           break;
       }
-    });
+    }
 
     if (noClosedCaptions) {
       muxedCaptionFormats = [];
-    } // ignore: always_specify_types
+    }
 
     return HlsMasterPlaylist(
       baseUri: baseUri,
@@ -604,7 +601,7 @@ class HlsPlaylistParser {
 
     return value?.replaceAllMapped(
       RegExp(regexpVariableReference),
-      (Match match) => variableDefinitions![match.group(1)] ??= value!
+      (match) => variableDefinitions![match.group(1)] ??= value!
           .substring(match.start, match.end),
     );
   }
@@ -780,13 +777,13 @@ class HlsPlaylistParser {
     Segment? initializationSegment;
     final variableDefinitions = <String?, String?>{};
     final segments = <Segment>[];
-    final tags = <String>[]; // ignore: always_specify_types
+    final tags = <String>[];
     int? segmentByteRangeLength;
     int? segmentMediaSequence = 0;
     int? segmentDurationUs;
     String? segmentTitle;
     final currentSchemeDatas =
-        <String?, SchemeData>{}; // ignore: always_specify_types
+        <String?, SchemeData>{};
     DrmInitData? cachedDrmInitData;
     String? encryptionScheme;
     DrmInitData? playlistProtectionSchemes;
@@ -822,7 +819,7 @@ class HlsPlaylistParser {
           source: line,
           pattern: regexpTimeOffset,
           variableDefinitions: {},
-        )!; // ignore: always_specify_types
+        )!;
         startOffsetUs = (double.parse(string) * 1000000).toInt();
       } else if (line.startsWith(tagInitSegment)) {
         final uri = _parseStringAttr(

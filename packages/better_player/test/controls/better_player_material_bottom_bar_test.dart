@@ -39,7 +39,7 @@ void main() {
   }
 
   testWidgets('Material bottom bar shows play button when paused', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       wrapWidget(
@@ -63,7 +63,7 @@ void main() {
   });
 
   testWidgets('Material bottom bar shows pause button when playing', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       wrapWidget(
@@ -90,7 +90,7 @@ void main() {
   });
 
   testWidgets('Material bottom bar triggers onPlayPause callback', (
-    WidgetTester tester,
+    tester,
   ) async {
     var playPauseTriggered = false;
     await tester.pumpWidget(
@@ -122,7 +122,7 @@ void main() {
   });
 
   testWidgets('Material bottom bar shows mute icon when volume is 0', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       wrapWidget(

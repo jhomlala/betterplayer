@@ -4,11 +4,6 @@ import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialTopBar extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final VoidCallback onPlayerHide;
-  final VoidCallback onShowMoreClicked;
 
   const BetterPlayerMaterialTopBar({
     required this.controller,
@@ -18,6 +13,11 @@ class BetterPlayerMaterialTopBar extends StatelessWidget {
     required this.onShowMoreClicked,
     super.key,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final VoidCallback onPlayerHide;
+  final VoidCallback onShowMoreClicked;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class BetterPlayerMaterialTopBar extends StatelessWidget {
               opacity: controlsNotVisible ? 0.0 : 1.0,
               duration: controlsConfiguration.controlsHideTime,
               onEnd: onPlayerHide,
-              child: Container(
+              child: SizedBox(
                 height: controlsConfiguration.controlBarHeight,
                 width: double.infinity,
                 child: Row(
@@ -61,10 +61,6 @@ class BetterPlayerMaterialTopBar extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialPipButtonWrapper extends StatefulWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final VoidCallback onPlayerHide;
 
   const _BetterPlayerMaterialPipButtonWrapper({
     required this.controller,
@@ -72,6 +68,10 @@ class _BetterPlayerMaterialPipButtonWrapper extends StatefulWidget {
     required this.controlsNotVisible,
     required this.onPlayerHide,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final VoidCallback onPlayerHide;
 
   @override
   State<_BetterPlayerMaterialPipButtonWrapper> createState() =>
@@ -109,7 +109,7 @@ class _BetterPlayerMaterialPipButtonWrapperState
             opacity: widget.controlsNotVisible ? 0.0 : 1.0,
             duration: widget.controlsConfiguration.controlsHideTime,
             onEnd: widget.onPlayerHide,
-            child: Container(
+            child: SizedBox(
               height: widget.controlsConfiguration.controlBarHeight,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -145,15 +145,15 @@ class _BetterPlayerMaterialPipButtonWrapperState
 }
 
 class _BetterPlayerMaterialMoreButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onShowMoreClicked;
 
   const _BetterPlayerMaterialMoreButton({
     required this.controller,
     required this.controlsConfiguration,
     required this.onShowMoreClicked,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onShowMoreClicked;
 
   @override
   Widget build(BuildContext context) {

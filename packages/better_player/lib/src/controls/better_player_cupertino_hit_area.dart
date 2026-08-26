@@ -2,11 +2,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoHitArea extends StatelessWidget {
-  final VideoPlayerValue? latestValue;
-  final bool controlsNotVisible;
-  final VoidCallback onCancelAndRestartTimer;
-  final VoidCallback onHideTimerCancel;
-  final Function(bool) onChangePlayerControlsNotVisible;
 
   const BetterPlayerCupertinoHitArea({
     required this.latestValue,
@@ -16,6 +11,11 @@ class BetterPlayerCupertinoHitArea extends StatelessWidget {
     required this.onChangePlayerControlsNotVisible,
     super.key,
   });
+  final VideoPlayerValue? latestValue;
+  final bool controlsNotVisible;
+  final VoidCallback onCancelAndRestartTimer;
+  final VoidCallback onHideTimerCancel;
+  final Function(bool) onChangePlayerControlsNotVisible;
 
   @override
   Widget build(BuildContext context) {

@@ -5,12 +5,12 @@ import 'package:material_ui/material_ui.dart';
 import '../helpers/better_player_mock_controller.dart';
 
 class MockControlsWidget extends StatefulWidget {
-  final BetterPlayerController controller;
 
   const MockControlsWidget({
     required this.controller,
     super.key,
   });
+  final BetterPlayerController controller;
 
   @override
   MockControlsState createState() => MockControlsState();
@@ -79,7 +79,7 @@ void main() {
     });
 
     testWidgets('changePlayerControlsNotVisible updates state', (
-      WidgetTester tester,
+      tester,
     ) async {
       await tester.pumpWidget(
         MaterialApp(

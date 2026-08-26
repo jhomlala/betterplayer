@@ -25,7 +25,7 @@ void main() {
     visibilityStreamController.close();
   });
 
-  testWidgets('Subtitles are displayed correctly', (WidgetTester tester) async {
+  testWidgets('Subtitles are displayed correctly', (tester) async {
     final subtitle = BetterPlayerSubtitle(
       '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
       false,
@@ -63,7 +63,7 @@ void main() {
   });
 
   testWidgets('Subtitles are hidden when player not visible', (
-    WidgetTester tester,
+    tester,
   ) async {
     final subtitle = BetterPlayerSubtitle(
       '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
@@ -101,7 +101,7 @@ void main() {
   });
 
   testWidgets('Subtitles with custom configuration', (
-    WidgetTester tester,
+    tester,
   ) async {
     final subtitle = BetterPlayerSubtitle(
       '00:00:01,000 --> 00:00:05,000\nTest Subtitle',

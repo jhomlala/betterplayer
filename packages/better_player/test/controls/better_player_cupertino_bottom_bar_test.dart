@@ -39,7 +39,7 @@ void main() {
   }
 
   testWidgets('Cupertino bottom bar shows play button when paused', (
-    WidgetTester tester,
+    tester,
   ) async {
     final controlsConfiguration = BetterPlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
@@ -68,7 +68,7 @@ void main() {
   });
 
   testWidgets('Cupertino bottom bar shows pause button when playing', (
-    WidgetTester tester,
+    tester,
   ) async {
     final controlsConfiguration = BetterPlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
@@ -100,7 +100,7 @@ void main() {
   });
 
   testWidgets('Cupertino bottom bar triggers onPlayPause callback', (
-    WidgetTester tester,
+    tester,
   ) async {
     var playPauseTriggered = false;
     final controlsConfiguration = BetterPlayerControlsConfiguration.cupertino();

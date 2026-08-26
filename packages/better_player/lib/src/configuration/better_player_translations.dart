@@ -1,31 +1,5 @@
 ///Class used to hold translations for all features within Better Player
 class BetterPlayerTranslations {
-  final String languageCode;
-  final String generalDefaultError;
-  final String generalNone;
-  final String generalDefault;
-  final String generalRetry;
-  final String playlistLoadingNextVideo;
-  final String controlsLive;
-  final String controlsNextVideoIn;
-  final String overflowMenuPlaybackSpeed;
-  final String overflowMenuSubtitles;
-  final String overflowMenuQuality;
-  final String overflowMenuAudioTracks;
-  final String qualityAuto;
-
-  /// Accessibility labels
-  final String controlsPlayLabel;
-  final String controlsPauseLabel;
-  final String controlsMuteLabel;
-  final String controlsUnmuteLabel;
-  final String controlsFullscreenLabel;
-  final String controlsExitFullscreenLabel;
-  final String controlsSkipForwardLabel;
-  final String controlsSkipBackwardLabel;
-  final String progressBarLabel;
-  final String overflowMenuLabel;
-  final String controlsPipLabel;
 
   BetterPlayerTranslations({
     this.languageCode = 'en',
@@ -240,4 +214,30 @@ class BetterPlayerTranslations {
     overflowMenuLabel: 'Menú de opciones',
     controlsPipLabel: 'Imagen en imagen',
   );
+  final String languageCode;
+  final String generalDefaultError;
+  final String generalNone;
+  final String generalDefault;
+  final String generalRetry;
+  final String playlistLoadingNextVideo;
+  final String controlsLive;
+  final String controlsNextVideoIn;
+  final String overflowMenuPlaybackSpeed;
+  final String overflowMenuSubtitles;
+  final String overflowMenuQuality;
+  final String overflowMenuAudioTracks;
+  final String qualityAuto;
+
+  /// Accessibility labels
+  final String controlsPlayLabel;
+  final String controlsPauseLabel;
+  final String controlsMuteLabel;
+  final String controlsUnmuteLabel;
+  final String controlsFullscreenLabel;
+  final String controlsExitFullscreenLabel;
+  final String controlsSkipForwardLabel;
+  final String controlsSkipBackwardLabel;
+  final String progressBarLabel;
+  final String overflowMenuLabel;
+  final String controlsPipLabel;
 }

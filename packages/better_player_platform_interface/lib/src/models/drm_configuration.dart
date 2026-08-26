@@ -2,6 +2,15 @@ import 'package:better_player_platform_interface/src/models/drm_type.dart';
 
 ///Configuration of DRM used to protect data source
 class DrmConfiguration {
+
+  const DrmConfiguration({
+    this.drmType,
+    this.token,
+    this.licenseUrl,
+    this.certificateUrl,
+    this.headers,
+    this.clearKey,
+  });
   ///Type of DRM
   final DrmType? drmType;
 
@@ -19,13 +28,4 @@ class DrmConfiguration {
 
   ///Additional headers send with auth request, used only for WIDEVINE DRM
   final Map<String, String>? headers;
-
-  const DrmConfiguration({
-    this.drmType,
-    this.token,
-    this.licenseUrl,
-    this.certificateUrl,
-    this.headers,
-    this.clearKey,
-  });
 }

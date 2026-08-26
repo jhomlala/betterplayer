@@ -3,14 +3,14 @@ import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoNextVideoWidget extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   const BetterPlayerCupertinoNextVideoWidget({
     required this.controller,
     required this.controlsConfiguration,
     super.key,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {

@@ -32,7 +32,7 @@ void main() {
     });
 
     testWidgets('calculateAspectRatio returns correct value', (
-      WidgetTester tester,
+      tester,
     ) async {
       await tester.pumpWidget(
         MaterialApp(

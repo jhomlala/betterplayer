@@ -50,8 +50,7 @@ class BetterPlayerHlsUtils {
         data,
       );
       if (parsedPlaylist is HlsMasterPlaylist) {
-        parsedPlaylist.variants.forEach(
-          (variant) {
+        for (final variant in parsedPlaylist.variants) {
             tracks.add(
               BetterPlayerAsmsTrack(
                 '',
@@ -63,8 +62,7 @@ class BetterPlayerHlsUtils {
                 '',
               ),
             );
-          },
-        );
+          }
       }
 
       if (tracks.isNotEmpty) {

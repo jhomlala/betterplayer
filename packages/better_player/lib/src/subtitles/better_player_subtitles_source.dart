@@ -5,6 +5,18 @@ import 'package:better_player/src/subtitles/better_player_subtitles_source_type.
 ///Representation of subtitles source. Used to define subtitles in Better
 /// Player.
 class BetterPlayerSubtitlesSource {
+
+  BetterPlayerSubtitlesSource({
+    this.type,
+    this.name = 'Default subtitles',
+    this.urls,
+    this.content,
+    this.selectedByDefault,
+    this.headers,
+    this.asmsIsSegmented,
+    this.asmsSegmentsTime,
+    this.asmsSegments,
+  });
   ///Source type
   final BetterPlayerSubtitlesSourceType? type;
 
@@ -35,18 +47,6 @@ class BetterPlayerSubtitlesSource {
   ///List of segments (start,end,url of the segment). This shouldn't be
   ///configured manually.
   final List<BetterPlayerAsmsSubtitleSegment>? asmsSegments;
-
-  BetterPlayerSubtitlesSource({
-    this.type,
-    this.name = 'Default subtitles',
-    this.urls,
-    this.content,
-    this.selectedByDefault,
-    this.headers,
-    this.asmsIsSegmented,
-    this.asmsSegmentsTime,
-    this.asmsSegments,
-  });
 
   ///Creates list with only one subtitles
   static List<BetterPlayerSubtitlesSource> single({

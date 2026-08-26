@@ -3,7 +3,6 @@ import 'package:better_player_platform_interface/src/method_channel_video_player
 import 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 import 'package:better_player_platform_interface/src/models/data_source.dart';
 import 'package:better_player_platform_interface/src/models/video_event.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 

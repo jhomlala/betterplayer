@@ -14,7 +14,7 @@ void main() {
 
   group('BetterPlayerWithControls tests', () {
     testWidgets('Renders properly with controller', (
-      WidgetTester tester,
+      tester,
     ) async {
       final mockVideoPlayerController =
           BetterPlayerTestUtils.setupMockVideoPlayerControler();
@@ -43,7 +43,7 @@ void main() {
     });
 
     testWidgets('Renders placeholder when provided', (
-      WidgetTester tester,
+      tester,
     ) async {
       final mockVideoPlayerController =
           BetterPlayerTestUtils.setupMockVideoPlayerControler();
@@ -76,7 +76,7 @@ void main() {
     });
 
     testWidgets('Updates aspect ratio when video size changes', (
-      WidgetTester tester,
+      tester,
     ) async {
       final mockVideoPlayerController =
           BetterPlayerTestUtils.setupMockVideoPlayerControler();
@@ -141,7 +141,7 @@ void main() {
     });
 
     testWidgets('Updates video fit widget when video size changes', (
-      WidgetTester tester,
+      tester,
     ) async {
       final mockVideoPlayerController =
           BetterPlayerTestUtils.setupMockVideoPlayerControler();

@@ -5,9 +5,6 @@ import 'package:material_ui/material_ui.dart';
 
 ///Special version of Better Player used to play videos in playlist.
 class BetterPlayerPlaylist extends StatefulWidget {
-  final List<BetterPlayerDataSource> betterPlayerDataSourceList;
-  final BetterPlayerConfiguration betterPlayerConfiguration;
-  final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
 
   const BetterPlayerPlaylist({
     required this.betterPlayerDataSourceList,
@@ -15,6 +12,9 @@ class BetterPlayerPlaylist extends StatefulWidget {
     required this.betterPlayerPlaylistConfiguration,
     super.key,
   });
+  final List<BetterPlayerDataSource> betterPlayerDataSourceList;
+  final BetterPlayerConfiguration betterPlayerConfiguration;
+  final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
 
   @override
   BetterPlayerPlaylistState createState() => BetterPlayerPlaylistState();

@@ -2,12 +2,12 @@ import 'package:better_player/src/configuration/better_player_controls_configura
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoLoadingWidget extends StatelessWidget {
-  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   const BetterPlayerCupertinoLoadingWidget({
     required this.controlsConfiguration,
     super.key,
   });
+  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 // Flutter imports:
-import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerUiUtils {

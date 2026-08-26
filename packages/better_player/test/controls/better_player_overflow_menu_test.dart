@@ -31,7 +31,7 @@ void main() {
   }
 
   testWidgets('Overflow menu shows all items when enabled', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       wrapWidget(
@@ -65,7 +65,7 @@ void main() {
   });
 
   testWidgets('Overflow menu hides items when disabled', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       wrapWidget(
@@ -103,7 +103,7 @@ void main() {
     );
   });
 
-  testWidgets('Overflow menu triggers callbacks', (WidgetTester tester) async {
+  testWidgets('Overflow menu triggers callbacks', (tester) async {
     var speedTriggered = false;
     await tester.pumpWidget(
       wrapWidget(
@@ -126,7 +126,7 @@ void main() {
     expect(speedTriggered, isTrue);
   });
 
-  testWidgets('Overflow menu shows custom items', (WidgetTester tester) async {
+  testWidgets('Overflow menu shows custom items', (tester) async {
     var customTriggered = false;
     await tester.pumpWidget(
       wrapWidget(

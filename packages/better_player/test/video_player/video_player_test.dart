@@ -10,7 +10,7 @@ void main() {
 
     setUp(() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-          .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
+          .setMockMethodCallHandler(channel, (methodCall) async {
             if (methodCall.method == 'create') {
               return {'textureId': 1};
             }
@@ -62,7 +62,7 @@ void main() {
               'height': 720.0,
               'key': 'https://example.com/video.mp4',
             }),
-            (ByteData? data) {},
+            (data) {},
           );
 
       await setDataSourceFuture;
@@ -79,7 +79,7 @@ void main() {
               'height': 1080.0,
               'key': 'https://example.com/video.mp4',
             }),
-            (ByteData? data) {},
+            (data) {},
           );
 
       expect(controller.value.size, const Size(1920, 1080));
@@ -94,7 +94,7 @@ void main() {
               'height': 0.0,
               'key': 'https://example.com/video.mp4',
             }),
-            (ByteData? data) {},
+            (data) {},
           );
 
       expect(controller.value.size, const Size(1920, 1080));

@@ -28,12 +28,12 @@ class BetterPlayerMockControllerWithTracks extends BetterPlayerMockController {
 }
 
 class MockControlsWidget extends StatefulWidget {
-  final BetterPlayerController controller;
 
   const MockControlsWidget({
     required this.controller,
     super.key,
   });
+  final BetterPlayerController controller;
 
   @override
   MockControlsState createState() => MockControlsState();
@@ -77,7 +77,7 @@ void main() {
 
     testWidgets(
       'Auto track has correct semantics identifier when fields are 0',
-      (WidgetTester tester) async {
+      (tester) async {
         controller.setTracks([
           BetterPlayerAsmsTrack.defaultTrack(), // 0, 0, 0
           BetterPlayerAsmsTrack('', 1920, 1080, 5000000, 30, '', ''),
@@ -119,7 +119,7 @@ void main() {
 
     testWidgets(
       'Auto track has correct semantics identifier when fields are null',
-      (WidgetTester tester) async {
+      (tester) async {
         controller.setTracks([
           BetterPlayerAsmsTrack('', null, null, null, null, '', ''),
         ]);
@@ -157,7 +157,7 @@ void main() {
     );
 
     testWidgets('Non-auto track has index-based semantics identifier', (
-      WidgetTester tester,
+      tester,
     ) async {
       controller.setTracks([
         BetterPlayerAsmsTrack.defaultTrack(),
@@ -198,7 +198,7 @@ void main() {
 
     testWidgets(
       'Non-ASMS (normal MP4) resolution has quality_auto identifier when children empty',
-      (WidgetTester tester) async {
+      (tester) async {
         controller.setTracks([]);
         controller.setDataSource(BetterPlayerDataSource.network('video.mp4'));
 
@@ -236,7 +236,7 @@ void main() {
 
     testWidgets(
       'Non-ASMS (normal MP4) with multiple resolutions has index-based semantics identifier',
-      (WidgetTester tester) async {
+      (tester) async {
         controller.setTracks([]);
         controller.setDataSource(
           BetterPlayerDataSource.network(

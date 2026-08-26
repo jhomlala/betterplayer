@@ -29,7 +29,6 @@ final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
 ///
 /// After [dispose] all further calls are ignored.
 class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
-  final BufferingConfiguration bufferingConfiguration;
 
   /// Constructs a [VideoPlayerController] and creates video controller on platform side.
   VideoPlayerController({
@@ -40,6 +39,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       _create();
     }
   }
+  final BufferingConfiguration bufferingConfiguration;
 
   final StreamController<VideoEvent> videoEventStreamController =
       StreamController.broadcast();
@@ -335,7 +335,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       await _videoPlayerPlatform.play(_textureId);
       _timer = Timer.periodic(
         const Duration(milliseconds: 300),
-        (Timer timer) async {
+        (timer) async {
           if (_isDisposed) {
             return;
           }
@@ -654,7 +654,7 @@ class _VideoScrubberState extends State<_VideoScrubber> {
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onHorizontalDragStart: (DragStartDetails details) {
+      onHorizontalDragStart: (details) {
         if (!controller.value.initialized) {
           return;
         }
@@ -663,18 +663,18 @@ class _VideoScrubberState extends State<_VideoScrubber> {
           controller.pause();
         }
       },
-      onHorizontalDragUpdate: (DragUpdateDetails details) {
+      onHorizontalDragUpdate: (details) {
         if (!controller.value.initialized) {
           return;
         }
         seekToRelativePosition(details.globalPosition);
       },
-      onHorizontalDragEnd: (DragEndDetails details) {
+      onHorizontalDragEnd: (details) {
         if (_controllerWasPlaying) {
           controller.play();
         }
       },
-      onTapDown: (TapDownDetails details) {
+      onTapDown: (details) {
         if (!controller.value.initialized) {
           return;
         }

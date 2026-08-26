@@ -4,7 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 void main() {
   group('BetterPlayerMultipleGestureDetector tests', () {
-    testWidgets('Inherited data is accessible', (WidgetTester tester) async {
+    testWidgets('Inherited data is accessible', (tester) async {
       var tapped = false;
       await tester.pumpWidget(
         BetterPlayerMultipleGestureDetector(

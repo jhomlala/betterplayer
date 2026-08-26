@@ -5,19 +5,6 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoTopBar extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final double barHeight;
-  final double iconSize;
-  final double buttonPadding;
-  final double marginSize;
-  final Color backgroundColor;
-  final Color iconColor;
-  final VoidCallback onExpandCollapse;
-  final VoidCallback onShowMoreClicked;
-  final VoidCallback onMute;
-  final VideoPlayerValue? latestValue;
 
   const BetterPlayerCupertinoTopBar({
     required this.controller,
@@ -35,6 +22,19 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
     required this.latestValue,
     super.key,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final double barHeight;
+  final double iconSize;
+  final double buttonPadding;
+  final double marginSize;
+  final Color backgroundColor;
+  final Color iconColor;
+  final VoidCallback onExpandCollapse;
+  final VoidCallback onShowMoreClicked;
+  final VoidCallback onMute;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -117,15 +117,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final double barHeight;
-  final double iconSize;
-  final double buttonPadding;
-  final Color backgroundColor;
-  final Color iconColor;
-  final VoidCallback onExpandCollapse;
 
   const _BetterPlayerCupertinoExpandButton({
     required this.controller,
@@ -138,6 +129,15 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
     required this.iconColor,
     required this.onExpandCollapse,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final double barHeight;
+  final double iconSize;
+  final double buttonPadding;
+  final Color backgroundColor;
+  final Color iconColor;
+  final VoidCallback onExpandCollapse;
 
   @override
   Widget build(BuildContext context) {
@@ -176,14 +176,6 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoPipButton extends StatefulWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final double barHeight;
-  final double iconSize;
-  final double buttonPadding;
-  final Color backgroundColor;
-  final Color iconColor;
 
   const _BetterPlayerCupertinoPipButton({
     required this.controller,
@@ -195,6 +187,14 @@ class _BetterPlayerCupertinoPipButton extends StatefulWidget {
     required this.backgroundColor,
     required this.iconColor,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final double barHeight;
+  final double iconSize;
+  final double buttonPadding;
+  final Color backgroundColor;
+  final Color iconColor;
 
   @override
   State<_BetterPlayerCupertinoPipButton> createState() =>
@@ -268,16 +268,6 @@ class _BetterPlayerCupertinoPipButtonState
 }
 
 class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final double barHeight;
-  final double iconSize;
-  final double buttonPadding;
-  final Color backgroundColor;
-  final Color iconColor;
-  final VoidCallback onMute;
-  final VideoPlayerValue? latestValue;
 
   const _BetterPlayerCupertinoMuteButton({
     required this.controller,
@@ -291,6 +281,16 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
     required this.onMute,
     required this.latestValue,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final double barHeight;
+  final double iconSize;
+  final double buttonPadding;
+  final Color backgroundColor;
+  final Color iconColor;
+  final VoidCallback onMute;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -332,15 +332,6 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final double barHeight;
-  final double iconSize;
-  final double buttonPadding;
-  final Color backgroundColor;
-  final Color iconColor;
-  final VoidCallback onShowMoreClicked;
 
   const _BetterPlayerCupertinoMoreButton({
     required this.controller,
@@ -353,6 +344,15 @@ class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
     required this.iconColor,
     required this.onShowMoreClicked,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final double barHeight;
+  final double iconSize;
+  final double buttonPadding;
+  final Color backgroundColor;
+  final Color iconColor;
+  final VoidCallback onShowMoreClicked;
 
   @override
   Widget build(BuildContext context) {

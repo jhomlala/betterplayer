@@ -12,7 +12,7 @@ void main() {
   });
 
   testWidgets('Better Player simple player - network', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       _wrapWidget(
@@ -26,7 +26,7 @@ void main() {
   });
 
   testWidgets('Better Player simple player - file', (
-    WidgetTester tester,
+    tester,
   ) async {
     await tester.pumpWidget(
       _wrapWidget(
@@ -39,7 +39,7 @@ void main() {
     );
   });
 
-  testWidgets('BetterPlayer - with controller', (WidgetTester tester) async {
+  testWidgets('BetterPlayer - with controller', (tester) async {
     final betterPlayerController = BetterPlayerMockController(
       const BetterPlayerConfiguration(),
     );

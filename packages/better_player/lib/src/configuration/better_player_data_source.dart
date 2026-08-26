@@ -5,70 +5,6 @@ import 'package:flutter/widgets.dart';
 ///Representation of data source which will be played in Better Player. Allows
 ///to setup all necessary configuration connected to video source.
 class BetterPlayerDataSource {
-  ///Type of source of video
-  final DataSourceType type;
-
-  ///Url of the video
-  final String url;
-
-  ///Subtitles configuration
-  final List<BetterPlayerSubtitlesSource>? subtitles;
-
-  ///Flag to determine if current data source is live stream
-  final bool? liveStream;
-
-  /// Custom headers for player
-  final Map<String, String>? headers;
-
-  ///Should player use hls / dash subtitles (ASMS - Adaptive Streaming Media Sources).
-  final bool? useAsmsSubtitles;
-
-  ///Should player use hls tracks
-  final bool? useAsmsTracks;
-
-  ///Should player use hls /das audio tracks
-  final bool? useAsmsAudioTracks;
-
-  ///List of strings that represents tracks names.
-  ///If empty, then better player will choose name based on track parameters
-  final List<String>? asmsTrackNames;
-
-  ///Optional, alternative resolutions for non-hls/dash video. Used to setup
-  ///different qualities for video.
-  ///Data should be in given format:
-  ///{"360p": "url", "540p": "url2" }
-  final Map<String, String>? resolutions;
-
-  ///Optional cache configuration, used only for network data sources
-  final CacheConfiguration? cacheConfiguration;
-
-  ///List of bytes, used only in memory player
-  final List<int>? bytes;
-
-  ///Configuration of remote controls notification
-  final NotificationConfiguration? notificationConfiguration;
-
-  ///Duration which will be returned instead of original duration
-  final Duration? overriddenDuration;
-
-  ///Video format hint when data source url has not valid extension.
-  final VideoFormat? videoFormat;
-
-  ///Extension of video without dot.
-  final String? videoExtension;
-
-  ///Configuration of content protection
-  final DrmConfiguration? drmConfiguration;
-
-  ///Placeholder widget which will be shown until video load or play. This
-  ///placeholder may be useful if you want to show placeholder before each video
-  ///in playlist. Otherwise, you should use placeholder from
-  /// BetterPlayerConfiguration.
-  final Widget? placeholder;
-
-  ///Configuration of video buffering. Currently only supported in Android
-  ///platform.
-  final BufferingConfiguration bufferingConfiguration;
 
   BetterPlayerDataSource(
     this.type,
@@ -197,6 +133,70 @@ class BetterPlayerDataSource {
       placeholder: placeholder,
     );
   }
+  ///Type of source of video
+  final DataSourceType type;
+
+  ///Url of the video
+  final String url;
+
+  ///Subtitles configuration
+  final List<BetterPlayerSubtitlesSource>? subtitles;
+
+  ///Flag to determine if current data source is live stream
+  final bool? liveStream;
+
+  /// Custom headers for player
+  final Map<String, String>? headers;
+
+  ///Should player use hls / dash subtitles (ASMS - Adaptive Streaming Media Sources).
+  final bool? useAsmsSubtitles;
+
+  ///Should player use hls tracks
+  final bool? useAsmsTracks;
+
+  ///Should player use hls /das audio tracks
+  final bool? useAsmsAudioTracks;
+
+  ///List of strings that represents tracks names.
+  ///If empty, then better player will choose name based on track parameters
+  final List<String>? asmsTrackNames;
+
+  ///Optional, alternative resolutions for non-hls/dash video. Used to setup
+  ///different qualities for video.
+  ///Data should be in given format:
+  ///{"360p": "url", "540p": "url2" }
+  final Map<String, String>? resolutions;
+
+  ///Optional cache configuration, used only for network data sources
+  final CacheConfiguration? cacheConfiguration;
+
+  ///List of bytes, used only in memory player
+  final List<int>? bytes;
+
+  ///Configuration of remote controls notification
+  final NotificationConfiguration? notificationConfiguration;
+
+  ///Duration which will be returned instead of original duration
+  final Duration? overriddenDuration;
+
+  ///Video format hint when data source url has not valid extension.
+  final VideoFormat? videoFormat;
+
+  ///Extension of video without dot.
+  final String? videoExtension;
+
+  ///Configuration of content protection
+  final DrmConfiguration? drmConfiguration;
+
+  ///Placeholder widget which will be shown until video load or play. This
+  ///placeholder may be useful if you want to show placeholder before each video
+  ///in playlist. Otherwise, you should use placeholder from
+  /// BetterPlayerConfiguration.
+  final Widget? placeholder;
+
+  ///Configuration of video buffering. Currently only supported in Android
+  ///platform.
+  final BufferingConfiguration bufferingConfiguration;
 
   BetterPlayerDataSource copyWith({
     DataSourceType? type,

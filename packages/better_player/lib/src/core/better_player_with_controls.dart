@@ -11,9 +11,9 @@ import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
-  final BetterPlayerController? controller;
 
   const BetterPlayerWithControls({super.key, this.controller});
+  final BetterPlayerController? controller;
 
   @override
   _BetterPlayerWithControlsState createState() =>
@@ -362,9 +362,7 @@ class _BetterPlayerVideoFitWidgetState
     if (_initialized && _started) {
       return Center(
         child: ClipRect(
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
+          child: SizedBox.expand(
             child: FittedBox(
               fit: widget.boxFit,
               child: SizedBox(

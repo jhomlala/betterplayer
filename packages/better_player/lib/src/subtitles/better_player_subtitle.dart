@@ -1,18 +1,6 @@
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 
 class BetterPlayerSubtitle {
-  static const String timerSeparator = ' --> ';
-  final int? index;
-  final Duration? start;
-  final Duration? end;
-  final List<String>? texts;
-
-  BetterPlayerSubtitle._({
-    this.index,
-    this.start,
-    this.end,
-    this.texts,
-  });
 
   factory BetterPlayerSubtitle(String value, bool isWebVTT) {
     try {
@@ -29,6 +17,18 @@ class BetterPlayerSubtitle {
       return BetterPlayerSubtitle._();
     }
   }
+
+  BetterPlayerSubtitle._({
+    this.index,
+    this.start,
+    this.end,
+    this.texts,
+  });
+  static const String timerSeparator = ' --> ';
+  final int? index;
+  final Duration? start;
+  final Duration? end;
+  final List<String>? texts;
 
   static BetterPlayerSubtitle _handle2LinesSubtitles(List<String> scanner) {
     try {

@@ -942,7 +942,7 @@ void main() {
       });
 
       testWidgets('BetterPlayerController.of(context) works', (
-        WidgetTester tester,
+        tester,
       ) async {
         final controller =
             BetterPlayerTestUtils.setupBetterPlayerMockController();

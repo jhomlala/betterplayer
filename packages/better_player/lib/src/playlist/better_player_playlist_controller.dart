@@ -3,6 +3,18 @@ import 'package:better_player/better_player.dart';
 
 ///Controller used to manage playlist player.
 class BetterPlayerPlaylistController {
+
+  BetterPlayerPlaylistController(
+    this._betterPlayerDataSourceList, {
+    this.betterPlayerConfiguration = const BetterPlayerConfiguration(),
+    this.betterPlayerPlaylistConfiguration =
+        const BetterPlayerPlaylistConfiguration(),
+  }) : assert(
+         _betterPlayerDataSourceList.isNotEmpty,
+         "Better Player data source list can't be empty",
+       ) {
+    _setup();
+  }
   ///List of data sources set for playlist.
   final List<BetterPlayerDataSource> _betterPlayerDataSourceList;
 
@@ -23,18 +35,6 @@ class BetterPlayerPlaylistController {
 
   ///Flag that determines whenever player is changing video
   bool _changingToNextVideo = false;
-
-  BetterPlayerPlaylistController(
-    this._betterPlayerDataSourceList, {
-    this.betterPlayerConfiguration = const BetterPlayerConfiguration(),
-    this.betterPlayerPlaylistConfiguration =
-        const BetterPlayerPlaylistConfiguration(),
-  }) : assert(
-         _betterPlayerDataSourceList.isNotEmpty,
-         "Better Player data source list can't be empty",
-       ) {
-    _setup();
-  }
 
   ///Initialize controller and listeners.
   void _setup() {

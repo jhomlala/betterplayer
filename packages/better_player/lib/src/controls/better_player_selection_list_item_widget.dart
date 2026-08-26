@@ -3,11 +3,6 @@ import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerSelectionListItemWidget extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final String? semanticsIdentifier;
 
   const BetterPlayerSelectionListItemWidget({
     required this.label,
@@ -17,6 +12,11 @@ class BetterPlayerSelectionListItemWidget extends StatelessWidget {
     this.semanticsIdentifier,
     super.key,
   });
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final String? semanticsIdentifier;
 
   @override
   Widget build(BuildContext context) {

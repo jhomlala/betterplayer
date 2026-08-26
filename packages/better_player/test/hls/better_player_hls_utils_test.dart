@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
-import 'package:better_player/src/hls/hls_parser/format.dart';
-import 'package:better_player/src/hls/hls_parser/rendition.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MockHttpClient extends Fake implements HttpClient {

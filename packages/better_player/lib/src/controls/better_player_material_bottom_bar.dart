@@ -8,17 +8,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialBottomBar extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final VoidCallback onPlayerHide;
-  final VoidCallback onPlayPause;
-  final VoidCallback onMute;
-  final VoidCallback onExpandCollapse;
-  final VoidCallback onProgressBarDragStart;
-  final VoidCallback onProgressBarDragEnd;
-  final VoidCallback onProgressBarTapDown;
-  final VideoPlayerValue? latestValue;
 
   const BetterPlayerMaterialBottomBar({
     required this.controller,
@@ -34,6 +23,17 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
     required this.latestValue,
     super.key,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final VoidCallback onPlayerHide;
+  final VoidCallback onPlayPause;
+  final VoidCallback onMute;
+  final VoidCallback onExpandCollapse;
+  final VoidCallback onProgressBarDragStart;
+  final VoidCallback onProgressBarDragEnd;
+  final VoidCallback onProgressBarTapDown;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +44,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
       opacity: controlsNotVisible ? 0.0 : 1.0,
       duration: controlsConfiguration.controlsHideTime,
       onEnd: onPlayerHide,
-      child: Container(
+      child: SizedBox(
         height: controlsConfiguration.controlBarHeight + 20.0,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,10 +120,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onPlayPause;
-  final VideoPlayerValue? latestValue;
 
   const _BetterPlayerMaterialPlayPauseButton({
     required this.controller,
@@ -131,6 +127,10 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
     required this.onPlayPause,
     required this.latestValue,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onPlayPause;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -158,11 +158,6 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialMuteButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onMute;
-  final bool controlsNotVisible;
-  final VideoPlayerValue? latestValue;
 
   const _BetterPlayerMaterialMuteButton({
     required this.controller,
@@ -171,6 +166,11 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
     required this.controlsNotVisible,
     required this.latestValue,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onMute;
+  final bool controlsNotVisible;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -201,10 +201,6 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onExpandCollapse;
-  final bool controlsNotVisible;
 
   const _BetterPlayerMaterialFullscreenButton({
     required this.controller,
@@ -212,6 +208,10 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
     required this.onExpandCollapse,
     required this.controlsNotVisible,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onExpandCollapse;
+  final bool controlsNotVisible;
 
   @override
   Widget build(BuildContext context) {
@@ -246,13 +246,13 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   const _BetterPlayerMaterialLiveWidget({
     required this.controller,
     required this.controlsConfiguration,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
@@ -267,15 +267,15 @@ class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VideoPlayerValue? latestValue;
 
   const _BetterPlayerMaterialPositionWidget({
     required this.controller,
     required this.controlsConfiguration,
     required this.latestValue,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -315,11 +315,6 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onProgressBarDragStart;
-  final VoidCallback onProgressBarDragEnd;
-  final VoidCallback onProgressBarTapDown;
 
   const _BetterPlayerMaterialProgressBarWrapper({
     required this.controller,
@@ -328,6 +323,11 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
     required this.onProgressBarDragEnd,
     required this.onProgressBarTapDown,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onProgressBarDragStart;
+  final VoidCallback onProgressBarDragEnd;
+  final VoidCallback onProgressBarTapDown;
 
   @override
   Widget build(BuildContext context) {

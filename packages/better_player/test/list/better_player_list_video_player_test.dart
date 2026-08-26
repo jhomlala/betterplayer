@@ -24,7 +24,7 @@ void main() {
   );
 
   group('BetterPlayerListVideoPlayer tests', () {
-    testWidgets('Initialization works', (WidgetTester tester) async {
+    testWidgets('Initialization works', (tester) async {
       final dataSource = BetterPlayerDataSource.network(
         'https://example.com/video.mp4',
       );
@@ -40,7 +40,7 @@ void main() {
       expect(find.byType(BetterPlayerListVideoPlayer), findsOneWidget);
     });
 
-    testWidgets('Controller works correctly', (WidgetTester tester) async {
+    testWidgets('Controller works correctly', (tester) async {
       final dataSource = BetterPlayerDataSource.network(
         'https://example.com/video.mp4',
       );

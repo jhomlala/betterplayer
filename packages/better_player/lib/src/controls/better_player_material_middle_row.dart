@@ -5,14 +5,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialHitArea extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final VoidCallback onSkipBack;
-  final VoidCallback onSkipForward;
-  final VoidCallback onReplay;
-  final VideoPlayerValue? latestValue;
-  final bool isVideoFinished;
 
   const BetterPlayerMaterialHitArea({
     required this.controller,
@@ -25,6 +17,14 @@ class BetterPlayerMaterialHitArea extends StatelessWidget {
     required this.isVideoFinished,
     super.key,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final VoidCallback onSkipBack;
+  final VoidCallback onSkipForward;
+  final VoidCallback onReplay;
+  final VideoPlayerValue? latestValue;
+  final bool isVideoFinished;
 
   @override
   Widget build(BuildContext context) {
@@ -52,13 +52,6 @@ class BetterPlayerMaterialHitArea extends StatelessWidget {
 }
 
 class BetterPlayerMaterialMiddleRow extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onSkipBack;
-  final VoidCallback onSkipForward;
-  final VoidCallback onReplay;
-  final VideoPlayerValue? latestValue;
-  final bool isVideoFinished;
 
   const BetterPlayerMaterialMiddleRow({
     required this.controller,
@@ -70,6 +63,13 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
     required this.isVideoFinished,
     super.key,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onSkipBack;
+  final VoidCallback onSkipForward;
+  final VoidCallback onReplay;
+  final VideoPlayerValue? latestValue;
+  final bool isVideoFinished;
 
   @override
   Widget build(BuildContext context) {
@@ -138,10 +138,6 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
-  final VoidCallback onClicked;
-  final Widget icon;
-  final String? semanticsLabel;
-  final String? semanticsIdentifier;
 
   const _BetterPlayerMaterialHitAreaClickableButton({
     required this.onClicked,
@@ -150,6 +146,10 @@ class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
     this.semanticsIdentifier,
     super.key,
   });
+  final VoidCallback onClicked;
+  final Widget icon;
+  final String? semanticsLabel;
+  final String? semanticsIdentifier;
 
   @override
   Widget build(BuildContext context) {
@@ -179,11 +179,6 @@ class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
 }
 
 class _BetterPlayerMaterialReplayButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onReplay;
-  final VideoPlayerValue? latestValue;
-  final bool isVideoFinished;
 
   const _BetterPlayerMaterialReplayButton({
     required this.controller,
@@ -192,6 +187,11 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
     required this.latestValue,
     required this.isVideoFinished,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onReplay;
+  final VideoPlayerValue? latestValue;
+  final bool isVideoFinished;
 
   @override
   Widget build(BuildContext context) {

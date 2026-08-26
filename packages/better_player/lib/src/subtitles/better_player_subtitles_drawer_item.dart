@@ -3,10 +3,6 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerSubtitlesDrawerItem extends StatelessWidget {
-  final String subtitleText;
-  final BetterPlayerSubtitlesConfiguration configuration;
-  final TextStyle innerTextStyle;
-  final TextStyle outerTextStyle;
 
   const BetterPlayerSubtitlesDrawerItem({
     required this.subtitleText,
@@ -15,6 +11,10 @@ class BetterPlayerSubtitlesDrawerItem extends StatelessWidget {
     required this.outerTextStyle,
     super.key,
   });
+  final String subtitleText;
+  final BetterPlayerSubtitlesConfiguration configuration;
+  final TextStyle innerTextStyle;
+  final TextStyle outerTextStyle;
 
   @override
   Widget build(BuildContext context) {

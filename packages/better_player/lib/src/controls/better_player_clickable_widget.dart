@@ -3,10 +3,6 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialClickableWidget extends StatelessWidget {
-  final Widget child;
-  final void Function() onTap;
-  final String? semanticsLabel;
-  final String? semanticsIdentifier;
 
   const BetterPlayerMaterialClickableWidget({
     required this.onTap,
@@ -15,6 +11,10 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
     this.semanticsIdentifier,
     super.key,
   });
+  final Widget child;
+  final void Function() onTap;
+  final String? semanticsLabel;
+  final String? semanticsIdentifier;
 
   @override
   Widget build(BuildContext context) {

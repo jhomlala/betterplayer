@@ -3,6 +3,19 @@ import 'package:material_ui/material_ui.dart';
 
 ///Special version of Better Player which is used to play video in list view.
 class BetterPlayerListVideoPlayer extends StatefulWidget {
+
+  const BetterPlayerListVideoPlayer(
+    this.dataSource, {
+    this.configuration = const BetterPlayerConfiguration(),
+    this.playFraction = 0.6,
+    this.autoPlay = true,
+    this.autoPause = true,
+    this.betterPlayerListVideoPlayerController,
+    super.key,
+  }) : assert(
+         playFraction >= 0.0 && playFraction <= 1.0,
+         "Play fraction can't be null and must be between 0.0 and 1.0",
+       );
   ///Video to show
   final BetterPlayerDataSource dataSource;
 
@@ -22,19 +35,6 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
 
   final BetterPlayerListVideoPlayerController?
   betterPlayerListVideoPlayerController;
-
-  const BetterPlayerListVideoPlayer(
-    this.dataSource, {
-    this.configuration = const BetterPlayerConfiguration(),
-    this.playFraction = 0.6,
-    this.autoPlay = true,
-    this.autoPause = true,
-    this.betterPlayerListVideoPlayerController,
-    super.key,
-  }) : assert(
-         playFraction >= 0.0 && playFraction <= 1.0,
-         "Play fraction can't be null and must be between 0.0 and 1.0",
-       );
 
   @override
   _BetterPlayerListVideoPlayerState createState() =>
@@ -87,7 +87,7 @@ class _BetterPlayerListVideoPlayerState
     );
   }
 
-  void onVisibilityChanged(double visibleFraction) async {
+  Future<void> onVisibilityChanged(double visibleFraction) async {
     final isPlaying = _betterPlayerController!.isPlaying();
     final initialized = _betterPlayerController!.isVideoInitialized();
     if (visibleFraction >= widget.playFraction) {

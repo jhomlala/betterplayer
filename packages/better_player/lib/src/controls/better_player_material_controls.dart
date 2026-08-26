@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
-import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_material_bottom_bar.dart';
 import 'package:better_player/src/controls/better_player_material_error_widget.dart';
@@ -17,17 +16,17 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialControls extends StatefulWidget {
-  ///Callback used to send information if player bar is hidden or not
-  final Function(bool visbility) onControlsVisibilityChanged;
-
-  ///Controls config
-  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   const BetterPlayerMaterialControls({
     required this.onControlsVisibilityChanged,
     required this.controlsConfiguration,
     super.key,
   });
+  ///Callback used to send information if player bar is hidden or not
+  final Function(bool visbility) onControlsVisibilityChanged;
+
+  ///Controls config
+  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   @override
   State<StatefulWidget> createState() {

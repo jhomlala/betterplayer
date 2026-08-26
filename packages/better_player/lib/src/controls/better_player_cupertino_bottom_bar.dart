@@ -7,21 +7,6 @@ import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoBottomBar extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
-  final double barHeight;
-  final double marginSize;
-  final Color backgroundColor;
-  final Color iconColor;
-  final VoidCallback onPlayPause;
-  final VoidCallback onSkipBack;
-  final VoidCallback onSkipForward;
-  final VoidCallback onProgressBarDragStart;
-  final VoidCallback onProgressBarDragEnd;
-  final VoidCallback onProgressBarTapDown;
-  final VoidCallback onPlayerHide;
-  final VideoPlayerValue? latestValue;
 
   const BetterPlayerCupertinoBottomBar({
     required this.controller,
@@ -41,6 +26,21 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
     required this.latestValue,
     super.key,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final bool controlsNotVisible;
+  final double barHeight;
+  final double marginSize;
+  final Color backgroundColor;
+  final Color iconColor;
+  final VoidCallback onPlayPause;
+  final VoidCallback onSkipBack;
+  final VoidCallback onSkipForward;
+  final VoidCallback onProgressBarDragStart;
+  final VoidCallback onProgressBarDragEnd;
+  final VoidCallback onProgressBarTapDown;
+  final VoidCallback onPlayerHide;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -155,12 +155,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onPlayPause;
-  final Color iconColor;
-  final double barHeight;
-  final VideoPlayerValue? latestValue;
 
   const _BetterPlayerCupertinoPlayPauseButton({
     required this.controller,
@@ -170,6 +164,12 @@ class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
     required this.barHeight,
     required this.latestValue,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onPlayPause;
+  final Color iconColor;
+  final double barHeight;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -200,13 +200,6 @@ class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
-  final BetterPlayerController controller;
-  final VoidCallback onSkip;
-  final IconData icon;
-  final String semanticsLabel;
-  final Color iconColor;
-  final double barHeight;
-  final bool isBack;
 
   const _BetterPlayerCupertinoSkipButton({
     required this.controller,
@@ -217,6 +210,13 @@ class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
     required this.barHeight,
     required this.isBack,
   });
+  final BetterPlayerController controller;
+  final VoidCallback onSkip;
+  final IconData icon;
+  final String semanticsLabel;
+  final Color iconColor;
+  final double barHeight;
+  final bool isBack;
 
   @override
   Widget build(BuildContext context) {
@@ -245,13 +245,13 @@ class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoLiveWidget extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   const _BetterPlayerCupertinoLiveWidget({
     required this.controller,
     required this.controlsConfiguration,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
@@ -268,13 +268,13 @@ class _BetterPlayerCupertinoLiveWidget extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoPositionWidget extends StatelessWidget {
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VideoPlayerValue? latestValue;
 
   const _BetterPlayerCupertinoPositionWidget({
     required this.controlsConfiguration,
     required this.latestValue,
   });
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -298,13 +298,13 @@ class _BetterPlayerCupertinoPositionWidget extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VideoPlayerValue? latestValue;
 
   const _BetterPlayerCupertinoRemainingWidget({
     required this.controlsConfiguration,
     required this.latestValue,
   });
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
@@ -328,11 +328,6 @@ class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
 }
 
 class _BetterPlayerCupertinoProgressBarWrapper extends StatelessWidget {
-  final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
-  final VoidCallback onDragStart;
-  final VoidCallback onDragEnd;
-  final VoidCallback onTapDown;
 
   const _BetterPlayerCupertinoProgressBarWrapper({
     required this.controller,
@@ -341,6 +336,11 @@ class _BetterPlayerCupertinoProgressBarWrapper extends StatelessWidget {
     required this.onDragEnd,
     required this.onTapDown,
   });
+  final BetterPlayerController controller;
+  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final VoidCallback onDragStart;
+  final VoidCallback onDragEnd;
+  final VoidCallback onTapDown;
 
   @override
   Widget build(BuildContext context) {
