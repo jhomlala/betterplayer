@@ -1,6 +1,9 @@
 ## Unreleased
 * Updated: Refactored federated plugin architecture to improve separation of concerns between core and platform implementation packages.
 * Fixed: Restored Picture-in-Picture logic and corrected platform view identifiers.
+* Fixed: Compilation error and lint warnings in `BetterPlayerAsmsUtils`.
+* Fixed: `MaterialLocalizations` error in `BetterPlayerControlsState` tests by ensuring correct package imports.
+* Updated: Refactored `BetterPlayerAsmsUtils.getDataFromUrl` for improved type safety and code clarity.
 
 ## 1.0.0
 * Updated: Migrated to federated plugin.

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
 import 'package:better_player/src/core/better_player_utils.dart';
@@ -46,12 +47,7 @@ class BetterPlayerAsmsUtils {
       }
 
       final response = await request.close();
-      var data = '';
-      await response.transform(const Utf8Decoder()).listen((content) {
-        data += content;
-      }).asFuture<String?>();
-
-      return data;
+      return await response.transform(const Utf8Decoder()).join();
     } catch (exception) {
       BetterPlayerUtils.log('GetDataFromUrl failed: $exception');
       return null;
