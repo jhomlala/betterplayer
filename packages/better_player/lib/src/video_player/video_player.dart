@@ -242,7 +242,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     return _setDataSource(
       DataSource(
         sourceType: DataSourceType.file,
-        uri: 'file://',
+        uri: 'file://${file.path}',
         notificationConfiguration: NotificationConfiguration(
           showNotification: showNotification,
           title: title,

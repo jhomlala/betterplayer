@@ -91,7 +91,7 @@ class _BetterPlayerSubtitlesDrawerState
     if (mounted) {
       setState(() {
         _latestValue =
-            widget.betterPlayerController.videoPlayerController!.value;
+            widget.betterPlayerController.videoPlayerController?.value;
       });
     }
   }

@@ -190,6 +190,9 @@ class _VideoProgressBarState
   }
 
   VideoPlayerValue _getValue() {
+    if (controller == null) {
+      return VideoPlayerValue.uninitialized();
+    }
     if (lastSeek != null) {
       return controller!.value.copyWith(position: lastSeek);
     } else {
