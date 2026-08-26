@@ -8,6 +8,3 @@ workspace:
   - packages/better_player_platform_interface
   - packages/better_player_example
   - packages/better_player/example
-  - packages/better_player_android/example
-  - packages/better_player_ios/example
-  - packages/better_player_platform_interface/example
