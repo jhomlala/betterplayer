@@ -71,10 +71,10 @@ jobs:
         run: sudo chmod 666 /dev/kvm
 
       - name: Fetch dependencies
-        run: flutter pub get; cd packages/better_player/example; flutter pub get
+        run: flutter pub get; cd packages/better_player_example; flutter pub get
 
       - name: Build App
-        run: cd packages/better_player/example; flutter build apk --debug --target lib/main_e2e.dart
+        run: cd packages/better_player_example; flutter build apk --debug --target lib/main_e2e.dart
 
       - name: Run Maestro Tests
         uses: reactivecircus/android-emulator-runner@v2
@@ -85,7 +85,7 @@ jobs:
           force-avd-creation: false
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 4096 -cache-size 2048 -accel on
-          script: until adb shell pm list packages > /dev/null 2>&1; do echo "Waiting for package manager..."; sleep 5; done; adb shell input keyevent 82; adb install packages/better_player/example/build/app/outputs/flutter-apk/app-debug.apk; maestro test maestro/android/
+          script: until adb shell pm list packages > /dev/null 2>&1; do echo "Waiting for package manager..."; sleep 5; done; adb shell input keyevent 82; adb install packages/better_player_example/build/app/outputs/flutter-apk/app-debug.apk; maestro test maestro/android/
 
       - name: Upload Maestro Artifacts
         if: always()
