@@ -1,47 +1,8 @@
-name: better_player
-description: Advanced video player. It solves many typical use cases and it's easy to run.
-version: 0.8.1
-homepage: https://github.com/jhomlala/betterplayer
-documentation: https://jhomlala.github.io/betterplayer/
-
-screenshots:
-  - description: 'Better Player Logo'
-    path: assets/pub/logo.png
-  - description: 'Player Controls'
-    path: assets/pub/controls.png
-  - description: 'Settings Menu'
-    path: assets/pub/settings.png
-
+name: better_player_workspace
 environment:
-  sdk: "^3.12.0"
-  flutter: ">=3.47.0"
-
-dependencies:
-  flutter:
-    sdk: flutter
-  material_ui: ^1.0.0
-  cupertino_ui: ^1.0.0
-  cupertino_icons: ^1.0.8
-  wakelock_plus: ^1.7.0
-  meta: ^1.18.0
-  flutter_widget_from_html_core: ^0.17.0
-  visibility_detector: ^0.4.0+2
-  path_provider: ^2.1.5
-  collection: ^1.18.0
-  xml: ^7.0.0
-
-dev_dependencies:
-  very_good_analysis: ^10.3.0
-  flutter_test:
-    sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-
-flutter:
-  plugin:
-    platforms:
-      android:
-        package: pl.hasoft.better_player
-        pluginClass: BetterPlayerPlugin
-      ios:
-        pluginClass: BetterPlayerPlugin
+  sdk: "^3.13.0"
+workspace:
+  - packages/better_player
+  - packages/better_player_android
+  - packages/better_player_ios
+  - packages/better_player_platform_interface

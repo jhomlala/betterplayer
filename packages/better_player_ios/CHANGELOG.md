@@ -1,0 +1,5 @@
+## Unreleased
+
+## 1.0.0
+* Updated: Extracted iOS native code from the core package into a standalone federated plugin package (`better_player_ios`).
+* Fixed: Restored remote notification (lock screen) controls by correctly storing data source information.

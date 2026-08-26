@@ -1,8 +1,6 @@
 include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
-  strong-mode:
-    implicit-dynamic: false
   errors:
     undefined_lint: ignore
     strict_raw_type: ignore
@@ -27,7 +25,6 @@ linter:
     avoid_catches_without_on_clauses: false
     use_setters_to_change_properties: false
     document_ignores: false
-    one_member_abstracts: false
     missing_whitespace_between_adjacent_strings: false
     close_sinks: true
     sort_constructors_first: false
@@ -38,31 +35,23 @@ linter:
     prefer_constructors_over_static_methods: false
     sort_unnamed_constructors_first: false
     sized_box_for_whitespace: false
-    invalid_dependency: false
     library_private_types_in_public_api: false
     unawaited_futures: false
     discarded_futures: false
     avoid_types_on_closure_parameters: false
     no_literal_bool_comparisons: false
     unnecessary_ignore: false
-    removed_lint_use: false
     cascade_invocations: false
     use_named_constants: false
     parameter_assignments: false
     avoid_dynamic_calls: false
     avoid_equals_and_hash_code_on_mutable_classes: false
-    inference_failure_on_function_return_type: false
-    strict_raw_type: false
     flutter_style_todos: false
     comment_references: false
     prefer_asserts_with_message: false
     prefer_null_aware_method_calls: false
     no_default_cases: false
-    unreachable_switch_default: false
-    non_nullable_equals_parameter: false
-    unused_import: false
     avoid_unnecessary_containers: false
-    deprecated_member_use: false
     unnecessary_const: false
     use_build_context_synchronously: false
     sort_pub_dependencies: false
