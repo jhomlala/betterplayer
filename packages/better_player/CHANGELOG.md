@@ -1,4 +1,7 @@
 ## Unreleased
+* Updated: Renamed `isPictureInPictureEnabled` to `isPictureInPictureSupported` across the platform interface and core controller for clarity.
+* Fixed: Corrected missing method channel success response for `setMixWithOthers` on Android, preventing hangs.
+* Fixed: Restored remote notification (lock screen) functionality on iOS by ensuring data source info is correctly stored.
 * Updated: Extracted `dataSourceToMap` in `MethodChannelVideoPlayer` to allow platform-specific `DataSource` mapping, improving modularity and extensibility of the federated plugin.
 * Updated: Refactored federated plugin architecture to improve separation of concerns between core and platform implementation packages.
 * Fixed: Restored Picture-in-Picture logic and corrected platform view identifiers.

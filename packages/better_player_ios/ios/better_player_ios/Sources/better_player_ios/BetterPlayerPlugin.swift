@@ -266,6 +266,7 @@ extension BetterPlayerPlugin {
         case "setDataSource":
             player.clear()
             let dataSource = argsMap["dataSource"] as? [String: Any] ?? [:]
+            dataSourceDict[textureId] = dataSource
             textureIdDict[player] = textureId // Save textureId for player if needed
             let assetArg = dataSource["asset"] as? String
             let uriArg = dataSource["uri"] as? String

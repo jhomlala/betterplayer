@@ -620,7 +620,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_textureId == null) {
       return false;
     }
-    return _videoPlayerPlatform.isPictureInPictureEnabled(_textureId);
+    return _videoPlayerPlatform.isPictureInPictureSupported(_textureId);
   }
 
   void refresh() {

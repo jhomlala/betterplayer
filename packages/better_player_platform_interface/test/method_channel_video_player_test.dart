@@ -106,6 +106,27 @@ void main() {
       expect(pos.inSeconds, 5);
     });
 
+    test(
+      'isPictureInPictureSupported calls isPictureInPictureSupported',
+      () async {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              const MethodChannel('better_player_channel'),
+              (methodCall) async {
+                log.add(methodCall);
+                if (methodCall.method == 'isPictureInPictureSupported') {
+                  return true;
+                }
+                return null;
+              },
+            );
+        final supported = await player.isPictureInPictureSupported(1);
+        expect(supported, true);
+        expect(log.last.method, 'isPictureInPictureSupported');
+        expect(log.last.arguments['textureId'], 1);
+      },
+    );
+
     group('setDataSource and preCache tests', () {
       test('setDataSource network source correctly maps data', () async {
         final dataSource = DataSource(

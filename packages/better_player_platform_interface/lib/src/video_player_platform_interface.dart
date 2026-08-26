@@ -148,9 +148,9 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     );
   }
 
-  Future<bool?> isPictureInPictureEnabled(int? textureId) {
+  Future<bool?> isPictureInPictureSupported(int? textureId) {
     throw UnimplementedError(
-      'isPictureInPictureEnabled() has not been implemented.',
+      'isPictureInPictureSupported() has not been implemented.',
     );
   }
 

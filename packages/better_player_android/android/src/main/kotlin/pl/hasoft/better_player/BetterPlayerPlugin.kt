@@ -216,6 +216,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
                 if (mixWitOthers != null) {
                     player.setMixWithOthers(mixWitOthers)
                 }
+                result.success(null)
             }
             DISPOSE_METHOD -> {
                 dispose(player, textureId)
