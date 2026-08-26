@@ -277,7 +277,6 @@ class _BetterPlayerState extends State<BetterPlayer>
 }
 
 class _BetterPlayerVideoWithVisibility extends StatelessWidget {
-
   const _BetterPlayerVideoWithVisibility({required this.controller});
   final BetterPlayerController controller;
 
