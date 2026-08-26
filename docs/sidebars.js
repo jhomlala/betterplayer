@@ -7,12 +7,18 @@ const sidebars = {
       items: [
         'home',
         'install',
-        'migration_to_federated',
-        'migration_from_video_player',
-        'migration_from_chewie',
         'general_player_usage',
         'playlist_player_usage',
         'list_player_usage',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Migrations',
+      items: [
+        'migration_to_federated',
+        'migration_from_video_player',
+        'migration_from_chewie',
       ],
     },
     {

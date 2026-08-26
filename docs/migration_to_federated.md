@@ -1,4 +1,4 @@
-﻿---
+---
 id: migration_to_federated
 title: Migrating to v1.0.0 (Federated Architecture)
 ---
@@ -32,9 +32,13 @@ To avoid duplicating types between the core player and the new platform interfac
 
 | Old Name | New Name |
 | :--- | :--- |
-| BetterPlayerDataSourceType | DataSourceType |
-| BetterPlayerVideoFormat | VideoFormat |
-| BetterPlayerUtils | BetterPlayerUiUtils |
+| `BetterPlayerDataSourceType` | `DataSourceType` |
+| `BetterPlayerVideoFormat` | `VideoFormat` |
+| `BetterPlayerCacheConfiguration` | `CacheConfiguration` |
+| `BetterPlayerNotificationConfiguration` | `NotificationConfiguration` |
+| `BetterPlayerDrmConfiguration` | `DrmConfiguration` |
+| `BetterPlayerBufferingConfiguration` | `BufferingConfiguration` |
+| `BetterPlayerUtils` | `BetterPlayerUiUtils` |
 
 ### Example Fix:
 **Before (0.8.x):**
