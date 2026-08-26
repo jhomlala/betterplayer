@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'dart:math';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_overflow_menu.dart';
 import 'package:better_player/src/controls/better_player_selection_list_item_widget.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 ///Base class for both material and cupertino controls

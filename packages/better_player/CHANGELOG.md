@@ -1,4 +1,6 @@
 ## Unreleased
+* Updated: Refactored federated plugin architecture to improve separation of concerns between core and platform implementation packages.
+* Fixed: Restored Picture-in-Picture logic and corrected platform view identifiers.
 
 ## 1.0.0
 * Updated: Migrated to federated plugin.

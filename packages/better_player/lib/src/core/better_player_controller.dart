@@ -148,6 +148,9 @@ class BetterPlayerController {
   ///Overridden fit which will be used instead of fit passed in configuration.
   BoxFit? _overriddenFit;
 
+  ///Was Picture in Picture opened.
+  bool _wasInPipMode = false;
+
   ///Was player in fullscreen before Picture in Picture opened.
   bool _wasInFullScreenBeforePiP = false;
 
@@ -831,6 +834,19 @@ class BetterPlayerController {
       _hasCurrentDataSourceInitialized = true;
       _postEvent(BetterPlayerEvent(BetterPlayerEventType.initialized));
     }
+    if (currentVideoPlayerValue.isPip) {
+      _wasInPipMode = true;
+    } else if (_wasInPipMode) {
+      _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStop));
+      _wasInPipMode = false;
+      if (!_wasInFullScreenBeforePiP) {
+        exitFullScreen();
+      }
+      if (_wasControlsEnabledBeforePiP) {
+        setControlsEnabled(true);
+      }
+      videoPlayerController?.refresh();
+    }
 
     if (_betterPlayerSubtitlesSource?.asmsIsSegmented == true) {
       _loadAsmsSubtitlesSegments(currentVideoPlayerValue.position);
@@ -1130,23 +1146,42 @@ class BetterPlayerController {
         (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
 
     if (isPipSupported) {
-      final renderBox =
-          betterPlayerGlobalKey.currentContext!.findRenderObject()
-              as RenderBox?;
-      if (renderBox == null) {
-        BetterPlayerUtils.log(
-          "Can't show PiP. RenderBox is null. Did you provide valid global"
-          ' key?',
+      _wasInFullScreenBeforePiP = _isFullScreen;
+      _wasControlsEnabledBeforePiP = _controlsEnabled;
+      setControlsEnabled(false);
+      if (Platform.isAndroid) {
+        _wasInFullScreenBeforePiP = _isFullScreen;
+        await videoPlayerController?.enablePictureInPicture(
+          left: 0,
+          top: 0,
+          width: 0,
+          height: 0,
         );
-        return videoPlayerController?.enablePictureInPicture();
+        enterFullScreen();
+        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
+        return;
       }
-      final position = renderBox.localToGlobal(Offset.zero);
-      return videoPlayerController?.enablePictureInPicture(
-        left: position.dx,
-        top: position.dy,
-        width: renderBox.size.width,
-        height: renderBox.size.height,
-      );
+      if (Platform.isIOS) {
+        final renderBox =
+            betterPlayerGlobalKey.currentContext!.findRenderObject()
+                as RenderBox?;
+        if (renderBox == null) {
+          BetterPlayerUtils.log(
+            "Can't show PiP. RenderBox is null. Did you provide valid global"
+            ' key?',
+          );
+          return;
+        }
+        final position = renderBox.localToGlobal(Offset.zero);
+        return videoPlayerController?.enablePictureInPicture(
+          left: position.dx,
+          top: position.dy,
+          width: renderBox.size.width,
+          height: renderBox.size.height,
+        );
+      } else {
+        BetterPlayerUtils.log('Unsupported PiP in current platform.');
+      }
     } else {
       BetterPlayerUtils.log(
         "Picture in picture is not supported in this device. If you're "
@@ -1215,20 +1250,6 @@ class BetterPlayerController {
         );
       case VideoEventType.bufferingEnd:
         _postEvent(BetterPlayerEvent(BetterPlayerEventType.bufferingEnd));
-      case VideoEventType.pipStart:
-        _wasInFullScreenBeforePiP = _isFullScreen;
-        _wasControlsEnabledBeforePiP = _controlsEnabled;
-        setControlsEnabled(false);
-        enterFullScreen();
-        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStart));
-      case VideoEventType.pipStop:
-        _postEvent(BetterPlayerEvent(BetterPlayerEventType.pipStop));
-        if (!_wasInFullScreenBeforePiP) {
-          exitFullScreen();
-        }
-        if (_wasControlsEnabledBeforePiP) {
-          setControlsEnabled(true);
-        }
       default:
 
         ///TODO: Handle when needed
