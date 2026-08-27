@@ -1,7 +1,11 @@
 #include <stdint.h>
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
-#import "../../../../../../../../../../../var/folders/df/djsxfhc17x95674wsm_g8s980000gn/T/WAqNYm/better_player_ios.h"
+#if __has_include(<better_player_ios/better_player_ios-Swift.h>)
+#import <better_player_ios/better_player_ios-Swift.h>
+#else
+#import "better_player_ios-Swift.h"
+#endif
 
 #if !__has_feature(objc_arc)
 #error "This file must be compiled with ARC enabled"
