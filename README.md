@@ -11,6 +11,10 @@
 
 Better Player is a powerful video player for Flutter, built on top of the official `video_player` plugin and inspired by `Chewie`. It solves common playback issues, provides extensive configuration options, and handles complex media use cases out of the box.
 
+
+> **[IMPORTANT] Migrating to 1.x.x?**
+> We've introduced a cleaner federated architecture and unified model names (e.g. `BetterPlayerConfiguration` is now `PlayerConfiguration`). See the [Migration Guide to 1.x.x](https://github.com/jhomlala/betterplayer/blob/master/docs/migration_to_1.x.x.md) to learn how to upgrade your project in a single command using `dart fix --apply`.
+
 ---
 
 ## 📱 Visual Showcase
@@ -123,3 +127,4 @@ Valuable contributions are welcome! Better Player is a community-driven project.
 
 ## 📄 License
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
