@@ -12,9 +12,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  better_player_platform_interface: ^1.1.1
-  better_player_android: ^1.1.1
-  better_player_ios: ^1.1.1
+  better_player_platform_interface: ^1.0.2
+  better_player_android: ^1.0.2
+  better_player_ios: ^1.0.2
   material_ui: ^1.1.0
   cupertino_ui: ^1.0.1
   cupertino_icons: ^1.0.9
