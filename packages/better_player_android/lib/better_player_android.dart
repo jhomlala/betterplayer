@@ -60,7 +60,7 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
       onError$async: true,
     ));
 
-    final player = BetterPlayerApi.Companion.createPlayer(androidApplicationContext, callback);
+    final player = BetterPlayerApi.Companion.createPlayer(androidApplicationContext as Context, callback);
     if (player == null) return null;
     
     final textureId = player.textureId;
@@ -172,7 +172,7 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     }
 
     player.setDataSource(
-      androidApplicationContext,
+      androidApplicationContext as Context,
       (map['key'] as String?)?.toJString(),
       (map['uri'] as String? ?? map['asset'] as String?)?.toJString(),
       (map['formatHint'] as String?)?.toJString(),
