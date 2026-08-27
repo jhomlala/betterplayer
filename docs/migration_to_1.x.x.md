@@ -63,24 +63,24 @@ BetterPlayerController(
 
 ```dart
 BetterPlayerController(
-  PlayerConfiguration( // [!code focus]
+  PlayerConfiguration(
     autoPlay: true,
   ),
-  betterPlayerDataSource: PlayerDataSource( // [!code focus]
-    DataSourceType.network, // [!code focus]
+  betterPlayerDataSource: PlayerDataSource(
+    DataSourceType.network,
     "https://example.com/video.mp4",
-    videoFormat: VideoFormat.hls, // [!code focus]
-    cacheConfiguration: CacheConfiguration( // [!code focus]
+    videoFormat: VideoFormat.hls,
+    cacheConfiguration: CacheConfiguration(
       useCache: true,
     ),
-    bufferingConfiguration: BufferingConfiguration( // [!code focus]
+    bufferingConfiguration: BufferingConfiguration(
       minBufferMs: 50000,
     ),
-    notificationConfiguration: NotificationConfiguration( // [!code focus]
+    notificationConfiguration: NotificationConfiguration(
       showNotification: true,
       title: "My Video",
     ),
-    drmConfiguration: DrmConfiguration( // [!code focus]
+    drmConfiguration: DrmConfiguration(
       drmType: BetterPlayerDrmType.widevine,
       licenseUrl: "https://example.com/license",
     ),
@@ -120,11 +120,11 @@ BetterPlayerControlsConfiguration(
 <td>
 
 ```dart
-PlayerControlsConfiguration( // [!code focus]
-  playerTheme: PlayerTheme.material, // [!code focus]
+PlayerControlsConfiguration(
+  playerTheme: PlayerTheme.material,
   progressBarPlayedColor: Colors.red,
   overflowMenuCustomItems: [
-    PlayerOverflowMenuItem( // [!code focus]
+    PlayerOverflowMenuItem(
       Icons.star,
       "Favorite",
       () => print("Clicked"),
@@ -163,12 +163,12 @@ final config = BetterPlayerSubtitlesConfiguration(
 <td>
 
 ```dart
-final source = PlayerSubtitlesSource( // [!code focus]
+final source = PlayerSubtitlesSource(
   type: BetterPlayerSubtitlesSourceType.network,
   urls: ["https://example.com/sub.srt"],
 );
 
-final config = PlayerSubtitlesConfiguration( // [!code focus]
+final config = PlayerSubtitlesConfiguration(
   fontSize: 20,
   fontColor: Colors.white,
 );
@@ -199,7 +199,7 @@ final playlistConfig = BetterPlayerPlaylistConfiguration(
 <td>
 
 ```dart
-final playlistConfig = PlayerPlaylistConfiguration( // [!code focus]
+final playlistConfig = PlayerPlaylistConfiguration(
   loopVideos: true,
   nextVideoDelay: Duration(seconds: 3),
 );
@@ -231,8 +231,8 @@ _controller.addEventsListener((BetterPlayerEvent event) {
 <td>
 
 ```dart
-_controller.addEventsListener((PlayerEvent event) { // [!code focus]
-  if (event.betterPlayerEventType == PlayerEventType.play) { // [!code focus]
+_controller.addEventsListener((PlayerEvent event) {
+  if (event.betterPlayerEventType == PlayerEventType.play) {
     print("Video is playing");
   }
 });

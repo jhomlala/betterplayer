@@ -220,7 +220,7 @@ transforms:
     date: 2026-08-27
     element:
       uris: ['package:better_player/better_player.dart']
-      class: 'BetterPlayerController'
+      inClass: 'BetterPlayerController'
       method: 'isPictureInPictureEnabled'
     changes:
       - kind: 'rename'
