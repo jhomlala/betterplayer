@@ -1,0 +1,50 @@
+import 'dart:io';
+import 'package:ffigen/ffigen.dart' as fg;
+import 'package:logging/logging.dart';
+import 'package:swiftgen/swiftgen.dart';
+
+Future<void> main() async {
+  final logger = Logger('swiftgen');
+  logger.onRecord.listen((record) {
+    stderr.writeln('${record.level.name}: ${record.message}');
+  });
+
+  final packageRoot = Platform.script.resolve('../');
+
+  final sdkPath = (await Process.run('xcrun', [
+    '--sdk', 'iphoneos', '--show-sdk-path',
+  ])).stdout.toString().trim();
+  final sdkVersion = (await Process.run('xcrun', [
+    '--sdk', 'iphoneos', '--show-sdk-version',
+  ])).stdout.toString().trim();
+
+  await SwiftGenerator(
+    target: Target(
+      triple: 'arm64-apple-ios$sdkVersion',
+      sdk: Uri.directory(sdkPath),
+    ),
+    inputs: [
+      ObjCCompatibleSwiftFileInput(
+        files: [
+          packageRoot.resolve('ios/better_player_ios/Sources/better_player_ios/BetterPlayerApi.swift'),
+          packageRoot.resolve('ios/better_player_ios/Sources/better_player_ios/BetterPlayer.swift'),
+        ],
+      ),
+    ],
+    output: Output(
+      module: 'better_player_ios',
+      dartFile: packageRoot.resolve('lib/src/better_player_ios_ffi.g.dart'),
+      objectiveCFile: packageRoot.resolve('ios/better_player_ios/Sources/better_player_ios_objc/better_player.m'),
+    ),
+    ffigen: FfiGeneratorOptions(
+      objectiveC: fg.ObjectiveC(
+        interfaces: fg.Interfaces(
+          include: (decl) => ['BetterPlayerApi', 'BetterPlayer'].contains(decl.originalName),
+        ),
+        protocols: fg.Protocols(
+          include: (decl) => ['BetterPlayerCallback'].contains(decl.originalName),
+        ),
+      ),
+    ),
+  ).generate(logger: logger);
+}
