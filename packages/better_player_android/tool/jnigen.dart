@@ -4,20 +4,23 @@ import 'package:jnigen/jnigen.dart';
 void main(List<String> args) {
   final packageRoot = Platform.script.resolve('../');
   
-  // Find where the kotlin classes were actually compiled
-  final buildDir = Directory.fromUri(packageRoot.resolve('example/build/better_player_android'));
+  // Broadly search the ENTIRE example/build directory
+  final buildDir = Directory.fromUri(packageRoot.resolve('example/build'));
   List<Uri> classPaths = [];
+  
   if (buildDir.existsSync()) {
     for (var entity in buildDir.listSync(recursive: true)) {
       if (entity is File) {
-        if (entity.path.endsWith('.jar')) {
+        final path = entity.path.replaceAll('\\', '/');
+        // If we find any JAR related to our plugin, add it!
+        if (path.endsWith('.jar') && path.contains('better_player_android')) {
           classPaths.add(entity.uri);
-        } else if (entity.path.endsWith('BetterPlayerApi.class')) {
-          // Found the class! Walk up the tree to the root of the package structure
-          // pl/hasoft/better_player/BetterPlayerApi.class
-          var rootDir = entity.parent.parent.parent.parent;
-          if (!classPaths.contains(rootDir.uri)) {
-            classPaths.add(rootDir.uri);
+        } else if (path.endsWith('.class') && path.contains('pl/hasoft/better_player')) {
+          // If we find loose class files, add the root directory
+          final rootPath = path.substring(0, path.indexOf('pl/hasoft/better_player'));
+          final uri = Uri.directory(rootPath);
+          if (!classPaths.contains(uri)) {
+            classPaths.add(uri);
           }
         }
       }
