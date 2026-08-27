@@ -4,6 +4,11 @@ on:
   push:
     branches:
       - 'feature/ffi-migration'
+    paths:
+      - 'packages/better_player_ios/ios/**'
+      - 'packages/better_player_android/android/**'
+      - 'packages/better_player_ios/tool/swiftgen.dart'
+      - 'packages/better_player_android/tool/jnigen.dart'
   workflow_dispatch: # Allows you to manually trigger it from the Actions tab
 
 jobs:
