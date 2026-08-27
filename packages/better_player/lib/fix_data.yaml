@@ -152,3 +152,76 @@ transforms:
     changes:
       - kind: 'rename'
         newName: 'PlayerOverflowMenuItem'
+  - title: 'Rename BetterPlayerVideoFormat'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      enum: 'BetterPlayerVideoFormat'
+    changes:
+      - kind: 'rename'
+        newName: 'VideoFormat'
+  - title: 'Rename BetterPlayerCacheConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerCacheConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'CacheConfiguration'
+  - title: 'Rename BetterPlayerNotificationConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerNotificationConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'NotificationConfiguration'
+  - title: 'Rename BetterPlayerDrmConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerDrmConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'DrmConfiguration'
+  - title: 'Rename BetterPlayerBufferingConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerBufferingConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'BufferingConfiguration'
+  - title: 'Rename BetterPlayerUtils'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerUtils'
+    changes:
+      - kind: 'rename'
+        newName: 'BetterPlayerUiUtils'
+  - title: 'Rename BetterPlayerDataSourceType'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      enum: 'BetterPlayerDataSourceType'
+    changes:
+      - kind: 'rename'
+        newName: 'DataSourceType'
+  - title: 'Rename PlayerDataSourceType'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      enum: 'PlayerDataSourceType'
+    changes:
+      - kind: 'rename'
+        newName: 'DataSourceType'
+  - title: 'Rename isPictureInPictureEnabled'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerController'
+      method: 'isPictureInPictureEnabled'
+    changes:
+      - kind: 'rename'
+        newName: 'isPictureInPictureSupported'
