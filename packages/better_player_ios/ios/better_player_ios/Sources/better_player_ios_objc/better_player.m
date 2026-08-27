@@ -1,11 +1,7 @@
 #include <stdint.h>
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
-#if __has_include(<better_player_ios/better_player_ios-Swift.h>)
-#import <better_player_ios/better_player_ios-Swift.h>
-#else
-#import "better_player_ios-Swift.h"
-#endif
+@protocol BetterPlayerCallback;
 
 #if !__has_feature(objc_arc)
 #error "This file must be compiled with ARC enabled"
