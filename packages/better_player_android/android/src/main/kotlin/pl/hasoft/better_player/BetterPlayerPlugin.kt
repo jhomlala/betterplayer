@@ -38,5 +38,12 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware {
 
     companion object {
         private const val TAG = "BetterPlayerPlugin"
+        const val URL_PARAMETER = "url"
+        const val FILE_PATH_PARAMETER = "filePath"
+        const val PRE_CACHE_SIZE_PARAMETER = "preCacheSize"
+        const val MAX_CACHE_SIZE_PARAMETER = "maxCacheSize"
+        const val MAX_CACHE_FILE_SIZE_PARAMETER = "maxCacheFileSize"
+        const val CACHE_KEY_PARAMETER = "cacheKey"
+        const val HEADER_PARAMETER = "header_"
     }
 }
