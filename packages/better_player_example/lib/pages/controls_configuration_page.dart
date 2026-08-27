@@ -15,7 +15,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
 
   @override
   void initState() {
-    final controlsConfiguration = BetterPlayerControlsConfiguration(
+    final controlsConfiguration = PlayerControlsConfiguration(
       controlBarColor: Colors.indigoAccent.withAlpha(200),
       iconsColor: Colors.lightGreen,
       playIcon: Icons.forward,
@@ -30,12 +30,12 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
       overflowMenuIconsColor: Colors.white,
     );
 
-    final betterPlayerConfiguration = BetterPlayerConfiguration(
+    final betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       controlsConfiguration: controlsConfiguration,
     );
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.bugBuckBunnyVideoUrl,
     );
@@ -54,7 +54,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Player with customized controls via BetterPlayerControlsConfiguration.',
+              'Player with customized controls via PlayerControlsConfiguration.',
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -65,8 +65,8 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
           ElevatedButton(
             onPressed: () {
               setState(() {
-                _betterPlayerController.setBetterPlayerControlsConfiguration(
-                  const BetterPlayerControlsConfiguration(
+                _betterPlayerController.setPlayerControlsConfiguration(
+                  const PlayerControlsConfiguration(
                     overflowModalColor: Colors.amberAccent,
                   ),
                 );

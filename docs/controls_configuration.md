@@ -5,13 +5,13 @@ title: Controls Configuration
 
 # Controls Configuration
 
-The user interface (UI) of the player can be extensively customized using the `BetterPlayerControlsConfiguration` class. This configuration is passed to the `BetterPlayerConfiguration` instance.
+The user interface (UI) of the player can be extensively customized using the `PlayerControlsConfiguration` class. This configuration is passed to the `PlayerConfiguration` instance.
 
 ## Implementation Example
 
 ```dart
-var betterPlayerConfiguration = BetterPlayerConfiguration(
-    controlsConfiguration: BetterPlayerControlsConfiguration(
+var betterPlayerConfiguration = PlayerConfiguration(
+    controlsConfiguration: PlayerControlsConfiguration(
         textColor: Colors.white,
         iconsColor: Colors.white,
         controlBarColor: Colors.black.withOpacity(0.7),
@@ -68,18 +68,18 @@ Customize the look of the seek bar:
 *   **`showControlsOnInitialize`**: Show controls immediately upon initialization.
 *   **`controlBarHeight`**: Adjust the height of the control bar.
 *   **`liveTextColor`**: The color of the "LIVE" indicator text.
-*   **`overflowMenuCustomItems`**: A list of `BetterPlayerOverflowMenuItem` to add custom actions to the overflow menu.
+*   **`overflowMenuCustomItems`**: A list of `PlayerOverflowMenuItem` to add custom actions to the overflow menu.
 *   **`forwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped forward (default: 15s).
 *   **`backwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped backward (default: 15s).
 *   **`sigmaX`, `sigmaY`**: (iOS only) The quality of the Gaussian Blur applied to the background.
 
 ## Dynamic Configuration Updates
 
-You can update the controls configuration at runtime using the `setBetterPlayerControlsConfiguration` method on the `BetterPlayerController`:
+You can update the controls configuration at runtime using the `setPlayerControlsConfiguration` method on the `BetterPlayerController`:
 
 ```dart
-_betterPlayerController.setBetterPlayerControlsConfiguration(
-  BetterPlayerControlsConfiguration(
+_betterPlayerController.setPlayerControlsConfiguration(
+  PlayerControlsConfiguration(
       overflowModalColor: Colors.amberAccent,
   ),
 );

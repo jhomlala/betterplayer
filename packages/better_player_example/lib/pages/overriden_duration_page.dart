@@ -14,7 +14,7 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -24,7 +24,7 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
   }
 
   Future<void> _setupDataSource() async {
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.elephantDreamVideoUrl,
 

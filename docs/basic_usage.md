@@ -36,7 +36,7 @@ Widget build(BuildContext context) {
       aspectRatio: 16 / 9,
       child: BetterPlayer.network(
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        betterPlayerConfiguration: BetterPlayerConfiguration(
+        betterPlayerConfiguration: PlayerConfiguration(
           aspectRatio: 16 / 9,
         ),
       ),
@@ -47,11 +47,11 @@ Widget build(BuildContext context) {
 
 ## Standard Implementation
 
-For advanced use cases requiring more granular control, you should manually create a `BetterPlayerDataSource` and a `BetterPlayerController`.
+For advanced use cases requiring more granular control, you should manually create a `PlayerDataSource` and a `BetterPlayerController`.
 
 ### Core Components
 
-1.  **BetterPlayerDataSource**: Defines the source of the video, including the URL, source type, subtitle tracks, and additional metadata.
+1.  **PlayerDataSource**: Defines the source of the video, including the URL, source type, subtitle tracks, and additional metadata.
 2.  **BetterPlayerController**: Acts as the central management hub for the player instance. It allows you to programmatically control playback (start, stop, seek), adjust volume, and monitor events.
 
 ### Step 1: Initialize the Controller
@@ -66,13 +66,13 @@ void initState() {
   super.initState();
   
   // Define the data source
-  BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+  PlayerDataSource betterPlayerDataSource = PlayerDataSource(
+      PlayerDataSourceType.network,
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
   
   // Initialize the controller with the data source and configuration
   _betterPlayerController = BetterPlayerController(
-      BetterPlayerConfiguration(),
+      PlayerConfiguration(),
       betterPlayerDataSource: betterPlayerDataSource);
 }
 ```
@@ -103,11 +103,11 @@ BetterPlayerController controller = BetterPlayerController.of(context);
 ```
 
 ### Source-Specific Placeholders
-While you can define a global placeholder in `BetterPlayerConfiguration`, you can also provide a specific placeholder for each `BetterPlayerDataSource`. The source-specific placeholder will take precedence:
+While you can define a global placeholder in `PlayerConfiguration`, you can also provide a specific placeholder for each `PlayerDataSource`. The source-specific placeholder will take precedence:
 
 ```dart
-BetterPlayerDataSource(
-  BetterPlayerDataSourceType.network,
+PlayerDataSource(
+  PlayerDataSourceType.network,
   "url",
   placeholder: Image.asset("assets/video_thumbnail.png"),
 )

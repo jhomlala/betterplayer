@@ -11,9 +11,9 @@ class BetterPlayerPlaylist extends StatefulWidget {
     required this.betterPlayerPlaylistConfiguration,
     super.key,
   });
-  final List<BetterPlayerDataSource> betterPlayerDataSourceList;
-  final BetterPlayerConfiguration betterPlayerConfiguration;
-  final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
+  final List<PlayerDataSource> betterPlayerDataSourceList;
+  final PlayerConfiguration betterPlayerConfiguration;
+  final PlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
 
   @override
   BetterPlayerPlaylistState createState() => BetterPlayerPlaylistState();

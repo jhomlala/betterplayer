@@ -12,11 +12,11 @@ class NormalPlayerPage extends StatefulWidget {
 
 class _NormalPlayerPageState extends State<NormalPlayerPage> {
   late BetterPlayerController _betterPlayerController;
-  late BetterPlayerDataSource _betterPlayerDataSource;
+  late PlayerDataSource _betterPlayerDataSource;
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       autoPlay: true,
@@ -26,7 +26,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
         DeviceOrientation.portraitUp,
       ],
     );
-    _betterPlayerDataSource = BetterPlayerDataSource(
+    _betterPlayerDataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.bugBuckBunnyVideoUrl,
     );

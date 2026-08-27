@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('BetterPlayerConfiguration tests', () {
+  group('PlayerConfiguration tests', () {
     test('Default values', () {
-      const config = BetterPlayerConfiguration();
+      const config = PlayerConfiguration();
       expect(config.autoPlay, false);
       expect(config.looping, false);
       expect(config.fullScreenByDefault, false);
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('copyWith', () {
-      const config = BetterPlayerConfiguration();
+      const config = PlayerConfiguration();
       final newConfig = config.copyWith(
         autoPlay: true,
         looping: true,

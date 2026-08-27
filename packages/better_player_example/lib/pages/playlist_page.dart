@@ -13,33 +13,33 @@ class PlaylistPage extends StatefulWidget {
 
 class _PlaylistPageState extends State<PlaylistPage> {
   _PlaylistPageState() {
-    _betterPlayerConfiguration = const BetterPlayerConfiguration(
+    _betterPlayerConfiguration = const PlayerConfiguration(
       aspectRatio: 1,
       fit: BoxFit.cover,
       showPlaceholderUntilPlay: true,
-      subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(fontSize: 10),
+      subtitlesConfiguration: PlayerSubtitlesConfiguration(fontSize: 10),
       deviceOrientationsAfterFullScreen: [
         DeviceOrientation.portraitUp,
         DeviceOrientation.portraitDown,
       ],
     );
     _betterPlayerPlaylistConfiguration =
-        const BetterPlayerPlaylistConfiguration();
+        const PlayerPlaylistConfiguration();
   }
 
   final GlobalKey<BetterPlayerPlaylistState> _betterPlayerPlaylistStateKey =
       GlobalKey();
-  final List<BetterPlayerDataSource> _dataSourceList = [];
-  late BetterPlayerConfiguration _betterPlayerConfiguration;
-  late BetterPlayerPlaylistConfiguration _betterPlayerPlaylistConfiguration;
+  final List<PlayerDataSource> _dataSourceList = [];
+  late PlayerConfiguration _betterPlayerConfiguration;
+  late PlayerPlaylistConfiguration _betterPlayerPlaylistConfiguration;
 
-  Future<List<BetterPlayerDataSource>> setupData() async {
+  Future<List<PlayerDataSource>> setupData() async {
     _dataSourceList.add(
-      BetterPlayerDataSource(
+      PlayerDataSource(
         DataSourceType.network,
         Constants.bugBuckBunnyVideoUrl,
-        subtitles: BetterPlayerSubtitlesSource.single(
-          type: BetterPlayerSubtitlesSourceType.file,
+        subtitles: PlayerSubtitlesSource.single(
+          type: PlayerSubtitlesSourceType.file,
           url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
         ),
         placeholder: Image.network(Constants.catImageUrl, fit: BoxFit.cover),
@@ -47,14 +47,14 @@ class _PlaylistPageState extends State<PlaylistPage> {
     );
 
     _dataSourceList.add(
-      BetterPlayerDataSource(
+      PlayerDataSource(
         DataSourceType.network,
         Constants.forBiggerBlazesUrl,
         placeholder: Image.network(Constants.catImageUrl, fit: BoxFit.cover),
       ),
     );
     _dataSourceList.add(
-      BetterPlayerDataSource(
+      PlayerDataSource(
         DataSourceType.network,
         Constants.forBiggerJoyridesVideoUrl,
       ),
@@ -67,7 +67,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Playlist')),
-      body: FutureBuilder<List<BetterPlayerDataSource>>(
+      body: FutureBuilder<List<PlayerDataSource>>(
         future: setupData(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
@@ -124,7 +124,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 ElevatedButton(
                   onPressed: () {
                     final list = [
-                      BetterPlayerDataSource(
+                      PlayerDataSource(
                         DataSourceType.network,
                         Constants.bugBuckBunnyVideoUrl,
                         placeholder: Image.network(

@@ -37,7 +37,7 @@ void main() {
         controller: mock,
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -51,19 +51,19 @@ void main() {
     });
 
     test("preCache and stopPreCache don't crash", () async {
-      final dataSource = BetterPlayerDataSource.network(
+      final dataSource = PlayerDataSource.network(
         BetterPlayerTestUtils.forBiggerBlazesUrl,
       );
       await BetterPlayerController(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       ).preCache(
         dataSource,
       );
       await BetterPlayerController(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       ).stopPreCache(dataSource);
       await BetterPlayerController(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       ).clearCache();
     });
 
@@ -83,7 +83,7 @@ void main() {
         controller: mock,
       );
 
-      final audioTrack = BetterPlayerAsmsAudioTrack(label: 'Test');
+      final audioTrack = PlayerAsmsAudioTrack(label: 'Test');
       controller.setAudioTrack(audioTrack);
       expect(controller.betterPlayerAsmsAudioTrack, null);
     });
@@ -93,7 +93,7 @@ void main() {
         controller: MockVideoPlayerController(),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.file('test/video.mp4'),
+        PlayerDataSource.file('test/video.mp4'),
       );
       expect(controller.betterPlayerDataSource != null, true);
     });
@@ -103,7 +103,7 @@ void main() {
         controller: MockVideoPlayerController(),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.memory([1, 2, 3]),
+        PlayerDataSource.memory([1, 2, 3]),
       );
       expect(controller.betterPlayerDataSource != null, true);
     });

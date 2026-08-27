@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/configuration/better_player_controller_event.dart';
+import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/core/better_player_full_screen_video.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
 import 'package:flutter/services.dart';
@@ -15,11 +15,11 @@ class BetterPlayer extends StatefulWidget {
 
   factory BetterPlayer.network(
     String url, {
-    BetterPlayerConfiguration? betterPlayerConfiguration,
+    PlayerConfiguration? betterPlayerConfiguration,
   }) => BetterPlayer(
     controller: BetterPlayerController(
-      betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
-      betterPlayerDataSource: BetterPlayerDataSource(
+      betterPlayerConfiguration ?? const PlayerConfiguration(),
+      betterPlayerDataSource: PlayerDataSource(
         DataSourceType.network,
         url,
       ),
@@ -28,11 +28,11 @@ class BetterPlayer extends StatefulWidget {
 
   factory BetterPlayer.file(
     String url, {
-    BetterPlayerConfiguration? betterPlayerConfiguration,
+    PlayerConfiguration? betterPlayerConfiguration,
   }) => BetterPlayer(
     controller: BetterPlayerController(
-      betterPlayerConfiguration ?? const BetterPlayerConfiguration(),
-      betterPlayerDataSource: BetterPlayerDataSource(
+      betterPlayerConfiguration ?? const PlayerConfiguration(),
+      betterPlayerDataSource: PlayerDataSource(
         DataSourceType.file,
         url,
       ),
@@ -49,7 +49,7 @@ class BetterPlayer extends StatefulWidget {
 
 class _BetterPlayerState extends State<BetterPlayer>
     with WidgetsBindingObserver {
-  BetterPlayerConfiguration get _betterPlayerConfiguration =>
+  PlayerConfiguration get _betterPlayerConfiguration =>
       widget.controller.betterPlayerConfiguration;
 
   bool _isFullScreen = false;
@@ -135,11 +135,11 @@ class _BetterPlayerState extends State<BetterPlayer>
     super.didUpdateWidget(oldWidget);
   }
 
-  void onControllerEvent(BetterPlayerControllerEvent event) {
+  void onControllerEvent(PlayerControllerEvent event) {
     switch (event) {
-      case BetterPlayerControllerEvent.openFullscreen:
+      case PlayerControllerEvent.openFullscreen:
         onFullScreenChanged();
-      case BetterPlayerControllerEvent.hideFullscreen:
+      case PlayerControllerEvent.hideFullscreen:
         onFullScreenChanged();
       default:
         setState(() {});
@@ -151,14 +151,14 @@ class _BetterPlayerState extends State<BetterPlayer>
     if (controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
       controller.postEvent(
-        BetterPlayerEvent(BetterPlayerEventType.openFullscreen),
+        PlayerEvent(PlayerEventType.openFullscreen),
       );
       await _pushFullScreenWidget(context);
     } else if (_isFullScreen) {
       Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
       controller.postEvent(
-        BetterPlayerEvent(BetterPlayerEventType.hideFullscreen),
+        PlayerEvent(PlayerEventType.hideFullscreen),
       );
     }
   }

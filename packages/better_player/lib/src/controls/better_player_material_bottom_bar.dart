@@ -1,7 +1,7 @@
-import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
-import 'package:better_player/src/controls/better_player_progress_colors.dart';
+import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_ui_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -23,7 +23,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
     super.key,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final VoidCallback onPlayerHide;
   final VoidCallback onPlayPause;
@@ -126,7 +126,7 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
     required this.latestValue,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onPlayPause;
   final VideoPlayerValue? latestValue;
 
@@ -164,7 +164,7 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
     required this.latestValue,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onMute;
   final bool controlsNotVisible;
   final VideoPlayerValue? latestValue;
@@ -205,7 +205,7 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
     required this.controlsNotVisible,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onExpandCollapse;
   final bool controlsNotVisible;
 
@@ -247,7 +247,7 @@ class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
     required this.controlsConfiguration,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
@@ -268,7 +268,7 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
     required this.latestValue,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VideoPlayerValue? latestValue;
 
   @override
@@ -317,7 +317,7 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
     required this.onProgressBarTapDown,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onProgressBarDragStart;
   final VoidCallback onProgressBarDragEnd;
   final VoidCallback onProgressBarTapDown;
@@ -335,7 +335,7 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
           onDragStart: onProgressBarDragStart,
           onDragEnd: onProgressBarDragEnd,
           onTapDown: onProgressBarTapDown,
-          colors: BetterPlayerProgressColors(
+          colors: PlayerProgressColors(
             playedColor: controlsConfiguration.progressBarPlayedColor,
             handleColor: controlsConfiguration.progressBarHandleColor,
             bufferedColor: controlsConfiguration.progressBarBufferedColor,

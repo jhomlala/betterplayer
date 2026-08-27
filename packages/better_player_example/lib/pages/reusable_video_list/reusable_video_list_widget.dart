@@ -46,7 +46,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
       controller = widget.videoListController!.getBetterPlayerController();
       if (controller != null) {
         controller!.setupDataSource(
-          BetterPlayerDataSource.network(
+          PlayerDataSource.network(
             videoListData!.videoUrl,
             cacheConfiguration: const CacheConfiguration(useCache: true),
           ),
@@ -76,11 +76,11 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
     }
   }
 
-  void onPlayerEvent(BetterPlayerEvent event) {
-    if (event.betterPlayerEventType == BetterPlayerEventType.progress) {
+  void onPlayerEvent(PlayerEvent event) {
+    if (event.betterPlayerEventType == PlayerEventType.progress) {
       videoListData!.lastPosition = event.parameters!['progress'] as Duration?;
     }
-    if (event.betterPlayerEventType == BetterPlayerEventType.initialized) {
+    if (event.betterPlayerEventType == PlayerEventType.initialized) {
       if (videoListData!.lastPosition != null) {
         controller!.seekTo(videoListData!.lastPosition!);
       }

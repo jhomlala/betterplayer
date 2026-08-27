@@ -32,7 +32,7 @@ To avoid duplicating types between the core player and the new platform interfac
 
 | Old Name | New Name |
 | :--- | :--- |
-| `BetterPlayerDataSourceType` | `DataSourceType` |
+| `PlayerDataSourceType` | `DataSourceType` |
 | `BetterPlayerVideoFormat` | `VideoFormat` |
 | `BetterPlayerCacheConfiguration` | `CacheConfiguration` |
 | `BetterPlayerNotificationConfiguration` | `NotificationConfiguration` |
@@ -43,15 +43,15 @@ To avoid duplicating types between the core player and the new platform interfac
 ### Example Fix:
 **Before (0.8.x):**
 `dart
-BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+PlayerDataSource(
+    PlayerDataSourceType.network,
     "https://example.com/video.mp4",
 )
 `
 
 **After (1.x.x):**
 `dart
-BetterPlayerDataSource(
+PlayerDataSource(
     DataSourceType.network,
     "https://example.com/video.mp4",
 )

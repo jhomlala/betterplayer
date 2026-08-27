@@ -1,7 +1,7 @@
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 
-class BetterPlayerSubtitle {
-  factory BetterPlayerSubtitle(String value, bool isWebVTT) {
+class PlayerSubtitle {
+  factory PlayerSubtitle(String value, bool isWebVTT) {
     try {
       final scanner = value.split('\n');
       if (scanner.length == 2) {
@@ -10,14 +10,14 @@ class BetterPlayerSubtitle {
       if (scanner.length > 2) {
         return _handle3LinesAndMoreSubtitles(scanner, isWebVTT);
       }
-      return BetterPlayerSubtitle._();
+      return PlayerSubtitle._();
     } catch (exception) {
       BetterPlayerUtils.log('Failed to parse subtitle line: $value');
-      return BetterPlayerSubtitle._();
+      return PlayerSubtitle._();
     }
   }
 
-  BetterPlayerSubtitle._({
+  PlayerSubtitle._({
     this.index,
     this.start,
     this.end,
@@ -29,14 +29,14 @@ class BetterPlayerSubtitle {
   final Duration? end;
   final List<String>? texts;
 
-  static BetterPlayerSubtitle _handle2LinesSubtitles(List<String> scanner) {
+  static PlayerSubtitle _handle2LinesSubtitles(List<String> scanner) {
     try {
       final timeSplit = scanner[0].split(timerSeparator);
       final start = _stringToDuration(timeSplit[0]);
       final end = _stringToDuration(timeSplit[1]);
       final texts = scanner.sublist(1, scanner.length);
 
-      return BetterPlayerSubtitle._(
+      return PlayerSubtitle._(
         index: -1,
         start: start,
         end: end,
@@ -44,11 +44,11 @@ class BetterPlayerSubtitle {
       );
     } catch (exception) {
       BetterPlayerUtils.log('Failed to parse subtitle line: $scanner');
-      return BetterPlayerSubtitle._();
+      return PlayerSubtitle._();
     }
   }
 
-  static BetterPlayerSubtitle _handle3LinesAndMoreSubtitles(
+  static PlayerSubtitle _handle3LinesAndMoreSubtitles(
     List<String> scanner,
     bool isWebVTT,
   ) {
@@ -68,7 +68,7 @@ class BetterPlayerSubtitle {
       final start = _stringToDuration(timeSplit[0]);
       final end = _stringToDuration(timeSplit[1]);
       final texts = scanner.sublist(firstLineOfText, scanner.length);
-      return BetterPlayerSubtitle._(
+      return PlayerSubtitle._(
         index: index,
         start: start,
         end: end,
@@ -76,7 +76,7 @@ class BetterPlayerSubtitle {
       );
     } catch (exception) {
       BetterPlayerUtils.log('Failed to parse subtitle line: $scanner');
-      return BetterPlayerSubtitle._();
+      return PlayerSubtitle._();
     }
   }
 
@@ -120,6 +120,6 @@ class BetterPlayerSubtitle {
 
   @override
   String toString() {
-    return 'BetterPlayerSubtitle{index: $index, start: $start, end: $end, texts: $texts}';
+    return 'PlayerSubtitle{index: $index, start: $start, end: $end, texts: $texts}';
   }
 }

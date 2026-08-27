@@ -21,7 +21,7 @@ class BetterPlayerExample extends StatelessWidget {
             const SizedBox(height: 8),
             BetterPlayer.network(
               'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-              betterPlayerConfiguration: const BetterPlayerConfiguration(
+              betterPlayerConfiguration: const PlayerConfiguration(
                 aspectRatio: 16 / 9,
               ),
             ),

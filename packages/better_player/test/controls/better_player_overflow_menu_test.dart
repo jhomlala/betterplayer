@@ -18,7 +18,7 @@ void main() {
         );
 
     mockController = BetterPlayerMockController(
-      const BetterPlayerConfiguration(),
+      const PlayerConfiguration(),
     );
   });
 
@@ -37,7 +37,7 @@ void main() {
       wrapWidget(
         BetterPlayerOverflowMenu(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(),
+          controlsConfiguration: const PlayerControlsConfiguration(),
           onPlaybackSpeedClicked: () {},
           onSubtitlesClicked: () {},
           onQualitiesClicked: () {},
@@ -71,7 +71,7 @@ void main() {
       wrapWidget(
         BetterPlayerOverflowMenu(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(
+          controlsConfiguration: const PlayerControlsConfiguration(
             enablePlaybackSpeed: false,
             enableSubtitles: false,
             enableQualities: false,
@@ -109,7 +109,7 @@ void main() {
       wrapWidget(
         BetterPlayerOverflowMenu(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(),
+          controlsConfiguration: const PlayerControlsConfiguration(),
           onPlaybackSpeedClicked: () {
             speedTriggered = true;
           },
@@ -132,9 +132,9 @@ void main() {
       wrapWidget(
         BetterPlayerOverflowMenu(
           controller: mockController,
-          controlsConfiguration: BetterPlayerControlsConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
             overflowMenuCustomItems: [
-              BetterPlayerOverflowMenuItem(
+              PlayerOverflowMenuItem(
                 Icons.star,
                 'Custom Item',
                 () {

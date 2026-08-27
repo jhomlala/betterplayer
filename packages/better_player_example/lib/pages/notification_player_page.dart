@@ -14,7 +14,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -25,7 +25,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
 
   Future<void> _setupDataSource() async {
     // String imageUrl = await Utils.getFileUrl(Constants.logo);
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.elephantDreamVideoUrl,
       notificationConfiguration: NotificationConfiguration(

@@ -27,7 +27,7 @@ Widget build(BuildContext context) {
       aspectRatio: 16 / 9,
       child: BetterPlayer.network(
         "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
-        betterPlayerConfiguration: BetterPlayerConfiguration(
+        betterPlayerConfiguration: PlayerConfiguration(
           aspectRatio: 16 / 9,
         ),
       ),
@@ -42,7 +42,7 @@ For production applications, using `BetterPlayerController` is the recommended a
 
 ### Key Components
 
-*   **BetterPlayerDataSource**: Encapsulates all information regarding the media source, such as the URL, video format, subtitles, and headers.
+*   **PlayerDataSource**: Encapsulates all information regarding the media source, such as the URL, video format, subtitles, and headers.
 *   **BetterPlayerController**: Manages the state and behavior of the player. It serves as the primary interface for interacting with the video engine.
 
 ### Implementation Workflow
@@ -57,12 +57,12 @@ late BetterPlayerController _betterPlayerController;
 void initState() {
   super.initState();
   
-  BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+  PlayerDataSource betterPlayerDataSource = PlayerDataSource(
+      PlayerDataSourceType.network,
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
       
   _betterPlayerController = BetterPlayerController(
-      BetterPlayerConfiguration(),
+      PlayerConfiguration(),
       betterPlayerDataSource: betterPlayerDataSource);
 }
 ```

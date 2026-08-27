@@ -17,7 +17,7 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -32,7 +32,7 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
     final file = File(filePath);
 
     final List<int> bytes = file.readAsBytesSync().buffer.asUint8List();
-    final dataSource = BetterPlayerDataSource.memory(
+    final dataSource = PlayerDataSource.memory(
       bytes,
       videoExtension: 'mp4',
     );

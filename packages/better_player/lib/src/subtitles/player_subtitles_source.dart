@@ -1,11 +1,11 @@
-import 'package:better_player/src/asms/better_player_asms_subtitle_segment.dart';
+import 'package:better_player/src/asms/player_asms_subtitle_segment.dart';
 
 import 'package:better_player/src/subtitles/better_player_subtitles_source_type.dart';
 
 ///Representation of subtitles source. Used to define subtitles in Better
 /// Player.
-class BetterPlayerSubtitlesSource {
-  BetterPlayerSubtitlesSource({
+class PlayerSubtitlesSource {
+  PlayerSubtitlesSource({
     this.type,
     this.name = 'Default subtitles',
     this.urls,
@@ -18,7 +18,7 @@ class BetterPlayerSubtitlesSource {
   });
 
   ///Source type
-  final BetterPlayerSubtitlesSourceType? type;
+  final PlayerSubtitlesSourceType? type;
 
   ///Name of the subtitles, default value is "Default subtitles"
   final String? name;
@@ -33,7 +33,7 @@ class BetterPlayerSubtitlesSource {
   final bool? selectedByDefault;
 
   //Additional headers used in HTTP request. Works only for
-  // [BetterPlayerSubtitlesSourceType.memory] source type.
+  // [PlayerSubtitlesSourceType.memory] source type.
   final Map<String, String>? headers;
 
   ///Is ASMS segmented source (more than 1 subtitle file). This shouldn't be
@@ -46,18 +46,18 @@ class BetterPlayerSubtitlesSource {
 
   ///List of segments (start,end,url of the segment). This shouldn't be
   ///configured manually.
-  final List<BetterPlayerAsmsSubtitleSegment>? asmsSegments;
+  final List<PlayerAsmsSubtitleSegment>? asmsSegments;
 
   ///Creates list with only one subtitles
-  static List<BetterPlayerSubtitlesSource> single({
-    BetterPlayerSubtitlesSourceType? type,
+  static List<PlayerSubtitlesSource> single({
+    PlayerSubtitlesSourceType? type,
     String name = 'Default subtitles',
     String? url,
     String? content,
     bool? selectedByDefault,
     Map<String, String>? headers,
   }) => [
-    BetterPlayerSubtitlesSource(
+    PlayerSubtitlesSource(
       type: type,
       name: name,
       urls: [url],

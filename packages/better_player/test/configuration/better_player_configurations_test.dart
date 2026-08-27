@@ -27,19 +27,19 @@ void main() {
       expect(config.showNotification, null);
     });
 
-    test('BetterPlayerControlsConfiguration factories', () {
-      final white = BetterPlayerControlsConfiguration.white();
+    test('PlayerControlsConfiguration factories', () {
+      final white = PlayerControlsConfiguration.white();
       expect(white.controlBarColor, Colors.white);
 
-      final cupertino = BetterPlayerControlsConfiguration.cupertino();
+      final cupertino = PlayerControlsConfiguration.cupertino();
       expect(cupertino.playIcon, CupertinoIcons.play_arrow_solid);
 
-      final theme = BetterPlayerControlsConfiguration.theme(ThemeData.light());
+      final theme = PlayerControlsConfiguration.theme(ThemeData.light());
       expect(theme.textColor, ThemeData.light().textTheme.bodySmall?.color);
     });
 
-    test('BetterPlayerConfiguration copyWith', () {
-      const config = BetterPlayerConfiguration(autoPlay: true);
+    test('PlayerConfiguration copyWith', () {
+      const config = PlayerConfiguration(autoPlay: true);
       final copied = config.copyWith(autoPlay: false);
       expect(copied.autoPlay, false);
       expect(copied.looping, false);

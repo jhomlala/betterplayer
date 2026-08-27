@@ -20,7 +20,7 @@ class MockControlsState extends BetterPlayerControlsState<MockControlsWidget> {
   BetterPlayerController? get betterPlayerController => widget.controller;
 
   @override
-  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
+  PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       widget.controller.betterPlayerControlsConfiguration;
 
   @override
@@ -42,7 +42,7 @@ void main() {
 
     setUp(() {
       controller = BetterPlayerMockController(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       );
     });
 

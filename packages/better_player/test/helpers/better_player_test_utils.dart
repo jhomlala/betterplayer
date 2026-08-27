@@ -14,7 +14,7 @@ class BetterPlayerTestUtils {
 
   static BetterPlayerMockController setupBetterPlayerMockController({
     VideoPlayerController? controller,
-    BetterPlayerConfiguration configuration = const BetterPlayerConfiguration(),
+    PlayerConfiguration configuration = const PlayerConfiguration(),
   }) {
     final mockController = BetterPlayerMockController(configuration);
     if (controller != null) {

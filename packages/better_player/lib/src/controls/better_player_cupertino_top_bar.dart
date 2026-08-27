@@ -1,4 +1,4 @@
-import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
@@ -22,7 +22,7 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
     super.key,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
@@ -128,7 +128,7 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
     required this.onExpandCollapse,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
@@ -185,7 +185,7 @@ class _BetterPlayerCupertinoPipButton extends StatefulWidget {
     required this.iconColor,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
@@ -278,7 +278,7 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
     required this.latestValue,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
@@ -340,7 +340,7 @@ class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
     required this.onShowMoreClicked,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;

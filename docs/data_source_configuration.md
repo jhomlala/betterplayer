@@ -5,7 +5,7 @@ title: Data Source Configuration
 
 # Data Source Configuration
 
-The `BetterPlayerDataSource` class defines all necessary information for a single video source within your application.
+The `PlayerDataSource` class defines all necessary information for a single video source within your application.
 
 ## Source Types
 
@@ -16,21 +16,21 @@ Better Player supports three primary source types:
 
 ### Factory Methods
 We recommend using the provided factory methods for initialization:
-*   `BetterPlayerDataSource.network(url, ...)`
-*   `BetterPlayerDataSource.file(url, ...)`
-*   `BetterPlayerDataSource.memory(bytes, ...)`
+*   `PlayerDataSource.network(url, ...)`
+*   `PlayerDataSource.file(url, ...)`
+*   `PlayerDataSource.memory(bytes, ...)`
 
 ## Configuration Parameters
 
 ### Core Parameters
-*   **`type`**: The `BetterPlayerDataSourceType` (Network, File, or Memory).
+*   **`type`**: The `PlayerDataSourceType` (Network, File, or Memory).
 *   **`url`**: The path or URL of the video source.
-*   **`subtitles`**: A list of `BetterPlayerSubtitlesSource` objects.
+*   **`subtitles`**: A list of `PlayerSubtitlesSource` objects.
 *   **`headers`**: A map of custom HTTP headers for network requests.
 *   **`bytes`**: The byte array for memory sources.
 
 :::tip
-When using `BetterPlayerDataSource.memory`, providing a `videoExtension` (e.g., `"mp4"`) is highly recommended. It helps the underlying player engine correctly identify the media type when the byte stream is processed.
+When using `PlayerDataSource.memory`, providing a `videoExtension` (e.g., `"mp4"`) is highly recommended. It helps the underlying player engine correctly identify the media type when the byte stream is processed.
 
 :::
 ### Adaptive Streaming (ASMS)

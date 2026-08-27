@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/configuration/better_player_controller_event.dart';
+import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
@@ -20,10 +20,10 @@ class BetterPlayerWithControls extends StatefulWidget {
 }
 
 class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
-  BetterPlayerSubtitlesConfiguration get subtitlesConfiguration =>
+  PlayerSubtitlesConfiguration get subtitlesConfiguration =>
       widget.controller!.betterPlayerConfiguration.subtitlesConfiguration;
 
-  BetterPlayerControlsConfiguration get controlsConfiguration =>
+  PlayerControlsConfiguration get controlsConfiguration =>
       widget.controller!.betterPlayerControlsConfiguration;
 
   final StreamController<bool> playerVisibilityStreamController =
@@ -82,12 +82,12 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     super.dispose();
   }
 
-  void _onControllerChanged(BetterPlayerControllerEvent event) {
+  void _onControllerChanged(PlayerControllerEvent event) {
     setState(() {
       if (!_initialized) {
         _initialized = true;
       }
-      if (event == BetterPlayerControllerEvent.setupDataSource) {
+      if (event == PlayerControllerEvent.setupDataSource) {
         _setupVideoPlayerControllerListener();
       }
     });
@@ -168,7 +168,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
           ),
           betterPlayerController.betterPlayerConfiguration.overlay ??
               const SizedBox(),
-          BetterPlayerSubtitlesDrawer(
+          PlayerSubtitlesDrawer(
             betterPlayerController: betterPlayerController,
             betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
             subtitles: betterPlayerController.subtitlesLines,
@@ -225,24 +225,24 @@ class BetterPlayerControlsSelectionWidget extends StatelessWidget {
       var playerTheme = controlsConfiguration.playerTheme;
       if (playerTheme == null) {
         if (defaultTargetPlatform == TargetPlatform.android) {
-          playerTheme = BetterPlayerTheme.material;
+          playerTheme = PlayerTheme.material;
         } else {
-          playerTheme = BetterPlayerTheme.cupertino;
+          playerTheme = PlayerTheme.cupertino;
         }
       }
 
       if (controlsConfiguration.customControlsBuilder != null &&
-          playerTheme == BetterPlayerTheme.custom) {
+          playerTheme == PlayerTheme.custom) {
         return controlsConfiguration.customControlsBuilder!(
           controller,
           onControlsVisibilityChanged,
         );
-      } else if (playerTheme == BetterPlayerTheme.material) {
+      } else if (playerTheme == PlayerTheme.material) {
         return BetterPlayerMaterialControls(
           onControlsVisibilityChanged: onControlsVisibilityChanged,
           controlsConfiguration: controlsConfiguration,
         );
-      } else if (playerTheme == BetterPlayerTheme.cupertino) {
+      } else if (playerTheme == PlayerTheme.cupertino) {
         return BetterPlayerCupertinoControls(
           onControlsVisibilityChanged: onControlsVisibilityChanged,
           controlsConfiguration: controlsConfiguration,
@@ -314,13 +314,13 @@ class _BetterPlayerVideoFitWidgetState
         .listen(_onControllerEvent);
   }
 
-  void _onControllerEvent(BetterPlayerControllerEvent event) {
+  void _onControllerEvent(PlayerControllerEvent event) {
     switch (event) {
-      case BetterPlayerControllerEvent.play:
+      case PlayerControllerEvent.play:
         if (!_started) {
           setState(_updateStartedFlag);
         }
-      case BetterPlayerControllerEvent.setupDataSource:
+      case PlayerControllerEvent.setupDataSource:
         setState(() {
           _started = false;
           _initialized = false;

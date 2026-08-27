@@ -11,15 +11,15 @@ class CachePage extends StatefulWidget {
 
 class _CachePageState extends State<CachePage> {
   late BetterPlayerController _betterPlayerController;
-  late BetterPlayerDataSource _betterPlayerDataSource;
+  late PlayerDataSource _betterPlayerDataSource;
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    _betterPlayerDataSource = BetterPlayerDataSource(
+    _betterPlayerDataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.phantomVideoUrl,
       cacheConfiguration: const CacheConfiguration(

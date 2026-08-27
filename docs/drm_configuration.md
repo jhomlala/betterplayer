@@ -5,7 +5,7 @@ title: DRM Configuration
 
 # DRM Configuration
 
-Better Player provides robust support for Digital Rights Management (DRM) to protect your video content. DRM is configured using the `drmConfiguration` parameter within the `BetterPlayerDataSource`.
+Better Player provides robust support for Digital Rights Management (DRM) to protect your video content. DRM is configured using the `drmConfiguration` parameter within the `PlayerDataSource`.
 
 ## Supported DRM Types
 
@@ -24,8 +24,8 @@ Currently, Better Player supports the following DRM mechanisms:
 Used when the license is retrieved via a simple authorization token.
 
 ```dart
-BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+PlayerDataSource dataSource = PlayerDataSource(
+    PlayerDataSourceType.network,
     "url",
     videoFormat: BetterPlayerVideoFormat.hls,
     drmConfiguration: BetterPlayerDrmConfiguration(
@@ -39,8 +39,8 @@ BetterPlayerDataSource dataSource = BetterPlayerDataSource(
 Used for license retrieval based on a license URL.
 
 ```dart
-BetterPlayerDataSource _widevineDataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+PlayerDataSource _widevineDataSource = PlayerDataSource(
+    PlayerDataSourceType.network,
     "url",
     drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.widevine,
@@ -54,8 +54,8 @@ BetterPlayerDataSource _widevineDataSource = BetterPlayerDataSource(
 Requires a certificate URL and a license URL.
 
 ```dart
-BetterPlayerDataSource _fairplayDataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+PlayerDataSource _fairplayDataSource = PlayerDataSource(
+    PlayerDataSourceType.network,
     Constants.fairplayHlsUrl,
     drmConfiguration: BetterPlayerDrmConfiguration(
         drmType: BetterPlayerDrmType.fairplay,
@@ -98,8 +98,8 @@ MP4Box -frag 240000 testvideo_encrypt_tmp.mp4 -out testvideo_encrypt.mp4
 
 #### 2. Configure ClearKey in Data Source
 ```dart
-var _clearKeyDataSource = BetterPlayerDataSource(
-  BetterPlayerDataSourceType.file,
+var _clearKeyDataSource = PlayerDataSource(
+  PlayerDataSourceType.file,
   await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
   drmConfiguration: BetterPlayerDrmConfiguration(
       drmType: BetterPlayerDrmType.clearKey,

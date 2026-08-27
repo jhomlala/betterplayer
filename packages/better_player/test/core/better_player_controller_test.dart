@@ -1,5 +1,5 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/configuration/better_player_controller_event.dart';
+import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player_ios/better_player_ios.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -29,7 +29,7 @@ void main() {
 
       test('Create controller without data source', () {
         final betterPlayerMockController = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         expect(betterPlayerMockController.betterPlayerDataSource, null);
         expect(betterPlayerMockController.videoPlayerController, null);
@@ -38,9 +38,9 @@ void main() {
 
       test('Add and remove event listener', () {
         final betterPlayerMockController = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
-        void listener(BetterPlayerEvent event) {}
+        void listener(PlayerEvent event) {}
         betterPlayerMockController.addEventsListener(listener);
         expect(betterPlayerMockController.eventListeners.length, 1);
         betterPlayerMockController.removeEventsListener(listener);
@@ -49,7 +49,7 @@ void main() {
 
       test('setSpeed changes speed', () async {
         final betterPlayerMockController = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         final videoPlayerController = MockVideoPlayerController();
         betterPlayerMockController.videoPlayerController =
@@ -61,7 +61,7 @@ void main() {
 
       test('setVolume changes volume', () async {
         final betterPlayerMockController = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         final videoPlayerController = MockVideoPlayerController();
         betterPlayerMockController.videoPlayerController =
@@ -73,7 +73,7 @@ void main() {
 
       test('setLooping changes looping', () async {
         final betterPlayerMockController = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         final videoPlayerController = MockVideoPlayerController();
         betterPlayerMockController.videoPlayerController =
@@ -85,17 +85,17 @@ void main() {
 
       test('isLiveStream returns true for live stream source', () async {
         final betterPlayerMockController = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         await betterPlayerMockController.setupDataSource(
-          BetterPlayerDataSource.network('url', liveStream: true),
+          PlayerDataSource.network('url', liveStream: true),
         );
         expect(betterPlayerMockController.isLiveStream(), true);
       });
 
       test('isVideoInitialized returns correct value', () async {
         final betterPlayerMockController = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         expect(
           betterPlayerMockController.isVideoInitialized,
@@ -113,10 +113,10 @@ void main() {
 
       test('Setup data source in controller', () async {
         final betterPlayerMockController = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         await betterPlayerMockController.setupDataSource(
-          BetterPlayerDataSource.network(
+          PlayerDataSource.network(
             BetterPlayerTestUtils.forBiggerBlazesUrl,
           ),
         );
@@ -188,11 +188,11 @@ void main() {
           var finishEventCalls = 0;
           betterPlayerController.addEventsListener(
             (event) {
-              if (event.betterPlayerEventType == BetterPlayerEventType.seekTo) {
+              if (event.betterPlayerEventType == PlayerEventType.seekTo) {
                 seekEventCalls += 1;
               }
               if (event.betterPlayerEventType ==
-                  BetterPlayerEventType.finished) {
+                  PlayerEventType.finished) {
                 finishEventCalls += 1;
               }
             },
@@ -209,7 +209,7 @@ void main() {
 
       test('full screen and auto play should work', () async {
         final betterPlayerMockController = BetterPlayerMockController(
-          const BetterPlayerConfiguration(
+          const PlayerConfiguration(
             fullScreenByDefault: true,
             autoPlay: true,
           ),
@@ -217,7 +217,7 @@ void main() {
         betterPlayerMockController.videoPlayerController =
             MockVideoPlayerController();
         await betterPlayerMockController.setupDataSource(
-          BetterPlayerDataSource.network(
+          PlayerDataSource.network(
             BetterPlayerTestUtils.forBiggerBlazesUrl,
           ),
         );
@@ -240,7 +240,7 @@ void main() {
         final betterPlayerMockController =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         await betterPlayerMockController.setupDataSource(
-          BetterPlayerDataSource.network(
+          PlayerDataSource.network(
             BetterPlayerTestUtils.forBiggerBlazesUrl,
           ),
         );
@@ -253,7 +253,7 @@ void main() {
         final betterPlayerMockController =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         await betterPlayerMockController.setupDataSource(
-          BetterPlayerDataSource.network(
+          PlayerDataSource.network(
             BetterPlayerTestUtils.forBiggerBlazesUrl,
           ),
         );
@@ -332,11 +332,11 @@ void main() {
         betterPlayerMockController.addEventsListener(
           (event) {
             if (event.betterPlayerEventType ==
-                BetterPlayerEventType.controlsVisible) {
+                PlayerEventType.controlsVisible) {
               controlsVisibleEventCount += 1;
             }
             if (event.betterPlayerEventType ==
-                BetterPlayerEventType.controlsHiddenEnd) {
+                PlayerEventType.controlsHiddenEnd) {
               controlsHiddenEventCount += 1;
             }
           },
@@ -367,14 +367,14 @@ void main() {
           },
         );
         betterPlayerMockController.postEvent(
-          BetterPlayerEvent(BetterPlayerEventType.play),
+          PlayerEvent(PlayerEventType.play),
         );
         betterPlayerMockController.postEvent(
-          BetterPlayerEvent(BetterPlayerEventType.progress),
+          PlayerEvent(PlayerEventType.progress),
         );
 
         betterPlayerMockController.postEvent(
-          BetterPlayerEvent(BetterPlayerEventType.pause),
+          PlayerEvent(PlayerEventType.pause),
         );
         await Future<void>.delayed(const Duration(milliseconds: 100), () {});
         expect(firstEventCounter, 3);
@@ -389,7 +389,7 @@ void main() {
         expect(betterPlayerMockController.eventListeners.length, 2);
       });
 
-      void dummyEventListener(BetterPlayerEvent event) {}
+      void dummyEventListener(PlayerEvent event) {}
 
       test('removeEventsListener update list of event listener', () async {
         final betterPlayerMockController =
@@ -430,7 +430,7 @@ void main() {
           betterPlayerMockController.addEventsListener(
             (event) {
               if (event.betterPlayerEventType ==
-                  BetterPlayerEventType.setVolume) {
+                  PlayerEventType.setVolume) {
                 setVolumeCalls += 1;
               }
             },
@@ -483,7 +483,7 @@ void main() {
           betterPlayerMockController.addEventsListener(
             (event) {
               if (event.betterPlayerEventType ==
-                  BetterPlayerEventType.setSpeed) {
+                  PlayerEventType.setSpeed) {
                 setSpeedCalls += 1;
               }
             },
@@ -518,7 +518,7 @@ void main() {
           throwsA(isA<StateError>()),
         );
         await betterPlayerMockController.setupDataSource(
-          BetterPlayerDataSource(
+          PlayerDataSource(
             DataSourceType.network,
             BetterPlayerTestUtils.forBiggerBlazesUrl,
             liveStream: true,
@@ -549,9 +549,9 @@ void main() {
       test('startNextVideoTimer starts next video timer', () async {
         final BetterPlayerController betterPlayerMockController =
             BetterPlayerMockController(
-              const BetterPlayerConfiguration(),
+              const PlayerConfiguration(),
               betterPlayerPlaylistConfiguration:
-                  const BetterPlayerPlaylistConfiguration(
+                  const PlayerPlaylistConfiguration(
                     nextVideoDelay: Duration(seconds: 2),
                   ),
             );
@@ -575,7 +575,7 @@ void main() {
 
       test('getAspectRatio priority order: overridden aspect ratio', () {
         final controller = BetterPlayerMockController(
-          const BetterPlayerConfiguration(aspectRatio: 1),
+          const PlayerConfiguration(aspectRatio: 1),
         );
         final mockVideoPlayerController = MockVideoPlayerController();
         mockVideoPlayerController.setAspectRatio(2);
@@ -587,7 +587,7 @@ void main() {
 
       test('getAspectRatio priority order: configuration aspect ratio', () {
         final controller = BetterPlayerMockController(
-          const BetterPlayerConfiguration(aspectRatio: 16 / 9),
+          const PlayerConfiguration(aspectRatio: 16 / 9),
         );
         final mockVideoPlayerController = MockVideoPlayerController();
         mockVideoPlayerController.setAspectRatio(2);
@@ -598,7 +598,7 @@ void main() {
 
       test('getAspectRatio priority order: video player aspect ratio', () {
         final controller = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         final mockVideoPlayerController = MockVideoPlayerController();
         mockVideoPlayerController.setAspectRatio(16 / 9);
@@ -609,7 +609,7 @@ void main() {
 
       test('getAspectRatio returns null when size is null and no override', () {
         final controller = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         final mockVideoPlayerController = MockVideoPlayerController();
         // Size is null by default in MockVideoPlayerController constructor (VideoPlayerValue(duration: null))
@@ -638,14 +638,14 @@ void main() {
         final controller =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         var eventCount = 0;
-        void listener(BetterPlayerEvent event) => eventCount++;
+        void listener(PlayerEvent event) => eventCount++;
 
         controller.addEventsListener(listener);
-        controller.postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
+        controller.postEvent(PlayerEvent(PlayerEventType.play));
         expect(eventCount, 1);
 
         controller.removeEventsListener(listener);
-        controller.postEvent(BetterPlayerEvent(BetterPlayerEventType.pause));
+        controller.postEvent(PlayerEvent(PlayerEventType.pause));
         expect(eventCount, 1);
       });
 
@@ -678,10 +678,10 @@ void main() {
         final controller =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         controller.videoPlayerController = MockVideoPlayerController();
-        BetterPlayerEvent? lastEvent;
+        PlayerEvent? lastEvent;
         controller.addEventsListener((event) => lastEvent = event);
 
-        final track = BetterPlayerAsmsTrack(
+        final track = PlayerAsmsTrack(
           '1',
           1920,
           1080,
@@ -694,7 +694,7 @@ void main() {
 
         expect(
           lastEvent?.betterPlayerEventType,
-          BetterPlayerEventType.changedTrack,
+          PlayerEventType.changedTrack,
         );
         expect(lastEvent?.parameters?['width'], 1920);
         expect(controller.betterPlayerAsmsTrack, track);
@@ -705,7 +705,7 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         controller.videoPlayerController = MockVideoPlayerController();
 
-        final audioTrack = BetterPlayerAsmsAudioTrack(
+        final audioTrack = PlayerAsmsAudioTrack(
           id: 1,
           label: 'English',
           language: 'en',
@@ -716,7 +716,7 @@ void main() {
       });
 
       test('DRM configuration adds token to headers', () async {
-        final dataSource = BetterPlayerDataSource.network(
+        final dataSource = PlayerDataSource.network(
           'https://example.com/video.mp4',
           drmConfiguration: const DrmConfiguration(
             drmType: DrmType.token,
@@ -745,16 +745,16 @@ void main() {
         controller.videoPlayerController = mockVideoPlayerController;
 
         await controller.setupDataSource(
-          BetterPlayerDataSource.network(
+          PlayerDataSource.network(
             'https://example.com/video_720p.mp4',
           ),
         );
 
-        BetterPlayerEvent? resolutionEvent;
+        PlayerEvent? resolutionEvent;
         controller.addEventsListener(
           (event) {
             if (event.betterPlayerEventType ==
-                BetterPlayerEventType.changedResolution) {
+                PlayerEventType.changedResolution) {
               resolutionEvent = event;
             }
           },
@@ -764,7 +764,7 @@ void main() {
 
         expect(
           resolutionEvent?.betterPlayerEventType,
-          BetterPlayerEventType.changedResolution,
+          PlayerEventType.changedResolution,
         );
         expect(
           resolutionEvent?.parameters?['url'],
@@ -787,7 +787,7 @@ void main() {
               controller: MockVideoPlayerController(),
             );
         await controller.setupDataSource(
-          BetterPlayerDataSource.network(
+          PlayerDataSource.network(
             BetterPlayerTestUtils.forBiggerBlazesUrl,
           ),
         );
@@ -809,7 +809,7 @@ void main() {
               controller: MockVideoPlayerController(),
             );
         await controller.setupDataSource(
-          BetterPlayerDataSource.network(
+          PlayerDataSource.network(
             BetterPlayerTestUtils.forBiggerBlazesUrl,
           ),
         );
@@ -859,7 +859,7 @@ void main() {
         controller.addEventsListener((_) => eventCount1++);
         controller.addEventsListener((_) => eventCount2++);
 
-        controller.postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
+        controller.postEvent(PlayerEvent(PlayerEventType.play));
         expect(eventCount1, 1);
         expect(eventCount2, 1);
       });
@@ -868,11 +868,11 @@ void main() {
         final controller =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         var eventCount = 0;
-        void listener(BetterPlayerEvent event) => eventCount++;
+        void listener(PlayerEvent event) => eventCount++;
         controller.addEventsListener(listener);
         controller.removeEventsListener(listener);
 
-        controller.postEvent(BetterPlayerEvent(BetterPlayerEventType.play));
+        controller.postEvent(PlayerEvent(PlayerEventType.play));
         expect(eventCount, 0);
       });
 
@@ -881,11 +881,11 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         controller.videoPlayerController = MockVideoPlayerController();
 
-        final events = <BetterPlayerControllerEvent>[];
+        final events = <PlayerControllerEvent>[];
         controller.controllerEventStream.listen(events.add);
 
         await controller.setupDataSource(
-          BetterPlayerDataSource.network('url'),
+          PlayerDataSource.network('url'),
         );
         await controller.play();
         controller.enterFullScreen();
@@ -894,16 +894,16 @@ void main() {
         await Future<void>.delayed(const Duration(milliseconds: 100));
 
         expect(
-          events.contains(BetterPlayerControllerEvent.setupDataSource),
+          events.contains(PlayerControllerEvent.setupDataSource),
           true,
         );
-        expect(events.contains(BetterPlayerControllerEvent.play), true);
+        expect(events.contains(PlayerControllerEvent.play), true);
         expect(
-          events.contains(BetterPlayerControllerEvent.openFullscreen),
+          events.contains(PlayerControllerEvent.openFullscreen),
           true,
         );
         expect(
-          events.contains(BetterPlayerControllerEvent.hideFullscreen),
+          events.contains(PlayerControllerEvent.hideFullscreen),
           true,
         );
       });
@@ -915,18 +915,18 @@ void main() {
         VideoPlayerPlatform.instance = BetterPlayerIOS();
         try {
           final controller = BetterPlayerMockController(
-            const BetterPlayerConfiguration(),
+            const PlayerConfiguration(),
           );
-          BetterPlayerEvent? exceptionEvent;
+          PlayerEvent? exceptionEvent;
           controller.addEventsListener((event) {
             if (event.betterPlayerEventType ==
-                BetterPlayerEventType.exception) {
+                PlayerEventType.exception) {
               exceptionEvent = event;
             }
           });
 
           await controller.setupDataSource(
-            BetterPlayerDataSource.network('https://example.com/video.mpd'),
+            PlayerDataSource.network('https://example.com/video.mpd'),
           );
 
           expect(exceptionEvent != null, true);

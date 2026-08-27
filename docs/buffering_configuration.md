@@ -14,8 +14,8 @@ Buffering configuration is currently available only on Android.
 ## Implementation Example
 
 ```dart
-BetterPlayerDataSource _betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+PlayerDataSource _betterPlayerDataSource = PlayerDataSource(
+      PlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
       bufferingConfiguration: BetterPlayerBufferingConfiguration(
         minBufferMs: 50000,

@@ -22,11 +22,11 @@ void main() {
 
     mockVideoPlayerController = MockVideoPlayerController();
     mockController = BetterPlayerMockController(
-      const BetterPlayerConfiguration(),
+      const PlayerConfiguration(),
     );
     mockController.videoPlayerController = mockVideoPlayerController;
     await mockController.setupDataSource(
-      BetterPlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
     );
   });
 
@@ -41,7 +41,7 @@ void main() {
   testWidgets('Cupertino bottom bar shows play button when paused', (
     tester,
   ) async {
-    final controlsConfiguration = BetterPlayerControlsConfiguration.cupertino();
+    final controlsConfiguration = PlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
       wrapWidget(
         BetterPlayerCupertinoBottomBar(
@@ -70,7 +70,7 @@ void main() {
   testWidgets('Cupertino bottom bar shows pause button when playing', (
     tester,
   ) async {
-    final controlsConfiguration = BetterPlayerControlsConfiguration.cupertino();
+    final controlsConfiguration = PlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
       wrapWidget(
         BetterPlayerCupertinoBottomBar(
@@ -103,7 +103,7 @@ void main() {
     tester,
   ) async {
     var playPauseTriggered = false;
-    final controlsConfiguration = BetterPlayerControlsConfiguration.cupertino();
+    final controlsConfiguration = PlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
       wrapWidget(
         BetterPlayerCupertinoBottomBar(

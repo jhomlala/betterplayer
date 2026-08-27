@@ -1,6 +1,6 @@
 /// Represents HLS / DASH track which can be played within player
-class BetterPlayerAsmsTrack {
-  BetterPlayerAsmsTrack(
+class PlayerAsmsTrack {
+  PlayerAsmsTrack(
     this.id,
     this.width,
     this.height,
@@ -10,8 +10,8 @@ class BetterPlayerAsmsTrack {
     this.mimeType,
   );
 
-  factory BetterPlayerAsmsTrack.defaultTrack() {
-    return BetterPlayerAsmsTrack('', 0, 0, 0, 0, '', '');
+  factory PlayerAsmsTrack.defaultTrack() {
+    return PlayerAsmsTrack('', 0, 0, 0, 0, '', '');
   }
 
   ///Id of the track
@@ -41,7 +41,7 @@ class BetterPlayerAsmsTrack {
 
   @override
   bool operator ==(dynamic other) {
-    return other is BetterPlayerAsmsTrack &&
+    return other is PlayerAsmsTrack &&
         width == other.width &&
         height == other.height &&
         bitrate == other.bitrate &&

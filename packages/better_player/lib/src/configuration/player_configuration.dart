@@ -5,8 +5,8 @@ import 'package:material_ui/material_ui.dart';
 ///Configuration of Better Player. Allows to setup general behavior of player.
 ///Master configuration which contains children that configure specific part
 ///of player.
-class BetterPlayerConfiguration {
-  const BetterPlayerConfiguration({
+class PlayerConfiguration {
+  const PlayerConfiguration({
     this.aspectRatio,
     this.autoPlay = false,
     this.startAt,
@@ -32,8 +32,8 @@ class BetterPlayerConfiguration {
     ],
     this.routePageBuilder,
     this.eventListener,
-    this.subtitlesConfiguration = const BetterPlayerSubtitlesConfiguration(),
-    this.controlsConfiguration = const BetterPlayerControlsConfiguration(),
+    this.subtitlesConfiguration = const PlayerSubtitlesConfiguration(),
+    this.controlsConfiguration = const PlayerControlsConfiguration(),
     this.fit = BoxFit.fill,
     this.rotation = 0,
     this.playerVisibilityChangedBehavior,
@@ -103,13 +103,13 @@ class BetterPlayerConfiguration {
   final BetterPlayerRoutePageBuilder? routePageBuilder;
 
   /// Defines a event listener where video player events will be send
-  final Function(BetterPlayerEvent)? eventListener;
+  final Function(PlayerEvent)? eventListener;
 
   ///Defines subtitles configuration
-  final BetterPlayerSubtitlesConfiguration subtitlesConfiguration;
+  final PlayerSubtitlesConfiguration subtitlesConfiguration;
 
   ///Defines controls configuration
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
 
   ///Defines fit of the video, allows to fix video stretching, see possible
   ///values here: https://api.flutter.dev/flutter/painting/BoxFit-class.html
@@ -124,7 +124,7 @@ class BetterPlayerConfiguration {
 
   ///Defines translations used in player. If null, then default english translations
   ///will be used.
-  final List<BetterPlayerTranslations>? translations;
+  final List<PlayerTranslations>? translations;
 
   ///Defines if player should auto detect full screen device orientation based
   ///on aspect ratio of the video. If aspect ratio of the video is < 1 then
@@ -158,7 +158,7 @@ class BetterPlayerConfiguration {
   ///Default value is false.
   final bool useRootNavigator;
 
-  BetterPlayerConfiguration copyWith({
+  PlayerConfiguration copyWith({
     double? aspectRatio,
     bool? autoPlay,
     Duration? startAt,
@@ -176,20 +176,20 @@ class BetterPlayerConfiguration {
     List<SystemUiOverlay>? systemOverlaysAfterFullScreen,
     List<DeviceOrientation>? deviceOrientationsAfterFullScreen,
     BetterPlayerRoutePageBuilder? routePageBuilder,
-    Function(BetterPlayerEvent)? eventListener,
-    BetterPlayerSubtitlesConfiguration? subtitlesConfiguration,
-    BetterPlayerControlsConfiguration? controlsConfiguration,
+    Function(PlayerEvent)? eventListener,
+    PlayerSubtitlesConfiguration? subtitlesConfiguration,
+    PlayerControlsConfiguration? controlsConfiguration,
     BoxFit? fit,
     double? rotation,
     Function(double visibilityFraction)? playerVisibilityChangedBehavior,
-    List<BetterPlayerTranslations>? translations,
+    List<PlayerTranslations>? translations,
     bool? autoDetectFullscreenDeviceOrientation,
     bool? handleLifecycle,
     bool? autoDispose,
     bool? expandToFill,
     bool? useRootNavigator,
   }) {
-    return BetterPlayerConfiguration(
+    return PlayerConfiguration(
       aspectRatio: aspectRatio ?? this.aspectRatio,
       autoPlay: autoPlay ?? this.autoPlay,
       startAt: startAt ?? this.startAt,

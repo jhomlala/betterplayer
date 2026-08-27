@@ -12,17 +12,17 @@ class ChangePlayerThemePage extends StatefulWidget {
 
 class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
   late BetterPlayerController _betterPlayerController;
-  BetterPlayerDataSource? _dataSource;
-  BetterPlayerTheme _playerTheme = BetterPlayerTheme.material;
+  PlayerDataSource? _dataSource;
+  PlayerTheme _playerTheme = PlayerTheme.material;
 
   @override
   void initState() {
     super.initState();
     const url = Constants.bugBuckBunnyVideoUrl;
-    _dataSource = BetterPlayerDataSource(DataSourceType.network, url);
+    _dataSource = PlayerDataSource(DataSourceType.network, url);
     _betterPlayerController = BetterPlayerController(
-      BetterPlayerConfiguration(
-        controlsConfiguration: BetterPlayerControlsConfiguration(
+      PlayerConfiguration(
+        controlsConfiguration: PlayerControlsConfiguration(
           playerTheme: _playerTheme,
         ),
       ),
@@ -54,12 +54,12 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                   child: const Text('MATERIAL'),
                   onPressed: () {
                     setState(() {
-                      _playerTheme = BetterPlayerTheme.material;
+                      _playerTheme = PlayerTheme.material;
                       _betterPlayerController.pause();
                       _betterPlayerController = BetterPlayerController(
-                        BetterPlayerConfiguration(
+                        PlayerConfiguration(
                           controlsConfiguration:
-                              BetterPlayerControlsConfiguration(
+                              PlayerControlsConfiguration(
                                 playerTheme: _playerTheme,
                               ),
                         ),
@@ -72,12 +72,12 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                   child: const Text('CUPERTINO'),
                   onPressed: () {
                     setState(() {
-                      _playerTheme = BetterPlayerTheme.cupertino;
+                      _playerTheme = PlayerTheme.cupertino;
                       _betterPlayerController.pause();
                       _betterPlayerController = BetterPlayerController(
-                        BetterPlayerConfiguration(
+                        PlayerConfiguration(
                           controlsConfiguration:
-                              BetterPlayerControlsConfiguration(
+                              PlayerControlsConfiguration(
                                 playerTheme: _playerTheme,
                               ),
                         ),
@@ -90,12 +90,12 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                   child: const Text('CUSTOM'),
                   onPressed: () {
                     setState(() {
-                      _playerTheme = BetterPlayerTheme.custom;
+                      _playerTheme = PlayerTheme.custom;
                       _betterPlayerController.pause();
                       _betterPlayerController = BetterPlayerController(
-                        BetterPlayerConfiguration(
+                        PlayerConfiguration(
                           controlsConfiguration:
-                              BetterPlayerControlsConfiguration(
+                              PlayerControlsConfiguration(
                                 playerTheme: _playerTheme,
                                 customControlsBuilder:
                                     (controller, onControlsVisibilityChanged) =>

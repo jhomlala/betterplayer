@@ -3,8 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('BetterPlayer ASMS models tests', () {
-    test('BetterPlayerAsmsSubtitle initialization', () {
-      final subtitle = BetterPlayerAsmsSubtitle(
+    test('PlayerAsmsSubtitle initialization', () {
+      final subtitle = PlayerAsmsSubtitle(
         name: 'English',
         language: 'en',
         isDefault: true,
@@ -14,8 +14,8 @@ void main() {
       expect(subtitle.isDefault, true);
     });
 
-    test('BetterPlayerAsmsSubtitleSegment initialization', () {
-      final segment = BetterPlayerAsmsSubtitleSegment(
+    test('PlayerAsmsSubtitleSegment initialization', () {
+      final segment = PlayerAsmsSubtitleSegment(
         const Duration(seconds: 1),
         const Duration(seconds: 2),
         'https://example.com/seg1.vtt',
@@ -25,8 +25,8 @@ void main() {
       expect(segment.realUrl, 'https://example.com/seg1.vtt');
     });
 
-    test('BetterPlayerAsmsTrack equality', () {
-      final track1 = BetterPlayerAsmsTrack(
+    test('PlayerAsmsTrack equality', () {
+      final track1 = PlayerAsmsTrack(
         '1',
         1920,
         1080,
@@ -35,7 +35,7 @@ void main() {
         'avc1',
         'video/mp4',
       );
-      final track2 = BetterPlayerAsmsTrack(
+      final track2 = PlayerAsmsTrack(
         '1',
         1920,
         1080,
@@ -44,7 +44,7 @@ void main() {
         'avc1',
         'video/mp4',
       );
-      final track3 = BetterPlayerAsmsTrack(
+      final track3 = PlayerAsmsTrack(
         '2',
         1280,
         720,
@@ -59,8 +59,8 @@ void main() {
       expect(track1.hashCode, track1.hashCode);
     });
 
-    test('BetterPlayerAsmsTrack.defaultTrack initialization', () {
-      final track = BetterPlayerAsmsTrack.defaultTrack();
+    test('PlayerAsmsTrack.defaultTrack initialization', () {
+      final track = PlayerAsmsTrack.defaultTrack();
       expect(track.id, '');
       expect(track.width, 0);
       expect(track.height, 0);
@@ -70,8 +70,8 @@ void main() {
       expect(track.mimeType, '');
     });
 
-    test('BetterPlayerAsmsAudioTrack initialization', () {
-      final audioTrack = BetterPlayerAsmsAudioTrack(
+    test('PlayerAsmsAudioTrack initialization', () {
+      final audioTrack = PlayerAsmsAudioTrack(
         id: 1,
         segmentAlignment: true,
         label: 'English',
@@ -87,18 +87,18 @@ void main() {
       expect(audioTrack.mimeType, 'audio/mp4');
     });
 
-    test('BetterPlayerAsmsDataHolder initialization', () {
+    test('PlayerAsmsDataHolder initialization', () {
       final tracks = [
-        BetterPlayerAsmsTrack.defaultTrack(),
+        PlayerAsmsTrack.defaultTrack(),
       ];
       final subtitles = [
-        BetterPlayerAsmsSubtitle(name: 'Test', language: 'en'),
+        PlayerAsmsSubtitle(name: 'Test', language: 'en'),
       ];
       final audios = [
-        BetterPlayerAsmsAudioTrack(id: 1),
+        PlayerAsmsAudioTrack(id: 1),
       ];
 
-      final dataHolder = BetterPlayerAsmsDataHolder(
+      final dataHolder = PlayerAsmsDataHolder(
         tracks: tracks,
         subtitles: subtitles,
         audios: audios,

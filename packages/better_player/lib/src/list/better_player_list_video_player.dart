@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 class BetterPlayerListVideoPlayer extends StatefulWidget {
   const BetterPlayerListVideoPlayer(
     this.dataSource, {
-    this.configuration = const BetterPlayerConfiguration(),
+    this.configuration = const PlayerConfiguration(),
     this.playFraction = 0.6,
     this.autoPlay = true,
     this.autoPause = true,
@@ -17,10 +17,10 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
        );
 
   ///Video to show
-  final BetterPlayerDataSource dataSource;
+  final PlayerDataSource dataSource;
 
   ///Video player configuration
-  final BetterPlayerConfiguration configuration;
+  final PlayerConfiguration configuration;
 
   ///Fraction of the screen height that will trigger play/pause. For example
   ///if playFraction is 0.6 video will be played if 60% of player height is
@@ -56,7 +56,7 @@ class _BetterPlayerListVideoPlayerState
       ),
       betterPlayerDataSource: widget.dataSource,
       betterPlayerPlaylistConfiguration:
-          const BetterPlayerPlaylistConfiguration(),
+          const PlayerPlaylistConfiguration(),
     );
 
     if (widget.betterPlayerListVideoPlayerController != null) {

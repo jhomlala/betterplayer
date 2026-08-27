@@ -1,30 +1,30 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/subtitles/better_player_subtitle.dart';
+import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer_item.dart';
 import 'package:material_ui/material_ui.dart';
 
-class BetterPlayerSubtitlesDrawer extends StatefulWidget {
-  const BetterPlayerSubtitlesDrawer({
+class PlayerSubtitlesDrawer extends StatefulWidget {
+  const PlayerSubtitlesDrawer({
     required this.subtitles,
     required this.betterPlayerController,
     required this.playerVisibilityStream,
     super.key,
     this.betterPlayerSubtitlesConfiguration,
   });
-  final List<BetterPlayerSubtitle> subtitles;
+  final List<PlayerSubtitle> subtitles;
   final BetterPlayerController betterPlayerController;
-  final BetterPlayerSubtitlesConfiguration? betterPlayerSubtitlesConfiguration;
+  final PlayerSubtitlesConfiguration? betterPlayerSubtitlesConfiguration;
   final Stream<bool> playerVisibilityStream;
 
   @override
-  _BetterPlayerSubtitlesDrawerState createState() =>
-      _BetterPlayerSubtitlesDrawerState();
+  _PlayerSubtitlesDrawerState createState() =>
+      _PlayerSubtitlesDrawerState();
 }
 
-class _BetterPlayerSubtitlesDrawerState
-    extends State<BetterPlayerSubtitlesDrawer> {
+class _PlayerSubtitlesDrawerState
+    extends State<PlayerSubtitlesDrawer> {
   final RegExp htmlRegExp =
       // ignore: unnecessary_raw_strings
       RegExp(r'<[^>]*>', multiLine: true);
@@ -32,7 +32,7 @@ class _BetterPlayerSubtitlesDrawerState
   late TextStyle _outerTextStyle;
 
   VideoPlayerValue? _latestValue;
-  BetterPlayerSubtitlesConfiguration? _configuration;
+  PlayerSubtitlesConfiguration? _configuration;
   bool _playerVisible = false;
 
   ///Stream used to detect if play controls are visible or not
@@ -101,7 +101,7 @@ class _BetterPlayerSubtitlesDrawerState
     widget.betterPlayerController.renderedSubtitle = subtitle;
     final subtitles = subtitle?.texts ?? [];
     final textWidgets = subtitles.map((subtitleText) {
-      return BetterPlayerSubtitlesDrawerItem(
+      return PlayerSubtitlesDrawerItem(
         subtitleText: subtitleText,
         configuration: _configuration!,
         innerTextStyle: _innerTextStyle,
@@ -126,7 +126,7 @@ class _BetterPlayerSubtitlesDrawerState
     );
   }
 
-  BetterPlayerSubtitle? _getSubtitleAtCurrentPosition() {
+  PlayerSubtitle? _getSubtitleAtCurrentPosition() {
     if (_latestValue == null) {
       return null;
     }
@@ -140,7 +140,7 @@ class _BetterPlayerSubtitlesDrawerState
     return null;
   }
 
-  BetterPlayerSubtitlesConfiguration setupDefaultConfiguration() {
-    return const BetterPlayerSubtitlesConfiguration();
+  PlayerSubtitlesConfiguration setupDefaultConfiguration() {
+    return const PlayerSubtitlesConfiguration();
   }
 }

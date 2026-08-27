@@ -1,20 +1,20 @@
-import 'package:better_player/src/asms/better_player_asms_audio_track.dart';
-import 'package:better_player/src/asms/better_player_asms_data_holder.dart';
-import 'package:better_player/src/asms/better_player_asms_subtitle.dart';
-import 'package:better_player/src/asms/better_player_asms_track.dart';
+import 'package:better_player/src/asms/player_asms_audio_track.dart';
+import 'package:better_player/src/asms/player_asms_data_holder.dart';
+import 'package:better_player/src/asms/player_asms_subtitle.dart';
+import 'package:better_player/src/asms/player_asms_track.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:xml/xml.dart';
 
 ///DASH helper class
 class BetterPlayerDashUtils {
-  static Future<BetterPlayerAsmsDataHolder> parse(
+  static Future<PlayerAsmsDataHolder> parse(
     String data,
     String masterPlaylistUrl,
   ) async {
-    var tracks = <BetterPlayerAsmsTrack>[];
-    final audios = <BetterPlayerAsmsAudioTrack>[];
-    final subtitles = <BetterPlayerAsmsSubtitle>[];
+    var tracks = <PlayerAsmsTrack>[];
+    final audios = <PlayerAsmsAudioTrack>[];
+    final subtitles = <PlayerAsmsSubtitle>[];
     try {
       var audiosCount = 0;
       final document = XmlDocument.parse(data);
@@ -36,15 +36,15 @@ class BetterPlayerDashUtils {
     } catch (exception) {
       BetterPlayerUtils.log('Exception on dash parse: $exception');
     }
-    return BetterPlayerAsmsDataHolder(
+    return PlayerAsmsDataHolder(
       tracks: tracks,
       audios: audios,
       subtitles: subtitles,
     );
   }
 
-  static List<BetterPlayerAsmsTrack> parseVideo(XmlElement node) {
-    final tracks = <BetterPlayerAsmsTrack>[];
+  static List<PlayerAsmsTrack> parseVideo(XmlElement node) {
+    final tracks = <PlayerAsmsTrack>[];
 
     final representations = node.findAllElements('Representation');
 
@@ -61,7 +61,7 @@ class BetterPlayerDashUtils {
       final codecs = representation.getAttribute('codecs');
       final mimeType = MimeTypes.getMediaMimeType(codecs ?? '');
       tracks.add(
-        BetterPlayerAsmsTrack(
+        PlayerAsmsTrack(
           id,
           width,
           height,
@@ -76,7 +76,7 @@ class BetterPlayerDashUtils {
     return tracks;
   }
 
-  static BetterPlayerAsmsAudioTrack parseAudio(XmlElement node, int index) {
+  static PlayerAsmsAudioTrack parseAudio(XmlElement node, int index) {
     final segmentAlignmentStr = node.getAttribute('segmentAlignment') ?? '';
     var label = node.getAttribute('label');
     final language = node.getAttribute('lang');
@@ -84,7 +84,7 @@ class BetterPlayerDashUtils {
 
     label ??= language;
 
-    return BetterPlayerAsmsAudioTrack(
+    return PlayerAsmsAudioTrack(
       id: index,
       segmentAlignment: segmentAlignmentStr.toLowerCase() == 'true',
       label: label,
@@ -93,7 +93,7 @@ class BetterPlayerDashUtils {
     );
   }
 
-  static BetterPlayerAsmsSubtitle parseSubtitle(
+  static PlayerAsmsSubtitle parseSubtitle(
     String masterPlaylistUrl,
     XmlElement node,
   ) {
@@ -120,7 +120,7 @@ class BetterPlayerDashUtils {
 
     name ??= language;
 
-    return BetterPlayerAsmsSubtitle(
+    return PlayerAsmsSubtitle(
       name: name,
       language: language,
       mimeType: mimeType,

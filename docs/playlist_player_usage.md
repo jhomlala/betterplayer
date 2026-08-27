@@ -14,14 +14,14 @@ Better Player includes a specialized `BetterPlayerPlaylist` widget designed to p
 ## Implementation Workflow
 
 ### 1. Create a Data Set
-Prepare a list of `BetterPlayerDataSource` objects:
+Prepare a list of `PlayerDataSource` objects:
 
 ```dart
-List<BetterPlayerDataSource> createDataSet() {
+List<PlayerDataSource> createDataSet() {
   return [
-    BetterPlayerDataSource(BetterPlayerDataSourceType.network, "url1"),
-    BetterPlayerDataSource(BetterPlayerDataSourceType.network, "url2"),
-    BetterPlayerDataSource(BetterPlayerDataSourceType.network, "url3"),
+    PlayerDataSource(PlayerDataSourceType.network, "url1"),
+    PlayerDataSource(PlayerDataSourceType.network, "url2"),
+    PlayerDataSource(PlayerDataSourceType.network, "url3"),
   ];
 }
 ```
@@ -35,8 +35,8 @@ Widget build(BuildContext context) {
   return AspectRatio(
     aspectRatio: 16 / 9,
     child: BetterPlayerPlaylist(
-        betterPlayerConfiguration: BetterPlayerConfiguration(),
-        betterPlayerPlaylistConfiguration: const BetterPlayerPlaylistConfiguration(),
+        betterPlayerConfiguration: PlayerConfiguration(),
+        betterPlayerPlaylistConfiguration: const PlayerPlaylistConfiguration(),
         betterPlayerDataSourceList: dataSourceList),
   );
 }

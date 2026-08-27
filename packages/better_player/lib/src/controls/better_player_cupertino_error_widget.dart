@@ -1,4 +1,4 @@
-import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
@@ -10,7 +10,7 @@ class BetterPlayerCupertinoErrorWidget extends StatelessWidget {
     super.key,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {

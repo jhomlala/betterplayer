@@ -78,7 +78,7 @@ AspectRatio(
   aspectRatio: 16 / 9,
   child: BetterPlayer.network(
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    betterPlayerConfiguration: BetterPlayerConfiguration(
+    betterPlayerConfiguration: PlayerConfiguration(
       aspectRatio: 16 / 9,
       looping: true,
       autoPlay: true,
@@ -92,8 +92,8 @@ For full control, use the `BetterPlayerController`:
 
 ```dart
 BetterPlayerController _controller = BetterPlayerController(
-    const BetterPlayerConfiguration(),
-    betterPlayerDataSource: BetterPlayerDataSource(
+    const PlayerConfiguration(),
+    betterPlayerDataSource: PlayerDataSource(
         DataSourceType.network,
         "https://example.com/video.mp4",
     ),

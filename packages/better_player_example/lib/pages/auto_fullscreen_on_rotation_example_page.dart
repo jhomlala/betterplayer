@@ -18,11 +18,11 @@ class _AutoFullscreenOnRotationExamplePageState
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );
@@ -32,8 +32,8 @@ class _AutoFullscreenOnRotationExamplePageState
     super.initState();
   }
 
-  void _onPlayerEvent(BetterPlayerEvent event) {
-    if (event.betterPlayerEventType == BetterPlayerEventType.hideFullscreen) {
+  void _onPlayerEvent(PlayerEvent event) {
+    if (event.betterPlayerEventType == PlayerEventType.hideFullscreen) {
       if (MediaQuery.of(context).orientation == Orientation.landscape) {
         _isManualExit = true;
       }

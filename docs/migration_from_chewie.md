@@ -79,7 +79,7 @@ void initState() {
 ```
 
 #### `better_player` approach:
-Better Player combines data source definition and playback configuration into `BetterPlayerController` and `BetterPlayerDataSource`, managing initialization under the hood.
+Better Player combines data source definition and playback configuration into `BetterPlayerController` and `PlayerDataSource`, managing initialization under the hood.
 
 ```dart
 late BetterPlayerController _betterPlayerController;
@@ -88,13 +88,13 @@ late BetterPlayerController _betterPlayerController;
 void initState() {
   super.initState();
 
-  BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+  PlayerDataSource dataSource = PlayerDataSource(
+    PlayerDataSourceType.network,
     'https://example.com/video.mp4',
   );
 
   _betterPlayerController = BetterPlayerController(
-    const BetterPlayerConfiguration(
+    const PlayerConfiguration(
       autoPlay: true,
       looping: false,
       aspectRatio: 16 / 9,
@@ -172,8 +172,8 @@ Switching to Better Player gives you immediate access to features that often req
 
 - **Built-in Video Caching**:
   ```dart
-  BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+  PlayerDataSource(
+    PlayerDataSourceType.network,
     'https://example.com/video.mp4',
     cacheConfiguration: const BetterPlayerCacheConfiguration(
       useCache: true,
@@ -181,6 +181,6 @@ Switching to Better Player gives you immediate access to features that often req
     ),
   );
   ```
-- **Subtitles & Closed Captions**: Pass SRT/WebVTT subtitles directly via `subtitles` configuration or `BetterPlayerSubtitlesSource`.
+- **Subtitles & Closed Captions**: Pass SRT/WebVTT subtitles directly via `subtitles` configuration or `PlayerSubtitlesSource`.
 - **ListView / RecyclerView Playback**: Optimized playback out of the box using `BetterPlayerListPlayerController`.
 - **Picture-in-Picture (PiP)**: Built-in PiP support via `_betterPlayerController.enablePictureInPicture(...)`.

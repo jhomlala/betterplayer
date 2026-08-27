@@ -1,4 +1,4 @@
-import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -14,7 +14,7 @@ class BetterPlayerSelectionListItemWidget extends StatelessWidget {
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final String? semanticsIdentifier;
 
   @override

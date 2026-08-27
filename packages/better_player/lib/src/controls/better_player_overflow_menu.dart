@@ -1,4 +1,4 @@
-import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
@@ -15,7 +15,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
     super.key,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onPlaybackSpeedClicked;
   final VoidCallback onSubtitlesClicked;
   final VoidCallback onQualitiesClicked;
@@ -28,7 +28,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
       child: Column(
         children: [
           if (controlsConfiguration.enablePlaybackSpeed)
-            BetterPlayerOverflowMenuItemWidget(
+            PlayerOverflowMenuItemWidget(
               icon: controlsConfiguration.playbackSpeedIcon,
               name: translations.overflowMenuPlaybackSpeed,
               onTap: onPlaybackSpeedClicked,
@@ -36,7 +36,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
               semanticsIdentifier: 'better_player_overflow_menu_playback_speed',
             ),
           if (controlsConfiguration.enableSubtitles)
-            BetterPlayerOverflowMenuItemWidget(
+            PlayerOverflowMenuItemWidget(
               key: const Key('better_player_overflow_menu_subtitles'),
               icon: controlsConfiguration.subtitlesIcon,
               name: translations.overflowMenuSubtitles,
@@ -45,7 +45,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
               semanticsIdentifier: 'better_player_overflow_menu_subtitles',
             ),
           if (controlsConfiguration.enableQualities)
-            BetterPlayerOverflowMenuItemWidget(
+            PlayerOverflowMenuItemWidget(
               key: const Key('better_player_overflow_menu_qualities'),
               icon: controlsConfiguration.qualitiesIcon,
               name: translations.overflowMenuQuality,
@@ -54,7 +54,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
               semanticsIdentifier: 'better_player_overflow_menu_quality',
             ),
           if (controlsConfiguration.enableAudioTracks)
-            BetterPlayerOverflowMenuItemWidget(
+            PlayerOverflowMenuItemWidget(
               key: const Key('better_player_overflow_menu_audio_tracks'),
               icon: controlsConfiguration.audioTracksIcon,
               name: translations.overflowMenuAudioTracks,
@@ -64,7 +64,7 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
             ),
           if (controlsConfiguration.overflowMenuCustomItems.isNotEmpty)
             ...controlsConfiguration.overflowMenuCustomItems.map(
-              (customItem) => BetterPlayerOverflowMenuItemWidget(
+              (customItem) => PlayerOverflowMenuItemWidget(
                 icon: customItem.icon,
                 name: customItem.title,
                 onTap: () {
@@ -82,8 +82,8 @@ class BetterPlayerOverflowMenu extends StatelessWidget {
   }
 }
 
-class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
-  const BetterPlayerOverflowMenuItemWidget({
+class PlayerOverflowMenuItemWidget extends StatelessWidget {
+  const PlayerOverflowMenuItemWidget({
     required this.icon,
     required this.name,
     required this.onTap,
@@ -95,14 +95,14 @@ class BetterPlayerOverflowMenuItemWidget extends StatelessWidget {
   final IconData icon;
   final String name;
   final VoidCallback onTap;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final bool isSelected;
   final String? semanticsIdentifier;
 
   @override
   Widget build(BuildContext context) {
     BetterPlayerUtils.log(
-      'E2E: Building BetterPlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
+      'E2E: Building PlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
     );
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,

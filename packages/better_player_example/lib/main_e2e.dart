@@ -42,7 +42,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   void initState() {
     BetterPlayerUtils.log('E2E: initState starting');
     super.initState();
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       autoPlay: true,
@@ -56,7 +56,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       BetterPlayerUtils.log('E2E: postFrameCallback - setting up data source');
-      final betterPlayerDataSource = BetterPlayerDataSource(
+      final betterPlayerDataSource = PlayerDataSource(
         DataSourceType.network,
         Constants.bugBuckBunnyVideoUrl,
       );
@@ -68,7 +68,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       BetterPlayerUtils.log(
         'E2E: Event received: ${event.betterPlayerEventType}',
       );
-      if (event.betterPlayerEventType == BetterPlayerEventType.exception) {
+      if (event.betterPlayerEventType == PlayerEventType.exception) {
         BetterPlayerUtils.log('E2E: Exception event: ${event.parameters}');
         setState(() {
           _errorDescription = _betterPlayerController
@@ -77,7 +77,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
               .errorDescription;
         });
       } else if (event.betterPlayerEventType ==
-          BetterPlayerEventType.setupDataSource) {
+          PlayerEventType.setupDataSource) {
         BetterPlayerUtils.log('E2E: setupDataSource event');
         setState(() {
           _errorDescription = null;
@@ -97,7 +97,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     DataSourceType type, {
     DrmConfiguration? drmConfiguration,
   }) {
-    final betterPlayerDataSource = BetterPlayerDataSource(
+    final betterPlayerDataSource = PlayerDataSource(
       type,
       url,
       drmConfiguration: drmConfiguration,

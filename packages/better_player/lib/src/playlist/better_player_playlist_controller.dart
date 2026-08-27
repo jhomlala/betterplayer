@@ -5,9 +5,9 @@ import 'package:better_player/better_player.dart';
 class BetterPlayerPlaylistController {
   BetterPlayerPlaylistController(
     this._betterPlayerDataSourceList, {
-    this.betterPlayerConfiguration = const BetterPlayerConfiguration(),
+    this.betterPlayerConfiguration = const PlayerConfiguration(),
     this.betterPlayerPlaylistConfiguration =
-        const BetterPlayerPlaylistConfiguration(),
+        const PlayerPlaylistConfiguration(),
   }) : assert(
          _betterPlayerDataSourceList.isNotEmpty,
          "Better Player data source list can't be empty",
@@ -16,13 +16,13 @@ class BetterPlayerPlaylistController {
   }
 
   ///List of data sources set for playlist.
-  final List<BetterPlayerDataSource> _betterPlayerDataSourceList;
+  final List<PlayerDataSource> _betterPlayerDataSourceList;
 
   //General configuration of Better Player
-  final BetterPlayerConfiguration betterPlayerConfiguration;
+  final PlayerConfiguration betterPlayerConfiguration;
 
   ///Playlist configuration of Better Player
-  final BetterPlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
+  final PlayerPlaylistConfiguration betterPlayerPlaylistConfiguration;
 
   ///BetterPlayerController instance
   BetterPlayerController? _betterPlayerController;
@@ -62,7 +62,7 @@ class BetterPlayerPlaylistController {
 
   /// Setup new data source list. Pauses currently played video and init new data
   /// source list. Previous data source list will be removed.
-  void setupDataSourceList(List<BetterPlayerDataSource> dataSourceList) {
+  void setupDataSourceList(List<PlayerDataSource> dataSourceList) {
     _betterPlayerController?.pause();
     _betterPlayerDataSourceList.clear();
     _betterPlayerDataSourceList.addAll(dataSourceList);
@@ -88,11 +88,11 @@ class BetterPlayerPlaylistController {
     _changingToNextVideo = false;
   }
 
-  ///Handle BetterPlayerEvent from BetterPlayerController. Used to control
+  ///Handle PlayerEvent from BetterPlayerController. Used to control
   ///startup of next video timer.
-  void _handleEvent(BetterPlayerEvent betterPlayerEvent) {
+  void _handleEvent(PlayerEvent betterPlayerEvent) {
     if (betterPlayerEvent.betterPlayerEventType ==
-        BetterPlayerEventType.finished) {
+        PlayerEventType.finished) {
       if (_getNextDataSourceIndex() != -1) {
         _betterPlayerController!.startNextVideoTimer();
       }

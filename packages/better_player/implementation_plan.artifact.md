@@ -5,7 +5,7 @@ This plan covers the first five points identified for improving the federated pl
 ## User Review Required
 
 > [!IMPORTANT]
-> This refactor involves moving and renaming several core classes and enums. While I will update all internal references, external users of the library (if any) might be affected by these changes if they were relying on the specific names `BetterPlayerDataSourceType` or `BetterPlayerVideoFormat`.
+> This refactor involves moving and renaming several core classes and enums. While I will update all internal references, external users of the library (if any) might be affected by these changes if they were relying on the specific names `PlayerDataSourceType` or `BetterPlayerVideoFormat`.
 
 ## Proposed Changes
 
@@ -20,7 +20,7 @@ Remove in favor of `DataSourceType` from PI.
 #### [DELETE] [better_player_video_format.dart](file:///C:/Users/jhoml/betterplayer/packages/better_player/lib/src/configuration/better_player_video_format.dart)
 Remove in favor of `VideoFormat` from PI.
 
-#### [MODIFY] [better_player_data_source.dart](file:///C:/Users/jhoml/betterplayer/packages/better_player/lib/src/configuration/better_player_data_source.dart)
+#### [MODIFY] [player_data_source.dart](file:///C:/Users/jhoml/betterplayer/packages/better_player/lib/src/configuration/player_data_source.dart)
 Update to use `DataSourceType` and `VideoFormat` from PI.
 
 ---

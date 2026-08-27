@@ -2,9 +2,9 @@
 import 'package:material_ui/material_ui.dart';
 
 ///Configuration of subtitles - colors/padding/font. Used in
-///BetterPlayerConfiguration.
-class BetterPlayerSubtitlesConfiguration {
-  const BetterPlayerSubtitlesConfiguration({
+///PlayerConfiguration.
+class PlayerSubtitlesConfiguration {
+  const PlayerSubtitlesConfiguration({
     this.fontSize = 14,
     this.fontColor = Colors.white,
     this.outlineEnabled = true,

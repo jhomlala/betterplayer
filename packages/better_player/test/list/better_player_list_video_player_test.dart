@@ -25,7 +25,7 @@ void main() {
 
   group('BetterPlayerListVideoPlayer tests', () {
     testWidgets('Initialization works', (tester) async {
-      final dataSource = BetterPlayerDataSource.network(
+      final dataSource = PlayerDataSource.network(
         'https://example.com/video.mp4',
       );
       await tester.pumpWidget(
@@ -41,7 +41,7 @@ void main() {
     });
 
     testWidgets('Controller works correctly', (tester) async {
-      final dataSource = BetterPlayerDataSource.network(
+      final dataSource = PlayerDataSource.network(
         'https://example.com/video.mp4',
       );
       final listController = BetterPlayerListVideoPlayerController();

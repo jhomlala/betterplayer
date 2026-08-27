@@ -5,12 +5,12 @@ title: General Configuration
 
 # General Configuration
 
-The `BetterPlayerConfiguration` class serves as the primary way to define the behavior and appearance of the player. This configuration object is passed to the `BetterPlayerController` during its initialization.
+The `PlayerConfiguration` class serves as the primary way to define the behavior and appearance of the player. This configuration object is passed to the `BetterPlayerController` during its initialization.
 
 ## Implementation Example
 
 ```dart
-var betterPlayerConfiguration = BetterPlayerConfiguration(
+var betterPlayerConfiguration = PlayerConfiguration(
     autoPlay: true,
     looping: true,
     fullScreenByDefault: true,
@@ -19,7 +19,7 @@ var betterPlayerConfiguration = BetterPlayerConfiguration(
 
 ## Configuration Parameters
 
-Below is a detailed list of available options within `BetterPlayerConfiguration`:
+Below is a detailed list of available options within `PlayerConfiguration`:
 
 ### Playback Options
 *   **`autoPlay`**: Automatically start video playback once the widget is displayed.
@@ -56,8 +56,8 @@ Enabling `autoDetectFullscreenDeviceOrientation` is highly recommended for apps 
 *   **`subtitlesConfiguration`**: Defines the styling and behavior of subtitles.
 *   **`controlsConfiguration`**: Deep customization of the player's UI controls.
 *   **`rotation`**: Rotates the video box by a specific degree (0, 90, 180, 270). This is useful for correcting the orientation of user-uploaded videos.
-*   **`translations`**: A list of `BetterPlayerTranslations` for localized UI strings.
-*   **`eventListener`**: A callback function that receives all `BetterPlayerEvent` notifications.
+*   **`translations`**: A list of `PlayerTranslations` for localized UI strings.
+*   **`eventListener`**: A callback function that receives all `PlayerEvent` notifications.
 *   **`errorBuilder`**: A function that returns a custom widget when an error occurs. Use this to provide branded error messages or localized recovery instructions.
 *   **`playerVisibilityChangedBehavior`**: A callback to handle behavior changes based on player visibility.
 *   **`autoDispose`**: If enabled (default: true), automatically disposes of the controller when the widget is destroyed.
