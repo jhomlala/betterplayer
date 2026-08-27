@@ -19,10 +19,10 @@ public class FlutterError: NSObject {
 }
 public typealias FlutterResult = (Any?) -> Void
 
-public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoaderDelegate {
+@objc public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoaderDelegate {
     public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) { super.init() }
 }
-public class CacheManager: NSObject {
+@objc public class CacheManager: NSObject {
     public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: [NSObject: AnyObject]) -> AVPlayerItem? { return nil }
 }
 public class BetterPlayerView: UIView {
@@ -161,7 +161,7 @@ private var presentationSizeContext = 0
 
     /// Sets the video aspect ratio gravity.
     /// - Parameter gravity: The gravity to apply.
-    public func setAspectRatio(_ gravity: AVLayerVideoGravity) {
+    @objc public func setAspectRatio(_ gravity: AVLayerVideoGravity) {
         self.videoGravity = gravity
 
         if let playerLayer = playerView?.layer as? AVPlayerLayer {
@@ -269,7 +269,7 @@ private var presentationSizeContext = 0
     // MARK: - Data Source Handling
 
     /// Sets the data source from an asset path.
-    public func setDataSourceAsset(_ assetPath: String, key: String?, certificateUrl: String?, licenseUrl: String?, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int) {
+    @objc public func setDataSourceAsset(_ assetPath: String, key: String?, certificateUrl: String?, licenseUrl: String?, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int) {
         if let path = Bundle.main.path(forResource: assetPath, ofType: nil) {
             let url = URL(fileURLWithPath: path)
             setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: false, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: nil)
@@ -277,7 +277,7 @@ private var presentationSizeContext = 0
     }
 
     /// Sets the data source from a URL.
-    public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
+    @objc public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
         self.overriddenDuration = 0
 
         let item: AVPlayerItem
@@ -526,18 +526,18 @@ private var presentationSizeContext = 0
     }
 
     /// Returns the current playback position in milliseconds.
-    public func position() -> Int64 {
+    @objc public func position() -> Int64 {
         return BetterPlayerTimeUtils.cmTimeToMillis(player.currentTime())
     }
 
     /// Returns the absolute position in milliseconds for live streams.
-    public func absolutePosition() -> Int64 {
+    @objc public func absolutePosition() -> Int64 {
         let interval = player.currentItem?.currentDate()?.timeIntervalSince1970 ?? 0
         return BetterPlayerTimeUtils.timeIntervalToMillis(interval)
     }
 
     /// Returns the total duration of the media in milliseconds.
-    public func duration() -> Int64 {
+    @objc public func duration() -> Int64 {
         let time: CMTime
         if #available(iOS 13, *) {
             time = player.currentItem?.duration ?? .zero
@@ -603,7 +603,7 @@ private var presentationSizeContext = 0
 
     /// Sets Picture-in-Picture state.
     /// - Parameter pictureInPicture: Whether PiP should be active.
-    public func setPictureInPicture(_ pictureInPicture: Bool) {
+    @objc public func setPictureInPicture(_ pictureInPicture: Bool) {
         self.pictureInPicture = pictureInPicture
         if #available(iOS 9.0, *) {
             if let pip = pipController, self.pictureInPicture && !pip.isPictureInPictureActive {
@@ -615,7 +615,7 @@ private var presentationSizeContext = 0
     }
 
     /// Sets the completion handler for restoring UI after PiP stops.
-    public func setRestoreUserInterfaceForPIPStopCompletionHandler(_ restore: Bool) {
+    @objc public func setRestoreUserInterfaceForPIPStopCompletionHandler(_ restore: Bool) {
         restoreUIOnPipStop?(restore)
         restoreUIOnPipStop = nil
     }
@@ -633,7 +633,7 @@ private var presentationSizeContext = 0
 
     /// Enables Picture-in-Picture for the given frame.
     /// - Parameter frame: The frame for PiP.
-    public func enablePictureInPicture(_ frame: CGRect) {
+    @objc public func enablePictureInPicture(_ frame: CGRect) {
         disablePictureInPicture()
         usePlayerLayer(frame)
     }
@@ -674,7 +674,7 @@ private var presentationSizeContext = 0
     }
 
     /// Disables Picture-in-Picture.
-    public func disablePictureInPicture() {
+    @objc public func disablePictureInPicture() {
         setPictureInPicture(true)
         if let layer = playerLayerRef {
             layer.removeFromSuperlayer()
@@ -735,7 +735,7 @@ private var presentationSizeContext = 0
     // MARK: - Disposal
 
     /// Clears the player state.
-    public func clear() {
+    @objc public func clear() {
         isInitialized = false
         isPlaying = false
         disposed = false
@@ -747,7 +747,7 @@ private var presentationSizeContext = 0
     }
 
     /// Disposes the player without affecting the event channel.
-    public func disposeSansEventChannel() {
+    @objc public func disposeSansEventChannel() {
         do {
             clear()
         }
