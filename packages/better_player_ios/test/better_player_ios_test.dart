@@ -16,7 +16,7 @@ void main() {
       final widget = iosPlayer.buildView(1);
       expect(widget, isA<UiKitView>());
       final uiKitView = widget as UiKitView;
-      expect(uiKitView.viewType, 'pl.hasoft.better_player');
+      expect(uiKitView.viewType, 'better_player_view');
       expect(uiKitView.creationParams, {'textureId': 1});
     });
 
