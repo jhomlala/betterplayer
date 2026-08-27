@@ -26,7 +26,8 @@ let package = Package(
         .target(
             name: "better_player_ios_objc",
             dependencies: ["better_player_ios"],
-            path: "Sources/better_player_ios_objc"
+            path: "Sources/better_player_ios_objc",
+            publicHeadersPath: ""
         )
     ]
 )
