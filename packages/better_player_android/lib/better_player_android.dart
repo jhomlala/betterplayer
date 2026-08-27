@@ -60,7 +60,7 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
       onError$async: true,
     ));
 
-    final player = BetterPlayerApi.Companion.createPlayer(Jni.context, callback);
+    final player = BetterPlayerApi.Companion.createPlayer(androidApplicationContext, callback);
     if (player == null) return null;
     
     final textureId = player.textureId;
@@ -156,7 +156,7 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     JMap<JString, JString>? headersMap;
     if (map['headers'] != null) {
       final m = map['headers'] as Map;
-      headersMap = JMap.hash(JString.type, JString.type);
+      headersMap = (JHashMap() as JObject) as JMap<JString, JString>;
       m.forEach((k, v) {
         headersMap!.put(k.toString().toJString(), v.toString().toJString());
       });
@@ -165,14 +165,14 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     JMap<JString, JString>? drmHeadersMap;
     if (map['drmHeaders'] != null) {
       final m = map['drmHeaders'] as Map;
-      drmHeadersMap = JMap.hash(JString.type, JString.type);
+      drmHeadersMap = (JHashMap() as JObject) as JMap<JString, JString>;
       m.forEach((k, v) {
         drmHeadersMap!.put(k.toString().toJString(), v.toString().toJString());
       });
     }
 
     player.setDataSource(
-      Jni.context,
+      androidApplicationContext,
       (map['key'] as String?)?.toJString(),
       (map['uri'] as String? ?? map['asset'] as String?)?.toJString(),
       (map['formatHint'] as String?)?.toJString(),
