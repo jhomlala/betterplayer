@@ -38,10 +38,10 @@ jobs:
             better_player_android:\
               path: ..' pubspec.yaml
           
-          # Downgrade Kotlin version to 1.9.24 in the example app to avoid jnigen metadata crash
-          sed -i.bak 's/id("org.jetbrains.kotlin.android") version "[0-9\.]*"/id("org.jetbrains.kotlin.android") version "1.9.24"/' android/settings.gradle.kts
-          
           flutter pub get
+
+          # Monkey-patch jnigen to support the latest Kotlin metadata format
+          find ~/.pub-cache/hosted -path "*/jnigen*/java/build.gradle.kts" -exec sed -i.bak 's/kotlin-metadata-jvm:2.2.0/kotlin-metadata-jvm:2.+/' {} +
           flutter build apk --debug
 
       - name: Generate Android FFI (jnigen)
