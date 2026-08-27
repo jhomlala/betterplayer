@@ -16,4 +16,12 @@ import Foundation
         players[nextId] = player
         return nextId
     }
+
+    @objc public static func getPlayer(_ textureId: Int64) -> BetterPlayer? {
+        return players[textureId]
+    }
+
+    @objc public static func createCacheManager() -> CacheManager {
+        return CacheManager()
+    }
 }
