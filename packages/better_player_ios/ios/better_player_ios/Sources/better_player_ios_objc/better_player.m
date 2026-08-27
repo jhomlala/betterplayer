@@ -228,52 +228,6 @@ __attribute__((visibility("default"))) __attribute__((used))
 void  _x224me_protocolTrampoline_1tz5yf(id target, void * sel, id arg1, id arg2, id arg3) {
   return ((_ProtocolTrampoline_1)((id (*)(id, SEL, SEL))objc_msgSend)(target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1, arg2, arg3);
 }
-
-__attribute__((visibility("default")))
-@interface _x224me_BlockArgs_xtuoz7 : NSObject
-@property (copy) id block;
-@property (strong) id arg0;
-@end
-@implementation _x224me_BlockArgs_xtuoz7
-@end
-
-typedef void  (^_ListenerTrampoline_3)(id arg0);
-__attribute__((visibility("default"))) __attribute__((used))
-_ListenerTrampoline_3 _x224me_wrapListenerBlock_xtuoz7(
-    int64_t port, DOBJC_Context* ctx) NS_RETURNS_RETAINED {
-  __block __weak _ListenerTrampoline_3 weakSelfBlock = nil;
-  _ListenerTrampoline_3 strongSelfBlock = [^void(id arg0) {
-    @autoreleasepool {
-      _x224me_BlockArgs_xtuoz7* args = [[_x224me_BlockArgs_xtuoz7 alloc] init];
-      args.block = weakSelfBlock;
-      args.arg0 = arg0;
-      ctx->invokeListenerPortBlock(port, (__bridge_retained void*)args);
-    }
-  } copy];
-  weakSelfBlock = strongSelfBlock;
-  return strongSelfBlock;
-}
-
-typedef void  (^_BlockingTrampoline_3)(void * waiter, id arg0);
-__attribute__((visibility("default"))) __attribute__((used))
-_ListenerTrampoline_3 _x224me_wrapBlockingBlock_xtuoz7(int64_t port, DOBJC_Context* ctx,
-    void (*directInvoke)(void*)) NS_RETURNS_RETAINED {
-  BLOCKING_BLOCK_IMPL(ctx, _ListenerTrampoline_3, ^void(id arg0), {
-    @autoreleasepool {
-      _x224me_BlockArgs_xtuoz7* args = [[_x224me_BlockArgs_xtuoz7 alloc] init];
-      args.block = weakSelfBlock;
-      args.arg0 = arg0;
-      directInvoke((__bridge_retained void*)args);
-    }
-  }, {
-    @autoreleasepool {
-      _x224me_BlockArgs_xtuoz7* args = [[_x224me_BlockArgs_xtuoz7 alloc] init];
-      args.block = weakSelfBlock;
-      args.arg0 = arg0;
-      ctx->invokeBlockingPortBlock(port, (__bridge_retained void*)args, waiter);
-    }
-  });
-}
 #undef BLOCKING_BLOCK_IMPL
 
 #pragma clang diagnostic pop

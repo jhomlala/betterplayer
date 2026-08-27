@@ -103,26 +103,6 @@ external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapBlockingBlock_fjrv01(
   ffi.Pointer<objc.ObjCBlockImpl> Function(
     ffi.Int64,
     ffi.Pointer<objc.DOBJC_Context>,
-    ffi.Pointer<
-      ffi.NativeFunction<
-        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> args)
-      >
-    >,
-  )
->(isLeaf: true)
-external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapBlockingBlock_xtuoz7(
-  int port,
-  ffi.Pointer<objc.DOBJC_Context> context,
-  ffi.Pointer<
-    ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> args)>
-  >
-  directInvoke,
-);
-
-@ffi.Native<
-  ffi.Pointer<objc.ObjCBlockImpl> Function(
-    ffi.Int64,
-    ffi.Pointer<objc.DOBJC_Context>,
   )
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapListenerBlock_1s56lr9(
@@ -148,17 +128,6 @@ external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapListenerBlock_1tz5yf(
   )
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapListenerBlock_fjrv01(
-  int port,
-  ffi.Pointer<objc.DOBJC_Context> context,
-);
-
-@ffi.Native<
-  ffi.Pointer<objc.ObjCBlockImpl> Function(
-    ffi.Int64,
-    ffi.Pointer<objc.DOBJC_Context>,
-  )
->(isLeaf: true)
-external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapListenerBlock_xtuoz7(
   int port,
   ffi.Pointer<objc.DOBJC_Context> context,
 );
@@ -497,6 +466,47 @@ extension BetterPlayer$Methods on BetterPlayer {
     );
   }
 
+  /// setDataSourceURLString:key:certificateUrl:licenseUrl:useCache:cacheKey:cacheManager:overriddenDuration:videoExtension:
+  void setDataSourceURLString(
+    objc.NSString urlString, {
+    objc.NSString? key,
+    objc.NSString? certificateUrl,
+    objc.NSString? licenseUrl,
+    required bool useCache,
+    objc.NSString? cacheKey,
+    required CacheManager cacheManager,
+    required int overriddenDuration,
+    objc.NSString? videoExtension,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = urlString.ref;
+    final _$$ref$2 = key?.ref;
+    final _$$ref$3 = certificateUrl?.ref;
+    final _$$ref$4 = licenseUrl?.ref;
+    final _$$ref$5 = cacheKey?.ref;
+    final _$$ref$6 = cacheManager.ref;
+    final _$$ref$7 = videoExtension?.ref;
+    _objc_msgSend_aqrvxd(
+      _$$ref.pointer,
+      _sel_setDataSourceURLString_key_certificateUrl_licenseUrl_useCache_cacheKey_cacheManager_overriddenDuration_videoExtension_,
+      _$$ref$1.pointer,
+      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$3?.pointer ?? ffi.nullptr,
+      _$$ref$4?.pointer ?? ffi.nullptr,
+      useCache,
+      _$$ref$5?.pointer ?? ffi.nullptr,
+      _$$ref$6.pointer,
+      overriddenDuration,
+      _$$ref$7?.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// setLooping:
+  void setLooping(bool looping) {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1s56lr9(_$$ref.pointer, _sel_setLooping_, looping);
+  }
+
   /// Sets whether the audio should mix with others.
   /// \param mixWithOthers Whether to mix audio.
   void setMixWithOthers(bool mixWithOthers) {
@@ -531,23 +541,9 @@ extension BetterPlayer$Methods on BetterPlayer {
 
   /// Sets the playback speed.
   /// \param speed The playback speed.
-  ///
-  /// \param result The Flutter result to report success or failure.
-  void setSpeed(
-    double speed, {
-    required objc.ObjCBlock<
-      ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)
-    >
-    result,
-  }) {
+  void setSpeed(double speed) {
     final _$$ref = object$.ref;
-    final _$$ref$1 = result.ref;
-    _objc_msgSend_16dy26p(
-      _$$ref.pointer,
-      _sel_setSpeed_result_,
-      speed,
-      _$$ref$1.pointer,
-    );
+    _objc_msgSend_hwm8nu(_$$ref.pointer, _sel_setSpeed_, speed);
   }
 
   /// Sets track parameters like bitrate and resolution.
@@ -623,6 +619,15 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
     return BetterPlayerApi.fromPointer($ret, retain: false, release: true);
   }
 
+  /// createCacheManager
+  static CacheManager createCacheManager() {
+    final $ret = _objc_msgSend_151sglz(
+      _class_BetterPlayerApi,
+      _sel_createCacheManager,
+    );
+    return CacheManager.fromPointer($ret, retain: true, release: true);
+  }
+
   /// createPlayerWithCallback:
   static int createPlayerWithCallback(BetterPlayerCallback callback) {
     final _$$ref = callback.ref;
@@ -631,6 +636,18 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
       _sel_createPlayerWithCallback_,
       _$$ref.pointer,
     );
+  }
+
+  /// getPlayer:
+  static BetterPlayer? getPlayer(int textureId) {
+    final $ret = _objc_msgSend_1ya1kjn(
+      _class_BetterPlayerApi,
+      _sel_getPlayer_,
+      textureId,
+    );
+    return $ret.address == 0
+        ? null
+        : BetterPlayer.fromPointer($ret, retain: true, release: true);
   }
 
   /// new
@@ -1724,178 +1741,6 @@ extension ObjCBlock_ffiVoid_ffiVoid_NSString_NSString_NSString$CallExtension
   }
 }
 
-/// Construction methods for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>`.
-abstract final class ObjCBlock_ffiVoid_objcObjCObjectImpl {
-  /// Returns a block that wraps the given raw block pointer.
-  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>
-  fromPointer(
-    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
-    bool retain = false,
-    bool release = false,
-  }) => objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>(
-    pointer,
-    retain: retain,
-    release: release,
-  );
-
-  /// Creates a block from a C function pointer.
-  ///
-  /// This block must be invoked by native code running on the same thread as
-  /// the isolate that registered it. Invoking the block on the wrong thread
-  /// will result in a crash.
-  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>
-  fromFunctionPointer(
-    ffi.Pointer<
-      ffi.NativeFunction<
-        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
-      >
-    >
-    ptr,
-  ) => objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>(
-    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
-    retain: false,
-    release: true,
-  );
-
-  /// Creates a block from a Dart function.
-  ///
-  /// This block must be invoked by native code running on the same thread as
-  /// the isolate that registered it. Invoking the block on the wrong thread
-  /// will result in a crash.
-  ///
-  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
-  /// until it is garbage collected by both Dart and ObjC.
-  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>
-  fromFunction(
-    void Function(objc.ObjCObject?) fn, {
-    bool keepIsolateAlive = true,
-  }) => objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>(
-    objc.newClosureBlock(_closureCallable, (
-      ffi.Pointer<objc.ObjCObjectImpl> arg0,
-    ) {
-      return fn(
-        arg0.address == 0
-            ? null
-            : objc.ObjCObject(arg0, retain: true, release: true),
-      );
-    }, keepIsolateAlive),
-    retain: false,
-    release: true,
-  );
-
-  /// Creates a listener block from a Dart function.
-  ///
-  /// This block can be invoked from any thread, but only supports void
-  /// functions, and is not run synchronously. Async functions (ie returning
-  /// Future<void>) are not supported.
-  ///
-  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
-  /// until it is garbage collected by both Dart and ObjC.
-  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>
-  listener(void Function(objc.ObjCObject?) fn, {bool keepIsolateAlive = true}) {
-    return objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>(
-      objc.newBlockPort(_x224me_wrapListenerBlock_xtuoz7, (
-        ffi.Pointer<objc.ObjCObjectImpl> rawArgs,
-      ) {
-        final args = _BlockArgs_1boj2ic.fromPointer(
-          rawArgs,
-          retain: false,
-          release: false,
-        );
-
-        fn(args.arg0);
-      }, keepIsolateAlive),
-      retain: false,
-      release: true,
-    );
-  }
-
-  /// Creates a blocking block from a Dart function.
-  ///
-  /// This callback can be invoked from any native thread, and will block the
-  /// caller until the callback is handled by the Dart isolate that created
-  /// the block. Async functions (ie returning Future<void>) are not supported.
-  ///
-  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
-  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
-  /// has shut down, and the block is invoked by native code, it may block
-  /// indefinitely, or have other undefined behavior.
-  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>
-  blocking(void Function(objc.ObjCObject?) fn, {bool keepIsolateAlive = true}) {
-    return objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>(
-      objc.newBlockingBlockPort(_x224me_wrapBlockingBlock_xtuoz7, (
-        ffi.Pointer<objc.ObjCObjectImpl> rawArgs,
-      ) {
-        final args = _BlockArgs_1boj2ic.fromPointer(
-          rawArgs,
-          retain: false,
-          release: false,
-        );
-
-        fn(args.arg0);
-      }, keepIsolateAlive),
-      retain: false,
-      release: true,
-    );
-  }
-
-  static void _fnPtrTrampoline(
-    ffi.Pointer<objc.ObjCBlockImpl> block,
-    ffi.Pointer<objc.ObjCObjectImpl> arg0,
-  ) => block.ref.target
-      .cast<
-        ffi.NativeFunction<
-          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
-        >
-      >()
-      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
-  static ffi.Pointer<ffi.Void> _fnPtrCallable =
-      ffi.Pointer.fromFunction<
-            ffi.Void Function(
-              ffi.Pointer<objc.ObjCBlockImpl>,
-              ffi.Pointer<objc.ObjCObjectImpl>,
-            )
-          >(_fnPtrTrampoline)
-          .cast();
-  static void _closureTrampoline(
-    ffi.Pointer<objc.ObjCBlockImpl> block,
-    ffi.Pointer<objc.ObjCObjectImpl> arg0,
-  ) =>
-      (objc.getBlockClosure(block)
-          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
-  static ffi.Pointer<ffi.Void> _closureCallable =
-      ffi.Pointer.fromFunction<
-            ffi.Void Function(
-              ffi.Pointer<objc.ObjCBlockImpl>,
-              ffi.Pointer<objc.ObjCObjectImpl>,
-            )
-          >(_closureTrampoline)
-          .cast();
-}
-
-/// Call operator for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)>`.
-extension ObjCBlock_ffiVoid_objcObjCObjectImpl$CallExtension
-    on objc.ObjCBlock<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl>?)> {
-  void call(objc.ObjCObject? arg0) {
-    final _$$ref = arg0?.ref;
-    return ref.pointer.ref.invoke
-        .cast<
-          ffi.NativeFunction<
-            ffi.Void Function(
-              ffi.Pointer<objc.ObjCBlockImpl> block,
-              ffi.Pointer<objc.ObjCObjectImpl> arg0,
-            )
-          >
-        >()
-        .asFunction<
-          void Function(
-            ffi.Pointer<objc.ObjCBlockImpl>,
-            ffi.Pointer<objc.ObjCObjectImpl>,
-          )
-        >()(ref.pointer, _$$ref?.pointer ?? ffi.nullptr);
-  }
-}
-
 /// WARNING: UIView is a stub. To generate bindings for this class, include
 /// UIView in your config's objc-interfaces list.
 ///
@@ -1910,42 +1755,6 @@ extension type UIView._(objc.ObjCObject object$) implements objc.ObjCObject {
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
-}
-
-extension type _BlockArgs_1boj2ic._(objc.ObjCObject object$)
-    implements objc.ObjCObject {
-  /// Constructs a [_BlockArgs_1boj2ic] that points to the same underlying object as [other].
-  _BlockArgs_1boj2ic.as(objc.ObjCObject other) : object$ = other {
-    assert(isA(object$));
-  }
-
-  /// Constructs a [_BlockArgs_1boj2ic] that wraps the given raw object pointer.
-  _BlockArgs_1boj2ic.fromPointer(
-    ffi.Pointer<objc.ObjCObjectImpl> other, {
-    bool retain = false,
-    bool release = false,
-  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
-    assert(isA(object$));
-  }
-
-  /// Returns whether [obj] is an instance of [_BlockArgs_1boj2ic].
-  static bool isA(objc.ObjCObject? obj) => obj == null
-      ? false
-      : _objc_msgSend_19nvye5(
-          obj.ref.pointer,
-          _sel_isKindOfClass_,
-          _class__BlockArgs_1boj2ic,
-        );
-}
-
-extension _BlockArgs_1boj2ic$Methods on _BlockArgs_1boj2ic {
-  objc.ObjCObject? get arg0 {
-    final _$$ref = object$.ref;
-    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_arg0);
-    return $ret.address == 0
-        ? null
-        : objc.ObjCObject($ret, retain: true, release: true);
-  }
 }
 
 extension type _BlockArgs_1ptzs7z._(objc.ObjCObject object$)
@@ -2098,16 +1907,6 @@ final _class_BetterPlayerApi = objc.getClass(
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
-  symbol: 'OBJC_CLASS_\$__x224me_BlockArgs_xtuoz7',
-)
-external ffi.Pointer<objc.ObjCObjectImpl> _class__BlockArgs_1boj2ic_raw;
-final _class__BlockArgs_1boj2ic = objc.getClass(
-  "_x224me_BlockArgs_xtuoz7",
-  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
-    _class__BlockArgs_1boj2ic_raw,
-  ).cast(),
-);
-@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
   symbol: 'OBJC_CLASS_\$__x224me_BlockArgs_fjrv01',
 )
 external ffi.Pointer<objc.ObjCObjectImpl> _class__BlockArgs_1ptzs7z_raw;
@@ -2150,25 +1949,6 @@ final _objc_msgSend_151sglz = objc.msgSendPointer
       ffi.Pointer<objc.ObjCObjectImpl> Function(
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCSelector>,
-      )
-    >();
-final _objc_msgSend_16dy26p = objc.msgSendPointer
-    .cast<
-      ffi.NativeFunction<
-        ffi.Void Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-          ffi.Double,
-          ffi.Pointer<objc.ObjCBlockImpl>,
-        )
-      >
-    >()
-    .asFunction<
-      void Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        double,
-        ffi.Pointer<objc.ObjCBlockImpl>,
       )
     >();
 final _objc_msgSend_17gvxvj = objc.msgSendPointer
@@ -2394,6 +2174,23 @@ final _objc_msgSend_1vngrzb = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
+final _objc_msgSend_1ya1kjn = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObjectImpl> Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Int64,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObjectImpl> Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+      )
+    >();
 final _objc_msgSend_4sp4xj = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -2460,6 +2257,39 @@ final _objc_msgSend_91o635 = objc.msgSendPointer
       bool Function(
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
+final _objc_msgSend_aqrvxd = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Long,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        bool,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
 final _objc_msgSend_e3qsqz = objc.msgSendPointer
@@ -2606,6 +2436,7 @@ late final _sel_arg3 = objc.registerName("arg3");
 late final _sel_callback = objc.registerName("callback");
 late final _sel_clear = objc.registerName("clear");
 late final _sel_conformsToProtocol_ = objc.registerName("conformsToProtocol:");
+late final _sel_createCacheManager = objc.registerName("createCacheManager");
 late final _sel_createPlayerWithCallback_ = objc.registerName(
   "createPlayerWithCallback:",
 );
@@ -2620,6 +2451,7 @@ late final _sel_duration = objc.registerName("duration");
 late final _sel_enablePictureInPicture_ = objc.registerName(
   "enablePictureInPicture:",
 );
+late final _sel_getPlayer_ = objc.registerName("getPlayer:");
 late final _sel_init = objc.registerName("init");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 late final _sel_new = objc.registerName("new");
@@ -2652,10 +2484,15 @@ late final _sel_setDataSourceAsset_key_certificateUrl_licenseUrl_cacheKey_cacheM
     objc.registerName(
       "setDataSourceAsset:key:certificateUrl:licenseUrl:cacheKey:cacheManager:overriddenDuration:",
     );
+late final _sel_setDataSourceURLString_key_certificateUrl_licenseUrl_useCache_cacheKey_cacheManager_overriddenDuration_videoExtension_ =
+    objc.registerName(
+      "setDataSourceURLString:key:certificateUrl:licenseUrl:useCache:cacheKey:cacheManager:overriddenDuration:videoExtension:",
+    );
 late final _sel_setDataSourceURL_key_certificateUrl_licenseUrl_headers_useCache_cacheKey_cacheManager_overriddenDuration_videoExtension_ =
     objc.registerName(
       "setDataSourceURL:key:certificateUrl:licenseUrl:headers:useCache:cacheKey:cacheManager:overriddenDuration:videoExtension:",
     );
+late final _sel_setLooping_ = objc.registerName("setLooping:");
 late final _sel_setMixWithOthers_ = objc.registerName("setMixWithOthers:");
 late final _sel_setNextId_ = objc.registerName("setNextId:");
 late final _sel_setPictureInPicture_ = objc.registerName(
@@ -2664,7 +2501,7 @@ late final _sel_setPictureInPicture_ = objc.registerName(
 late final _sel_setPlayers_ = objc.registerName("setPlayers:");
 late final _sel_setRestoreUserInterfaceForPIPStopCompletionHandler_ = objc
     .registerName("setRestoreUserInterfaceForPIPStopCompletionHandler:");
-late final _sel_setSpeed_result_ = objc.registerName("setSpeed:result:");
+late final _sel_setSpeed_ = objc.registerName("setSpeed:");
 late final _sel_setTrackParametersWithWidth_height_bitrate_ = objc.registerName(
   "setTrackParametersWithWidth:height:bitrate:",
 );
