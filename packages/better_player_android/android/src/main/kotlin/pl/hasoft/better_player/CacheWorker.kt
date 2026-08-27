@@ -38,9 +38,8 @@ class CacheWorker(
             val headers: MutableMap<String, String> = HashMap()
             for (key in data.keyValueMap.keys) {
                 if (key.contains(BetterPlayerPlugin.HEADER_PARAMETER)) {
-                    val keySplit =
-                        key.split(BetterPlayerPlugin.HEADER_PARAMETER.toRegex()).toTypedArray()[0]
-                    headers[keySplit] = Objects.requireNonNull(data.keyValueMap[key]) as String
+                    val keySplit = key.split(BetterPlayerPlugin.HEADER_PARAMETER).toTypedArray()[1]
+                    headers[keySplit] = data.keyValueMap[key] as String
                 }
             }
             val uri = Uri.parse(url)
