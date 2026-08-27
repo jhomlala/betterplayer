@@ -29,7 +29,9 @@ jobs:
 
       - name: Install Android Dependencies
         working-directory: packages/better_player_android
-        run: flutter pub get
+        run: |
+          flutter pub get
+          flutter create --platforms=android example
 
       - name: Generate Android FFI (jnigen)
         working-directory: packages/better_player_android
