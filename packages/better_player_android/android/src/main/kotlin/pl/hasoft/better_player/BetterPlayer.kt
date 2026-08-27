@@ -60,7 +60,7 @@ import androidx.annotation.Keep
 @UnstableApi
 class BetterPlayer(
     context: Context,
-    private val textureEntry: SurfaceTextureEntry,
+    val textureEntry: SurfaceTextureEntry,
     private val callback: BetterPlayerCallback,
     customDefaultLoadControl: CustomDefaultLoadControl? = null
 ) {
@@ -97,6 +97,11 @@ class BetterPlayer(
         workManager = WorkManager.getInstance(context)
         workerObserverMap = HashMap()
         setupVideoPlayer(textureEntry)
+    }
+
+    @Keep
+    fun getTextureId(): Long {
+        return textureEntry.id()
     }
 
     @Keep
