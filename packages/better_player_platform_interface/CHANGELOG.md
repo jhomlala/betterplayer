@@ -1,3 +1,8 @@
+## 1.1.0
+
+* Refactor: Unified model names by removing 'Better' prefix.
+* Added fix_data.yaml for automated migration.
+
 ## Unreleased
 - none.
 
@@ -10,3 +15,4 @@
 * Updated: Consolidated core models (`DataSource`, `VideoEvent`, etc.) and `MethodChannelVideoPlayer` into this package.
 * Updated: Renamed `isPictureInPictureEnabled` to `isPictureInPictureSupported` for API consistency.
 * Added: `dataSourceToMap` serialization in `MethodChannelVideoPlayer` to allow platform-specific extensions.
+

@@ -1,3 +1,8 @@
+## 1.1.0
+
+* Refactor: Unified model names by removing 'Better' prefix.
+* Added fix_data.yaml for automated migration.
+
 ## Unreleased
 - none.
 
@@ -685,3 +690,4 @@
 
 ## 0.0.1
 * Initial release.
+
