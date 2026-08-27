@@ -1,5 +1,4 @@
 import Foundation
-import Flutter
 
 @objc public protocol BetterPlayerCallback {
     @objc func onEvent(_ event: String, parameters: String)
