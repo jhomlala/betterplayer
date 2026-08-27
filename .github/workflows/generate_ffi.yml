@@ -33,6 +33,11 @@ jobs:
           flutter pub get
           flutter create --platforms=android example
           cd example
+          # Inject path dependency to the plugin so it actually compiles!
+          sed -i.bak '/dependencies:/a\
+            better_player_android:\
+              path: ..' pubspec.yaml
+          flutter pub get
           flutter build apk --debug
 
       - name: Generate Android FFI (jnigen)
