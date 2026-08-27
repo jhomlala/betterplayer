@@ -400,7 +400,7 @@ private var presentationSizeContext = 0
         }
 
         if context == &timeRangeContext {
-            if let eventSink = eventSink, let item = object as? AVPlayerItem {
+            if callback != nil, let item = object as? AVPlayerItem {
                 var values: [[NSNumber]] = []
                 for rangeValue in item.loadedTimeRanges {
                     let range = rangeValue.timeRangeValue
@@ -473,7 +473,7 @@ private var presentationSizeContext = 0
 
     /// Handles transition to ready-to-play state.
     public func onReadyToPlay() {
-        guard let eventSink = eventSink, !isInitialized, key != nil else { return }
+        guard callback != nil, !isInitialized, key != nil else { return }
         guard player.currentItem != nil else { return }
         guard player.status == .readyToPlay else { return }
 
@@ -504,7 +504,7 @@ private var presentationSizeContext = 0
 
         isInitialized = true
         updatePlayingState()
-        eventSink(["event": "initialized",
+        sendEvent(["event": "initialized",
                    "duration": NSNumber(value: duration()),
                    "width": NSNumber(value: Float(width)),
                    "height": NSNumber(value: Float(height)),
@@ -757,7 +757,6 @@ private var presentationSizeContext = 0
     @objc public func dispose() {
         pause()
         disposeSansEventChannel()
-        eventChannel?.setStreamHandler(nil)
         disablePictureInPicture()
         setPictureInPicture(false)
         disposed = true
