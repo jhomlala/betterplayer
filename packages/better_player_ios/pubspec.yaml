@@ -9,11 +9,13 @@ environment:
   flutter: ">=3.47.0"
 
 dependencies:
+  objective_c: ^9.5.0
   flutter:
     sdk: flutter
   better_player_platform_interface: ^1.0.2
 
 dev_dependencies:
+  objective_c: ^9.5.0
   ffigen: ^21.0.0
   flutter_test:
     sdk: flutter
