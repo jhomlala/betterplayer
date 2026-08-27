@@ -35,8 +35,12 @@ jobs:
       - name: Build website
         run: npm run build
 
+      - name: Disable Jekyll
+        run: touch ./docs/build/.nojekyll
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/build
+
