@@ -58,10 +58,9 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                       _betterPlayerController.pause();
                       _betterPlayerController = BetterPlayerController(
                         PlayerConfiguration(
-                          controlsConfiguration:
-                              PlayerControlsConfiguration(
-                                playerTheme: _playerTheme,
-                              ),
+                          controlsConfiguration: PlayerControlsConfiguration(
+                            playerTheme: _playerTheme,
+                          ),
                         ),
                         betterPlayerDataSource: _dataSource,
                       );
@@ -76,10 +75,9 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                       _betterPlayerController.pause();
                       _betterPlayerController = BetterPlayerController(
                         PlayerConfiguration(
-                          controlsConfiguration:
-                              PlayerControlsConfiguration(
-                                playerTheme: _playerTheme,
-                              ),
+                          controlsConfiguration: PlayerControlsConfiguration(
+                            playerTheme: _playerTheme,
+                          ),
                         ),
                         betterPlayerDataSource: _dataSource,
                       );
@@ -94,17 +92,16 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
                       _betterPlayerController.pause();
                       _betterPlayerController = BetterPlayerController(
                         PlayerConfiguration(
-                          controlsConfiguration:
-                              PlayerControlsConfiguration(
-                                playerTheme: _playerTheme,
-                                customControlsBuilder:
-                                    (controller, onControlsVisibilityChanged) =>
-                                        CustomControlsWidget(
-                                          controller: controller,
-                                          onControlsVisibilityChanged:
-                                              onControlsVisibilityChanged,
-                                        ),
-                              ),
+                          controlsConfiguration: PlayerControlsConfiguration(
+                            playerTheme: _playerTheme,
+                            customControlsBuilder:
+                                (controller, onControlsVisibilityChanged) =>
+                                    CustomControlsWidget(
+                                      controller: controller,
+                                      onControlsVisibilityChanged:
+                                          onControlsVisibilityChanged,
+                                    ),
+                          ),
                         ),
                         betterPlayerDataSource: _dataSource,
                       );

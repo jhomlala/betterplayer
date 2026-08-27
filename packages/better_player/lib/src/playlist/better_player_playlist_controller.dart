@@ -91,8 +91,7 @@ class BetterPlayerPlaylistController {
   ///Handle PlayerEvent from BetterPlayerController. Used to control
   ///startup of next video timer.
   void _handleEvent(PlayerEvent betterPlayerEvent) {
-    if (betterPlayerEvent.betterPlayerEventType ==
-        PlayerEventType.finished) {
+    if (betterPlayerEvent.betterPlayerEventType == PlayerEventType.finished) {
       if (_getNextDataSourceIndex() != -1) {
         _betterPlayerController!.startNextVideoTimer();
       }

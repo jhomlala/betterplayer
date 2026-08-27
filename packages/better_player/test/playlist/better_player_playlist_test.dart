@@ -48,10 +48,9 @@ void main() {
       ];
       final playlistController = BetterPlayerPlaylistController(
         dataSourceList,
-        betterPlayerPlaylistConfiguration:
-            const PlayerPlaylistConfiguration(
-              nextVideoDelay: Duration.zero,
-            ),
+        betterPlayerPlaylistConfiguration: const PlayerPlaylistConfiguration(
+          nextVideoDelay: Duration.zero,
+        ),
       );
 
       // Manually trigger video finished event
@@ -71,10 +70,9 @@ void main() {
       ];
       final playlistController = BetterPlayerPlaylistController(
         dataSourceList,
-        betterPlayerPlaylistConfiguration:
-            const PlayerPlaylistConfiguration(
-              nextVideoDelay: Duration.zero,
-            ),
+        betterPlayerPlaylistConfiguration: const PlayerPlaylistConfiguration(
+          nextVideoDelay: Duration.zero,
+        ),
       );
 
       playlistController.betterPlayerController!.postEvent(

@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
-import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
+import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
@@ -61,8 +62,7 @@ class BetterPlayerController {
       _betterPlayerControlsConfiguration;
 
   ///Expose all active eventListeners
-  List<Function(PlayerEvent)?> get eventListeners =>
-      _eventListeners.sublist(1);
+  List<Function(PlayerEvent)?> get eventListeners => _eventListeners.sublist(1);
 
   /// Defines a event listener where video player events will be send.
   Function(PlayerEvent)? get eventListener =>
@@ -102,8 +102,7 @@ class BetterPlayerController {
   List<PlayerAsmsTrack> _betterPlayerAsmsTracks = [];
 
   ///List of tracks available for current data source. Used only for HLS / DASH.
-  List<PlayerAsmsTrack> get betterPlayerAsmsTracks =>
-      _betterPlayerAsmsTracks;
+  List<PlayerAsmsTrack> get betterPlayerAsmsTracks => _betterPlayerAsmsTracks;
 
   ///Currently selected player track. Used only for HLS / DASH.
   PlayerAsmsTrack? _betterPlayerAsmsTrack;
@@ -426,14 +425,13 @@ class BetterPlayerController {
           .toList();
 
       if (segmentsToLoad != null && segmentsToLoad.isNotEmpty) {
-        final subtitlesParsed =
-            await PlayerSubtitlesFactory.parseSubtitles(
-              PlayerSubtitlesSource(
-                type: _betterPlayerSubtitlesSource!.type,
-                headers: _betterPlayerSubtitlesSource!.headers,
-                urls: segmentsToLoad,
-              ),
-            );
+        final subtitlesParsed = await PlayerSubtitlesFactory.parseSubtitles(
+          PlayerSubtitlesSource(
+            type: _betterPlayerSubtitlesSource!.type,
+            headers: _betterPlayerSubtitlesSource!.headers,
+            urls: segmentsToLoad,
+          ),
+        );
 
         ///Additional check if current source of subtitles is same as source
         ///used to start loading subtitles. It can be different when user

@@ -191,8 +191,7 @@ void main() {
               if (event.betterPlayerEventType == PlayerEventType.seekTo) {
                 seekEventCalls += 1;
               }
-              if (event.betterPlayerEventType ==
-                  PlayerEventType.finished) {
+              if (event.betterPlayerEventType == PlayerEventType.finished) {
                 finishEventCalls += 1;
               }
             },
@@ -429,8 +428,7 @@ void main() {
           var setVolumeCalls = 0;
           betterPlayerMockController.addEventsListener(
             (event) {
-              if (event.betterPlayerEventType ==
-                  PlayerEventType.setVolume) {
+              if (event.betterPlayerEventType == PlayerEventType.setVolume) {
                 setVolumeCalls += 1;
               }
             },
@@ -482,8 +480,7 @@ void main() {
           var setSpeedCalls = 0;
           betterPlayerMockController.addEventsListener(
             (event) {
-              if (event.betterPlayerEventType ==
-                  PlayerEventType.setSpeed) {
+              if (event.betterPlayerEventType == PlayerEventType.setSpeed) {
                 setSpeedCalls += 1;
               }
             },
@@ -919,8 +916,7 @@ void main() {
           );
           PlayerEvent? exceptionEvent;
           controller.addEventsListener((event) {
-            if (event.betterPlayerEventType ==
-                PlayerEventType.exception) {
+            if (event.betterPlayerEventType == PlayerEventType.exception) {
               exceptionEvent = event;
             }
           });

@@ -23,8 +23,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
         DeviceOrientation.portraitDown,
       ],
     );
-    _betterPlayerPlaylistConfiguration =
-        const PlayerPlaylistConfiguration();
+    _betterPlayerPlaylistConfiguration = const PlayerPlaylistConfiguration();
   }
 
   final GlobalKey<BetterPlayerPlaylistState> _betterPlayerPlaylistStateKey =

@@ -178,8 +178,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             (subtitlesSource.type == PlayerSubtitlesSourceType.none &&
                 subtitlesSource.type == selectedSourceType!.type);
 
-        final name =
-            subtitlesSource.type == PlayerSubtitlesSourceType.none
+        final name = subtitlesSource.type == PlayerSubtitlesSourceType.none
             ? betterPlayerController!.translations.generalNone
             : subtitlesSource.name ??
                   betterPlayerController!.translations.generalDefault;

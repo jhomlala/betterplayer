@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer_item.dart';
+import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:material_ui/material_ui.dart';
 
 class PlayerSubtitlesDrawer extends StatefulWidget {
@@ -19,12 +19,10 @@ class PlayerSubtitlesDrawer extends StatefulWidget {
   final Stream<bool> playerVisibilityStream;
 
   @override
-  _PlayerSubtitlesDrawerState createState() =>
-      _PlayerSubtitlesDrawerState();
+  _PlayerSubtitlesDrawerState createState() => _PlayerSubtitlesDrawerState();
 }
 
-class _PlayerSubtitlesDrawerState
-    extends State<PlayerSubtitlesDrawer> {
+class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
   final RegExp htmlRegExp =
       // ignore: unnecessary_raw_strings
       RegExp(r'<[^>]*>', multiLine: true);

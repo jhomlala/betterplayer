@@ -1,10 +1,11 @@
 export 'package:better_player_platform_interface/better_player_platform_interface.dart';
+
+export 'src/asms/better_player_asms_utils.dart';
 export 'src/asms/player_asms_audio_track.dart';
 export 'src/asms/player_asms_data_holder.dart';
 export 'src/asms/player_asms_subtitle.dart';
 export 'src/asms/player_asms_subtitle_segment.dart';
 export 'src/asms/player_asms_track.dart';
-export 'src/asms/better_player_asms_utils.dart';
 export 'src/clearkey/better_player_clearkey_utils.dart';
 export 'src/configuration/player_configuration.dart';
 export 'src/configuration/player_controls_configuration.dart';
@@ -24,8 +25,8 @@ export 'src/core/better_player_ui_utils.dart';
 export 'src/list/better_player_list_video_player.dart';
 export 'src/list/better_player_list_video_player_controller.dart';
 export 'src/playlist/better_player_playlist.dart';
-export 'src/playlist/player_playlist_configuration.dart';
 export 'src/playlist/better_player_playlist_controller.dart';
+export 'src/playlist/player_playlist_configuration.dart';
+export 'src/subtitles/better_player_subtitles_source_type.dart';
 export 'src/subtitles/player_subtitles_configuration.dart';
 export 'src/subtitles/player_subtitles_source.dart';
-export 'src/subtitles/better_player_subtitles_source_type.dart';

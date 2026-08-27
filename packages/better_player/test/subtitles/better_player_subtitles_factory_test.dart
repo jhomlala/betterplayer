@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
-import 'package:better_player/src/subtitles/player_subtitles_source.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source_type.dart';
+import 'package:better_player/src/subtitles/player_subtitles_source.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MockHttpClient extends Fake implements HttpClient {

@@ -55,8 +55,7 @@ class _BetterPlayerListVideoPlayerState
         playerVisibilityChangedBehavior: onVisibilityChanged,
       ),
       betterPlayerDataSource: widget.dataSource,
-      betterPlayerPlaylistConfiguration:
-          const PlayerPlaylistConfiguration(),
+      betterPlayerPlaylistConfiguration: const PlayerPlaylistConfiguration(),
     );
 
     if (widget.betterPlayerListVideoPlayerController != null) {
