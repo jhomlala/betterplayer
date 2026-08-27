@@ -9,14 +9,15 @@ void main(List<String> args) {
   List<Uri> classPaths = [];
   if (buildDir.existsSync()) {
     for (var entity in buildDir.listSync(recursive: true)) {
-      if (entity is File && entity.path.endsWith('.class')) {
-        // Add the directory containing 'pl/hasoft/better_player' to the classPath
-        final path = entity.path.replaceAll('\\', '/');
-        if (path.contains('pl/hasoft/better_player')) {
-          final rootPath = path.substring(0, path.indexOf('pl/hasoft/better_player'));
-          final uri = Uri.directory(rootPath);
-          if (!classPaths.contains(uri)) {
-            classPaths.add(uri);
+      if (entity is File) {
+        if (entity.path.endsWith('.jar')) {
+          classPaths.add(entity.uri);
+        } else if (entity.path.endsWith('BetterPlayerApi.class')) {
+          // Found the class! Walk up the tree to the root of the package structure
+          // pl/hasoft/better_player/BetterPlayerApi.class
+          var rootDir = entity.parent.parent.parent.parent;
+          if (!classPaths.contains(rootDir.uri)) {
+            classPaths.add(rootDir.uri);
           }
         }
       }
