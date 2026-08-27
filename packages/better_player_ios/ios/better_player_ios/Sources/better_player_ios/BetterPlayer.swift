@@ -2,7 +2,23 @@
 
 import AVFoundation
 import AVKit
+#if canImport(Flutter)
 import Flutter
+#else
+public protocol FlutterPlatformView {}
+public class FlutterError: NSObject {
+    @objc public var code: String
+    @objc public var message: String?
+    @objc public var details: Any?
+    @objc public init(code: String, message: String?, details: Any?) {
+        self.code = code
+        self.message = message
+        self.details = details
+        super.init()
+    }
+}
+public typealias FlutterResult = (Any?) -> Void
+#endif
 import Foundation
 import UIKit
 

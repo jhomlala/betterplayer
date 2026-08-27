@@ -1,10 +1,11 @@
+## Unreleased
+- none.
+
 ## 1.1.0
 
 * Refactor: Unified model names by removing 'Better' prefix.
 * Added fix_data.yaml for automated migration.
 
-## Unreleased
-- none.
 
 ## 1.0.1
 * Add thin examples to platform packages and decoupled example app.
