@@ -105,3 +105,8 @@
     2. `CHANGELOG.md` is finalized.
     3. The user provides explicit approval for publishing.
     4. `publish_to: none` is not present in the target package.
+
+
+## FFI Generation
+
+Swiftgen and jnigen bindings are automatically generated on CI/CD (or triggered manually via GitHub Actions workflow_dispatch). Do not attempt to run swiftgen or jnigen locally if your environment doesn't support it (e.g. Windows for iOS). Instead, make the code changes, commit them, and ask the user to trigger the generation on CI/CD.
