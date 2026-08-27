@@ -12,10 +12,13 @@ dependencies:
   flutter:
     sdk: flutter
   better_player_platform_interface: ^1.0.2
+  jni: ^1.0.3
+  jni_flutter: ^1.0.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  jnigen: ^0.17.0
   very_good_analysis: ^10.3.0
 
 flutter:

@@ -1,9 +1,10 @@
+## Unreleased
+- none.
+
 ## 1.0.2
 
 * Docs: Updated model name references in example.md.
 
-## Unreleased
-- none.
 
 ## 1.0.1
 * Add thin examples to platform packages and decoupled example app.
