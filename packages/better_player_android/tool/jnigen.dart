@@ -14,17 +14,14 @@ void main(List<String> args) {
       addGradleDeps: true,
       androidExample: 'example', // Points to example app for Gradle resolution
     ),
-    sourcePath: [packageRoot.resolve('android/src/main/kotlin/')],
+    classPath: [
+      packageRoot.resolve('example/build/better_player_android/tmp/kotlin-classes/debug/'),
+      packageRoot.resolve('example/build/better_player_android/intermediates/javac/debug/classes/'),
+    ],
     classes: [
-      'pl.hasoft.better_player.BetterPlayerPlugin',
+      'pl.hasoft.better_player.BetterPlayerApi',
+      'pl.hasoft.better_player.BetterPlayerCallback',
       'pl.hasoft.better_player.BetterPlayer',
-      'pl.hasoft.better_player.BetterPlayerCache',
-      'pl.hasoft.better_player.CacheDataSourceFactory',
-      'pl.hasoft.better_player.CacheWorker',
-      'pl.hasoft.better_player.CustomDefaultLoadControl',
-      'pl.hasoft.better_player.DataSourceUtils',
-      'pl.hasoft.better_player.ImageWorker',
-      'pl.hasoft.better_player.QueuingEventSink',
     ],
   ));
 }

@@ -32,6 +32,8 @@ jobs:
         run: |
           flutter pub get
           flutter create --platforms=android example
+          cd example
+          flutter build apk --debug
 
       - name: Generate Android FFI (jnigen)
         working-directory: packages/better_player_android
