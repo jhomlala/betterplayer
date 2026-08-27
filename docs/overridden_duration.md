@@ -10,8 +10,8 @@ The `overriddenDuration` parameter allows you to define a custom end point for v
 ## Implementation Example
 
 ```dart
-BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+PlayerDataSource dataSource = PlayerDataSource(
+    PlayerDataSourceType.network,
     Constants.elephantDreamVideoUrl,
     /// Play only the first 10 seconds of this video.
     overriddenDuration: const Duration(seconds: 10),

@@ -3,7 +3,7 @@ import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('BetterPlayerSubtitlesFactory tests', () {
+  group('PlayerSubtitlesFactory tests', () {
     test('Parse SRT subtitles from memory', () async {
       const srtContent = '''
 1
@@ -14,11 +14,11 @@ Hello World
 00:00:05,000 --> 00:00:08,000
 Better Player Subtitles
 ''';
-      final source = BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.memory,
+      final source = PlayerSubtitlesSource(
+        type: PlayerSubtitlesSourceType.memory,
         content: srtContent,
       );
-      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
         source,
       );
 
@@ -38,11 +38,11 @@ Hello World VTT
 00:00:05.000 --> 00:00:08.000
 Better Player Subtitles VTT
 ''';
-      final source = BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.memory,
+      final source = PlayerSubtitlesSource(
+        type: PlayerSubtitlesSourceType.memory,
         content: vttContent,
       );
-      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
         source,
       );
 
@@ -52,11 +52,11 @@ Better Player Subtitles VTT
 
     test('Parse invalid content should return empty list', () async {
       const invalidContent = 'NOT SUBTITLES';
-      final source = BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.memory,
+      final source = PlayerSubtitlesSource(
+        type: PlayerSubtitlesSourceType.memory,
         content: invalidContent,
       );
-      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
         source,
       );
       expect(subtitles.isEmpty, true);

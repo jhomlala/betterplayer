@@ -5,12 +5,12 @@ title: Playlist Configuration
 
 # Playlist Configuration
 
-You can customize the behavior of the `BetterPlayerPlaylist` widget using the `BetterPlayerPlaylistConfiguration` class.
+You can customize the behavior of the `BetterPlayerPlaylist` widget using the `PlayerPlaylistConfiguration` class.
 
 ## Implementation Example
 
 ```dart
-var betterPlayerPlaylistConfiguration = BetterPlayerPlaylistConfiguration(
+var betterPlayerPlaylistConfiguration = PlayerPlaylistConfiguration(
     loopVideos: false,
     nextVideoDelay: Duration(milliseconds: 5000),
     initialStartIndex: 0,

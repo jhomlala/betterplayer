@@ -1,6 +1,6 @@
 ///Additional configuration used in Better Player Playlist player.
-class BetterPlayerPlaylistConfiguration {
-  const BetterPlayerPlaylistConfiguration({
+class PlayerPlaylistConfiguration {
+  const PlayerPlaylistConfiguration({
     this.nextVideoDelay = const Duration(milliseconds: 3000),
     this.loopVideos = true,
     this.initialStartIndex = 0,

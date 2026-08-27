@@ -1,0 +1,227 @@
+version: 1
+transforms:
+  - title: 'Rename BetterPlayerConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerConfiguration'
+  - title: 'Rename BetterPlayerControlsConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerControlsConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerControlsConfiguration'
+  - title: 'Rename BetterPlayerDataSource'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerDataSource'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerDataSource'
+  - title: 'Rename BetterPlayerControllerEvent'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerControllerEvent'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerControllerEvent'
+  - title: 'Rename BetterPlayerEvent'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerEvent'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerEvent'
+  - title: 'Rename BetterPlayerEventType'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      enum: 'BetterPlayerEventType'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerEventType'
+  - title: 'Rename BetterPlayerTheme'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      enum: 'BetterPlayerTheme'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerTheme'
+  - title: 'Rename BetterPlayerTranslations'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerTranslations'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerTranslations'
+  - title: 'Rename BetterPlayerPlaylistConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerPlaylistConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerPlaylistConfiguration'
+  - title: 'Rename BetterPlayerSubtitle'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerSubtitle'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerSubtitle'
+  - title: 'Rename BetterPlayerSubtitlesConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerSubtitlesConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerSubtitlesConfiguration'
+  - title: 'Rename BetterPlayerSubtitlesSource'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerSubtitlesSource'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerSubtitlesSource'
+  - title: 'Rename BetterPlayerAsmsAudioTrack'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerAsmsAudioTrack'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerAsmsAudioTrack'
+  - title: 'Rename BetterPlayerAsmsDataHolder'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerAsmsDataHolder'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerAsmsDataHolder'
+  - title: 'Rename BetterPlayerAsmsSubtitle'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerAsmsSubtitle'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerAsmsSubtitle'
+  - title: 'Rename BetterPlayerAsmsSubtitleSegment'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerAsmsSubtitleSegment'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerAsmsSubtitleSegment'
+  - title: 'Rename BetterPlayerAsmsTrack'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerAsmsTrack'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerAsmsTrack'
+  - title: 'Rename BetterPlayerProgressColors'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerProgressColors'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerProgressColors'
+  - title: 'Rename BetterPlayerOverflowMenuItem'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerOverflowMenuItem'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerOverflowMenuItem'
+  - title: 'Rename BetterPlayerVideoFormat'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      enum: 'BetterPlayerVideoFormat'
+    changes:
+      - kind: 'rename'
+        newName: 'VideoFormat'
+  - title: 'Rename BetterPlayerCacheConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerCacheConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'CacheConfiguration'
+  - title: 'Rename BetterPlayerNotificationConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerNotificationConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'NotificationConfiguration'
+  - title: 'Rename BetterPlayerDrmConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerDrmConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'DrmConfiguration'
+  - title: 'Rename BetterPlayerBufferingConfiguration'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerBufferingConfiguration'
+    changes:
+      - kind: 'rename'
+        newName: 'BufferingConfiguration'
+  - title: 'Rename BetterPlayerUtils'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerUtils'
+    changes:
+      - kind: 'rename'
+        newName: 'BetterPlayerUiUtils'
+  - title: 'Rename BetterPlayerDataSourceType'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      enum: 'BetterPlayerDataSourceType'
+    changes:
+      - kind: 'rename'
+        newName: 'DataSourceType'
+  - title: 'Rename PlayerDataSourceType'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      enum: 'PlayerDataSourceType'
+    changes:
+      - kind: 'rename'
+        newName: 'DataSourceType'
+  - title: 'Rename isPictureInPictureEnabled'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerController'
+      method: 'isPictureInPictureEnabled'
+    changes:
+      - kind: 'rename'
+        newName: 'isPictureInPictureSupported'

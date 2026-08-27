@@ -17,21 +17,21 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
 
   @override
   void initState() {
-    final betterPlayerConfiguration = BetterPlayerConfiguration(
+    final betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       placeholder: _FadePlaceholder(playStream: _playController.stream),
       showPlaceholderUntilPlay: true,
       placeholderOnTop: false,
     );
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == BetterPlayerEventType.play) {
+      if (event.betterPlayerEventType == PlayerEventType.play) {
         _playController.add(false);
       }
     });

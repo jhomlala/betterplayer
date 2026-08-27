@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/subtitles/better_player_subtitle.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
+import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:material_ui/material_ui.dart';
@@ -26,7 +26,7 @@ void main() {
   });
 
   testWidgets('Subtitles are displayed correctly', (tester) async {
-    final subtitle = BetterPlayerSubtitle(
+    final subtitle = PlayerSubtitle(
       '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
       false,
     );
@@ -36,7 +36,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: BetterPlayerSubtitlesDrawer(
+          body: PlayerSubtitlesDrawer(
             subtitles: subtitles,
             betterPlayerController: controller,
             playerVisibilityStream: visibilityStreamController.stream,
@@ -65,7 +65,7 @@ void main() {
   testWidgets('Subtitles are hidden when player not visible', (
     tester,
   ) async {
-    final subtitle = BetterPlayerSubtitle(
+    final subtitle = PlayerSubtitle(
       '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
       false,
     );
@@ -75,7 +75,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: BetterPlayerSubtitlesDrawer(
+          body: PlayerSubtitlesDrawer(
             subtitles: subtitles,
             betterPlayerController: controller,
             playerVisibilityStream: visibilityStreamController.stream,
@@ -103,7 +103,7 @@ void main() {
   testWidgets('Subtitles with custom configuration', (
     tester,
   ) async {
-    final subtitle = BetterPlayerSubtitle(
+    final subtitle = PlayerSubtitle(
       '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
       false,
     );
@@ -113,12 +113,12 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: BetterPlayerSubtitlesDrawer(
+          body: PlayerSubtitlesDrawer(
             subtitles: subtitles,
             betterPlayerController: controller,
             playerVisibilityStream: visibilityStreamController.stream,
             betterPlayerSubtitlesConfiguration:
-                const BetterPlayerSubtitlesConfiguration(
+                const PlayerSubtitlesConfiguration(
                   outlineEnabled: false,
                   fontColor: Colors.red,
                 ),

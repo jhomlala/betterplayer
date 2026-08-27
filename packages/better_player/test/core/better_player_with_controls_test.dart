@@ -19,12 +19,12 @@ void main() {
       final mockVideoPlayerController =
           BetterPlayerTestUtils.setupMockVideoPlayerControler();
       final controller = BetterPlayerMockController(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       );
       controller.videoPlayerController = mockVideoPlayerController;
 
       await controller.setupDataSource(
-        BetterPlayerDataSource.network('url'),
+        PlayerDataSource.network('url'),
       );
 
       await tester.pumpWidget(
@@ -49,7 +49,7 @@ void main() {
           BetterPlayerTestUtils.setupMockVideoPlayerControler();
       final placeholder = Container(key: const Key('placeholder'));
       final controller = BetterPlayerMockController(
-        BetterPlayerConfiguration(
+        PlayerConfiguration(
           placeholder: placeholder,
           showPlaceholderUntilPlay: true,
         ),
@@ -57,7 +57,7 @@ void main() {
       controller.videoPlayerController = mockVideoPlayerController;
 
       await controller.setupDataSource(
-        BetterPlayerDataSource.network('url'),
+        PlayerDataSource.network('url'),
       );
 
       await tester.pumpWidget(
@@ -81,12 +81,12 @@ void main() {
       final mockVideoPlayerController =
           BetterPlayerTestUtils.setupMockVideoPlayerControler();
       final controller = BetterPlayerMockController(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       );
       controller.videoPlayerController = mockVideoPlayerController;
 
       await controller.setupDataSource(
-        BetterPlayerDataSource.network('url'),
+        PlayerDataSource.network('url'),
       );
 
       // Initial size (default mock might have a certain size or null)
@@ -146,12 +146,12 @@ void main() {
       final mockVideoPlayerController =
           BetterPlayerTestUtils.setupMockVideoPlayerControler();
       final controller = BetterPlayerMockController(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       );
       controller.videoPlayerController = mockVideoPlayerController;
 
       await controller.setupDataSource(
-        BetterPlayerDataSource.network('url'),
+        PlayerDataSource.network('url'),
       );
 
       mockVideoPlayerController.value = mockVideoPlayerController.value

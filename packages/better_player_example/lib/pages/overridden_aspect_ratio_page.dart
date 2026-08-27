@@ -15,10 +15,10 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
     );
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );

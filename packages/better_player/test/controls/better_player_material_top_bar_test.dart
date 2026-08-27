@@ -18,7 +18,7 @@ void main() {
         );
 
     mockController = BetterPlayerMockController(
-      const BetterPlayerConfiguration(),
+      const PlayerConfiguration(),
     );
   });
 
@@ -37,7 +37,7 @@ void main() {
       wrapWidget(
         BetterPlayerMaterialTopBar(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(),
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onShowMoreClicked: () {},
@@ -56,7 +56,7 @@ void main() {
       wrapWidget(
         BetterPlayerMaterialTopBar(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(),
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onShowMoreClicked: () {
@@ -81,7 +81,7 @@ void main() {
       wrapWidget(
         BetterPlayerMaterialTopBar(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(),
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onShowMoreClicked: () {},

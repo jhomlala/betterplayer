@@ -1,6 +1,6 @@
 ///Representation of HLS / DASH audio track
-class BetterPlayerAsmsAudioTrack {
-  BetterPlayerAsmsAudioTrack({
+class PlayerAsmsAudioTrack {
+  PlayerAsmsAudioTrack({
     this.id,
     this.segmentAlignment,
     this.label,

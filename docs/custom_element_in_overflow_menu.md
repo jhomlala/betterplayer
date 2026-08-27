@@ -5,14 +5,14 @@ title: Custom Overflow Menu Items
 
 # Custom Overflow Menu Items
 
-You can extend the player's overflow menu by adding custom elements using the `BetterPlayerControlsConfiguration`.
+You can extend the player's overflow menu by adding custom elements using the `PlayerControlsConfiguration`.
 
 ## Implementation Example
 
 ```dart
-controlsConfiguration: BetterPlayerControlsConfiguration(
+controlsConfiguration: PlayerControlsConfiguration(
     overflowMenuCustomItems: [
-        BetterPlayerOverflowMenuItem(
+        PlayerOverflowMenuItem(
             Icons.account_circle_rounded,
             "User Profile",
             () => BetterPlayerUtils.log("Custom Action Executed!"),

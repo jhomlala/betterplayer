@@ -17,9 +17,9 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWidget(
-        const BetterPlayerSubtitlesDrawerItem(
+        const PlayerSubtitlesDrawerItem(
           subtitleText: 'Test Subtitle',
-          configuration: BetterPlayerSubtitlesConfiguration(
+          configuration: PlayerSubtitlesConfiguration(
             outlineEnabled: false,
           ),
           innerTextStyle: TextStyle(),
@@ -36,9 +36,9 @@ void main() {
     (tester) async {
       await tester.pumpWidget(
         wrapWidget(
-          const BetterPlayerSubtitlesDrawerItem(
+          const PlayerSubtitlesDrawerItem(
             subtitleText: '<b>HTML</b> Subtitle',
-            configuration: BetterPlayerSubtitlesConfiguration(),
+            configuration: PlayerSubtitlesConfiguration(),
             innerTextStyle: TextStyle(),
             outerTextStyle: TextStyle(),
           ),

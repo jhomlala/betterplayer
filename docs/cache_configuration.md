@@ -5,13 +5,13 @@ title: Cache Configuration
 
 # Cache Configuration
 
-Better Player provides a powerful caching system for network-based data sources to improve playback performance and reduce bandwidth usage. Caching is configured using the `BetterPlayerCacheConfiguration` class within the `BetterPlayerDataSource`.
+Better Player provides a powerful caching system for network-based data sources to improve playback performance and reduce bandwidth usage. Caching is configured using the `BetterPlayerCacheConfiguration` class within the `PlayerDataSource`.
 
 ## Basic Configuration
 
 ```dart
-BetterPlayerDataSource _betterPlayerDataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
+PlayerDataSource _betterPlayerDataSource = PlayerDataSource(
+      PlayerDataSourceType.network,
       Constants.elephantDreamVideoUrl,
       cacheConfiguration: BetterPlayerCacheConfiguration(
         useCache: true,

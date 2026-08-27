@@ -26,7 +26,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
 
   @override
   void initState() {
-    final betterPlayerConfiguration = BetterPlayerConfiguration(
+    final betterPlayerConfiguration = PlayerConfiguration(
       fit: BoxFit.contain,
       placeholder: _VideoPlaceholder(
         placeholderStream: _placeholderStreamController.stream,
@@ -34,14 +34,14 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
       ),
       showPlaceholderUntilPlay: true,
     );
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.elephantDreamVideoUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == BetterPlayerEventType.play) {
+      if (event.betterPlayerEventType == PlayerEventType.play) {
         _setPlaceholderVisibleState(false);
       }
     });

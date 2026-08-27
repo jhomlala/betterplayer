@@ -1,6 +1,6 @@
 ///Class used to hold translations for all features within Better Player
-class BetterPlayerTranslations {
-  BetterPlayerTranslations({
+class PlayerTranslations {
+  PlayerTranslations({
     this.languageCode = 'en',
     this.generalDefaultError = "Video can't be played",
     this.generalNone = 'None',
@@ -27,7 +27,7 @@ class BetterPlayerTranslations {
     this.controlsPipLabel = 'Picture-in-Picture',
   });
 
-  factory BetterPlayerTranslations.polish() => BetterPlayerTranslations(
+  factory PlayerTranslations.polish() => PlayerTranslations(
     languageCode: 'pl',
     generalDefaultError: 'Video nie może zostać odtworzone',
     generalNone: 'Brak',
@@ -53,7 +53,7 @@ class BetterPlayerTranslations {
     controlsPipLabel: 'Obraz w obrazie',
   );
 
-  factory BetterPlayerTranslations.chinese() => BetterPlayerTranslations(
+  factory PlayerTranslations.chinese() => PlayerTranslations(
     languageCode: 'zh',
     generalDefaultError: '无法播放视频',
     generalNone: '没有',
@@ -80,7 +80,7 @@ class BetterPlayerTranslations {
     controlsPipLabel: '畫中畫',
   );
 
-  factory BetterPlayerTranslations.hindi() => BetterPlayerTranslations(
+  factory PlayerTranslations.hindi() => PlayerTranslations(
     languageCode: 'hi',
     generalDefaultError: 'वीडियो नहीं चलाया जा सकता',
     generalNone: 'कोई नहीं',
@@ -107,7 +107,7 @@ class BetterPlayerTranslations {
     controlsPipLabel: 'पिक्चर-इन-पिक्चर',
   );
 
-  factory BetterPlayerTranslations.arabic() => BetterPlayerTranslations(
+  factory PlayerTranslations.arabic() => PlayerTranslations(
     languageCode: 'ar',
     generalDefaultError: 'لا يمكن تشغيل الفيديو',
     generalNone: 'لا يوجد',
@@ -134,7 +134,7 @@ class BetterPlayerTranslations {
     controlsPipLabel: 'صورة داخل صورة',
   );
 
-  factory BetterPlayerTranslations.turkish() => BetterPlayerTranslations(
+  factory PlayerTranslations.turkish() => PlayerTranslations(
     languageCode: 'tr',
     generalDefaultError: 'Video oynatılamıyor',
     generalNone: 'Hiçbiri',
@@ -161,7 +161,7 @@ class BetterPlayerTranslations {
     controlsPipLabel: 'Resim içinde Resim',
   );
 
-  factory BetterPlayerTranslations.vietnamese() => BetterPlayerTranslations(
+  factory PlayerTranslations.vietnamese() => PlayerTranslations(
     languageCode: 'vi',
     generalDefaultError: 'Video không thể phát bây giờ',
     generalNone: 'Không có',
@@ -188,7 +188,7 @@ class BetterPlayerTranslations {
     controlsPipLabel: 'Hình trong hình',
   );
 
-  factory BetterPlayerTranslations.spanish() => BetterPlayerTranslations(
+  factory PlayerTranslations.spanish() => PlayerTranslations(
     languageCode: 'es',
     generalDefaultError: 'No se puede reproducir el video',
     generalNone: 'Ninguno',

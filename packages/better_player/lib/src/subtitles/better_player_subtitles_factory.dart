@@ -1,29 +1,29 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/subtitles/better_player_subtitle.dart';
+import 'package:better_player/src/subtitles/player_subtitle.dart';
 
-class BetterPlayerSubtitlesFactory {
-  static Future<List<BetterPlayerSubtitle>> parseSubtitles(
-    BetterPlayerSubtitlesSource source,
+class PlayerSubtitlesFactory {
+  static Future<List<PlayerSubtitle>> parseSubtitles(
+    PlayerSubtitlesSource source,
   ) async {
     switch (source.type) {
-      case BetterPlayerSubtitlesSourceType.file:
+      case PlayerSubtitlesSourceType.file:
         return _parseSubtitlesFromFile(source);
-      case BetterPlayerSubtitlesSourceType.network:
+      case PlayerSubtitlesSourceType.network:
         return _parseSubtitlesFromNetwork(source);
-      case BetterPlayerSubtitlesSourceType.memory:
+      case PlayerSubtitlesSourceType.memory:
         return _parseSubtitlesFromMemory(source);
       default:
         return [];
     }
   }
 
-  static Future<List<BetterPlayerSubtitle>> _parseSubtitlesFromFile(
-    BetterPlayerSubtitlesSource source,
+  static Future<List<PlayerSubtitle>> _parseSubtitlesFromFile(
+    PlayerSubtitlesSource source,
   ) async {
     try {
-      final subtitles = <BetterPlayerSubtitle>[];
+      final subtitles = <PlayerSubtitle>[];
       for (final url in source.urls!) {
         final file = File(url!);
         if (file.existsSync()) {
@@ -41,12 +41,12 @@ class BetterPlayerSubtitlesFactory {
     return [];
   }
 
-  static Future<List<BetterPlayerSubtitle>> _parseSubtitlesFromNetwork(
-    BetterPlayerSubtitlesSource source,
+  static Future<List<PlayerSubtitle>> _parseSubtitlesFromNetwork(
+    PlayerSubtitlesSource source,
   ) async {
     try {
       final client = HttpClient();
-      final subtitles = <BetterPlayerSubtitle>[];
+      final subtitles = <PlayerSubtitle>[];
       for (final url in source.urls!) {
         final request = await client.getUrl(Uri.parse(url!));
         source.headers?.keys.forEach((key) {
@@ -72,8 +72,8 @@ class BetterPlayerSubtitlesFactory {
     return [];
   }
 
-  static List<BetterPlayerSubtitle> _parseSubtitlesFromMemory(
-    BetterPlayerSubtitlesSource source,
+  static List<PlayerSubtitle> _parseSubtitlesFromMemory(
+    PlayerSubtitlesSource source,
   ) {
     try {
       return _parseString(source.content!);
@@ -83,7 +83,7 @@ class BetterPlayerSubtitlesFactory {
     return [];
   }
 
-  static List<BetterPlayerSubtitle> _parseString(String value) {
+  static List<PlayerSubtitle> _parseString(String value) {
     var components = value.split('\r\n\r\n');
     if (components.length == 1) {
       components = value.split('\n\n');
@@ -94,14 +94,14 @@ class BetterPlayerSubtitlesFactory {
       return [];
     }
 
-    final subtitlesObj = <BetterPlayerSubtitle>[];
+    final subtitlesObj = <PlayerSubtitle>[];
 
     final isWebVTT = components.contains('WEBVTT');
     for (final component in components) {
       if (component.isEmpty) {
         continue;
       }
-      final subtitle = BetterPlayerSubtitle(component, isWebVTT);
+      final subtitle = PlayerSubtitle(component, isWebVTT);
       if (subtitle.start != null &&
           subtitle.end != null &&
           subtitle.texts != null) {

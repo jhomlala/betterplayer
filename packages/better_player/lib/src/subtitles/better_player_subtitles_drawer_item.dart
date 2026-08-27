@@ -1,9 +1,9 @@
-import 'package:better_player/src/subtitles/better_player_subtitles_configuration.dart';
+import 'package:better_player/src/subtitles/player_subtitles_configuration.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:material_ui/material_ui.dart';
 
-class BetterPlayerSubtitlesDrawerItem extends StatelessWidget {
-  const BetterPlayerSubtitlesDrawerItem({
+class PlayerSubtitlesDrawerItem extends StatelessWidget {
+  const PlayerSubtitlesDrawerItem({
     required this.subtitleText,
     required this.configuration,
     required this.innerTextStyle,
@@ -11,7 +11,7 @@ class BetterPlayerSubtitlesDrawerItem extends StatelessWidget {
     super.key,
   });
   final String subtitleText;
-  final BetterPlayerSubtitlesConfiguration configuration;
+  final PlayerSubtitlesConfiguration configuration;
   final TextStyle innerTextStyle;
   final TextStyle outerTextStyle;
 

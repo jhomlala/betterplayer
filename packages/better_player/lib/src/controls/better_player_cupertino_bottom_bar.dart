@@ -1,6 +1,6 @@
-import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
-import 'package:better_player/src/controls/better_player_progress_colors.dart';
+import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_ui_utils.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -26,7 +26,7 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
     super.key,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
   final double marginSize;
@@ -163,7 +163,7 @@ class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
     required this.latestValue,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onPlayPause;
   final Color iconColor;
   final double barHeight;
@@ -247,7 +247,7 @@ class _BetterPlayerCupertinoLiveWidget extends StatelessWidget {
     required this.controlsConfiguration,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
@@ -268,7 +268,7 @@ class _BetterPlayerCupertinoPositionWidget extends StatelessWidget {
     required this.controlsConfiguration,
     required this.latestValue,
   });
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VideoPlayerValue? latestValue;
 
   @override
@@ -297,7 +297,7 @@ class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
     required this.controlsConfiguration,
     required this.latestValue,
   });
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VideoPlayerValue? latestValue;
 
   @override
@@ -330,7 +330,7 @@ class _BetterPlayerCupertinoProgressBarWrapper extends StatelessWidget {
     required this.onTapDown,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onDragStart;
   final VoidCallback onDragEnd;
   final VoidCallback onTapDown;
@@ -346,7 +346,7 @@ class _BetterPlayerCupertinoProgressBarWrapper extends StatelessWidget {
           onDragStart: onDragStart,
           onDragEnd: onDragEnd,
           onTapDown: onTapDown,
-          colors: BetterPlayerProgressColors(
+          colors: PlayerProgressColors(
             playedColor: controlsConfiguration.progressBarPlayedColor,
             handleColor: controlsConfiguration.progressBarHandleColor,
             bufferedColor: controlsConfiguration.progressBarBufferedColor,

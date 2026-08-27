@@ -44,7 +44,7 @@ _betterPlayerController.disablePictureInPicture();
 
 ## UI Configuration
 
-PiP is enabled by default in both Material and Cupertino controls. You can toggle this feature using the `enablePip` flag in `BetterPlayerControlsConfiguration`. Additionally, you can customize the menu icon using the `pipMenuIcon` property.
+PiP is enabled by default in both Material and Cupertino controls. You can toggle this feature using the `enablePip` flag in `PlayerControlsConfiguration`. Additionally, you can customize the menu icon using the `pipMenuIcon` property.
 
 ## Important Limitations
 

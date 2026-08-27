@@ -1,10 +1,10 @@
-import 'package:better_player/src/controls/better_player_progress_colors.dart';
+import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
-  test('BetterPlayerProgressColors test', () {
-    final colors = BetterPlayerProgressColors(
+  test('PlayerProgressColors test', () {
+    final colors = PlayerProgressColors(
       playedColor: const Color(0xFF000001),
       bufferedColor: const Color(0xFF000002),
       handleColor: const Color(0xFF000003),

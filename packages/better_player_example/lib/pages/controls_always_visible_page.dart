@@ -15,7 +15,7 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -25,7 +25,7 @@ class _ControlsAlwaysVisiblePageState extends State<ControlsAlwaysVisiblePage> {
   }
 
   Future<void> _setupDataSource() async {
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.elephantDreamVideoUrl,
     );

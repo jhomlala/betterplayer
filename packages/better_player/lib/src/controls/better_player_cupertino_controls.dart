@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_cupertino_bottom_bar.dart';
 import 'package:better_player/src/controls/better_player_cupertino_error_widget.dart';
@@ -25,7 +25,7 @@ class BetterPlayerCupertinoControls extends StatefulWidget {
   final Function(bool visbility) onControlsVisibilityChanged;
 
   ///Controls config
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   State<StatefulWidget> createState() {
@@ -47,7 +47,7 @@ class _BetterPlayerCupertinoControlsState
   BetterPlayerController? _betterPlayerController;
   StreamSubscription? _controlsVisibilityStreamSubscription;
 
-  BetterPlayerControlsConfiguration get _controlsConfiguration =>
+  PlayerControlsConfiguration get _controlsConfiguration =>
       widget.controlsConfiguration;
 
   @override
@@ -57,7 +57,7 @@ class _BetterPlayerCupertinoControlsState
   BetterPlayerController? get betterPlayerController => _betterPlayerController;
 
   @override
-  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
+  PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _controlsConfiguration;
 
   @override

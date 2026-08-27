@@ -1,4 +1,4 @@
-import 'package:better_player/src/configuration/better_player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -17,7 +17,7 @@ class BetterPlayerMaterialHitArea extends StatelessWidget {
     super.key,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final VoidCallback onSkipBack;
   final VoidCallback onSkipForward;
@@ -62,7 +62,7 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
     super.key,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onSkipBack;
   final VoidCallback onSkipForward;
   final VoidCallback onReplay;
@@ -184,7 +184,7 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
     required this.isVideoFinished,
   });
   final BetterPlayerController controller;
-  final BetterPlayerControlsConfiguration controlsConfiguration;
+  final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onReplay;
   final VideoPlayerValue? latestValue;
   final bool isVideoFinished;

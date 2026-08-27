@@ -7,17 +7,17 @@ class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
   BetterPlayerMaterialVideoProgressBar(
     this.controller,
     this.betterPlayerController, {
-    BetterPlayerProgressColors? colors,
+    PlayerProgressColors? colors,
     this.onDragEnd,
     this.onDragStart,
     this.onDragUpdate,
     this.onTapDown,
     super.key,
-  }) : colors = colors ?? BetterPlayerProgressColors();
+  }) : colors = colors ?? PlayerProgressColors();
 
   final VideoPlayerController? controller;
   final BetterPlayerController? betterPlayerController;
-  final BetterPlayerProgressColors colors;
+  final PlayerProgressColors colors;
   final Function()? onDragStart;
   final Function()? onDragEnd;
   final Function()? onDragUpdate;
@@ -232,7 +232,7 @@ class _ProgressBarPainter extends CustomPainter {
   _ProgressBarPainter(this.value, this.colors);
 
   VideoPlayerValue value;
-  BetterPlayerProgressColors colors;
+  PlayerProgressColors colors;
 
   @override
   bool shouldRepaint(CustomPainter painter) {

@@ -13,11 +13,11 @@ Subtitles can be loaded from **Network**, **File**, or **Memory** sources. You c
 
 ### Example: Network Subtitles
 ```dart
-var dataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+var dataSource = PlayerDataSource(
+    PlayerDataSourceType.network,
     "video_url",
-    subtitles: BetterPlayerSubtitlesSource.single(
-        type: BetterPlayerSubtitlesSourceType.network,
+    subtitles: PlayerSubtitlesSource.single(
+        type: PlayerSubtitlesSourceType.network,
         url: "https://example.com/subtitles.srt"
     ),
 );
@@ -25,17 +25,17 @@ var dataSource = BetterPlayerDataSource(
 
 ### Example: Multiple Subtitle Tracks
 ```dart
-var dataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+var dataSource = PlayerDataSource(
+    PlayerDataSourceType.network,
     "hls_url",
     subtitles: [
-        BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.network,
+        PlayerSubtitlesSource(
+          type: PlayerSubtitlesSourceType.network,
           name: "English",
           urls: ["url_en"],
         ),
-        BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.network,
+        PlayerSubtitlesSource(
+          type: PlayerSubtitlesSourceType.network,
           name: "German",
           urls: ["url_de"],
         ),
@@ -45,11 +45,11 @@ var dataSource = BetterPlayerDataSource(
 
 ## Styling & Customization
 
-The appearance of subtitles is controlled via `BetterPlayerSubtitlesConfiguration`.
+The appearance of subtitles is controlled via `PlayerSubtitlesConfiguration`.
 
 ```dart
-var betterPlayerConfiguration = BetterPlayerConfiguration(
-    subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
+var betterPlayerConfiguration = PlayerConfiguration(
+    subtitlesConfiguration: PlayerSubtitlesConfiguration(
         fontSize: 20,
         fontColor: Colors.white,
         outlineEnabled: true,

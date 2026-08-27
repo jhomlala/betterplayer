@@ -22,14 +22,14 @@ void main() {
       final mockVideoPlayerController = MockVideoPlayerController();
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.material,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -66,14 +66,14 @@ void main() {
       final mockVideoPlayerController = MockVideoPlayerController();
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.material,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -110,14 +110,14 @@ void main() {
 
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.material,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );

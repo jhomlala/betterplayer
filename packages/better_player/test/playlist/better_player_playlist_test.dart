@@ -21,8 +21,8 @@ void main() {
   group('BetterPlayerPlaylistController tests', () {
     test('Initialization with data sources', () {
       final dataSourceList = [
-        BetterPlayerDataSource.network('https://example.com/1.mp4'),
-        BetterPlayerDataSource.network('https://example.com/2.mp4'),
+        PlayerDataSource.network('https://example.com/1.mp4'),
+        PlayerDataSource.network('https://example.com/2.mp4'),
       ];
       final playlistController = BetterPlayerPlaylistController(dataSourceList);
 
@@ -32,8 +32,8 @@ void main() {
 
     test('setupDataSource changes current index', () {
       final dataSourceList = [
-        BetterPlayerDataSource.network('https://example.com/1.mp4'),
-        BetterPlayerDataSource.network('https://example.com/2.mp4'),
+        PlayerDataSource.network('https://example.com/1.mp4'),
+        PlayerDataSource.network('https://example.com/2.mp4'),
       ];
       final playlistController = BetterPlayerPlaylistController(dataSourceList);
 
@@ -43,20 +43,19 @@ void main() {
 
     test('Next video from playlist', () async {
       final dataSourceList = [
-        BetterPlayerDataSource.network('https://example.com/1.mp4'),
-        BetterPlayerDataSource.network('https://example.com/2.mp4'),
+        PlayerDataSource.network('https://example.com/1.mp4'),
+        PlayerDataSource.network('https://example.com/2.mp4'),
       ];
       final playlistController = BetterPlayerPlaylistController(
         dataSourceList,
-        betterPlayerPlaylistConfiguration:
-            const BetterPlayerPlaylistConfiguration(
-              nextVideoDelay: Duration.zero,
-            ),
+        betterPlayerPlaylistConfiguration: const PlayerPlaylistConfiguration(
+          nextVideoDelay: Duration.zero,
+        ),
       );
 
       // Manually trigger video finished event
       playlistController.betterPlayerController!.postEvent(
-        BetterPlayerEvent(BetterPlayerEventType.finished),
+        PlayerEvent(PlayerEventType.finished),
       );
 
       // The controller should trigger next video timer and then auto-switch because delay is 0
@@ -67,18 +66,17 @@ void main() {
 
     test('looping playlist works', () async {
       final dataSourceList = [
-        BetterPlayerDataSource.network('https://example.com/1.mp4'),
+        PlayerDataSource.network('https://example.com/1.mp4'),
       ];
       final playlistController = BetterPlayerPlaylistController(
         dataSourceList,
-        betterPlayerPlaylistConfiguration:
-            const BetterPlayerPlaylistConfiguration(
-              nextVideoDelay: Duration.zero,
-            ),
+        betterPlayerPlaylistConfiguration: const PlayerPlaylistConfiguration(
+          nextVideoDelay: Duration.zero,
+        ),
       );
 
       playlistController.betterPlayerController!.postEvent(
-        BetterPlayerEvent(BetterPlayerEventType.finished),
+        PlayerEvent(PlayerEventType.finished),
       );
 
       await Future<void>.delayed(const Duration(milliseconds: 500));
@@ -87,7 +85,7 @@ void main() {
 
     test('dispose clears resources', () {
       final dataSourceList = [
-        BetterPlayerDataSource.network('https://example.com/1.mp4'),
+        PlayerDataSource.network('https://example.com/1.mp4'),
       ];
       final playlistController = BetterPlayerPlaylistController(dataSourceList);
       playlistController.dispose();
@@ -97,16 +95,16 @@ void main() {
       tester,
     ) async {
       final dataSourceList = [
-        BetterPlayerDataSource.network('https://example.com/1.mp4'),
+        PlayerDataSource.network('https://example.com/1.mp4'),
       ];
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: BetterPlayerPlaylist(
               betterPlayerDataSourceList: dataSourceList,
-              betterPlayerConfiguration: const BetterPlayerConfiguration(),
+              betterPlayerConfiguration: const PlayerConfiguration(),
               betterPlayerPlaylistConfiguration:
-                  const BetterPlayerPlaylistConfiguration(),
+                  const PlayerPlaylistConfiguration(),
             ),
           ),
         ),

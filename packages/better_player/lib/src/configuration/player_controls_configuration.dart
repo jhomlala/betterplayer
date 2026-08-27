@@ -3,10 +3,10 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
 ///UI configuration of Better Player. Allows to change colors/icons/behavior
-///of controls. Used in BetterPlayerConfiguration. Configuration applies only
+///of controls. Used in PlayerConfiguration. Configuration applies only
 ///for player displayed in app, not in notification or PiP mode.
-class BetterPlayerControlsConfiguration {
-  const BetterPlayerControlsConfiguration({
+class PlayerControlsConfiguration {
+  const PlayerControlsConfiguration({
     this.controlBarColor = Colors.black87,
     this.textColor = Colors.white,
     this.iconsColor = Colors.white,
@@ -60,8 +60,8 @@ class BetterPlayerControlsConfiguration {
     this.overflowModalTextColor = Colors.black,
   });
 
-  factory BetterPlayerControlsConfiguration.white() {
-    return const BetterPlayerControlsConfiguration(
+  factory PlayerControlsConfiguration.white() {
+    return const PlayerControlsConfiguration(
       controlBarColor: Colors.white,
       textColor: Colors.black,
       iconsColor: Colors.black,
@@ -72,8 +72,8 @@ class BetterPlayerControlsConfiguration {
     );
   }
 
-  factory BetterPlayerControlsConfiguration.cupertino() {
-    return const BetterPlayerControlsConfiguration(
+  factory PlayerControlsConfiguration.cupertino() {
+    return const PlayerControlsConfiguration(
       fullscreenEnableIcon: CupertinoIcons.arrow_up_left_arrow_down_right,
       fullscreenDisableIcon: CupertinoIcons.arrow_down_right_arrow_up_left,
       playIcon: CupertinoIcons.play_arrow_solid,
@@ -83,9 +83,9 @@ class BetterPlayerControlsConfiguration {
     );
   }
 
-  ///Setup BetterPlayerControlsConfiguration based on Theme options.
-  factory BetterPlayerControlsConfiguration.theme(ThemeData theme) {
-    return BetterPlayerControlsConfiguration(
+  ///Setup PlayerControlsConfiguration based on Theme options.
+  factory PlayerControlsConfiguration.theme(ThemeData theme) {
+    return PlayerControlsConfiguration(
       textColor: theme.textTheme.bodySmall?.color ?? Colors.white,
       iconsColor: theme.buttonTheme.colorScheme?.primary ?? Colors.white,
     );
@@ -168,7 +168,7 @@ class BetterPlayerControlsConfiguration {
   customControlsBuilder;
 
   ///Parameter used to change theme of the player
-  final BetterPlayerTheme? playerTheme;
+  final PlayerTheme? playerTheme;
 
   ///Flag used to show/hide controls
   final bool showControls;
@@ -205,7 +205,7 @@ class BetterPlayerControlsConfiguration {
   final bool enableAudioTracks;
 
   ///Custom items of overflow menu
-  final List<BetterPlayerOverflowMenuItem> overflowMenuCustomItems;
+  final List<PlayerOverflowMenuItem> overflowMenuCustomItems;
 
   ///Icon of the overflow menu
   final IconData overflowMenuIcon;

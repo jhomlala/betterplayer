@@ -19,7 +19,7 @@ void main() {
 
     test('isVideoInitialized returns false when duration is null', () {
       final controller = BetterPlayerMockController(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       );
       final videoPlayerController = MockVideoPlayerController();
       controller.videoPlayerController = videoPlayerController;
@@ -29,7 +29,7 @@ void main() {
 
     test('isVideoInitialized returns true when duration is set', () {
       final controller = BetterPlayerMockController(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       );
       final videoPlayerController = MockVideoPlayerController();
       controller.videoPlayerController = videoPlayerController;
@@ -42,7 +42,7 @@ void main() {
       'getDuration returns correct duration from videoPlayerController',
       () async {
         final controller = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         final videoPlayerController = MockVideoPlayerController();
         controller.videoPlayerController = videoPlayerController;
@@ -59,7 +59,7 @@ void main() {
       'initialization event updates duration and initialized state',
       () async {
         final controller = BetterPlayerMockController(
-          const BetterPlayerConfiguration(),
+          const PlayerConfiguration(),
         );
         final videoPlayerController = MockVideoPlayerController();
         controller.videoPlayerController = videoPlayerController;

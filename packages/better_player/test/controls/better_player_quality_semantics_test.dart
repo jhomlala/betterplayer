@@ -9,20 +9,20 @@ import '../helpers/mock_video_player_controller.dart';
 class BetterPlayerMockControllerWithTracks extends BetterPlayerMockController {
   BetterPlayerMockControllerWithTracks(super.betterPlayerConfiguration);
 
-  List<BetterPlayerAsmsTrack> _tracks = [];
-  BetterPlayerDataSource? _dataSource;
+  List<PlayerAsmsTrack> _tracks = [];
+  PlayerDataSource? _dataSource;
 
   @override
-  List<BetterPlayerAsmsTrack> get betterPlayerAsmsTracks => _tracks;
+  List<PlayerAsmsTrack> get betterPlayerAsmsTracks => _tracks;
 
   @override
-  BetterPlayerDataSource? get betterPlayerDataSource => _dataSource;
+  PlayerDataSource? get betterPlayerDataSource => _dataSource;
 
-  void setTracks(List<BetterPlayerAsmsTrack> tracks) {
+  void setTracks(List<PlayerAsmsTrack> tracks) {
     _tracks = tracks;
   }
 
-  void setDataSource(BetterPlayerDataSource dataSource) {
+  void setDataSource(PlayerDataSource dataSource) {
     _dataSource = dataSource;
   }
 }
@@ -43,7 +43,7 @@ class MockControlsState extends BetterPlayerControlsState<MockControlsWidget> {
   BetterPlayerController? get betterPlayerController => widget.controller;
 
   @override
-  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration =>
+  PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       widget.controller.betterPlayerControlsConfiguration;
 
   @override
@@ -69,7 +69,7 @@ void main() {
 
     setUp(() {
       controller = BetterPlayerMockControllerWithTracks(
-        const BetterPlayerConfiguration(),
+        const PlayerConfiguration(),
       );
       controller.videoPlayerController = MockVideoPlayerController();
     });
@@ -78,10 +78,10 @@ void main() {
       'Auto track has correct semantics identifier when fields are 0',
       (tester) async {
         controller.setTracks([
-          BetterPlayerAsmsTrack.defaultTrack(), // 0, 0, 0
-          BetterPlayerAsmsTrack('', 1920, 1080, 5000000, 30, '', ''),
+          PlayerAsmsTrack.defaultTrack(), // 0, 0, 0
+          PlayerAsmsTrack('', 1920, 1080, 5000000, 30, '', ''),
         ]);
-        controller.setDataSource(BetterPlayerDataSource.network('url.m3u8'));
+        controller.setDataSource(PlayerDataSource.network('url.m3u8'));
 
         await tester.pumpWidget(
           MaterialApp(
@@ -120,9 +120,9 @@ void main() {
       'Auto track has correct semantics identifier when fields are null',
       (tester) async {
         controller.setTracks([
-          BetterPlayerAsmsTrack('', null, null, null, null, '', ''),
+          PlayerAsmsTrack('', null, null, null, null, '', ''),
         ]);
-        controller.setDataSource(BetterPlayerDataSource.network('url.m3u8'));
+        controller.setDataSource(PlayerDataSource.network('url.m3u8'));
 
         await tester.pumpWidget(
           MaterialApp(
@@ -159,10 +159,10 @@ void main() {
       tester,
     ) async {
       controller.setTracks([
-        BetterPlayerAsmsTrack.defaultTrack(),
-        BetterPlayerAsmsTrack('', 1920, 1080, 5000000, 30, '', ''),
+        PlayerAsmsTrack.defaultTrack(),
+        PlayerAsmsTrack('', 1920, 1080, 5000000, 30, '', ''),
       ]);
-      controller.setDataSource(BetterPlayerDataSource.network('url.m3u8'));
+      controller.setDataSource(PlayerDataSource.network('url.m3u8'));
 
       await tester.pumpWidget(
         MaterialApp(
@@ -199,7 +199,7 @@ void main() {
       'Non-ASMS (normal MP4) resolution has quality_auto identifier when children empty',
       (tester) async {
         controller.setTracks([]);
-        controller.setDataSource(BetterPlayerDataSource.network('video.mp4'));
+        controller.setDataSource(PlayerDataSource.network('video.mp4'));
 
         await tester.pumpWidget(
           MaterialApp(
@@ -238,7 +238,7 @@ void main() {
       (tester) async {
         controller.setTracks([]);
         controller.setDataSource(
-          BetterPlayerDataSource.network(
+          PlayerDataSource.network(
             'video.mp4',
             qualities: {
               'LOW': 'low.mp4',

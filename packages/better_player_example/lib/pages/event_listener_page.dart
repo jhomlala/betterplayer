@@ -13,17 +13,17 @@ class EventListenerPage extends StatefulWidget {
 
 class _EventListenerPageState extends State<EventListenerPage> {
   late BetterPlayerController _betterPlayerController;
-  List<BetterPlayerEvent> events = [];
+  List<PlayerEvent> events = [];
   final StreamController<DateTime> _eventStreamController =
       StreamController.broadcast();
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.bugBuckBunnyVideoUrl,
     );
@@ -40,7 +40,7 @@ class _EventListenerPageState extends State<EventListenerPage> {
     super.dispose();
   }
 
-  void _handleEvent(BetterPlayerEvent event) {
+  void _handleEvent(PlayerEvent event) {
     events.insert(0, event);
 
     ///Used to refresh only list of events

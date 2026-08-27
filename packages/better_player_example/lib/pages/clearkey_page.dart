@@ -20,7 +20,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
@@ -41,7 +41,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
   }
 
   Future<void> _setupDataSources() async {
-    final clearKeyDataSourceFile = BetterPlayerDataSource(
+    final clearKeyDataSourceFile = PlayerDataSource(
       DataSourceType.file,
       await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
       drmConfiguration: DrmConfiguration(
@@ -57,7 +57,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
 
     _clearKeyControllerFile.setupDataSource(clearKeyDataSourceFile);
 
-    final clearKeyDataSourceBroken = BetterPlayerDataSource(
+    final clearKeyDataSourceBroken = PlayerDataSource(
       DataSourceType.file,
       await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
       drmConfiguration: DrmConfiguration(
@@ -73,7 +73,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
 
     _clearKeyControllerBroken.setupDataSource(clearKeyDataSourceBroken);
 
-    final clearKeyDataSourceNetwork = BetterPlayerDataSource(
+    final clearKeyDataSourceNetwork = PlayerDataSource(
       DataSourceType.network,
       Constants.networkTestVideoEncryptUrl,
       drmConfiguration: DrmConfiguration(
@@ -89,7 +89,7 @@ class _ClearKeyState extends State<ClearKeyPage> {
 
     _clearKeyControllerNetwork.setupDataSource(clearKeyDataSourceNetwork);
 
-    final clearKeyDataSourceMemory = BetterPlayerDataSource(
+    final clearKeyDataSourceMemory = PlayerDataSource(
       DataSourceType.memory,
       '',
       bytes: File(

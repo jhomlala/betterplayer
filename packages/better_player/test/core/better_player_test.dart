@@ -41,7 +41,7 @@ void main() {
 
   testWidgets('BetterPlayer - with controller', (tester) async {
     final betterPlayerController = BetterPlayerMockController(
-      const BetterPlayerConfiguration(),
+      const PlayerConfiguration(),
     );
     await tester.pumpWidget(
       _wrapWidget(

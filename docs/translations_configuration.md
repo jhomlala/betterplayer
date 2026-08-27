@@ -5,7 +5,7 @@ title: Translations Configuration
 
 # Internationalization & Translations
 
-Better Player allows you to localize all UI strings using the `BetterPlayerTranslations` class.
+Better Player allows you to localize all UI strings using the `PlayerTranslations` class.
 
 ## Built-in Languages
 
@@ -23,12 +23,12 @@ The player automatically selects the appropriate translation if it matches the c
 
 ## Custom Translations
 
-You can provide your own translations by passing a list of `BetterPlayerTranslations` to the `BetterPlayerConfiguration`.
+You can provide your own translations by passing a list of `PlayerTranslations` to the `PlayerConfiguration`.
 
 ```dart
-BetterPlayerConfiguration(
+PlayerConfiguration(
     translations: [
-      BetterPlayerTranslations(
+      PlayerTranslations(
         languageCode: "fr",
         generalDefaultError: "Une erreur est survenue",
         generalNone: "Aucun",

@@ -22,11 +22,11 @@ void main() {
 
     mockVideoPlayerController = MockVideoPlayerController();
     mockController = BetterPlayerMockController(
-      const BetterPlayerConfiguration(),
+      const PlayerConfiguration(),
     );
     mockController.videoPlayerController = mockVideoPlayerController;
     await mockController.setupDataSource(
-      BetterPlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
     );
   });
 
@@ -45,7 +45,7 @@ void main() {
       wrapWidget(
         BetterPlayerMaterialBottomBar(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(),
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -69,7 +69,7 @@ void main() {
       wrapWidget(
         BetterPlayerMaterialBottomBar(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(),
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -97,7 +97,7 @@ void main() {
       wrapWidget(
         BetterPlayerMaterialBottomBar(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(),
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {
@@ -128,7 +128,7 @@ void main() {
       wrapWidget(
         BetterPlayerMaterialBottomBar(
           controller: mockController,
-          controlsConfiguration: const BetterPlayerControlsConfiguration(),
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},

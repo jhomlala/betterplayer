@@ -1,5 +1,5 @@
 ///Supported event types
-enum BetterPlayerEventType {
+enum PlayerEventType {
   initialized,
   play,
   pause,

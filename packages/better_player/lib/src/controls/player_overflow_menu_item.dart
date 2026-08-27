@@ -2,8 +2,8 @@
 import 'package:material_ui/material_ui.dart';
 
 ///Menu item data used in overflow menu (3 dots).
-class BetterPlayerOverflowMenuItem {
-  BetterPlayerOverflowMenuItem(this.icon, this.title, this.onClicked);
+class PlayerOverflowMenuItem {
+  PlayerOverflowMenuItem(this.icon, this.title, this.onClicked);
 
   ///Icon of menu item
   final IconData icon;

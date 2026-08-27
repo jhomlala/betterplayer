@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:better_player/src/controls/better_player_progress_colors.dart';
+import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:material_ui/material_ui.dart';
@@ -8,17 +8,17 @@ class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
   BetterPlayerCupertinoVideoProgressBar(
     this.controller,
     this.betterPlayerController, {
-    BetterPlayerProgressColors? colors,
+    PlayerProgressColors? colors,
     this.onDragEnd,
     this.onDragStart,
     this.onDragUpdate,
     this.onTapDown,
     super.key,
-  }) : colors = colors ?? BetterPlayerProgressColors();
+  }) : colors = colors ?? PlayerProgressColors();
 
   final VideoPlayerController? controller;
   final BetterPlayerController? betterPlayerController;
-  final BetterPlayerProgressColors colors;
+  final PlayerProgressColors colors;
   final Function()? onDragStart;
   final Function()? onDragEnd;
   final Function()? onDragUpdate;
@@ -226,7 +226,7 @@ class _ProgressBarPainter extends CustomPainter {
   _ProgressBarPainter(this.value, this.colors);
 
   VideoPlayerValue value;
-  BetterPlayerProgressColors colors;
+  PlayerProgressColors colors;
 
   @override
   bool shouldRepaint(CustomPainter painter) {

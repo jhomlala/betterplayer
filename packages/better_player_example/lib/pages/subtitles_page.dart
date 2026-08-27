@@ -15,10 +15,10 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-      subtitlesConfiguration: BetterPlayerSubtitlesConfiguration(
+      subtitlesConfiguration: PlayerSubtitlesConfiguration(
         backgroundColor: Colors.green,
         fontSize: 20,
       ),
@@ -26,7 +26,7 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
 
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == BetterPlayerEventType.progress) {
+      if (event.betterPlayerEventType == PlayerEventType.progress) {
         BetterPlayerUtils.log(
           'Current subtitle line: ${_betterPlayerController.renderedSubtitle}',
         );
@@ -37,11 +37,11 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
   }
 
   Future<void> _setupDataSource() async {
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.bugBuckBunnyVideoUrl,
-      subtitles: BetterPlayerSubtitlesSource.single(
-        type: BetterPlayerSubtitlesSourceType.file,
+      subtitles: PlayerSubtitlesSource.single(
+        type: PlayerSubtitlesSourceType.file,
         url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
         name: 'My subtitles',
         selectedByDefault: true,

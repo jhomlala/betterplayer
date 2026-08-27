@@ -66,7 +66,7 @@ void initState() {
 ```
 
 #### `better_player` approach:
-Better Player encapsulates data source configuration, caching, headers, and initialization cleanly using `BetterPlayerController` and `BetterPlayerDataSource`:
+Better Player encapsulates data source configuration, caching, headers, and initialization cleanly using `BetterPlayerController` and `PlayerDataSource`:
 
 ```dart
 late BetterPlayerController _betterPlayerController;
@@ -75,13 +75,13 @@ late BetterPlayerController _betterPlayerController;
 void initState() {
   super.initState();
   
-  BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+  PlayerDataSource dataSource = PlayerDataSource(
+    PlayerDataSourceType.network,
     'https://example.com/video.mp4',
   );
 
   _betterPlayerController = BetterPlayerController(
-    const BetterPlayerConfiguration(
+    const PlayerConfiguration(
       autoPlay: true,
       looping: false,
       aspectRatio: 16 / 9,
@@ -174,8 +174,8 @@ Now that you are using `better_player`, you can easily enable advanced features 
 
 - **Caching**: Enable video caching with a single configuration flag:
   ```dart
-  BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+  PlayerDataSource(
+    PlayerDataSourceType.network,
     'https://example.com/video.mp4',
     cacheConfiguration: const BetterPlayerCacheConfiguration(
       useCache: true,
@@ -184,6 +184,6 @@ Now that you are using `better_player`, you can easily enable advanced features 
     ),
   );
   ```
-- **Subtitles**: Add SRT or WebVTT subtitles effortlessly via `BetterPlayerSubtitlesSource`.
-- **HLS / DASH Adaptive Streaming**: Pass adaptive streaming URLs directly into `BetterPlayerDataSourceType.network`. Note: DASH is currently only supported on Android.
+- **Subtitles**: Add SRT or WebVTT subtitles effortlessly via `PlayerSubtitlesSource`.
+- **HLS / DASH Adaptive Streaming**: Pass adaptive streaming URLs directly into `PlayerDataSourceType.network`. Note: DASH is currently only supported on Android.
 - **Picture-in-Picture (PiP)**: Enable PiP support with built-in controls and state listeners.

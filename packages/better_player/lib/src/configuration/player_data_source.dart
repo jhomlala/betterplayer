@@ -1,11 +1,11 @@
-import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
+import 'package:better_player/src/subtitles/player_subtitles_source.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/widgets.dart';
 
 ///Representation of data source which will be played in Better Player. Allows
 ///to setup all necessary configuration connected to video source.
-class BetterPlayerDataSource {
-  BetterPlayerDataSource(
+class PlayerDataSource {
+  PlayerDataSource(
     this.type,
     this.url, {
     this.bytes,
@@ -35,9 +35,9 @@ class BetterPlayerDataSource {
 
   ///Factory method to build network data source which uses url as data source
   ///Bytes parameter is not used in this data source.
-  factory BetterPlayerDataSource.network(
+  factory PlayerDataSource.network(
     String url, {
-    List<BetterPlayerSubtitlesSource>? subtitles,
+    List<PlayerSubtitlesSource>? subtitles,
     bool? liveStream,
     Map<String, String>? headers,
     bool? useAsmsSubtitles,
@@ -54,7 +54,7 @@ class BetterPlayerDataSource {
     BufferingConfiguration bufferingConfiguration =
         const BufferingConfiguration(),
   }) {
-    return BetterPlayerDataSource(
+    return PlayerDataSource(
       DataSourceType.network,
       url,
       subtitles: subtitles,
@@ -76,9 +76,9 @@ class BetterPlayerDataSource {
 
   ///Factory method to build file data source which uses url as data source.
   ///Bytes parameter is not used in this data source.
-  factory BetterPlayerDataSource.file(
+  factory PlayerDataSource.file(
     String url, {
-    List<BetterPlayerSubtitlesSource>? subtitles,
+    List<PlayerSubtitlesSource>? subtitles,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
     Map<String, String>? qualities,
@@ -87,7 +87,7 @@ class BetterPlayerDataSource {
     Duration? overriddenDuration,
     Widget? placeholder,
   }) {
-    return BetterPlayerDataSource(
+    return PlayerDataSource(
       DataSourceType.file,
       url,
       subtitles: subtitles,
@@ -104,10 +104,10 @@ class BetterPlayerDataSource {
 
   ///Factory method to build network data source which uses bytes as data source.
   ///Url parameter is not used in this data source.
-  factory BetterPlayerDataSource.memory(
+  factory PlayerDataSource.memory(
     List<int> bytes, {
     String? videoExtension,
-    List<BetterPlayerSubtitlesSource>? subtitles,
+    List<PlayerSubtitlesSource>? subtitles,
     bool? useAsmsSubtitles,
     bool? useAsmsTracks,
     Map<String, String>? qualities,
@@ -116,7 +116,7 @@ class BetterPlayerDataSource {
     Duration? overriddenDuration,
     Widget? placeholder,
   }) {
-    return BetterPlayerDataSource(
+    return PlayerDataSource(
       DataSourceType.memory,
       '',
       videoExtension: videoExtension,
@@ -140,7 +140,7 @@ class BetterPlayerDataSource {
   final String url;
 
   ///Subtitles configuration
-  final List<BetterPlayerSubtitlesSource>? subtitles;
+  final List<PlayerSubtitlesSource>? subtitles;
 
   ///Flag to determine if current data source is live stream
   final bool? liveStream;
@@ -191,18 +191,18 @@ class BetterPlayerDataSource {
   ///Placeholder widget which will be shown until video load or play. This
   ///placeholder may be useful if you want to show placeholder before each video
   ///in playlist. Otherwise, you should use placeholder from
-  /// BetterPlayerConfiguration.
+  /// PlayerConfiguration.
   final Widget? placeholder;
 
   ///Configuration of video buffering. Currently only supported in Android
   ///platform.
   final BufferingConfiguration bufferingConfiguration;
 
-  BetterPlayerDataSource copyWith({
+  PlayerDataSource copyWith({
     DataSourceType? type,
     String? url,
     List<int>? bytes,
-    List<BetterPlayerSubtitlesSource>? subtitles,
+    List<PlayerSubtitlesSource>? subtitles,
     bool? liveStream,
     Map<String, String>? headers,
     bool? useAsmsSubtitles,
@@ -220,7 +220,7 @@ class BetterPlayerDataSource {
     BufferingConfiguration? bufferingConfiguration =
         const BufferingConfiguration(),
   }) {
-    return BetterPlayerDataSource(
+    return PlayerDataSource(
       type ?? this.type,
       url ?? this.url,
       bytes: bytes ?? this.bytes,

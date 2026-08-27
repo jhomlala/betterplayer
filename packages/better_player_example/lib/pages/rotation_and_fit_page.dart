@@ -14,11 +14,11 @@ class _RotationAndFitPageState extends State<RotationAndFitPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 1,
       rotation: 90,
     );
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.forBiggerBlazesUrl,
     );

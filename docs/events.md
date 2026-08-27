@@ -9,7 +9,7 @@ Better Player allows you to monitor a wide range of player events, enabling you 
 
 ## Available Event Types
 
-You can listen for the following `BetterPlayerEventType` values:
+You can listen for the following `PlayerEventType` values:
 
 *   `initialized`: The video player has successfully initialized.
 *   `play`, `pause`: Playback state has changed.

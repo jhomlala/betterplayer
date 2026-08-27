@@ -12,14 +12,14 @@ class VideoListWidget extends StatefulWidget {
 
 class _VideoListWidgetState extends State<VideoListWidget> {
   VideoListData? get videoListData => widget.videoListData;
-  BetterPlayerConfiguration? betterPlayerConfiguration;
+  PlayerConfiguration? betterPlayerConfiguration;
   BetterPlayerListVideoPlayerController? controller;
 
   @override
   void initState() {
     super.initState();
     controller = BetterPlayerListVideoPlayerController();
-    betterPlayerConfiguration = const BetterPlayerConfiguration(autoPlay: true);
+    betterPlayerConfiguration = const PlayerConfiguration(autoPlay: true);
   }
 
   @override
@@ -44,7 +44,7 @@ class _VideoListWidgetState extends State<VideoListWidget> {
           AspectRatio(
             aspectRatio: 1,
             child: BetterPlayerListVideoPlayer(
-              BetterPlayerDataSource(
+              PlayerDataSource(
                 DataSourceType.network,
                 videoListData!.videoUrl,
                 notificationConfiguration: NotificationConfiguration(
@@ -59,7 +59,7 @@ class _VideoListWidgetState extends State<VideoListWidget> {
                   bufferForPlaybackAfterRebufferMs: 2000,
                 ),
               ),
-              configuration: const BetterPlayerConfiguration(aspectRatio: 1),
+              configuration: const PlayerConfiguration(aspectRatio: 1),
               //key: Key(videoListData.hashCode.toString()),
               playFraction: 0.8,
               betterPlayerListVideoPlayerController: controller,

@@ -2,9 +2,9 @@ import 'package:better_player/better_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  group('BetterPlayerDataSource tests', () {
+  group('PlayerDataSource tests', () {
     test('Network factory', () {
-      final source = BetterPlayerDataSource.network(
+      final source = PlayerDataSource.network(
         'https://example.com/video.mp4',
       );
       expect(source.type, DataSourceType.network);
@@ -12,19 +12,19 @@ void main() {
     });
 
     test('File factory', () {
-      final source = BetterPlayerDataSource.file('/path/to/video.mp4');
+      final source = PlayerDataSource.file('/path/to/video.mp4');
       expect(source.type, DataSourceType.file);
       expect(source.url, '/path/to/video.mp4');
     });
 
     test('Memory factory', () {
-      final source = BetterPlayerDataSource.memory([1, 2, 3]);
+      final source = PlayerDataSource.memory([1, 2, 3]);
       expect(source.type, DataSourceType.memory);
       expect(source.bytes, [1, 2, 3]);
     });
 
     test('copyWith', () {
-      final source = BetterPlayerDataSource(
+      final source = PlayerDataSource(
         DataSourceType.network,
         'https://example.com/video.mp4',
       );
@@ -41,10 +41,10 @@ void main() {
     });
 
     test('Network factory with all parameters', () {
-      final source = BetterPlayerDataSource.network(
+      final source = PlayerDataSource.network(
         'url',
         subtitles: [
-          BetterPlayerSubtitlesSource(name: 'en'),
+          PlayerSubtitlesSource(name: 'en'),
         ],
         liveStream: true,
         headers: {'header': 'value'},
@@ -83,10 +83,10 @@ void main() {
     });
 
     test('File factory with all parameters', () {
-      final source = BetterPlayerDataSource.file(
+      final source = PlayerDataSource.file(
         'file_url',
         subtitles: [
-          BetterPlayerSubtitlesSource(name: 'en'),
+          PlayerSubtitlesSource(name: 'en'),
         ],
         useAsmsSubtitles: false,
         useAsmsTracks: false,
@@ -110,11 +110,11 @@ void main() {
     });
 
     test('Memory factory with all parameters', () {
-      final source = BetterPlayerDataSource.memory(
+      final source = PlayerDataSource.memory(
         [1, 2, 3],
         videoExtension: 'mp4',
         subtitles: [
-          BetterPlayerSubtitlesSource(name: 'en'),
+          PlayerSubtitlesSource(name: 'en'),
         ],
         useAsmsSubtitles: false,
         useAsmsTracks: false,
@@ -140,7 +140,7 @@ void main() {
 
     test('memory source assertion works', () {
       expect(
-        () => BetterPlayerDataSource(
+        () => PlayerDataSource(
           DataSourceType.memory,
           '',
           bytes: [],
@@ -150,7 +150,7 @@ void main() {
     });
 
     test('network source factories', () {
-      final source = BetterPlayerDataSource.network(
+      final source = PlayerDataSource.network(
         'url',
         liveStream: true,
       );

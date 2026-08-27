@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
-import 'package:better_player/src/subtitles/better_player_subtitles_source.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source_type.dart';
+import 'package:better_player/src/subtitles/player_subtitles_source.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MockHttpClient extends Fake implements HttpClient {
@@ -93,13 +94,13 @@ class TestHttpOverrides extends HttpOverrides {
 }
 
 void main() {
-  group('BetterPlayerSubtitlesFactory tests', () {
+  group('PlayerSubtitlesFactory tests', () {
     test('parseSubtitles from memory', () async {
-      final source = BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.memory,
+      final source = PlayerSubtitlesSource(
+        type: PlayerSubtitlesSourceType.memory,
         content: '1\n00:00:01,000 --> 00:00:02,000\nHello\n\n',
       );
-      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
         source,
       );
       expect(subtitles.length, 1);
@@ -109,11 +110,11 @@ void main() {
     test('parseSubtitles from network', () async {
       await HttpOverrides.runWithHttpOverrides(
         () async {
-          final source = BetterPlayerSubtitlesSource(
-            type: BetterPlayerSubtitlesSourceType.network,
+          final source = PlayerSubtitlesSource(
+            type: PlayerSubtitlesSourceType.network,
             urls: ['https://example.com/subs.srt'],
           );
-          final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+          final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
             source,
           );
           expect(subtitles.length, 1);
@@ -123,11 +124,11 @@ void main() {
     });
 
     test('parseSubtitles from file handles non-existent file', () async {
-      final source = BetterPlayerSubtitlesSource(
-        type: BetterPlayerSubtitlesSourceType.file,
+      final source = PlayerSubtitlesSource(
+        type: PlayerSubtitlesSourceType.file,
         urls: ['non_existent_file.srt'],
       );
-      final subtitles = await BetterPlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
         source,
       );
       expect(subtitles.length, 0);

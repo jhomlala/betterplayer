@@ -16,11 +16,11 @@ This error typically indicates that the `BetterPlayer` widget was disposed of pr
 
 ## Implementing Manual Disposal
 
-To take control of the disposal process, set the `autoDispose` flag to `false` within your `BetterPlayerConfiguration`:
+To take control of the disposal process, set the `autoDispose` flag to `false` within your `PlayerConfiguration`:
 
 ```dart
-BetterPlayerConfiguration betterPlayerConfiguration =
-    BetterPlayerConfiguration(
+PlayerConfiguration betterPlayerConfiguration =
+    PlayerConfiguration(
         autoDispose: false,
     );
 ```

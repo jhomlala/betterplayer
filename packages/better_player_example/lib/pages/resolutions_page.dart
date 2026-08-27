@@ -14,11 +14,11 @@ class _ResolutionsPageState extends State<ResolutionsPage> {
 
   @override
   void initState() {
-    const betterPlayerConfiguration = BetterPlayerConfiguration(
+    const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
     );
-    final dataSource = BetterPlayerDataSource(
+    final dataSource = PlayerDataSource(
       DataSourceType.network,
       Constants.exampleResolutionsUrls.values.first,
       resolutions: Constants.exampleResolutionsUrls,

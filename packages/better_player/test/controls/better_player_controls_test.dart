@@ -19,7 +19,7 @@ void main() {
 
   setUp(() {
     mockController = BetterPlayerMockController(
-      const BetterPlayerConfiguration(),
+      const PlayerConfiguration(),
     );
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
@@ -56,14 +56,14 @@ void main() {
 
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockVideoPlayerController(),
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.material,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -92,14 +92,14 @@ void main() {
     (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockVideoPlayerController(),
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.material,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -129,14 +129,14 @@ void main() {
       mockVideoPlayerController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.cupertino,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.cupertino,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -163,14 +163,14 @@ void main() {
     (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockVideoPlayerController(),
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.material,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -213,14 +213,14 @@ void main() {
 
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockVideoPlayerController(),
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.material,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -268,14 +268,14 @@ void main() {
     (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockVideoPlayerController(),
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.material,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -303,14 +303,14 @@ void main() {
       mockVideoPlayerController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,
-        configuration: const BetterPlayerConfiguration(
-          controlsConfiguration: BetterPlayerControlsConfiguration(
-            playerTheme: BetterPlayerTheme.cupertino,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.cupertino,
           ),
         ),
       );
       await controller.setupDataSource(
-        BetterPlayerDataSource.network(
+        PlayerDataSource.network(
           BetterPlayerTestUtils.forBiggerBlazesUrl,
         ),
       );
@@ -335,8 +335,8 @@ void main() {
     'Playlist navigation buttons in controls',
     (tester) async {
       final dataSourceList = [
-        BetterPlayerDataSource.network('https://example.com/1.mp4'),
-        BetterPlayerDataSource.network('https://example.com/2.mp4'),
+        PlayerDataSource.network('https://example.com/1.mp4'),
+        PlayerDataSource.network('https://example.com/2.mp4'),
       ];
 
       await tester.pumpWidget(
@@ -344,13 +344,13 @@ void main() {
           home: Scaffold(
             body: BetterPlayerPlaylist(
               betterPlayerDataSourceList: dataSourceList,
-              betterPlayerConfiguration: const BetterPlayerConfiguration(
-                controlsConfiguration: BetterPlayerControlsConfiguration(
-                  playerTheme: BetterPlayerTheme.material,
+              betterPlayerConfiguration: const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.material,
                 ),
               ),
               betterPlayerPlaylistConfiguration:
-                  const BetterPlayerPlaylistConfiguration(),
+                  const PlayerPlaylistConfiguration(),
             ),
           ),
         ),

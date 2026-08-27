@@ -11,6 +11,10 @@
 
 Better Player is a powerful video player for Flutter, built on top of the official `video_player` plugin and inspired by `Chewie`. It solves common playback issues, provides extensive configuration options, and handles complex media use cases out of the box.
 
+
+> **[IMPORTANT] Migrating to 1.x.x?**
+> We've introduced a cleaner federated architecture and unified model names (e.g. `BetterPlayerConfiguration` is now `PlayerConfiguration`). See the [Migration Guide to 1.x.x](https://jhomlala.github.io/betterplayer/migration_to_1.x.x) to learn how to upgrade your project in a single command using `dart fix --apply`.
+
 ---
 
 ## 📱 Visual Showcase
@@ -78,7 +82,7 @@ AspectRatio(
   aspectRatio: 16 / 9,
   child: BetterPlayer.network(
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    betterPlayerConfiguration: BetterPlayerConfiguration(
+    betterPlayerConfiguration: PlayerConfiguration(
       aspectRatio: 16 / 9,
       looping: true,
       autoPlay: true,
@@ -92,8 +96,8 @@ For full control, use the `BetterPlayerController`:
 
 ```dart
 BetterPlayerController _controller = BetterPlayerController(
-    const BetterPlayerConfiguration(),
-    betterPlayerDataSource: BetterPlayerDataSource(
+    const PlayerConfiguration(),
+    betterPlayerDataSource: PlayerDataSource(
         DataSourceType.network,
         "https://example.com/video.mp4",
     ),
@@ -123,3 +127,5 @@ Valuable contributions are welcome! Better Player is a community-driven project.
 
 ## 📄 License
 This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+

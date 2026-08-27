@@ -13,11 +13,11 @@ Better Player supports native platform notifications, allowing users to control 
 
 ## Implementation
 
-Notifications are configured using the `notificationConfiguration` parameter within the `BetterPlayerDataSource`.
+Notifications are configured using the `notificationConfiguration` parameter within the `PlayerDataSource`.
 
 ```dart
-BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+PlayerDataSource dataSource = PlayerDataSource(
+    PlayerDataSourceType.network,
     Constants.elephantDreamVideoUrl,
     notificationConfiguration: BetterPlayerNotificationConfiguration(
         showNotification: true,
@@ -40,7 +40,7 @@ BetterPlayerDataSource dataSource = BetterPlayerDataSource(
 ## Advanced Considerations
 
 ### Background Playback
-To allow playback to continue after the user leaves the application, ensure `handleLifecycle` is set to `false` in your `BetterPlayerConfiguration`.
+To allow playback to continue after the user leaves the application, ensure `handleLifecycle` is set to `false` in your `PlayerConfiguration`.
 
 :::tip
 Setting `handleLifecycle: false` is essential for audio-only apps or video apps that support background audio, as it prevents the system from automatically pausing playback when the app is minimized.

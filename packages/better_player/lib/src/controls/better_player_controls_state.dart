@@ -16,7 +16,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   BetterPlayerController? get betterPlayerController;
 
-  BetterPlayerControlsConfiguration get betterPlayerControlsConfiguration;
+  PlayerControlsConfiguration get betterPlayerControlsConfiguration;
 
   VideoPlayerValue? get latestValue;
 
@@ -158,13 +158,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     );
     final noneSubtitlesElementExists =
         subtitles.firstWhereOrNull(
-          (source) => source.type == BetterPlayerSubtitlesSourceType.none,
+          (source) => source.type == PlayerSubtitlesSourceType.none,
         ) !=
         null;
     if (!noneSubtitlesElementExists) {
       subtitles.add(
-        BetterPlayerSubtitlesSource(
-          type: BetterPlayerSubtitlesSourceType.none,
+        PlayerSubtitlesSource(
+          type: PlayerSubtitlesSourceType.none,
         ),
       );
     }
@@ -175,11 +175,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             betterPlayerController!.betterPlayerSubtitlesSource;
         final isSelected =
             (subtitlesSource == selectedSourceType) ||
-            (subtitlesSource.type == BetterPlayerSubtitlesSourceType.none &&
+            (subtitlesSource.type == PlayerSubtitlesSourceType.none &&
                 subtitlesSource.type == selectedSourceType!.type);
 
-        final name =
-            subtitlesSource.type == BetterPlayerSubtitlesSourceType.none
+        final name = subtitlesSource.type == PlayerSubtitlesSourceType.none
             ? betterPlayerController!.translations.generalNone
             : subtitlesSource.name ??
                   betterPlayerController!.translations.generalDefault;
@@ -286,7 +285,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setTrack(
-              BetterPlayerAsmsTrack.defaultTrack(),
+              PlayerAsmsTrack.defaultTrack(),
             );
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
@@ -335,7 +334,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setAudioTrack(
-              BetterPlayerAsmsAudioTrack(
+              PlayerAsmsAudioTrack(
                 label: betterPlayerController!.translations.generalDefault,
               ),
             );
@@ -429,7 +428,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     setState(() {
       if (notVisible) {
         betterPlayerController?.postEvent(
-          BetterPlayerEvent(BetterPlayerEventType.controlsHiddenStart),
+          PlayerEvent(PlayerEventType.controlsHiddenStart),
         );
       }
       controlsNotVisible = notVisible;

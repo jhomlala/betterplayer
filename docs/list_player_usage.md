@@ -21,8 +21,8 @@ Widget build(BuildContext context) {
   return AspectRatio(
     aspectRatio: 16 / 9,
     child: BetterPlayerListVideoPlayer(
-      BetterPlayerDataSource(
-          BetterPlayerDataSourceType.network, videoListData.videoUrl),
+      PlayerDataSource(
+          PlayerDataSourceType.network, videoListData.videoUrl),
       key: Key(videoListData.hashCode.toString()),
       playFraction: 0.8,
     ),
@@ -44,4 +44,4 @@ Creating multiple instances of `BetterPlayerController` is resource-intensive. O
 Implement a pattern where a small pool of `BetterPlayerController` instances (e.g., 2-3) is reused across list items as they scroll into view.
 
 *   **Reusable Video List Example**: [View Code](https://github.com/jhomlala/betterplayer/tree/master/example/lib/pages/reusable_video_list)
-*   **Buffer Tuning**: If you encounter random OOM issues, consider reducing the values within the `bufferingConfiguration` of your `BetterPlayerDataSource`.
+*   **Buffer Tuning**: If you encounter random OOM issues, consider reducing the values within the `bufferingConfiguration` of your `PlayerDataSource`.

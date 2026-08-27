@@ -18,7 +18,7 @@ void main() {
         );
 
     mockController = BetterPlayerMockController(
-      const BetterPlayerConfiguration(),
+      const PlayerConfiguration(),
     );
   });
 
@@ -35,7 +35,7 @@ void main() {
   ) async {
     const placeholder = Text('DataSource Placeholder');
     mockController.setupDataSource(
-      BetterPlayerDataSource.network(
+      PlayerDataSource.network(
         'url',
         placeholder: placeholder,
       ),
@@ -55,7 +55,7 @@ void main() {
   ) async {
     const placeholder = Text('Config Placeholder');
     final controller = BetterPlayerMockController(
-      const BetterPlayerConfiguration(placeholder: placeholder),
+      const PlayerConfiguration(placeholder: placeholder),
     );
 
     await tester.pumpWidget(
