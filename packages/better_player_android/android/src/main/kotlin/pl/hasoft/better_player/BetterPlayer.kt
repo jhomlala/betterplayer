@@ -396,7 +396,7 @@ class BetterPlayer(
                 when (playbackState) {
                     Player.STATE_BUFFERING -> {
                         sendBufferingUpdate(true)
-                        val event: MutableMap<String, Any> = HashMap()
+                        val event: MutableMap<String, Any?> = HashMap()
                         event["event"] = "bufferingStart"
                         callback.onEvent(event["event"].toString(), event)
                     }
@@ -405,7 +405,7 @@ class BetterPlayer(
                             isInitialized = true
                             sendInitialized()
                         }
-                        val event: MutableMap<String, Any> = HashMap()
+                        val event: MutableMap<String, Any?> = HashMap()
                         event["event"] = "bufferingEnd"
                         callback.onEvent(event["event"].toString(), event)
                     }
@@ -455,7 +455,7 @@ class BetterPlayer(
     fun sendBufferingUpdate(isFromBufferingStart: Boolean) {
         val bufferedPosition = exoPlayer?.bufferedPosition ?: 0L
         if (isFromBufferingStart || bufferedPosition != lastSendBufferedPosition) {
-            val event: MutableMap<String, Any> = HashMap()
+            val event: MutableMap<String, Any?> = HashMap()
             event["event"] = "bufferingUpdate"
             val range: List<Number?> = listOf(0, bufferedPosition)
             event["values"] = listOf(range)
@@ -536,14 +536,8 @@ class BetterPlayer(
         exoPlayer?.seekTo(location.toLong())
     }
 
-    @Keep
-
-
     val position: Long
         get() = exoPlayer?.currentPosition ?: 0L
-
-    @Keep
-
 
     val absolutePosition: Long
         get() {
@@ -610,7 +604,7 @@ class BetterPlayer(
 
 
     fun onPictureInPictureStatusChanged(inPip: Boolean) {
-        val event: MutableMap<String, Any> = HashMap()
+        val event: MutableMap<String, Any?> = HashMap()
         event["event"] = if (inPip) "pipStart" else "pipStop"
         callback.onEvent(event["event"].toString(), event)
     }
@@ -692,7 +686,7 @@ class BetterPlayer(
     }
 
     private fun sendSeekToEvent(positionMs: Long) {
-        val event: MutableMap<String, Any> = HashMap()
+        val event: MutableMap<String, Any?> = HashMap()
         event["event"] = "seek"
         event["position"] = positionMs
         callback.onEvent(event["event"].toString(), event)

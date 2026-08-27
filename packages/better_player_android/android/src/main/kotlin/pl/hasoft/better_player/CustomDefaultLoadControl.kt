@@ -2,7 +2,7 @@ package pl.hasoft.better_player
 
 import androidx.media3.exoplayer.DefaultLoadControl
 
-internal class CustomDefaultLoadControl {
+class CustomDefaultLoadControl {
     /**
      * The default minimum duration of media that the player will attempt to ensure is buffered
      * at all times, in milliseconds.
