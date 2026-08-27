@@ -18,6 +18,9 @@ public class FlutterError: NSObject {
     }
 }
 public typealias FlutterResult = (Any?) -> Void
+
+public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject {}
+public class CacheManager: NSObject {}
 #endif
 import Foundation
 import UIKit
