@@ -39,7 +39,7 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,
   }) async {
-    final callback = BetterPlayerCallback.implement(\$BetterPlayerCallback(
+    final callback = BetterPlayerCallback.implement($BetterPlayerCallback(
       onEvent: (JString event, JMap<JString, JObject?> parameters) {
         final eventStr = event.toDartString();
         // Since full JMap extraction requires JNI reflection which is tedious here,
@@ -53,14 +53,14 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
           controller.add(videoEvent);
         }
       },
-      onEvent\$async: true,
+      onEvent$async: true,
       onError: (JString errorCode, JString errorMessage, JString errorDetails) {
         // Implement parsing error events
       },
-      onError\$async: true,
+      onError$async: true,
     ));
 
-    final player = BetterPlayerApi.Companion.createPlayer(Jni.cachedApplicationContext, callback);
+    final player = BetterPlayerApi.Companion.createPlayer(Jni.context, callback);
     if (player == null) return null;
     
     final textureId = player.textureId;
@@ -156,7 +156,7 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     JMap<JString, JString>? headersMap;
     if (map['headers'] != null) {
       final m = map['headers'] as Map;
-      headersMap = JMap(JString.type, JString.type);
+      headersMap = JMap.hash(JString.type, JString.type);
       m.forEach((k, v) {
         headersMap!.put(k.toString().toJString(), v.toString().toJString());
       });
@@ -165,14 +165,14 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     JMap<JString, JString>? drmHeadersMap;
     if (map['drmHeaders'] != null) {
       final m = map['drmHeaders'] as Map;
-      drmHeadersMap = JMap(JString.type, JString.type);
+      drmHeadersMap = JMap.hash(JString.type, JString.type);
       m.forEach((k, v) {
         drmHeadersMap!.put(k.toString().toJString(), v.toString().toJString());
       });
     }
 
     player.setDataSource(
-      Jni.cachedApplicationContext,
+      Jni.context,
       (map['key'] as String?)?.toJString(),
       (map['uri'] as String? ?? map['asset'] as String?)?.toJString(),
       (map['formatHint'] as String?)?.toJString(),
@@ -200,12 +200,12 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
 
   @override
   Future<void> setVolume(int? textureId, double volume) async {
-    _players[textureId]?.setVolume(volume);
+    _players[textureId]?.volume = volume;
   }
 
   @override
   Future<void> setSpeed(int? textureId, double speed) async {
-    _players[textureId]?.setSpeed(speed);
+    _players[textureId]?.speed = speed;
   }
 
   @override
