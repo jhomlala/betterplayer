@@ -1,7 +1,10 @@
 name: Generate FFI Bindings
 
 on:
-  workflow_dispatch: # Allows you to manually trigger it from the Actions tab
+  push:
+    branches:
+      - 'feature/ffi-migration'
+  workflow_dispatch:
 
 jobs:
   generate:
