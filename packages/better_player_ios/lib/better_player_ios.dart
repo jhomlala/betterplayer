@@ -6,79 +6,7 @@ import 'package:flutter/widgets.dart';
 import 'package:objective_c/objective_c.dart' as objc;
 import 'package:better_player_ios/src/better_player_ios_ffi.g.dart';
 
-final _libObjC = ffi.DynamicLibrary.process();
-
-final _selObjectForKey = objc.registerName('objectForKey:');
-final _selNumberWithLongLong = objc.registerName('numberWithLongLong:');
-final _classNSNumber = objc.getClass('NSNumber');
-
-late final _objcMsgSendObjectForKey = _libObjC.lookupFunction<
-    ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        ffi.Pointer<objc.ObjCObjectImpl>),
-    ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        ffi.Pointer<objc.ObjCObjectImpl>)>('objc_msgSend');
-
-late final _objcMsgSendNumberWithLongLong = _libObjC.lookupFunction<
-    ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        ffi.Int64),
-    ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>,
-        int)>('objc_msgSend');
-
-BetterPlayer? _getPlayer(int textureId) {
-  final dict = BetterPlayerApi.getPlayers();
-  
-  final numPtr = _objcMsgSendNumberWithLongLong(
-      _classNSNumber, _selNumberWithLongLong, textureId);
-      
-  final playerPtr = _objcMsgSendObjectForKey(
-      dict.ref.pointer, _selObjectForKey, numPtr);
-      
-  if (playerPtr.address == 0) return null;
-  return BetterPlayer.fromPointer(playerPtr, retain: true, release: true);
-}
-
-late final _objcMsgSendNoArgs = _libObjC.lookupFunction<
-    ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>),
-    ffi.Pointer<objc.ObjCObjectImpl> Function(
-        ffi.Pointer<objc.ObjCObjectImpl>,
-        ffi.Pointer<objc.ObjCSelector>)>('objc_msgSend');
-
-  late final _selURLWithString = objc.registerName('URLWithString:');
-  late final _classNSURL = objc.getClass('NSURL');
-  late final _objcMsgSendURL = _libObjC.lookupFunction<
-      ffi.Pointer<objc.ObjCObjectImpl> Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-          ffi.Pointer<objc.ObjCObjectImpl>),
-      ffi.Pointer<objc.ObjCObjectImpl> Function(
-          ffi.Pointer<objc.ObjCObjectImpl>,
-          ffi.Pointer<objc.ObjCSelector>,
-          ffi.Pointer<objc.ObjCObjectImpl>)>('objc_msgSend');
-
-  objc.NSURL _createNSURL(String url) {
-    final str = url.toNSString();
-    final urlPtr = _objcMsgSendURL(_classNSURL, _selURLWithString, str.ref.pointer);
-    return objc.NSURL.fromPointer(urlPtr, retain: true, release: true);
-  }
-
-CacheManager _createCacheManager() {
-  final cls = objc.getClass('CacheManager');
-  final selAlloc = objc.registerName('alloc');
-  final selInit = objc.registerName('init');
-  final allocPtr = _objcMsgSendNoArgs(cls, selAlloc);
-  final initPtr = _objcMsgSendNoArgs(allocPtr, selInit);
-  return CacheManager.fromPointer(initPtr);
-}
+BetterPlayer? _getPlayer(int textureId) => BetterPlayerApi.getPlayer(textureId);
 
 class BetterPlayerIOS extends VideoPlayerPlatform {
   static void registerWith() {
@@ -125,7 +53,12 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
         }
       },
       onError_errorMessage_errorDetails_: (objc.NSString errorCode, objc.NSString errorMessage, objc.NSString errorDetails) {
-        // Implement parsing error events
+        if (currentTextureId == null) return;
+        _eventControllers[currentTextureId]?.addError(PlatformException(
+            code: errorCode.toString(),
+            message: errorMessage.toString(),
+            details: errorDetails.toString(),
+        ));
       },
     );
 
@@ -208,7 +141,7 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
     final player = _getPlayer(textureId);
     if (player == null) return;
     
-    final cacheManager = _createCacheManager();
+    final cacheManager = BetterPlayerApi.createCacheManager();
     final overriddenDuration = (map['overriddenDuration'] as int?) ?? 0;
 
     if (dataSource.sourceType == DataSourceType.asset) {
@@ -219,13 +152,16 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
         overriddenDuration: overriddenDuration,
       );
     } else {
-      player.setDataSourceURL(
-        _createNSURL(map['uri'] as String),
+      player.setDataSourceURLString(
+        (map['uri'] as String).toNSString(),
         key: (map['key'] as String?)?.toNSString(),
-        headers: objc.NSDictionary(),
+        certificateUrl: null,
+        licenseUrl: null,
         useCache: map['useCache'] as bool? ?? false,
+        cacheKey: null,
         cacheManager: cacheManager,
         overriddenDuration: overriddenDuration,
+        videoExtension: null,
       );
     }
   }
@@ -233,7 +169,7 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
   @override
   Future<void> setLooping(int? textureId, bool looping) async {
     if (textureId == null) return;
-    // _getPlayer(textureId)?.setLooping(looping); // Method not generated/annotated?
+    _getPlayer(textureId)?.setLooping(looping);
   }
 
   @override
@@ -257,13 +193,13 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
   @override
   Future<void> setSpeed(int? textureId, double speed) async {
     if (textureId == null) return;
-    // _getPlayer(textureId)?.setSpeed(speed);
+    _getPlayer(textureId)?.setSpeed(speed);
   }
 
   @override
   Future<void> seekTo(int? textureId, Duration? position) async {
-    if (textureId == null) return;
-    // _getPlayer(textureId)?.seekTo(position.inMilliseconds);
+    if (textureId == null || position == null) return;
+    _getPlayer(textureId)?.seekTo(position.inMilliseconds);
   }
 
   @override

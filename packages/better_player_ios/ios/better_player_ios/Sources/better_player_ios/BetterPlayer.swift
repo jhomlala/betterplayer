@@ -571,18 +571,21 @@ private var presentationSizeContext = 0
     /// Sets the playback speed.
     /// - Parameters:
     ///   - speed: The playback speed.
-    ///   - result: The Flutter result to report success or failure.
-    @objc public func setSpeed(_ speed: Double, result: FlutterResult) {
-        if speed < 0 || speed > 2.0 {
-            result(FlutterError(code: "unsupported_speed", message: "Speed must be >= 0.0 and <= 2.0", details: nil))
-            return
-        }
-
+    @objc public func setSpeed(_ speed: Double) {
+        guard speed >= 0, speed <= 2.0 else { return }
         playerRate = Float(speed == 0.0 ? 1.0 : speed)
         if isPlaying {
             applyPlayerRate()
         }
-        result(nil)
+    }
+
+    @objc public func setLooping(_ looping: Bool) {
+        isLooping = looping
+    }
+
+    @objc public func setDataSourceURLString(_ urlString: String, key: String?, certificateUrl: String?, licenseUrl: String?, useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
+        guard let url = URL(string: urlString) else { return }
+        setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: useCache, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: videoExtension)
     }
 
     // MARK: - Track Parameters
