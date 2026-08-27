@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'better_player_ios'
-  s.version          = '1.1.1'
+  s.version          = '1.0.2'
   s.summary          = 'iOS implementation of the better_player plugin.'
   s.description      = <<-DESC
 iOS implementation of the better_player plugin.
