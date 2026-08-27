@@ -19,8 +19,19 @@ public class FlutterError: NSObject {
 }
 public typealias FlutterResult = (Any?) -> Void
 
-public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject {}
-public class CacheManager: NSObject {}
+public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoaderDelegate {
+    public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) { super.init() }
+}
+public class CacheManager: NSObject {
+    public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: [NSObject: AnyObject]) -> AVPlayerItem? { return nil }
+}
+public class BetterPlayerView: UIView {
+    public var player: AVPlayer?
+}
+public class BetterPlayerTimeUtils {
+    public static func cmTimeToMillis(_ time: CMTime) -> Int64 { return 0 }
+    public static func timeIntervalToMillis(_ interval: TimeInterval) -> Int64 { return 0 }
+}
 #endif
 import Foundation
 import UIKit
