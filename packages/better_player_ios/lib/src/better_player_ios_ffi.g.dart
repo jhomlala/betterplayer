@@ -234,6 +234,12 @@ extension type BetterPlayer._(objc.ObjCObject object$)
 }
 
 extension BetterPlayer$Methods on BetterPlayer {
+  /// Returns the absolute position in milliseconds for live streams.
+  int absolutePosition() {
+    final _$$ref = object$.ref;
+    return _objc_msgSend_pysgoz(_$$ref.pointer, _sel_absolutePosition);
+  }
+
   /// The sink for emitting events to Flutter.
   BetterPlayerCallback? get callback {
     final _$$ref = object$.ref;
@@ -243,10 +249,41 @@ extension BetterPlayer$Methods on BetterPlayer {
         : BetterPlayerCallback.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Clears the player state.
+  void clear() {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_clear);
+  }
+
+  /// Disables Picture-in-Picture.
+  void disablePictureInPicture() {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_disablePictureInPicture);
+  }
+
   /// Disposes the player and cleans up resources.
   void dispose() {
     final _$$ref = object$.ref;
     _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_dispose);
+  }
+
+  /// Disposes the player without affecting the event channel.
+  void disposeSansEventChannel() {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_disposeSansEventChannel);
+  }
+
+  /// Returns the total duration of the media in milliseconds.
+  int duration() {
+    final _$$ref = object$.ref;
+    return _objc_msgSend_pysgoz(_$$ref.pointer, _sel_duration);
+  }
+
+  /// Enables Picture-in-Picture for the given frame.
+  /// \param frame The frame for PiP.
+  void enablePictureInPicture(objc.CGRect frame) {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1okkq16(_$$ref.pointer, _sel_enablePictureInPicture_, frame);
   }
 
   /// init
@@ -341,11 +378,29 @@ extension BetterPlayer$Methods on BetterPlayer {
     _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_play);
   }
 
+  /// Returns the current playback position in milliseconds.
+  int position() {
+    final _$$ref = object$.ref;
+    return _objc_msgSend_pysgoz(_$$ref.pointer, _sel_position);
+  }
+
   /// Seeks to the specified position in milliseconds.
   /// \param location The position to seek to.
   void seekTo(int location) {
     final _$$ref = object$.ref;
     _objc_msgSend_4sp4xj(_$$ref.pointer, _sel_seekTo_, location);
+  }
+
+  /// Sets the video aspect ratio gravity.
+  /// \param gravity The gravity to apply.
+  void setAspectRatio(objc.ObjCObject gravity) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = gravity.ref;
+    _objc_msgSend_xtuoz7(
+      _$$ref.pointer,
+      _sel_setAspectRatio_,
+      _$$ref$1.pointer,
+    );
   }
 
   /// Sets the audio track by name and index.
@@ -374,6 +429,74 @@ extension BetterPlayer$Methods on BetterPlayer {
     );
   }
 
+  /// Sets the data source from an asset path.
+  void setDataSourceAsset(
+    objc.NSString assetPath, {
+    objc.NSString? key,
+    objc.NSString? certificateUrl,
+    objc.NSString? licenseUrl,
+    objc.NSString? cacheKey,
+    required CacheManager cacheManager,
+    required int overriddenDuration,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = assetPath.ref;
+    final _$$ref$2 = key?.ref;
+    final _$$ref$3 = certificateUrl?.ref;
+    final _$$ref$4 = licenseUrl?.ref;
+    final _$$ref$5 = cacheKey?.ref;
+    final _$$ref$6 = cacheManager.ref;
+    _objc_msgSend_1o6tp0z(
+      _$$ref.pointer,
+      _sel_setDataSourceAsset_key_certificateUrl_licenseUrl_cacheKey_cacheManager_overriddenDuration_,
+      _$$ref$1.pointer,
+      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$3?.pointer ?? ffi.nullptr,
+      _$$ref$4?.pointer ?? ffi.nullptr,
+      _$$ref$5?.pointer ?? ffi.nullptr,
+      _$$ref$6.pointer,
+      overriddenDuration,
+    );
+  }
+
+  /// Sets the data source from a URL.
+  void setDataSourceURL(
+    objc.NSURL url, {
+    objc.NSString? key,
+    objc.NSString? certificateUrl,
+    objc.NSString? licenseUrl,
+    required objc.NSDictionary headers,
+    required bool useCache,
+    objc.NSString? cacheKey,
+    required CacheManager cacheManager,
+    required int overriddenDuration,
+    objc.NSString? videoExtension,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = url.ref;
+    final _$$ref$2 = key?.ref;
+    final _$$ref$3 = certificateUrl?.ref;
+    final _$$ref$4 = licenseUrl?.ref;
+    final _$$ref$5 = headers.ref;
+    final _$$ref$6 = cacheKey?.ref;
+    final _$$ref$7 = cacheManager.ref;
+    final _$$ref$8 = videoExtension?.ref;
+    _objc_msgSend_1vngrzb(
+      _$$ref.pointer,
+      _sel_setDataSourceURL_key_certificateUrl_licenseUrl_headers_useCache_cacheKey_cacheManager_overriddenDuration_videoExtension_,
+      _$$ref$1.pointer,
+      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$3?.pointer ?? ffi.nullptr,
+      _$$ref$4?.pointer ?? ffi.nullptr,
+      _$$ref$5.pointer,
+      useCache,
+      _$$ref$6?.pointer ?? ffi.nullptr,
+      _$$ref$7.pointer,
+      overriddenDuration,
+      _$$ref$8?.pointer ?? ffi.nullptr,
+    );
+  }
+
   /// Sets whether the audio should mix with others.
   /// \param mixWithOthers Whether to mix audio.
   void setMixWithOthers(bool mixWithOthers) {
@@ -382,6 +505,27 @@ extension BetterPlayer$Methods on BetterPlayer {
       _$$ref.pointer,
       _sel_setMixWithOthers_,
       mixWithOthers,
+    );
+  }
+
+  /// Sets Picture-in-Picture state.
+  /// \param pictureInPicture Whether PiP should be active.
+  void setPictureInPicture(bool pictureInPicture) {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1s56lr9(
+      _$$ref.pointer,
+      _sel_setPictureInPicture_,
+      pictureInPicture,
+    );
+  }
+
+  /// Sets the completion handler for restoring UI after PiP stops.
+  void setRestoreUserInterfaceForPIPStopCompletionHandler(bool restore) {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1s56lr9(
+      _$$ref.pointer,
+      _sel_setRestoreUserInterfaceForPIPStopCompletionHandler_,
+      restore,
     );
   }
 
@@ -847,6 +991,23 @@ interface class BetterPlayerCallback$Builder {
               ) => func(arg1, arg2),
             ),
       );
+}
+
+/// WARNING: CacheManager is a stub. To generate bindings for this class, include
+/// CacheManager in your config's objc-interfaces list.
+///
+/// CacheManager
+extension type CacheManager._(objc.ObjCObject object$)
+    implements objc.ObjCObject, objc.NSObject {
+  /// Constructs a [CacheManager] that points to the same underlying object as [other].
+  CacheManager.as(objc.ObjCObject other) : object$ = other {}
+
+  /// Constructs a [CacheManager] that wraps the given raw object pointer.
+  CacheManager.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
 }
 
 /// Construction methods for `objc.ObjCBlock<ffi.Void Function(ffi.Bool)>`.
@@ -2080,6 +2241,35 @@ final _objc_msgSend_1nvl641 = objc.msgSendPointer
         int,
       )
     >();
+final _objc_msgSend_1o6tp0z = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Long,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+      )
+    >();
 final _objc_msgSend_1oj5o8z = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -2095,6 +2285,23 @@ final _objc_msgSend_1oj5o8z = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCSelector>,
         ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
+final _objc_msgSend_1okkq16 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          objc.CGRect,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        objc.CGRect,
       )
     >();
 final _objc_msgSend_1pl4k3n = objc.msgSendPointer
@@ -2150,6 +2357,41 @@ final _objc_msgSend_1s56lr9 = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCSelector>,
         bool,
+      )
+    >();
+final _objc_msgSend_1vngrzb = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Long,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        bool,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
 final _objc_msgSend_4sp4xj = objc.msgSendPointer
@@ -2354,6 +2596,7 @@ final _protocol_BetterPlayerCallback = objc.getProtocol(
   "better_player_ios.BetterPlayerCallback",
   _protocol_BetterPlayerCallback_raw,
 );
+late final _sel_absolutePosition = objc.registerName("absolutePosition");
 late final _sel_alloc = objc.registerName("alloc");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
 late final _sel_arg0 = objc.registerName("arg0");
@@ -2361,11 +2604,22 @@ late final _sel_arg1 = objc.registerName("arg1");
 late final _sel_arg2 = objc.registerName("arg2");
 late final _sel_arg3 = objc.registerName("arg3");
 late final _sel_callback = objc.registerName("callback");
+late final _sel_clear = objc.registerName("clear");
 late final _sel_conformsToProtocol_ = objc.registerName("conformsToProtocol:");
 late final _sel_createPlayerWithCallback_ = objc.registerName(
   "createPlayerWithCallback:",
 );
+late final _sel_disablePictureInPicture = objc.registerName(
+  "disablePictureInPicture",
+);
 late final _sel_dispose = objc.registerName("dispose");
+late final _sel_disposeSansEventChannel = objc.registerName(
+  "disposeSansEventChannel",
+);
+late final _sel_duration = objc.registerName("duration");
+late final _sel_enablePictureInPicture_ = objc.registerName(
+  "enablePictureInPicture:",
+);
 late final _sel_init = objc.registerName("init");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 late final _sel_new = objc.registerName("new");
@@ -2387,14 +2641,29 @@ late final _sel_pictureInPictureController_restoreUserInterfaceForPictureInPictu
     );
 late final _sel_play = objc.registerName("play");
 late final _sel_players = objc.registerName("players");
+late final _sel_position = objc.registerName("position");
 late final _sel_seekTo_ = objc.registerName("seekTo:");
+late final _sel_setAspectRatio_ = objc.registerName("setAspectRatio:");
 late final _sel_setAudioTrackWithName_index_ = objc.registerName(
   "setAudioTrackWithName:index:",
 );
 late final _sel_setCallback_ = objc.registerName("setCallback:");
+late final _sel_setDataSourceAsset_key_certificateUrl_licenseUrl_cacheKey_cacheManager_overriddenDuration_ =
+    objc.registerName(
+      "setDataSourceAsset:key:certificateUrl:licenseUrl:cacheKey:cacheManager:overriddenDuration:",
+    );
+late final _sel_setDataSourceURL_key_certificateUrl_licenseUrl_headers_useCache_cacheKey_cacheManager_overriddenDuration_videoExtension_ =
+    objc.registerName(
+      "setDataSourceURL:key:certificateUrl:licenseUrl:headers:useCache:cacheKey:cacheManager:overriddenDuration:videoExtension:",
+    );
 late final _sel_setMixWithOthers_ = objc.registerName("setMixWithOthers:");
 late final _sel_setNextId_ = objc.registerName("setNextId:");
+late final _sel_setPictureInPicture_ = objc.registerName(
+  "setPictureInPicture:",
+);
 late final _sel_setPlayers_ = objc.registerName("setPlayers:");
+late final _sel_setRestoreUserInterfaceForPIPStopCompletionHandler_ = objc
+    .registerName("setRestoreUserInterfaceForPIPStopCompletionHandler:");
 late final _sel_setSpeed_result_ = objc.registerName("setSpeed:result:");
 late final _sel_setTrackParametersWithWidth_height_bitrate_ = objc.registerName(
   "setTrackParametersWithWidth:height:bitrate:",
