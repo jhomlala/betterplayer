@@ -906,6 +906,64 @@ extension type BetterPlayer._(jni$_.JObject _$this) implements jni$_.JObject {
 }
 
 extension BetterPlayer$$Methods on BetterPlayer {
+  static final _id_get$textureEntry = BetterPlayer._class.instanceMethodId(
+    r'getTextureEntry',
+    r'()Lio/flutter/view/TextureRegistry$SurfaceTextureEntry;',
+  );
+
+  static final _get$textureEntry =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public final io.flutter.view.TextureRegistry$SurfaceTextureEntry getTextureEntry()`
+  /// The returned object must be released after use, by calling the [release] method.
+  TextureRegistry$$SurfaceTextureEntry get textureEntry {
+    final _$$selfRef = reference;
+    return _get$textureEntry(
+      _$$selfRef.pointer,
+      _id_get$textureEntry.pointer,
+    ).object<TextureRegistry$$SurfaceTextureEntry>();
+  }
+
+  static final _id_get$textureId = BetterPlayer._class.instanceMethodId(
+    r'getTextureId',
+    r'()J',
+  );
+
+  static final _get$textureId =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallLongMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public fun getTextureId(): kotlin.Long`
+  core$_.int get textureId {
+    final _$$selfRef = reference;
+    return _get$textureId(_$$selfRef.pointer, _id_get$textureId.pointer).long;
+  }
+
   static final _id_setDataSource = BetterPlayer._class.instanceMethodId(
     r'setDataSource',
     r'(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ZJJJLjava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;)V',
