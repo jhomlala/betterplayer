@@ -1,5 +1,7 @@
 import 'dart:async';
 
+// ignore_for_file: avoid_setters_without_getters
+
 import 'package:better_player_android/src/better_player_android_jni.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/services.dart';
@@ -258,6 +260,90 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+    // Convert headers to JMap
+    final headersMap = (JHashMap() as JObject) as JMap<JString, JString?>;
+    if (dataSource.headers != null) {
+      dataSource.headers!.forEach((k, v) {
+        headersMap.put(k.toJString(), v?.toString().toJString());
+      });
+    }
+
+    final companion = BetterPlayer.Companion;
+    companion.preCache(
+      androidApplicationContext as Context,
+      (dataSource.uri ?? dataSource.asset ?? '').toJString(),
+      preCacheSize,
+      dataSource.cacheConfiguration?.maxCacheSize ?? 0,
+      dataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
+      headersMap,
+      dataSource.cacheConfiguration?.key?.toJString(),
+    );
+  }
+
+  @override
+  Future<void> stopPreCache(String url, String? cacheKey) async {
+    BetterPlayer.Companion.stopPreCache(
+      androidApplicationContext as Context,
+      url.toJString(),
+    );
+  }
+
+  @override
+  Future<void> clearCache() async {
+    BetterPlayer.Companion.clearCache(androidApplicationContext as Context);
+  }
+
+  @override
+  Future<void> setTrackParameters(
+    int? textureId,
+    int? width,
+    int? height,
+    int? bitrate,
+  ) async {
+    _players[textureId]?.setTrackParameters(
+      width ?? 0,
+      height ?? 0,
+      bitrate ?? 0,
+    );
+  }
+
+  @override
+  Future<void> setAudioTrack(int? textureId, String? name, int? index) async {
+    _players[textureId]?.setAudioTrack(
+      name?.toJString() ?? ''.toJString(),
+      index ?? 0,
+    );
+  }
+
+  @override
+  Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
+    _players[textureId]?.mixWithOthers = mixWithOthers;
+  }
+
+  @override
+  Future<bool?> isPictureInPictureSupported(int? textureId) async {
+    return false;
+  }
+
+  @override
+  Future<void> enablePictureInPicture(
+    int? textureId,
+    double? top,
+    double? left,
+    double? width,
+    double? height,
+  ) async {
+    // Android PiP is usually triggered via Activity.enterPictureInPictureMode()
+    // which is not currently exposed in this JNI layer.
+  }
+
+  @override
+  Future<void> disablePictureInPicture(int? textureId) async {
+    // Usually handled by the system or activity.
+  }
+
+  @override
   Stream<VideoEvent> videoEventsFor(int? textureId) {
     return _eventControllers[textureId]?.stream ?? const Stream.empty();
   }
@@ -304,6 +390,9 @@ abstract class BetterPlayerWrapper {
     JString? cacheKey,
     JString? clearKey,
   );
+  void setTrackParameters(int width, int height, int bitrate);
+  void setAudioTrack(JString name, int index);
+  set mixWithOthers(bool mixWithOthers);
   void play();
   void pause();
   set volume(double volume);
@@ -356,6 +445,18 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
       clearKey,
     );
   }
+
+  @override
+  void setTrackParameters(int width, int height, int bitrate) =>
+      _player.setTrackParameters(width, height, bitrate);
+
+  @override
+  void setAudioTrack(JString name, int index) =>
+      _player.setAudioTrack(name, index);
+
+  @override
+  set mixWithOthers(bool mixWithOthers) =>
+      _player.mixWithOthers = mixWithOthers;
 
   @override
   void play() => _player.play();

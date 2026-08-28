@@ -1,17 +1,17 @@
 import 'dart:async';
+import 'dart:ffi' as ffi;
 import 'package:better_player_ios/better_player_ios.dart';
 import 'package:better_player_ios/src/better_player_ios_ffi.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:ffi/ffi.dart' as pkg_ffi;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:objective_c/objective_c.dart' as objc;
 
 // Use dynamic typing so we don't need to implement the final FFI extension type
-class MockBetterPlayer extends Mock implements BetterPlayerWrapper {
-  @override
-  int position() => 5000;
-}
+class MockBetterPlayer extends Mock implements BetterPlayerWrapper {}
 
 class MockCacheManager extends Mock {}
 
@@ -54,6 +54,14 @@ void main() {
       mockPlayer = MockBetterPlayer();
       mockCacheManager = MockCacheManager();
       iosPlayer = TestBetterPlayerIOS(mockPlayer, mockCacheManager);
+
+      final frame = pkg_ffi.calloc.allocate<objc.CGRect>(
+        ffi.sizeOf<objc.CGRect>(),
+      );
+      registerFallbackValue(frame.ref);
+
+      when(() => mockPlayer.position()).thenReturn(5000);
+      when(() => mockPlayer.absolutePosition()).thenReturn(1600000000000);
     });
 
     test('registerWith sets instance', () {
@@ -86,20 +94,47 @@ void main() {
       expect(textureId, 1);
     });
 
-    test('play, pause, setVolume, setSpeed interact with player', () async {
+    test(
+      'play, pause, setVolume, setSpeed, setTrackParameters, setAudioTrack, setMixWithOthers, PiP interact with player',
+      () async {
+        await iosPlayer.create();
+
+        await iosPlayer.play(1);
+        verify(() => mockPlayer.play()).called(1);
+
+        await iosPlayer.pause(1);
+        verify(() => mockPlayer.pause()).called(1);
+
+        await iosPlayer.setVolume(1, 0.5);
+        verify(() => mockPlayer.setVolume(0.5)).called(1);
+
+        await iosPlayer.setSpeed(1, 1.5);
+        verify(() => mockPlayer.setSpeed(1.5)).called(1);
+
+        await iosPlayer.setTrackParameters(1, 1920, 1080, 5000);
+        verify(
+          () =>
+              mockPlayer.setTrackParameters(1920, height: 1080, bitrate: 5000),
+        ).called(1);
+
+        await iosPlayer.setAudioTrack(1, 'eng', 1);
+        verify(() => mockPlayer.setAudioTrack('eng', index: 1)).called(1);
+
+        await iosPlayer.setMixWithOthers(1, true);
+        verify(() => mockPlayer.setMixWithOthers(true)).called(1);
+
+        await iosPlayer.enablePictureInPicture(1, 0, 0, 100, 100);
+        verify(() => mockPlayer.enablePictureInPicture(any())).called(1);
+
+        await iosPlayer.disablePictureInPicture(1);
+        verify(() => mockPlayer.disablePictureInPicture()).called(1);
+      },
+    );
+
+    test('getAbsolutePosition returns correct value', () async {
       await iosPlayer.create();
-
-      await iosPlayer.play(1);
-      verify(() => mockPlayer.play()).called(1);
-
-      await iosPlayer.pause(1);
-      verify(() => mockPlayer.pause()).called(1);
-
-      await iosPlayer.setVolume(1, 0.5);
-      verify(() => mockPlayer.setVolume(0.5)).called(1);
-
-      await iosPlayer.setSpeed(1, 1.5);
-      verify(() => mockPlayer.setSpeed(1.5)).called(1);
+      final absPos = await iosPlayer.getAbsolutePosition(1);
+      expect(absPos, DateTime.fromMillisecondsSinceEpoch(1600000000000));
     });
 
     test('seekTo calls seekTo in ms', () async {
