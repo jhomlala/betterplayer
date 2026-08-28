@@ -4,8 +4,8 @@ import 'package:jnigen/jnigen.dart';
 void main(List<String> args) {
   final packageRoot = Platform.script.resolve('../');
 
-  // Broadly search the ENTIRE example/build directory
-  final buildDir = Directory.fromUri(packageRoot.resolve('example/build'));
+  // Broadly search the ENTIRE example_ffi/build directory
+  final buildDir = Directory.fromUri(packageRoot.resolve('example_ffi/build'));
   final classPaths = <Uri>[];
 
   if (buildDir.existsSync()) {
@@ -44,7 +44,7 @@ void main(List<String> args) {
       androidSdkConfig: AndroidSdkConfig(
         addGradleDeps: true,
         androidExample:
-            'example', // Points to example app for Gradle resolution
+            'example_ffi', // Points to example_ffi app for Gradle resolution
       ),
       classPath: classPaths,
       classes: [
