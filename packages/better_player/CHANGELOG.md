@@ -1,4 +1,6 @@
 ## Unreleased
+- Fixed: Improved robustness in `seekTo` in `BetterPlayerController` and `VideoPlayerController` to prevent crashes when called before full initialization.
+- Updated: Enhanced FFI E2E tests to wait for video initialization before proceeding with method calls.
 - Updated: Refactored `VideoPlayerController` to use event stream for initialization tracking, improving robustness and fixing race conditions during data source setup.
 - Fixed: A bug in `VideoPlayerController` where error descriptions were not correctly assigned to the player state.
 

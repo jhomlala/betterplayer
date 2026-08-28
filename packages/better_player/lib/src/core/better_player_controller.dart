@@ -672,7 +672,7 @@ class BetterPlayerController {
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
-    if (videoPlayerController?.value.duration == null) {
+    if (!(videoPlayerController?.value.initialized ?? false)) {
       throw StateError('The video has not been initialized yet.');
     }
 

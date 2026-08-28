@@ -79,6 +79,17 @@ class _FFITestPageState extends State<FFITestPage> {
                 'Waiting for initialization...',
                 style: TextStyle(color: Colors.orange),
               ),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Semantics(
+                identifier: 'ffi_test_initialized_status',
+                child: const Text(
+                  'initialized=true',
+                  style: TextStyle(color: Colors.green),
+                ),
+              ),
             ),
           Expanded(
             child: ListView(
