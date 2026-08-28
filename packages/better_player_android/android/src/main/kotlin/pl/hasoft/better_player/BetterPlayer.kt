@@ -401,24 +401,17 @@ class BetterPlayer(
                 when (playbackState) {
                     Player.STATE_BUFFERING -> {
                         sendBufferingUpdate(true)
-                        val event: MutableMap<String, Any?> = HashMap()
-                        event["event"] = "bufferingStart"
-                        callback.onEvent(event["event"].toString(), event)
+                        callback.onBufferingStart()
                     }
                     Player.STATE_READY -> {
                         if (!isInitializedSent) {
                             isInitialized = true
                             sendInitialized()
                         }
-                        val event: MutableMap<String, Any?> = HashMap()
-                        event["event"] = "bufferingEnd"
-                        callback.onEvent(event["event"].toString(), event)
+                        callback.onBufferingEnd()
                     }
                     Player.STATE_ENDED -> {
-                        val event: MutableMap<String, Any?> = HashMap()
-                        event["event"] = "completed"
-                        event["key"] = key
-                        callback.onEvent(event["event"].toString(), event)
+                        callback.onCompleted(key = key)
                     }
                     Player.STATE_IDLE -> {
                         //no-op
@@ -445,12 +438,7 @@ class BetterPlayer(
                         width = videoSize.height
                         height = videoSize.width
                     }
-                    val event: MutableMap<String, Any?> = HashMap()
-                    event["event"] = "changedSize"
-                    event["width"] = width
-                    event["height"] = height
-                    event["key"] = key
-                    callback.onEvent(event["event"].toString(), event)
+                    callback.onChangedSize(width = width, height = height, key = key)
                 }
             }
         })
@@ -460,11 +448,7 @@ class BetterPlayer(
     fun sendBufferingUpdate(isFromBufferingStart: Boolean) {
         val bufferedPosition = exoPlayer?.bufferedPosition ?: 0L
         if (isFromBufferingStart || bufferedPosition != lastSendBufferedPosition) {
-            val event: MutableMap<String, Any?> = HashMap()
-            event["event"] = "bufferingUpdate"
-            val range: List<Number?> = listOf(0, bufferedPosition)
-            event["values"] = listOf(range)
-            callback.onEvent(event["event"].toString(), event)
+            callback.onBufferingUpdate(bufferedMs = bufferedPosition)
             lastSendBufferedPosition = bufferedPosition
         }
     }
@@ -566,24 +550,19 @@ class BetterPlayer(
                 return
             }
             isInitializedSent = true
-            val event: MutableMap<String, Any?> = HashMap()
-            event["event"] = "initialized"
-            event["key"] = key
-            event["duration"] = duration
-            
+            var width = 0
+            var height = 0
             val videoSize = exoPlayer?.videoSize
             if (videoSize != null && videoSize != VideoSize.UNKNOWN) {
-                var width = videoSize.width
-                var height = videoSize.height
+                width = videoSize.width
+                height = videoSize.height
                 val rotationDegrees = videoSize.unappliedRotationDegrees
                 if (rotationDegrees == 90 || rotationDegrees == 270) {
                     width = videoSize.height
                     height = videoSize.width
                 }
-                event["width"] = width
-                event["height"] = height
             }
-            callback.onEvent(event["event"].toString(), event)
+            callback.onInitialized(durationMs = duration, width = width, height = height, key = key)
         }
     }
 
@@ -609,9 +588,11 @@ class BetterPlayer(
 
 
     fun onPictureInPictureStatusChanged(inPip: Boolean) {
-        val event: MutableMap<String, Any?> = HashMap()
-        event["event"] = if (inPip) "pipStart" else "pipStop"
-        callback.onEvent(event["event"].toString(), event)
+        if (inPip) {
+            callback.onPipStart()
+        } else {
+            callback.onPipStop()
+        }
     }
 
     fun disposeMediaSession() {
@@ -691,10 +672,7 @@ class BetterPlayer(
     }
 
     private fun sendSeekToEvent(positionMs: Long) {
-        val event: MutableMap<String, Any?> = HashMap()
-        event["event"] = "seek"
-        event["position"] = positionMs
-        callback.onEvent(event["event"].toString(), event)
+        callback.onSeek(positionMs = positionMs)
     }
 
     @Keep
