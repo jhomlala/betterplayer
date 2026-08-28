@@ -26,6 +26,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware {
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         activity = binding.activity
+        BetterPlayerApi.activity = binding.activity
     }
 
     override fun onDetachedFromActivityForConfigChanges() {}
@@ -34,6 +35,7 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware {
 
     override fun onDetachedFromActivity() {
         activity = null
+        BetterPlayerApi.activity = null
     }
 
     companion object {
