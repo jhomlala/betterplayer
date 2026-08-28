@@ -309,9 +309,16 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
 
   @override
   Future<bool?> isPictureInPictureSupported(int? textureId) async {
-    return BetterPlayer.Companion.isPictureInPictureSupported(
-      androidApplicationContext as Context,
-    );
+    try {
+      final res = BetterPlayer.Companion.isPictureInPictureSupported(
+        androidApplicationContext as Context,
+      );
+      BetterPlayerUtils.log('Android JNI PiP Supported: $res');
+      return res;
+    } catch (e) {
+      BetterPlayerUtils.log('Android JNI PiP Check Error: $e');
+      return false;
+    }
   }
 
   @override

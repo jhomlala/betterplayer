@@ -791,30 +791,34 @@ class BetterPlayer(
         @Keep
         fun enablePictureInPicture(context: Context?) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (context is android.app.Activity) {
+                val activity = BetterPlayerApi.activity
+                if (activity != null) {
                     val params = android.app.PictureInPictureParams.Builder().build()
-                    context.enterPictureInPictureMode(params)
+                    activity.enterPictureInPictureMode(params)
                 }
             }
         }
 
         @Keep
         fun disablePictureInPicture(context: Context?) {
-            if (context is android.app.Activity) {
-                val intent = android.content.Intent(context, context.javaClass)
+            val activity = BetterPlayerApi.activity
+            if (activity != null) {
+                val intent = android.content.Intent(activity, activity.javaClass)
                 intent.flags = android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                context.startActivity(intent)
+                activity.startActivity(intent)
             }
         }
 
         @Keep
         fun isPictureInPictureSupported(context: Context?): Boolean {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                if (context is android.app.Activity) {
-                    return context.packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_PICTURE_IN_PICTURE)
-                }
+            val useContext = context ?: BetterPlayerApi.activity
+            val res = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                useContext?.packageManager?.hasSystemFeature(android.content.pm.PackageManager.FEATURE_PICTURE_IN_PICTURE) ?: false
+            } else {
+                false
             }
-            return false
+            Log.i(TAG, "isPictureInPictureSupported: $res (context: $useContext)")
+            return res
         }
     }
 }
