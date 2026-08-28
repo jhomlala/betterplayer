@@ -309,7 +309,9 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
 
   @override
   Future<bool?> isPictureInPictureSupported(int? textureId) async {
-    return false;
+    return BetterPlayer.Companion.isPictureInPictureSupported(
+      androidApplicationContext as Context,
+    );
   }
 
   @override
@@ -320,13 +322,16 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     double? width,
     double? height,
   ) async {
-    // Android PiP is usually triggered via Activity.enterPictureInPictureMode()
-    // which is not currently exposed in this JNI layer.
+    BetterPlayer.Companion.enablePictureInPicture(
+      androidApplicationContext as Context,
+    );
   }
 
   @override
   Future<void> disablePictureInPicture(int? textureId) async {
-    // Usually handled by the system or activity.
+    BetterPlayer.Companion.disablePictureInPicture(
+      androidApplicationContext as Context,
+    );
   }
 
   @override
