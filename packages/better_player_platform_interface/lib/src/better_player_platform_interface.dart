@@ -169,4 +169,3 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
 }
 
 class _PlaceholderBetterPlayerPlatform extends BetterPlayerPlatform {}
-
