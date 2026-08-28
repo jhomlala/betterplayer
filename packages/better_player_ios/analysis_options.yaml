@@ -17,6 +17,7 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
+    - lib/src/**/*.g.dart
 
 linter:
   rules:

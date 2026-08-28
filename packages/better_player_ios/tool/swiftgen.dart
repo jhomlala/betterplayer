@@ -52,7 +52,7 @@ Future<void> main() async {
   final objcFile = packageRoot.resolve('ios/better_player_ios/Sources/better_player_ios_objc/better_player.m');
   final file = File.fromUri(objcFile);
   if (file.existsSync()) {
-    String content = file.readAsStringSync();
+    var content = file.readAsStringSync();
     content = content.replaceAll(
       RegExp(r'#import\s+"[^"]+better_player_ios\.h"'), 
       '@protocol BetterPlayerCallback;'

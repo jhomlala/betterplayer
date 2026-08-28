@@ -1,9 +1,11 @@
 import 'dart:async';
+
+import 'package:better_player_android/src/better_player_android_jni.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:jni/jni.dart';
 import 'package:jni_flutter/jni_flutter.dart';
-import 'src/better_player_android_jni.g.dart';
 
 class BetterPlayerAndroid extends VideoPlayerPlatform {
   /// Registers this class as the default instance of [VideoPlayerPlatform].
@@ -48,65 +50,66 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
           duration: Duration(milliseconds: durationMs),
           size: Size(width.toDouble(), height.toDouble()),
         );
-        for (var controller in _eventControllers.values) {
+        for (final controller in _eventControllers.values) {
           controller.add(videoEvent);
         }
       },
       onInitialized$async: true,
       onCompleted: (JString? key) {
-        for (var controller in _eventControllers.values) {
+        for (final controller in _eventControllers.values) {
           controller.add(VideoEvent(eventType: VideoEventType.completed, key: key?.toDartString()));
         }
       },
       onCompleted$async: true,
       onPlay: () {
-        for (var controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.play));
+        for (final controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.play, key: null));
         }
       },
       onPlay$async: true,
       onPause: () {
-        for (var controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.pause));
+        for (final controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.pause, key: null));
         }
       },
       onPause$async: true,
       onSeek: (int positionMs) {
-        for (var controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.seek, position: Duration(milliseconds: positionMs)));
+        for (final controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.seek, key: null, position: Duration(milliseconds: positionMs)));
         }
       },
       onSeek$async: true,
       onBufferingStart: () {
-        for (var controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.bufferingStart));
+        for (final controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.bufferingStart, key: null));
         }
       },
       onBufferingStart$async: true,
       onBufferingEnd: () {
-        for (var controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.bufferingEnd));
+        for (final controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.bufferingEnd, key: null));
         }
       },
       onBufferingEnd$async: true,
       onBufferingUpdate: (int bufferedMs) {
-        for (var controller in _eventControllers.values) {
+        for (final controller in _eventControllers.values) {
           controller.add(VideoEvent(
             eventType: VideoEventType.bufferingUpdate,
+            key: null,
             buffered: [DurationRange(Duration.zero, Duration(milliseconds: bufferedMs))],
           ));
         }
       },
       onBufferingUpdate$async: true,
       onPipStart: () {
-        for (var controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.pipStart));
+        for (final controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.pipStart, key: null));
         }
       },
       onPipStart$async: true,
       onPipStop: () {
-        for (var controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.pipStop));
+        for (final controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.pipStop, key: null));
         }
       },
       onPipStop$async: true,
@@ -116,7 +119,7 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
       },
       onChangedSize$async: true,
       onError: (JString errorCode, JString errorMessage, JString errorDetails) {
-        for (var controller in _eventControllers.values) {
+        for (final controller in _eventControllers.values) {
           controller.addError(PlatformException(
             code: errorCode.toDartString(),
             message: errorMessage.toDartString(),
@@ -148,7 +151,7 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     if (dataSource.headers != null) {
       headersMap = (JHashMap() as JObject) as JMap<JString, JString>;
       dataSource.headers!.forEach((k, v) {
-        headersMap!.put(k.toString().toJString(), (v?.toString() ?? '').toJString());
+        headersMap!.put(k.toJString(), (v?.toString() ?? '').toJString());
       });
     }
     
@@ -156,7 +159,7 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     if (dataSource.drmConfiguration?.headers != null) {
       drmHeadersMap = (JHashMap() as JObject) as JMap<JString, JString>;
       dataSource.drmConfiguration!.headers!.forEach((k, v) {
-        drmHeadersMap!.put(k.toString().toJString(), v.toString().toJString());
+        drmHeadersMap!.put(k.toJString(), v.toJString());
       });
     }
 
@@ -228,4 +231,6 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
   }
 
 }
+
+
 

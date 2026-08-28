@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:ffi' as ffi;
+
+import 'package:better_player_ios/src/better_player_ios_ffi.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:objective_c/objective_c.dart' as objc;
-import 'package:better_player_ios/src/better_player_ios_ffi.g.dart';
 
 BetterPlayer? _getPlayer(int textureId) => BetterPlayerApi.getPlayer(textureId);
 
@@ -71,7 +71,7 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
         if (currentTextureId == null) return;
         final decoded = jsonDecode(jsonRanges.toString()) as List<dynamic>;
         final buffered = decoded.map<DurationRange>((dynamic value) {
-          final List<dynamic> range = value as List<dynamic>;
+          final range = value as List<dynamic>;
           return DurationRange(
             Duration(milliseconds: (range[0] as num).toInt()),
             Duration(milliseconds: (range[1] as num).toInt()),
@@ -85,11 +85,11 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
       },
       onPipStart: () {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.pipStart));
+        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.pipStart, key: null));
       },
       onPipStop: () {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.pipStop));
+        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.pipStop, key: null));
       },
       onError_errorMessage_errorDetails_: (objc.NSString errorCode, objc.NSString errorMessage, objc.NSString errorDetails) {
         if (currentTextureId == null) return;
@@ -137,9 +137,6 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
       player.setDataSourceAsset(
         (dataSource.asset ?? dataSource.uri!).toNSString(),
         key: key,
-        certificateUrl: null,
-        licenseUrl: null,
-        cacheKey: null,
         cacheManager: cacheManager,
         overriddenDuration: overriddenDuration,
       );
