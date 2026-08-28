@@ -46,6 +46,27 @@ appId: pl.hasoft.example
     id: "ffi_test_status_setMixWithOthers"
     text: "success=true"
 - scrollUntilVisible:
+    id: "ffi_test_button_setLooping"
+- tapOn:
+    id: "ffi_test_button_setLooping"
+- assertVisible:
+    id: "ffi_test_status_setLooping"
+    text: "success=true"
+- scrollUntilVisible:
+    id: "ffi_test_button_getPosition"
+- tapOn:
+    id: "ffi_test_button_getPosition"
+- assertVisible:
+    id: "ffi_test_status_getPosition"
+    text: "success=true"
+- scrollUntilVisible:
+    id: "ffi_test_button_getAbsolutePosition"
+- tapOn:
+    id: "ffi_test_button_getAbsolutePosition"
+- assertVisible:
+    id: "ffi_test_status_getAbsolutePosition"
+    text: "success=true"
+- scrollUntilVisible:
     id: "ffi_test_button_preCache"
 - tapOn:
     id: "ffi_test_button_preCache"
