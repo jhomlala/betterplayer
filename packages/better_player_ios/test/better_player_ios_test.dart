@@ -77,10 +77,6 @@ void main() {
       expect(uiKitView.creationParams, {'textureId': 1});
     });
 
-    test('init completes normally', () async {
-      await expectLater(iosPlayer.init(), completes);
-    });
-
     test('dispose calls native dispose', () async {
       await iosPlayer.create();
 

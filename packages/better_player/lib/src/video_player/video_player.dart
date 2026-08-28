@@ -13,10 +13,8 @@ import 'package:material_ui/material_ui.dart';
 export 'package:better_player_platform_interface/better_player_platform_interface.dart'
     show VideoPlayerValue;
 
-final BetterPlayerPlatform _betterPlayerPlatform = BetterPlayerPlatform.instance
-  // This will clear all open videos on the platform when a full restart is
-  // performed.
-  ..init();
+final BetterPlayerPlatform _betterPlayerPlatform =
+    BetterPlayerPlatform.instance;
 
 /// Controls a platform video player, and provides updates when the state is
 /// changing.
@@ -47,7 +45,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   Timer? _timer;
   bool _isDisposed = false;
-  late Completer<void> _initializingCompleter;
   StreamSubscription<dynamic>? _eventSubscription;
 
   bool get _created => _creatingCompleter.isCompleted;
@@ -79,7 +76,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             duration: event.duration,
             size: event.size,
           );
-          _initializingCompleter.complete(null);
           _applyPlayPause();
         case VideoEventType.completed:
           value = value.copyWith(isPlaying: false, position: value.duration);
@@ -104,7 +100,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.pipStop:
           value = value.copyWith(isPip: false);
         case VideoEventType.changedSize:
-          value = value.copyWith(size: event.size);
+          if (event.size != null &&
+              event.size!.width > 0 &&
+              event.size!.height > 0) {
+            value = value.copyWith(size: event.size);
+          }
         case VideoEventType.unknown:
           break;
       }
@@ -115,12 +115,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         final e = object;
         value = value.copyWith(errorDescription: e.message);
       } else {
-        value.copyWith(errorDescription: object.toString());
+        value = value.copyWith(errorDescription: object.toString());
       }
       _timer?.cancel();
-      if (!_initializingCompleter.isCompleted) {
-        _initializingCompleter.completeError(object);
-      }
+      videoEventStreamController.addError(object);
     }
 
     _eventSubscription = _betterPlayerPlatform
@@ -271,13 +269,31 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     if (!_creatingCompleter.isCompleted) await _creatingCompleter.future;
 
-    _initializingCompleter = Completer<void>();
-
-    await BetterPlayerPlatform.instance.setDataSource(
-      _textureId,
-      dataSourceDescription,
+    final completer = Completer<void>();
+    final subscription = videoEventStreamController.stream.listen(
+      (event) {
+        if (event.eventType == VideoEventType.initialized) {
+          completer.complete();
+        }
+      },
+      onError: completer.completeError,
+      onDone: () {
+        if (!completer.isCompleted) {
+          completer.completeError(StateError('Stream closed'));
+        }
+      },
+      cancelOnError: true,
     );
-    return _initializingCompleter.future;
+
+    try {
+      await BetterPlayerPlatform.instance.setDataSource(
+        _textureId,
+        dataSourceDescription,
+      );
+      await completer.future;
+    } finally {
+      await subscription.cancel();
+    }
   }
 
   @override

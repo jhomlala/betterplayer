@@ -78,10 +78,6 @@ void main() {
       expect((widget as Texture).textureId, 1);
     });
 
-    test('init completes normally', () async {
-      await expectLater(androidPlayer.init(), completes);
-    });
-
     test('dispose calls native dispose and release', () async {
       await androidPlayer.create();
       await androidPlayer.dispose(1);

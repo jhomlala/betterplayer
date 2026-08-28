@@ -4,10 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../helpers/better_player_mock_controller.dart';
+import '../helpers/better_player_test_utils.dart';
 import '../helpers/mock_method_channel.dart';
 
 void main() {
   late BetterPlayerMockController mockController;
+
+  setUpAll(BetterPlayerTestUtils.setupMockPlatform);
 
   setUp(() {
     final mockMethodChannel = MockMethodChannel();

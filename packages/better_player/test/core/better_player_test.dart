@@ -8,6 +8,7 @@ import '../helpers/better_player_test_utils.dart';
 
 void main() {
   setUpAll(() {
+    BetterPlayerTestUtils.setupMockPlatform();
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
 

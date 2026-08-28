@@ -34,14 +34,6 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  /// Initializes the platform interface and disposes all existing players.
-  ///
-  /// This method is called when the plugin is first initialized
-  /// and on every full restart.
-  Future<void> init() {
-    throw UnimplementedError('init() has not been implemented.');
-  }
-
   /// Clears one video.
   Future<void> dispose(int? textureId) {
     throw UnimplementedError('dispose() has not been implemented.');
