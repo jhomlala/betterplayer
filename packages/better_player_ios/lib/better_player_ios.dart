@@ -9,10 +9,13 @@ import 'package:objective_c/objective_c.dart' as objc;
 
 class BetterPlayerIOS extends BetterPlayerPlatform {
   @visibleForTesting
-  dynamic getPlayer(int textureId) => BetterPlayerApi.getPlayer(textureId);
+  BetterPlayerWrapper? getPlayer(int textureId) {
+    final player = BetterPlayerApi.getPlayer(textureId);
+    return player != null ? NativeBetterPlayerWrapper(player) : null;
+  }
 
   @visibleForTesting
-  dynamic createCacheManager() => BetterPlayerApi.createCacheManager();
+  Object createCacheManager() => BetterPlayerApi.createCacheManager();
   static void registerWith() {
     BetterPlayerPlatform.instance = BetterPlayerIOS();
   }
@@ -175,27 +178,26 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     final cacheManager = createCacheManager();
     final overriddenDuration =
         dataSource.overriddenDuration?.inMilliseconds ?? 0;
-    final key = dataSource.key.toNSString();
+    final key = dataSource.key;
 
     if (dataSource.sourceType == DataSourceType.asset) {
       player.setDataSourceAsset(
-        (dataSource.asset ?? dataSource.uri!).toNSString(),
+        dataSource.asset ?? dataSource.uri!,
         key: key,
         cacheManager: cacheManager,
         overriddenDuration: overriddenDuration,
       );
     } else {
       player.setDataSourceURLString(
-        dataSource.uri!.toNSString(),
+        dataSource.uri!,
         key: key,
-        certificateUrl: dataSource.drmConfiguration?.certificateUrl
-            ?.toNSString(),
-        licenseUrl: dataSource.drmConfiguration?.licenseUrl?.toNSString(),
+        certificateUrl: dataSource.drmConfiguration?.certificateUrl,
+        licenseUrl: dataSource.drmConfiguration?.licenseUrl,
         useCache: dataSource.cacheConfiguration?.useCache ?? false,
-        cacheKey: dataSource.cacheConfiguration?.key?.toNSString(),
+        cacheKey: dataSource.cacheConfiguration?.key,
         cacheManager: cacheManager,
         overriddenDuration: overriddenDuration,
-        videoExtension: dataSource.videoExtension?.toNSString(),
+        videoExtension: dataSource.videoExtension,
       );
     }
   }
@@ -239,7 +241,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   @override
   Future<Duration> getPosition(int? textureId) async {
     if (textureId == null) return Duration.zero;
-    final pos = getPlayer(textureId)?.position() as int?;
+    final pos = getPlayer(textureId)?.position();
     return Duration(milliseconds: pos ?? 0);
   }
 
@@ -247,4 +249,102 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   Stream<VideoEvent> videoEventsFor(int? textureId) {
     return _eventControllers[textureId]?.stream ?? const Stream.empty();
   }
+}
+
+abstract class BetterPlayerWrapper {
+  void dispose();
+  void setDataSourceURLString(
+    String url, {
+    required String? key,
+    required String? certificateUrl,
+    required String? licenseUrl,
+    required bool useCache,
+    required String? cacheKey,
+    required Object cacheManager,
+    required int overriddenDuration,
+    required String? videoExtension,
+  });
+  void setDataSourceAsset(
+    String asset, {
+    required String? key,
+    required Object cacheManager,
+    required int overriddenDuration,
+  });
+  void setLooping(bool looping);
+  void play();
+  void pause();
+  void setVolume(double volume);
+  void setSpeed(double speed);
+  void seekTo(int positionMs);
+  int? position();
+}
+
+class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
+  final BetterPlayer _player;
+
+  NativeBetterPlayerWrapper(this._player);
+
+  @override
+  void dispose() => _player.dispose();
+
+  @override
+  void setDataSourceURLString(
+    String url, {
+    required String? key,
+    required String? certificateUrl,
+    required String? licenseUrl,
+    required bool useCache,
+    required String? cacheKey,
+    required Object cacheManager,
+    required int overriddenDuration,
+    required String? videoExtension,
+  }) {
+    _player.setDataSourceURLString(
+      url.toNSString(),
+      key: key?.toNSString(),
+      certificateUrl: certificateUrl?.toNSString(),
+      licenseUrl: licenseUrl?.toNSString(),
+      useCache: useCache,
+      cacheKey: cacheKey?.toNSString(),
+      cacheManager: cacheManager as CacheManager,
+      overriddenDuration: overriddenDuration,
+      videoExtension: videoExtension?.toNSString(),
+    );
+  }
+
+  @override
+  void setDataSourceAsset(
+    String asset, {
+    required String? key,
+    required Object cacheManager,
+    required int overriddenDuration,
+  }) {
+    _player.setDataSourceAsset(
+      asset.toNSString(),
+      key: key?.toNSString(),
+      cacheManager: cacheManager as CacheManager,
+      overriddenDuration: overriddenDuration,
+    );
+  }
+
+  @override
+  void setLooping(bool looping) => _player.setLooping(looping);
+
+  @override
+  void play() => _player.play();
+
+  @override
+  void pause() => _player.pause();
+
+  @override
+  void setVolume(double volume) => _player.setVolume(volume);
+
+  @override
+  void setSpeed(double speed) => _player.setSpeed(speed);
+
+  @override
+  void seekTo(int positionMs) => _player.seekTo(positionMs);
+
+  @override
+  int? position() => _player.position();
 }
