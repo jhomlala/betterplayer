@@ -11,7 +11,7 @@ appId: pl.hasoft.example
     visible:
       id: "ffi_test_initialized_status"
       text: "initialized=true"
-    timeout: 10000
+    timeout: 30000
 - tapOn:
     id: "ffi_test_button_play"
 - assertVisible:

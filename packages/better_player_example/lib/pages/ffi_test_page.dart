@@ -13,6 +13,7 @@ class _FFITestPageState extends State<FFITestPage> {
   late BetterPlayerController _betterPlayerController;
   final Map<String, bool?> _results = {};
   bool _isInitialized = false;
+  String? _errorMessage;
 
   @override
   void initState() {
@@ -27,13 +28,27 @@ class _FFITestPageState extends State<FFITestPage> {
       if (event.betterPlayerEventType == PlayerEventType.initialized) {
         setState(() {
           _isInitialized = true;
+          _errorMessage = null;
         });
       } else if (event.betterPlayerEventType == PlayerEventType.exception) {
-        BetterPlayerUtils.log('FFI TEST PAGE: EXCEPTION: ${event.parameters}');
+        final error =
+            event.parameters?['exception']?.toString() ?? 'Unknown error';
+        BetterPlayerUtils.log('FFI TEST PAGE: EXCEPTION: $error');
+        setState(() {
+          _errorMessage = error;
+        });
       }
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Check if already initialized (e.g. if events were missed)
+      if (_betterPlayerController.videoPlayerController?.value.initialized ??
+          false) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+
       final betterPlayerDataSource = PlayerDataSource(
         DataSourceType.network,
         Constants.bugBuckBunnyVideoUrl,
@@ -72,7 +87,18 @@ class _FFITestPageState extends State<FFITestPage> {
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
           ),
-          if (!_isInitialized)
+          if (_errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Semantics(
+                identifier: 'ffi_test_error_status',
+                child: Text(
+                  'error=$_errorMessage',
+                  style: const TextStyle(color: Colors.red),
+                ),
+              ),
+            )
+          else if (!_isInitialized)
             const Padding(
               padding: EdgeInsets.all(8),
               child: Text(
