@@ -1,4 +1,4 @@
-appId: pl.hasoft.better_player.example
+appId: pl.hasoft.example
 ---
 - launchApp
 - tapOn:
