@@ -31,6 +31,27 @@ class TestBetterPlayerAndroid extends BetterPlayerAndroid {
   BetterPlayerWrapper createWrapper(dynamic player) {
     return player as BetterPlayerWrapper;
   }
+
+  @override
+  int getTextureIdFromPlayer(dynamic player) {
+    return (player as MockBetterPlayer).textureId;
+  }
+
+  @override
+  void jniPreCache(
+    String dataSource,
+    int preCacheSize,
+    int maxCacheSize,
+    int maxCacheFileSize,
+    Map<String, String?>? headers,
+    String? cacheKey,
+  ) {}
+
+  @override
+  void jniStopPreCache(String url) {}
+
+  @override
+  void jniClearCache() {}
 }
 
 void main() {
@@ -93,6 +114,9 @@ void main() {
         await androidPlayer.setTrackParameters(1, 1920, 1080, 5000);
         verify(() => mockPlayer.setTrackParameters(1920, 1080, 5000)).called(1);
 
+        await androidPlayer.setLooping(1, true);
+        verify(() => mockPlayer.looping = true).called(1);
+
         await androidPlayer.setAudioTrack(1, 'eng', 1);
         verify(() => mockPlayer.setAudioTrack(any(), 1)).called(1);
 
@@ -122,7 +146,7 @@ void main() {
       expect(stream, isA<Stream<VideoEvent>>());
     });
 
-    test('setDataSource throws Error due to JNI in test environment', () async {
+    test('setDataSource successfully delegates to wrapper', () async {
       await androidPlayer.create();
 
       final dataSource = DataSource(
@@ -130,10 +154,33 @@ void main() {
         uri: 'https://example.com/video.mp4',
       );
 
-      expect(
-        () => androidPlayer.setDataSource(1, dataSource),
-        throwsA(isA<Error>()),
+      await androidPlayer.setDataSource(1, dataSource);
+      verify(
+        () => mockPlayer.setDataSource(
+          any(),
+          'https://example.com/video.mp4',
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
+      ).called(1);
+    });
+
+    test('preCache, stopPreCache, clearCache complete normally in test', () async {
+      final dataSource = DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'https://example.com/video.mp4',
       );
+      await expectLater(androidPlayer.preCache(dataSource, 100), completes);
+      await expectLater(androidPlayer.stopPreCache('url', null), completes);
+      await expectLater(androidPlayer.clearCache(), completes);
     });
   });
 }
