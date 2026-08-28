@@ -812,13 +812,11 @@ class BetterPlayer(
         @Keep
         fun isPictureInPictureSupported(context: Context?): Boolean {
             val useContext = context ?: BetterPlayerApi.activity
-            val res = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 useContext?.packageManager?.hasSystemFeature(android.content.pm.PackageManager.FEATURE_PICTURE_IN_PICTURE) ?: false
             } else {
                 false
             }
-            Log.i(TAG, "isPictureInPictureSupported: $res (context: $useContext)")
-            return res
         }
     }
 }

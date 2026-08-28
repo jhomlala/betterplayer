@@ -1,0 +1,130 @@
+appId: pl.hasoft.example
+---
+- launchApp
+- tapOn:
+    id: "better_player_e2e_navigate_ffi"
+- tapOn:
+    id: "ffi_test_button_play"
+- assertVisible:
+    id: "ffi_test_status_play"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_pause"
+- assertVisible:
+    id: "ffi_test_status_pause"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_seekTo"
+- assertVisible:
+    id: "ffi_test_status_seekTo"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_setVolume"
+- assertVisible:
+    id: "ffi_test_status_setVolume"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_setSpeed"
+- assertVisible:
+    id: "ffi_test_status_setSpeed"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_setTrackParameters"
+- assertVisible:
+    id: "ffi_test_status_setTrackParameters"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_setAudioTrack"
+- assertVisible:
+    id: "ffi_test_status_setAudioTrack"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_setMixWithOthers"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_setMixWithOthers"
+- assertVisible:
+    id: "ffi_test_status_setMixWithOthers"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_setLooping"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_setLooping"
+- assertVisible:
+    id: "ffi_test_status_setLooping"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_getPosition"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_getPosition"
+- assertVisible:
+    id: "ffi_test_status_getPosition"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_getAbsolutePosition"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_getAbsolutePosition"
+- assertVisible:
+    id: "ffi_test_status_getAbsolutePosition"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_isPictureInPictureSupported"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_isPictureInPictureSupported"
+- assertVisible:
+    id: "ffi_test_status_isPictureInPictureSupported"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_enablePictureInPicture"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_enablePictureInPicture"
+- assertVisible:
+    id: "ffi_test_status_enablePictureInPicture"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_disablePictureInPicture"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_disablePictureInPicture"
+- assertVisible:
+    id: "ffi_test_status_disablePictureInPicture"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_preCache"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_preCache"
+- assertVisible:
+    id: "ffi_test_status_preCache"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_stopPreCache"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_stopPreCache"
+- assertVisible:
+    id: "ffi_test_status_stopPreCache"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_clearCache"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_clearCache"
+- assertVisible:
+    id: "ffi_test_status_clearCache"
+    text: "success=true"
