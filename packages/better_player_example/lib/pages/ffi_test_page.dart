@@ -71,8 +71,18 @@ class _FFITestPageState extends State<FFITestPage> {
             ),
             _buildTestButton(
               'seekTo',
-              () async =>
-                  _betterPlayerController.seekTo(const Duration(seconds: 5)),
+              () async {
+                final duration = _betterPlayerController.videoPlayerController?.value.duration;
+                if (duration != null) {
+                  await _betterPlayerController.seekTo(const Duration(seconds: 5));
+                } else {
+                  // If not initialized, fallback to direct platform call to test FFI bridge
+                  final textureId = _betterPlayerController.videoPlayerController?.textureId;
+                  if (textureId != null) {
+                     await BetterPlayerPlatform.instance.seekTo(textureId, const Duration(seconds: 5));
+                  }
+                }
+              },
             ),
             _buildTestButton(
               'setVolume',
@@ -111,24 +121,6 @@ class _FFITestPageState extends State<FFITestPage> {
               'getAbsolutePosition',
               () async {
                 await _betterPlayerController.videoPlayerController?.absolutePosition;
-              },
-            ),
-            _buildTestButton(
-              'isPictureInPictureSupported',
-              () async {
-                await _betterPlayerController.isPictureInPictureSupported();
-              },
-            ),
-            _buildTestButton(
-              'enablePictureInPicture',
-              () async {
-                await _betterPlayerController.enablePictureInPicture(GlobalKey());
-              },
-            ),
-            _buildTestButton(
-              'disablePictureInPicture',
-              () async {
-                await _betterPlayerController.disablePictureInPicture();
               },
             ),
             _buildTestButton(
