@@ -50,3 +50,19 @@ import Foundation
         return CacheManager()
     }
 }
+
+// Dummy class to force the Swift compiler to emit the full Objective-C protocol metadata
+// for BetterPlayerCallback into the runtime, preventing FailedToLoadProtocolMethodException in Dart.
+@objc class _DummyBetterPlayerCallbackImpl: NSObject, BetterPlayerCallback {
+    func onInitialized(durationMs: Int64, width: Double, height: Double, key: String?) {}
+    func onCompleted(key: String?) {}
+    func onPlay(key: String?) {}
+    func onPause(key: String?) {}
+    func onSeek(positionMs: Int64, key: String?) {}
+    func onBufferingStart(key: String?) {}
+    func onBufferingEnd(key: String?) {}
+    func onBufferingUpdate(jsonRanges: String, key: String?) {}
+    func onPipStart() {}
+    func onPipStop() {}
+    func onError(_ errorCode: String, errorMessage: String, errorDetails: String) {}
+}
