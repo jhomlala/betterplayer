@@ -49,20 +49,23 @@ import Foundation
     @objc public static func createCacheManager() -> CacheManager {
         return CacheManager()
     }
+
+    // Reference the dummy class to prevent the linker from stripping it out
+    @objc public static let _dummyCallback: BetterPlayerCallback = _DummyBetterPlayerCallbackImpl()
 }
 
 // Dummy class to force the Swift compiler to emit the full Objective-C protocol metadata
 // for BetterPlayerCallback into the runtime, preventing FailedToLoadProtocolMethodException in Dart.
-@objc class _DummyBetterPlayerCallbackImpl: NSObject, BetterPlayerCallback {
-    func onInitialized(durationMs: Int64, width: Double, height: Double, key: String?) {}
-    func onCompleted(key: String?) {}
-    func onPlay(key: String?) {}
-    func onPause(key: String?) {}
-    func onSeek(positionMs: Int64, key: String?) {}
-    func onBufferingStart(key: String?) {}
-    func onBufferingEnd(key: String?) {}
-    func onBufferingUpdate(jsonRanges: String, key: String?) {}
-    func onPipStart() {}
-    func onPipStop() {}
-    func onError(_ errorCode: String, errorMessage: String, errorDetails: String) {}
+@objc public class _DummyBetterPlayerCallbackImpl: NSObject, BetterPlayerCallback {
+    public func onInitialized(durationMs: Int64, width: Double, height: Double, key: String?) {}
+    public func onCompleted(key: String?) {}
+    public func onPlay(key: String?) {}
+    public func onPause(key: String?) {}
+    public func onSeek(positionMs: Int64, key: String?) {}
+    public func onBufferingStart(key: String?) {}
+    public func onBufferingEnd(key: String?) {}
+    public func onBufferingUpdate(jsonRanges: String, key: String?) {}
+    public func onPipStart() {}
+    public func onPipStop() {}
+    public func onError(_ errorCode: String, errorMessage: String, errorDetails: String) {}
 }
