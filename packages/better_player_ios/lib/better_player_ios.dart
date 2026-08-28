@@ -34,76 +34,116 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     int? currentTextureId;
 
     final callback = BetterPlayerCallback$Builder.implement(
-      onInitializedWithDurationMs_width_height_key_: (int durationMs, double width, double height, objc.NSString? key) {
-        if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(
-          eventType: VideoEventType.initialized,
-          key: key?.toString(),
-          duration: Duration(milliseconds: durationMs),
-          size: Size(width, height),
-        ));
-      },
+      onInitializedWithDurationMs_width_height_key_:
+          (int durationMs, double width, double height, objc.NSString? key) {
+            if (currentTextureId == null) return;
+            _eventControllers[currentTextureId]?.add(
+              VideoEvent(
+                eventType: VideoEventType.initialized,
+                key: key?.toString(),
+                duration: Duration(milliseconds: durationMs),
+                size: Size(width, height),
+              ),
+            );
+          },
       onCompletedWithKey_: (objc.NSString? key) {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.completed, key: key?.toString()));
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(eventType: VideoEventType.completed, key: key?.toString()),
+        );
       },
       onPlayWithKey_: (objc.NSString? key) {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.play, key: key?.toString()));
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(eventType: VideoEventType.play, key: key?.toString()),
+        );
       },
       onPauseWithKey_: (objc.NSString? key) {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.pause, key: key?.toString()));
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(eventType: VideoEventType.pause, key: key?.toString()),
+        );
       },
       onSeekWithPositionMs_key_: (int positionMs, objc.NSString? key) {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.seek, key: key?.toString(), position: Duration(milliseconds: positionMs)));
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(
+            eventType: VideoEventType.seek,
+            key: key?.toString(),
+            position: Duration(milliseconds: positionMs),
+          ),
+        );
       },
       onBufferingStartWithKey_: (objc.NSString? key) {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.bufferingStart, key: key?.toString()));
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(
+            eventType: VideoEventType.bufferingStart,
+            key: key?.toString(),
+          ),
+        );
       },
       onBufferingEndWithKey_: (objc.NSString? key) {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.bufferingEnd, key: key?.toString()));
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(
+            eventType: VideoEventType.bufferingEnd,
+            key: key?.toString(),
+          ),
+        );
       },
-      onBufferingUpdateWithJsonRanges_key_: (objc.NSString jsonRanges, objc.NSString? key) {
-        if (currentTextureId == null) return;
-        final decoded = jsonDecode(jsonRanges.toString()) as List<dynamic>;
-        final buffered = decoded.map<DurationRange>((dynamic value) {
-          final range = value as List<dynamic>;
-          return DurationRange(
-            Duration(milliseconds: (range[0] as num).toInt()),
-            Duration(milliseconds: (range[1] as num).toInt()),
-          );
-        }).toList();
-        _eventControllers[currentTextureId]?.add(VideoEvent(
-          eventType: VideoEventType.bufferingUpdate,
-          key: key?.toString(),
-          buffered: buffered,
-        ));
-      },
+      onBufferingUpdateWithJsonRanges_key_:
+          (objc.NSString jsonRanges, objc.NSString? key) {
+            if (currentTextureId == null) return;
+            final decoded = jsonDecode(jsonRanges.toString()) as List<dynamic>;
+            final buffered = decoded.map<DurationRange>((dynamic value) {
+              final range = value as List<dynamic>;
+              return DurationRange(
+                Duration(milliseconds: (range[0] as num).toInt()),
+                Duration(milliseconds: (range[1] as num).toInt()),
+              );
+            }).toList();
+            _eventControllers[currentTextureId]?.add(
+              VideoEvent(
+                eventType: VideoEventType.bufferingUpdate,
+                key: key?.toString(),
+                buffered: buffered,
+              ),
+            );
+          },
       onPipStart: () {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.pipStart, key: null));
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(eventType: VideoEventType.pipStart, key: null),
+        );
       },
       onPipStop: () {
         if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.add(VideoEvent(eventType: VideoEventType.pipStop, key: null));
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(eventType: VideoEventType.pipStop, key: null),
+        );
       },
-      onError_errorMessage_errorDetails_: (objc.NSString errorCode, objc.NSString errorMessage, objc.NSString errorDetails) {
-        if (currentTextureId == null) return;
-        _eventControllers[currentTextureId]?.addError(PlatformException(
-            code: errorCode.toString(),
-            message: errorMessage.toString(),
-            details: errorDetails.toString(),
-        ));
-      },
+      onError_errorMessage_errorDetails_:
+          (
+            objc.NSString errorCode,
+            objc.NSString errorMessage,
+            objc.NSString errorDetails,
+          ) {
+            if (currentTextureId == null) return;
+            _eventControllers[currentTextureId]?.addError(
+              PlatformException(
+                code: errorCode.toString(),
+                message: errorMessage.toString(),
+                details: errorDetails.toString(),
+              ),
+            );
+          },
     );
 
     currentTextureId = BetterPlayerApi.createPlayerWithCallback(callback);
-    
-    _eventControllers[currentTextureId] = StreamController<VideoEvent>.broadcast();
+
+    _eventControllers[currentTextureId] =
+        StreamController<VideoEvent>.broadcast();
     return currentTextureId;
   }
 
@@ -128,9 +168,10 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
         'DASH streams are not supported on iOS platform. Please use HLS instead.',
       );
     }
-    
+
     final cacheManager = BetterPlayerApi.createCacheManager();
-    final overriddenDuration = dataSource.overriddenDuration?.inMilliseconds ?? 0;
+    final overriddenDuration =
+        dataSource.overriddenDuration?.inMilliseconds ?? 0;
     final key = dataSource.key.toNSString();
 
     if (dataSource.sourceType == DataSourceType.asset) {
@@ -144,7 +185,8 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       player.setDataSourceURLString(
         dataSource.uri!.toNSString(),
         key: key,
-        certificateUrl: dataSource.drmConfiguration?.certificateUrl?.toNSString(),
+        certificateUrl: dataSource.drmConfiguration?.certificateUrl
+            ?.toNSString(),
         licenseUrl: dataSource.drmConfiguration?.licenseUrl?.toNSString(),
         useCache: dataSource.cacheConfiguration?.useCache ?? false,
         cacheKey: dataSource.cacheConfiguration?.key?.toNSString(),
