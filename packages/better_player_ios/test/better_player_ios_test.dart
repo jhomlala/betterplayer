@@ -8,7 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 // Use dynamic typing so we don't need to implement the final FFI extension type
-class MockBetterPlayer extends Mock {
+class MockBetterPlayer extends Mock implements BetterPlayerWrapper {
+  @override
   int position() => 5000;
 }
 
@@ -32,13 +33,13 @@ class TestBetterPlayerIOS extends BetterPlayerIOS {
   }
 
   @override
-  dynamic getPlayer(int textureId) {
+  BetterPlayerWrapper? getPlayer(int textureId) {
     if (textureId == 1) return mockPlayer;
     return null;
   }
 
   @override
-  dynamic createCacheManager() {
+  Object createCacheManager() {
     return mockCacheManager;
   }
 }
@@ -77,7 +78,7 @@ void main() {
 
       await iosPlayer.dispose(1);
 
-      verify(() => (mockPlayer as dynamic).dispose()).called(1);
+      verify(() => mockPlayer.dispose()).called(1);
     });
 
     test('create stores streams and returns textureId', () async {
@@ -89,30 +90,28 @@ void main() {
       await iosPlayer.create();
 
       await iosPlayer.play(1);
-      verify(() => (mockPlayer as dynamic).play()).called(1);
+      verify(() => mockPlayer.play()).called(1);
 
       await iosPlayer.pause(1);
-      verify(() => (mockPlayer as dynamic).pause()).called(1);
+      verify(() => mockPlayer.pause()).called(1);
 
       await iosPlayer.setVolume(1, 0.5);
-      verify(() => (mockPlayer as dynamic).setVolume(0.5)).called(1);
+      verify(() => mockPlayer.setVolume(0.5)).called(1);
 
       await iosPlayer.setSpeed(1, 1.5);
-      verify(() => (mockPlayer as dynamic).setSpeed(1.5)).called(1);
+      verify(() => mockPlayer.setSpeed(1.5)).called(1);
     });
 
     test('seekTo calls seekTo in ms', () async {
       await iosPlayer.create();
-
-      await iosPlayer.seekTo(1, const Duration(seconds: 10));
-      verify(() => (mockPlayer as dynamic).seekTo(10000)).called(1);
+      await iosPlayer.seekTo(1, const Duration(seconds: 5));
+      verify(() => mockPlayer.seekTo(5000)).called(1);
     });
 
     test('setLooping interacts with player', () async {
       await iosPlayer.create();
-
       await iosPlayer.setLooping(1, true);
-      verify(() => (mockPlayer as dynamic).setLooping(true)).called(1);
+      verify(() => mockPlayer.setLooping(true)).called(1);
     });
 
     test('getPosition returns correct value', () async {
@@ -137,32 +136,47 @@ void main() {
       expect(() => iosPlayer.setDataSource(1, dataSource), throwsException);
     });
 
-    test('setDataSource throws Error for network URL due to FFI', () async {
+    test(
+      'setDataSource successfully delegates network URL to wrapper',
+      () async {
+        await iosPlayer.create();
+        await iosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://test.com',
+          ),
+        );
+        verify(
+          () => mockPlayer.setDataSourceURLString(
+            'https://test.com',
+            key: any(named: 'key'),
+            certificateUrl: any(named: 'certificateUrl'),
+            licenseUrl: any(named: 'licenseUrl'),
+            useCache: any(named: 'useCache'),
+            cacheKey: any(named: 'cacheKey'),
+            cacheManager: any(named: 'cacheManager'),
+            overriddenDuration: any(named: 'overriddenDuration'),
+            videoExtension: any(named: 'videoExtension'),
+          ),
+        ).called(1);
+      },
+    );
+
+    test('setDataSource successfully delegates Asset to wrapper', () async {
       await iosPlayer.create();
-
-      final dataSource = DataSource(
-        sourceType: DataSourceType.network,
-        uri: 'https://example.com/video.mp4',
+      await iosPlayer.setDataSource(
+        1,
+        DataSource(sourceType: DataSourceType.asset, asset: 'asset.mp4'),
       );
-
-      expect(
-        () => iosPlayer.setDataSource(1, dataSource),
-        throwsA(isA<Error>()),
-      );
-    });
-
-    test('setDataSource throws Error for Asset due to FFI', () async {
-      await iosPlayer.create();
-
-      final dataSource = DataSource(
-        sourceType: DataSourceType.asset,
-        asset: 'assets/video.mp4',
-      );
-
-      expect(
-        () => iosPlayer.setDataSource(1, dataSource),
-        throwsA(isA<Error>()),
-      );
+      verify(
+        () => mockPlayer.setDataSourceAsset(
+          'asset.mp4',
+          key: any(named: 'key'),
+          cacheManager: any(named: 'cacheManager'),
+          overriddenDuration: any(named: 'overriddenDuration'),
+        ),
+      ).called(1);
     });
   });
 }
