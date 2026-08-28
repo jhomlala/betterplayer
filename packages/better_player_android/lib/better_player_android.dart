@@ -40,22 +40,89 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     BufferingConfiguration? bufferingConfiguration,
   }) async {
     final callback = BetterPlayerCallback.implement($BetterPlayerCallback(
-      onEvent: (JString event, JMap<JString, JObject?> parameters) {
-        final eventStr = event.toDartString();
-        // Since full JMap extraction requires JNI reflection which is tedious here,
-        // we map it manually if needed, or assume empty parameters for now.
-        final map = _jmapToMap(parameters);
-        map['event'] = eventStr;
-        final videoEvent = _parseVideoEvent(eventStr, map);
-        // Note: we can't easily capture textureId in this callback since we don't have it yet!
-        // We'll broadcast it to all controllers for now, or match by key.
+      onInitialized: (int durationMs, int width, int height, JString? key) {
+        // Broadcast to all since we don't know textureId yet, or match by key.
+        final videoEvent = VideoEvent(
+          eventType: VideoEventType.initialized,
+          key: key?.toDartString(),
+          duration: Duration(milliseconds: durationMs),
+          size: Size(width.toDouble(), height.toDouble()),
+        );
         for (var controller in _eventControllers.values) {
           controller.add(videoEvent);
         }
       },
-      onEvent$async: true,
+      onInitialized$async: true,
+      onCompleted: (JString? key) {
+        for (var controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.completed, key: key?.toDartString()));
+        }
+      },
+      onCompleted$async: true,
+      onPlay: () {
+        for (var controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.play));
+        }
+      },
+      onPlay$async: true,
+      onPause: () {
+        for (var controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.pause));
+        }
+      },
+      onPause$async: true,
+      onSeek: (int positionMs) {
+        for (var controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.seek, position: Duration(milliseconds: positionMs)));
+        }
+      },
+      onSeek$async: true,
+      onBufferingStart: () {
+        for (var controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.bufferingStart));
+        }
+      },
+      onBufferingStart$async: true,
+      onBufferingEnd: () {
+        for (var controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.bufferingEnd));
+        }
+      },
+      onBufferingEnd$async: true,
+      onBufferingUpdate: (int bufferedMs) {
+        for (var controller in _eventControllers.values) {
+          controller.add(VideoEvent(
+            eventType: VideoEventType.bufferingUpdate,
+            buffered: [DurationRange(Duration.zero, Duration(milliseconds: bufferedMs))],
+          ));
+        }
+      },
+      onBufferingUpdate$async: true,
+      onPipStart: () {
+        for (var controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.pipStart));
+        }
+      },
+      onPipStart$async: true,
+      onPipStop: () {
+        for (var controller in _eventControllers.values) {
+          controller.add(VideoEvent(eventType: VideoEventType.pipStop));
+        }
+      },
+      onPipStop$async: true,
+      onChangedSize: (int width, int height, JString? key) {
+        // Internal usage, you can emit an event or handled it differently if needed.
+        // Wait, better_player doesn't have a changedSize VideoEventType.
+      },
+      onChangedSize$async: true,
       onError: (JString errorCode, JString errorMessage, JString errorDetails) {
-        // Implement parsing error events
+        for (var controller in _eventControllers.values) {
+          controller.addError(PlatformException(
+            code: errorCode.toDartString(),
+            message: errorMessage.toDartString(),
+            details: errorDetails.toDartString(),
+          ));
+        }
       },
       onError$async: true,
     ));
@@ -69,80 +136,6 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     _eventControllers[textureId] = StreamController<VideoEvent>.broadcast();
     
     return textureId;
-  }
-
-  @override
-
-
-  VideoEvent _parseVideoEvent(String eventType, Map<dynamic, dynamic> map) {
-    final key = map['key'] as String?;
-    switch (eventType) {
-      case 'initialized':
-        double width = 0;
-        double height = 0;
-        try {
-          if (map.containsKey("width")) {
-            final num widthNum = map["width"] as num;
-            width = widthNum.toDouble();
-          }
-          if (map.containsKey("height")) {
-            final num heightNum = map["height"] as num;
-            height = heightNum.toDouble();
-          }
-        } catch (exception) {
-          // ignore
-        }
-        return VideoEvent(
-          eventType: VideoEventType.initialized,
-          key: key,
-          duration: Duration(milliseconds: (map['duration'] as num?)?.toInt() ?? 0),
-          size: Size(width, height),
-        );
-      case 'completed':
-        return VideoEvent(eventType: VideoEventType.completed, key: key);
-      case 'bufferingUpdate':
-        final List<dynamic> values = map['values'] as List<dynamic>? ?? [];
-        return VideoEvent(
-          eventType: VideoEventType.bufferingUpdate,
-          key: key,
-          buffered: values.map<DurationRange>((dynamic value) {
-            final List<dynamic> range = value as List<dynamic>;
-            return DurationRange(
-              Duration(milliseconds: (range[0] as num).toInt()),
-              Duration(milliseconds: (range[1] as num).toInt()),
-            );
-          }).toList(),
-        );
-      case 'bufferingStart':
-        return VideoEvent(eventType: VideoEventType.bufferingStart, key: key);
-      case 'bufferingEnd':
-        return VideoEvent(eventType: VideoEventType.bufferingEnd, key: key);
-      case 'play':
-        return VideoEvent(eventType: VideoEventType.play, key: key);
-      case 'pause':
-        return VideoEvent(eventType: VideoEventType.pause, key: key);
-      case 'seek':
-        return VideoEvent(
-          eventType: VideoEventType.seek,
-          key: key,
-          position: Duration(milliseconds: (map['position'] as num?)?.toInt() ?? 0),
-        );
-      case 'pipStart':
-        return VideoEvent(eventType: VideoEventType.pipStart, key: key);
-      case 'pipStop':
-        return VideoEvent(eventType: VideoEventType.pipStop, key: key);
-      default:
-        return VideoEvent(eventType: VideoEventType.unknown, key: key);
-    }
-  }
-
-  Map<dynamic, dynamic> _jmapToMap(JMap<JString, JObject?> jmap) {
-    // Note: A proper mapping from JObject to Dart types would be needed here.
-    // For now, we'll just implement a dummy mapping since jni_flutter returns proxies.
-    // In a real implementation we would iterate the map and extract integers/strings.
-    final result = <dynamic, dynamic>{};
-    // Placeholder for actual JMap iteration
-    return result;
   }
 
   @override
