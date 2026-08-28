@@ -169,10 +169,10 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       ),
     );
 
-    final player = createJniPlayer(callback);
+    final player = createJniPlayer(callback) as BetterPlayer?;
     if (player == null) return null;
 
-    final textureId = player.textureId as int;
+    final textureId = player.textureId;
     _players[textureId] = createWrapper(player);
     _callbacks[textureId] = callback;
     _eventControllers[textureId] = StreamController<VideoEvent>.broadcast();
