@@ -94,8 +94,24 @@ class _FFITestPageState extends State<FFITestPage> {
             ),
             _buildTestButton(
               'setMixWithOthers',
-              () async =>
-                  _betterPlayerController.setMixWithOthers(true),
+              () async => _betterPlayerController.setMixWithOthers(true),
+            ),
+            _buildTestButton(
+              'setLooping',
+              () async => _betterPlayerController.setLooping(true),
+            ),
+            _buildTestButton(
+              'getPosition',
+              () async {
+                final pos = await _betterPlayerController.videoPlayerController?.position;
+                if (pos == null) throw Exception('Position is null');
+              },
+            ),
+            _buildTestButton(
+              'getAbsolutePosition',
+              () async {
+                await _betterPlayerController.videoPlayerController?.absolutePosition;
+              },
             ),
             _buildTestButton(
               'preCache',
