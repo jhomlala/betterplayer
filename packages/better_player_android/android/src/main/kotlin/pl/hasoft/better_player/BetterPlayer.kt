@@ -786,7 +786,35 @@ class BetterPlayer(
             if (url != null && context != null) {
                 WorkManager.getInstance(context).cancelAllWorkByTag(url)
             }
-            
+        }
+
+        @Keep
+        fun enablePictureInPicture(context: Context?) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (context is android.app.Activity) {
+                    val params = android.app.PictureInPictureParams.Builder().build()
+                    context.enterPictureInPictureMode(params)
+                }
+            }
+        }
+
+        @Keep
+        fun disablePictureInPicture(context: Context?) {
+            if (context is android.app.Activity) {
+                val intent = android.content.Intent(context, context.javaClass)
+                intent.flags = android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                context.startActivity(intent)
+            }
+        }
+
+        @Keep
+        fun isPictureInPictureSupported(context: Context?): Boolean {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (context is android.app.Activity) {
+                    return context.packageManager.hasSystemFeature(android.content.pm.PackageManager.FEATURE_PICTURE_IN_PICTURE)
+                }
+            }
+            return false
         }
     }
 }
