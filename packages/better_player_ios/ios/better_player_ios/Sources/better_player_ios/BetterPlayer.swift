@@ -305,6 +305,9 @@ private var presentationSizeContext = 0
         self.stalledCount = 0
         self.isStalledCheckStarted = false
         self.playerRate = 1
+        
+        removeObservers()
+        
         player.replaceCurrentItem(with: item)
 
         let asset = item.asset
