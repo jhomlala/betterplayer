@@ -30,6 +30,10 @@ import Foundation
     @objc public static var nextId: Int64 = 0
     
     @objc public static func createPlayer(callback: BetterPlayerCallback) -> Int64 {
+        // Prevent dead code elimination of the dummy class and protocol metadata
+        let dummy = _DummyBetterPlayerCallbackImpl()
+        let _ = dummy as BetterPlayerCallback
+        
         let player = BetterPlayer()
         player.callback = callback
         nextId += 1
@@ -57,15 +61,15 @@ import Foundation
 // Dummy class to force the Swift compiler to emit the full Objective-C protocol metadata
 // for BetterPlayerCallback into the runtime, preventing FailedToLoadProtocolMethodException in Dart.
 @objc public class _DummyBetterPlayerCallbackImpl: NSObject, BetterPlayerCallback {
-    public func onInitialized(durationMs: Int64, width: Double, height: Double, key: String?) {}
-    public func onCompleted(key: String?) {}
-    public func onPlay(key: String?) {}
-    public func onPause(key: String?) {}
-    public func onSeek(positionMs: Int64, key: String?) {}
-    public func onBufferingStart(key: String?) {}
-    public func onBufferingEnd(key: String?) {}
-    public func onBufferingUpdate(jsonRanges: String, key: String?) {}
-    public func onPipStart() {}
-    public func onPipStop() {}
-    public func onError(_ errorCode: String, errorMessage: String, errorDetails: String) {}
+    @objc public func onInitialized(durationMs: Int64, width: Double, height: Double, key: String?) {}
+    @objc public func onCompleted(key: String?) {}
+    @objc public func onPlay(key: String?) {}
+    @objc public func onPause(key: String?) {}
+    @objc public func onSeek(positionMs: Int64, key: String?) {}
+    @objc public func onBufferingStart(key: String?) {}
+    @objc public func onBufferingEnd(key: String?) {}
+    @objc public func onBufferingUpdate(jsonRanges: String, key: String?) {}
+    @objc public func onPipStart() {}
+    @objc public func onPipStop() {}
+    @objc public func onError(_ errorCode: String, errorMessage: String, errorDetails: String) {}
 }

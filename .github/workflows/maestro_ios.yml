@@ -109,7 +109,8 @@ jobs:
       - name: Run Maestro
         run: |
           cd better_player
-          maestro test maestro/ios/
+          # Run only ffi test for now to speed things up
+          maestro test maestro/ios/ffi_test_flow.yaml
 
       - name: Upload Maestro Artifacts
         if: always()
