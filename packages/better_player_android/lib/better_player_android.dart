@@ -19,7 +19,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
 
   @override
   Future<void> init() async {
-    // Usually nothing globally required for Android initialization 
+    // Usually nothing globally required for Android initialization
     // unless clearing global caches.
   }
 
@@ -29,7 +29,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     _players[textureId]?.dispose();
     _players[textureId]?.release();
     _players.remove(textureId);
-    
+
     _callbacks[textureId]?.release();
     _callbacks.remove(textureId);
 
@@ -41,103 +41,141 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,
   }) async {
-    final callback = BetterPlayerCallback.implement($BetterPlayerCallback(
-      onInitialized: (int durationMs, int width, int height, JString? key) {
-        // Broadcast to all since we don't know textureId yet, or match by key.
-        final videoEvent = VideoEvent(
-          eventType: VideoEventType.initialized,
-          key: key?.toDartString(),
-          duration: Duration(milliseconds: durationMs),
-          size: Size(width.toDouble(), height.toDouble()),
-        );
-        for (final controller in _eventControllers.values) {
-          controller.add(videoEvent);
-        }
-      },
-      onInitialized$async: true,
-      onCompleted: (JString? key) {
-        for (final controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.completed, key: key?.toDartString()));
-        }
-      },
-      onCompleted$async: true,
-      onPlay: () {
-        for (final controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.play, key: null));
-        }
-      },
-      onPlay$async: true,
-      onPause: () {
-        for (final controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.pause, key: null));
-        }
-      },
-      onPause$async: true,
-      onSeek: (int positionMs) {
-        for (final controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.seek, key: null, position: Duration(milliseconds: positionMs)));
-        }
-      },
-      onSeek$async: true,
-      onBufferingStart: () {
-        for (final controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.bufferingStart, key: null));
-        }
-      },
-      onBufferingStart$async: true,
-      onBufferingEnd: () {
-        for (final controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.bufferingEnd, key: null));
-        }
-      },
-      onBufferingEnd$async: true,
-      onBufferingUpdate: (int bufferedMs) {
-        for (final controller in _eventControllers.values) {
-          controller.add(VideoEvent(
-            eventType: VideoEventType.bufferingUpdate,
-            key: null,
-            buffered: [DurationRange(Duration.zero, Duration(milliseconds: bufferedMs))],
-          ));
-        }
-      },
-      onBufferingUpdate$async: true,
-      onPipStart: () {
-        for (final controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.pipStart, key: null));
-        }
-      },
-      onPipStart$async: true,
-      onPipStop: () {
-        for (final controller in _eventControllers.values) {
-          controller.add(VideoEvent(eventType: VideoEventType.pipStop, key: null));
-        }
-      },
-      onPipStop$async: true,
-      onChangedSize: (int width, int height, JString? key) {
-        // Internal usage, you can emit an event or handled it differently if needed.
-        // Wait, better_player doesn't have a changedSize VideoEventType.
-      },
-      onChangedSize$async: true,
-      onError: (JString errorCode, JString errorMessage, JString errorDetails) {
-        for (final controller in _eventControllers.values) {
-          controller.addError(PlatformException(
-            code: errorCode.toDartString(),
-            message: errorMessage.toDartString(),
-            details: errorDetails.toDartString(),
-          ));
-        }
-      },
-      onError$async: true,
-    ));
+    final callback = BetterPlayerCallback.implement(
+      $BetterPlayerCallback(
+        onInitialized: (int durationMs, int width, int height, JString? key) {
+          // Broadcast to all since we don't know textureId yet, or match by key.
+          final videoEvent = VideoEvent(
+            eventType: VideoEventType.initialized,
+            key: key?.toDartString(),
+            duration: Duration(milliseconds: durationMs),
+            size: Size(width.toDouble(), height.toDouble()),
+          );
+          for (final controller in _eventControllers.values) {
+            controller.add(videoEvent);
+          }
+        },
+        onInitialized$async: true,
+        onCompleted: (JString? key) {
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(
+                eventType: VideoEventType.completed,
+                key: key?.toDartString(),
+              ),
+            );
+          }
+        },
+        onCompleted$async: true,
+        onPlay: () {
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(eventType: VideoEventType.play, key: null),
+            );
+          }
+        },
+        onPlay$async: true,
+        onPause: () {
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(eventType: VideoEventType.pause, key: null),
+            );
+          }
+        },
+        onPause$async: true,
+        onSeek: (int positionMs) {
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(
+                eventType: VideoEventType.seek,
+                key: null,
+                position: Duration(milliseconds: positionMs),
+              ),
+            );
+          }
+        },
+        onSeek$async: true,
+        onBufferingStart: () {
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(eventType: VideoEventType.bufferingStart, key: null),
+            );
+          }
+        },
+        onBufferingStart$async: true,
+        onBufferingEnd: () {
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(eventType: VideoEventType.bufferingEnd, key: null),
+            );
+          }
+        },
+        onBufferingEnd$async: true,
+        onBufferingUpdate: (int bufferedMs) {
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(
+                eventType: VideoEventType.bufferingUpdate,
+                key: null,
+                buffered: [
+                  DurationRange(
+                    Duration.zero,
+                    Duration(milliseconds: bufferedMs),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+        onBufferingUpdate$async: true,
+        onPipStart: () {
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(eventType: VideoEventType.pipStart, key: null),
+            );
+          }
+        },
+        onPipStart$async: true,
+        onPipStop: () {
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(eventType: VideoEventType.pipStop, key: null),
+            );
+          }
+        },
+        onPipStop$async: true,
+        onChangedSize: (int width, int height, JString? key) {
+          // Internal usage, you can emit an event or handled it differently if needed.
+          // Wait, better_player doesn't have a changedSize VideoEventType.
+        },
+        onChangedSize$async: true,
+        onError:
+            (JString errorCode, JString errorMessage, JString errorDetails) {
+              for (final controller in _eventControllers.values) {
+                controller.addError(
+                  PlatformException(
+                    code: errorCode.toDartString(),
+                    message: errorMessage.toDartString(),
+                    details: errorDetails.toDartString(),
+                  ),
+                );
+              }
+            },
+        onError$async: true,
+      ),
+    );
 
-    final player = BetterPlayerApi.Companion.createPlayer(androidApplicationContext as Context, callback);
+    final player = BetterPlayerApi.Companion.createPlayer(
+      androidApplicationContext as Context,
+      callback,
+    );
     if (player == null) return null;
-    
+
     final textureId = player.textureId;
     _players[textureId] = player;
     _callbacks[textureId] = callback;
     _eventControllers[textureId] = StreamController<VideoEvent>.broadcast();
-    
+
     return textureId;
   }
 
@@ -145,7 +183,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
     final player = _players[textureId];
     if (player == null) return;
-    
+
     // Convert headers to JMap
     JMap<JString, JString>? headersMap;
     if (dataSource.headers != null) {
@@ -154,7 +192,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         headersMap!.put(k.toJString(), (v?.toString() ?? '').toJString());
       });
     }
-    
+
     JMap<JString, JString>? drmHeadersMap;
     if (dataSource.drmConfiguration?.headers != null) {
       drmHeadersMap = (JHashMap() as JObject) as JMap<JString, JString>;
@@ -212,7 +250,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     final pos = _players[textureId]?.position ?? 0;
     return Duration(milliseconds: pos);
   }
-  
+
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
     final pos = _players[textureId]?.absolutePosition ?? 0;
@@ -229,5 +267,4 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Widget buildView(int? textureId) {
     return Texture(textureId: textureId!);
   }
-
 }

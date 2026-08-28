@@ -19,6 +19,5 @@ void main() {
       expect(uiKitView.viewType, 'better_player_view');
       expect(uiKitView.creationParams, {'textureId': 1});
     });
-
   });
 }

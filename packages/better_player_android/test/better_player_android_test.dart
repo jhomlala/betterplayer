@@ -17,6 +17,5 @@ void main() {
       expect(widget, isA<Texture>());
       expect((widget as Texture).textureId, 1);
     });
-
   });
 }

@@ -1,4 +1,3 @@
-
 export 'package:better_player_platform_interface/src/better_player_platform_interface.dart';
 export 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 export 'package:better_player_platform_interface/src/models/cache_configuration.dart';
