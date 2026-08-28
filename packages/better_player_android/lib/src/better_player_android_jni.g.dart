@@ -155,6 +155,73 @@ extension BetterPlayerApi$Companion$$Methods on BetterPlayerApi$Companion {
     ).check();
   }
 
+  static final _id_get$activity = BetterPlayerApi$Companion._class
+      .instanceMethodId(
+        r'getActivity',
+        r'()Landroid/app/Activity;',
+      );
+
+  static final _get$activity =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public final android.app.Activity getActivity()`
+  /// The returned object must be released after use, by calling the [release] method.
+  Activity? get activity {
+    final _$$selfRef = reference;
+    return _get$activity(
+      _$$selfRef.pointer,
+      _id_get$activity.pointer,
+    ).object<Activity?>();
+  }
+
+  static final _id_set$activity = BetterPlayerApi$Companion._class
+      .instanceMethodId(
+        r'setActivity',
+        r'(Landroid/app/Activity;)V',
+      );
+
+  static final _set$activity =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public final void setActivity(android.app.Activity activity)`
+  set activity(Activity? activity) {
+    final _$$selfRef = reference;
+    final _$activity = activity?.reference ?? jni$_.jNullReference;
+    _set$activity(
+      _$$selfRef.pointer,
+      _id_set$activity.pointer,
+      _$activity.pointer,
+    ).check();
+  }
+
   static final _id_createPlayer = BetterPlayerApi$Companion._class.instanceMethodId(
     r'createPlayer',
     r'(Landroid/content/Context;Lpl/hasoft/better_player/BetterPlayerCallback;)Lpl/hasoft/better_player/BetterPlayer;',
@@ -2394,6 +2461,24 @@ final class $TextureRegistry$Type$ extends jni$_.JType<TextureRegistry> {
   @jni$_.internal
   @core$_.override
   String get signature => r'Lio/flutter/view/TextureRegistry;';
+}
+
+/// from: `android.app.Activity`
+///
+/// WARNING: Activity is a stub. To generate bindings for this class, include
+/// android.app.Activity in your config's classes list.
+///
+extension type Activity._(jni$_.JObject _$this) implements jni$_.JObject {
+  static const jni$_.JType<Activity> type = $Activity$Type$();
+}
+
+final class $Activity$Type$ extends jni$_.JType<Activity> {
+  @jni$_.internal
+  const $Activity$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Landroid/app/Activity;';
 }
 
 /// from: `android.content.Context`
