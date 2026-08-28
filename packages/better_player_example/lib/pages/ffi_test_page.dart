@@ -122,7 +122,7 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'enablePictureInPicture',
               () async {
-                await _betterPlayerController.enablePictureInPicture();
+                await _betterPlayerController.enablePictureInPicture(GlobalKey());
               },
             ),
             _buildTestButton(
