@@ -7,10 +7,6 @@ import 'package:mocktail/mocktail.dart';
 
 class MockBetterPlayer extends Mock implements BetterPlayerWrapper {
   int get textureId => 1;
-  @override
-  int get position => 5000;
-  @override
-  int get absolutePosition => 1600000000000;
 }
 
 class TestBetterPlayerAndroid extends BetterPlayerAndroid {
@@ -45,6 +41,9 @@ void main() {
     setUp(() {
       mockPlayer = MockBetterPlayer();
       androidPlayer = TestBetterPlayerAndroid(mockPlayer);
+
+      when(() => mockPlayer.position).thenReturn(5000);
+      when(() => mockPlayer.absolutePosition).thenReturn(1600000000000);
     });
 
     test('registerWith sets instance', () {
@@ -74,21 +73,33 @@ void main() {
       expect(textureId, 1);
     });
 
-    test('play, pause, setVolume, setSpeed interact with player', () async {
-      await androidPlayer.create();
+    test(
+      'play, pause, setVolume, setSpeed, setTrackParameters, setAudioTrack, setMixWithOthers interact with player',
+      () async {
+        await androidPlayer.create();
 
-      await androidPlayer.play(1);
-      verify(() => mockPlayer.play()).called(1);
+        await androidPlayer.play(1);
+        verify(() => mockPlayer.play()).called(1);
 
-      await androidPlayer.pause(1);
-      verify(() => mockPlayer.pause()).called(1);
+        await androidPlayer.pause(1);
+        verify(() => mockPlayer.pause()).called(1);
 
-      await androidPlayer.setVolume(1, 0.5);
-      verify(() => mockPlayer.volume = 0.5).called(1);
+        await androidPlayer.setVolume(1, 0.5);
+        verify(() => mockPlayer.volume = 0.5).called(1);
 
-      await androidPlayer.setSpeed(1, 1.5);
-      verify(() => mockPlayer.speed = 1.5).called(1);
-    });
+        await androidPlayer.setSpeed(1, 1.5);
+        verify(() => mockPlayer.speed = 1.5).called(1);
+
+        await androidPlayer.setTrackParameters(1, 1920, 1080, 5000);
+        verify(() => mockPlayer.setTrackParameters(1920, 1080, 5000)).called(1);
+
+        await androidPlayer.setAudioTrack(1, 'eng', 1);
+        verify(() => mockPlayer.setAudioTrack(any(), 1)).called(1);
+
+        await androidPlayer.setMixWithOthers(1, true);
+        verify(() => mockPlayer.mixWithOthers = true).called(1);
+      },
+    );
 
     test('seekTo calls seekTo in ms', () async {
       await androidPlayer.create();

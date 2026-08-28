@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi' as ffi;
 
 import 'package:better_player_ios/src/better_player_ios_ffi.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:ffi/ffi.dart' as pkg_ffi;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:objective_c/objective_c.dart' as objc;
@@ -246,6 +248,85 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+    // Cache management is not yet fully bridged for iOS in the current FFI layer.
+  }
+
+  @override
+  Future<void> stopPreCache(String url, String? cacheKey) async {
+    // Cache management is not yet fully bridged for iOS in the current FFI layer.
+  }
+
+  @override
+  Future<void> clearCache() async {
+    // Cache management is not yet fully bridged for iOS in the current FFI layer.
+  }
+
+  @override
+  Future<void> setTrackParameters(
+    int? textureId,
+    int? width,
+    int? height,
+    int? bitrate,
+  ) async {
+    if (textureId == null) return;
+    getPlayer(textureId)?.setTrackParameters(
+      width ?? 0,
+      height: height ?? 0,
+      bitrate: bitrate ?? 0,
+    );
+  }
+
+  @override
+  Future<void> setAudioTrack(int? textureId, String? name, int? index) async {
+    if (textureId == null) return;
+    getPlayer(textureId)?.setAudioTrack(name ?? '', index: index ?? 0);
+  }
+
+  @override
+  Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
+    if (textureId == null) return;
+    getPlayer(textureId)?.setMixWithOthers(mixWithOthers);
+  }
+
+  @override
+  Future<bool?> isPictureInPictureSupported(int? textureId) async {
+    return true;
+  }
+
+  @override
+  Future<void> enablePictureInPicture(
+    int? textureId,
+    double? top,
+    double? left,
+    double? width,
+    double? height,
+  ) async {
+    if (textureId == null) return;
+    final frame = pkg_ffi.calloc<objc.CGRect>();
+    frame.ref.origin.x = left ?? 0;
+    frame.ref.origin.y = top ?? 0;
+    frame.ref.size.width = width ?? 0;
+    frame.ref.size.height = height ?? 0;
+    getPlayer(textureId)?.enablePictureInPicture(frame.ref);
+    pkg_ffi.calloc.free(frame);
+  }
+
+  @override
+  Future<void> disablePictureInPicture(int? textureId) async {
+    if (textureId == null) return;
+    getPlayer(textureId)?.disablePictureInPicture();
+  }
+
+  @override
+  Future<DateTime?> getAbsolutePosition(int? textureId) async {
+    if (textureId == null) return null;
+    final pos = getPlayer(textureId)?.absolutePosition();
+    if (pos == null || pos <= 0) return null;
+    return DateTime.fromMillisecondsSinceEpoch(pos);
+  }
+
+  @override
   Stream<VideoEvent> videoEventsFor(int? textureId) {
     return _eventControllers[textureId]?.stream ?? const Stream.empty();
   }
@@ -271,6 +352,16 @@ abstract class BetterPlayerWrapper {
     required int overriddenDuration,
   });
   void setLooping(bool looping);
+  void setMixWithOthers(bool mixWithOthers);
+  void setTrackParameters(
+    int width, {
+    required int height,
+    required int bitrate,
+  });
+  void setAudioTrack(String name, {required int index});
+  void enablePictureInPicture(objc.CGRect frame);
+  void disablePictureInPicture();
+  int? absolutePosition();
   void play();
   void pause();
   void setVolume(double volume);
@@ -331,11 +422,41 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   void setLooping(bool looping) => _player.setLooping(looping);
 
   @override
+  void setMixWithOthers(bool mixWithOthers) =>
+      _player.setMixWithOthers(mixWithOthers);
+
+  @override
+  void setTrackParameters(
+    int width, {
+    required int height,
+    required int bitrate,
+  }) => _player.setTrackParametersWithWidth(
+    width,
+    height: height,
+    bitrate: bitrate,
+  );
+
+  @override
+  void setAudioTrack(String name, {required int index}) =>
+      _player.setAudioTrackWithName(name.toNSString(), index: index);
+
+  @override
+  void enablePictureInPicture(objc.CGRect frame) =>
+      _player.enablePictureInPicture(frame);
+
+  @override
+  void disablePictureInPicture() => _player.disablePictureInPicture();
+
+  @override
+  int? absolutePosition() => _player.absolutePosition();
+
+  @override
   void play() => _player.play();
 
   @override
   void pause() => _player.pause();
 
+  @override
   @override
   void setVolume(double volume) => _player.setVolume(volume);
 
