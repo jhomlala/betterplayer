@@ -5,6 +5,7 @@ appId: pl.hasoft.example
     element:
       id: "better_player_e2e_navigate_ffi"
     direction: DOWN
+    centerElement: true
 - tapOn:
     id: "better_player_e2e_navigate_ffi"
 - extendedWaitUntil:
@@ -51,6 +52,7 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_button_setMixWithOthers"
     direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_setMixWithOthers"
 - assertVisible:
@@ -60,6 +62,7 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_button_setLooping"
     direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_setLooping"
 - assertVisible:
@@ -69,6 +72,7 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_button_getPosition"
     direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_getPosition"
 - assertVisible:
@@ -78,6 +82,7 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_button_getAbsolutePosition"
     direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_getAbsolutePosition"
 - assertVisible:
@@ -87,6 +92,7 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_button_preCache"
     direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_preCache"
 - assertVisible:
@@ -96,6 +102,7 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_button_stopPreCache"
     direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_stopPreCache"
 - assertVisible:
@@ -105,6 +112,7 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_button_clearCache"
     direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_clearCache"
 - assertVisible:

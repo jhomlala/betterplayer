@@ -131,6 +131,7 @@ class _FFITestPageState extends State<FFITestPage> {
             ),
           Expanded(
             child: ListView(
+              padding: const EdgeInsets.only(bottom: 100),
               children: [
                 const SizedBox(height: 16),
                 _buildTestButton(
