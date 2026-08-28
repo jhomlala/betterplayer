@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:better_player_platform_interface/src/method_channel_video_player.dart';
 import 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 import 'package:better_player_platform_interface/src/models/data_source.dart';
 import 'package:better_player_platform_interface/src/models/video_event.dart';
@@ -19,15 +18,13 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static VideoPlayerPlatform _instance = MethodChannelVideoPlayer();
+  static VideoPlayerPlatform _instance = _PlaceholderVideoPlayerPlatform();
 
   /// The default instance of [VideoPlayerPlatform] to use.
   ///
   /// Platform-specific plugins should override this with their own
   /// platform-specific class that extends [VideoPlayerPlatform] when they
   /// register themselves.
-  ///
-  /// Defaults to [MethodChannelVideoPlayer].
   static VideoPlayerPlatform get instance => _instance;
 
   /// Platform-specific plugins should set this with their own platform-specific
@@ -170,3 +167,6 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('buildView() has not been implemented.');
   }
 }
+
+class _PlaceholderVideoPlayerPlatform extends VideoPlayerPlatform {}
+

@@ -1,4 +1,4 @@
-export 'package:better_player_platform_interface/src/method_channel_video_player.dart';
+
 export 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 export 'package:better_player_platform_interface/src/models/cache_configuration.dart';
 export 'package:better_player_platform_interface/src/models/data_source.dart';
