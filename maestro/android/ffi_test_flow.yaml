@@ -39,49 +39,63 @@ appId: pl.hasoft.example
     id: "ffi_test_status_setAudioTrack"
     text: "success=true"
 - scrollUntilVisible:
-    id: "ffi_test_button_setMixWithOthers"
+    element:
+      id: "ffi_test_button_setMixWithOthers"
+    direction: DOWN
 - tapOn:
     id: "ffi_test_button_setMixWithOthers"
 - assertVisible:
     id: "ffi_test_status_setMixWithOthers"
     text: "success=true"
 - scrollUntilVisible:
-    id: "ffi_test_button_setLooping"
+    element:
+      id: "ffi_test_button_setLooping"
+    direction: DOWN
 - tapOn:
     id: "ffi_test_button_setLooping"
 - assertVisible:
     id: "ffi_test_status_setLooping"
     text: "success=true"
 - scrollUntilVisible:
-    id: "ffi_test_button_getPosition"
+    element:
+      id: "ffi_test_button_getPosition"
+    direction: DOWN
 - tapOn:
     id: "ffi_test_button_getPosition"
 - assertVisible:
     id: "ffi_test_status_getPosition"
     text: "success=true"
 - scrollUntilVisible:
-    id: "ffi_test_button_getAbsolutePosition"
+    element:
+      id: "ffi_test_button_getAbsolutePosition"
+    direction: DOWN
 - tapOn:
     id: "ffi_test_button_getAbsolutePosition"
 - assertVisible:
     id: "ffi_test_status_getAbsolutePosition"
     text: "success=true"
 - scrollUntilVisible:
-    id: "ffi_test_button_preCache"
+    element:
+      id: "ffi_test_button_preCache"
+    direction: DOWN
 - tapOn:
     id: "ffi_test_button_preCache"
 - assertVisible:
     id: "ffi_test_status_preCache"
     text: "success=true"
 - scrollUntilVisible:
-    id: "ffi_test_button_stopPreCache"
+    element:
+      id: "ffi_test_button_stopPreCache"
+    direction: DOWN
 - tapOn:
     id: "ffi_test_button_stopPreCache"
 - assertVisible:
     id: "ffi_test_status_stopPreCache"
     text: "success=true"
 - scrollUntilVisible:
-    id: "ffi_test_button_clearCache"
+    element:
+      id: "ffi_test_button_clearCache"
+    direction: DOWN
 - tapOn:
     id: "ffi_test_button_clearCache"
 - assertVisible:
