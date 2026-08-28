@@ -32,13 +32,13 @@ class TestBetterPlayerIOS extends BetterPlayerIOS {
   }
 
   @override
-  BetterPlayer? getPlayer(int textureId) {
+  dynamic getPlayer(int textureId) {
     if (textureId == 1) return mockPlayer;
     return null;
   }
 
   @override
-  CacheManager? createCacheManager() {
+  dynamic createCacheManager() {
     return mockCacheManager;
   }
 }
