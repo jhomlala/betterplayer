@@ -1,7 +1,16 @@
 import Foundation
 
 @objc public protocol BetterPlayerCallback {
-    @objc func onEvent(_ event: String, parameters: String)
+    @objc func onInitialized(durationMs: Int64, width: Double, height: Double, key: String?)
+    @objc func onCompleted(key: String?)
+    @objc func onPlay(key: String?)
+    @objc func onPause(key: String?)
+    @objc func onSeek(positionMs: Int64, key: String?)
+    @objc func onBufferingStart(key: String?)
+    @objc func onBufferingEnd(key: String?)
+    @objc func onBufferingUpdate(jsonRanges: String, key: String?)
+    @objc func onPipStart()
+    @objc func onPipStop()
     @objc func onError(_ errorCode: String, errorMessage: String, errorDetails: String)
 }
 

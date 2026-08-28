@@ -47,15 +47,6 @@ private var presentationSizeContext = 0
 /// Handles player initialization, lifecycle, and event reporting to Flutter.
 @objc public class BetterPlayer: NSObject, FlutterPlatformView, AVPictureInPictureControllerDelegate {
 
-    private func sendEvent(_ dict: [String: Any]) {
-        guard let callback = callback else { return }
-        let event = dict["event"] as? String ?? ""
-        if let jsonData = try? JSONSerialization.data(withJSONObject: dict, options: []),
-           let jsonString = String(data: jsonData, encoding: .utf8) {
-            callback.onEvent(event, parameters: jsonString)
-        }
-    }
-    
     private func sendError(_ error: FlutterError) {
         callback?.onError(error.code, errorMessage: error.message ?? "", errorDetails: (error.details as? String) ?? "")
     }
@@ -210,7 +201,7 @@ private var presentationSizeContext = 0
             }
         } else {
             if callback != nil {
-                sendEvent(["event": "completed", "key": key as Any])
+                callback?.onCompleted(key: key)
                 removeObservers()
             }
         }
@@ -377,12 +368,12 @@ private var presentationSizeContext = 0
                 }
                 if player.timeControlStatus == .paused {
                     lastAvPlayerTimeControlStatus = player.timeControlStatus
-                    sendEvent(["event": "pause"])
+                    callback?.onPause(key: key)
                     return
                 }
                 if player.timeControlStatus == .playing {
                     lastAvPlayerTimeControlStatus = player.timeControlStatus
-                    sendEvent(["event": "play"])
+                    callback?.onPlay(key: key)
                 }
             }
 
@@ -412,7 +403,10 @@ private var presentationSizeContext = 0
                     }
                     values.append([start, end])
                 }
-                sendEvent(["event": "bufferingUpdate", "values": values, "key": key as Any])
+                if let jsonData = try? JSONSerialization.data(withJSONObject: values, options: []),
+                   let jsonString = String(data: jsonData, encoding: .utf8) {
+                    callback?.onBufferingUpdate(jsonRanges: jsonString, key: key)
+                }
             }
         } else if context == &presentationSizeContext {
             onReadyToPlay()
@@ -437,12 +431,12 @@ private var presentationSizeContext = 0
         } else if context == &playbackLikelyToKeepUpContext {
             if player.currentItem?.isPlaybackLikelyToKeepUp == true {
                 updatePlayingState()
-                sendEvent(["event": "bufferingEnd", "key": key as Any])
+                callback?.onBufferingEnd(key: key)
             }
         } else if context == &playbackBufferEmptyContext {
-            sendEvent(["event": "bufferingStart", "key": key as Any])
+            callback?.onBufferingStart(key: key)
         } else if context == &playbackBufferFullContext {
-            sendEvent(["event": "bufferingEnd", "key": key as Any])
+            callback?.onBufferingEnd(key: key)
         }
     }
 
@@ -504,11 +498,12 @@ private var presentationSizeContext = 0
 
         isInitialized = true
         updatePlayingState()
-        sendEvent(["event": "initialized",
-                   "duration": NSNumber(value: duration()),
-                   "width": NSNumber(value: Float(width)),
-                   "height": NSNumber(value: Float(height)),
-                   "key": key as Any])
+        callback?.onInitialized(
+            durationMs: Int64(duration()),
+            width: Double(width),
+            height: Double(height),
+            key: key
+        )
     }
 
     /// Starts playback.
@@ -682,7 +677,7 @@ private var presentationSizeContext = 0
         if let layer = playerLayerRef {
             layer.removeFromSuperlayer()
             playerLayerRef = nil
-            sendEvent(["event": "pipStop"])
+            callback?.onPipStop()
         }
     }
 
@@ -693,7 +688,7 @@ private var presentationSizeContext = 0
     }
 
     public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
-        sendEvent(["event": "pipStart"])
+        callback?.onPipStart()
     }
 
     public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
