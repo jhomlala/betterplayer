@@ -1,6 +1,6 @@
 import Foundation
 
-@objc public protocol BetterPlayerCallback {
+@objc(BetterPlayerCallback) public protocol BetterPlayerCallback {
     @objc(onInitializedWithDurationMs:width:height:key:)
     func onInitialized(durationMs: Int64, width: Double, height: Double, key: String?)
     @objc(onCompletedWithKey:)

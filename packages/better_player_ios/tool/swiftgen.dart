@@ -69,7 +69,7 @@ Future<void> main() async {
     var content = file.readAsStringSync();
     content = content.replaceAll(
       RegExp(r'#import\s+"[^"]+better_player_ios\.h"'),
-      '@protocol BetterPlayerCallback;',
+      '#if __has_include(<better_player_ios/better_player_ios-Swift.h>)\n#import <better_player_ios/better_player_ios-Swift.h>\n#else\n#import "better_player_ios-Swift.h"\n#endif\n',
     );
     file.writeAsStringSync(content);
   }

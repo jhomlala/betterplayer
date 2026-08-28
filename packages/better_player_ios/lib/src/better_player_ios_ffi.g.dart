@@ -4571,7 +4571,7 @@ final _objc_msgSend_xtuoz7 = objc.msgSendPointer
 external ffi.Pointer<objc.ObjCProtocolImpl>
 _protocol_BetterPlayerCallback_raw();
 final _protocol_BetterPlayerCallback = objc.getProtocol(
-  "better_player_ios.BetterPlayerCallback",
+  "BetterPlayerCallback",
   _protocol_BetterPlayerCallback_raw,
 );
 late final _sel__dummyCallback = objc.registerName("_dummyCallback");
