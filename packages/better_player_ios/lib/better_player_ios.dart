@@ -9,11 +9,10 @@ import 'package:objective_c/objective_c.dart' as objc;
 
 class BetterPlayerIOS extends BetterPlayerPlatform {
   @visibleForTesting
-  BetterPlayer? getPlayer(int textureId) =>
-      BetterPlayerApi.getPlayer(textureId);
+  dynamic getPlayer(int textureId) => BetterPlayerApi.getPlayer(textureId);
 
   @visibleForTesting
-  CacheManager? createCacheManager() => BetterPlayerApi.createCacheManager();
+  dynamic createCacheManager() => BetterPlayerApi.createCacheManager();
   static void registerWith() {
     BetterPlayerPlatform.instance = BetterPlayerIOS();
   }
@@ -240,7 +239,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   @override
   Future<Duration> getPosition(int? textureId) async {
     if (textureId == null) return Duration.zero;
-    final pos = getPlayer(textureId)?.position();
+    final pos = getPlayer(textureId)?.position() as int?;
     return Duration(milliseconds: pos ?? 0);
   }
 
