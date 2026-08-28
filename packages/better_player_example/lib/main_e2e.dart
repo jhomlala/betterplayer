@@ -203,7 +203,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   identifier: 'better_player_e2e_setup_error',
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
-                      'https://invalid.url.com/video.mp4',
+                      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/404.mp4',
                       DataSourceType.network,
                     ),
                     child: const Text('Invalid'),
