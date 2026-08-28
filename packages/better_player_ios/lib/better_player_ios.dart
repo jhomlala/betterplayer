@@ -77,7 +77,12 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
     );
   }
 
-  Map<String, dynamic> dataSourceToMap(DataSource dataSource) {
+  @override
+  Future<void> setDataSource(int? textureId, DataSource dataSource) async {
+    if (textureId == null) return;
+    final player = _getPlayer(textureId);
+    if (player == null) return;
+
     if (dataSource.uri?.contains('.mpd') == true ||
         dataSource.formatHint == VideoFormat.dash) {
       throw Exception(
@@ -85,83 +90,31 @@ class BetterPlayerIOS extends VideoPlayerPlatform {
       );
     }
     
-    final map = <String, dynamic>{
-      'key': dataSource.key,
-      'useCache': false,
-      'maxCacheSize': 0,
-      'maxCacheFileSize': 0,
-      'showNotification':
-          dataSource.notificationConfiguration?.showNotification ?? false,
-      'title': dataSource.notificationConfiguration?.title,
-      'author': dataSource.notificationConfiguration?.author,
-      'imageUrl': dataSource.notificationConfiguration?.imageUrl,
-      'notificationChannelName':
-          dataSource.notificationConfiguration?.notificationChannelName,
-      'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-      'activityName': dataSource.notificationConfiguration?.activityName,
-    };
-
-    switch (dataSource.sourceType) {
-      case DataSourceType.asset:
-        map.addAll(<String, dynamic>{
-          'asset': dataSource.asset,
-          'package': dataSource.package,
-        });
-      case DataSourceType.network:
-        map.addAll(<String, dynamic>{
-          'uri': dataSource.uri,
-          'formatHint': dataSource.rawFormalHint,
-          'headers': dataSource.headers,
-          'useCache': dataSource.cacheConfiguration?.useCache ?? false,
-          'maxCacheSize': dataSource.cacheConfiguration?.maxCacheSize ?? 0,
-          'maxCacheFileSize':
-              dataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
-          'cacheKey': dataSource.cacheConfiguration?.key,
-          'licenseUrl': dataSource.drmConfiguration?.licenseUrl,
-          'certificateUrl': dataSource.drmConfiguration?.certificateUrl,
-          'drmHeaders': dataSource.drmConfiguration?.headers,
-          'clearKey': dataSource.drmConfiguration?.clearKey,
-          'videoExtension': dataSource.videoExtension,
-        });
-      case DataSourceType.file:
-      case DataSourceType.memory:
-        map.addAll(<String, dynamic>{
-          'uri': dataSource.uri,
-          'formatHint': dataSource.rawFormalHint,
-          'clearKey': dataSource.drmConfiguration?.clearKey,
-        });
-    }
-    return map;
-  }
-
-  @override
-  Future<void> setDataSource(int? textureId, DataSource dataSource) async {
-    if (textureId == null) return;
-    final map = dataSourceToMap(dataSource);
-    final player = _getPlayer(textureId);
-    if (player == null) return;
-    
     final cacheManager = BetterPlayerApi.createCacheManager();
-    final overriddenDuration = (map['overriddenDuration'] as int?) ?? 0;
+    final overriddenDuration = dataSource.overriddenDuration?.inMilliseconds ?? 0;
+    final key = dataSource.key.toNSString();
 
     if (dataSource.sourceType == DataSourceType.asset) {
       player.setDataSourceAsset(
-        (map['asset'] as String).toNSString(),
-        key: (map['key'] as String?)?.toNSString(),
+        (dataSource.asset ?? dataSource.uri!).toNSString(),
+        key: key,
+        certificateUrl: null,
+        licenseUrl: null,
+        cacheKey: null,
         cacheManager: cacheManager,
         overriddenDuration: overriddenDuration,
       );
     } else {
       player.setDataSourceURLString(
-        (map['uri'] as String).toNSString(),
-        key: (map['key'] as String?)?.toNSString(),
-        certificateUrl: null,
-        licenseUrl: null,
-        useCache: map['useCache'] as bool? ?? false,
-        cacheKey: null,
+        dataSource.uri!.toNSString(),
+        key: key,
+        certificateUrl: dataSource.drmConfiguration?.certificateUrl?.toNSString(),
+        licenseUrl: dataSource.drmConfiguration?.licenseUrl?.toNSString(),
+        useCache: dataSource.cacheConfiguration?.useCache ?? false,
+        cacheKey: dataSource.cacheConfiguration?.key?.toNSString(),
         cacheManager: cacheManager,
         overriddenDuration: overriddenDuration,
-        videoExtension: null,
+        videoExtension: dataSource.videoExtension?.toNSString(),
       );
     }
   }

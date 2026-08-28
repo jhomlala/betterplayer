@@ -150,41 +150,39 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     final player = _players[textureId];
     if (player == null) return;
     
-    final map = dataSourceToMap(dataSource);
-    
-    // Convert maps to JMap
+    // Convert headers to JMap
     JMap<JString, JString>? headersMap;
-    if (map['headers'] != null) {
-      final m = map['headers'] as Map;
+    if (dataSource.headers != null) {
       headersMap = (JHashMap() as JObject) as JMap<JString, JString>;
-      m.forEach((k, v) {
-        headersMap!.put(k.toString().toJString(), v.toString().toJString());
+      dataSource.headers!.forEach((k, v) {
+        headersMap!.put(k.toString().toJString(), (v?.toString() ?? '').toJString());
       });
     }
     
     JMap<JString, JString>? drmHeadersMap;
-    if (map['drmHeaders'] != null) {
-      final m = map['drmHeaders'] as Map;
+    if (dataSource.drmConfiguration?.headers != null) {
       drmHeadersMap = (JHashMap() as JObject) as JMap<JString, JString>;
-      m.forEach((k, v) {
+      dataSource.drmConfiguration!.headers!.forEach((k, v) {
         drmHeadersMap!.put(k.toString().toJString(), v.toString().toJString());
       });
     }
 
+    final uri = (dataSource.uri ?? dataSource.asset ?? '').toJString();
+
     player.setDataSource(
       androidApplicationContext as Context,
-      (map['key'] as String?)?.toJString(),
-      (map['uri'] as String? ?? map['asset'] as String?)?.toJString(),
-      (map['formatHint'] as String?)?.toJString(),
+      dataSource.key.toJString(),
+      uri,
+      dataSource.rawFormalHint?.toJString(),
       headersMap,
-      map['useCache'] as bool? ?? false,
-      map['maxCacheSize'] as int? ?? 0,
-      map['maxCacheFileSize'] as int? ?? 0,
-      map['overriddenDuration'] as int? ?? 0,
-      (map['licenseUrl'] as String?)?.toJString(),
+      dataSource.cacheConfiguration?.useCache ?? false,
+      dataSource.cacheConfiguration?.maxCacheSize ?? 0,
+      dataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
+      dataSource.overriddenDuration?.inMilliseconds ?? 0,
+      dataSource.drmConfiguration?.licenseUrl?.toJString(),
       drmHeadersMap,
-      (map['cacheKey'] as String?)?.toJString(),
-      (map['clearKey'] as String?)?.toJString(),
+      dataSource.cacheConfiguration?.key?.toJString(),
+      dataSource.drmConfiguration?.clearKey?.toJString(),
     );
   }
 
@@ -236,54 +234,5 @@ class BetterPlayerAndroid extends VideoPlayerPlatform {
     return Texture(textureId: textureId!);
   }
 
-  Map<String, dynamic> dataSourceToMap(DataSource dataSource) {
-    final map = <String, dynamic>{
-      'key': dataSource.key,
-      'useCache': false,
-      'maxCacheSize': 0,
-      'maxCacheFileSize': 0,
-      'showNotification':
-          dataSource.notificationConfiguration?.showNotification ?? false,
-      'title': dataSource.notificationConfiguration?.title,
-      'author': dataSource.notificationConfiguration?.author,
-      'imageUrl': dataSource.notificationConfiguration?.imageUrl,
-      'notificationChannelName':
-          dataSource.notificationConfiguration?.notificationChannelName,
-      'overriddenDuration': dataSource.overriddenDuration?.inMilliseconds,
-      'activityName': dataSource.notificationConfiguration?.activityName,
-    };
-
-    switch (dataSource.sourceType) {
-      case DataSourceType.asset:
-        map.addAll(<String, dynamic>{
-          'asset': dataSource.asset,
-          'package': dataSource.package,
-        });
-      case DataSourceType.network:
-        map.addAll(<String, dynamic>{
-          'uri': dataSource.uri,
-          'formatHint': dataSource.rawFormalHint,
-          'headers': dataSource.headers,
-          'useCache': dataSource.cacheConfiguration?.useCache ?? false,
-          'maxCacheSize': dataSource.cacheConfiguration?.maxCacheSize ?? 0,
-          'maxCacheFileSize':
-              dataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
-          'cacheKey': dataSource.cacheConfiguration?.key,
-          'licenseUrl': dataSource.drmConfiguration?.licenseUrl,
-          'certificateUrl': dataSource.drmConfiguration?.certificateUrl,
-          'drmHeaders': dataSource.drmConfiguration?.headers,
-          'clearKey': dataSource.drmConfiguration?.clearKey,
-          'videoExtension': dataSource.videoExtension,
-        });
-      case DataSourceType.file:
-      case DataSourceType.memory:
-        map.addAll(<String, dynamic>{
-          'uri': dataSource.uri,
-          'formatHint': dataSource.rawFormalHint,
-          'clearKey': dataSource.drmConfiguration?.clearKey,
-        });
-    }
-    return map;
-  }
 }
 
