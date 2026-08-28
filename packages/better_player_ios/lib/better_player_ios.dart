@@ -9,9 +9,9 @@ import 'package:objective_c/objective_c.dart' as objc;
 
 BetterPlayer? _getPlayer(int textureId) => BetterPlayerApi.getPlayer(textureId);
 
-class BetterPlayerIOS extends VideoPlayerPlatform {
+class BetterPlayerIOS extends BetterPlayerPlatform {
   static void registerWith() {
-    VideoPlayerPlatform.instance = BetterPlayerIOS();
+    BetterPlayerPlatform.instance = BetterPlayerIOS();
   }
 
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};

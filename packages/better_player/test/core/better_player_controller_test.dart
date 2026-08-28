@@ -908,8 +908,8 @@ void main() {
       test('setupDataSource emits exception for DASH on iOS', () async {
         final previousPlatform = debugDefaultTargetPlatformOverride;
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-        final previousInstance = VideoPlayerPlatform.instance;
-        VideoPlayerPlatform.instance = BetterPlayerIOS();
+        final previousInstance = BetterPlayerPlatform.instance;
+        BetterPlayerPlatform.instance = BetterPlayerIOS();
         try {
           final controller = BetterPlayerMockController(
             const PlayerConfiguration(),
@@ -933,7 +933,7 @@ void main() {
           expect(controller.videoPlayerController, null);
         } finally {
           debugDefaultTargetPlatformOverride = previousPlatform;
-          VideoPlayerPlatform.instance = previousInstance;
+          BetterPlayerPlatform.instance = previousInstance;
         }
       });
 

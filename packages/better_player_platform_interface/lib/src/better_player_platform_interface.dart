@@ -11,25 +11,25 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 /// does not consider newly added methods to be breaking changes. Extending this class
 /// (using `extends`) ensures that the subclass will get the default implementation, while
 /// platform implementations that `implements` this interface will be broken by newly added
-/// [VideoPlayerPlatform] methods.
-abstract class VideoPlayerPlatform extends PlatformInterface {
-  /// Constructs a VideoPlayerPlatform.
-  VideoPlayerPlatform() : super(token: _token);
+/// [BetterPlayerPlatform] methods.
+abstract class BetterPlayerPlatform extends PlatformInterface {
+  /// Constructs a BetterPlayerPlatform.
+  BetterPlayerPlatform() : super(token: _token);
 
   static final Object _token = Object();
 
-  static VideoPlayerPlatform _instance = _PlaceholderVideoPlayerPlatform();
+  static BetterPlayerPlatform _instance = _PlaceholderBetterPlayerPlatform();
 
-  /// The default instance of [VideoPlayerPlatform] to use.
+  /// The default instance of [BetterPlayerPlatform] to use.
   ///
   /// Platform-specific plugins should override this with their own
-  /// platform-specific class that extends [VideoPlayerPlatform] when they
+  /// platform-specific class that extends [BetterPlayerPlatform] when they
   /// register themselves.
-  static VideoPlayerPlatform get instance => _instance;
+  static BetterPlayerPlatform get instance => _instance;
 
   /// Platform-specific plugins should set this with their own platform-specific
-  /// class that extends [VideoPlayerPlatform] when they register themselves.
-  static set instance(VideoPlayerPlatform instance) {
+  /// class that extends [BetterPlayerPlatform] when they register themselves.
+  static set instance(BetterPlayerPlatform instance) {
     PlatformInterface.verify(instance, _token);
     _instance = instance;
   }
@@ -168,5 +168,5 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 }
 
-class _PlaceholderVideoPlayerPlatform extends VideoPlayerPlatform {}
+class _PlaceholderBetterPlayerPlatform extends BetterPlayerPlatform {}
 

@@ -7,10 +7,10 @@ import 'package:flutter/widgets.dart';
 import 'package:jni/jni.dart';
 import 'package:jni_flutter/jni_flutter.dart';
 
-class BetterPlayerAndroid extends VideoPlayerPlatform {
-  /// Registers this class as the default instance of [VideoPlayerPlatform].
+class BetterPlayerAndroid extends BetterPlayerPlatform {
+  /// Registers this class as the default instance of [BetterPlayerPlatform].
   static void registerWith() {
-    VideoPlayerPlatform.instance = BetterPlayerAndroid();
+    BetterPlayerPlatform.instance = BetterPlayerAndroid();
   }
 
   final Map<int, BetterPlayer> _players = {};
