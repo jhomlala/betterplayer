@@ -108,11 +108,14 @@ class _FFITestPageState extends State<FFITestPage> {
               ),
             )
           else if (!_isInitialized)
-            const Padding(
-              padding: EdgeInsets.all(8),
-              child: Text(
-                'Waiting for initialization...',
-                style: TextStyle(color: Colors.orange),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: Semantics(
+                identifier: 'ffi_test_waiting_status',
+                child: const Text(
+                  'Waiting for initialization...',
+                  style: TextStyle(color: Colors.orange),
+                ),
               ),
             )
           else
