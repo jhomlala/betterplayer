@@ -9,7 +9,7 @@ void main() {
 
     test('registerWith sets instance', () {
       BetterPlayerIOS.registerWith();
-      expect(VideoPlayerPlatform.instance, isA<BetterPlayerIOS>());
+      expect(BetterPlayerPlatform.instance, isA<BetterPlayerIOS>());
     });
 
     test('buildView returns UiKitView widget', () {

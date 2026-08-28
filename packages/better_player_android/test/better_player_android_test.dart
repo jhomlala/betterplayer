@@ -9,7 +9,7 @@ void main() {
 
     test('registerWith sets instance', () {
       BetterPlayerAndroid.registerWith();
-      expect(VideoPlayerPlatform.instance, isA<BetterPlayerAndroid>());
+      expect(BetterPlayerPlatform.instance, isA<BetterPlayerAndroid>());
     });
 
     test('buildView returns Texture widget', () {
