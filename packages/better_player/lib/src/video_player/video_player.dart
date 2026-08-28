@@ -425,9 +425,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
 
     var positionToSeek = position;
-    if (position! > value.duration!) {
-      positionToSeek = value.duration;
-    } else if (position < const Duration()) {
+    if (value.duration != null && position != null) {
+      if (position > value.duration!) {
+        positionToSeek = value.duration;
+      }
+    }
+    if (position != null && position < const Duration()) {
       positionToSeek = const Duration();
     }
     _seekPosition = positionToSeek;

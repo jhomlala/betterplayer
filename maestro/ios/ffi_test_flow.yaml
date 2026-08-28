@@ -7,6 +7,11 @@ appId: pl.hasoft.example
     direction: DOWN
 - tapOn:
     id: "better_player_e2e_navigate_ffi"
+- extendedWaitUntil:
+    visible:
+      id: "ffi_test_initialized_status"
+      text: "initialized=true"
+    timeout: 10000
 - tapOn:
     id: "ffi_test_button_play"
 - assertVisible:
