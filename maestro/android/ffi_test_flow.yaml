@@ -38,21 +38,29 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "ffi_test_status_setAudioTrack"
     text: "success=true"
+- scrollUntilVisible:
+    id: "ffi_test_button_setMixWithOthers"
 - tapOn:
     id: "ffi_test_button_setMixWithOthers"
 - assertVisible:
     id: "ffi_test_status_setMixWithOthers"
     text: "success=true"
+- scrollUntilVisible:
+    id: "ffi_test_button_preCache"
 - tapOn:
     id: "ffi_test_button_preCache"
 - assertVisible:
     id: "ffi_test_status_preCache"
     text: "success=true"
+- scrollUntilVisible:
+    id: "ffi_test_button_stopPreCache"
 - tapOn:
     id: "ffi_test_button_stopPreCache"
 - assertVisible:
     id: "ffi_test_status_stopPreCache"
     text: "success=true"
+- scrollUntilVisible:
+    id: "ffi_test_button_clearCache"
 - tapOn:
     id: "ffi_test_button_clearCache"
 - assertVisible:
