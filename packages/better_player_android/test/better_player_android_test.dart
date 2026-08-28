@@ -173,14 +173,17 @@ void main() {
       ).called(1);
     });
 
-    test('preCache, stopPreCache, clearCache complete normally in test', () async {
-      final dataSource = DataSource(
-        sourceType: DataSourceType.network,
-        uri: 'https://example.com/video.mp4',
-      );
-      await expectLater(androidPlayer.preCache(dataSource, 100), completes);
-      await expectLater(androidPlayer.stopPreCache('url', null), completes);
-      await expectLater(androidPlayer.clearCache(), completes);
-    });
+    test(
+      'preCache, stopPreCache, clearCache complete normally in test',
+      () async {
+        final dataSource = DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.mp4',
+        );
+        await expectLater(androidPlayer.preCache(dataSource, 100), completes);
+        await expectLater(androidPlayer.stopPreCache('url', null), completes);
+        await expectLater(androidPlayer.clearCache(), completes);
+      },
+    );
   });
 }

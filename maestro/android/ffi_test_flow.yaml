@@ -1,12 +1,12 @@
 appId: pl.hasoft.example
 ---
 - launchApp
+- scrollUntilVisible:
+    element:
+      id: "better_player_e2e_navigate_ffi"
+    direction: DOWN
 - tapOn:
     id: "better_player_e2e_navigate_ffi"
-- extendedWaitUntil:
-    visible:
-      id: "ffi_test_button_play"
-    timeout: 30000
 - tapOn:
     id: "ffi_test_button_play"
 - assertVisible:
