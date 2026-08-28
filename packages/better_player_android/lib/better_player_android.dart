@@ -169,10 +169,10 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       ),
     );
 
-    final player = createJniPlayer(callback) as BetterPlayer?;
+    final player = createJniPlayer(callback);
     if (player == null) return null;
 
-    final textureId = player.textureId;
+    final textureId = getTextureIdFromPlayer(player);
     _players[textureId] = createWrapper(player);
     _callbacks[textureId] = callback;
     _eventControllers[textureId] = StreamController<VideoEvent>.broadcast();
@@ -185,40 +185,25 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     final player = _players[textureId];
     if (player == null) return;
 
-    // Convert headers to JMap
-    JMap<JString, JString>? headersMap;
-    if (dataSource.headers != null) {
-      headersMap = (JHashMap() as JObject) as JMap<JString, JString>;
-      dataSource.headers!.forEach((k, v) {
-        headersMap!.put(k.toJString(), (v?.toString() ?? '').toJString());
-      });
-    }
-
-    JMap<JString, JString>? drmHeadersMap;
-    if (dataSource.drmConfiguration?.headers != null) {
-      drmHeadersMap = (JHashMap() as JObject) as JMap<JString, JString>;
-      dataSource.drmConfiguration!.headers!.forEach((k, v) {
-        drmHeadersMap!.put(k.toJString(), v.toJString());
-      });
-    }
-
-    final uri = (dataSource.uri ?? dataSource.asset ?? '').toJString();
-
     player.setDataSource(
-      androidApplicationContext as Context,
-      dataSource.key.toJString(),
-      uri,
-      dataSource.rawFormalHint?.toJString(),
-      headersMap,
+      dataSource.key,
+      dataSource.uri ?? dataSource.asset ?? '',
+      dataSource.rawFormalHint,
+      dataSource.headers?.map((k, v) => MapEntry(k, v?.toString() ?? '')),
       dataSource.cacheConfiguration?.useCache ?? false,
       dataSource.cacheConfiguration?.maxCacheSize ?? 0,
       dataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
       dataSource.overriddenDuration?.inMilliseconds ?? 0,
-      dataSource.drmConfiguration?.licenseUrl?.toJString(),
-      drmHeadersMap,
-      dataSource.cacheConfiguration?.key?.toJString(),
-      dataSource.drmConfiguration?.clearKey?.toJString(),
+      dataSource.drmConfiguration?.licenseUrl,
+      dataSource.drmConfiguration?.headers,
+      dataSource.cacheConfiguration?.key,
+      dataSource.drmConfiguration?.clearKey,
     );
+  }
+
+  @override
+  Future<void> setLooping(int? textureId, bool looping) async {
+    _players[textureId]?.looping = looping;
   }
 
   @override
@@ -261,37 +246,24 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) async {
-    // Convert headers to JMap
-    final headersMap = (JHashMap() as JObject) as JMap<JString, JString?>;
-    if (dataSource.headers != null) {
-      dataSource.headers!.forEach((k, v) {
-        headersMap.put(k.toJString(), v?.toString().toJString());
-      });
-    }
-
-    final companion = BetterPlayer.Companion;
-    companion.preCache(
-      androidApplicationContext as Context,
-      (dataSource.uri ?? dataSource.asset ?? '').toJString(),
+    jniPreCache(
+      dataSource.uri ?? dataSource.asset ?? '',
       preCacheSize,
       dataSource.cacheConfiguration?.maxCacheSize ?? 0,
       dataSource.cacheConfiguration?.maxCacheFileSize ?? 0,
-      headersMap,
-      dataSource.cacheConfiguration?.key?.toJString(),
+      dataSource.headers?.map((k, v) => MapEntry(k, v?.toString())),
+      dataSource.cacheConfiguration?.key,
     );
   }
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) async {
-    BetterPlayer.Companion.stopPreCache(
-      androidApplicationContext as Context,
-      url.toJString(),
-    );
+    jniStopPreCache(url);
   }
 
   @override
   Future<void> clearCache() async {
-    BetterPlayer.Companion.clearCache(androidApplicationContext as Context);
+    jniClearCache();
   }
 
   @override
@@ -310,10 +282,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
 
   @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async {
-    _players[textureId]?.setAudioTrack(
-      name?.toJString() ?? ''.toJString(),
-      index ?? 0,
-    );
+    _players[textureId]?.setAudioTrack(name ?? '', index ?? 0);
   }
 
   @override
@@ -370,31 +339,74 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   BetterPlayerWrapper createWrapper(dynamic player) {
     return NativeBetterPlayerWrapper(player as BetterPlayer);
   }
+
+  @visibleForTesting
+  int getTextureIdFromPlayer(dynamic player) {
+    return (player as BetterPlayer).textureId;
+  }
+
+  @visibleForTesting
+  void jniPreCache(
+    String dataSource,
+    int preCacheSize,
+    int maxCacheSize,
+    int maxCacheFileSize,
+    Map<String, String?>? headers,
+    String? cacheKey,
+  ) {
+    final headersMap = (JHashMap() as JObject) as JMap<JString, JString?>;
+    headers?.forEach((k, v) {
+      headersMap.put(k.toJString(), v?.toJString());
+    });
+
+    BetterPlayer.Companion.preCache(
+      androidApplicationContext as Context,
+      dataSource.toJString(),
+      preCacheSize,
+      maxCacheSize,
+      maxCacheFileSize,
+      headersMap,
+      cacheKey?.toJString(),
+    );
+  }
+
+  @visibleForTesting
+  void jniStopPreCache(String url) {
+    BetterPlayer.Companion.stopPreCache(
+      androidApplicationContext as Context,
+      url.toJString(),
+    );
+  }
+
+  @visibleForTesting
+  void jniClearCache() {
+    BetterPlayer.Companion.clearCache(androidApplicationContext as Context);
+  }
 }
 
 abstract class BetterPlayerWrapper {
   void dispose();
   void release();
   void setDataSource(
-    Context context,
-    JString key,
-    JString dataSource,
-    JString? formatHint,
-    JMap<JString, JString>? headers,
+    String key,
+    String dataSource,
+    String? formatHint,
+    Map<String, String>? headers,
     bool useCache,
     int maxCacheSize,
     int maxCacheFileSize,
     int overriddenDuration,
-    JString? licenseUrl,
-    JMap<JString, JString>? drmHeaders,
-    JString? cacheKey,
-    JString? clearKey,
+    String? licenseUrl,
+    Map<String, String>? drmHeaders,
+    String? cacheKey,
+    String? clearKey,
   );
   void setTrackParameters(int width, int height, int bitrate);
-  void setAudioTrack(JString name, int index);
+  void setAudioTrack(String name, int index);
   set mixWithOthers(bool mixWithOthers);
   void play();
   void pause();
+  set looping(bool looping);
   set volume(double volume);
   set speed(double speed);
   void seekTo(int positionMs);
@@ -415,34 +427,50 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
 
   @override
   void setDataSource(
-    Context context,
-    JString key,
-    JString dataSource,
-    JString? formatHint,
-    JMap<JString, JString>? headers,
+    String key,
+    String dataSource,
+    String? formatHint,
+    Map<String, String>? headers,
     bool useCache,
     int maxCacheSize,
     int maxCacheFileSize,
     int overriddenDuration,
-    JString? licenseUrl,
-    JMap<JString, JString>? drmHeaders,
-    JString? cacheKey,
-    JString? clearKey,
+    String? licenseUrl,
+    Map<String, String>? drmHeaders,
+    String? cacheKey,
+    String? clearKey,
   ) {
+    // Convert headers to JMap
+    JMap<JString, JString>? headersMap;
+    if (headers != null) {
+      headersMap = (JHashMap() as JObject) as JMap<JString, JString>;
+      headers.forEach((k, v) {
+        headersMap!.put(k.toJString(), v.toJString());
+      });
+    }
+
+    JMap<JString, JString>? drmHeadersMap;
+    if (drmHeaders != null) {
+      drmHeadersMap = (JHashMap() as JObject) as JMap<JString, JString>;
+      drmHeaders.forEach((k, v) {
+        drmHeadersMap!.put(k.toJString(), v.toJString());
+      });
+    }
+
     _player.setDataSource(
-      context,
-      key,
-      dataSource,
-      formatHint,
-      headers,
+      androidApplicationContext as Context,
+      key.toJString(),
+      dataSource.toJString(),
+      formatHint?.toJString(),
+      headersMap,
       useCache,
       maxCacheSize,
       maxCacheFileSize,
       overriddenDuration,
-      licenseUrl,
-      drmHeaders,
-      cacheKey,
-      clearKey,
+      licenseUrl?.toJString(),
+      drmHeadersMap,
+      cacheKey?.toJString(),
+      clearKey?.toJString(),
     );
   }
 
@@ -451,8 +479,8 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
       _player.setTrackParameters(width, height, bitrate);
 
   @override
-  void setAudioTrack(JString name, int index) =>
-      _player.setAudioTrack(name, index);
+  void setAudioTrack(String name, int index) =>
+      _player.setAudioTrack(name.toJString(), index);
 
   @override
   set mixWithOthers(bool mixWithOthers) =>
@@ -463,6 +491,9 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
 
   @override
   void pause() => _player.pause();
+
+  @override
+  set looping(bool looping) => _player.looping = looping;
 
   @override
   set volume(double volume) => _player.volume = volume;
