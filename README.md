@@ -2,6 +2,7 @@
 <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/logo.png" width="250px">
 </p>
 
+
 # Better Player
 ### The most advanced and feature-rich video player for Flutter.
 
