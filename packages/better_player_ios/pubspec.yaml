@@ -22,6 +22,7 @@ dev_dependencies:
   very_good_analysis: ^10.3.0
 
   logging: any
+  mocktail: ^1.0.5
 flutter:
   plugin:
     implements: better_player

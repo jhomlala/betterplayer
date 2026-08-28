@@ -13,9 +13,9 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     BetterPlayerPlatform.instance = BetterPlayerAndroid();
   }
 
-  final Map<int, BetterPlayer> _players = {};
+  final Map<int, BetterPlayerWrapper> _players = {};
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
-  final Map<int, BetterPlayerCallback> _callbacks = {};
+  final Map<int, dynamic> _callbacks = {};
 
   @override
   Future<void> init() async {
@@ -30,7 +30,9 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     _players[textureId]?.release();
     _players.remove(textureId);
 
-    _callbacks[textureId]?.release();
+    try {
+      _callbacks[textureId]?.release();
+    } catch (_) {}
     _callbacks.remove(textureId);
 
     _eventControllers[textureId]?.close();
@@ -41,7 +43,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,
   }) async {
-    final callback = BetterPlayerCallback.implement(
+    final callback = buildCallback(
       $BetterPlayerCallback(
         onInitialized: (int durationMs, int width, int height, JString? key) {
           // Broadcast to all since we don't know textureId yet, or match by key.
@@ -165,14 +167,11 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       ),
     );
 
-    final player = BetterPlayerApi.Companion.createPlayer(
-      androidApplicationContext as Context,
-      callback,
-    );
+    final player = createJniPlayer(callback);
     if (player == null) return null;
 
     final textureId = player.textureId;
-    _players[textureId] = player;
+    _players[textureId] = createWrapper(player);
     _callbacks[textureId] = callback;
     _eventControllers[textureId] = StreamController<VideoEvent>.broadcast();
 
@@ -267,4 +266,115 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Widget buildView(int? textureId) {
     return Texture(textureId: textureId!);
   }
+
+  @visibleForTesting
+  dynamic buildCallback(dynamic impl) {
+    return BetterPlayerCallback.implement(impl as $BetterPlayerCallback);
+  }
+
+  @visibleForTesting
+  dynamic createJniPlayer(dynamic callback) {
+    return BetterPlayerApi.Companion.createPlayer(
+      androidApplicationContext as Context,
+      callback as BetterPlayerCallback,
+    );
+  }
+
+  @visibleForTesting
+  BetterPlayerWrapper createWrapper(dynamic player) {
+    return NativeBetterPlayerWrapper(player as BetterPlayer);
+  }
+}
+
+abstract class BetterPlayerWrapper {
+  void dispose();
+  void release();
+  void setDataSource(
+    Context context,
+    JString key,
+    JString dataSource,
+    JString? formatHint,
+    JMap<JString, JString>? headers,
+    bool useCache,
+    int maxCacheSize,
+    int maxCacheFileSize,
+    int overriddenDuration,
+    JString? licenseUrl,
+    JMap<JString, JString>? drmHeaders,
+    JString? cacheKey,
+    JString? clearKey,
+  );
+  void play();
+  void pause();
+  set volume(double volume);
+  set speed(double speed);
+  void seekTo(int positionMs);
+  int get position;
+  int get absolutePosition;
+}
+
+class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
+  final BetterPlayer _player;
+
+  NativeBetterPlayerWrapper(this._player);
+
+  @override
+  void dispose() => _player.dispose();
+
+  @override
+  void release() => _player.release();
+
+  @override
+  void setDataSource(
+    Context context,
+    JString key,
+    JString dataSource,
+    JString? formatHint,
+    JMap<JString, JString>? headers,
+    bool useCache,
+    int maxCacheSize,
+    int maxCacheFileSize,
+    int overriddenDuration,
+    JString? licenseUrl,
+    JMap<JString, JString>? drmHeaders,
+    JString? cacheKey,
+    JString? clearKey,
+  ) {
+    _player.setDataSource(
+      context,
+      key,
+      dataSource,
+      formatHint,
+      headers,
+      useCache,
+      maxCacheSize,
+      maxCacheFileSize,
+      overriddenDuration,
+      licenseUrl,
+      drmHeaders,
+      cacheKey,
+      clearKey,
+    );
+  }
+
+  @override
+  void play() => _player.play();
+
+  @override
+  void pause() => _player.pause();
+
+  @override
+  set volume(double volume) => _player.volume = volume;
+
+  @override
+  set speed(double speed) => _player.speed = speed;
+
+  @override
+  void seekTo(int positionMs) => _player.seekTo(positionMs);
+
+  @override
+  int get position => _player.position;
+
+  @override
+  int get absolutePosition => _player.absolutePosition;
 }
