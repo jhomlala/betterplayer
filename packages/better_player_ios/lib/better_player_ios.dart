@@ -7,9 +7,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:objective_c/objective_c.dart' as objc;
 
-BetterPlayer? _getPlayer(int textureId) => BetterPlayerApi.getPlayer(textureId);
-
 class BetterPlayerIOS extends BetterPlayerPlatform {
+  @visibleForTesting
+  BetterPlayer? getPlayer(int textureId) =>
+      BetterPlayerApi.getPlayer(textureId);
+
+  @visibleForTesting
+  CacheManager? createCacheManager() => BetterPlayerApi.createCacheManager();
   static void registerWith() {
     BetterPlayerPlatform.instance = BetterPlayerIOS();
   }
@@ -22,7 +26,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   @override
   Future<void> dispose(int? textureId) async {
     if (textureId == null) return;
-    _getPlayer(textureId)?.dispose();
+    getPlayer(textureId)?.dispose();
     _eventControllers[textureId]?.close();
     _eventControllers.remove(textureId);
   }
@@ -159,7 +163,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
     if (textureId == null) return;
-    final player = _getPlayer(textureId);
+    final player = getPlayer(textureId);
     if (player == null) return;
 
     if (dataSource.uri?.contains('.mpd') == true ||
@@ -169,7 +173,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       );
     }
 
-    final cacheManager = BetterPlayerApi.createCacheManager();
+    final cacheManager = createCacheManager();
     final overriddenDuration =
         dataSource.overriddenDuration?.inMilliseconds ?? 0;
     final key = dataSource.key.toNSString();
@@ -200,43 +204,43 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   @override
   Future<void> setLooping(int? textureId, bool looping) async {
     if (textureId == null) return;
-    _getPlayer(textureId)?.setLooping(looping);
+    getPlayer(textureId)?.setLooping(looping);
   }
 
   @override
   Future<void> play(int? textureId) async {
     if (textureId == null) return;
-    _getPlayer(textureId)?.play();
+    getPlayer(textureId)?.play();
   }
 
   @override
   Future<void> pause(int? textureId) async {
     if (textureId == null) return;
-    _getPlayer(textureId)?.pause();
+    getPlayer(textureId)?.pause();
   }
 
   @override
   Future<void> setVolume(int? textureId, double volume) async {
     if (textureId == null) return;
-    _getPlayer(textureId)?.setVolume(volume);
+    getPlayer(textureId)?.setVolume(volume);
   }
 
   @override
   Future<void> setSpeed(int? textureId, double speed) async {
     if (textureId == null) return;
-    _getPlayer(textureId)?.setSpeed(speed);
+    getPlayer(textureId)?.setSpeed(speed);
   }
 
   @override
   Future<void> seekTo(int? textureId, Duration? position) async {
     if (textureId == null || position == null) return;
-    _getPlayer(textureId)?.seekTo(position.inMilliseconds);
+    getPlayer(textureId)?.seekTo(position.inMilliseconds);
   }
 
   @override
   Future<Duration> getPosition(int? textureId) async {
     if (textureId == null) return Duration.zero;
-    final pos = _getPlayer(textureId)?.position();
+    final pos = getPlayer(textureId)?.position();
     return Duration(milliseconds: pos ?? 0);
   }
 
