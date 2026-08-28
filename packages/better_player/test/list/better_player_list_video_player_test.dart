@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
+import '../helpers/better_player_test_utils.dart';
 import '../helpers/mock_method_channel.dart';
 
 void main() {
@@ -10,6 +11,7 @@ void main() {
   final mockMethodChannel = MockMethodChannel();
 
   setUpAll(() {
+    BetterPlayerTestUtils.setupMockPlatform();
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
 
@@ -35,7 +37,8 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(BetterPlayerListVideoPlayer), findsOneWidget);
     });
@@ -55,7 +58,8 @@ void main() {
           ),
         ),
       );
-      await tester.pumpAndSettle();
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
 
       // Test controller methods don't crash
       listController.play();

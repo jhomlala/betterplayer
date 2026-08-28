@@ -25,9 +25,6 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
 
   @override
-  Future<void> init() async {}
-
-  @override
   Future<void> dispose(int? textureId) async {
     if (textureId == null) return;
     getPlayer(textureId)?.dispose();
@@ -456,7 +453,6 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   @override
   void pause() => _player.pause();
 
-  @override
   @override
   void setVolume(double volume) => _player.setVolume(volume);
 

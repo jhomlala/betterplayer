@@ -1,5 +1,6 @@
 ## Unreleased
-- none.
+- Updated: Refactored `VideoPlayerController` to use event stream for initialization tracking, improving robustness and fixing race conditions during data source setup.
+- Fixed: A bug in `VideoPlayerController` where error descriptions were not correctly assigned to the player state.
 
 ## 1.1.1
 * Fixed: `fix_data.yaml` syntax error preventing downgrade analysis.

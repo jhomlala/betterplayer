@@ -14,6 +14,7 @@ void main() {
   late BetterPlayerMockController mockController;
 
   setUpAll(() {
+    BetterPlayerTestUtils.setupMockPlatform();
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
 

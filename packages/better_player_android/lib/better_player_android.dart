@@ -20,12 +20,6 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   final Map<int, dynamic> _callbacks = {};
 
   @override
-  Future<void> init() async {
-    // Usually nothing globally required for Android initialization
-    // unless clearing global caches.
-  }
-
-  @override
   Future<void> dispose(int? textureId) async {
     if (textureId == null) return;
     final player = _players[textureId];
