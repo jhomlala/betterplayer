@@ -90,166 +90,168 @@ class _FFITestPageState extends State<FFITestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('FFI Method Test')),
-      body: ListView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 100),
-        children: [
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-          if (_errorMessage != null)
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Semantics(
-                identifier: 'ffi_test_error_status',
-                child: Text(
-                  'error=$_errorMessage',
-                  style: const TextStyle(color: Colors.red),
-                ),
-              ),
-            )
-          else if (!_isInitialized)
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Semantics(
-                identifier: 'ffi_test_waiting_status',
-                child: const Text(
-                  'Waiting for initialization...',
-                  style: TextStyle(color: Colors.orange),
-                ),
-              ),
-            )
-          else
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Semantics(
-                identifier: 'ffi_test_initialized_status',
-                child: const Text(
-                  'initialized=true',
-                  style: TextStyle(color: Colors.green),
-                ),
-              ),
+        child: Column(
+          children: [
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(controller: _betterPlayerController),
             ),
-          const SizedBox(height: 16),
-          _buildTestButton(
-            'play',
-            () async => _betterPlayerController.play(),
-          ),
-          _buildTestButton(
-            'pause',
-            () async => _betterPlayerController.pause(),
-          ),
-          _buildTestButton(
-            'seekTo',
-            () async {
-              // Try to seek even if not initialized to test FFI bridge
-              try {
-                await _betterPlayerController.seekTo(
-                  const Duration(seconds: 5),
-                );
-              } catch (e) {
-                // Fallback to direct platform call if controller logic fails
-                final textureId = _betterPlayerController
-                    .videoPlayerController
-                    // ignore: invalid_use_of_visible_for_testing_member
-                    ?.textureId;
-                if (textureId != null) {
-                  await BetterPlayerPlatform.instance.seekTo(
-                    textureId,
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Semantics(
+                  identifier: 'ffi_test_error_status',
+                  child: Text(
+                    'error=$_errorMessage',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                ),
+              )
+            else if (!_isInitialized)
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Semantics(
+                  identifier: 'ffi_test_waiting_status',
+                  child: const Text(
+                    'Waiting for initialization...',
+                    style: TextStyle(color: Colors.orange),
+                  ),
+                ),
+              )
+            else
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Semantics(
+                  identifier: 'ffi_test_initialized_status',
+                  child: const Text(
+                    'initialized=true',
+                    style: TextStyle(color: Colors.green),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 16),
+            _buildTestButton(
+              'play',
+              () async => _betterPlayerController.play(),
+            ),
+            _buildTestButton(
+              'pause',
+              () async => _betterPlayerController.pause(),
+            ),
+            _buildTestButton(
+              'seekTo',
+              () async {
+                // Try to seek even if not initialized to test FFI bridge
+                try {
+                  await _betterPlayerController.seekTo(
                     const Duration(seconds: 5),
                   );
-                } else {
-                  rethrow;
+                } catch (e) {
+                  // Fallback to direct platform call if controller logic fails
+                  final textureId = _betterPlayerController
+                      .videoPlayerController
+                      // ignore: invalid_use_of_visible_for_testing_member
+                      ?.textureId;
+                  if (textureId != null) {
+                    await BetterPlayerPlatform.instance.seekTo(
+                      textureId,
+                      const Duration(seconds: 5),
+                    );
+                  } else {
+                    rethrow;
+                  }
                 }
-              }
-            },
-          ),
-          _buildTestButton(
-            'setVolume',
-            () async => _betterPlayerController.setVolume(0.8),
-          ),
-          _buildTestButton(
-            'setSpeed',
-            () async => _betterPlayerController.setSpeed(1.2),
-          ),
-          _buildTestButton(
-            'setTrackParameters',
-            () async {
-              final vpc = _betterPlayerController.videoPlayerController;
-              if (vpc != null) {
-                await vpc.setTrackParameters(1280, 720, 2000);
-              } else {
-                throw Exception('VideoPlayerController is null');
-              }
-            },
-          ),
-          _buildTestButton(
-            'setAudioTrack',
-            () async {
-              final vpc = _betterPlayerController.videoPlayerController;
-              if (vpc != null) {
-                vpc.setAudioTrack('English', 0);
-              } else {
-                throw Exception('VideoPlayerController is null');
-              }
-            },
-          ),
-          _buildTestButton(
-            'setMixWithOthers',
-            () async {
-              _betterPlayerController.setMixWithOthers(true);
-            },
-          ),
-          _buildTestButton(
-            'setLooping',
-            () async => _betterPlayerController.setLooping(true),
-          ),
-          _buildTestButton(
-            'getPosition',
-            () async {
-              final vpc = _betterPlayerController.videoPlayerController;
-              if (vpc != null) {
-                await vpc.position;
-              } else {
-                throw Exception('VideoPlayerController is null');
-              }
-            },
-          ),
-          _buildTestButton(
-            'getAbsolutePosition',
-            () async {
-              final vpc = _betterPlayerController.videoPlayerController;
-              if (vpc != null) {
-                await vpc.absolutePosition;
-              } else {
-                throw Exception('VideoPlayerController is null');
-              }
-            },
-          ),
-          _buildTestButton(
-            'preCache',
-            () async => _betterPlayerController.preCache(
-              PlayerDataSource(
-                DataSourceType.network,
-                Constants.bugBuckBunnyVideoUrl,
+              },
+            ),
+            _buildTestButton(
+              'setVolume',
+              () async => _betterPlayerController.setVolume(0.8),
+            ),
+            _buildTestButton(
+              'setSpeed',
+              () async => _betterPlayerController.setSpeed(1.2),
+            ),
+            _buildTestButton(
+              'setTrackParameters',
+              () async {
+                final vpc = _betterPlayerController.videoPlayerController;
+                if (vpc != null) {
+                  await vpc.setTrackParameters(1280, 720, 2000);
+                } else {
+                  throw Exception('VideoPlayerController is null');
+                }
+              },
+            ),
+            _buildTestButton(
+              'setAudioTrack',
+              () async {
+                final vpc = _betterPlayerController.videoPlayerController;
+                if (vpc != null) {
+                  vpc.setAudioTrack('English', 0);
+                } else {
+                  throw Exception('VideoPlayerController is null');
+                }
+              },
+            ),
+            _buildTestButton(
+              'setMixWithOthers',
+              () async {
+                _betterPlayerController.setMixWithOthers(true);
+              },
+            ),
+            _buildTestButton(
+              'setLooping',
+              () async => _betterPlayerController.setLooping(true),
+            ),
+            _buildTestButton(
+              'getPosition',
+              () async {
+                final vpc = _betterPlayerController.videoPlayerController;
+                if (vpc != null) {
+                  await vpc.position;
+                } else {
+                  throw Exception('VideoPlayerController is null');
+                }
+              },
+            ),
+            _buildTestButton(
+              'getAbsolutePosition',
+              () async {
+                final vpc = _betterPlayerController.videoPlayerController;
+                if (vpc != null) {
+                  await vpc.absolutePosition;
+                } else {
+                  throw Exception('VideoPlayerController is null');
+                }
+              },
+            ),
+            _buildTestButton(
+              'preCache',
+              () async => _betterPlayerController.preCache(
+                PlayerDataSource(
+                  DataSourceType.network,
+                  Constants.bugBuckBunnyVideoUrl,
+                ),
               ),
             ),
-          ),
-          _buildTestButton(
-            'stopPreCache',
-            () async => _betterPlayerController.stopPreCache(
-              PlayerDataSource(
-                DataSourceType.network,
-                Constants.bugBuckBunnyVideoUrl,
+            _buildTestButton(
+              'stopPreCache',
+              () async => _betterPlayerController.stopPreCache(
+                PlayerDataSource(
+                  DataSourceType.network,
+                  Constants.bugBuckBunnyVideoUrl,
+                ),
               ),
             ),
-          ),
-          _buildTestButton(
-            'clearCache',
-            () async => _betterPlayerController.clearCache(),
-          ),
-          const SizedBox(height: 32),
-        ],
+            _buildTestButton(
+              'clearCache',
+              () async => _betterPlayerController.clearCache(),
+            ),
+            const SizedBox(height: 32),
+          ],
+        ),
       ),
     );
   }
