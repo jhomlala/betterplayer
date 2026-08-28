@@ -50,7 +50,7 @@ appId: pl.hasoft.example
     text: "success=true"
 - scrollUntilVisible:
     element:
-      id: "ffi_test_button_setMixWithOthers"
+      id: "ffi_test_status_setMixWithOthers"
     direction: DOWN
     centerElement: true
 - tapOn:
@@ -60,7 +60,7 @@ appId: pl.hasoft.example
     text: "success=true"
 - scrollUntilVisible:
     element:
-      id: "ffi_test_button_setLooping"
+      id: "ffi_test_status_setLooping"
     direction: DOWN
     centerElement: true
 - tapOn:
@@ -70,7 +70,7 @@ appId: pl.hasoft.example
     text: "success=true"
 - scrollUntilVisible:
     element:
-      id: "ffi_test_button_getPosition"
+      id: "ffi_test_status_getPosition"
     direction: DOWN
     centerElement: true
 - tapOn:
@@ -80,7 +80,7 @@ appId: pl.hasoft.example
     text: "success=true"
 - scrollUntilVisible:
     element:
-      id: "ffi_test_button_getAbsolutePosition"
+      id: "ffi_test_status_getAbsolutePosition"
     direction: DOWN
     centerElement: true
 - tapOn:
@@ -90,7 +90,7 @@ appId: pl.hasoft.example
     text: "success=true"
 - scrollUntilVisible:
     element:
-      id: "ffi_test_button_preCache"
+      id: "ffi_test_status_preCache"
     direction: DOWN
     centerElement: true
 - tapOn:
@@ -100,7 +100,7 @@ appId: pl.hasoft.example
     text: "success=true"
 - scrollUntilVisible:
     element:
-      id: "ffi_test_button_stopPreCache"
+      id: "ffi_test_status_stopPreCache"
     direction: DOWN
     centerElement: true
 - tapOn:
@@ -110,7 +110,7 @@ appId: pl.hasoft.example
     text: "success=true"
 - scrollUntilVisible:
     element:
-      id: "ffi_test_button_clearCache"
+      id: "ffi_test_status_clearCache"
     direction: DOWN
     centerElement: true
 - tapOn:
