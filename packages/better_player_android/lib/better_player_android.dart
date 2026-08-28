@@ -28,6 +28,10 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   @override
   Future<void> dispose(int? textureId) async {
     if (textureId == null) return;
+    final player = _players[textureId];
+    if (player is NativeBetterPlayerWrapper) {
+      player.internalPlayer.disposeRemoteNotifications();
+    }
     _players[textureId]?.dispose();
     _players[textureId]?.release();
     _players.remove(textureId);
@@ -199,6 +203,19 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       dataSource.cacheConfiguration?.key,
       dataSource.drmConfiguration?.clearKey,
     );
+
+    final notificationConfig = dataSource.notificationConfiguration;
+    if (notificationConfig?.showNotification == true) {
+      final playerWrapper = player as NativeBetterPlayerWrapper;
+      playerWrapper.internalPlayer.setupPlayerNotification(
+        androidApplicationContext as Context,
+        (notificationConfig?.title ?? '').toJString(),
+        notificationConfig?.author?.toJString(),
+        notificationConfig?.imageUrl?.toJString(),
+        notificationConfig?.notificationChannelName?.toJString(),
+        (notificationConfig?.activityName ?? 'MainActivity').toJString(),
+      );
+    }
   }
 
   @override
@@ -418,6 +435,8 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   final BetterPlayer _player;
 
   NativeBetterPlayerWrapper(this._player);
+
+  BetterPlayer get internalPlayer => _player;
 
   @override
   void dispose() => _player.dispose();
