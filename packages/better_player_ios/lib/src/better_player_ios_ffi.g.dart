@@ -782,6 +782,15 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
           _class_BetterPlayerApi,
         );
 
+  /// _dummyCallback
+  static BetterPlayerCallback get_dummyCallback() {
+    final $ret = _objc_msgSend_151sglz(
+      _class_BetterPlayerApi,
+      _sel__dummyCallback,
+    );
+    return BetterPlayerCallback.fromPointer($ret, retain: true, release: true);
+  }
+
   /// alloc
   static BetterPlayerApi alloc() {
     final $ret = _objc_msgSend_151sglz(_class_BetterPlayerApi, _sel_alloc);
@@ -4565,6 +4574,7 @@ final _protocol_BetterPlayerCallback = objc.getProtocol(
   "better_player_ios.BetterPlayerCallback",
   _protocol_BetterPlayerCallback_raw,
 );
+late final _sel__dummyCallback = objc.registerName("_dummyCallback");
 late final _sel_absolutePosition = objc.registerName("absolutePosition");
 late final _sel_alloc = objc.registerName("alloc");
 late final _sel_allocWithZone_ = objc.registerName("allocWithZone:");
