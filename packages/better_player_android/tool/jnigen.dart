@@ -6,12 +6,12 @@ void main(List<String> args) {
   
   // Broadly search the ENTIRE example/build directory
   final buildDir = Directory.fromUri(packageRoot.resolve('example/build'));
-  List<Uri> classPaths = [];
+  final classPaths = <Uri>[];
   
   if (buildDir.existsSync()) {
-    for (var entity in buildDir.listSync(recursive: true)) {
+    for (final entity in buildDir.listSync(recursive: true)) {
       if (entity is File) {
-        final path = entity.path.replaceAll('\\', '/');
+        final path = entity.path.replaceAll(r'\', '/');
         // If we find any JAR related to our plugin, add it!
         if (path.endsWith('.jar') && path.contains('better_player_android')) {
           classPaths.add(entity.uri);
