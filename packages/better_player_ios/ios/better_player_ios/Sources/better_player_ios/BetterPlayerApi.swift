@@ -23,11 +23,16 @@ import Foundation
         player.callback = callback
         nextId += 1
         players[nextId] = player
+        NSLog("[BetterPlayerApi] createPlayer: nextId=\(nextId), totalPlayers=\(players.count)")
         return nextId
     }
 
     @objc public static func getPlayer(_ textureId: Int64) -> BetterPlayer? {
-        return players[textureId]
+        let player = players[textureId]
+        if player == nil {
+            NSLog("[BetterPlayerApi] getPlayer: textureId=\(textureId) NOT FOUND")
+        }
+        return player
     }
 
     @objc public static func createCacheManager() -> CacheManager {
