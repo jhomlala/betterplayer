@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/pages/ffi_test_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -205,6 +206,20 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                     DataSourceType.network,
                   ),
                   child: const Text('Invalid'),
+                ),
+              ),
+              Semantics(
+                identifier: 'better_player_e2e_navigate_ffi',
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (context) => const FFITestPage(),
+                      ),
+                    );
+                  },
+                  child: const Text('FFI Test'),
                 ),
               ),
             ],

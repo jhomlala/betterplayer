@@ -1,0 +1,60 @@
+appId: pl.hasoft.better_player.example
+---
+- launchApp
+- tapOn:
+    id: "better_player_e2e_navigate_ffi"
+- tapOn:
+    id: "ffi_test_button_play"
+- assertVisible:
+    id: "ffi_test_status_play"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_pause"
+- assertVisible:
+    id: "ffi_test_status_pause"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_seekTo"
+- assertVisible:
+    id: "ffi_test_status_seekTo"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_setVolume"
+- assertVisible:
+    id: "ffi_test_status_setVolume"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_setSpeed"
+- assertVisible:
+    id: "ffi_test_status_setSpeed"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_setTrackParameters"
+- assertVisible:
+    id: "ffi_test_status_setTrackParameters"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_setAudioTrack"
+- assertVisible:
+    id: "ffi_test_status_setAudioTrack"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_setMixWithOthers"
+- assertVisible:
+    id: "ffi_test_status_setMixWithOthers"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_preCache"
+- assertVisible:
+    id: "ffi_test_status_preCache"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_stopPreCache"
+- assertVisible:
+    id: "ffi_test_status_stopPreCache"
+    text: "success=true"
+- tapOn:
+    id: "ffi_test_button_clearCache"
+- assertVisible:
+    id: "ffi_test_status_clearCache"
+    text: "success=true"
