@@ -13,41 +13,84 @@ appId: pl.hasoft.example
       id: "ffi_test_initialized_status"
       text: "initialized=true"
     timeout: 60000
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_play"
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_play"
 - assertVisible:
     id: "ffi_test_status_play"
     text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_pause"
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_pause"
 - assertVisible:
     id: "ffi_test_status_pause"
     text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_seekTo"
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_seekTo"
 - assertVisible:
     id: "ffi_test_status_seekTo"
     text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setVolume"
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_setVolume"
 - assertVisible:
     id: "ffi_test_status_setVolume"
     text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setSpeed"
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_setSpeed"
 - assertVisible:
     id: "ffi_test_status_setSpeed"
     text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setTrackParameters"
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_setTrackParameters"
 - assertVisible:
     id: "ffi_test_status_setTrackParameters"
     text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setAudioTrack"
+    direction: DOWN
+    centerElement: true
 - tapOn:
     id: "ffi_test_button_setAudioTrack"
 - assertVisible:
     id: "ffi_test_status_setAudioTrack"
     text: "success=true"
+
 - scrollUntilVisible:
     element:
       id: "ffi_test_status_setMixWithOthers"
@@ -58,6 +101,7 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "ffi_test_status_setMixWithOthers"
     text: "success=true"
+
 - scrollUntilVisible:
     element:
       id: "ffi_test_status_setLooping"
@@ -68,6 +112,7 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "ffi_test_status_setLooping"
     text: "success=true"
+
 - scrollUntilVisible:
     element:
       id: "ffi_test_status_getPosition"
@@ -78,6 +123,7 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "ffi_test_status_getPosition"
     text: "success=true"
+
 - scrollUntilVisible:
     element:
       id: "ffi_test_status_getAbsolutePosition"
@@ -88,6 +134,7 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "ffi_test_status_getAbsolutePosition"
     text: "success=true"
+
 - scrollUntilVisible:
     element:
       id: "ffi_test_status_preCache"
@@ -98,6 +145,7 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "ffi_test_status_preCache"
     text: "success=true"
+
 - scrollUntilVisible:
     element:
       id: "ffi_test_status_stopPreCache"
@@ -108,6 +156,7 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "ffi_test_status_stopPreCache"
     text: "success=true"
+
 - scrollUntilVisible:
     element:
       id: "ffi_test_status_clearCache"
