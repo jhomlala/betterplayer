@@ -74,7 +74,9 @@ Future<void> main() async {
     file.writeAsStringSync(content);
 
     // Fix protocol name in Dart file
-    final dartFile = File(packageRoot.resolve('lib/src/better_player_ios_ffi.g.dart').toFilePath());
+    final dartFile = File(
+      packageRoot.resolve('lib/src/better_player_ios_ffi.g.dart').toFilePath(),
+    );
     if (dartFile.existsSync()) {
       var dartContent = dartFile.readAsStringSync();
       dartContent = dartContent.replaceAll(
