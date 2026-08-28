@@ -312,10 +312,62 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
     try {
       final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
       final $a = $i.args;
-      if ($d == r'onEvent(Ljava/lang/String;Ljava/util/Map;)V') {
-        _$impls[$p]!.onEvent(
-          ($a![0] as jni$_.JString),
-          ($a![1] as jni$_.JMap<jni$_.JString, jni$_.JObject?>),
+      if ($d == r'onInitialized(JIILjava/lang/String;)V') {
+        _$impls[$p]!.onInitialized(
+          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
+          ($a![1] as jni$_.JInteger).toDartInt(releaseOriginal: true),
+          ($a![2] as jni$_.JInteger).toDartInt(releaseOriginal: true),
+          ($a![3] as jni$_.JString?),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d == r'onCompleted(Ljava/lang/String;)V') {
+        _$impls[$p]!.onCompleted(
+          ($a![0] as jni$_.JString?),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d == r'onPlay()V') {
+        _$impls[$p]!.onPlay();
+        return jni$_.nullptr;
+      }
+      if ($d == r'onPause()V') {
+        _$impls[$p]!.onPause();
+        return jni$_.nullptr;
+      }
+      if ($d == r'onSeek(J)V') {
+        _$impls[$p]!.onSeek(
+          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d == r'onBufferingStart()V') {
+        _$impls[$p]!.onBufferingStart();
+        return jni$_.nullptr;
+      }
+      if ($d == r'onBufferingEnd()V') {
+        _$impls[$p]!.onBufferingEnd();
+        return jni$_.nullptr;
+      }
+      if ($d == r'onBufferingUpdate(J)V') {
+        _$impls[$p]!.onBufferingUpdate(
+          ($a![0] as jni$_.JLong).toDartInt(releaseOriginal: true),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d == r'onPipStart()V') {
+        _$impls[$p]!.onPipStart();
+        return jni$_.nullptr;
+      }
+      if ($d == r'onPipStop()V') {
+        _$impls[$p]!.onPipStop();
+        return jni$_.nullptr;
+      }
+      if ($d == r'onChangedSize(IILjava/lang/String;)V') {
+        _$impls[$p]!.onChangedSize(
+          ($a![0] as jni$_.JInteger).toDartInt(releaseOriginal: true),
+          ($a![1] as jni$_.JInteger).toDartInt(releaseOriginal: true),
+          ($a![2] as jni$_.JString?),
         );
         return jni$_.nullptr;
       }
@@ -355,7 +407,17 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
       $p,
       _$invokePointer,
       [
-        if ($impl.onEvent$async) r'onEvent(Ljava/lang/String;Ljava/util/Map;)V',
+        if ($impl.onInitialized$async) r'onInitialized(JIILjava/lang/String;)V',
+        if ($impl.onCompleted$async) r'onCompleted(Ljava/lang/String;)V',
+        if ($impl.onPlay$async) r'onPlay()V',
+        if ($impl.onPause$async) r'onPause()V',
+        if ($impl.onSeek$async) r'onSeek(J)V',
+        if ($impl.onBufferingStart$async) r'onBufferingStart()V',
+        if ($impl.onBufferingEnd$async) r'onBufferingEnd()V',
+        if ($impl.onBufferingUpdate$async) r'onBufferingUpdate(J)V',
+        if ($impl.onPipStart$async) r'onPipStart()V',
+        if ($impl.onPipStop$async) r'onPipStop()V',
+        if ($impl.onChangedSize$async) r'onChangedSize(IILjava/lang/String;)V',
         if ($impl.onError$async)
           r'onError(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V',
       ],
@@ -374,19 +436,24 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
 }
 
 extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
-  static final _id_onEvent = BetterPlayerCallback._class.instanceMethodId(
-    r'onEvent',
-    r'(Ljava/lang/String;Ljava/util/Map;)V',
+  static final _id_onInitialized = BetterPlayerCallback._class.instanceMethodId(
+    r'onInitialized',
+    r'(JIILjava/lang/String;)V',
   );
 
-  static final _onEvent =
+  static final _onInitialized =
       jni$_.ProtectedJniExtensions.lookup<
             jni$_.NativeFunction<
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
                 jni$_.VarArgs<
-                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                  (
+                    jni$_.Int64,
+                    jni$_.Int32,
+                    jni$_.Int32,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
                 >,
               )
             >
@@ -395,24 +462,340 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
             jni$_.JThrowablePtr Function(
               jni$_.Pointer<jni$_.Void>,
               jni$_.JMethodIDPtr,
-              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+              core$_.int,
+              core$_.int,
               jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun onEvent(event: kotlin.String, parameters: kotlin.collections.Map<kotlin.String, kotlin.Any?>): kotlin.Unit`
-  void onEvent(
-    jni$_.JString string,
-    jni$_.JMap<jni$_.JString, jni$_.JObject?> map,
+  /// from: `public fun onInitialized(durationMs: kotlin.Long, width: kotlin.Int, height: kotlin.Int, key: kotlin.String?): kotlin.Unit`
+  void onInitialized(
+    core$_.int j,
+    core$_.int i,
+    core$_.int i1,
+    jni$_.JString? string,
   ) {
     final _$$selfRef = reference;
-    final _$string = string.reference;
-    final _$map = map.reference;
-    _onEvent(
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _onInitialized(
       _$$selfRef.pointer,
-      _id_onEvent.pointer,
+      _id_onInitialized.pointer,
+      j,
+      i,
+      i1,
       _$string.pointer,
-      _$map.pointer,
+    ).check();
+  }
+
+  static final _id_onCompleted = BetterPlayerCallback._class.instanceMethodId(
+    r'onCompleted',
+    r'(Ljava/lang/String;)V',
+  );
+
+  static final _onCompleted =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun onCompleted(key: kotlin.String?): kotlin.Unit`
+  void onCompleted(
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _onCompleted(
+      _$$selfRef.pointer,
+      _id_onCompleted.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
+  static final _id_onPlay = BetterPlayerCallback._class.instanceMethodId(
+    r'onPlay',
+    r'()V',
+  );
+
+  static final _onPlay =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public fun onPlay(): kotlin.Unit`
+  void onPlay() {
+    final _$$selfRef = reference;
+    _onPlay(_$$selfRef.pointer, _id_onPlay.pointer).check();
+  }
+
+  static final _id_onPause = BetterPlayerCallback._class.instanceMethodId(
+    r'onPause',
+    r'()V',
+  );
+
+  static final _onPause =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public fun onPause(): kotlin.Unit`
+  void onPause() {
+    final _$$selfRef = reference;
+    _onPause(_$$selfRef.pointer, _id_onPause.pointer).check();
+  }
+
+  static final _id_onSeek = BetterPlayerCallback._class.instanceMethodId(
+    r'onSeek',
+    r'(J)V',
+  );
+
+  static final _onSeek =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+            )
+          >();
+
+  /// from: `public fun onSeek(positionMs: kotlin.Long): kotlin.Unit`
+  void onSeek(
+    core$_.int j,
+  ) {
+    final _$$selfRef = reference;
+    _onSeek(_$$selfRef.pointer, _id_onSeek.pointer, j).check();
+  }
+
+  static final _id_onBufferingStart = BetterPlayerCallback._class
+      .instanceMethodId(
+        r'onBufferingStart',
+        r'()V',
+      );
+
+  static final _onBufferingStart =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public fun onBufferingStart(): kotlin.Unit`
+  void onBufferingStart() {
+    final _$$selfRef = reference;
+    _onBufferingStart(_$$selfRef.pointer, _id_onBufferingStart.pointer).check();
+  }
+
+  static final _id_onBufferingEnd = BetterPlayerCallback._class
+      .instanceMethodId(
+        r'onBufferingEnd',
+        r'()V',
+      );
+
+  static final _onBufferingEnd =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public fun onBufferingEnd(): kotlin.Unit`
+  void onBufferingEnd() {
+    final _$$selfRef = reference;
+    _onBufferingEnd(_$$selfRef.pointer, _id_onBufferingEnd.pointer).check();
+  }
+
+  static final _id_onBufferingUpdate = BetterPlayerCallback._class
+      .instanceMethodId(
+        r'onBufferingUpdate',
+        r'(J)V',
+      );
+
+  static final _onBufferingUpdate =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int64,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+            )
+          >();
+
+  /// from: `public fun onBufferingUpdate(bufferedMs: kotlin.Long): kotlin.Unit`
+  void onBufferingUpdate(
+    core$_.int j,
+  ) {
+    final _$$selfRef = reference;
+    _onBufferingUpdate(
+      _$$selfRef.pointer,
+      _id_onBufferingUpdate.pointer,
+      j,
+    ).check();
+  }
+
+  static final _id_onPipStart = BetterPlayerCallback._class.instanceMethodId(
+    r'onPipStart',
+    r'()V',
+  );
+
+  static final _onPipStart =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public fun onPipStart(): kotlin.Unit`
+  void onPipStart() {
+    final _$$selfRef = reference;
+    _onPipStart(_$$selfRef.pointer, _id_onPipStart.pointer).check();
+  }
+
+  static final _id_onPipStop = BetterPlayerCallback._class.instanceMethodId(
+    r'onPipStop',
+    r'()V',
+  );
+
+  static final _onPipStop =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public fun onPipStop(): kotlin.Unit`
+  void onPipStop() {
+    final _$$selfRef = reference;
+    _onPipStop(_$$selfRef.pointer, _id_onPipStop.pointer).check();
+  }
+
+  static final _id_onChangedSize = BetterPlayerCallback._class.instanceMethodId(
+    r'onChangedSize',
+    r'(IILjava/lang/String;)V',
+  );
+
+  static final _onChangedSize =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Int32, jni$_.Int32, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun onChangedSize(width: kotlin.Int, height: kotlin.Int, key: kotlin.String?): kotlin.Unit`
+  void onChangedSize(
+    core$_.int i,
+    core$_.int i1,
+    jni$_.JString? string,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string?.reference ?? jni$_.jNullReference;
+    _onChangedSize(
+      _$$selfRef.pointer,
+      _id_onChangedSize.pointer,
+      i,
+      i1,
+      _$string.pointer,
     ).check();
   }
 
@@ -470,11 +853,34 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
 abstract base mixin class $BetterPlayerCallback {
   factory $BetterPlayerCallback({
     required void Function(
-      jni$_.JString string,
-      jni$_.JMap<jni$_.JString, jni$_.JObject?> map,
+      core$_.int j,
+      core$_.int i,
+      core$_.int i1,
+      jni$_.JString? string,
     )
-    onEvent,
-    core$_.bool onEvent$async,
+    onInitialized,
+    core$_.bool onInitialized$async,
+    required void Function(jni$_.JString? string) onCompleted,
+    core$_.bool onCompleted$async,
+    required void Function() onPlay,
+    core$_.bool onPlay$async,
+    required void Function() onPause,
+    core$_.bool onPause$async,
+    required void Function(core$_.int j) onSeek,
+    core$_.bool onSeek$async,
+    required void Function() onBufferingStart,
+    core$_.bool onBufferingStart$async,
+    required void Function() onBufferingEnd,
+    core$_.bool onBufferingEnd$async,
+    required void Function(core$_.int j) onBufferingUpdate,
+    core$_.bool onBufferingUpdate$async,
+    required void Function() onPipStart,
+    core$_.bool onPipStart$async,
+    required void Function() onPipStop,
+    core$_.bool onPipStop$async,
+    required void Function(core$_.int i, core$_.int i1, jni$_.JString? string)
+    onChangedSize,
+    core$_.bool onChangedSize$async,
     required void Function(
       jni$_.JString string,
       jni$_.JString string1,
@@ -484,11 +890,33 @@ abstract base mixin class $BetterPlayerCallback {
     core$_.bool onError$async,
   }) = _$BetterPlayerCallback;
 
-  void onEvent(
-    jni$_.JString string,
-    jni$_.JMap<jni$_.JString, jni$_.JObject?> map,
+  void onInitialized(
+    core$_.int j,
+    core$_.int i,
+    core$_.int i1,
+    jni$_.JString? string,
   );
-  core$_.bool get onEvent$async => false;
+  core$_.bool get onInitialized$async => false;
+  void onCompleted(jni$_.JString? string);
+  core$_.bool get onCompleted$async => false;
+  void onPlay();
+  core$_.bool get onPlay$async => false;
+  void onPause();
+  core$_.bool get onPause$async => false;
+  void onSeek(core$_.int j);
+  core$_.bool get onSeek$async => false;
+  void onBufferingStart();
+  core$_.bool get onBufferingStart$async => false;
+  void onBufferingEnd();
+  core$_.bool get onBufferingEnd$async => false;
+  void onBufferingUpdate(core$_.int j);
+  core$_.bool get onBufferingUpdate$async => false;
+  void onPipStart();
+  core$_.bool get onPipStart$async => false;
+  void onPipStop();
+  core$_.bool get onPipStop$async => false;
+  void onChangedSize(core$_.int i, core$_.int i1, jni$_.JString? string);
+  core$_.bool get onChangedSize$async => false;
   void onError(
     jni$_.JString string,
     jni$_.JString string1,
@@ -500,11 +928,34 @@ abstract base mixin class $BetterPlayerCallback {
 final class _$BetterPlayerCallback with $BetterPlayerCallback {
   _$BetterPlayerCallback({
     required void Function(
-      jni$_.JString string,
-      jni$_.JMap<jni$_.JString, jni$_.JObject?> map,
+      core$_.int j,
+      core$_.int i,
+      core$_.int i1,
+      jni$_.JString? string,
     )
-    onEvent,
-    this.onEvent$async = false,
+    onInitialized,
+    this.onInitialized$async = false,
+    required void Function(jni$_.JString? string) onCompleted,
+    this.onCompleted$async = false,
+    required void Function() onPlay,
+    this.onPlay$async = false,
+    required void Function() onPause,
+    this.onPause$async = false,
+    required void Function(core$_.int j) onSeek,
+    this.onSeek$async = false,
+    required void Function() onBufferingStart,
+    this.onBufferingStart$async = false,
+    required void Function() onBufferingEnd,
+    this.onBufferingEnd$async = false,
+    required void Function(core$_.int j) onBufferingUpdate,
+    this.onBufferingUpdate$async = false,
+    required void Function() onPipStart,
+    this.onPipStart$async = false,
+    required void Function() onPipStop,
+    this.onPipStop$async = false,
+    required void Function(core$_.int i, core$_.int i1, jni$_.JString? string)
+    onChangedSize,
+    this.onChangedSize$async = false,
     required void Function(
       jni$_.JString string,
       jni$_.JString string1,
@@ -512,15 +963,48 @@ final class _$BetterPlayerCallback with $BetterPlayerCallback {
     )
     onError,
     this.onError$async = false,
-  }) : _onEvent = onEvent,
+  }) : _onInitialized = onInitialized,
+       _onCompleted = onCompleted,
+       _onPlay = onPlay,
+       _onPause = onPause,
+       _onSeek = onSeek,
+       _onBufferingStart = onBufferingStart,
+       _onBufferingEnd = onBufferingEnd,
+       _onBufferingUpdate = onBufferingUpdate,
+       _onPipStart = onPipStart,
+       _onPipStop = onPipStop,
+       _onChangedSize = onChangedSize,
        _onError = onError;
 
   final void Function(
-    jni$_.JString string,
-    jni$_.JMap<jni$_.JString, jni$_.JObject?> map,
+    core$_.int j,
+    core$_.int i,
+    core$_.int i1,
+    jni$_.JString? string,
   )
-  _onEvent;
-  final core$_.bool onEvent$async;
+  _onInitialized;
+  final core$_.bool onInitialized$async;
+  final void Function(jni$_.JString? string) _onCompleted;
+  final core$_.bool onCompleted$async;
+  final void Function() _onPlay;
+  final core$_.bool onPlay$async;
+  final void Function() _onPause;
+  final core$_.bool onPause$async;
+  final void Function(core$_.int j) _onSeek;
+  final core$_.bool onSeek$async;
+  final void Function() _onBufferingStart;
+  final core$_.bool onBufferingStart$async;
+  final void Function() _onBufferingEnd;
+  final core$_.bool onBufferingEnd$async;
+  final void Function(core$_.int j) _onBufferingUpdate;
+  final core$_.bool onBufferingUpdate$async;
+  final void Function() _onPipStart;
+  final core$_.bool onPipStart$async;
+  final void Function() _onPipStop;
+  final core$_.bool onPipStop$async;
+  final void Function(core$_.int i, core$_.int i1, jni$_.JString? string)
+  _onChangedSize;
+  final core$_.bool onChangedSize$async;
   final void Function(
     jni$_.JString string,
     jni$_.JString string1,
@@ -529,11 +1013,53 @@ final class _$BetterPlayerCallback with $BetterPlayerCallback {
   _onError;
   final core$_.bool onError$async;
 
-  void onEvent(
-    jni$_.JString string,
-    jni$_.JMap<jni$_.JString, jni$_.JObject?> map,
+  void onInitialized(
+    core$_.int j,
+    core$_.int i,
+    core$_.int i1,
+    jni$_.JString? string,
   ) {
-    return _onEvent(string, map);
+    return _onInitialized(j, i, i1, string);
+  }
+
+  void onCompleted(jni$_.JString? string) {
+    return _onCompleted(string);
+  }
+
+  void onPlay() {
+    return _onPlay();
+  }
+
+  void onPause() {
+    return _onPause();
+  }
+
+  void onSeek(core$_.int j) {
+    return _onSeek(j);
+  }
+
+  void onBufferingStart() {
+    return _onBufferingStart();
+  }
+
+  void onBufferingEnd() {
+    return _onBufferingEnd();
+  }
+
+  void onBufferingUpdate(core$_.int j) {
+    return _onBufferingUpdate(j);
+  }
+
+  void onPipStart() {
+    return _onPipStart();
+  }
+
+  void onPipStop() {
+    return _onPipStop();
+  }
+
+  void onChangedSize(core$_.int i, core$_.int i1, jni$_.JString? string) {
+    return _onChangedSize(i, i1, string);
   }
 
   void onError(
