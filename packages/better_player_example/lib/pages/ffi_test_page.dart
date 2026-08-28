@@ -114,6 +114,24 @@ class _FFITestPageState extends State<FFITestPage> {
               },
             ),
             _buildTestButton(
+              'isPictureInPictureSupported',
+              () async {
+                await _betterPlayerController.isPictureInPictureSupported();
+              },
+            ),
+            _buildTestButton(
+              'enablePictureInPicture',
+              () async {
+                await _betterPlayerController.enablePictureInPicture();
+              },
+            ),
+            _buildTestButton(
+              'disablePictureInPicture',
+              () async {
+                await _betterPlayerController.disablePictureInPicture();
+              },
+            ),
+            _buildTestButton(
               'preCache',
               () async => _betterPlayerController.preCache(
                 PlayerDataSource(

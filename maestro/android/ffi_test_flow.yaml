@@ -76,6 +76,33 @@ appId: pl.hasoft.example
     text: "success=true"
 - scrollUntilVisible:
     element:
+      id: "ffi_test_button_isPictureInPictureSupported"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_isPictureInPictureSupported"
+- assertVisible:
+    id: "ffi_test_status_isPictureInPictureSupported"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_enablePictureInPicture"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_enablePictureInPicture"
+- assertVisible:
+    id: "ffi_test_status_enablePictureInPicture"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_button_disablePictureInPicture"
+    direction: DOWN
+- tapOn:
+    id: "ffi_test_button_disablePictureInPicture"
+- assertVisible:
+    id: "ffi_test_status_disablePictureInPicture"
+    text: "success=true"
+- scrollUntilVisible:
+    element:
       id: "ffi_test_button_preCache"
     direction: DOWN
 - tapOn:
