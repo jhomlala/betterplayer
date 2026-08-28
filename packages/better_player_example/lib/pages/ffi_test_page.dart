@@ -17,6 +17,7 @@ class _FFITestPageState extends State<FFITestPage> {
 
   @override
   void initState() {
+    BetterPlayerUtils.log('FFI TEST PAGE: initState');
     super.initState();
     const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
@@ -25,6 +26,9 @@ class _FFITestPageState extends State<FFITestPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
 
     _betterPlayerController.addEventsListener((event) {
+      BetterPlayerUtils.log(
+        'FFI TEST PAGE: Event received: ${event.betterPlayerEventType}',
+      );
       if (event.betterPlayerEventType == PlayerEventType.initialized) {
         setState(() {
           _isInitialized = true;
@@ -41,9 +45,11 @@ class _FFITestPageState extends State<FFITestPage> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      BetterPlayerUtils.log('FFI TEST PAGE: addPostFrameCallback');
       // Check if already initialized (e.g. if events were missed)
       if (_betterPlayerController.videoPlayerController?.value.initialized ??
           false) {
+        BetterPlayerUtils.log('FFI TEST PAGE: Already initialized');
         setState(() {
           _isInitialized = true;
         });
@@ -51,7 +57,10 @@ class _FFITestPageState extends State<FFITestPage> {
 
       final betterPlayerDataSource = PlayerDataSource(
         DataSourceType.network,
-        Constants.bugBuckBunnyVideoUrl,
+        Constants.hlsTestStreamUrl,
+      );
+      BetterPlayerUtils.log(
+        'FFI TEST PAGE: Setting up data source: ${betterPlayerDataSource.url}',
       );
       _betterPlayerController.setupDataSource(betterPlayerDataSource);
     });

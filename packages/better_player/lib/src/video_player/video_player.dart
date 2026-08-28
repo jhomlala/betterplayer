@@ -69,6 +69,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
+      BetterPlayerUtils.log(
+        'VideoPlayerController: Event received: ${event.eventType}',
+      );
       videoEventStreamController.add(event);
       switch (event.eventType) {
         case VideoEventType.initialized:
@@ -286,11 +289,20 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     try {
+      BetterPlayerUtils.log(
+        'VideoPlayerController: setDataSource platform call starting',
+      );
       await BetterPlayerPlatform.instance.setDataSource(
         _textureId,
         dataSourceDescription,
       );
+      BetterPlayerUtils.log(
+        'VideoPlayerController: setDataSource platform call finished, waiting for init event',
+      );
       await completer.future;
+      BetterPlayerUtils.log(
+        'VideoPlayerController: setDataSource init event received',
+      );
     } finally {
       await subscription.cancel();
     }
