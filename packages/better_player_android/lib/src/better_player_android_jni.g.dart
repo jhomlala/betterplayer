@@ -1275,6 +1275,117 @@ extension BetterPlayer$Companion$$Methods on BetterPlayer$Companion {
       _$string.pointer,
     ).check();
   }
+
+  static final _id_enablePictureInPicture = BetterPlayer$Companion._class
+      .instanceMethodId(
+        r'enablePictureInPicture',
+        r'(Landroid/content/Context;)V',
+      );
+
+  static final _enablePictureInPicture =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun enablePictureInPicture(context: android.content.Context?): kotlin.Unit`
+  void enablePictureInPicture(
+    Context? context,
+  ) {
+    final _$$selfRef = reference;
+    final _$context = context?.reference ?? jni$_.jNullReference;
+    _enablePictureInPicture(
+      _$$selfRef.pointer,
+      _id_enablePictureInPicture.pointer,
+      _$context.pointer,
+    ).check();
+  }
+
+  static final _id_disablePictureInPicture = BetterPlayer$Companion._class
+      .instanceMethodId(
+        r'disablePictureInPicture',
+        r'(Landroid/content/Context;)V',
+      );
+
+  static final _disablePictureInPicture =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun disablePictureInPicture(context: android.content.Context?): kotlin.Unit`
+  void disablePictureInPicture(
+    Context? context,
+  ) {
+    final _$$selfRef = reference;
+    final _$context = context?.reference ?? jni$_.jNullReference;
+    _disablePictureInPicture(
+      _$$selfRef.pointer,
+      _id_disablePictureInPicture.pointer,
+      _$context.pointer,
+    ).check();
+  }
+
+  static final _id_isPictureInPictureSupported = BetterPlayer$Companion._class
+      .instanceMethodId(
+        r'isPictureInPictureSupported',
+        r'(Landroid/content/Context;)Z',
+      );
+
+  static final _isPictureInPictureSupported =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallBooleanMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun isPictureInPictureSupported(context: android.content.Context?): kotlin.Boolean`
+  core$_.bool isPictureInPictureSupported(
+    Context? context,
+  ) {
+    final _$$selfRef = reference;
+    final _$context = context?.reference ?? jni$_.jNullReference;
+    return _isPictureInPictureSupported(
+      _$$selfRef.pointer,
+      _id_isPictureInPictureSupported.pointer,
+      _$context.pointer,
+    ).boolean;
+  }
 }
 
 final class $BetterPlayer$Companion$Type$
