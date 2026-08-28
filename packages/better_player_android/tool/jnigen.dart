@@ -27,7 +27,7 @@ void main(List<String> args) {
     }
   }
 
-  print('Discovered classPaths: $classPaths');
+  stdout.writeln('Discovered classPaths: $classPaths');
 
   generateJniBindings(Config(
     outputConfig: OutputConfig(

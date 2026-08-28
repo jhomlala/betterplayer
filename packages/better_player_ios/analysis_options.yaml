@@ -16,8 +16,8 @@ analyzer:
     - web/**
     - windows/**
     - macos/**
-    - linux/**
-    - lib/src/**/*.g.dart
+    - "linux/**"
+    - "**/*.g.dart"
 
 linter:
   rules:
