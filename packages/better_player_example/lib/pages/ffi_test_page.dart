@@ -12,6 +12,7 @@ class FFITestPage extends StatefulWidget {
 class _FFITestPageState extends State<FFITestPage> {
   late BetterPlayerController _betterPlayerController;
   final Map<String, bool?> _results = {};
+  bool _isInitialized = false;
 
   @override
   void initState() {
@@ -22,6 +23,14 @@ class _FFITestPageState extends State<FFITestPage> {
     );
     _betterPlayerController =
         BetterPlayerController(betterPlayerConfiguration);
+
+    _betterPlayerController.addEventsListener((event) {
+      if (event.betterPlayerEventType == PlayerEventType.initialized) {
+        setState(() {
+          _isInitialized = true;
+        });
+      }
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final betterPlayerDataSource = PlayerDataSource(
@@ -63,88 +72,88 @@ class _FFITestPageState extends State<FFITestPage> {
               aspectRatio: 16 / 9,
               child: BetterPlayer(controller: _betterPlayerController),
             ),
-            const SizedBox(height: 16),
-            _buildTestButton('play', () async => _betterPlayerController.play()),
-            _buildTestButton(
-              'pause',
-              () async => _betterPlayerController.pause(),
-            ),
-            _buildTestButton(
-              'seekTo',
-              () async {
-                final duration = _betterPlayerController.videoPlayerController?.value.duration;
-                if (duration != null) {
-                  await _betterPlayerController.seekTo(const Duration(seconds: 5));
-                } else {
-                  // If not initialized, fallback to direct platform call to test FFI bridge
-                  final textureId = _betterPlayerController.videoPlayerController?.textureId;
-                  if (textureId != null) {
-                     await BetterPlayerPlatform.instance.seekTo(textureId, const Duration(seconds: 5));
-                  }
-                }
-              },
-            ),
-            _buildTestButton(
-              'setVolume',
-              () async => _betterPlayerController.setVolume(0.8),
-            ),
-            _buildTestButton(
-              'setSpeed',
-              () async => _betterPlayerController.setSpeed(1.2),
-            ),
-            _buildTestButton(
-              'setTrackParameters',
-              () async => _betterPlayerController.videoPlayerController
-                  ?.setTrackParameters(1280, 720, 2000),
-            ),
-            _buildTestButton(
-              'setAudioTrack',
-              () async => _betterPlayerController.videoPlayerController
-                  ?.setAudioTrack('English', 0),
-            ),
-            _buildTestButton(
-              'setMixWithOthers',
-              () async => _betterPlayerController.setMixWithOthers(true),
-            ),
-            _buildTestButton(
-              'setLooping',
-              () async => _betterPlayerController.setLooping(true),
-            ),
-            _buildTestButton(
-              'getPosition',
-              () async {
-                final pos = await _betterPlayerController.videoPlayerController?.position;
-                if (pos == null) throw Exception('Position is null');
-              },
-            ),
-            _buildTestButton(
-              'getAbsolutePosition',
-              () async {
-                await _betterPlayerController.videoPlayerController?.absolutePosition;
-              },
-            ),
-            _buildTestButton(
-              'preCache',
-              () async => _betterPlayerController.preCache(
-                PlayerDataSource(
-                  DataSourceType.network,
-                  Constants.bugBuckBunnyVideoUrl,
+            if (!_isInitialized)
+              const Padding(
+                padding: EdgeInsets.all(32),
+                child: CircularProgressIndicator(),
+              )
+            else ...[
+              const SizedBox(height: 16),
+              _buildTestButton(
+                  'play', () async => _betterPlayerController.play()),
+              _buildTestButton(
+                'pause',
+                () async => _betterPlayerController.pause(),
+              ),
+              _buildTestButton(
+                'seekTo',
+                () async =>
+                    _betterPlayerController.seekTo(const Duration(seconds: 5)),
+              ),
+              _buildTestButton(
+                'setVolume',
+                () async => _betterPlayerController.setVolume(0.8),
+              ),
+              _buildTestButton(
+                'setSpeed',
+                () async => _betterPlayerController.setSpeed(1.2),
+              ),
+              _buildTestButton(
+                'setTrackParameters',
+                () async => _betterPlayerController.videoPlayerController
+                    ?.setTrackParameters(1280, 720, 2000),
+              ),
+              _buildTestButton(
+                'setAudioTrack',
+                () async => _betterPlayerController.videoPlayerController
+                    ?.setAudioTrack('English', 0),
+              ),
+              _buildTestButton(
+                'setMixWithOthers',
+                () async => _betterPlayerController.setMixWithOthers(true),
+              ),
+              _buildTestButton(
+                'setLooping',
+                () async => _betterPlayerController.setLooping(true),
+              ),
+              _buildTestButton(
+                'getPosition',
+                () async {
+                  final pos = await _betterPlayerController
+                      .videoPlayerController?.position;
+                  if (pos == null) throw Exception('Position is null');
+                },
+              ),
+              _buildTestButton(
+                'getAbsolutePosition',
+                () async {
+                  await _betterPlayerController
+                      .videoPlayerController?.absolutePosition;
+                },
+              ),
+              _buildTestButton(
+                'preCache',
+                () async => _betterPlayerController.preCache(
+                  PlayerDataSource(
+                    DataSourceType.network,
+                    Constants.bugBuckBunnyVideoUrl,
+                  ),
                 ),
               ),
-            ),
-            _buildTestButton(
-              'stopPreCache',
-              () async => _betterPlayerController.stopPreCache(
-                PlayerDataSource(
-                  DataSourceType.network,
-                  Constants.bugBuckBunnyVideoUrl,
+              _buildTestButton(
+                'stopPreCache',
+                () async => _betterPlayerController.stopPreCache(
+                  PlayerDataSource(
+                    DataSourceType.network,
+                    Constants.bugBuckBunnyVideoUrl,
+                  ),
                 ),
               ),
-            ),
-            _buildTestButton(
-              'clearCache',
-              () async => _betterPlayerController.clearCache(),
-            ),
+              _buildTestButton(
+                'clearCache',
+                () async => _betterPlayerController.clearCache(),
+              ),
+            ],
             const SizedBox(height: 32),
           ],
         ),
