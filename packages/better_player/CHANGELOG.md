@@ -1,5 +1,6 @@
 ## Unreleased
-- none.
+- Updated: Conducted a comprehensive documentation audit, fixing inconsistencies, outdated version references (e.g., iOS 11 to 13), and updating code examples to use modern class names without legacy prefixes.
+- Updated: Improved Docusaurus configuration to enable warnings for broken links and markdown links.
 
 ## 1.2.0
 - Updated: Migrated to a modern JNI/Swift architecture for native bridges, improving performance and reliability.

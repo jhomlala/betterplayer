@@ -17,9 +17,9 @@ Notifications are configured using the `notificationConfiguration` parameter wit
 
 ```dart
 PlayerDataSource dataSource = PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     Constants.elephantDreamVideoUrl,
-    notificationConfiguration: BetterPlayerNotificationConfiguration(
+    notificationConfiguration: NotificationConfiguration(
         showNotification: true,
         title: "Elephant's Dream",
         author: "Blender Foundation",

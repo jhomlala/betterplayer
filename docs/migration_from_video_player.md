@@ -25,7 +25,7 @@ dependencies:
   # video_player: ^x.y.z
   
   # Add this line:
-  better_player: ^0.6.0
+  better_player: ^1.2.0
 ```
 
 Run `flutter pub get` in your terminal to update dependencies.
@@ -76,7 +76,7 @@ void initState() {
   super.initState();
   
   PlayerDataSource dataSource = PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     'https://example.com/video.mp4',
   );
 
@@ -161,9 +161,9 @@ void dispose() {
 
 ## Step 4: Platform-Specific Requirements
 
-Make sure your project meets the platform configuration requirements specified in [Installation](install.md):
+Make sure your project meets the platform configuration requirements specified in [Installation](install):
 
-- **iOS**: Minimum deployment target set to **iOS 11.0+** and Swift 5.
+- **iOS**: Minimum deployment target set to **iOS 13.0** and Swift 5.
 - **Android**: `compileSdkVersion` set to **36** and MultiDex enabled.
 
 ---
@@ -175,9 +175,9 @@ Now that you are using `better_player`, you can easily enable advanced features 
 - **Caching**: Enable video caching with a single configuration flag:
   ```dart
   PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     'https://example.com/video.mp4',
-    cacheConfiguration: const BetterPlayerCacheConfiguration(
+    cacheConfiguration: const CacheConfiguration(
       useCache: true,
       maxCacheSize: 10 * 1024 * 1024,
       maxCacheFileSize: 10 * 1024 * 1024,
@@ -185,5 +185,5 @@ Now that you are using `better_player`, you can easily enable advanced features 
   );
   ```
 - **Subtitles**: Add SRT or WebVTT subtitles effortlessly via `PlayerSubtitlesSource`.
-- **HLS / DASH Adaptive Streaming**: Pass adaptive streaming URLs directly into `PlayerDataSourceType.network`. Note: DASH is currently only supported on Android.
+- **HLS / DASH Adaptive Streaming**: Pass adaptive streaming URLs directly into `DataSourceType.network`. Note: DASH is currently only supported on Android.
 - **Picture-in-Picture (PiP)**: Enable PiP support with built-in controls and state listeners.

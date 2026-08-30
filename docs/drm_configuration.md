@@ -25,11 +25,11 @@ Used when the license is retrieved via a simple authorization token.
 
 ```dart
 PlayerDataSource dataSource = PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     "url",
-    videoFormat: BetterPlayerVideoFormat.hls,
-    drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.token,
+    videoFormat: VideoFormat.hls,
+    drmConfiguration: DrmConfiguration(
+        drmType: DrmType.token,
         token: "Bearer=token",
     ),
 );
@@ -40,10 +40,10 @@ Used for license retrieval based on a license URL.
 
 ```dart
 PlayerDataSource _widevineDataSource = PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     "url",
-    drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.widevine,
+    drmConfiguration: DrmConfiguration(
+        drmType: DrmType.widevine,
         licenseUrl: "https://your-license-server.com/license",
         headers: {"Authorization": "Bearer token"}
     ),
@@ -55,10 +55,10 @@ Requires a certificate URL and a license URL.
 
 ```dart
 PlayerDataSource _fairplayDataSource = PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     Constants.fairplayHlsUrl,
-    drmConfiguration: BetterPlayerDrmConfiguration(
-        drmType: BetterPlayerDrmType.fairplay,
+    drmConfiguration: DrmConfiguration(
+        drmType: DrmType.fairplay,
         certificateUrl: Constants.fairplayCertificateUrl,
         licenseUrl: Constants.fairplayLicenseUrl,
     ),
@@ -99,10 +99,10 @@ MP4Box -frag 240000 testvideo_encrypt_tmp.mp4 -out testvideo_encrypt.mp4
 #### 2. Configure ClearKey in Data Source
 ```dart
 var _clearKeyDataSource = PlayerDataSource(
-  PlayerDataSourceType.file,
+  DataSourceType.file,
   await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
-  drmConfiguration: BetterPlayerDrmConfiguration(
-      drmType: BetterPlayerDrmType.clearKey,
+  drmConfiguration: DrmConfiguration(
+      drmType: DrmType.clearKey,
       clearKey: BetterPlayerClearKeyUtils.generate({
         "f3c5e0361e6654b28f8049c778b23946": "a4631a153a443df9eed0593043db7519",
       })

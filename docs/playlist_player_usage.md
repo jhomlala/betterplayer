@@ -19,9 +19,9 @@ Prepare a list of `PlayerDataSource` objects:
 ```dart
 List<PlayerDataSource> createDataSet() {
   return [
-    PlayerDataSource(PlayerDataSourceType.network, "url1"),
-    PlayerDataSource(PlayerDataSourceType.network, "url2"),
-    PlayerDataSource(PlayerDataSourceType.network, "url3"),
+    PlayerDataSource(DataSourceType.network, "url1"),
+    PlayerDataSource(DataSourceType.network, "url2"),
+    PlayerDataSource(DataSourceType.network, "url3"),
   ];
 }
 ```

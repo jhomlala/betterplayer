@@ -11,7 +11,7 @@ For standard video formats (non-HLS, non-DASH), you can provide multiple URLs co
 
 ```dart
 var dataSource = PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     "https://example.com/video_720p.mp4",
     resolutions: {
         "360p": "https://example.com/video_360p.mp4",
