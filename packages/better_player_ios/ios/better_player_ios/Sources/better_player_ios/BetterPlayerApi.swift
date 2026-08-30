@@ -35,15 +35,14 @@ import AVKit
     @objc public static var players: [Int64: BetterPlayer] = [:]
     @objc public static var nextId: Int64 = 0
 
-    @objc public static var logCallback: BetterPlayerLogCallback? = nil
-    @objc public static let _dummyLogCallback: BetterPlayerLogCallback = _DummyLogCallbackImpl()
+    private static var _logCallback: BetterPlayerLogCallback? = nil
 
     @objc public static func setLogCallback(_ callback: BetterPlayerLogCallback?) {
-        logCallback = callback
+        _logCallback = callback
     }
 
     public static func log(_ level: Int, _ tag: String, _ msg: String) {
-        guard let cb = logCallback else { return }
+        guard let cb = _logCallback else { return }
         let safe = msg.count > 4000 ? String(msg.prefix(4000)) + "…[truncated]" : msg
         cb.onLog(level, tag: tag, message: safe)
     }
