@@ -271,17 +271,24 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) async {
-    // Cache management is not yet fully bridged for iOS in the current FFI layer.
+    BetterPlayerApi.preCacheWithUrl(
+      (dataSource.uri ?? dataSource.asset ?? '').toNSString(),
+      cacheKey: dataSource.cacheConfiguration?.key?.toNSString(),
+      videoExtension: dataSource.videoExtension?.toNSString(),
+    );
   }
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) async {
-    // Cache management is not yet fully bridged for iOS in the current FFI layer.
+    BetterPlayerApi.stopPreCacheWithUrl(
+      url.toNSString(),
+      cacheKey: cacheKey?.toNSString(),
+    );
   }
 
   @override
   Future<void> clearCache() async {
-    // Cache management is not yet fully bridged for iOS in the current FFI layer.
+    BetterPlayerApi.clearCache();
   }
 
   @override
