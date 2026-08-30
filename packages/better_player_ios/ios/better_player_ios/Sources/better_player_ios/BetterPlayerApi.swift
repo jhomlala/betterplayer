@@ -1,4 +1,5 @@
 import Foundation
+import AVKit
 
 @objc(BetterPlayerCallback) public protocol BetterPlayerCallback {
     @objc(onInitializedWithDurationMs:width:height:key:)
@@ -66,6 +67,10 @@ import Foundation
 
     @objc public static func clearCache() {
         CacheManager.shared.clearCache()
+    }
+
+    @objc public static func isPictureInPictureSupported() -> Bool {
+        return AVPictureInPictureController.isPictureInPictureSupported()
     }
 
     // Reference the dummy class to prevent the linker from stripping it out

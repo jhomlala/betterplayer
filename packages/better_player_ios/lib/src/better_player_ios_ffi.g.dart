@@ -812,6 +812,11 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
     _objc_msgSend_1pl9qdv(_class_BetterPlayerApi, _sel_clearCache);
   }
 
+  /// isPictureInPictureSupported
+  static bool isPictureInPictureSupported() {
+    return _objc_msgSend_91o635(_class_BetterPlayerApi, _sel_isPictureInPictureSupported);
+  }
+
   /// createCacheManager
   static CacheManager createCacheManager() {
     final $ret = _objc_msgSend_151sglz(
@@ -4650,6 +4655,7 @@ late final _sel_arg4 = objc.registerName("arg4");
 late final _sel_callback = objc.registerName("callback");
 late final _sel_clear = objc.registerName("clear");
 late final _sel_clearCache = objc.registerName("clearCache");
+late final _sel_isPictureInPictureSupported = objc.registerName("isPictureInPictureSupported");
 late final _sel_conformsToProtocol_ = objc.registerName("conformsToProtocol:");
 late final _sel_createCacheManager = objc.registerName("createCacheManager");
 late final _sel_createPlayerWithCallback_ = objc.registerName(

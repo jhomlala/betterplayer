@@ -320,7 +320,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
 
   @override
   Future<bool?> isPictureInPictureSupported(int? textureId) async {
-    return true;
+    return BetterPlayerApi.isPictureInPictureSupported();
   }
 
   @override
