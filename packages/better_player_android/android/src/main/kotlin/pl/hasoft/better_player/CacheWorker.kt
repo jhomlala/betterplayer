@@ -38,9 +38,8 @@ class CacheWorker(
             val headers: MutableMap<String, String> = HashMap()
             for (key in data.keyValueMap.keys) {
                 if (key.contains(BetterPlayerPlugin.HEADER_PARAMETER)) {
-                    val keySplit =
-                        key.split(BetterPlayerPlugin.HEADER_PARAMETER.toRegex()).toTypedArray()[0]
-                    headers[keySplit] = Objects.requireNonNull(data.keyValueMap[key]) as String
+                    val keySplit = key.split(BetterPlayerPlugin.HEADER_PARAMETER).toTypedArray()[1]
+                    headers[keySplit] = data.keyValueMap[key] as String
                 }
             }
             val uri = Uri.parse(url)
@@ -65,19 +64,13 @@ class CacheWorker(
                     val completedData = (bytesCached * 100f / preCacheSize).toDouble()
                     if (completedData >= lastCacheReportIndex * 10) {
                         lastCacheReportIndex += 1
-                        Log.d(
-                            TAG,
-                            "Completed pre cache of " + url + ": " + completedData.toInt() + "%"
-                        )
                     }
                 }
                 cacheWriter?.cache()
             } else {
-                Log.e(TAG, "Preloading only possible for remote data sources")
                 return Result.failure()
             }
         } catch (exception: Exception) {
-            Log.e(TAG, exception.toString())
             return if (exception is HttpDataSourceException) {
                 Result.success()
             } else {
@@ -92,7 +85,6 @@ class CacheWorker(
             cacheWriter?.cancel()
             super.onStopped()
         } catch (exception: Exception) {
-            Log.e(TAG, exception.toString())
         }
     }
 

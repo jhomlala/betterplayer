@@ -37,3 +37,8 @@ static/
 maestro/
 .maestro/
 rules/
+
+# Exclude JNI/FFI generation tools
+**/tool/jnigen.dart
+**/tool/swiftgen.dart
+**/example_ffi/

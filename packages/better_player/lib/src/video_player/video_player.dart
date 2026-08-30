@@ -13,10 +13,8 @@ import 'package:material_ui/material_ui.dart';
 export 'package:better_player_platform_interface/better_player_platform_interface.dart'
     show VideoPlayerValue;
 
-final VideoPlayerPlatform _videoPlayerPlatform = VideoPlayerPlatform.instance
-  // This will clear all open videos on the platform when a full restart is
-  // performed.
-  ..init();
+final BetterPlayerPlatform _betterPlayerPlatform =
+    BetterPlayerPlatform.instance;
 
 /// Controls a platform video player, and provides updates when the state is
 /// changing.
@@ -47,7 +45,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   Timer? _timer;
   bool _isDisposed = false;
-  late Completer<void> _initializingCompleter;
   StreamSubscription<dynamic>? _eventSubscription;
 
   bool get _created => _creatingCompleter.isCompleted;
@@ -60,7 +57,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> _create() async {
-    _textureId = await _videoPlayerPlatform.create(
+    _textureId = await _betterPlayerPlatform.create(
       bufferingConfiguration: bufferingConfiguration,
     );
     _creatingCompleter.complete(null);
@@ -72,6 +69,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
+      BetterPlayerUtils.log(
+        'VideoPlayerController: Event received: ${event.eventType}',
+      );
       videoEventStreamController.add(event);
       switch (event.eventType) {
         case VideoEventType.initialized:
@@ -79,7 +79,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
             duration: event.duration,
             size: event.size,
           );
-          _initializingCompleter.complete(null);
           _applyPlayPause();
         case VideoEventType.completed:
           value = value.copyWith(isPlaying: false, position: value.duration);
@@ -104,7 +103,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         case VideoEventType.pipStop:
           value = value.copyWith(isPip: false);
         case VideoEventType.changedSize:
-          value = value.copyWith(size: event.size);
+          if (event.size != null &&
+              event.size!.width > 0 &&
+              event.size!.height > 0) {
+            value = value.copyWith(size: event.size);
+          }
         case VideoEventType.unknown:
           break;
       }
@@ -115,15 +118,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         final e = object;
         value = value.copyWith(errorDescription: e.message);
       } else {
-        value.copyWith(errorDescription: object.toString());
+        value = value.copyWith(errorDescription: object.toString());
       }
       _timer?.cancel();
-      if (!_initializingCompleter.isCompleted) {
-        _initializingCompleter.completeError(object);
-      }
+      videoEventStreamController.addError(object);
     }
 
-    _eventSubscription = _videoPlayerPlatform
+    _eventSubscription = _betterPlayerPlatform
         .videoEventsFor(_textureId)
         .listen(eventListener, onError: errorListener);
   }
@@ -271,13 +272,40 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     if (!_creatingCompleter.isCompleted) await _creatingCompleter.future;
 
-    _initializingCompleter = Completer<void>();
-
-    await VideoPlayerPlatform.instance.setDataSource(
-      _textureId,
-      dataSourceDescription,
+    final completer = Completer<void>();
+    final subscription = videoEventStreamController.stream.listen(
+      (event) {
+        if (event.eventType == VideoEventType.initialized) {
+          completer.complete();
+        }
+      },
+      onError: completer.completeError,
+      onDone: () {
+        if (!completer.isCompleted) {
+          completer.completeError(StateError('Stream closed'));
+        }
+      },
+      cancelOnError: true,
     );
-    return _initializingCompleter.future;
+
+    try {
+      BetterPlayerUtils.log(
+        'VideoPlayerController: setDataSource platform call starting',
+      );
+      await BetterPlayerPlatform.instance.setDataSource(
+        _textureId,
+        dataSourceDescription,
+      );
+      BetterPlayerUtils.log(
+        'VideoPlayerController: setDataSource platform call finished, waiting for init event',
+      );
+      await completer.future;
+      BetterPlayerUtils.log(
+        'VideoPlayerController: setDataSource init event received',
+      );
+    } finally {
+      await subscription.cancel();
+    }
   }
 
   @override
@@ -288,7 +316,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       value = VideoPlayerValue.uninitialized();
       _timer?.cancel();
       await _eventSubscription?.cancel();
-      await _videoPlayerPlatform.dispose(_textureId);
+      await _betterPlayerPlatform.dispose(_textureId);
       videoEventStreamController.close();
     }
     _isDisposed = true;
@@ -322,7 +350,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!_created || _isDisposed) {
       return;
     }
-    await _videoPlayerPlatform.setLooping(_textureId, value.isLooping);
+    await _betterPlayerPlatform.setLooping(_textureId, value.isLooping);
   }
 
   Future<void> _applyPlayPause() async {
@@ -331,7 +359,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
     _timer?.cancel();
     if (value.isPlaying) {
-      await _videoPlayerPlatform.play(_textureId);
+      await _betterPlayerPlatform.play(_textureId);
       _timer = Timer.periodic(
         const Duration(milliseconds: 300),
         (timer) async {
@@ -355,7 +383,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         },
       );
     } else {
-      await _videoPlayerPlatform.pause(_textureId);
+      await _betterPlayerPlatform.pause(_textureId);
     }
   }
 
@@ -363,14 +391,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!_created || _isDisposed) {
       return;
     }
-    await _videoPlayerPlatform.setVolume(_textureId, value.volume);
+    await _betterPlayerPlatform.setVolume(_textureId, value.volume);
   }
 
   Future<void> _applySpeed() async {
     if (!_created || _isDisposed) {
       return;
     }
-    await _videoPlayerPlatform.setSpeed(_textureId, value.speed);
+    await _betterPlayerPlatform.setSpeed(_textureId, value.speed);
   }
 
   /// The position in the current video.
@@ -378,7 +406,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!value.initialized && _isDisposed) {
       return null;
     }
-    return _videoPlayerPlatform.getPosition(_textureId);
+    return _betterPlayerPlatform.getPosition(_textureId);
   }
 
   /// The absolute position in the current video stream
@@ -387,7 +415,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!value.initialized && _isDisposed) {
       return null;
     }
-    return _videoPlayerPlatform.getAbsolutePosition(_textureId);
+    return _betterPlayerPlatform.getAbsolutePosition(_textureId);
   }
 
   /// Sets the video's current timestamp to be at [moment]. The next
@@ -409,14 +437,17 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     }
 
     var positionToSeek = position;
-    if (position! > value.duration!) {
-      positionToSeek = value.duration;
-    } else if (position < const Duration()) {
+    if (value.duration != null && position != null) {
+      if (position > value.duration!) {
+        positionToSeek = value.duration;
+      }
+    }
+    if (position != null && position < const Duration()) {
       positionToSeek = const Duration();
     }
     _seekPosition = positionToSeek;
 
-    await _videoPlayerPlatform.seekTo(_textureId, positionToSeek);
+    await _betterPlayerPlatform.seekTo(_textureId, positionToSeek);
     _updatePosition(position);
 
     if (isPlaying) {
@@ -455,7 +486,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [height] specifies height of the selected track
   /// [bitrate] specifies bitrate of the selected track
   Future<void> setTrackParameters(int? width, int? height, int? bitrate) async {
-    await _videoPlayerPlatform.setTrackParameters(
+    await _betterPlayerPlatform.setTrackParameters(
       _textureId,
       width,
       height,
@@ -469,7 +500,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     double? width,
     double? height,
   }) async {
-    await _videoPlayerPlatform.enablePictureInPicture(
+    await _betterPlayerPlatform.enablePictureInPicture(
       textureId,
       top,
       left,
@@ -479,7 +510,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   Future<void> disablePictureInPicture() async {
-    await _videoPlayerPlatform.disablePictureInPicture(textureId);
+    await _betterPlayerPlatform.disablePictureInPicture(textureId);
   }
 
   void _updatePosition(Duration? position, {DateTime? absolutePosition}) {
@@ -493,7 +524,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_textureId == null) {
       return false;
     }
-    return _videoPlayerPlatform.isPictureInPictureSupported(_textureId);
+    return _betterPlayerPlatform.isPictureInPictureSupported(_textureId);
   }
 
   void refresh() {
@@ -501,23 +532,23 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   void setAudioTrack(String? name, int? index) {
-    _videoPlayerPlatform.setAudioTrack(_textureId, name, index);
+    _betterPlayerPlatform.setAudioTrack(_textureId, name, index);
   }
 
   void setMixWithOthers(bool mixWithOthers) {
-    _videoPlayerPlatform.setMixWithOthers(_textureId, mixWithOthers);
+    _betterPlayerPlatform.setMixWithOthers(_textureId, mixWithOthers);
   }
 
   static Future clearCache() async {
-    return _videoPlayerPlatform.clearCache();
+    return _betterPlayerPlatform.clearCache();
   }
 
   static Future preCache(DataSource dataSource, int preCacheSize) async {
-    return _videoPlayerPlatform.preCache(dataSource, preCacheSize);
+    return _betterPlayerPlatform.preCache(dataSource, preCacheSize);
   }
 
   static Future stopPreCache(String url, String? cacheKey) async {
-    return _videoPlayerPlatform.stopPreCache(url, cacheKey);
+    return _betterPlayerPlatform.stopPreCache(url, cacheKey);
   }
 }
 
@@ -576,7 +607,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   Widget build(BuildContext context) {
     return _textureId == null
         ? Container()
-        : _videoPlayerPlatform.buildView(_textureId);
+        : _betterPlayerPlatform.buildView(_textureId);
   }
 }
 

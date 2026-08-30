@@ -1,0 +1,25 @@
+appId: pl.hasoft.example
+---
+- launchApp:
+    clearState: true
+- assertVisible: "Better Player Example"
+
+# Start with MP4
+- tapOn:
+    id: "better_player_e2e_setup_mp4"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_material_video_area"
+    timeout: 10000
+
+# Swap to HLS
+- tapOn:
+    id: "better_player_e2e_setup_hls"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_material_video_area"
+    timeout: 15000
+
+# Verify it's playing
+- tapOn:
+    id: "better_player_material_controls_play_pause_button"

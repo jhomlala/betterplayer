@@ -1,0 +1,169 @@
+appId: pl.hasoft.example
+---
+- launchApp
+- scrollUntilVisible:
+    element:
+      id: "better_player_e2e_navigate_ffi"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "better_player_e2e_navigate_ffi"
+- extendedWaitUntil:
+    visible:
+      id: "ffi_test_initialized_status"
+      text: "initialized=true"
+    timeout: 60000
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_play"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_play"
+- assertVisible:
+    id: "ffi_test_status_play"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_pause"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_pause"
+- assertVisible:
+    id: "ffi_test_status_pause"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_seekTo"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_seekTo"
+- assertVisible:
+    id: "ffi_test_status_seekTo"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setVolume"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_setVolume"
+- assertVisible:
+    id: "ffi_test_status_setVolume"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setSpeed"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_setSpeed"
+- assertVisible:
+    id: "ffi_test_status_setSpeed"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setTrackParameters"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_setTrackParameters"
+- assertVisible:
+    id: "ffi_test_status_setTrackParameters"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setAudioTrack"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_setAudioTrack"
+- assertVisible:
+    id: "ffi_test_status_setAudioTrack"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setMixWithOthers"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_setMixWithOthers"
+- assertVisible:
+    id: "ffi_test_status_setMixWithOthers"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_setLooping"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_setLooping"
+- assertVisible:
+    id: "ffi_test_status_setLooping"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_getPosition"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_getPosition"
+- assertVisible:
+    id: "ffi_test_status_getPosition"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_getAbsolutePosition"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_getAbsolutePosition"
+- assertVisible:
+    id: "ffi_test_status_getAbsolutePosition"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_preCache"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_preCache"
+- assertVisible:
+    id: "ffi_test_status_preCache"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_stopPreCache"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_stopPreCache"
+- assertVisible:
+    id: "ffi_test_status_stopPreCache"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_clearCache"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_clearCache"
+- assertVisible:
+    id: "ffi_test_status_clearCache"
+    text: "success=true"

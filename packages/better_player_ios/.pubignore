@@ -1,0 +1,5 @@
+# Exclude Swift generation tool
+tool/swiftgen.dart
+
+# Exclude internal FFI testing example
+example_ffi/

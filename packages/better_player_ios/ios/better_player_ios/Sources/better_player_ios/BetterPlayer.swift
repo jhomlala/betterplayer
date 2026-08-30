@@ -2,7 +2,41 @@
 
 import AVFoundation
 import AVKit
+#if canImport(Flutter)
 import Flutter
+#else
+public protocol FlutterPlatformView {}
+public class FlutterError: NSObject {
+    @objc public var code: String
+    @objc public var message: String?
+    @objc public var details: Any?
+    @objc public init(code: String, message: String?, details: Any?) {
+        self.code = code
+        self.message = message
+        self.details = details
+        super.init()
+    }
+}
+public typealias FlutterResult = (Any?) -> Void
+
+@objc public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoaderDelegate {
+    public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) { super.init() }
+}
+@objc public class CacheManager: NSObject {
+    @objc public static let shared = CacheManager()
+    public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: [NSObject: AnyObject]) -> AVPlayerItem? { return nil }
+    @objc public func preCacheURL(_ url: URL, cacheKey: String?, videoExtension: String?, withHeaders headers: [NSObject: AnyObject], completionHandler: ((_ success: Bool) -> Void)?) {}
+    @objc public func stopPreCache(_ url: URL, cacheKey: String?, completionHandler: ((_ success: Bool) -> Void)?) {}
+    @objc public func clearCache() {}
+}
+public class BetterPlayerView: UIView {
+    public var player: AVPlayer?
+}
+public class BetterPlayerTimeUtils {
+    public static func cmTimeToMillis(_ time: CMTime) -> Int64 { return 0 }
+    public static func timeIntervalToMillis(_ interval: TimeInterval) -> Int64 { return 0 }
+}
+#endif
 import Foundation
 import UIKit
 
@@ -15,7 +49,12 @@ private var presentationSizeContext = 0
 
 /// A platform view implementation that wraps AVPlayer for video playback.
 /// Handles player initialization, lifecycle, and event reporting to Flutter.
-public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, AVPictureInPictureControllerDelegate {
+@objc public class BetterPlayer: NSObject, FlutterPlatformView, AVPictureInPictureControllerDelegate {
+
+    private func sendError(_ error: FlutterError) {
+        callback?.onError(error.code, errorMessage: error.message ?? "", errorDetails: (error.details as? String) ?? "")
+    }
+
 
     // MARK: - Properties
 
@@ -26,10 +65,10 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     public private(set) var loaderDelegate: BetterPlayerEzDrmAssetsLoaderDelegate?
 
     /// The Flutter event channel for sending player events.
-    public var eventChannel: FlutterEventChannel?
+    
 
     /// The sink for emitting events to Flutter.
-    public var eventSink: FlutterEventSink?
+    @objc public var callback: BetterPlayerCallback?
 
     /// The preferred transform for the video.
     public var preferredTransform: CGAffineTransform = .identity
@@ -102,7 +141,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     }
 
     /// Returns the view to be displayed in Flutter.
-    public func view() -> UIView {
+    @objc public func view() -> UIView {
         let playerView = BetterPlayerView(frame: .zero)
         playerView.player = player
         if let playerLayer = playerView.layer as? AVPlayerLayer {
@@ -117,7 +156,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
     /// Sets the video aspect ratio gravity.
     /// - Parameter gravity: The gravity to apply.
-    public func setAspectRatio(_ gravity: AVLayerVideoGravity) {
+    @objc public func setAspectRatio(_ gravity: AVLayerVideoGravity) {
         self.videoGravity = gravity
 
         if let playerLayer = playerView?.layer as? AVPlayerLayer {
@@ -165,8 +204,8 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
                 p.seek(to: .zero, completionHandler: nil)
             }
         } else {
-            if let eventSink = eventSink {
-                eventSink(["event": "completed", "key": key as Any])
+            if callback != nil {
+                callback?.onCompleted(key: key)
                 removeObservers()
             }
         }
@@ -225,7 +264,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     // MARK: - Data Source Handling
 
     /// Sets the data source from an asset path.
-    public func setDataSourceAsset(_ assetPath: String, key: String?, certificateUrl: String?, licenseUrl: String?, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int) {
+    @objc public func setDataSourceAsset(_ assetPath: String, key: String?, certificateUrl: String?, licenseUrl: String?, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int) {
         if let path = Bundle.main.path(forResource: assetPath, ofType: nil) {
             let url = URL(fileURLWithPath: path)
             setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: false, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: nil)
@@ -233,7 +272,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     }
 
     /// Sets the data source from a URL.
-    public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
+    @objc public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
         self.overriddenDuration = 0
 
         let item: AVPlayerItem
@@ -267,6 +306,9 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
         self.stalledCount = 0
         self.isStalledCheckStarted = false
         self.playerRate = 1
+        
+        removeObservers()
+        
         player.replaceCurrentItem(with: item)
 
         let asset = item.asset
@@ -303,9 +345,9 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
             } else {
                 stalledCount += 1
                 if stalledCount > 60 {
-                    if let eventSink = eventSink {
+                    if callback != nil {
                         let error = FlutterError(code: "VideoError", message: "Failed to load video: playback stalled", details: nil)
-                        eventSink(error)
+                        sendError(error)
                     }
                     return
                 }
@@ -333,12 +375,12 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
                 }
                 if player.timeControlStatus == .paused {
                     lastAvPlayerTimeControlStatus = player.timeControlStatus
-                    eventSink?(["event": "pause"])
+                    callback?.onPause(key: key)
                     return
                 }
                 if player.timeControlStatus == .playing {
                     lastAvPlayerTimeControlStatus = player.timeControlStatus
-                    eventSink?(["event": "play"])
+                    callback?.onPlay(key: key)
                 }
             }
 
@@ -356,7 +398,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
         }
 
         if context == &timeRangeContext {
-            if let eventSink = eventSink, let item = object as? AVPlayerItem {
+            if callback != nil, let item = object as? AVPlayerItem {
                 var values: [[NSNumber]] = []
                 for rangeValue in item.loadedTimeRanges {
                     let range = rangeValue.timeRangeValue
@@ -368,7 +410,10 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
                     }
                     values.append([start, end])
                 }
-                eventSink(["event": "bufferingUpdate", "values": values, "key": key as Any])
+                if let jsonData = try? JSONSerialization.data(withJSONObject: values, options: []),
+                   let jsonString = String(data: jsonData, encoding: .utf8) {
+                    callback?.onBufferingUpdate(jsonRanges: jsonString, key: key)
+                }
             }
         } else if context == &presentationSizeContext {
             onReadyToPlay()
@@ -376,11 +421,10 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
             if let item = object as? AVPlayerItem {
                 switch item.status {
                 case .failed:
-                    NSLog("Failed to load video: \(String(describing: item.error?.localizedDescription))")
-                    if let eventSink = eventSink {
+                    if callback != nil {
                         let message = "Failed to load video: \(item.error?.localizedDescription ?? "unknown")"
                         let error = FlutterError(code: "VideoError", message: message, details: nil)
-                        eventSink(error)
+                        sendError(error)
                     }
                 case .unknown:
                     break
@@ -393,12 +437,12 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
         } else if context == &playbackLikelyToKeepUpContext {
             if player.currentItem?.isPlaybackLikelyToKeepUp == true {
                 updatePlayingState()
-                eventSink?(["event": "bufferingEnd", "key": key as Any])
+                callback?.onBufferingEnd(key: key)
             }
         } else if context == &playbackBufferEmptyContext {
-            eventSink?(["event": "bufferingStart", "key": key as Any])
+            callback?.onBufferingStart(key: key)
         } else if context == &playbackBufferFullContext {
-            eventSink?(["event": "bufferingEnd", "key": key as Any])
+            callback?.onBufferingEnd(key: key)
         }
     }
 
@@ -429,7 +473,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
     /// Handles transition to ready-to-play state.
     public func onReadyToPlay() {
-        guard let eventSink = eventSink, !isInitialized, key != nil else { return }
+        guard callback != nil, !isInitialized, key != nil else { return }
         guard player.currentItem != nil else { return }
         guard player.status == .readyToPlay else { return }
 
@@ -439,11 +483,14 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
         let asset = player.currentItem!.asset
         let onlyAudio = asset.tracks(withMediaType: .video).count == 0
+
         if !onlyAudio && height == .zero && width == .zero {
             return
         }
         let isLive = CMTIME_IS_INDEFINITE(player.currentItem!.duration)
-        if !isLive && duration() == 0 { return }
+        let dur = duration()
+
+        if !isLive && dur == 0 { return }
 
         if let track = player.currentItem?.tracks.first?.assetTrack {
             let naturalSize = track.naturalSize
@@ -460,15 +507,16 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
         isInitialized = true
         updatePlayingState()
-        eventSink(["event": "initialized",
-                   "duration": NSNumber(value: duration()),
-                   "width": NSNumber(value: Float(width)),
-                   "height": NSNumber(value: Float(height)),
-                   "key": key as Any])
+        callback?.onInitialized(
+            durationMs: Int64(duration()),
+            width: Double(width),
+            height: Double(height),
+            key: key
+        )
     }
 
     /// Starts playback.
-    public func play() {
+    @objc public func play() {
         stalledCount = 0
         isStalledCheckStarted = false
         isPlaying = true
@@ -476,24 +524,24 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     }
 
     /// Pauses playback.
-    public func pause() {
+    @objc public func pause() {
         isPlaying = false
         updatePlayingState()
     }
 
     /// Returns the current playback position in milliseconds.
-    public func position() -> Int64 {
+    @objc public func position() -> Int64 {
         return BetterPlayerTimeUtils.cmTimeToMillis(player.currentTime())
     }
 
     /// Returns the absolute position in milliseconds for live streams.
-    public func absolutePosition() -> Int64 {
+    @objc public func absolutePosition() -> Int64 {
         let interval = player.currentItem?.currentDate()?.timeIntervalSince1970 ?? 0
         return BetterPlayerTimeUtils.timeIntervalToMillis(interval)
     }
 
     /// Returns the total duration of the media in milliseconds.
-    public func duration() -> Int64 {
+    @objc public func duration() -> Int64 {
         let time: CMTime
         if #available(iOS 13, *) {
             time = player.currentItem?.duration ?? .zero
@@ -508,7 +556,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
     /// Seeks to the specified position in milliseconds.
     /// - Parameter location: The position to seek to.
-    public func seekTo(_ location: Int) {
+    @objc public func seekTo(_ location: Int) {
         let wasPlaying = isPlaying
         if wasPlaying { player.pause() }
         player.seek(to: CMTimeMake(value: Int64(location), timescale: 1000), toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
@@ -519,7 +567,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
     /// Sets the player volume.
     /// - Parameter volume: The volume level (0.0 to 1.0).
-    public func setVolume(_ volume: Double) {
+    @objc public func setVolume(_ volume: Double) {
         let v = max(0.0, min(1.0, volume))
         player.volume = Float(v)
     }
@@ -527,24 +575,27 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     /// Sets the playback speed.
     /// - Parameters:
     ///   - speed: The playback speed.
-    ///   - result: The Flutter result to report success or failure.
-    public func setSpeed(_ speed: Double, result: FlutterResult) {
-        if speed < 0 || speed > 2.0 {
-            result(FlutterError(code: "unsupported_speed", message: "Speed must be >= 0.0 and <= 2.0", details: nil))
-            return
-        }
-
+    @objc public func setSpeed(_ speed: Double) {
+        guard speed >= 0, speed <= 2.0 else { return }
         playerRate = Float(speed == 0.0 ? 1.0 : speed)
         if isPlaying {
             applyPlayerRate()
         }
-        result(nil)
+    }
+
+    @objc public func setLooping(_ looping: Bool) {
+        isLooping = looping
+    }
+
+    @objc public func setDataSourceURLString(_ urlString: String, key: String?, certificateUrl: String?, licenseUrl: String?, useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
+        guard let url = URL(string: urlString) else { return }
+        setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: useCache, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: videoExtension)
     }
 
     // MARK: - Track Parameters
 
     /// Sets track parameters like bitrate and resolution.
-    public func setTrackParameters(width: Int, height: Int, bitrate: Int) {
+    @objc public func setTrackParameters(width: Int, height: Int, bitrate: Int) {
         player.currentItem?.preferredPeakBitRate = Double(bitrate)
         if #available(iOS 11.0, *) {
             if width == 0 && height == 0 {
@@ -559,7 +610,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
     /// Sets Picture-in-Picture state.
     /// - Parameter pictureInPicture: Whether PiP should be active.
-    public func setPictureInPicture(_ pictureInPicture: Bool) {
+    @objc public func setPictureInPicture(_ pictureInPicture: Bool) {
         self.pictureInPicture = pictureInPicture
         if #available(iOS 9.0, *) {
             if let pip = pipController, self.pictureInPicture && !pip.isPictureInPictureActive {
@@ -571,7 +622,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     }
 
     /// Sets the completion handler for restoring UI after PiP stops.
-    public func setRestoreUserInterfaceForPIPStopCompletionHandler(_ restore: Bool) {
+    @objc public func setRestoreUserInterfaceForPIPStopCompletionHandler(_ restore: Bool) {
         restoreUIOnPipStop?(restore)
         restoreUIOnPipStop = nil
     }
@@ -589,7 +640,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
     /// Enables Picture-in-Picture for the given frame.
     /// - Parameter frame: The frame for PiP.
-    public func enablePictureInPicture(_ frame: CGRect) {
+    @objc public func enablePictureInPicture(_ frame: CGRect) {
         disablePictureInPicture()
         usePlayerLayer(frame)
     }
@@ -630,12 +681,12 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     }
 
     /// Disables Picture-in-Picture.
-    public func disablePictureInPicture() {
+    @objc public func disablePictureInPicture() {
         setPictureInPicture(true)
         if let layer = playerLayerRef {
             layer.removeFromSuperlayer()
             playerLayerRef = nil
-            eventSink?(["event": "pipStop"])
+            callback?.onPipStop()
         }
     }
 
@@ -646,7 +697,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     }
 
     public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
-        eventSink?(["event": "pipStart"])
+        callback?.onPipStart()
     }
 
     public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
@@ -660,7 +711,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     /// - Parameters:
     ///   - name: The name of the track.
     ///   - index: The index of the track.
-    public func setAudioTrack(name: String, index: Int) {
+    @objc public func setAudioTrack(name: String, index: Int) {
         guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: .audible) else { return }
         let options = group.options
         for audioTrackIndex in 0..<options.count {
@@ -674,7 +725,7 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
     /// Sets whether the audio should mix with others.
     /// - Parameter mixWithOthers: Whether to mix audio.
-    public func setMixWithOthers(_ mixWithOthers: Bool) {
+    @objc public func setMixWithOthers(_ mixWithOthers: Bool) {
         if mixWithOthers {
             try? AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
         } else {
@@ -684,21 +735,14 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
 
     // MARK: - FlutterStreamHandler
 
-    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        eventSink = nil
-        return nil
-    }
+    
 
-    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        eventSink = events
-        onReadyToPlay()
-        return nil
-    }
+    
 
     // MARK: - Disposal
 
     /// Clears the player state.
-    public func clear() {
+    @objc public func clear() {
         isInitialized = false
         isPlaying = false
         disposed = false
@@ -710,19 +754,22 @@ public class BetterPlayer: NSObject, FlutterPlatformView, FlutterStreamHandler, 
     }
 
     /// Disposes the player without affecting the event channel.
-    public func disposeSansEventChannel() {
+    @objc public func disposeSansEventChannel() {
         do {
             clear()
         }
     }
 
     /// Disposes the player and cleans up resources.
-    public func dispose() {
+    @objc public func dispose() {
         pause()
         disposeSansEventChannel()
-        eventChannel?.setStreamHandler(nil)
         disablePictureInPicture()
         setPictureInPicture(false)
         disposed = true
+        
+        if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
+            BetterPlayerApi.players.removeValue(forKey: key)
+        }
     }
 }

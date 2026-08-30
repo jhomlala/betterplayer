@@ -61,13 +61,11 @@ class ImageWorker(
             options.inJustDecodeBounds = false
             BitmapFactory.decodeStream(inputStream, null, options)
         } catch (exception: Exception) {
-            Log.e(TAG, "Failed to get bitmap from external url: $src")
             null
         } finally {
             try {
                 inputStream?.close()
             } catch (exception: Exception) {
-                Log.e(TAG, "Failed to close bitmap input stream/")
             }
         }
     }
@@ -102,7 +100,6 @@ class ImageWorker(
             options.inJustDecodeBounds = false
             BitmapFactory.decodeFile(src)
         } catch (exception: Exception) {
-            Log.e(TAG, "Failed to get bitmap from internal url: $src")
             null
         }
     }

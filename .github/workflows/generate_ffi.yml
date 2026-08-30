@@ -1,0 +1,66 @@
+name: Generate FFI Bindings
+
+on:
+  push:
+    branches:
+      - 'feature/ffi-migration'
+    paths:
+      - 'packages/better_player_ios/ios/**'
+      - 'packages/better_player_android/android/**'
+      - 'packages/better_player_ios/tool/**'
+      - 'packages/better_player_android/tool/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '21'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install iOS Dependencies
+        working-directory: packages/better_player_ios
+        run: flutter pub get
+
+      - name: Generate iOS FFI (swiftgen)
+        working-directory: packages/better_player_ios
+        run: dart run tool/swiftgen.dart
+
+      - name: Install Android Dependencies
+        working-directory: packages/better_player_android
+        run: |
+          flutter pub get
+          cd example_ffi
+          flutter pub get
+
+          # Monkey-patch jnigen to support the latest Kotlin metadata format
+          find ~/.pub-cache/hosted -path "*/jnigen*/java/build.gradle.kts" -exec sed -i.bak 's/kotlin-metadata-jvm:2.2.0/kotlin-metadata-jvm:2.+/' {} +
+          flutter build apk --debug
+
+      - name: Generate Android FFI (jnigen)
+        working-directory: packages/better_player_android
+        run: dart run tool/jnigen.dart
+
+      - name: Commit Generated Bindings
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: Generate Android and iOS FFI bindings"
+          file_pattern: "packages/better_player_android/lib/src/*.dart packages/better_player_ios/lib/src/*.dart packages/better_player_ios/ios/better_player_ios/Sources/better_player_ios_objc/*.m"
+          branch: ${{ github.ref }}

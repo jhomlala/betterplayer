@@ -1,12 +1,12 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
-import 'package:better_player_ios/better_player_ios.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../helpers/better_player_mock_controller.dart';
 import '../helpers/better_player_test_utils.dart';
+import '../helpers/mock_better_player_platform.dart';
 import '../helpers/mock_method_channel.dart';
 import '../helpers/mock_video_player_controller.dart';
 
@@ -14,18 +14,18 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final mockMethodChannel = MockMethodChannel();
 
+  setUpAll(BetterPlayerTestUtils.setupMockPlatform);
+
   group(
     'BetterPlayerController tests',
     () {
-      setUp(
-        () => {
-          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-              .setMockMethodCallHandler(
-                mockMethodChannel.channel,
-                mockMethodChannel.handle,
-              ),
-        },
-      );
+      setUp(() {
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              mockMethodChannel.channel,
+              mockMethodChannel.handle,
+            );
+      });
 
       test('Create controller without data source', () {
         final betterPlayerMockController = BetterPlayerMockController(
@@ -908,8 +908,8 @@ void main() {
       test('setupDataSource emits exception for DASH on iOS', () async {
         final previousPlatform = debugDefaultTargetPlatformOverride;
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-        final previousInstance = VideoPlayerPlatform.instance;
-        VideoPlayerPlatform.instance = BetterPlayerIOS();
+        final previousInstance = BetterPlayerPlatform.instance;
+        BetterPlayerPlatform.instance = _MockIOSBetterPlayerPlatform();
         try {
           final controller = BetterPlayerMockController(
             const PlayerConfiguration(),
@@ -933,7 +933,7 @@ void main() {
           expect(controller.videoPlayerController, null);
         } finally {
           debugDefaultTargetPlatformOverride = previousPlatform;
-          VideoPlayerPlatform.instance = previousInstance;
+          BetterPlayerPlatform.instance = previousInstance;
         }
       });
 
@@ -957,4 +957,17 @@ void main() {
       });
     },
   );
+}
+
+class _MockIOSBetterPlayerPlatform extends MockBetterPlayerPlatform {
+  @override
+  Future<void> setDataSource(int? textureId, DataSource dataSource) async {
+    if (dataSource.uri?.contains('.mpd') == true ||
+        dataSource.formatHint == VideoFormat.dash) {
+      throw Exception(
+        'DASH streams are not supported on iOS platform. Please use HLS instead.',
+      );
+    }
+    return super.setDataSource(textureId, dataSource);
+  }
 }

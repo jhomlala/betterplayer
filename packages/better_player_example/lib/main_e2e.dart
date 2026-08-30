@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/pages/ffi_test_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -71,10 +72,12 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       if (event.betterPlayerEventType == PlayerEventType.exception) {
         BetterPlayerUtils.log('E2E: Exception event: ${event.parameters}');
         setState(() {
-          _errorDescription = _betterPlayerController
-              .videoPlayerController
-              ?.value
-              .errorDescription;
+          _errorDescription =
+              event.parameters?['exception']?.toString() ??
+              _betterPlayerController
+                  .videoPlayerController
+                  ?.value
+                  .errorDescription;
         });
       } else if (event.betterPlayerEventType ==
           PlayerEventType.setupDataSource) {
@@ -124,92 +127,109 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
           child: const Text('Better Player Example'),
         ),
       ),
-      body: Column(
-        children: [
-          const SizedBox(height: 8),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-          if (_errorDescription != null)
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Semantics(
-                identifier: 'better_player_e2e_error_text',
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    border: Border.all(color: Colors.red),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Error: $_errorDescription',
-                        style: const TextStyle(
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      _buildDebugLine(
-                        'URL',
-                        _betterPlayerController.betterPlayerDataSource?.url,
-                      ),
-                      Text(
-                        'Status: Init: ${_betterPlayerController.videoPlayerController?.value.initialized}, '
-                        'Buffering: ${_betterPlayerController.videoPlayerController?.value.isBuffering}, '
-                        'Playing: ${_betterPlayerController.videoPlayerController?.value.isPlaying}',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 8),
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(controller: _betterPlayerController),
             ),
-          const SizedBox(height: 16),
-          Wrap(
-            spacing: 8,
-            children: [
-              Semantics(
-                identifier: 'better_player_e2e_setup_mp4',
-                child: ElevatedButton(
-                  onPressed: () => _setupDataSource(
-                    Constants.bugBuckBunnyVideoUrl,
-                    DataSourceType.network,
+            if (_errorDescription != null)
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Semantics(
+                  identifier: 'better_player_e2e_error_text',
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      border: Border.all(color: Colors.red),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Error: $_errorDescription',
+                          style: const TextStyle(
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        _buildDebugLine(
+                          'URL',
+                          _betterPlayerController.betterPlayerDataSource?.url,
+                        ),
+                        Text(
+                          'Status: Init: ${_betterPlayerController.videoPlayerController?.value.initialized}, '
+                          'Buffering: ${_betterPlayerController.videoPlayerController?.value.isBuffering}, '
+                          'Playing: ${_betterPlayerController.videoPlayerController?.value.isPlaying}',
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                  child: const Text('MP4'),
                 ),
               ),
-              Semantics(
-                identifier: 'better_player_e2e_setup_hls',
-                child: ElevatedButton(
-                  onPressed: () => _setupDataSource(
-                    Constants.hlsTestStreamUrl,
-                    DataSourceType.network,
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              children: [
+                Semantics(
+                  identifier: 'better_player_e2e_setup_mp4',
+                  child: ElevatedButton(
+                    onPressed: () => _setupDataSource(
+                      Constants.bugBuckBunnyVideoUrl,
+                      DataSourceType.network,
+                    ),
+                    child: const Text('MP4'),
                   ),
-                  child: const Text('HLS'),
                 ),
-              ),
-              Semantics(
-                identifier: 'better_player_e2e_setup_error',
-                child: ElevatedButton(
-                  onPressed: () => _setupDataSource(
-                    'https://invalid.url.com/video.mp4',
-                    DataSourceType.network,
+                Semantics(
+                  identifier: 'better_player_e2e_setup_hls',
+                  child: ElevatedButton(
+                    onPressed: () => _setupDataSource(
+                      Constants.hlsTestStreamUrl,
+                      DataSourceType.network,
+                    ),
+                    child: const Text('HLS'),
                   ),
-                  child: const Text('Invalid'),
                 ),
-              ),
-            ],
-          ),
-        ],
+                Semantics(
+                  identifier: 'better_player_e2e_setup_error',
+                  child: ElevatedButton(
+                    onPressed: () => _setupDataSource(
+                      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/404.mp4',
+                      DataSourceType.network,
+                    ),
+                    child: const Text('Invalid'),
+                  ),
+                ),
+                Semantics(
+                  identifier: 'better_player_e2e_navigate_ffi',
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => const FFITestPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('FFI Test'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 200),
+          ],
+        ),
       ),
     );
   }

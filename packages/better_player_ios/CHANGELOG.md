@@ -1,9 +1,13 @@
+## Unreleased
+- none.
+
+## 1.1.0
+- Added: Migrated native implementation to Swift FFI using `swiftgen`, enabling direct `AVPlayer` interaction without MethodChannel overhead.
+
 ## 1.0.2
 
 * Docs: Updated model name references in example.md.
 
-## Unreleased
-- none.
 
 ## 1.0.1
 * Add thin examples to platform packages and decoupled example app.

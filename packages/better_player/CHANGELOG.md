@@ -1,6 +1,13 @@
 ## Unreleased
 - none.
 
+## 1.2.0
+- Updated: Migrated to a modern JNI/Swift architecture for native bridges, improving performance and reliability.
+- Fixed: Improved robustness in `seekTo` in `BetterPlayerController` and `VideoPlayerController` to prevent crashes when called before full initialization.
+- Updated: Enhanced FFI E2E tests to wait for video initialization before proceeding with method calls.
+- Updated: Refactored `VideoPlayerController` to use event stream for initialization tracking, improving robustness and fixing race conditions during data source setup.
+- Fixed: A bug in `VideoPlayerController` where error descriptions were not correctly assigned to the player state.
+
 ## 1.1.1
 * Fixed: `fix_data.yaml` syntax error preventing downgrade analysis.
 * Updated: Removed `[!code focus]` annotations from migration docs.

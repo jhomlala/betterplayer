@@ -10,6 +10,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import androidx.annotation.OptIn
@@ -48,25 +50,32 @@ import androidx.work.WorkManager
 import pl.hasoft.better_player.DataSourceUtils.getDataSourceFactory
 import pl.hasoft.better_player.DataSourceUtils.getUserAgent
 import pl.hasoft.better_player.DataSourceUtils.isHTTP
-import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.EventChannel.EventSink
-import io.flutter.plugin.common.MethodChannel
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry
 import java.io.File
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
+import androidx.annotation.Keep
+
+@Keep
 @UnstableApi
-internal class BetterPlayer(
+class BetterPlayer(
     context: Context,
-    private val eventChannel: EventChannel,
-    private val textureEntry: SurfaceTextureEntry,
-    customDefaultLoadControl: CustomDefaultLoadControl?,
-    result: MethodChannel.Result
+    val textureEntry: SurfaceTextureEntry,
+    private val callback: BetterPlayerCallback,
+    customDefaultLoadControl: CustomDefaultLoadControl? = null
 ) {
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private fun runOnMainThread(action: () -> Unit) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            action()
+        } else {
+            mainHandler.post(action)
+        }
+    }
+
     private val exoPlayer: ExoPlayer?
-    private val eventSink = QueuingEventSink()
     private val trackSelector: DefaultTrackSelector = DefaultTrackSelector(context)
     private val loadControl: LoadControl
     private var isInitialized = false
@@ -98,15 +107,22 @@ internal class BetterPlayer(
             .build()
         workManager = WorkManager.getInstance(context)
         workerObserverMap = HashMap()
-        setupVideoPlayer(eventChannel, textureEntry, result)
+        setupVideoPlayer(textureEntry)
     }
+
+    @Keep
+    fun getTextureId(): Long {
+        return textureEntry.id()
+    }
+
+    @Keep
+
 
     fun setDataSource(
         context: Context,
         key: String?,
         dataSource: String?,
         formatHint: String?,
-        result: MethodChannel.Result,
         headers: Map<String, String>?,
         useCache: Boolean,
         maxCacheSize: Long,
@@ -132,7 +148,6 @@ internal class BetterPlayer(
                 }
             }
             if (Util.SDK_INT < 18) {
-                Log.e(TAG, "Protected content not supported on API levels below 18")
                 drmSessionManager = null
             } else {
                 val drmSchemeUuid = Util.getDrmUuid("widevine")
@@ -156,7 +171,6 @@ internal class BetterPlayer(
             }
         } else if (clearKey != null && clearKey.isNotEmpty()) {
             drmSessionManager = if (Util.SDK_INT < 18) {
-                Log.e(TAG, "Protected content not supported on API levels below 18")
                 null
             } else {
                 DefaultDrmSessionManager.Builder()
@@ -189,8 +203,11 @@ internal class BetterPlayer(
             exoPlayer?.setMediaSource(mediaSource)
         }
         exoPlayer?.prepare()
-        result.success(null)
+        
     }
+
+    @Keep
+
 
     fun setupPlayerNotification(
         context: Context, title: String, author: String?,
@@ -265,12 +282,13 @@ internal class BetterPlayer(
                             }
                         }
                     } catch (exception: Exception) {
-                        Log.e(TAG, "Image select error: $exception")
                     }
                 }
                 val workerUuid = imageWorkRequest.id
-                workManager.getWorkInfoByIdLiveData(workerUuid)
-                    .observeForever(workInfoObserver)
+                runOnMainThread {
+                    workManager.getWorkInfoByIdLiveData(workerUuid)
+                        .observeForever(workInfoObserver)
+                }
                 workerObserverMap[workerUuid] = workInfoObserver
                 return null
             }
@@ -312,6 +330,9 @@ internal class BetterPlayer(
         
         exoPlayer?.seekTo(0)
     }
+
+    @Keep
+
 
     fun disposeRemoteNotifications() {
         if (playerNotificationManager != null) {
@@ -381,19 +402,7 @@ internal class BetterPlayer(
         }
     }
 
-    private fun setupVideoPlayer(
-        eventChannel: EventChannel, textureEntry: SurfaceTextureEntry, result: MethodChannel.Result
-    ) {
-        eventChannel.setStreamHandler(
-            object : EventChannel.StreamHandler {
-                override fun onListen(o: Any?, sink: EventSink) {
-                    eventSink.setDelegate(sink)
-                }
-
-                override fun onCancel(o: Any?) {
-                    eventSink.setDelegate(null)
-                }
-            })
+    private fun setupVideoPlayer(textureEntry: SurfaceTextureEntry) {
         surface = Surface(textureEntry.surfaceTexture())
         exoPlayer?.setVideoSurface(surface)
         setAudioAttributes(exoPlayer, true)
@@ -402,24 +411,17 @@ internal class BetterPlayer(
                 when (playbackState) {
                     Player.STATE_BUFFERING -> {
                         sendBufferingUpdate(true)
-                        val event: MutableMap<String, Any> = HashMap()
-                        event["event"] = "bufferingStart"
-                        eventSink.success(event)
+                        callback.onBufferingStart()
                     }
                     Player.STATE_READY -> {
                         if (!isInitializedSent) {
                             isInitialized = true
                             sendInitialized()
                         }
-                        val event: MutableMap<String, Any> = HashMap()
-                        event["event"] = "bufferingEnd"
-                        eventSink.success(event)
+                        callback.onBufferingEnd()
                     }
                     Player.STATE_ENDED -> {
-                        val event: MutableMap<String, Any?> = HashMap()
-                        event["event"] = "completed"
-                        event["key"] = key
-                        eventSink.success(event)
+                        callback.onCompleted(key = key)
                     }
                     Player.STATE_IDLE -> {
                         //no-op
@@ -428,7 +430,7 @@ internal class BetterPlayer(
             }
 
             override fun onPlayerError(error: PlaybackException) {
-                eventSink.error("VideoError", "Video player had error $error", "")
+                callback.onError("VideoError", "Video player had error $error", "")
             }
 
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -446,28 +448,17 @@ internal class BetterPlayer(
                         width = videoSize.height
                         height = videoSize.width
                     }
-                    val event: MutableMap<String, Any?> = HashMap()
-                    event["event"] = "changedSize"
-                    event["width"] = width
-                    event["height"] = height
-                    event["key"] = key
-                    eventSink.success(event)
+                    callback.onChangedSize(width = width, height = height, key = key)
                 }
             }
         })
-        val reply: MutableMap<String, Any> = HashMap()
-        reply["textureId"] = textureEntry.id()
-        result.success(reply)
+        
     }
 
     fun sendBufferingUpdate(isFromBufferingStart: Boolean) {
         val bufferedPosition = exoPlayer?.bufferedPosition ?: 0L
         if (isFromBufferingStart || bufferedPosition != lastSendBufferedPosition) {
-            val event: MutableMap<String, Any> = HashMap()
-            event["event"] = "bufferingUpdate"
-            val range: List<Number?> = listOf(0, bufferedPosition)
-            event["values"] = listOf(range)
-            eventSink.success(event)
+            callback.onBufferingUpdate(bufferedMs = bufferedPosition)
             lastSendBufferedPosition = bufferedPosition
         }
     }
@@ -480,17 +471,29 @@ internal class BetterPlayer(
         exoPlayer?.setAudioAttributes(attributes, !mixWithOthers)
     }
 
+    @Keep
+
+
     fun play() {
         exoPlayer?.playWhenReady = true
     }
+
+    @Keep
+
 
     fun pause() {
         exoPlayer?.playWhenReady = false
     }
 
+    @Keep
+
+
     fun setLooping(value: Boolean) {
         exoPlayer?.repeatMode = if (value) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
     }
+
+    @Keep
+
 
     fun setVolume(value: Double) {
         val bracketedValue = max(0.0, min(1.0, value))
@@ -498,11 +501,17 @@ internal class BetterPlayer(
         exoPlayer?.volume = bracketedValue
     }
 
+    @Keep
+
+
     fun setSpeed(value: Double) {
         val bracketedValue = value.toFloat()
         val playbackParameters = PlaybackParameters(bracketedValue)
         exoPlayer?.playbackParameters = playbackParameters
     }
+
+    @Keep
+
 
     fun setTrackParameters(width: Int, height: Int, bitrate: Int) {
         val parametersBuilder = trackSelector.buildUponParameters()
@@ -518,6 +527,9 @@ internal class BetterPlayer(
         }
         trackSelector.setParameters(parametersBuilder)
     }
+
+    @Keep
+
 
     fun seekTo(location: Int) {
         exoPlayer?.seekTo(location.toLong())
@@ -548,24 +560,19 @@ internal class BetterPlayer(
                 return
             }
             isInitializedSent = true
-            val event: MutableMap<String, Any?> = HashMap()
-            event["event"] = "initialized"
-            event["key"] = key
-            event["duration"] = duration
-            
+            var width = 0
+            var height = 0
             val videoSize = exoPlayer?.videoSize
             if (videoSize != null && videoSize != VideoSize.UNKNOWN) {
-                var width = videoSize.width
-                var height = videoSize.height
+                width = videoSize.width
+                height = videoSize.height
                 val rotationDegrees = videoSize.unappliedRotationDegrees
                 if (rotationDegrees == 90 || rotationDegrees == 270) {
                     width = videoSize.height
                     height = videoSize.width
                 }
-                event["width"] = width
-                event["height"] = height
             }
-            eventSink.success(event)
+            callback.onInitialized(durationMs = duration, width = width, height = height, key = key)
         }
     }
 
@@ -587,10 +594,15 @@ internal class BetterPlayer(
         return null
     }
 
+    @Keep
+
+
     fun onPictureInPictureStatusChanged(inPip: Boolean) {
-        val event: MutableMap<String, Any> = HashMap()
-        event["event"] = if (inPip) "pipStart" else "pipStop"
-        eventSink.success(event)
+        if (inPip) {
+            callback.onPipStart()
+        } else {
+            callback.onPipStop()
+        }
     }
 
     fun disposeMediaSession() {
@@ -599,6 +611,9 @@ internal class BetterPlayer(
         }
         mediaSession = null
     }
+
+    @Keep
+
 
     fun setAudioTrack(name: String, index: Int) {
         try {
@@ -645,11 +660,11 @@ internal class BetterPlayer(
                 }
             }
         } catch (exception: Exception) {
-            Log.e(TAG, "setAudioTrack failed$exception")
         }
     }
 
-    private fun setAudioTrack(rendererIndex: Int, groupIndex: Int, groupElementIndex: Int) {
+    private @Keep
+ fun setAudioTrack(rendererIndex: Int, groupIndex: Int, groupElementIndex: Int) {
         val mappedTrackInfo = trackSelector.currentMappedTrackInfo
         if (mappedTrackInfo != null) {
             val builder = trackSelector.parameters.buildUpon()
@@ -666,24 +681,35 @@ internal class BetterPlayer(
     }
 
     private fun sendSeekToEvent(positionMs: Long) {
-        val event: MutableMap<String, Any> = HashMap()
-        event["event"] = "seek"
-        event["position"] = positionMs
-        eventSink.success(event)
+        callback.onSeek(positionMs = positionMs)
     }
+
+    @Keep
+
 
     fun setMixWithOthers(mixWithOthers: Boolean) {
         setAudioAttributes(exoPlayer, mixWithOthers)
     }
 
+    @Keep
+
+
     fun dispose() {
         disposeMediaSession()
         disposeRemoteNotifications()
+        
+        runOnMainThread {
+            workerObserverMap.forEach { (uuid, observer) ->
+                workManager.getWorkInfoByIdLiveData(uuid).removeObserver(observer)
+            }
+            workerObserverMap.clear()
+        }
+
         if (isInitialized) {
             exoPlayer?.stop()
         }
         textureEntry.release()
-        eventChannel.setStreamHandler(null)
+        
         surface?.release()
         exoPlayer?.release()
     }
@@ -711,17 +737,18 @@ internal class BetterPlayer(
         private const val DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION"
         private const val NOTIFICATION_ID = 20772077
 
-        fun clearCache(context: Context?, result: MethodChannel.Result) {
+        @Keep
+
+
+        fun clearCache(context: Context?) {
             try {
                 context?.let { context ->
                     val file = File(context.cacheDir, "betterPlayerCache")
                     deleteDirectory(file)
                 }
-                result.success(null)
+                
             } catch (exception: Exception) {
-                Log.e(TAG, exception.toString())
-                result.error("", "", "")
-            }
+                            }
         }
 
         private fun deleteDirectory(file: File) {
@@ -734,15 +761,16 @@ internal class BetterPlayer(
                 }
             }
             if (!file.delete()) {
-                Log.e(TAG, "Failed to delete cache dir.")
             }
         }
+
+        @Keep
+
 
         fun preCache(
             context: Context?, dataSource: String?, preCacheSize: Long,
             maxCacheSize: Long, maxCacheFileSize: Long, headers: Map<String, String?>,
-            cacheKey: String?, result: MethodChannel.Result
-        ) {
+            cacheKey: String?) {
             val dataBuilder = Data.Builder()
                 .putString(BetterPlayerPlugin.URL_PARAMETER, dataSource)
                 .putLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, preCacheSize)
@@ -763,14 +791,47 @@ internal class BetterPlayer(
                     .setInputData(dataBuilder.build()).build()
                 WorkManager.getInstance(context).enqueue(cacheWorkRequest)
             }
-            result.success(null)
+            
         }
 
-        fun stopPreCache(context: Context?, url: String?, result: MethodChannel.Result) {
+        @Keep
+
+
+        fun stopPreCache(context: Context?, url: String?) {
             if (url != null && context != null) {
                 WorkManager.getInstance(context).cancelAllWorkByTag(url)
             }
-            result.success(null)
+        }
+
+        @Keep
+        fun enablePictureInPicture(context: Context?) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val activity = BetterPlayerApi.activity
+                if (activity != null) {
+                    val params = android.app.PictureInPictureParams.Builder().build()
+                    activity.enterPictureInPictureMode(params)
+                }
+            }
+        }
+
+        @Keep
+        fun disablePictureInPicture(context: Context?) {
+            val activity = BetterPlayerApi.activity
+            if (activity != null) {
+                val intent = android.content.Intent(activity, activity.javaClass)
+                intent.flags = android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                activity.startActivity(intent)
+            }
+        }
+
+        @Keep
+        fun isPictureInPictureSupported(context: Context?): Boolean {
+            val useContext = context ?: BetterPlayerApi.activity
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                useContext?.packageManager?.hasSystemFeature(android.content.pm.PackageManager.FEATURE_PICTURE_IN_PICTURE) ?: false
+            } else {
+                false
+            }
         }
     }
 }

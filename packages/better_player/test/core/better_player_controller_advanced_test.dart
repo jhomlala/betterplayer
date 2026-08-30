@@ -10,26 +10,26 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   final mockMethodChannel = MockMethodChannel();
 
+  setUpAll(BetterPlayerTestUtils.setupMockPlatform);
+
   group('BetterPlayerController advanced tests', () {
-    setUp(
-      () => {
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              mockMethodChannel.channel,
-              mockMethodChannel.handle,
-            ),
-        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-            .setMockMethodCallHandler(
-              const MethodChannel('plugins.flutter.io/path_provider'),
-              (methodCall) async {
-                if (methodCall.method == 'getTemporaryDirectory') {
-                  return '.';
-                }
-                return null;
-              },
-            ),
-      },
-    );
+    setUp(() {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            mockMethodChannel.channel,
+            mockMethodChannel.handle,
+          );
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('plugins.flutter.io/path_provider'),
+            (methodCall) async {
+              if (methodCall.method == 'getTemporaryDirectory') {
+                return '.';
+              }
+              return null;
+            },
+          );
+    });
 
     test('retryDataSource works', () async {
       final mock = MockVideoPlayerController();

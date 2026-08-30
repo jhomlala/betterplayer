@@ -1,7 +1,7 @@
 name: better_player_platform_interface
 resolution: workspace
 description: A common platform interface for the better_player plugin.
-version: 1.0.2
+version: 1.1.0
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_platform_interface
 
 environment:

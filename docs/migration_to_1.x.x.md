@@ -246,3 +246,32 @@ _controller.addEventsListener((PlayerEvent event) {
 
 - `isPictureInPictureEnabled` in `BetterPlayerController` has been renamed to `isPictureInPictureSupported` to better reflect its function (it checks if the hardware/OS supports PiP, not if it's currently turned on).
 
+## 4. Migrating to v1.2.0 (Direct Native Bridges)
+
+Better Player 1.2.0 replaces the legacy asynchronous `MethodChannel` communication with **Direct Native Bridges**. 
+This architectural shift provides higher performance, better type safety, and more reliable state synchronization.
+
+### What Changed?
+
+*   **Android**: Migrated to **JNI** using `jnigen`. The plugin now communicates directly with the Java/Kotlin media engine without the overhead of MethodChannel serialization.
+*   **iOS**: Migrated to **Swift FFI** using `swiftgen`. This allows Dart to call into `AVPlayer` logic directly through the Objective-C runtime.
+*   **Platform Interface**: 
+    *   Renamed `VideoPlayerPlatform` to `BetterPlayerPlatform`.
+    *   Removed `MethodChannelVideoPlayer`. 
+
+### Breaking Changes for Custom Implementations
+
+If you have extended Better Player or implemented a custom platform backend, you must update your references:
+
+1.  **Replace `VideoPlayerPlatform` with `BetterPlayerPlatform`**:
+    ```dart
+    // Before
+    class MyCustomPlatform extends VideoPlayerPlatform { ... }
+    
+    // After
+    class MyCustomPlatform extends BetterPlayerPlatform { ... }
+    ```
+
+2.  **Legacy `MethodChannelVideoPlayer` Removal**:
+    The class `MethodChannelVideoPlayer` is no longer available. All logic has been moved to the respective FFI/JNI implementations in `better_player_android` and `better_player_ios`.
+

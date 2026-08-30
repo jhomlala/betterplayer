@@ -1,15 +1,75 @@
+import 'dart:async';
 import 'package:better_player_android/better_player_android.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class MockBetterPlayer extends Mock implements BetterPlayerWrapper {
+  int get textureId => 1;
+}
+
+class TestBetterPlayerAndroid extends BetterPlayerAndroid {
+  final MockBetterPlayer mockPlayer;
+  dynamic
+  capturedCallback; // Now dynamic since we capture $BetterPlayerCallback
+
+  TestBetterPlayerAndroid(this.mockPlayer);
+
+  @override
+  dynamic buildCallback(dynamic impl) {
+    capturedCallback = impl;
+    return impl; // Return raw object to bypass JNI
+  }
+
+  @override
+  dynamic createJniPlayer(dynamic callback) {
+    return mockPlayer;
+  }
+
+  @override
+  BetterPlayerWrapper createWrapper(dynamic player) {
+    return player as BetterPlayerWrapper;
+  }
+
+  @override
+  int getTextureIdFromPlayer(dynamic player) {
+    return (player as MockBetterPlayer).textureId;
+  }
+
+  @override
+  void jniPreCache(
+    String dataSource,
+    int preCacheSize,
+    int maxCacheSize,
+    int maxCacheFileSize,
+    Map<String, String?>? headers,
+    String? cacheKey,
+  ) {}
+
+  @override
+  void jniStopPreCache(String url) {}
+
+  @override
+  void jniClearCache() {}
+}
 
 void main() {
   group('BetterPlayerAndroid tests', () {
-    final androidPlayer = BetterPlayerAndroid();
+    late MockBetterPlayer mockPlayer;
+    late TestBetterPlayerAndroid androidPlayer;
+
+    setUp(() {
+      mockPlayer = MockBetterPlayer();
+      androidPlayer = TestBetterPlayerAndroid(mockPlayer);
+
+      when(() => mockPlayer.position).thenReturn(5000);
+      when(() => mockPlayer.absolutePosition).thenReturn(1600000000000);
+    });
 
     test('registerWith sets instance', () {
       BetterPlayerAndroid.registerWith();
-      expect(VideoPlayerPlatform.instance, isA<BetterPlayerAndroid>());
+      expect(BetterPlayerPlatform.instance, isA<BetterPlayerAndroid>());
     });
 
     test('buildView returns Texture widget', () {
@@ -18,35 +78,107 @@ void main() {
       expect((widget as Texture).textureId, 1);
     });
 
-    test('dataSourceToMap includes formatHint', () {
-      final dataSource = DataSource(
-        sourceType: DataSourceType.network,
-        uri: 'https://example.com/video.mp4',
-        formatHint: VideoFormat.hls,
-      );
+    test('dispose calls native dispose and release', () async {
+      await androidPlayer.create();
+      await androidPlayer.dispose(1);
+      verify(() => mockPlayer.dispose()).called(1);
+      verify(() => mockPlayer.release()).called(1);
+    });
 
-      // We need a way to access the protected method or test it through public API.
-      // Since it's protected, we can test it through a subclass or just by calling
-      // a method that uses it.
-      // However, for testing purposes, we can just call it if we are in the same library
-      // or if we use a helper.
-      // In Dart tests, we can often just call it if it's not truly private.
-      // Let's see if we can just call it.
-
-      final map = androidPlayer.dataSourceToMap(dataSource);
-      expect(map['formatHint'], 'hls');
+    test('create stores player and returns textureId', () async {
+      final textureId = await androidPlayer.create();
+      expect(textureId, 1);
     });
 
     test(
-      'dataSourceToMap for non-network source does not force formatHint',
-      () {
-        final dataSource = DataSource(
-          sourceType: DataSourceType.asset,
-          asset: 'assets/video.mp4',
-        );
+      'play, pause, setVolume, setSpeed, setTrackParameters, setAudioTrack, setMixWithOthers interact with player',
+      () async {
+        await androidPlayer.create();
 
-        final map = androidPlayer.dataSourceToMap(dataSource);
-        expect(map.containsKey('formatHint'), false);
+        await androidPlayer.play(1);
+        verify(() => mockPlayer.play()).called(1);
+
+        await androidPlayer.pause(1);
+        verify(() => mockPlayer.pause()).called(1);
+
+        await androidPlayer.setVolume(1, 0.5);
+        verify(() => mockPlayer.volume = 0.5).called(1);
+
+        await androidPlayer.setSpeed(1, 1.5);
+        verify(() => mockPlayer.speed = 1.5).called(1);
+
+        await androidPlayer.setTrackParameters(1, 1920, 1080, 5000);
+        verify(() => mockPlayer.setTrackParameters(1920, 1080, 5000)).called(1);
+
+        await androidPlayer.setLooping(1, true);
+        verify(() => mockPlayer.looping = true).called(1);
+
+        await androidPlayer.setAudioTrack(1, 'eng', 1);
+        verify(() => mockPlayer.setAudioTrack(any(), 1)).called(1);
+
+        await androidPlayer.setMixWithOthers(1, true);
+        verify(() => mockPlayer.mixWithOthers = true).called(1);
+      },
+    );
+
+    test('seekTo calls seekTo in ms', () async {
+      await androidPlayer.create();
+      await androidPlayer.seekTo(1, const Duration(seconds: 5));
+      verify(() => mockPlayer.seekTo(5000)).called(1);
+    });
+
+    test('getPosition and getAbsolutePosition return correct values', () async {
+      await androidPlayer.create();
+      final pos = await androidPlayer.getPosition(1);
+      final absPos = await androidPlayer.getAbsolutePosition(1);
+
+      expect(pos, const Duration(milliseconds: 5000));
+      expect(absPos, DateTime.fromMillisecondsSinceEpoch(1600000000000));
+    });
+
+    test('videoEventsFor returns stream', () async {
+      await androidPlayer.create();
+      final stream = androidPlayer.videoEventsFor(1);
+      expect(stream, isA<Stream<VideoEvent>>());
+    });
+
+    test('setDataSource successfully delegates to wrapper', () async {
+      await androidPlayer.create();
+
+      final dataSource = DataSource(
+        sourceType: DataSourceType.network,
+        uri: 'https://example.com/video.mp4',
+      );
+
+      await androidPlayer.setDataSource(1, dataSource);
+      verify(
+        () => mockPlayer.setDataSource(
+          any(),
+          'https://example.com/video.mp4',
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+          any(),
+        ),
+      ).called(1);
+    });
+
+    test(
+      'preCache, stopPreCache, clearCache complete normally in test',
+      () async {
+        final dataSource = DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.mp4',
+        );
+        await expectLater(androidPlayer.preCache(dataSource, 100), completes);
+        await expectLater(androidPlayer.stopPreCache('url', null), completes);
+        await expectLater(androidPlayer.clearCache(), completes);
       },
     );
   });

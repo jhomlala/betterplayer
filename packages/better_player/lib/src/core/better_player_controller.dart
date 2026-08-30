@@ -230,6 +230,7 @@ class BetterPlayerController {
 
   ///Setup new data source in Better Player.
   Future setupDataSource(PlayerDataSource betterPlayerDataSource) async {
+    BetterPlayerUtils.log('Controller: setupDataSource starting');
     postEvent(
       PlayerEvent(
         PlayerEventType.setupDataSource,
@@ -672,7 +673,7 @@ class BetterPlayerController {
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
-    if (videoPlayerController?.value.duration == null) {
+    if (!(videoPlayerController?.value.initialized ?? false)) {
       throw StateError('The video has not been initialized yet.');
     }
 
@@ -795,19 +796,9 @@ class BetterPlayerController {
         videoPlayerController?.value ??
         VideoPlayerValue(duration: const Duration());
 
-    if (currentVideoPlayerValue.hasError) {
-      _videoPlayerValueOnError ??= currentVideoPlayerValue;
-      _postEvent(
-        PlayerEvent(
-          PlayerEventType.exception,
-          parameters: <String, dynamic>{
-            'exception': currentVideoPlayerValue.errorDescription,
-          },
-        ),
-      );
-    }
     if (currentVideoPlayerValue.initialized &&
         !_hasCurrentDataSourceInitialized) {
+      BetterPlayerUtils.log('Controller: Video player initialized');
       _hasCurrentDataSourceInitialized = true;
       _postEvent(PlayerEvent(PlayerEventType.initialized));
     }
