@@ -4,8 +4,8 @@ import 'package:better_player/src/configuration/player_translations.dart';
 import 'package:better_player/src/core/better_player.dart';
 import 'package:better_player/src/logging/player_log_configuration.dart';
 import 'package:better_player/src/subtitles/player_subtitles_configuration.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 ///Configuration of Better Player. Allows to setup general behavior of player.
 ///Master configuration which contains children that configure specific part
