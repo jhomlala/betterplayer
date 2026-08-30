@@ -249,7 +249,7 @@ class _FFITestPageState extends State<FFITestPage> {
               'clearCache',
               () async => _betterPlayerController.clearCache(),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 400),
           ],
         ),
       ),
