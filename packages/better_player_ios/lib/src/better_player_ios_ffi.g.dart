@@ -812,11 +812,6 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
     _objc_msgSend_1pl9qdv(_class_BetterPlayerApi, _sel_clearCache);
   }
 
-  /// isPictureInPictureSupported
-  static bool isPictureInPictureSupported() {
-    return _objc_msgSend_91o635(_class_BetterPlayerApi, _sel_isPictureInPictureSupported);
-  }
-
   /// createCacheManager
   static CacheManager createCacheManager() {
     final $ret = _objc_msgSend_151sglz(
@@ -846,6 +841,14 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
     return $ret.address == 0
         ? null
         : BetterPlayer.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// isPictureInPictureSupported
+  static bool isPictureInPictureSupported() {
+    return _objc_msgSend_91o635(
+      _class_BetterPlayerApi,
+      _sel_isPictureInPictureSupported,
+    );
   }
 
   /// new
@@ -4655,7 +4658,6 @@ late final _sel_arg4 = objc.registerName("arg4");
 late final _sel_callback = objc.registerName("callback");
 late final _sel_clear = objc.registerName("clear");
 late final _sel_clearCache = objc.registerName("clearCache");
-late final _sel_isPictureInPictureSupported = objc.registerName("isPictureInPictureSupported");
 late final _sel_conformsToProtocol_ = objc.registerName("conformsToProtocol:");
 late final _sel_createCacheManager = objc.registerName("createCacheManager");
 late final _sel_createPlayerWithCallback_ = objc.registerName(
@@ -4675,6 +4677,9 @@ late final _sel_enablePictureInPicture_ = objc.registerName(
 late final _sel_getPlayer_ = objc.registerName("getPlayer:");
 late final _sel_init = objc.registerName("init");
 late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
+late final _sel_isPictureInPictureSupported = objc.registerName(
+  "isPictureInPictureSupported",
+);
 late final _sel_new = objc.registerName("new");
 late final _sel_nextId = objc.registerName("nextId");
 late final _sel_observeValueForKeyPath_ofObject_change_context_ = objc
