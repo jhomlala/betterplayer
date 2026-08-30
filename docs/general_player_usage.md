@@ -58,7 +58,7 @@ void initState() {
   super.initState();
   
   PlayerDataSource betterPlayerDataSource = PlayerDataSource(
-      PlayerDataSourceType.network,
+      DataSourceType.network,
       "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
       
   _betterPlayerController = BetterPlayerController(
@@ -80,6 +80,26 @@ Widget build(BuildContext context) {
     ),
   );
 }
+```
+
+## Pro Tips
+
+### Accessing the Controller via Context
+In deep widget trees, you can access the `BetterPlayerController` from any descendant widget of `BetterPlayer` using the `InheritedWidget` pattern. This is useful for building custom UI overlays:
+
+```dart
+BetterPlayerController controller = BetterPlayerController.of(context);
+```
+
+### Source-Specific Placeholders
+While you can define a global placeholder in `PlayerConfiguration`, you can also provide a specific placeholder for each `PlayerDataSource`. The source-specific placeholder will take precedence:
+
+```dart
+PlayerDataSource(
+  DataSourceType.network,
+  "url",
+  placeholder: Image.asset("assets/video_thumbnail.png"),
+)
 ```
 
 ## Explore More

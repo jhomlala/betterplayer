@@ -10,7 +10,7 @@ slug: /
 
 # Better Player
 
-Better Player is an advanced video player plugin for Flutter, built upon the foundation of [Chewie](https://github.com/brianegan/chewie). It enhances the original concepts by addressing common bugs, providing extensive configuration options, and offering solutions for advanced video playback use cases.
+Better Player is an advanced video player plugin for Flutter, built upon the foundation of [Chewie](https://github.com/fluttercommunity/chewie). It enhances the original concepts by addressing common bugs, providing extensive configuration options, and offering solutions for advanced video playback use cases.
 
 ## Key Features
 

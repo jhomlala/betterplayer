@@ -10,8 +10,8 @@ const config = {
   organizationName: 'jhomlala',
   projectName: 'betterplayer',
 
-  onBrokenLinks: 'ignore',
-  onBrokenMarkdownLinks: 'ignore',
+  onBrokenLinks: 'warn',
+  onBrokenMarkdownLinks: 'warn',
 
   i18n: {
     defaultLocale: 'en',

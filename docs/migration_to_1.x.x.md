@@ -37,7 +37,7 @@ BetterPlayerController(
     autoPlay: true,
   ),
   betterPlayerDataSource: BetterPlayerDataSource(
-    BetterPlayerDataSourceType.network,
+    DataSourceType.network,
     "https://example.com/video.mp4",
     videoFormat: BetterPlayerVideoFormat.hls,
     cacheConfiguration: BetterPlayerCacheConfiguration(
@@ -164,7 +164,7 @@ final config = BetterPlayerSubtitlesConfiguration(
 
 ```dart
 final source = PlayerSubtitlesSource(
-  type: BetterPlayerSubtitlesSourceType.network,
+  type: PlayerSubtitlesSourceType.network,
   urls: ["https://example.com/sub.srt"],
 );
 

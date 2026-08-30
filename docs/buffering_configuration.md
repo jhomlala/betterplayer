@@ -5,7 +5,7 @@ title: Buffering Configuration
 
 # Buffering Configuration
 
-You can fine-tune the video buffering behavior using the `BetterPlayerBufferingConfiguration` class. This allows you to optimize the playback experience based on network conditions or specific application requirements.
+You can fine-tune the video buffering behavior using the `BufferingConfiguration` class. This allows you to optimize the playback experience based on network conditions or specific application requirements.
 
 :::note
 Buffering configuration is currently available only on Android.
@@ -15,9 +15,9 @@ Buffering configuration is currently available only on Android.
 
 ```dart
 PlayerDataSource _betterPlayerDataSource = PlayerDataSource(
-      PlayerDataSourceType.network,
+      DataSourceType.network,
       Constants.elephantDreamVideoUrl,
-      bufferingConfiguration: BetterPlayerBufferingConfiguration(
+      bufferingConfiguration: BufferingConfiguration(
         minBufferMs: 50000,
         maxBufferMs: 13107200,
         bufferForPlaybackMs: 2500,

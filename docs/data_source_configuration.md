@@ -23,7 +23,7 @@ We recommend using the provided factory methods for initialization:
 ## Configuration Parameters
 
 ### Core Parameters
-*   **`type`**: The `PlayerDataSourceType` (Network, File, or Memory).
+*   **`type`**: The `DataSourceType` (Network, File, or Memory).
 *   **`url`**: The path or URL of the video source.
 *   **`subtitles`**: A list of `PlayerSubtitlesSource` objects.
 *   **`headers`**: A map of custom HTTP headers for network requests.

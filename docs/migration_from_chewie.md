@@ -26,7 +26,7 @@ dependencies:
   # video_player: ^x.y.z
   
   # Add this line:
-  better_player: ^0.6.0
+  better_player: ^1.2.0
 ```
 
 Run `flutter pub get` in your terminal to fetch the packages.
@@ -89,7 +89,7 @@ void initState() {
   super.initState();
 
   PlayerDataSource dataSource = PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     'https://example.com/video.mp4',
   );
 
@@ -173,9 +173,9 @@ Switching to Better Player gives you immediate access to features that often req
 - **Built-in Video Caching**:
   ```dart
   PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     'https://example.com/video.mp4',
-    cacheConfiguration: const BetterPlayerCacheConfiguration(
+    cacheConfiguration: const CacheConfiguration(
       useCache: true,
       maxCacheSize: 10 * 1024 * 1024,
     ),

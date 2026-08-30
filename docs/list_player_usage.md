@@ -22,7 +22,7 @@ Widget build(BuildContext context) {
     aspectRatio: 16 / 9,
     child: BetterPlayerListVideoPlayer(
       PlayerDataSource(
-          PlayerDataSourceType.network, videoListData.videoUrl),
+          DataSourceType.network, videoListData.videoUrl),
       key: Key(videoListData.hashCode.toString()),
       playFraction: 0.8,
     ),

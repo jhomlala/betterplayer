@@ -14,7 +14,7 @@ Subtitles can be loaded from **Network**, **File**, or **Memory** sources. You c
 ### Example: Network Subtitles
 ```dart
 var dataSource = PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     "video_url",
     subtitles: PlayerSubtitlesSource.single(
         type: PlayerSubtitlesSourceType.network,
@@ -26,7 +26,7 @@ var dataSource = PlayerDataSource(
 ### Example: Multiple Subtitle Tracks
 ```dart
 var dataSource = PlayerDataSource(
-    PlayerDataSourceType.network,
+    DataSourceType.network,
     "hls_url",
     subtitles: [
         PlayerSubtitlesSource(
