@@ -15,9 +15,10 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     void Function(int levelIndex, String tag, String message) callback,
   ) async {
     final ffiFn = BetterPlayerLogCallback$Builder.implement(
-      onLog_tag_message_: (int level, objc.NSString tag, objc.NSString message) {
-        callback(level, tag.toString(), message.toString());
-      },
+      onLog_tag_message_:
+          (int level, objc.NSString tag, objc.NSString message) {
+            callback(level, tag.toString(), message.toString());
+          },
     );
     BetterPlayerApi.setLogCallback(ffiFn);
   }
@@ -43,8 +44,6 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     _eventControllers[textureId]?.close();
     _eventControllers.remove(textureId);
   }
-
-
 
   @override
   Future<int?> create({

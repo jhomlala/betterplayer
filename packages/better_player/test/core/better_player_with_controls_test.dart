@@ -30,6 +30,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: BetterPlayerControllerProvider(
             controller: controller,
             child: BetterPlayerWithControls(
@@ -63,6 +64,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: BetterPlayerControllerProvider(
             controller: controller,
             child: BetterPlayerWithControls(
@@ -99,6 +101,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: BetterPlayerControllerProvider(
             controller: controller,
             child: BetterPlayerWithControls(
@@ -166,6 +169,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: BetterPlayerControllerProvider(
             controller: controller,
             child: BetterPlayerWithControls(

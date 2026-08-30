@@ -7,7 +7,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 

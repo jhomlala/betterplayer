@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
-import 'player_log_level.dart';
-import 'player_log_record.dart';
+
+import 'package:better_player/src/logging/player_log_level.dart';
+import 'package:better_player/src/logging/player_log_record.dart';
 
 /// Abstract base for all log output backends.
 /// Implement this to add file logging, network logging, etc.

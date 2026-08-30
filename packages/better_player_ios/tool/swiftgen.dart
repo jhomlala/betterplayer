@@ -53,8 +53,10 @@ Future<void> main() async {
               ['BetterPlayerApi', 'BetterPlayer'].contains(decl.originalName),
         ),
         protocols: fg.Protocols(
-          include: (decl) =>
-              ['BetterPlayerCallback', 'BetterPlayerLogCallback'].contains(decl.originalName),
+          include: (decl) => [
+            'BetterPlayerCallback',
+            'BetterPlayerLogCallback',
+          ].contains(decl.originalName),
         ),
       ),
     ),

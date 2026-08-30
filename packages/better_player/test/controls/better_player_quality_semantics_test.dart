@@ -85,6 +85,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            theme: ThemeData(useMaterial3: false),
             home: MockControlsWidget(controller: controller),
           ),
         );
@@ -126,6 +127,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            theme: ThemeData(useMaterial3: false),
             home: MockControlsWidget(controller: controller),
           ),
         );
@@ -203,6 +205,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            theme: ThemeData(useMaterial3: false),
             home: MockControlsWidget(controller: controller),
           ),
         );
@@ -249,6 +252,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            theme: ThemeData(useMaterial3: false),
             home: MockControlsWidget(controller: controller),
           ),
         );

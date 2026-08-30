@@ -54,8 +54,6 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     _eventControllers.remove(textureId);
   }
 
-
-
   @override
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,

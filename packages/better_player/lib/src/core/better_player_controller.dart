@@ -3,13 +3,12 @@ import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
-import 'package:better_player/better_player.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 ///Class used to control overall Better Player behavior. Main class to change
@@ -1076,7 +1075,7 @@ class BetterPlayerController {
     final languageCode = locale.languageCode;
     translations =
         betterPlayerConfiguration.translations?.firstWhereOrNull(
-          (translations) => translations.languageCode == languageCode,
+          (t) => t.languageCode == languageCode,
         ) ??
         _getDefaultTranslations(locale);
   }

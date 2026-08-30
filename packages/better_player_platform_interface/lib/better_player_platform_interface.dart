@@ -11,4 +11,3 @@ export 'package:better_player_platform_interface/src/models/video_event.dart';
 export 'package:better_player_platform_interface/src/models/video_event_type.dart';
 export 'package:better_player_platform_interface/src/models/video_format.dart';
 export 'package:better_player_platform_interface/src/models/video_player_value.dart';
-

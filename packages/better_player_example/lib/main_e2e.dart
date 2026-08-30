@@ -56,7 +56,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      BetterPlayerLogger.instance.info('E2E: postFrameCallback - setting up data source');
+      BetterPlayerLogger.instance.info(
+        'E2E: postFrameCallback - setting up data source',
+      );
       final betterPlayerDataSource = PlayerDataSource(
         DataSourceType.network,
         Constants.bugBuckBunnyVideoUrl,
@@ -70,7 +72,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         'E2E: Event received: ${event.betterPlayerEventType}',
       );
       if (event.betterPlayerEventType == PlayerEventType.exception) {
-        BetterPlayerLogger.instance.info('E2E: Exception event: ${event.parameters}');
+        BetterPlayerLogger.instance.info(
+          'E2E: Exception event: ${event.parameters}',
+        );
         setState(() {
           _errorDescription =
               event.parameters?['exception']?.toString() ??

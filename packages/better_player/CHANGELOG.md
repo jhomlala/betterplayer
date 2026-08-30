@@ -1,4 +1,5 @@
 ## Unreleased
+- Fixed: missing shader error `ink_sparkle.frag` in tests by disabling Material 3 in `MaterialApp`.
 - Added: Extensible logging system with `BetterPlayerLogger`. Dart is now the single source of truth for logs.
 - Added: Global shorthand `PlayerLogger` for more concise logging (e.g., `PlayerLogger.info(...)`).
 - Added: Native-to-Dart logging streaming for Android (ExoPlayer) and iOS (AVPlayer).

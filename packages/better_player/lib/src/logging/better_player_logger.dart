@@ -1,7 +1,7 @@
+import 'package:better_player/src/logging/player_log_configuration.dart';
+import 'package:better_player/src/logging/player_log_level.dart';
+import 'package:better_player/src/logging/player_log_record.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
-import 'player_log_configuration.dart';
-import 'player_log_level.dart';
-import 'player_log_record.dart';
 
 class BetterPlayerLogger {
   BetterPlayerLogger._();
@@ -36,15 +36,31 @@ class BetterPlayerLogger {
   void info(String message, {String tag = 'BetterPlayer'}) =>
       _log(PlayerLogLevel.info, message, tag: tag);
 
-  void warning(String message,
-          {String tag = 'BetterPlayer', Object? error, StackTrace? stackTrace}) =>
-      _log(PlayerLogLevel.warning, message,
-          tag: tag, error: error, stackTrace: stackTrace);
+  void warning(
+    String message, {
+    String tag = 'BetterPlayer',
+    Object? error,
+    StackTrace? stackTrace,
+  }) => _log(
+    PlayerLogLevel.warning,
+    message,
+    tag: tag,
+    error: error,
+    stackTrace: stackTrace,
+  );
 
-  void error(String message,
-          {String tag = 'BetterPlayer', Object? error, StackTrace? stackTrace}) =>
-      _log(PlayerLogLevel.error, message,
-          tag: tag, error: error, stackTrace: stackTrace);
+  void error(
+    String message, {
+    String tag = 'BetterPlayer',
+    Object? error,
+    StackTrace? stackTrace,
+  }) => _log(
+    PlayerLogLevel.error,
+    message,
+    tag: tag,
+    error: error,
+    stackTrace: stackTrace,
+  );
 
   /// Entry point for native → Dart log forwarding.
   void onNativeLog(int levelIndex, String tag, String message) {
@@ -60,7 +76,8 @@ class BetterPlayerLogger {
     Object? error,
     StackTrace? stackTrace,
   }) {
-    final shouldLog = level.index >= _config.logLevel.index ||
+    final shouldLog =
+        level.index >= _config.logLevel.index ||
         (_config.alwaysLogErrors && level == PlayerLogLevel.error);
     if (!shouldLog) return;
 
@@ -72,7 +89,7 @@ class BetterPlayerLogger {
       error: error,
       stackTrace: stackTrace,
     );
-    
+
     for (final output in _config.outputs) {
       output.output(record);
     }
