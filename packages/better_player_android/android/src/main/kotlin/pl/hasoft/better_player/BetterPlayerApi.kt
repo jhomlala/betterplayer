@@ -11,10 +11,8 @@ class BetterPlayerApi {
     companion object {
         @Keep
         var textureRegistry: TextureRegistry? = null
-
         @Keep
         var activity: Activity? = null
-
         @Keep
         var logCallback: BetterPlayerLogCallback? = null
 
