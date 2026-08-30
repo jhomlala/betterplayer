@@ -24,9 +24,6 @@ class BetterPlayerController {
       betterPlayerConfiguration.playerLogConfiguration,
     );
     BetterPlayerLogger.instance.info('Controller created', tag: 'Controller');
-      'Controller initialized',
-      tag: 'Controller',
-    );
     _betterPlayerControlsConfiguration =
         betterPlayerConfiguration.controlsConfiguration;
     _eventListeners.add(eventListener);
