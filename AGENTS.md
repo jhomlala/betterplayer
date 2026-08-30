@@ -110,3 +110,11 @@
 ## FFI Generation
 
 Swiftgen and jnigen bindings are automatically generated on CI/CD (or triggered manually via GitHub Actions workflow_dispatch). Do not attempt to run swiftgen or jnigen locally if your environment doesn't support it (e.g. Windows for iOS). Instead, make the code changes, commit them, and ask the user to trigger the generation on CI/CD.
+
+## FFI/JNI Generation Learnings
+
+1. **CI Chicken-and-Egg**: When introducing new native interfaces (like callbacks) that require generation via `jnigen` or `swiftgen` in CI, don't use those bindings in Dart immediately. If CI runs `flutter build` before generation, the build will fail because the Dart classes don't exist yet, preventing the generator from running. Workaround: Temporarily comment out the Dart usages, let CI generate the bindings, pull them, and then uncomment.
+2. **Kotlin Setter Clashes**: Exposing a public Kotlin property (`var callback: Callback?`) automatically creates a JVM setter `setCallback()`. If you manually define `fun setCallback()`, you will get a JVM 'Platform declaration clash'. Use a `private var _callback` to store the value instead.
+3. **Swift Setter Clashes**: Similarly in Swift, an `@objc public static var callback` creates an Objective-C setter `setCallback:`. Defining a manual `@objc public static func setCallback()` will cause a selector conflict. Use `private static var _callback`.
+4. **JNI Auto-Setters**: `jnigen` automatically maps Kotlin `setX(...)` functions to Dart setter properties. For example, `setLogCallback(callback)` in Kotlin becomes `Api.Companion.logCallback = callback;` in Dart.
+5. **Swiftgen Allow-Lists**: Don't forget to explicitly add new Swift protocols to the `protocols:` allow-list inside `swiftgen.dart`. If you forget, it will only generate a stub class without the required Builder implementation.
