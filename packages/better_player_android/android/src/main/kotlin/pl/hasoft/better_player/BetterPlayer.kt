@@ -10,6 +10,8 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.Surface
 import androidx.annotation.OptIn
@@ -64,6 +66,15 @@ class BetterPlayer(
     private val callback: BetterPlayerCallback,
     customDefaultLoadControl: CustomDefaultLoadControl? = null
 ) {
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private fun runOnMainThread(action: () -> Unit) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            action()
+        } else {
+            mainHandler.post(action)
+        }
+    }
+
     private val exoPlayer: ExoPlayer?
     private val trackSelector: DefaultTrackSelector = DefaultTrackSelector(context)
     private val loadControl: LoadControl
@@ -277,8 +288,10 @@ class BetterPlayer(
                     }
                 }
                 val workerUuid = imageWorkRequest.id
-                workManager.getWorkInfoByIdLiveData(workerUuid)
-                    .observeForever(workInfoObserver)
+                runOnMainThread {
+                    workManager.getWorkInfoByIdLiveData(workerUuid)
+                        .observeForever(workInfoObserver)
+                }
                 workerObserverMap[workerUuid] = workInfoObserver
                 return null
             }
@@ -688,6 +701,14 @@ class BetterPlayer(
     fun dispose() {
         disposeMediaSession()
         disposeRemoteNotifications()
+        
+        runOnMainThread {
+            workerObserverMap.forEach { (uuid, observer) ->
+                workManager.getWorkInfoByIdLiveData(uuid).removeObserver(observer)
+            }
+            workerObserverMap.clear()
+        }
+
         if (isInitialized) {
             exoPlayer?.stop()
         }
