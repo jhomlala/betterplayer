@@ -1,3 +1,6 @@
+## Unreleased
+- Added: `setupLogger` method to `BetterPlayerPlatform` to support synchronized native logging.
+
 ## 1.1.0
 - Added: Removed legacy `MethodChannelVideoPlayer` and replaced it with a modern JNI/Swiftgen implementation.
 - Added: Renamed `VideoPlayerPlatform` to `BetterPlayerPlatform` for better project branding.

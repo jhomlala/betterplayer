@@ -87,6 +87,40 @@ extension type BetterPlayerApi$Companion._(jni$_.JObject _$this)
 }
 
 extension BetterPlayerApi$Companion$$Methods on BetterPlayerApi$Companion {
+  static final _id_setupLogger = BetterPlayerApi$Companion._class
+      .instanceMethodId(
+        r'setupLogger',
+        r'(I)V',
+      );
+
+  static final _setupLogger =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int32,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              int,
+            )
+          >();
+
+  /// from: `public final void setupLogger(int level)`
+  void setupLogger(int level) {
+    final _$$selfRef = reference;
+    _setupLogger(
+      _$$selfRef.pointer,
+      _id_setupLogger.pointer,
+      level,
+    ).check();
+  }
+
   static final _id_get$textureRegistry = BetterPlayerApi$Companion._class
       .instanceMethodId(
         r'getTextureRegistry',

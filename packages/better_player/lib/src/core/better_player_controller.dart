@@ -19,6 +19,20 @@ class BetterPlayerController {
     this.betterPlayerPlaylistConfiguration,
     PlayerDataSource? betterPlayerDataSource,
   }) {
+    BetterPlayerLogger.instance.setup(
+      betterPlayerConfiguration.playerLogConfiguration,
+    );
+    BetterPlayerPlatform.instance.setupLogger(
+      betterPlayerConfiguration.playerLogConfiguration.logLevel.index,
+    );
+    BetterPlayerUtils.logCallback = (msg) => BetterPlayerLogger.instance.info(
+      msg,
+      breadcrumb: 'Platform',
+    );
+    BetterPlayerLogger.instance.info(
+      'Controller initialized',
+      breadcrumb: 'Controller',
+    );
     _betterPlayerControlsConfiguration =
         betterPlayerConfiguration.controlsConfiguration;
     _eventListeners.add(eventListener);
@@ -230,7 +244,10 @@ class BetterPlayerController {
 
   ///Setup new data source in Better Player.
   Future setupDataSource(PlayerDataSource betterPlayerDataSource) async {
-    BetterPlayerUtils.log('Controller: setupDataSource starting');
+    BetterPlayerLogger.instance.info(
+      'setupDataSource starting',
+      breadcrumb: 'Controller',
+    );
     postEvent(
       PlayerEvent(
         PlayerEventType.setupDataSource,
@@ -277,11 +294,21 @@ class BetterPlayerController {
     }
     try {
       await Future.wait(setupFutures);
-    } catch (exception) {
+      BetterPlayerLogger.instance.info(
+        'Data source setup complete: ${betterPlayerDataSource.url}',
+        breadcrumb: 'Controller',
+      );
+    } catch (exception, stackTrace) {
       if (createdNewController) {
         videoPlayerController?.dispose();
         videoPlayerController = null;
       }
+      BetterPlayerLogger.instance.error(
+        'Data source setup failed: $exception',
+        error: exception,
+        stackTrace: stackTrace,
+        breadcrumb: 'Controller',
+      );
       _postEvent(
         PlayerEvent(
           PlayerEventType.exception,
@@ -443,8 +470,13 @@ class BetterPlayerController {
         }
       }
       _asmsSegmentsLoading = false;
-    } catch (exception) {
-      BetterPlayerUtils.log('Load ASMS subtitle segments failed: $exception');
+    } catch (exception, stackTrace) {
+      BetterPlayerLogger.instance.error(
+        'Load ASMS subtitle segments failed: $exception',
+        error: exception,
+        stackTrace: stackTrace,
+        breadcrumb: 'Controller',
+      );
     }
   }
 
@@ -488,10 +520,11 @@ class BetterPlayerController {
       case DataSourceType.file:
         final file = File(betterPlayerDataSource.url);
         if (!file.existsSync()) {
-          BetterPlayerUtils.log(
+          BetterPlayerLogger.instance.warning(
             "File ${file.path} doesn't exists. This may be because "
             "you're acessing file from native path and Flutter doesn't "
             'recognize this path.',
+            breadcrumb: 'Controller',
           );
         }
 
@@ -567,6 +600,10 @@ class BetterPlayerController {
   ///Initializes video based on configuration. Invoke actions which need to be
   ///run on player start.
   Future _initializeVideo() async {
+    BetterPlayerLogger.instance.info(
+      'Initializing video: autoPlay=${betterPlayerConfiguration.autoPlay}, startAt=${betterPlayerConfiguration.startAt}',
+      breadcrumb: 'Controller',
+    );
     setLooping(betterPlayerConfiguration.looping);
     _videoEventStreamSubscription?.cancel();
     _videoEventStreamSubscription = null;
@@ -636,6 +673,7 @@ class BetterPlayerController {
   ///Start video playback. Play will be triggered only if current lifecycle state
   ///is resumed.
   Future<void> play() async {
+    BetterPlayerLogger.instance.info('play()', breadcrumb: 'Controller');
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -660,6 +698,7 @@ class BetterPlayerController {
 
   ///Stop video playback.
   Future<void> pause() async {
+    BetterPlayerLogger.instance.info('pause()', breadcrumb: 'Controller');
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -670,6 +709,10 @@ class BetterPlayerController {
 
   ///Move player to specific position/moment of the video.
   Future<void> seekTo(Duration moment) async {
+    BetterPlayerLogger.instance.info(
+      'seekTo($moment)',
+      breadcrumb: 'Controller',
+    );
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -700,11 +743,17 @@ class BetterPlayerController {
   ///Set volume of player. Allows values from 0.0 to 1.0.
   Future<void> setVolume(double volume) async {
     if (volume < 0.0 || volume > 1.0) {
-      BetterPlayerUtils.log('Volume must be between 0.0 and 1.0');
+      BetterPlayerLogger.instance.warning(
+        'Volume must be between 0.0 and 1.0',
+        breadcrumb: 'Controller',
+      );
       throw ArgumentError('Volume must be between 0.0 and 1.0');
     }
     if (videoPlayerController == null) {
-      BetterPlayerUtils.log('The data source has not been initialized');
+      BetterPlayerLogger.instance.warning(
+        'The data source has not been initialized',
+        breadcrumb: 'Controller',
+      );
       throw StateError('The data source has not been initialized');
     }
     await videoPlayerController!.setVolume(volume);
@@ -719,11 +768,17 @@ class BetterPlayerController {
   ///Set playback speed of video. Allows to set speed value between 0 and 2.
   Future<void> setSpeed(double speed) async {
     if (speed <= 0 || speed > 2) {
-      BetterPlayerUtils.log('Speed must be between 0 and 2');
+      BetterPlayerLogger.instance.warning(
+        'Speed must be between 0 and 2',
+        breadcrumb: 'Controller',
+      );
       throw ArgumentError('Speed must be between 0 and 2');
     }
     if (videoPlayerController == null) {
-      BetterPlayerUtils.log('The data source has not been initialized');
+      BetterPlayerLogger.instance.warning(
+        'The data source has not been initialized',
+        breadcrumb: 'Controller',
+      );
       throw StateError('The data source has not been initialized');
     }
     await videoPlayerController?.setSpeed(speed);
@@ -798,7 +853,10 @@ class BetterPlayerController {
 
     if (currentVideoPlayerValue.initialized &&
         !_hasCurrentDataSourceInitialized) {
-      BetterPlayerUtils.log('Controller: Video player initialized');
+      BetterPlayerLogger.instance.info(
+        'Video player initialized',
+        breadcrumb: 'Controller',
+      );
       _hasCurrentDataSourceInitialized = true;
       _postEvent(PlayerEvent(PlayerEventType.initialized));
     }
@@ -849,7 +907,10 @@ class BetterPlayerController {
   ///Flag which determines whenever player is playing live data source.
   bool isLiveStream() {
     if (_betterPlayerDataSource == null) {
-      BetterPlayerUtils.log('The data source has not been initialized');
+      BetterPlayerLogger.instance.warning(
+        'The data source has not been initialized',
+        breadcrumb: 'Controller',
+      );
       throw StateError('The data source has not been initialized');
     }
     return _betterPlayerDataSource!.liveStream == true;
@@ -858,7 +919,10 @@ class BetterPlayerController {
   ///Flag which determines whenever player data source has been initialized.
   bool? isVideoInitialized() {
     if (videoPlayerController == null) {
-      BetterPlayerUtils.log('The data source has not been initialized');
+      BetterPlayerLogger.instance.warning(
+        'The data source has not been initialized',
+        breadcrumb: 'Controller',
+      );
       throw StateError('The data source has not been initialized');
     }
     return videoPlayerController?.value.initialized;
@@ -869,8 +933,9 @@ class BetterPlayerController {
   void startNextVideoTimer() {
     if (_nextVideoTimer == null) {
       if (betterPlayerPlaylistConfiguration == null) {
-        BetterPlayerUtils.log(
+        BetterPlayerLogger.instance.warning(
           'BettterPlayerPlaylistConifugration has not been set!',
+          breadcrumb: 'Controller',
         );
         throw StateError(
           'BettterPlayerPlaylistConifugration has not been set!',
@@ -918,6 +983,10 @@ class BetterPlayerController {
   ///Setup track parameters for currently played video. Can be only used for HLS or DASH
   ///data source.
   void setTrack(PlayerAsmsTrack track) {
+    BetterPlayerLogger.instance.debug(
+      'Track set: ${track.id}, ${track.width}x${track.height}, ${track.bitrate}bps',
+      breadcrumb: 'Controller',
+    );
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -987,6 +1056,10 @@ class BetterPlayerController {
 
   ///Set different resolution (quality) for video
   Future<void> setResolution(String url) async {
+    BetterPlayerLogger.instance.info(
+      'Resolution changed to: $url',
+      breadcrumb: 'Controller',
+    );
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -1047,6 +1120,10 @@ class BetterPlayerController {
   ///state, then video playback will stop. If showNotification is set in data
   ///source or handleLifecycle is false then this logic will be ignored.
   void setAppLifecycleState(AppLifecycleState appLifecycleState) {
+    BetterPlayerLogger.instance.debug(
+      'App lifecycle: $appLifecycleState',
+      breadcrumb: 'Controller',
+    );
     if (_isAutomaticPlayPauseHandled()) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
@@ -1132,12 +1209,16 @@ class BetterPlayerController {
             betterPlayerGlobalKey.currentContext!.findRenderObject()
                 as RenderBox?;
         if (renderBox == null) {
-          BetterPlayerUtils.log(
-            "Can't show PiP. RenderBox is null. Did you provide valid global"
-            ' key?',
+          BetterPlayerLogger.instance.warning(
+            "Can't show PiP. RenderBox is null. Did you provide valid global key?",
+            breadcrumb: 'Controller',
           );
           return;
         }
+        BetterPlayerLogger.instance.info(
+          'PiP enabled',
+          breadcrumb: 'Controller',
+        );
         final position = renderBox.localToGlobal(Offset.zero);
         return videoPlayerController?.enablePictureInPicture(
           left: position.dx,
@@ -1146,13 +1227,17 @@ class BetterPlayerController {
           height: renderBox.size.height,
         );
       } else {
-        BetterPlayerUtils.log('Unsupported PiP in current platform.');
+        BetterPlayerLogger.instance.warning(
+          'Unsupported PiP in current platform.',
+          breadcrumb: 'Controller',
+        );
       }
     } else {
-      BetterPlayerUtils.log(
+      BetterPlayerLogger.instance.warning(
         "Picture in picture is not supported in this device. If you're "
         "using Android, please check if you're using activity v2 "
         'embedding.',
+        breadcrumb: 'Controller',
       );
     }
   }
@@ -1184,6 +1269,10 @@ class BetterPlayerController {
 
   ///Handle VideoEvent when remote controls notification / PiP is shown
   Future<void> _handleVideoEvent(VideoEvent event) async {
+    BetterPlayerLogger.instance.debug(
+      'Video event: ${event.eventType}',
+      breadcrumb: 'Controller',
+    );
     switch (event.eventType) {
       case VideoEventType.play:
         _postEvent(PlayerEvent(PlayerEventType.play));
@@ -1230,6 +1319,10 @@ class BetterPlayerController {
 
   ///Retry data source if playback failed.
   Future retryDataSource() async {
+    BetterPlayerLogger.instance.warning(
+      'Retrying data source',
+      breadcrumb: 'Controller',
+    );
     await _setupDataSource(_betterPlayerDataSource!);
     if (_videoPlayerValueOnError != null) {
       final position = _videoPlayerValueOnError!.position;
@@ -1241,6 +1334,10 @@ class BetterPlayerController {
 
   ///Set [audioTrack] in player. Works only for HLS or DASH streams.
   void setAudioTrack(PlayerAsmsAudioTrack audioTrack) {
+    BetterPlayerLogger.instance.debug(
+      'Audio track set: ${audioTrack.label}',
+      breadcrumb: 'Controller',
+    );
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -1339,6 +1436,7 @@ class BetterPlayerController {
   ///autoDispose parameter will be overridden and controller will be disposed
   ///(if it wasn't disposed before).
   void dispose({bool forceDispose = false}) {
+    BetterPlayerLogger.instance.info('dispose()', breadcrumb: 'Controller');
     if (!betterPlayerConfiguration.autoDispose && !forceDispose) {
       return;
     }
@@ -1355,6 +1453,10 @@ class BetterPlayerController {
       _controlsVisibilityStreamController.close();
       _videoEventStreamSubscription?.cancel();
       _disposed = true;
+      BetterPlayerLogger.instance.info(
+        'Controller disposed',
+        breadcrumb: 'Controller',
+      );
       _controllerEventStreamController.close();
 
       ///Delete files async

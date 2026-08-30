@@ -1,9 +1,4 @@
-import 'package:better_player/src/asms/better_player_asms_utils.dart';
-import 'package:better_player/src/asms/player_asms_audio_track.dart';
-import 'package:better_player/src/asms/player_asms_data_holder.dart';
-import 'package:better_player/src/asms/player_asms_subtitle.dart';
-import 'package:better_player/src/asms/player_asms_subtitle_segment.dart';
-import 'package:better_player/src/asms/player_asms_track.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/hls/hls_parser/hls_master_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_media_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
@@ -29,8 +24,13 @@ class BetterPlayerHlsUtils {
       tracks = list[0] as List<PlayerAsmsTrack>;
       subtitles = list[1] as List<PlayerAsmsSubtitle>;
       audios = list[2] as List<PlayerAsmsAudioTrack>;
-    } catch (exception) {
-      BetterPlayerUtils.log('Exception on hls parse: $exception');
+    } catch (exception, stackTrace) {
+      BetterPlayerLogger.instance.error(
+        'Exception on hls parse: $exception',
+        error: exception,
+        stackTrace: stackTrace,
+        breadcrumb: 'HLS',
+      );
     }
     return PlayerAsmsDataHolder(
       tracks: tracks,
@@ -68,8 +68,13 @@ class BetterPlayerHlsUtils {
       if (tracks.isNotEmpty) {
         tracks.insert(0, PlayerAsmsTrack.defaultTrack());
       }
-    } catch (exception) {
-      BetterPlayerUtils.log('Exception on parseSubtitles: $exception');
+    } catch (exception, stackTrace) {
+      BetterPlayerLogger.instance.error(
+        'Exception on parseSubtitles: $exception',
+        error: exception,
+        stackTrace: stackTrace,
+        breadcrumb: 'HLS',
+      );
     }
     return tracks;
   }
@@ -94,8 +99,13 @@ class BetterPlayerHlsUtils {
           }
         }
       }
-    } catch (exception) {
-      BetterPlayerUtils.log('Exception on parseSubtitles: $exception');
+    } catch (exception, stackTrace) {
+      BetterPlayerLogger.instance.error(
+        'Exception on parseSubtitles: $exception',
+        error: exception,
+        stackTrace: stackTrace,
+        breadcrumb: 'HLS',
+      );
     }
 
     return subtitles;
@@ -181,8 +191,13 @@ class BetterPlayerHlsUtils {
         segments: asmsSegments,
         isDefault: isDefault,
       );
-    } catch (exception) {
-      BetterPlayerUtils.log('Failed to process subtitles playlist: $exception');
+    } catch (exception, stackTrace) {
+      BetterPlayerLogger.instance.error(
+        'Failed to process subtitles playlist: $exception',
+        error: exception,
+        stackTrace: stackTrace,
+        breadcrumb: 'HLS',
+      );
       return null;
     }
   }

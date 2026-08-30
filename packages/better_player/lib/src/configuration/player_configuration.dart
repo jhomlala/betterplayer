@@ -44,7 +44,11 @@ class PlayerConfiguration {
     this.autoDispose = true,
     this.expandToFill = true,
     this.useRootNavigator = false,
+    this.playerLogConfiguration = const PlayerLogConfiguration(),
   });
+
+  /// Defines the logging configuration.
+  final PlayerLogConfiguration playerLogConfiguration;
 
   /// Play the video as soon as it's displayed
   final bool autoPlay;
@@ -188,6 +192,7 @@ class PlayerConfiguration {
     bool? autoDispose,
     bool? expandToFill,
     bool? useRootNavigator,
+    PlayerLogConfiguration? playerLogConfiguration,
   }) {
     return PlayerConfiguration(
       aspectRatio: aspectRatio ?? this.aspectRatio,
@@ -230,6 +235,8 @@ class PlayerConfiguration {
       autoDispose: autoDispose ?? this.autoDispose,
       expandToFill: expandToFill ?? this.expandToFill,
       useRootNavigator: useRootNavigator ?? this.useRootNavigator,
+      playerLogConfiguration:
+          playerLogConfiguration ?? this.playerLogConfiguration,
     );
   }
 }

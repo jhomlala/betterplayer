@@ -108,6 +108,7 @@ class BetterPlayer(
         workManager = WorkManager.getInstance(context)
         workerObserverMap = HashMap()
         setupVideoPlayer(textureEntry)
+        BetterPlayerApi.log(1, TAG, "Initialized")
     }
 
     @Keep
@@ -133,6 +134,7 @@ class BetterPlayer(
         cacheKey: String?,
         clearKey: String?
     ) {
+        BetterPlayerApi.log(1, TAG, "Setting data source: $dataSource")
         this.key = key
         isInitialized = false
         isInitializedSent = false
@@ -408,12 +410,15 @@ class BetterPlayer(
         setAudioAttributes(exoPlayer, true)
         exoPlayer?.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
+                BetterPlayerApi.log(0, TAG, "Playback state changed: $playbackState")
                 when (playbackState) {
                     Player.STATE_BUFFERING -> {
+                        BetterPlayerApi.log(1, TAG, "Playback state: BUFFERING")
                         sendBufferingUpdate(true)
                         callback.onBufferingStart()
                     }
                     Player.STATE_READY -> {
+                        BetterPlayerApi.log(1, TAG, "Playback state: READY")
                         if (!isInitializedSent) {
                             isInitialized = true
                             sendInitialized()
@@ -421,15 +426,17 @@ class BetterPlayer(
                         callback.onBufferingEnd()
                     }
                     Player.STATE_ENDED -> {
+                        BetterPlayerApi.log(1, TAG, "Playback state: ENDED")
                         callback.onCompleted(key = key)
                     }
                     Player.STATE_IDLE -> {
-                        //no-op
+                        BetterPlayerApi.log(1, TAG, "Playback state: IDLE")
                     }
                 }
             }
 
             override fun onPlayerError(error: PlaybackException) {
+                BetterPlayerApi.log(3, TAG, "Player error: $error")
                 callback.onError("VideoError", "Video player had error $error", "")
             }
 
@@ -472,16 +479,14 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun play() {
+        BetterPlayerApi.log(1, TAG, "play()")
         exoPlayer?.playWhenReady = true
     }
 
     @Keep
-
-
     fun pause() {
+        BetterPlayerApi.log(1, TAG, "pause()")
         exoPlayer?.playWhenReady = false
     }
 
@@ -692,9 +697,8 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun dispose() {
+        BetterPlayerApi.log(1, TAG, "dispose()")
         disposeMediaSession()
         disposeRemoteNotifications()
         

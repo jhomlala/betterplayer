@@ -1,4 +1,5 @@
 ## Unreleased
+- Added: Comprehensive Logging System with configurable log levels (debug, info, warning, error, none) across Dart, Android, and iOS. Includes ISO-8601 timestamps, breadcrumbs, and integration with `dart:developer`.
 - Updated: Conducted a comprehensive documentation audit, fixing inconsistencies, outdated version references (e.g., iOS 11 to 13), and updating code examples to use modern class names without legacy prefixes.
 - Updated: Improved Docusaurus configuration to enable warnings for broken links and markdown links.
 

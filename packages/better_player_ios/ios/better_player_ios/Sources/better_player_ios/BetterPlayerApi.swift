@@ -29,7 +29,18 @@ import AVKit
 @objc public class BetterPlayerApi: NSObject {
     @objc public static var players: [Int64: BetterPlayer] = [:]
     @objc public static var nextId: Int64 = 0
-    
+    @objc public static var logLevel: Int = 1 // 0=debug, 1=info, 2=warn, 3=error, 4=none
+
+    @objc public static func setupLogger(level: Int) {
+        logLevel = level
+    }
+
+    public static func log(_ level: Int, _ tag: String, _ msg: String) {
+        guard logLevel < 4 && level >= logLevel else { return }
+        let prefix = ["D", "I", "W", "E"][level]
+        print("[\(prefix)] [BetterPlayer/\(tag)] \(msg)")
+    }
+
     @objc public static func createPlayer(callback: BetterPlayerCallback) -> Int64 {
         // Prevent dead code elimination of the dummy class and protocol metadata
         let dummy = _DummyBetterPlayerCallbackImpl()

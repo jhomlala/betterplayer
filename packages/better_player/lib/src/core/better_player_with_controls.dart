@@ -142,7 +142,10 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     var rotation = configuration.rotation;
 
     if (!(rotation <= 360 && rotation % 90 == 0)) {
-      BetterPlayerUtils.log('Invalid rotation provided. Using rotation = 0');
+      BetterPlayerLogger.instance.warning(
+        'Invalid rotation provided. Using rotation = 0',
+        breadcrumb: 'BetterPlayerWithControls',
+      );
       rotation = 0;
     }
     if (betterPlayerController.betterPlayerDataSource == null) {

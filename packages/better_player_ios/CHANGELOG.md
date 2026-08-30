@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Support for native logging with synchronized log levels from the Dart controller.
+
 ## 1.1.0
 - Added: Migrated native implementation to Swift FFI using `swiftgen`, enabling direct `AVPlayer` interaction without MethodChannel overhead.
 

@@ -852,6 +852,10 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
   }
 
   /// new
+  static void setupLogger(int level) {
+    _objc_msgSend_17gvxvj(_class_BetterPlayerApi, _sel_setupLogger_, level);
+  }
+
   static BetterPlayerApi new$() {
     final $ret = _objc_msgSend_151sglz(_class_BetterPlayerApi, _sel_new);
     return BetterPlayerApi.fromPointer($ret, retain: false, release: true);
@@ -4741,6 +4745,7 @@ late final _sel_setDataSourceURL_key_certificateUrl_licenseUrl_headers_useCache_
 late final _sel_setLooping_ = objc.registerName("setLooping:");
 late final _sel_setMixWithOthers_ = objc.registerName("setMixWithOthers:");
 late final _sel_setNextId_ = objc.registerName("setNextId:");
+late final _sel_setupLogger_ = objc.registerName("setupLoggerWithLevel:");
 late final _sel_setPictureInPicture_ = objc.registerName(
   "setPictureInPicture:",
 );

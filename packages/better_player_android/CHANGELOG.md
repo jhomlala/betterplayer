@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Support for native logging with synchronized log levels from the Dart controller.
+
 ## 1.1.0
 - Added: Migrated native bridge to JNI using `jnigen` for high-performance direct communication with the Android media engine.
 - Fixed: Memory leak in player disposal and optimized WorkManager threading for caching.

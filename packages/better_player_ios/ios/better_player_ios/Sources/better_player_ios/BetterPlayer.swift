@@ -126,6 +126,7 @@ private var presentationSizeContext = 0
     public override init() {
         self.player = AVPlayer()
         super.init()
+        BetterPlayerApi.log(1, "BetterPlayer", "Initialized")
         self.player.actionAtItemEnd = .none
         if #available(iOS 10.0, *) {
             self.player.automaticallyWaitsToMinimizeStalling = false
@@ -273,6 +274,7 @@ private var presentationSizeContext = 0
 
     /// Sets the data source from a URL.
     @objc public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
+        BetterPlayerApi.log(1, "BetterPlayer", "Setting data source: \(url)")
         self.overriddenDuration = 0
 
         let item: AVPlayerItem
@@ -399,6 +401,7 @@ private var presentationSizeContext = 0
 
         if context == &timeRangeContext {
             if callback != nil, let item = object as? AVPlayerItem {
+                BetterPlayerApi.log(0, "BetterPlayer", "Loaded time ranges changed")
                 var values: [[NSNumber]] = []
                 for rangeValue in item.loadedTimeRanges {
                     let range = rangeValue.timeRangeValue
@@ -416,19 +419,23 @@ private var presentationSizeContext = 0
                 }
             }
         } else if context == &presentationSizeContext {
+            BetterPlayerApi.log(0, "BetterPlayer", "Presentation size changed")
             onReadyToPlay()
         } else if context == &statusContext {
             if let item = object as? AVPlayerItem {
                 switch item.status {
                 case .failed:
+                    BetterPlayerApi.log(3, "BetterPlayer", "Status: FAILED")
                     if callback != nil {
                         let message = "Failed to load video: \(item.error?.localizedDescription ?? "unknown")"
                         let error = FlutterError(code: "VideoError", message: message, details: nil)
                         sendError(error)
                     }
                 case .unknown:
+                    BetterPlayerApi.log(0, "BetterPlayer", "Status: UNKNOWN")
                     break
                 case .readyToPlay:
+                    BetterPlayerApi.log(1, "BetterPlayer", "Status: READY")
                     onReadyToPlay()
                 @unknown default:
                     break
@@ -436,12 +443,15 @@ private var presentationSizeContext = 0
             }
         } else if context == &playbackLikelyToKeepUpContext {
             if player.currentItem?.isPlaybackLikelyToKeepUp == true {
+                BetterPlayerApi.log(0, "BetterPlayer", "Playback likely to keep up")
                 updatePlayingState()
                 callback?.onBufferingEnd(key: key)
             }
         } else if context == &playbackBufferEmptyContext {
+            BetterPlayerApi.log(1, "BetterPlayer", "Playback buffer empty")
             callback?.onBufferingStart(key: key)
         } else if context == &playbackBufferFullContext {
+            BetterPlayerApi.log(1, "BetterPlayer", "Playback buffer full")
             callback?.onBufferingEnd(key: key)
         }
     }
@@ -517,6 +527,7 @@ private var presentationSizeContext = 0
 
     /// Starts playback.
     @objc public func play() {
+        BetterPlayerApi.log(1, "BetterPlayer", "play()")
         stalledCount = 0
         isStalledCheckStarted = false
         isPlaying = true
@@ -525,6 +536,7 @@ private var presentationSizeContext = 0
 
     /// Pauses playback.
     @objc public func pause() {
+        BetterPlayerApi.log(1, "BetterPlayer", "pause()")
         isPlaying = false
         updatePlayingState()
     }
@@ -762,6 +774,7 @@ private var presentationSizeContext = 0
 
     /// Disposes the player and cleans up resources.
     @objc public func dispose() {
+        BetterPlayerApi.log(1, "BetterPlayer", "dispose()")
         pause()
         disposeSansEventChannel()
         disablePictureInPicture()

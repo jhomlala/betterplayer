@@ -1,7 +1,5 @@
-import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
-import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerOverflowMenu extends StatelessWidget {
@@ -101,8 +99,9 @@ class PlayerOverflowMenuItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BetterPlayerUtils.log(
-      'E2E: Building PlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
+    BetterPlayerLogger.instance.debug(
+      'Building PlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
+      breadcrumb: 'OverflowMenu',
     );
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,

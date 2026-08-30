@@ -272,6 +272,11 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setupLogger(int logLevel) async {
+    BetterPlayerApi.setupLogger(logLevel);
+  }
+
+  @override
   Future<void> setTrackParameters(
     int? textureId,
     int? width,
