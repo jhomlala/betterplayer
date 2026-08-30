@@ -1,6 +1,7 @@
 appId: pl.hasoft.example
 ---
-- launchApp
+- launchApp:
+    clearState: true
 - assertVisible: "Better Player Example"
 
 # Trigger an invalid/error state
