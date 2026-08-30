@@ -116,8 +116,6 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setDataSource(
         context: Context,
         key: String?,
@@ -208,8 +206,6 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setupPlayerNotification(
         context: Context, title: String, author: String?,
         imageUrl: String?, notificationChannelName: String?,
@@ -333,8 +329,6 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun disposeRemoteNotifications() {
         if (playerNotificationManager != null) {
             playerNotificationManager?.setPlayer(null)
@@ -478,24 +472,18 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun play() {
         BetterPlayerApi.log(1, TAG, "play()")
         exoPlayer?.playWhenReady = true
     }
 
     @Keep
-
-
     fun pause() {
         BetterPlayerApi.log(1, TAG, "pause()")
         exoPlayer?.playWhenReady = false
     }
 
     @Keep
-
-
     fun setLooping(value: Boolean) {
         exoPlayer?.repeatMode = if (value) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
     }
@@ -509,8 +497,6 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setSpeed(value: Double) {
         BetterPlayerApi.log(0, TAG, "setSpeed: $value")
         val bracketedValue = value.toFloat()
@@ -519,8 +505,6 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setTrackParameters(width: Int, height: Int, bitrate: Int) {
         BetterPlayerApi.log(0, TAG, "setTrackParameters: width=$width, height=$height, bitrate=$bitrate")
         val parametersBuilder = trackSelector.buildUponParameters()
@@ -538,8 +522,6 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun seekTo(location: Int) {
         BetterPlayerApi.log(1, TAG, "seekTo: $location")
         exoPlayer?.seekTo(location.toLong())
@@ -605,8 +587,6 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun onPictureInPictureStatusChanged(inPip: Boolean) {
         if (inPip) {
             callback.onPipStart()
@@ -623,8 +603,6 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setAudioTrack(name: String, index: Int) {
         BetterPlayerApi.log(0, TAG, "setAudioTrack: name=$name, index=$index")
         try {
@@ -696,15 +674,11 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setMixWithOthers(mixWithOthers: Boolean) {
         setAudioAttributes(exoPlayer, mixWithOthers)
     }
 
     @Keep
-
-
     fun dispose() {
         BetterPlayerApi.log(1, TAG, "dispose()")
         disposeMediaSession()
@@ -750,9 +724,7 @@ class BetterPlayer(
         private const val NOTIFICATION_ID = 20772077
 
         @Keep
-
-
-        fun clearCache(context: Context?) {
+    fun clearCache(context: Context?) {
             try {
                 context?.let { context ->
                     val file = File(context.cacheDir, "betterPlayerCache")
@@ -777,9 +749,7 @@ class BetterPlayer(
         }
 
         @Keep
-
-
-        fun preCache(
+    fun preCache(
             context: Context?, dataSource: String?, preCacheSize: Long,
             maxCacheSize: Long, maxCacheFileSize: Long, headers: Map<String, String?>,
             cacheKey: String?) {
@@ -807,9 +777,7 @@ class BetterPlayer(
         }
 
         @Keep
-
-
-        fun stopPreCache(context: Context?, url: String?) {
+    fun stopPreCache(context: Context?, url: String?) {
             if (url != null && context != null) {
                 WorkManager.getInstance(context).cancelAllWorkByTag(url)
             }
