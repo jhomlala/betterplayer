@@ -50,9 +50,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   bool get _created => _creatingCompleter.isCompleted;
   Duration? _seekPosition;
 
-  /// This is just exposed for testing. It shouldn't be used by anyone depending
-  /// on the plugin.
-  @visibleForTesting
+  /// The id of a texture that hasn't been initialized is null.
   int? get textureId => _textureId;
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
