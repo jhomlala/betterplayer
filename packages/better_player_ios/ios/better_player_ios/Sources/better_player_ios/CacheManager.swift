@@ -5,6 +5,7 @@ import Cache
 
 /// Manages caching of media files for `BetterPlayer`.
 @objc public class CacheManager: NSObject {
+    @objc public static let shared = CacheManager()
 
     /// Stores the last pre-cached `CachingPlayerItem` objects.
     private var preCachedURLs = [String: CachingPlayerItem]()

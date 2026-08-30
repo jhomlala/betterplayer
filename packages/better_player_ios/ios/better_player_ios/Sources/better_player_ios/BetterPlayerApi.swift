@@ -51,7 +51,21 @@ import Foundation
     }
 
     @objc public static func createCacheManager() -> CacheManager {
-        return CacheManager()
+        return CacheManager.shared
+    }
+
+    @objc public static func preCache(url: String, cacheKey: String?, videoExtension: String?, headers: [String: String]?) {
+        guard let nsurl = URL(string: url) else { return }
+        CacheManager.shared.preCacheURL(nsurl, cacheKey: cacheKey, videoExtension: videoExtension, withHeaders: (headers as [NSObject: AnyObject]?) ?? [:], completionHandler: nil)
+    }
+
+    @objc public static func stopPreCache(url: String, cacheKey: String?) {
+        guard let nsurl = URL(string: url) else { return }
+        CacheManager.shared.stopPreCache(nsurl, cacheKey: cacheKey, completionHandler: nil)
+    }
+
+    @objc public static func clearCache() {
+        CacheManager.shared.clearCache()
     }
 
     // Reference the dummy class to prevent the linker from stripping it out

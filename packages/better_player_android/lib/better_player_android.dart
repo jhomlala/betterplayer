@@ -147,8 +147,15 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onPipStop$async: true,
         onChangedSize: (int width, int height, JString? key) {
-          // Internal usage, you can emit an event or handled it differently if needed.
-          // Wait, better_player doesn't have a changedSize VideoEventType.
+          for (final controller in _eventControllers.values) {
+            controller.add(
+              VideoEvent(
+                eventType: VideoEventType.changedSize,
+                key: key?.toDartString(),
+                size: Size(width.toDouble(), height.toDouble()),
+              ),
+            );
+          }
         },
         onChangedSize$async: true,
         onError:

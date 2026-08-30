@@ -184,9 +184,14 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
 
     if (dataSource.uri?.contains('.mpd') == true ||
         dataSource.formatHint == VideoFormat.dash) {
-      throw Exception(
-        'DASH streams are not supported on iOS platform. Please use HLS instead.',
+      _eventControllers[textureId]?.addError(
+        PlatformException(
+          code: 'UNSUPPORTED_FORMAT',
+          message:
+              'DASH streams are not supported on iOS platform. Please use HLS instead.',
+        ),
       );
+      return;
     }
 
     final cacheManager = createCacheManager();

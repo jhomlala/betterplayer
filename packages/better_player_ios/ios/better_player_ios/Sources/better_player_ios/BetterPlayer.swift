@@ -774,5 +774,9 @@ private var presentationSizeContext = 0
         disablePictureInPicture()
         setPictureInPicture(false)
         disposed = true
+        
+        if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
+            BetterPlayerApi.players.removeValue(forKey: key)
+        }
     }
 }
