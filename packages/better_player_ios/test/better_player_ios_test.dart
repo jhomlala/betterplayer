@@ -158,13 +158,15 @@ void main() {
       expect(stream, isA<Stream<VideoEvent>>());
     });
 
-    test('setDataSource throws on DASH', () async {
+    test('setDataSource handles DASH without throwing', () async {
+      await iosPlayer.create();
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
         uri: 'https://example.com/video.mpd',
       );
 
-      expect(() => iosPlayer.setDataSource(1, dataSource), throwsException);
+      // Verify it doesn't throw a synchronous exception
+      expect(iosPlayer.setDataSource(1, dataSource), completes);
     });
 
     test(
