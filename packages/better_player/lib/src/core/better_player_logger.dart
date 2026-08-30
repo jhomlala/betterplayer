@@ -8,39 +8,44 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 class BetterPlayerLogger {
   BetterPlayerLogger._();
 
-  static final BetterPlayerLogger instance = BetterPlayerLogger._();
+  static final BetterPlayerLogger _instance = BetterPlayerLogger._();
+
+  /// The singleton instance of [BetterPlayerLogger].
+  static BetterPlayerLogger get instance => _instance;
 
   PlayerLogConfiguration _config = PlayerLogConfiguration.defaultConfig;
 
   /// Setup the logger with the provided configuration.
-  void setup(PlayerLogConfiguration config) {
+  static void setup(PlayerLogConfiguration config) => _instance._setup(config);
+
+  void _setup(PlayerLogConfiguration config) {
     _config = config;
     BetterPlayerUtils.logHandler = info;
   }
 
   /// Log a debug message.
-  void debug(String message, {String? breadcrumb}) {
-    _log(PlayerLogLevel.debug, message, breadcrumb: breadcrumb);
+  static void debug(String message, {String? breadcrumb}) {
+    _instance._log(PlayerLogLevel.debug, message, breadcrumb: breadcrumb);
   }
 
   /// Log an info message.
-  void info(String message, {String? breadcrumb}) {
-    _log(PlayerLogLevel.info, message, breadcrumb: breadcrumb);
+  static void info(String message, {String? breadcrumb}) {
+    _instance._log(PlayerLogLevel.info, message, breadcrumb: breadcrumb);
   }
 
   /// Log a warning message.
-  void warning(String message, {String? breadcrumb}) {
-    _log(PlayerLogLevel.warning, message, breadcrumb: breadcrumb);
+  static void warning(String message, {String? breadcrumb}) {
+    _instance._log(PlayerLogLevel.warning, message, breadcrumb: breadcrumb);
   }
 
   /// Log an error message.
-  void error(
+  static void error(
     String message, {
     Object? error,
     StackTrace? stackTrace,
     String? breadcrumb,
   }) {
-    _log(
+    _instance._log(
       PlayerLogLevel.error,
       message,
       error: error,
@@ -97,3 +102,9 @@ class BetterPlayerLogger {
     }
   }
 }
+
+/// Shorthand for [BetterPlayerLogger].
+typedef BPLog = BetterPlayerLogger;
+
+/// Shorthand for [BetterPlayerLogger].
+typedef Logger = BetterPlayerLogger;

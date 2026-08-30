@@ -35,7 +35,7 @@ class BetterPlayerDashUtils {
         }
       }
     } catch (exception) {
-      BetterPlayerLogger.instance.error(
+      BPLog.error(
         'Exception on dash parse: $exception',
         error: exception,
         breadcrumb: 'DashUtils',

@@ -13,7 +13,7 @@ class PlayerSubtitle {
       }
       return PlayerSubtitle._();
     } catch (exception) {
-      BetterPlayerLogger.instance.warning(
+      BPLog.warning(
         'Failed to parse subtitle line: $value',
         breadcrumb: 'Subtitle',
       );
@@ -47,7 +47,7 @@ class PlayerSubtitle {
         texts: texts,
       );
     } catch (exception) {
-      BetterPlayerLogger.instance.warning(
+      BPLog.warning(
         'Failed to parse subtitle line: $scanner',
         breadcrumb: 'Subtitle',
       );
@@ -82,7 +82,7 @@ class PlayerSubtitle {
         texts: texts,
       );
     } catch (exception) {
-      BetterPlayerLogger.instance.warning(
+      BPLog.warning(
         'Failed to parse subtitle line: $scanner',
         breadcrumb: 'Subtitle',
       );
@@ -123,7 +123,7 @@ class PlayerSubtitle {
       );
       return result;
     } catch (exception) {
-      BetterPlayerLogger.instance.warning(
+      BPLog.warning(
         'Failed to process value: $value',
         breadcrumb: 'Subtitle',
       );
