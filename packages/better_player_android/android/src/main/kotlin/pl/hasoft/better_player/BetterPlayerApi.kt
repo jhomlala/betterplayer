@@ -14,15 +14,15 @@ class BetterPlayerApi {
         @Keep
         var activity: Activity? = null
         @Keep
-        var logCallback: BetterPlayerLogCallback? = null
+        private var _logCallback: BetterPlayerLogCallback? = null
 
         @Keep
         fun setLogCallback(callback: BetterPlayerLogCallback?) {
-            logCallback = callback
+            _logCallback = callback
         }
 
         internal fun log(level: Int, tag: String, msg: String) {
-            val cb = logCallback ?: return
+            val cb = _logCallback ?: return
             val safe = if (msg.length > 4000) msg.substring(0, 4000) + "…[truncated]" else msg
             cb.onLog(level, tag, safe)
         }
