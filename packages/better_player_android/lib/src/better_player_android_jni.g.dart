@@ -222,6 +222,42 @@ extension BetterPlayerApi$Companion$$Methods on BetterPlayerApi$Companion {
     ).check();
   }
 
+  static final _id_set$logCallback = BetterPlayerApi$Companion._class
+      .instanceMethodId(
+        r'setLogCallback',
+        r'(Lpl/hasoft/better_player/BetterPlayerLogCallback;)V',
+      );
+
+  static final _set$logCallback =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun setLogCallback(callback: pl.hasoft.better_player.BetterPlayerLogCallback?): kotlin.Unit`
+  set logCallback(BetterPlayerLogCallback? betterPlayerLogCallback) {
+    final _$$selfRef = reference;
+    final _$betterPlayerLogCallback =
+        betterPlayerLogCallback?.reference ?? jni$_.jNullReference;
+    _set$logCallback(
+      _$$selfRef.pointer,
+      _id_set$logCallback.pointer,
+      _$betterPlayerLogCallback.pointer,
+    ).check();
+  }
+
   static final _id_createPlayer = BetterPlayerApi$Companion._class.instanceMethodId(
     r'createPlayer',
     r'(Landroid/content/Context;Lpl/hasoft/better_player/BetterPlayerCallback;)Lpl/hasoft/better_player/BetterPlayer;',
@@ -1146,6 +1182,195 @@ final class $BetterPlayerCallback$Type$
   @jni$_.internal
   @core$_.override
   String get signature => r'Lpl/hasoft/better_player/BetterPlayerCallback;';
+}
+
+/// from: `pl.hasoft.better_player.BetterPlayerLogCallback`
+extension type BetterPlayerLogCallback._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'pl/hasoft/better_player/BetterPlayerLogCallback',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<BetterPlayerLogCallback> type =
+      $BetterPlayerLogCallback$Type$();
+
+  /// Maps a specific port to the implemented interface.
+  static final core$_.Map<core$_.int, $BetterPlayerLogCallback> _$impls = {};
+  static jni$_.JObjectPtr _$invoke(
+    core$_.int port,
+    jni$_.JObjectPtr descriptor,
+    jni$_.JObjectPtr args,
+  ) {
+    return _$invokeMethod(
+      port,
+      jni$_.MethodInvocation.fromAddresses(
+        0,
+        descriptor.address,
+        args.address,
+      ),
+    );
+  }
+
+  static final jni$_.Pointer<
+    jni$_.NativeFunction<
+      jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)
+    >
+  >
+  _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
+
+  static jni$_.Pointer<jni$_.Void> _$invokeMethod(
+    core$_.int $p,
+    jni$_.MethodInvocation $i,
+  ) {
+    try {
+      final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
+      final $a = $i.args;
+      if ($d == r'onLog(ILjava/lang/String;Ljava/lang/String;)V') {
+        _$impls[$p]!.onLog(
+          ($a![0] as jni$_.JInteger).toDartInt(releaseOriginal: true),
+          ($a![1] as jni$_.JString),
+          ($a![2] as jni$_.JString),
+        );
+        return jni$_.nullptr;
+      }
+    } catch (e) {
+      return jni$_.ProtectedJniExtensions.newDartException(e);
+    }
+    return jni$_.nullptr;
+  }
+
+  static void implementIn(
+    jni$_.JImplementer implementer,
+    $BetterPlayerLogCallback $impl,
+  ) {
+    late final jni$_.RawReceivePort $p;
+    $p = jni$_.RawReceivePort(($m) {
+      if ($m == null) {
+        _$impls.remove($p.sendPort.nativePort);
+        $p.close();
+        return;
+      }
+      final $i = jni$_.MethodInvocation.fromMessage($m);
+      final $r = _$invokeMethod($p.sendPort.nativePort, $i);
+      $i.args?.release();
+      jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
+    });
+    implementer.add(
+      r'pl.hasoft.better_player.BetterPlayerLogCallback',
+      $p,
+      _$invokePointer,
+      [
+        if ($impl.onLog$async) r'onLog(ILjava/lang/String;Ljava/lang/String;)V',
+      ],
+    );
+    final $a = $p.sendPort.nativePort;
+    _$impls[$a] = $impl;
+  }
+
+  factory BetterPlayerLogCallback.implement(
+    $BetterPlayerLogCallback $impl,
+  ) {
+    final $i = jni$_.JImplementer();
+    implementIn($i, $impl);
+    return $i.implement<BetterPlayerLogCallback>();
+  }
+}
+
+extension BetterPlayerLogCallback$$Methods on BetterPlayerLogCallback {
+  static final _id_onLog = BetterPlayerLogCallback._class.instanceMethodId(
+    r'onLog',
+    r'(ILjava/lang/String;Ljava/lang/String;)V',
+  );
+
+  static final _onLog =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Int32,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                  )
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun onLog(level: kotlin.Int, tag: kotlin.String, message: kotlin.String): kotlin.Unit`
+  void onLog(
+    core$_.int i,
+    jni$_.JString string,
+    jni$_.JString string1,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$string1 = string1.reference;
+    _onLog(
+      _$$selfRef.pointer,
+      _id_onLog.pointer,
+      i,
+      _$string.pointer,
+      _$string1.pointer,
+    ).check();
+  }
+}
+
+abstract base mixin class $BetterPlayerLogCallback {
+  factory $BetterPlayerLogCallback({
+    required void Function(
+      core$_.int i,
+      jni$_.JString string,
+      jni$_.JString string1,
+    )
+    onLog,
+    core$_.bool onLog$async,
+  }) = _$BetterPlayerLogCallback;
+
+  void onLog(core$_.int i, jni$_.JString string, jni$_.JString string1);
+  core$_.bool get onLog$async => false;
+}
+
+final class _$BetterPlayerLogCallback with $BetterPlayerLogCallback {
+  _$BetterPlayerLogCallback({
+    required void Function(
+      core$_.int i,
+      jni$_.JString string,
+      jni$_.JString string1,
+    )
+    onLog,
+    this.onLog$async = false,
+  }) : _onLog = onLog;
+
+  final void Function(core$_.int i, jni$_.JString string, jni$_.JString string1)
+  _onLog;
+  final core$_.bool onLog$async;
+
+  void onLog(core$_.int i, jni$_.JString string, jni$_.JString string1) {
+    return _onLog(i, string, string1);
+  }
+}
+
+final class $BetterPlayerLogCallback$Type$
+    extends jni$_.JType<BetterPlayerLogCallback> {
+  @jni$_.internal
+  const $BetterPlayerLogCallback$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature => r'Lpl/hasoft/better_player/BetterPlayerLogCallback;';
 }
 
 /// from: `pl.hasoft.better_player.BetterPlayer$Companion`

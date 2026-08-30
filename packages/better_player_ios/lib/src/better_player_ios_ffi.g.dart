@@ -889,6 +889,16 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
     );
   }
 
+  /// setLogCallback:
+  static void setLogCallback(BetterPlayerLogCallback? callback) {
+    final _$$ref = callback?.ref;
+    _objc_msgSend_xtuoz7(
+      _class_BetterPlayerApi,
+      _sel_setLogCallback_,
+      _$$ref?.pointer ?? ffi.nullptr,
+    );
+  }
+
   /// setNextId:
   static void setNextId(int value) {
     _objc_msgSend_17gvxvj(_class_BetterPlayerApi, _sel_setNextId_, value);
@@ -1952,6 +1962,23 @@ interface class BetterPlayerCallback$Builder {
                   func(arg1, arg2),
             ),
       );
+}
+
+/// WARNING: BetterPlayerLogCallback is a stub. To generate bindings for this class, include
+/// BetterPlayerLogCallback in your config's objc-protocols list.
+///
+/// BetterPlayerLogCallback
+extension type BetterPlayerLogCallback._(objc.ObjCProtocol object$)
+    implements objc.ObjCProtocol {
+  /// Constructs a [BetterPlayerLogCallback] that points to the same underlying object as [other].
+  BetterPlayerLogCallback.as(objc.ObjCObject other) : object$ = other;
+
+  /// Constructs a [BetterPlayerLogCallback] that wraps the given raw object pointer.
+  BetterPlayerLogCallback.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCProtocol(other, retain: retain, release: release);
 }
 
 /// WARNING: CacheManager is a stub. To generate bindings for this class, include
@@ -4738,6 +4765,7 @@ late final _sel_setDataSourceURL_key_certificateUrl_licenseUrl_headers_useCache_
     objc.registerName(
       "setDataSourceURL:key:certificateUrl:licenseUrl:headers:useCache:cacheKey:cacheManager:overriddenDuration:videoExtension:",
     );
+late final _sel_setLogCallback_ = objc.registerName("setLogCallback:");
 late final _sel_setLooping_ = objc.registerName("setLooping:");
 late final _sel_setMixWithOthers_ = objc.registerName("setMixWithOthers:");
 late final _sel_setNextId_ = objc.registerName("setNextId:");
