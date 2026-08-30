@@ -807,6 +807,11 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
     return BetterPlayerApi.fromPointer($ret, retain: false, release: true);
   }
 
+  /// clearCache
+  static void clearCache() {
+    _objc_msgSend_1pl9qdv(_class_BetterPlayerApi, _sel_clearCache);
+  }
+
   /// createCacheManager
   static CacheManager createCacheManager() {
     final $ret = _objc_msgSend_151sglz(
@@ -855,6 +860,27 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
     return objc.NSDictionary.fromPointer($ret, retain: true, release: true);
   }
 
+  /// preCacheWithUrl:cacheKey:videoExtension:headers:
+  static void preCacheWithUrl(
+    objc.NSString url, {
+    objc.NSString? cacheKey,
+    objc.NSString? videoExtension,
+    objc.NSDictionary? headers,
+  }) {
+    final _$$ref = url.ref;
+    final _$$ref$1 = cacheKey?.ref;
+    final _$$ref$2 = videoExtension?.ref;
+    final _$$ref$3 = headers?.ref;
+    _objc_msgSend_mlcr8l(
+      _class_BetterPlayerApi,
+      _sel_preCacheWithUrl_cacheKey_videoExtension_headers_,
+      _$$ref.pointer,
+      _$$ref$1?.pointer ?? ffi.nullptr,
+      _$$ref$2?.pointer ?? ffi.nullptr,
+      _$$ref$3?.pointer ?? ffi.nullptr,
+    );
+  }
+
   /// setNextId:
   static void setNextId(int value) {
     _objc_msgSend_17gvxvj(_class_BetterPlayerApi, _sel_setNextId_, value);
@@ -867,6 +893,21 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
       _class_BetterPlayerApi,
       _sel_setPlayers_,
       _$$ref.pointer,
+    );
+  }
+
+  /// stopPreCacheWithUrl:cacheKey:
+  static void stopPreCacheWithUrl(
+    objc.NSString url, {
+    objc.NSString? cacheKey,
+  }) {
+    final _$$ref = url.ref;
+    final _$$ref$1 = cacheKey?.ref;
+    _objc_msgSend_pfv6jd(
+      _class_BetterPlayerApi,
+      _sel_stopPreCacheWithUrl_cacheKey_,
+      _$$ref.pointer,
+      _$$ref$1?.pointer ?? ffi.nullptr,
     );
   }
 
@@ -4432,6 +4473,29 @@ final _objc_msgSend_hwm8nu = objc.msgSendPointer
         double,
       )
     >();
+final _objc_msgSend_mlcr8l = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+      )
+    >();
 final _objc_msgSend_mpxix1 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
@@ -4585,6 +4649,7 @@ late final _sel_arg3 = objc.registerName("arg3");
 late final _sel_arg4 = objc.registerName("arg4");
 late final _sel_callback = objc.registerName("callback");
 late final _sel_clear = objc.registerName("clear");
+late final _sel_clearCache = objc.registerName("clearCache");
 late final _sel_conformsToProtocol_ = objc.registerName("conformsToProtocol:");
 late final _sel_createCacheManager = objc.registerName("createCacheManager");
 late final _sel_createPlayerWithCallback_ = objc.registerName(
@@ -4642,6 +4707,8 @@ late final _sel_pictureInPictureController_restoreUserInterfaceForPictureInPictu
 late final _sel_play = objc.registerName("play");
 late final _sel_players = objc.registerName("players");
 late final _sel_position = objc.registerName("position");
+late final _sel_preCacheWithUrl_cacheKey_videoExtension_headers_ = objc
+    .registerName("preCacheWithUrl:cacheKey:videoExtension:headers:");
 late final _sel_seekTo_ = objc.registerName("seekTo:");
 late final _sel_setAspectRatio_ = objc.registerName("setAspectRatio:");
 late final _sel_setAudioTrackWithName_index_ = objc.registerName(
@@ -4674,6 +4741,9 @@ late final _sel_setTrackParametersWithWidth_height_bitrate_ = objc.registerName(
   "setTrackParametersWithWidth:height:bitrate:",
 );
 late final _sel_setVolume_ = objc.registerName("setVolume:");
+late final _sel_stopPreCacheWithUrl_cacheKey_ = objc.registerName(
+  "stopPreCacheWithUrl:cacheKey:",
+);
 late final _sel_view = objc.registerName("view");
 typedef instancetype = ffi.Pointer<objc.ObjCObjectImpl>;
 typedef Dartinstancetype = objc.ObjCObject;
