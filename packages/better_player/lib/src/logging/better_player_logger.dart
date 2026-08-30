@@ -22,7 +22,7 @@ class BetterPlayerLogger {
 
     if (!_nativeCallbackRegistered && config.logLevel != PlayerLogLevel.none) {
       try {
-        BetterPlayerPlatform.instance.setupNativeLogCallback(onNativeLog);
+        BetterPlayerPlatform.instance.setupLogCallback(onNativeLog);
         _nativeCallbackRegistered = true;
       } catch (e) {
         // Native logging not implemented on this platform yet

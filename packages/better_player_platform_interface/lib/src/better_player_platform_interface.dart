@@ -157,10 +157,10 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
   /// Register a callback to receive log records from the native layer.
   /// Only called when logLevel != none. When not called, native logCallback
   /// stays null — zero JNI/FFI overhead.
-  Future<void> setupNativeLogCallback(
+  Future<void> setupLogCallback(
     void Function(int levelIndex, String tag, String message) callback,
   ) {
-    throw UnimplementedError('setupNativeLogCallback() has not been implemented.');
+    throw UnimplementedError('setupLogCallback() has not been implemented.');
   }
 
   /// Returns a widget displaying the video with a given textureID.

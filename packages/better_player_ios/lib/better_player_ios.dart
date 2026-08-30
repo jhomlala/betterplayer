@@ -11,7 +11,7 @@ import 'package:objective_c/objective_c.dart' as objc;
 
 class BetterPlayerIOS extends BetterPlayerPlatform {
   @override
-  Future<void> setupNativeLogCallback(
+  Future<void> setupLogCallback(
     void Function(int levelIndex, String tag, String message) callback,
   ) async {
     final ffiFn = BetterPlayerLogCallback$Builder.implement(

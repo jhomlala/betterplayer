@@ -16,7 +16,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }
 
   @override
-  Future<void> setupNativeLogCallback(
+  Future<void> setupLogCallback(
     void Function(int levelIndex, String tag, String message) callback,
   ) async {
     final jniCallback = BetterPlayerLogCallback.implement(
