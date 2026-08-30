@@ -72,7 +72,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       if (event.betterPlayerEventType == PlayerEventType.exception) {
         BetterPlayerUtils.log('E2E: Exception event: ${event.parameters}');
         setState(() {
-          _errorDescription = event.parameters?['exception']?.toString() ??
+          _errorDescription =
+              event.parameters?['exception']?.toString() ??
               _betterPlayerController
                   .videoPlayerController
                   ?.value
