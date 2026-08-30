@@ -31,7 +31,7 @@ class BetterPlayerHlsUtils {
       subtitles = list[1] as List<PlayerAsmsSubtitle>;
       audios = list[2] as List<PlayerAsmsAudioTrack>;
     } catch (exception) {
-      BPLog.error(
+      Logger.error(
         'Exception on hls parse: $exception',
         error: exception,
         breadcrumb: 'HlsUtils',
@@ -74,7 +74,7 @@ class BetterPlayerHlsUtils {
         tracks.insert(0, PlayerAsmsTrack.defaultTrack());
       }
     } catch (exception) {
-      BPLog.error(
+      Logger.error(
         'Exception on parseTracks: $exception',
         error: exception,
         breadcrumb: 'HlsUtils',
@@ -104,7 +104,7 @@ class BetterPlayerHlsUtils {
         }
       }
     } catch (exception) {
-      BPLog.error(
+      Logger.error(
         'Exception on parseSubtitles: $exception',
         error: exception,
         breadcrumb: 'HlsUtils',
@@ -195,7 +195,7 @@ class BetterPlayerHlsUtils {
         isDefault: isDefault,
       );
     } catch (exception) {
-      BPLog.error(
+      Logger.error(
         'Failed to process subtitles playlist: $exception',
         error: exception,
         breadcrumb: 'HlsUtils',

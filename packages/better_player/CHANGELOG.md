@@ -1,6 +1,6 @@
 ## Unreleased
 - Added: Extensible logging system with `BetterPlayerLogger`. Dart is now the single source of truth for logs.
-- Added: Global shorthands `BPLog` and `Logger` for more concise logging (e.g., `BPLog.info(...)`).
+- Added: Global shorthand `Logger` for more concise logging (e.g., `Logger.info(...)`).
 - Added: Native-to-Dart logging streaming for Android (ExoPlayer) and iOS (AVPlayer).
 - Updated: Migrated all internal `BetterPlayerUtils.log` calls to the new logging system with appropriate log levels.
 - Added: Comprehensive "Day Zero" logs across the library for better troubleshooting.

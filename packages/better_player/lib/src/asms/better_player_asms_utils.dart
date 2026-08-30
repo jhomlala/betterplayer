@@ -50,7 +50,7 @@ class BetterPlayerAsmsUtils {
       final response = await request.close();
       return await response.transform(const Utf8Decoder()).join();
     } catch (exception) {
-      BPLog.error(
+      Logger.error(
         'GetDataFromUrl failed: $exception',
         error: exception,
         breadcrumb: 'AsmsUtils',

@@ -104,7 +104,4 @@ class BetterPlayerLogger {
 }
 
 /// Shorthand for [BetterPlayerLogger].
-typedef BPLog = BetterPlayerLogger;
-
-/// Shorthand for [BetterPlayerLogger].
 typedef Logger = BetterPlayerLogger;
