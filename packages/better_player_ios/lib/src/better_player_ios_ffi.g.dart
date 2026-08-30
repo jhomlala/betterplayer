@@ -43,6 +43,23 @@ external void _x224me_protocolTrampoline_1ancy3p(
   ffi.Void Function(
     ffi.Pointer<objc.ObjCObjectImpl>,
     ffi.Pointer<ffi.Void>,
+    ffi.Long,
+    ffi.Pointer<objc.ObjCObjectImpl>,
+    ffi.Pointer<objc.ObjCObjectImpl>,
+  )
+>()
+external void _x224me_protocolTrampoline_1ihjjaj(
+  ffi.Pointer<objc.ObjCObjectImpl> target,
+  ffi.Pointer<ffi.Void> arg0,
+  int arg1,
+  ffi.Pointer<objc.ObjCObjectImpl> arg2,
+  ffi.Pointer<objc.ObjCObjectImpl> arg3,
+);
+
+@ffi.Native<
+  ffi.Void Function(
+    ffi.Pointer<objc.ObjCObjectImpl>,
+    ffi.Pointer<ffi.Void>,
     ffi.Pointer<objc.ObjCObjectImpl>,
     ffi.Pointer<objc.ObjCObjectImpl>,
     ffi.Pointer<objc.ObjCObjectImpl>,
@@ -126,6 +143,26 @@ external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapBlockingBlock_18v1jvf(
   )
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapBlockingBlock_1ancy3p(
+  int port,
+  ffi.Pointer<objc.DOBJC_Context> context,
+  ffi.Pointer<
+    ffi.NativeFunction<ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> args)>
+  >
+  directInvoke,
+);
+
+@ffi.Native<
+  ffi.Pointer<objc.ObjCBlockImpl> Function(
+    ffi.Int64,
+    ffi.Pointer<objc.DOBJC_Context>,
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> args)
+      >
+    >,
+  )
+>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapBlockingBlock_1ihjjaj(
   int port,
   ffi.Pointer<objc.DOBJC_Context> context,
   ffi.Pointer<
@@ -252,6 +289,17 @@ external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapListenerBlock_18v1jvf(
   )
 >(isLeaf: true)
 external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapListenerBlock_1ancy3p(
+  int port,
+  ffi.Pointer<objc.DOBJC_Context> context,
+);
+
+@ffi.Native<
+  ffi.Pointer<objc.ObjCBlockImpl> Function(
+    ffi.Int64,
+    ffi.Pointer<objc.DOBJC_Context>,
+  )
+>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl> _x224me_wrapListenerBlock_1ihjjaj(
   int port,
   ffi.Pointer<objc.DOBJC_Context> context,
 );
@@ -1964,9 +2012,6 @@ interface class BetterPlayerCallback$Builder {
       );
 }
 
-/// WARNING: BetterPlayerLogCallback is a stub. To generate bindings for this class, include
-/// BetterPlayerLogCallback in your config's objc-protocols list.
-///
 /// BetterPlayerLogCallback
 extension type BetterPlayerLogCallback._(objc.ObjCProtocol object$)
     implements objc.ObjCProtocol {
@@ -1979,6 +2024,219 @@ extension type BetterPlayerLogCallback._(objc.ObjCProtocol object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCProtocol(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [BetterPlayerLogCallback].
+  static bool conformsTo(objc.ObjCObject obj) {
+    return _objc_msgSend_e3qsqz(
+      obj.ref.pointer,
+      _sel_conformsToProtocol_,
+      _protocol_BetterPlayerLogCallback,
+    );
+  }
+}
+
+extension BetterPlayerLogCallback$Methods on BetterPlayerLogCallback {
+  /// onLog:tag:message:
+  void onLog(
+    int level, {
+    required objc.NSString tag,
+    required objc.NSString message,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = tag.ref;
+    final _$$ref$2 = message.ref;
+    _objc_msgSend_1m6rrzn(
+      _$$ref.pointer,
+      _sel_onLog_tag_message_,
+      level,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+    );
+  }
+}
+
+interface class BetterPlayerLogCallback$Builder {
+  /// Returns the [objc.Protocol] object for this protocol.
+  static objc.Protocol get $protocol =>
+      objc.Protocol.fromPointer(_protocol_BetterPlayerLogCallback.cast());
+
+  /// Builds an object that implements the BetterPlayerLogCallback protocol. To implement
+  /// multiple protocols, use [addToBuilder] or [objc.ObjCProtocolBuilder] directly.
+  ///
+  /// If `$keepIsolateAlive` is true, this protocol will keep this isolate
+  /// alive until it is garbage collected by both Dart and ObjC.
+  static BetterPlayerLogCallback implement({
+    required void Function(int, objc.NSString, objc.NSString)
+    onLog_tag_message_,
+    bool $keepIsolateAlive = true,
+  }) {
+    final builder = objc.ObjCProtocolBuilder(
+      debugName: 'BetterPlayerLogCallback',
+    );
+    BetterPlayerLogCallback$Builder.onLog_tag_message_.implement(
+      builder,
+      onLog_tag_message_,
+    );
+    builder.addProtocol($protocol);
+    return BetterPlayerLogCallback.as(
+      builder.build(keepIsolateAlive: $keepIsolateAlive),
+    );
+  }
+
+  /// Adds the implementation of the BetterPlayerLogCallback protocol to an existing
+  /// [objc.ObjCProtocolBuilder].
+  ///
+  /// Note: You cannot call this method after you have called `builder.build`.
+  static void addToBuilder(
+    objc.ObjCProtocolBuilder builder, {
+    required void Function(int, objc.NSString, objc.NSString)
+    onLog_tag_message_,
+    bool $keepIsolateAlive = true,
+  }) {
+    BetterPlayerLogCallback$Builder.onLog_tag_message_.implement(
+      builder,
+      onLog_tag_message_,
+    );
+    builder.addProtocol($protocol);
+  }
+
+  /// Builds an object that implements the BetterPlayerLogCallback protocol. To implement
+  /// multiple protocols, use [addToBuilder] or [objc.ObjCProtocolBuilder] directly. All
+  /// methods that can be implemented as listeners will be.
+  ///
+  /// If `$keepIsolateAlive` is true, this protocol will keep this isolate
+  /// alive until it is garbage collected by both Dart and ObjC.
+  static BetterPlayerLogCallback implementAsListener({
+    required void Function(int, objc.NSString, objc.NSString)
+    onLog_tag_message_,
+    bool $keepIsolateAlive = true,
+  }) {
+    final builder = objc.ObjCProtocolBuilder(
+      debugName: 'BetterPlayerLogCallback',
+    );
+    BetterPlayerLogCallback$Builder.onLog_tag_message_.implementAsListener(
+      builder,
+      onLog_tag_message_,
+    );
+    builder.addProtocol($protocol);
+    return BetterPlayerLogCallback.as(
+      builder.build(keepIsolateAlive: $keepIsolateAlive),
+    );
+  }
+
+  /// Adds the implementation of the BetterPlayerLogCallback protocol to an existing
+  /// [objc.ObjCProtocolBuilder]. All methods that can be implemented as listeners will
+  /// be.
+  ///
+  /// Note: You cannot call this method after you have called `builder.build`.
+  static void addToBuilderAsListener(
+    objc.ObjCProtocolBuilder builder, {
+    required void Function(int, objc.NSString, objc.NSString)
+    onLog_tag_message_,
+    bool $keepIsolateAlive = true,
+  }) {
+    BetterPlayerLogCallback$Builder.onLog_tag_message_.implementAsListener(
+      builder,
+      onLog_tag_message_,
+    );
+    builder.addProtocol($protocol);
+  }
+
+  /// Builds an object that implements the BetterPlayerLogCallback protocol. To implement
+  /// multiple protocols, use [addToBuilder] or [objc.ObjCProtocolBuilder] directly. All
+  /// methods that can be implemented as blocking listeners will be.
+  ///
+  /// If `$keepIsolateAlive` is true, this protocol will keep this isolate
+  /// alive until it is garbage collected by both Dart and ObjC.
+  static BetterPlayerLogCallback implementAsBlocking({
+    required void Function(int, objc.NSString, objc.NSString)
+    onLog_tag_message_,
+    bool $keepIsolateAlive = true,
+  }) {
+    final builder = objc.ObjCProtocolBuilder(
+      debugName: 'BetterPlayerLogCallback',
+    );
+    BetterPlayerLogCallback$Builder.onLog_tag_message_.implementAsBlocking(
+      builder,
+      onLog_tag_message_,
+    );
+    builder.addProtocol($protocol);
+    return BetterPlayerLogCallback.as(
+      builder.build(keepIsolateAlive: $keepIsolateAlive),
+    );
+  }
+
+  /// Adds the implementation of the BetterPlayerLogCallback protocol to an existing
+  /// [objc.ObjCProtocolBuilder]. All methods that can be implemented as blocking
+  /// listeners will be.
+  ///
+  /// Note: You cannot call this method after you have called `builder.build`.
+  static void addToBuilderAsBlocking(
+    objc.ObjCProtocolBuilder builder, {
+    required void Function(int, objc.NSString, objc.NSString)
+    onLog_tag_message_,
+    bool $keepIsolateAlive = true,
+  }) {
+    BetterPlayerLogCallback$Builder.onLog_tag_message_.implementAsBlocking(
+      builder,
+      onLog_tag_message_,
+    );
+    builder.addProtocol($protocol);
+  }
+
+  /// onLog:tag:message:
+  static final onLog_tag_message_ =
+      objc.ObjCProtocolListenableMethod<
+        void Function(int, objc.NSString, objc.NSString)
+      >(
+        _protocol_BetterPlayerLogCallback,
+        _sel_onLog_tag_message_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Void Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Long,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_x224me_protocolTrampoline_1ihjjaj)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_BetterPlayerLogCallback,
+          _sel_onLog_tag_message_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (void Function(int, objc.NSString, objc.NSString) func) =>
+            ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString.fromFunction(
+              (
+                ffi.Pointer<ffi.Void> _,
+                int arg1,
+                objc.NSString arg2,
+                objc.NSString arg3,
+              ) => func(arg1, arg2, arg3),
+            ),
+        (void Function(int, objc.NSString, objc.NSString) func) =>
+            ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString.listener(
+              (
+                ffi.Pointer<ffi.Void> _,
+                int arg1,
+                objc.NSString arg2,
+                objc.NSString arg3,
+              ) => func(arg1, arg2, arg3),
+            ),
+        (void Function(int, objc.NSString, objc.NSString) func) =>
+            ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString.blocking(
+              (
+                ffi.Pointer<ffi.Void> _,
+                int arg1,
+                objc.NSString arg2,
+                objc.NSString arg3,
+              ) => func(arg1, arg2, arg3),
+            ),
+      );
 }
 
 /// WARNING: CacheManager is a stub. To generate bindings for this class, include
@@ -2877,6 +3135,314 @@ extension ObjCBlock_ffiVoid_ffiVoid_Int64_ffiDouble_ffiDouble_NSString$CallExten
   }
 }
 
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Long, objc.NSString, objc.NSString)>`.
+abstract final class ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      ffi.Pointer<ffi.Void>,
+      ffi.Long,
+      objc.NSString,
+      objc.NSString,
+    )
+  >
+  fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) =>
+      objc.ObjCBlock<
+        ffi.Void Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Long,
+          objc.NSString,
+          objc.NSString,
+        )
+      >(pointer, retain: retain, release: release);
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      ffi.Pointer<ffi.Void>,
+      ffi.Long,
+      objc.NSString,
+      objc.NSString,
+    )
+  >
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<ffi.Void> arg0,
+          ffi.Long arg1,
+          ffi.Pointer<objc.ObjCObjectImpl> arg2,
+          ffi.Pointer<objc.ObjCObjectImpl> arg3,
+        )
+      >
+    >
+    ptr,
+  ) =>
+      objc.ObjCBlock<
+        ffi.Void Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Long,
+          objc.NSString,
+          objc.NSString,
+        )
+      >(
+        objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+        retain: false,
+        release: true,
+      );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      ffi.Pointer<ffi.Void>,
+      ffi.Long,
+      objc.NSString,
+      objc.NSString,
+    )
+  >
+  fromFunction(
+    void Function(ffi.Pointer<ffi.Void>, int, objc.NSString, objc.NSString)
+    fn, {
+    bool keepIsolateAlive = true,
+  }) =>
+      objc.ObjCBlock<
+        ffi.Void Function(
+          ffi.Pointer<ffi.Void>,
+          ffi.Long,
+          objc.NSString,
+          objc.NSString,
+        )
+      >(
+        objc.newClosureBlock(_closureCallable, (
+          ffi.Pointer<ffi.Void> arg0,
+          int arg1,
+          ffi.Pointer<objc.ObjCObjectImpl> arg2,
+          ffi.Pointer<objc.ObjCObjectImpl> arg3,
+        ) {
+          return fn(
+            arg0,
+            arg1,
+            objc.NSString.fromPointer(arg2, retain: true, release: true),
+            objc.NSString.fromPointer(arg3, retain: true, release: true),
+          );
+        }, keepIsolateAlive),
+        retain: false,
+        release: true,
+      );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This block can be invoked from any thread, but only supports void
+  /// functions, and is not run synchronously. Async functions (ie returning
+  /// Future<void>) are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      ffi.Pointer<ffi.Void>,
+      ffi.Long,
+      objc.NSString,
+      objc.NSString,
+    )
+  >
+  listener(
+    void Function(ffi.Pointer<ffi.Void>, int, objc.NSString, objc.NSString)
+    fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    return objc.ObjCBlock<
+      ffi.Void Function(
+        ffi.Pointer<ffi.Void>,
+        ffi.Long,
+        objc.NSString,
+        objc.NSString,
+      )
+    >(
+      objc.newBlockPort(_x224me_wrapListenerBlock_1ihjjaj, (
+        ffi.Pointer<objc.ObjCObjectImpl> rawArgs,
+      ) {
+        final args = _BlockArgs_1wrsxdo.fromPointer(
+          rawArgs,
+          retain: false,
+          release: false,
+        );
+
+        fn(args.arg0, args.arg1, args.arg2, args.arg3);
+      }, keepIsolateAlive),
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions (ie returning Future<void>) are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<
+    ffi.Void Function(
+      ffi.Pointer<ffi.Void>,
+      ffi.Long,
+      objc.NSString,
+      objc.NSString,
+    )
+  >
+  blocking(
+    void Function(ffi.Pointer<ffi.Void>, int, objc.NSString, objc.NSString)
+    fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    return objc.ObjCBlock<
+      ffi.Void Function(
+        ffi.Pointer<ffi.Void>,
+        ffi.Long,
+        objc.NSString,
+        objc.NSString,
+      )
+    >(
+      objc.newBlockingBlockPort(_x224me_wrapBlockingBlock_1ihjjaj, (
+        ffi.Pointer<objc.ObjCObjectImpl> rawArgs,
+      ) {
+        final args = _BlockArgs_1wrsxdo.fromPointer(
+          rawArgs,
+          retain: false,
+          release: false,
+        );
+
+        fn(args.arg0, args.arg1, args.arg2, args.arg3);
+      }, keepIsolateAlive),
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    int arg1,
+    ffi.Pointer<objc.ObjCObjectImpl> arg2,
+    ffi.Pointer<objc.ObjCObjectImpl> arg3,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<ffi.Void> arg0,
+            ffi.Long arg1,
+            ffi.Pointer<objc.ObjCObjectImpl> arg2,
+            ffi.Pointer<objc.ObjCObjectImpl> arg3,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<ffi.Void>,
+          int,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(arg0, arg1, arg2, arg3);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Long,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    int arg1,
+    ffi.Pointer<objc.ObjCObjectImpl> arg2,
+    ffi.Pointer<objc.ObjCObjectImpl> arg3,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(
+            ffi.Pointer<ffi.Void>,
+            int,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          ))(arg0, arg1, arg2, arg3);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Long,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Long, objc.NSString, objc.NSString)>`.
+extension ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString$CallExtension
+    on
+        objc.ObjCBlock<
+          ffi.Void Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Long,
+            objc.NSString,
+            objc.NSString,
+          )
+        > {
+  void call(
+    ffi.Pointer<ffi.Void> arg0,
+    int arg1,
+    objc.NSString arg2,
+    objc.NSString arg3,
+  ) {
+    final _$$ref = arg2.ref;
+    final _$$ref$1 = arg3.ref;
+    return ref.pointer.ref.invoke
+        .cast<
+          ffi.NativeFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl> block,
+              ffi.Pointer<ffi.Void> arg0,
+              ffi.Long arg1,
+              ffi.Pointer<objc.ObjCObjectImpl> arg2,
+              ffi.Pointer<objc.ObjCObjectImpl> arg3,
+            )
+          >
+        >()
+        .asFunction<
+          void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            int,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >()(ref.pointer, arg0, arg1, _$$ref.pointer, _$$ref$1.pointer);
+  }
+}
+
 /// Construction methods for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString?)>`.
 abstract final class ObjCBlock_ffiVoid_ffiVoid_NSString {
   /// Returns a block that wraps the given raw block pointer.
@@ -3738,6 +4304,56 @@ extension _BlockArgs_1pvysg1$Methods on _BlockArgs_1pvysg1 {
   }
 }
 
+extension type _BlockArgs_1wrsxdo._(objc.ObjCObject object$)
+    implements objc.ObjCObject {
+  /// Constructs a [_BlockArgs_1wrsxdo] that points to the same underlying object as [other].
+  _BlockArgs_1wrsxdo.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [_BlockArgs_1wrsxdo] that wraps the given raw object pointer.
+  _BlockArgs_1wrsxdo.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [_BlockArgs_1wrsxdo].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(
+          obj.ref.pointer,
+          _sel_isKindOfClass_,
+          _class__BlockArgs_1wrsxdo,
+        );
+}
+
+extension _BlockArgs_1wrsxdo$Methods on _BlockArgs_1wrsxdo {
+  ffi.Pointer<ffi.Void> get arg0 {
+    final _$$ref = object$.ref;
+    return _objc_msgSend_6ex6p5(_$$ref.pointer, _sel_arg0);
+  }
+
+  int get arg1 {
+    final _$$ref = object$.ref;
+    return _objc_msgSend_1hz7y9r(_$$ref.pointer, _sel_arg1);
+  }
+
+  objc.NSString get arg2 {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_arg2);
+    return objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+
+  objc.NSString get arg3 {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_arg3);
+    return objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+}
+
 extension type _BlockArgs_49uf14._(objc.ObjCObject object$)
     implements objc.ObjCObject {
   /// Constructs a [_BlockArgs_49uf14] that points to the same underlying object as [other].
@@ -4029,6 +4645,16 @@ final _class__BlockArgs_1pvysg1 = objc.getClass(
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__x224me_BlockArgs_1ihjjaj',
+)
+external ffi.Pointer<objc.ObjCObjectImpl> _class__BlockArgs_1wrsxdo_raw;
+final _class__BlockArgs_1wrsxdo = objc.getClass(
+  "_x224me_BlockArgs_1ihjjaj",
+  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
+    _class__BlockArgs_1wrsxdo_raw,
+  ).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
   symbol: 'OBJC_CLASS_\$__x224me_BlockArgs_18v1jvf',
 )
 external ffi.Pointer<objc.ObjCObjectImpl> _class__BlockArgs_49uf14_raw;
@@ -4152,6 +4778,42 @@ final _objc_msgSend_1cwp428 = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObjectImpl>,
         ffi.Pointer<objc.ObjCSelector>,
         ffi.Pointer<objc.NSZone>,
+      )
+    >();
+final _objc_msgSend_1hz7y9r = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Long Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+        )
+      >
+    >()
+    .asFunction<
+      int Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+      )
+    >();
+final _objc_msgSend_1m6rrzn = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Long,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
       )
     >();
 final _objc_msgSend_1nvl641 = objc.msgSendPointer
@@ -4673,6 +5335,15 @@ final _protocol_BetterPlayerCallback = objc.getProtocol(
   "BetterPlayerCallback",
   _protocol_BetterPlayerCallback_raw,
 );
+@ffi.Native<ffi.Pointer<objc.ObjCProtocolImpl> Function()>(
+  symbol: '_x224me_BetterPlayerLogCallback',
+)
+external ffi.Pointer<objc.ObjCProtocolImpl>
+_protocol_BetterPlayerLogCallback_raw();
+final _protocol_BetterPlayerLogCallback = objc.getProtocol(
+  "BetterPlayerLogCallback",
+  _protocol_BetterPlayerLogCallback_raw,
+);
 late final _sel__dummyCallback = objc.registerName("_dummyCallback");
 late final _sel_absolutePosition = objc.registerName("absolutePosition");
 late final _sel_alloc = objc.registerName("alloc");
@@ -4726,6 +5397,7 @@ late final _sel_onError_errorMessage_errorDetails_ = objc.registerName(
 );
 late final _sel_onInitializedWithDurationMs_width_height_key_ = objc
     .registerName("onInitializedWithDurationMs:width:height:key:");
+late final _sel_onLog_tag_message_ = objc.registerName("onLog:tag:message:");
 late final _sel_onPauseWithKey_ = objc.registerName("onPauseWithKey:");
 late final _sel_onPipStart = objc.registerName("onPipStart");
 late final _sel_onPipStop = objc.registerName("onPipStop");
