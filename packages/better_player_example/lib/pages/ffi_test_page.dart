@@ -150,10 +150,8 @@ class _FFITestPageState extends State<FFITestPage> {
                   );
                 } catch (e) {
                   // Fallback to direct platform call if controller logic fails
-                  final textureId = _betterPlayerController
-                      .videoPlayerController
-                      // ignore: invalid_use_of_visible_for_testing_member
-                      ?.textureId;
+                  final textureId =
+                      _betterPlayerController.videoPlayerController?.textureId;
                   if (textureId != null) {
                     await BetterPlayerPlatform.instance.seekTo(
                       textureId,
