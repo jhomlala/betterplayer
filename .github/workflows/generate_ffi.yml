@@ -2,8 +2,6 @@ name: Generate FFI Bindings
 
 on:
   push:
-    branches:
-      - 'feature/ffi-migration'
     paths:
       - 'packages/better_player_ios/ios/**'
       - 'packages/better_player_android/android/**'
