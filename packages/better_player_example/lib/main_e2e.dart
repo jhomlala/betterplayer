@@ -72,10 +72,11 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       if (event.betterPlayerEventType == PlayerEventType.exception) {
         BetterPlayerUtils.log('E2E: Exception event: ${event.parameters}');
         setState(() {
-          _errorDescription = _betterPlayerController
-              .videoPlayerController
-              ?.value
-              .errorDescription;
+          _errorDescription = event.parameters?['exception']?.toString() ??
+              _betterPlayerController
+                  .videoPlayerController
+                  ?.value
+                  .errorDescription;
         });
       } else if (event.betterPlayerEventType ==
           PlayerEventType.setupDataSource) {
