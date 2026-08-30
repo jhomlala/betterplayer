@@ -14,12 +14,15 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   Future<void> setupLogCallback(
     void Function(int levelIndex, String tag, String message) callback,
   ) async {
+    // TEMPORARY: Commented out to allow CI to compile and generate FFI bindings
+    /*
     final ffiFn = BetterPlayerLogCallback$Builder.implement(
       onLog_tag_message_: (int level, objc.NSString tag, objc.NSString message) {
         callback(level, tag.toString(), message.toString());
       },
     );
     BetterPlayerApi.setLogCallback(ffiFn);
+    */
   }
 
   @visibleForTesting

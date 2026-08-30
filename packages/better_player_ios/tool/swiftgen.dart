@@ -54,7 +54,7 @@ Future<void> main() async {
         ),
         protocols: fg.Protocols(
           include: (decl) =>
-              ['BetterPlayerCallback'].contains(decl.originalName),
+              ['BetterPlayerCallback', 'BetterPlayerLogCallback'].contains(decl.originalName),
         ),
       ),
     ),
@@ -82,6 +82,10 @@ Future<void> main() async {
       dartContent = dartContent.replaceAll(
         '"better_player_ios.BetterPlayerCallback"',
         '"BetterPlayerCallback"',
+      );
+      dartContent = dartContent.replaceAll(
+        '"better_player_ios.BetterPlayerLogCallback"',
+        '"BetterPlayerLogCallback"',
       );
       dartFile.writeAsStringSync(dartContent);
     }
