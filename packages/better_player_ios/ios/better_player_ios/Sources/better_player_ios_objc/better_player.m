@@ -2,6 +2,7 @@
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
 @protocol BetterPlayerCallback;
+@protocol BetterPlayerLogCallback;
 
 #if !__has_feature(objc_arc)
 #error "This file must be compiled with ARC enabled"

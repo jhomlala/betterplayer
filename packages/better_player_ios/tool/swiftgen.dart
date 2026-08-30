@@ -71,7 +71,7 @@ Future<void> main() async {
     var content = file.readAsStringSync();
     content = content.replaceAll(
       RegExp(r'#import\s+"[^"]+better_player_ios\.h"'),
-      '@protocol BetterPlayerCallback;',
+      '@protocol BetterPlayerCallback;\n@protocol BetterPlayerLogCallback;',
     );
     file.writeAsStringSync(content);
 
