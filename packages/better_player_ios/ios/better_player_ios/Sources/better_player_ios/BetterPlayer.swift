@@ -58,6 +58,9 @@ private var presentationSizeContext = 0
 
     // MARK: - Properties
 
+    public var textureId: Int64 = -1
+    private var TAG: String { "BetterPlayer-\(textureId)" }
+
     /// The underlying AVPlayer instance.
     public private(set) var player: AVPlayer
 
@@ -70,7 +73,7 @@ private var presentationSizeContext = 0
     /// The sink for emitting events to Flutter.
     @objc public var callback: BetterPlayerCallback?
 
-    private let TAG = "BetterPlayer"
+    
 
     /// The preferred transform for the video.
     public var preferredTransform: CGAffineTransform = .identity

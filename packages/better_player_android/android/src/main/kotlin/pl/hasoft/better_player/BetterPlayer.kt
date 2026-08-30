@@ -63,9 +63,10 @@ import androidx.annotation.Keep
 class BetterPlayer(
     context: Context,
     val textureEntry: SurfaceTextureEntry,
-    private val callback: BetterPlayerCallback,
-    customDefaultLoadControl: CustomDefaultLoadControl? = null
+    val callback: BetterPlayerCallback,
+    val customDefaultLoadControl: CustomDefaultLoadControl?,
 ) {
+    private val TAG: String = "BetterPlayer-${textureEntry.id()}"
     private val mainHandler = Handler(Looper.getMainLooper())
     private fun runOnMainThread(action: () -> Unit) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -715,7 +716,7 @@ class BetterPlayer(
     }
 
     companion object {
-        private const val TAG = "BetterPlayer"
+        
         private const val FORMAT_SS = "ss"
         private const val FORMAT_DASH = "dash"
         private const val FORMAT_HLS = "hls"

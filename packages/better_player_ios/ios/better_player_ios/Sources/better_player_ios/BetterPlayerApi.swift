@@ -54,9 +54,11 @@ import AVKit
         
         let player = BetterPlayer()
         player.callback = callback
+        let id = nextId
         nextId += 1
-        players[nextId] = player
-        return nextId
+        player.textureId = id
+        players[id] = player
+        return id
     }
 
     @objc public static func getPlayer(_ textureId: Int64) -> BetterPlayer? {
