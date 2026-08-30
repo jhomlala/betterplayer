@@ -11,6 +11,9 @@ on:
       - 'packages/better_player_android/tool/**'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   generate:
     runs-on: macos-latest
