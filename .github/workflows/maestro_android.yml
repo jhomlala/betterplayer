@@ -2,7 +2,7 @@ name: Maestro Android flow
 
 on:
   push:
-    branches: [ master, feature/ffi-migration ]
+    branches: [ master ]
   pull_request:
     branches: [ master ]
 
