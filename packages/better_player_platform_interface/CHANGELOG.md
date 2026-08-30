@@ -1,6 +1,14 @@
 ## Unreleased
 - none.
 
+## 1.1.0
+- Added: Removed legacy `MethodChannelVideoPlayer` and replaced it with a modern JNI/Swiftgen implementation.
+- Added: Renamed `VideoPlayerPlatform` to `BetterPlayerPlatform` for better project branding.
+
+## 1.1.0
+- Refactor: Rename `VideoPlayerPlatform` to `BetterPlayerPlatform` for consistency.
+- Refactor: Remove legacy `MethodChannelVideoPlayer` implementation in favor of FFI/JNI.
+
 ## 1.0.2
 
 * Docs: Updated model name references in example.md.

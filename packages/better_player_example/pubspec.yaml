@@ -2,7 +2,7 @@ name: better_player_example
 resolution: workspace
 description: "Example to showcase use cases of Better Player."
 publish_to: 'none'
-version: 1.1.0+1
+version: 1.2.0
 environment:
   sdk: "^3.12.0"
   flutter: ">=3.47.0"
