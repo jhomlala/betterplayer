@@ -27,7 +27,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         onLog$async: true,
       ),
     );
-    BetterPlayerApi.setLogCallback(jniCallback);
+    BetterPlayerApi.Companion.logCallback = jniCallback;
   }
 
   final Map<int, BetterPlayerWrapper> _players = {};
