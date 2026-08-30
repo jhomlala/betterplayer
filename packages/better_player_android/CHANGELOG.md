@@ -1,13 +1,10 @@
-## 1.0.2
-
-* Docs: Updated model name references in example.md.
-
-## Unreleased
-- none.
-
 ## 1.1.0
 - Added: Migrated native bridge to JNI using `jnigen` for high-performance direct communication with the Android media engine.
 - Fixed: Memory leak in player disposal and optimized WorkManager threading for caching.
+
+## 1.0.2
+
+* Docs: Updated model name references in example.md.
 
 ## 1.0.1
 * Add thin examples to platform packages and decoupled example app.

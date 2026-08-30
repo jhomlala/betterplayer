@@ -19,7 +19,7 @@
   - Ensure all packages in `packages/` are consistent.
 - **Error Resolution**: If `flutter analyze` reports issues, they MUST be fixed immediately before concluding the task.
 - **PR Completeness**: Before considering a task or bug fix finished, ensure the work is ready to be merged. This includes:
-  - Adding a relevant entry to `CHANGELOG.md` under the `## Unreleased` header (following the Changelog Guidelines).
+  - Adding a relevant entry to `CHANGELOG.md` under the `## Unreleased` header. If the header does not exist, create it at the very top of the file (following the Changelog Guidelines).
   - Ensuring all tests pass and `flutter analyze` is clean.
   - Providing clear verification steps and, for bugs, the reproduction data source.
 
@@ -78,7 +78,7 @@
 ## Changelog Guidelines
 - **Content Policy**: Entries in `CHANGELOG.md` MUST ONLY be for the plugin itself (features, fixes, updates). DO NOT include DevOps, infrastructure, or CI/CD changes (e.g., workflow updates, script optimizations).
 - **History Preservation**: NEVER remove historical entries from `CHANGELOG.md`. Keep the complete history intact.
-- **Unreleased Section**: The `## Unreleased` header MUST ALWAYS be at the very top of the changelog file. If there are no unreleased changes, it should contain a single entry: `- none.`.
+- **Unreleased Section**: The `## Unreleased` header should ONLY be present when there are actual unreleased changes. If present, it MUST be at the very top of the changelog file, above all other version headers. Version headers MUST be ordered chronologically, with the most recent version at the top. If there are no unreleased changes, the `## Unreleased` header MUST NOT be present.
 - **Grouping**: Always group related or repetitive changes under a single concise entry in `## Unreleased` to avoid bloating.
 - **Labels**: Mark critical or API-breaking changes with the `[BREAKING_CHANGE]` label at the start of the line.
 - **Sections**: Use the following verbs to start entries:
@@ -92,7 +92,7 @@
   1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml`, `packages/better_player_android/pubspec.yaml`, `packages/better_player_ios/pubspec.yaml`, and `packages/better_player_platform_interface/pubspec.yaml`.
   2. Update `s.version = 'X.Y.Z'` in `packages/better_player_ios/ios/better_player_ios.podspec`.
   3. Update `better_player: ^X.Y.Z` in the installation snippet of `docs/install.md`.
-  4. Move all entries from `## Unreleased` to a new `## X.Y.Z` header in `CHANGELOG.md` (omit the date). Ensure a new `## Unreleased` header is left at the very top with `- none.`.
+  4. Rename the `## Unreleased` header to `## X.Y.Z` in `CHANGELOG.md` (omit the date). Ensure that version headers remain ordered correctly with the most recent at the top. DO NOT leave an empty `## Unreleased` section after the release.
   5. Run `flutter pub get` in the root directory.
   6. Run `dart format .` and `flutter analyze .`.
 - **Internal Release (`publish_to: none`)**:
