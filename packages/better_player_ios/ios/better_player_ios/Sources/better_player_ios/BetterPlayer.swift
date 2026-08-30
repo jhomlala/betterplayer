@@ -70,6 +70,8 @@ private var presentationSizeContext = 0
     /// The sink for emitting events to Flutter.
     @objc public var callback: BetterPlayerCallback?
 
+    private let TAG = "BetterPlayer"
+
     /// The preferred transform for the video.
     public var preferredTransform: CGAffineTransform = .identity
 
@@ -265,6 +267,7 @@ private var presentationSizeContext = 0
 
     /// Sets the data source from an asset path.
     @objc public func setDataSourceAsset(_ assetPath: String, key: String?, certificateUrl: String?, licenseUrl: String?, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int) {
+        BetterPlayerApi.log(1, TAG, "setDataSourceAsset: \(assetPath)")
         if let path = Bundle.main.path(forResource: assetPath, ofType: nil) {
             let url = URL(fileURLWithPath: path)
             setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: false, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: nil)
@@ -273,6 +276,7 @@ private var presentationSizeContext = 0
 
     /// Sets the data source from a URL.
     @objc public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
+        BetterPlayerApi.log(1, TAG, "setDataSourceURL: \(url.absoluteString)")
         self.overriddenDuration = 0
 
         let item: AVPlayerItem
@@ -310,6 +314,7 @@ private var presentationSizeContext = 0
         removeObservers()
         
         player.replaceCurrentItem(with: item)
+        BetterPlayerApi.log(1, TAG, "setDataSource: item replaced")
 
         let asset = item.asset
         asset.loadValuesAsynchronously(forKeys: ["tracks"]) {
@@ -422,6 +427,7 @@ private var presentationSizeContext = 0
                 switch item.status {
                 case .failed:
                     if callback != nil {
+                        BetterPlayerApi.log(3, TAG, "item status failed: \(item.error?.localizedDescription ?? "unknown")")
                         let message = "Failed to load video: \(item.error?.localizedDescription ?? "unknown")"
                         let error = FlutterError(code: "VideoError", message: message, details: nil)
                         sendError(error)
@@ -436,12 +442,15 @@ private var presentationSizeContext = 0
             }
         } else if context == &playbackLikelyToKeepUpContext {
             if player.currentItem?.isPlaybackLikelyToKeepUp == true {
+                BetterPlayerApi.log(1, TAG, "playbackLikelyToKeepUp: true")
                 updatePlayingState()
                 callback?.onBufferingEnd(key: key)
             }
         } else if context == &playbackBufferEmptyContext {
+            BetterPlayerApi.log(1, TAG, "playbackBufferEmpty: true")
             callback?.onBufferingStart(key: key)
         } else if context == &playbackBufferFullContext {
+            BetterPlayerApi.log(1, TAG, "playbackBufferFull: true")
             callback?.onBufferingEnd(key: key)
         }
     }
@@ -517,6 +526,7 @@ private var presentationSizeContext = 0
 
     /// Starts playback.
     @objc public func play() {
+        BetterPlayerApi.log(1, TAG, "play()")
         stalledCount = 0
         isStalledCheckStarted = false
         isPlaying = true
@@ -525,6 +535,7 @@ private var presentationSizeContext = 0
 
     /// Pauses playback.
     @objc public func pause() {
+        BetterPlayerApi.log(1, TAG, "pause()")
         isPlaying = false
         updatePlayingState()
     }
@@ -557,6 +568,7 @@ private var presentationSizeContext = 0
     /// Seeks to the specified position in milliseconds.
     /// - Parameter location: The position to seek to.
     @objc public func seekTo(_ location: Int) {
+        BetterPlayerApi.log(1, TAG, "seekTo: \(location)")
         let wasPlaying = isPlaying
         if wasPlaying { player.pause() }
         player.seek(to: CMTimeMake(value: Int64(location), timescale: 1000), toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
@@ -762,6 +774,7 @@ private var presentationSizeContext = 0
 
     /// Disposes the player and cleans up resources.
     @objc public func dispose() {
+        BetterPlayerApi.log(1, TAG, "dispose()")
         pause()
         disposeSansEventChannel()
         disablePictureInPicture()

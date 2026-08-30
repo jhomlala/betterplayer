@@ -133,6 +133,7 @@ class BetterPlayer(
         cacheKey: String?,
         clearKey: String?
     ) {
+        BetterPlayerApi.log(1, TAG, "setDataSource: $dataSource")
         this.key = key
         isInitialized = false
         isInitializedSent = false
@@ -203,7 +204,7 @@ class BetterPlayer(
             exoPlayer?.setMediaSource(mediaSource)
         }
         exoPlayer?.prepare()
-        
+        BetterPlayerApi.log(1, TAG, "setDataSource: prepare() called")
     }
 
     @Keep
@@ -410,10 +411,12 @@ class BetterPlayer(
             override fun onPlaybackStateChanged(playbackState: Int) {
                 when (playbackState) {
                     Player.STATE_BUFFERING -> {
+                        BetterPlayerApi.log(1, TAG, "PlaybackState: BUFFERING")
                         sendBufferingUpdate(true)
                         callback.onBufferingStart()
                     }
                     Player.STATE_READY -> {
+                        BetterPlayerApi.log(1, TAG, "PlaybackState: READY")
                         if (!isInitializedSent) {
                             isInitialized = true
                             sendInitialized()
@@ -421,15 +424,17 @@ class BetterPlayer(
                         callback.onBufferingEnd()
                     }
                     Player.STATE_ENDED -> {
+                        BetterPlayerApi.log(1, TAG, "PlaybackState: ENDED")
                         callback.onCompleted(key = key)
                     }
                     Player.STATE_IDLE -> {
-                        //no-op
+                        BetterPlayerApi.log(1, TAG, "PlaybackState: IDLE")
                     }
                 }
             }
 
             override fun onPlayerError(error: PlaybackException) {
+                BetterPlayerApi.log(3, TAG, "PlayerError: $error")
                 callback.onError("VideoError", "Video player had error $error", "")
             }
 
@@ -475,6 +480,7 @@ class BetterPlayer(
 
 
     fun play() {
+        BetterPlayerApi.log(1, TAG, "play()")
         exoPlayer?.playWhenReady = true
     }
 
@@ -482,6 +488,7 @@ class BetterPlayer(
 
 
     fun pause() {
+        BetterPlayerApi.log(1, TAG, "pause()")
         exoPlayer?.playWhenReady = false
     }
 
@@ -532,6 +539,7 @@ class BetterPlayer(
 
 
     fun seekTo(location: Int) {
+        BetterPlayerApi.log(1, TAG, "seekTo: $location")
         exoPlayer?.seekTo(location.toLong())
     }
 
@@ -695,6 +703,7 @@ class BetterPlayer(
 
 
     fun dispose() {
+        BetterPlayerApi.log(1, TAG, "dispose()")
         disposeMediaSession()
         disposeRemoteNotifications()
         

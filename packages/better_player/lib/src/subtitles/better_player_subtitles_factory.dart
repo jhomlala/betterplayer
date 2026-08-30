@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/core/better_player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 
 class PlayerSubtitlesFactory {
@@ -31,12 +32,19 @@ class PlayerSubtitlesFactory {
           final subtitlesCache = _parseString(fileContent);
           subtitles.addAll(subtitlesCache);
         } else {
-          BetterPlayerUtils.log("$url doesn't exist!");
+          BetterPlayerLogger.instance.warning(
+            "$url doesn't exist!",
+            breadcrumb: 'Subtitles',
+          );
         }
       }
       return subtitles;
     } catch (exception) {
-      BetterPlayerUtils.log('Failed to read subtitles from file: $exception');
+      BetterPlayerLogger.instance.error(
+        'Failed to read subtitles from file: $exception',
+        error: exception,
+        breadcrumb: 'Subtitles',
+      );
     }
     return [];
   }
@@ -62,11 +70,16 @@ class PlayerSubtitlesFactory {
       }
       client.close();
 
-      BetterPlayerUtils.log('Parsed total subtitles: ${subtitles.length}');
+      BetterPlayerLogger.instance.debug(
+        'Parsed total subtitles: ${subtitles.length}',
+        breadcrumb: 'Subtitles',
+      );
       return subtitles;
     } catch (exception) {
-      BetterPlayerUtils.log(
+      BetterPlayerLogger.instance.error(
         'Failed to read subtitles from network: $exception',
+        error: exception,
+        breadcrumb: 'Subtitles',
       );
     }
     return [];
@@ -78,7 +91,11 @@ class PlayerSubtitlesFactory {
     try {
       return _parseString(source.content!);
     } catch (exception) {
-      BetterPlayerUtils.log('Failed to read subtitles from memory: $exception');
+      BetterPlayerLogger.instance.error(
+        'Failed to read subtitles from memory: $exception',
+        error: exception,
+        breadcrumb: 'Subtitles',
+      );
     }
     return [];
   }

@@ -33,6 +33,11 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setupLogger(int logLevel) async {
+    BetterPlayerApi.setupLogger(logLevel);
+  }
+
+  @override
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,
   }) async {

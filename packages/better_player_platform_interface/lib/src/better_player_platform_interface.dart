@@ -154,6 +154,11 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('clearCache() has not been implemented.');
   }
 
+  /// Setups the logger for the platform.
+  Future<void> setupLogger(int logLevel) {
+    throw UnimplementedError('setupLogger() has not been implemented.');
+  }
+
   /// Returns a widget displaying the video with a given textureID.
   Widget buildView(int? textureId) {
     throw UnimplementedError('buildView() has not been implemented.');

@@ -12,6 +12,8 @@ export 'src/configuration/player_controls_configuration.dart';
 export 'src/configuration/player_data_source.dart';
 export 'src/configuration/player_event.dart';
 export 'src/configuration/player_event_type.dart';
+export 'src/configuration/player_log_configuration.dart';
+export 'src/configuration/player_log_level.dart';
 export 'src/configuration/player_theme.dart';
 export 'src/configuration/player_translations.dart';
 export 'src/controls/better_player_controls_state.dart';

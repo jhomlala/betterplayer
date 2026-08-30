@@ -40,6 +40,11 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setupLogger(int logLevel) async {
+    BetterPlayerApi.Companion.setupLogger(logLevel);
+  }
+
+  @override
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,
   }) async {
