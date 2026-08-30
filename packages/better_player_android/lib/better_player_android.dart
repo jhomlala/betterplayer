@@ -19,6 +19,8 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Future<void> setupLogCallback(
     void Function(int levelIndex, String tag, String message) callback,
   ) async {
+    // TEMPORARY: Commented out to allow CI to compile the Android app and generate JNI bindings
+    /*
     final jniCallback = BetterPlayerLogCallback.implement(
       $BetterPlayerLogCallback(
         onLog: (int level, JString tag, JString message) {
@@ -28,6 +30,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       ),
     );
     BetterPlayerApi.setLogCallback(jniCallback);
+    */
   }
 
   final Map<int, BetterPlayerWrapper> _players = {};
