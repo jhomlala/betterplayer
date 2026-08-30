@@ -23,7 +23,11 @@ public typealias FlutterResult = (Any?) -> Void
     public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) { super.init() }
 }
 @objc public class CacheManager: NSObject {
+    @objc public static let shared = CacheManager()
     public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: [NSObject: AnyObject]) -> AVPlayerItem? { return nil }
+    @objc public func preCacheURL(_ url: URL, cacheKey: String?, videoExtension: String?, withHeaders headers: [NSObject: AnyObject], completionHandler: ((_ success: Bool) -> Void)?) {}
+    @objc public func stopPreCache(_ url: URL, cacheKey: String?, completionHandler: ((_ success: Bool) -> Void)?) {}
+    @objc public func clearCache() {}
 }
 public class BetterPlayerView: UIView {
     public var player: AVPlayer?
