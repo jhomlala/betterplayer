@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/core/better_player_full_screen_video.dart';
-import 'package:better_player/src/core/better_player_logger.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
@@ -95,10 +95,10 @@ class _BetterPlayerState extends State<BetterPlayer>
         locale = contextLocale;
       }
     } catch (exception) {
-      PlayerLogger.error(
+      BetterPlayerLogger.instance.error(
         'Failed to get locale: $exception',
         error: exception,
-        breadcrumb: 'BetterPlayer',
+        tag: 'BetterPlayer',
       );
     }
     widget.controller.setupTranslations(locale);

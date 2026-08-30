@@ -32,3 +32,9 @@ export 'src/playlist/player_playlist_configuration.dart';
 export 'src/subtitles/better_player_subtitles_source_type.dart';
 export 'src/subtitles/player_subtitles_configuration.dart';
 export 'src/subtitles/player_subtitles_source.dart';
+
+export 'src/logging/player_log_level.dart';
+export 'src/logging/player_log_record.dart';
+export 'src/logging/player_log_output.dart';
+export 'src/logging/player_log_configuration.dart';
+export 'src/logging/better_player_logger.dart';

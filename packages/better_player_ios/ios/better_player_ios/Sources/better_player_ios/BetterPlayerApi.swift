@@ -26,20 +26,26 @@ import AVKit
     func onError(_ errorCode: String, errorMessage: String, errorDetails: String)
 }
 
+@objc(BetterPlayerLogCallback) public protocol BetterPlayerLogCallback {
+    @objc(onLog:tag:message:)
+    func onLog(_ level: Int, tag: String, message: String)
+}
+
 @objc public class BetterPlayerApi: NSObject {
     @objc public static var players: [Int64: BetterPlayer] = [:]
     @objc public static var nextId: Int64 = 0
 
-    @objc public static var logLevel: Int = 1 // 0=debug, 1=info, 2=warning, 3=error, 4=none
+    @objc public static var logCallback: BetterPlayerLogCallback? = nil
+    @objc public static let _dummyLogCallback: BetterPlayerLogCallback = _DummyLogCallbackImpl()
 
-    @objc public static func setupLogger(level: Int) {
-        logLevel = level
+    @objc public static func setLogCallback(_ callback: BetterPlayerLogCallback?) {
+        logCallback = callback
     }
 
     public static func log(_ level: Int, _ tag: String, _ msg: String) {
-        guard logLevel < 4 && level >= logLevel else { return }
-        let prefix = ["D", "I", "W", "E"][level]
-        print("[\(prefix)] [BetterPlayer/\(tag)] \(msg)")
+        guard let cb = logCallback else { return }
+        let safe = msg.count > 4000 ? String(msg.prefix(4000)) + "…[truncated]" : msg
+        cb.onLog(level, tag: tag, message: safe)
     }
 
     @objc public static func createPlayer(callback: BetterPlayerCallback) -> Int64 {
@@ -99,4 +105,8 @@ import AVKit
     @objc public func onPipStart() {}
     @objc public func onPipStop() {}
     @objc public func onError(_ errorCode: String, errorMessage: String, errorDetails: String) {}
+}
+
+@objc public class _DummyLogCallbackImpl: NSObject, BetterPlayerLogCallback {
+    @objc public func onLog(_ level: Int, tag: String, message: String) {}
 }

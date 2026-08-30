@@ -6,7 +6,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:better_player/src/core/better_player_logger.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
@@ -70,9 +70,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
-      PlayerLogger.debug(
+      BetterPlayerLogger.instance.debug(
         'VideoPlayerController: Event received: ${event.eventType}',
-        breadcrumb: 'VideoPlayer',
+        tag: 'VideoPlayer',
       );
       videoEventStreamController.add(event);
       switch (event.eventType) {
@@ -291,22 +291,22 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     try {
-      PlayerLogger.debug(
+      BetterPlayerLogger.instance.debug(
         'VideoPlayerController: setDataSource platform call starting',
-        breadcrumb: 'VideoPlayer',
+        tag: 'VideoPlayer',
       );
       await BetterPlayerPlatform.instance.setDataSource(
         _textureId,
         dataSourceDescription,
       );
-      PlayerLogger.debug(
+      BetterPlayerLogger.instance.debug(
         'VideoPlayerController: setDataSource platform call finished, waiting for init event',
-        breadcrumb: 'VideoPlayer',
+        tag: 'VideoPlayer',
       );
       await completer.future;
-      PlayerLogger.debug(
+      BetterPlayerLogger.instance.debug(
         'VideoPlayerController: setDataSource init event received',
-        breadcrumb: 'VideoPlayer',
+        tag: 'VideoPlayer',
       );
     } finally {
       await subscription.cancel();

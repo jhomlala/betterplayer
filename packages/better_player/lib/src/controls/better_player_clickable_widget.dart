@@ -1,5 +1,5 @@
 // Flutter imports:
-import 'package:better_player/src/core/better_player_logger.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -26,9 +26,9 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          PlayerLogger.debug(
+          BetterPlayerLogger.instance.debug(
             'Tapped on: $semanticsIdentifier ($semanticsLabel)',
-            breadcrumb: 'ClickableWidget',
+            tag: 'ClickableWidget',
           );
           onTap();
         },

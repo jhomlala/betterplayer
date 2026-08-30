@@ -1,6 +1,9 @@
-import 'package:better_player/better_player.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:material_ui/material_ui.dart';
+
+import '../logging/player_log_configuration.dart';
+import 'player_controls_configuration.dart';
+import 'player_subtitles_configuration.dart';
 
 ///Configuration of Better Player. Allows to setup general behavior of player.
 ///Master configuration which contains children that configure specific part
@@ -59,7 +62,7 @@ class PlayerConfiguration {
   /// When the video playback runs  into an error, you can build a custom
   /// error message.
   final Widget Function(BuildContext context, String? errorMessage)?
-  errorBuilder;
+      errorBuilder;
 
   /// The Aspect Ratio of the Video. Important to get the correct size of the
   /// video!

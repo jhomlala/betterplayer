@@ -10,6 +10,18 @@ import 'package:flutter/widgets.dart';
 import 'package:objective_c/objective_c.dart' as objc;
 
 class BetterPlayerIOS extends BetterPlayerPlatform {
+  @override
+  Future<void> setupNativeLogCallback(
+    void Function(int levelIndex, String tag, String message) callback,
+  ) async {
+    final ffiFn = BetterPlayerLogCallback$Builder.implement(
+      onLog_tag_message_: (int level, objc.NSString tag, objc.NSString message) {
+        callback(level, tag.toString(), message.toString());
+      },
+    );
+    BetterPlayerApi.setLogCallback(ffiFn);
+  }
+
   @visibleForTesting
   BetterPlayerWrapper? getPlayer(int textureId) {
     final player = BetterPlayerApi.getPlayer(textureId);
@@ -32,10 +44,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     _eventControllers.remove(textureId);
   }
 
-  @override
-  Future<void> setupLogger(int logLevel) async {
-    BetterPlayerApi.setupLogger(logLevel);
-  }
+
 
   @override
   Future<int?> create({

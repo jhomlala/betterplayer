@@ -434,8 +434,9 @@ class BetterPlayer(
             }
 
             override fun onPlayerError(error: PlaybackException) {
-                BetterPlayerApi.log(3, TAG, "PlayerError: $error")
-                callback.onError("VideoError", "Video player had error $error", "")
+                val errorMessage = error.message ?: "Unknown error"
+                BetterPlayerApi.log(3, TAG, "PlayerError: $errorMessage")
+                callback.onError("VideoError", "Video player had error $errorMessage", "")
             }
 
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -500,9 +501,8 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setVolume(value: Double) {
+        BetterPlayerApi.log(0, TAG, "setVolume: $value")
         val bracketedValue = max(0.0, min(1.0, value))
             .toFloat()
         exoPlayer?.volume = bracketedValue
@@ -512,6 +512,7 @@ class BetterPlayer(
 
 
     fun setSpeed(value: Double) {
+        BetterPlayerApi.log(0, TAG, "setSpeed: $value")
         val bracketedValue = value.toFloat()
         val playbackParameters = PlaybackParameters(bracketedValue)
         exoPlayer?.playbackParameters = playbackParameters
@@ -521,6 +522,7 @@ class BetterPlayer(
 
 
     fun setTrackParameters(width: Int, height: Int, bitrate: Int) {
+        BetterPlayerApi.log(0, TAG, "setTrackParameters: width=$width, height=$height, bitrate=$bitrate")
         val parametersBuilder = trackSelector.buildUponParameters()
         if (width != 0 && height != 0) {
             parametersBuilder.setMaxVideoSize(width, height)
@@ -624,6 +626,7 @@ class BetterPlayer(
 
 
     fun setAudioTrack(name: String, index: Int) {
+        BetterPlayerApi.log(0, TAG, "setAudioTrack: name=$name, index=$index")
         try {
             val mappedTrackInfo = trackSelector.currentMappedTrackInfo
             if (mappedTrackInfo != null) {

@@ -15,6 +15,21 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     BetterPlayerPlatform.instance = BetterPlayerAndroid();
   }
 
+  @override
+  Future<void> setupNativeLogCallback(
+    void Function(int levelIndex, String tag, String message) callback,
+  ) async {
+    final jniCallback = BetterPlayerLogCallback.implement(
+      $BetterPlayerLogCallback(
+        onLog: (int level, JString tag, JString message) {
+          callback(level, tag.toDartString(), message.toDartString());
+        },
+        onLog$async: true,
+      ),
+    );
+    BetterPlayerApi.setLogCallback(jniCallback);
+  }
+
   final Map<int, BetterPlayerWrapper> _players = {};
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
   final Map<int, dynamic> _callbacks = {};
@@ -39,10 +54,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     _eventControllers.remove(textureId);
   }
 
-  @override
-  Future<void> setupLogger(int logLevel) async {
-    BetterPlayerApi.Companion.setupLogger(logLevel);
-  }
+
 
   @override
   Future<int?> create({

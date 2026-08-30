@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_overflow_menu.dart';
 import 'package:better_player/src/controls/better_player_selection_list_item_widget.dart';
-import 'package:better_player/src/core/better_player_logger.dart';
+import 'package:better_player/better_player.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
@@ -66,18 +66,18 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void onShowMoreClicked() {
-    PlayerLogger.debug(
+    BetterPlayerLogger.instance.debug(
       'onShowMoreClicked',
-      breadcrumb: 'Controls',
+      tag: 'Controls',
     );
     _showModalBottomSheet([
       BetterPlayerOverflowMenu(
         controller: betterPlayerController!,
         controlsConfiguration: betterPlayerControlsConfiguration,
         onPlaybackSpeedClicked: () {
-          PlayerLogger.debug(
+          BetterPlayerLogger.instance.debug(
             'onPlaybackSpeedClicked',
-            breadcrumb: 'Controls',
+            tag: 'Controls',
           );
           Navigator.of(context).pop();
           Future.delayed(
@@ -86,9 +86,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onSubtitlesClicked: () {
-          PlayerLogger.debug(
+          BetterPlayerLogger.instance.debug(
             'onSubtitlesClicked',
-            breadcrumb: 'Controls',
+            tag: 'Controls',
           );
           Navigator.of(context).pop();
           Future.delayed(
@@ -97,9 +97,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onQualitiesClicked: () {
-          PlayerLogger.debug(
+          BetterPlayerLogger.instance.debug(
             'onQualitiesClicked',
-            breadcrumb: 'Controls',
+            tag: 'Controls',
           );
           Navigator.of(context).pop();
           Future.delayed(
@@ -108,9 +108,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onAudioTracksClicked: () {
-          PlayerLogger.debug(
+          BetterPlayerLogger.instance.debug(
             'onAudioTracksClicked',
-            breadcrumb: 'Controls',
+            tag: 'Controls',
           );
           Navigator.of(context).pop();
           Future.delayed(
@@ -218,17 +218,17 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void showQualitiesSelectionWidget() {
-    PlayerLogger.debug(
+    BetterPlayerLogger.instance.debug(
       'showQualitiesSelectionWidget started',
-      breadcrumb: 'Controls',
+      tag: 'Controls',
     );
     // HLS / DASH
     final asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
     final asmsTracks = betterPlayerController!.betterPlayerAsmsTracks;
-    PlayerLogger.debug(
+    BetterPlayerLogger.instance.debug(
       'ASMS Tracks: ${asmsTracks.length}',
-      breadcrumb: 'Controls',
+      tag: 'Controls',
     );
     final children = <Widget>[];
     for (var index = 0; index < asmsTracks.length; index++) {
@@ -277,9 +277,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     // normal videos
     final resolutions =
         betterPlayerController!.betterPlayerDataSource!.resolutions;
-    PlayerLogger.debug(
+    BetterPlayerLogger.instance.debug(
       'Resolutions: ${resolutions?.length ?? 0}',
-      breadcrumb: 'Controls',
+      tag: 'Controls',
     );
     var resolutionIndex = 0;
     resolutions?.forEach((key, value) {
@@ -302,9 +302,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     });
 
     if (children.isEmpty) {
-      PlayerLogger.debug(
+      BetterPlayerLogger.instance.debug(
         'Quality children empty, adding Auto fallback',
-        breadcrumb: 'Controls',
+        tag: 'Controls',
       );
       children.add(
         BetterPlayerSelectionListItemWidget(
@@ -322,9 +322,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       );
     }
 
-    PlayerLogger.debug(
+    BetterPlayerLogger.instance.debug(
       'Showing qualities menu with ${children.length} items',
-      breadcrumb: 'Controls',
+      tag: 'Controls',
     );
     _showModalBottomSheet(children);
   }
@@ -377,9 +377,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showModalBottomSheet(List<Widget> children) {
-    PlayerLogger.debug(
+    BetterPlayerLogger.instance.debug(
       'Showing bottom sheet with ${children.length} items',
-      breadcrumb: 'Controls',
+      tag: 'Controls',
     );
     defaultTargetPlatform == TargetPlatform.android
         ? _showMaterialBottomSheet(children)
