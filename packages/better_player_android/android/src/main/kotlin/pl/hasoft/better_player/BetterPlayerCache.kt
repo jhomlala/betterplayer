@@ -37,7 +37,6 @@ object BetterPlayerCache {
                 instance = null
             }
         } catch (exception: Exception) {
-            Log.e("BetterPlayerCache", exception.toString())
         }
     }
 }

@@ -1,0 +1,5 @@
+# Exclude JNI generation tool
+tool/jnigen.dart
+
+# Exclude internal FFI testing example
+example_ffi/

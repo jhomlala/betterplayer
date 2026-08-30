@@ -148,7 +148,6 @@ class BetterPlayer(
                 }
             }
             if (Util.SDK_INT < 18) {
-                Log.e(TAG, "Protected content not supported on API levels below 18")
                 drmSessionManager = null
             } else {
                 val drmSchemeUuid = Util.getDrmUuid("widevine")
@@ -172,7 +171,6 @@ class BetterPlayer(
             }
         } else if (clearKey != null && clearKey.isNotEmpty()) {
             drmSessionManager = if (Util.SDK_INT < 18) {
-                Log.e(TAG, "Protected content not supported on API levels below 18")
                 null
             } else {
                 DefaultDrmSessionManager.Builder()
@@ -284,7 +282,6 @@ class BetterPlayer(
                             }
                         }
                     } catch (exception: Exception) {
-                        Log.e(TAG, "Image select error: $exception")
                     }
                 }
                 val workerUuid = imageWorkRequest.id
@@ -663,7 +660,6 @@ class BetterPlayer(
                 }
             }
         } catch (exception: Exception) {
-            Log.e(TAG, "setAudioTrack failed$exception")
         }
     }
 
@@ -752,7 +748,6 @@ class BetterPlayer(
                 }
                 
             } catch (exception: Exception) {
-                Log.e(TAG, exception.toString())
                             }
         }
 
@@ -766,7 +761,6 @@ class BetterPlayer(
                 }
             }
             if (!file.delete()) {
-                Log.e(TAG, "Failed to delete cache dir.")
             }
         }
 

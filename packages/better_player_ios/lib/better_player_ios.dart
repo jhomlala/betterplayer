@@ -41,9 +41,6 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     final callback = BetterPlayerCallback$Builder.implement(
       onInitializedWithDurationMs_width_height_key_:
           (int durationMs, double width, double height, objc.NSString? key) {
-            BetterPlayerUtils.log(
-              '[IOS FFI] onInitialized: textureId=$currentTextureId, dur=$durationMs, size=${width}x$height',
-            );
             if (currentTextureId == null) return;
             _eventControllers[currentTextureId]?.add(
               VideoEvent(
@@ -55,23 +52,18 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
             );
           },
       onCompletedWithKey_: (objc.NSString? key) {
-        BetterPlayerUtils.log(
-          '[IOS FFI] onCompleted: textureId=$currentTextureId',
-        );
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(eventType: VideoEventType.completed, key: key?.toString()),
         );
       },
       onPlayWithKey_: (objc.NSString? key) {
-        BetterPlayerUtils.log('[IOS FFI] onPlay: textureId=$currentTextureId');
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(eventType: VideoEventType.play, key: key?.toString()),
         );
       },
       onPauseWithKey_: (objc.NSString? key) {
-        BetterPlayerUtils.log('[IOS FFI] onPause: textureId=$currentTextureId');
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(eventType: VideoEventType.pause, key: key?.toString()),
@@ -142,9 +134,6 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
             objc.NSString errorMessage,
             objc.NSString errorDetails,
           ) {
-            BetterPlayerUtils.log(
-              '[IOS FFI] onError: textureId=$currentTextureId, code=$errorCode, msg=$errorMessage',
-            );
             if (currentTextureId == null) return;
             _eventControllers[currentTextureId]?.addError(
               PlatformException(
@@ -157,7 +146,6 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     );
 
     currentTextureId = BetterPlayerApi.createPlayerWithCallback(callback);
-    BetterPlayerUtils.log('[IOS FFI] create: textureId=$currentTextureId');
 
     _eventControllers[currentTextureId] =
         StreamController<VideoEvent>.broadcast();
@@ -175,9 +163,6 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
 
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
-    BetterPlayerUtils.log(
-      '[IOS FFI] setDataSource: textureId=$textureId, url=${dataSource.uri}',
-    );
     if (textureId == null) return;
     final player = getPlayer(textureId);
     if (player == null) return;
@@ -229,14 +214,12 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
 
   @override
   Future<void> play(int? textureId) async {
-    BetterPlayerUtils.log('[IOS FFI] play: textureId=$textureId');
     if (textureId == null) return;
     getPlayer(textureId)?.play();
   }
 
   @override
   Future<void> pause(int? textureId) async {
-    BetterPlayerUtils.log('[IOS FFI] pause: textureId=$textureId');
     if (textureId == null) return;
     getPlayer(textureId)?.pause();
   }
@@ -255,9 +238,6 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
 
   @override
   Future<void> seekTo(int? textureId, Duration? position) async {
-    BetterPlayerUtils.log(
-      '[IOS FFI] seekTo: textureId=$textureId, pos=${position?.inMilliseconds}',
-    );
     if (textureId == null || position == null) return;
     getPlayer(textureId)?.seekTo(position.inMilliseconds);
   }

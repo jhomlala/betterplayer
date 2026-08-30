@@ -158,7 +158,6 @@ import Cache
                 self.existsInStorage = true
                 let mimeTypeResult = getMimeType(url: url, explicitVideoExtension: videoExtension)
                 if mimeTypeResult.1.isEmpty {
-                    NSLog("Cache error: couldn't find mime type for url: \(url.absoluteURL). Video will be played without cache.")
                     playerItem = CachingPlayerItem(url: url, cacheKey: key, headers: headers)
                 } else {
                     playerItem = CachingPlayerItem(data: data, mimeType: mimeTypeResult.1, fileExtension: mimeTypeResult.0)
@@ -238,7 +237,6 @@ extension CacheManager: CachingPlayerItemDelegate {
     }
 
     func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
-        NSLog("Error when downloading the file %@", error as NSError)
         self.completionHandler?(false)
     }
 }

@@ -52,7 +52,6 @@ private var presentationSizeContext = 0
 @objc public class BetterPlayer: NSObject, FlutterPlatformView, AVPictureInPictureControllerDelegate {
 
     private func sendError(_ error: FlutterError) {
-        NSLog("[BetterPlayer@\(Unmanaged.passUnretained(self).toOpaque())] sendError: code=\(error.code), message=\(error.message ?? "nil")")
         callback?.onError(error.code, errorMessage: error.message ?? "", errorDetails: (error.details as? String) ?? "")
     }
 
@@ -127,7 +126,6 @@ private var presentationSizeContext = 0
     public override init() {
         self.player = AVPlayer()
         super.init()
-        NSLog("[BetterPlayer@\(Unmanaged.passUnretained(self).toOpaque())] init")
         self.player.actionAtItemEnd = .none
         if #available(iOS 10.0, *) {
             self.player.automaticallyWaitsToMinimizeStalling = false
@@ -275,7 +273,6 @@ private var presentationSizeContext = 0
 
     /// Sets the data source from a URL.
     @objc public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
-        NSLog("[BetterPlayer@\(Unmanaged.passUnretained(self).toOpaque())] setDataSourceURL: url=\(url.absoluteString), key=\(key ?? "nil"), useCache=\(useCache)")
         self.overriddenDuration = 0
 
         let item: AVPlayerItem
@@ -372,7 +369,6 @@ private var presentationSizeContext = 0
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "rate" {
-            NSLog("[BetterPlayer@\(Unmanaged.passUnretained(self).toOpaque())] observeValue: rate=\(player.rate), isPlaying=\(isPlaying)")
             if #available(iOS 10.0, *), let pipController = pipController, pipController.isPictureInPictureActive {
                 if let last = lastAvPlayerTimeControlStatus, last == player.timeControlStatus {
                     return
@@ -423,10 +419,8 @@ private var presentationSizeContext = 0
             onReadyToPlay()
         } else if context == &statusContext {
             if let item = object as? AVPlayerItem {
-                NSLog("[BetterPlayer@\(Unmanaged.passUnretained(self).toOpaque())] observeValue: statusContext=\(item.status.rawValue)")
                 switch item.status {
                 case .failed:
-                    NSLog("Failed to load video: \(String(describing: item.error?.localizedDescription))")
                     if callback != nil {
                         let message = "Failed to load video: \(item.error?.localizedDescription ?? "unknown")"
                         let error = FlutterError(code: "VideoError", message: message, details: nil)
@@ -490,14 +484,11 @@ private var presentationSizeContext = 0
         let asset = player.currentItem!.asset
         let onlyAudio = asset.tracks(withMediaType: .video).count == 0
 
-        NSLog("[BetterPlayer@\(Unmanaged.passUnretained(self).toOpaque())] onReadyToPlay check: width=\(width), height=\(height), onlyAudio=\(onlyAudio)")
-
         if !onlyAudio && height == .zero && width == .zero {
             return
         }
         let isLive = CMTIME_IS_INDEFINITE(player.currentItem!.duration)
         let dur = duration()
-        NSLog("[BetterPlayer@\(Unmanaged.passUnretained(self).toOpaque())] onReadyToPlay check: isLive=\(isLive), duration=\(dur)")
 
         if !isLive && dur == 0 { return }
 
@@ -752,7 +743,6 @@ private var presentationSizeContext = 0
 
     /// Clears the player state.
     @objc public func clear() {
-        NSLog("[BetterPlayer@\(Unmanaged.passUnretained(self).toOpaque())] clear")
         isInitialized = false
         isPlaying = false
         disposed = false
@@ -772,7 +762,6 @@ private var presentationSizeContext = 0
 
     /// Disposes the player and cleans up resources.
     @objc public func dispose() {
-        NSLog("[BetterPlayer@\(Unmanaged.passUnretained(self).toOpaque())] dispose")
         pause()
         disposeSansEventChannel()
         disablePictureInPicture()

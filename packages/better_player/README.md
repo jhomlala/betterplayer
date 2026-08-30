@@ -13,7 +13,7 @@ Better Player is a powerful video player for Flutter, built on top of the offici
 
 
 > **[IMPORTANT] Migrating to 1.x.x?**
-> We've introduced a cleaner federated architecture and unified model names (e.g. `BetterPlayerConfiguration` is now `PlayerConfiguration`). See the [Migration Guide to 1.x.x](https://jhomlala.github.io/betterplayer/migration_to_1.x.x) to learn how to upgrade your project in a single command using `dart fix --apply`.
+> We've introduced a cleaner federated architecture, direct native bridges (JNI/FFI) in v1.2.0, and unified model names (e.g. `BetterPlayerConfiguration` is now `PlayerConfiguration`). See the [Migration Guide to 1.x.x](https://jhomlala.github.io/betterplayer/migration_to_1.x.x) to learn how to upgrade your project.
 
 ---
 

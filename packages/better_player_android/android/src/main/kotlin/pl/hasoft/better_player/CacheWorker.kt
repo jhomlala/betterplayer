@@ -64,19 +64,13 @@ class CacheWorker(
                     val completedData = (bytesCached * 100f / preCacheSize).toDouble()
                     if (completedData >= lastCacheReportIndex * 10) {
                         lastCacheReportIndex += 1
-                        Log.d(
-                            TAG,
-                            "Completed pre cache of " + url + ": " + completedData.toInt() + "%"
-                        )
                     }
                 }
                 cacheWriter?.cache()
             } else {
-                Log.e(TAG, "Preloading only possible for remote data sources")
                 return Result.failure()
             }
         } catch (exception: Exception) {
-            Log.e(TAG, exception.toString())
             return if (exception is HttpDataSourceException) {
                 Result.success()
             } else {
@@ -91,7 +85,6 @@ class CacheWorker(
             cacheWriter?.cancel()
             super.onStopped()
         } catch (exception: Exception) {
-            Log.e(TAG, exception.toString())
         }
     }
 

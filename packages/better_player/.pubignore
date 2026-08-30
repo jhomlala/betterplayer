@@ -1,0 +1,4 @@
+# Exclude package-specific temporary/artifact files
+*.null
+build/
+.dart_tool/
