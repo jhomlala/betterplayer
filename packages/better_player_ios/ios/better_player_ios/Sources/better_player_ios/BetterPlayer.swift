@@ -59,7 +59,6 @@ private var presentationSizeContext = 0
     // MARK: - Properties
 
     public var textureId: Int64 = -1
-    private var TAG: String { "BetterPlayer-\(textureId)" }
 
     /// The underlying AVPlayer instance.
     public private(set) var player: AVPlayer
@@ -270,7 +269,7 @@ private var presentationSizeContext = 0
 
     /// Sets the data source from an asset path.
     @objc public func setDataSourceAsset(_ assetPath: String, key: String?, certificateUrl: String?, licenseUrl: String?, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int) {
-        BetterPlayerApi.log(1, TAG, "setDataSourceAsset: \(assetPath)")
+        BetterPlayerApi.log($1, $2)")
         if let path = Bundle.main.path(forResource: assetPath, ofType: nil) {
             let url = URL(fileURLWithPath: path)
             setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: false, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: nil)
@@ -279,7 +278,7 @@ private var presentationSizeContext = 0
 
     /// Sets the data source from a URL.
     @objc public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
-        BetterPlayerApi.log(1, TAG, "setDataSourceURL: \(url.absoluteString)")
+        BetterPlayerApi.log($1, $2)")
         self.overriddenDuration = 0
 
         let item: AVPlayerItem
@@ -317,7 +316,7 @@ private var presentationSizeContext = 0
         removeObservers()
         
         player.replaceCurrentItem(with: item)
-        BetterPlayerApi.log(1, TAG, "setDataSource: item replaced")
+        BetterPlayerApi.log($1, $2)
 
         let asset = item.asset
         asset.loadValuesAsynchronously(forKeys: ["tracks"]) {
@@ -430,7 +429,7 @@ private var presentationSizeContext = 0
                 switch item.status {
                 case .failed:
                     if callback != nil {
-                        BetterPlayerApi.log(3, TAG, "item status failed: \(item.error?.localizedDescription ?? "unknown")")
+                        BetterPlayerApi.log($1, $2)")
                         let message = "Failed to load video: \(item.error?.localizedDescription ?? "unknown")"
                         let error = FlutterError(code: "VideoError", message: message, details: nil)
                         sendError(error)
@@ -445,15 +444,15 @@ private var presentationSizeContext = 0
             }
         } else if context == &playbackLikelyToKeepUpContext {
             if player.currentItem?.isPlaybackLikelyToKeepUp == true {
-                BetterPlayerApi.log(1, TAG, "playbackLikelyToKeepUp: true")
+                BetterPlayerApi.log($1, $2)
                 updatePlayingState()
                 callback?.onBufferingEnd(key: key)
             }
         } else if context == &playbackBufferEmptyContext {
-            BetterPlayerApi.log(1, TAG, "playbackBufferEmpty: true")
+            BetterPlayerApi.log($1, $2)
             callback?.onBufferingStart(key: key)
         } else if context == &playbackBufferFullContext {
-            BetterPlayerApi.log(1, TAG, "playbackBufferFull: true")
+            BetterPlayerApi.log($1, $2)
             callback?.onBufferingEnd(key: key)
         }
     }
@@ -529,7 +528,7 @@ private var presentationSizeContext = 0
 
     /// Starts playback.
     @objc public func play() {
-        BetterPlayerApi.log(1, TAG, "play()")
+        BetterPlayerApi.log($1, $2)")
         stalledCount = 0
         isStalledCheckStarted = false
         isPlaying = true
@@ -538,7 +537,7 @@ private var presentationSizeContext = 0
 
     /// Pauses playback.
     @objc public func pause() {
-        BetterPlayerApi.log(1, TAG, "pause()")
+        BetterPlayerApi.log($1, $2)")
         isPlaying = false
         updatePlayingState()
     }
@@ -571,7 +570,7 @@ private var presentationSizeContext = 0
     /// Seeks to the specified position in milliseconds.
     /// - Parameter location: The position to seek to.
     @objc public func seekTo(_ location: Int) {
-        BetterPlayerApi.log(1, TAG, "seekTo: \(location)")
+        BetterPlayerApi.log($1, $2)")
         let wasPlaying = isPlaying
         if wasPlaying { player.pause() }
         player.seek(to: CMTimeMake(value: Int64(location), timescale: 1000), toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
@@ -583,7 +582,7 @@ private var presentationSizeContext = 0
     /// Sets the player volume.
     /// - Parameter volume: The volume level (0.0 to 1.0).
     @objc public func setVolume(_ volume: Double) {
-        BetterPlayerApi.log(0, TAG, "setVolume: \(volume)")
+        BetterPlayerApi.log($1, $2)")
         let v = max(0.0, min(1.0, volume))
         player.volume = Float(v)
     }
@@ -592,7 +591,7 @@ private var presentationSizeContext = 0
     /// - Parameters:
     ///   - speed: The playback speed.
     @objc public func setSpeed(_ speed: Double) {
-        BetterPlayerApi.log(0, TAG, "setSpeed: \(speed)")
+        BetterPlayerApi.log($1, $2)")
         guard speed >= 0, speed <= 2.0 else { return }
         playerRate = Float(speed == 0.0 ? 1.0 : speed)
         if isPlaying {
@@ -601,7 +600,7 @@ private var presentationSizeContext = 0
     }
 
     @objc public func setLooping(_ looping: Bool) {
-        BetterPlayerApi.log(1, TAG, "setLooping: \(looping)")
+        BetterPlayerApi.log($1, $2)")
         isLooping = looping
     }
 
@@ -614,7 +613,7 @@ private var presentationSizeContext = 0
 
     /// Sets track parameters like bitrate and resolution.
     @objc public func setTrackParameters(width: Int, height: Int, bitrate: Int) {
-        BetterPlayerApi.log(0, TAG, "setTrackParameters: width=\(width), height=\(height), bitrate=\(bitrate)")
+        BetterPlayerApi.log($1, $2), height=\(height), bitrate=\(bitrate)")
         player.currentItem?.preferredPeakBitRate = Double(bitrate)
         if #available(iOS 11.0, *) {
             if width == 0 && height == 0 {
@@ -660,7 +659,7 @@ private var presentationSizeContext = 0
     /// Enables Picture-in-Picture for the given frame.
     /// - Parameter frame: The frame for PiP.
     @objc public func enablePictureInPicture(_ frame: CGRect) {
-        BetterPlayerApi.log(1, TAG, "enablePictureInPicture: \(frame)")
+        BetterPlayerApi.log($1, $2)")
         disablePictureInPicture()
         usePlayerLayer(frame)
     }
@@ -702,7 +701,7 @@ private var presentationSizeContext = 0
 
     /// Disables Picture-in-Picture.
     @objc public func disablePictureInPicture() {
-        BetterPlayerApi.log(1, TAG, "disablePictureInPicture()")
+        BetterPlayerApi.log($1, $2)")
         setPictureInPicture(true)
         if let layer = playerLayerRef {
             layer.removeFromSuperlayer()
@@ -714,12 +713,12 @@ private var presentationSizeContext = 0
     // MARK: - AVPictureInPictureControllerDelegate
 
     public func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
-        BetterPlayerApi.log(1, TAG, "pictureInPictureControllerDidStopPictureInPicture")
+        BetterPlayerApi.log($1, $2)
         disablePictureInPicture()
     }
 
     public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
-        BetterPlayerApi.log(1, TAG, "pictureInPictureControllerDidStartPictureInPicture")
+        BetterPlayerApi.log($1, $2)
         callback?.onPipStart()
     }
 
@@ -735,7 +734,7 @@ private var presentationSizeContext = 0
     ///   - name: The name of the track.
     ///   - index: The index of the track.
     @objc public func setAudioTrack(name: String, index: Int) {
-        BetterPlayerApi.log(0, TAG, "setAudioTrack: name=\(name), index=\(index)")
+        BetterPlayerApi.log($1, $2), index=\(index)")
         guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.audible) else { return }
         let options = group.options
         for audioTrackIndex in 0..<options.count {
@@ -750,7 +749,7 @@ private var presentationSizeContext = 0
     /// Sets whether the audio should mix with others.
     /// - Parameter mixWithOthers: Whether to mix audio.
     @objc public func setMixWithOthers(_ mixWithOthers: Bool) {
-        BetterPlayerApi.log(1, TAG, "setMixWithOthers: \(mixWithOthers)")
+        BetterPlayerApi.log($1, $2)")
         if mixWithOthers {
             try? AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
         } else {
@@ -768,7 +767,7 @@ private var presentationSizeContext = 0
 
     /// Clears the player state.
     @objc public func clear() {
-        BetterPlayerApi.log(1, TAG, "clear()")
+        BetterPlayerApi.log($1, $2)")
         isInitialized = false
         isPlaying = false
         disposed = false
@@ -788,7 +787,7 @@ private var presentationSizeContext = 0
 
     /// Disposes the player and cleans up resources.
     @objc public func dispose() {
-        BetterPlayerApi.log(1, TAG, "dispose()")
+        BetterPlayerApi.log($1, $2)")
         pause()
         disposeSansEventChannel()
         disablePictureInPicture()
