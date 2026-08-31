@@ -1866,6 +1866,37 @@ extension BetterPlayer$$Methods on BetterPlayer {
     ).object<TextureRegistry$$SurfaceTextureEntry>();
   }
 
+  static final _id_get$callback = BetterPlayer._class.instanceMethodId(
+    r'getCallback',
+    r'()Lpl/hasoft/better_player/BetterPlayerCallback;',
+  );
+
+  static final _get$callback =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+            )
+          >();
+
+  /// from: `public final pl.hasoft.better_player.BetterPlayerCallback getCallback()`
+  /// The returned object must be released after use, by calling the [release] method.
+  BetterPlayerCallback get callback {
+    final _$$selfRef = reference;
+    return _get$callback(
+      _$$selfRef.pointer,
+      _id_get$callback.pointer,
+    ).object<BetterPlayerCallback>();
+  }
+
   static final _id_get$textureId = BetterPlayer._class.instanceMethodId(
     r'getTextureId',
     r'()J',
