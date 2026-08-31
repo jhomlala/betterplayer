@@ -14,8 +14,9 @@ import 'package:path_provider/path_provider.dart';
 ///Class used to control overall Better Player behavior. Main class to change
 ///state of Better Player.
 class BetterPlayerController {
-  String get _logTag =>
-      'BetterPlayer-${videoPlayerController?.textureId ?? hashCode}';
+  String get _logTag => videoPlayerController?.textureId != null
+      ? 'BetterPlayer-${videoPlayerController!.textureId}'
+      : 'BetterPlayer';
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,

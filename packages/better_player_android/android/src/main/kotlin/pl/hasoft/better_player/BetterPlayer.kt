@@ -64,7 +64,7 @@ class BetterPlayer(
     context: Context,
     val textureEntry: SurfaceTextureEntry,
     val callback: BetterPlayerCallback,
-    val customDefaultLoadControl: CustomDefaultLoadControl?,
+    customDefaultLoadControl: CustomDefaultLoadControl? = null,
 ) {
     private val TAG: String = "BetterPlayer-${textureEntry.id()}"
     private val mainHandler = Handler(Looper.getMainLooper())
@@ -89,17 +89,17 @@ class BetterPlayer(
     private var drmSessionManager: DrmSessionManager? = null
     private val workManager: WorkManager
     private val workerObserverMap: HashMap<UUID, Observer<WorkInfo?>>
-    private val customDefaultLoadControl: CustomDefaultLoadControl =
+    private val playerLoadControl: CustomDefaultLoadControl =
         customDefaultLoadControl ?: CustomDefaultLoadControl()
     private var lastSendBufferedPosition = 0L
 
     init {
         val loadBuilder = DefaultLoadControl.Builder()
         loadBuilder.setBufferDurationsMs(
-            this.customDefaultLoadControl.minBufferMs,
-            this.customDefaultLoadControl.maxBufferMs,
-            this.customDefaultLoadControl.bufferForPlaybackMs,
-            this.customDefaultLoadControl.bufferForPlaybackAfterRebufferMs
+            playerLoadControl.minBufferMs,
+            playerLoadControl.maxBufferMs,
+            playerLoadControl.bufferForPlaybackMs,
+            playerLoadControl.bufferForPlaybackAfterRebufferMs
         )
         loadControl = loadBuilder.build()
         exoPlayer = ExoPlayer.Builder(context)
