@@ -28,7 +28,6 @@ class BetterPlayerHlsUtils {
       PlayerLogger.error(
         'Exception on hls parse: $exception',
         error: exception,
-        tag: 'HlsUtils',
       );
     }
     return PlayerAsmsDataHolder(
@@ -71,7 +70,6 @@ class BetterPlayerHlsUtils {
       PlayerLogger.error(
         'Exception on parseTracks: $exception',
         error: exception,
-        tag: 'HlsUtils',
       );
     }
     return tracks;
@@ -101,7 +99,6 @@ class BetterPlayerHlsUtils {
       PlayerLogger.error(
         'Exception on parseSubtitles: $exception',
         error: exception,
-        tag: 'HlsUtils',
       );
     }
 
@@ -192,7 +189,6 @@ class BetterPlayerHlsUtils {
       PlayerLogger.error(
         'Failed to process subtitles playlist: $exception',
         error: exception,
-        tag: 'HlsUtils',
       );
       return null;
     }

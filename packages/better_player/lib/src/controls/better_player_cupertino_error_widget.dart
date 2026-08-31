@@ -31,10 +31,7 @@ class BetterPlayerCupertinoErrorWidget extends StatelessWidget {
               color: controlsConfiguration.iconsColor,
               size: 42,
             ),
-            Text(
-              controller.translations.generalDefaultError,
-              style: textStyle,
-            ),
+            Text(controller.translations.generalDefaultError, style: textStyle),
             if (controlsConfiguration.enableRetry)
               TextButton(
                 onPressed: controller.retryDataSource,

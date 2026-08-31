@@ -102,7 +102,6 @@ class PlayerOverflowMenuItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     PlayerLogger.debug(
       'E2E: Building PlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
-      tag: 'OverflowMenu',
     );
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,
@@ -113,15 +112,9 @@ class PlayerOverflowMenuItemWidget extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(width: 8),
-            Icon(
-              icon,
-              color: controlsConfiguration.overflowMenuIconsColor,
-            ),
+            Icon(icon, color: controlsConfiguration.overflowMenuIconsColor),
             const SizedBox(width: 16),
-            Text(
-              name,
-              style: _getOverflowMenuElementTextStyle(isSelected),
-            ),
+            Text(name, style: _getOverflowMenuElementTextStyle(isSelected)),
           ],
         ),
       ),
@@ -133,9 +126,7 @@ class PlayerOverflowMenuItemWidget extends StatelessWidget {
       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       color: isSelected
           ? controlsConfiguration.overflowModalTextColor
-          : controlsConfiguration.overflowModalTextColor.withValues(
-              alpha: 0.7,
-            ),
+          : controlsConfiguration.overflowModalTextColor.withValues(alpha: 0.7),
     );
   }
 }

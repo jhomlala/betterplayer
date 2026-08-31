@@ -1,4 +1,7 @@
 ## Unreleased
+- Added: Automatic tag derivation for `PlayerLogger` based on the calling class name. Manual tags are now optional.
+- Added: Automatic caller detection for `PlayerLogger` using stack trace parsing (enabled by default).
+- Updated: Renamed `PlayerLogConfiguration` to `PlayerLoggerConfiguration` for naming consistency.
 - Added: Extensible logging system with `PlayerLogger`. Dart is now the single source of truth for logs.
 - Updated: Refactored `BetterPlayerLogger` to `PlayerLogger` with static methods for more concise logging (e.g., `PlayerLogger.info(...)`).
 - Added: Native-to-Dart logging streaming for Android (ExoPlayer) and iOS (AVPlayer).

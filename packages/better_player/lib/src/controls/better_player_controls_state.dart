@@ -66,19 +66,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void onShowMoreClicked() {
-    PlayerLogger.debug(
-      'onShowMoreClicked',
-      tag: 'Controls',
-    );
+    PlayerLogger.debug('onShowMoreClicked');
     _showModalBottomSheet([
       BetterPlayerOverflowMenu(
         controller: betterPlayerController!,
         controlsConfiguration: betterPlayerControlsConfiguration,
         onPlaybackSpeedClicked: () {
-          PlayerLogger.debug(
-            'onPlaybackSpeedClicked',
-            tag: 'Controls',
-          );
+          PlayerLogger.debug('onPlaybackSpeedClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
@@ -86,10 +80,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onSubtitlesClicked: () {
-          PlayerLogger.debug(
-            'onSubtitlesClicked',
-            tag: 'Controls',
-          );
+          PlayerLogger.debug('onSubtitlesClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
@@ -97,10 +88,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onQualitiesClicked: () {
-          PlayerLogger.debug(
-            'onQualitiesClicked',
-            tag: 'Controls',
-          );
+          PlayerLogger.debug('onQualitiesClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
@@ -108,10 +96,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onAudioTracksClicked: () {
-          PlayerLogger.debug(
-            'onAudioTracksClicked',
-            tag: 'Controls',
-          );
+          PlayerLogger.debug('onAudioTracksClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 300),
@@ -179,9 +164,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         null;
     if (!noneSubtitlesElementExists) {
       subtitles.add(
-        PlayerSubtitlesSource(
-          type: PlayerSubtitlesSourceType.none,
-        ),
+        PlayerSubtitlesSource(type: PlayerSubtitlesSourceType.none),
       );
     }
 
@@ -218,18 +201,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void showQualitiesSelectionWidget() {
-    PlayerLogger.debug(
-      'showQualitiesSelectionWidget started',
-      tag: 'Controls',
-    );
+    PlayerLogger.debug('showQualitiesSelectionWidget started');
     // HLS / DASH
     final asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
     final asmsTracks = betterPlayerController!.betterPlayerAsmsTracks;
-    PlayerLogger.debug(
-      'ASMS Tracks: ${asmsTracks.length}',
-      tag: 'Controls',
-    );
+    PlayerLogger.debug('ASMS Tracks: ${asmsTracks.length}');
     final children = <Widget>[];
     for (var index = 0; index < asmsTracks.length; index++) {
       final track = asmsTracks[index];
@@ -277,10 +254,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     // normal videos
     final resolutions =
         betterPlayerController!.betterPlayerDataSource!.resolutions;
-    PlayerLogger.debug(
-      'Resolutions: ${resolutions?.length ?? 0}',
-      tag: 'Controls',
-    );
+    PlayerLogger.debug('Resolutions: ${resolutions?.length ?? 0}');
     var resolutionIndex = 0;
     resolutions?.forEach((key, value) {
       final isSelected =
@@ -302,19 +276,14 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     });
 
     if (children.isEmpty) {
-      PlayerLogger.debug(
-        'Quality children empty, adding Auto fallback',
-        tag: 'Controls',
-      );
+      PlayerLogger.debug('Quality children empty, adding Auto fallback');
       children.add(
         BetterPlayerSelectionListItemWidget(
           label: betterPlayerController!.translations.qualityAuto,
           isSelected: true,
           onTap: () {
             Navigator.of(context).pop();
-            betterPlayerController!.setTrack(
-              PlayerAsmsTrack.defaultTrack(),
-            );
+            betterPlayerController!.setTrack(PlayerAsmsTrack.defaultTrack());
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier: 'better_player_overflow_menu_quality_auto',
@@ -322,10 +291,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       );
     }
 
-    PlayerLogger.debug(
-      'Showing qualities menu with ${children.length} items',
-      tag: 'Controls',
-    );
+    PlayerLogger.debug('Showing qualities menu with ${children.length} items');
     _showModalBottomSheet(children);
   }
 
@@ -377,10 +343,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showModalBottomSheet(List<Widget> children) {
-    PlayerLogger.debug(
-      'Showing bottom sheet with ${children.length} items',
-      tag: 'Controls',
-    );
+    PlayerLogger.debug('Showing bottom sheet with ${children.length} items');
     defaultTargetPlatform == TargetPlatform.android
         ? _showMaterialBottomSheet(children)
         : _showCupertinoModalBottomSheet(children);
@@ -408,9 +371,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   topRight: Radius.circular(24),
                 ),
               ),
-              child: Column(
-                children: children,
-              ),
+              child: Column(children: children),
             ),
           ),
         );
@@ -439,9 +400,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   topRight: Radius.circular(24),
                 ),
               ),
-              child: Column(
-                children: children,
-              ),
+              child: Column(children: children),
             ),
           ),
         );

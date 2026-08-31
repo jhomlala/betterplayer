@@ -143,10 +143,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     var rotation = configuration.rotation;
 
     if (!(rotation <= 360 && rotation % 90 == 0)) {
-      PlayerLogger.warning(
-        'Invalid rotation provided. Using rotation = 0',
-        tag: 'WithControls',
-      );
+      PlayerLogger.warning('Invalid rotation provided. Using rotation = 0');
       rotation = 0;
     }
     if (betterPlayerController.betterPlayerDataSource == null) {
@@ -260,10 +257,7 @@ class BetterPlayerControlsSelectionWidget extends StatelessWidget {
 
 ///Widget used to set the proper box fit of the video. Default fit is 'fill'.
 class _BetterPlayerVideoFitWidget extends StatefulWidget {
-  const _BetterPlayerVideoFitWidget(
-    this.betterPlayerController,
-    this.boxFit,
-  );
+  const _BetterPlayerVideoFitWidget(this.betterPlayerController, this.boxFit);
 
   final BetterPlayerController betterPlayerController;
   final BoxFit boxFit;

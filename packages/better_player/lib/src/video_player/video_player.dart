@@ -70,15 +70,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       }
       PlayerLogger.debug(
         'VideoPlayerController: Event received: ${event.eventType}',
-        tag: 'VideoPlayer',
       );
       videoEventStreamController.add(event);
       switch (event.eventType) {
         case VideoEventType.initialized:
-          value = value.copyWith(
-            duration: event.duration,
-            size: event.size,
-          );
+          value = value.copyWith(duration: event.duration, size: event.size);
           _applyPlayPause();
         case VideoEventType.completed:
           value = value.copyWith(isPlaying: false, position: value.duration);
@@ -252,9 +248,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           activityName: activityName,
         ),
         overriddenDuration: overriddenDuration,
-        drmConfiguration: DrmConfiguration(
-          clearKey: clearKey,
-        ),
+        drmConfiguration: DrmConfiguration(clearKey: clearKey),
       ),
     );
   }
@@ -291,7 +285,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     try {
       PlayerLogger.debug(
         'VideoPlayerController: setDataSource platform call starting',
-        tag: 'VideoPlayer',
       );
       await BetterPlayerPlatform.instance.setDataSource(
         _textureId,
@@ -299,12 +292,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       );
       PlayerLogger.debug(
         'VideoPlayerController: setDataSource platform call finished, waiting for init event',
-        tag: 'VideoPlayer',
       );
       await completer.future;
       PlayerLogger.debug(
         'VideoPlayerController: setDataSource init event received',
-        tag: 'VideoPlayer',
       );
     } finally {
       await subscription.cancel();
@@ -363,28 +354,25 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _timer?.cancel();
     if (value.isPlaying) {
       await _betterPlayerPlatform.play(_textureId);
-      _timer = Timer.periodic(
-        const Duration(milliseconds: 300),
-        (timer) async {
-          if (_isDisposed) {
-            return;
+      _timer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
+        if (_isDisposed) {
+          return;
+        }
+        final newPosition = await position;
+        final newAbsolutePosition = await absolutePosition;
+        // ignore: invariant_booleans
+        if (_isDisposed) {
+          return;
+        }
+        _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
+        if (_seekPosition != null && newPosition != null) {
+          final difference =
+              newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
+          if (difference > 0) {
+            _seekPosition = null;
           }
-          final newPosition = await position;
-          final newAbsolutePosition = await absolutePosition;
-          // ignore: invariant_booleans
-          if (_isDisposed) {
-            return;
-          }
-          _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
-          if (_seekPosition != null && newPosition != null) {
-            final difference =
-                newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
-            if (difference > 0) {
-              _seekPosition = null;
-            }
-          }
-        },
-      );
+        }
+      });
     } else {
       await _betterPlayerPlatform.pause(_textureId);
     }
@@ -883,10 +871,9 @@ class ClosedCaption extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveTextStyle =
         textStyle ??
-        DefaultTextStyle.of(context).style.copyWith(
-          fontSize: 36,
-          color: Colors.white,
-        );
+        DefaultTextStyle.of(
+          context,
+        ).style.copyWith(fontSize: 36, color: Colors.white);
 
     if (text == null) {
       return const SizedBox.shrink();

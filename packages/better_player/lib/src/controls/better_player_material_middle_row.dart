@@ -164,9 +164,7 @@ class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
             ),
             child: Padding(
               padding: const EdgeInsets.all(8),
-              child: Stack(
-                children: [icon],
-              ),
+              child: Stack(children: [icon]),
             ),
           ),
         ),

@@ -6,6 +6,7 @@ class PlayerLoggerConfiguration {
   const PlayerLoggerConfiguration({
     this.logLevel = PlayerLogLevel.info,
     this.alwaysLogErrors = true,
+    this.printCallerInfo = true,
     this.outputs = const [ConsoleLogOutput()],
   });
 
@@ -16,6 +17,10 @@ class PlayerLoggerConfiguration {
   /// When true, error-level records always pass the level filter
   /// regardless of logLevel. Default: true.
   final bool alwaysLogErrors;
+
+  /// Whether to automatically include the calling class/method name in logs.
+  /// Note: enabling this has a small performance cost due to stack trace parsing.
+  final bool printCallerInfo;
 
   /// The chain of outputs to write to. Defaults to ConsoleLogOutput.
   final List<PlayerLogOutput> outputs;

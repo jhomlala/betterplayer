@@ -36,10 +36,7 @@ class BetterPlayerSelectionListItemWidget extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 16),
-            Text(
-              label,
-              style: _getTextStyle(),
-            ),
+            Text(label, style: _getTextStyle()),
           ],
         ),
       ),
@@ -51,9 +48,7 @@ class BetterPlayerSelectionListItemWidget extends StatelessWidget {
       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       color: isSelected
           ? controlsConfiguration.overflowModalTextColor
-          : controlsConfiguration.overflowModalTextColor.withValues(
-              alpha: 0.7,
-            ),
+          : controlsConfiguration.overflowModalTextColor.withValues(alpha: 0.7),
     );
   }
 }

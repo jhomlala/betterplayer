@@ -33,9 +33,7 @@ class BetterPlayerCupertinoHitArea extends StatelessWidget {
                 onHideTimerCancel();
                 onChangePlayerControlsNotVisible(false);
               },
-        child: Container(
-          color: Colors.transparent,
-        ),
+        child: Container(color: Colors.transparent),
       ),
     );
   }

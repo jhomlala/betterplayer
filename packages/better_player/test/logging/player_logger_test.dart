@@ -126,5 +126,60 @@ void main() {
       expect(mockOutput.records[2].level, PlayerLogLevel.error);
       expect(mockOutput.records[2].message, 'clamped msg');
     });
+
+    test('captures caller info when enabled', () {
+      PlayerLogger.setup(
+        PlayerLoggerConfiguration(
+          outputs: [mockOutput],
+        ),
+      );
+      mockOutput.records.clear();
+
+      PlayerLogger.info('test message');
+
+      final record = mockOutput.records.last;
+      expect(record.caller, isNotNull);
+      // It should contain the test method name
+      expect(record.caller, contains('main'));
+    });
+
+    test('derives tag from caller when manual tag is null', () {
+      PlayerLogger.setup(
+        PlayerLoggerConfiguration(
+          printCallerInfo: true,
+          outputs: [mockOutput],
+        ),
+      );
+      mockOutput.records.clear();
+
+      PlayerLogger.info('test message');
+
+      final record = mockOutput.records.last;
+      expect(record.tag, isNotNull);
+      // Since it's called from 'main', tag should probably be 'main'
+      expect(record.tag, contains('main'));
+    });
+
+    test('uses manual tag when provided', () {
+      PlayerLogger.info('test message', tag: 'ManualTag');
+
+      final record = mockOutput.records.last;
+      expect(record.tag, 'ManualTag');
+    });
+
+    test('skips caller info when disabled', () {
+      PlayerLogger.setup(
+        PlayerLoggerConfiguration(
+          printCallerInfo: false,
+          outputs: [mockOutput],
+        ),
+      );
+      mockOutput.records.clear();
+
+      PlayerLogger.info('test message');
+
+      final record = mockOutput.records.last;
+      expect(record.caller, isNull);
+    });
   });
 }

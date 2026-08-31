@@ -34,7 +34,6 @@ class BetterPlayerDashUtils {
       PlayerLogger.error(
         'Exception on dash parse: $exception',
         error: exception,
-        tag: 'DashUtils',
       );
     }
     return PlayerAsmsDataHolder(

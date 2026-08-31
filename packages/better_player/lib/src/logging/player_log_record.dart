@@ -7,6 +7,7 @@ class PlayerLogRecord {
     required this.message,
     required this.tag,
     required this.timestamp,
+    this.caller,
     this.error,
     this.stackTrace,
   });
@@ -15,6 +16,9 @@ class PlayerLogRecord {
   final String message;
   final String tag;
   final DateTime timestamp;
+
+  /// Optional caller information (e.g. "ClassName.methodName").
+  final String? caller;
   final Object? error;
   final StackTrace? stackTrace;
 
@@ -23,7 +27,7 @@ class PlayerLogRecord {
 
   @override
   String toString() =>
-      '[$isoTimestamp] [${level.name.toUpperCase()}] [$tag] $message'
+      '[$isoTimestamp] [${level.name.toUpperCase()}] [$tag] ${caller != null ? '[$caller] ' : ''}$message'
       '${error != null ? '\nError: $error' : ''}'
       '${stackTrace != null ? '\n$stackTrace' : ''}';
 }

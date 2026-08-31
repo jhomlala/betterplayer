@@ -33,15 +33,15 @@ class PlayerLogger {
     }
   }
 
-  static void debug(String message, {String tag = 'BetterPlayer'}) =>
+  static void debug(String message, {String? tag}) =>
       _log(PlayerLogLevel.debug, message, tag: tag);
 
-  static void info(String message, {String tag = 'BetterPlayer'}) =>
+  static void info(String message, {String? tag}) =>
       _log(PlayerLogLevel.info, message, tag: tag);
 
   static void warning(
     String message, {
-    String tag = 'BetterPlayer',
+    String? tag,
     Object? error,
     StackTrace? stackTrace,
   }) => _log(
@@ -54,7 +54,7 @@ class PlayerLogger {
 
   static void error(
     String message, {
-    String tag = 'BetterPlayer',
+    String? tag,
     Object? error,
     StackTrace? stackTrace,
   }) => _log(
@@ -76,7 +76,7 @@ class PlayerLogger {
   static void _log(
     PlayerLogLevel level,
     String message, {
-    required String tag,
+    String? tag,
     Object? error,
     StackTrace? stackTrace,
   }) {
@@ -85,11 +85,19 @@ class PlayerLogger {
         (_config.alwaysLogErrors && level == PlayerLogLevel.error);
     if (!shouldLog) return;
 
+    String? caller;
+    if (_config.printCallerInfo) {
+      caller = _getCaller();
+    }
+
+    final effectiveTag = tag ?? _deriveTag(caller) ?? 'BetterPlayer';
+
     final record = PlayerLogRecord(
       level: level,
       message: message,
-      tag: tag,
+      tag: effectiveTag,
       timestamp: DateTime.now().toUtc(),
+      caller: caller,
       error: error,
       stackTrace: stackTrace,
     );
@@ -97,5 +105,33 @@ class PlayerLogger {
     for (final output in _config.outputs) {
       output.output(record);
     }
+  }
+
+  /// Derives a tag from the caller info (e.g. "BetterPlayerController.setup" -> "BetterPlayerController").
+  static String? _deriveTag(String? caller) {
+    if (caller == null) return null;
+    final parts = caller.split('.');
+    return parts.first;
+  }
+
+  /// Parses the stack trace to find the immediate caller of the logger.
+  static String? _getCaller() {
+    try {
+      final lines = StackTrace.current.toString().split('\n');
+      if (lines.length > 3) {
+        // Line 0: _getCaller
+        // Line 1: _log
+        // Line 2: info/debug/error/warning
+        // Line 3: The actual caller
+        final line = lines[3];
+
+        // Format: #3      ClassName.methodName (package:...)
+        final match = RegExp(r'#\d+\s+([^\s]+)').firstMatch(line);
+        return match?.group(1);
+      }
+    } catch (_) {
+      // Fallback to null if parsing fails
+    }
+    return null;
   }
 }

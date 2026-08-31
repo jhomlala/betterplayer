@@ -33,10 +33,7 @@ class PlayerSubtitlesFactory {
           final subtitlesCache = _parseString(fileContent);
           subtitles.addAll(subtitlesCache);
         } else {
-          PlayerLogger.warning(
-            "$url doesn't exist!",
-            tag: 'Subtitles',
-          );
+          PlayerLogger.warning("$url doesn't exist!");
         }
       }
       return subtitles;
@@ -44,7 +41,6 @@ class PlayerSubtitlesFactory {
       PlayerLogger.error(
         'Failed to read subtitles from file: $exception',
         error: exception,
-        tag: 'Subtitles',
       );
     }
     return [];
@@ -71,16 +67,12 @@ class PlayerSubtitlesFactory {
       }
       client.close();
 
-      PlayerLogger.debug(
-        'Parsed total subtitles: ${subtitles.length}',
-        tag: 'Subtitles',
-      );
+      PlayerLogger.debug('Parsed total subtitles: ${subtitles.length}');
       return subtitles;
     } catch (exception) {
       PlayerLogger.error(
         'Failed to read subtitles from network: $exception',
         error: exception,
-        tag: 'Subtitles',
       );
     }
     return [];
@@ -95,7 +87,6 @@ class PlayerSubtitlesFactory {
       PlayerLogger.error(
         'Failed to read subtitles from memory: $exception',
         error: exception,
-        tag: 'Subtitles',
       );
     }
     return [];

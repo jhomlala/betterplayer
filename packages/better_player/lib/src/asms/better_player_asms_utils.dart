@@ -49,11 +49,7 @@ class BetterPlayerAsmsUtils {
       final response = await request.close();
       return await response.transform(const Utf8Decoder()).join();
     } catch (exception) {
-      PlayerLogger.error(
-        'GetDataFromUrl failed: $exception',
-        error: exception,
-        tag: 'AsmsUtils',
-      );
+      PlayerLogger.error('GetDataFromUrl failed: $exception', error: exception);
       return null;
     }
   }

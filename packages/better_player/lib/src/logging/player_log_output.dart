@@ -26,8 +26,11 @@ class ConsoleLogOutput extends PlayerLogOutput {
 
   @override
   void output(PlayerLogRecord record) {
+    final message = record.caller != null
+        ? '[${record.caller}] ${record.message}'
+        : record.message;
     developer.log(
-      record.message,
+      message,
       time: record.timestamp,
       name: '$_name/${record.tag}',
       level: _toDevLevel(record.level),

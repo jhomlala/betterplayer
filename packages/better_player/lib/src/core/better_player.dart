@@ -20,10 +20,7 @@ class BetterPlayer extends StatefulWidget {
   }) => BetterPlayer(
     controller: BetterPlayerController(
       betterPlayerConfiguration ?? const PlayerConfiguration(),
-      betterPlayerDataSource: PlayerDataSource(
-        DataSourceType.network,
-        url,
-      ),
+      betterPlayerDataSource: PlayerDataSource(DataSourceType.network, url),
     ),
   );
 
@@ -33,10 +30,7 @@ class BetterPlayer extends StatefulWidget {
   }) => BetterPlayer(
     controller: BetterPlayerController(
       betterPlayerConfiguration ?? const PlayerConfiguration(),
-      betterPlayerDataSource: PlayerDataSource(
-        DataSourceType.file,
-        url,
-      ),
+      betterPlayerDataSource: PlayerDataSource(DataSourceType.file, url),
     ),
   );
 
@@ -95,10 +89,7 @@ class _BetterPlayerState extends State<BetterPlayer>
         locale = contextLocale;
       }
     } catch (exception) {
-      PlayerLogger.error(
-        'Failed to get locale: $exception',
-        error: exception,
-      );
+      PlayerLogger.error('Failed to get locale: $exception', error: exception);
     }
     widget.controller.setupTranslations(locale);
   }
@@ -154,16 +145,12 @@ class _BetterPlayerState extends State<BetterPlayer>
     final controller = widget.controller;
     if (controller.isFullScreen && !_isFullScreen) {
       _isFullScreen = true;
-      controller.postEvent(
-        PlayerEvent(PlayerEventType.openFullscreen),
-      );
+      controller.postEvent(PlayerEvent(PlayerEventType.openFullscreen));
       await _pushFullScreenWidget(context);
     } else if (_isFullScreen) {
       Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
-      controller.postEvent(
-        PlayerEvent(PlayerEventType.hideFullscreen),
-      );
+      controller.postEvent(PlayerEvent(PlayerEventType.hideFullscreen));
     }
   }
 
