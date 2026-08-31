@@ -736,7 +736,7 @@ private var presentationSizeContext = 0
     ///   - index: The index of the track.
     @objc public func setAudioTrack(name: String, index: Int) {
         BetterPlayerApi.log(0, TAG, "setAudioTrack: name=\(name), index=\(index)")
-        guard let group = player.currentItem?.mediaSelectionGroup(forMediaCharacteristic: .audible) else { return }
+        guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.audible) else { return }
         let options = group.options
         for audioTrackIndex in 0..<options.count {
             let option = options[audioTrackIndex]
