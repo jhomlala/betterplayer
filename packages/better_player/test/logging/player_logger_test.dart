@@ -16,7 +16,7 @@ class MockLogOutput extends PlayerLogOutput {
   }
 
   @override
-  void output(PlayerLogRecord record) {
+  void onLog(PlayerLogRecord record) {
     records.add(record);
   }
 
@@ -62,10 +62,10 @@ void main() {
       );
       mockOutput.records.clear();
 
-      PlayerLogger.debug('debug');
-      PlayerLogger.info('info');
-      PlayerLogger.warning('warning');
-      PlayerLogger.error('error');
+      PlayerLogger.debug(message: 'debug');
+      PlayerLogger.info(message: 'info');
+      PlayerLogger.warning(message: 'warning');
+      PlayerLogger.error(message: 'error');
 
       expect(mockOutput.records.length, 3);
       expect(mockOutput.records[0].level, PlayerLogLevel.info);
@@ -82,8 +82,8 @@ void main() {
       );
       mockOutput.records.clear();
 
-      PlayerLogger.info('info');
-      PlayerLogger.error('error');
+      PlayerLogger.info(message: 'info');
+      PlayerLogger.error(message: 'error');
 
       expect(mockOutput.records.length, 1);
       expect(mockOutput.records[0].level, PlayerLogLevel.error);
@@ -95,7 +95,7 @@ void main() {
       final stackTrace = StackTrace.current;
 
       PlayerLogger.warning(
-        'warn message',
+        message: 'warn message',
         tag: 'CustomTag',
         error: error,
         stackTrace: stackTrace,
@@ -113,7 +113,6 @@ void main() {
       PlayerLogger.setup(
         PlayerLoggerConfiguration(
           logLevel: PlayerLogLevel.debug,
-          printCallerInfo: true,
           outputs: [mockOutput],
         ),
       );
@@ -138,7 +137,7 @@ void main() {
       );
       mockOutput.records.clear();
 
-      PlayerLogger.info('test message');
+      PlayerLogger.info(message: 'test message');
 
       final record = mockOutput.records.last;
       expect(record.caller, isNotNull);
@@ -154,7 +153,7 @@ void main() {
       );
       mockOutput.records.clear();
 
-      PlayerLogger.info('test message');
+      PlayerLogger.info(message: 'test message');
 
       final record = mockOutput.records.last;
       expect(record.tag, isNotNull);
@@ -163,7 +162,7 @@ void main() {
     });
 
     test('uses manual tag when provided', () {
-      PlayerLogger.info('test message', tag: 'ManualTag');
+      PlayerLogger.info(message: 'test message', tag: 'ManualTag');
 
       final record = mockOutput.records.last;
       expect(record.tag, 'ManualTag');
@@ -182,7 +181,7 @@ void main() {
       // or just assume if this test is running inside an anonymous closure it works.
       // For now, let's just ensure the regex doesn't break things.
       void testClosure() {
-        PlayerLogger.info('inside closure');
+        PlayerLogger.info(message: 'inside closure');
       }
 
       testClosure();
@@ -200,7 +199,7 @@ void main() {
       );
       mockOutput.records.clear();
 
-      PlayerLogger.info('test message');
+      PlayerLogger.info(message: 'test message');
 
       final record = mockOutput.records.last;
       expect(record.caller, isNull);

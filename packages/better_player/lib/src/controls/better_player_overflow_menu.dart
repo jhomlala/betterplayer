@@ -101,7 +101,8 @@ class PlayerOverflowMenuItemWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     PlayerLogger.debug(
-      'E2E: Building PlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
+      message:
+          'E2E: Building PlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
     );
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,

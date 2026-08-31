@@ -69,7 +69,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         return;
       }
       PlayerLogger.debug(
-        'VideoPlayerController: Event received: ${event.eventType}',
+        message: 'VideoPlayerController: Event received: ${event.eventType}',
       );
       videoEventStreamController.add(event);
       switch (event.eventType) {
@@ -284,18 +284,19 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     try {
       PlayerLogger.debug(
-        'VideoPlayerController: setDataSource platform call starting',
+        message: 'VideoPlayerController: setDataSource platform call starting',
       );
       await BetterPlayerPlatform.instance.setDataSource(
         _textureId,
         dataSourceDescription,
       );
       PlayerLogger.debug(
-        'VideoPlayerController: setDataSource platform call finished, waiting for init event',
+        message:
+            'VideoPlayerController: setDataSource platform call finished, waiting for init event',
       );
       await completer.future;
       PlayerLogger.debug(
-        'VideoPlayerController: setDataSource init event received',
+        message: 'VideoPlayerController: setDataSource init event received',
       );
     } finally {
       await subscription.cancel();

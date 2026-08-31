@@ -12,7 +12,7 @@ abstract class PlayerLogOutput {
   void init() {}
 
   /// Receives every log record that passes the level filter.
-  void output(PlayerLogRecord record);
+  void onLog(PlayerLogRecord record);
 
   /// Called when the logger is torn down (e.g. controller disposed).
   void destroy() {}
@@ -25,7 +25,7 @@ class ConsoleLogOutput extends PlayerLogOutput {
   static const _name = 'BetterPlayer';
 
   @override
-  void output(PlayerLogRecord record) {
+  void onLog(PlayerLogRecord record) {
     final message = record.caller != null
         ? '[${record.caller}] ${record.message}'
         : record.message;

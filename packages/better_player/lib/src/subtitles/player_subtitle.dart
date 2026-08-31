@@ -14,7 +14,7 @@ class PlayerSubtitle {
       }
       return PlayerSubtitle._();
     } catch (exception) {
-      PlayerLogger.warning('Failed to parse subtitle line: $value');
+      PlayerLogger.warning(message: 'Failed to parse subtitle line: $value');
       return PlayerSubtitle._();
     }
   }
@@ -40,7 +40,7 @@ class PlayerSubtitle {
 
       return PlayerSubtitle._(index: -1, start: start, end: end, texts: texts);
     } catch (exception) {
-      PlayerLogger.warning('Failed to parse subtitle line: $scanner');
+      PlayerLogger.warning(message: 'Failed to parse subtitle line: $scanner');
       return PlayerSubtitle._();
     }
   }
@@ -72,7 +72,7 @@ class PlayerSubtitle {
         texts: texts,
       );
     } catch (exception) {
-      PlayerLogger.warning('Failed to parse subtitle line: $scanner');
+      PlayerLogger.warning(message: 'Failed to parse subtitle line: $scanner');
       return PlayerSubtitle._();
     }
   }
@@ -110,7 +110,7 @@ class PlayerSubtitle {
       );
       return result;
     } catch (exception) {
-      PlayerLogger.warning('Failed to process value: $value');
+      PlayerLogger.warning(message: 'Failed to process value: $value');
       return const Duration();
     }
   }

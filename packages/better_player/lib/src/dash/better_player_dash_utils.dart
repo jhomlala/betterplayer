@@ -32,7 +32,7 @@ class BetterPlayerDashUtils {
       }
     } catch (exception) {
       PlayerLogger.error(
-        'Exception on dash parse: $exception',
+        message: 'Exception on dash parse: $exception',
         error: exception,
       );
     }

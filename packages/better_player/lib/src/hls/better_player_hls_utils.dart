@@ -26,7 +26,7 @@ class BetterPlayerHlsUtils {
       audios = list[2] as List<PlayerAsmsAudioTrack>;
     } catch (exception) {
       PlayerLogger.error(
-        'Exception on hls parse: $exception',
+        message: 'Exception on hls parse: $exception',
         error: exception,
       );
     }
@@ -68,7 +68,7 @@ class BetterPlayerHlsUtils {
       }
     } catch (exception) {
       PlayerLogger.error(
-        'Exception on parseTracks: $exception',
+        message: 'Exception on parseTracks: $exception',
         error: exception,
       );
     }
@@ -97,7 +97,7 @@ class BetterPlayerHlsUtils {
       }
     } catch (exception) {
       PlayerLogger.error(
-        'Exception on parseSubtitles: $exception',
+        message: 'Exception on parseSubtitles: $exception',
         error: exception,
       );
     }
@@ -187,7 +187,7 @@ class BetterPlayerHlsUtils {
       );
     } catch (exception) {
       PlayerLogger.error(
-        'Failed to process subtitles playlist: $exception',
+        message: 'Failed to process subtitles playlist: $exception',
         error: exception,
       );
       return null;

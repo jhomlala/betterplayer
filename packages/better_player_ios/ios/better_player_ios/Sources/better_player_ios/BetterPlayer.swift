@@ -583,6 +583,7 @@ private var presentationSizeContext = 0
     /// Sets the player volume.
     /// - Parameter volume: The volume level (0.0 to 1.0).
     @objc public func setVolume(_ volume: Double) {
+        BetterPlayerApi.log(0, TAG, "setVolume: \(volume)")
         let v = max(0.0, min(1.0, volume))
         player.volume = Float(v)
     }
@@ -591,6 +592,7 @@ private var presentationSizeContext = 0
     /// - Parameters:
     ///   - speed: The playback speed.
     @objc public func setSpeed(_ speed: Double) {
+        BetterPlayerApi.log(0, TAG, "setSpeed: \(speed)")
         guard speed >= 0, speed <= 2.0 else { return }
         playerRate = Float(speed == 0.0 ? 1.0 : speed)
         if isPlaying {
@@ -599,6 +601,7 @@ private var presentationSizeContext = 0
     }
 
     @objc public func setLooping(_ looping: Bool) {
+        BetterPlayerApi.log(1, TAG, "setLooping: \(looping)")
         isLooping = looping
     }
 
@@ -611,6 +614,7 @@ private var presentationSizeContext = 0
 
     /// Sets track parameters like bitrate and resolution.
     @objc public func setTrackParameters(width: Int, height: Int, bitrate: Int) {
+        BetterPlayerApi.log(0, TAG, "setTrackParameters: width=\(width), height=\(height), bitrate=\(bitrate)")
         player.currentItem?.preferredPeakBitRate = Double(bitrate)
         if #available(iOS 11.0, *) {
             if width == 0 && height == 0 {
@@ -656,6 +660,7 @@ private var presentationSizeContext = 0
     /// Enables Picture-in-Picture for the given frame.
     /// - Parameter frame: The frame for PiP.
     @objc public func enablePictureInPicture(_ frame: CGRect) {
+        BetterPlayerApi.log(1, TAG, "enablePictureInPicture: \(frame)")
         disablePictureInPicture()
         usePlayerLayer(frame)
     }
@@ -697,6 +702,7 @@ private var presentationSizeContext = 0
 
     /// Disables Picture-in-Picture.
     @objc public func disablePictureInPicture() {
+        BetterPlayerApi.log(1, TAG, "disablePictureInPicture()")
         setPictureInPicture(true)
         if let layer = playerLayerRef {
             layer.removeFromSuperlayer()
@@ -708,10 +714,12 @@ private var presentationSizeContext = 0
     // MARK: - AVPictureInPictureControllerDelegate
 
     public func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        BetterPlayerApi.log(1, TAG, "pictureInPictureControllerDidStopPictureInPicture")
         disablePictureInPicture()
     }
 
     public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        BetterPlayerApi.log(1, TAG, "pictureInPictureControllerDidStartPictureInPicture")
         callback?.onPipStart()
     }
 
@@ -727,11 +735,12 @@ private var presentationSizeContext = 0
     ///   - name: The name of the track.
     ///   - index: The index of the track.
     @objc public func setAudioTrack(name: String, index: Int) {
-        guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: .audible) else { return }
+        BetterPlayerApi.log(0, TAG, "setAudioTrack: name=\(name), index=\(index)")
+        guard let group = player.currentItem?.mediaSelectionGroup(forMediaCharacteristic: .audible) else { return }
         let options = group.options
         for audioTrackIndex in 0..<options.count {
             let option = options[audioTrackIndex]
-            let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: "title" as (NSCopying & NSObjectProtocol), keySpace: AVMetadataKeySpace(rawValue: "comn"))
+            let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle as (NSCopying & NSObjectProtocol), keySpace: .common)
             if let title = metas.first?.stringValue, title == name && audioTrackIndex == index {
                 player.currentItem?.select(option, in: group)
             }
@@ -741,6 +750,7 @@ private var presentationSizeContext = 0
     /// Sets whether the audio should mix with others.
     /// - Parameter mixWithOthers: Whether to mix audio.
     @objc public func setMixWithOthers(_ mixWithOthers: Bool) {
+        BetterPlayerApi.log(1, TAG, "setMixWithOthers: \(mixWithOthers)")
         if mixWithOthers {
             try? AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
         } else {
@@ -758,6 +768,7 @@ private var presentationSizeContext = 0
 
     /// Clears the player state.
     @objc public func clear() {
+        BetterPlayerApi.log(1, TAG, "clear()")
         isInitialized = false
         isPlaying = false
         disposed = false

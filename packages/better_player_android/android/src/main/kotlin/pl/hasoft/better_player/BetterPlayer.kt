@@ -212,6 +212,7 @@ class BetterPlayer(
         imageUrl: String?, notificationChannelName: String?,
         activityName: String
     ) {
+        BetterPlayerApi.log(1, TAG, "setupPlayerNotification: title=$title, author=$author")
         val mediaDescriptionAdapter: MediaDescriptionAdapter = object : MediaDescriptionAdapter {
             override fun getCurrentContentTitle(player: Player): String {
                 return title
@@ -331,6 +332,7 @@ class BetterPlayer(
 
     @Keep
     fun disposeRemoteNotifications() {
+        BetterPlayerApi.log(1, TAG, "disposeRemoteNotifications()")
         if (playerNotificationManager != null) {
             playerNotificationManager?.setPlayer(null)
         }
@@ -486,6 +488,7 @@ class BetterPlayer(
 
     @Keep
     fun setLooping(value: Boolean) {
+        BetterPlayerApi.log(1, TAG, "setLooping: $value")
         exoPlayer?.repeatMode = if (value) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
     }
 
@@ -589,6 +592,7 @@ class BetterPlayer(
 
     @Keep
     fun onPictureInPictureStatusChanged(inPip: Boolean) {
+        BetterPlayerApi.log(1, TAG, "onPictureInPictureStatusChanged: $inPip")
         if (inPip) {
             callback.onPipStart()
         } else {
@@ -676,6 +680,7 @@ class BetterPlayer(
 
     @Keep
     fun setMixWithOthers(mixWithOthers: Boolean) {
+        BetterPlayerApi.log(1, TAG, "setMixWithOthers: $mixWithOthers")
         setAudioAttributes(exoPlayer, mixWithOthers)
     }
 

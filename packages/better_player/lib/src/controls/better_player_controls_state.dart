@@ -66,13 +66,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void onShowMoreClicked() {
-    PlayerLogger.debug('onShowMoreClicked');
+    PlayerLogger.debug(message: 'onShowMoreClicked');
     _showModalBottomSheet([
       BetterPlayerOverflowMenu(
         controller: betterPlayerController!,
         controlsConfiguration: betterPlayerControlsConfiguration,
         onPlaybackSpeedClicked: () {
-          PlayerLogger.debug('onPlaybackSpeedClicked');
+          PlayerLogger.debug(message: 'onPlaybackSpeedClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
@@ -80,7 +80,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onSubtitlesClicked: () {
-          PlayerLogger.debug('onSubtitlesClicked');
+          PlayerLogger.debug(message: 'onSubtitlesClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
@@ -88,7 +88,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onQualitiesClicked: () {
-          PlayerLogger.debug('onQualitiesClicked');
+          PlayerLogger.debug(message: 'onQualitiesClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
@@ -96,7 +96,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onAudioTracksClicked: () {
-          PlayerLogger.debug('onAudioTracksClicked');
+          PlayerLogger.debug(message: 'onAudioTracksClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 300),
@@ -201,12 +201,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void showQualitiesSelectionWidget() {
-    PlayerLogger.debug('showQualitiesSelectionWidget started');
+    PlayerLogger.debug(message: 'showQualitiesSelectionWidget started');
     // HLS / DASH
     final asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
     final asmsTracks = betterPlayerController!.betterPlayerAsmsTracks;
-    PlayerLogger.debug('ASMS Tracks: ${asmsTracks.length}');
+    PlayerLogger.debug(message: 'ASMS Tracks: ${asmsTracks.length}');
     final children = <Widget>[];
     for (var index = 0; index < asmsTracks.length; index++) {
       final track = asmsTracks[index];
@@ -254,7 +254,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     // normal videos
     final resolutions =
         betterPlayerController!.betterPlayerDataSource!.resolutions;
-    PlayerLogger.debug('Resolutions: ${resolutions?.length ?? 0}');
+    PlayerLogger.debug(message: 'Resolutions: ${resolutions?.length ?? 0}');
     var resolutionIndex = 0;
     resolutions?.forEach((key, value) {
       final isSelected =
@@ -276,7 +276,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     });
 
     if (children.isEmpty) {
-      PlayerLogger.debug('Quality children empty, adding Auto fallback');
+      PlayerLogger.debug(
+        message: 'Quality children empty, adding Auto fallback',
+      );
       children.add(
         BetterPlayerSelectionListItemWidget(
           label: betterPlayerController!.translations.qualityAuto,
@@ -291,7 +293,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       );
     }
 
-    PlayerLogger.debug('Showing qualities menu with ${children.length} items');
+    PlayerLogger.debug(
+      message: 'Showing qualities menu with ${children.length} items',
+    );
     _showModalBottomSheet(children);
   }
 
@@ -343,7 +347,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showModalBottomSheet(List<Widget> children) {
-    PlayerLogger.debug('Showing bottom sheet with ${children.length} items');
+    PlayerLogger.debug(
+      message: 'Showing bottom sheet with ${children.length} items',
+    );
     defaultTargetPlatform == TargetPlatform.android
         ? _showMaterialBottomSheet(children)
         : _showCupertinoModalBottomSheet(children);

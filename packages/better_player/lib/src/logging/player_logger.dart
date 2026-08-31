@@ -33,33 +33,33 @@ class PlayerLogger {
     }
   }
 
-  static void debug(String message, {String? tag}) =>
-      _log(PlayerLogLevel.debug, message, tag: tag);
+  static void debug({required String message, String? tag}) =>
+      _log(level: PlayerLogLevel.debug, message: message, tag: tag);
 
-  static void info(String message, {String? tag}) =>
-      _log(PlayerLogLevel.info, message, tag: tag);
+  static void info({required String message, String? tag}) =>
+      _log(level: PlayerLogLevel.info, message: message, tag: tag);
 
-  static void warning(
-    String message, {
+  static void warning({
+    required String message,
     String? tag,
     Object? error,
     StackTrace? stackTrace,
   }) => _log(
-    PlayerLogLevel.warning,
-    message,
+    level: PlayerLogLevel.warning,
+    message: message,
     tag: tag,
     error: error,
     stackTrace: stackTrace,
   );
 
-  static void error(
-    String message, {
+  static void error({
+    required String message,
     String? tag,
     Object? error,
     StackTrace? stackTrace,
   }) => _log(
-    PlayerLogLevel.error,
-    message,
+    level: PlayerLogLevel.error,
+    message: message,
     tag: tag,
     error: error,
     stackTrace: stackTrace,
@@ -70,12 +70,17 @@ class PlayerLogger {
     // Clamp to valid loggable levels (exclude 'none')
     final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 2);
     final level = PlayerLogLevel.values[clampedIndex];
-    _log(level, message, tag: tag, includeCaller: false);
+    _log(
+      level: level,
+      message: message,
+      tag: tag,
+      includeCaller: false,
+    );
   }
 
-  static void _log(
-    PlayerLogLevel level,
-    String message, {
+  static void _log({
+    required PlayerLogLevel level,
+    required String message,
     String? tag,
     bool includeCaller = true,
     Object? error,
@@ -104,7 +109,7 @@ class PlayerLogger {
     );
 
     for (final output in _config.outputs) {
-      output.output(record);
+      output.onLog(record);
     }
   }
 

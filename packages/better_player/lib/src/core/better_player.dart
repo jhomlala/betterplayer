@@ -89,7 +89,10 @@ class _BetterPlayerState extends State<BetterPlayer>
         locale = contextLocale;
       }
     } catch (exception) {
-      PlayerLogger.error('Failed to get locale: $exception', error: exception);
+      PlayerLogger.error(
+        message: 'Failed to get locale: $exception',
+        error: exception,
+      );
     }
     widget.controller.setupTranslations(locale);
   }
