@@ -22,10 +22,10 @@ class BetterPlayerController {
     this.betterPlayerPlaylistConfiguration,
     PlayerDataSource? betterPlayerDataSource,
   }) {
-    BetterPlayerLogger.instance.setup(
+    PlayerLogger.setup(
       betterPlayerConfiguration.playerLogConfiguration,
     );
-    BetterPlayerLogger.instance.info('Controller created', tag: _logTag);
+    PlayerLogger.info('Controller created', tag: _logTag);
     _betterPlayerControlsConfiguration =
         betterPlayerConfiguration.controlsConfiguration;
     _eventListeners.add(eventListener);
@@ -237,7 +237,7 @@ class BetterPlayerController {
 
   ///Setup new data source in Better Player.
   Future setupDataSource(PlayerDataSource betterPlayerDataSource) async {
-    BetterPlayerLogger.instance.info(
+    PlayerLogger.info(
       'Controller: setupDataSource starting',
       tag: _logTag,
     );
@@ -287,12 +287,12 @@ class BetterPlayerController {
     }
     try {
       await Future.wait(setupFutures);
-      BetterPlayerLogger.instance.info(
+      PlayerLogger.info(
         'Data source setup complete: ${betterPlayerDataSource.url}',
         tag: _logTag,
       );
     } catch (exception) {
-      BetterPlayerLogger.instance.error(
+      PlayerLogger.error(
         'Data source setup failed: $exception',
         error: exception,
         tag: _logTag,
@@ -463,7 +463,7 @@ class BetterPlayerController {
       }
       _asmsSegmentsLoading = false;
     } catch (exception) {
-      BetterPlayerLogger.instance.error(
+      PlayerLogger.error(
         'Load ASMS subtitle segments failed: $exception',
         error: exception,
         tag: _logTag,
@@ -511,7 +511,7 @@ class BetterPlayerController {
       case DataSourceType.file:
         final file = File(betterPlayerDataSource.url);
         if (!file.existsSync()) {
-          BetterPlayerLogger.instance.warning(
+          PlayerLogger.warning(
             "File ${file.path} doesn't exists. This may be because "
             "you're acessing file from native path and Flutter doesn't "
             'recognize this path.',
@@ -591,7 +591,7 @@ class BetterPlayerController {
   ///Initializes video based on configuration. Invoke actions which need to be
   ///run on player start.
   Future _initializeVideo() async {
-    BetterPlayerLogger.instance.info(
+    PlayerLogger.info(
       'Initializing video: autoPlay=${betterPlayerConfiguration.autoPlay}, '
       'startAt=${betterPlayerConfiguration.startAt}',
       tag: _logTag,
@@ -665,7 +665,7 @@ class BetterPlayerController {
   ///Start video playback. Play will be triggered only if current lifecycle state
   ///is resumed.
   Future<void> play() async {
-    BetterPlayerLogger.instance.info('play(, tag: _logTag)', tag: _logTag);
+    PlayerLogger.info('play(, tag: _logTag)', tag: _logTag);
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -690,7 +690,7 @@ class BetterPlayerController {
 
   ///Stop video playback.
   Future<void> pause() async {
-    BetterPlayerLogger.instance.info('pause(, tag: _logTag)', tag: _logTag);
+    PlayerLogger.info('pause(, tag: _logTag)', tag: _logTag);
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -701,7 +701,7 @@ class BetterPlayerController {
 
   ///Move player to specific position/moment of the video.
   Future<void> seekTo(Duration moment) async {
-    BetterPlayerLogger.instance.info(
+    PlayerLogger.info(
       'seekTo($moment, tag: _logTag)',
       tag: _logTag,
     );
@@ -735,14 +735,14 @@ class BetterPlayerController {
   ///Set volume of player. Allows values from 0.0 to 1.0.
   Future<void> setVolume(double volume) async {
     if (volume < 0.0 || volume > 1.0) {
-      BetterPlayerLogger.instance.warning(
+      PlayerLogger.warning(
         'Volume must be between 0.0 and 1.0',
         tag: _logTag,
       );
       throw ArgumentError('Volume must be between 0.0 and 1.0');
     }
     if (videoPlayerController == null) {
-      BetterPlayerLogger.instance.warning(
+      PlayerLogger.warning(
         'The data source has not been initialized',
         tag: _logTag,
       );
@@ -760,14 +760,14 @@ class BetterPlayerController {
   ///Set playback speed of video. Allows to set speed value between 0 and 2.
   Future<void> setSpeed(double speed) async {
     if (speed <= 0 || speed > 2) {
-      BetterPlayerLogger.instance.warning(
+      PlayerLogger.warning(
         'Speed must be between 0 and 2',
         tag: _logTag,
       );
       throw ArgumentError('Speed must be between 0 and 2');
     }
     if (videoPlayerController == null) {
-      BetterPlayerLogger.instance.warning(
+      PlayerLogger.warning(
         'The data source has not been initialized',
         tag: _logTag,
       );
@@ -845,7 +845,7 @@ class BetterPlayerController {
 
     if (currentVideoPlayerValue.initialized &&
         !_hasCurrentDataSourceInitialized) {
-      BetterPlayerLogger.instance.info(
+      PlayerLogger.info(
         'Controller: Video player initialized',
         tag: _logTag,
       );
@@ -899,7 +899,7 @@ class BetterPlayerController {
   ///Flag which determines whenever player is playing live data source.
   bool isLiveStream() {
     if (_betterPlayerDataSource == null) {
-      BetterPlayerLogger.instance.warning(
+      PlayerLogger.warning(
         'The data source has not been initialized',
         tag: _logTag,
       );
@@ -911,7 +911,7 @@ class BetterPlayerController {
   ///Flag which determines whenever player data source has been initialized.
   bool? isVideoInitialized() {
     if (videoPlayerController == null) {
-      BetterPlayerLogger.instance.warning(
+      PlayerLogger.warning(
         'The data source has not been initialized',
         tag: _logTag,
       );
@@ -925,7 +925,7 @@ class BetterPlayerController {
   void startNextVideoTimer() {
     if (_nextVideoTimer == null) {
       if (betterPlayerPlaylistConfiguration == null) {
-        BetterPlayerLogger.instance.warning(
+        PlayerLogger.warning(
           'BettterPlayerPlaylistConifugration has not been set!',
           tag: _logTag,
         );
@@ -975,7 +975,7 @@ class BetterPlayerController {
   ///Setup track parameters for currently played video. Can be only used for HLS or DASH
   ///data source.
   void setTrack(PlayerAsmsTrack track) {
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'Track set: ${track.id}, ${track.width}x${track.height}, '
       '${track.bitrate}bps',
       tag: _logTag,
@@ -1049,7 +1049,7 @@ class BetterPlayerController {
 
   ///Set different resolution (quality) for video
   Future<void> setResolution(String url) async {
-    BetterPlayerLogger.instance.info(
+    PlayerLogger.info(
       'Resolution changed to: $url',
       tag: _logTag,
     );
@@ -1113,7 +1113,7 @@ class BetterPlayerController {
   ///state, then video playback will stop. If showNotification is set in data
   ///source or handleLifecycle is false then this logic will be ignored.
   void setAppLifecycleState(AppLifecycleState appLifecycleState) {
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'App lifecycle: $appLifecycleState',
       tag: _logTag,
     );
@@ -1202,7 +1202,7 @@ class BetterPlayerController {
             betterPlayerGlobalKey.currentContext!.findRenderObject()
                 as RenderBox?;
         if (renderBox == null) {
-          BetterPlayerLogger.instance.warning(
+          PlayerLogger.warning(
             "Can't show PiP. RenderBox is null. Did you provide valid global"
             ' key?',
             tag: _logTag,
@@ -1217,13 +1217,13 @@ class BetterPlayerController {
           height: renderBox.size.height,
         );
       } else {
-        BetterPlayerLogger.instance.warning(
+        PlayerLogger.warning(
           'Unsupported PiP in current platform.',
           tag: _logTag,
         );
       }
     } else {
-      BetterPlayerLogger.instance.warning(
+      PlayerLogger.warning(
         "Picture in picture is not supported in this device. If you're "
         "using Android, please check if you're using activity v2 "
         'embedding.',
@@ -1259,7 +1259,7 @@ class BetterPlayerController {
 
   ///Handle VideoEvent when remote controls notification / PiP is shown
   Future<void> _handleVideoEvent(VideoEvent event) async {
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'Video event: ${event.eventType}',
       tag: _logTag,
     );
@@ -1309,7 +1309,7 @@ class BetterPlayerController {
 
   ///Retry data source if playback failed.
   Future retryDataSource() async {
-    BetterPlayerLogger.instance.warning(
+    PlayerLogger.warning(
       'Retrying data source',
       tag: _logTag,
     );
@@ -1324,7 +1324,7 @@ class BetterPlayerController {
 
   ///Set [audioTrack] in player. Works only for HLS or DASH streams.
   void setAudioTrack(PlayerAsmsAudioTrack audioTrack) {
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'Audio track set: ${audioTrack.label}',
       tag: _logTag,
     );
@@ -1426,7 +1426,7 @@ class BetterPlayerController {
   ///autoDispose parameter will be overridden and controller will be disposed
   ///(if it wasn't disposed before).
   void dispose({bool forceDispose = false}) {
-    BetterPlayerLogger.instance.info(
+    PlayerLogger.info(
       'Controller disposed',
       tag: _logTag,
     );

@@ -7,7 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:material_ui/material_ui.dart' as m3;
 
 void main() {
-  BetterPlayerLogger.instance.info('E2E: Starting main()');
+  PlayerLogger.info('E2E: Starting main()');
   WidgetsFlutterBinding.ensureInitialized();
   runApp(const BetterPlayerE2EApp());
 }
@@ -17,7 +17,7 @@ class BetterPlayerE2EApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BetterPlayerLogger.instance.info('E2E: Building BetterPlayerE2EApp');
+    PlayerLogger.info('E2E: Building BetterPlayerE2EApp');
     return const MaterialApp(
       localizationsDelegates: [
         ...GlobalMaterialLocalizations.delegates,
@@ -41,7 +41,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 
   @override
   void initState() {
-    BetterPlayerLogger.instance.info('E2E: initState starting');
+    PlayerLogger.info('E2E: initState starting');
     super.initState();
     const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
@@ -56,7 +56,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      BetterPlayerLogger.instance.info(
+      PlayerLogger.info(
         'E2E: postFrameCallback - setting up data source',
       );
       final betterPlayerDataSource = PlayerDataSource(
@@ -68,11 +68,11 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     });
 
     _betterPlayerController.addEventsListener((event) {
-      BetterPlayerLogger.instance.info(
+      PlayerLogger.info(
         'E2E: Event received: ${event.betterPlayerEventType}',
       );
       if (event.betterPlayerEventType == PlayerEventType.exception) {
-        BetterPlayerLogger.instance.info(
+        PlayerLogger.info(
           'E2E: Exception event: ${event.parameters}',
         );
         setState(() {
@@ -85,7 +85,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         });
       } else if (event.betterPlayerEventType ==
           PlayerEventType.setupDataSource) {
-        BetterPlayerLogger.instance.info('E2E: setupDataSource event');
+        PlayerLogger.info('E2E: setupDataSource event');
         setState(() {
           _errorDescription = null;
         });
@@ -123,7 +123,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 
   @override
   Widget build(BuildContext context) {
-    BetterPlayerLogger.instance.info('E2E: E2EPlayerPage build()');
+    PlayerLogger.info('E2E: E2EPlayerPage build()');
     return Scaffold(
       appBar: AppBar(
         title: Semantics(

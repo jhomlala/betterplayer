@@ -27,7 +27,7 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == PlayerEventType.progress) {
-        BetterPlayerLogger.instance.info(
+        PlayerLogger.info(
           'Current subtitle line: ${_betterPlayerController.renderedSubtitle}',
         );
       }

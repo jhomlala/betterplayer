@@ -17,7 +17,7 @@ class _FFITestPageState extends State<FFITestPage> {
 
   @override
   void initState() {
-    BetterPlayerLogger.instance.info('FFI TEST PAGE: initState');
+    PlayerLogger.info('FFI TEST PAGE: initState');
     super.initState();
     const betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
@@ -26,7 +26,7 @@ class _FFITestPageState extends State<FFITestPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
 
     _betterPlayerController.addEventsListener((event) {
-      BetterPlayerLogger.instance.info(
+      PlayerLogger.info(
         'FFI TEST PAGE: Event received: ${event.betterPlayerEventType}',
       );
       if (event.betterPlayerEventType == PlayerEventType.initialized) {
@@ -37,7 +37,7 @@ class _FFITestPageState extends State<FFITestPage> {
       } else if (event.betterPlayerEventType == PlayerEventType.exception) {
         final error =
             event.parameters?['exception']?.toString() ?? 'Unknown error';
-        BetterPlayerLogger.instance.info('FFI TEST PAGE: EXCEPTION: $error');
+        PlayerLogger.info('FFI TEST PAGE: EXCEPTION: $error');
         setState(() {
           _errorMessage = error;
         });
@@ -45,11 +45,11 @@ class _FFITestPageState extends State<FFITestPage> {
     });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      BetterPlayerLogger.instance.info('FFI TEST PAGE: addPostFrameCallback');
+      PlayerLogger.info('FFI TEST PAGE: addPostFrameCallback');
       // Check if already initialized (e.g. if events were missed)
       if (_betterPlayerController.videoPlayerController?.value.initialized ??
           false) {
-        BetterPlayerLogger.instance.info('FFI TEST PAGE: Already initialized');
+        PlayerLogger.info('FFI TEST PAGE: Already initialized');
         setState(() {
           _isInitialized = true;
         });
@@ -59,7 +59,7 @@ class _FFITestPageState extends State<FFITestPage> {
         DataSourceType.network,
         Constants.hlsTestStreamUrl,
       );
-      BetterPlayerLogger.instance.info(
+      PlayerLogger.info(
         'FFI TEST PAGE: Setting up data source: ${betterPlayerDataSource.url}',
       );
       _betterPlayerController.setupDataSource(betterPlayerDataSource);
@@ -79,7 +79,7 @@ class _FFITestPageState extends State<FFITestPage> {
         _results[name] = true;
       });
     } catch (e) {
-      BetterPlayerLogger.instance.info('FFI Test Error ($name): $e');
+      PlayerLogger.info('FFI Test Error ($name): $e');
       setState(() {
         _results[name] = false;
       });

@@ -26,7 +26,7 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          BetterPlayerLogger.instance.debug(
+          PlayerLogger.debug(
             'Tapped on: $semanticsIdentifier ($semanticsLabel)',
             tag: 'ClickableWidget',
           );

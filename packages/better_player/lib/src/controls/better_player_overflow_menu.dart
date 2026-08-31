@@ -99,7 +99,7 @@ class PlayerOverflowMenuItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'E2E: Building PlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
       tag: 'OverflowMenu',
     );

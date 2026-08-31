@@ -67,7 +67,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
-      BetterPlayerLogger.instance.debug(
+      PlayerLogger.debug(
         'VideoPlayerController: Event received: ${event.eventType}',
         tag: 'VideoPlayer',
       );
@@ -288,7 +288,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     try {
-      BetterPlayerLogger.instance.debug(
+      PlayerLogger.debug(
         'VideoPlayerController: setDataSource platform call starting',
         tag: 'VideoPlayer',
       );
@@ -296,12 +296,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         _textureId,
         dataSourceDescription,
       );
-      BetterPlayerLogger.instance.debug(
+      PlayerLogger.debug(
         'VideoPlayerController: setDataSource platform call finished, waiting for init event',
         tag: 'VideoPlayer',
       );
       await completer.future;
-      BetterPlayerLogger.instance.debug(
+      PlayerLogger.debug(
         'VideoPlayerController: setDataSource init event received',
         tag: 'VideoPlayer',
       );

@@ -94,7 +94,7 @@ class _BetterPlayerState extends State<BetterPlayer>
         locale = contextLocale;
       }
     } catch (exception) {
-      BetterPlayerLogger.instance.error(
+      PlayerLogger.error(
         'Failed to get locale: $exception',
         error: exception,
       );

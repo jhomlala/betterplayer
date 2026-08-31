@@ -3,15 +3,15 @@ import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_record.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 
-class BetterPlayerLogger {
-  BetterPlayerLogger._();
-  static final BetterPlayerLogger instance = BetterPlayerLogger._();
+/// Logger for Better Player.
+class PlayerLogger {
+  PlayerLogger._();
 
-  PlayerLogConfiguration _config = PlayerLogConfiguration.defaultConfig;
-  bool _nativeCallbackRegistered = false;
+  static PlayerLogConfiguration _config = PlayerLogConfiguration.defaultConfig;
+  static bool _nativeCallbackRegistered = false;
 
   /// Apply configuration and initialise outputs.
-  void setup(PlayerLogConfiguration config) {
+  static void setup(PlayerLogConfiguration config) {
     for (final output in _config.outputs) {
       output.destroy();
     }
@@ -30,13 +30,13 @@ class BetterPlayerLogger {
     }
   }
 
-  void debug(String message, {String tag = 'BetterPlayer'}) =>
+  static void debug(String message, {String tag = 'BetterPlayer'}) =>
       _log(PlayerLogLevel.debug, message, tag: tag);
 
-  void info(String message, {String tag = 'BetterPlayer'}) =>
+  static void info(String message, {String tag = 'BetterPlayer'}) =>
       _log(PlayerLogLevel.info, message, tag: tag);
 
-  void warning(
+  static void warning(
     String message, {
     String tag = 'BetterPlayer',
     Object? error,
@@ -49,7 +49,7 @@ class BetterPlayerLogger {
     stackTrace: stackTrace,
   );
 
-  void error(
+  static void error(
     String message, {
     String tag = 'BetterPlayer',
     Object? error,
@@ -63,13 +63,13 @@ class BetterPlayerLogger {
   );
 
   /// Entry point for native → Dart log forwarding.
-  void onNativeLog(int levelIndex, String tag, String message) {
+  static void onNativeLog(int levelIndex, String tag, String message) {
     final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 1);
     final level = PlayerLogLevel.values[clampedIndex];
     _log(level, message, tag: tag);
   }
 
-  void _log(
+  static void _log(
     PlayerLogLevel level,
     String message, {
     required String tag,

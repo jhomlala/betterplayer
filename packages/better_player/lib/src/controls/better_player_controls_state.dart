@@ -65,7 +65,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void onShowMoreClicked() {
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'onShowMoreClicked',
       tag: 'Controls',
     );
@@ -74,7 +74,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         controller: betterPlayerController!,
         controlsConfiguration: betterPlayerControlsConfiguration,
         onPlaybackSpeedClicked: () {
-          BetterPlayerLogger.instance.debug(
+          PlayerLogger.debug(
             'onPlaybackSpeedClicked',
             tag: 'Controls',
           );
@@ -85,7 +85,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onSubtitlesClicked: () {
-          BetterPlayerLogger.instance.debug(
+          PlayerLogger.debug(
             'onSubtitlesClicked',
             tag: 'Controls',
           );
@@ -96,7 +96,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onQualitiesClicked: () {
-          BetterPlayerLogger.instance.debug(
+          PlayerLogger.debug(
             'onQualitiesClicked',
             tag: 'Controls',
           );
@@ -107,7 +107,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onAudioTracksClicked: () {
-          BetterPlayerLogger.instance.debug(
+          PlayerLogger.debug(
             'onAudioTracksClicked',
             tag: 'Controls',
           );
@@ -217,7 +217,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void showQualitiesSelectionWidget() {
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'showQualitiesSelectionWidget started',
       tag: 'Controls',
     );
@@ -225,7 +225,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
     final asmsTracks = betterPlayerController!.betterPlayerAsmsTracks;
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'ASMS Tracks: ${asmsTracks.length}',
       tag: 'Controls',
     );
@@ -276,7 +276,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     // normal videos
     final resolutions =
         betterPlayerController!.betterPlayerDataSource!.resolutions;
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'Resolutions: ${resolutions?.length ?? 0}',
       tag: 'Controls',
     );
@@ -301,7 +301,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     });
 
     if (children.isEmpty) {
-      BetterPlayerLogger.instance.debug(
+      PlayerLogger.debug(
         'Quality children empty, adding Auto fallback',
         tag: 'Controls',
       );
@@ -321,7 +321,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       );
     }
 
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'Showing qualities menu with ${children.length} items',
       tag: 'Controls',
     );
@@ -376,7 +376,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showModalBottomSheet(List<Widget> children) {
-    BetterPlayerLogger.instance.debug(
+    PlayerLogger.debug(
       'Showing bottom sheet with ${children.length} items',
       tag: 'Controls',
     );

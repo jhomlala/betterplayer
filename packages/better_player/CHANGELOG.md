@@ -1,10 +1,10 @@
 ## Unreleased
-- Fixed: missing shader error `ink_sparkle.frag` in tests by disabling Material 3 in `MaterialApp`.
-- Added: Extensible logging system with `BetterPlayerLogger`. Dart is now the single source of truth for logs.
-- Added: Global shorthand `PlayerLogger` for more concise logging (e.g., `PlayerLogger.info(...)`).
+- Added: Extensible logging system with `PlayerLogger`. Dart is now the single source of truth for logs.
+- Updated: Refactored `BetterPlayerLogger` to `PlayerLogger` with static methods for more concise logging (e.g., `PlayerLogger.info(...)`).
 - Added: Native-to-Dart logging streaming for Android (ExoPlayer) and iOS (AVPlayer).
 - Updated: Migrated all internal `BetterPlayerUtils.log` calls to the new logging system with appropriate log levels.
 - Added: Comprehensive "Day Zero" logs across the library for better troubleshooting.
+- Fixed: missing shader error `ink_sparkle.frag` in tests by disabling Material 3 in `MaterialApp`.
 - Fixed: linting issues identified by `flutter analyze`, including `prefer_const_constructors`, `avoid_redundant_argument_values`, `omit_local_variable_types`, and import sorting across several files.
 - Updated: Conducted a comprehensive documentation audit, fixing inconsistencies, outdated version references (e.g., iOS 11 to 13), and updating code examples to use modern class names without legacy prefixes.
 - Updated: Improved Docusaurus configuration to enable warnings for broken links and markdown links.
@@ -709,4 +709,3 @@
 
 ## 0.0.1
 * Initial release.
-
