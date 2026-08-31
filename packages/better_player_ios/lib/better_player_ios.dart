@@ -12,8 +12,12 @@ import 'package:objective_c/objective_c.dart' as objc;
 class BetterPlayerIOS extends BetterPlayerPlatform {
   @override
   Future<void> setupLogCallback(
-    void Function(int levelIndex, String tag, String message) callback,
+    void Function(int levelIndex, String tag, String message)? callback,
   ) async {
+    if (callback == null) {
+      BetterPlayerApi.setLogCallback(null);
+      return;
+    }
     final ffiFn = BetterPlayerLogCallback$Builder.implement(
       onLog_tag_message_:
           (int level, objc.NSString tag, objc.NSString message) {

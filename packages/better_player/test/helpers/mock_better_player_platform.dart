@@ -112,6 +112,17 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   @override
   Future<void> clearCache() async {}
 
+  int setupLogCallbackCount = 0;
+  void Function(int levelIndex, String tag, String message)? lastLogCallback;
+
+  @override
+  Future<void> setupLogCallback(
+    void Function(int levelIndex, String tag, String message)? callback,
+  ) async {
+    setupLogCallbackCount++;
+    lastLogCallback = callback;
+  }
+
   @override
   Widget buildView(int? textureId) {
     return const SizedBox();

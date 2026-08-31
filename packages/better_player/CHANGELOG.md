@@ -1,4 +1,6 @@
 ## Unreleased
+- Fixed: Improved `PlayerLogger` native callback lifecycle and robust caller detection.
+- Updated: `BetterPlayerPlatform.setupLogCallback` now supports `null` to unregister native log forwarding.
 - Added: Automatic tag derivation for `PlayerLogger` based on the calling class name. Manual tags are now optional.
 - Added: Automatic caller detection for `PlayerLogger` using stack trace parsing (enabled by default).
 - Updated: Renamed `PlayerLogConfiguration` to `PlayerLoggerConfiguration` for naming consistency.

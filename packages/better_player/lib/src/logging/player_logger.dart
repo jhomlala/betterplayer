@@ -13,6 +13,13 @@ class PlayerLogger {
       PlayerLoggerConfiguration.defaultConfig;
   static bool _nativeCallbackRegistered = false;
 
+  /// Resets the logger state.
+  @visibleForTesting
+  static void reset() {
+    _config = PlayerLoggerConfiguration.defaultConfig;
+    _nativeCallbackRegistered = false;
+  }
+
   /// Apply configuration and initialise outputs.
   static void setup(PlayerLoggerConfiguration config) {
     for (final output in _config.outputs) {
@@ -23,12 +30,23 @@ class PlayerLogger {
       output.init();
     }
 
-    if (!_nativeCallbackRegistered && config.logLevel != PlayerLogLevel.none) {
-      try {
-        BetterPlayerPlatform.instance.setupLogCallback(onNativeLog);
-        _nativeCallbackRegistered = true;
-      } catch (e) {
-        // Native logging not implemented on this platform yet
+    if (config.logLevel != PlayerLogLevel.none) {
+      if (!_nativeCallbackRegistered) {
+        try {
+          BetterPlayerPlatform.instance.setupLogCallback(onNativeLog);
+          _nativeCallbackRegistered = true;
+        } catch (e) {
+          // Native logging not implemented on this platform yet
+        }
+      }
+    } else {
+      if (_nativeCallbackRegistered) {
+        try {
+          BetterPlayerPlatform.instance.setupLogCallback(null);
+          _nativeCallbackRegistered = false;
+        } catch (e) {
+          // ignore
+        }
       }
     }
   }
@@ -124,24 +142,23 @@ class PlayerLogger {
   static String? _getCaller() {
     try {
       final lines = StackTrace.current.toString().split('\n');
-      if (lines.length > 3) {
-        // Line 0: _getCaller
-        // Line 1: _log
-        // Line 2: info/debug/error/warning
-        // Line 3: The actual caller
-        final line = lines[3];
+      for (final line in lines) {
+        if (line.isEmpty) continue;
+        // Skip frames belonging to this logger to find the actual caller
+        if (line.contains('PlayerLogger.')) continue;
 
         // Format: #3      ClassName.methodName (package:...)
-        final match = RegExp(r'#\d+\s+([^\s]+)').firstMatch(line);
+        // Use non-greedy match until we hit a space followed by '(' to handle spaces in names (like <anonymous closure>)
+        final match = RegExp(r'#\d+\s+(.+?)(?:\s+\(|$)').firstMatch(line);
         var caller = match?.group(1);
 
         // Simplify constructors (ClassName.new or ClassName/new -> ClassName)
         if (caller != null) {
           caller = caller.replaceAll(RegExp(r'[./]new$'), '');
-          // Strip anonymous function suffixes
-          caller = caller.replaceAll(RegExp(r'\.<anonymous.*$'), '');
+          // Strip anonymous function suffixes (non-greedy to avoid stripping subsequent names)
+          caller = caller.replaceAll(RegExp(r'\.<anonymous[^>]*>'), '');
+          return caller;
         }
-        return caller;
       }
     } catch (_) {
       // Fallback to null if parsing fails

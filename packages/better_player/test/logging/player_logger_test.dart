@@ -3,7 +3,11 @@ import 'package:better_player/src/logging/player_log_output.dart';
 import 'package:better_player/src/logging/player_log_record.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/logging/player_logger_configuration.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:meta/meta.dart';
+
+import '../helpers/mock_better_player_platform.dart';
 
 class MockLogOutput extends PlayerLogOutput {
   final List<PlayerLogRecord> records = [];
@@ -29,9 +33,13 @@ class MockLogOutput extends PlayerLogOutput {
 void main() {
   group('PlayerLogger', () {
     late MockLogOutput mockOutput;
+    late MockBetterPlayerPlatform mockPlatform;
 
     setUp(() {
+      PlayerLogger.reset();
       mockOutput = MockLogOutput();
+      mockPlatform = MockBetterPlayerPlatform();
+      BetterPlayerPlatform.instance = mockPlatform;
       PlayerLogger.setup(
         PlayerLoggerConfiguration(
           logLevel: PlayerLogLevel.debug,
@@ -203,6 +211,61 @@ void main() {
 
       final record = mockOutput.records.last;
       expect(record.caller, isNull);
+    });
+
+    test('setup(none) unregisters native callback if registered', () {
+      // Already registered in setUp (logLevel: debug)
+      expect(mockPlatform.setupLogCallbackCount, 1);
+      expect(mockPlatform.lastLogCallback, isNotNull);
+
+      // Unregister
+      PlayerLogger.setup(
+        const PlayerLoggerConfiguration(logLevel: PlayerLogLevel.none),
+      );
+      expect(mockPlatform.setupLogCallbackCount, 2);
+      expect(mockPlatform.lastLogCallback, isNull);
+    });
+
+    test('setup(non-none) re-registers native callback if unregistered', () {
+      // 1. Start with none
+      PlayerLogger.setup(
+        const PlayerLoggerConfiguration(logLevel: PlayerLogLevel.none),
+      );
+      // reset registration flag for this test specifically if needed,
+      // but setup(none) should have set _nativeCallbackRegistered to false.
+
+      final initialCount = mockPlatform.setupLogCallbackCount;
+
+      // 2. Register
+      PlayerLogger.setup(
+        const PlayerLoggerConfiguration(),
+      );
+      expect(mockPlatform.setupLogCallbackCount, initialCount + 1);
+      expect(mockPlatform.lastLogCallback, isNotNull);
+    });
+
+    test('robustly parses caller info even through wrappers', () {
+      PlayerLogger.setup(
+        PlayerLoggerConfiguration(
+          outputs: [mockOutput],
+        ),
+      );
+      mockOutput.records.clear();
+
+      void wrapper() {
+        PlayerLogger.info(message: 'wrapped');
+      }
+
+      void nestedWrapper() {
+        wrapper();
+      }
+
+      nestedWrapper();
+
+      final record = mockOutput.records.last;
+      expect(record.caller, isNotNull);
+      // It should skip PlayerLogger frames and find the first non-logger frame: 'wrapper'
+      expect(record.caller, contains('wrapper'));
     });
   });
 }
