@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/video_player/video_player.dart';

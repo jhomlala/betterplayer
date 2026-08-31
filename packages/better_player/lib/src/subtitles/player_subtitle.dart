@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 
 class PlayerSubtitle {

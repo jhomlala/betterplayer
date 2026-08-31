@@ -5,6 +5,7 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
 import 'package:better_player/src/video_player/video_player.dart';
 import 'package:flutter/foundation.dart';

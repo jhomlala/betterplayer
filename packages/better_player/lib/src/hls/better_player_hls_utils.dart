@@ -4,6 +4,7 @@ import 'package:better_player/src/hls/hls_parser/hls_media_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
 import 'package:better_player/src/hls/hls_parser/rendition.dart';
 import 'package:better_player/src/hls/hls_parser/util.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 
 ///HLS helper class
 class BetterPlayerHlsUtils {

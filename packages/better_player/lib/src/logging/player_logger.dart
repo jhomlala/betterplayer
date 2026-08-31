@@ -2,8 +2,10 @@ import 'package:better_player/src/logging/player_log_configuration.dart';
 import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_record.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:meta/meta.dart';
 
 /// Logger for Better Player.
+@internal
 class PlayerLogger {
   PlayerLogger._();
 

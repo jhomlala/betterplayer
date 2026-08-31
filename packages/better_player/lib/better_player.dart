@@ -28,7 +28,6 @@ export 'src/logging/player_log_configuration.dart';
 export 'src/logging/player_log_level.dart';
 export 'src/logging/player_log_output.dart';
 export 'src/logging/player_log_record.dart';
-export 'src/logging/player_logger.dart';
 export 'src/playlist/better_player_playlist.dart';
 export 'src/playlist/better_player_playlist_controller.dart';
 export 'src/playlist/player_playlist_configuration.dart';
