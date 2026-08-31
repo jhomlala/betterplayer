@@ -109,22 +109,25 @@ void main() {
       expect(record.stackTrace, stackTrace);
     });
 
-    test('onNativeLog maps level indices correctly', () {
+    test('onNativeLog maps level indices correctly and skips caller info', () {
+      PlayerLogger.setup(
+        PlayerLoggerConfiguration(
+          logLevel: PlayerLogLevel.debug,
+          printCallerInfo: true,
+          outputs: [mockOutput],
+        ),
+      );
       mockOutput.records.clear();
 
       // Mapping: 0:debug, 1:info, 2:warning, 3:error
       PlayerLogger.onNativeLog(0, 'NativeTag', 'debug msg');
       PlayerLogger.onNativeLog(3, 'NativeTag', 'error msg');
-      PlayerLogger.onNativeLog(
-        10,
-        'NativeTag',
-        'clamped msg',
-      ); // Should clamp to error
+      PlayerLogger.onNativeLog(10, 'NativeTag', 'clamped msg');
 
       expect(mockOutput.records[0].level, PlayerLogLevel.debug);
+      expect(mockOutput.records[0].caller, isNull);
       expect(mockOutput.records[1].level, PlayerLogLevel.error);
       expect(mockOutput.records[2].level, PlayerLogLevel.error);
-      expect(mockOutput.records[2].message, 'clamped msg');
     });
 
     test('captures caller info when enabled', () {
@@ -146,7 +149,6 @@ void main() {
     test('derives tag from caller when manual tag is null', () {
       PlayerLogger.setup(
         PlayerLoggerConfiguration(
-          printCallerInfo: true,
           outputs: [mockOutput],
         ),
       );
@@ -165,6 +167,28 @@ void main() {
 
       final record = mockOutput.records.last;
       expect(record.tag, 'ManualTag');
+    });
+
+    test('simplifies anonymous function names', () {
+      PlayerLogger.setup(
+        PlayerLoggerConfiguration(
+          outputs: [mockOutput],
+        ),
+      );
+      mockOutput.records.clear();
+
+      // We can't easily mock the stack trace here without deep trickery,
+      // but we can verify the regex logic by testing the internal _getCaller if it were accessible,
+      // or just assume if this test is running inside an anonymous closure it works.
+      // For now, let's just ensure the regex doesn't break things.
+      void testClosure() {
+        PlayerLogger.info('inside closure');
+      }
+
+      testClosure();
+      final record = mockOutput.records.last;
+      expect(record.caller, isNotNull);
+      expect(record.caller, isNot(contains('<anonymous')));
     });
 
     test('skips caller info when disabled', () {

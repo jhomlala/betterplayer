@@ -70,13 +70,14 @@ class PlayerLogger {
     // Clamp to valid loggable levels (exclude 'none')
     final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 2);
     final level = PlayerLogLevel.values[clampedIndex];
-    _log(level, message, tag: tag);
+    _log(level, message, tag: tag, includeCaller: false);
   }
 
   static void _log(
     PlayerLogLevel level,
     String message, {
     String? tag,
+    bool includeCaller = true,
     Object? error,
     StackTrace? stackTrace,
   }) {
@@ -86,7 +87,7 @@ class PlayerLogger {
     if (!shouldLog) return;
 
     String? caller;
-    if (_config.printCallerInfo) {
+    if (includeCaller && _config.printCallerInfo) {
       caller = _getCaller();
     }
 
@@ -110,7 +111,7 @@ class PlayerLogger {
   /// Derives a tag from the caller info (e.g. "BetterPlayerController.setup" -> "BetterPlayerController").
   static String? _deriveTag(String? caller) {
     if (caller == null) return null;
-    final parts = caller.split('.');
+    final parts = caller.split(RegExp('[./]'));
     return parts.first;
   }
 
@@ -127,7 +128,15 @@ class PlayerLogger {
 
         // Format: #3      ClassName.methodName (package:...)
         final match = RegExp(r'#\d+\s+([^\s]+)').firstMatch(line);
-        return match?.group(1);
+        var caller = match?.group(1);
+
+        // Simplify constructors (ClassName.new or ClassName/new -> ClassName)
+        if (caller != null) {
+          caller = caller.replaceAll(RegExp(r'[./]new$'), '');
+          // Strip anonymous function suffixes
+          caller = caller.replaceAll(RegExp(r'\.<anonymous.*$'), '');
+        }
+        return caller;
       }
     } catch (_) {
       // Fallback to null if parsing fails

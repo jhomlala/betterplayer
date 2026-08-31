@@ -653,7 +653,6 @@ class BetterPlayerController {
   ///Start video playback. Play will be triggered only if current lifecycle state
   ///is resumed.
   Future<void> play() async {
-    PlayerLogger.info('play()');
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -678,7 +677,6 @@ class BetterPlayerController {
 
   ///Stop video playback.
   Future<void> pause() async {
-    PlayerLogger.info('pause()');
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -689,7 +687,6 @@ class BetterPlayerController {
 
   ///Move player to specific position/moment of the video.
   Future<void> seekTo(Duration moment) async {
-    PlayerLogger.info('seekTo($moment)');
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -720,11 +717,9 @@ class BetterPlayerController {
   ///Set volume of player. Allows values from 0.0 to 1.0.
   Future<void> setVolume(double volume) async {
     if (volume < 0.0 || volume > 1.0) {
-      PlayerLogger.warning('Volume must be between 0.0 and 1.0');
       throw ArgumentError('Volume must be between 0.0 and 1.0');
     }
     if (videoPlayerController == null) {
-      PlayerLogger.warning('The data source has not been initialized');
       throw StateError('The data source has not been initialized');
     }
     await videoPlayerController!.setVolume(volume);
@@ -739,11 +734,9 @@ class BetterPlayerController {
   ///Set playback speed of video. Allows to set speed value between 0 and 2.
   Future<void> setSpeed(double speed) async {
     if (speed <= 0 || speed > 2) {
-      PlayerLogger.warning('Speed must be between 0 and 2');
       throw ArgumentError('Speed must be between 0 and 2');
     }
     if (videoPlayerController == null) {
-      PlayerLogger.warning('The data source has not been initialized');
       throw StateError('The data source has not been initialized');
     }
     await videoPlayerController?.setSpeed(speed);
@@ -938,10 +931,6 @@ class BetterPlayerController {
   ///Setup track parameters for currently played video. Can be only used for HLS or DASH
   ///data source.
   void setTrack(PlayerAsmsTrack track) {
-    PlayerLogger.debug(
-      'Track set: ${track.id}, ${track.width}x${track.height}, '
-      '${track.bitrate}bps',
-    );
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -1267,7 +1256,6 @@ class BetterPlayerController {
 
   ///Set [audioTrack] in player. Works only for HLS or DASH streams.
   void setAudioTrack(PlayerAsmsAudioTrack audioTrack) {
-    PlayerLogger.debug('Audio track set: ${audioTrack.label}');
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
