@@ -86,15 +86,21 @@
   - `Updated`: for changes in existing functionality or dependencies.
   - `Fixed`: for bug fixes.
 - **Attribution**: If the work was done by a contributor, append `(by @username)` or `(by Name)` to the end of the entry.
+- **Sub-package Changelogs**: When updating changelogs, ensure you are updating the correct `CHANGELOG.md` for the package that actually changed (e.g., native changes go in `better_player_android/CHANGELOG.md` or `better_player_ios/CHANGELOG.md`).
 
 ## Release Management
-- **Preparation**: When asked to "Prepare a release for version X.Y.Z", the AI must:
-  1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml`, `packages/better_player_android/pubspec.yaml`, `packages/better_player_ios/pubspec.yaml`, and `packages/better_player_platform_interface/pubspec.yaml`.
-  2. Update `s.version = 'X.Y.Z'` in `packages/better_player_ios/ios/better_player_ios.podspec`.
-  3. Update `better_player: ^X.Y.Z` in the installation snippet of `docs/install.md`.
-  4. Rename the `## Unreleased` header to `## X.Y.Z` in `CHANGELOG.md` (omit the date). Ensure that version headers remain ordered correctly with the most recent at the top. DO NOT leave an empty `## Unreleased` section after the release.
-  5. Run `flutter pub get` in the root directory.
-  6. Run `dart format .` and `flutter analyze .`.
+- **Versioning Strategy (Federated Architecture)**: The core package (`better_player` and `better_player_example`) maintains a SEPARATE versioning track from the federated sub-packages (`better_player_android`, `better_player_ios`, `better_player_platform_interface`).
+  - NEVER artificially sync the versions of the sub-packages to match the core package.
+  - Sub-packages should only be bumped incrementally from their *own* current version (e.g., `1.1.0` -> `1.2.0`) based on their own unreleased changes.
+- **Preparation**: When asked to "Prepare a release for version X.Y.Z" (referring to the core package), the AI must:
+  1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml` and `packages/better_player_example/pubspec.yaml`.
+  2. Evaluate sub-packages (`android`, `ios`, `platform_interface`). If they have changes, bump their versions incrementally (e.g., to `A.B.C`) in their respective `pubspec.yaml` files.
+  3. Update `s.version = 'A.B.C'` in `packages/better_player_ios/ios/better_player_ios.podspec` to match the iOS sub-package version.
+  4. Update the dependencies in `packages/better_player/pubspec.yaml` to point to the newly bumped `^A.B.C` versions of the sub-packages.
+  5. Update `better_player: ^X.Y.Z` in the installation snippet of `docs/install.md`.
+  6. Rename the `## Unreleased` header to `## X.Y.Z` in `packages/better_player/CHANGELOG.md`. For any bumped sub-packages, rename their `## Unreleased` headers to their respective new versions (`## A.B.C`). Ensure version headers remain ordered correctly. DO NOT leave an empty `## Unreleased` section after the release.
+  7. Run `flutter pub get` in the root directory.
+  8. Run `dart format .` and `flutter analyze .`.
 - **Internal Release (`publish_to: none`)**:
   - If any core package has `publish_to: none`, the "release" is strictly a version bump and Git tag.
   - DO NOT run `flutter pub publish` unless explicitly instructed AND `publish_to: none` is removed.

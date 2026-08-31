@@ -25,7 +25,7 @@ dependencies:
   # video_player: ^x.y.z
   
   # Add this line:
-  better_player: ^1.2.0
+  better_player: ^1.3.0
 ```
 
 Run `flutter pub get` in your terminal to update dependencies.

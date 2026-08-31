@@ -1,18 +1,7 @@
-## Unreleased
-- Fixed: Improved `PlayerLogger` native callback lifecycle and robust caller detection.
-- Updated: `BetterPlayerPlatform.setupLogCallback` now supports `null` to unregister native log forwarding.
-- Added: Automatic tag derivation for `PlayerLogger` based on the calling class name. Manual tags are now optional.
-- Added: Automatic caller detection for `PlayerLogger` using stack trace parsing (enabled by default).
-- Updated: Renamed `PlayerLogConfiguration` to `PlayerLoggerConfiguration` for naming consistency.
-- Added: Extensible logging system with `PlayerLogger`. Dart is now the single source of truth for logs.
-- Updated: Refactored `BetterPlayerLogger` to `PlayerLogger` with static methods for more concise logging (e.g., `PlayerLogger.info(...)`).
-- Added: Native-to-Dart logging streaming for Android (ExoPlayer) and iOS (AVPlayer).
-- Updated: Migrated all internal `BetterPlayerUtils.log` calls to the new logging system with appropriate log levels.
-- Added: Comprehensive "Day Zero" logs across the library for better troubleshooting.
-- Fixed: missing shader error `ink_sparkle.frag` in tests by disabling Material 3 in `MaterialApp`.
-- Fixed: linting issues identified by `flutter analyze`, including required named parameters for `PlayerLogger`, `prefer_const_constructors`, `avoid_redundant_argument_values`, `omit_local_variable_types`, and import sorting across several files.
-- Updated: Conducted a comprehensive documentation audit, fixing inconsistencies, outdated version references (e.g., iOS 11 to 13), and updating code examples to use modern class names without legacy prefixes.
-- Updated: Improved Docusaurus configuration to enable warnings for broken links and markdown links.
+## 1.3.0
+- Added: Extensible logging system with `PlayerLogger`, featuring native-to-Dart log streaming, automatic caller/tag derivation, and comprehensive internal logs.
+- Updated: Comprehensive documentation audit and modernized code examples.
+- Fixed: Various test and linting issues.
 
 ## 1.2.0
 - Updated: Migrated to a modern JNI/Swift architecture for native bridges, improving performance and reliability.

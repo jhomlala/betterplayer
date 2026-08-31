@@ -1,3 +1,6 @@
+## 1.2.0
+- Added: Support for native-to-Dart log streaming (`setupLogCallback`) via JNI for ExoPlayer.
+
 ## 1.1.0
 - Added: Migrated native bridge to JNI using `jnigen` for high-performance direct communication with the Android media engine.
 - Fixed: Memory leak in player disposal and optimized WorkManager threading for caching.
