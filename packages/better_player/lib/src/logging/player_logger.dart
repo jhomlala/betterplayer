@@ -105,9 +105,7 @@ class PlayerLogger {
     Object? error,
     StackTrace? stackTrace,
   }) {
-    final shouldLog =
-        level.index >= _config.logLevel.index ||
-        (_config.alwaysLogErrors && level == PlayerLogLevel.error);
+    final shouldLog = level.index >= _config.logLevel.index;
     if (!shouldLog) return;
 
     String? caller;

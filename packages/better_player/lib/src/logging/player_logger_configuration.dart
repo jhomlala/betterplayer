@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 class PlayerLoggerConfiguration {
   const PlayerLoggerConfiguration({
     this.logLevel = PlayerLogLevel.info,
-    this.alwaysLogErrors = true,
     this.printCallerInfo = true,
     this.outputs = const [ConsoleLogOutput()],
   });
@@ -13,10 +12,6 @@ class PlayerLoggerConfiguration {
   /// Minimum level that gets routed to outputs.
   /// Use PlayerLogLevel.none to silence all logs.
   final PlayerLogLevel logLevel;
-
-  /// When true, error-level records always pass the level filter
-  /// regardless of logLevel. Default: true.
-  final bool alwaysLogErrors;
 
   /// Whether to automatically include the calling class/method name in logs.
   /// Note: enabling this has a small performance cost due to stack trace parsing.

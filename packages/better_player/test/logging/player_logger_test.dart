@@ -81,23 +81,6 @@ void main() {
       expect(mockOutput.records[2].level, PlayerLogLevel.error);
     });
 
-    test('alwaysLogErrors logs error even if logLevel is none', () {
-      PlayerLogger.setup(
-        PlayerLoggerConfiguration(
-          logLevel: PlayerLogLevel.none,
-          outputs: [mockOutput],
-        ),
-      );
-      mockOutput.records.clear();
-
-      PlayerLogger.info(message: 'info');
-      PlayerLogger.error(message: 'error');
-
-      expect(mockOutput.records.length, 1);
-      expect(mockOutput.records[0].level, PlayerLogLevel.error);
-      expect(mockOutput.records[0].message, 'error');
-    });
-
     test('convenience methods pass all arguments', () {
       final error = Exception('test');
       final stackTrace = StackTrace.current;
