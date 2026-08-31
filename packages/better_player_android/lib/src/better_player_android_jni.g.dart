@@ -1231,7 +1231,7 @@ extension type BetterPlayerLogCallback._(jni$_.JObject _$this)
           ($a![0] as jni$_.JInteger).toDartInt(releaseOriginal: true),
           ($a![1] as jni$_.JString),
         );
-        return jni$_.JReference.nullRef;
+        return jni$_.nullptr;
       }
     } catch (e) {
       return jni$_.ProtectedJniExtensions.newDartException(e);
