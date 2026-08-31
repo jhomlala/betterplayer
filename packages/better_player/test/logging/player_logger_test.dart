@@ -1,8 +1,8 @@
-import 'package:better_player/src/logging/player_log_configuration.dart';
 import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_output.dart';
 import 'package:better_player/src/logging/player_log_record.dart';
 import 'package:better_player/src/logging/player_logger.dart';
+import 'package:better_player/src/logging/player_logger_configuration.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class MockLogOutput extends PlayerLogOutput {
@@ -33,7 +33,7 @@ void main() {
     setUp(() {
       mockOutput = MockLogOutput();
       PlayerLogger.setup(
-        PlayerLogConfiguration(
+        PlayerLoggerConfiguration(
           logLevel: PlayerLogLevel.debug,
           outputs: [mockOutput],
         ),
@@ -45,7 +45,7 @@ void main() {
 
       final secondMockOutput = MockLogOutput();
       PlayerLogger.setup(
-        PlayerLogConfiguration(
+        PlayerLoggerConfiguration(
           outputs: [secondMockOutput],
         ),
       );
@@ -56,7 +56,7 @@ void main() {
 
     test('logs messages when level >= logLevel', () {
       PlayerLogger.setup(
-        PlayerLogConfiguration(
+        PlayerLoggerConfiguration(
           outputs: [mockOutput],
         ),
       );
@@ -75,7 +75,7 @@ void main() {
 
     test('alwaysLogErrors logs error even if logLevel is none', () {
       PlayerLogger.setup(
-        PlayerLogConfiguration(
+        PlayerLoggerConfiguration(
           logLevel: PlayerLogLevel.none,
           outputs: [mockOutput],
         ),

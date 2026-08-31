@@ -2,8 +2,8 @@ import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_output.dart';
 import 'package:flutter/foundation.dart';
 
-class PlayerLogConfiguration {
-  const PlayerLogConfiguration({
+class PlayerLoggerConfiguration {
+  const PlayerLoggerConfiguration({
     this.logLevel = PlayerLogLevel.info,
     this.alwaysLogErrors = true,
     this.outputs = const [ConsoleLogOutput()],
@@ -21,8 +21,8 @@ class PlayerLogConfiguration {
   final List<PlayerLogOutput> outputs;
 
   /// Sensible default: debug verbosity in debug mode, info in profile/release.
-  static PlayerLogConfiguration get defaultConfig =>
-      const PlayerLogConfiguration(
+  static PlayerLoggerConfiguration get defaultConfig =>
+      const PlayerLoggerConfiguration(
         logLevel: kDebugMode ? PlayerLogLevel.debug : PlayerLogLevel.info,
       );
 }

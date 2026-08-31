@@ -1,6 +1,6 @@
-import 'package:better_player/src/logging/player_log_configuration.dart';
 import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_record.dart';
+import 'package:better_player/src/logging/player_logger_configuration.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:meta/meta.dart';
 
@@ -9,11 +9,12 @@ import 'package:meta/meta.dart';
 class PlayerLogger {
   PlayerLogger._();
 
-  static PlayerLogConfiguration _config = PlayerLogConfiguration.defaultConfig;
+  static PlayerLoggerConfiguration _config =
+      PlayerLoggerConfiguration.defaultConfig;
   static bool _nativeCallbackRegistered = false;
 
   /// Apply configuration and initialise outputs.
-  static void setup(PlayerLogConfiguration config) {
+  static void setup(PlayerLoggerConfiguration config) {
     for (final output in _config.outputs) {
       output.destroy();
     }
