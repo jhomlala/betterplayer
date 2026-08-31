@@ -1279,7 +1279,7 @@ extension type BetterPlayerLogCallback._(jni$_.JObject _$this)
 extension BetterPlayerLogCallback$$Methods on BetterPlayerLogCallback {
   static final _id_onLog = BetterPlayerLogCallback._class.instanceMethodId(
     r'onLog',
-    r'(ILjava/lang/String;Ljava/lang/String;)V',
+    r'(ILjava/lang/String;)V',
   );
 
   static final _onLog =
@@ -1288,13 +1288,7 @@ extension BetterPlayerLogCallback$$Methods on BetterPlayerLogCallback {
               jni$_.JThrowablePtr Function(
                 jni$_.Pointer<jni$_.Void>,
                 jni$_.JMethodIDPtr,
-                jni$_.VarArgs<
-                  (
-                    jni$_.Int32,
-                    jni$_.Pointer<jni$_.Void>,
-                    jni$_.Pointer<jni$_.Void>,
-                  )
-                >,
+                jni$_.VarArgs<(jni$_.Int32, jni$_.Pointer<jni$_.Void>)>,
               )
             >
           >('globalEnv_CallVoidMethod')
@@ -1304,36 +1298,23 @@ extension BetterPlayerLogCallback$$Methods on BetterPlayerLogCallback {
               jni$_.JMethodIDPtr,
               core$_.int,
               jni$_.Pointer<jni$_.Void>,
-              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun onLog(level: kotlin.Int, tag: kotlin.String, message: kotlin.String): kotlin.Unit`
+  /// from: `public fun onLog(level: kotlin.Int, message: kotlin.String): kotlin.Unit`
   void onLog(
     core$_.int i,
     jni$_.JString string,
-    jni$_.JString string1,
   ) {
     final _$$selfRef = reference;
     final _$string = string.reference;
-    final _$string1 = string1.reference;
-    _onLog(
-      _$$selfRef.pointer,
-      _id_onLog.pointer,
-      i,
-      _$string.pointer,
-      _$string1.pointer,
-    ).check();
+    _onLog(_$$selfRef.pointer, _id_onLog.pointer, i, _$string.pointer).check();
   }
 }
 
 abstract base mixin class $BetterPlayerLogCallback {
   factory $BetterPlayerLogCallback({
-    required void Function(
-      core$_.int i,
-      jni$_.JString string,
-    )
-    onLog,
+    required void Function(core$_.int i, jni$_.JString string) onLog,
     core$_.bool onLog$async,
   }) = _$BetterPlayerLogCallback;
 
@@ -1343,16 +1324,11 @@ abstract base mixin class $BetterPlayerLogCallback {
 
 final class _$BetterPlayerLogCallback with $BetterPlayerLogCallback {
   _$BetterPlayerLogCallback({
-    required void Function(
-      core$_.int i,
-      jni$_.JString string,
-    )
-    onLog,
+    required void Function(core$_.int i, jni$_.JString string) onLog,
     this.onLog$async = false,
   }) : _onLog = onLog;
 
-  final void Function(core$_.int i, jni$_.JString string)
-  _onLog;
+  final void Function(core$_.int i, jni$_.JString string) _onLog;
   final core$_.bool onLog$async;
 
   void onLog(core$_.int i, jni$_.JString string) {
