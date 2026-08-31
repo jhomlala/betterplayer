@@ -2036,21 +2036,18 @@ extension type BetterPlayerLogCallback._(objc.ObjCProtocol object$)
 }
 
 extension BetterPlayerLogCallback$Methods on BetterPlayerLogCallback {
-  /// onLog:tag:message:
+  /// onLog:message:
   void onLog(
     int level, {
-    required objc.NSString tag,
     required objc.NSString message,
   }) {
-    final _$$ref = object$.ref;
-    final _$$ref$1 = tag.ref;
-    final _$$ref$2 = message.ref;
-    _objc_msgSend_1m6rrzn(
+    final _$$ref = this.object$;
+    final _$$ref$1 = message.ref;
+    _objc_msgSend_custom_onLog(
       _$$ref.pointer,
-      _sel_onLog_tag_message_,
+      _sel_onLog_message_,
       level,
       _$$ref$1.pointer,
-      _$$ref$2.pointer,
     );
   }
 }
@@ -2066,16 +2063,16 @@ interface class BetterPlayerLogCallback$Builder {
   /// If `$keepIsolateAlive` is true, this protocol will keep this isolate
   /// alive until it is garbage collected by both Dart and ObjC.
   static BetterPlayerLogCallback implement({
-    required void Function(int, objc.NSString, objc.NSString)
-    onLog_tag_message_,
+    required void Function(int, objc.NSString)
+    onLog_message_,
     bool $keepIsolateAlive = true,
   }) {
     final builder = objc.ObjCProtocolBuilder(
       debugName: 'BetterPlayerLogCallback',
     );
-    BetterPlayerLogCallback$Builder.onLog_tag_message_.implement(
+    BetterPlayerLogCallback$Builder.onLog_message_.implement(
       builder,
-      onLog_tag_message_,
+      onLog_message_,
     );
     builder.addProtocol($protocol);
     return BetterPlayerLogCallback.as(
@@ -2089,13 +2086,13 @@ interface class BetterPlayerLogCallback$Builder {
   /// Note: You cannot call this method after you have called `builder.build`.
   static void addToBuilder(
     objc.ObjCProtocolBuilder builder, {
-    required void Function(int, objc.NSString, objc.NSString)
-    onLog_tag_message_,
+    required void Function(int, objc.NSString)
+    onLog_message_,
     bool $keepIsolateAlive = true,
   }) {
-    BetterPlayerLogCallback$Builder.onLog_tag_message_.implement(
+    BetterPlayerLogCallback$Builder.onLog_message_.implement(
       builder,
-      onLog_tag_message_,
+      onLog_message_,
     );
     builder.addProtocol($protocol);
   }
@@ -2107,16 +2104,16 @@ interface class BetterPlayerLogCallback$Builder {
   /// If `$keepIsolateAlive` is true, this protocol will keep this isolate
   /// alive until it is garbage collected by both Dart and ObjC.
   static BetterPlayerLogCallback implementAsListener({
-    required void Function(int, objc.NSString, objc.NSString)
-    onLog_tag_message_,
+    required void Function(int, objc.NSString)
+    onLog_message_,
     bool $keepIsolateAlive = true,
   }) {
     final builder = objc.ObjCProtocolBuilder(
       debugName: 'BetterPlayerLogCallback',
     );
-    BetterPlayerLogCallback$Builder.onLog_tag_message_.implementAsListener(
+    BetterPlayerLogCallback$Builder.onLog_message_.implementAsListener(
       builder,
-      onLog_tag_message_,
+      onLog_message_,
     );
     builder.addProtocol($protocol);
     return BetterPlayerLogCallback.as(
@@ -2131,13 +2128,13 @@ interface class BetterPlayerLogCallback$Builder {
   /// Note: You cannot call this method after you have called `builder.build`.
   static void addToBuilderAsListener(
     objc.ObjCProtocolBuilder builder, {
-    required void Function(int, objc.NSString, objc.NSString)
-    onLog_tag_message_,
+    required void Function(int, objc.NSString)
+    onLog_message_,
     bool $keepIsolateAlive = true,
   }) {
-    BetterPlayerLogCallback$Builder.onLog_tag_message_.implementAsListener(
+    BetterPlayerLogCallback$Builder.onLog_message_.implementAsListener(
       builder,
-      onLog_tag_message_,
+      onLog_message_,
     );
     builder.addProtocol($protocol);
   }
@@ -2149,16 +2146,16 @@ interface class BetterPlayerLogCallback$Builder {
   /// If `$keepIsolateAlive` is true, this protocol will keep this isolate
   /// alive until it is garbage collected by both Dart and ObjC.
   static BetterPlayerLogCallback implementAsBlocking({
-    required void Function(int, objc.NSString, objc.NSString)
-    onLog_tag_message_,
+    required void Function(int, objc.NSString)
+    onLog_message_,
     bool $keepIsolateAlive = true,
   }) {
     final builder = objc.ObjCProtocolBuilder(
       debugName: 'BetterPlayerLogCallback',
     );
-    BetterPlayerLogCallback$Builder.onLog_tag_message_.implementAsBlocking(
+    BetterPlayerLogCallback$Builder.onLog_message_.implementAsBlocking(
       builder,
-      onLog_tag_message_,
+      onLog_message_,
     );
     builder.addProtocol($protocol);
     return BetterPlayerLogCallback.as(
@@ -2173,24 +2170,24 @@ interface class BetterPlayerLogCallback$Builder {
   /// Note: You cannot call this method after you have called `builder.build`.
   static void addToBuilderAsBlocking(
     objc.ObjCProtocolBuilder builder, {
-    required void Function(int, objc.NSString, objc.NSString)
-    onLog_tag_message_,
+    required void Function(int, objc.NSString)
+    onLog_message_,
     bool $keepIsolateAlive = true,
   }) {
-    BetterPlayerLogCallback$Builder.onLog_tag_message_.implementAsBlocking(
+    BetterPlayerLogCallback$Builder.onLog_message_.implementAsBlocking(
       builder,
-      onLog_tag_message_,
+      onLog_message_,
     );
     builder.addProtocol($protocol);
   }
 
-  /// onLog:tag:message:
-  static final onLog_tag_message_ =
+  /// onLog:message:
+  static final onLog_message_ =
       objc.ObjCProtocolListenableMethod<
-        void Function(int, objc.NSString, objc.NSString)
+        void Function(int, objc.NSString)
       >(
         _protocol_BetterPlayerLogCallback,
-        _sel_onLog_tag_message_,
+        _sel_onLog_message_,
         ffi.Native.addressOf<
               ffi.NativeFunction<
                 ffi.Void Function(
@@ -2205,12 +2202,12 @@ interface class BetterPlayerLogCallback$Builder {
             .cast(),
         objc.getProtocolMethodSignature(
           _protocol_BetterPlayerLogCallback,
-          _sel_onLog_tag_message_,
+          _sel_onLog_message_,
           isRequired: true,
           isInstanceMethod: true,
         ),
-        (void Function(int, objc.NSString, objc.NSString) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString.fromFunction(
+        (void Function(int, objc.NSString) func) =>
+            ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString.fromFunction(
               (
                 ffi.Pointer<ffi.Void> _,
                 int arg1,
@@ -2218,8 +2215,8 @@ interface class BetterPlayerLogCallback$Builder {
                 objc.NSString arg3,
               ) => func(arg1, arg2, arg3),
             ),
-        (void Function(int, objc.NSString, objc.NSString) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString.listener(
+        (void Function(int, objc.NSString) func) =>
+            ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString.listener(
               (
                 ffi.Pointer<ffi.Void> _,
                 int arg1,
@@ -2227,8 +2224,8 @@ interface class BetterPlayerLogCallback$Builder {
                 objc.NSString arg3,
               ) => func(arg1, arg2, arg3),
             ),
-        (void Function(int, objc.NSString, objc.NSString) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString.blocking(
+        (void Function(int, objc.NSString) func) =>
+            ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString.blocking(
               (
                 ffi.Pointer<ffi.Void> _,
                 int arg1,
@@ -3136,7 +3133,7 @@ extension ObjCBlock_ffiVoid_ffiVoid_Int64_ffiDouble_ffiDouble_NSString$CallExten
 }
 
 /// Construction methods for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Long, objc.NSString, objc.NSString)>`.
-abstract final class ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString {
+abstract final class ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString {
   /// Returns a block that wraps the given raw block pointer.
   static objc.ObjCBlock<
     ffi.Void Function(
@@ -3401,7 +3398,7 @@ abstract final class ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString {
 }
 
 /// Call operator for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, ffi.Long, objc.NSString, objc.NSString)>`.
-extension ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString_NSString$CallExtension
+extension ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString$CallExtension
     on
         objc.ObjCBlock<
           ffi.Void Function(
@@ -5397,7 +5394,7 @@ late final _sel_onError_errorMessage_errorDetails_ = objc.registerName(
 );
 late final _sel_onInitializedWithDurationMs_width_height_key_ = objc
     .registerName("onInitializedWithDurationMs:width:height:key:");
-late final _sel_onLog_tag_message_ = objc.registerName("onLog:tag:message:");
+late final _sel_onLog_message_ = objc.registerName("onLog:message:");
 late final _sel_onPauseWithKey_ = objc.registerName("onPauseWithKey:");
 late final _sel_onPipStart = objc.registerName("onPipStart");
 late final _sel_onPipStop = objc.registerName("onPipStop");
@@ -5458,3 +5455,23 @@ late final _sel_stopPreCacheWithUrl_cacheKey_ = objc.registerName(
 late final _sel_view = objc.registerName("view");
 typedef instancetype = ffi.Pointer<objc.ObjCObjectImpl>;
 typedef Dartinstancetype = objc.ObjCObject;
+
+final _objc_msgSend_custom_onLogPtr = objc.ObjectiveCBindings.ffiDynamicLibrary
+    .lookup<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Int64,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >('objc_msgSend');
+late final _objc_msgSend_custom_onLog = _objc_msgSend_custom_onLogPtr.asFunction<
+  void Function(
+    ffi.Pointer<objc.ObjCObject>,
+    ffi.Pointer<objc.ObjCSelector>,
+    int,
+    ffi.Pointer<objc.ObjCObject>,
+  )
+>();

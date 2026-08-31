@@ -1226,13 +1226,12 @@ extension type BetterPlayerLogCallback._(jni$_.JObject _$this)
     try {
       final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
       final $a = $i.args;
-      if ($d == r'onLog(ILjava/lang/String;Ljava/lang/String;)V') {
+      if ($d == r'onLog(ILjava/lang/String;)V') {
         _$impls[$p]!.onLog(
           ($a![0] as jni$_.JInteger).toDartInt(releaseOriginal: true),
           ($a![1] as jni$_.JString),
-          ($a![2] as jni$_.JString),
         );
-        return jni$_.nullptr;
+        return jni$_.JReference.nullRef;
       }
     } catch (e) {
       return jni$_.ProtectedJniExtensions.newDartException(e);
@@ -1261,7 +1260,7 @@ extension type BetterPlayerLogCallback._(jni$_.JObject _$this)
       $p,
       _$invokePointer,
       [
-        if ($impl.onLog$async) r'onLog(ILjava/lang/String;Ljava/lang/String;)V',
+        if ($impl.onLog$async) r'onLog(ILjava/lang/String;)V',
       ],
     );
     final $a = $p.sendPort.nativePort;
@@ -1333,13 +1332,12 @@ abstract base mixin class $BetterPlayerLogCallback {
     required void Function(
       core$_.int i,
       jni$_.JString string,
-      jni$_.JString string1,
     )
     onLog,
     core$_.bool onLog$async,
   }) = _$BetterPlayerLogCallback;
 
-  void onLog(core$_.int i, jni$_.JString string, jni$_.JString string1);
+  void onLog(core$_.int i, jni$_.JString string);
   core$_.bool get onLog$async => false;
 }
 
@@ -1348,18 +1346,17 @@ final class _$BetterPlayerLogCallback with $BetterPlayerLogCallback {
     required void Function(
       core$_.int i,
       jni$_.JString string,
-      jni$_.JString string1,
     )
     onLog,
     this.onLog$async = false,
   }) : _onLog = onLog;
 
-  final void Function(core$_.int i, jni$_.JString string, jni$_.JString string1)
+  final void Function(core$_.int i, jni$_.JString string)
   _onLog;
   final core$_.bool onLog$async;
 
-  void onLog(core$_.int i, jni$_.JString string, jni$_.JString string1) {
-    return _onLog(i, string, string1);
+  void onLog(core$_.int i, jni$_.JString string) {
+    return _onLog(i, string);
   }
 }
 
