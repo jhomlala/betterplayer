@@ -127,9 +127,21 @@ void main() {
       mockOutput.records.clear();
 
       // Mapping: 0:debug, 1:info, 2:warning, 3:error
-      PlayerLogger.onNativeLog(0, 'NativeTag', 'debug msg');
-      PlayerLogger.onNativeLog(3, 'NativeTag', 'error msg');
-      PlayerLogger.onNativeLog(10, 'NativeTag', 'clamped msg');
+      PlayerLogger.onNativeLog(
+        levelIndex: 0,
+        tag: 'NativeTag',
+        message: 'debug msg',
+      );
+      PlayerLogger.onNativeLog(
+        levelIndex: 3,
+        tag: 'NativeTag',
+        message: 'error msg',
+      );
+      PlayerLogger.onNativeLog(
+        levelIndex: 10,
+        tag: 'NativeTag',
+        message: 'clamped msg',
+      );
 
       expect(mockOutput.records[0].level, PlayerLogLevel.debug);
       expect(mockOutput.records[0].caller, isNull);

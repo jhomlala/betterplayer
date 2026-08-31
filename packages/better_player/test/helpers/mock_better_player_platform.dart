@@ -113,11 +113,21 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   Future<void> clearCache() async {}
 
   int setupLogCallbackCount = 0;
-  void Function(int levelIndex, String tag, String message)? lastLogCallback;
+  void Function({
+    required int levelIndex,
+    required String tag,
+    required String message,
+  })?
+  lastLogCallback;
 
   @override
   Future<void> setupLogCallback(
-    void Function(int levelIndex, String tag, String message)? callback,
+    void Function({
+      required int levelIndex,
+      required String tag,
+      required String message,
+    })?
+    callback,
   ) async {
     setupLogCallbackCount++;
     lastLogCallback = callback;

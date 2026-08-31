@@ -158,7 +158,12 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
   /// Only called when logLevel != none. When not called, native logCallback
   /// stays null — zero JNI/FFI overhead.
   Future<void> setupLogCallback(
-    void Function(int levelIndex, String tag, String message)? callback,
+    void Function({
+      required int levelIndex,
+      required String tag,
+      required String message,
+    })?
+    callback,
   ) {
     throw UnimplementedError('setupLogCallback() has not been implemented.');
   }

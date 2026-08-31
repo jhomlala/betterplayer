@@ -13,6 +13,11 @@ class PlayerLogger {
       PlayerLoggerConfiguration.defaultConfig;
   static bool _nativeCallbackRegistered = false;
 
+  static final _tagSplitRegExp = RegExp('[./]');
+  static final _callerFrameRegExp = RegExp(r'#\d+\s+(.+?)(?:\s+\(|$)');
+  static final _constructorRegExp = RegExp(r'[./]new$');
+  static final _anonymousClosureRegExp = RegExp(r'\.<anonymous[^>]*>');
+
   /// Resets the logger state.
   @visibleForTesting
   static void reset() {
@@ -76,7 +81,11 @@ class PlayerLogger {
   );
 
   /// Entry point for native → Dart log forwarding.
-  static void onNativeLog(int levelIndex, String tag, String message) {
+  static void onNativeLog({
+    required int levelIndex,
+    required String tag,
+    required String message,
+  }) {
     // Clamp to valid loggable levels (exclude 'none')
     final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 2);
     final level = PlayerLogLevel.values[clampedIndex];
@@ -126,7 +135,7 @@ class PlayerLogger {
   /// Derives a tag from the caller info (e.g. "BetterPlayerController.setup" -> "BetterPlayerController").
   static String? _deriveTag(String? caller) {
     if (caller == null) return null;
-    final parts = caller.split(RegExp('[./]'));
+    final parts = caller.split(_tagSplitRegExp);
     return parts.first;
   }
 
@@ -141,14 +150,14 @@ class PlayerLogger {
 
         // Format: #3      ClassName.methodName (package:...)
         // Use non-greedy match until we hit a space followed by '(' to handle spaces in names (like <anonymous closure>)
-        final match = RegExp(r'#\d+\s+(.+?)(?:\s+\(|$)').firstMatch(line);
+        final match = _callerFrameRegExp.firstMatch(line);
         var caller = match?.group(1);
 
         // Simplify constructors (ClassName.new or ClassName/new -> ClassName)
         if (caller != null) {
-          caller = caller.replaceAll(RegExp(r'[./]new$'), '');
+          caller = caller.replaceAll(_constructorRegExp, '');
           // Strip anonymous function suffixes (non-greedy to avoid stripping subsequent names)
-          caller = caller.replaceAll(RegExp(r'\.<anonymous[^>]*>'), '');
+          caller = caller.replaceAll(_anonymousClosureRegExp, '');
           return caller;
         }
       }
