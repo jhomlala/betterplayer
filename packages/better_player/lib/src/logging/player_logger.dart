@@ -48,21 +48,33 @@ class PlayerLogger {
     }
   }
 
-  static void debug({required String message, String? tag}) =>
-      _log(level: PlayerLogLevel.debug, message: message, tag: tag);
+  static void debug({required String message, String? tag, int? textureId}) =>
+      _log(
+        level: PlayerLogLevel.debug,
+        message: message,
+        tag: tag,
+        textureId: textureId,
+      );
 
-  static void info({required String message, String? tag}) =>
-      _log(level: PlayerLogLevel.info, message: message, tag: tag);
+  static void info({required String message, String? tag, int? textureId}) =>
+      _log(
+        level: PlayerLogLevel.info,
+        message: message,
+        tag: tag,
+        textureId: textureId,
+      );
 
   static void warning({
     required String message,
     String? tag,
+    int? textureId,
     Object? error,
     StackTrace? stackTrace,
   }) => _log(
     level: PlayerLogLevel.warning,
     message: message,
     tag: tag,
+    textureId: textureId,
     error: error,
     stackTrace: stackTrace,
   );
@@ -70,12 +82,14 @@ class PlayerLogger {
   static void error({
     required String message,
     String? tag,
+    int? textureId,
     Object? error,
     StackTrace? stackTrace,
   }) => _log(
     level: PlayerLogLevel.error,
     message: message,
     tag: tag,
+    textureId: textureId,
     error: error,
     stackTrace: stackTrace,
   );
@@ -83,7 +97,6 @@ class PlayerLogger {
   /// Entry point for native → Dart log forwarding.
   static void onNativeLog({
     required int levelIndex,
-    required String tag,
     required String message,
   }) {
     // Clamp to valid loggable levels (exclude 'none')
@@ -92,7 +105,6 @@ class PlayerLogger {
     _log(
       level: level,
       message: message,
-      tag: tag,
       includeCaller: false,
     );
   }
@@ -101,6 +113,7 @@ class PlayerLogger {
     required PlayerLogLevel level,
     required String message,
     String? tag,
+    int? textureId,
     bool includeCaller = true,
     Object? error,
     StackTrace? stackTrace,
@@ -113,7 +126,11 @@ class PlayerLogger {
       caller = _getCaller();
     }
 
-    final effectiveTag = tag ?? _deriveTag(caller) ?? 'BetterPlayer';
+    var effectiveTag = tag ?? _deriveTag(caller) ?? 'BetterPlayer';
+
+    if (textureId != null) {
+      effectiveTag = '$effectiveTag [#$textureId]';
+    }
 
     final record = PlayerLogRecord(
       level: level,

@@ -19,7 +19,6 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Future<void> setupLogCallback(
     void Function({
       required int levelIndex,
-      required String tag,
       required String message,
     })?
     callback,
@@ -30,10 +29,9 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     }
     final jniCallback = BetterPlayerLogCallback.implement(
       $BetterPlayerLogCallback(
-        onLog: (int level, JString tag, JString message) {
+        onLog: (int level, JString message) {
           callback(
             levelIndex: level,
-            tag: tag.toDartString(),
             message: message.toDartString(),
           );
         },

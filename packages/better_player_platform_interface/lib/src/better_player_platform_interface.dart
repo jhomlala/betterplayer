@@ -160,7 +160,6 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
   Future<void> setupLogCallback(
     void Function({
       required int levelIndex,
-      required String tag,
       required String message,
     })?
     callback,

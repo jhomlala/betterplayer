@@ -14,7 +14,6 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   Future<void> setupLogCallback(
     void Function({
       required int levelIndex,
-      required String tag,
       required String message,
     })?
     callback,
@@ -24,11 +23,10 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       return;
     }
     final ffiFn = BetterPlayerLogCallback$Builder.implement(
-      onLog_tag_message_:
-          (int level, objc.NSString tag, objc.NSString message) {
+      onLog_message_:
+          (int level, objc.NSString message) {
             callback(
               levelIndex: level,
-              tag: tag.toString(),
               message: message.toString(),
             );
           },

@@ -145,6 +145,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
     if (!(rotation <= 360 && rotation % 90 == 0)) {
       PlayerLogger.warning(
         message: 'Invalid rotation provided. Using rotation = 0',
+        textureId: betterPlayerController.textureId,
       );
       rotation = 0;
     }

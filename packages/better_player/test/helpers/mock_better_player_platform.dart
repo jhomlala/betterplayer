@@ -115,7 +115,6 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   int setupLogCallbackCount = 0;
   void Function({
     required int levelIndex,
-    required String tag,
     required String message,
   })?
   lastLogCallback;
@@ -124,7 +123,6 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   Future<void> setupLogCallback(
     void Function({
       required int levelIndex,
-      required String tag,
       required String message,
     })?
     callback,

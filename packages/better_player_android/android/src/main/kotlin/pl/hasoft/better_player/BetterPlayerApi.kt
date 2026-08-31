@@ -21,10 +21,10 @@ class BetterPlayerApi {
             _logCallback = callback
         }
 
-        internal fun log(level: Int, tag: String, msg: String) {
+        internal fun log(level: Int, msg: String) {
             val cb = _logCallback ?: return
             val safe = if (msg.length > 4000) msg.substring(0, 4000) + "…[truncated]" else msg
-            cb.onLog(level, tag, safe)
+            cb.onLog(level, safe)
         }
         
         @Keep

@@ -27,8 +27,8 @@ import AVKit
 }
 
 @objc(BetterPlayerLogCallback) public protocol BetterPlayerLogCallback {
-    @objc(onLog:tag:message:)
-    func onLog(_ level: Int, tag: String, message: String)
+    @objc(onLog:message:)
+    func onLog(_ level: Int, message: String)
 }
 
 @objc public class BetterPlayerApi: NSObject {
@@ -41,10 +41,10 @@ import AVKit
         _logCallback = callback
     }
 
-    public static func log(_ level: Int, _ tag: String, _ msg: String) {
+    public static func log(_ level: Int, _ msg: String) {
         guard let cb = _logCallback else { return }
         let safe = msg.count > 4000 ? String(msg.prefix(4000)) + "…[truncated]" : msg
-        cb.onLog(level, tag: tag, message: safe)
+        cb.onLog(level, message: safe)
     }
 
     @objc public static func createPlayer(callback: BetterPlayerCallback) -> Int64 {
@@ -109,5 +109,5 @@ import AVKit
 }
 
 @objc public class _DummyLogCallbackImpl: NSObject, BetterPlayerLogCallback {
-    @objc public func onLog(_ level: Int, tag: String, message: String) {}
+    @objc public func onLog(_ level: Int, message: String) {}
 }

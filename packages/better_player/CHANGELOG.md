@@ -1,3 +1,7 @@
+## Unreleased
+- Updated: Enhanced logging in `BetterPlayerController` by including the `textureId` in log tags, allowing for easier identification of logs from multiple player instances.
+- Added: `textureId` getter in `BetterPlayerController`.
+
 ## 1.3.0
 - Added: Extensible logging system with `PlayerLogger`, featuring native-to-Dart log streaming, automatic caller/tag derivation, and comprehensive internal logs.
 - Updated: Comprehensive documentation audit and modernized code examples.

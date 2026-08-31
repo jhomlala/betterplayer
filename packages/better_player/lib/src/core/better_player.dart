@@ -91,6 +91,7 @@ class _BetterPlayerState extends State<BetterPlayer>
     } catch (exception) {
       PlayerLogger.error(
         message: 'Failed to get locale: $exception',
+        textureId: widget.controller.textureId,
         error: exception,
       );
     }
