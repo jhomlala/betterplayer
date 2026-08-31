@@ -258,5 +258,35 @@ void main() {
       // It should skip PlayerLogger frames and find the first non-logger frame: 'wrapper'
       expect(record.caller, contains('wrapper'));
     });
+    test('textureId modifies message instead of tag', () {
+      PlayerLogger.setup(
+        PlayerLoggerConfiguration(
+          outputs: [mockOutput],
+        ),
+      );
+      mockOutput.records.clear();
+
+      PlayerLogger.info(message: 'video initialized', textureId: 1);
+
+      final record = mockOutput.records.last;
+      expect(record.message, '[#1] video initialized');
+      // The tag should not contain the textureId
+      expect(record.tag, isNot(contains('[#1]')));
+    });
+
+    test('onNativeLog sets a valid platform tag', () {
+      PlayerLogger.setup(
+        PlayerLoggerConfiguration(
+          outputs: [mockOutput],
+        ),
+      );
+      mockOutput.records.clear();
+
+      PlayerLogger.onNativeLog(levelIndex: 1, message: 'native message');
+
+      final record = mockOutput.records.last;
+      expect(record.tag, anyOf('Android', 'iOS', 'Native'));
+      expect(record.message, 'native message');
+    });
   });
 }

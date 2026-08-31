@@ -23,13 +23,12 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       return;
     }
     final ffiFn = BetterPlayerLogCallback$Builder.implement(
-      onLog_message_:
-          (int level, objc.NSString message) {
-            callback(
-              levelIndex: level,
-              message: message.toString(),
-            );
-          },
+      onLog_message_: (int level, objc.NSString message) {
+        callback(
+          levelIndex: level,
+          message: message.toString(),
+        );
+      },
     );
     BetterPlayerApi.setLogCallback(ffiFn);
   }

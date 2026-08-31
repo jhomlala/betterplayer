@@ -2,6 +2,7 @@ import 'dart:developer' as developer;
 
 import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_record.dart';
+import 'package:meta/meta.dart';
 
 /// Abstract base for all log output backends.
 /// Implement this to add file logging, network logging, etc.
@@ -24,15 +25,20 @@ class ConsoleLogOutput extends PlayerLogOutput {
 
   static const _name = 'BetterPlayer';
 
-  @override
-  void onLog(PlayerLogRecord record) {
-    String? callerStr = record.caller;
+  @visibleForTesting
+  String formatMessage(PlayerLogRecord record) {
+    var callerStr = record.caller;
     if (callerStr != null && callerStr.startsWith('${record.tag}.')) {
       callerStr = callerStr.substring(record.tag.length + 1);
     }
-    final message = callerStr != null && callerStr.isNotEmpty
+    return callerStr != null && callerStr.isNotEmpty
         ? '[$callerStr] ${record.message}'
         : record.message;
+  }
+
+  @override
+  void onLog(PlayerLogRecord record) {
+    final message = formatMessage(record);
     developer.log(
       message,
       time: record.timestamp,

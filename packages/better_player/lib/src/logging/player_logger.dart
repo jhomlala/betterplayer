@@ -104,7 +104,9 @@ class PlayerLogger {
     // Clamp to valid loggable levels (exclude 'none')
     final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 2);
     final level = PlayerLogLevel.values[clampedIndex];
-    final tag = Platform.isAndroid ? 'Android' : (Platform.isIOS ? 'iOS' : 'Native');
+    final tag = Platform.isAndroid
+        ? 'Android'
+        : (Platform.isIOS ? 'iOS' : 'Native');
     _log(
       level: level,
       message: message,
@@ -130,7 +132,7 @@ class PlayerLogger {
       caller = _getCaller();
     }
 
-    var effectiveTag = tag ?? _deriveTag(caller) ?? 'BetterPlayer';
+    final effectiveTag = tag ?? _deriveTag(caller) ?? 'BetterPlayer';
     var effectiveMessage = message;
 
     if (textureId != null) {
@@ -180,8 +182,7 @@ class PlayerLogger {
             caller = caller.substring(4);
           }
           // Strip anonymous function suffixes (non-greedy to avoid stripping subsequent names)
-          caller = caller.replaceAll(_anonymousClosureRegExp, '');
-          return caller;
+          return caller.replaceAll(_anonymousClosureRegExp, '');
         }
       }
     } catch (_) {
