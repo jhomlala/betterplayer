@@ -66,7 +66,8 @@ class PlayerLogger {
 
   /// Entry point for native → Dart log forwarding.
   static void onNativeLog(int levelIndex, String tag, String message) {
-    final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 1);
+    // Clamp to valid loggable levels (exclude 'none')
+    final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 2);
     final level = PlayerLogLevel.values[clampedIndex];
     _log(level, message, tag: tag);
   }
