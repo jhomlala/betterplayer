@@ -30,23 +30,15 @@ class PlayerLogger {
       output.init();
     }
 
-    if (config.logLevel != PlayerLogLevel.none) {
-      if (!_nativeCallbackRegistered) {
-        try {
-          BetterPlayerPlatform.instance.setupLogCallback(onNativeLog);
-          _nativeCallbackRegistered = true;
-        } catch (e) {
-          // Native logging not implemented on this platform yet
-        }
-      }
-    } else {
-      if (_nativeCallbackRegistered) {
-        try {
-          BetterPlayerPlatform.instance.setupLogCallback(null);
-          _nativeCallbackRegistered = false;
-        } catch (e) {
-          // ignore
-        }
+    final shouldRegisterNative = config.logLevel != PlayerLogLevel.none;
+    if (shouldRegisterNative != _nativeCallbackRegistered) {
+      try {
+        BetterPlayerPlatform.instance.setupLogCallback(
+          shouldRegisterNative ? onNativeLog : null,
+        );
+        _nativeCallbackRegistered = shouldRegisterNative;
+      } catch (e) {
+        // Native logging not implemented on this platform yet
       }
     }
   }
