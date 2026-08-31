@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_record.dart';
 import 'package:better_player/src/logging/player_logger_configuration.dart';
@@ -102,9 +104,11 @@ class PlayerLogger {
     // Clamp to valid loggable levels (exclude 'none')
     final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 2);
     final level = PlayerLogLevel.values[clampedIndex];
+    final tag = Platform.isAndroid ? 'Android' : (Platform.isIOS ? 'iOS' : 'Native');
     _log(
       level: level,
       message: message,
+      tag: tag,
       includeCaller: false,
     );
   }
@@ -127,14 +131,15 @@ class PlayerLogger {
     }
 
     var effectiveTag = tag ?? _deriveTag(caller) ?? 'BetterPlayer';
+    var effectiveMessage = message;
 
     if (textureId != null) {
-      effectiveTag = '$effectiveTag [#$textureId]';
+      effectiveMessage = '[#$textureId] $effectiveMessage';
     }
 
     final record = PlayerLogRecord(
       level: level,
-      message: message,
+      message: effectiveMessage,
       tag: effectiveTag,
       timestamp: DateTime.now().toUtc(),
       caller: caller,
@@ -171,6 +176,9 @@ class PlayerLogger {
         // Simplify constructors (ClassName.new or ClassName/new -> ClassName)
         if (caller != null) {
           caller = caller.replaceAll(_constructorRegExp, '');
+          if (caller.startsWith('new ')) {
+            caller = caller.substring(4);
+          }
           // Strip anonymous function suffixes (non-greedy to avoid stripping subsequent names)
           caller = caller.replaceAll(_anonymousClosureRegExp, '');
           return caller;

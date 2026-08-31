@@ -26,8 +26,12 @@ class ConsoleLogOutput extends PlayerLogOutput {
 
   @override
   void onLog(PlayerLogRecord record) {
-    final message = record.caller != null
-        ? '[${record.caller}] ${record.message}'
+    String? callerStr = record.caller;
+    if (callerStr != null && callerStr.startsWith('${record.tag}.')) {
+      callerStr = callerStr.substring(record.tag.length + 1);
+    }
+    final message = callerStr != null && callerStr.isNotEmpty
+        ? '[$callerStr] ${record.message}'
         : record.message;
     developer.log(
       message,

@@ -21,7 +21,7 @@ class BetterPlayerController {
     PlayerDataSource? betterPlayerDataSource,
   }) {
     PlayerLogger.setup(betterPlayerConfiguration.playerLogConfiguration);
-    PlayerLogger.info(message: 'Controller created', textureId: textureId);
+    PlayerLogger.info(message: 'Created', textureId: textureId);
     _betterPlayerControlsConfiguration =
         betterPlayerConfiguration.controlsConfiguration;
     _eventListeners.add(eventListener);
@@ -237,7 +237,7 @@ class BetterPlayerController {
   ///Setup new data source in Better Player.
   Future setupDataSource(PlayerDataSource betterPlayerDataSource) async {
     PlayerLogger.info(
-      message: 'Controller: setupDataSource starting',
+      message: 'setupDataSource starting',
       textureId: textureId,
     );
     postEvent(
@@ -825,7 +825,7 @@ class BetterPlayerController {
     if (currentVideoPlayerValue.initialized &&
         !_hasCurrentDataSourceInitialized) {
       PlayerLogger.info(
-        message: 'Controller: Video player initialized',
+        message: 'Video player initialized',
         textureId: textureId,
       );
       _hasCurrentDataSourceInitialized = true;
@@ -1394,7 +1394,7 @@ class BetterPlayerController {
   ///autoDispose parameter will be overridden and controller will be disposed
   ///(if it wasn't disposed before).
   void dispose({bool forceDispose = false}) {
-    PlayerLogger.info(message: 'Controller disposed', textureId: textureId);
+    PlayerLogger.info(message: 'Disposed', textureId: textureId);
     if (!betterPlayerConfiguration.autoDispose && !forceDispose) {
       return;
     }
