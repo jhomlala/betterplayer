@@ -11,7 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  better_player_platform_interface: ^1.1.0
+  better_player_platform_interface: ^1.2.0
   jni: ^1.0.3
   jni_flutter: ^1.0.2
 
