@@ -26,7 +26,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       onLog_message_: (int level, objc.NSString message) {
         callback(
           levelIndex: level,
-          message: message.toString(),
+          message: message.toDartString(),
         );
       },
     );
@@ -68,7 +68,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
             _eventControllers[currentTextureId]?.add(
               VideoEvent(
                 eventType: VideoEventType.initialized,
-                key: key?.toString(),
+                key: key?.toDartString(),
                 duration: Duration(milliseconds: durationMs),
                 size: Size(width, height),
               ),
@@ -77,19 +77,19 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       onCompletedWithKey_: (objc.NSString? key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
-          VideoEvent(eventType: VideoEventType.completed, key: key?.toString()),
+          VideoEvent(eventType: VideoEventType.completed, key: key?.toDartString()),
         );
       },
       onPlayWithKey_: (objc.NSString? key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
-          VideoEvent(eventType: VideoEventType.play, key: key?.toString()),
+          VideoEvent(eventType: VideoEventType.play, key: key?.toDartString()),
         );
       },
       onPauseWithKey_: (objc.NSString? key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
-          VideoEvent(eventType: VideoEventType.pause, key: key?.toString()),
+          VideoEvent(eventType: VideoEventType.pause, key: key?.toDartString()),
         );
       },
       onSeekWithPositionMs_key_: (int positionMs, objc.NSString? key) {
@@ -97,7 +97,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
             eventType: VideoEventType.seek,
-            key: key?.toString(),
+            key: key?.toDartString(),
             position: Duration(milliseconds: positionMs),
           ),
         );
@@ -107,7 +107,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
             eventType: VideoEventType.bufferingStart,
-            key: key?.toString(),
+            key: key?.toDartString(),
           ),
         );
       },
@@ -116,14 +116,14 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
             eventType: VideoEventType.bufferingEnd,
-            key: key?.toString(),
+            key: key?.toDartString(),
           ),
         );
       },
       onBufferingUpdateWithJsonRanges_key_:
           (objc.NSString jsonRanges, objc.NSString? key) {
             if (currentTextureId == null) return;
-            final decoded = jsonDecode(jsonRanges.toString()) as List<dynamic>;
+            final decoded = jsonDecode(jsonRanges.toDartString()) as List<dynamic>;
             final buffered = decoded.map<DurationRange>((dynamic value) {
               final range = value as List<dynamic>;
               return DurationRange(
@@ -134,7 +134,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
             _eventControllers[currentTextureId]?.add(
               VideoEvent(
                 eventType: VideoEventType.bufferingUpdate,
-                key: key?.toString(),
+                key: key?.toDartString(),
                 buffered: buffered,
               ),
             );
@@ -160,9 +160,9 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
             if (currentTextureId == null) return;
             _eventControllers[currentTextureId]?.addError(
               PlatformException(
-                code: errorCode.toString(),
-                message: errorMessage.toString(),
-                details: errorDetails.toString(),
+                code: errorCode.toDartString(),
+                message: errorMessage.toDartString(),
+                details: errorDetails.toDartString(),
               ),
             );
           },
