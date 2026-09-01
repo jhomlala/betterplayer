@@ -17,7 +17,7 @@ class BetterPlayerMaterialErrorWidget extends StatelessWidget {
     if (errorBuilder != null) {
       return errorBuilder(
         context,
-        controller.videoPlayerController!.value.errorDescription,
+        controller.videoPlayerController?.value.errorDescription,
       );
     } else {
       final textStyle = TextStyle(color: controlsConfiguration.textColor);
@@ -30,10 +30,7 @@ class BetterPlayerMaterialErrorWidget extends StatelessWidget {
               color: controlsConfiguration.iconsColor,
               size: 42,
             ),
-            Text(
-              controller.translations.generalDefaultError,
-              style: textStyle,
-            ),
+            Text(controller.translations.generalDefaultError, style: textStyle),
             if (controlsConfiguration.enableRetry)
               TextButton(
                 onPressed: controller.retryDataSource,

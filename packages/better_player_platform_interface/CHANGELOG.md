@@ -1,3 +1,6 @@
+## 1.2.0
+- Added: `setupLogCallback` to the platform interface to support native-to-Dart log streaming.
+
 ## 1.1.0
 - Added: Removed legacy `MethodChannelVideoPlayer` and replaced it with a modern JNI/Swiftgen implementation.
 - Added: Renamed `VideoPlayerPlatform` to `BetterPlayerPlatform` for better project branding.

@@ -1,6 +1,11 @@
 ## Unreleased
-- Updated: Conducted a comprehensive documentation audit, fixing inconsistencies, outdated version references (e.g., iOS 11 to 13), and updating code examples to use modern class names without legacy prefixes.
-- Updated: Improved Docusaurus configuration to enable warnings for broken links and markdown links.
+- Updated: Enhanced logging in `BetterPlayerController` by including the `textureId` in log tags, allowing for easier identification of logs from multiple player instances.
+- Added: `textureId` getter in `BetterPlayerController`.
+
+## 1.3.0
+- Added: Extensible logging system with `PlayerLogger`, featuring native-to-Dart log streaming, automatic caller/tag derivation, and comprehensive internal logs.
+- Updated: Comprehensive documentation audit and modernized code examples.
+- Fixed: Various test and linting issues.
 
 ## 1.2.0
 - Updated: Migrated to a modern JNI/Swift architecture for native bridges, improving performance and reliability.
@@ -702,4 +707,3 @@
 
 ## 0.0.1
 * Initial release.
-

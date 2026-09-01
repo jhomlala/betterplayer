@@ -53,8 +53,10 @@ Future<void> main() async {
               ['BetterPlayerApi', 'BetterPlayer'].contains(decl.originalName),
         ),
         protocols: fg.Protocols(
-          include: (decl) =>
-              ['BetterPlayerCallback'].contains(decl.originalName),
+          include: (decl) => [
+            'BetterPlayerCallback',
+            'BetterPlayerLogCallback',
+          ].contains(decl.originalName),
         ),
       ),
     ),
@@ -69,7 +71,7 @@ Future<void> main() async {
     var content = file.readAsStringSync();
     content = content.replaceAll(
       RegExp(r'#import\s+"[^"]+better_player_ios\.h"'),
-      '@protocol BetterPlayerCallback;',
+      '@protocol BetterPlayerCallback;\n@protocol BetterPlayerLogCallback;',
     );
     file.writeAsStringSync(content);
 
@@ -82,6 +84,10 @@ Future<void> main() async {
       dartContent = dartContent.replaceAll(
         '"better_player_ios.BetterPlayerCallback"',
         '"BetterPlayerCallback"',
+      );
+      dartContent = dartContent.replaceAll(
+        '"better_player_ios.BetterPlayerLogCallback"',
+        '"BetterPlayerLogCallback"',
       );
       dartFile.writeAsStringSync(dartContent);
     }

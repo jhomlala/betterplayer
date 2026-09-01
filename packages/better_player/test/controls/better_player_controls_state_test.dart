@@ -82,6 +82,7 @@ void main() {
     ) async {
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: MockControlsWidget(controller: controller),
         ),
       );

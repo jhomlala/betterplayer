@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_overflow_menu.dart';
 import 'package:better_player/src/controls/better_player_selection_list_item_widget.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
@@ -65,13 +66,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void onShowMoreClicked() {
-    BetterPlayerUtils.log('onShowMoreClicked');
+    PlayerLogger.debug(message: 'onShowMoreClicked');
     _showModalBottomSheet([
       BetterPlayerOverflowMenu(
         controller: betterPlayerController!,
         controlsConfiguration: betterPlayerControlsConfiguration,
         onPlaybackSpeedClicked: () {
-          BetterPlayerUtils.log('onPlaybackSpeedClicked');
+          PlayerLogger.debug(message: 'onPlaybackSpeedClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
@@ -79,7 +80,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onSubtitlesClicked: () {
-          BetterPlayerUtils.log('onSubtitlesClicked');
+          PlayerLogger.debug(message: 'onSubtitlesClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
@@ -87,7 +88,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onQualitiesClicked: () {
-          BetterPlayerUtils.log('onQualitiesClicked');
+          PlayerLogger.debug(message: 'onQualitiesClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
@@ -95,7 +96,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           );
         },
         onAudioTracksClicked: () {
-          BetterPlayerUtils.log('onAudioTracksClicked');
+          PlayerLogger.debug(message: 'onAudioTracksClicked');
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 300),
@@ -163,9 +164,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         null;
     if (!noneSubtitlesElementExists) {
       subtitles.add(
-        PlayerSubtitlesSource(
-          type: PlayerSubtitlesSourceType.none,
-        ),
+        PlayerSubtitlesSource(type: PlayerSubtitlesSourceType.none),
       );
     }
 
@@ -202,12 +201,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   ///Track selection is used for HLS / DASH videos
   ///Resolution selection is used for normal videos
   void showQualitiesSelectionWidget() {
-    BetterPlayerUtils.log('showQualitiesSelectionWidget started');
+    PlayerLogger.debug(message: 'showQualitiesSelectionWidget started');
     // HLS / DASH
     final asmsTrackNames =
         betterPlayerController!.betterPlayerDataSource!.asmsTrackNames ?? [];
     final asmsTracks = betterPlayerController!.betterPlayerAsmsTracks;
-    BetterPlayerUtils.log('ASMS Tracks: ${asmsTracks.length}');
+    PlayerLogger.debug(message: 'ASMS Tracks: ${asmsTracks.length}');
     final children = <Widget>[];
     for (var index = 0; index < asmsTracks.length; index++) {
       final track = asmsTracks[index];
@@ -255,7 +254,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     // normal videos
     final resolutions =
         betterPlayerController!.betterPlayerDataSource!.resolutions;
-    BetterPlayerUtils.log('Resolutions: ${resolutions?.length ?? 0}');
+    PlayerLogger.debug(message: 'Resolutions: ${resolutions?.length ?? 0}');
     var resolutionIndex = 0;
     resolutions?.forEach((key, value) {
       final isSelected =
@@ -277,16 +276,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     });
 
     if (children.isEmpty) {
-      BetterPlayerUtils.log('Quality children empty, adding Auto fallback');
+      PlayerLogger.debug(
+        message: 'Quality children empty, adding Auto fallback',
+      );
       children.add(
         BetterPlayerSelectionListItemWidget(
           label: betterPlayerController!.translations.qualityAuto,
           isSelected: true,
           onTap: () {
             Navigator.of(context).pop();
-            betterPlayerController!.setTrack(
-              PlayerAsmsTrack.defaultTrack(),
-            );
+            betterPlayerController!.setTrack(PlayerAsmsTrack.defaultTrack());
           },
           controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier: 'better_player_overflow_menu_quality_auto',
@@ -294,8 +293,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       );
     }
 
-    BetterPlayerUtils.log(
-      'Showing qualities menu with ${children.length} items',
+    PlayerLogger.debug(
+      message: 'Showing qualities menu with ${children.length} items',
     );
     _showModalBottomSheet(children);
   }
@@ -348,7 +347,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 
   void _showModalBottomSheet(List<Widget> children) {
-    BetterPlayerUtils.log('Showing bottom sheet with ${children.length} items');
+    PlayerLogger.debug(
+      message: 'Showing bottom sheet with ${children.length} items',
+    );
     defaultTargetPlatform == TargetPlatform.android
         ? _showMaterialBottomSheet(children)
         : _showCupertinoModalBottomSheet(children);
@@ -376,9 +377,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   topRight: Radius.circular(24),
                 ),
               ),
-              child: Column(
-                children: children,
-              ),
+              child: Column(children: children),
             ),
           ),
         );
@@ -407,9 +406,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   topRight: Radius.circular(24),
                 ),
               ),
-              child: Column(
-                children: children,
-              ),
+              child: Column(children: children),
             ),
           ),
         );

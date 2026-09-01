@@ -1,3 +1,5 @@
+import 'package:better_player/better_player.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 
 class PlayerSubtitle {
@@ -12,7 +14,7 @@ class PlayerSubtitle {
       }
       return PlayerSubtitle._();
     } catch (exception) {
-      BetterPlayerUtils.log('Failed to parse subtitle line: $value');
+      PlayerLogger.warning(message: 'Failed to parse subtitle line: $value');
       return PlayerSubtitle._();
     }
   }
@@ -36,14 +38,9 @@ class PlayerSubtitle {
       final end = _stringToDuration(timeSplit[1]);
       final texts = scanner.sublist(1, scanner.length);
 
-      return PlayerSubtitle._(
-        index: -1,
-        start: start,
-        end: end,
-        texts: texts,
-      );
+      return PlayerSubtitle._(index: -1, start: start, end: end, texts: texts);
     } catch (exception) {
-      BetterPlayerUtils.log('Failed to parse subtitle line: $scanner');
+      PlayerLogger.warning(message: 'Failed to parse subtitle line: $scanner');
       return PlayerSubtitle._();
     }
   }
@@ -75,7 +72,7 @@ class PlayerSubtitle {
         texts: texts,
       );
     } catch (exception) {
-      BetterPlayerUtils.log('Failed to parse subtitle line: $scanner');
+      PlayerLogger.warning(message: 'Failed to parse subtitle line: $scanner');
       return PlayerSubtitle._();
     }
   }
@@ -113,7 +110,7 @@ class PlayerSubtitle {
       );
       return result;
     } catch (exception) {
-      BetterPlayerUtils.log('Failed to process value: $value');
+      PlayerLogger.warning(message: 'Failed to process value: $value');
       return const Duration();
     }
   }

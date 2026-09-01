@@ -32,6 +32,7 @@ void main() {
       );
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: Scaffold(
             body: BetterPlayerListVideoPlayer(dataSource),
           ),
@@ -50,6 +51,7 @@ void main() {
       final listController = BetterPlayerListVideoPlayerController();
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: Scaffold(
             body: BetterPlayerListVideoPlayer(
               dataSource,

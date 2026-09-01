@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:better_player/src/asms/player_asms_data_holder.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/dash/better_player_dash_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 
 ///Base helper class for ASMS parsing.
 class BetterPlayerAsmsUtils {
@@ -49,7 +49,10 @@ class BetterPlayerAsmsUtils {
       final response = await request.close();
       return await response.transform(const Utf8Decoder()).join();
     } catch (exception) {
-      BetterPlayerUtils.log('GetDataFromUrl failed: $exception');
+      PlayerLogger.error(
+        message: 'GetDataFromUrl failed: $exception',
+        error: exception,
+      );
       return null;
     }
   }

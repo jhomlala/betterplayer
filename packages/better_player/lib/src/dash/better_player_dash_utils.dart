@@ -1,9 +1,6 @@
-import 'package:better_player/src/asms/player_asms_audio_track.dart';
-import 'package:better_player/src/asms/player_asms_data_holder.dart';
-import 'package:better_player/src/asms/player_asms_subtitle.dart';
-import 'package:better_player/src/asms/player_asms_track.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:xml/xml.dart';
 
 ///DASH helper class
@@ -34,7 +31,10 @@ class BetterPlayerDashUtils {
         }
       }
     } catch (exception) {
-      BetterPlayerUtils.log('Exception on dash parse: $exception');
+      PlayerLogger.error(
+        message: 'Exception on dash parse: $exception',
+        error: exception,
+      );
     }
     return PlayerAsmsDataHolder(
       tracks: tracks,

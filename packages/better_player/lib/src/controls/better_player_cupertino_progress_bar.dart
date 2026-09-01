@@ -137,10 +137,7 @@ class _VideoProgressBarState
             width: MediaQuery.of(context).size.width,
             color: Colors.transparent,
             child: CustomPaint(
-              painter: _ProgressBarPainter(
-                _getValue(),
-                widget.colors,
-              ),
+              painter: _ProgressBarPainter(_getValue(), widget.colors),
             ),
           ),
         ),

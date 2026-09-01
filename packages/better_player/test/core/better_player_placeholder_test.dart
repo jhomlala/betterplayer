@@ -27,6 +27,7 @@ void main() {
 
   Widget wrapWidget(Widget widget) {
     return MaterialApp(
+      theme: ThemeData(useMaterial3: false),
       home: Scaffold(
         body: widget,
       ),

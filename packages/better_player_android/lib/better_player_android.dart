@@ -15,6 +15,32 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     BetterPlayerPlatform.instance = BetterPlayerAndroid();
   }
 
+  @override
+  Future<void> setupLogCallback(
+    void Function({
+      required int levelIndex,
+      required String message,
+    })?
+    callback,
+  ) async {
+    if (callback == null) {
+      BetterPlayerApi.Companion.logCallback = null;
+      return;
+    }
+    final jniCallback = BetterPlayerLogCallback.implement(
+      $BetterPlayerLogCallback(
+        onLog: (int level, JString message) {
+          callback(
+            levelIndex: level,
+            message: message.toDartString(),
+          );
+        },
+        onLog$async: true,
+      ),
+    );
+    BetterPlayerApi.Companion.logCallback = jniCallback;
+  }
+
   final Map<int, BetterPlayerWrapper> _players = {};
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
   final Map<int, dynamic> _callbacks = {};

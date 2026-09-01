@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/video_player/video_player.dart';
@@ -19,6 +20,8 @@ class BetterPlayerController {
     this.betterPlayerPlaylistConfiguration,
     PlayerDataSource? betterPlayerDataSource,
   }) {
+    PlayerLogger.setup(betterPlayerConfiguration.playerLogConfiguration);
+    PlayerLogger.info(message: 'Created', textureId: textureId);
     _betterPlayerControlsConfiguration =
         betterPlayerConfiguration.controlsConfiguration;
     _eventListeners.add(eventListener);
@@ -197,6 +200,9 @@ class BetterPlayerController {
   PlayerAsmsAudioTrack? get betterPlayerAsmsAudioTrack =>
       _betterPlayerAsmsAudioTrack;
 
+  /// The id of a texture that hasn't been initialized is null.
+  int? get textureId => videoPlayerController?.textureId;
+
   ///Selected videoPlayerValue when error occurred.
   VideoPlayerValue? _videoPlayerValueOnError;
 
@@ -230,7 +236,10 @@ class BetterPlayerController {
 
   ///Setup new data source in Better Player.
   Future setupDataSource(PlayerDataSource betterPlayerDataSource) async {
-    BetterPlayerUtils.log('Controller: setupDataSource starting');
+    PlayerLogger.info(
+      message: 'setupDataSource starting',
+      textureId: textureId,
+    );
     postEvent(
       PlayerEvent(
         PlayerEventType.setupDataSource,
@@ -277,7 +286,16 @@ class BetterPlayerController {
     }
     try {
       await Future.wait(setupFutures);
+      PlayerLogger.info(
+        message: 'Data source setup complete: ${betterPlayerDataSource.url}',
+        textureId: textureId,
+      );
     } catch (exception) {
+      PlayerLogger.error(
+        message: 'Data source setup failed: $exception',
+        textureId: textureId,
+        error: exception,
+      );
       if (createdNewController) {
         videoPlayerController?.dispose();
         videoPlayerController = null;
@@ -444,7 +462,11 @@ class BetterPlayerController {
       }
       _asmsSegmentsLoading = false;
     } catch (exception) {
-      BetterPlayerUtils.log('Load ASMS subtitle segments failed: $exception');
+      PlayerLogger.error(
+        message: 'Load ASMS subtitle segments failed: $exception',
+        textureId: textureId,
+        error: exception,
+      );
     }
   }
 
@@ -488,10 +510,12 @@ class BetterPlayerController {
       case DataSourceType.file:
         final file = File(betterPlayerDataSource.url);
         if (!file.existsSync()) {
-          BetterPlayerUtils.log(
-            "File ${file.path} doesn't exists. This may be because "
-            "you're acessing file from native path and Flutter doesn't "
-            'recognize this path.',
+          PlayerLogger.warning(
+            message:
+                "File ${file.path} doesn't exists. This may be because "
+                "you're acessing file from native path and Flutter doesn't "
+                'recognize this path.',
+            textureId: textureId,
           );
         }
 
@@ -567,6 +591,12 @@ class BetterPlayerController {
   ///Initializes video based on configuration. Invoke actions which need to be
   ///run on player start.
   Future _initializeVideo() async {
+    PlayerLogger.info(
+      message:
+          'Initializing video: autoPlay=${betterPlayerConfiguration.autoPlay}, '
+          'startAt=${betterPlayerConfiguration.startAt}',
+      textureId: textureId,
+    );
     setLooping(betterPlayerConfiguration.looping);
     _videoEventStreamSubscription?.cancel();
     _videoEventStreamSubscription = null;
@@ -700,11 +730,9 @@ class BetterPlayerController {
   ///Set volume of player. Allows values from 0.0 to 1.0.
   Future<void> setVolume(double volume) async {
     if (volume < 0.0 || volume > 1.0) {
-      BetterPlayerUtils.log('Volume must be between 0.0 and 1.0');
       throw ArgumentError('Volume must be between 0.0 and 1.0');
     }
     if (videoPlayerController == null) {
-      BetterPlayerUtils.log('The data source has not been initialized');
       throw StateError('The data source has not been initialized');
     }
     await videoPlayerController!.setVolume(volume);
@@ -719,11 +747,9 @@ class BetterPlayerController {
   ///Set playback speed of video. Allows to set speed value between 0 and 2.
   Future<void> setSpeed(double speed) async {
     if (speed <= 0 || speed > 2) {
-      BetterPlayerUtils.log('Speed must be between 0 and 2');
       throw ArgumentError('Speed must be between 0 and 2');
     }
     if (videoPlayerController == null) {
-      BetterPlayerUtils.log('The data source has not been initialized');
       throw StateError('The data source has not been initialized');
     }
     await videoPlayerController?.setSpeed(speed);
@@ -798,7 +824,10 @@ class BetterPlayerController {
 
     if (currentVideoPlayerValue.initialized &&
         !_hasCurrentDataSourceInitialized) {
-      BetterPlayerUtils.log('Controller: Video player initialized');
+      PlayerLogger.info(
+        message: 'Video player initialized',
+        textureId: textureId,
+      );
       _hasCurrentDataSourceInitialized = true;
       _postEvent(PlayerEvent(PlayerEventType.initialized));
     }
@@ -849,7 +878,10 @@ class BetterPlayerController {
   ///Flag which determines whenever player is playing live data source.
   bool isLiveStream() {
     if (_betterPlayerDataSource == null) {
-      BetterPlayerUtils.log('The data source has not been initialized');
+      PlayerLogger.warning(
+        message: 'The data source has not been initialized',
+        textureId: textureId,
+      );
       throw StateError('The data source has not been initialized');
     }
     return _betterPlayerDataSource!.liveStream == true;
@@ -858,7 +890,10 @@ class BetterPlayerController {
   ///Flag which determines whenever player data source has been initialized.
   bool? isVideoInitialized() {
     if (videoPlayerController == null) {
-      BetterPlayerUtils.log('The data source has not been initialized');
+      PlayerLogger.warning(
+        message: 'The data source has not been initialized',
+        textureId: textureId,
+      );
       throw StateError('The data source has not been initialized');
     }
     return videoPlayerController?.value.initialized;
@@ -869,8 +904,9 @@ class BetterPlayerController {
   void startNextVideoTimer() {
     if (_nextVideoTimer == null) {
       if (betterPlayerPlaylistConfiguration == null) {
-        BetterPlayerUtils.log(
-          'BettterPlayerPlaylistConifugration has not been set!',
+        PlayerLogger.warning(
+          message: 'BettterPlayerPlaylistConifugration has not been set!',
+          textureId: textureId,
         );
         throw StateError(
           'BettterPlayerPlaylistConifugration has not been set!',
@@ -963,9 +999,7 @@ class BetterPlayerController {
     if (_disposed) {
       return;
     }
-    _postEvent(
-      PlayerEvent(PlayerEventType.changedPlayerVisibility),
-    );
+    _postEvent(PlayerEvent(PlayerEventType.changedPlayerVisibility));
 
     if (_isAutomaticPlayPauseHandled()) {
       if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
@@ -987,6 +1021,10 @@ class BetterPlayerController {
 
   ///Set different resolution (quality) for video
   Future<void> setResolution(String url) async {
+    PlayerLogger.info(
+      message: 'Resolution changed to: $url',
+      textureId: textureId,
+    );
     if (videoPlayerController == null) {
       throw StateError('The data source has not been initialized');
     }
@@ -1012,7 +1050,7 @@ class BetterPlayerController {
     final languageCode = locale.languageCode;
     translations =
         betterPlayerConfiguration.translations?.firstWhereOrNull(
-          (translations) => translations.languageCode == languageCode,
+          (t) => t.languageCode == languageCode,
         ) ??
         _getDefaultTranslations(locale);
   }
@@ -1047,6 +1085,10 @@ class BetterPlayerController {
   ///state, then video playback will stop. If showNotification is set in data
   ///source or handleLifecycle is false then this logic will be ignored.
   void setAppLifecycleState(AppLifecycleState appLifecycleState) {
+    PlayerLogger.debug(
+      message: 'App lifecycle: $appLifecycleState',
+      textureId: textureId,
+    );
     if (_isAutomaticPlayPauseHandled()) {
       _appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
@@ -1132,9 +1174,11 @@ class BetterPlayerController {
             betterPlayerGlobalKey.currentContext!.findRenderObject()
                 as RenderBox?;
         if (renderBox == null) {
-          BetterPlayerUtils.log(
-            "Can't show PiP. RenderBox is null. Did you provide valid global"
-            ' key?',
+          PlayerLogger.warning(
+            message:
+                "Can't show PiP. RenderBox is null. Did you provide valid global"
+                ' key?',
+            textureId: textureId,
           );
           return;
         }
@@ -1146,13 +1190,18 @@ class BetterPlayerController {
           height: renderBox.size.height,
         );
       } else {
-        BetterPlayerUtils.log('Unsupported PiP in current platform.');
+        PlayerLogger.warning(
+          message: 'Unsupported PiP in current platform.',
+          textureId: textureId,
+        );
       }
     } else {
-      BetterPlayerUtils.log(
-        "Picture in picture is not supported in this device. If you're "
-        "using Android, please check if you're using activity v2 "
-        'embedding.',
+      PlayerLogger.warning(
+        message:
+            "Picture in picture is not supported in this device. If you're "
+            "using Android, please check if you're using activity v2 "
+            'embedding.',
+        textureId: textureId,
       );
     }
   }
@@ -1184,6 +1233,10 @@ class BetterPlayerController {
 
   ///Handle VideoEvent when remote controls notification / PiP is shown
   Future<void> _handleVideoEvent(VideoEvent event) async {
+    PlayerLogger.debug(
+      message: 'Video event: ${event.eventType}',
+      textureId: textureId,
+    );
     switch (event.eventType) {
       case VideoEventType.play:
         _postEvent(PlayerEvent(PlayerEventType.play));
@@ -1230,6 +1283,10 @@ class BetterPlayerController {
 
   ///Retry data source if playback failed.
   Future retryDataSource() async {
+    PlayerLogger.warning(
+      message: 'Retrying data source',
+      textureId: textureId,
+    );
     await _setupDataSource(_betterPlayerDataSource!);
     if (_videoPlayerValueOnError != null) {
       final position = _videoPlayerValueOnError!.position;
@@ -1311,9 +1368,7 @@ class BetterPlayerController {
 
   ///Stop pre cache for given [betterPlayerDataSource]. If there was no pre
   ///cache started for given [betterPlayerDataSource] then it will be ignored.
-  Future<void> stopPreCache(
-    PlayerDataSource betterPlayerDataSource,
-  ) async {
+  Future<void> stopPreCache(PlayerDataSource betterPlayerDataSource) async {
     return VideoPlayerController.stopPreCache(
       betterPlayerDataSource.url,
       betterPlayerDataSource.cacheConfiguration?.key,
@@ -1339,6 +1394,7 @@ class BetterPlayerController {
   ///autoDispose parameter will be overridden and controller will be disposed
   ///(if it wasn't disposed before).
   void dispose({bool forceDispose = false}) {
+    PlayerLogger.info(message: 'Disposed', textureId: textureId);
     if (!betterPlayerConfiguration.autoDispose && !forceDispose) {
       return;
     }

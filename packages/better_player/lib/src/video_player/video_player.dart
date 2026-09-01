@@ -6,7 +6,8 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player/better_player.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -50,9 +51,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   bool get _created => _creatingCompleter.isCompleted;
   Duration? _seekPosition;
 
-  /// This is just exposed for testing. It shouldn't be used by anyone depending
-  /// on the plugin.
-  @visibleForTesting
+  /// The id of a texture that hasn't been initialized is null.
   int? get textureId => _textureId;
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
@@ -69,16 +68,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       if (_isDisposed) {
         return;
       }
-      BetterPlayerUtils.log(
-        'VideoPlayerController: Event received: ${event.eventType}',
+      PlayerLogger.debug(
+        message: 'VideoPlayerController: Event received: ${event.eventType}',
       );
       videoEventStreamController.add(event);
       switch (event.eventType) {
         case VideoEventType.initialized:
-          value = value.copyWith(
-            duration: event.duration,
-            size: event.size,
-          );
+          value = value.copyWith(duration: event.duration, size: event.size);
           _applyPlayPause();
         case VideoEventType.completed:
           value = value.copyWith(isPlaying: false, position: value.duration);
@@ -252,9 +248,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           activityName: activityName,
         ),
         overriddenDuration: overriddenDuration,
-        drmConfiguration: DrmConfiguration(
-          clearKey: clearKey,
-        ),
+        drmConfiguration: DrmConfiguration(clearKey: clearKey),
       ),
     );
   }
@@ -289,19 +283,20 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     try {
-      BetterPlayerUtils.log(
-        'VideoPlayerController: setDataSource platform call starting',
+      PlayerLogger.debug(
+        message: 'VideoPlayerController: setDataSource platform call starting',
       );
       await BetterPlayerPlatform.instance.setDataSource(
         _textureId,
         dataSourceDescription,
       );
-      BetterPlayerUtils.log(
-        'VideoPlayerController: setDataSource platform call finished, waiting for init event',
+      PlayerLogger.debug(
+        message:
+            'VideoPlayerController: setDataSource platform call finished, waiting for init event',
       );
       await completer.future;
-      BetterPlayerUtils.log(
-        'VideoPlayerController: setDataSource init event received',
+      PlayerLogger.debug(
+        message: 'VideoPlayerController: setDataSource init event received',
       );
     } finally {
       await subscription.cancel();
@@ -360,28 +355,25 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _timer?.cancel();
     if (value.isPlaying) {
       await _betterPlayerPlatform.play(_textureId);
-      _timer = Timer.periodic(
-        const Duration(milliseconds: 300),
-        (timer) async {
-          if (_isDisposed) {
-            return;
+      _timer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
+        if (_isDisposed) {
+          return;
+        }
+        final newPosition = await position;
+        final newAbsolutePosition = await absolutePosition;
+        // ignore: invariant_booleans
+        if (_isDisposed) {
+          return;
+        }
+        _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
+        if (_seekPosition != null && newPosition != null) {
+          final difference =
+              newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
+          if (difference > 0) {
+            _seekPosition = null;
           }
-          final newPosition = await position;
-          final newAbsolutePosition = await absolutePosition;
-          // ignore: invariant_booleans
-          if (_isDisposed) {
-            return;
-          }
-          _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
-          if (_seekPosition != null && newPosition != null) {
-            final difference =
-                newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
-            if (difference > 0) {
-              _seekPosition = null;
-            }
-          }
-        },
-      );
+        }
+      });
     } else {
       await _betterPlayerPlatform.pause(_textureId);
     }
@@ -880,10 +872,9 @@ class ClosedCaption extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveTextStyle =
         textStyle ??
-        DefaultTextStyle.of(context).style.copyWith(
-          fontSize: 36,
-          color: Colors.white,
-        );
+        DefaultTextStyle.of(
+          context,
+        ).style.copyWith(fontSize: 36, color: Colors.white);
 
     if (text == null) {
       return const SizedBox.shrink();

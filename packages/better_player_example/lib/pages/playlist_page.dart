@@ -105,7 +105,7 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    BetterPlayerUtils.log(
+                    debugPrint(
                       'Currently playing video: ${_betterPlayerPlaylistController!.currentDataSourceIndex}',
                     );
                   },

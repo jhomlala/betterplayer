@@ -36,6 +36,7 @@ const sidebars = {
         'drm_configuration',
         'playlist_configuration',
         'translations_configuration',
+        'logging_configuration',
       ],
     },
     {

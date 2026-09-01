@@ -1,4 +1,9 @@
-import 'package:better_player/better_player.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_event.dart';
+import 'package:better_player/src/configuration/player_translations.dart';
+import 'package:better_player/src/core/better_player.dart';
+import 'package:better_player/src/logging/player_logger_configuration.dart';
+import 'package:better_player/src/subtitles/player_subtitles_configuration.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -44,6 +49,7 @@ class PlayerConfiguration {
     this.autoDispose = true,
     this.expandToFill = true,
     this.useRootNavigator = false,
+    this.playerLogConfiguration = const PlayerLoggerConfiguration(),
   });
 
   /// Play the video as soon as it's displayed
@@ -158,6 +164,9 @@ class PlayerConfiguration {
   ///Default value is false.
   final bool useRootNavigator;
 
+  ///Defines logger configuration
+  final PlayerLoggerConfiguration playerLogConfiguration;
+
   PlayerConfiguration copyWith({
     double? aspectRatio,
     bool? autoPlay,
@@ -188,6 +197,7 @@ class PlayerConfiguration {
     bool? autoDispose,
     bool? expandToFill,
     bool? useRootNavigator,
+    PlayerLoggerConfiguration? playerLogConfiguration,
   }) {
     return PlayerConfiguration(
       aspectRatio: aspectRatio ?? this.aspectRatio,
@@ -230,6 +240,8 @@ class PlayerConfiguration {
       autoDispose: autoDispose ?? this.autoDispose,
       expandToFill: expandToFill ?? this.expandToFill,
       useRootNavigator: useRootNavigator ?? this.useRootNavigator,
+      playerLogConfiguration:
+          playerLogConfiguration ?? this.playerLogConfiguration,
     );
   }
 }

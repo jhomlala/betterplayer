@@ -154,6 +154,19 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('clearCache() has not been implemented.');
   }
 
+  /// Register a callback to receive log records from the native layer.
+  /// Only called when logLevel != none. When not called, native logCallback
+  /// stays null — zero JNI/FFI overhead.
+  Future<void> setupLogCallback(
+    void Function({
+      required int levelIndex,
+      required String message,
+    })?
+    callback,
+  ) {
+    throw UnimplementedError('setupLogCallback() has not been implemented.');
+  }
+
   /// Returns a widget displaying the video with a given textureID.
   Widget buildView(int? textureId) {
     throw UnimplementedError('buildView() has not been implemented.');

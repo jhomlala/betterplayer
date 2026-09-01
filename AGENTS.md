@@ -3,7 +3,7 @@
 ## Development Workflow
 - **Commit/Push Policy**: NEVER commit or push changes automatically. ALWAYS wait for explicit user approval before performing any Git commit or push operations.
 - **Git Hygiene**:
-  - ALWAYS create a new branch before starting any modification (e.g., `feat/feature-name`, `fix/bug-name`).
+  - NEVER create or change branches automatically. ALWAYS wait for explicit user instruction on which branch to use.
   - ALWAYS `git fetch origin master` and `git rebase origin/master` before starting any new task to ensure you are working on the latest code.
   - Ensure your branch history is clean and only contains commits relevant to the current task.
   - Use standard branch naming conventions based on the task type:
@@ -86,15 +86,21 @@
   - `Updated`: for changes in existing functionality or dependencies.
   - `Fixed`: for bug fixes.
 - **Attribution**: If the work was done by a contributor, append `(by @username)` or `(by Name)` to the end of the entry.
+- **Sub-package Changelogs**: When updating changelogs, ensure you are updating the correct `CHANGELOG.md` for the package that actually changed (e.g., native changes go in `better_player_android/CHANGELOG.md` or `better_player_ios/CHANGELOG.md`).
 
 ## Release Management
-- **Preparation**: When asked to "Prepare a release for version X.Y.Z", the AI must:
-  1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml`, `packages/better_player_android/pubspec.yaml`, `packages/better_player_ios/pubspec.yaml`, and `packages/better_player_platform_interface/pubspec.yaml`.
-  2. Update `s.version = 'X.Y.Z'` in `packages/better_player_ios/ios/better_player_ios.podspec`.
-  3. Update `better_player: ^X.Y.Z` in the installation snippet of `docs/install.md`.
-  4. Rename the `## Unreleased` header to `## X.Y.Z` in `CHANGELOG.md` (omit the date). Ensure that version headers remain ordered correctly with the most recent at the top. DO NOT leave an empty `## Unreleased` section after the release.
-  5. Run `flutter pub get` in the root directory.
-  6. Run `dart format .` and `flutter analyze .`.
+- **Versioning Strategy (Federated Architecture)**: The core package (`better_player` and `better_player_example`) maintains a SEPARATE versioning track from the federated sub-packages (`better_player_android`, `better_player_ios`, `better_player_platform_interface`).
+  - NEVER artificially sync the versions of the sub-packages to match the core package.
+  - Sub-packages should only be bumped incrementally from their *own* current version (e.g., `1.1.0` -> `1.2.0`) based on their own unreleased changes.
+- **Preparation**: When asked to "Prepare a release for version X.Y.Z" (referring to the core package), the AI must:
+  1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml` and `packages/better_player_example/pubspec.yaml`.
+  2. Evaluate sub-packages (`android`, `ios`, `platform_interface`). If they have changes, bump their versions incrementally (e.g., to `A.B.C`) in their respective `pubspec.yaml` files.
+  3. Update `s.version = 'A.B.C'` in `packages/better_player_ios/ios/better_player_ios.podspec` to match the iOS sub-package version.
+  4. Update the dependencies in `packages/better_player/pubspec.yaml` to point to the newly bumped `^A.B.C` versions of the sub-packages.
+  5. Update `better_player: ^X.Y.Z` in the installation snippet of `docs/install.md`.
+  6. Rename the `## Unreleased` header to `## X.Y.Z` in `packages/better_player/CHANGELOG.md`. For any bumped sub-packages, rename their `## Unreleased` headers to their respective new versions (`## A.B.C`). Ensure version headers remain ordered correctly. DO NOT leave an empty `## Unreleased` section after the release.
+  7. Run `flutter pub get` in the root directory.
+  8. Run `dart format .` and `flutter analyze .`.
 - **Internal Release (`publish_to: none`)**:
   - If any core package has `publish_to: none`, the "release" is strictly a version bump and Git tag.
   - DO NOT run `flutter pub publish` unless explicitly instructed AND `publish_to: none` is removed.
@@ -110,3 +116,11 @@
 ## FFI Generation
 
 Swiftgen and jnigen bindings are automatically generated on CI/CD (or triggered manually via GitHub Actions workflow_dispatch). Do not attempt to run swiftgen or jnigen locally if your environment doesn't support it (e.g. Windows for iOS). Instead, make the code changes, commit them, and ask the user to trigger the generation on CI/CD.
+
+## FFI/JNI Generation Learnings
+
+1. **CI Chicken-and-Egg**: When introducing new native interfaces (like callbacks) that require generation via `jnigen` or `swiftgen` in CI, don't use those bindings in Dart immediately. If CI runs `flutter build` before generation, the build will fail because the Dart classes don't exist yet, preventing the generator from running. Workaround: Temporarily comment out the Dart usages, let CI generate the bindings, pull them, and then uncomment.
+2. **Kotlin Setter Clashes**: Exposing a public Kotlin property (`var callback: Callback?`) automatically creates a JVM setter `setCallback()`. If you manually define `fun setCallback()`, you will get a JVM 'Platform declaration clash'. Use a `private var _callback` to store the value instead.
+3. **Swift Setter Clashes**: Similarly in Swift, an `@objc public static var callback` creates an Objective-C setter `setCallback:`. Defining a manual `@objc public static func setCallback()` will cause a selector conflict. Use `private static var _callback`.
+4. **JNI Auto-Setters**: `jnigen` automatically maps Kotlin `setX(...)` functions to Dart setter properties. For example, `setLogCallback(callback)` in Kotlin becomes `Api.Companion.logCallback = callback;` in Dart.
+5. **Swiftgen Allow-Lists**: Don't forget to explicitly add new Swift protocols to the `protocols:` allow-list inside `swiftgen.dart`. If you forget, it will only generate a stub class without the required Builder implementation.

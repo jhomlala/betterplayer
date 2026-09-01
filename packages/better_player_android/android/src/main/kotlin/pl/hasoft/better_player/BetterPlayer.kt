@@ -63,9 +63,10 @@ import androidx.annotation.Keep
 class BetterPlayer(
     context: Context,
     val textureEntry: SurfaceTextureEntry,
-    private val callback: BetterPlayerCallback,
-    customDefaultLoadControl: CustomDefaultLoadControl? = null
+    val callback: BetterPlayerCallback,
+    customDefaultLoadControl: CustomDefaultLoadControl? = null,
 ) {
+    
     private val mainHandler = Handler(Looper.getMainLooper())
     private fun runOnMainThread(action: () -> Unit) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -88,17 +89,17 @@ class BetterPlayer(
     private var drmSessionManager: DrmSessionManager? = null
     private val workManager: WorkManager
     private val workerObserverMap: HashMap<UUID, Observer<WorkInfo?>>
-    private val customDefaultLoadControl: CustomDefaultLoadControl =
+    private val playerLoadControl: CustomDefaultLoadControl =
         customDefaultLoadControl ?: CustomDefaultLoadControl()
     private var lastSendBufferedPosition = 0L
 
     init {
         val loadBuilder = DefaultLoadControl.Builder()
         loadBuilder.setBufferDurationsMs(
-            this.customDefaultLoadControl.minBufferMs,
-            this.customDefaultLoadControl.maxBufferMs,
-            this.customDefaultLoadControl.bufferForPlaybackMs,
-            this.customDefaultLoadControl.bufferForPlaybackAfterRebufferMs
+            playerLoadControl.minBufferMs,
+            playerLoadControl.maxBufferMs,
+            playerLoadControl.bufferForPlaybackMs,
+            playerLoadControl.bufferForPlaybackAfterRebufferMs
         )
         loadControl = loadBuilder.build()
         exoPlayer = ExoPlayer.Builder(context)
@@ -116,8 +117,6 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setDataSource(
         context: Context,
         key: String?,
@@ -133,6 +132,7 @@ class BetterPlayer(
         cacheKey: String?,
         clearKey: String?
     ) {
+        BetterPlayerApi.log(1, "setDataSource: $dataSource")
         this.key = key
         isInitialized = false
         isInitializedSent = false
@@ -203,17 +203,16 @@ class BetterPlayer(
             exoPlayer?.setMediaSource(mediaSource)
         }
         exoPlayer?.prepare()
-        
+        BetterPlayerApi.log(1, "setDataSource: prepare() called")
     }
 
     @Keep
-
-
     fun setupPlayerNotification(
         context: Context, title: String, author: String?,
         imageUrl: String?, notificationChannelName: String?,
         activityName: String
     ) {
+        BetterPlayerApi.log(1, "setupPlayerNotification: title=$title, author=$author")
         val mediaDescriptionAdapter: MediaDescriptionAdapter = object : MediaDescriptionAdapter {
             override fun getCurrentContentTitle(player: Player): String {
                 return title
@@ -332,9 +331,8 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun disposeRemoteNotifications() {
+        BetterPlayerApi.log(1, "disposeRemoteNotifications()")
         if (playerNotificationManager != null) {
             playerNotificationManager?.setPlayer(null)
         }
@@ -410,10 +408,12 @@ class BetterPlayer(
             override fun onPlaybackStateChanged(playbackState: Int) {
                 when (playbackState) {
                     Player.STATE_BUFFERING -> {
+                        BetterPlayerApi.log(1, "PlaybackState: BUFFERING")
                         sendBufferingUpdate(true)
                         callback.onBufferingStart()
                     }
                     Player.STATE_READY -> {
+                        BetterPlayerApi.log(1, "PlaybackState: READY")
                         if (!isInitializedSent) {
                             isInitialized = true
                             sendInitialized()
@@ -421,16 +421,19 @@ class BetterPlayer(
                         callback.onBufferingEnd()
                     }
                     Player.STATE_ENDED -> {
+                        BetterPlayerApi.log(1, "PlaybackState: ENDED")
                         callback.onCompleted(key = key)
                     }
                     Player.STATE_IDLE -> {
-                        //no-op
+                        BetterPlayerApi.log(1, "PlaybackState: IDLE")
                     }
                 }
             }
 
             override fun onPlayerError(error: PlaybackException) {
-                callback.onError("VideoError", "Video player had error $error", "")
+                val errorMessage = error.message ?: "Unknown error"
+                BetterPlayerApi.log(3, "PlayerError: $errorMessage")
+                callback.onError("VideoError", "Video player had error $errorMessage", "")
             }
 
             override fun onTimelineChanged(timeline: Timeline, reason: Int) {
@@ -472,48 +475,42 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun play() {
+        BetterPlayerApi.log(1, "play()")
         exoPlayer?.playWhenReady = true
     }
 
     @Keep
-
-
     fun pause() {
+        BetterPlayerApi.log(1, "pause()")
         exoPlayer?.playWhenReady = false
     }
 
     @Keep
-
-
     fun setLooping(value: Boolean) {
+        BetterPlayerApi.log(1, "setLooping: $value")
         exoPlayer?.repeatMode = if (value) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
     }
 
     @Keep
-
-
     fun setVolume(value: Double) {
+        BetterPlayerApi.log(0, "setVolume: $value")
         val bracketedValue = max(0.0, min(1.0, value))
             .toFloat()
         exoPlayer?.volume = bracketedValue
     }
 
     @Keep
-
-
     fun setSpeed(value: Double) {
+        BetterPlayerApi.log(0, "setSpeed: $value")
         val bracketedValue = value.toFloat()
         val playbackParameters = PlaybackParameters(bracketedValue)
         exoPlayer?.playbackParameters = playbackParameters
     }
 
     @Keep
-
-
     fun setTrackParameters(width: Int, height: Int, bitrate: Int) {
+        BetterPlayerApi.log(0, "setTrackParameters: width=$width, height=$height, bitrate=$bitrate")
         val parametersBuilder = trackSelector.buildUponParameters()
         if (width != 0 && height != 0) {
             parametersBuilder.setMaxVideoSize(width, height)
@@ -529,9 +526,8 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun seekTo(location: Int) {
+        BetterPlayerApi.log(1, "seekTo: $location")
         exoPlayer?.seekTo(location.toLong())
     }
 
@@ -595,9 +591,8 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun onPictureInPictureStatusChanged(inPip: Boolean) {
+        BetterPlayerApi.log(1, "onPictureInPictureStatusChanged: $inPip")
         if (inPip) {
             callback.onPipStart()
         } else {
@@ -613,9 +608,8 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setAudioTrack(name: String, index: Int) {
+        BetterPlayerApi.log(0, "setAudioTrack: name=$name, index=$index")
         try {
             val mappedTrackInfo = trackSelector.currentMappedTrackInfo
             if (mappedTrackInfo != null) {
@@ -685,16 +679,14 @@ class BetterPlayer(
     }
 
     @Keep
-
-
     fun setMixWithOthers(mixWithOthers: Boolean) {
+        BetterPlayerApi.log(1, "setMixWithOthers: $mixWithOthers")
         setAudioAttributes(exoPlayer, mixWithOthers)
     }
 
     @Keep
-
-
     fun dispose() {
+        BetterPlayerApi.log(1, "dispose()")
         disposeMediaSession()
         disposeRemoteNotifications()
         
@@ -729,7 +721,7 @@ class BetterPlayer(
     }
 
     companion object {
-        private const val TAG = "BetterPlayer"
+        
         private const val FORMAT_SS = "ss"
         private const val FORMAT_DASH = "dash"
         private const val FORMAT_HLS = "hls"
@@ -738,9 +730,7 @@ class BetterPlayer(
         private const val NOTIFICATION_ID = 20772077
 
         @Keep
-
-
-        fun clearCache(context: Context?) {
+    fun clearCache(context: Context?) {
             try {
                 context?.let { context ->
                     val file = File(context.cacheDir, "betterPlayerCache")
@@ -765,9 +755,7 @@ class BetterPlayer(
         }
 
         @Keep
-
-
-        fun preCache(
+    fun preCache(
             context: Context?, dataSource: String?, preCacheSize: Long,
             maxCacheSize: Long, maxCacheFileSize: Long, headers: Map<String, String?>,
             cacheKey: String?) {
@@ -795,9 +783,7 @@ class BetterPlayer(
         }
 
         @Keep
-
-
-        fun stopPreCache(context: Context?, url: String?) {
+    fun stopPreCache(context: Context?, url: String?) {
             if (url != null && context != null) {
                 WorkManager.getInstance(context).cancelAllWorkByTag(url)
             }

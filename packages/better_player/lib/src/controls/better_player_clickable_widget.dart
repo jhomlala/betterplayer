@@ -1,4 +1,6 @@
 // Flutter imports:
+import 'package:better_player/better_player.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -18,15 +20,13 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(60),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(60)),
       clipBehavior: Clip.hardEdge,
       color: Colors.transparent,
       child: InkWell(
         onTap: () {
-          BetterPlayerUtils.log(
-            'Tapped on: $semanticsIdentifier ($semanticsLabel)',
+          PlayerLogger.debug(
+            message: 'Tapped on: $semanticsIdentifier ($semanticsLabel)',
           );
           onTap();
         },

@@ -13,7 +13,10 @@ void main() {
   });
 
   Widget wrapWidget(Widget widget) {
-    return MaterialApp(home: Scaffold(body: widget));
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: false),
+      home: Scaffold(body: widget),
+    );
   }
 
   testWidgets(

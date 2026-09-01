@@ -342,6 +342,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: Scaffold(
             body: BetterPlayerPlaylist(
               betterPlayerDataSourceList: dataSourceList,
@@ -367,5 +368,8 @@ void main() {
 ///Wrap widget with material app to handle all features like navigation and
 ///localization properly.
 Widget _wrapWidget(Widget widget) {
-  return MaterialApp(home: widget);
+  return MaterialApp(
+    theme: ThemeData(useMaterial3: false),
+    home: widget,
+  );
 }

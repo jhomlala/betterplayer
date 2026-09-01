@@ -50,6 +50,7 @@ void main(List<String> args) {
       classes: [
         'pl.hasoft.better_player.BetterPlayerApi',
         'pl.hasoft.better_player.BetterPlayerCallback',
+        'pl.hasoft.better_player.BetterPlayerLogCallback',
         'pl.hasoft.better_player.BetterPlayer',
       ],
     ),

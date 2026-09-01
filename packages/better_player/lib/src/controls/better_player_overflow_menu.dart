@@ -1,7 +1,6 @@
-import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
-import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerOverflowMenu extends StatelessWidget {
@@ -101,8 +100,9 @@ class PlayerOverflowMenuItemWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BetterPlayerUtils.log(
-      'E2E: Building PlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
+    PlayerLogger.debug(
+      message:
+          'E2E: Building PlayerOverflowMenuItemWidget: $name (ID: $semanticsIdentifier)',
     );
     return BetterPlayerMaterialClickableWidget(
       onTap: onTap,
@@ -113,15 +113,9 @@ class PlayerOverflowMenuItemWidget extends StatelessWidget {
         child: Row(
           children: [
             const SizedBox(width: 8),
-            Icon(
-              icon,
-              color: controlsConfiguration.overflowMenuIconsColor,
-            ),
+            Icon(icon, color: controlsConfiguration.overflowMenuIconsColor),
             const SizedBox(width: 16),
-            Text(
-              name,
-              style: _getOverflowMenuElementTextStyle(isSelected),
-            ),
+            Text(name, style: _getOverflowMenuElementTextStyle(isSelected)),
           ],
         ),
       ),
@@ -133,9 +127,7 @@ class PlayerOverflowMenuItemWidget extends StatelessWidget {
       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       color: isSelected
           ? controlsConfiguration.overflowModalTextColor
-          : controlsConfiguration.overflowModalTextColor.withValues(
-              alpha: 0.7,
-            ),
+          : controlsConfiguration.overflowModalTextColor.withValues(alpha: 0.7),
     );
   }
 }
