@@ -5,11 +5,11 @@ title: Logging Configuration
 
 # Logging Configuration
 
-Better Player provides an extensible logging system with `PlayerLogger`. It supports native-to-Dart log streaming (from Android ExoPlayer and iOS AVPlayer) and automatic caller/tag derivation, making it easier to track what the player is doing under the hood.
+Better Player provides an extensible logging system centered around the `PlayerLogger`. It supports native-to-Dart log streaming from Android (ExoPlayer) and iOS (AVPlayer), automatic caller derivation, and custom output backends.
 
 ## Setup
 
-You can configure the logging system by passing a `PlayerLoggerConfiguration` to your `PlayerConfiguration`:
+The logging system is configured via `PlayerLoggerConfiguration`, which is passed to your `PlayerConfiguration`:
 
 ```dart
 import 'package:better_player/better_player.dart';
@@ -23,47 +23,54 @@ var playerConfiguration = PlayerConfiguration(
 );
 ```
 
-By default, Better Player uses a sensible default configuration which prints `debug` logs in debug mode and `info` logs in profile/release builds.
+By default, Better Player uses `PlayerLoggerConfiguration.defaultConfig`, which sets the level to `debug` in debug mode and `info` in profile or release builds.
 
 ## Configuration Parameters
 
-- `logLevel`: The minimum level that gets routed to outputs. Use `PlayerLogLevel.none` to silence all logs.
-- `printCallerInfo`: Whether to automatically include the calling class/method name in logs. Note: enabling this has a small performance cost due to stack trace parsing. (Default: `true`).
-- `outputs`: The chain of outputs to write to. Defaults to `ConsoleLogOutput` (which uses `dart:developer` under the hood for IDE/DevTools integration).
+- **`logLevel`**: The minimum level required for a record to be sent to outputs. Use `PlayerLogLevel.none` to disable all logging.
+- **`printCallerInfo`**: If `true`, the logger will automatically parse the stack trace to include the class and method name that triggered the log. (Default: `true`).
+- **`outputs`**: A list of `PlayerLogOutput` instances. Defaults to `[ConsoleLogOutput()]`, which uses `dart:developer` for IDE and DevTools integration.
+
+## Log Levels
+
+Better Player uses the following hierarchy (from lowest to highest):
+
+1.  `PlayerLogLevel.debug`: Fine-grained informational events that are most useful to debug an application.
+2.  `PlayerLogLevel.info`: Informational messages that highlight the progress of the application at coarse-grained level.
+3.  `PlayerLogLevel.warning`: Potentially harmful situations.
+4.  `PlayerLogLevel.error`: Error events that might still allow the application to continue running.
+5.  `PlayerLogLevel.none`: Special level used to turn off logging.
+
+## Native Log Streaming
+
+Better Player automatically captures logs from the native playback engines:
+- **Android**: Internal events from ExoPlayer's `Player.Listener` and lifecycle logs.
+- **iOS**: State changes via KVO (Key-Value Observing) on `AVPlayer` and lifecycle logs.
+
+These logs are forwarded to Dart and routed through `PlayerLogger` with the `Android` or `iOS` tag, allowing you to see exactly what is happening in the native layer within your Flutter console or custom log backends.
 
 ## Custom Log Outputs
 
-You can easily create custom log outputs by extending `PlayerLogOutput`. This is useful if you want to write logs to a file, send them to a remote crash reporting tool (like Sentry or Crashlytics), or use a different internal logging library.
+To send logs to external services like Sentry, Firebase Crashlytics, or a local file, extend the `PlayerLogOutput` class:
 
 ```dart
 class CustomCrashlyticsOutput extends PlayerLogOutput {
   @override
-  void init() {
-    // Setup 
-  }
-
-  @override
   void onLog(PlayerLogRecord record) {
     if (record.level == PlayerLogLevel.error) {
-       // Report error to crashlytics
-       // Crashlytics.instance.recordError(record.error, record.stackTrace);
+       // Example: Crashlytics.instance.recordError(record.error, record.stackTrace);
     }
-  }
-
-  @override
-  void destroy() {
-    // Cleanup
   }
 }
 ```
 
-Simply pass your custom output to the configuration:
+### PlayerLogRecord Fields
 
-```dart
-playerLogConfiguration: PlayerLoggerConfiguration(
-  outputs: [
-    ConsoleLogOutput(),
-    CustomCrashlyticsOutput(),
-  ],
-)
-```
+Every log entry is encapsulated in a `PlayerLogRecord` containing:
+- `level`: The `PlayerLogLevel`.
+- `message`: The formatted log message.
+- `tag`: The category (e.g., `BetterPlayerController`, `Android`, or a custom tag).
+- `timestamp`: UTC `DateTime` when the log was created.
+- `caller`: The derived calling method (if `printCallerInfo` is enabled).
+- `error`: Optional error object.
+- `stackTrace`: Optional stack trace.
