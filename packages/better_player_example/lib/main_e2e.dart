@@ -51,6 +51,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       ],
       playerLogConfiguration: PlayerLoggerConfiguration(
         logLevel: PlayerLogLevel.debug,
+        outputs: [ConsoleLogOutput(usePrint: true)],
       ),
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);

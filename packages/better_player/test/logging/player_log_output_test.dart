@@ -62,5 +62,19 @@ void main() {
       final message = output.formatMessage(record);
       expect(message, 'Native event');
     });
+
+    test('onLog with usePrint does not throw', () {
+      const printOutput = ConsoleLogOutput(usePrint: true);
+      final record = PlayerLogRecord(
+        level: PlayerLogLevel.info,
+        message: 'Test message',
+        tag: 'TestTag',
+        timestamp: DateTime.now(),
+        error: 'TestError',
+        stackTrace: StackTrace.current,
+      );
+
+      expect(() => printOutput.onLog(record), returnsNormally);
+    });
   });
 }

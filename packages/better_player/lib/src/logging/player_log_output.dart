@@ -21,7 +21,11 @@ abstract class PlayerLogOutput {
 
 /// Default output: uses dart:developer log() for IDE/DevTools integration.
 class ConsoleLogOutput extends PlayerLogOutput {
-  const ConsoleLogOutput();
+  const ConsoleLogOutput({this.usePrint = false});
+
+  /// Whether to use standard print() instead of developer.log().
+  /// Useful for CI or environments where developer.log() is not captured.
+  final bool usePrint;
 
   static const _name = 'BetterPlayer';
 
@@ -39,14 +43,29 @@ class ConsoleLogOutput extends PlayerLogOutput {
   @override
   void onLog(PlayerLogRecord record) {
     final message = formatMessage(record);
-    developer.log(
-      message,
-      time: record.timestamp,
-      name: '$_name/${record.tag}',
-      level: _toDevLevel(record.level),
-      error: record.error,
-      stackTrace: record.stackTrace,
-    );
+    if (usePrint) {
+      // ignore: avoid_print
+      print(
+        '[$_name/${record.tag}] [${record.level.name.toUpperCase()}] $message',
+      );
+      if (record.error != null) {
+        // ignore: avoid_print
+        print('Error: ${record.error}');
+      }
+      if (record.stackTrace != null) {
+        // ignore: avoid_print
+        print('StackTrace: ${record.stackTrace}');
+      }
+    } else {
+      developer.log(
+        message,
+        time: record.timestamp,
+        name: '$_name/${record.tag}',
+        level: _toDevLevel(record.level),
+        error: record.error,
+        stackTrace: record.stackTrace,
+      );
+    }
   }
 
   int _toDevLevel(PlayerLogLevel level) {
