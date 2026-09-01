@@ -2,7 +2,7 @@ import 'package:better_player/better_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../helpers/better_player_mock_controller.dart';
 import '../helpers/mock_method_channel.dart';
-import '../helpers/mock_video_player_controller.dart';
+import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -21,8 +21,8 @@ void main() {
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
-      final videoPlayerController = MockVideoPlayerController();
-      controller.videoPlayerController = videoPlayerController;
+      final videoPlayerController = MockPlayerEngineController();
+      controller.engineController = videoPlayerController;
 
       expect(controller.isVideoInitialized(), false);
     });
@@ -31,8 +31,8 @@ void main() {
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
-      final videoPlayerController = MockVideoPlayerController();
-      controller.videoPlayerController = videoPlayerController;
+      final videoPlayerController = MockPlayerEngineController();
+      controller.engineController = videoPlayerController;
 
       videoPlayerController.setDuration(const Duration(seconds: 10));
       expect(controller.isVideoInitialized(), true);
@@ -44,8 +44,8 @@ void main() {
         final controller = BetterPlayerMockController(
           const PlayerConfiguration(),
         );
-        final videoPlayerController = MockVideoPlayerController();
-        controller.videoPlayerController = videoPlayerController;
+        final videoPlayerController = MockPlayerEngineController();
+        controller.engineController = videoPlayerController;
 
         videoPlayerController.setDuration(const Duration(seconds: 15));
         expect(
@@ -61,8 +61,8 @@ void main() {
         final controller = BetterPlayerMockController(
           const PlayerConfiguration(),
         );
-        final videoPlayerController = MockVideoPlayerController();
-        controller.videoPlayerController = videoPlayerController;
+        final videoPlayerController = MockPlayerEngineController();
+        controller.engineController = videoPlayerController;
 
         expect(controller.isVideoInitialized(), false);
 

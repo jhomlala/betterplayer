@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_test_utils.dart';
-import '../helpers/mock_video_player_controller.dart';
+import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   setUpAll(() {
@@ -22,7 +22,7 @@ void main() {
   testWidgets(
     'Material controls have correct semantic labels for Play/Pause',
     (tester) async {
-      final mockVideoPlayerController = MockVideoPlayerController();
+      final mockVideoPlayerController = MockPlayerEngineController();
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,
         configuration: const PlayerConfiguration(
@@ -66,7 +66,7 @@ void main() {
   testWidgets(
     'Material controls have correct semantic labels for Mute/Unmute',
     (tester) async {
-      final mockVideoPlayerController = MockVideoPlayerController();
+      final mockVideoPlayerController = MockPlayerEngineController();
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,
         configuration: const PlayerConfiguration(
@@ -109,7 +109,7 @@ void main() {
     'Progress bar has correct semantics and supports seeking via gestures',
     (tester) async {
       final handle = tester.ensureSemantics();
-      final mockVideoPlayerController = MockVideoPlayerController();
+      final mockVideoPlayerController = MockPlayerEngineController();
 
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,

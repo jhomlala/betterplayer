@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../helpers/better_player_mock_controller.dart';
-import '../helpers/mock_video_player_controller.dart';
+import '../helpers/mock_player_engine_controller.dart';
 
 class BetterPlayerMockControllerWithTracks extends BetterPlayerMockController {
   BetterPlayerMockControllerWithTracks(super.betterPlayerConfiguration);
@@ -71,7 +71,7 @@ void main() {
       controller = BetterPlayerMockControllerWithTracks(
         const PlayerConfiguration(),
       );
-      controller.videoPlayerController = MockVideoPlayerController();
+      controller.engineController = MockPlayerEngineController();
     });
 
     testWidgets(

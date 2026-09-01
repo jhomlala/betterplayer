@@ -8,7 +8,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_mock_controller.dart';
 import '../helpers/better_player_test_utils.dart';
-import '../helpers/mock_video_player_controller.dart';
+import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   late BetterPlayerMockController mockController;
@@ -56,7 +56,7 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -92,7 +92,7 @@ void main() {
     'Material controls show mute button if enabled',
     (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -126,7 +126,7 @@ void main() {
   testWidgets(
     'Cupertino controls show play/pause button',
     (tester) async {
-      final mockVideoPlayerController = MockVideoPlayerController();
+      final mockVideoPlayerController = MockPlayerEngineController();
       mockVideoPlayerController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,
@@ -163,7 +163,7 @@ void main() {
     'Overflow menu opens on tap',
     (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -213,7 +213,7 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -268,7 +268,7 @@ void main() {
     'Material controls show progress bar',
     (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -300,7 +300,7 @@ void main() {
   testWidgets(
     'Cupertino controls show progress bar',
     (tester) async {
-      final mockVideoPlayerController = MockVideoPlayerController();
+      final mockVideoPlayerController = MockPlayerEngineController();
       mockVideoPlayerController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mockVideoPlayerController,

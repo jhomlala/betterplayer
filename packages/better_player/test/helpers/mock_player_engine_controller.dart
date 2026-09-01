@@ -4,7 +4,7 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:flutter/material.dart';
 
 class MockVideoPlayerController extends PlayerEngineController {
-  MockVideoPlayerController() : super(autoCreate: false) {
+  MockPlayerEngineController() : super(autoCreate: false) {
     value = VideoPlayerValue(duration: null);
   }
   

@@ -22,7 +22,7 @@ void main() {
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
-      controller.videoPlayerController = mockVideoPlayerController;
+      controller.engineController = mockVideoPlayerController;
 
       await controller.setupDataSource(
         PlayerDataSource.network('url'),
@@ -56,7 +56,7 @@ void main() {
           showPlaceholderUntilPlay: true,
         ),
       );
-      controller.videoPlayerController = mockVideoPlayerController;
+      controller.engineController = mockVideoPlayerController;
 
       await controller.setupDataSource(
         PlayerDataSource.network('url'),
@@ -86,7 +86,7 @@ void main() {
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
-      controller.videoPlayerController = mockVideoPlayerController;
+      controller.engineController = mockVideoPlayerController;
 
       await controller.setupDataSource(
         PlayerDataSource.network('url'),
@@ -152,7 +152,7 @@ void main() {
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
-      controller.videoPlayerController = mockVideoPlayerController;
+      controller.engineController = mockVideoPlayerController;
 
       await controller.setupDataSource(
         PlayerDataSource.network('url'),
