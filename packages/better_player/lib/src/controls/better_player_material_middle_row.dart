@@ -189,7 +189,7 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPlaying = controller.videoPlayerController!.value.isPlaying;
+    final isPlaying = controller.videoPlayerController?.value.isPlaying == true;
 
     var semanticsLabel = isPlaying
         ? controller.translations.controlsPauseLabel

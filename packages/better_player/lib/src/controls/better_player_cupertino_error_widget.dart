@@ -18,7 +18,7 @@ class BetterPlayerCupertinoErrorWidget extends StatelessWidget {
     if (errorBuilder != null) {
       return errorBuilder(
         context,
-        controller.videoPlayerController!.value.errorDescription,
+        controller.videoPlayerController?.value.errorDescription,
       );
     } else {
       final textStyle = TextStyle(color: controlsConfiguration.textColor);

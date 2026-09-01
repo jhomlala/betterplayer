@@ -9,7 +9,7 @@ class Constants {
       'https://github.com/jhomlala/betterplayer/raw/master/example/assets/testvideo_encrypt.mp4';
   static const String fileExampleSubtitlesUrl = 'example_subtitles.srt';
   static const String hlsTestStreamUrl =
-      'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
+      'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8';
   static const String hlsPlaylistUrl =
       'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8';
   static const Map<String, String> exampleResolutionsUrls = {
