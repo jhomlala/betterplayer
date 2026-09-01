@@ -77,7 +77,10 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       onCompletedWithKey_: (objc.NSString? key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
-          VideoEvent(eventType: VideoEventType.completed, key: key?.toDartString()),
+          VideoEvent(
+            eventType: VideoEventType.completed,
+            key: key?.toDartString(),
+          ),
         );
       },
       onPlayWithKey_: (objc.NSString? key) {
@@ -123,7 +126,8 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       onBufferingUpdateWithJsonRanges_key_:
           (objc.NSString jsonRanges, objc.NSString? key) {
             if (currentTextureId == null) return;
-            final decoded = jsonDecode(jsonRanges.toDartString()) as List<dynamic>;
+            final decoded =
+                jsonDecode(jsonRanges.toDartString()) as List<dynamic>;
             final buffered = decoded.map<DurationRange>((dynamic value) {
               final range = value as List<dynamic>;
               return DurationRange(
