@@ -44,10 +44,10 @@ void main() {
 
       // Simulate error
       mock.value = mock.value.copyWith(errorDescription: 'Error');
-      controller.videoPlayerController!.notifyListeners();
+      controller.engineController!.notifyListeners();
 
       await controller.retryDataSource();
-      expect(controller.videoPlayerController != null, true);
+      expect(controller.isEngineReady, true);
     });
 
     test("preCache and stopPreCache don't crash", () async {

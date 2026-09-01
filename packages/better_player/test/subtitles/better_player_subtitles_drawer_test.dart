@@ -50,13 +50,13 @@ void main() {
     expect(find.text('Test Subtitle'), findsNothing);
 
     // Update position to 2s
-    (controller.videoPlayerController! as MockVideoPlayerController).value =
-        controller.videoPlayerController!.value.copyWith(
+    (controller.engineController! as MockVideoPlayerController).value =
+        controller.engineController!.value.copyWith(
           position: const Duration(seconds: 2),
         );
 
     // Trigger listener
-    controller.videoPlayerController!.notifyListeners();
+    controller.engineController!.notifyListeners();
     await tester.pumpAndSettle();
 
     expect(find.byType(HtmlWidget), findsNWidgets(2));
@@ -86,11 +86,11 @@ void main() {
       ),
     );
 
-    (controller.videoPlayerController! as MockVideoPlayerController).value =
-        controller.videoPlayerController!.value.copyWith(
+    (controller.engineController! as MockVideoPlayerController).value =
+        controller.engineController!.value.copyWith(
           position: const Duration(seconds: 2),
         );
-    controller.videoPlayerController!.notifyListeners();
+    controller.engineController!.notifyListeners();
     await tester.pump();
 
     expect(find.byType(HtmlWidget), findsNWidgets(2));
@@ -130,11 +130,11 @@ void main() {
       ),
     );
 
-    (controller.videoPlayerController! as MockVideoPlayerController).value =
-        controller.videoPlayerController!.value.copyWith(
+    (controller.engineController! as MockVideoPlayerController).value =
+        controller.engineController!.value.copyWith(
           position: const Duration(seconds: 2),
         );
-    controller.videoPlayerController!.notifyListeners();
+    controller.engineController!.notifyListeners();
     await tester.pumpAndSettle();
 
     // Only 1 HtmlWidget because outline is disabled

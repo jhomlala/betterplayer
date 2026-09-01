@@ -50,18 +50,6 @@ class BetterPlayerController {
   ///List of files to delete once player disposes.
   final List<File> _tempFiles = [];
 
-  ///Stream controller which emits stream when control visibility changes.
-  final StreamController<bool> _controlsVisibilityStreamController =
-      StreamController.broadcast();
-
-  ///Instance of video player controller which is adapter used to communicate
-  ///between flutter high level code and lower level native code.
-  PlayerEngineController? _engine;
-
-  ///Controls configuration
-  late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
-
-  ///Controls configuration
   PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _betterPlayerControlsConfiguration;
 
@@ -169,19 +157,6 @@ class BetterPlayerController {
   ///Was player in fullscreen before Picture in Picture opened.
   bool _wasInFullScreenBeforePiP = false;
 
-  ///Was controls enabled before Picture in Picture opened.
-  bool _wasControlsEnabledBeforePiP = false;
-
-  ///GlobalKey of the BetterPlayer widget
-  GlobalKey? _betterPlayerGlobalKey;
-
-  ///Getter of the GlobalKey
-  GlobalKey? get betterPlayerGlobalKey => _betterPlayerGlobalKey;
-
-  ///StreamSubscription for VideoEvent listener
-  StreamSubscription<VideoEvent>? _videoEventStreamSubscription;
-
-  ///Are controls always visible
   bool _controlsAlwaysVisible = false;
 
   ///Are controls always visible

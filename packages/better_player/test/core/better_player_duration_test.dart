@@ -21,8 +21,8 @@ void main() {
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
-      final videoPlayerController = MockPlayerEngineController();
-      controller.engineController = videoPlayerController;
+      final engineController = MockPlayerEngineController();
+      controller.engineController = engineController;
 
       expect(controller.isVideoInitialized(), false);
     });
@@ -31,25 +31,25 @@ void main() {
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
-      final videoPlayerController = MockPlayerEngineController();
-      controller.engineController = videoPlayerController;
+      final engineController = MockPlayerEngineController();
+      controller.engineController = engineController;
 
-      videoPlayerController.setDuration(const Duration(seconds: 10));
+      engineController.setDuration(const Duration(seconds: 10));
       expect(controller.isVideoInitialized(), true);
     });
 
     test(
-      'getDuration returns correct duration from videoPlayerController',
+      'getDuration returns correct duration from engineController',
       () async {
         final controller = BetterPlayerMockController(
           const PlayerConfiguration(),
         );
-        final videoPlayerController = MockPlayerEngineController();
-        controller.engineController = videoPlayerController;
+        final engineController = MockPlayerEngineController();
+        controller.engineController = engineController;
 
-        videoPlayerController.setDuration(const Duration(seconds: 15));
+        engineController.setDuration(const Duration(seconds: 15));
         expect(
-          controller.videoPlayerController!.value.duration,
+          controller.engineController!.value.duration,
           const Duration(seconds: 15),
         );
       },
@@ -61,16 +61,16 @@ void main() {
         final controller = BetterPlayerMockController(
           const PlayerConfiguration(),
         );
-        final videoPlayerController = MockPlayerEngineController();
-        controller.engineController = videoPlayerController;
+        final engineController = MockPlayerEngineController();
+        controller.engineController = engineController;
 
         expect(controller.isVideoInitialized(), false);
 
-        videoPlayerController.emitInitialized();
+        engineController.emitInitialized();
 
         expect(controller.isVideoInitialized(), true);
         expect(
-          controller.videoPlayerController!.value.duration,
+          controller.engineController!.value.duration,
           const Duration(seconds: 1),
         );
       },

@@ -25,7 +25,7 @@ class MockControlsState extends BetterPlayerControlsState<MockControlsWidget> {
 
   @override
   VideoPlayerValue? get latestValue =>
-      widget.controller.videoPlayerController?.value;
+      widget.controller.engineController?.value;
 
   @override
   void cancelAndRestartTimer() {}

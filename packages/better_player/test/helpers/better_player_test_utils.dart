@@ -23,7 +23,7 @@ class BetterPlayerTestUtils {
   }) {
     final mockController = BetterPlayerMockController(configuration);
     if (engine != null) {
-      mockController.videoPlayerController = engine;
+      mockController.engineController = engine;
     }
     return mockController;
   }
