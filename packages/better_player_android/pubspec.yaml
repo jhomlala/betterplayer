@@ -1,6 +1,6 @@
 name: better_player_android
 resolution: workspace
-description: Android implementation of the better_player plugin.
+description: The Android implementation of the better_player plugin, offering advanced video playback features using ExoPlayer and JNI for optimized performance in Flutter applications.
 version: 1.2.0
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_android
 

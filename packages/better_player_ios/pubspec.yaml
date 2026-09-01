@@ -1,6 +1,6 @@
 name: better_player_ios
 resolution: workspace
-description: iOS implementation of the better_player plugin.
+description: The iOS implementation of the better_player plugin, providing high-performance video playback using AVPlayer and FFI for seamless integration in Flutter apps.
 version: 1.2.0
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_ios
 

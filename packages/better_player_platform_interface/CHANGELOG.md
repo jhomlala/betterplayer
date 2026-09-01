@@ -1,5 +1,6 @@
 ## 1.2.0
 - Added: `setupLogCallback` to the platform interface to support native-to-Dart log streaming.
+- Updated: Enhanced package description in `pubspec.yaml` for better discoverability.
 
 ## 1.1.0
 - Added: Removed legacy `MethodChannelVideoPlayer` and replaced it with a modern JNI/Swiftgen implementation.
