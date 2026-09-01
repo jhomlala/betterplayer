@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Broken links in README.md files (migration guides and example application).
+
 ## 1.3.0
 - Added: Extensible logging system with `PlayerLogger`, featuring native-to-Dart log streaming, automatic caller/tag derivation, and comprehensive internal logs.
 - Updated: Comprehensive documentation audit and modernized code examples.
