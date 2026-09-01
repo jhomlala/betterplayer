@@ -1,5 +1,6 @@
 ## 1.2.0
 - Added: Support for native-to-Dart log streaming (`setupLogCallback`) via FFI for AVPlayer.
+- Added: Reintroduced `example` directory with documentation to the package.
 
 ## 1.1.0
 - Added: Migrated native implementation to Swift FFI using `swiftgen`, enabling direct `AVPlayer` interaction without MethodChannel overhead.
