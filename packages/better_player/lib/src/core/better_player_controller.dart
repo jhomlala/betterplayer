@@ -56,7 +56,7 @@ class BetterPlayerController {
 
   ///Instance of video player controller which is adapter used to communicate
   ///between flutter high level code and lower level native code.
-  PlayerEngineController? videoPlayerController;
+  PlayerEngineController? _engine;
 
   ///Controls configuration
   late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
@@ -202,7 +202,34 @@ class BetterPlayerController {
       _betterPlayerAsmsAudioTrack;
 
   /// The id of a texture that hasn't been initialized is null.
-  int? get textureId => videoPlayerController?.textureId;
+  int? get textureId => _engine?.textureId;
+  /// Whether the engine has been created. False before [setupDataSource] is called.
+  bool get isEngineReady => _engine != null;
+
+  /// Whether the video has been initialized (duration is known).
+  bool get isInitialized => _engine?.value.initialized ?? false;
+
+  /// Total duration of the current video. Null until initialized.
+  Duration? get duration => _engine?.value.duration;
+
+  /// The full engine state snapshot. Prefer individual getters for new code.
+  VideoPlayerValue? get playerValue => _engine?.value;
+
+  /// Current playback position.
+  Future<Duration?> get position async => _engine?.position;
+
+  /// Absolute position in a live stream (EXT-X-PROGRAM-DATE-TIME).
+  Future<DateTime?> get absolutePosition async => _engine?.absolutePosition;
+
+  /// Sets track parameters directly on the engine (width, height, bitrate).
+  /// Prefer [setTrack] with a [PlayerAsmsTrack] for HLS/DASH streams.
+  Future<void> setTrackParameters(int? width, int? height, int? bitrate) async {
+    if (_engine == null) {
+      throw StateError('The data source has not been initialized');
+    }
+    await _engine!.setTrackParameters(width, height, bitrate);
+  }
+
 
   ///Selected videoPlayerValue when error occurred.
   VideoPlayerValue? _videoPlayerValueOnError;
@@ -256,14 +283,14 @@ class BetterPlayerController {
     _betterPlayerDataSource = betterPlayerDataSource;
     _betterPlayerSubtitlesSourceList.clear();
 
-    final createdNewController = videoPlayerController == null;
+    final createdNewController = _engine == null;
 
-    ///Build videoPlayerController if null
+    ///Build _engine if null
     if (createdNewController) {
-      videoPlayerController = PlayerEngineController(
+      _engine = PlayerEngineController(
         bufferingConfiguration: betterPlayerDataSource.bufferingConfiguration,
       );
-      videoPlayerController?.addListener(_onVideoPlayerChanged);
+      _engine?.addListener(_onVideoPlayerChanged);
     }
 
     ///Clear asms tracks
@@ -298,8 +325,8 @@ class BetterPlayerController {
         error: exception,
       );
       if (createdNewController) {
-        videoPlayerController?.dispose();
-        videoPlayerController = null;
+        _engine?.dispose();
+        _engine = null;
       }
       _postEvent(
         PlayerEvent(
@@ -471,11 +498,11 @@ class BetterPlayerController {
     }
   }
 
-  ///Internal method which invokes videoPlayerController source setup.
+  ///Internal method which invokes _engine source setup.
   Future _setupDataSource(PlayerDataSource betterPlayerDataSource) async {
     switch (betterPlayerDataSource.type) {
       case DataSourceType.network:
-        await videoPlayerController?.setNetworkDataSource(
+        await _engine?.setNetworkDataSource(
           betterPlayerDataSource.url,
           headers: _getHeaders(),
           useCache:
@@ -520,7 +547,7 @@ class BetterPlayerController {
           );
         }
 
-        await videoPlayerController?.setFileDataSource(
+        await _engine?.setFileDataSource(
           File(betterPlayerDataSource.url),
           showNotification: _betterPlayerDataSource
               ?.notificationConfiguration
@@ -544,7 +571,7 @@ class BetterPlayerController {
         );
 
         if (file.existsSync()) {
-          await videoPlayerController?.setFileDataSource(
+          await _engine?.setFileDataSource(
             file,
             showNotification: _betterPlayerDataSource
                 ?.notificationConfiguration
@@ -602,7 +629,7 @@ class BetterPlayerController {
     _videoEventStreamSubscription?.cancel();
     _videoEventStreamSubscription = null;
 
-    _videoEventStreamSubscription = videoPlayerController
+    _videoEventStreamSubscription = _engine
         ?.videoEventStreamController
         .stream
         .listen(_handleVideoEvent);
@@ -636,9 +663,9 @@ class BetterPlayerController {
 
   ///Method which is invoked when full screen changes.
   Future<void> _onFullScreenStateChanged() async {
-    if (videoPlayerController?.value.isPlaying == true && !_isFullScreen) {
+    if (_engine?.value.isPlaying == true && !_isFullScreen) {
       enterFullScreen();
-      videoPlayerController?.removeListener(_onFullScreenStateChanged);
+      _engine?.removeListener(_onFullScreenStateChanged);
     }
   }
 
@@ -667,12 +694,12 @@ class BetterPlayerController {
   ///Start video playback. Play will be triggered only if current lifecycle state
   ///is resumed.
   Future<void> play() async {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
 
     if (_appLifecycleState == AppLifecycleState.resumed) {
-      await videoPlayerController!.play();
+      await _engine!.play();
       _hasCurrentDataSourceStarted = true;
       _wasPlayingBeforePause = null;
       _postEvent(PlayerEvent(PlayerEventType.play));
@@ -682,33 +709,33 @@ class BetterPlayerController {
 
   ///Enables/disables looping (infinity playback) mode.
   Future<void> setLooping(bool looping) async {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
 
-    await videoPlayerController!.setLooping(looping);
+    await _engine!.setLooping(looping);
   }
 
   ///Stop video playback.
   Future<void> pause() async {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
 
-    await videoPlayerController!.pause();
+    await _engine!.pause();
     _postEvent(PlayerEvent(PlayerEventType.pause));
   }
 
   ///Move player to specific position/moment of the video.
   Future<void> seekTo(Duration moment) async {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    if (!(videoPlayerController?.value.initialized ?? false)) {
+    if (!(_engine?.value.initialized ?? false)) {
       throw StateError('The video has not been initialized yet.');
     }
 
-    await videoPlayerController!.seekTo(moment);
+    await _engine!.seekTo(moment);
 
     _postEvent(
       PlayerEvent(
@@ -717,7 +744,7 @@ class BetterPlayerController {
       ),
     );
 
-    final currentDuration = videoPlayerController!.value.duration;
+    final currentDuration = _engine!.value.duration;
     if (currentDuration == null) {
       return;
     }
@@ -733,10 +760,10 @@ class BetterPlayerController {
     if (volume < 0.0 || volume > 1.0) {
       throw ArgumentError('Volume must be between 0.0 and 1.0');
     }
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    await videoPlayerController!.setVolume(volume);
+    await _engine!.setVolume(volume);
     _postEvent(
       PlayerEvent(
         PlayerEventType.setVolume,
@@ -750,10 +777,10 @@ class BetterPlayerController {
     if (speed <= 0 || speed > 2) {
       throw ArgumentError('Speed must be between 0 and 2');
     }
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    await videoPlayerController?.setSpeed(speed);
+    await _engine?.setSpeed(speed);
     _postEvent(
       PlayerEvent(
         PlayerEventType.setSpeed,
@@ -766,18 +793,18 @@ class BetterPlayerController {
 
   ///Flag which determines whenever player is playing or not.
   bool? isPlaying() {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    return videoPlayerController!.value.isPlaying;
+    return _engine!.value.isPlaying;
   }
 
   ///Flag which determines whenever player is loading video data or not.
   bool? isBuffering() {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    return videoPlayerController!.value.isBuffering;
+    return _engine!.value.isBuffering;
   }
 
   ///Show or hide controls manually
@@ -820,7 +847,7 @@ class BetterPlayerController {
   ///Listener used to handle video player changes.
   Future<void> _onVideoPlayerChanged() async {
     final currentVideoPlayerValue =
-        videoPlayerController?.value ??
+        _engine?.value ??
         VideoPlayerValue(duration: const Duration());
 
     if (currentVideoPlayerValue.initialized &&
@@ -843,7 +870,7 @@ class BetterPlayerController {
       if (_wasControlsEnabledBeforePiP) {
         setControlsEnabled(true);
       }
-      videoPlayerController?.refresh();
+      _engine?.refresh();
     }
 
     if (_betterPlayerSubtitlesSource?.asmsIsSegmented == true) {
@@ -890,14 +917,14 @@ class BetterPlayerController {
 
   ///Flag which determines whenever player data source has been initialized.
   bool? isVideoInitialized() {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       PlayerLogger.warning(
         message: 'The data source has not been initialized',
         textureId: textureId,
       );
       throw StateError('The data source has not been initialized');
     }
-    return videoPlayerController?.value.initialized;
+    return _engine?.value.initialized;
   }
 
   ///Start timer which will trigger next video. Used in playlist. Do not use
@@ -955,7 +982,7 @@ class BetterPlayerController {
   ///Setup track parameters for currently played video. Can be only used for HLS or DASH
   ///data source.
   void setTrack(PlayerAsmsTrack track) {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
     _postEvent(
@@ -973,7 +1000,7 @@ class BetterPlayerController {
       ),
     );
 
-    videoPlayerController!.setTrackParameters(
+    _engine!.setTrackParameters(
       track.width,
       track.height,
       track.bitrate,
@@ -1026,10 +1053,10 @@ class BetterPlayerController {
       message: 'Resolution changed to: $url',
       textureId: textureId,
     );
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    final position = await videoPlayerController!.position;
+    final position = await _engine!.position;
     final wasPlayingBeforeChange = isPlaying()!;
     pause();
     await setupDataSource(betterPlayerDataSource!.copyWith(url: url));
@@ -1112,7 +1139,7 @@ class BetterPlayerController {
   ///Get aspect ratio used in current video. Returns the first non-null value
   ///from the following priority order: [_overriddenAspectRatio] →
   ///[PlayerConfiguration.aspectRatio] → the video player's actual aspect
-  ///ratio ([videoPlayerController.value.aspectRatio]).
+  ///ratio ([_engine.value.aspectRatio]).
   ///If the video player is not initialized or the video size is not yet
   ///available, it returns null unless an override or configuration is set.
   double? getAspectRatio() {
@@ -1123,7 +1150,7 @@ class BetterPlayerController {
       return betterPlayerConfiguration.aspectRatio;
     }
 
-    final videoValue = videoPlayerController?.value;
+    final videoValue = _engine?.value;
     if (videoValue != null && videoValue.size != null) {
       return videoValue.aspectRatio;
     }
@@ -1147,12 +1174,12 @@ class BetterPlayerController {
   ///to open PiP mode in iOS. When device is not supported, PiP mode won't be
   ///open.
   Future<void>? enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
 
     final isPipSupported =
-        (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
+        (await _engine!.isPictureInPictureSupported()) ?? false;
 
     if (isPipSupported) {
       _wasInFullScreenBeforePiP = _isFullScreen;
@@ -1160,7 +1187,7 @@ class BetterPlayerController {
       setControlsEnabled(false);
       if (defaultTargetPlatform == TargetPlatform.android) {
         _wasInFullScreenBeforePiP = _isFullScreen;
-        await videoPlayerController?.enablePictureInPicture(
+        await _engine?.enablePictureInPicture(
           left: 0,
           top: 0,
           width: 0,
@@ -1184,7 +1211,7 @@ class BetterPlayerController {
           return;
         }
         final position = renderBox.localToGlobal(Offset.zero);
-        return videoPlayerController?.enablePictureInPicture(
+        return _engine?.enablePictureInPicture(
           left: position.dx,
           top: position.dy,
           width: renderBox.size.width,
@@ -1209,10 +1236,10 @@ class BetterPlayerController {
 
   ///Disable Picture in Picture mode if it's enabled.
   Future<void>? disablePictureInPicture() {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    return videoPlayerController!.disablePictureInPicture();
+    return _engine!.disablePictureInPicture();
   }
 
   ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
@@ -1222,12 +1249,12 @@ class BetterPlayerController {
 
   ///Check if picture in picture mode is supported in this device.
   Future<bool> isPictureInPictureSupported() async {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
 
     final isPipSupported =
-        (await videoPlayerController!.isPictureInPictureSupported()) ?? false;
+        (await _engine!.isPictureInPictureSupported()) ?? false;
 
     return isPipSupported && !_isFullScreen;
   }
@@ -1246,7 +1273,7 @@ class BetterPlayerController {
       case VideoEventType.seek:
         _postEvent(PlayerEvent(PlayerEventType.seekTo));
       case VideoEventType.completed:
-        final videoValue = videoPlayerController?.value;
+        final videoValue = _engine?.value;
         _postEvent(
           PlayerEvent(
             PlayerEventType.finished,
@@ -1299,7 +1326,7 @@ class BetterPlayerController {
 
   ///Set [audioTrack] in player. Works only for HLS or DASH streams.
   void setAudioTrack(PlayerAsmsAudioTrack audioTrack) {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
 
@@ -1309,16 +1336,16 @@ class BetterPlayerController {
     }
 
     _betterPlayerAsmsAudioTrack = audioTrack;
-    videoPlayerController!.setAudioTrack(audioTrack.label, audioTrack.id);
+    _engine!.setAudioTrack(audioTrack.label, audioTrack.id);
   }
 
   ///Enable or disable audio mixing with other sound within device.
   void setMixWithOthers(bool mixWithOthers) {
-    if (videoPlayerController == null) {
+    if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
 
-    videoPlayerController!.setMixWithOthers(mixWithOthers);
+    _engine!.setMixWithOthers(mixWithOthers);
   }
 
   ///Clear all cached data. Video player controller must be initialized to
@@ -1400,11 +1427,11 @@ class BetterPlayerController {
       return;
     }
     if (!_disposed) {
-      if (videoPlayerController != null) {
+      if (_engine != null) {
         pause();
-        videoPlayerController!.removeListener(_onFullScreenStateChanged);
-        videoPlayerController!.removeListener(_onVideoPlayerChanged);
-        videoPlayerController!.dispose();
+        _engine!.removeListener(_onFullScreenStateChanged);
+        _engine!.removeListener(_onVideoPlayerChanged);
+        _engine!.dispose();
       }
       _eventListeners.clear();
       _nextVideoTimer?.cancel();
