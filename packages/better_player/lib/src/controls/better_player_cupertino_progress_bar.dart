@@ -1,7 +1,9 @@
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
+import 'package:better_player/src/engine/player_progress_bar.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
@@ -16,7 +18,7 @@ class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
     super.key,
   }) : colors = colors ?? PlayerProgressColors();
 
-  final VideoPlayerController? controller;
+  final PlayerEngineController? controller;
   final BetterPlayerController? betterPlayerController;
   final PlayerProgressColors colors;
   final Function()? onDragStart;
@@ -41,7 +43,7 @@ class _VideoProgressBarState
   late VoidCallback listener;
   bool _controllerWasPlaying = false;
 
-  VideoPlayerController? get controller => widget.controller;
+  PlayerEngineController? get controller => widget.controller;
 
   BetterPlayerController? get betterPlayerController =>
       widget.betterPlayerController;

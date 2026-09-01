@@ -1,3 +1,4 @@
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -6,7 +7,7 @@ import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
@@ -55,7 +56,7 @@ class BetterPlayerController {
 
   ///Instance of video player controller which is adapter used to communicate
   ///between flutter high level code and lower level native code.
-  VideoPlayerController? videoPlayerController;
+  PlayerEngineController? videoPlayerController;
 
   ///Controls configuration
   late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
@@ -259,7 +260,7 @@ class BetterPlayerController {
 
     ///Build videoPlayerController if null
     if (createdNewController) {
-      videoPlayerController = VideoPlayerController(
+      videoPlayerController = PlayerEngineController(
         bufferingConfiguration: betterPlayerDataSource.bufferingConfiguration,
       );
       videoPlayerController?.addListener(_onVideoPlayerChanged);
@@ -1323,7 +1324,7 @@ class BetterPlayerController {
   ///Clear all cached data. Video player controller must be initialized to
   ///clear the cache.
   Future<void> clearCache() async {
-    return VideoPlayerController.clearCache();
+    return PlayerEngineController.clearCache();
   }
 
   ///Build headers map that will be used to setup video player controller. Apply
@@ -1363,13 +1364,13 @@ class BetterPlayerController {
       videoExtension: betterPlayerDataSource.videoExtension,
     );
 
-    return VideoPlayerController.preCache(dataSource, cacheConfig.preCacheSize);
+    return PlayerEngineController.preCache(dataSource, cacheConfig.preCacheSize);
   }
 
   ///Stop pre cache for given [betterPlayerDataSource]. If there was no pre
   ///cache started for given [betterPlayerDataSource] then it will be ignored.
   Future<void> stopPreCache(PlayerDataSource betterPlayerDataSource) async {
-    return VideoPlayerController.stopPreCache(
+    return PlayerEngineController.stopPreCache(
       betterPlayerDataSource.url,
       betterPlayerDataSource.cacheConfiguration?.key,
     );

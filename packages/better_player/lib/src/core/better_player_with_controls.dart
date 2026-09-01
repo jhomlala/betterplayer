@@ -7,7 +7,8 @@ import 'package:better_player/src/controls/better_player_cupertino_controls.dart
 import 'package:better_player/src/controls/better_player_material_controls.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
+import 'package:better_player/src/engine/player_engine_view.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -33,7 +34,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   bool _initialized = false;
 
   StreamSubscription? _controllerEventSubscription;
-  VideoPlayerController? _videoPlayerController;
+  PlayerEngineController? _videoPlayerController;
 
   @override
   void initState() {
@@ -58,7 +59,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         .listen(_onControllerChanged);
   }
 
-  /// Sets up a listener for the [VideoPlayerController].
+  /// Sets up a listener for the [PlayerEngineController].
   /// This is required to react to resolution changes (HLS ABR) and update
   /// the aspect ratio of the player (Issue #768).
   void _setupVideoPlayerControllerListener() {
@@ -272,13 +273,13 @@ class _BetterPlayerVideoFitWidget extends StatefulWidget {
 
 class _BetterPlayerVideoFitWidgetState
     extends State<_BetterPlayerVideoFitWidget> {
-  VideoPlayerController? get controller =>
+  PlayerEngineController? get controller =>
       widget.betterPlayerController.videoPlayerController;
 
   bool _initialized = false;
   bool _started = false;
   StreamSubscription? _controllerEventSubscription;
-  VideoPlayerController? _videoPlayerController;
+  PlayerEngineController? _videoPlayerController;
 
   @override
   void initState() {
@@ -332,7 +333,7 @@ class _BetterPlayerVideoFitWidgetState
     }
   }
 
-  /// Sets up a listener for the [VideoPlayerController].
+  /// Sets up a listener for the [PlayerEngineController].
   /// This is required to react to resolution changes (HLS ABR) and update
   /// the video dimensions inside FittedBox (Issue #768).
   void _setupVideoPlayerControllerListener() {

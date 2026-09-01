@@ -1,3 +1,4 @@
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
@@ -10,7 +11,7 @@ import 'package:better_player/src/controls/better_player_material_top_bar.dart';
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
 
 // Flutter imports:
 import 'package:material_ui/material_ui.dart';
@@ -43,7 +44,7 @@ class _BetterPlayerMaterialControlsState
   Timer? _showAfterExpandCollapseTimer;
   bool _displayTapped = false;
   bool _wasLoading = false;
-  VideoPlayerController? _controller;
+  PlayerEngineController? _controller;
   BetterPlayerController? _betterPlayerController;
   StreamSubscription? _controlsVisibilityStreamSubscription;
 

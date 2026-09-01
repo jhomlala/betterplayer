@@ -1,3 +1,4 @@
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:math';
 
 import 'package:better_player/better_player.dart';

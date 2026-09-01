@@ -1,4 +1,5 @@
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoHitArea extends StatelessWidget {
