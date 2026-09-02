@@ -1176,8 +1176,8 @@ class BetterPlayerController {
   }
 
   ///Get aspect ratio used in current video. Returns the first non-null value
-  ///from the following priority order: [_overriddenAspectRatio] â†’
-  ///[PlayerConfiguration.aspectRatio] â†’ the video player's actual aspect
+  ///from the following priority order: [_overriddenAspectRatio] ->
+  ///[PlayerConfiguration.aspectRatio] -> the video player's actual aspect
   ///ratio ([_engine.value.aspectRatio]).
   ///If the video player is not initialized or the video size is not yet
   ///available, it returns null unless an override or configuration is set.
