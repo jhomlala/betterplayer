@@ -28,6 +28,7 @@ class BetterPlayerController {
       setupDataSource(betterPlayerDataSource);
     }
   }
+
   static const String _durationParameter = 'duration';
   static const String _progressParameter = 'progress';
   static const String _bufferedParameter = 'buffered';
@@ -253,11 +254,19 @@ class BetterPlayerController {
 
   /// Sets track parameters directly on the engine (width, height, bitrate).
   /// Prefer [setTrack] with a [PlayerAsmsTrack] for HLS/DASH streams.
-  Future<void> setTrackParameters({int? width, int? height, int? bitrate}) async {
+  Future<void> setTrackParameters({
+    int? width,
+    int? height,
+    int? bitrate,
+  }) async {
     if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    await _engine!.setTrackParameters(width: width, height: height, bitrate: bitrate);
+    await _engine!.setTrackParameters(
+      width: width,
+      height: height,
+      bitrate: bitrate,
+    );
   }
 
   ///Selected videoPlayerValue when error occurred.
@@ -872,6 +881,7 @@ class BetterPlayerController {
   }
 
   ///Listener used to handle video player changes.
+  Future<void> _onVideoPlayerChanged() async {
     for (final listener in List<VoidCallback>.from(_videoListeners)) {
       listener();
     }
