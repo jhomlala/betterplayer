@@ -1,4 +1,4 @@
-﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -19,6 +19,7 @@ class BetterPlayerCupertinoHitArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Expanded(
       child: GestureDetector(
         onTap: latestValue != null && latestValue!.isPlaying
@@ -39,3 +40,6 @@ class BetterPlayerCupertinoHitArea extends StatelessWidget {
     );
   }
 }
+
+
+

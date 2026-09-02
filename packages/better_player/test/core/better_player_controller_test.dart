@@ -609,7 +609,7 @@ void main() {
           const PlayerConfiguration(),
         );
         final mockVideoPlayerController = MockPlayerEngineController();
-        // Size is null by default in MockVideoPlayerController constructor (VideoPlayerValue(duration: null))
+        // Size is null by default in MockPlayerEngineController constructor (VideoPlayerValue(duration: null))
         controller.engineController = mockVideoPlayerController;
 
         expect(controller.getAspectRatio(), null);
@@ -971,3 +971,4 @@ class _MockIOSBetterPlayerPlatform extends MockBetterPlayerPlatform {
     return super.setDataSource(textureId, dataSource);
   }
 }
+

@@ -1,23 +1,24 @@
-﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoErrorWidget extends StatelessWidget {
   const BetterPlayerCupertinoErrorWidget({
-    required required this.controlsConfiguration,
+    required this.controlsConfiguration,
     super.key,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
+    final controller = BetterPlayerController.of(context);
     final errorBuilder = controller.betterPlayerConfiguration.errorBuilder;
     if (errorBuilder != null) {
       return errorBuilder(
         context,
-        controller.videoPlayerValue.errorDescription,
+        controller.videoPlayerValue?.errorDescription,
       );
     } else {
       final textStyle = TextStyle(color: controlsConfiguration.textColor);
@@ -45,3 +46,8 @@ class BetterPlayerCupertinoErrorWidget extends StatelessWidget {
     }
   }
 }
+
+
+
+
+

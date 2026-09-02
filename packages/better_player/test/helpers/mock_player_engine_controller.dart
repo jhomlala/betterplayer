@@ -3,7 +3,7 @@ import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 
-class MockVideoPlayerController extends PlayerEngineController {
+class MockPlayerEngineController extends PlayerEngineController {
   MockPlayerEngineController() : super(autoCreate: false) {
     value = VideoPlayerValue(duration: null);
   }
@@ -127,3 +127,4 @@ class MockVideoPlayerController extends PlayerEngineController {
   
   Map<String, String?>? headers;
 }
+

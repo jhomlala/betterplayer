@@ -1,4 +1,5 @@
-﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/src/core/better_player_controller_provider.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialLoadingWidget extends StatelessWidget {
@@ -24,3 +25,5 @@ class BetterPlayerMaterialLoadingWidget extends StatelessWidget {
     );
   }
 }
+
+

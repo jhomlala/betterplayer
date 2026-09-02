@@ -1,4 +1,5 @@
-﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player/src/core/better_player_controller_provider.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
@@ -75,8 +76,7 @@ class _BetterPlayerMaterialControlsState
         child: ColoredBox(
           color: Colors.black,
           child: BetterPlayerMaterialErrorWidget(
-            controller: _betterPlayerController!,
-            controlsConfiguration: _controlsConfiguration,
+                        controlsConfiguration: _controlsConfiguration,
           ),
         ),
       );
@@ -121,8 +121,7 @@ class _BetterPlayerMaterialControlsState
                 )
               else
                 BetterPlayerMaterialHitArea(
-                  controller: _betterPlayerController!,
-                  controlsConfiguration: _controlsConfiguration,
+                                    controlsConfiguration: _controlsConfiguration,
                   controlsNotVisible: controlsNotVisible,
                   onSkipBack: skipBack,
                   onSkipForward: skipForward,
@@ -136,7 +135,7 @@ class _BetterPlayerMaterialControlsState
                 right: 0,
                 child: BetterPlayerMaterialTopBar(
                   controller: _betterPlayerController!,
-                  controlsConfiguration: _controlsConfiguration,
+                                    controlsConfiguration: _controlsConfiguration,
                   controlsNotVisible: controlsNotVisible,
                   onPlayerHide: _onPlayerHide,
                   onShowMoreClicked: onShowMoreClicked,
@@ -147,8 +146,7 @@ class _BetterPlayerMaterialControlsState
                 left: 0,
                 right: 0,
                 child: BetterPlayerMaterialBottomBar(
-                  controller: _betterPlayerController!,
-                  controlsConfiguration: _controlsConfiguration,
+                                    controlsConfiguration: _controlsConfiguration,
                   controlsNotVisible: controlsNotVisible,
                   onPlayerHide: _onPlayerHide,
                   onPlayPause: _onPlayPause,
@@ -164,7 +162,7 @@ class _BetterPlayerMaterialControlsState
               ),
               BetterPlayerMaterialNextVideoWidget(
                 controller: _betterPlayerController!,
-                controlsConfiguration: _controlsConfiguration,
+                                controlsConfiguration: _controlsConfiguration,
               ),
             ],
           ),
@@ -180,7 +178,7 @@ class _BetterPlayerMaterialControlsState
   }
 
   void _dispose() {
-    _controller?.removeListener(_updateState);
+    _betterPlayerController?.removeVideoListener(_updateState);
     _hideTimer?.cancel();
     _initTimer?.cancel();
     _showAfterExpandCollapseTimer?.cancel();
@@ -192,7 +190,7 @@ class _BetterPlayerMaterialControlsState
     final oldController = _betterPlayerController;
     _betterPlayerController = BetterPlayerController.of(context);
     
-    _latestValue = _betterPlayerController!.videoPlayerValue!;
+    _latestValue = _betterPlayerController!.videoPlayerValue;
 
     if (oldController != _betterPlayerController) {
       _dispose();
@@ -317,11 +315,11 @@ class _BetterPlayerMaterialControlsState
   void _updateState() {
     if (mounted) {
       if (!controlsNotVisible ||
-          isVideoFinished(_betterPlayerController!.videoPlayerValue!) ||
+          isVideoFinished(_betterPlayerController!.videoPlayerValue) ||
           _wasLoading ||
-          isLoading(_betterPlayerController!.videoPlayerValue!)) {
+          isLoading(_betterPlayerController!.videoPlayerValue)) {
         setState(() {
-          _latestValue = _betterPlayerController!.videoPlayerValue!;
+          _latestValue = _betterPlayerController!.videoPlayerValue;
           if (isVideoFinished(_latestValue) &&
               _betterPlayerController?.isLiveStream() == false) {
             changePlayerControlsNotVisible(false);
@@ -336,3 +334,8 @@ class _BetterPlayerMaterialControlsState
     widget.onControlsVisibilityChanged(!controlsNotVisible);
   }
 }
+
+
+
+
+

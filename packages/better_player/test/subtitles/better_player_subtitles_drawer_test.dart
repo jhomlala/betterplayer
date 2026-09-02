@@ -50,7 +50,7 @@ void main() {
     expect(find.text('Test Subtitle'), findsNothing);
 
     // Update position to 2s
-    (controller.engineController! as MockVideoPlayerController).value =
+    (controller.engineController! as MockPlayerEngineController).value =
         controller.engineController!.value.copyWith(
           position: const Duration(seconds: 2),
         );
@@ -86,7 +86,7 @@ void main() {
       ),
     );
 
-    (controller.engineController! as MockVideoPlayerController).value =
+    (controller.engineController! as MockPlayerEngineController).value =
         controller.engineController!.value.copyWith(
           position: const Duration(seconds: 2),
         );
@@ -130,7 +130,7 @@ void main() {
       ),
     );
 
-    (controller.engineController! as MockVideoPlayerController).value =
+    (controller.engineController! as MockPlayerEngineController).value =
         controller.engineController!.value.copyWith(
           position: const Duration(seconds: 2),
         );
@@ -141,3 +141,4 @@ void main() {
     expect(find.byType(HtmlWidget), findsOneWidget);
   });
 }
+

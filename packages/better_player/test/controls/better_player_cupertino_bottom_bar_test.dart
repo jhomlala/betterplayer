@@ -10,7 +10,7 @@ import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   late BetterPlayerMockController mockController;
-  late MockVideoPlayerController mockVideoPlayerController;
+  late MockPlayerEngineController mockVideoPlayerController;
 
   setUp(() async {
     final mockMethodChannel = MockMethodChannel();
@@ -34,7 +34,10 @@ void main() {
     return MaterialApp(
       theme: ThemeData(useMaterial3: false),
       home: Scaffold(
-        body: widget,
+        body: BetterPlayerControllerProvider(
+          controller: mockController,
+          child: widget,
+        ),
       ),
     );
   }
@@ -45,9 +48,7 @@ void main() {
     final controlsConfiguration = PlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerCupertinoBottomBar(
-          controller: mockController,
-          controlsConfiguration: controlsConfiguration,
+        BetterPlayerCupertinoBottomBar(controlsConfiguration: controlsConfiguration,
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -74,9 +75,7 @@ void main() {
     final controlsConfiguration = PlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerCupertinoBottomBar(
-          controller: mockController,
-          controlsConfiguration: controlsConfiguration,
+        BetterPlayerCupertinoBottomBar(controlsConfiguration: controlsConfiguration,
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -107,9 +106,7 @@ void main() {
     final controlsConfiguration = PlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerCupertinoBottomBar(
-          controller: mockController,
-          controlsConfiguration: controlsConfiguration,
+        BetterPlayerCupertinoBottomBar(controlsConfiguration: controlsConfiguration,
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {
@@ -133,3 +130,6 @@ void main() {
     expect(playPauseTriggered, isTrue);
   });
 }
+
+
+

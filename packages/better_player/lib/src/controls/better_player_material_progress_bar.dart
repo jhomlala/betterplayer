@@ -1,4 +1,5 @@
-﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player/src/core/better_player_controller_provider.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/engine/player_engine_controller.dart';
@@ -16,7 +17,6 @@ class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
     super.key,
   }) : colors = colors ?? PlayerProgressColors();
 
-  final 
   final BetterPlayerController? betterPlayerController;
   final PlayerProgressColors colors;
   final Function()? onDragStart;
@@ -78,7 +78,7 @@ class _VideoProgressBarState
 
         _controllerWasPlaying = betterPlayerController!.videoPlayerValue!.isPlaying;
         if (_controllerWasPlaying) {
-          controller!.pause();
+          betterPlayerController!.pause();
         }
 
         if (widget.onDragStart != null) {
@@ -167,10 +167,10 @@ class _VideoProgressBarState
   }
 
   void _seekRelative(double relative) {
-    final duration = betterPlayerController!.videoPlayerValue.duration;
+    final duration = betterPlayerController!.videoPlayerValue!.duration;
     if (duration != null) {
-      final position = betterPlayerController!.videoPlayerValue.position;
-      final newPosition = position! + duration * relative;
+      final position = betterPlayerController!.videoPlayerValue!.position;
+      final newPosition = position + duration * relative;
       betterPlayerController?.seekTo(newPosition);
     }
   }
@@ -188,7 +188,7 @@ class _VideoProgressBarState
   }
 
   VideoPlayerValue _getValue() {
-    if (controller == null) {
+    if (betterPlayerController == null || betterPlayerController!.videoPlayerValue == null) {
       return VideoPlayerValue.uninitialized();
     }
     if (lastSeek != null) {
@@ -299,3 +299,5 @@ class _ProgressBarPainter extends CustomPainter {
     );
   }
 }
+
+

@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoLoadingWidget extends StatelessWidget {
@@ -10,6 +10,7 @@ class BetterPlayerCupertinoLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     if (controlsConfiguration.loadingWidget != null) {
       return controlsConfiguration.loadingWidget!;
     }
@@ -21,3 +22,6 @@ class BetterPlayerCupertinoLoadingWidget extends StatelessWidget {
     );
   }
 }
+
+
+

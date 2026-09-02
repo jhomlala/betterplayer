@@ -1,4 +1,5 @@
-﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player/src/core/better_player_controller_provider.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
@@ -11,7 +12,7 @@ import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialBottomBar extends StatelessWidget {
   const BetterPlayerMaterialBottomBar({
-    required required this.controlsConfiguration,
+    required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.onPlayerHide,
     required this.onPlayPause,
@@ -23,7 +24,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
     required this.latestValue,
     super.key,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final VoidCallback onPlayerHide;
@@ -37,6 +37,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     if (!controller.controlsEnabled) {
       return const SizedBox();
     }
@@ -121,17 +122,17 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
 
 class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
   const _BetterPlayerMaterialPlayPauseButton({
-    required required this.controlsConfiguration,
+    required this.controlsConfiguration,
     required this.onPlayPause,
     required this.latestValue,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onPlayPause;
   final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     final isPlaying = latestValue?.isPlaying ?? false;
     return BetterPlayerMaterialClickableWidget(
       key: const Key('better_player_material_controls_play_pause_button'),
@@ -157,12 +158,11 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
 
 class _BetterPlayerMaterialMuteButton extends StatelessWidget {
   const _BetterPlayerMaterialMuteButton({
-    required required this.controlsConfiguration,
+    required this.controlsConfiguration,
     required this.onMute,
     required this.controlsNotVisible,
     required this.latestValue,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onMute;
   final bool controlsNotVisible;
@@ -170,6 +170,7 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return BetterPlayerMaterialClickableWidget(
       onTap: onMute,
       semanticsLabel: (latestValue != null && latestValue!.volume > 0)
@@ -198,17 +199,17 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
 
 class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
   const _BetterPlayerMaterialFullscreenButton({
-    required required this.controlsConfiguration,
+    required this.controlsConfiguration,
     required this.onExpandCollapse,
     required this.controlsNotVisible,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onExpandCollapse;
   final bool controlsNotVisible;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: BetterPlayerMaterialClickableWidget(
@@ -241,13 +242,13 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
 
 class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
   const _BetterPlayerMaterialLiveWidget({
-    required required this.controlsConfiguration,
+    required this.controlsConfiguration,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Text(
       controller.translations.controlsLive,
       style: TextStyle(
@@ -260,10 +261,9 @@ class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
 
 class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
   const _BetterPlayerMaterialPositionWidget({
-    required required this.controlsConfiguration,
+    required this.controlsConfiguration,
     required this.latestValue,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VideoPlayerValue? latestValue;
 
@@ -306,12 +306,11 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
 
 class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
   const _BetterPlayerMaterialProgressBarWrapper({
-    required required this.controlsConfiguration,
+    required this.controlsConfiguration,
     required this.onProgressBarDragStart,
     required this.onProgressBarDragEnd,
     required this.onProgressBarTapDown,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onProgressBarDragStart;
   final VoidCallback onProgressBarDragEnd;
@@ -319,6 +318,7 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Expanded(
       flex: 40,
       child: Container(
@@ -340,3 +340,8 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
     );
   }
 }
+
+
+
+
+

@@ -10,7 +10,7 @@ import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   late BetterPlayerMockController mockController;
-  late MockVideoPlayerController mockVideoPlayerController;
+  late MockPlayerEngineController mockVideoPlayerController;
 
   setUp(() async {
     final mockMethodChannel = MockMethodChannel();
@@ -34,7 +34,10 @@ void main() {
     return MaterialApp(
       theme: ThemeData(useMaterial3: false),
       home: Scaffold(
-        body: widget,
+        body: BetterPlayerControllerProvider(
+          controller: mockController,
+          child: widget,
+        ),
       ),
     );
   }
@@ -44,9 +47,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerMaterialBottomBar(
-          controller: mockController,
-          controlsConfiguration: const PlayerControlsConfiguration(),
+        BetterPlayerMaterialBottomBar(controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -68,9 +69,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerMaterialBottomBar(
-          controller: mockController,
-          controlsConfiguration: const PlayerControlsConfiguration(),
+        BetterPlayerMaterialBottomBar(controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -96,9 +95,7 @@ void main() {
     var playPauseTriggered = false;
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerMaterialBottomBar(
-          controller: mockController,
-          controlsConfiguration: const PlayerControlsConfiguration(),
+        BetterPlayerMaterialBottomBar(controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {
@@ -127,9 +124,7 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerMaterialBottomBar(
-          controller: mockController,
-          controlsConfiguration: const PlayerControlsConfiguration(),
+        BetterPlayerMaterialBottomBar(controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -149,3 +144,6 @@ void main() {
     expect(find.byIcon(Icons.volume_off_outlined), findsOneWidget);
   });
 }
+
+
+

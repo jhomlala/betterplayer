@@ -59,6 +59,13 @@ class BetterPlayerController {
   ///between flutter high level code and lower level native code.
   PlayerEngineController? _engine;
 
+  @visibleForTesting
+  PlayerEngineController? get engineController => _engine;
+
+  @visibleForTesting
+  set engineController(PlayerEngineController? value) => _engine = value;
+
+
   ///Controls configuration
   late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
 

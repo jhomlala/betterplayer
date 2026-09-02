@@ -60,11 +60,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
 
 
-  void _onVideoPlayerChanged() {
-    if (mounted) {
-      setState(() {});
-    }
-  }
+
 
   @override
   void dispose() {
@@ -319,22 +315,6 @@ class _BetterPlayerVideoFitWidgetState
         });
       default:
         break;
-    }
-  }
-
-
-
-  void _onVideoPlayerChanged() {
-    if (!mounted) {
-      return;
-    }
-    final isInitialized = widget.betterPlayerController.videoPlayerValue?.initialized ?? false;
-    if (isInitialized != _initialized) {
-      setState(() {
-        _initialized = isInitialized;
-      });
-    } else {
-      setState(() {});
     }
   }
 

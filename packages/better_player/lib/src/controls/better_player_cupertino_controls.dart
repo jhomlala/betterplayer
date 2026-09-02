@@ -1,4 +1,4 @@
-﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
@@ -63,6 +63,7 @@ class _BetterPlayerCupertinoControlsState
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return buildLTRDirectionality(_buildMainWidget());
   }
 
@@ -76,8 +77,7 @@ class _BetterPlayerCupertinoControlsState
         child: ColoredBox(
           color: Colors.black,
           child: BetterPlayerCupertinoErrorWidget(
-            controller: _betterPlayerController!,
-            controlsConfiguration: _controlsConfiguration,
+                        controlsConfiguration: _controlsConfiguration,
           ),
         ),
       );
@@ -96,8 +96,7 @@ class _BetterPlayerCupertinoControlsState
     final controlsColumn = Column(
       children: <Widget>[
         BetterPlayerCupertinoTopBar(
-          controller: _betterPlayerController!,
-          controlsConfiguration: _controlsConfiguration,
+                    controlsConfiguration: _controlsConfiguration,
           controlsNotVisible: controlsNotVisible,
           barHeight: barHeight * 0.8,
           iconSize: barHeight * 0.4,
@@ -127,12 +126,10 @@ class _BetterPlayerCupertinoControlsState
             onChangePlayerControlsNotVisible: changePlayerControlsNotVisible,
           ),
         BetterPlayerCupertinoNextVideoWidget(
-          controller: _betterPlayerController!,
-          controlsConfiguration: _controlsConfiguration,
+                    controlsConfiguration: _controlsConfiguration,
         ),
         BetterPlayerCupertinoBottomBar(
-          controller: _betterPlayerController!,
-          controlsConfiguration: _controlsConfiguration,
+                    controlsConfiguration: _controlsConfiguration,
           controlsNotVisible: controlsNotVisible,
           barHeight: barHeight,
           marginSize: marginSize,
@@ -333,3 +330,7 @@ class _BetterPlayerCupertinoControlsState
     }
   }
 }
+
+
+
+

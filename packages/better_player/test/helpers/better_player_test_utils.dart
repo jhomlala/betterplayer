@@ -1,5 +1,4 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/engine/player_engine_controller.dart';
 
 import 'better_player_mock_controller.dart';
 import 'mock_better_player_platform.dart';
@@ -18,12 +17,12 @@ class BetterPlayerTestUtils {
   }
 
   static BetterPlayerMockController setupBetterPlayerMockController({
-    PlayerEngineController? engine,
+    PlayerEngineController? controller,
     PlayerConfiguration configuration = const PlayerConfiguration(),
   }) {
     final mockController = BetterPlayerMockController(configuration);
-    if (engine != null) {
-      mockController.engineController = engine;
+    if (controller != null) {
+      mockController.engineController = controller;
     }
     return mockController;
   }
