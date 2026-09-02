@@ -49,5 +49,3 @@ class BetterPlayerMaterialNextVideoWidget extends StatelessWidget {
     );
   }
 }
-
-

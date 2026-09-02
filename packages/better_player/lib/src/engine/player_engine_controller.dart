@@ -1,4 +1,4 @@
-﻿// Copyright 2017 The Chromium Authors. All rights reserved.
+// Copyright 2017 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,8 +10,6 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
-
-
 
 final BetterPlayerPlatform _betterPlayerPlatform =
     BetterPlayerPlatform.instance;

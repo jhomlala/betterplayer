@@ -43,7 +43,6 @@ class _BetterPlayerCupertinoControlsState
   Timer? _initTimer;
   bool _wasLoading = false;
 
-  
   BetterPlayerController? _betterPlayerController;
   StreamSubscription? _controlsVisibilityStreamSubscription;
 
@@ -62,7 +61,6 @@ class _BetterPlayerCupertinoControlsState
 
   @override
   Widget build(BuildContext context) {
-    final controller = BetterPlayerController.of(context);
     return buildLTRDirectionality(_buildMainWidget());
   }
 
@@ -76,13 +74,12 @@ class _BetterPlayerCupertinoControlsState
         child: ColoredBox(
           color: Colors.black,
           child: BetterPlayerCupertinoErrorWidget(
-                        controlsConfiguration: _controlsConfiguration,
+            controlsConfiguration: _controlsConfiguration,
           ),
         ),
       );
     }
 
-    
     final backgroundColor = _controlsConfiguration.controlBarColor;
     final iconColor = _controlsConfiguration.iconsColor;
     final orientation = MediaQuery.of(context).orientation;
@@ -95,7 +92,7 @@ class _BetterPlayerCupertinoControlsState
     final controlsColumn = Column(
       children: <Widget>[
         BetterPlayerCupertinoTopBar(
-                    controlsConfiguration: _controlsConfiguration,
+          controlsConfiguration: _controlsConfiguration,
           controlsNotVisible: controlsNotVisible,
           barHeight: barHeight * 0.8,
           iconSize: barHeight * 0.4,
@@ -125,10 +122,10 @@ class _BetterPlayerCupertinoControlsState
             onChangePlayerControlsNotVisible: changePlayerControlsNotVisible,
           ),
         BetterPlayerCupertinoNextVideoWidget(
-                    controlsConfiguration: _controlsConfiguration,
+          controlsConfiguration: _controlsConfiguration,
         ),
         BetterPlayerCupertinoBottomBar(
-                    controlsConfiguration: _controlsConfiguration,
+          controlsConfiguration: _controlsConfiguration,
           controlsNotVisible: controlsNotVisible,
           barHeight: barHeight,
           marginSize: marginSize,
@@ -203,7 +200,6 @@ class _BetterPlayerCupertinoControlsState
   void didChangeDependencies() {
     final oldController = _betterPlayerController;
     _betterPlayerController = BetterPlayerController.of(context);
-    
 
     if (oldController != _betterPlayerController) {
       _dispose();
@@ -329,7 +325,3 @@ class _BetterPlayerCupertinoControlsState
     }
   }
 }
-
-
-
-

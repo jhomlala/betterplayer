@@ -69,7 +69,7 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                     children: [
                       InkWell(
                         onTap: () async {
-                          final videoDuration = await widget
+                          final videoDuration = widget
                               .controller!
                               .videoPlayerValue!.position;
                           setState(() {
@@ -112,7 +112,7 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                       ),
                       InkWell(
                         onTap: () async {
-                          final videoDuration = await widget
+                          final videoDuration = widget
                               .controller!
                               .videoPlayerValue!.position;
                           setState(() {
@@ -148,6 +148,3 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
     );
   }
 }
-
-
-

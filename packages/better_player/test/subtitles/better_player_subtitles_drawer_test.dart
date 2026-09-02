@@ -141,4 +141,3 @@ void main() {
     expect(find.byType(HtmlWidget), findsOneWidget);
   });
 }
-

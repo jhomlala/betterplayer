@@ -48,7 +48,8 @@ void main() {
     final controlsConfiguration = PlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerCupertinoBottomBar(controlsConfiguration: controlsConfiguration,
+        BetterPlayerCupertinoBottomBar(
+          controlsConfiguration: controlsConfiguration,
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -75,7 +76,8 @@ void main() {
     final controlsConfiguration = PlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerCupertinoBottomBar(controlsConfiguration: controlsConfiguration,
+        BetterPlayerCupertinoBottomBar(
+          controlsConfiguration: controlsConfiguration,
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -106,7 +108,8 @@ void main() {
     final controlsConfiguration = PlayerControlsConfiguration.cupertino();
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerCupertinoBottomBar(controlsConfiguration: controlsConfiguration,
+        BetterPlayerCupertinoBottomBar(
+          controlsConfiguration: controlsConfiguration,
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {
@@ -130,6 +133,3 @@ void main() {
     expect(playPauseTriggered, isTrue);
   });
 }
-
-
-

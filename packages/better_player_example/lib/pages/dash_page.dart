@@ -125,8 +125,3 @@ class _ResolutionTextState extends State<_ResolutionText> {
     );
   }
 }
-
-
-
-
-

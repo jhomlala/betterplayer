@@ -62,7 +62,6 @@ class BetterPlayerController {
   @visibleForTesting
   set engineController(PlayerEngineController? value) => _engine = value;
 
-
   ///Controls configuration
   late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
 
@@ -206,6 +205,7 @@ class BetterPlayerController {
 
   /// The id of a texture that hasn't been initialized is null.
   int? get textureId => _engine?.textureId;
+
   /// Whether the engine has been created. False before [setupDataSource] is called.
   bool get isEngineReady => _engine != null;
 
@@ -255,7 +255,6 @@ class BetterPlayerController {
     }
     await _engine!.setTrackParameters(width, height, bitrate);
   }
-
 
   ///Selected videoPlayerValue when error occurred.
   VideoPlayerValue? _videoPlayerValueOnError;
@@ -655,9 +654,7 @@ class BetterPlayerController {
     _videoEventStreamSubscription?.cancel();
     _videoEventStreamSubscription = null;
 
-    _videoEventStreamSubscription = _engine
-        ?.videoEventStreamController
-        .stream
+    _videoEventStreamSubscription = _engine?.videoEventStreamController.stream
         .listen(_handleVideoEvent);
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
@@ -877,8 +874,7 @@ class BetterPlayerController {
     }
 
     final currentVideoPlayerValue =
-        _engine?.value ??
-        VideoPlayerValue(duration: const Duration());
+        _engine?.value ?? VideoPlayerValue(duration: const Duration());
 
     if (currentVideoPlayerValue.initialized &&
         !_hasCurrentDataSourceInitialized) {
@@ -1421,7 +1417,10 @@ class BetterPlayerController {
       videoExtension: betterPlayerDataSource.videoExtension,
     );
 
-    return PlayerEngineController.preCache(dataSource, cacheConfig.preCacheSize);
+    return PlayerEngineController.preCache(
+      dataSource,
+      cacheConfig.preCacheSize,
+    );
   }
 
   ///Stop pre cache for given [betterPlayerDataSource]. If there was no pre

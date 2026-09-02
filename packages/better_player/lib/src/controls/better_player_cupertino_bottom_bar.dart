@@ -64,7 +64,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                       const SizedBox(width: 8),
                       if (controlsConfiguration.enablePlayPause)
                         _BetterPlayerCupertinoPlayPauseButton(
-                          
                           controlsConfiguration: controlsConfiguration,
                           onPlayPause: onPlayPause,
                           iconColor: iconColor,
@@ -75,7 +74,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                         const SizedBox(),
                       const SizedBox(width: 8),
                       _BetterPlayerCupertinoLiveWidget(
-                        
                         controlsConfiguration: controlsConfiguration,
                       ),
                     ],
@@ -84,7 +82,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                     children: <Widget>[
                       if (controlsConfiguration.enableSkips)
                         _BetterPlayerCupertinoSkipButton(
-                          
                           onSkip: onSkipBack,
                           icon: controlsConfiguration.skipBackIcon,
                           semanticsLabel:
@@ -97,7 +94,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                         const SizedBox(),
                       if (controlsConfiguration.enablePlayPause)
                         _BetterPlayerCupertinoPlayPauseButton(
-                          
                           controlsConfiguration: controlsConfiguration,
                           onPlayPause: onPlayPause,
                           iconColor: iconColor,
@@ -108,7 +104,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                         const SizedBox(),
                       if (controlsConfiguration.enableSkips)
                         _BetterPlayerCupertinoSkipButton(
-                          
                           onSkip: onSkipForward,
                           icon: controlsConfiguration.skipForwardIcon,
                           semanticsLabel:
@@ -128,7 +123,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                         const SizedBox(),
                       if (controlsConfiguration.enableProgressBar)
                         _BetterPlayerCupertinoProgressBarWrapper(
-                          
                           controlsConfiguration: controlsConfiguration,
                           onDragStart: onProgressBarDragStart,
                           onDragEnd: onProgressBarDragEnd,
@@ -213,7 +207,6 @@ class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = BetterPlayerController.of(context);
     return GestureDetector(
       onTap: onSkip,
       child: Semantics(
@@ -265,7 +258,6 @@ class _BetterPlayerCupertinoPositionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = BetterPlayerController.of(context);
     final position = latestValue != null
         ? latestValue!.position
         : Duration.zero;
@@ -295,7 +287,6 @@ class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = BetterPlayerController.of(context);
     final remaining = latestValue != null && latestValue!.duration != null
         ? latestValue!.duration! - latestValue!.position
         : Duration.zero;
@@ -349,6 +340,3 @@ class _BetterPlayerCupertinoProgressBarWrapper extends StatelessWidget {
     );
   }
 }
-
-
-

@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:better_player/src/hls/hls_parser/drm_init_data.dart';
@@ -248,7 +248,9 @@ class HlsPlaylistParser {
           sessionKeyDrmInitData.add(drmInitData);
         }
       } else if (line.startsWith(tagStreamInf)) {
-        noClosedCaptions |= line.contains(attrClosedCaptionsNone); //todo ĺ†Ťć¤śč¨Ž
+        noClosedCaptions |= line.contains(
+          attrClosedCaptionsNone,
+        ); //todo ĺ†Ťć¤śč¨Ž
         final bitrate = int.parse(
           _parseStringAttr(source: line, pattern: regexpBandwidth)!,
         );

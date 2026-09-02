@@ -1,5 +1,4 @@
-﻿import 'package:material_ui/material_ui.dart';
-
+import 'package:material_ui/material_ui.dart';
 
 /// Widget for displaying closed captions on top of a video.
 ///

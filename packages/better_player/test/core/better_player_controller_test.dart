@@ -52,8 +52,7 @@ void main() {
           const PlayerConfiguration(),
         );
         final engineController = MockPlayerEngineController();
-        betterPlayerMockController.engineController =
-            engineController;
+        betterPlayerMockController.engineController = engineController;
 
         await betterPlayerMockController.setSpeed(1.5);
         expect(engineController.speed, 1.5);
@@ -64,8 +63,7 @@ void main() {
           const PlayerConfiguration(),
         );
         final engineController = MockPlayerEngineController();
-        betterPlayerMockController.engineController =
-            engineController;
+        betterPlayerMockController.engineController = engineController;
 
         await betterPlayerMockController.setVolume(0.8);
         expect(engineController.volume, 0.8);
@@ -76,8 +74,7 @@ void main() {
           const PlayerConfiguration(),
         );
         final engineController = MockPlayerEngineController();
-        betterPlayerMockController.engineController =
-            engineController;
+        betterPlayerMockController.engineController = engineController;
 
         await betterPlayerMockController.setLooping(true);
         expect(engineController.isLoopingState, true);
@@ -103,8 +100,7 @@ void main() {
         );
 
         final engineController = MockPlayerEngineController();
-        betterPlayerMockController.engineController =
-            engineController;
+        betterPlayerMockController.engineController = engineController;
 
         expect(betterPlayerMockController.isVideoInitialized(), false);
         engineController.emitInitialized();
@@ -168,8 +164,7 @@ void main() {
               await betterPlayerController.engineController!.position;
           expect(position, const Duration(seconds: 5));
           await betterPlayerController.seekTo(const Duration(seconds: 30));
-          position =
-              await betterPlayerController.engineController!.position;
+          position = await betterPlayerController.engineController!.position;
           expect(position, const Duration(seconds: 30));
         },
       );
@@ -272,8 +267,7 @@ void main() {
           BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
         );
 
-        betterPlayerMockController.engineController =
-            mockVideoPlayerController;
+        betterPlayerMockController.engineController = mockVideoPlayerController;
         expect(mockVideoPlayerController.isLoopingState, false);
         await betterPlayerMockController.setLooping(true);
         expect(mockVideoPlayerController.isLoopingState, true);
@@ -407,8 +401,7 @@ void main() {
         mockVideoPlayerController.setNetworkDataSource(
           BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
         );
-        betterPlayerMockController.engineController =
-            mockVideoPlayerController;
+        betterPlayerMockController.engineController = mockVideoPlayerController;
         await betterPlayerMockController.setVolume(1);
         expect(mockVideoPlayerController.volume, 1);
         await betterPlayerMockController.setVolume(0.5);
@@ -422,8 +415,7 @@ void main() {
               BetterPlayerTestUtils.setupBetterPlayerMockController();
           final engineController =
               BetterPlayerTestUtils.setupMockVideoPlayerControler();
-          betterPlayerMockController.engineController =
-              engineController;
+          betterPlayerMockController.engineController = engineController;
 
           var setVolumeCalls = 0;
           betterPlayerMockController.addEventsListener(
@@ -449,8 +441,7 @@ void main() {
         mockVideoPlayerController.setNetworkDataSource(
           BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
         );
-        betterPlayerMockController.engineController =
-            mockVideoPlayerController;
+        betterPlayerMockController.engineController = mockVideoPlayerController;
         await betterPlayerMockController.setSpeed(1.1);
         expect(mockVideoPlayerController.speed, 1.1);
         await betterPlayerMockController.setSpeed(0.5);
@@ -474,8 +465,7 @@ void main() {
               BetterPlayerTestUtils.setupBetterPlayerMockController();
           final engineController =
               BetterPlayerTestUtils.setupMockVideoPlayerControler();
-          betterPlayerMockController.engineController =
-              engineController;
+          betterPlayerMockController.engineController = engineController;
 
           var setSpeedCalls = 0;
           betterPlayerMockController.addEventsListener(
@@ -499,8 +489,7 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         final engineController =
             BetterPlayerTestUtils.setupMockVideoPlayerControler();
-        betterPlayerMockController.engineController =
-            engineController;
+        betterPlayerMockController.engineController = engineController;
         engineController.setBuffering(false);
         expect(betterPlayerMockController.isBuffering(), false);
         engineController.setBuffering(true);
@@ -523,8 +512,7 @@ void main() {
         );
         final engineController =
             BetterPlayerTestUtils.setupMockVideoPlayerControler();
-        betterPlayerMockController.engineController =
-            engineController;
+        betterPlayerMockController.engineController = engineController;
         expect(betterPlayerMockController.isLiveStream(), true);
       });
 
@@ -537,8 +525,7 @@ void main() {
         );
         final engineController =
             BetterPlayerTestUtils.setupMockVideoPlayerControler();
-        betterPlayerMockController.engineController =
-            engineController;
+        betterPlayerMockController.engineController = engineController;
         engineController.setDuration(const Duration(seconds: 1));
         expect(betterPlayerMockController.isVideoInitialized(), true);
       });
@@ -971,4 +958,3 @@ class _MockIOSBetterPlayerPlatform extends MockBetterPlayerPlatform {
     return super.setDataSource(textureId, dataSource);
   }
 }
-

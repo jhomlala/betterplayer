@@ -1,4 +1,4 @@
-﻿///Class used to hold translations for all features within Better Player
+///Class used to hold translations for all features within Better Player
 class PlayerTranslations {
   PlayerTranslations({
     this.languageCode = 'en',
@@ -82,11 +82,13 @@ class PlayerTranslations {
 
   factory PlayerTranslations.hindi() => PlayerTranslations(
     languageCode: 'hi',
-    generalDefaultError: 'ŕ¤µŕĄ€ŕ¤ˇŕ¤żŕ¤ŻŕĄ‹ ŕ¤¨ŕ¤ąŕĄ€ŕ¤‚ ŕ¤šŕ¤˛ŕ¤ľŕ¤Żŕ¤ľ ŕ¤śŕ¤ľ ŕ¤¸ŕ¤•ŕ¤¤ŕ¤ľ',
+    generalDefaultError:
+        'ŕ¤µŕĄ€ŕ¤ˇŕ¤żŕ¤ŻŕĄ‹ ŕ¤¨ŕ¤ąŕĄ€ŕ¤‚ ŕ¤šŕ¤˛ŕ¤ľŕ¤Żŕ¤ľ ŕ¤śŕ¤ľ ŕ¤¸ŕ¤•ŕ¤¤ŕ¤ľ',
     generalNone: 'ŕ¤•ŕĄ‹ŕ¤ ŕ¤¨ŕ¤ąŕĄ€ŕ¤‚',
     generalDefault: 'ŕ¤šŕĄ‚ŕ¤•',
     generalRetry: 'ŕ¤ŞŕĄŕ¤¨ŕ¤ ŕ¤ŞŕĄŤŕ¤°ŕ¤Żŕ¤ľŕ¤¸ ŕ¤•ŕ¤°ŕĄ‡ŕ¤‚',
-    playlistLoadingNextVideo: 'ŕ¤…ŕ¤—ŕ¤˛ŕ¤ľ ŕ¤µŕĄ€ŕ¤ˇŕ¤żŕ¤ŻŕĄ‹ ŕ¤˛ŕĄ‹ŕ¤ˇ ŕ¤ąŕĄ‹ ŕ¤°ŕ¤ąŕ¤ľ ŕ¤ąŕĄ',
+    playlistLoadingNextVideo:
+        'ŕ¤…ŕ¤—ŕ¤˛ŕ¤ľ ŕ¤µŕĄ€ŕ¤ˇŕ¤żŕ¤ŻŕĄ‹ ŕ¤˛ŕĄ‹ŕ¤ˇ ŕ¤ąŕĄ‹ ŕ¤°ŕ¤ąŕ¤ľ ŕ¤ąŕĄ',
     controlsLive: 'ŕ¤˛ŕ¤ľŕ¤‡ŕ¤µ',
     controlsNextVideoIn: 'ŕ¤®ŕĄ‡ŕ¤‚ ŕ¤…ŕ¤—ŕ¤˛ŕ¤ľ ŕ¤µŕĄ€ŕ¤ˇŕ¤żŕ¤ŻŕĄ‹',
     overflowMenuPlaybackSpeed: 'ŕ¤ŞŕĄŤŕ¤˛ŕĄ‡ŕ¤¬ŕĄŕ¤• ŕ¤•ŕĄ€ ŕ¤—ŕ¤¤ŕ¤ż',
@@ -98,8 +100,10 @@ class PlayerTranslations {
     controlsPauseLabel: 'ŕ¤ŞŕĄ‰ŕ¤ś ŕ¤•ŕ¤°ŕĄ‡ŕ¤‚',
     controlsMuteLabel: 'ŕ¤®ŕĄŤŕ¤ŻŕĄ‚ŕ¤ź ŕ¤•ŕ¤°ŕĄ‡ŕ¤‚',
     controlsUnmuteLabel: 'ŕ¤…ŕ¤¨ŕ¤®ŕĄŤŕ¤ŻŕĄ‚ŕ¤ź ŕ¤•ŕ¤°ŕĄ‡ŕ¤‚',
-    controlsFullscreenLabel: 'ŕ¤ŞŕĄ‚ŕ¤°ŕĄŤŕ¤Ł ŕ¤¸ŕĄŤŕ¤•ŕĄŤŕ¤°ŕĄ€ŕ¤¨ ŕ¤•ŕ¤°ŕĄ‡ŕ¤‚',
-    controlsExitFullscreenLabel: 'ŕ¤ŞŕĄ‚ŕ¤°ŕĄŤŕ¤Ł ŕ¤¸ŕĄŤŕ¤•ŕĄŤŕ¤°ŕĄ€ŕ¤¨ ŕ¤¸ŕĄ‡ ŕ¤¬ŕ¤ľŕ¤ąŕ¤° ŕ¤¨ŕ¤żŕ¤•ŕ¤˛ŕĄ‡ŕ¤‚',
+    controlsFullscreenLabel:
+        'ŕ¤ŞŕĄ‚ŕ¤°ŕĄŤŕ¤Ł ŕ¤¸ŕĄŤŕ¤•ŕĄŤŕ¤°ŕĄ€ŕ¤¨ ŕ¤•ŕ¤°ŕĄ‡ŕ¤‚',
+    controlsExitFullscreenLabel:
+        'ŕ¤ŞŕĄ‚ŕ¤°ŕĄŤŕ¤Ł ŕ¤¸ŕĄŤŕ¤•ŕĄŤŕ¤°ŕĄ€ŕ¤¨ ŕ¤¸ŕĄ‡ ŕ¤¬ŕ¤ľŕ¤ąŕ¤° ŕ¤¨ŕ¤żŕ¤•ŕ¤˛ŕĄ‡ŕ¤‚',
     controlsSkipForwardLabel: 'ŕ¤†ŕ¤—ŕĄ‡ ŕ¤¬ŕ¤˘ŕ¤ĽŕĄ‡ŕ¤‚',
     controlsSkipBackwardLabel: 'ŕ¤ŞŕĄ€ŕ¤›ŕĄ‡ ŕ¤ąŕ¤źŕĄ‡ŕ¤‚',
     progressBarLabel: 'ŕ¤µŕĄ€ŕ¤ˇŕ¤żŕ¤ŻŕĄ‹ ŕ¤ŞŕĄŤŕ¤°ŕ¤—ŕ¤¤ŕ¤ż',

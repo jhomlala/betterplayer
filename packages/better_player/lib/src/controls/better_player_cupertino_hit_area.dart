@@ -11,6 +11,7 @@ class BetterPlayerCupertinoHitArea extends StatelessWidget {
     required this.onChangePlayerControlsNotVisible,
     super.key,
   });
+
   final VideoPlayerValue? latestValue;
   final bool controlsNotVisible;
   final VoidCallback onCancelAndRestartTimer;
@@ -19,7 +20,6 @@ class BetterPlayerCupertinoHitArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = BetterPlayerController.of(context);
     return Expanded(
       child: GestureDetector(
         onTap: latestValue != null && latestValue!.isPlaying
@@ -40,7 +40,3 @@ class BetterPlayerCupertinoHitArea extends StatelessWidget {
     );
   }
 }
-
-
-
-

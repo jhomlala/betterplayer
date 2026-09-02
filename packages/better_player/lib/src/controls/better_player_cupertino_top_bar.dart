@@ -369,6 +369,3 @@ class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
     );
   }
 }
-
-
-

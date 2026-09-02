@@ -33,13 +33,12 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   bool _initialized = false;
 
   StreamSubscription? _controllerEventSubscription;
-  
 
   @override
   void initState() {
     playerVisibilityStreamController.add(true);
     _setupControllerEventSubscription();
-    
+
     super.initState();
   }
 
@@ -47,7 +46,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   void didUpdateWidget(BetterPlayerWithControls oldWidget) {
     if (oldWidget.controller != widget.controller) {
       _setupControllerEventSubscription();
-      
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -58,15 +56,11 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         .listen(_onControllerChanged);
   }
 
-
-
-
-
   @override
   void dispose() {
     playerVisibilityStreamController.close();
     _controllerEventSubscription?.cancel();
-    
+
     super.dispose();
   }
 
@@ -75,9 +69,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       if (!_initialized) {
         _initialized = true;
       }
-      if (event == PlayerControllerEvent.setupDataSource) {
-        
-      }
+      if (event == PlayerControllerEvent.setupDataSource) {}
     });
   }
 
@@ -91,8 +83,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       if (config.autoDetectFullscreenDeviceOrientation ||
           config.autoDetectFullscreenAspectRatio) {
         aspectRatio =
-            betterPlayerController.videoPlayerValue?.aspectRatio ??
-            1.0;
+            betterPlayerController.videoPlayerValue?.aspectRatio ?? 1.0;
       } else {
         aspectRatio =
             config.fullScreenAspectRatio ??
@@ -259,20 +250,17 @@ class _BetterPlayerVideoFitWidget extends StatefulWidget {
 
 class _BetterPlayerVideoFitWidgetState
     extends State<_BetterPlayerVideoFitWidget> {
-  
-
   bool _initialized = false;
   bool _started = false;
   StreamSubscription? _controllerEventSubscription;
-  
 
   @override
   void initState() {
     super.initState();
     _updateStartedFlag();
-    _initialized = widget.betterPlayerController.videoPlayerValue?.initialized ?? false;
+    _initialized =
+        widget.betterPlayerController.videoPlayerValue?.initialized ?? false;
     _setupControllerEventSubscription();
-    
   }
 
   @override
@@ -280,7 +268,7 @@ class _BetterPlayerVideoFitWidgetState
     if (oldWidget.betterPlayerController != widget.betterPlayerController) {
       _setupControllerEventSubscription();
     }
-    
+
     super.didUpdateWidget(oldWidget);
   }
 
@@ -311,7 +299,6 @@ class _BetterPlayerVideoFitWidgetState
         setState(() {
           _started = false;
           _initialized = false;
-          
         });
       default:
         break;
@@ -327,8 +314,20 @@ class _BetterPlayerVideoFitWidgetState
             child: FittedBox(
               fit: widget.boxFit,
               child: SizedBox(
-                width: widget.betterPlayerController.videoPlayerValue?.size?.width ?? 0,
-                height: widget.betterPlayerController.videoPlayerValue?.size?.height ?? 0,
+                width:
+                    widget
+                        .betterPlayerController
+                        .videoPlayerValue
+                        ?.size
+                        ?.width ??
+                    0,
+                height:
+                    widget
+                        .betterPlayerController
+                        .videoPlayerValue
+                        ?.size
+                        ?.height ??
+                    0,
                 child: widget.betterPlayerController.buildVideoPlayerView(),
               ),
             ),
@@ -342,7 +341,6 @@ class _BetterPlayerVideoFitWidgetState
 
   @override
   void dispose() {
-    
     _controllerEventSubscription?.cancel();
     super.dispose();
   }

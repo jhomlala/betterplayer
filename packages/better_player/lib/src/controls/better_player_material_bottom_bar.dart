@@ -53,7 +53,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                 children: [
                   if (controlsConfiguration.enablePlayPause)
                     _BetterPlayerMaterialPlayPauseButton(
-                      
                       controlsConfiguration: controlsConfiguration,
                       onPlayPause: onPlayPause,
                       latestValue: latestValue,
@@ -62,13 +61,11 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                     const SizedBox(),
                   if (controller.isLiveStream())
                     _BetterPlayerMaterialLiveWidget(
-                      
                       controlsConfiguration: controlsConfiguration,
                     )
                   else if (controlsConfiguration.enableProgressText)
                     Expanded(
                       child: _BetterPlayerMaterialPositionWidget(
-                        
                         controlsConfiguration: controlsConfiguration,
                         latestValue: latestValue,
                       ),
@@ -78,7 +75,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                   const Spacer(),
                   if (controlsConfiguration.enableMute)
                     _BetterPlayerMaterialMuteButton(
-                      
                       controlsConfiguration: controlsConfiguration,
                       onMute: onMute,
                       controlsNotVisible: controlsNotVisible,
@@ -88,7 +84,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                     const SizedBox(),
                   if (controlsConfiguration.enableFullscreen)
                     _BetterPlayerMaterialFullscreenButton(
-                      
                       controlsConfiguration: controlsConfiguration,
                       onExpandCollapse: onExpandCollapse,
                       controlsNotVisible: controlsNotVisible,
@@ -102,7 +97,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
               const SizedBox()
             else if (controlsConfiguration.enableProgressBar)
               _BetterPlayerMaterialProgressBarWrapper(
-                
                 controlsConfiguration: controlsConfiguration,
                 onProgressBarDragStart: onProgressBarDragStart,
                 onProgressBarDragEnd: onProgressBarDragEnd,
@@ -337,8 +331,3 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
     );
   }
 }
-
-
-
-
-

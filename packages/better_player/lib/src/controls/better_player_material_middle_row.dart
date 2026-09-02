@@ -35,7 +35,6 @@ class BetterPlayerMaterialHitArea extends StatelessWidget {
           opacity: controlsNotVisible ? 0.0 : 1.0,
           duration: controlsConfiguration.controlsHideTime,
           child: BetterPlayerMaterialMiddleRow(
-            
             controlsConfiguration: controlsConfiguration,
             onSkipBack: onSkipBack,
             onSkipForward: onSkipForward,
@@ -100,7 +99,6 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
                   const SizedBox(),
                 Expanded(
                   child: _BetterPlayerMaterialReplayButton(
-                    
                     controlsConfiguration: controlsConfiguration,
                     onReplay: onReplay,
                     latestValue: latestValue,
@@ -215,8 +213,3 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
     );
   }
 }
-
-
-
-
-

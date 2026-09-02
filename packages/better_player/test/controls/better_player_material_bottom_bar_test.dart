@@ -47,7 +47,8 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerMaterialBottomBar(controlsConfiguration: const PlayerControlsConfiguration(),
+        BetterPlayerMaterialBottomBar(
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -69,7 +70,8 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerMaterialBottomBar(controlsConfiguration: const PlayerControlsConfiguration(),
+        BetterPlayerMaterialBottomBar(
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -95,7 +97,8 @@ void main() {
     var playPauseTriggered = false;
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerMaterialBottomBar(controlsConfiguration: const PlayerControlsConfiguration(),
+        BetterPlayerMaterialBottomBar(
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {
@@ -124,7 +127,8 @@ void main() {
   ) async {
     await tester.pumpWidget(
       wrapWidget(
-        BetterPlayerMaterialBottomBar(controlsConfiguration: const PlayerControlsConfiguration(),
+        BetterPlayerMaterialBottomBar(
+          controlsConfiguration: const PlayerControlsConfiguration(),
           controlsNotVisible: false,
           onPlayerHide: () {},
           onPlayPause: () {},
@@ -144,6 +148,3 @@ void main() {
     expect(find.byIcon(Icons.volume_off_outlined), findsOneWidget);
   });
 }
-
-
-

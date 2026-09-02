@@ -87,8 +87,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
   void _updateState() {
     if (mounted) {
       setState(() {
-        _latestValue =
-            widget.betterPlayerController.videoPlayerValue;
+        _latestValue = widget.betterPlayerController.videoPlayerValue;
       });
     }
   }

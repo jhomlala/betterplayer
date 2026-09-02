@@ -226,6 +226,3 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     );
   }
 }
-
-
-

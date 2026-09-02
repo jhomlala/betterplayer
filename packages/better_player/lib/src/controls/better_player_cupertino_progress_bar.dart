@@ -40,8 +40,6 @@ class _VideoProgressBarState
   late VoidCallback listener;
   bool _controllerWasPlaying = false;
 
-  
-
   BetterPlayerController? get betterPlayerController =>
       widget.betterPlayerController;
 
@@ -64,16 +62,17 @@ class _VideoProgressBarState
 
   @override
   Widget build(BuildContext context) {
-    final controller = BetterPlayerController.of(context);
     final enableProgressBarDrag = betterPlayerController!
         .betterPlayerControlsConfiguration
         .enableProgressBarDrag;
     return GestureDetector(
       onHorizontalDragStart: (details) {
-        if (!betterPlayerController!.videoPlayerValue!.initialized || !enableProgressBarDrag) {
+        if (!betterPlayerController!.videoPlayerValue!.initialized ||
+            !enableProgressBarDrag) {
           return;
         }
-        _controllerWasPlaying = betterPlayerController!.videoPlayerValue!.isPlaying;
+        _controllerWasPlaying =
+            betterPlayerController!.videoPlayerValue!.isPlaying;
         if (_controllerWasPlaying) {
           betterPlayerController!.pause();
         }
@@ -83,7 +82,8 @@ class _VideoProgressBarState
         }
       },
       onHorizontalDragUpdate: (details) {
-        if (!betterPlayerController!.videoPlayerValue!.initialized || !enableProgressBarDrag) {
+        if (!betterPlayerController!.videoPlayerValue!.initialized ||
+            !enableProgressBarDrag) {
           return;
         }
         seekToRelativePosition(details.globalPosition);
@@ -107,7 +107,8 @@ class _VideoProgressBarState
         }
       },
       onTapDown: (details) {
-        if (!betterPlayerController!.videoPlayerValue!.initialized || !enableProgressBarDrag) {
+        if (!betterPlayerController!.videoPlayerValue!.initialized ||
+            !enableProgressBarDrag) {
           return;
         }
 
@@ -185,7 +186,9 @@ class _VideoProgressBarState
 
   VideoPlayerValue _getValue() {
     if (lastSeek != null) {
-      return betterPlayerController!.videoPlayerValue!.copyWith(position: lastSeek);
+      return betterPlayerController!.videoPlayerValue!.copyWith(
+        position: lastSeek,
+      );
     } else {
       return betterPlayerController!.videoPlayerValue!;
     }
@@ -198,13 +201,16 @@ class _VideoProgressBarState
       final tapPos = box.globalToLocal(globalPosition);
       final relative = tapPos.dx / box.size.width;
       if (relative > 0) {
-        final position = betterPlayerController!.videoPlayerValue!.duration! * relative;
+        final position =
+            betterPlayerController!.videoPlayerValue!.duration! * relative;
         lastSeek = position;
         await betterPlayerController!.seekTo(position);
         onFinishedLastSeek();
         if (relative >= 1) {
           lastSeek = betterPlayerController!.videoPlayerValue!.duration;
-          await betterPlayerController!.seekTo(betterPlayerController!.videoPlayerValue!.duration!);
+          await betterPlayerController!.seekTo(
+            betterPlayerController!.videoPlayerValue!.duration!,
+          );
           onFinishedLastSeek();
         }
       }
@@ -295,8 +301,3 @@ class _ProgressBarPainter extends CustomPainter {
     );
   }
 }
-
-
-
-
-

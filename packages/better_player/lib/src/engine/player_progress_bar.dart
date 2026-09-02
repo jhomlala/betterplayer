@@ -1,6 +1,5 @@
-﻿import 'package:better_player/src/engine/player_engine_controller.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:material_ui/material_ui.dart';
-
 
 /// describes the video's status.
 ///
