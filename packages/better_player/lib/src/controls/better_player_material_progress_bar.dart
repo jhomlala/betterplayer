@@ -48,34 +48,36 @@ class _VideoProgressBarState
   @override
   void initState() {
     super.initState();
-    betterPlayerController!.addVideoListener(listener);
+    betterPlayerController?.addVideoListener(listener);
   }
 
   @override
   void deactivate() {
-    betterPlayerController!.removeVideoListener(listener);
+    betterPlayerController?.removeVideoListener(listener);
     _cancelUpdateBlockTimer();
     super.deactivate();
   }
 
   @override
   Widget build(BuildContext context) {
-    final enableProgressBarDrag = betterPlayerController!
-        .betterPlayerConfiguration
-        .controlsConfiguration
-        .enableProgressBarDrag;
+    final enableProgressBarDrag =
+        betterPlayerController
+            ?.betterPlayerControlsConfiguration
+            .enableProgressBarDrag ??
+        true;
 
     return GestureDetector(
       onHorizontalDragStart: (details) {
-        if (!betterPlayerController!.videoPlayerValue!.initialized ||
+        final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+        if (videoPlayerValue == null ||
+            !videoPlayerValue.initialized ||
             !enableProgressBarDrag) {
           return;
         }
 
-        _controllerWasPlaying =
-            betterPlayerController!.videoPlayerValue!.isPlaying;
+        _controllerWasPlaying = videoPlayerValue.isPlaying;
         if (_controllerWasPlaying) {
-          betterPlayerController!.pause();
+          betterPlayerController?.pause();
         }
 
         if (widget.onDragStart != null) {
@@ -83,7 +85,9 @@ class _VideoProgressBarState
         }
       },
       onHorizontalDragUpdate: (details) {
-        if (!betterPlayerController!.videoPlayerValue!.initialized ||
+        final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+        if (videoPlayerValue == null ||
+            !videoPlayerValue.initialized ||
             !enableProgressBarDrag) {
           return;
         }
@@ -110,7 +114,9 @@ class _VideoProgressBarState
         }
       },
       onTapDown: (details) {
-        if (!betterPlayerController!.videoPlayerValue!.initialized ||
+        final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+        if (videoPlayerValue == null ||
+            !videoPlayerValue.initialized ||
             !enableProgressBarDrag) {
           return;
         }
@@ -121,7 +127,9 @@ class _VideoProgressBarState
         }
       },
       child: Semantics(
-        label: betterPlayerController!.translations.progressBarLabel,
+        label:
+            betterPlayerController?.translations.progressBarLabel ??
+            'Video progress',
         identifier: 'better_player_material_progress_bar',
         value: _getSemanticsValue(),
         increasedValue: _getSemanticsValue(relative: 0.1),
@@ -166,9 +174,10 @@ class _VideoProgressBarState
   }
 
   void _seekRelative(double relative) {
-    final duration = betterPlayerController!.videoPlayerValue!.duration;
-    if (duration != null) {
-      final position = betterPlayerController!.videoPlayerValue!.position;
+    final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+    final duration = videoPlayerValue?.duration;
+    if (videoPlayerValue != null && duration != null) {
+      final position = videoPlayerValue.position;
       final newPosition = position + duration * relative;
       betterPlayerController?.seekTo(newPosition);
     }
@@ -187,36 +196,38 @@ class _VideoProgressBarState
   }
 
   VideoPlayerValue _getValue() {
-    if (betterPlayerController == null ||
-        betterPlayerController!.videoPlayerValue == null) {
+    final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+    if (videoPlayerValue == null) {
       return VideoPlayerValue.uninitialized();
     }
     if (lastSeek != null) {
-      return betterPlayerController!.videoPlayerValue!.copyWith(
+      return videoPlayerValue.copyWith(
         position: lastSeek,
       );
     } else {
-      return betterPlayerController!.videoPlayerValue!;
+      return videoPlayerValue;
     }
   }
 
   Future<void> seekToRelativePosition(Offset globalPosition) async {
+    final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+    final duration = videoPlayerValue?.duration;
+    if (videoPlayerValue == null || duration == null) {
+      return;
+    }
     final renderObject = context.findRenderObject();
     if (renderObject != null) {
       final box = renderObject as RenderBox;
       final tapPos = box.globalToLocal(globalPosition);
       final relative = tapPos.dx / box.size.width;
       if (relative > 0) {
-        final position =
-            betterPlayerController!.videoPlayerValue!.duration! * relative;
+        final position = duration * relative;
         lastSeek = position;
-        await betterPlayerController!.seekTo(position);
+        await betterPlayerController?.seekTo(position);
         onFinishedLastSeek();
         if (relative >= 1) {
-          lastSeek = betterPlayerController!.videoPlayerValue!.duration;
-          await betterPlayerController!.seekTo(
-            betterPlayerController!.videoPlayerValue!.duration!,
-          );
+          lastSeek = duration;
+          await betterPlayerController?.seekTo(duration);
           onFinishedLastSeek();
         }
       }

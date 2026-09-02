@@ -363,6 +363,74 @@ void main() {
       expect(find.byType(BetterPlayerPlaylist), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'Material progress bar handles null/uninitialized videoPlayerValue without throwing',
+    (tester) async {
+      final controller = BetterPlayerController(
+        const PlayerConfiguration(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BetterPlayerMaterialVideoProgressBar(
+              controller,
+            ),
+          ),
+        ),
+      );
+
+      final progressBarFinder = find.byType(
+        BetterPlayerMaterialVideoProgressBar,
+      );
+      expect(progressBarFinder, findsOneWidget);
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(progressBarFinder),
+      );
+      await gesture.moveBy(const Offset(50, 0));
+      await gesture.up();
+      await tester.pump();
+
+      await tester.tap(progressBarFinder);
+      await tester.pump();
+    },
+  );
+
+  testWidgets(
+    'Cupertino progress bar handles null/uninitialized videoPlayerValue without throwing',
+    (tester) async {
+      final controller = BetterPlayerController(
+        const PlayerConfiguration(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BetterPlayerCupertinoVideoProgressBar(
+              controller,
+            ),
+          ),
+        ),
+      );
+
+      final progressBarFinder = find.byType(
+        BetterPlayerCupertinoVideoProgressBar,
+      );
+      expect(progressBarFinder, findsOneWidget);
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(progressBarFinder),
+      );
+      await gesture.moveBy(const Offset(50, 0));
+      await gesture.up();
+      await tester.pump();
+
+      await tester.tap(progressBarFinder);
+      await tester.pump();
+    },
+  );
 }
 
 ///Wrap widget with material app to handle all features like navigation and
