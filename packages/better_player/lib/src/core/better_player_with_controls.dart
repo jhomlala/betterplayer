@@ -261,11 +261,14 @@ class _BetterPlayerVideoFitWidgetState
     _initialized =
         widget.betterPlayerController.videoPlayerValue?.initialized ?? false;
     _setupControllerEventSubscription();
+    widget.betterPlayerController.addVideoListener(_onVideoPlayerChanged);
   }
 
   @override
   void didUpdateWidget(_BetterPlayerVideoFitWidget oldWidget) {
     if (oldWidget.betterPlayerController != widget.betterPlayerController) {
+      oldWidget.betterPlayerController.removeVideoListener(_onVideoPlayerChanged);
+      widget.betterPlayerController.addVideoListener(_onVideoPlayerChanged);
       _setupControllerEventSubscription();
     }
 
@@ -305,6 +308,21 @@ class _BetterPlayerVideoFitWidgetState
     }
   }
 
+  void _onVideoPlayerChanged() {
+    if (!mounted) {
+      return;
+    }
+    final isInitialized =
+        widget.betterPlayerController.videoPlayerValue?.initialized ?? false;
+    if (isInitialized != _initialized) {
+      setState(() {
+        _initialized = isInitialized;
+      });
+    } else {
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_initialized && _started) {
@@ -341,7 +359,9 @@ class _BetterPlayerVideoFitWidgetState
 
   @override
   void dispose() {
+    widget.betterPlayerController.removeVideoListener(_onVideoPlayerChanged);
     _controllerEventSubscription?.cancel();
     super.dispose();
   }
 }
+
