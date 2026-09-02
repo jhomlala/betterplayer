@@ -222,7 +222,7 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       padding: widget.padding,
       child: progressIndicator,
     );
-    if (widget.allowScrubbing!) {
+    if (widget.allowScrubbing ?? false) {
       return _VideoScrubber(
         controller: controller,
         child: paddedProgressIndicator,
