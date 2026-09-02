@@ -1,4 +1,4 @@
-class VariantInfo {
+﻿class VariantInfo {
   VariantInfo({
     this.bitrate,
     this.videoGroupId,

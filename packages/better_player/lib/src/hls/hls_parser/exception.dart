@@ -1,4 +1,4 @@
-class ParserException implements Exception {
+﻿class ParserException implements Exception {
   ParserException(this.message) : super();
 
   final String message;

@@ -1,4 +1,4 @@
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
@@ -53,7 +53,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
       _configuration = setupDefaultConfiguration();
     }
 
-    widget.betterPlayerController.videoPlayerController!.addListener(
+    widget.betterPlayerController.addVideoListener(
       _updateState,
     );
 
@@ -77,7 +77,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
 
   @override
   void dispose() {
-    widget.betterPlayerController.videoPlayerController!.removeListener(
+    widget.betterPlayerController.removeVideoListener(
       _updateState,
     );
     _visibilityStreamSubscription.cancel();
@@ -89,7 +89,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
     if (mounted) {
       setState(() {
         _latestValue =
-            widget.betterPlayerController.videoPlayerController?.value;
+            widget.betterPlayerController.videoPlayerValue;
       });
     }
   }

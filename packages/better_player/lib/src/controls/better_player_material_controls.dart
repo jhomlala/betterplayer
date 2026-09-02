@@ -1,4 +1,4 @@
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
@@ -44,7 +44,7 @@ class _BetterPlayerMaterialControlsState
   Timer? _showAfterExpandCollapseTimer;
   bool _displayTapped = false;
   bool _wasLoading = false;
-  PlayerEngineController? _controller;
+  
   BetterPlayerController? _betterPlayerController;
   StreamSubscription? _controlsVisibilityStreamSubscription;
 
@@ -191,8 +191,8 @@ class _BetterPlayerMaterialControlsState
   void didChangeDependencies() {
     final oldController = _betterPlayerController;
     _betterPlayerController = BetterPlayerController.of(context);
-    _controller = _betterPlayerController!.videoPlayerController;
-    _latestValue = _controller!.value;
+    
+    _latestValue = _betterPlayerController!.videoPlayerValue!;
 
     if (oldController != _betterPlayerController) {
       _dispose();
@@ -210,7 +210,7 @@ class _BetterPlayerMaterialControlsState
     if (_latestValue!.volume == 0) {
       _betterPlayerController!.setVolume(_latestVolume ?? 0.5);
     } else {
-      _latestVolume = _controller!.value.volume;
+      _latestVolume = _betterPlayerController!.videoPlayerValue!.volume;
       _betterPlayerController!.setVolume(0);
     }
   }
@@ -244,11 +244,11 @@ class _BetterPlayerMaterialControlsState
 
   Future<void> _initialize() async {
     controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
-    _controller!.addListener(_updateState);
+    _betterPlayerController!.addVideoListener(_updateState);
 
     _updateState();
 
-    if ((_controller!.value.isPlaying) ||
+    if ((_betterPlayerController!.videoPlayerValue!.isPlaying) ||
         _betterPlayerController!.betterPlayerConfiguration.autoPlay) {
       _startHideTimer();
     }
@@ -287,14 +287,14 @@ class _BetterPlayerMaterialControlsState
       isFinished = _latestValue!.position >= _latestValue!.duration!;
     }
 
-    if (_controller!.value.isPlaying) {
+    if (_betterPlayerController!.videoPlayerValue!.isPlaying) {
       changePlayerControlsNotVisible(false);
       _hideTimer?.cancel();
       _betterPlayerController!.pause();
     } else {
       cancelAndRestartTimer();
 
-      if (!_controller!.value.initialized) {
+      if (!_betterPlayerController!.videoPlayerValue!.initialized) {
       } else {
         if (isFinished) {
           _betterPlayerController!.seekTo(const Duration());
@@ -317,11 +317,11 @@ class _BetterPlayerMaterialControlsState
   void _updateState() {
     if (mounted) {
       if (!controlsNotVisible ||
-          isVideoFinished(_controller!.value) ||
+          isVideoFinished(_betterPlayerController!.videoPlayerValue!) ||
           _wasLoading ||
-          isLoading(_controller!.value)) {
+          isLoading(_betterPlayerController!.videoPlayerValue!)) {
         setState(() {
-          _latestValue = _controller!.value;
+          _latestValue = _betterPlayerController!.videoPlayerValue!;
           if (isVideoFinished(_latestValue) &&
               _betterPlayerController?.isLiveStream() == false) {
             changePlayerControlsNotVisible(false);

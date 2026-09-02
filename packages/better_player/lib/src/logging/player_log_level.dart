@@ -1,4 +1,4 @@
-enum PlayerLogLevel {
+﻿enum PlayerLogLevel {
   debug,
   info,
   warning,

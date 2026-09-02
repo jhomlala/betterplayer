@@ -1,4 +1,4 @@
-import 'src/engine/player_engine_controller.dart';
+﻿import 'src/engine/player_engine_controller.dart';
 export 'package:better_player_platform_interface/better_player_platform_interface.dart';
 
 export 'src/asms/better_player_asms_utils.dart';

@@ -1,4 +1,4 @@
-import 'package:better_player/src/logging/player_log_level.dart';
+﻿import 'package:better_player/src/logging/player_log_level.dart';
 
 /// Immutable snapshot of a single log event.
 class PlayerLogRecord {

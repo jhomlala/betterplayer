@@ -1,11 +1,10 @@
-import 'package:better_player/src/configuration/player_controls_configuration.dart';
+﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialErrorWidget extends StatelessWidget {
   const BetterPlayerMaterialErrorWidget({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     super.key,
   });
   final BetterPlayerController controller;
@@ -17,7 +16,7 @@ class BetterPlayerMaterialErrorWidget extends StatelessWidget {
     if (errorBuilder != null) {
       return errorBuilder(
         context,
-        controller.videoPlayerController?.value.errorDescription,
+        controller.videoPlayerValue.errorDescription,
       );
     } else {
       final textStyle = TextStyle(color: controlsConfiguration.textColor);

@@ -1,4 +1,4 @@
-import 'package:better_player/src/hls/hls_parser/util.dart';
+﻿import 'package:better_player/src/hls/hls_parser/util.dart';
 
 class MimeTypes {
   static const String baseTypeVideo = 'video';

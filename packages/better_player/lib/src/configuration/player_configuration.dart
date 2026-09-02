@@ -1,4 +1,4 @@
-import 'package:better_player/src/configuration/player_controls_configuration.dart';
+﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/configuration/player_event.dart';
 import 'package:better_player/src/configuration/player_translations.dart';
 import 'package:better_player/src/core/better_player.dart';

@@ -1,4 +1,4 @@
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
@@ -11,8 +11,7 @@ import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialBottomBar extends StatelessWidget {
   const BetterPlayerMaterialBottomBar({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.onPlayerHide,
     required this.onPlayPause,
@@ -56,7 +55,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                 children: [
                   if (controlsConfiguration.enablePlayPause)
                     _BetterPlayerMaterialPlayPauseButton(
-                      controller: controller,
+                      
                       controlsConfiguration: controlsConfiguration,
                       onPlayPause: onPlayPause,
                       latestValue: latestValue,
@@ -65,13 +64,13 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                     const SizedBox(),
                   if (controller.isLiveStream())
                     _BetterPlayerMaterialLiveWidget(
-                      controller: controller,
+                      
                       controlsConfiguration: controlsConfiguration,
                     )
                   else if (controlsConfiguration.enableProgressText)
                     Expanded(
                       child: _BetterPlayerMaterialPositionWidget(
-                        controller: controller,
+                        
                         controlsConfiguration: controlsConfiguration,
                         latestValue: latestValue,
                       ),
@@ -81,7 +80,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                   const Spacer(),
                   if (controlsConfiguration.enableMute)
                     _BetterPlayerMaterialMuteButton(
-                      controller: controller,
+                      
                       controlsConfiguration: controlsConfiguration,
                       onMute: onMute,
                       controlsNotVisible: controlsNotVisible,
@@ -91,7 +90,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                     const SizedBox(),
                   if (controlsConfiguration.enableFullscreen)
                     _BetterPlayerMaterialFullscreenButton(
-                      controller: controller,
+                      
                       controlsConfiguration: controlsConfiguration,
                       onExpandCollapse: onExpandCollapse,
                       controlsNotVisible: controlsNotVisible,
@@ -105,7 +104,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
               const SizedBox()
             else if (controlsConfiguration.enableProgressBar)
               _BetterPlayerMaterialProgressBarWrapper(
-                controller: controller,
+                
                 controlsConfiguration: controlsConfiguration,
                 onProgressBarDragStart: onProgressBarDragStart,
                 onProgressBarDragEnd: onProgressBarDragEnd,
@@ -122,8 +121,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
 
 class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
   const _BetterPlayerMaterialPlayPauseButton({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     required this.onPlayPause,
     required this.latestValue,
   });
@@ -159,8 +157,7 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
 
 class _BetterPlayerMaterialMuteButton extends StatelessWidget {
   const _BetterPlayerMaterialMuteButton({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     required this.onMute,
     required this.controlsNotVisible,
     required this.latestValue,
@@ -201,8 +198,7 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
 
 class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
   const _BetterPlayerMaterialFullscreenButton({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     required this.onExpandCollapse,
     required this.controlsNotVisible,
   });
@@ -245,8 +241,7 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
 
 class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
   const _BetterPlayerMaterialLiveWidget({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
   });
   final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
@@ -265,8 +260,7 @@ class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
 
 class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
   const _BetterPlayerMaterialPositionWidget({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     required this.latestValue,
   });
   final BetterPlayerController controller;
@@ -312,8 +306,7 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
 
 class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
   const _BetterPlayerMaterialProgressBarWrapper({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     required this.onProgressBarDragStart,
     required this.onProgressBarDragEnd,
     required this.onProgressBarTapDown,
@@ -332,7 +325,6 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
         alignment: Alignment.bottomCenter,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: BetterPlayerMaterialVideoProgressBar(
-          controller.videoPlayerController,
           controller,
           onDragStart: onProgressBarDragStart,
           onDragEnd: onProgressBarDragEnd,

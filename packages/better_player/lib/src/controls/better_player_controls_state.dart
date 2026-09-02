@@ -1,4 +1,4 @@
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:math';
 
 import 'package:better_player/better_player.dart';
@@ -112,7 +112,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     _showModalBottomSheet(
       [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0].map((speed) {
         final isSelected =
-            betterPlayerController!.videoPlayerController!.value.speed == speed;
+            betterPlayerController!.videoPlayerValue!.speed == speed;
         return BetterPlayerSelectionListItemWidget(
           label: '$speed x',
           isSelected: isSelected,

@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 
 import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_record.dart';
@@ -96,7 +96,7 @@ class PlayerLogger {
     stackTrace: stackTrace,
   );
 
-  /// Entry point for native → Dart log forwarding.
+  /// Entry point for native â†’ Dart log forwarding.
   static void onNativeLog({
     required int levelIndex,
     required String message,

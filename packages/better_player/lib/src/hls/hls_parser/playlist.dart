@@ -1,4 +1,4 @@
-abstract class HlsPlaylist {
+﻿abstract class HlsPlaylist {
   HlsPlaylist({
     required this.baseUri,
     required this.tags,

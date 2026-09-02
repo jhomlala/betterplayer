@@ -1,4 +1,4 @@
-///Class which represents one segment of subtitles. It consists of start time
+﻿///Class which represents one segment of subtitles. It consists of start time
 ///and end time which are relative from start of the video and real url of the
 ///video (with domain and all paths).
 class PlayerAsmsSubtitleSegment {

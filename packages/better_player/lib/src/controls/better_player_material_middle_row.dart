@@ -1,4 +1,4 @@
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
@@ -7,8 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialHitArea extends StatelessWidget {
   const BetterPlayerMaterialHitArea({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.onSkipBack,
     required this.onSkipForward,
@@ -37,7 +36,7 @@ class BetterPlayerMaterialHitArea extends StatelessWidget {
           opacity: controlsNotVisible ? 0.0 : 1.0,
           duration: controlsConfiguration.controlsHideTime,
           child: BetterPlayerMaterialMiddleRow(
-            controller: controller,
+            
             controlsConfiguration: controlsConfiguration,
             onSkipBack: onSkipBack,
             onSkipForward: onSkipForward,
@@ -53,8 +52,7 @@ class BetterPlayerMaterialHitArea extends StatelessWidget {
 
 class BetterPlayerMaterialMiddleRow extends StatelessWidget {
   const BetterPlayerMaterialMiddleRow({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     required this.onSkipBack,
     required this.onSkipForward,
     required this.onReplay,
@@ -103,7 +101,7 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
                   const SizedBox(),
                 Expanded(
                   child: _BetterPlayerMaterialReplayButton(
-                    controller: controller,
+                    
                     controlsConfiguration: controlsConfiguration,
                     onReplay: onReplay,
                     latestValue: latestValue,
@@ -176,8 +174,7 @@ class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
 
 class _BetterPlayerMaterialReplayButton extends StatelessWidget {
   const _BetterPlayerMaterialReplayButton({
-    required this.controller,
-    required this.controlsConfiguration,
+    required required this.controlsConfiguration,
     required this.onReplay,
     required this.latestValue,
     required this.isVideoFinished,
@@ -190,7 +187,7 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isPlaying = controller.videoPlayerController?.value.isPlaying == true;
+    final isPlaying = controller.videoPlayerValue.isPlaying == true;
 
     var semanticsLabel = isPlaying
         ? controller.translations.controlsPauseLabel

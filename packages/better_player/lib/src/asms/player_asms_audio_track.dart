@@ -1,4 +1,4 @@
-///Representation of HLS / DASH audio track
+﻿///Representation of HLS / DASH audio track
 class PlayerAsmsAudioTrack {
   PlayerAsmsAudioTrack({
     this.id,

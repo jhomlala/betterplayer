@@ -1,4 +1,4 @@
-import 'package:better_player/src/hls/hls_parser/drm_init_data.dart';
+﻿import 'package:better_player/src/hls/hls_parser/drm_init_data.dart';
 import 'package:better_player/src/hls/hls_parser/metadata.dart';
 import 'package:better_player/src/hls/hls_parser/util.dart';
 
@@ -91,7 +91,7 @@ class Format {
   ///DRM initialization data if the stream is protected, or null otherwise.
   final DrmInitData? drmInitData;
 
-  //todo ここ追加で検討
+  //todo ă“ă“čż˝ĺŠ ă§ć¤śč¨Ž
   /// For samples that contain subsamples, this is an offset that should be added to subsample timestamps.
   /// A value of {@link #OFFSET_SAMPLE_RELATIVE} indicates that subsample timestamps are relative to the timestamps of their parent samples.
   final int? subsampleOffsetUs;

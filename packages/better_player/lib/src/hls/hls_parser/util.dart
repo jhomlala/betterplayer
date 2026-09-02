@@ -1,4 +1,4 @@
-import 'package:better_player/src/hls/hls_parser/exception.dart';
+﻿import 'package:better_player/src/hls/hls_parser/exception.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 
 class LibUtil {
@@ -64,7 +64,7 @@ class LibUtil {
       if ('-' == match.group(11)) timezoneShift *= -1;
     }
 
-    //todo UTCではなくGMT?
+    //todo UTCă§ăŻăŞăŹGMT?
     final dateTime = DateTime.utc(
       int.parse(match.group(1)!),
       int.parse(match.group(2)!),
@@ -74,7 +74,7 @@ class LibUtil {
       int.parse(match.group(6)!),
     );
     if (match.group(8)?.isNotEmpty == true) {
-      //todo ここ実装再検討
+      //todo ă“ă“ĺ®źčŁ…ĺ†Ťć¤śč¨Ž
     }
 
     var time = dateTime.millisecondsSinceEpoch;

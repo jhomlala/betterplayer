@@ -1,4 +1,4 @@
-import 'package:better_player/src/asms/player_asms_subtitle_segment.dart';
+﻿import 'package:better_player/src/asms/player_asms_subtitle_segment.dart';
 
 import 'package:better_player/src/subtitles/better_player_subtitles_source_type.dart';
 

@@ -1,4 +1,4 @@
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+﻿import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/engine/player_engine_controller.dart';
@@ -7,7 +7,6 @@ import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
   BetterPlayerMaterialVideoProgressBar(
-    this.controller,
     this.betterPlayerController, {
     PlayerProgressColors? colors,
     this.onDragEnd,
@@ -17,7 +16,7 @@ class BetterPlayerMaterialVideoProgressBar extends StatefulWidget {
     super.key,
   }) : colors = colors ?? PlayerProgressColors();
 
-  final PlayerEngineController? controller;
+  final 
   final BetterPlayerController? betterPlayerController;
   final PlayerProgressColors colors;
   final Function()? onDragStart;
@@ -42,7 +41,7 @@ class _VideoProgressBarState
   late VoidCallback listener;
   bool _controllerWasPlaying = false;
 
-  PlayerEngineController? get controller => widget.controller;
+  
 
   BetterPlayerController? get betterPlayerController =>
       widget.betterPlayerController;
@@ -54,12 +53,12 @@ class _VideoProgressBarState
   @override
   void initState() {
     super.initState();
-    controller!.addListener(listener);
+    betterPlayerController!.addVideoListener(listener);
   }
 
   @override
   void deactivate() {
-    controller!.removeListener(listener);
+    betterPlayerController!.removeVideoListener(listener);
     _cancelUpdateBlockTimer();
     super.deactivate();
   }
@@ -73,11 +72,11 @@ class _VideoProgressBarState
 
     return GestureDetector(
       onHorizontalDragStart: (details) {
-        if (!controller!.value.initialized || !enableProgressBarDrag) {
+        if (!betterPlayerController!.videoPlayerValue!.initialized || !enableProgressBarDrag) {
           return;
         }
 
-        _controllerWasPlaying = controller!.value.isPlaying;
+        _controllerWasPlaying = betterPlayerController!.videoPlayerValue!.isPlaying;
         if (_controllerWasPlaying) {
           controller!.pause();
         }
@@ -87,7 +86,7 @@ class _VideoProgressBarState
         }
       },
       onHorizontalDragUpdate: (details) {
-        if (!controller!.value.initialized || !enableProgressBarDrag) {
+        if (!betterPlayerController!.videoPlayerValue!.initialized || !enableProgressBarDrag) {
           return;
         }
 
@@ -113,7 +112,7 @@ class _VideoProgressBarState
         }
       },
       onTapDown: (details) {
-        if (!controller!.value.initialized || !enableProgressBarDrag) {
+        if (!betterPlayerController!.videoPlayerValue!.initialized || !enableProgressBarDrag) {
           return;
         }
         seekToRelativePosition(details.globalPosition);
@@ -168,9 +167,9 @@ class _VideoProgressBarState
   }
 
   void _seekRelative(double relative) {
-    final duration = controller?.value.duration;
+    final duration = betterPlayerController!.videoPlayerValue.duration;
     if (duration != null) {
-      final position = controller?.value.position;
+      final position = betterPlayerController!.videoPlayerValue.position;
       final newPosition = position! + duration * relative;
       betterPlayerController?.seekTo(newPosition);
     }
@@ -193,9 +192,9 @@ class _VideoProgressBarState
       return VideoPlayerValue.uninitialized();
     }
     if (lastSeek != null) {
-      return controller!.value.copyWith(position: lastSeek);
+      return betterPlayerController!.videoPlayerValue!.copyWith(position: lastSeek);
     } else {
-      return controller!.value;
+      return betterPlayerController!.videoPlayerValue!;
     }
   }
 
@@ -206,13 +205,13 @@ class _VideoProgressBarState
       final tapPos = box.globalToLocal(globalPosition);
       final relative = tapPos.dx / box.size.width;
       if (relative > 0) {
-        final position = controller!.value.duration! * relative;
+        final position = betterPlayerController!.videoPlayerValue!.duration! * relative;
         lastSeek = position;
         await betterPlayerController!.seekTo(position);
         onFinishedLastSeek();
         if (relative >= 1) {
-          lastSeek = controller!.value.duration;
-          await betterPlayerController!.seekTo(controller!.value.duration!);
+          lastSeek = betterPlayerController!.videoPlayerValue!.duration;
+          await betterPlayerController!.seekTo(betterPlayerController!.videoPlayerValue!.duration!);
           onFinishedLastSeek();
         }
       }

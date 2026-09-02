@@ -8,6 +8,7 @@ import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/engine/player_engine_controller.dart';
+import 'package:better_player/src/engine/player_engine_view.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
@@ -49,6 +50,17 @@ class BetterPlayerController {
 
   ///List of files to delete once player disposes.
   final List<File> _tempFiles = [];
+
+  ///Stream controller which emits stream when control visibility changes.
+  final StreamController<bool> _controlsVisibilityStreamController =
+      StreamController.broadcast();
+
+  ///Instance of video player controller which is adapter used to communicate
+  ///between flutter high level code and lower level native code.
+  PlayerEngineController? _engine;
+
+  ///Controls configuration
+  late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
 
   PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _betterPlayerControlsConfiguration;
@@ -157,6 +169,18 @@ class BetterPlayerController {
   ///Was player in fullscreen before Picture in Picture opened.
   bool _wasInFullScreenBeforePiP = false;
 
+  ///Was controls enabled before Picture in Picture opened.
+  bool _wasControlsEnabledBeforePiP = false;
+
+  ///GlobalKey of the BetterPlayer widget
+  GlobalKey? _betterPlayerGlobalKey;
+
+  ///Getter of the GlobalKey
+  GlobalKey? get betterPlayerGlobalKey => _betterPlayerGlobalKey;
+
+  ///StreamSubscription for VideoEvent listener
+  StreamSubscription<VideoEvent>? _videoEventStreamSubscription;
+
   bool _controlsAlwaysVisible = false;
 
   ///Are controls always visible
@@ -195,6 +219,29 @@ class BetterPlayerController {
 
   /// Absolute position in a live stream (EXT-X-PROGRAM-DATE-TIME).
   Future<DateTime?> get absolutePosition async => _engine?.absolutePosition;
+
+  final List<VoidCallback> _videoListeners = [];
+
+  /// Add listener for video player state changes.
+  void addVideoListener(VoidCallback listener) {
+    _videoListeners.add(listener);
+  }
+
+  /// Remove listener for video player state changes.
+  void removeVideoListener(VoidCallback listener) {
+    _videoListeners.remove(listener);
+  }
+
+  /// Get current video player value (state).
+  VideoPlayerValue? get videoPlayerValue => _engine?.value;
+
+  /// Build the internal VideoPlayer view.
+  Widget buildVideoPlayerView() {
+    if (_engine == null) {
+      return const SizedBox();
+    }
+    return VideoPlayer(_engine!);
+  }
 
   /// Sets track parameters directly on the engine (width, height, bitrate).
   /// Prefer [setTrack] with a [PlayerAsmsTrack] for HLS/DASH streams.
@@ -821,6 +868,10 @@ class BetterPlayerController {
 
   ///Listener used to handle video player changes.
   Future<void> _onVideoPlayerChanged() async {
+    for (final listener in _videoListeners) {
+      listener();
+    }
+
     final currentVideoPlayerValue =
         _engine?.value ??
         VideoPlayerValue(duration: const Duration());
@@ -1112,8 +1163,8 @@ class BetterPlayerController {
   }
 
   ///Get aspect ratio used in current video. Returns the first non-null value
-  ///from the following priority order: [_overriddenAspectRatio] →
-  ///[PlayerConfiguration.aspectRatio] → the video player's actual aspect
+  ///from the following priority order: [_overriddenAspectRatio] â†’
+  ///[PlayerConfiguration.aspectRatio] â†’ the video player's actual aspect
   ///ratio ([_engine.value.aspectRatio]).
   ///If the video player is not initialized or the video size is not yet
   ///available, it returns null unless an override or configuration is set.

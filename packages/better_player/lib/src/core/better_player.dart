@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
@@ -220,7 +220,7 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     if (_betterPlayerConfiguration.autoDetectFullscreenDeviceOrientation) {
       final aspectRatio =
-          widget.controller.videoPlayerController?.value.aspectRatio ?? 1.0;
+          widget.controller.videoPlayerValue.aspectRatio ?? 1.0;
       List<DeviceOrientation> deviceOrientations;
       if (aspectRatio < 1.0) {
         deviceOrientations = [
