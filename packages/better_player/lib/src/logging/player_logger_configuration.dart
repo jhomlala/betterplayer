@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/logging/player_log_level.dart';
+import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_output.dart';
 import 'package:flutter/foundation.dart';
 

@@ -1,4 +1,4 @@
-﻿// Flutter imports:
+// Flutter imports:
 import 'package:flutter/rendering.dart';
 
 ///Representation of colors used in progress bar.

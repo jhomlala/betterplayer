@@ -1,6 +1,7 @@
 ## Unreleased
 - Fixed: Broken links in README.md files (migration guides and example application).
 - Fixed: Guarded against null or uninitialized `videoPlayerValue` in progress bars during drag and tap gestures.
+- Fixed: Removed unexpected UTF-8 BOM characters across source files.
 
 ## 1.3.0
 - Added: Extensible logging system with `PlayerLogger`, featuring native-to-Dart log streaming, automatic caller/tag derivation, and comprehensive internal logs.

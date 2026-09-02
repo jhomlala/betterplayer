@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/hls/hls_parser/scheme_data.dart';
+import 'package:better_player/src/hls/hls_parser/scheme_data.dart';
 import 'package:collection/collection.dart';
 
 class DrmInitData {

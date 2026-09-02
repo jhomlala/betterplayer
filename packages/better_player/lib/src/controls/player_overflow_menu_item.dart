@@ -1,4 +1,4 @@
-﻿// Flutter imports:
+// Flutter imports:
 import 'package:material_ui/material_ui.dart';
 
 ///Menu item data used in overflow menu (3 dots).

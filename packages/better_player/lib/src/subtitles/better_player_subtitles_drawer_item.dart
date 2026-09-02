@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/subtitles/player_subtitles_configuration.dart';
+import 'package:better_player/src/subtitles/player_subtitles_configuration.dart';
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:material_ui/material_ui.dart';
 

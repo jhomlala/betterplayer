@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/hls/hls_parser/exception.dart';
+import 'package:better_player/src/hls/hls_parser/exception.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 
 class LibUtil {

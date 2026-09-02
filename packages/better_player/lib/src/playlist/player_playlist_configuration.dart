@@ -1,4 +1,4 @@
-﻿///Additional configuration used in Better Player Playlist player.
+///Additional configuration used in Better Player Playlist player.
 class PlayerPlaylistConfiguration {
   const PlayerPlaylistConfiguration({
     this.nextVideoDelay = const Duration(milliseconds: 3000),

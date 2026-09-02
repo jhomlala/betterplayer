@@ -1,4 +1,4 @@
-﻿/// Represents HLS / DASH track which can be played within player
+/// Represents HLS / DASH track which can be played within player
 class PlayerAsmsTrack {
   PlayerAsmsTrack(
     this.id,
