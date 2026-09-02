@@ -1,9 +1,9 @@
 import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// describes the video's status.
+/// Describes the video's status.
 ///
-/// The widget uses default colors that are customizeable through this class.
+/// The widget uses default colors that are customizable through this class.
 class VideoProgressColors {
   /// Any property can be set to any color. They each have defaults.
   ///
