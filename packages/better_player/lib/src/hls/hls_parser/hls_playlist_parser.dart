@@ -166,7 +166,7 @@ class HlsPlaylistParser {
       }
       codeUnits = codeUnits
           .getRange(5, codeUnits.length - 1)
-          .toList(); //ä¸Ťč¦ăŞć–‡ĺ­—ăŚĺ«ăľă‚Śă¦ă„ă‚‹
+          .toList(); // Contains unwanted characters
     }
 
     if (!LibUtil.startsWith(codeUnits, playlistHeader.runes.toList())) {
@@ -250,7 +250,7 @@ class HlsPlaylistParser {
       } else if (line.startsWith(tagStreamInf)) {
         noClosedCaptions |= line.contains(
           attrClosedCaptionsNone,
-        ); //todo ĺ†Ťć¤śč¨Ž
+        ); // TODO: Revisit
         final bitrate = int.parse(
           _parseStringAttr(source: line, pattern: regexpBandwidth)!,
         );
@@ -625,13 +625,13 @@ class HlsPlaylistParser {
       )!;
       final data = _getBase64FromUri(uriString);
       return SchemeData(
-        //          uuid: '', //todo äżťç•™
+        //          uuid: '', // TODO: Pending
         mimeType: MimeTypes.videoMp4,
         data: data,
       );
     } else if (keyFormatWidevinePsshJson == keyFormat) {
       return SchemeData(
-        //          uuid: '', //todo äżťç•™
+        //          uuid: '', // TODO: Pending
         mimeType: MimeTypes.hls,
         data: const Utf8Encoder().convert(line!),
       );
@@ -642,7 +642,7 @@ class HlsPlaylistParser {
         variableDefinitions: variableDefinitions,
       )!;
       final data = _getBase64FromUri(uriString);
-      //      Uint8List psshData; //todo äżťç•™
+      //      Uint8List psshData; // TODO: Pending
       return SchemeData(mimeType: MimeTypes.videoMp4, data: data);
     }
 
