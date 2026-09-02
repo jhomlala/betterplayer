@@ -21,7 +21,7 @@ class VideoPlayer extends StatefulWidget {
 class _VideoPlayerState extends State<VideoPlayer> {
   _VideoPlayerState() {
     _listener = () {
-      final newTextureId = widget.controller!.textureId;
+      final newTextureId = widget.controller?.textureId;
       if (newTextureId != _textureId) {
         setState(() {
           _textureId = newTextureId;
@@ -36,24 +36,24 @@ class _VideoPlayerState extends State<VideoPlayer> {
   @override
   void initState() {
     super.initState();
-    _textureId = widget.controller!.textureId;
+    _textureId = widget.controller?.textureId;
     // Need to listen for initialization events since the actual texture ID
     // becomes available after asynchronous initialization finishes.
-    widget.controller!.addListener(_listener);
+    widget.controller?.addListener(_listener);
   }
 
   @override
   void didUpdateWidget(VideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.controller!.removeListener(_listener);
-    _textureId = widget.controller!.textureId;
-    widget.controller!.addListener(_listener);
+    oldWidget.controller?.removeListener(_listener);
+    _textureId = widget.controller?.textureId;
+    widget.controller?.addListener(_listener);
   }
 
   @override
   void deactivate() {
     super.deactivate();
-    widget.controller!.removeListener(_listener);
+    widget.controller?.removeListener(_listener);
   }
 
   @override
@@ -63,5 +63,3 @@ class _VideoPlayerState extends State<VideoPlayer> {
         : _betterPlayerPlatform.buildView(_textureId);
   }
 }
-
-/// Used to configure the [VideoProgressIndicator] widget's colors for how it
