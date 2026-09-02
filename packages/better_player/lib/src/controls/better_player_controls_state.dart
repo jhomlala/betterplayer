@@ -26,11 +26,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   void cancelAndRestartTimer();
 
   bool isVideoFinished(VideoPlayerValue? videoPlayerValue) {
-    return videoPlayerValue?.position != null &&
-        videoPlayerValue?.duration != null &&
-        videoPlayerValue!.position.inMilliseconds != 0 &&
-        videoPlayerValue.duration!.inMilliseconds != 0 &&
-        videoPlayerValue.position >= videoPlayerValue.duration!;
+    if (videoPlayerValue == null) return false;
+    final position = videoPlayerValue.position;
+    final duration = videoPlayerValue.duration;
+    if (duration == null) return false;
+    return position.inMilliseconds != 0 &&
+        duration.inMilliseconds != 0 &&
+        position >= duration;
   }
 
   void skipBack() {
@@ -111,7 +113,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     _showModalBottomSheet(
       [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0].map((speed) {
         final isSelected =
-            betterPlayerController!.videoPlayerValue!.speed == speed;
+            betterPlayerController?.videoPlayerValue?.speed == speed;
         return BetterPlayerSelectionListItemWidget(
           label: '$speed x',
           isSelected: isSelected,

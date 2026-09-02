@@ -203,10 +203,10 @@ class _BetterPlayerMaterialControlsState
     if (_latestValue == null) {
       return;
     }
-    if (_latestValue!.volume == 0) {
+    if (_latestValue?.volume == 0) {
       _betterPlayerController!.setVolume(_latestVolume ?? 0.5);
     } else {
-      _latestVolume = _betterPlayerController!.videoPlayerValue!.volume;
+      _latestVolume = _betterPlayerController!.videoPlayerValue?.volume;
       _betterPlayerController!.setVolume(0);
     }
   }
@@ -244,7 +244,7 @@ class _BetterPlayerMaterialControlsState
 
     _updateState();
 
-    if ((_betterPlayerController!.videoPlayerValue!.isPlaying) ||
+    if ((_betterPlayerController!.videoPlayerValue?.isPlaying ?? false) ||
         _betterPlayerController!.betterPlayerConfiguration.autoPlay) {
       _startHideTimer();
     }
@@ -283,14 +283,14 @@ class _BetterPlayerMaterialControlsState
       isFinished = _latestValue!.position >= _latestValue!.duration!;
     }
 
-    if (_betterPlayerController!.videoPlayerValue!.isPlaying) {
+    if (_betterPlayerController!.videoPlayerValue?.isPlaying ?? false) {
       changePlayerControlsNotVisible(false);
       _hideTimer?.cancel();
       _betterPlayerController!.pause();
     } else {
       cancelAndRestartTimer();
 
-      if (!_betterPlayerController!.videoPlayerValue!.initialized) {
+      if (!(_betterPlayerController!.videoPlayerValue?.initialized ?? false)) {
       } else {
         if (isFinished) {
           _betterPlayerController!.seekTo(const Duration());
