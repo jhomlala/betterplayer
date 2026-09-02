@@ -275,7 +275,9 @@ class _BetterPlayerVideoFitWidgetState
   @override
   void didUpdateWidget(_BetterPlayerVideoFitWidget oldWidget) {
     if (oldWidget.betterPlayerController != widget.betterPlayerController) {
-      oldWidget.betterPlayerController.removeVideoListener(_onVideoPlayerChanged);
+      oldWidget.betterPlayerController.removeVideoListener(
+        _onVideoPlayerChanged,
+      );
       widget.betterPlayerController.addVideoListener(_onVideoPlayerChanged);
       _setupControllerEventSubscription();
     }
@@ -372,6 +374,3 @@ class _BetterPlayerVideoFitWidgetState
     super.dispose();
   }
 }
-
-
-

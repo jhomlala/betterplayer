@@ -1481,5 +1481,3 @@ class BetterPlayerController {
     }
   }
 }
-
-
