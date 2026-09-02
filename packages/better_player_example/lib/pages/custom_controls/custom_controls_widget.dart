@@ -71,19 +71,16 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                         onTap: () async {
                           final videoDuration = await widget
                               .controller!
-                              .videoPlayerController!
-                              .position;
+                              .videoPlayerValue!.position;
                           setState(() {
                             if (widget.controller!.isPlaying()!) {
                               final rewindDuration = Duration(
-                                seconds: videoDuration!.inSeconds - 2,
+                                seconds: videoDuration.inSeconds - 2,
                               );
                               if (rewindDuration <
                                   widget
                                       .controller!
-                                      .videoPlayerController!
-                                      .value
-                                      .duration!) {
+                                      .videoPlayerValue!.duration!) {
                                 widget.controller!.seekTo(const Duration());
                               } else {
                                 widget.controller!.seekTo(rewindDuration);
@@ -117,19 +114,16 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                         onTap: () async {
                           final videoDuration = await widget
                               .controller!
-                              .videoPlayerController!
-                              .position;
+                              .videoPlayerValue!.position;
                           setState(() {
                             if (widget.controller!.isPlaying()!) {
                               final forwardDuration = Duration(
-                                seconds: videoDuration!.inSeconds + 2,
+                                seconds: videoDuration.inSeconds + 2,
                               );
                               if (forwardDuration >
                                   widget
                                       .controller!
-                                      .videoPlayerController!
-                                      .value
-                                      .duration!) {
+                                      .videoPlayerValue!.duration!) {
                                 widget.controller!.seekTo(const Duration());
                                 widget.controller!.pause();
                               } else {
@@ -154,3 +148,6 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
     );
   }
 }
+
+
+

@@ -1,4 +1,3 @@
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -7,8 +6,6 @@ import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
-import 'package:better_player/src/engine/player_engine_controller.dart';
-import 'package:better_player/src/engine/player_engine_view.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
@@ -247,7 +244,7 @@ class BetterPlayerController {
     if (_engine == null) {
       return const SizedBox();
     }
-    return VideoPlayer(_engine!);
+    return VideoPlayer(_engine);
   }
 
   /// Sets track parameters directly on the engine (width, height, bitrate).

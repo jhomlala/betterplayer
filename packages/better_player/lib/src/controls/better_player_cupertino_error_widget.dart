@@ -13,7 +13,6 @@ class BetterPlayerCupertinoErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
-    final controller = BetterPlayerController.of(context);
     final errorBuilder = controller.betterPlayerConfiguration.errorBuilder;
     if (errorBuilder != null) {
       return errorBuilder(
@@ -46,6 +45,7 @@ class BetterPlayerCupertinoErrorWidget extends StatelessWidget {
     }
   }
 }
+
 
 
 

@@ -1,3 +1,4 @@
+// ignore_for_file: invalid_use_of_visible_for_testing_member
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
@@ -47,7 +48,7 @@ class _FFITestPageState extends State<FFITestPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       debugPrint('FFI TEST PAGE: addPostFrameCallback');
       // Check if already initialized (e.g. if events were missed)
-      if (_betterPlayerController.videoPlayerController?.value.initialized ??
+      if (_betterPlayerController.videoPlayerValue?.initialized ??
           false) {
         debugPrint('FFI TEST PAGE: Already initialized');
         setState(() {
@@ -151,7 +152,7 @@ class _FFITestPageState extends State<FFITestPage> {
                 } catch (e) {
                   // Fallback to direct platform call if controller logic fails
                   final textureId =
-                      _betterPlayerController.videoPlayerController?.textureId;
+                      _betterPlayerController.engineController?.textureId;
                   if (textureId != null) {
                     await BetterPlayerPlatform.instance.seekTo(
                       textureId,
@@ -174,7 +175,7 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'setTrackParameters',
               () async {
-                final vpc = _betterPlayerController.videoPlayerController;
+                final vpc = _betterPlayerController.engineController;
                 if (vpc != null) {
                   await vpc.setTrackParameters(1280, 720, 2000);
                 } else {
@@ -185,7 +186,7 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'setAudioTrack',
               () async {
-                final vpc = _betterPlayerController.videoPlayerController;
+                final vpc = _betterPlayerController.engineController;
                 if (vpc != null) {
                   vpc.setAudioTrack('English', 0);
                 } else {
@@ -206,7 +207,7 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'getPosition',
               () async {
-                final vpc = _betterPlayerController.videoPlayerController;
+                final vpc = _betterPlayerController.engineController;
                 if (vpc != null) {
                   await vpc.position;
                 } else {
@@ -217,7 +218,7 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'getAbsolutePosition',
               () async {
-                final vpc = _betterPlayerController.videoPlayerController;
+                final vpc = _betterPlayerController.engineController;
                 if (vpc != null) {
                   await vpc.absolutePosition;
                 } else {
@@ -292,3 +293,7 @@ class _FFITestPageState extends State<FFITestPage> {
     );
   }
 }
+
+
+
+

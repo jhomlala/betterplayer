@@ -1,4 +1,5 @@
-﻿import 'src/engine/player_engine_controller.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
+
 export 'package:better_player_platform_interface/better_player_platform_interface.dart';
 
 export 'src/asms/better_player_asms_utils.dart';
@@ -19,11 +20,6 @@ export 'src/controls/better_player_controls_state.dart';
 export 'src/controls/better_player_multiple_gesture_detector.dart';
 export 'src/controls/player_overflow_menu_item.dart';
 export 'src/controls/player_progress_colors.dart';
-export 'src/engine/player_engine_controller.dart';
-export 'src/engine/player_engine_view.dart';
-export 'src/engine/player_progress_bar.dart';
-export 'src/engine/player_closed_caption.dart';
-
 // KEEP FOR BACKWARD COMPATIBILITY
 // End-users might still explicitly use VideoPlayerController type.
 
@@ -31,6 +27,10 @@ export 'src/core/better_player.dart';
 export 'src/core/better_player_controller.dart';
 export 'src/core/better_player_controller_provider.dart';
 export 'src/core/better_player_ui_utils.dart';
+export 'src/engine/player_closed_caption.dart';
+export 'src/engine/player_engine_controller.dart';
+export 'src/engine/player_engine_view.dart';
+export 'src/engine/player_progress_bar.dart';
 export 'src/list/better_player_list_video_player.dart';
 export 'src/list/better_player_list_video_player_controller.dart';
 export 'src/logging/player_log_level.dart';

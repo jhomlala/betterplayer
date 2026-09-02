@@ -1,6 +1,5 @@
-import 'package:better_player/src/core/better_player_controller_provider.dart';
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'dart:async';
+
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
 import 'package:better_player/src/controls/better_player_material_bottom_bar.dart';
@@ -12,8 +11,7 @@ import 'package:better_player/src/controls/better_player_material_top_bar.dart';
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/engine/player_engine_controller.dart';
-
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 // Flutter imports:
 import 'package:material_ui/material_ui.dart';
 

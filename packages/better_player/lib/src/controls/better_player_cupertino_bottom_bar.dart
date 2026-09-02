@@ -1,11 +1,9 @@
-import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
 import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_ui_utils.dart';
-import 'package:better_player/src/engine/player_engine_controller.dart';
-import 'package:better_player/src/engine/player_progress_bar.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoBottomBar extends StatelessWidget {
