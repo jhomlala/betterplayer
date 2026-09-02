@@ -126,7 +126,7 @@ void main() {
           final BetterPlayerController betterPlayerController =
               BetterPlayerTestUtils.setupBetterPlayerMockController();
           final engineController =
-              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+              BetterPlayerTestUtils.setupMockPlayerEngineController();
           betterPlayerController.engineController = engineController;
           await Future<void>.delayed(const Duration(seconds: 1), () {});
           await betterPlayerController.play();
@@ -140,7 +140,7 @@ void main() {
           final BetterPlayerController betterPlayerController =
               BetterPlayerTestUtils.setupBetterPlayerMockController();
           final engineController =
-              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+              BetterPlayerTestUtils.setupMockPlayerEngineController();
           betterPlayerController.engineController = engineController;
           await Future<void>.delayed(const Duration(seconds: 1), () {});
           await betterPlayerController.play();
@@ -156,7 +156,7 @@ void main() {
           final BetterPlayerController betterPlayerController =
               BetterPlayerTestUtils.setupBetterPlayerMockController();
           final engineController =
-              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+              BetterPlayerTestUtils.setupMockPlayerEngineController();
           engineController.setDuration(const Duration(seconds: 100));
           betterPlayerController.engineController = engineController;
           await betterPlayerController.seekTo(const Duration(seconds: 5));
@@ -175,7 +175,7 @@ void main() {
           final BetterPlayerController betterPlayerController =
               BetterPlayerTestUtils.setupBetterPlayerMockController();
           final engineController =
-              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+              BetterPlayerTestUtils.setupMockPlayerEngineController();
           engineController.setDuration(const Duration(seconds: 100));
           betterPlayerController.engineController = engineController;
 
@@ -414,7 +414,7 @@ void main() {
           final BetterPlayerController betterPlayerMockController =
               BetterPlayerTestUtils.setupBetterPlayerMockController();
           final engineController =
-              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+              BetterPlayerTestUtils.setupMockPlayerEngineController();
           betterPlayerMockController.engineController = engineController;
 
           var setVolumeCalls = 0;
@@ -464,7 +464,7 @@ void main() {
           final BetterPlayerController betterPlayerMockController =
               BetterPlayerTestUtils.setupBetterPlayerMockController();
           final engineController =
-              BetterPlayerTestUtils.setupMockVideoPlayerControler();
+              BetterPlayerTestUtils.setupMockPlayerEngineController();
           betterPlayerMockController.engineController = engineController;
 
           var setSpeedCalls = 0;
@@ -488,7 +488,7 @@ void main() {
         final BetterPlayerController betterPlayerMockController =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
         final engineController =
-            BetterPlayerTestUtils.setupMockVideoPlayerControler();
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
         betterPlayerMockController.engineController = engineController;
         engineController.setBuffering(false);
         expect(betterPlayerMockController.isBuffering(), false);
@@ -511,7 +511,7 @@ void main() {
           ),
         );
         final engineController =
-            BetterPlayerTestUtils.setupMockVideoPlayerControler();
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
         betterPlayerMockController.engineController = engineController;
         expect(betterPlayerMockController.isLiveStream(), true);
       });
@@ -524,7 +524,7 @@ void main() {
           throwsA(isA<StateError>()),
         );
         final engineController =
-            BetterPlayerTestUtils.setupMockVideoPlayerControler();
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
         betterPlayerMockController.engineController = engineController;
         engineController.setDuration(const Duration(seconds: 1));
         expect(betterPlayerMockController.isVideoInitialized(), true);

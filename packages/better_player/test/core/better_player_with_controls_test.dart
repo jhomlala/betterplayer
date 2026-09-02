@@ -18,7 +18,7 @@ void main() {
       tester,
     ) async {
       final mockVideoPlayerController =
-          BetterPlayerTestUtils.setupMockVideoPlayerControler();
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
@@ -48,7 +48,7 @@ void main() {
       tester,
     ) async {
       final mockVideoPlayerController =
-          BetterPlayerTestUtils.setupMockVideoPlayerControler();
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
       final placeholder = Container(key: const Key('placeholder'));
       final controller = BetterPlayerMockController(
         PlayerConfiguration(
@@ -82,7 +82,7 @@ void main() {
       tester,
     ) async {
       final mockVideoPlayerController =
-          BetterPlayerTestUtils.setupMockVideoPlayerControler();
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
@@ -148,7 +148,7 @@ void main() {
       tester,
     ) async {
       final mockVideoPlayerController =
-          BetterPlayerTestUtils.setupMockVideoPlayerControler();
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
       );
