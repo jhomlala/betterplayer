@@ -70,8 +70,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         setState(() {
           _errorDescription =
               event.parameters?['exception']?.toString() ??
-              _betterPlayerController
-                  .videoPlayerValue?.errorDescription;
+              _betterPlayerController.videoPlayerValue?.errorDescription;
         });
       } else if (event.betterPlayerEventType ==
           PlayerEventType.setupDataSource) {

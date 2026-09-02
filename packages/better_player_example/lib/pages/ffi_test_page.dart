@@ -48,8 +48,7 @@ class _FFITestPageState extends State<FFITestPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       debugPrint('FFI TEST PAGE: addPostFrameCallback');
       // Check if already initialized (e.g. if events were missed)
-      if (_betterPlayerController.videoPlayerValue?.initialized ??
-          false) {
+      if (_betterPlayerController.videoPlayerValue?.initialized ?? false) {
         debugPrint('FFI TEST PAGE: Already initialized');
         setState(() {
           _isInitialized = true;
