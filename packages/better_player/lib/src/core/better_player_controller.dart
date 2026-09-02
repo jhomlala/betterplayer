@@ -872,8 +872,7 @@ class BetterPlayerController {
   }
 
   ///Listener used to handle video player changes.
-  Future<void> _onVideoPlayerChanged() async {
-    for (final listener in _videoListeners) {
+    for (final listener in List<VoidCallback>.from(_videoListeners)) {
       listener();
     }
 
