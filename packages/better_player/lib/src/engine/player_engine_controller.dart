@@ -474,7 +474,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   /// [width] specifies width of the selected track
   /// [height] specifies height of the selected track
   /// [bitrate] specifies bitrate of the selected track
-  Future<void> setTrackParameters(int? width, int? height, int? bitrate) async {
+  Future<void> setTrackParameters({int? width, int? height, int? bitrate}) async {
     await _betterPlayerPlatform.setTrackParameters(
       _textureId,
       width,

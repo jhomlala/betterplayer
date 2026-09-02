@@ -52,11 +52,11 @@ class MockPlayerEngineController extends PlayerEngineController {
   }
 
   @override
-  Future<void> setTrackParameters(
+  Future<void> setTrackParameters({
     int? width,
     int? height,
     int? bitrate,
-  ) async {}
+  }) async {}
 
   @override
   Future<Duration?> get position async => value.position;

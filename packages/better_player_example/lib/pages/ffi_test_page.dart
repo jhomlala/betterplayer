@@ -176,7 +176,7 @@ class _FFITestPageState extends State<FFITestPage> {
               () async {
                 final vpc = _betterPlayerController.engineController;
                 if (vpc != null) {
-                  await vpc.setTrackParameters(1280, 720, 2000);
+                  await vpc.setTrackParameters(width: 1280, height: 720, bitrate: 2000);
                 } else {
                   throw Exception('VideoPlayerController is null');
                 }

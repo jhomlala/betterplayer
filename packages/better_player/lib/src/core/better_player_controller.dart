@@ -253,11 +253,11 @@ class BetterPlayerController {
 
   /// Sets track parameters directly on the engine (width, height, bitrate).
   /// Prefer [setTrack] with a [PlayerAsmsTrack] for HLS/DASH streams.
-  Future<void> setTrackParameters(int? width, int? height, int? bitrate) async {
+  Future<void> setTrackParameters({int? width, int? height, int? bitrate}) async {
     if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
-    await _engine!.setTrackParameters(width, height, bitrate);
+    await _engine!.setTrackParameters(width: width, height: height, bitrate: bitrate);
   }
 
   ///Selected videoPlayerValue when error occurred.
@@ -1031,9 +1031,9 @@ class BetterPlayerController {
     );
 
     _engine!.setTrackParameters(
-      track.width,
-      track.height,
-      track.bitrate,
+      width: track.width,
+      height: track.height,
+      bitrate: track.bitrate,
     );
     _betterPlayerAsmsTrack = track;
   }
