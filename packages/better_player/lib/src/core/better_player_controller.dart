@@ -60,7 +60,11 @@ class BetterPlayerController {
   PlayerEngineController? get engineController => _engine;
 
   @visibleForTesting
-  set engineController(PlayerEngineController? value) => _engine = value;
+  set engineController(PlayerEngineController? value) {
+    _engine?.removeListener(_onVideoPlayerChanged);
+    _engine = value;
+    _engine?.addListener(_onVideoPlayerChanged);
+  }
 
   ///Controls configuration
   late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
@@ -1477,3 +1481,5 @@ class BetterPlayerController {
     }
   }
 }
+
+
