@@ -6,7 +6,7 @@ class Constants {
   static const String fileTestVideoUrl = 'testvideo.mp4';
   static const String fileTestVideoEncryptUrl = 'testvideo_encrypt.mp4';
   static const String networkTestVideoEncryptUrl =
-      'https://github.com/jhomlala/betterplayer/raw/master/example/assets/testvideo_encrypt.mp4';
+      'https://raw.githubusercontent.com/jhomlala/betterplayer/master/packages/better_player_example/assets/testvideo_encrypt.mp4';
   static const String fileExampleSubtitlesUrl = 'example_subtitles.srt';
   static const String hlsTestStreamUrl =
       'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8';
