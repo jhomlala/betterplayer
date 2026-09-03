@@ -1,4 +1,3 @@
-// ignore_for_file: invalid_use_of_visible_for_testing_member
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:flutter/material.dart';
@@ -150,8 +149,7 @@ class _FFITestPageState extends State<FFITestPage> {
                   );
                 } catch (e) {
                   // Fallback to direct platform call if controller logic fails
-                  final textureId =
-                      _betterPlayerController.engineController?.textureId;
+                  final textureId = _betterPlayerController.textureId;
                   if (textureId != null) {
                     await BetterPlayerPlatform.instance.seekTo(
                       textureId,
@@ -174,27 +172,19 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'setTrackParameters',
               () async {
-                final vpc = _betterPlayerController.engineController;
-                if (vpc != null) {
-                  await vpc.setTrackParameters(
-                    width: 1280,
-                    height: 720,
-                    bitrate: 2000,
-                  );
-                } else {
-                  throw Exception('VideoPlayerController is null');
-                }
+                await _betterPlayerController.setTrackParameters(
+                  width: 1280,
+                  height: 720,
+                  bitrate: 2000,
+                );
               },
             ),
             _buildTestButton(
               'setAudioTrack',
               () async {
-                final vpc = _betterPlayerController.engineController;
-                if (vpc != null) {
-                  vpc.setAudioTrack('English', 0);
-                } else {
-                  throw Exception('VideoPlayerController is null');
-                }
+                _betterPlayerController.setAudioTrack(
+                  PlayerAsmsAudioTrack(label: 'English', id: 0),
+                );
               },
             ),
             _buildTestButton(
@@ -210,23 +200,13 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'getPosition',
               () async {
-                final vpc = _betterPlayerController.engineController;
-                if (vpc != null) {
-                  await vpc.position;
-                } else {
-                  throw Exception('VideoPlayerController is null');
-                }
+                await _betterPlayerController.position;
               },
             ),
             _buildTestButton(
               'getAbsolutePosition',
               () async {
-                final vpc = _betterPlayerController.engineController;
-                if (vpc != null) {
-                  await vpc.absolutePosition;
-                } else {
-                  throw Exception('VideoPlayerController is null');
-                }
+                await _betterPlayerController.absolutePosition;
               },
             ),
             _buildTestButton(

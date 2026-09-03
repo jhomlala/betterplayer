@@ -12,11 +12,13 @@ import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   late BetterPlayerController controller;
+  late MockPlayerEngineController mockEngine;
   late StreamController<bool> visibilityStreamController;
 
   setUp(() {
+    mockEngine = MockPlayerEngineController();
     controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-      controller: MockPlayerEngineController(),
+      controller: mockEngine,
     );
     visibilityStreamController = StreamController<bool>.broadcast();
   });
@@ -50,13 +52,12 @@ void main() {
     expect(find.text('Test Subtitle'), findsNothing);
 
     // Update position to 2s
-    (controller.engineController! as MockPlayerEngineController).value =
-        controller.engineController!.value.copyWith(
-          position: const Duration(seconds: 2),
-        );
+    mockEngine.value = mockEngine.value.copyWith(
+      position: const Duration(seconds: 2),
+    );
 
     // Trigger listener
-    controller.engineController!.notifyListeners();
+    mockEngine.notifyListeners();
     await tester.pumpAndSettle();
 
     expect(find.byType(HtmlWidget), findsNWidgets(2));
@@ -86,11 +87,10 @@ void main() {
       ),
     );
 
-    (controller.engineController! as MockPlayerEngineController).value =
-        controller.engineController!.value.copyWith(
-          position: const Duration(seconds: 2),
-        );
-    controller.engineController!.notifyListeners();
+    mockEngine.value = mockEngine.value.copyWith(
+      position: const Duration(seconds: 2),
+    );
+    mockEngine.notifyListeners();
     await tester.pump();
 
     expect(find.byType(HtmlWidget), findsNWidgets(2));
@@ -130,11 +130,10 @@ void main() {
       ),
     );
 
-    (controller.engineController! as MockPlayerEngineController).value =
-        controller.engineController!.value.copyWith(
-          position: const Duration(seconds: 2),
-        );
-    controller.engineController!.notifyListeners();
+    mockEngine.value = mockEngine.value.copyWith(
+      position: const Duration(seconds: 2),
+    );
+    mockEngine.notifyListeners();
     await tester.pumpAndSettle();
 
     // Only 1 HtmlWidget because outline is disabled

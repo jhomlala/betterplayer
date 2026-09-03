@@ -260,7 +260,7 @@ void main() {
       await tester.tap(speed2x);
       await tester.pumpAndSettle();
 
-      expect(controller.engineController!.value.speed, 2.0);
+      expect(controller.videoPlayerValue?.speed, 2.0);
     },
   );
 

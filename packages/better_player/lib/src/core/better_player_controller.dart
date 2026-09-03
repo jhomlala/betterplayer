@@ -18,12 +18,16 @@ class BetterPlayerController {
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
     PlayerDataSource? betterPlayerDataSource,
-  }) {
+    PlayerEngineController? playerEngineController,
+  }) : _engine = playerEngineController {
     PlayerLogger.setup(betterPlayerConfiguration.playerLogConfiguration);
     PlayerLogger.info(message: 'Created', textureId: textureId);
     _betterPlayerControlsConfiguration =
         betterPlayerConfiguration.controlsConfiguration;
     _eventListeners.add(eventListener);
+    if (_engine != null) {
+      _engine!.addListener(_onVideoPlayerChanged);
+    }
     if (betterPlayerDataSource != null) {
       setupDataSource(betterPlayerDataSource);
     }
@@ -56,16 +60,6 @@ class BetterPlayerController {
   ///Instance of video player controller which is adapter used to communicate
   ///between flutter high level code and lower level native code.
   PlayerEngineController? _engine;
-
-  @visibleForTesting
-  PlayerEngineController? get engineController => _engine;
-
-  @visibleForTesting
-  set engineController(PlayerEngineController? value) {
-    _engine?.removeListener(_onVideoPlayerChanged);
-    _engine = value;
-    _engine?.addListener(_onVideoPlayerChanged);
-  }
 
   ///Controls configuration
   late PlayerControlsConfiguration _betterPlayerControlsConfiguration;

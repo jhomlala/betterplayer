@@ -44,7 +44,7 @@ void main() {
 
       // Simulate error
       mock.value = mock.value.copyWith(errorDescription: 'Error');
-      controller.engineController!.notifyListeners();
+      mock.notifyListeners();
 
       await controller.retryDataSource();
       expect(controller.isEngineReady, true);

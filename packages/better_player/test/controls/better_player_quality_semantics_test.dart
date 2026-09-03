@@ -7,7 +7,10 @@ import '../helpers/better_player_mock_controller.dart';
 import '../helpers/mock_player_engine_controller.dart';
 
 class BetterPlayerMockControllerWithTracks extends BetterPlayerMockController {
-  BetterPlayerMockControllerWithTracks(super.betterPlayerConfiguration);
+  BetterPlayerMockControllerWithTracks(
+    super.betterPlayerConfiguration, {
+    super.playerEngineController,
+  });
 
   List<PlayerAsmsTrack> _tracks = [];
   PlayerDataSource? _dataSource;
@@ -47,8 +50,7 @@ class MockControlsState extends BetterPlayerControlsState<MockControlsWidget> {
       widget.controller.betterPlayerControlsConfiguration;
 
   @override
-  VideoPlayerValue? get latestValue =>
-      widget.controller.engineController?.value;
+  VideoPlayerValue? get latestValue => widget.controller.videoPlayerValue;
 
   @override
   void cancelAndRestartTimer() {}
@@ -70,8 +72,8 @@ void main() {
     setUp(() {
       controller = BetterPlayerMockControllerWithTracks(
         const PlayerConfiguration(),
+        playerEngineController: MockPlayerEngineController(),
       );
-      controller.engineController = MockPlayerEngineController();
     });
 
     testWidgets(

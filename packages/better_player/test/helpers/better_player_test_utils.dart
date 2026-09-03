@@ -20,11 +20,10 @@ class BetterPlayerTestUtils {
     PlayerEngineController? controller,
     PlayerConfiguration configuration = const PlayerConfiguration(),
   }) {
-    final mockController = BetterPlayerMockController(configuration);
-    if (controller != null) {
-      mockController.engineController = controller;
-    }
-    return mockController;
+    return BetterPlayerMockController(
+      configuration,
+      playerEngineController: controller,
+    );
   }
 
   static MockPlayerEngineController setupMockPlayerEngineController() {

@@ -1,4 +1,5 @@
 ## Unreleased
+- Updated: Removed `@visibleForTesting engineController` getter and setter from `BetterPlayerController`, replacing post-construction engine mutations in tests with constructor injection.
 - Fixed: Broken links in README.md files (migration guides and example application).
 - Fixed: Guarded against null or uninitialized `videoPlayerValue` in progress bars during drag and tap gestures.
 - Fixed: Removed unexpected UTF-8 BOM characters across source files.

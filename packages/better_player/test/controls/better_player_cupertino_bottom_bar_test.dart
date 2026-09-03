@@ -23,8 +23,8 @@ void main() {
     mockVideoPlayerController = MockPlayerEngineController();
     mockController = BetterPlayerMockController(
       const PlayerConfiguration(),
+      playerEngineController: mockVideoPlayerController,
     );
-    mockController.engineController = mockVideoPlayerController;
     await mockController.setupDataSource(
       PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
     );

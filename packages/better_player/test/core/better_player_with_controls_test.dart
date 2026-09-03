@@ -21,8 +21,8 @@ void main() {
           BetterPlayerTestUtils.setupMockPlayerEngineController();
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
+        playerEngineController: mockVideoPlayerController,
       );
-      controller.engineController = mockVideoPlayerController;
 
       await controller.setupDataSource(
         PlayerDataSource.network('url'),
@@ -55,8 +55,8 @@ void main() {
           placeholder: placeholder,
           showPlaceholderUntilPlay: true,
         ),
+        playerEngineController: mockVideoPlayerController,
       );
-      controller.engineController = mockVideoPlayerController;
 
       await controller.setupDataSource(
         PlayerDataSource.network('url'),
@@ -85,8 +85,8 @@ void main() {
           BetterPlayerTestUtils.setupMockPlayerEngineController();
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
+        playerEngineController: mockVideoPlayerController,
       );
-      controller.engineController = mockVideoPlayerController;
 
       await controller.setupDataSource(
         PlayerDataSource.network('url'),
@@ -151,8 +151,8 @@ void main() {
           BetterPlayerTestUtils.setupMockPlayerEngineController();
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
+        playerEngineController: mockVideoPlayerController,
       );
-      controller.engineController = mockVideoPlayerController;
 
       await controller.setupDataSource(
         PlayerDataSource.network('url'),
