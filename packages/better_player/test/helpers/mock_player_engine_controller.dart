@@ -1,11 +1,10 @@
 import 'dart:io';
-
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter/material.dart';
 
-class MockVideoPlayerController extends VideoPlayerController {
-  MockVideoPlayerController() : super(autoCreate: false) {
+class MockPlayerEngineController extends PlayerEngineController {
+  MockPlayerEngineController() : super(autoCreate: false) {
     value = VideoPlayerValue(duration: null);
   }
 
@@ -22,13 +21,11 @@ class MockVideoPlayerController extends VideoPlayerController {
   @override
   Future<void> play() async {
     value = value.copyWith(isPlaying: true);
-    return;
   }
 
   @override
   Future<void> pause() async {
     value = value.copyWith(isPlaying: false);
-    return;
   }
 
   @override
@@ -55,9 +52,11 @@ class MockVideoPlayerController extends VideoPlayerController {
   }
 
   @override
-  Future<void> setTrackParameters(int? width, int? height, int? bitrate) async {
-    return;
-  }
+  Future<void> setTrackParameters({
+    int? width,
+    int? height,
+    int? bitrate,
+  }) async {}
 
   @override
   Future<Duration?> get position async => value.position;

@@ -166,7 +166,7 @@ class HlsPlaylistParser {
       }
       codeUnits = codeUnits
           .getRange(5, codeUnits.length - 1)
-          .toList(); //不要な文字が含まれている
+          .toList(); // Contains unwanted characters
     }
 
     if (!LibUtil.startsWith(codeUnits, playlistHeader.runes.toList())) {
@@ -248,7 +248,9 @@ class HlsPlaylistParser {
           sessionKeyDrmInitData.add(drmInitData);
         }
       } else if (line.startsWith(tagStreamInf)) {
-        noClosedCaptions |= line.contains(attrClosedCaptionsNone); //todo 再検討
+        noClosedCaptions |= line.contains(
+          attrClosedCaptionsNone,
+        ); // TODO: Revisit
         final bitrate = int.parse(
           _parseStringAttr(source: line, pattern: regexpBandwidth)!,
         );
@@ -623,13 +625,13 @@ class HlsPlaylistParser {
       )!;
       final data = _getBase64FromUri(uriString);
       return SchemeData(
-        //          uuid: '', //todo 保留
+        //          uuid: '', // TODO: Pending
         mimeType: MimeTypes.videoMp4,
         data: data,
       );
     } else if (keyFormatWidevinePsshJson == keyFormat) {
       return SchemeData(
-        //          uuid: '', //todo 保留
+        //          uuid: '', // TODO: Pending
         mimeType: MimeTypes.hls,
         data: const Utf8Encoder().convert(line!),
       );
@@ -640,7 +642,7 @@ class HlsPlaylistParser {
         variableDefinitions: variableDefinitions,
       )!;
       final data = _getBase64FromUri(uriString);
-      //      Uint8List psshData; //todo 保留
+      //      Uint8List psshData; // TODO: Pending
       return SchemeData(mimeType: MimeTypes.videoMp4, data: data);
     }
 

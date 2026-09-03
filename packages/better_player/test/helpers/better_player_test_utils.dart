@@ -1,9 +1,9 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
 
 import 'better_player_mock_controller.dart';
 import 'mock_better_player_platform.dart';
-import 'mock_video_player_controller.dart';
+import 'mock_player_engine_controller.dart';
 
 class BetterPlayerTestUtils {
   static const String bugBuckBunnyVideoUrl =
@@ -18,21 +18,18 @@ class BetterPlayerTestUtils {
   }
 
   static BetterPlayerMockController setupBetterPlayerMockController({
-    VideoPlayerController? controller,
+    PlayerEngineController? controller,
     PlayerConfiguration configuration = const PlayerConfiguration(),
   }) {
-    final mockController = BetterPlayerMockController(configuration);
-    if (controller != null) {
-      mockController.videoPlayerController = controller;
-    }
-    return mockController;
+    return BetterPlayerMockController(
+      configuration,
+      playerEngineController: controller,
+    );
   }
 
-  static MockVideoPlayerController setupMockVideoPlayerControler() {
-    final mockVideoPlayerController = MockVideoPlayerController();
-    mockVideoPlayerController.setNetworkDataSource(
-      BetterPlayerTestUtils.forBiggerBlazesUrl,
-    );
-    return mockVideoPlayerController;
+  static MockPlayerEngineController setupMockPlayerEngineController() {
+    final mock = MockPlayerEngineController();
+    mock.setNetworkDataSource(BetterPlayerTestUtils.forBiggerBlazesUrl);
+    return mock;
   }
 }

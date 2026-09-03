@@ -10,11 +10,12 @@
 [![pub package](https://img.shields.io/github/license/jhomlala/betterplayer.svg?style=flat)](https://github.com/jhomlala/betterplayer)
 [![pub package](https://img.shields.io/badge/platform-flutter-blue.svg)](https://github.com/jhomlala/betterplayer)
 
-Better Player is a powerful video player for Flutter, built on top of the official `video_player` plugin and inspired by `Chewie`. It solves common playback issues, provides extensive configuration options, and handles complex media use cases out of the box.
+Better Player is a powerful video player for Flutter, originally based on the official video_player plugin but now fully independent. It solves common playback issues, provides extensive configuration options, and handles complex media use cases out of the box.
 
 
 > **[IMPORTANT] Migrating to 1.x.x?**
 > We've introduced a cleaner federated architecture, direct native bridges (JNI/FFI) in v1.2.0, and unified model names (e.g. `BetterPlayerConfiguration` is now `PlayerConfiguration`). See the [Migration Guide to 1.x.x](https://jhomlala.github.io/betterplayer/migration_to_1.x.x) to learn how to upgrade your project.
+
 
 ---
 
@@ -69,7 +70,7 @@ Better Player is a powerful video player for Flutter, built on top of the offici
 Add Better Player to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  better_player: ^1.2.0
+  better_player: ^1.4.0
 ```
 
 ### 2. Basic Usage

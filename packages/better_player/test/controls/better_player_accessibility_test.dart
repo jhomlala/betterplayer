@@ -5,7 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_test_utils.dart';
-import '../helpers/mock_video_player_controller.dart';
+import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   setUpAll(() {
@@ -22,9 +22,9 @@ void main() {
   testWidgets(
     'Material controls have correct semantic labels for Play/Pause',
     (tester) async {
-      final mockVideoPlayerController = MockVideoPlayerController();
+      final mockPlayerEngineController = MockPlayerEngineController();
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: mockVideoPlayerController,
+        controller: mockPlayerEngineController,
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -51,7 +51,7 @@ void main() {
       );
 
       // Change to playing state
-      mockVideoPlayerController.value = mockVideoPlayerController.value
+      mockPlayerEngineController.value = mockPlayerEngineController.value
           .copyWith(isPlaying: true);
       await tester.pumpAndSettle();
 
@@ -66,9 +66,9 @@ void main() {
   testWidgets(
     'Material controls have correct semantic labels for Mute/Unmute',
     (tester) async {
-      final mockVideoPlayerController = MockVideoPlayerController();
+      final mockPlayerEngineController = MockPlayerEngineController();
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: mockVideoPlayerController,
+        controller: mockPlayerEngineController,
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -94,7 +94,7 @@ void main() {
       );
 
       // Change to muted state
-      mockVideoPlayerController.value = mockVideoPlayerController.value
+      mockPlayerEngineController.value = mockPlayerEngineController.value
           .copyWith(volume: 0);
       await tester.pumpAndSettle();
 
@@ -109,10 +109,10 @@ void main() {
     'Progress bar has correct semantics and supports seeking via gestures',
     (tester) async {
       final handle = tester.ensureSemantics();
-      final mockVideoPlayerController = MockVideoPlayerController();
+      final mockPlayerEngineController = MockPlayerEngineController();
 
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: mockVideoPlayerController,
+        controller: mockPlayerEngineController,
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -127,8 +127,8 @@ void main() {
 
       // Set duration and position AFTER setupDataSource to avoid override
       const duration = Duration(minutes: 10);
-      mockVideoPlayerController.setDuration(duration);
-      mockVideoPlayerController.value = mockVideoPlayerController.value
+      mockPlayerEngineController.setDuration(duration);
+      mockPlayerEngineController.value = mockPlayerEngineController.value
           .copyWith(position: const Duration(minutes: 5));
 
       await tester.pumpWidget(wrapWidget(BetterPlayer(controller: controller)));
@@ -166,7 +166,7 @@ void main() {
 
       // Should seek forward by 10% (1 minute)
       expect(
-        mockVideoPlayerController.lastSeekPosition,
+        mockPlayerEngineController.lastSeekPosition,
         const Duration(minutes: 6),
       );
 
@@ -179,7 +179,7 @@ void main() {
 
       // Should seek backward
       expect(
-        mockVideoPlayerController.lastSeekPosition,
+        mockPlayerEngineController.lastSeekPosition,
         const Duration(minutes: 5),
       );
 

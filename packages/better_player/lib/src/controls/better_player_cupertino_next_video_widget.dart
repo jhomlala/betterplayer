@@ -4,15 +4,15 @@ import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoNextVideoWidget extends StatelessWidget {
   const BetterPlayerCupertinoNextVideoWidget({
-    required this.controller,
     required this.controlsConfiguration,
     super.key,
   });
-  final BetterPlayerController controller;
+
   final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return StreamBuilder<int?>(
       stream: controller.nextVideoTimeStream,
       builder: (context, snapshot) {

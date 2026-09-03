@@ -64,7 +64,7 @@ class LibUtil {
       if ('-' == match.group(11)) timezoneShift *= -1;
     }
 
-    //todo UTCではなくGMT?
+    // TODO: GMT instead of UTC?
     final dateTime = DateTime.utc(
       int.parse(match.group(1)!),
       int.parse(match.group(2)!),
@@ -74,7 +74,7 @@ class LibUtil {
       int.parse(match.group(6)!),
     );
     if (match.group(8)?.isNotEmpty == true) {
-      //todo ここ実装再検討
+      // TODO: Revisit implementation
     }
 
     var time = dateTime.millisecondsSinceEpoch;

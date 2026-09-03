@@ -15,6 +15,7 @@ concurrency:
 
 env:
   MAESTRO_CLI_NO_ANALYTICS: 1
+  MAESTRO_DRIVER_STARTUP_TIMEOUT: 300000
 
 jobs:
   maestro:

@@ -8,15 +8,17 @@ import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart
 import 'package:material_ui/material_ui.dart';
 
 import '../helpers/better_player_test_utils.dart';
-import '../helpers/mock_video_player_controller.dart';
+import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   late BetterPlayerController controller;
+  late MockPlayerEngineController mockEngine;
   late StreamController<bool> visibilityStreamController;
 
   setUp(() {
+    mockEngine = MockPlayerEngineController();
     controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-      controller: MockVideoPlayerController(),
+      controller: mockEngine,
     );
     visibilityStreamController = StreamController<bool>.broadcast();
   });
@@ -50,13 +52,12 @@ void main() {
     expect(find.text('Test Subtitle'), findsNothing);
 
     // Update position to 2s
-    (controller.videoPlayerController! as MockVideoPlayerController).value =
-        controller.videoPlayerController!.value.copyWith(
-          position: const Duration(seconds: 2),
-        );
+    mockEngine.value = mockEngine.value.copyWith(
+      position: const Duration(seconds: 2),
+    );
 
     // Trigger listener
-    controller.videoPlayerController!.notifyListeners();
+    mockEngine.notifyListeners();
     await tester.pumpAndSettle();
 
     expect(find.byType(HtmlWidget), findsNWidgets(2));
@@ -86,11 +87,10 @@ void main() {
       ),
     );
 
-    (controller.videoPlayerController! as MockVideoPlayerController).value =
-        controller.videoPlayerController!.value.copyWith(
-          position: const Duration(seconds: 2),
-        );
-    controller.videoPlayerController!.notifyListeners();
+    mockEngine.value = mockEngine.value.copyWith(
+      position: const Duration(seconds: 2),
+    );
+    mockEngine.notifyListeners();
     await tester.pump();
 
     expect(find.byType(HtmlWidget), findsNWidgets(2));
@@ -130,11 +130,10 @@ void main() {
       ),
     );
 
-    (controller.videoPlayerController! as MockVideoPlayerController).value =
-        controller.videoPlayerController!.value.copyWith(
-          position: const Duration(seconds: 2),
-        );
-    controller.videoPlayerController!.notifyListeners();
+    mockEngine.value = mockEngine.value.copyWith(
+      position: const Duration(seconds: 2),
+    );
+    mockEngine.notifyListeners();
     await tester.pumpAndSettle();
 
     // Only 1 HtmlWidget because outline is disabled

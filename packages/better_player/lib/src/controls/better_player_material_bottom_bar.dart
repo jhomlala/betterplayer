@@ -4,12 +4,11 @@ import 'package:better_player/src/controls/better_player_material_progress_bar.d
 import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_ui_utils.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialBottomBar extends StatelessWidget {
   const BetterPlayerMaterialBottomBar({
-    required this.controller,
     required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.onPlayerHide,
@@ -22,7 +21,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
     required this.latestValue,
     super.key,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final VoidCallback onPlayerHide;
@@ -36,6 +34,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     if (!controller.controlsEnabled) {
       return const SizedBox();
     }
@@ -54,7 +53,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                 children: [
                   if (controlsConfiguration.enablePlayPause)
                     _BetterPlayerMaterialPlayPauseButton(
-                      controller: controller,
                       controlsConfiguration: controlsConfiguration,
                       onPlayPause: onPlayPause,
                       latestValue: latestValue,
@@ -63,13 +61,11 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                     const SizedBox(),
                   if (controller.isLiveStream())
                     _BetterPlayerMaterialLiveWidget(
-                      controller: controller,
                       controlsConfiguration: controlsConfiguration,
                     )
                   else if (controlsConfiguration.enableProgressText)
                     Expanded(
                       child: _BetterPlayerMaterialPositionWidget(
-                        controller: controller,
                         controlsConfiguration: controlsConfiguration,
                         latestValue: latestValue,
                       ),
@@ -79,7 +75,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                   const Spacer(),
                   if (controlsConfiguration.enableMute)
                     _BetterPlayerMaterialMuteButton(
-                      controller: controller,
                       controlsConfiguration: controlsConfiguration,
                       onMute: onMute,
                       controlsNotVisible: controlsNotVisible,
@@ -89,7 +84,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
                     const SizedBox(),
                   if (controlsConfiguration.enableFullscreen)
                     _BetterPlayerMaterialFullscreenButton(
-                      controller: controller,
                       controlsConfiguration: controlsConfiguration,
                       onExpandCollapse: onExpandCollapse,
                       controlsNotVisible: controlsNotVisible,
@@ -103,7 +97,6 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
               const SizedBox()
             else if (controlsConfiguration.enableProgressBar)
               _BetterPlayerMaterialProgressBarWrapper(
-                controller: controller,
                 controlsConfiguration: controlsConfiguration,
                 onProgressBarDragStart: onProgressBarDragStart,
                 onProgressBarDragEnd: onProgressBarDragEnd,
@@ -120,18 +113,17 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
 
 class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
   const _BetterPlayerMaterialPlayPauseButton({
-    required this.controller,
     required this.controlsConfiguration,
     required this.onPlayPause,
     required this.latestValue,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onPlayPause;
   final VideoPlayerValue? latestValue;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     final isPlaying = latestValue?.isPlaying ?? false;
     return BetterPlayerMaterialClickableWidget(
       key: const Key('better_player_material_controls_play_pause_button'),
@@ -157,13 +149,11 @@ class _BetterPlayerMaterialPlayPauseButton extends StatelessWidget {
 
 class _BetterPlayerMaterialMuteButton extends StatelessWidget {
   const _BetterPlayerMaterialMuteButton({
-    required this.controller,
     required this.controlsConfiguration,
     required this.onMute,
     required this.controlsNotVisible,
     required this.latestValue,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onMute;
   final bool controlsNotVisible;
@@ -171,6 +161,7 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return BetterPlayerMaterialClickableWidget(
       onTap: onMute,
       semanticsLabel: (latestValue != null && latestValue!.volume > 0)
@@ -199,18 +190,17 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
 
 class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
   const _BetterPlayerMaterialFullscreenButton({
-    required this.controller,
     required this.controlsConfiguration,
     required this.onExpandCollapse,
     required this.controlsNotVisible,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onExpandCollapse;
   final bool controlsNotVisible;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: BetterPlayerMaterialClickableWidget(
@@ -243,14 +233,13 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
 
 class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
   const _BetterPlayerMaterialLiveWidget({
-    required this.controller,
     required this.controlsConfiguration,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Text(
       controller.translations.controlsLive,
       style: TextStyle(
@@ -263,11 +252,9 @@ class _BetterPlayerMaterialLiveWidget extends StatelessWidget {
 
 class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
   const _BetterPlayerMaterialPositionWidget({
-    required this.controller,
     required this.controlsConfiguration,
     required this.latestValue,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VideoPlayerValue? latestValue;
 
@@ -310,13 +297,11 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
 
 class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
   const _BetterPlayerMaterialProgressBarWrapper({
-    required this.controller,
     required this.controlsConfiguration,
     required this.onProgressBarDragStart,
     required this.onProgressBarDragEnd,
     required this.onProgressBarTapDown,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onProgressBarDragStart;
   final VoidCallback onProgressBarDragEnd;
@@ -324,13 +309,13 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Expanded(
       flex: 40,
       child: Container(
         alignment: Alignment.bottomCenter,
         padding: const EdgeInsets.symmetric(horizontal: 12),
         child: BetterPlayerMaterialVideoProgressBar(
-          controller.videoPlayerController,
           controller,
           onDragStart: onProgressBarDragStart,
           onDragEnd: onProgressBarDragEnd,

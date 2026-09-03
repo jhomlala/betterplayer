@@ -4,20 +4,19 @@ import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialErrorWidget extends StatelessWidget {
   const BetterPlayerMaterialErrorWidget({
-    required this.controller,
     required this.controlsConfiguration,
     super.key,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     final errorBuilder = controller.betterPlayerConfiguration.errorBuilder;
     if (errorBuilder != null) {
       return errorBuilder(
         context,
-        controller.videoPlayerController?.value.errorDescription,
+        controller.videoPlayerValue?.errorDescription,
       );
     } else {
       final textStyle = TextStyle(color: controlsConfiguration.textColor);

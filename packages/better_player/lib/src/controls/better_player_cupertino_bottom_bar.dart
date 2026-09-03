@@ -3,12 +3,11 @@ import 'package:better_player/src/controls/better_player_cupertino_progress_bar.
 import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_ui_utils.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoBottomBar extends StatelessWidget {
   const BetterPlayerCupertinoBottomBar({
-    required this.controller,
     required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.barHeight,
@@ -25,7 +24,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
     required this.latestValue,
     super.key,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
@@ -43,6 +41,7 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     if (!controller.controlsEnabled) {
       return const SizedBox();
     }
@@ -65,7 +64,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                       const SizedBox(width: 8),
                       if (controlsConfiguration.enablePlayPause)
                         _BetterPlayerCupertinoPlayPauseButton(
-                          controller: controller,
                           controlsConfiguration: controlsConfiguration,
                           onPlayPause: onPlayPause,
                           iconColor: iconColor,
@@ -76,7 +74,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                         const SizedBox(),
                       const SizedBox(width: 8),
                       _BetterPlayerCupertinoLiveWidget(
-                        controller: controller,
                         controlsConfiguration: controlsConfiguration,
                       ),
                     ],
@@ -85,7 +82,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                     children: <Widget>[
                       if (controlsConfiguration.enableSkips)
                         _BetterPlayerCupertinoSkipButton(
-                          controller: controller,
                           onSkip: onSkipBack,
                           icon: controlsConfiguration.skipBackIcon,
                           semanticsLabel:
@@ -98,7 +94,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                         const SizedBox(),
                       if (controlsConfiguration.enablePlayPause)
                         _BetterPlayerCupertinoPlayPauseButton(
-                          controller: controller,
                           controlsConfiguration: controlsConfiguration,
                           onPlayPause: onPlayPause,
                           iconColor: iconColor,
@@ -109,7 +104,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                         const SizedBox(),
                       if (controlsConfiguration.enableSkips)
                         _BetterPlayerCupertinoSkipButton(
-                          controller: controller,
                           onSkip: onSkipForward,
                           icon: controlsConfiguration.skipForwardIcon,
                           semanticsLabel:
@@ -129,7 +123,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
                         const SizedBox(),
                       if (controlsConfiguration.enableProgressBar)
                         _BetterPlayerCupertinoProgressBarWrapper(
-                          controller: controller,
                           controlsConfiguration: controlsConfiguration,
                           onDragStart: onProgressBarDragStart,
                           onDragEnd: onProgressBarDragEnd,
@@ -155,14 +148,12 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
 
 class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
   const _BetterPlayerCupertinoPlayPauseButton({
-    required this.controller,
     required this.controlsConfiguration,
     required this.onPlayPause,
     required this.iconColor,
     required this.barHeight,
     required this.latestValue,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onPlayPause;
   final Color iconColor;
@@ -171,6 +162,7 @@ class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     final isPlaying = latestValue?.isPlaying ?? false;
     return GestureDetector(
       onTap: onPlayPause,
@@ -199,7 +191,6 @@ class _BetterPlayerCupertinoPlayPauseButton extends StatelessWidget {
 
 class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
   const _BetterPlayerCupertinoSkipButton({
-    required this.controller,
     required this.onSkip,
     required this.icon,
     required this.semanticsLabel,
@@ -207,7 +198,6 @@ class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
     required this.barHeight,
     required this.isBack,
   });
-  final BetterPlayerController controller;
   final VoidCallback onSkip;
   final IconData icon;
   final String semanticsLabel;
@@ -239,14 +229,13 @@ class _BetterPlayerCupertinoSkipButton extends StatelessWidget {
 
 class _BetterPlayerCupertinoLiveWidget extends StatelessWidget {
   const _BetterPlayerCupertinoLiveWidget({
-    required this.controller,
     required this.controlsConfiguration,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Expanded(
       child: Text(
         controller.translations.controlsLive,
@@ -319,13 +308,11 @@ class _BetterPlayerCupertinoRemainingWidget extends StatelessWidget {
 
 class _BetterPlayerCupertinoProgressBarWrapper extends StatelessWidget {
   const _BetterPlayerCupertinoProgressBarWrapper({
-    required this.controller,
     required this.controlsConfiguration,
     required this.onDragStart,
     required this.onDragEnd,
     required this.onTapDown,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final VoidCallback onDragStart;
   final VoidCallback onDragEnd;
@@ -333,11 +320,11 @@ class _BetterPlayerCupertinoProgressBarWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.only(right: 12),
         child: BetterPlayerCupertinoVideoProgressBar(
-          controller.videoPlayerController,
           controller,
           onDragStart: onDragStart,
           onDragEnd: onDragEnd,

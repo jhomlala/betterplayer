@@ -1,4 +1,4 @@
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,7 +9,7 @@ import '../helpers/mock_better_player_platform.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  group('VideoPlayerController tests', () {
+  group('PlayerEngineController tests', () {
     late MockBetterPlayerPlatform mockPlatform;
 
     setUp(() {
@@ -17,8 +17,8 @@ void main() {
       BetterPlayerPlatform.instance = mockPlatform;
     });
 
-    test('VideoPlayerController updates size on changedSize event', () async {
-      final controller = VideoPlayerController();
+    test('PlayerEngineController updates size on changedSize event', () async {
+      final controller = PlayerEngineController();
 
       // Wait for textureId to be available (completes _create)
       int? textureId;

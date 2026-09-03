@@ -69,20 +69,17 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                     children: [
                       InkWell(
                         onTap: () async {
-                          final videoDuration = await widget
-                              .controller!
-                              .videoPlayerController!
-                              .position;
+                          final videoDuration =
+                              widget.controller!.videoPlayerValue!.position;
                           setState(() {
                             if (widget.controller!.isPlaying()!) {
                               final rewindDuration = Duration(
-                                seconds: videoDuration!.inSeconds - 2,
+                                seconds: videoDuration.inSeconds - 2,
                               );
                               if (rewindDuration <
                                   widget
                                       .controller!
-                                      .videoPlayerController!
-                                      .value
+                                      .videoPlayerValue!
                                       .duration!) {
                                 widget.controller!.seekTo(const Duration());
                               } else {
@@ -115,20 +112,17 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                       ),
                       InkWell(
                         onTap: () async {
-                          final videoDuration = await widget
-                              .controller!
-                              .videoPlayerController!
-                              .position;
+                          final videoDuration =
+                              widget.controller!.videoPlayerValue!.position;
                           setState(() {
                             if (widget.controller!.isPlaying()!) {
                               final forwardDuration = Duration(
-                                seconds: videoDuration!.inSeconds + 2,
+                                seconds: videoDuration.inSeconds + 2,
                               );
                               if (forwardDuration >
                                   widget
                                       .controller!
-                                      .videoPlayerController!
-                                      .value
+                                      .videoPlayerValue!
                                       .duration!) {
                                 widget.controller!.seekTo(const Duration());
                                 widget.controller!.pause();

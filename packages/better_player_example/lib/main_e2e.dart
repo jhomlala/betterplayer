@@ -70,10 +70,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         setState(() {
           _errorDescription =
               event.parameters?['exception']?.toString() ??
-              _betterPlayerController
-                  .videoPlayerController
-                  ?.value
-                  .errorDescription;
+              _betterPlayerController.videoPlayerValue?.errorDescription;
         });
       } else if (event.betterPlayerEventType ==
           PlayerEventType.setupDataSource) {
@@ -158,9 +155,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                           _betterPlayerController.betterPlayerDataSource?.url,
                         ),
                         Text(
-                          'Status: Init: ${_betterPlayerController.videoPlayerController?.value.initialized}, '
-                          'Buffering: ${_betterPlayerController.videoPlayerController?.value.isBuffering}, '
-                          'Playing: ${_betterPlayerController.videoPlayerController?.value.isPlaying}',
+                          'Status: Init: ${_betterPlayerController.videoPlayerValue?.initialized}, '
+                          'Buffering: ${_betterPlayerController.videoPlayerValue?.isBuffering}, '
+                          'Playing: ${_betterPlayerController.videoPlayerValue?.isPlaying}',
                           style: const TextStyle(
                             fontSize: 10,
                             color: Colors.blue,

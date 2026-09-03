@@ -1,5 +1,8 @@
-## Unreleased
-- Fixed: Broken links in README.md files (migration guides and example application).
+## 1.4.0
+- Updated: Replaced videoPlayerController with PlayerEngineController and removed the public API.
+- Added: Automated migration rules in `fix_data.yaml` for deprecated `VideoPlayerController` types.
+- Fixed: Broken links and outdated dependency claims in `README.md` files.
+- Fixed: Guarded against null or uninitialized `videoPlayerValue` in progress bars during drag and tap gestures.
 
 ## 1.3.0
 - Added: Extensible logging system with `PlayerLogger`, featuring native-to-Dart log streaming, automatic caller/tag derivation, and comprehensive internal logs.

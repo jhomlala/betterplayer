@@ -11,7 +11,7 @@ import 'package:better_player/src/controls/better_player_cupertino_top_bar.dart'
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoControls extends StatefulWidget {
@@ -43,7 +43,6 @@ class _BetterPlayerCupertinoControlsState
   Timer? _initTimer;
   bool _wasLoading = false;
 
-  VideoPlayerController? _controller;
   BetterPlayerController? _betterPlayerController;
   StreamSubscription? _controlsVisibilityStreamSubscription;
 
@@ -75,14 +74,12 @@ class _BetterPlayerCupertinoControlsState
         child: ColoredBox(
           color: Colors.black,
           child: BetterPlayerCupertinoErrorWidget(
-            controller: _betterPlayerController!,
             controlsConfiguration: _controlsConfiguration,
           ),
         ),
       );
     }
 
-    _controller = _betterPlayerController!.videoPlayerController;
     final backgroundColor = _controlsConfiguration.controlBarColor;
     final iconColor = _controlsConfiguration.iconsColor;
     final orientation = MediaQuery.of(context).orientation;
@@ -95,7 +92,6 @@ class _BetterPlayerCupertinoControlsState
     final controlsColumn = Column(
       children: <Widget>[
         BetterPlayerCupertinoTopBar(
-          controller: _betterPlayerController!,
           controlsConfiguration: _controlsConfiguration,
           controlsNotVisible: controlsNotVisible,
           barHeight: barHeight * 0.8,
@@ -126,11 +122,9 @@ class _BetterPlayerCupertinoControlsState
             onChangePlayerControlsNotVisible: changePlayerControlsNotVisible,
           ),
         BetterPlayerCupertinoNextVideoWidget(
-          controller: _betterPlayerController!,
           controlsConfiguration: _controlsConfiguration,
         ),
         BetterPlayerCupertinoBottomBar(
-          controller: _betterPlayerController!,
           controlsConfiguration: _controlsConfiguration,
           controlsNotVisible: controlsNotVisible,
           barHeight: barHeight,
@@ -195,7 +189,7 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _dispose() {
-    _controller!.removeListener(_updateState);
+    _betterPlayerController!.removeVideoListener(_updateState);
     _hideTimer?.cancel();
     _expandCollapseTimer?.cancel();
     _initTimer?.cancel();
@@ -206,7 +200,6 @@ class _BetterPlayerCupertinoControlsState
   void didChangeDependencies() {
     final oldController = _betterPlayerController;
     _betterPlayerController = BetterPlayerController.of(context);
-    _controller = _betterPlayerController!.videoPlayerController;
 
     if (oldController != _betterPlayerController) {
       _dispose();
@@ -222,11 +215,11 @@ class _BetterPlayerCupertinoControlsState
       return;
     }
 
-    if (_latestValue!.volume == 0) {
-      _controller!.setVolume(_latestVolume ?? 0.5);
+    if (_latestValue?.volume == 0) {
+      _betterPlayerController!.setVolume(_latestVolume ?? 0.5);
     } else {
-      _latestVolume = _controller!.value.volume;
-      _controller!.setVolume(0);
+      _latestVolume = _betterPlayerController!.videoPlayerValue?.volume;
+      _betterPlayerController!.setVolume(0);
     }
   }
 
@@ -244,11 +237,11 @@ class _BetterPlayerCupertinoControlsState
 
   Future<void> _initialize() async {
     controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
-    _controller!.addListener(_updateState);
+    _betterPlayerController!.addVideoListener(_updateState);
 
     _updateState();
 
-    if ((_controller!.value.isPlaying) ||
+    if ((_betterPlayerController!.videoPlayerValue?.isPlaying ?? false) ||
         _betterPlayerController!.betterPlayerConfiguration.autoPlay) {
       _startHideTimer();
     }
@@ -284,14 +277,14 @@ class _BetterPlayerCupertinoControlsState
       isFinished = _latestValue!.position >= _latestValue!.duration!;
     }
 
-    if (_controller!.value.isPlaying) {
+    if (_betterPlayerController!.videoPlayerValue?.isPlaying ?? false) {
       changePlayerControlsNotVisible(false);
       _hideTimer?.cancel();
       _betterPlayerController!.pause();
     } else {
       cancelAndRestartTimer();
 
-      if (!_controller!.value.initialized) {
+      if (!(_betterPlayerController!.videoPlayerValue?.initialized ?? false)) {
         if (_betterPlayerController!.betterPlayerDataSource?.liveStream ==
             true) {
           _betterPlayerController!.play();
@@ -319,11 +312,11 @@ class _BetterPlayerCupertinoControlsState
   void _updateState() {
     if (mounted) {
       if (!controlsNotVisible ||
-          isVideoFinished(_controller!.value) ||
+          isVideoFinished(_betterPlayerController!.videoPlayerValue) ||
           _wasLoading ||
-          isLoading(_controller!.value)) {
+          isLoading(_betterPlayerController!.videoPlayerValue)) {
         setState(() {
-          _latestValue = _controller!.value;
+          _latestValue = _betterPlayerController!.videoPlayerValue;
           if (isVideoFinished(_latestValue)) {
             changePlayerControlsNotVisible(false);
           }

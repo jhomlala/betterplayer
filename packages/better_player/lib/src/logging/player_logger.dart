@@ -96,7 +96,7 @@ class PlayerLogger {
     stackTrace: stackTrace,
   );
 
-  /// Entry point for native → Dart log forwarding.
+  /// Entry point for native -> Dart log forwarding.
   static void onNativeLog({
     required int levelIndex,
     required String message,

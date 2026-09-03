@@ -138,6 +138,50 @@ appId: pl.hasoft.example
 
 - scrollUntilVisible:
     element:
+      id: "ffi_test_status_playerValue"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_playerValue"
+- assertVisible:
+    id: "ffi_test_status_playerValue"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_duration"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_duration"
+- assertVisible:
+    id: "ffi_test_status_duration"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_isInitialized"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_isInitialized"
+- assertVisible:
+    id: "ffi_test_status_isInitialized"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
+      id: "ffi_test_status_isPictureInPictureSupported"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_isPictureInPictureSupported"
+- assertVisible:
+    id: "ffi_test_status_isPictureInPictureSupported"
+    text: "success=true"
+
+- scrollUntilVisible:
+    element:
       id: "ffi_test_status_preCache"
     direction: DOWN
     centerElement: true

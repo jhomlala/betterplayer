@@ -52,7 +52,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
       _configuration = setupDefaultConfiguration();
     }
 
-    widget.betterPlayerController.videoPlayerController!.addListener(
+    widget.betterPlayerController.addVideoListener(
       _updateState,
     );
 
@@ -76,7 +76,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
 
   @override
   void dispose() {
-    widget.betterPlayerController.videoPlayerController!.removeListener(
+    widget.betterPlayerController.removeVideoListener(
       _updateState,
     );
     _visibilityStreamSubscription.cancel();
@@ -87,8 +87,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
   void _updateState() {
     if (mounted) {
       setState(() {
-        _latestValue =
-            widget.betterPlayerController.videoPlayerController?.value;
+        _latestValue = widget.betterPlayerController.videoPlayerValue;
       });
     }
   }

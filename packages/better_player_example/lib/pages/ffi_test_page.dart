@@ -47,8 +47,7 @@ class _FFITestPageState extends State<FFITestPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       debugPrint('FFI TEST PAGE: addPostFrameCallback');
       // Check if already initialized (e.g. if events were missed)
-      if (_betterPlayerController.videoPlayerController?.value.initialized ??
-          false) {
+      if (_betterPlayerController.videoPlayerValue?.initialized ?? false) {
         debugPrint('FFI TEST PAGE: Already initialized');
         setState(() {
           _isInitialized = true;
@@ -150,8 +149,7 @@ class _FFITestPageState extends State<FFITestPage> {
                   );
                 } catch (e) {
                   // Fallback to direct platform call if controller logic fails
-                  final textureId =
-                      _betterPlayerController.videoPlayerController?.textureId;
+                  final textureId = _betterPlayerController.textureId;
                   if (textureId != null) {
                     await BetterPlayerPlatform.instance.seekTo(
                       textureId,
@@ -174,23 +172,19 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'setTrackParameters',
               () async {
-                final vpc = _betterPlayerController.videoPlayerController;
-                if (vpc != null) {
-                  await vpc.setTrackParameters(1280, 720, 2000);
-                } else {
-                  throw Exception('VideoPlayerController is null');
-                }
+                await _betterPlayerController.setTrackParameters(
+                  width: 1280,
+                  height: 720,
+                  bitrate: 2000,
+                );
               },
             ),
             _buildTestButton(
               'setAudioTrack',
               () async {
-                final vpc = _betterPlayerController.videoPlayerController;
-                if (vpc != null) {
-                  vpc.setAudioTrack('English', 0);
-                } else {
-                  throw Exception('VideoPlayerController is null');
-                }
+                _betterPlayerController.setAudioTrack(
+                  PlayerAsmsAudioTrack(label: 'English', id: 0),
+                );
               },
             ),
             _buildTestButton(
@@ -206,23 +200,58 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'getPosition',
               () async {
-                final vpc = _betterPlayerController.videoPlayerController;
-                if (vpc != null) {
-                  await vpc.position;
-                } else {
-                  throw Exception('VideoPlayerController is null');
+                final pos = await _betterPlayerController.position;
+                if (pos == null) {
+                  throw Exception('getPosition returned null');
                 }
+                debugPrint('FFI Test getPosition result: $pos');
               },
             ),
             _buildTestButton(
               'getAbsolutePosition',
               () async {
-                final vpc = _betterPlayerController.videoPlayerController;
-                if (vpc != null) {
-                  await vpc.absolutePosition;
-                } else {
-                  throw Exception('VideoPlayerController is null');
+                final absPos = await _betterPlayerController.absolutePosition;
+                debugPrint('FFI Test getAbsolutePosition result: $absPos');
+              },
+            ),
+            _buildTestButton(
+              'playerValue',
+              () async {
+                final value = _betterPlayerController.videoPlayerValue;
+                if (value == null) {
+                  throw Exception('videoPlayerValue returned null');
                 }
+                debugPrint('FFI Test playerValue result: $value');
+              },
+            ),
+            _buildTestButton(
+              'duration',
+              () async {
+                final dur = _betterPlayerController.duration;
+                if (dur == null || dur <= Duration.zero) {
+                  throw Exception('duration returned invalid value: $dur');
+                }
+                debugPrint('FFI Test duration result: $dur');
+              },
+            ),
+            _buildTestButton(
+              'isInitialized',
+              () async {
+                final initialized = _betterPlayerController.isInitialized;
+                if (!initialized) {
+                  throw Exception('isInitialized returned false');
+                }
+                debugPrint('FFI Test isInitialized result: $initialized');
+              },
+            ),
+            _buildTestButton(
+              'isPictureInPictureSupported',
+              () async {
+                final supported = await _betterPlayerController
+                    .isPictureInPictureSupported();
+                debugPrint(
+                  'FFI Test isPictureInPictureSupported result: $supported',
+                );
               },
             ),
             _buildTestButton(

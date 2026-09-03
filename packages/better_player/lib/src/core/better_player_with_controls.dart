@@ -7,7 +7,7 @@ import 'package:better_player/src/controls/better_player_cupertino_controls.dart
 import 'package:better_player/src/controls/better_player_material_controls.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -33,21 +33,21 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
   bool _initialized = false;
 
   StreamSubscription? _controllerEventSubscription;
-  VideoPlayerController? _videoPlayerController;
 
   @override
   void initState() {
     playerVisibilityStreamController.add(true);
     _setupControllerEventSubscription();
-    _setupVideoPlayerControllerListener();
+    widget.controller!.addVideoListener(_onVideoPlayerChanged);
     super.initState();
   }
 
   @override
   void didUpdateWidget(BetterPlayerWithControls oldWidget) {
     if (oldWidget.controller != widget.controller) {
+      oldWidget.controller!.removeVideoListener(_onVideoPlayerChanged);
+      widget.controller!.addVideoListener(_onVideoPlayerChanged);
       _setupControllerEventSubscription();
-      _setupVideoPlayerControllerListener();
     }
     super.didUpdateWidget(oldWidget);
   }
@@ -58,17 +58,6 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
         .listen(_onControllerChanged);
   }
 
-  /// Sets up a listener for the [VideoPlayerController].
-  /// This is required to react to resolution changes (HLS ABR) and update
-  /// the aspect ratio of the player (Issue #768).
-  void _setupVideoPlayerControllerListener() {
-    if (_videoPlayerController != widget.controller!.videoPlayerController) {
-      _videoPlayerController?.removeListener(_onVideoPlayerChanged);
-      _videoPlayerController = widget.controller!.videoPlayerController;
-      _videoPlayerController?.addListener(_onVideoPlayerChanged);
-    }
-  }
-
   void _onVideoPlayerChanged() {
     if (mounted) {
       setState(() {});
@@ -77,9 +66,9 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
   @override
   void dispose() {
+    widget.controller!.removeVideoListener(_onVideoPlayerChanged);
     playerVisibilityStreamController.close();
     _controllerEventSubscription?.cancel();
-    _videoPlayerController?.removeListener(_onVideoPlayerChanged);
     super.dispose();
   }
 
@@ -88,9 +77,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       if (!_initialized) {
         _initialized = true;
       }
-      if (event == PlayerControllerEvent.setupDataSource) {
-        _setupVideoPlayerControllerListener();
-      }
+      if (event == PlayerControllerEvent.setupDataSource) {}
     });
   }
 
@@ -104,8 +91,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       if (config.autoDetectFullscreenDeviceOrientation ||
           config.autoDetectFullscreenAspectRatio) {
         aspectRatio =
-            betterPlayerController.videoPlayerController?.value.aspectRatio ??
-            1.0;
+            betterPlayerController.videoPlayerValue?.aspectRatio ?? 1.0;
       } else {
         aspectRatio =
             config.fullScreenAspectRatio ??
@@ -272,29 +258,30 @@ class _BetterPlayerVideoFitWidget extends StatefulWidget {
 
 class _BetterPlayerVideoFitWidgetState
     extends State<_BetterPlayerVideoFitWidget> {
-  VideoPlayerController? get controller =>
-      widget.betterPlayerController.videoPlayerController;
-
   bool _initialized = false;
   bool _started = false;
   StreamSubscription? _controllerEventSubscription;
-  VideoPlayerController? _videoPlayerController;
 
   @override
   void initState() {
     super.initState();
     _updateStartedFlag();
-    _initialized = controller?.value.initialized ?? false;
+    _initialized =
+        widget.betterPlayerController.videoPlayerValue?.initialized ?? false;
     _setupControllerEventSubscription();
-    _setupVideoPlayerControllerListener();
+    widget.betterPlayerController.addVideoListener(_onVideoPlayerChanged);
   }
 
   @override
   void didUpdateWidget(_BetterPlayerVideoFitWidget oldWidget) {
     if (oldWidget.betterPlayerController != widget.betterPlayerController) {
+      oldWidget.betterPlayerController.removeVideoListener(
+        _onVideoPlayerChanged,
+      );
+      widget.betterPlayerController.addVideoListener(_onVideoPlayerChanged);
       _setupControllerEventSubscription();
     }
-    _setupVideoPlayerControllerListener();
+
     super.didUpdateWidget(oldWidget);
   }
 
@@ -325,21 +312,9 @@ class _BetterPlayerVideoFitWidgetState
         setState(() {
           _started = false;
           _initialized = false;
-          _setupVideoPlayerControllerListener();
         });
       default:
         break;
-    }
-  }
-
-  /// Sets up a listener for the [VideoPlayerController].
-  /// This is required to react to resolution changes (HLS ABR) and update
-  /// the video dimensions inside FittedBox (Issue #768).
-  void _setupVideoPlayerControllerListener() {
-    if (_videoPlayerController != controller) {
-      _videoPlayerController?.removeListener(_onVideoPlayerChanged);
-      _videoPlayerController = controller;
-      _videoPlayerController?.addListener(_onVideoPlayerChanged);
     }
   }
 
@@ -347,7 +322,8 @@ class _BetterPlayerVideoFitWidgetState
     if (!mounted) {
       return;
     }
-    final isInitialized = controller?.value.initialized ?? false;
+    final isInitialized =
+        widget.betterPlayerController.videoPlayerValue?.initialized ?? false;
     if (isInitialized != _initialized) {
       setState(() {
         _initialized = isInitialized;
@@ -360,15 +336,16 @@ class _BetterPlayerVideoFitWidgetState
   @override
   Widget build(BuildContext context) {
     if (_initialized && _started) {
+      final size = widget.betterPlayerController.videoPlayerValue?.size;
       return Center(
         child: ClipRect(
           child: SizedBox.expand(
             child: FittedBox(
               fit: widget.boxFit,
               child: SizedBox(
-                width: controller!.value.size?.width ?? 0,
-                height: controller!.value.size?.height ?? 0,
-                child: VideoPlayer(controller),
+                width: size?.width ?? 0,
+                height: size?.height ?? 0,
+                child: widget.betterPlayerController.buildVideoPlayerView(),
               ),
             ),
           ),
@@ -381,7 +358,7 @@ class _BetterPlayerVideoFitWidgetState
 
   @override
   void dispose() {
-    _videoPlayerController?.removeListener(_onVideoPlayerChanged);
+    widget.betterPlayerController.removeVideoListener(_onVideoPlayerChanged);
     _controllerEventSubscription?.cancel();
     super.dispose();
   }

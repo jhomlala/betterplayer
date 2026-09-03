@@ -88,23 +88,39 @@ class _DashPageState extends State<DashPage> {
   }
 }
 
-class _ResolutionText extends StatelessWidget {
+class _ResolutionText extends StatefulWidget {
   const _ResolutionText({required this.controller});
-
   final BetterPlayerController controller;
 
   @override
+  State<_ResolutionText> createState() => _ResolutionTextState();
+}
+
+class _ResolutionTextState extends State<_ResolutionText> {
+  void _listener() {
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controller.addVideoListener(_listener);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeVideoListener(_listener);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final value = widget.controller.videoPlayerValue;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: ValueListenableBuilder(
-        valueListenable: controller.videoPlayerController!,
-        builder: (context, value, child) {
-          return Text(
-            'Resolution: ${value.size?.width.toInt() ?? 0}x${value.size?.height.toInt() ?? 0}',
-            style: const TextStyle(fontSize: 14),
-          );
-        },
+      child: Text(
+        'Resolution: ${(value?.size?.width ?? 0).toInt()}x${(value?.size?.height ?? 0).toInt()}',
+        style: const TextStyle(fontSize: 14),
       ),
     );
   }

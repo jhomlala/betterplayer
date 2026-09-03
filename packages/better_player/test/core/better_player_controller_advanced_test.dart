@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/better_player_test_utils.dart';
 import '../helpers/mock_method_channel.dart';
-import '../helpers/mock_video_player_controller.dart';
+import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +32,7 @@ void main() {
     });
 
     test('retryDataSource works', () async {
-      final mock = MockVideoPlayerController();
+      final mock = MockPlayerEngineController();
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mock,
       );
@@ -44,10 +44,10 @@ void main() {
 
       // Simulate error
       mock.value = mock.value.copyWith(errorDescription: 'Error');
-      controller.videoPlayerController!.notifyListeners();
+      mock.notifyListeners();
 
       await controller.retryDataSource();
-      expect(controller.videoPlayerController != null, true);
+      expect(controller.isEngineReady, true);
     });
 
     test("preCache and stopPreCache don't crash", () async {
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('PiP support check', () async {
-      final mock = MockVideoPlayerController();
+      final mock = MockPlayerEngineController();
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mock,
       );
@@ -78,7 +78,7 @@ void main() {
     });
 
     test('setAudioTrack with null language', () {
-      final mock = MockVideoPlayerController();
+      final mock = MockPlayerEngineController();
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: mock,
       );
@@ -90,7 +90,7 @@ void main() {
 
     test('setupDataSource with asset', () async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
       );
       await controller.setupDataSource(
         PlayerDataSource.file('test/video.mp4'),
@@ -100,7 +100,7 @@ void main() {
 
     test('setupDataSource with memory', () async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
       );
       await controller.setupDataSource(
         PlayerDataSource.memory([1, 2, 3]),

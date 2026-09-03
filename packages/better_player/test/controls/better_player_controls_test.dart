@@ -8,7 +8,7 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_mock_controller.dart';
 import '../helpers/better_player_test_utils.dart';
-import '../helpers/mock_video_player_controller.dart';
+import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   late BetterPlayerMockController mockController;
@@ -56,7 +56,7 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -92,7 +92,7 @@ void main() {
     'Material controls show mute button if enabled',
     (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -126,10 +126,10 @@ void main() {
   testWidgets(
     'Cupertino controls show play/pause button',
     (tester) async {
-      final mockVideoPlayerController = MockVideoPlayerController();
-      mockVideoPlayerController.setDuration(const Duration(seconds: 100));
+      final mockPlayerEngineController = MockPlayerEngineController();
+      mockPlayerEngineController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: mockVideoPlayerController,
+        controller: mockPlayerEngineController,
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.cupertino,
@@ -163,7 +163,7 @@ void main() {
     'Overflow menu opens on tap',
     (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -213,7 +213,7 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -260,7 +260,7 @@ void main() {
       await tester.tap(speed2x);
       await tester.pumpAndSettle();
 
-      expect(controller.videoPlayerController!.value.speed, 2.0);
+      expect(controller.videoPlayerValue?.speed, 2.0);
     },
   );
 
@@ -268,7 +268,7 @@ void main() {
     'Material controls show progress bar',
     (tester) async {
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockVideoPlayerController(),
+        controller: MockPlayerEngineController(),
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.material,
@@ -300,10 +300,10 @@ void main() {
   testWidgets(
     'Cupertino controls show progress bar',
     (tester) async {
-      final mockVideoPlayerController = MockVideoPlayerController();
-      mockVideoPlayerController.setDuration(const Duration(seconds: 100));
+      final mockPlayerEngineController = MockPlayerEngineController();
+      mockPlayerEngineController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: mockVideoPlayerController,
+        controller: mockPlayerEngineController,
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.cupertino,
@@ -361,6 +361,74 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(BetterPlayerPlaylist), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Material progress bar handles null/uninitialized videoPlayerValue without throwing',
+    (tester) async {
+      final controller = BetterPlayerController(
+        const PlayerConfiguration(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BetterPlayerMaterialVideoProgressBar(
+              controller,
+            ),
+          ),
+        ),
+      );
+
+      final progressBarFinder = find.byType(
+        BetterPlayerMaterialVideoProgressBar,
+      );
+      expect(progressBarFinder, findsOneWidget);
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(progressBarFinder),
+      );
+      await gesture.moveBy(const Offset(50, 0));
+      await gesture.up();
+      await tester.pump();
+
+      await tester.tap(progressBarFinder);
+      await tester.pump();
+    },
+  );
+
+  testWidgets(
+    'Cupertino progress bar handles null/uninitialized videoPlayerValue without throwing',
+    (tester) async {
+      final controller = BetterPlayerController(
+        const PlayerConfiguration(),
+      );
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BetterPlayerCupertinoVideoProgressBar(
+              controller,
+            ),
+          ),
+        ),
+      );
+
+      final progressBarFinder = find.byType(
+        BetterPlayerCupertinoVideoProgressBar,
+      );
+      expect(progressBarFinder, findsOneWidget);
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(progressBarFinder),
+      );
+      await gesture.moveBy(const Offset(50, 0));
+      await gesture.up();
+      await tester.pump();
+
+      await tester.tap(progressBarFinder);
+      await tester.pump();
     },
   );
 }

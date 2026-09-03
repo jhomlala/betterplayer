@@ -1,12 +1,11 @@
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/video_player/video_player.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoTopBar extends StatelessWidget {
   const BetterPlayerCupertinoTopBar({
-    required this.controller,
     required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.barHeight,
@@ -21,7 +20,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
     required this.latestValue,
     super.key,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
@@ -37,6 +35,7 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     if (!controller.controlsEnabled) {
       return const SizedBox();
     }
@@ -52,7 +51,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
         children: <Widget>[
           if (controlsConfiguration.enableFullscreen)
             _BetterPlayerCupertinoExpandButton(
-              controller: controller,
               controlsConfiguration: controlsConfiguration,
               controlsNotVisible: controlsNotVisible,
               barHeight: barHeight,
@@ -67,7 +65,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
           const SizedBox(width: 4),
           if (controlsConfiguration.enablePip)
             _BetterPlayerCupertinoPipButton(
-              controller: controller,
               controlsConfiguration: controlsConfiguration,
               controlsNotVisible: controlsNotVisible,
               barHeight: barHeight,
@@ -81,7 +78,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
           const Spacer(),
           if (controlsConfiguration.enableMute)
             _BetterPlayerCupertinoMuteButton(
-              controller: controller,
               controlsConfiguration: controlsConfiguration,
               controlsNotVisible: controlsNotVisible,
               barHeight: barHeight,
@@ -97,7 +93,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
           const SizedBox(width: 4),
           if (controlsConfiguration.enableOverflowMenu)
             _BetterPlayerCupertinoMoreButton(
-              controller: controller,
               controlsConfiguration: controlsConfiguration,
               controlsNotVisible: controlsNotVisible,
               barHeight: barHeight,
@@ -117,7 +112,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
 
 class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
   const _BetterPlayerCupertinoExpandButton({
-    required this.controller,
     required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.barHeight,
@@ -127,7 +121,6 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
     required this.iconColor,
     required this.onExpandCollapse,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
@@ -139,6 +132,7 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return GestureDetector(
       onTap: onExpandCollapse,
       child: Semantics(
@@ -175,7 +169,6 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
 
 class _BetterPlayerCupertinoPipButton extends StatefulWidget {
   const _BetterPlayerCupertinoPipButton({
-    required this.controller,
     required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.barHeight,
@@ -184,7 +177,6 @@ class _BetterPlayerCupertinoPipButton extends StatefulWidget {
     required this.backgroundColor,
     required this.iconColor,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
@@ -202,33 +194,32 @@ class _BetterPlayerCupertinoPipButtonState
     extends State<_BetterPlayerCupertinoPipButton> {
   late Future<bool> _isPipSupportedFuture;
 
-  @override
-  void initState() {
-    super.initState();
-    _isPipSupportedFuture = widget.controller.isPictureInPictureSupported();
-  }
+  BetterPlayerController? _controller;
 
   @override
-  void didUpdateWidget(covariant _BetterPlayerCupertinoPipButton oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.controller != widget.controller) {
-      _isPipSupportedFuture = widget.controller.isPictureInPictureSupported();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final newController = BetterPlayerController.of(context);
+    if (_controller != newController) {
+      _controller = newController;
+      _isPipSupportedFuture = _controller!.isPictureInPictureSupported();
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return FutureBuilder<bool>(
       future: _isPipSupportedFuture,
       builder: (context, snapshot) {
         final isPipSupported = snapshot.data ?? false;
-        if (isPipSupported && widget.controller.betterPlayerGlobalKey != null) {
+        if (isPipSupported && controller.betterPlayerGlobalKey != null) {
           return GestureDetector(
-            onTap: () => widget.controller.enablePictureInPicture(
-              widget.controller.betterPlayerGlobalKey!,
+            onTap: () => controller.enablePictureInPicture(
+              controller.betterPlayerGlobalKey!,
             ),
             child: Semantics(
-              label: widget.controller.translations.controlsPipLabel,
+              label: controller.translations.controlsPipLabel,
               identifier: 'better_player_cupertino_controls_pip_button',
               button: true,
               child: AnimatedOpacity(
@@ -266,7 +257,6 @@ class _BetterPlayerCupertinoPipButtonState
 
 class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
   const _BetterPlayerCupertinoMuteButton({
-    required this.controller,
     required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.barHeight,
@@ -277,7 +267,6 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
     required this.onMute,
     required this.latestValue,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
@@ -290,6 +279,7 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     final isMuted = latestValue != null && latestValue!.volume == 0;
     final semanticsLabel = isMuted
         ? controller.translations.controlsUnmuteLabel
@@ -329,7 +319,6 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
 
 class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
   const _BetterPlayerCupertinoMoreButton({
-    required this.controller,
     required this.controlsConfiguration,
     required this.controlsNotVisible,
     required this.barHeight,
@@ -339,7 +328,6 @@ class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
     required this.iconColor,
     required this.onShowMoreClicked,
   });
-  final BetterPlayerController controller;
   final PlayerControlsConfiguration controlsConfiguration;
   final bool controlsNotVisible;
   final double barHeight;
@@ -351,6 +339,7 @@ class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return GestureDetector(
       onTap: onShowMoreClicked,
       child: Semantics(

@@ -11,9 +11,6 @@ import 'package:better_player/src/logging/player_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-export 'package:better_player_platform_interface/better_player_platform_interface.dart'
-    show VideoPlayerValue;
-
 final BetterPlayerPlatform _betterPlayerPlatform =
     BetterPlayerPlatform.instance;
 
@@ -27,9 +24,9 @@ final BetterPlayerPlatform _betterPlayerPlatform =
 /// To reclaim the resources used by the player call [dispose].
 ///
 /// After [dispose] all further calls are ignored.
-class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
-  /// Constructs a [VideoPlayerController] and creates video controller on platform side.
-  VideoPlayerController({
+class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
+  /// Constructs a [PlayerEngineController] and creates video controller on platform side.
+  PlayerEngineController({
     this.bufferingConfiguration = const BufferingConfiguration(),
     bool autoCreate = true,
   }) : super(VideoPlayerValue(duration: null)) {
@@ -69,7 +66,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         return;
       }
       PlayerLogger.debug(
-        message: 'VideoPlayerController: Event received: ${event.eventType}',
+        message: 'PlayerEngineController: Event received: ${event.eventType}',
       );
       videoEventStreamController.add(event);
       switch (event.eventType) {
@@ -284,7 +281,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     try {
       PlayerLogger.debug(
-        message: 'VideoPlayerController: setDataSource platform call starting',
+        message: 'PlayerEngineController: setDataSource platform call starting',
       );
       await BetterPlayerPlatform.instance.setDataSource(
         _textureId,
@@ -292,11 +289,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       );
       PlayerLogger.debug(
         message:
-            'VideoPlayerController: setDataSource platform call finished, waiting for init event',
+            'PlayerEngineController: setDataSource platform call finished, waiting for init event',
       );
       await completer.future;
       PlayerLogger.debug(
-        message: 'VideoPlayerController: setDataSource init event received',
+        message: 'PlayerEngineController: setDataSource init event received',
       );
     } finally {
       await subscription.cancel();
@@ -477,7 +474,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [width] specifies width of the selected track
   /// [height] specifies height of the selected track
   /// [bitrate] specifies bitrate of the selected track
-  Future<void> setTrackParameters(int? width, int? height, int? bitrate) async {
+  Future<void> setTrackParameters({
+    int? width,
+    int? height,
+    int? bitrate,
+  }) async {
     await _betterPlayerPlatform.setTrackParameters(
       _textureId,
       width,
@@ -541,360 +542,5 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   static Future stopPreCache(String url, String? cacheKey) async {
     return _betterPlayerPlatform.stopPreCache(url, cacheKey);
-  }
-}
-
-/// Widget that displays the video controlled by [controller].
-class VideoPlayer extends StatefulWidget {
-  /// Uses the given [controller] for all video rendered in this widget.
-  const VideoPlayer(this.controller, {super.key});
-
-  /// The [VideoPlayerController] responsible for the video being rendered in
-  /// this widget.
-  final VideoPlayerController? controller;
-
-  @override
-  _VideoPlayerState createState() => _VideoPlayerState();
-}
-
-class _VideoPlayerState extends State<VideoPlayer> {
-  _VideoPlayerState() {
-    _listener = () {
-      final newTextureId = widget.controller!.textureId;
-      if (newTextureId != _textureId) {
-        setState(() {
-          _textureId = newTextureId;
-        });
-      }
-    };
-  }
-
-  late VoidCallback _listener;
-  int? _textureId;
-
-  @override
-  void initState() {
-    super.initState();
-    _textureId = widget.controller!.textureId;
-    // Need to listen for initialization events since the actual texture ID
-    // becomes available after asynchronous initialization finishes.
-    widget.controller!.addListener(_listener);
-  }
-
-  @override
-  void didUpdateWidget(VideoPlayer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    oldWidget.controller!.removeListener(_listener);
-    _textureId = widget.controller!.textureId;
-    widget.controller!.addListener(_listener);
-  }
-
-  @override
-  void deactivate() {
-    super.deactivate();
-    widget.controller!.removeListener(_listener);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _textureId == null
-        ? Container()
-        : _betterPlayerPlatform.buildView(_textureId);
-  }
-}
-
-/// Used to configure the [VideoProgressIndicator] widget's colors for how it
-/// describes the video's status.
-///
-/// The widget uses default colors that are customizeable through this class.
-class VideoProgressColors {
-  /// Any property can be set to any color. They each have defaults.
-  ///
-  /// [playedColor] defaults to red at 70% opacity. This fills up a portion of
-  /// the [VideoProgressIndicator] to represent how much of the video has played
-  /// so far.
-  ///
-  /// [bufferedColor] defaults to blue at 20% opacity. This fills up a portion
-  /// of [VideoProgressIndicator] to represent how much of the video has
-  /// buffered so far.
-  ///
-  /// [backgroundColor] defaults to gray at 50% opacity. This is the background
-  /// color behind both [playedColor] and [bufferedColor] to denote the total
-  /// size of the video compared to either of those values.
-  VideoProgressColors({
-    this.playedColor = const Color.fromRGBO(255, 0, 0, 0.7),
-    this.bufferedColor = const Color.fromRGBO(50, 50, 200, 0.2),
-    this.backgroundColor = const Color.fromRGBO(200, 200, 200, 0.5),
-  });
-
-  /// [playedColor] defaults to red at 70% opacity. This fills up a portion of
-  /// the [VideoProgressIndicator] to represent how much of the video has played
-  /// so far.
-  final Color playedColor;
-
-  /// [bufferedColor] defaults to blue at 20% opacity. This fills up a portion
-  /// of [VideoProgressIndicator] to represent how much of the video has
-  /// buffered so far.
-  final Color bufferedColor;
-
-  /// [backgroundColor] defaults to gray at 50% opacity. This is the background
-  /// color behind both [playedColor] and [bufferedColor] to denote the total
-  /// size of the video compared to either of those values.
-  final Color backgroundColor;
-}
-
-class _VideoScrubber extends StatefulWidget {
-  const _VideoScrubber({
-    required this.child,
-    required this.controller,
-  });
-
-  final Widget child;
-  final VideoPlayerController controller;
-
-  @override
-  _VideoScrubberState createState() => _VideoScrubberState();
-}
-
-class _VideoScrubberState extends State<_VideoScrubber> {
-  bool _controllerWasPlaying = false;
-
-  VideoPlayerController get controller => widget.controller;
-
-  @override
-  Widget build(BuildContext context) {
-    void seekToRelativePosition(Offset globalPosition) {
-      final renderObject = context.findRenderObject();
-      if (renderObject != null) {
-        final box = renderObject as RenderBox;
-        final tapPos = box.globalToLocal(globalPosition);
-        final relative = tapPos.dx / box.size.width;
-        final position = controller.value.duration! * relative;
-        controller.seekTo(position);
-      }
-    }
-
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onHorizontalDragStart: (details) {
-        if (!controller.value.initialized) {
-          return;
-        }
-        _controllerWasPlaying = controller.value.isPlaying;
-        if (_controllerWasPlaying) {
-          controller.pause();
-        }
-      },
-      onHorizontalDragUpdate: (details) {
-        if (!controller.value.initialized) {
-          return;
-        }
-        seekToRelativePosition(details.globalPosition);
-      },
-      onHorizontalDragEnd: (details) {
-        if (_controllerWasPlaying) {
-          controller.play();
-        }
-      },
-      onTapDown: (details) {
-        if (!controller.value.initialized) {
-          return;
-        }
-        seekToRelativePosition(details.globalPosition);
-      },
-      child: widget.child,
-    );
-  }
-}
-
-/// Displays the play/buffering status of the video controlled by [controller].
-///
-/// If [allowScrubbing] is true, this widget will detect taps and drags and
-/// seek the video accordingly.
-///
-/// [padding] allows to specify some extra padding around the progress indicator
-/// that will also detect the gestures.
-class VideoProgressIndicator extends StatefulWidget {
-  /// Construct an instance that displays the play/buffering status of the video
-  /// controlled by [controller].
-  ///
-  /// Defaults will be used for everything except [controller] if they're not
-  /// provided. [allowScrubbing] defaults to false, and [padding] will default
-  /// to `top: 5.0`.
-  VideoProgressIndicator(
-    this.controller, {
-    VideoProgressColors? colors,
-    this.allowScrubbing,
-    this.padding = const EdgeInsets.only(top: 5),
-    super.key,
-  }) : colors = colors ?? VideoProgressColors();
-
-  /// The [VideoPlayerController] that actually associates a video with this
-  /// widget.
-  final VideoPlayerController controller;
-
-  /// The default colors used throughout the indicator.
-  ///
-  /// See [VideoProgressColors] for default values.
-  final VideoProgressColors colors;
-
-  /// When true, the widget will detect touch input and try to seek the video
-  /// accordingly. The widget ignores such input when false.
-  ///
-  /// Defaults to false.
-  final bool? allowScrubbing;
-
-  /// This allows for visual padding around the progress indicator that can
-  /// still detect gestures via [allowScrubbing].
-  ///
-  /// Defaults to `top: 5.0`.
-  final EdgeInsets padding;
-
-  @override
-  _VideoProgressIndicatorState createState() => _VideoProgressIndicatorState();
-}
-
-class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
-  _VideoProgressIndicatorState() {
-    listener = () {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    };
-  }
-
-  late VoidCallback listener;
-
-  VideoPlayerController get controller => widget.controller;
-
-  VideoProgressColors get colors => widget.colors;
-
-  @override
-  void initState() {
-    super.initState();
-    controller.addListener(listener);
-  }
-
-  @override
-  void deactivate() {
-    controller.removeListener(listener);
-    super.deactivate();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget progressIndicator;
-    if (controller.value.initialized) {
-      final duration = controller.value.duration!.inMilliseconds;
-      final position = controller.value.position.inMilliseconds;
-
-      var maxBuffering = 0;
-      for (final range in controller.value.buffered) {
-        final end = range.end.inMilliseconds;
-        if (end > maxBuffering) {
-          maxBuffering = end;
-        }
-      }
-
-      progressIndicator = Stack(
-        fit: StackFit.passthrough,
-        children: <Widget>[
-          LinearProgressIndicator(
-            value: maxBuffering / duration,
-            valueColor: AlwaysStoppedAnimation<Color>(colors.bufferedColor),
-            backgroundColor: colors.backgroundColor,
-          ),
-          LinearProgressIndicator(
-            value: position / duration,
-            valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
-            backgroundColor: Colors.transparent,
-          ),
-        ],
-      );
-    } else {
-      progressIndicator = LinearProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
-        backgroundColor: colors.backgroundColor,
-      );
-    }
-    final Widget paddedProgressIndicator = Padding(
-      padding: widget.padding,
-      child: progressIndicator,
-    );
-    if (widget.allowScrubbing!) {
-      return _VideoScrubber(
-        controller: controller,
-        child: paddedProgressIndicator,
-      );
-    } else {
-      return paddedProgressIndicator;
-    }
-  }
-}
-
-/// Widget for displaying closed captions on top of a video.
-///
-/// If [text] is null, this widget will not display anything.
-///
-/// If [textStyle] is supplied, it will be used to style the text in the closed
-/// caption.
-///
-/// Note: in order to have closed captions, you need to specify a
-/// [VideoPlayerController.closedCaptionFile].
-///
-/// Usage:
-///
-/// ```dart
-/// Stack(children: <Widget>[
-///   VideoPlayer(_controller),
-///   ClosedCaption(text: _controller.value.caption.text),
-/// ]),
-/// ```
-class ClosedCaption extends StatelessWidget {
-  /// Creates a a new closed caption, designed to be used with
-  /// [VideoPlayerValue.caption].
-  ///
-  /// If [text] is null, nothing will be displayed.
-  const ClosedCaption({super.key, this.text, this.textStyle});
-
-  /// The text that will be shown in the closed caption, or null if no caption
-  /// should be shown.
-  final String? text;
-
-  /// Specifies how the text in the closed caption should look.
-  ///
-  /// If null, defaults to [DefaultTextStyle.of(context).style] with size 36
-  /// font colored white.
-  final TextStyle? textStyle;
-
-  @override
-  Widget build(BuildContext context) {
-    final effectiveTextStyle =
-        textStyle ??
-        DefaultTextStyle.of(
-          context,
-        ).style.copyWith(fontSize: 36, color: Colors.white);
-
-    if (text == null) {
-      return const SizedBox.shrink();
-    }
-
-    return Align(
-      alignment: Alignment.bottomCenter,
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 24),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: const Color(0xB8000000),
-            borderRadius: BorderRadius.circular(2),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            child: Text(text!, style: effectiveTextStyle),
-          ),
-        ),
-      ),
-    );
   }
 }
