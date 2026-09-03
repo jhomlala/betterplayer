@@ -166,21 +166,7 @@ class _BetterPlayerState extends State<BetterPlayer>
     );
   }
 
-  AnimatedWidget _defaultRoutePageBuilder(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    BetterPlayerControllerProvider controllerProvider,
-  ) {
-    return AnimatedBuilder(
-      animation: animation,
-      builder: (context, child) {
-        return BetterPlayerFullScreenVideo(
-          controllerProvider: controllerProvider,
-        );
-      },
-    );
-  }
+
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
     final TransitionRoute<void> route = PageRouteBuilder<void>(
