@@ -25,9 +25,6 @@ part 'extensions/player_events_extension.dart';
 ///Class used to control overall Better Player behavior. Main class to change
 ///state of Better Player.
 class BetterPlayerController {
-  // =========================================================================
-  // CONSTANTS
-  // =========================================================================
   static const String _durationParameter = 'duration';
   static const String _progressParameter = 'progress';
   static const String _bufferedParameter = 'buffered';
@@ -36,18 +33,12 @@ class BetterPlayerController {
   static const String _dataSourceParameter = 'dataSource';
   static const String _authorizationHeader = 'Authorization';
 
-  // =========================================================================
-  // FINAL CONFIGURATIONS
-  // =========================================================================
   ///General configuration used in controller instance.
   final PlayerConfiguration betterPlayerConfiguration;
 
   ///Playlist configuration used in controller instance.
   final PlayerPlaylistConfiguration? betterPlayerPlaylistConfiguration;
 
-  // =========================================================================
-  // MUTABLE FIELDS & STATE
-  // =========================================================================
   ///Instance of video player controller which is adapter used to communicate
   ///between flutter high level code and lower level native code.
   PlayerEngineController? _engine;
@@ -114,9 +105,6 @@ class BetterPlayerController {
   bool _asmsSegmentsLoading = false;
   final List<String> _asmsSegmentsLoaded = [];
 
-  // =========================================================================
-  // CONSTRUCTOR
-  // =========================================================================
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -136,9 +124,6 @@ class BetterPlayerController {
     }
   }
 
-  // =========================================================================
-  // GETTERS
-  // =========================================================================
   PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _betterPlayerControlsConfiguration;
 
@@ -197,9 +182,6 @@ class BetterPlayerController {
   /// Absolute position in a live stream (EXT-X-PROGRAM-DATE-TIME).
   Future<DateTime?> get absolutePosition async => _engine?.absolutePosition;
 
-  // =========================================================================
-  // STATIC METHODS
-  // =========================================================================
   ///Get BetterPlayerController from context. Used in InheritedWidget.
   static BetterPlayerController of(BuildContext context) {
     final betterPLayerControllerProvider = context
@@ -208,9 +190,6 @@ class BetterPlayerController {
     return betterPLayerControllerProvider.controller;
   }
 
-  // =========================================================================
-  // METHODS
-  // =========================================================================
   /// Add listener for video player state changes.
   void addVideoListener(VoidCallback listener) {
     _videoListeners.add(listener);
