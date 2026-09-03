@@ -215,6 +215,36 @@ class _FFITestPageState extends State<FFITestPage> {
               },
             ),
             _buildTestButton(
+              'playerValue',
+              () async {
+                final value = _betterPlayerController.videoPlayerValue;
+                if (value == null) {
+                  throw Exception('videoPlayerValue returned null');
+                }
+                debugPrint('FFI Test playerValue result: $value');
+              },
+            ),
+            _buildTestButton(
+              'duration',
+              () async {
+                final dur = _betterPlayerController.duration;
+                if (dur == null || dur <= Duration.zero) {
+                  throw Exception('duration returned invalid value: $dur');
+                }
+                debugPrint('FFI Test duration result: $dur');
+              },
+            ),
+            _buildTestButton(
+              'isInitialized',
+              () async {
+                final initialized = _betterPlayerController.isInitialized;
+                if (!initialized) {
+                  throw Exception('isInitialized returned false');
+                }
+                debugPrint('FFI Test isInitialized result: $initialized');
+              },
+            ),
+            _buildTestButton(
               'isPictureInPictureSupported',
               () async {
                 final supported = await _betterPlayerController
