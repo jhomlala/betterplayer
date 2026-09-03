@@ -410,33 +410,6 @@ class BetterPlayerController {
     }
   }
 
-  ///Retry data source if playback failed.
-  Future retryDataSource() async {
-    PlayerLogger.warning(
-      message: 'Retrying data source',
-      textureId: textureId,
-    );
-    await _setupDataSource(_betterPlayerDataSource!);
-    if (_videoPlayerValueOnError != null) {
-      final position = _videoPlayerValueOnError!.position;
-      await seekTo(position);
-      await play();
-      _videoPlayerValueOnError = null;
-    }
-  }
-
-  ///Build headers map that will be used to setup video player controller. Apply
-  ///DRM headers if available.
-  Map<String, String?> _getHeaders() {
-    final headers = betterPlayerDataSource!.headers ?? {};
-    if (betterPlayerDataSource?.drmConfiguration?.drmType == DrmType.token &&
-        betterPlayerDataSource?.drmConfiguration?.token != null) {
-      headers[_authorizationHeader] =
-          betterPlayerDataSource!.drmConfiguration!.token!;
-    }
-    return headers;
-  }
-
   /// Sets the new [betterPlayerControlsConfiguration] instance in the
   /// controller.
   void setPlayerControlsConfiguration(
