@@ -78,4 +78,21 @@ extension PlayerTrackExtension on BetterPlayerController {
 
     _engine!.setMixWithOthers(mixWithOthers);
   }
+
+  /// Sets track parameters directly on the engine (width, height, bitrate).
+  /// Prefer [setTrack] with a [PlayerAsmsTrack] for HLS/DASH streams.
+  Future<void> setTrackParameters({
+    int? width,
+    int? height,
+    int? bitrate,
+  }) async {
+    if (_engine == null) {
+      throw StateError('The data source has not been initialized');
+    }
+    await _engine!.setTrackParameters(
+      width: width,
+      height: height,
+      bitrate: bitrate,
+    );
+  }
 }

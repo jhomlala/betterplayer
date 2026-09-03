@@ -19,6 +19,8 @@ part 'mixins/player_subtitle_mixin.dart';
 part 'mixins/player_playlist_mixin.dart';
 part 'mixins/player_view_state_mixin.dart';
 part 'mixins/player_cache_mixin.dart';
+part 'mixins/player_translations_mixin.dart';
+part 'mixins/player_events_mixin.dart';
 
 ///Class used to control overall Better Player behavior. Main class to change
 ///state of Better Player.
@@ -255,23 +257,6 @@ class BetterPlayerController {
     return PlayerEngineView(_engine);
   }
 
-  /// Sets track parameters directly on the engine (width, height, bitrate).
-  /// Prefer [setTrack] with a [PlayerAsmsTrack] for HLS/DASH streams.
-  Future<void> setTrackParameters({
-    int? width,
-    int? height,
-    int? bitrate,
-  }) async {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    await _engine!.setTrackParameters(
-      width: width,
-      height: height,
-      bitrate: bitrate,
-    );
-  }
-
   ///Selected videoPlayerValue when error occurred.
   VideoPlayerValue? _videoPlayerValueOnError;
 
@@ -301,20 +286,6 @@ class BetterPlayerController {
         .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>()!;
 
     return betterPLayerControllerProvider.controller;
-  }
-
-  ///Send player event. Shouldn't be used manually.
-  void postEvent(PlayerEvent betterPlayerEvent) {
-    _postEvent(betterPlayerEvent);
-  }
-
-  ///Send player event to all listeners.
-  void _postEvent(PlayerEvent betterPlayerEvent) {
-    for (final eventListener in _eventListeners) {
-      if (eventListener != null) {
-        eventListener(betterPlayerEvent);
-      }
-    }
   }
 
   ///Listener used to handle video player changes.
@@ -368,17 +339,6 @@ class BetterPlayerController {
     }
   }
 
-  ///Add event listener which listens to player events.
-  void addEventsListener(Function(PlayerEvent) eventListener) {
-    _eventListeners.add(eventListener);
-  }
-
-  ///Remove event listener. This method should be called once you're disposing
-  ///Better Player.
-  void removeEventsListener(Function(PlayerEvent) eventListener) {
-    _eventListeners.remove(eventListener);
-  }
-
   ///Flag which determines whenever player is playing live data source.
   bool isLiveStream() {
     if (_betterPlayerDataSource == null) {
@@ -401,39 +361,6 @@ class BetterPlayerController {
       throw StateError('The data source has not been initialized');
     }
     return _engine?.value.initialized;
-  }
-
-  ///Setup translations for given locale. In normal use cases it shouldn't be
-  ///called manually.
-  void setupTranslations(Locale locale) {
-    final languageCode = locale.languageCode;
-    translations =
-        betterPlayerConfiguration.translations?.firstWhereOrNull(
-          (t) => t.languageCode == languageCode,
-        ) ??
-        _getDefaultTranslations(locale);
-  }
-
-  ///Setup default translations for selected user locale. These translations
-  ///are pre-build in.
-  PlayerTranslations _getDefaultTranslations(Locale locale) {
-    final languageCode = locale.languageCode;
-    switch (languageCode) {
-      case 'pl':
-        return PlayerTranslations.polish();
-      case 'zh':
-        return PlayerTranslations.chinese();
-      case 'hi':
-        return PlayerTranslations.hindi();
-      case 'tr':
-        return PlayerTranslations.turkish();
-      case 'vi':
-        return PlayerTranslations.vietnamese();
-      case 'es':
-        return PlayerTranslations.spanish();
-      default:
-        return PlayerTranslations();
-    }
   }
 
   ///Flag which determines whenever current data source has started.
@@ -516,13 +443,6 @@ class BetterPlayerController {
     PlayerControlsConfiguration betterPlayerControlsConfiguration,
   ) {
     _betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
-  }
-
-  /// Add controller internal event.
-  void _postControllerEvent(PlayerControllerEvent event) {
-    if (!_controllerEventStreamController.isClosed) {
-      _controllerEventStreamController.add(event);
-    }
   }
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
