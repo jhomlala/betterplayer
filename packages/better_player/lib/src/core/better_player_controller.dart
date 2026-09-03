@@ -12,15 +12,15 @@ import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 
-part 'mixins/player_data_source_mixin.dart';
-part 'mixins/player_playback_mixin.dart';
-part 'mixins/player_track_mixin.dart';
-part 'mixins/player_subtitle_mixin.dart';
-part 'mixins/player_playlist_mixin.dart';
-part 'mixins/player_view_state_mixin.dart';
-part 'mixins/player_cache_mixin.dart';
-part 'mixins/player_translations_mixin.dart';
-part 'mixins/player_events_mixin.dart';
+part 'extensions/player_data_source_extension.dart';
+part 'extensions/player_playback_extension.dart';
+part 'extensions/player_track_extension.dart';
+part 'extensions/player_subtitle_extension.dart';
+part 'extensions/player_playlist_extension.dart';
+part 'extensions/player_view_state_extension.dart';
+part 'extensions/player_cache_extension.dart';
+part 'extensions/player_translations_extension.dart';
+part 'extensions/player_events_extension.dart';
 
 ///Class used to control overall Better Player behavior. Main class to change
 ///state of Better Player.
