@@ -200,13 +200,28 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'getPosition',
               () async {
-                await _betterPlayerController.position;
+                final pos = await _betterPlayerController.position;
+                if (pos == null) {
+                  throw Exception('getPosition returned null');
+                }
+                debugPrint('FFI Test getPosition result: $pos');
               },
             ),
             _buildTestButton(
               'getAbsolutePosition',
               () async {
-                await _betterPlayerController.absolutePosition;
+                final absPos = await _betterPlayerController.absolutePosition;
+                debugPrint('FFI Test getAbsolutePosition result: $absPos');
+              },
+            ),
+            _buildTestButton(
+              'isPictureInPictureSupported',
+              () async {
+                final supported = await _betterPlayerController
+                    .isPictureInPictureSupported();
+                debugPrint(
+                  'FFI Test isPictureInPictureSupported result: $supported',
+                );
               },
             ),
             _buildTestButton(
