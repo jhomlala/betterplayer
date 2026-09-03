@@ -225,3 +225,11 @@ transforms:
     changes:
       - kind: 'rename'
         newName: 'isPictureInPictureSupported'
+  - title: 'Rename VideoPlayerController'
+    date: 2026-08-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      typedef: 'VideoPlayerController'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerEngineController'

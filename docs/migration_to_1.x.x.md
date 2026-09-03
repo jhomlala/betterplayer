@@ -275,3 +275,47 @@ If you have extended Better Player or implemented a custom platform backend, you
 2.  **Legacy `MethodChannelVideoPlayer` Removal**:
     The class `MethodChannelVideoPlayer` is no longer available. All logic has been moved to the respective FFI/JNI implementations in `better_player_android` and `better_player_ios`.
 
+## 5. Removing VideoPlayerController from the Public API
+
+In version 1.x.x, direct access to the underlying video player controller (`VideoPlayerController` / `PlayerEngineController`) has been removed from the public API. This was done to provide a cleaner and safer abstraction, ensuring all state changes flow through `BetterPlayerController`.
+
+The `VideoPlayerController` type is no longer exported, and the `videoPlayerController` (or `engineController`) getter has been removed.
+
+### How to migrate
+
+If you were accessing the underlying video player controller directly, you should now use the proxied methods on `BetterPlayerController`:
+
+**Playback Controls:**
+```dart
+// Before
+controller.videoPlayerController!.play();
+controller.videoPlayerController!.seekTo(Duration.zero);
+
+// After
+controller.play();
+controller.seekTo(Duration.zero);
+```
+
+**State Access:**
+```dart
+// Before
+final value = controller.videoPlayerController!.value;
+final isPlaying = value.isPlaying;
+
+// After
+final value = controller.videoPlayerValue;
+final isPlaying = value?.isPlaying ?? false;
+```
+
+**Event Listeners:**
+```dart
+// Before
+void listener() { ... }
+controller.videoPlayerController!.addListener(listener);
+controller.videoPlayerController!.removeListener(listener);
+
+// After
+void listener() { ... }
+controller.addVideoListener(listener);
+controller.removeVideoListener(listener);
+```
