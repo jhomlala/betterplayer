@@ -277,7 +277,7 @@ If you have extended Better Player or implemented a custom platform backend, you
 
 ## 5. Removing VideoPlayerController from the Public API
 
-In version 1.x.x, direct access to the underlying video player controller (`VideoPlayerController` / `PlayerEngineController`) has been removed from the public API. This was done to provide a cleaner and safer abstraction, ensuring all state changes flow through `BetterPlayerController`.
+In version 1.4.0, direct access to the underlying video player controller (`VideoPlayerController` / `PlayerEngineController`) has been removed from the public API. This was done to provide a cleaner and safer abstraction, ensuring all state changes flow through `BetterPlayerController`.
 
 The `VideoPlayerController` type is no longer exported, and the `videoPlayerController` (or `engineController`) getter has been removed.
 
