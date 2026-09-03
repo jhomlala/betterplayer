@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Refactored widget helper methods (e.g. `Widget _build...()`) into inline `Builder` patterns and proper `StatelessWidget` classes to strictly comply with project standards, specifically across UI controls, route builders, and example apps.
+
 ## 1.4.0
 - Updated: Replaced videoPlayerController with PlayerEngineController and removed the public API.
 - Added: Automated migration rules in `fix_data.yaml` for deprecated `VideoPlayerController` types.

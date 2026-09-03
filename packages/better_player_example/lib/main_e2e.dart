@@ -100,15 +100,6 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     _betterPlayerController.setupDataSource(betterPlayerDataSource);
   }
 
-  Widget _buildDebugLine(String label, String? value) {
-    return Text(
-      '$label: ${value ?? 'N/A'}',
-      style: const TextStyle(fontSize: 9, fontFamily: 'Courier'),
-      maxLines: 2,
-      overflow: TextOverflow.visible,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -150,7 +141,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                           ),
                         ),
                         const SizedBox(height: 8),
-                        _buildDebugLine(
+                        _DebugLine(
                           'URL',
                           _betterPlayerController.betterPlayerDataSource?.url,
                         ),
@@ -222,6 +213,22 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _DebugLine extends StatelessWidget {
+  const _DebugLine(this.label, this.value);
+  final String label;
+  final String? value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      '$label: ${value ?? 'N/A'}',
+      style: const TextStyle(fontSize: 9, fontFamily: 'Courier'),
+      maxLines: 2,
+      overflow: TextOverflow.visible,
     );
   }
 }
