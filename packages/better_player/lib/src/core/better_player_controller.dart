@@ -25,12 +25,25 @@ part 'extensions/player_events_extension.dart';
 ///Class used to control overall Better Player behavior. Main class to change
 ///state of Better Player.
 class BetterPlayerController {
+  /// Parameter for duration event
   static const String _durationParameter = 'duration';
+
+  /// Parameter for progress event
   static const String _progressParameter = 'progress';
+
+  /// Parameter for buffered event
   static const String _bufferedParameter = 'buffered';
+
+  /// Parameter for volume event
   static const String _volumeParameter = 'volume';
+
+  /// Parameter for speed event
   static const String _speedParameter = 'speed';
+
+  /// Parameter for data source event
   static const String _dataSourceParameter = 'dataSource';
+
+  /// Authorization header key
   static const String _authorizationHeader = 'Authorization';
 
   ///General configuration used in controller instance.
@@ -55,56 +68,115 @@ class BetterPlayerController {
   ///List of event listeners, which listen to events.
   final List<Function(PlayerEvent)?> _eventListeners = [];
 
+  ///List of callbacks for video player changes
   final List<VoidCallback> _videoListeners = [];
 
   ///List of files to delete once player disposes.
   final List<File> _tempFiles = [];
 
+  /// Stream controller for controls visibility changes
   final StreamController<bool> _controlsVisibilityStreamController =
       StreamController.broadcast();
+
+  /// Stream controller for next video time in playlist
   final StreamController<int?> _nextVideoTimeStreamController =
       StreamController.broadcast();
+
+  /// Stream controller for internal controller events
   final StreamController<PlayerControllerEvent>
   _controllerEventStreamController = StreamController.broadcast();
 
+  /// Subscription to video events from engine
   StreamSubscription<VideoEvent>? _videoEventStreamSubscription;
 
+  /// Is player in full screen
   bool _isFullScreen = false;
+
+  /// Last position selection timestamp
   int _lastPositionSelection = 0;
 
+  /// List of subtitle sources
   final List<PlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
+
+  /// Currently selected subtitle source
   PlayerSubtitlesSource? _betterPlayerSubtitlesSource;
+
+  /// Lines of currently active subtitles
   List<PlayerSubtitle> subtitlesLines = [];
+
+  /// Currently rendered subtitle
   PlayerSubtitle? renderedSubtitle;
 
+  /// Available ASMS tracks
   List<PlayerAsmsTrack> _betterPlayerAsmsTracks = [];
+
+  /// Currently selected ASMS track
   PlayerAsmsTrack? _betterPlayerAsmsTrack;
+
+  /// Available ASMS audio tracks
   List<PlayerAsmsAudioTrack> _betterPlayerAsmsAudioTracks = [];
+
+  /// Currently selected ASMS audio track
   PlayerAsmsAudioTrack? _betterPlayerAsmsAudioTrack;
 
+  /// Timer for next video in playlist
   Timer? _nextVideoTimer;
+
+  /// Time remaining for next video in playlist
   int? _nextVideoTime;
 
+  /// Is controller disposed
   bool _disposed = false;
+
+  /// Was playing before pause
   bool? _wasPlayingBeforePause;
+
+  /// Has data source started playing
   bool _hasCurrentDataSourceStarted = false;
+
+  /// Has data source initialized
   bool _hasCurrentDataSourceInitialized = false;
 
+  /// Current app lifecycle state
   AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
+
+  /// Are controls enabled
   bool _controlsEnabled = true;
+
+  /// Overridden aspect ratio
   double? _overriddenAspectRatio;
+
+  /// Overridden box fit
   BoxFit? _overriddenFit;
+
+  /// Was in PIP mode
   bool _wasInPipMode = false;
+
+  /// Was in full screen before PIP
   bool _wasInFullScreenBeforePiP = false;
+
+  /// Were controls enabled before PIP
   bool _wasControlsEnabledBeforePiP = false;
+
+  /// Global key for player
   GlobalKey? _betterPlayerGlobalKey;
+
+  /// Are controls always visible
   bool _controlsAlwaysVisible = false;
 
+  /// Video player value on error
   VideoPlayerValue? _videoPlayerValueOnError;
+
+  /// Is player visible
   bool _isPlayerVisible = true;
+
+  /// Are ASMS segments loading
   bool _asmsSegmentsLoading = false;
+
+  /// Loaded ASMS segments
   final List<String> _asmsSegmentsLoaded = [];
 
+  /// Construct BetterPlayerController
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -124,6 +196,7 @@ class BetterPlayerController {
     }
   }
 
+  /// Get current controls configuration
   PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _betterPlayerControlsConfiguration;
 
@@ -134,28 +207,55 @@ class BetterPlayerController {
   Function(PlayerEvent)? get eventListener =>
       betterPlayerConfiguration.eventListener;
 
+  /// Is currently in full screen
   bool get isFullScreen => _isFullScreen;
+
+  /// Current data source
   PlayerDataSource? get betterPlayerDataSource => _betterPlayerDataSource;
+
+  /// List of subtitle sources
   List<PlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
       _betterPlayerSubtitlesSourceList;
+
+  /// Current subtitle source
   PlayerSubtitlesSource? get betterPlayerSubtitlesSource =>
       _betterPlayerSubtitlesSource;
+
+  /// Available ASMS tracks
   List<PlayerAsmsTrack> get betterPlayerAsmsTracks => _betterPlayerAsmsTracks;
+
+  /// Current ASMS track
   PlayerAsmsTrack? get betterPlayerAsmsTrack => _betterPlayerAsmsTrack;
+
+  /// Available ASMS audio tracks
   List<PlayerAsmsAudioTrack> get betterPlayerAsmsAudioTracks =>
       _betterPlayerAsmsAudioTracks;
+
+  /// Current ASMS audio track
   PlayerAsmsAudioTrack? get betterPlayerAsmsAudioTrack =>
       _betterPlayerAsmsAudioTrack;
 
+  /// Stream of next video time in playlist
   Stream<int?> get nextVideoTimeStream => _nextVideoTimeStreamController.stream;
+
+  /// Stream of controls visibility changes
   Stream<bool> get controlsVisibilityStream =>
       _controlsVisibilityStreamController.stream;
+
+  /// Stream of internal controller events
   Stream<PlayerControllerEvent> get controllerEventStream =>
       _controllerEventStreamController.stream;
 
+  /// Are controls enabled
   bool get controlsEnabled => _controlsEnabled;
+
+  /// Global key for player
   GlobalKey? get betterPlayerGlobalKey => _betterPlayerGlobalKey;
+
+  /// Are controls always visible
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
+
+  /// Has data source started
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
   /// The id of a texture that hasn't been initialized is null.
