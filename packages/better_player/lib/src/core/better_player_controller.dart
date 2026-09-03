@@ -339,30 +339,6 @@ class BetterPlayerController {
     }
   }
 
-  ///Flag which determines whenever player is playing live data source.
-  bool isLiveStream() {
-    if (_betterPlayerDataSource == null) {
-      PlayerLogger.warning(
-        message: 'The data source has not been initialized',
-        textureId: textureId,
-      );
-      throw StateError('The data source has not been initialized');
-    }
-    return _betterPlayerDataSource!.liveStream == true;
-  }
-
-  ///Flag which determines whenever player data source has been initialized.
-  bool? isVideoInitialized() {
-    if (_engine == null) {
-      PlayerLogger.warning(
-        message: 'The data source has not been initialized',
-        textureId: textureId,
-      );
-      throw StateError('The data source has not been initialized');
-    }
-    return _engine?.value.initialized;
-  }
-
   ///Flag which determines whenever current data source has started.
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
