@@ -17,11 +17,11 @@ void main() {
     testWidgets('Renders properly with controller', (
       tester,
     ) async {
-      final mockVideoPlayerController =
+      final mockPlayerEngineController =
           BetterPlayerTestUtils.setupMockPlayerEngineController();
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
-        playerEngineController: mockVideoPlayerController,
+        playerEngineController: mockPlayerEngineController,
       );
 
       await controller.setupDataSource(
@@ -47,7 +47,7 @@ void main() {
     testWidgets('Renders placeholder when provided', (
       tester,
     ) async {
-      final mockVideoPlayerController =
+      final mockPlayerEngineController =
           BetterPlayerTestUtils.setupMockPlayerEngineController();
       final placeholder = Container(key: const Key('placeholder'));
       final controller = BetterPlayerMockController(
@@ -55,7 +55,7 @@ void main() {
           placeholder: placeholder,
           showPlaceholderUntilPlay: true,
         ),
-        playerEngineController: mockVideoPlayerController,
+        playerEngineController: mockPlayerEngineController,
       );
 
       await controller.setupDataSource(
@@ -81,11 +81,11 @@ void main() {
     testWidgets('Updates aspect ratio when video size changes', (
       tester,
     ) async {
-      final mockVideoPlayerController =
+      final mockPlayerEngineController =
           BetterPlayerTestUtils.setupMockPlayerEngineController();
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
-        playerEngineController: mockVideoPlayerController,
+        playerEngineController: mockPlayerEngineController,
       );
 
       await controller.setupDataSource(
@@ -93,7 +93,7 @@ void main() {
       );
 
       // Initial size (default mock might have a certain size or null)
-      mockVideoPlayerController.value = mockVideoPlayerController.value
+      mockPlayerEngineController.value = mockPlayerEngineController.value
           .copyWith(
             size: const Size(1280, 720),
             duration: const Duration(seconds: 1),
@@ -119,9 +119,9 @@ void main() {
       expect(initialAspectRatio, 1280 / 720);
 
       // Change video size
-      mockVideoPlayerController.value = mockVideoPlayerController.value
+      mockPlayerEngineController.value = mockPlayerEngineController.value
           .copyWith(size: const Size(1920, 1080));
-      mockVideoPlayerController.notifyListeners();
+      mockPlayerEngineController.notifyListeners();
 
       await tester.pump();
 
@@ -132,9 +132,9 @@ void main() {
       expect(updatedAspectRatio, 1920 / 1080);
 
       // Change video size to something different
-      mockVideoPlayerController.value = mockVideoPlayerController.value
+      mockPlayerEngineController.value = mockPlayerEngineController.value
           .copyWith(size: const Size(720, 1280));
-      mockVideoPlayerController.notifyListeners();
+      mockPlayerEngineController.notifyListeners();
 
       await tester.pump();
 
@@ -147,18 +147,18 @@ void main() {
     testWidgets('Updates video fit widget when video size changes', (
       tester,
     ) async {
-      final mockVideoPlayerController =
+      final mockPlayerEngineController =
           BetterPlayerTestUtils.setupMockPlayerEngineController();
       final controller = BetterPlayerMockController(
         const PlayerConfiguration(),
-        playerEngineController: mockVideoPlayerController,
+        playerEngineController: mockPlayerEngineController,
       );
 
       await controller.setupDataSource(
         PlayerDataSource.network('url'),
       );
 
-      mockVideoPlayerController.value = mockVideoPlayerController.value
+      mockPlayerEngineController.value = mockPlayerEngineController.value
           .copyWith(
             size: const Size(1280, 720),
             duration: const Duration(seconds: 1),
@@ -191,9 +191,9 @@ void main() {
       expect(sizedBox.height, 720);
 
       // Change video size
-      mockVideoPlayerController.value = mockVideoPlayerController.value
+      mockPlayerEngineController.value = mockPlayerEngineController.value
           .copyWith(size: const Size(1920, 1080));
-      mockVideoPlayerController.notifyListeners();
+      mockPlayerEngineController.notifyListeners();
 
       await tester.pump();
 

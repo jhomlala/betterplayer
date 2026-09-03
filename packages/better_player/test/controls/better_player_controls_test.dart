@@ -126,10 +126,10 @@ void main() {
   testWidgets(
     'Cupertino controls show play/pause button',
     (tester) async {
-      final mockVideoPlayerController = MockPlayerEngineController();
-      mockVideoPlayerController.setDuration(const Duration(seconds: 100));
+      final mockPlayerEngineController = MockPlayerEngineController();
+      mockPlayerEngineController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: mockVideoPlayerController,
+        controller: mockPlayerEngineController,
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.cupertino,
@@ -300,10 +300,10 @@ void main() {
   testWidgets(
     'Cupertino controls show progress bar',
     (tester) async {
-      final mockVideoPlayerController = MockPlayerEngineController();
-      mockVideoPlayerController.setDuration(const Duration(seconds: 100));
+      final mockPlayerEngineController = MockPlayerEngineController();
+      mockPlayerEngineController.setDuration(const Duration(seconds: 100));
       final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: mockVideoPlayerController,
+        controller: mockPlayerEngineController,
         configuration: const PlayerConfiguration(
           controlsConfiguration: PlayerControlsConfiguration(
             playerTheme: PlayerTheme.cupertino,

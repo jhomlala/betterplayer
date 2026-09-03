@@ -10,7 +10,7 @@ import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
   late BetterPlayerMockController mockController;
-  late MockPlayerEngineController mockVideoPlayerController;
+  late MockPlayerEngineController mockPlayerEngineController;
 
   setUp(() async {
     final mockMethodChannel = MockMethodChannel();
@@ -20,10 +20,10 @@ void main() {
           mockMethodChannel.handle,
         );
 
-    mockVideoPlayerController = MockPlayerEngineController();
+    mockPlayerEngineController = MockPlayerEngineController();
     mockController = BetterPlayerMockController(
       const PlayerConfiguration(),
-      playerEngineController: mockVideoPlayerController,
+      playerEngineController: mockPlayerEngineController,
     );
     await mockController.setupDataSource(
       PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),

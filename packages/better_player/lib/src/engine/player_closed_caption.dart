@@ -8,7 +8,7 @@ import 'package:material_ui/material_ui.dart';
 /// caption.
 ///
 /// Note: in order to have closed captions, you need to specify a
-/// [VideoPlayerController.closedCaptionFile].
+/// [PlayerEngineController.closedCaptionFile].
 ///
 /// Usage:
 ///

@@ -25,7 +25,7 @@ final BetterPlayerPlatform _betterPlayerPlatform =
 ///
 /// After [dispose] all further calls are ignored.
 class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
-  /// Constructs a [VideoPlayerController] and creates video controller on platform side.
+  /// Constructs a [PlayerEngineController] and creates video controller on platform side.
   PlayerEngineController({
     this.bufferingConfiguration = const BufferingConfiguration(),
     bool autoCreate = true,
@@ -66,7 +66,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
         return;
       }
       PlayerLogger.debug(
-        message: 'VideoPlayerController: Event received: ${event.eventType}',
+        message: 'PlayerEngineController: Event received: ${event.eventType}',
       );
       videoEventStreamController.add(event);
       switch (event.eventType) {
@@ -281,7 +281,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
 
     try {
       PlayerLogger.debug(
-        message: 'VideoPlayerController: setDataSource platform call starting',
+        message: 'PlayerEngineController: setDataSource platform call starting',
       );
       await BetterPlayerPlatform.instance.setDataSource(
         _textureId,
@@ -289,11 +289,11 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
       );
       PlayerLogger.debug(
         message:
-            'VideoPlayerController: setDataSource platform call finished, waiting for init event',
+            'PlayerEngineController: setDataSource platform call finished, waiting for init event',
       );
       await completer.future;
       PlayerLogger.debug(
-        message: 'VideoPlayerController: setDataSource init event received',
+        message: 'PlayerEngineController: setDataSource init event received',
       );
     } finally {
       await subscription.cancel();

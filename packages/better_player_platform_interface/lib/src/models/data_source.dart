@@ -35,7 +35,7 @@ class DataSource {
     this.videoExtension,
   }) : assert(uri == null || asset == null);
 
-  /// Describes the type of data source this [VideoPlayerController]
+  /// Describes the type of data source this [PlayerEngineController]
   /// is constructed with.
   ///
   /// The way in which the video was originally loaded.
