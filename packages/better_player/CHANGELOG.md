@@ -1,8 +1,8 @@
-## Unreleased
-- Updated: Removed `@visibleForTesting engineController` getter and setter from `BetterPlayerController`, replacing post-construction engine mutations in tests with constructor injection.
-- Fixed: Broken links in README.md files (migration guides and example application).
+## 1.4.0
+- Updated: Replaced videoPlayerController with PlayerEngineController and removed the public API.
+- Added: Automated migration rules in `fix_data.yaml` for deprecated `VideoPlayerController` types.
+- Fixed: Broken links and outdated dependency claims in `README.md` files.
 - Fixed: Guarded against null or uninitialized `videoPlayerValue` in progress bars during drag and tap gestures.
-- Fixed: Removed unexpected UTF-8 BOM characters across source files.
 
 ## 1.3.0
 - Added: Extensible logging system with `PlayerLogger`, featuring native-to-Dart log streaming, automatic caller/tag derivation, and comprehensive internal logs.
