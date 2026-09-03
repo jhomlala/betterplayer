@@ -25,6 +25,98 @@ part 'extensions/player_events_extension.dart';
 ///Class used to control overall Better Player behavior. Main class to change
 ///state of Better Player.
 class BetterPlayerController {
+  // =========================================================================
+  // CONSTANTS
+  // =========================================================================
+  static const String _durationParameter = 'duration';
+  static const String _progressParameter = 'progress';
+  static const String _bufferedParameter = 'buffered';
+  static const String _volumeParameter = 'volume';
+  static const String _speedParameter = 'speed';
+  static const String _dataSourceParameter = 'dataSource';
+  static const String _authorizationHeader = 'Authorization';
+
+  // =========================================================================
+  // FINAL CONFIGURATIONS
+  // =========================================================================
+  ///General configuration used in controller instance.
+  final PlayerConfiguration betterPlayerConfiguration;
+
+  ///Playlist configuration used in controller instance.
+  final PlayerPlaylistConfiguration? betterPlayerPlaylistConfiguration;
+
+  // =========================================================================
+  // MUTABLE FIELDS & STATE
+  // =========================================================================
+  ///Instance of video player controller which is adapter used to communicate
+  ///between flutter high level code and lower level native code.
+  PlayerEngineController? _engine;
+
+  ///Controls configuration
+  late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
+
+  ///Currently used data source in player.
+  PlayerDataSource? _betterPlayerDataSource;
+
+  ///Currently used translations
+  PlayerTranslations translations = PlayerTranslations();
+
+  ///List of event listeners, which listen to events.
+  final List<Function(PlayerEvent)?> _eventListeners = [];
+
+  final List<VoidCallback> _videoListeners = [];
+
+  ///List of files to delete once player disposes.
+  final List<File> _tempFiles = [];
+
+  final StreamController<bool> _controlsVisibilityStreamController =
+      StreamController.broadcast();
+  final StreamController<int?> _nextVideoTimeStreamController =
+      StreamController.broadcast();
+  final StreamController<PlayerControllerEvent>
+  _controllerEventStreamController = StreamController.broadcast();
+
+  StreamSubscription<VideoEvent>? _videoEventStreamSubscription;
+
+  bool _isFullScreen = false;
+  int _lastPositionSelection = 0;
+
+  final List<PlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
+  PlayerSubtitlesSource? _betterPlayerSubtitlesSource;
+  List<PlayerSubtitle> subtitlesLines = [];
+  PlayerSubtitle? renderedSubtitle;
+
+  List<PlayerAsmsTrack> _betterPlayerAsmsTracks = [];
+  PlayerAsmsTrack? _betterPlayerAsmsTrack;
+  List<PlayerAsmsAudioTrack> _betterPlayerAsmsAudioTracks = [];
+  PlayerAsmsAudioTrack? _betterPlayerAsmsAudioTrack;
+
+  Timer? _nextVideoTimer;
+  int? _nextVideoTime;
+
+  bool _disposed = false;
+  bool? _wasPlayingBeforePause;
+  bool _hasCurrentDataSourceStarted = false;
+  bool _hasCurrentDataSourceInitialized = false;
+
+  AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
+  bool _controlsEnabled = true;
+  double? _overriddenAspectRatio;
+  BoxFit? _overriddenFit;
+  bool _wasInPipMode = false;
+  bool _wasInFullScreenBeforePiP = false;
+  bool _wasControlsEnabledBeforePiP = false;
+  GlobalKey? _betterPlayerGlobalKey;
+  bool _controlsAlwaysVisible = false;
+
+  VideoPlayerValue? _videoPlayerValueOnError;
+  bool _isPlayerVisible = true;
+  bool _asmsSegmentsLoading = false;
+  final List<String> _asmsSegmentsLoaded = [];
+
+  // =========================================================================
+  // CONSTRUCTOR
+  // =========================================================================
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -44,37 +136,9 @@ class BetterPlayerController {
     }
   }
 
-  static const String _durationParameter = 'duration';
-  static const String _progressParameter = 'progress';
-  static const String _bufferedParameter = 'buffered';
-  static const String _volumeParameter = 'volume';
-  static const String _speedParameter = 'speed';
-  static const String _dataSourceParameter = 'dataSource';
-  static const String _authorizationHeader = 'Authorization';
-
-  ///General configuration used in controller instance.
-  final PlayerConfiguration betterPlayerConfiguration;
-
-  ///Playlist configuration used in controller instance.
-  final PlayerPlaylistConfiguration? betterPlayerPlaylistConfiguration;
-
-  ///List of event listeners, which listen to events.
-  final List<Function(PlayerEvent)?> _eventListeners = [];
-
-  ///List of files to delete once player disposes.
-  final List<File> _tempFiles = [];
-
-  ///Stream controller which emits stream when control visibility changes.
-  final StreamController<bool> _controlsVisibilityStreamController =
-      StreamController.broadcast();
-
-  ///Instance of video player controller which is adapter used to communicate
-  ///between flutter high level code and lower level native code.
-  PlayerEngineController? _engine;
-
-  ///Controls configuration
-  late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
-
+  // =========================================================================
+  // GETTERS
+  // =========================================================================
   PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _betterPlayerControlsConfiguration;
 
@@ -85,133 +149,29 @@ class BetterPlayerController {
   Function(PlayerEvent)? get eventListener =>
       betterPlayerConfiguration.eventListener;
 
-  ///Flag used to store full screen mode state.
-  bool _isFullScreen = false;
-
-  ///Flag used to store full screen mode state.
   bool get isFullScreen => _isFullScreen;
-
-  ///Time when last progress event was sent
-  int _lastPositionSelection = 0;
-
-  ///Currently used data source in player.
-  PlayerDataSource? _betterPlayerDataSource;
-
-  ///Currently used data source in player.
   PlayerDataSource? get betterPlayerDataSource => _betterPlayerDataSource;
-
-  ///List of PlayerSubtitlesSources.
-  final List<PlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
-
-  ///List of PlayerSubtitlesSources.
   List<PlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
       _betterPlayerSubtitlesSourceList;
-  PlayerSubtitlesSource? _betterPlayerSubtitlesSource;
-
-  ///Currently used subtitles source.
   PlayerSubtitlesSource? get betterPlayerSubtitlesSource =>
       _betterPlayerSubtitlesSource;
-
-  ///Subtitles lines for current data source.
-  List<PlayerSubtitle> subtitlesLines = [];
-
-  ///List of tracks available for current data source. Used only for HLS / DASH.
-  List<PlayerAsmsTrack> _betterPlayerAsmsTracks = [];
-
-  ///List of tracks available for current data source. Used only for HLS / DASH.
   List<PlayerAsmsTrack> get betterPlayerAsmsTracks => _betterPlayerAsmsTracks;
-
-  ///Currently selected player track. Used only for HLS / DASH.
-  PlayerAsmsTrack? _betterPlayerAsmsTrack;
-
-  ///Currently selected player track. Used only for HLS / DASH.
   PlayerAsmsTrack? get betterPlayerAsmsTrack => _betterPlayerAsmsTrack;
-
-  ///Timer for next video. Used in playlist.
-  Timer? _nextVideoTimer;
-
-  ///Time for next video.
-  int? _nextVideoTime;
-
-  ///Stream controller which emits next video time.
-  final StreamController<int?> _nextVideoTimeStreamController =
-      StreamController.broadcast();
-
-  Stream<int?> get nextVideoTimeStream => _nextVideoTimeStreamController.stream;
-
-  ///Has player been disposed.
-  bool _disposed = false;
-
-  ///Was player playing before automatic pause.
-  bool? _wasPlayingBeforePause;
-
-  ///Currently used translations
-  PlayerTranslations translations = PlayerTranslations();
-
-  ///Has current data source started
-  bool _hasCurrentDataSourceStarted = false;
-
-  ///Has current data source initialized
-  bool _hasCurrentDataSourceInitialized = false;
-
-  ///Stream which sends flag whenever visibility of controls changes
-  Stream<bool> get controlsVisibilityStream =>
-      _controlsVisibilityStreamController.stream;
-
-  ///Current app lifecycle state.
-  AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
-
-  ///Flag which determines if controls (UI interface) is shown. When false,
-  ///UI won't be shown (show only player surface).
-  bool _controlsEnabled = true;
-
-  ///Flag which determines if controls (UI interface) is shown. When false,
-  ///UI won't be shown (show only player surface).
-  bool get controlsEnabled => _controlsEnabled;
-
-  ///Overridden aspect ratio which will be used instead of aspect ratio passed
-  ///in configuration.
-  double? _overriddenAspectRatio;
-
-  ///Overridden fit which will be used instead of fit passed in configuration.
-  BoxFit? _overriddenFit;
-
-  ///Was Picture in Picture opened.
-  bool _wasInPipMode = false;
-
-  ///Was player in fullscreen before Picture in Picture opened.
-  bool _wasInFullScreenBeforePiP = false;
-
-  ///Was controls enabled before Picture in Picture opened.
-  bool _wasControlsEnabledBeforePiP = false;
-
-  ///GlobalKey of the BetterPlayer widget
-  GlobalKey? _betterPlayerGlobalKey;
-
-  ///Getter of the GlobalKey
-  GlobalKey? get betterPlayerGlobalKey => _betterPlayerGlobalKey;
-
-  ///StreamSubscription for VideoEvent listener
-  StreamSubscription<VideoEvent>? _videoEventStreamSubscription;
-
-  bool _controlsAlwaysVisible = false;
-
-  ///Are controls always visible
-  bool get controlsAlwaysVisible => _controlsAlwaysVisible;
-
-  ///List of all possible audio tracks returned from ASMS stream
-  List<PlayerAsmsAudioTrack> _betterPlayerAsmsAudioTracks = [];
-
-  ///List of all possible audio tracks returned from ASMS stream
   List<PlayerAsmsAudioTrack> get betterPlayerAsmsAudioTracks =>
       _betterPlayerAsmsAudioTracks;
-
-  ///Selected ASMS audio track
-  PlayerAsmsAudioTrack? _betterPlayerAsmsAudioTrack;
-
-  ///Selected ASMS audio track
   PlayerAsmsAudioTrack? get betterPlayerAsmsAudioTrack =>
       _betterPlayerAsmsAudioTrack;
+
+  Stream<int?> get nextVideoTimeStream => _nextVideoTimeStreamController.stream;
+  Stream<bool> get controlsVisibilityStream =>
+      _controlsVisibilityStreamController.stream;
+  Stream<PlayerControllerEvent> get controllerEventStream =>
+      _controllerEventStreamController.stream;
+
+  bool get controlsEnabled => _controlsEnabled;
+  GlobalKey? get betterPlayerGlobalKey => _betterPlayerGlobalKey;
+  bool get controlsAlwaysVisible => _controlsAlwaysVisible;
+  bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
   /// The id of a texture that hasn't been initialized is null.
   int? get textureId => _engine?.textureId;
@@ -228,14 +188,29 @@ class BetterPlayerController {
   /// The full engine state snapshot. Prefer individual getters for new code.
   VideoPlayerValue? get playerValue => _engine?.value;
 
+  /// Get current video player value (state).
+  VideoPlayerValue? get videoPlayerValue => _engine?.value;
+
   /// Current playback position.
   Future<Duration?> get position async => _engine?.position;
 
   /// Absolute position in a live stream (EXT-X-PROGRAM-DATE-TIME).
   Future<DateTime?> get absolutePosition async => _engine?.absolutePosition;
 
-  final List<VoidCallback> _videoListeners = [];
+  // =========================================================================
+  // STATIC METHODS
+  // =========================================================================
+  ///Get BetterPlayerController from context. Used in InheritedWidget.
+  static BetterPlayerController of(BuildContext context) {
+    final betterPLayerControllerProvider = context
+        .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>()!;
 
+    return betterPLayerControllerProvider.controller;
+  }
+
+  // =========================================================================
+  // METHODS
+  // =========================================================================
   /// Add listener for video player state changes.
   void addVideoListener(VoidCallback listener) {
     _videoListeners.add(listener);
@@ -246,9 +221,6 @@ class BetterPlayerController {
     _videoListeners.remove(listener);
   }
 
-  /// Get current video player value (state).
-  VideoPlayerValue? get videoPlayerValue => _engine?.value;
-
   /// Build the internal VideoPlayer view.
   Widget buildVideoPlayerView() {
     if (_engine == null) {
@@ -257,35 +229,12 @@ class BetterPlayerController {
     return PlayerEngineView(_engine);
   }
 
-  ///Selected videoPlayerValue when error occurred.
-  VideoPlayerValue? _videoPlayerValueOnError;
-
-  ///Flag which holds information about player visibility
-  bool _isPlayerVisible = true;
-
-  final StreamController<PlayerControllerEvent>
-  _controllerEventStreamController = StreamController.broadcast();
-
-  ///Stream of internal controller events. Shouldn't be used inside app. For
-  ///normal events, use eventListener.
-  Stream<PlayerControllerEvent> get controllerEventStream =>
-      _controllerEventStreamController.stream;
-
-  ///Flag which determines whether are ASMS segments loading
-  bool _asmsSegmentsLoading = false;
-
-  ///List of loaded ASMS segments
-  final List<String> _asmsSegmentsLoaded = [];
-
-  ///Currently displayed [PlayerSubtitle].
-  PlayerSubtitle? renderedSubtitle;
-
-  ///Get BetterPlayerController from context. Used in InheritedWidget.
-  static BetterPlayerController of(BuildContext context) {
-    final betterPLayerControllerProvider = context
-        .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>()!;
-
-    return betterPLayerControllerProvider.controller;
+  /// Sets the new [betterPlayerControlsConfiguration] instance in the
+  /// controller.
+  void setPlayerControlsConfiguration(
+    PlayerControlsConfiguration betterPlayerControlsConfiguration,
+  ) {
+    _betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
   }
 
   ///Listener used to handle video player changes.
@@ -339,9 +288,6 @@ class BetterPlayerController {
     }
   }
 
-  ///Flag which determines whenever current data source has started.
-  bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
-
   ///Handle VideoEvent when remote controls notification / PiP is shown
   Future<void> _handleVideoEvent(VideoEvent event) async {
     PlayerLogger.debug(
@@ -384,14 +330,6 @@ class BetterPlayerController {
         ///TODO: Handle when needed
         break;
     }
-  }
-
-  /// Sets the new [betterPlayerControlsConfiguration] instance in the
-  /// controller.
-  void setPlayerControlsConfiguration(
-    PlayerControlsConfiguration betterPlayerControlsConfiguration,
-  ) {
-    _betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
   }
 
   ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
