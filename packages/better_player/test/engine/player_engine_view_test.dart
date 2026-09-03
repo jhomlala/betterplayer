@@ -5,19 +5,19 @@ import 'package:flutter_test/flutter_test.dart';
 import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
-  group('VideoPlayer tests', () {
+  group('PlayerEngineView tests', () {
     testWidgets('renders Container when controller is null', (
       widgetTester,
     ) async {
       await widgetTester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
-            body: VideoPlayer(null),
+            body: PlayerEngineView(null),
           ),
         ),
       );
 
-      expect(find.byType(VideoPlayer), findsOneWidget);
+      expect(find.byType(PlayerEngineView), findsOneWidget);
       expect(find.byType(Container), findsWidgets);
     });
 
@@ -27,12 +27,12 @@ void main() {
       await widgetTester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: VideoPlayer(controller),
+            body: PlayerEngineView(controller),
           ),
         ),
       );
 
-      expect(find.byType(VideoPlayer), findsOneWidget);
+      expect(find.byType(PlayerEngineView), findsOneWidget);
     });
   });
 }

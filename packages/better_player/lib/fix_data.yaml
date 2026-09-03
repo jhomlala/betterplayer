@@ -233,3 +233,35 @@ transforms:
     changes:
       - kind: 'rename'
         newName: 'PlayerEngineController'
+  - title: 'Rename ClosedCaption'
+    date: 2026-09-03
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'ClosedCaption'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerClosedCaption'
+  - title: 'Rename VideoPlayer'
+    date: 2026-09-03
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'VideoPlayer'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerEngineView'
+  - title: 'Rename VideoProgressIndicator'
+    date: 2026-09-03
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'VideoProgressIndicator'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerProgressIndicator'
+  - title: 'Rename VideoProgressColors'
+    date: 2026-09-03
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'VideoProgressColors'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerEngineProgressColors'

@@ -14,16 +14,16 @@ import 'package:material_ui/material_ui.dart';
 ///
 /// ```dart
 /// Stack(children: <Widget>[
-///   VideoPlayer(_controller),
-///   ClosedCaption(text: _controller.value.caption.text),
+///   PlayerEngineView(_controller),
+///   PlayerClosedCaption(text: _controller.value.caption.text),
 /// ]),
 /// ```
-class ClosedCaption extends StatelessWidget {
+class PlayerClosedCaption extends StatelessWidget {
   /// Creates a a new closed caption, designed to be used with
   /// [VideoPlayerValue.caption].
   ///
   /// If [text] is null, nothing will be displayed.
-  const ClosedCaption({super.key, this.text, this.textStyle});
+  const PlayerClosedCaption({super.key, this.text, this.textStyle});
 
   /// The text that will be shown in the closed caption, or null if no caption
   /// should be shown.

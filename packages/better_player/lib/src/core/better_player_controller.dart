@@ -244,7 +244,7 @@ class BetterPlayerController {
     if (_engine == null) {
       return const SizedBox();
     }
-    return VideoPlayer(_engine);
+    return PlayerEngineView(_engine);
   }
 
   /// Sets track parameters directly on the engine (width, height, bitrate).

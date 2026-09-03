@@ -6,20 +6,20 @@ final BetterPlayerPlatform _betterPlayerPlatform =
     BetterPlayerPlatform.instance;
 
 /// Widget that displays the video controlled by [controller].
-class VideoPlayer extends StatefulWidget {
+class PlayerEngineView extends StatefulWidget {
   /// Uses the given [controller] for all video rendered in this widget.
-  const VideoPlayer(this.controller, {super.key});
+  const PlayerEngineView(this.controller, {super.key});
 
   /// The [PlayerEngineController] responsible for the video being rendered in
   /// this widget.
   final PlayerEngineController? controller;
 
   @override
-  _VideoPlayerState createState() => _VideoPlayerState();
+  _PlayerEngineViewState createState() => _PlayerEngineViewState();
 }
 
-class _VideoPlayerState extends State<VideoPlayer> {
-  _VideoPlayerState() {
+class _PlayerEngineViewState extends State<PlayerEngineView> {
+  _PlayerEngineViewState() {
     _listener = () {
       final newTextureId = widget.controller?.textureId;
       if (newTextureId != _textureId) {
@@ -43,7 +43,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
   }
 
   @override
-  void didUpdateWidget(VideoPlayer oldWidget) {
+  void didUpdateWidget(PlayerEngineView oldWidget) {
     super.didUpdateWidget(oldWidget);
     oldWidget.controller?.removeListener(_listener);
     _textureId = widget.controller?.textureId;

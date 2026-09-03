@@ -4,33 +4,33 @@ import 'package:material_ui/material_ui.dart';
 /// Describes the video's status.
 ///
 /// The widget uses default colors that are customizable through this class.
-class VideoProgressColors {
+class PlayerEngineProgressColors {
   /// Any property can be set to any color. They each have defaults.
   ///
   /// [playedColor] defaults to red at 70% opacity. This fills up a portion of
-  /// the [VideoProgressIndicator] to represent how much of the video has played
+  /// the [PlayerProgressIndicator] to represent how much of the video has played
   /// so far.
   ///
   /// [bufferedColor] defaults to blue at 20% opacity. This fills up a portion
-  /// of [VideoProgressIndicator] to represent how much of the video has
+  /// of [PlayerProgressIndicator] to represent how much of the video has
   /// buffered so far.
   ///
   /// [backgroundColor] defaults to gray at 50% opacity. This is the background
   /// color behind both [playedColor] and [bufferedColor] to denote the total
   /// size of the video compared to either of those values.
-  VideoProgressColors({
+  PlayerEngineProgressColors({
     this.playedColor = const Color.fromRGBO(255, 0, 0, 0.7),
     this.bufferedColor = const Color.fromRGBO(50, 50, 200, 0.2),
     this.backgroundColor = const Color.fromRGBO(200, 200, 200, 0.5),
   });
 
   /// [playedColor] defaults to red at 70% opacity. This fills up a portion of
-  /// the [VideoProgressIndicator] to represent how much of the video has played
+  /// the [PlayerProgressIndicator] to represent how much of the video has played
   /// so far.
   final Color playedColor;
 
   /// [bufferedColor] defaults to blue at 20% opacity. This fills up a portion
-  /// of [VideoProgressIndicator] to represent how much of the video has
+  /// of [PlayerProgressIndicator] to represent how much of the video has
   /// buffered so far.
   final Color bufferedColor;
 
@@ -114,20 +114,20 @@ class _VideoScrubberState extends State<_VideoScrubber> {
 ///
 /// [padding] allows to specify some extra padding around the progress indicator
 /// that will also detect the gestures.
-class VideoProgressIndicator extends StatefulWidget {
+class PlayerProgressIndicator extends StatefulWidget {
   /// Construct an instance that displays the play/buffering status of the video
   /// controlled by [controller].
   ///
   /// Defaults will be used for everything except [controller] if they're not
   /// provided. [allowScrubbing] defaults to false, and [padding] will default
   /// to `top: 5.0`.
-  VideoProgressIndicator(
+  PlayerProgressIndicator(
     this.controller, {
-    VideoProgressColors? colors,
+    PlayerEngineProgressColors? colors,
     this.allowScrubbing,
     this.padding = const EdgeInsets.only(top: 5),
     super.key,
-  }) : colors = colors ?? VideoProgressColors();
+  }) : colors = colors ?? PlayerEngineProgressColors();
 
   /// The [PlayerEngineController] that actually associates a video with this
   /// widget.
@@ -135,8 +135,8 @@ class VideoProgressIndicator extends StatefulWidget {
 
   /// The default colors used throughout the indicator.
   ///
-  /// See [VideoProgressColors] for default values.
-  final VideoProgressColors colors;
+  /// See [PlayerEngineProgressColors] for default values.
+  final PlayerEngineProgressColors colors;
 
   /// When true, the widget will detect touch input and try to seek the video
   /// accordingly. The widget ignores such input when false.
@@ -151,11 +151,12 @@ class VideoProgressIndicator extends StatefulWidget {
   final EdgeInsets padding;
 
   @override
-  _VideoProgressIndicatorState createState() => _VideoProgressIndicatorState();
+  _PlayerProgressIndicatorState createState() =>
+      _PlayerProgressIndicatorState();
 }
 
-class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
-  _VideoProgressIndicatorState() {
+class _PlayerProgressIndicatorState extends State<PlayerProgressIndicator> {
+  _PlayerProgressIndicatorState() {
     listener = () {
       if (!mounted) {
         return;
@@ -168,7 +169,7 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
 
   PlayerEngineController get controller => widget.controller;
 
-  VideoProgressColors get colors => widget.colors;
+  PlayerEngineProgressColors get colors => widget.colors;
 
   @override
   void initState() {

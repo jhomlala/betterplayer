@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
-  group('VideoProgressIndicator tests', () {
+  group('PlayerProgressIndicator tests', () {
     late MockPlayerEngineController controller;
 
     setUp(() {
@@ -18,12 +18,12 @@ void main() {
       await widgetTester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: VideoProgressIndicator(controller),
+            body: PlayerProgressIndicator(controller),
           ),
         ),
       );
 
-      expect(find.byType(VideoProgressIndicator), findsOneWidget);
+      expect(find.byType(PlayerProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders correctly when allowScrubbing is false', (
@@ -32,7 +32,7 @@ void main() {
       await widgetTester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: VideoProgressIndicator(
+            body: PlayerProgressIndicator(
               controller,
               allowScrubbing: false,
             ),
@@ -40,7 +40,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(VideoProgressIndicator), findsOneWidget);
+      expect(find.byType(PlayerProgressIndicator), findsOneWidget);
     });
 
     testWidgets('renders scrubber when allowScrubbing is true', (
@@ -49,7 +49,7 @@ void main() {
       await widgetTester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: VideoProgressIndicator(
+            body: PlayerProgressIndicator(
               controller,
               allowScrubbing: true,
             ),
@@ -57,7 +57,7 @@ void main() {
         ),
       );
 
-      expect(find.byType(VideoProgressIndicator), findsOneWidget);
+      expect(find.byType(PlayerProgressIndicator), findsOneWidget);
     });
   });
 }
