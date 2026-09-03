@@ -182,38 +182,36 @@ class _BetterPlayerState extends State<BetterPlayer>
     );
   }
 
-  Widget _fullScreenRoutePageBuilder(
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-  ) {
-    final controllerProvider = BetterPlayerControllerProvider(
-      controller: widget.controller,
-      child: _BetterPlayerVideoWithVisibility(controller: widget.controller),
-    );
-
-    final routePageBuilder = _betterPlayerConfiguration.routePageBuilder;
-    if (routePageBuilder == null) {
-      return _defaultRoutePageBuilder(
-        context,
-        animation,
-        secondaryAnimation,
-        controllerProvider,
-      );
-    }
-
-    return routePageBuilder(
-      context,
-      animation,
-      secondaryAnimation,
-      controllerProvider,
-    );
-  }
-
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
     final TransitionRoute<void> route = PageRouteBuilder<void>(
       settings: const RouteSettings(),
-      pageBuilder: _fullScreenRoutePageBuilder,
+      pageBuilder: (context, animation, secondaryAnimation) {
+        final controllerProvider = BetterPlayerControllerProvider(
+          controller: widget.controller,
+          child: _BetterPlayerVideoWithVisibility(
+            controller: widget.controller,
+          ),
+        );
+
+        final routePageBuilder = _betterPlayerConfiguration.routePageBuilder;
+        if (routePageBuilder == null) {
+          return AnimatedBuilder(
+            animation: animation,
+            builder: (context, child) {
+              return BetterPlayerFullScreenVideo(
+                controllerProvider: controllerProvider,
+              );
+            },
+          );
+        }
+
+        return routePageBuilder(
+          context,
+          animation,
+          secondaryAnimation,
+          controllerProvider,
+        );
+      },
     );
 
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);

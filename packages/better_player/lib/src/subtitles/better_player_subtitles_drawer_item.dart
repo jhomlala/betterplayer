@@ -22,25 +22,21 @@ class PlayerSubtitlesDrawerItem extends StatelessWidget {
         Expanded(
           child: Align(
             alignment: configuration.alignment,
-            child: _getTextWithStroke(subtitleText),
+            child: ColoredBox(
+              color: configuration.backgroundColor,
+              child: Stack(
+                children: [
+                  if (configuration.outlineEnabled)
+                    HtmlWidget(subtitleText, textStyle: outerTextStyle)
+                  else
+                    const SizedBox(),
+                  HtmlWidget(subtitleText, textStyle: innerTextStyle),
+                ],
+              ),
+            ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget _getTextWithStroke(String subtitleText) {
-    return ColoredBox(
-      color: configuration.backgroundColor,
-      child: Stack(
-        children: [
-          if (configuration.outlineEnabled)
-            HtmlWidget(subtitleText, textStyle: outerTextStyle)
-          else
-            const SizedBox(),
-          HtmlWidget(subtitleText, textStyle: innerTextStyle),
-        ],
-      ),
     );
   }
 }
