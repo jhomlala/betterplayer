@@ -8,10 +8,10 @@ extension PlayerPlaybackExtension on BetterPlayerController {
       throw StateError('The data source has not been initialized');
     }
 
-    if (_appLifecycleState == AppLifecycleState.resumed) {
+    if (_playbackState.appLifecycleState == AppLifecycleState.resumed) {
       await _engine!.play();
-      _hasCurrentDataSourceStarted = true;
-      _wasPlayingBeforePause = null;
+      _playbackState.hasCurrentDataSourceStarted = true;
+      _playbackState.wasPlayingBeforePause = null;
       _postEvent(PlayerEvent(PlayerEventType.play));
       _postControllerEvent(PlayerControllerEvent.play);
     }
@@ -51,7 +51,7 @@ extension PlayerPlaybackExtension on BetterPlayerController {
       PlayerEvent(
         PlayerEventType.seekTo,
         parameters: <String, dynamic>{
-          BetterPlayerController._durationParameter: moment,
+          PlayerEventConstants.durationParameter: moment,
         },
       ),
     );
@@ -80,7 +80,7 @@ extension PlayerPlaybackExtension on BetterPlayerController {
       PlayerEvent(
         PlayerEventType.setVolume,
         parameters: <String, dynamic>{
-          BetterPlayerController._volumeParameter: volume,
+          PlayerEventConstants.volumeParameter: volume,
         },
       ),
     );
@@ -99,7 +99,7 @@ extension PlayerPlaybackExtension on BetterPlayerController {
       PlayerEvent(
         PlayerEventType.setSpeed,
         parameters: <String, dynamic>{
-          BetterPlayerController._speedParameter: speed,
+          PlayerEventConstants.speedParameter: speed,
         },
       ),
     );

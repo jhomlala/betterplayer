@@ -11,16 +11,16 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       PlayerEvent(
         PlayerEventType.setupDataSource,
         parameters: <String, dynamic>{
-          BetterPlayerController._dataSourceParameter: betterPlayerDataSource,
+          PlayerEventConstants.dataSourceParameter: betterPlayerDataSource,
         },
       ),
     );
 
     _postControllerEvent(PlayerControllerEvent.setupDataSource);
-    _hasCurrentDataSourceStarted = false;
-    _hasCurrentDataSourceInitialized = false;
+    _playbackState.hasCurrentDataSourceStarted = false;
+    _playbackState.hasCurrentDataSourceInitialized = false;
     _betterPlayerDataSource = betterPlayerDataSource;
-    _betterPlayerSubtitlesSourceList.clear();
+    _subtitleState.subtitlesSourceList.clear();
 
     final createdNewController = _engine == null;
 
@@ -34,13 +34,13 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
     ///Clear asms tracks
     betterPlayerAsmsTracks.clear();
-    _betterPlayerAsmsAudioTracks.clear();
-    _betterPlayerAsmsAudioTrack = null;
+    _trackState.asmsAudioTracks.clear();
+    _trackState.asmsAudioTrack = null;
 
     ///Setup subtitles
     final betterPlayerSubtitlesSourceList = betterPlayerDataSource.subtitles;
     if (betterPlayerSubtitlesSourceList != null) {
-      _betterPlayerSubtitlesSourceList.addAll(
+      _subtitleState.subtitlesSourceList.addAll(
         betterPlayerDataSource.subtitles!,
       );
     }
@@ -105,14 +105,14 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
       /// Load tracks
       if (_betterPlayerDataSource?.useAsmsTracks == true) {
-        _betterPlayerAsmsTracks = response.tracks ?? [];
+        _trackState.asmsTracks = response.tracks ?? [];
       }
 
       /// Load subtitles
       if (betterPlayerDataSource?.useAsmsSubtitles == true) {
         final asmsSubtitles = response.subtitles ?? [];
         for (final asmsSubtitle in asmsSubtitles) {
-          _betterPlayerSubtitlesSourceList.add(
+          _subtitleState.subtitlesSourceList.add(
             PlayerSubtitlesSource(
               type: PlayerSubtitlesSourceType.network,
               name: asmsSubtitle.name,
@@ -129,9 +129,9 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       ///Load audio tracks
       if (betterPlayerDataSource?.useAsmsAudioTracks == true &&
           _isDataSourceAsms(betterPlayerDataSource!)) {
-        _betterPlayerAsmsAudioTracks = response.audios ?? [];
-        if (_betterPlayerAsmsAudioTracks.isNotEmpty) {
-          setAudioTrack(_betterPlayerAsmsAudioTracks.first);
+        _trackState.asmsAudioTracks = response.audios ?? [];
+        if (_trackState.asmsAudioTracks.isNotEmpty) {
+          setAudioTrack(_trackState.asmsAudioTracks.first);
         }
       }
     }
@@ -277,11 +277,11 @@ extension PlayerDataSourceExtension on BetterPlayerController {
         enterFullScreen();
       }
       if (_isAutomaticPlayPauseHandled()) {
-        if (_appLifecycleState == AppLifecycleState.resumed &&
-            _isPlayerVisible) {
+        if (_playbackState.appLifecycleState == AppLifecycleState.resumed &&
+            _viewState.isPlayerVisible) {
           await play();
         } else {
-          _wasPlayingBeforePause = true;
+          _playbackState.wasPlayingBeforePause = true;
         }
       } else {
         await play();
@@ -305,11 +305,11 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       textureId: textureId,
     );
     await _setupDataSource(_betterPlayerDataSource!);
-    if (_videoPlayerValueOnError != null) {
-      final position = _videoPlayerValueOnError!.position;
+    if (_playbackState.videoPlayerValueOnError != null) {
+      final position = _playbackState.videoPlayerValueOnError!.position;
       await seekTo(position);
       await play();
-      _videoPlayerValueOnError = null;
+      _playbackState.videoPlayerValueOnError = null;
     }
   }
 
@@ -319,7 +319,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     final headers = betterPlayerDataSource!.headers ?? {};
     if (betterPlayerDataSource?.drmConfiguration?.drmType == DrmType.token &&
         betterPlayerDataSource?.drmConfiguration?.token != null) {
-      headers[BetterPlayerController._authorizationHeader] =
+      headers[PlayerEventConstants.authorizationHeader] =
           betterPlayerDataSource!.drmConfiguration!.token!;
     }
     return headers;

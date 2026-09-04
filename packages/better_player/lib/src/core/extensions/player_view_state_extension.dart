@@ -3,7 +3,7 @@ part of '../better_player_controller.dart';
 extension PlayerViewStateExtension on BetterPlayerController {
   ///Method which is invoked when full screen changes.
   Future<void> _onFullScreenStateChanged() async {
-    if (_engine?.value.isPlaying == true && !_isFullScreen) {
+    if (_engine?.value.isPlaying == true && !_viewState.isFullScreen) {
       enterFullScreen();
       _engine?.removeListener(_onFullScreenStateChanged);
     }
@@ -11,20 +11,20 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Enables full screen mode in player. This will trigger route change.
   void enterFullScreen() {
-    _isFullScreen = true;
+    _viewState.isFullScreen = true;
     _postControllerEvent(PlayerControllerEvent.openFullscreen);
   }
 
   ///Disables full screen mode in player. This will trigger route change.
   void exitFullScreen() {
-    _isFullScreen = false;
+    _viewState.isFullScreen = false;
     _postControllerEvent(PlayerControllerEvent.hideFullscreen);
   }
 
   ///Enables/disables full screen mode based on current fullscreen state.
   void toggleFullScreen() {
-    _isFullScreen = !_isFullScreen;
-    if (_isFullScreen) {
+    _viewState.isFullScreen = !_viewState.isFullScreen;
+    if (_viewState.isFullScreen) {
       _postControllerEvent(PlayerControllerEvent.openFullscreen);
     } else {
       _postControllerEvent(PlayerControllerEvent.hideFullscreen);
@@ -41,7 +41,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
     if (!enabled) {
       _controlsVisibilityStreamController.add(false);
     }
-    _controlsEnabled = enabled;
+    _viewState.controlsEnabled = enabled;
   }
 
   ///Internal method, used to trigger CONTROLS_VISIBLE or CONTROLS_HIDDEN event
@@ -56,7 +56,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Setup controls always visible mode
   void setControlsAlwaysVisible(bool controlsAlwaysVisible) {
-    _controlsAlwaysVisible = controlsAlwaysVisible;
+    _viewState.controlsAlwaysVisible = controlsAlwaysVisible;
     _controlsVisibilityStreamController.add(controlsAlwaysVisible);
   }
 
@@ -75,7 +75,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
   ///used. If showNotification is set in data source or handleLifecycle is false
   /// then this logic will be ignored.
   Future<void> onPlayerVisibilityChanged(double visibilityFraction) async {
-    _isPlayerVisible = visibilityFraction > 0;
+    _viewState.isPlayerVisible = visibilityFraction > 0;
     if (_disposed) {
       return;
     }
@@ -88,10 +88,10 @@ extension PlayerViewStateExtension on BetterPlayerController {
         );
       } else {
         if (visibilityFraction == 0) {
-          _wasPlayingBeforePause ??= isPlaying();
+          _playbackState.wasPlayingBeforePause ??= isPlaying();
           pause();
         } else {
-          if (_wasPlayingBeforePause == true && !isPlaying()!) {
+          if (_playbackState.wasPlayingBeforePause == true && !isPlaying()!) {
             play();
           }
         }
@@ -109,14 +109,15 @@ extension PlayerViewStateExtension on BetterPlayerController {
       textureId: textureId,
     );
     if (_isAutomaticPlayPauseHandled()) {
-      _appLifecycleState = appLifecycleState;
+      _playbackState.appLifecycleState = appLifecycleState;
       if (appLifecycleState == AppLifecycleState.resumed) {
-        if (_wasPlayingBeforePause == true && _isPlayerVisible) {
+        if (_playbackState.wasPlayingBeforePause == true &&
+            _viewState.isPlayerVisible) {
           play();
         }
       }
       if (appLifecycleState == AppLifecycleState.paused) {
-        _wasPlayingBeforePause ??= isPlaying();
+        _playbackState.wasPlayingBeforePause ??= isPlaying();
         pause();
       }
     }
@@ -124,18 +125,18 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Setup overridden aspect ratio.
   void setOverriddenAspectRatio(double aspectRatio) {
-    _overriddenAspectRatio = aspectRatio;
+    _viewState.overriddenAspectRatio = aspectRatio;
   }
 
   ///Get aspect ratio used in current video. Returns the first non-null value
-  ///from the following priority order: [_overriddenAspectRatio] ->
+  ///from the following priority order: [_viewState.overriddenAspectRatio] ->
   ///[PlayerConfiguration.aspectRatio] -> the video player's actual aspect
   ///ratio ([_engine.value.aspectRatio]).
   ///If the video player is not initialized or the video size is not yet
   ///available, it returns null unless an override or configuration is set.
   double? getAspectRatio() {
-    if (_overriddenAspectRatio != null) {
-      return _overriddenAspectRatio;
+    if (_viewState.overriddenAspectRatio != null) {
+      return _viewState.overriddenAspectRatio;
     }
     if (betterPlayerConfiguration.aspectRatio != null) {
       return betterPlayerConfiguration.aspectRatio;
@@ -151,14 +152,14 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Setup overridden fit.
   void setOverriddenFit(BoxFit fit) {
-    _overriddenFit = fit;
+    _viewState.overriddenFit = fit;
   }
 
   ///Get fit used in current video. If fit is null, then fit from
-  ///PlayerConfiguration will be used. Otherwise [_overriddenFit] will be
+  ///PlayerConfiguration will be used. Otherwise [_viewState.overriddenFit] will be
   ///used.
   BoxFit getFit() {
-    return _overriddenFit ?? betterPlayerConfiguration.fit;
+    return _viewState.overriddenFit ?? betterPlayerConfiguration.fit;
   }
 
   ///Enable Picture in Picture (PiP) mode. [betterPlayerGlobalKey] is required
@@ -173,11 +174,11 @@ extension PlayerViewStateExtension on BetterPlayerController {
         (await _engine!.isPictureInPictureSupported()) ?? false;
 
     if (isPipSupported) {
-      _wasInFullScreenBeforePiP = _isFullScreen;
-      _wasControlsEnabledBeforePiP = _controlsEnabled;
+      _viewState.wasInFullScreenBeforePiP = _viewState.isFullScreen;
+      _viewState.wasControlsEnabledBeforePiP = _viewState.controlsEnabled;
       setControlsEnabled(false);
       if (defaultTargetPlatform == TargetPlatform.android) {
-        _wasInFullScreenBeforePiP = _isFullScreen;
+        _viewState.wasInFullScreenBeforePiP = _viewState.isFullScreen;
         await _engine?.enablePictureInPicture(
           left: 0,
           top: 0,
@@ -235,7 +236,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
   void setBetterPlayerGlobalKey(GlobalKey betterPlayerGlobalKey) {
-    _betterPlayerGlobalKey = betterPlayerGlobalKey;
+    _viewState.betterPlayerGlobalKey = betterPlayerGlobalKey;
   }
 
   ///Check if picture in picture mode is supported in this device.
@@ -247,6 +248,6 @@ extension PlayerViewStateExtension on BetterPlayerController {
     final isPipSupported =
         (await _engine!.isPictureInPictureSupported()) ?? false;
 
-    return isPipSupported && !_isFullScreen;
+    return isPipSupported && !_viewState.isFullScreen;
   }
 }
