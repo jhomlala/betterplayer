@@ -3,9 +3,10 @@ part of '../better_player_controller.dart';
 extension PlayerSubtitleExtension on BetterPlayerController {
   ///Configure subtitles based on subtitles source.
   void _setupSubtitles() {
-    _subtitleState.subtitlesSourceList.add(
+    _subtitleState = _subtitleState.copyWith(subtitlesSourceList: [
+      ..._subtitleState.subtitlesSourceList,
       PlayerSubtitlesSource(type: PlayerSubtitlesSourceType.none),
-    );
+    ]);
     final defaultSubtitle = _subtitleState.subtitlesSourceList.firstWhereOrNull(
       (element) => element.selectedByDefault == true,
     );

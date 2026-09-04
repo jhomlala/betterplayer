@@ -11,7 +11,7 @@ void main() {
       expect(state.hasCurrentDataSourceStarted, isFalse);
       expect(state.hasCurrentDataSourceInitialized, isFalse);
       expect(state.appLifecycleState, AppLifecycleState.resumed);
-      expect(state.wasPlayingBeforePause, isNull);
+      expect(state.wasPlayingBeforePause, isFalse);
       expect(state.videoPlayerValueOnError, isNull);
       expect(state.lastPositionSelection, 0);
     });

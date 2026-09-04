@@ -37,16 +37,17 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     }
 
     ///Clear asms tracks
-    betterPlayerAsmsTracks.clear();
+    _trackState = _trackState.copyWith(asmsTracks: []);
     _trackState = _trackState.copyWith(asmsAudioTracks: []);
     _trackState = _trackState.copyWith(clearAsmsAudioTrack: true);
 
     ///Setup subtitles
     final betterPlayerSubtitlesSourceList = betterPlayerDataSource.subtitles;
     if (betterPlayerSubtitlesSourceList != null) {
-      _subtitleState.subtitlesSourceList.addAll(
-        betterPlayerDataSource.subtitles!,
-      );
+      _subtitleState = _subtitleState.copyWith(subtitlesSourceList: [
+        ..._subtitleState.subtitlesSourceList,
+        ...betterPlayerDataSource.subtitles!,
+      ]);
     }
 
     final setupFutures = <Future<dynamic>>[
@@ -116,7 +117,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       if (betterPlayerDataSource?.useAsmsSubtitles == true) {
         final asmsSubtitles = response.subtitles ?? [];
         for (final asmsSubtitle in asmsSubtitles) {
-          _subtitleState.subtitlesSourceList.add(
+          _subtitleState = _subtitleState.copyWith(subtitlesSourceList: [
+            ..._subtitleState.subtitlesSourceList,
             PlayerSubtitlesSource(
               type: PlayerSubtitlesSourceType.network,
               name: asmsSubtitle.name,
@@ -126,7 +128,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
               asmsSegments: asmsSubtitle.segments,
               selectedByDefault: asmsSubtitle.isDefault,
             ),
-          );
+          ]);
         }
       }
 
