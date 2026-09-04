@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('PlayerSubtitleState', () {
     test('should initialize with correct default values', () {
-      final state = PlayerSubtitleState();
+      const state = PlayerSubtitleState();
 
       expect(state.subtitlesSourceList, isEmpty);
       expect(state.subtitlesSource, isNull);
@@ -17,7 +17,7 @@ void main() {
     });
 
     test('should allow updating fields', () {
-      final state = PlayerSubtitleState();
+      var state = const PlayerSubtitleState();
 
       final source = PlayerSubtitlesSource(
         type: PlayerSubtitlesSourceType.network,
@@ -28,12 +28,12 @@ void main() {
         false,
       );
 
-      state.subtitlesSourceList.add(source);
-      state.subtitlesSource = source;
-      state.subtitlesLines.add(subtitle);
-      state.renderedSubtitle = subtitle;
-      state.asmsSegmentsLoading = true;
-      state.asmsSegmentsLoaded.add('segment1');
+      state = state.copyWith(subtitlesSourceList: [...state.subtitlesSourceList, source]);
+      state = state.copyWith(subtitlesSource: source);
+      state = state.copyWith(subtitlesLines: [...state.subtitlesLines, subtitle]);
+      state = state.copyWith(renderedSubtitle: subtitle);
+      state = state.copyWith(asmsSegmentsLoading: true);
+      state = state.copyWith(asmsSegmentsLoaded: [...state.asmsSegmentsLoaded, 'segment1']);
 
       expect(state.subtitlesSourceList, hasLength(1));
       expect(state.subtitlesSource, source);

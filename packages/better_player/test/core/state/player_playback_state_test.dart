@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('PlayerPlaybackState', () {
     test('should initialize with correct default values', () {
-      final state = PlayerPlaybackState();
+      const state = PlayerPlaybackState();
 
       expect(state.hasCurrentDataSourceStarted, isFalse);
       expect(state.hasCurrentDataSourceInitialized, isFalse);
@@ -17,18 +17,18 @@ void main() {
     });
 
     test('should allow updating fields', () {
-      final state = PlayerPlaybackState();
+      var state = const PlayerPlaybackState();
 
       final errorValue = VideoPlayerValue(
         duration: const Duration(seconds: 10),
       );
 
-      state.hasCurrentDataSourceStarted = true;
-      state.hasCurrentDataSourceInitialized = true;
-      state.appLifecycleState = AppLifecycleState.paused;
-      state.wasPlayingBeforePause = true;
-      state.videoPlayerValueOnError = errorValue;
-      state.lastPositionSelection = 12345;
+      state = state.copyWith(hasCurrentDataSourceStarted: true);
+      state = state.copyWith(hasCurrentDataSourceInitialized: true);
+      state = state.copyWith(appLifecycleState: AppLifecycleState.paused);
+      state = state.copyWith(wasPlayingBeforePause: true);
+      state = state.copyWith(videoPlayerValueOnError: errorValue);
+      state = state.copyWith(lastPositionSelection: 12345);
 
       expect(state.hasCurrentDataSourceStarted, isTrue);
       expect(state.hasCurrentDataSourceInitialized, isTrue);

@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('PlayerTrackState', () {
     test('should initialize with correct default values', () {
-      final state = PlayerTrackState();
+      const state = PlayerTrackState();
 
       expect(state.asmsTracks, isEmpty);
       expect(state.asmsTrack, isNull);
@@ -14,7 +14,7 @@ void main() {
     });
 
     test('should allow updating fields', () {
-      final state = PlayerTrackState();
+      var state = const PlayerTrackState();
 
       final videoTrack = PlayerAsmsTrack(
         '1',
@@ -32,10 +32,10 @@ void main() {
         url: 'url',
       );
 
-      state.asmsTracks.add(videoTrack);
-      state.asmsTrack = videoTrack;
-      state.asmsAudioTracks.add(audioTrack);
-      state.asmsAudioTrack = audioTrack;
+      state = state.copyWith(asmsTracks: [...state.asmsTracks, videoTrack]);
+      state = state.copyWith(asmsTrack: videoTrack);
+      state = state.copyWith(asmsAudioTracks: [...state.asmsAudioTracks, audioTrack]);
+      state = state.copyWith(asmsAudioTrack: audioTrack);
 
       expect(state.asmsTracks, hasLength(1));
       expect(state.asmsTrack, videoTrack);

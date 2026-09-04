@@ -17,10 +17,14 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     );
 
     _postControllerEvent(PlayerControllerEvent.setupDataSource);
-    _playbackState.hasCurrentDataSourceStarted = false;
-    _playbackState.hasCurrentDataSourceInitialized = false;
+    _playbackState = _playbackState.copyWith(
+      hasCurrentDataSourceStarted: false,
+    );
+    _playbackState = _playbackState.copyWith(
+      hasCurrentDataSourceInitialized: false,
+    );
     _betterPlayerDataSource = betterPlayerDataSource;
-    _subtitleState.subtitlesSourceList.clear();
+    _subtitleState = _subtitleState.copyWith(subtitlesSourceList: []);
 
     final createdNewController = _engine == null;
 
@@ -34,8 +38,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
     ///Clear asms tracks
     betterPlayerAsmsTracks.clear();
-    _trackState.asmsAudioTracks.clear();
-    _trackState.asmsAudioTrack = null;
+    _trackState = _trackState.copyWith(asmsAudioTracks: []);
+    _trackState = _trackState.copyWith(clearAsmsAudioTrack: true);
 
     ///Setup subtitles
     final betterPlayerSubtitlesSourceList = betterPlayerDataSource.subtitles;
@@ -105,7 +109,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
       /// Load tracks
       if (_betterPlayerDataSource?.useAsmsTracks == true) {
-        _trackState.asmsTracks = response.tracks ?? [];
+        _trackState = _trackState.copyWith(asmsTracks: response.tracks ?? []);
       }
 
       /// Load subtitles
@@ -129,7 +133,9 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       ///Load audio tracks
       if (betterPlayerDataSource?.useAsmsAudioTracks == true &&
           _isDataSourceAsms(betterPlayerDataSource!)) {
-        _trackState.asmsAudioTracks = response.audios ?? [];
+        _trackState = _trackState.copyWith(
+          asmsAudioTracks: response.audios ?? [],
+        );
         if (_trackState.asmsAudioTracks.isNotEmpty) {
           setAudioTrack(_trackState.asmsAudioTracks.first);
         }
@@ -281,7 +287,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
             _viewState.isPlayerVisible) {
           await play();
         } else {
-          _playbackState.wasPlayingBeforePause = true;
+          _playbackState = _playbackState.copyWith(wasPlayingBeforePause: true);
         }
       } else {
         await play();
@@ -309,7 +315,9 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       final position = _playbackState.videoPlayerValueOnError!.position;
       await seekTo(position);
       await play();
-      _playbackState.videoPlayerValueOnError = null;
+      _playbackState = _playbackState.copyWith(
+        clearVideoPlayerValueOnError: true,
+      );
     }
   }
 

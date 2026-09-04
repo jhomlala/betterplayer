@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
-import 'package:better_player/src/core/player_event_constants.dart';
 import 'package:better_player/src/core/state/player_playback_state.dart';
 import 'package:better_player/src/core/state/player_subtitle_state.dart';
 import 'package:better_player/src/core/state/player_track_state.dart';
@@ -97,17 +96,17 @@ class BetterPlayerController {
   /// Used as a safeguard to prevent method calls or stream emissions after teardown.
   bool _disposed = false;
 
-  /// Tracks the visual state and UI configurations of the Better Player.
-  final PlayerViewState _viewState = PlayerViewState();
+  /// Tracks visual UI states (fullscreen, PIP, control visibility).
+  PlayerViewState _viewState = const PlayerViewState();
 
-  /// Tracks the subtitle configurations, parsing status, and rendered lines.
-  final PlayerSubtitleState _subtitleState = PlayerSubtitleState();
+  /// Tracks subtitle parsing and rendering states.
+  PlayerSubtitleState _subtitleState = const PlayerSubtitleState();
 
-  /// Tracks the audio and video tracks parsed from ASMS (HLS/DASH) manifests.
-  final PlayerTrackState _trackState = PlayerTrackState();
+  /// Tracks available audio and video qualities for HLS/DASH.
+  PlayerTrackState _trackState = const PlayerTrackState();
 
-  /// Tracks the low-level playback and lifecycle state of the media player.
-  final PlayerPlaybackState _playbackState = PlayerPlaybackState();
+  /// Tracks low-level engine playback states (initialization, buffering).
+  PlayerPlaybackState _playbackState = const PlayerPlaybackState();
 
   /// Construct BetterPlayerController
   BetterPlayerController(
@@ -163,13 +162,13 @@ class BetterPlayerController {
   /// for the currently active subtitle source.
   List<PlayerSubtitle> get subtitlesLines => _subtitleState.subtitlesLines;
   set subtitlesLines(List<PlayerSubtitle> value) =>
-      _subtitleState.subtitlesLines = value;
+      _subtitleState = _subtitleState.copyWith(subtitlesLines: value);
 
   /// The exact subtitle line that should currently be rendered on the screen
   /// based on the video's current playback position.
   PlayerSubtitle? get renderedSubtitle => _subtitleState.renderedSubtitle;
   set renderedSubtitle(PlayerSubtitle? value) =>
-      _subtitleState.renderedSubtitle = value;
+      _subtitleState = _subtitleState.copyWith(renderedSubtitle: value);
 
   /// Retrieves the complete list of alternative video tracks parsed from ASMS (HLS/DASH) streams.
   /// Useful for populating a quality selection menu.
@@ -300,14 +299,16 @@ class BetterPlayerController {
         message: 'Video player initialized',
         textureId: textureId,
       );
-      _playbackState.hasCurrentDataSourceInitialized = true;
+      _playbackState = _playbackState.copyWith(
+        hasCurrentDataSourceInitialized: true,
+      );
       _postEvent(PlayerEvent(PlayerEventType.initialized));
     }
     if (currentVideoPlayerValue.isPip) {
-      _viewState.wasInPipMode = true;
+      _viewState = _viewState.copyWith(wasInPipMode: true);
     } else if (_viewState.wasInPipMode) {
       _postEvent(PlayerEvent(PlayerEventType.pipStop));
-      _viewState.wasInPipMode = false;
+      _viewState = _viewState.copyWith(wasInPipMode: false);
       if (!_viewState.wasInFullScreenBeforePiP) {
         exitFullScreen();
       }
@@ -323,7 +324,7 @@ class BetterPlayerController {
 
     final now = DateTime.now().millisecondsSinceEpoch;
     if (now - _playbackState.lastPositionSelection > 500) {
-      _playbackState.lastPositionSelection = now;
+      _playbackState = _playbackState.copyWith(lastPositionSelection: now);
       _postEvent(
         PlayerEvent(
           PlayerEventType.progress,
@@ -394,6 +395,8 @@ class BetterPlayerController {
     if (!_disposed) {
       if (_engine != null) {
         pause();
+        // This listener is added dynamically in enterFullScreen().
+        // Removing it here is a safe no-op if the player never entered full-screen.
         _engine!.removeListener(_onFullScreenStateChanged);
         _engine!.removeListener(_onVideoPlayerChanged);
         _engine!.dispose();

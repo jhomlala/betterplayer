@@ -27,7 +27,7 @@ extension PlayerTrackExtension on BetterPlayerController {
       height: track.height,
       bitrate: track.bitrate,
     );
-    _trackState.asmsTrack = track;
+    _trackState = _trackState.copyWith(asmsTrack: track);
   }
 
   ///Set different resolution (quality) for video
@@ -62,11 +62,11 @@ extension PlayerTrackExtension on BetterPlayerController {
     }
 
     if (audioTrack.language == null) {
-      _trackState.asmsAudioTrack = null;
+      _trackState = _trackState.copyWith(clearAsmsAudioTrack: true);
       return;
     }
 
-    _trackState.asmsAudioTrack = audioTrack;
+    _trackState = _trackState.copyWith(asmsAudioTrack: audioTrack);
     _engine!.setAudioTrack(audioTrack.label, audioTrack.id);
   }
 

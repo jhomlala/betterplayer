@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('PlayerViewState', () {
     test('should initialize with correct default values', () {
-      final state = PlayerViewState();
+      const state = PlayerViewState();
 
       expect(state.isFullScreen, isFalse);
       expect(state.isPlayerVisible, isTrue);
@@ -20,13 +20,13 @@ void main() {
     });
 
     test('should allow updating fields', () {
-      final state = PlayerViewState();
+      var state = const PlayerViewState();
       final key = GlobalKey();
 
-      state.isFullScreen = true;
-      state.isPlayerVisible = false;
-      state.overriddenFit = BoxFit.cover;
-      state.betterPlayerGlobalKey = key;
+      state = state.copyWith(isFullScreen: true);
+      state = state.copyWith(isPlayerVisible: false);
+      state = state.copyWith(overriddenFit: BoxFit.cover);
+      state = state.copyWith(betterPlayerGlobalKey: key);
 
       expect(state.isFullScreen, isTrue);
       expect(state.isPlayerVisible, isFalse);

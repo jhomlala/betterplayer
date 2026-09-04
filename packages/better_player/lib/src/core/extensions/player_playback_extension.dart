@@ -10,8 +10,12 @@ extension PlayerPlaybackExtension on BetterPlayerController {
 
     if (_playbackState.appLifecycleState == AppLifecycleState.resumed) {
       await _engine!.play();
-      _playbackState.hasCurrentDataSourceStarted = true;
-      _playbackState.wasPlayingBeforePause = null;
+      _playbackState = _playbackState.copyWith(
+        hasCurrentDataSourceStarted: true,
+      );
+      _playbackState = _playbackState.copyWith(
+        wasPlayingBeforePause: false,
+      );
       _postEvent(PlayerEvent(PlayerEventType.play));
       _postControllerEvent(PlayerControllerEvent.play);
     }

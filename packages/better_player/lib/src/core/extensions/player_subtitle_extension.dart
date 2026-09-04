@@ -24,10 +24,10 @@ extension PlayerSubtitleExtension on BetterPlayerController {
     PlayerSubtitlesSource subtitlesSource, {
     bool sourceInitialize = false,
   }) async {
-    _subtitleState.subtitlesSource = subtitlesSource;
-    _subtitleState.subtitlesLines.clear();
-    _subtitleState.asmsSegmentsLoaded.clear();
-    _subtitleState.asmsSegmentsLoading = false;
+    _subtitleState = _subtitleState.copyWith(subtitlesSource: subtitlesSource);
+    _subtitleState = _subtitleState.copyWith(subtitlesLines: []);
+    _subtitleState = _subtitleState.copyWith(asmsSegmentsLoaded: []);
+    _subtitleState = _subtitleState.copyWith(asmsSegmentsLoading: false);
 
     if (subtitlesSource.type != PlayerSubtitlesSourceType.none) {
       if (subtitlesSource.asmsIsSegmented == true) {
@@ -36,7 +36,9 @@ extension PlayerSubtitleExtension on BetterPlayerController {
       final subtitlesParsed = await PlayerSubtitlesFactory.parseSubtitles(
         subtitlesSource,
       );
-      _subtitleState.subtitlesLines.addAll(subtitlesParsed);
+      _subtitleState = _subtitleState.copyWith(
+        subtitlesLines: [..._subtitleState.subtitlesLines, ...subtitlesParsed],
+      );
     }
 
     _postEvent(PlayerEvent(PlayerEventType.changedSubtitles));
@@ -57,7 +59,7 @@ extension PlayerSubtitleExtension on BetterPlayerController {
       if (_subtitleState.asmsSegmentsLoading) {
         return;
       }
-      _subtitleState.asmsSegmentsLoading = true;
+      _subtitleState = _subtitleState.copyWith(asmsSegmentsLoading: true);
       final source = _subtitleState.subtitlesSource;
       final loadDurationEnd = Duration(
         milliseconds:
@@ -87,11 +89,21 @@ extension PlayerSubtitleExtension on BetterPlayerController {
         ///used to start loading subtitles. It can be different when user
         ///changes subtitles and there was already pending load.
         if (source == _subtitleState.subtitlesSource) {
-          _subtitleState.subtitlesLines.addAll(subtitlesParsed);
-          _subtitleState.asmsSegmentsLoaded.addAll(segmentsToLoad);
+          _subtitleState = _subtitleState.copyWith(
+            subtitlesLines: [
+              ..._subtitleState.subtitlesLines,
+              ...subtitlesParsed,
+            ],
+          );
+          _subtitleState = _subtitleState.copyWith(
+            asmsSegmentsLoaded: [
+              ..._subtitleState.asmsSegmentsLoaded,
+              ...segmentsToLoad,
+            ],
+          );
         }
       }
-      _subtitleState.asmsSegmentsLoading = false;
+      _subtitleState = _subtitleState.copyWith(asmsSegmentsLoading: false);
     } catch (exception) {
       PlayerLogger.error(
         message: 'Load ASMS subtitle segments failed: $exception',
