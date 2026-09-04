@@ -45,15 +45,14 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final controlsConfiguration = PlayerControlsConfiguration(
+      const controlsConfiguration = PlayerControlsConfiguration(
         playerTheme: PlayerTheme.cupertino,
-        enablePlaybackSpeed: true,
       );
       mockController = BetterPlayerTestUtils.setupBetterPlayerMockController(
         controller: MockPlayerEngineController(),
-        configuration: PlayerConfiguration(
+        configuration: const PlayerConfiguration(
           controlsConfiguration: controlsConfiguration,
-        )
+        ),
       );
       await mockController.setupDataSource(
         PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
@@ -72,11 +71,15 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       mockController.setControlsAlwaysVisible(true);
       await tester.pumpAndSettle();
-      
+
       final moreButton = find.byIcon(controlsConfiguration.overflowMenuIcon);
       expect(moreButton, findsOneWidget);
 
-      final gestureDetector = tester.widget<GestureDetector>(find.ancestor(of: moreButton, matching: find.byType(GestureDetector)).first);
+      final gestureDetector = tester.widget<GestureDetector>(
+        find
+            .ancestor(of: moreButton, matching: find.byType(GestureDetector))
+            .first,
+      );
       gestureDetector.onTap!();
       await tester.pumpAndSettle();
 
@@ -88,11 +91,13 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(CupertinoActionSheetAction),
-          matching: find.text(mockController.translations.overflowMenuPlaybackSpeed),
+          matching: find.text(
+            mockController.translations.overflowMenuPlaybackSpeed,
+          ),
         ),
         findsOneWidget,
       );
-      
+
       // Check for Cancel button
       expect(
         find.descendant(

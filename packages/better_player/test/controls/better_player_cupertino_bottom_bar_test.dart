@@ -149,24 +149,32 @@ void main() {
             onProgressBarDragStart: () {},
             onProgressBarDragEnd: () {},
             onProgressBarTapDown: () {},
-            barHeight: 100, // Very large barHeight to ensure size does not scale
+            barHeight:
+                100, // Very large barHeight to ensure size does not scale
             marginSize: 5,
             backgroundColor: Colors.black,
             iconColor: Colors.white,
-            latestValue: VideoPlayerValue(duration: const Duration(seconds: 10)),
+            latestValue: VideoPlayerValue(
+              duration: const Duration(seconds: 10),
+            ),
           ),
         ),
       );
 
-      final playIcon = tester.widget<Icon>(find.byIcon(controlsConfiguration.playIcon));
+      final playIcon = tester.widget<Icon>(
+        find.byIcon(controlsConfiguration.playIcon),
+      );
       expect(playIcon.size, 28.0);
 
-      final skipBackIcon = tester.widget<Icon>(find.byIcon(controlsConfiguration.skipBackIcon));
+      final skipBackIcon = tester.widget<Icon>(
+        find.byIcon(controlsConfiguration.skipBackIcon),
+      );
       expect(skipBackIcon.size, 24.0);
 
-      final skipForwardIcon = tester.widget<Icon>(find.byIcon(controlsConfiguration.skipForwardIcon));
+      final skipForwardIcon = tester.widget<Icon>(
+        find.byIcon(controlsConfiguration.skipForwardIcon),
+      );
       expect(skipForwardIcon.size, 24.0);
     },
   );
 }
-
