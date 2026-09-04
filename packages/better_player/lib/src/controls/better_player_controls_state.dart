@@ -362,7 +362,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         final audioTrack = asmsTracks[index];
         children.add(
           _buildBottomSheetMenuItem(
-            label: audioTrack.label ?? betterPlayerController!.translations.generalDefault,
+            label:
+                audioTrack.label ??
+                betterPlayerController!.translations.generalDefault,
             isSelected: isSelected,
             onTap: () {
               Navigator.of(context).pop();
@@ -431,7 +433,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           ],
         ),
       );
-      
+
       if (semanticsIdentifier != null) {
         return Semantics(
           identifier: semanticsIdentifier,
@@ -477,7 +479,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             actions: children,
             cancelButton: CupertinoActionSheetAction(
               onPressed: () => Navigator.of(context).pop(),
-              isDestructiveAction: false,
               child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
             ),
           ),
