@@ -69,44 +69,107 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   void onShowMoreClicked() {
     PlayerLogger.debug(message: 'onShowMoreClicked');
-    _showModalBottomSheet([
-      BetterPlayerOverflowMenu(
-        controller: betterPlayerController!,
-        controlsConfiguration: betterPlayerControlsConfiguration,
-        onPlaybackSpeedClicked: () {
-          PlayerLogger.debug(message: 'onPlaybackSpeedClicked');
-          Navigator.of(context).pop();
-          Future.delayed(
-            const Duration(milliseconds: 500),
-            _showSpeedChooserWidget,
-          );
-        },
-        onSubtitlesClicked: () {
-          PlayerLogger.debug(message: 'onSubtitlesClicked');
-          Navigator.of(context).pop();
-          Future.delayed(
-            const Duration(milliseconds: 500),
-            _showSubtitlesSelectionWidget,
-          );
-        },
-        onQualitiesClicked: () {
-          PlayerLogger.debug(message: 'onQualitiesClicked');
-          Navigator.of(context).pop();
-          Future.delayed(
-            const Duration(milliseconds: 500),
-            showQualitiesSelectionWidget,
-          );
-        },
-        onAudioTracksClicked: () {
-          PlayerLogger.debug(message: 'onAudioTracksClicked');
-          Navigator.of(context).pop();
-          Future.delayed(
-            const Duration(milliseconds: 300),
-            _showAudioTracksSelectionWidget,
-          );
-        },
-      ),
-    ]);
+    final translations = betterPlayerController!.translations;
+    final children = <Widget>[];
+
+    if (betterPlayerControlsConfiguration.enablePlaybackSpeed) {
+      children.add(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
+          icon: betterPlayerControlsConfiguration.playbackSpeedIcon,
+          label: translations.overflowMenuPlaybackSpeed,
+          onTap: () {
+            Navigator.of(context).pop();
+            Future.delayed(
+              const Duration(milliseconds: 500),
+              _showSpeedChooserWidget,
+            );
+          },
+          semanticsIdentifier: 'better_player_overflow_menu_playback_speed',
+        ),
+      );
+    }
+
+    if (betterPlayerControlsConfiguration.enableSubtitles) {
+      children.add(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
+          icon: betterPlayerControlsConfiguration.subtitlesIcon,
+          label: translations.overflowMenuSubtitles,
+          onTap: () {
+            Navigator.of(context).pop();
+            Future.delayed(
+              const Duration(milliseconds: 500),
+              _showSubtitlesSelectionWidget,
+            );
+          },
+          semanticsIdentifier: 'better_player_overflow_menu_subtitles',
+        ),
+      );
+    }
+
+    if (betterPlayerControlsConfiguration.enableQualities) {
+      children.add(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
+          icon: betterPlayerControlsConfiguration.qualitiesIcon,
+          label: translations.overflowMenuQuality,
+          onTap: () {
+            Navigator.of(context).pop();
+            Future.delayed(
+              const Duration(milliseconds: 500),
+              showQualitiesSelectionWidget,
+            );
+          },
+          semanticsIdentifier: 'better_player_overflow_menu_quality',
+        ),
+      );
+    }
+
+    if (betterPlayerControlsConfiguration.enableAudioTracks) {
+      children.add(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
+          icon: betterPlayerControlsConfiguration.audioTracksIcon,
+          label: translations.overflowMenuAudioTracks,
+          onTap: () {
+            Navigator.of(context).pop();
+            Future.delayed(
+              const Duration(milliseconds: 300),
+              _showAudioTracksSelectionWidget,
+            );
+          },
+          semanticsIdentifier: 'better_player_overflow_menu_audio_tracks',
+        ),
+      );
+    }
+
+    if (betterPlayerControlsConfiguration.overflowMenuCustomItems.isNotEmpty) {
+      for (final customItem
+          in betterPlayerControlsConfiguration.overflowMenuCustomItems) {
+        children.add(
+          _BetterPlayerBottomSheetMenuItem(
+            isCupertinoTheme: _isCupertinoTheme,
+            betterPlayerControlsConfiguration:
+                betterPlayerControlsConfiguration,
+            icon: customItem.icon,
+            label: customItem.title,
+            onTap: () {
+              Navigator.of(context).pop();
+              customItem.onClicked.call();
+            },
+            semanticsIdentifier:
+                'better_player_overflow_menu_custom_item_${customItem.title.toLowerCase().replaceAll(' ', '_')}',
+          ),
+        );
+      }
+    }
+
+    _showModalBottomSheet(children);
   }
 
   void _showSpeedChooserWidget() {
@@ -114,14 +177,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0].map((speed) {
         final isSelected =
             betterPlayerController?.videoPlayerValue?.speed == speed;
-        return BetterPlayerSelectionListItemWidget(
+        return _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: '$speed x',
           isSelected: isSelected,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setSpeed(speed);
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier: 'better_player_overflow_menu_speed_$speed',
         );
       }).toList(),
@@ -184,14 +248,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             : subtitlesSource.name ??
                   betterPlayerController!.translations.generalDefault;
 
-        return BetterPlayerSelectionListItemWidget(
+        return _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: name,
           isSelected: isSelected,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setupSubtitleSource(subtitlesSource);
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier:
               'better_player_overflow_menu_subtitles_${subtitlesSource.type?.name ?? 'none'}',
         );
@@ -238,14 +303,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           preferredName == betterPlayerController!.translations.qualityAuto;
 
       children.add(
-        BetterPlayerSelectionListItemWidget(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: trackName,
           isSelected: isSelected,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setTrack(track);
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier: isAutoTrack
               ? 'better_player_overflow_menu_quality_auto'
               : 'better_player_overflow_menu_quality_$index',
@@ -262,14 +328,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       final isSelected =
           value == betterPlayerController!.betterPlayerDataSource!.url;
       children.add(
-        BetterPlayerSelectionListItemWidget(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: key,
           isSelected: isSelected,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setResolution(value);
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier:
               'better_player_overflow_menu_quality_$resolutionIndex',
         ),
@@ -282,14 +349,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         message: 'Quality children empty, adding Auto fallback',
       );
       children.add(
-        BetterPlayerSelectionListItemWidget(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: betterPlayerController!.translations.qualityAuto,
           isSelected: true,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setTrack(PlayerAsmsTrack.defaultTrack());
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier: 'better_player_overflow_menu_quality_auto',
         ),
       );
@@ -314,14 +382,18 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             selectedAsmsAudioTrack == asmsTracks[index];
         final audioTrack = asmsTracks[index];
         children.add(
-          BetterPlayerSelectionListItemWidget(
-            label: audioTrack.label!,
+          _BetterPlayerBottomSheetMenuItem(
+            isCupertinoTheme: _isCupertinoTheme,
+            betterPlayerControlsConfiguration:
+                betterPlayerControlsConfiguration,
+            label:
+                audioTrack.label ??
+                betterPlayerController!.translations.generalDefault,
             isSelected: isSelected,
             onTap: () {
               Navigator.of(context).pop();
               betterPlayerController!.setAudioTrack(audioTrack);
             },
-            controlsConfiguration: betterPlayerControlsConfiguration,
           ),
         );
       }
@@ -329,7 +401,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (children.isEmpty) {
       children.add(
-        BetterPlayerSelectionListItemWidget(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: betterPlayerController!.translations.generalDefault,
           isSelected: true,
           onTap: () {
@@ -340,7 +414,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               ),
             );
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
         ),
       );
     }
@@ -352,9 +425,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     PlayerLogger.debug(
       message: 'Showing bottom sheet with ${children.length} items',
     );
-    defaultTargetPlatform == TargetPlatform.android
+    !_isCupertinoTheme
         ? _showMaterialBottomSheet(children)
         : _showCupertinoModalBottomSheet(children);
+  }
+
+  bool get _isCupertinoTheme {
+    return betterPlayerControlsConfiguration.playerTheme ==
+            PlayerTheme.cupertino ||
+        (betterPlayerControlsConfiguration.playerTheme == null &&
+            defaultTargetPlatform == TargetPlatform.iOS);
   }
 
   void _showCupertinoModalBottomSheet(List<Widget> children) {
@@ -365,21 +445,15 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
           false,
       builder: (context) {
-        return SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              decoration: BoxDecoration(
-                color: betterPlayerControlsConfiguration.overflowModalColor,
-                /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-              ),
-              child: Column(children: children),
+        return CupertinoTheme(
+          data: CupertinoThemeData(
+            brightness: Theme.of(context).brightness,
+          ),
+          child: CupertinoActionSheet(
+            actions: children,
+            cancelButton: CupertinoActionSheetAction(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
             ),
           ),
         );
@@ -426,5 +500,73 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       }
       controlsNotVisible = notVisible;
     });
+  }
+}
+
+class _BetterPlayerBottomSheetMenuItem extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+  final bool isSelected;
+  final IconData? icon;
+  final String? semanticsIdentifier;
+  final bool isCupertinoTheme;
+  final PlayerControlsConfiguration betterPlayerControlsConfiguration;
+
+  const _BetterPlayerBottomSheetMenuItem({
+    required this.label,
+    required this.onTap,
+    required this.isCupertinoTheme,
+    required this.betterPlayerControlsConfiguration,
+    this.isSelected = false,
+    this.icon,
+    this.semanticsIdentifier,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (isCupertinoTheme) {
+      final action = CupertinoActionSheetAction(
+        onPressed: onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) Icon(icon, size: 20),
+            if (icon != null) const SizedBox(width: 8),
+            if (isSelected && icon == null)
+              const Icon(CupertinoIcons.check_mark, size: 18),
+            if (isSelected && icon == null) const SizedBox(width: 8),
+            Text(label),
+          ],
+        ),
+      );
+
+      if (semanticsIdentifier != null) {
+        return Semantics(
+          identifier: semanticsIdentifier,
+          button: true,
+          child: action,
+        );
+      }
+      return action;
+    }
+
+    final localIcon = icon;
+    if (localIcon != null) {
+      return PlayerOverflowMenuItemWidget(
+        icon: localIcon,
+        name: label,
+        onTap: onTap,
+        controlsConfiguration: betterPlayerControlsConfiguration,
+        semanticsIdentifier: semanticsIdentifier,
+      );
+    } else {
+      return BetterPlayerSelectionListItemWidget(
+        label: label,
+        isSelected: isSelected,
+        onTap: onTap,
+        controlsConfiguration: betterPlayerControlsConfiguration,
+        semanticsIdentifier: semanticsIdentifier,
+      );
+    }
   }
 }
