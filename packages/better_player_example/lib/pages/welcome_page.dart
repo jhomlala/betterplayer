@@ -30,6 +30,7 @@ import 'package:better_player_example/pages/reusable_video_list/reusable_video_l
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
@@ -45,10 +46,12 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
-    _saveAssetSubtitleToFile();
-    _saveAssetVideoToFile();
-    _saveAssetEncryptVideoToFile();
-    _saveLogoToFile();
+    if (!kIsWeb) {
+      _saveAssetSubtitleToFile();
+      _saveAssetVideoToFile();
+      _saveAssetEncryptVideoToFile();
+      _saveLogoToFile();
+    }
     super.initState();
   }
 
