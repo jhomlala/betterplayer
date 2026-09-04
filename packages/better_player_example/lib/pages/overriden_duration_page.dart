@@ -38,7 +38,7 @@ class _OverriddenDurationPageState extends State<OverriddenDurationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Overridden duration')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(

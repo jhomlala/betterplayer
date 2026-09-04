@@ -88,7 +88,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
         betterPlayerConfiguration.playerVisibilityChangedBehavior!(
           visibilityFraction,
         );
-      } else {
+      } else if (isEngineReady) {
         if (visibilityFraction == 0) {
           _playbackState = _playbackState.copyWith(
             wasPlayingBeforePause:
@@ -119,16 +119,23 @@ extension PlayerViewStateExtension on BetterPlayerController {
       );
       if (appLifecycleState == AppLifecycleState.resumed) {
         if (_playbackState.wasPlayingBeforePause == true &&
-            _viewState.isPlayerVisible) {
+            _viewState.isPlayerVisible &&
+            isEngineReady) {
           play();
         }
       }
       if (appLifecycleState == AppLifecycleState.paused) {
-        _playbackState = _playbackState.copyWith(
-          wasPlayingBeforePause:
-              _playbackState.wasPlayingBeforePause || isPlaying()!,
-        );
-        pause();
+        if (isEngineReady) {
+          _playbackState = _playbackState.copyWith(
+            wasPlayingBeforePause:
+                _playbackState.wasPlayingBeforePause || isPlaying()!,
+          );
+          pause();
+        } else {
+          _playbackState = _playbackState.copyWith(
+            wasPlayingBeforePause: _playbackState.wasPlayingBeforePause,
+          );
+        }
       }
     }
   }

@@ -39,7 +39,7 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Normal player page')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           AspectRatio(

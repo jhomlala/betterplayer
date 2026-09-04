@@ -54,7 +54,7 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Subtitles')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(

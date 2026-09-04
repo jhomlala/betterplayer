@@ -32,7 +32,7 @@ class _ResolutionsPageState extends State<ResolutionsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Resolutions')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(
