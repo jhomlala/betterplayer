@@ -234,93 +234,113 @@ class BetterPlayerController {
     }
   }
 
-  /// Get current controls configuration
+  /// Retrieves the current configuration used for the player's UI controls.
+  /// Allows external components to inspect how controls are structured (e.g., icons, colors, layout).
   PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _betterPlayerControlsConfiguration;
 
-  ///Expose all active eventListeners
+  /// Exposes a read-only list of all currently active event listeners subscribed to the player.
+  /// Used primarily for debugging or routing global event streams without modifying active subscriptions.
   List<Function(PlayerEvent)?> get eventListeners => _eventListeners.sublist(1);
 
-  /// Defines a event listener where video player events will be send.
+  /// Retrieves the primary global event listener defined within the configuration.
+  /// This listener receives every state change and interaction event emitted by the player.
   Function(PlayerEvent)? get eventListener =>
       betterPlayerConfiguration.eventListener;
 
-  /// Is currently in full screen
+  /// Returns true if the player is currently rendered in full screen mode, false otherwise.
   bool get isFullScreen => _isFullScreen;
 
-  /// Current data source
+  /// Returns the actively configured data source detailing the media URL, DRM, and format.
+  /// Returns null if no data source has been established yet.
   PlayerDataSource? get betterPlayerDataSource => _betterPlayerDataSource;
 
-  /// List of subtitle sources
+  /// Retrieves the complete list of all initialized subtitle sources.
+  /// Includes side-loaded subtitle files (like SRT/VTT) as well as any parsed from the stream manifest.
   List<PlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
       _betterPlayerSubtitlesSourceList;
 
-  /// Current subtitle source
+  /// Retrieves the single subtitle source currently selected and active for on-screen rendering.
   PlayerSubtitlesSource? get betterPlayerSubtitlesSource =>
       _betterPlayerSubtitlesSource;
 
-  /// Available ASMS tracks
+  /// Retrieves the complete list of alternative video tracks parsed from ASMS (HLS/DASH) streams.
+  /// Useful for populating a quality selection menu.
   List<PlayerAsmsTrack> get betterPlayerAsmsTracks => _betterPlayerAsmsTracks;
 
-  /// Current ASMS track
+  /// Retrieves the specifically selected ASMS video track dictating current resolution and bitrate.
+  /// Returns null if the player is utilizing automatic adaptive streaming.
   PlayerAsmsTrack? get betterPlayerAsmsTrack => _betterPlayerAsmsTrack;
 
-  /// Available ASMS audio tracks
+  /// Retrieves the complete list of alternative audio tracks parsed from ASMS (HLS/DASH) streams.
+  /// Useful for populating a language or descriptive audio selection menu.
   List<PlayerAsmsAudioTrack> get betterPlayerAsmsAudioTracks =>
       _betterPlayerAsmsAudioTracks;
 
-  /// Current ASMS audio track
+  /// Retrieves the specifically selected ASMS audio track dictating the current audio language/feed.
   PlayerAsmsAudioTrack? get betterPlayerAsmsAudioTrack =>
       _betterPlayerAsmsAudioTrack;
 
-  /// Stream of next video time in playlist
+  /// A broadcast stream emitting the countdown time (in seconds) until the next video in a playlist starts.
+  /// UI elements can listen to this stream to render a live countdown clock.
   Stream<int?> get nextVideoTimeStream => _nextVideoTimeStreamController.stream;
 
-  /// Stream of controls visibility changes
+  /// A broadcast stream emitting true when the control overlay becomes visible, and false when it hides.
+  /// Useful for coordinating surrounding UI elements or system overlays (like the status bar) with the player UI.
   Stream<bool> get controlsVisibilityStream =>
       _controlsVisibilityStreamController.stream;
 
-  /// Stream of internal controller events
+  /// A broadcast stream used for deeply internal structural events (like data source swaps).
+  /// General consumers should use [eventListener] instead of tapping into this stream.
   Stream<PlayerControllerEvent> get controllerEventStream =>
       _controllerEventStreamController.stream;
 
-  /// Are controls enabled
+  /// Indicates whether the interactive controls (play/pause, seek bar) are enabled and permitted to be shown.
   bool get controlsEnabled => _controlsEnabled;
 
-  /// Global key for player
+  /// Retrieves the unique GlobalKey assigned to this specific BetterPlayer instance.
+  /// Helps coordinate deeply nested UI state changes tied to this controller.
   GlobalKey? get betterPlayerGlobalKey => _betterPlayerGlobalKey;
 
-  /// Are controls always visible
+  /// Indicates whether the controls are forced to remain visible indefinitely, completely bypassing auto-hide timers.
   bool get controlsAlwaysVisible => _controlsAlwaysVisible;
 
-  /// Has data source started
+  /// Returns true if the current data source has begun playback and is actively buffering or playing media.
   bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
 
-  /// The id of a texture that hasn't been initialized is null.
+  /// Retrieves the internal texture ID provided by the native platform for rendering the video surface.
+  /// Returns null if the underlying video engine hasn't fully initialized the rendering surface yet.
   int? get textureId => _engine?.textureId;
 
-  /// Whether the engine has been created. False before [setupDataSource] is called.
+  /// Returns true if the underlying video engine has been successfully allocated.
+  /// Returns false if [setupDataSource] hasn't been called or the engine was explicitly disposed.
   bool get isEngineReady => _engine != null;
 
-  /// Whether the video has been initialized (duration is known).
+  /// Returns true if the video engine has successfully initialized the media stream, meaning its dimensions
+  /// and total duration are now known and playback can reliably begin.
   bool get isInitialized => _engine?.value.initialized ?? false;
 
-  /// Total duration of the current video. Null until initialized.
+  /// Returns the total duration of the currently loaded media.
+  /// Returns null if the video has not yet been initialized or if it's a live stream of unknown length.
   Duration? get duration => _engine?.value.duration;
 
-  /// The full engine state snapshot. Prefer individual getters for new code.
+  /// Retrieves a complete snapshot of the underlying video engine's state (playing, buffering, volume, duration).
+  /// For isolated state checks, prefer using the dedicated granular getters like [isInitialized] or [duration].
   VideoPlayerValue? get playerValue => _engine?.value;
 
-  /// Get current video player value (state).
+  /// An alias for [playerValue] providing a complete snapshot of the underlying video engine's state.
   VideoPlayerValue? get videoPlayerValue => _engine?.value;
 
-  /// Current playback position.
+  /// Asynchronously retrieves the exact current playback position from the internal engine.
   Future<Duration?> get position async => _engine?.position;
 
-  /// Absolute position in a live stream (EXT-X-PROGRAM-DATE-TIME).
+  /// Asynchronously retrieves the absolute physical time corresponding to the current playback position.
+  /// Only applicable to live streams that embed EXT-X-PROGRAM-DATE-TIME tags.
   Future<DateTime?> get absolutePosition async => _engine?.absolutePosition;
 
-  ///Get BetterPlayerController from context. Used in InheritedWidget.
+  /// Safely retrieves the [BetterPlayerController] instance from the nearest
+  /// [BetterPlayerControllerProvider] in the widget tree.
+  /// Used predominantly by internal UI components to access state.
   static BetterPlayerController of(BuildContext context) {
     final betterPLayerControllerProvider = context
         .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>()!;
@@ -328,17 +348,19 @@ class BetterPlayerController {
     return betterPLayerControllerProvider.controller;
   }
 
-  /// Add listener for video player state changes.
+  /// Subscribes a listener to raw video player state changes.
+  /// Listeners will be invoked continuously during playback (e.g., position updates).
   void addVideoListener(VoidCallback listener) {
     _videoListeners.add(listener);
   }
 
-  /// Remove listener for video player state changes.
+  /// Unsubscribes a previously registered listener from video player state changes.
   void removeVideoListener(VoidCallback listener) {
     _videoListeners.remove(listener);
   }
 
-  /// Build the internal VideoPlayer view.
+  /// Constructs the low-level [PlayerEngineView] widget that physically renders the video texture.
+  /// Should be placed securely within the widget tree where the video is meant to appear.
   Widget buildVideoPlayerView() {
     if (_engine == null) {
       return const SizedBox();
@@ -346,15 +368,16 @@ class BetterPlayerController {
     return PlayerEngineView(_engine);
   }
 
-  /// Sets the new [betterPlayerControlsConfiguration] instance in the
-  /// controller.
+  /// Hotswaps the active [PlayerControlsConfiguration] dictating UI behavior.
+  /// Allows dynamically changing themes or control layouts during playback.
   void setPlayerControlsConfiguration(
     PlayerControlsConfiguration betterPlayerControlsConfiguration,
   ) {
     _betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
   }
 
-  ///Listener used to handle video player changes.
+  /// Internal callback invoked whenever the underlying video engine reports a state change.
+  /// Responsible for syncing engine state (PIP, initialization, progress) to the high-level controller.
   Future<void> _onVideoPlayerChanged() async {
     for (final listener in List<VoidCallback>.from(_videoListeners)) {
       listener();
@@ -405,7 +428,8 @@ class BetterPlayerController {
     }
   }
 
-  ///Handle VideoEvent when remote controls notification / PiP is shown
+  /// Internal callback that routes native [VideoEvent]s (from platform channels)
+  /// into the controller's high-level [PlayerEvent] stream.
   Future<void> _handleVideoEvent(VideoEvent event) async {
     PlayerLogger.debug(
       message: 'Video event: ${event.eventType}',
@@ -449,9 +473,9 @@ class BetterPlayerController {
     }
   }
 
-  ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
-  ///autoDispose parameter will be overridden and controller will be disposed
-  ///(if it wasn't disposed before).
+  /// Disposes of the [BetterPlayerController] and gracefully tears down all resources.
+  /// If [forceDispose] is false, this will abort if [PlayerConfiguration.autoDispose] is false.
+  /// Automatically clears listeners, stops the engine, closes streams, and deletes temp files.
   void dispose({bool forceDispose = false}) {
     PlayerLogger.info(message: 'Disposed', textureId: textureId);
     if (!betterPlayerConfiguration.autoDispose && !forceDispose) {
