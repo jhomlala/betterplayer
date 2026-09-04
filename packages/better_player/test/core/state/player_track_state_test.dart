@@ -34,7 +34,9 @@ void main() {
 
       state = state.copyWith(asmsTracks: [...state.asmsTracks, videoTrack]);
       state = state.copyWith(asmsTrack: videoTrack);
-      state = state.copyWith(asmsAudioTracks: [...state.asmsAudioTracks, audioTrack]);
+      state = state.copyWith(
+        asmsAudioTracks: [...state.asmsAudioTracks, audioTrack],
+      );
       state = state.copyWith(asmsAudioTrack: audioTrack);
 
       expect(state.asmsTracks, hasLength(1));

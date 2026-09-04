@@ -1,4 +1,3 @@
-
 import 'package:better_player/better_player.dart';
 import 'package:flutter/widgets.dart';
 

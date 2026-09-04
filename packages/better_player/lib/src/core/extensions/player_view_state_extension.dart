@@ -91,8 +91,9 @@ extension PlayerViewStateExtension on BetterPlayerController {
       } else {
         if (visibilityFraction == 0) {
           _playbackState = _playbackState.copyWith(
-              wasPlayingBeforePause:
-                  _playbackState.wasPlayingBeforePause || isPlaying()!);
+            wasPlayingBeforePause:
+                _playbackState.wasPlayingBeforePause || isPlaying()!,
+          );
           pause();
         } else {
           if (_playbackState.wasPlayingBeforePause == true && !isPlaying()!) {
@@ -124,8 +125,9 @@ extension PlayerViewStateExtension on BetterPlayerController {
       }
       if (appLifecycleState == AppLifecycleState.paused) {
         _playbackState = _playbackState.copyWith(
-            wasPlayingBeforePause:
-                _playbackState.wasPlayingBeforePause || isPlaying()!);
+          wasPlayingBeforePause:
+              _playbackState.wasPlayingBeforePause || isPlaying()!,
+        );
         pause();
       }
     }

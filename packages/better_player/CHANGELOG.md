@@ -1,5 +1,7 @@
-## Unreleased
+## 1.5.0
+- Updated: Refactored `BetterPlayerController` by segregating internal state variables into immutable data classes (`PlayerViewState`, `PlayerSubtitleState`, `PlayerTrackState`, `PlayerPlaybackState`), improving architectural scalability.
 - Updated: Refactored widget helper methods (e.g. `Widget _build...()`) into inline `Builder` patterns and proper `StatelessWidget` classes to strictly comply with project standards, specifically across UI controls, route builders, and example apps.
+- Added: Extracted event constants into `PlayerEventConstants` and exported them in the main library interface for easier external subscription handling.
 
 ## 1.4.0
 - Updated: Replaced videoPlayerController with PlayerEngineController and removed the public API.

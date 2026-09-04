@@ -44,10 +44,12 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     ///Setup subtitles
     final betterPlayerSubtitlesSourceList = betterPlayerDataSource.subtitles;
     if (betterPlayerSubtitlesSourceList != null) {
-      _subtitleState = _subtitleState.copyWith(subtitlesSourceList: [
-        ..._subtitleState.subtitlesSourceList,
-        ...betterPlayerDataSource.subtitles!,
-      ]);
+      _subtitleState = _subtitleState.copyWith(
+        subtitlesSourceList: [
+          ..._subtitleState.subtitlesSourceList,
+          ...betterPlayerDataSource.subtitles!,
+        ],
+      );
     }
 
     final setupFutures = <Future<dynamic>>[
@@ -117,18 +119,20 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       if (betterPlayerDataSource?.useAsmsSubtitles == true) {
         final asmsSubtitles = response.subtitles ?? [];
         for (final asmsSubtitle in asmsSubtitles) {
-          _subtitleState = _subtitleState.copyWith(subtitlesSourceList: [
-            ..._subtitleState.subtitlesSourceList,
-            PlayerSubtitlesSource(
-              type: PlayerSubtitlesSourceType.network,
-              name: asmsSubtitle.name,
-              urls: asmsSubtitle.realUrls,
-              asmsIsSegmented: asmsSubtitle.isSegmented,
-              asmsSegmentsTime: asmsSubtitle.segmentsTime,
-              asmsSegments: asmsSubtitle.segments,
-              selectedByDefault: asmsSubtitle.isDefault,
-            ),
-          ]);
+          _subtitleState = _subtitleState.copyWith(
+            subtitlesSourceList: [
+              ..._subtitleState.subtitlesSourceList,
+              PlayerSubtitlesSource(
+                type: PlayerSubtitlesSourceType.network,
+                name: asmsSubtitle.name,
+                urls: asmsSubtitle.realUrls,
+                asmsIsSegmented: asmsSubtitle.isSegmented,
+                asmsSegmentsTime: asmsSubtitle.segmentsTime,
+                asmsSegments: asmsSubtitle.segments,
+                selectedByDefault: asmsSubtitle.isDefault,
+              ),
+            ],
+          );
         }
       }
 

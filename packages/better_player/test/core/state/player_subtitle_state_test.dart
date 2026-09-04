@@ -28,12 +28,18 @@ void main() {
         false,
       );
 
-      state = state.copyWith(subtitlesSourceList: [...state.subtitlesSourceList, source]);
+      state = state.copyWith(
+        subtitlesSourceList: [...state.subtitlesSourceList, source],
+      );
       state = state.copyWith(subtitlesSource: source);
-      state = state.copyWith(subtitlesLines: [...state.subtitlesLines, subtitle]);
+      state = state.copyWith(
+        subtitlesLines: [...state.subtitlesLines, subtitle],
+      );
       state = state.copyWith(renderedSubtitle: subtitle);
       state = state.copyWith(asmsSegmentsLoading: true);
-      state = state.copyWith(asmsSegmentsLoaded: [...state.asmsSegmentsLoaded, 'segment1']);
+      state = state.copyWith(
+        asmsSegmentsLoaded: [...state.asmsSegmentsLoaded, 'segment1'],
+      );
 
       expect(state.subtitlesSourceList, hasLength(1));
       expect(state.subtitlesSource, source);
