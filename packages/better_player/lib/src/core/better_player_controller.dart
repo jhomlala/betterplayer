@@ -22,158 +22,196 @@ part 'extensions/player_cache_extension.dart';
 part 'extensions/player_translations_extension.dart';
 part 'extensions/player_events_extension.dart';
 
-///Class used to control overall Better Player behavior. Main class to change
-///state of Better Player.
+/// Class used to control overall Better Player behavior. Main class to change
+/// state of Better Player and orchestrate its subsystems (subtitles, caching, analytics, etc).
 class BetterPlayerController {
-  /// Parameter for duration event
+  /// Parameter key used to pass the duration of the media in player events.
+  /// Typically passed within a Map of event parameters.
   static const String _durationParameter = 'duration';
 
-  /// Parameter for progress event
+  /// Parameter key used to pass the current playback progress of the media.
+  /// Typically passed within a Map of event parameters alongside duration.
   static const String _progressParameter = 'progress';
 
-  /// Parameter for buffered event
+  /// Parameter key used to indicate the buffered ranges of the media stream.
+  /// Helps UI components render the buffered progress bar.
   static const String _bufferedParameter = 'buffered';
 
-  /// Parameter for volume event
+  /// Parameter key used to communicate changes in audio volume.
   static const String _volumeParameter = 'volume';
 
-  /// Parameter for speed event
+  /// Parameter key used to communicate changes in playback speed (e.g. 1.0x, 2.0x).
   static const String _speedParameter = 'speed';
 
-  /// Parameter for data source event
+  /// Parameter key used to attach the currently loaded [PlayerDataSource] to an event.
   static const String _dataSourceParameter = 'dataSource';
 
-  /// Authorization header key
+  /// HTTP Header key used specifically for DRM authentication tokens.
   static const String _authorizationHeader = 'Authorization';
 
-  ///General configuration used in controller instance.
+  /// General configuration used to initialize this controller instance.
+  /// This dictates UI properties, error handling, layout behaviors, and overall player traits.
   final PlayerConfiguration betterPlayerConfiguration;
 
-  ///Playlist configuration used in controller instance.
+  /// Playlist configuration used in controller instance.
+  /// Only applicable if the player is set up to handle a playlist of videos,
+  /// dictating auto-advance behavior, looping, and playlist-specific UI.
   final PlayerPlaylistConfiguration? betterPlayerPlaylistConfiguration;
 
-  ///Instance of video player controller which is adapter used to communicate
-  ///between flutter high level code and lower level native code.
+  /// Instance of the internal video player controller engine.
+  /// Acts as the primary adapter used to communicate between Flutter's high-level code
+  /// and the lower-level native Android/iOS platform code.
   PlayerEngineController? _engine;
 
-  ///Controls configuration
+  /// Defines the visual and behavioral configuration for the player's controls.
+  /// Used to customize colors, icons, padding, and interactive behaviors of the UI overlay.
   late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
 
-  ///Currently used data source in player.
+  /// The data source currently loaded into the player.
+  /// Defines the video URL, format (HLS, DASH, MP4), headers, DRM, and resolution.
   PlayerDataSource? _betterPlayerDataSource;
 
-  ///Currently used translations
+  /// The set of translations used to localize the player's controls and error messages.
+  /// Defaults to a base set of standard translations if not customized.
   PlayerTranslations translations = PlayerTranslations();
 
-  ///List of event listeners, which listen to events.
+  /// List of active event listeners that have subscribed to the player's event stream.
+  /// Listeners will receive real-time updates for state changes, buffering, and user interactions.
   final List<Function(PlayerEvent)?> _eventListeners = [];
 
-  ///List of callbacks for video player changes
+  /// List of internal callbacks for low-level video player changes.
+  /// Triggers whenever the internal engine reports a state change (initialization, buffering, completion).
   final List<VoidCallback> _videoListeners = [];
 
-  ///List of files to delete once player disposes.
+  /// List of temporary files created during playback (e.g. cached files or subtitles)
+  /// that are scheduled to be deleted once the player disposes, to prevent storage leaks.
   final List<File> _tempFiles = [];
 
-  /// Stream controller for controls visibility changes
+  /// Broadcast stream controller used to notify the UI when the player's control overlay
+  /// becomes visible or hidden. Helps coordinate animations and PIP state.
   final StreamController<bool> _controlsVisibilityStreamController =
       StreamController.broadcast();
 
-  /// Stream controller for next video time in playlist
+  /// Broadcast stream controller used to emit the countdown time remaining
+  /// before the next video in a playlist begins. Used by playlist UI components.
   final StreamController<int?> _nextVideoTimeStreamController =
       StreamController.broadcast();
 
-  /// Stream controller for internal controller events
+  /// Broadcast stream controller used internally for structural controller events
+  /// (e.g. when a new data source is set, or a critical error occurs).
   final StreamController<PlayerControllerEvent>
   _controllerEventStreamController = StreamController.broadcast();
 
-  /// Subscription to video events from engine
+  /// Holds the active subscription to the video engine's raw event stream.
+  /// Listens to low-level native events and forwards them to the controller's listeners.
   StreamSubscription<VideoEvent>? _videoEventStreamSubscription;
 
-  /// Is player in full screen
+  /// Flag indicating whether the player is currently taking up the entire screen.
+  /// Managed by full-screen specific methods and controls UI overlay scaling.
   bool _isFullScreen = false;
 
-  /// Last position selection timestamp
+  /// Epoch timestamp of the last time a progress event was emitted.
+  /// Used to throttle progress updates to prevent overwhelming the UI thread.
   int _lastPositionSelection = 0;
 
-  /// List of subtitle sources
+  /// Complete list of all available subtitle sources for the current media.
+  /// Can include side-loaded VTT/SRT files or embedded streams.
   final List<PlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
 
-  /// Currently selected subtitle source
+  /// The specific subtitle source currently active and being parsed.
+  /// Null if subtitles are disabled or unavailable.
   PlayerSubtitlesSource? _betterPlayerSubtitlesSource;
 
-  /// Lines of currently active subtitles
+  /// The parsed list of subtitle lines (start time, end time, text content)
+  /// for the currently active subtitle source.
   List<PlayerSubtitle> subtitlesLines = [];
 
-  /// Currently rendered subtitle
+  /// The exact subtitle line that should currently be rendered on the screen
+  /// based on the video's current playback position.
   PlayerSubtitle? renderedSubtitle;
 
-  /// Available ASMS tracks
+  /// Complete list of video quality tracks parsed from ASMS (HLS/DASH) manifests.
+  /// Allows the user or system to switch between different resolutions/bitrates.
   List<PlayerAsmsTrack> _betterPlayerAsmsTracks = [];
 
-  /// Currently selected ASMS track
+  /// The specific ASMS (HLS/DASH) video track currently selected for playback.
+  /// If null, the player is typically relying on automatic adaptive bitrate streaming.
   PlayerAsmsTrack? _betterPlayerAsmsTrack;
 
-  /// Available ASMS audio tracks
+  /// Complete list of alternative audio tracks parsed from ASMS (HLS/DASH) manifests.
+  /// Useful for multi-language videos or descriptive audio streams.
   List<PlayerAsmsAudioTrack> _betterPlayerAsmsAudioTracks = [];
 
-  /// Currently selected ASMS audio track
+  /// The specific ASMS (HLS/DASH) audio track currently selected for playback.
   PlayerAsmsAudioTrack? _betterPlayerAsmsAudioTrack;
 
-  /// Timer for next video in playlist
+  /// Timer managing the countdown delay before the next video in a playlist automatically starts.
   Timer? _nextVideoTimer;
 
-  /// Time remaining for next video in playlist
+  /// The remaining time in seconds before the next video in the playlist starts.
   int? _nextVideoTime;
 
-  /// Is controller disposed
+  /// Flag indicating whether this controller has been disposed.
+  /// Used as a safeguard to prevent method calls or stream emissions after teardown.
   bool _disposed = false;
 
-  /// Was playing before pause
+  /// Tracks the play/pause state right before a systemic pause occurred
+  /// (e.g. entering PIP, app backgrounding) so it can be restored appropriately.
   bool? _wasPlayingBeforePause;
 
-  /// Has data source started playing
+  /// Flag indicating whether the current data source has begun playback at least once.
   bool _hasCurrentDataSourceStarted = false;
 
-  /// Has data source initialized
+  /// Flag indicating whether the internal engine has successfully parsed the
+  /// current data source and initialized its duration and dimensions.
   bool _hasCurrentDataSourceInitialized = false;
 
-  /// Current app lifecycle state
+  /// Tracks the lifecycle state of the Flutter application.
+  /// Used to automatically pause/resume video playback when the app goes into the background.
   AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
 
-  /// Are controls enabled
+  /// Flag indicating whether the interactive UI controls (play/pause, timeline) are enabled.
+  /// If false, the controls are disabled and potentially hidden.
   bool _controlsEnabled = true;
 
-  /// Overridden aspect ratio
+  /// A specific aspect ratio that overrides the configuration's aspect ratio.
+  /// Can be used to force the player into a specific shape regardless of video dimensions.
   double? _overriddenAspectRatio;
 
-  /// Overridden box fit
+  /// A specific Box Fit mode that overrides the configuration's fit.
+  /// Controls how the video scales within its bounds (e.g. cover, contain).
   BoxFit? _overriddenFit;
 
-  /// Was in PIP mode
+  /// Flag indicating whether the player was recently placed into Picture-in-Picture mode.
   bool _wasInPipMode = false;
 
-  /// Was in full screen before PIP
+  /// Stores the full screen state prior to entering Picture-in-Picture mode.
+  /// Used to accurately restore the player's state when exiting PIP.
   bool _wasInFullScreenBeforePiP = false;
 
-  /// Were controls enabled before PIP
+  /// Stores the controls enablement state prior to entering Picture-in-Picture mode.
+  /// Controls are typically disabled in PIP, and this ensures they are re-enabled correctly.
   bool _wasControlsEnabledBeforePiP = false;
 
-  /// Global key for player
+  /// A globally unique key representing the BetterPlayer widget instance in the widget tree.
+  /// Can be used to access the widget's context or force a rebuild.
   GlobalKey? _betterPlayerGlobalKey;
 
-  /// Are controls always visible
+  /// Flag indicating whether the controls overlay should remain persistently visible,
+  /// ignoring standard auto-hide timers.
   bool _controlsAlwaysVisible = false;
 
-  /// Video player value on error
+  /// Stores the last valid video player state exactly when a critical error occurred.
+  /// Useful for diagnostics or attempting to resume playback from the failure point.
   VideoPlayerValue? _videoPlayerValueOnError;
 
-  /// Is player visible
+  /// Flag indicating whether the player surface is currently visible on the screen.
   bool _isPlayerVisible = true;
 
-  /// Are ASMS segments loading
+  /// Flag indicating whether ASMS (HLS/DASH) segments are currently being downloaded/parsed.
   bool _asmsSegmentsLoading = false;
 
-  /// Loaded ASMS segments
+  /// A record of successfully loaded ASMS segment identifiers to prevent redundant network calls.
   final List<String> _asmsSegmentsLoaded = [];
 
   /// Construct BetterPlayerController
