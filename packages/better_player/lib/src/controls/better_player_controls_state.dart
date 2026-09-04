@@ -69,44 +69,86 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   void onShowMoreClicked() {
     PlayerLogger.debug(message: 'onShowMoreClicked');
-    _showModalBottomSheet([
-      BetterPlayerOverflowMenu(
-        controller: betterPlayerController!,
-        controlsConfiguration: betterPlayerControlsConfiguration,
-        onPlaybackSpeedClicked: () {
-          PlayerLogger.debug(message: 'onPlaybackSpeedClicked');
+    final translations = betterPlayerController!.translations;
+    final children = <Widget>[];
+
+    if (betterPlayerControlsConfiguration.enablePlaybackSpeed) {
+      children.add(_buildBottomSheetMenuItem(
+        icon: betterPlayerControlsConfiguration.playbackSpeedIcon,
+        label: translations.overflowMenuPlaybackSpeed,
+        onTap: () {
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
             _showSpeedChooserWidget,
           );
         },
-        onSubtitlesClicked: () {
-          PlayerLogger.debug(message: 'onSubtitlesClicked');
+        semanticsIdentifier: 'better_player_overflow_menu_playback_speed',
+      ));
+    }
+
+    if (betterPlayerControlsConfiguration.enableSubtitles) {
+      children.add(_buildBottomSheetMenuItem(
+        icon: betterPlayerControlsConfiguration.subtitlesIcon,
+        label: translations.overflowMenuSubtitles,
+        onTap: () {
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
             _showSubtitlesSelectionWidget,
           );
         },
-        onQualitiesClicked: () {
-          PlayerLogger.debug(message: 'onQualitiesClicked');
+        semanticsIdentifier: 'better_player_overflow_menu_subtitles',
+      ));
+    }
+
+    if (betterPlayerControlsConfiguration.enableQualities) {
+      children.add(_buildBottomSheetMenuItem(
+        icon: betterPlayerControlsConfiguration.qualitiesIcon,
+        label: translations.overflowMenuQuality,
+        onTap: () {
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 500),
             showQualitiesSelectionWidget,
           );
         },
-        onAudioTracksClicked: () {
-          PlayerLogger.debug(message: 'onAudioTracksClicked');
+        semanticsIdentifier: 'better_player_overflow_menu_quality',
+      ));
+    }
+
+    if (betterPlayerControlsConfiguration.enableAudioTracks) {
+      children.add(_buildBottomSheetMenuItem(
+        icon: betterPlayerControlsConfiguration.audioTracksIcon,
+        label: translations.overflowMenuAudioTracks,
+        onTap: () {
           Navigator.of(context).pop();
           Future.delayed(
             const Duration(milliseconds: 300),
             _showAudioTracksSelectionWidget,
           );
         },
-      ),
-    ]);
+        semanticsIdentifier: 'better_player_overflow_menu_audio_tracks',
+      ));
+    }
+
+    if (betterPlayerControlsConfiguration.overflowMenuCustomItems.isNotEmpty) {
+      for (final customItem
+          in betterPlayerControlsConfiguration.overflowMenuCustomItems) {
+        children.add(_buildBottomSheetMenuItem(
+          icon: customItem.icon,
+          label: customItem.title,
+          onTap: () {
+            Navigator.of(context).pop();
+            customItem.onClicked.call();
+          },
+          semanticsIdentifier:
+              'better_player_overflow_menu_custom_item_${customItem.title.toLowerCase().replaceAll(' ', '_')}',
+        ));
+      }
+    }
+
+    _showModalBottomSheet(children);
   }
 
   void _showSpeedChooserWidget() {
@@ -114,14 +156,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0].map((speed) {
         final isSelected =
             betterPlayerController?.videoPlayerValue?.speed == speed;
-        return BetterPlayerSelectionListItemWidget(
+        return _buildBottomSheetMenuItem(
           label: '$speed x',
           isSelected: isSelected,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setSpeed(speed);
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier: 'better_player_overflow_menu_speed_$speed',
         );
       }).toList(),
@@ -184,14 +225,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             : subtitlesSource.name ??
                   betterPlayerController!.translations.generalDefault;
 
-        return BetterPlayerSelectionListItemWidget(
+        return _buildBottomSheetMenuItem(
           label: name,
           isSelected: isSelected,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setupSubtitleSource(subtitlesSource);
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier:
               'better_player_overflow_menu_subtitles_${subtitlesSource.type?.name ?? 'none'}',
         );
@@ -238,14 +278,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           preferredName == betterPlayerController!.translations.qualityAuto;
 
       children.add(
-        BetterPlayerSelectionListItemWidget(
+        _buildBottomSheetMenuItem(
           label: trackName,
           isSelected: isSelected,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setTrack(track);
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier: isAutoTrack
               ? 'better_player_overflow_menu_quality_auto'
               : 'better_player_overflow_menu_quality_$index',
@@ -262,14 +301,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       final isSelected =
           value == betterPlayerController!.betterPlayerDataSource!.url;
       children.add(
-        BetterPlayerSelectionListItemWidget(
+        _buildBottomSheetMenuItem(
           label: key,
           isSelected: isSelected,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setResolution(value);
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier:
               'better_player_overflow_menu_quality_$resolutionIndex',
         ),
@@ -349,11 +387,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     PlayerLogger.debug(
       message: 'Showing bottom sheet with ${children.length} items',
     );
-    defaultTargetPlatform == TargetPlatform.android
-        ? _showMaterialBottomSheet(children)
-        : _showCupertinoModalBottomSheet(children);
+    !_isCupertinoTheme ? _showMaterialBottomSheet(children) : _showCupertinoModalBottomSheet(children);
   }
 
+
+  bool get _isCupertinoTheme {
+    return betterPlayerControlsConfiguration.playerTheme == PlayerTheme.cupertino || (betterPlayerControlsConfiguration.playerTheme == null && defaultTargetPlatform == TargetPlatform.iOS);
+  }
 
   Widget _buildBottomSheetMenuItem({
     required String label,
@@ -362,7 +402,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     IconData? icon,
     String? semanticsIdentifier,
   }) {
-    if (defaultTargetPlatform == TargetPlatform.iOS) {
+    if (_isCupertinoTheme) {
       return CupertinoActionSheetAction(
         onPressed: onTap,
         child: Row(
@@ -458,3 +498,5 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     });
   }
 }
+
+
