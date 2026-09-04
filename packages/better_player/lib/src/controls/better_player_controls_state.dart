@@ -408,11 +408,11 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            if (icon != null) Icon(icon, size: 20, color: betterPlayerControlsConfiguration.overflowMenuIconsColor),
+            if (icon != null) Icon(icon, size: 20),
             if (icon != null) const SizedBox(width: 8),
             if (isSelected && icon == null) const Icon(Icons.check, size: 18),
             if (isSelected && icon == null) const SizedBox(width: 8),
-            Text(label, style: TextStyle(color: betterPlayerControlsConfiguration.overflowModalTextColor)),
+            Text(label),
           ],
         ),
       );
@@ -445,12 +445,17 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
           false,
       builder: (context) {
-        return CupertinoActionSheet(
-          actions: children,
-          cancelButton: CupertinoActionSheetAction(
-            onPressed: () => Navigator.of(context).pop(),
-            isDestructiveAction: true,
-            child: const Text('Cancel'),
+        return CupertinoTheme(
+          data: CupertinoThemeData(
+            brightness: Theme.of(context).brightness,
+          ),
+          child: CupertinoActionSheet(
+            actions: children,
+            cancelButton: CupertinoActionSheetAction(
+              onPressed: () => Navigator.of(context).pop(),
+              isDestructiveAction: true,
+              child: const Text('Cancel'),
+            ),
           ),
         );
       },
