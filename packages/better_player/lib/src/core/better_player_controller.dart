@@ -3,6 +3,10 @@ import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
+import 'package:better_player/src/core/state/player_playback_state.dart';
+import 'package:better_player/src/core/state/player_subtitle_state.dart';
+import 'package:better_player/src/core/state/player_track_state.dart';
+import 'package:better_player/src/core/state/player_view_state.dart';
 import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
@@ -12,9 +16,99 @@ import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
 
-///Class used to control overall Better Player behavior. Main class to change
-///state of Better Player.
+part 'extensions/player_data_source_extension.dart';
+part 'extensions/player_playback_extension.dart';
+part 'extensions/player_track_extension.dart';
+part 'extensions/player_subtitle_extension.dart';
+part 'extensions/player_playlist_extension.dart';
+part 'extensions/player_view_state_extension.dart';
+part 'extensions/player_cache_extension.dart';
+part 'extensions/player_translations_extension.dart';
+part 'extensions/player_events_extension.dart';
+
+/// Class used to control overall Better Player behavior. Main class to change
+/// state of Better Player and orchestrate its subsystems (subtitles, caching, analytics, etc).
 class BetterPlayerController {
+  /// General configuration used to initialize this controller instance.
+  /// This dictates UI properties, error handling, layout behaviors, and overall player traits.
+  final PlayerConfiguration betterPlayerConfiguration;
+
+  /// Playlist configuration used in controller instance.
+  /// Only applicable if the player is set up to handle a playlist of videos,
+  /// dictating auto-advance behavior, looping, and playlist-specific UI.
+  final PlayerPlaylistConfiguration? betterPlayerPlaylistConfiguration;
+
+  /// Instance of the internal video player controller engine.
+  /// Acts as the primary adapter used to communicate between Flutter's high-level code
+  /// and the lower-level native Android/iOS platform code.
+  PlayerEngineController? _engine;
+
+  /// Defines the visual and behavioral configuration for the player's controls.
+  /// Used to customize colors, icons, padding, and interactive behaviors of the UI overlay.
+  late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
+
+  /// The data source currently loaded into the player.
+  /// Defines the video URL, format (HLS, DASH, MP4), headers, DRM, and resolution.
+  PlayerDataSource? _betterPlayerDataSource;
+
+  /// The set of translations used to localize the player's controls and error messages.
+  /// Defaults to a base set of standard translations if not customized.
+  PlayerTranslations translations = PlayerTranslations();
+
+  /// List of active event listeners that have subscribed to the player's event stream.
+  /// Listeners will receive real-time updates for state changes, buffering, and user interactions.
+  final List<Function(PlayerEvent)?> _eventListeners = [];
+
+  /// List of internal callbacks for low-level video player changes.
+  /// Triggers whenever the internal engine reports a state change (initialization, buffering, completion).
+  final List<VoidCallback> _videoListeners = [];
+
+  /// List of temporary files created during playback (e.g. cached files or subtitles)
+  /// that are scheduled to be deleted once the player disposes, to prevent storage leaks.
+  final List<File> _tempFiles = [];
+
+  /// Broadcast stream controller used to notify the UI when the player's control overlay
+  /// becomes visible or hidden. Helps coordinate animations and PIP state.
+  final StreamController<bool> _controlsVisibilityStreamController =
+      StreamController.broadcast();
+
+  /// Broadcast stream controller used to emit the countdown time remaining
+  /// before the next video in a playlist begins. Used by playlist UI components.
+  final StreamController<int?> _nextVideoTimeStreamController =
+      StreamController.broadcast();
+
+  /// Broadcast stream controller used internally for structural controller events
+  /// (e.g. when a new data source is set, or a critical error occurs).
+  final StreamController<PlayerControllerEvent>
+  _controllerEventStreamController = StreamController.broadcast();
+
+  /// Holds the active subscription to the video engine's raw event stream.
+  /// Listens to low-level native events and forwards them to the controller's listeners.
+  StreamSubscription<VideoEvent>? _videoEventStreamSubscription;
+
+  /// Timer managing the countdown delay before the next video in a playlist automatically starts.
+  Timer? _nextVideoTimer;
+
+  /// The remaining time in seconds before the next video in the playlist starts.
+  int? _nextVideoTime;
+
+  /// Flag indicating whether this controller has been disposed.
+  /// Used as a safeguard to prevent method calls or stream emissions after teardown.
+  bool _disposed = false;
+
+  /// Tracks visual UI states (fullscreen, PIP, control visibility).
+  PlayerViewState _viewState = const PlayerViewState();
+
+  /// Tracks subtitle parsing and rendering states.
+  PlayerSubtitleState _subtitleState = const PlayerSubtitleState();
+
+  /// Tracks available audio and video qualities for HLS/DASH.
+  PlayerTrackState _trackState = const PlayerTrackState();
+
+  /// Tracks low-level engine playback states (initialization, buffering).
+  PlayerPlaybackState _playbackState = const PlayerPlaybackState();
+
+  /// Construct BetterPlayerController
   BetterPlayerController(
     this.betterPlayerConfiguration, {
     this.betterPlayerPlaylistConfiguration,
@@ -34,260 +128,128 @@ class BetterPlayerController {
     }
   }
 
-  static const String _durationParameter = 'duration';
-  static const String _progressParameter = 'progress';
-  static const String _bufferedParameter = 'buffered';
-  static const String _volumeParameter = 'volume';
-  static const String _speedParameter = 'speed';
-  static const String _dataSourceParameter = 'dataSource';
-  static const String _authorizationHeader = 'Authorization';
-
-  ///General configuration used in controller instance.
-  final PlayerConfiguration betterPlayerConfiguration;
-
-  ///Playlist configuration used in controller instance.
-  final PlayerPlaylistConfiguration? betterPlayerPlaylistConfiguration;
-
-  ///List of event listeners, which listen to events.
-  final List<Function(PlayerEvent)?> _eventListeners = [];
-
-  ///List of files to delete once player disposes.
-  final List<File> _tempFiles = [];
-
-  ///Stream controller which emits stream when control visibility changes.
-  final StreamController<bool> _controlsVisibilityStreamController =
-      StreamController.broadcast();
-
-  ///Instance of video player controller which is adapter used to communicate
-  ///between flutter high level code and lower level native code.
-  PlayerEngineController? _engine;
-
-  ///Controls configuration
-  late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
-
+  /// Retrieves the current configuration used for the player's UI controls.
+  /// Allows external components to inspect how controls are structured (e.g., icons, colors, layout).
   PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _betterPlayerControlsConfiguration;
 
-  ///Expose all active eventListeners
-  List<Function(PlayerEvent)?> get eventListeners => _eventListeners.sublist(1);
+  /// Exposes a read-only list of all currently active event listeners subscribed to the player.
+  /// Used primarily for debugging or routing global event streams without modifying active subscriptions.
+  List<Function(PlayerEvent)?> get eventListeners => _eventListeners.length <= 1
+      ? const <Function(PlayerEvent)>[]
+      : _eventListeners.sublist(1);
 
-  /// Defines a event listener where video player events will be send.
+  /// Retrieves the primary global event listener defined within the configuration.
+  /// This listener receives every state change and interaction event emitted by the player.
   Function(PlayerEvent)? get eventListener =>
       betterPlayerConfiguration.eventListener;
 
-  ///Flag used to store full screen mode state.
-  bool _isFullScreen = false;
+  /// Returns true if the player is currently rendered in full screen mode, false otherwise.
+  bool get isFullScreen => _viewState.isFullScreen;
 
-  ///Flag used to store full screen mode state.
-  bool get isFullScreen => _isFullScreen;
-
-  ///Time when last progress event was sent
-  int _lastPositionSelection = 0;
-
-  ///Currently used data source in player.
-  PlayerDataSource? _betterPlayerDataSource;
-
-  ///Currently used data source in player.
+  /// Returns the actively configured data source detailing the media URL, DRM, and format.
+  /// Returns null if no data source has been established yet.
   PlayerDataSource? get betterPlayerDataSource => _betterPlayerDataSource;
 
-  ///List of PlayerSubtitlesSources.
-  final List<PlayerSubtitlesSource> _betterPlayerSubtitlesSourceList = [];
-
-  ///List of PlayerSubtitlesSources.
+  /// Retrieves the complete list of all initialized subtitle sources.
+  /// Includes side-loaded subtitle files (like SRT/VTT) as well as any parsed from the stream manifest.
   List<PlayerSubtitlesSource> get betterPlayerSubtitlesSourceList =>
-      _betterPlayerSubtitlesSourceList;
-  PlayerSubtitlesSource? _betterPlayerSubtitlesSource;
+      _subtitleState.subtitlesSourceList;
 
-  ///Currently used subtitles source.
+  /// Retrieves the single subtitle source currently selected and active for on-screen rendering.
   PlayerSubtitlesSource? get betterPlayerSubtitlesSource =>
-      _betterPlayerSubtitlesSource;
+      _subtitleState.subtitlesSource;
 
-  ///Subtitles lines for current data source.
-  List<PlayerSubtitle> subtitlesLines = [];
+  /// The parsed list of subtitle lines (start time, end time, text content)
+  /// for the currently active subtitle source.
+  List<PlayerSubtitle> get subtitlesLines => _subtitleState.subtitlesLines;
+  set subtitlesLines(List<PlayerSubtitle> value) =>
+      _subtitleState = _subtitleState.copyWith(subtitlesLines: value);
 
-  ///List of tracks available for current data source. Used only for HLS / DASH.
-  List<PlayerAsmsTrack> _betterPlayerAsmsTracks = [];
+  /// The exact subtitle line that should currently be rendered on the screen
+  /// based on the video's current playback position.
+  PlayerSubtitle? get renderedSubtitle => _subtitleState.renderedSubtitle;
+  set renderedSubtitle(PlayerSubtitle? value) =>
+      _subtitleState = _subtitleState.copyWith(renderedSubtitle: value);
 
-  ///List of tracks available for current data source. Used only for HLS / DASH.
-  List<PlayerAsmsTrack> get betterPlayerAsmsTracks => _betterPlayerAsmsTracks;
+  /// Retrieves the complete list of alternative video tracks parsed from ASMS (HLS/DASH) streams.
+  /// Useful for populating a quality selection menu.
+  List<PlayerAsmsTrack> get betterPlayerAsmsTracks => _trackState.asmsTracks;
 
-  ///Currently selected player track. Used only for HLS / DASH.
-  PlayerAsmsTrack? _betterPlayerAsmsTrack;
+  /// Retrieves the specifically selected ASMS video track dictating current resolution and bitrate.
+  /// Returns null if the player is utilizing automatic adaptive streaming.
+  PlayerAsmsTrack? get betterPlayerAsmsTrack => _trackState.asmsTrack;
 
-  ///Currently selected player track. Used only for HLS / DASH.
-  PlayerAsmsTrack? get betterPlayerAsmsTrack => _betterPlayerAsmsTrack;
+  /// Retrieves the complete list of alternative audio tracks parsed from ASMS (HLS/DASH) streams.
+  /// Useful for populating a language or descriptive audio selection menu.
+  List<PlayerAsmsAudioTrack> get betterPlayerAsmsAudioTracks =>
+      _trackState.asmsAudioTracks;
 
-  ///Timer for next video. Used in playlist.
-  Timer? _nextVideoTimer;
+  /// Retrieves the specifically selected ASMS audio track dictating the current audio language/feed.
+  PlayerAsmsAudioTrack? get betterPlayerAsmsAudioTrack =>
+      _trackState.asmsAudioTrack;
 
-  ///Time for next video.
-  int? _nextVideoTime;
-
-  ///Stream controller which emits next video time.
-  final StreamController<int?> _nextVideoTimeStreamController =
-      StreamController.broadcast();
-
+  /// A broadcast stream emitting the countdown time (in seconds) until the next video in a playlist starts.
+  /// UI elements can listen to this stream to render a live countdown clock.
   Stream<int?> get nextVideoTimeStream => _nextVideoTimeStreamController.stream;
 
-  ///Has player been disposed.
-  bool _disposed = false;
-
-  ///Was player playing before automatic pause.
-  bool? _wasPlayingBeforePause;
-
-  ///Currently used translations
-  PlayerTranslations translations = PlayerTranslations();
-
-  ///Has current data source started
-  bool _hasCurrentDataSourceStarted = false;
-
-  ///Has current data source initialized
-  bool _hasCurrentDataSourceInitialized = false;
-
-  ///Stream which sends flag whenever visibility of controls changes
+  /// A broadcast stream emitting true when the control overlay becomes visible, and false when it hides.
+  /// Useful for coordinating surrounding UI elements or system overlays (like the status bar) with the player UI.
   Stream<bool> get controlsVisibilityStream =>
       _controlsVisibilityStreamController.stream;
 
-  ///Current app lifecycle state.
-  AppLifecycleState _appLifecycleState = AppLifecycleState.resumed;
-
-  ///Flag which determines if controls (UI interface) is shown. When false,
-  ///UI won't be shown (show only player surface).
-  bool _controlsEnabled = true;
-
-  ///Flag which determines if controls (UI interface) is shown. When false,
-  ///UI won't be shown (show only player surface).
-  bool get controlsEnabled => _controlsEnabled;
-
-  ///Overridden aspect ratio which will be used instead of aspect ratio passed
-  ///in configuration.
-  double? _overriddenAspectRatio;
-
-  ///Overridden fit which will be used instead of fit passed in configuration.
-  BoxFit? _overriddenFit;
-
-  ///Was Picture in Picture opened.
-  bool _wasInPipMode = false;
-
-  ///Was player in fullscreen before Picture in Picture opened.
-  bool _wasInFullScreenBeforePiP = false;
-
-  ///Was controls enabled before Picture in Picture opened.
-  bool _wasControlsEnabledBeforePiP = false;
-
-  ///GlobalKey of the BetterPlayer widget
-  GlobalKey? _betterPlayerGlobalKey;
-
-  ///Getter of the GlobalKey
-  GlobalKey? get betterPlayerGlobalKey => _betterPlayerGlobalKey;
-
-  ///StreamSubscription for VideoEvent listener
-  StreamSubscription<VideoEvent>? _videoEventStreamSubscription;
-
-  bool _controlsAlwaysVisible = false;
-
-  ///Are controls always visible
-  bool get controlsAlwaysVisible => _controlsAlwaysVisible;
-
-  ///List of all possible audio tracks returned from ASMS stream
-  List<PlayerAsmsAudioTrack> _betterPlayerAsmsAudioTracks = [];
-
-  ///List of all possible audio tracks returned from ASMS stream
-  List<PlayerAsmsAudioTrack> get betterPlayerAsmsAudioTracks =>
-      _betterPlayerAsmsAudioTracks;
-
-  ///Selected ASMS audio track
-  PlayerAsmsAudioTrack? _betterPlayerAsmsAudioTrack;
-
-  ///Selected ASMS audio track
-  PlayerAsmsAudioTrack? get betterPlayerAsmsAudioTrack =>
-      _betterPlayerAsmsAudioTrack;
-
-  /// The id of a texture that hasn't been initialized is null.
-  int? get textureId => _engine?.textureId;
-
-  /// Whether the engine has been created. False before [setupDataSource] is called.
-  bool get isEngineReady => _engine != null;
-
-  /// Whether the video has been initialized (duration is known).
-  bool get isInitialized => _engine?.value.initialized ?? false;
-
-  /// Total duration of the current video. Null until initialized.
-  Duration? get duration => _engine?.value.duration;
-
-  /// The full engine state snapshot. Prefer individual getters for new code.
-  VideoPlayerValue? get playerValue => _engine?.value;
-
-  /// Current playback position.
-  Future<Duration?> get position async => _engine?.position;
-
-  /// Absolute position in a live stream (EXT-X-PROGRAM-DATE-TIME).
-  Future<DateTime?> get absolutePosition async => _engine?.absolutePosition;
-
-  final List<VoidCallback> _videoListeners = [];
-
-  /// Add listener for video player state changes.
-  void addVideoListener(VoidCallback listener) {
-    _videoListeners.add(listener);
-  }
-
-  /// Remove listener for video player state changes.
-  void removeVideoListener(VoidCallback listener) {
-    _videoListeners.remove(listener);
-  }
-
-  /// Get current video player value (state).
-  VideoPlayerValue? get videoPlayerValue => _engine?.value;
-
-  /// Build the internal VideoPlayer view.
-  Widget buildVideoPlayerView() {
-    if (_engine == null) {
-      return const SizedBox();
-    }
-    return PlayerEngineView(_engine);
-  }
-
-  /// Sets track parameters directly on the engine (width, height, bitrate).
-  /// Prefer [setTrack] with a [PlayerAsmsTrack] for HLS/DASH streams.
-  Future<void> setTrackParameters({
-    int? width,
-    int? height,
-    int? bitrate,
-  }) async {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    await _engine!.setTrackParameters(
-      width: width,
-      height: height,
-      bitrate: bitrate,
-    );
-  }
-
-  ///Selected videoPlayerValue when error occurred.
-  VideoPlayerValue? _videoPlayerValueOnError;
-
-  ///Flag which holds information about player visibility
-  bool _isPlayerVisible = true;
-
-  final StreamController<PlayerControllerEvent>
-  _controllerEventStreamController = StreamController.broadcast();
-
-  ///Stream of internal controller events. Shouldn't be used inside app. For
-  ///normal events, use eventListener.
+  /// A broadcast stream used for deeply internal structural events (like data source swaps).
+  /// General consumers should use [eventListener] instead of tapping into this stream.
   Stream<PlayerControllerEvent> get controllerEventStream =>
       _controllerEventStreamController.stream;
 
-  ///Flag which determines whether are ASMS segments loading
-  bool _asmsSegmentsLoading = false;
+  /// Indicates whether the interactive controls (play/pause, seek bar) are enabled and permitted to be shown.
+  bool get controlsEnabled => _viewState.controlsEnabled;
 
-  ///List of loaded ASMS segments
-  final List<String> _asmsSegmentsLoaded = [];
+  /// Retrieves the unique GlobalKey assigned to this specific BetterPlayer instance.
+  /// Helps coordinate deeply nested UI state changes tied to this controller.
+  GlobalKey? get betterPlayerGlobalKey => _viewState.betterPlayerGlobalKey;
 
-  ///Currently displayed [PlayerSubtitle].
-  PlayerSubtitle? renderedSubtitle;
+  /// Indicates whether the controls are forced to remain visible indefinitely, completely bypassing auto-hide timers.
+  bool get controlsAlwaysVisible => _viewState.controlsAlwaysVisible;
 
-  ///Get BetterPlayerController from context. Used in InheritedWidget.
+  /// Returns true if the current data source has begun playback and is actively buffering or playing media.
+  bool get hasCurrentDataSourceStarted =>
+      _playbackState.hasCurrentDataSourceStarted;
+
+  /// Retrieves the internal texture ID provided by the native platform for rendering the video surface.
+  /// Returns null if the underlying video engine hasn't fully initialized the rendering surface yet.
+  int? get textureId => _engine?.textureId;
+
+  /// Returns true if the underlying video engine has been successfully allocated.
+  /// Returns false if [setupDataSource] hasn't been called or the engine was explicitly disposed.
+  bool get isEngineReady => _engine != null;
+
+  /// Returns true if the video engine has successfully initialized the media stream, meaning its dimensions
+  /// and total duration are now known and playback can reliably begin.
+  bool get isInitialized => _engine?.value.initialized ?? false;
+
+  /// Returns the total duration of the currently loaded media.
+  /// Returns null if the video has not yet been initialized or if it's a live stream of unknown length.
+  Duration? get duration => _engine?.value.duration;
+
+  /// Retrieves a complete snapshot of the underlying video engine's state (playing, buffering, volume, duration).
+  /// For isolated state checks, prefer using the dedicated granular getters like [isInitialized] or [duration].
+  VideoPlayerValue? get playerValue => _engine?.value;
+
+  /// An alias for [playerValue] providing a complete snapshot of the underlying video engine's state.
+  VideoPlayerValue? get videoPlayerValue => _engine?.value;
+
+  /// Asynchronously retrieves the exact current playback position from the internal engine.
+  Future<Duration?> get position async => _engine?.position;
+
+  /// Asynchronously retrieves the absolute physical time corresponding to the current playback position.
+  /// Only applicable to live streams that embed EXT-X-PROGRAM-DATE-TIME tags.
+  Future<DateTime?> get absolutePosition async => _engine?.absolutePosition;
+
+  /// Safely retrieves the [BetterPlayerController] instance from the nearest
+  /// [BetterPlayerControllerProvider] in the widget tree.
+  /// Used predominantly by internal UI components to access state.
   static BetterPlayerController of(BuildContext context) {
     final betterPLayerControllerProvider = context
         .dependOnInheritedWidgetOfExactType<BetterPlayerControllerProvider>()!;
@@ -295,587 +257,36 @@ class BetterPlayerController {
     return betterPLayerControllerProvider.controller;
   }
 
-  ///Setup new data source in Better Player.
-  Future setupDataSource(PlayerDataSource betterPlayerDataSource) async {
-    PlayerLogger.info(
-      message: 'setupDataSource starting',
-      textureId: textureId,
-    );
-    postEvent(
-      PlayerEvent(
-        PlayerEventType.setupDataSource,
-        parameters: <String, dynamic>{
-          _dataSourceParameter: betterPlayerDataSource,
-        },
-      ),
-    );
-
-    _postControllerEvent(PlayerControllerEvent.setupDataSource);
-    _hasCurrentDataSourceStarted = false;
-    _hasCurrentDataSourceInitialized = false;
-    _betterPlayerDataSource = betterPlayerDataSource;
-    _betterPlayerSubtitlesSourceList.clear();
-
-    final createdNewController = _engine == null;
-
-    ///Build _engine if null
-    if (createdNewController) {
-      _engine = PlayerEngineController(
-        bufferingConfiguration: betterPlayerDataSource.bufferingConfiguration,
-      );
-      _engine?.addListener(_onVideoPlayerChanged);
-    }
-
-    ///Clear asms tracks
-    betterPlayerAsmsTracks.clear();
-    _betterPlayerAsmsAudioTracks.clear();
-    _betterPlayerAsmsAudioTrack = null;
-
-    ///Setup subtitles
-    final betterPlayerSubtitlesSourceList = betterPlayerDataSource.subtitles;
-    if (betterPlayerSubtitlesSourceList != null) {
-      _betterPlayerSubtitlesSourceList.addAll(
-        betterPlayerDataSource.subtitles!,
-      );
-    }
-
-    final setupFutures = <Future<dynamic>>[
-      _setupDataSource(betterPlayerDataSource),
-    ];
-    if (_isDataSourceAsms(betterPlayerDataSource)) {
-      setupFutures.add(_setupAsmsDataSource(betterPlayerDataSource));
-    }
-    try {
-      await Future.wait(setupFutures);
-      PlayerLogger.info(
-        message: 'Data source setup complete: ${betterPlayerDataSource.url}',
-        textureId: textureId,
-      );
-    } catch (exception) {
-      PlayerLogger.error(
-        message: 'Data source setup failed: $exception',
-        textureId: textureId,
-        error: exception,
-      );
-      if (createdNewController) {
-        _engine?.dispose();
-        _engine = null;
-      }
-      _postEvent(
-        PlayerEvent(
-          PlayerEventType.exception,
-          parameters: <String, dynamic>{
-            'exception': exception.toString().replaceFirst('Exception: ', ''),
-          },
-        ),
-      );
-      return;
-    }
-
-    _setupSubtitles();
-    setTrack(PlayerAsmsTrack.defaultTrack());
+  /// Subscribes a listener to raw video player state changes.
+  /// Listeners will be invoked continuously during playback (e.g., position updates).
+  void addVideoListener(VoidCallback listener) {
+    _videoListeners.add(listener);
   }
 
-  ///Configure subtitles based on subtitles source.
-  void _setupSubtitles() {
-    _betterPlayerSubtitlesSourceList.add(
-      PlayerSubtitlesSource(type: PlayerSubtitlesSourceType.none),
-    );
-    final defaultSubtitle = _betterPlayerSubtitlesSourceList.firstWhereOrNull(
-      (element) => element.selectedByDefault == true,
-    );
-
-    ///Setup subtitles (none is default)
-    setupSubtitleSource(
-      defaultSubtitle ?? _betterPlayerSubtitlesSourceList.last,
-      sourceInitialize: true,
-    );
+  /// Unsubscribes a previously registered listener from video player state changes.
+  void removeVideoListener(VoidCallback listener) {
+    _videoListeners.remove(listener);
   }
 
-  ///Check if given [betterPlayerDataSource] is HLS / DASH-type data source.
-  bool _isDataSourceAsms(PlayerDataSource betterPlayerDataSource) =>
-      (BetterPlayerAsmsUtils.isDataSourceHls(betterPlayerDataSource.url) ||
-          betterPlayerDataSource.videoFormat == VideoFormat.hls) ||
-      (BetterPlayerAsmsUtils.isDataSourceDash(betterPlayerDataSource.url) ||
-          betterPlayerDataSource.videoFormat == VideoFormat.dash);
-
-  ///Configure HLS / DASH data source based on provided data source and configuration.
-  ///This method configures tracks, subtitles and audio tracks from given
-  ///master playlist.
-  Future<void> _setupAsmsDataSource(PlayerDataSource source) async {
-    final data = await BetterPlayerAsmsUtils.getDataFromUrl(
-      betterPlayerDataSource!.url,
-      _getHeaders(),
-    );
-    if (data != null) {
-      final response = await BetterPlayerAsmsUtils.parse(
-        data,
-        betterPlayerDataSource!.url,
-      );
-
-      /// Load tracks
-      if (_betterPlayerDataSource?.useAsmsTracks == true) {
-        _betterPlayerAsmsTracks = response.tracks ?? [];
-      }
-
-      /// Load subtitles
-      if (betterPlayerDataSource?.useAsmsSubtitles == true) {
-        final asmsSubtitles = response.subtitles ?? [];
-        for (final asmsSubtitle in asmsSubtitles) {
-          _betterPlayerSubtitlesSourceList.add(
-            PlayerSubtitlesSource(
-              type: PlayerSubtitlesSourceType.network,
-              name: asmsSubtitle.name,
-              urls: asmsSubtitle.realUrls,
-              asmsIsSegmented: asmsSubtitle.isSegmented,
-              asmsSegmentsTime: asmsSubtitle.segmentsTime,
-              asmsSegments: asmsSubtitle.segments,
-              selectedByDefault: asmsSubtitle.isDefault,
-            ),
-          );
-        }
-      }
-
-      ///Load audio tracks
-      if (betterPlayerDataSource?.useAsmsAudioTracks == true &&
-          _isDataSourceAsms(betterPlayerDataSource!)) {
-        _betterPlayerAsmsAudioTracks = response.audios ?? [];
-        if (_betterPlayerAsmsAudioTracks.isNotEmpty) {
-          setAudioTrack(_betterPlayerAsmsAudioTracks.first);
-        }
-      }
-    }
-  }
-
-  ///Setup subtitles to be displayed from given subtitle source.
-  ///If subtitles source is segmented then don't load videos at start. Videos
-  ///will load with just in time policy.
-  Future<void> setupSubtitleSource(
-    PlayerSubtitlesSource subtitlesSource, {
-    bool sourceInitialize = false,
-  }) async {
-    _betterPlayerSubtitlesSource = subtitlesSource;
-    subtitlesLines.clear();
-    _asmsSegmentsLoaded.clear();
-    _asmsSegmentsLoading = false;
-
-    if (subtitlesSource.type != PlayerSubtitlesSourceType.none) {
-      if (subtitlesSource.asmsIsSegmented == true) {
-        return;
-      }
-      final subtitlesParsed = await PlayerSubtitlesFactory.parseSubtitles(
-        subtitlesSource,
-      );
-      subtitlesLines.addAll(subtitlesParsed);
-    }
-
-    _postEvent(PlayerEvent(PlayerEventType.changedSubtitles));
-    if (!_disposed && !sourceInitialize) {
-      _postControllerEvent(PlayerControllerEvent.changeSubtitles);
-    }
-  }
-
-  ///Load ASMS subtitles segments for given [position].
-  ///Segments are being loaded within range (current video position;endPosition)
-  ///where endPosition is based on time segment detected in HLS playlist. If
-  ///time segment is not present then 5000 ms will be used. Also time segment
-  ///is multiplied by 5 to increase window of duration.
-  ///Segments are also cached, so same segment won't load twice. Only one
-  ///pack of segments can be load at given time.
-  Future _loadAsmsSubtitlesSegments(Duration position) async {
-    try {
-      if (_asmsSegmentsLoading) {
-        return;
-      }
-      _asmsSegmentsLoading = true;
-      final source = _betterPlayerSubtitlesSource;
-      final loadDurationEnd = Duration(
-        milliseconds:
-            position.inMilliseconds +
-            5 * (_betterPlayerSubtitlesSource?.asmsSegmentsTime ?? 5000),
-      );
-
-      final segmentsToLoad = _betterPlayerSubtitlesSource?.asmsSegments
-          ?.where((segment) {
-            return segment.endTime > position &&
-                segment.startTime < loadDurationEnd &&
-                !_asmsSegmentsLoaded.contains(segment.realUrl);
-          })
-          .map((segment) => segment.realUrl)
-          .toList();
-
-      if (segmentsToLoad != null && segmentsToLoad.isNotEmpty) {
-        final subtitlesParsed = await PlayerSubtitlesFactory.parseSubtitles(
-          PlayerSubtitlesSource(
-            type: _betterPlayerSubtitlesSource!.type,
-            headers: _betterPlayerSubtitlesSource!.headers,
-            urls: segmentsToLoad,
-          ),
-        );
-
-        ///Additional check if current source of subtitles is same as source
-        ///used to start loading subtitles. It can be different when user
-        ///changes subtitles and there was already pending load.
-        if (source == _betterPlayerSubtitlesSource) {
-          subtitlesLines.addAll(subtitlesParsed);
-          _asmsSegmentsLoaded.addAll(segmentsToLoad);
-        }
-      }
-      _asmsSegmentsLoading = false;
-    } catch (exception) {
-      PlayerLogger.error(
-        message: 'Load ASMS subtitle segments failed: $exception',
-        textureId: textureId,
-        error: exception,
-      );
-    }
-  }
-
-  ///Internal method which invokes _engine source setup.
-  Future _setupDataSource(PlayerDataSource betterPlayerDataSource) async {
-    switch (betterPlayerDataSource.type) {
-      case DataSourceType.network:
-        await _engine?.setNetworkDataSource(
-          betterPlayerDataSource.url,
-          headers: _getHeaders(),
-          useCache:
-              _betterPlayerDataSource!.cacheConfiguration?.useCache ?? false,
-          maxCacheSize:
-              _betterPlayerDataSource!.cacheConfiguration?.maxCacheSize ?? 0,
-          maxCacheFileSize:
-              _betterPlayerDataSource!.cacheConfiguration?.maxCacheFileSize ??
-              0,
-          cacheKey: _betterPlayerDataSource?.cacheConfiguration?.key,
-          showNotification: _betterPlayerDataSource
-              ?.notificationConfiguration
-              ?.showNotification,
-          title: _betterPlayerDataSource?.notificationConfiguration?.title,
-          author: _betterPlayerDataSource?.notificationConfiguration?.author,
-          imageUrl:
-              _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
-          notificationChannelName: _betterPlayerDataSource
-              ?.notificationConfiguration
-              ?.notificationChannelName,
-          overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-          formatHint: _betterPlayerDataSource!.videoFormat,
-          licenseUrl: _betterPlayerDataSource?.drmConfiguration?.licenseUrl,
-          certificateUrl:
-              _betterPlayerDataSource?.drmConfiguration?.certificateUrl,
-          drmHeaders: _betterPlayerDataSource?.drmConfiguration?.headers,
-          activityName:
-              _betterPlayerDataSource?.notificationConfiguration?.activityName,
-          clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
-          videoExtension: _betterPlayerDataSource!.videoExtension,
-        );
-
-      case DataSourceType.file:
-        final file = File(betterPlayerDataSource.url);
-        if (!file.existsSync()) {
-          PlayerLogger.warning(
-            message:
-                "File ${file.path} doesn't exists. This may be because "
-                "you're acessing file from native path and Flutter doesn't "
-                'recognize this path.',
-            textureId: textureId,
-          );
-        }
-
-        await _engine?.setFileDataSource(
-          File(betterPlayerDataSource.url),
-          showNotification: _betterPlayerDataSource
-              ?.notificationConfiguration
-              ?.showNotification,
-          title: _betterPlayerDataSource?.notificationConfiguration?.title,
-          author: _betterPlayerDataSource?.notificationConfiguration?.author,
-          imageUrl:
-              _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
-          notificationChannelName: _betterPlayerDataSource
-              ?.notificationConfiguration
-              ?.notificationChannelName,
-          overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-          activityName:
-              _betterPlayerDataSource?.notificationConfiguration?.activityName,
-          clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
-        );
-      case DataSourceType.memory:
-        final file = await _createFile(
-          _betterPlayerDataSource!.bytes!,
-          extension: _betterPlayerDataSource!.videoExtension,
-        );
-
-        if (file.existsSync()) {
-          await _engine?.setFileDataSource(
-            file,
-            showNotification: _betterPlayerDataSource
-                ?.notificationConfiguration
-                ?.showNotification,
-            title: _betterPlayerDataSource?.notificationConfiguration?.title,
-            author: _betterPlayerDataSource?.notificationConfiguration?.author,
-            imageUrl:
-                _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
-            notificationChannelName: _betterPlayerDataSource
-                ?.notificationConfiguration
-                ?.notificationChannelName,
-            overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-            activityName: _betterPlayerDataSource
-                ?.notificationConfiguration
-                ?.activityName,
-            clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
-          );
-          _tempFiles.add(file);
-        } else {
-          throw ArgumentError("Couldn't create file from memory.");
-        }
-
-      default:
-        throw UnimplementedError(
-          '${betterPlayerDataSource.type} is not implemented',
-        );
-    }
-    await _initializeVideo();
-  }
-
-  ///Create file from provided list of bytes. File will be created in temporary
-  ///directory.
-  Future<File> _createFile(
-    List<int> bytes, {
-    String? extension = 'temp',
-  }) async {
-    final dir = (await getTemporaryDirectory()).path;
-    final temp = File(
-      '$dir/better_player_${DateTime.now().millisecondsSinceEpoch}.$extension',
-    );
-    await temp.writeAsBytes(bytes);
-    return temp;
-  }
-
-  ///Initializes video based on configuration. Invoke actions which need to be
-  ///run on player start.
-  Future _initializeVideo() async {
-    PlayerLogger.info(
-      message:
-          'Initializing video: autoPlay=${betterPlayerConfiguration.autoPlay}, '
-          'startAt=${betterPlayerConfiguration.startAt}',
-      textureId: textureId,
-    );
-    setLooping(betterPlayerConfiguration.looping);
-    _videoEventStreamSubscription?.cancel();
-    _videoEventStreamSubscription = null;
-
-    _videoEventStreamSubscription = _engine?.videoEventStreamController.stream
-        .listen(_handleVideoEvent);
-
-    final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
-    if (betterPlayerConfiguration.autoPlay) {
-      if (fullScreenByDefault && !isFullScreen) {
-        enterFullScreen();
-      }
-      if (_isAutomaticPlayPauseHandled()) {
-        if (_appLifecycleState == AppLifecycleState.resumed &&
-            _isPlayerVisible) {
-          await play();
-        } else {
-          _wasPlayingBeforePause = true;
-        }
-      } else {
-        await play();
-      }
-    } else {
-      if (fullScreenByDefault) {
-        enterFullScreen();
-      }
-    }
-
-    final startAt = betterPlayerConfiguration.startAt;
-    if (startAt != null) {
-      seekTo(startAt);
-    }
-  }
-
-  ///Method which is invoked when full screen changes.
-  Future<void> _onFullScreenStateChanged() async {
-    if (_engine?.value.isPlaying == true && !_isFullScreen) {
-      enterFullScreen();
-      _engine?.removeListener(_onFullScreenStateChanged);
-    }
-  }
-
-  ///Enables full screen mode in player. This will trigger route change.
-  void enterFullScreen() {
-    _isFullScreen = true;
-    _postControllerEvent(PlayerControllerEvent.openFullscreen);
-  }
-
-  ///Disables full screen mode in player. This will trigger route change.
-  void exitFullScreen() {
-    _isFullScreen = false;
-    _postControllerEvent(PlayerControllerEvent.hideFullscreen);
-  }
-
-  ///Enables/disables full screen mode based on current fullscreen state.
-  void toggleFullScreen() {
-    _isFullScreen = !_isFullScreen;
-    if (_isFullScreen) {
-      _postControllerEvent(PlayerControllerEvent.openFullscreen);
-    } else {
-      _postControllerEvent(PlayerControllerEvent.hideFullscreen);
-    }
-  }
-
-  ///Start video playback. Play will be triggered only if current lifecycle state
-  ///is resumed.
-  Future<void> play() async {
+  /// Constructs the low-level [PlayerEngineView] widget that physically renders the video texture.
+  /// Should be placed securely within the widget tree where the video is meant to appear.
+  Widget buildVideoPlayerView() {
     if (_engine == null) {
-      throw StateError('The data source has not been initialized');
+      return const SizedBox();
     }
-
-    if (_appLifecycleState == AppLifecycleState.resumed) {
-      await _engine!.play();
-      _hasCurrentDataSourceStarted = true;
-      _wasPlayingBeforePause = null;
-      _postEvent(PlayerEvent(PlayerEventType.play));
-      _postControllerEvent(PlayerControllerEvent.play);
-    }
+    return PlayerEngineView(_engine);
   }
 
-  ///Enables/disables looping (infinity playback) mode.
-  Future<void> setLooping(bool looping) async {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-
-    await _engine!.setLooping(looping);
+  /// Hotswaps the active [PlayerControlsConfiguration] dictating UI behavior.
+  /// Allows dynamically changing themes or control layouts during playback.
+  void setPlayerControlsConfiguration(
+    PlayerControlsConfiguration betterPlayerControlsConfiguration,
+  ) {
+    _betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
   }
 
-  ///Stop video playback.
-  Future<void> pause() async {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-
-    await _engine!.pause();
-    _postEvent(PlayerEvent(PlayerEventType.pause));
-  }
-
-  ///Move player to specific position/moment of the video.
-  Future<void> seekTo(Duration moment) async {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    if (!(_engine?.value.initialized ?? false)) {
-      throw StateError('The video has not been initialized yet.');
-    }
-
-    await _engine!.seekTo(moment);
-
-    _postEvent(
-      PlayerEvent(
-        PlayerEventType.seekTo,
-        parameters: <String, dynamic>{_durationParameter: moment},
-      ),
-    );
-
-    final currentDuration = _engine!.value.duration;
-    if (currentDuration == null) {
-      return;
-    }
-    if (moment > currentDuration) {
-      _postEvent(PlayerEvent(PlayerEventType.finished));
-    } else {
-      cancelNextVideoTimer();
-    }
-  }
-
-  ///Set volume of player. Allows values from 0.0 to 1.0.
-  Future<void> setVolume(double volume) async {
-    if (volume < 0.0 || volume > 1.0) {
-      throw ArgumentError('Volume must be between 0.0 and 1.0');
-    }
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    await _engine!.setVolume(volume);
-    _postEvent(
-      PlayerEvent(
-        PlayerEventType.setVolume,
-        parameters: <String, dynamic>{_volumeParameter: volume},
-      ),
-    );
-  }
-
-  ///Set playback speed of video. Allows to set speed value between 0 and 2.
-  Future<void> setSpeed(double speed) async {
-    if (speed <= 0 || speed > 2) {
-      throw ArgumentError('Speed must be between 0 and 2');
-    }
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    await _engine?.setSpeed(speed);
-    _postEvent(
-      PlayerEvent(
-        PlayerEventType.setSpeed,
-        parameters: <String, dynamic>{
-          _speedParameter: speed,
-        },
-      ),
-    );
-  }
-
-  ///Flag which determines whenever player is playing or not.
-  bool? isPlaying() {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    return _engine!.value.isPlaying;
-  }
-
-  ///Flag which determines whenever player is loading video data or not.
-  bool? isBuffering() {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    return _engine!.value.isBuffering;
-  }
-
-  ///Show or hide controls manually
-  void setControlsVisibility(bool isVisible) {
-    _controlsVisibilityStreamController.add(isVisible);
-  }
-
-  ///Enable/disable controls (when enabled = false, controls will be always hidden)
-  void setControlsEnabled(bool enabled) {
-    if (!enabled) {
-      _controlsVisibilityStreamController.add(false);
-    }
-    _controlsEnabled = enabled;
-  }
-
-  ///Internal method, used to trigger CONTROLS_VISIBLE or CONTROLS_HIDDEN event
-  ///once controls state changed.
-  void toggleControlsVisibility(bool isVisible) {
-    _postEvent(
-      isVisible
-          ? PlayerEvent(PlayerEventType.controlsVisible)
-          : PlayerEvent(PlayerEventType.controlsHiddenEnd),
-    );
-  }
-
-  ///Send player event. Shouldn't be used manually.
-  void postEvent(PlayerEvent betterPlayerEvent) {
-    _postEvent(betterPlayerEvent);
-  }
-
-  ///Send player event to all listeners.
-  void _postEvent(PlayerEvent betterPlayerEvent) {
-    for (final eventListener in _eventListeners) {
-      if (eventListener != null) {
-        eventListener(betterPlayerEvent);
-      }
-    }
-  }
-
-  ///Listener used to handle video player changes.
+  /// Internal callback invoked whenever the underlying video engine reports a state change.
+  /// Responsible for syncing engine state (PIP, initialization, progress) to the high-level controller.
   Future<void> _onVideoPlayerChanged() async {
     for (final listener in List<VoidCallback>.from(_videoListeners)) {
       listener();
@@ -885,415 +296,53 @@ class BetterPlayerController {
         _engine?.value ?? VideoPlayerValue(duration: const Duration());
 
     if (currentVideoPlayerValue.initialized &&
-        !_hasCurrentDataSourceInitialized) {
+        !_playbackState.hasCurrentDataSourceInitialized) {
       PlayerLogger.info(
         message: 'Video player initialized',
         textureId: textureId,
       );
-      _hasCurrentDataSourceInitialized = true;
+      _playbackState = _playbackState.copyWith(
+        hasCurrentDataSourceInitialized: true,
+      );
       _postEvent(PlayerEvent(PlayerEventType.initialized));
     }
     if (currentVideoPlayerValue.isPip) {
-      _wasInPipMode = true;
-    } else if (_wasInPipMode) {
+      _viewState = _viewState.copyWith(wasInPipMode: true);
+    } else if (_viewState.wasInPipMode) {
       _postEvent(PlayerEvent(PlayerEventType.pipStop));
-      _wasInPipMode = false;
-      if (!_wasInFullScreenBeforePiP) {
+      _viewState = _viewState.copyWith(wasInPipMode: false);
+      if (!_viewState.wasInFullScreenBeforePiP) {
         exitFullScreen();
       }
-      if (_wasControlsEnabledBeforePiP) {
+      if (_viewState.wasControlsEnabledBeforePiP) {
         setControlsEnabled(true);
       }
       _engine?.refresh();
     }
 
-    if (_betterPlayerSubtitlesSource?.asmsIsSegmented == true) {
+    if (_subtitleState.subtitlesSource?.asmsIsSegmented == true) {
       _loadAsmsSubtitlesSegments(currentVideoPlayerValue.position);
     }
 
     final now = DateTime.now().millisecondsSinceEpoch;
-    if (now - _lastPositionSelection > 500) {
-      _lastPositionSelection = now;
+    if (now - _playbackState.lastPositionSelection > 500) {
+      _playbackState = _playbackState.copyWith(lastPositionSelection: now);
       _postEvent(
         PlayerEvent(
           PlayerEventType.progress,
           parameters: <String, dynamic>{
-            _progressParameter: currentVideoPlayerValue.position,
-            _durationParameter: currentVideoPlayerValue.duration,
+            PlayerEventConstants.progressParameter:
+                currentVideoPlayerValue.position,
+            PlayerEventConstants.durationParameter:
+                currentVideoPlayerValue.duration,
           },
         ),
       );
     }
   }
 
-  ///Add event listener which listens to player events.
-  void addEventsListener(Function(PlayerEvent) eventListener) {
-    _eventListeners.add(eventListener);
-  }
-
-  ///Remove event listener. This method should be called once you're disposing
-  ///Better Player.
-  void removeEventsListener(Function(PlayerEvent) eventListener) {
-    _eventListeners.remove(eventListener);
-  }
-
-  ///Flag which determines whenever player is playing live data source.
-  bool isLiveStream() {
-    if (_betterPlayerDataSource == null) {
-      PlayerLogger.warning(
-        message: 'The data source has not been initialized',
-        textureId: textureId,
-      );
-      throw StateError('The data source has not been initialized');
-    }
-    return _betterPlayerDataSource!.liveStream == true;
-  }
-
-  ///Flag which determines whenever player data source has been initialized.
-  bool? isVideoInitialized() {
-    if (_engine == null) {
-      PlayerLogger.warning(
-        message: 'The data source has not been initialized',
-        textureId: textureId,
-      );
-      throw StateError('The data source has not been initialized');
-    }
-    return _engine?.value.initialized;
-  }
-
-  ///Start timer which will trigger next video. Used in playlist. Do not use
-  ///manually.
-  void startNextVideoTimer() {
-    if (_nextVideoTimer == null) {
-      if (betterPlayerPlaylistConfiguration == null) {
-        PlayerLogger.warning(
-          message: 'BettterPlayerPlaylistConifugration has not been set!',
-          textureId: textureId,
-        );
-        throw StateError(
-          'BettterPlayerPlaylistConifugration has not been set!',
-        );
-      }
-
-      _nextVideoTime =
-          betterPlayerPlaylistConfiguration!.nextVideoDelay.inSeconds;
-      _nextVideoTimeStreamController.add(_nextVideoTime);
-      if (_nextVideoTime == 0) {
-        return;
-      }
-
-      _nextVideoTimer = Timer.periodic(const Duration(milliseconds: 1000), (
-        timer,
-      ) async {
-        if (_nextVideoTime == 1) {
-          timer.cancel();
-          _nextVideoTimer = null;
-        }
-        if (_nextVideoTime != null) {
-          _nextVideoTime = _nextVideoTime! - 1;
-        }
-        _nextVideoTimeStreamController.add(_nextVideoTime);
-      });
-    }
-  }
-
-  ///Cancel next video timer. Used in playlist. Do not use manually.
-  void cancelNextVideoTimer() {
-    _nextVideoTime = null;
-    _nextVideoTimeStreamController.add(_nextVideoTime);
-    _nextVideoTimer?.cancel();
-    _nextVideoTimer = null;
-  }
-
-  ///Play next video form playlist. Do not use manually.
-  void playNextVideo() {
-    _nextVideoTime = 0;
-    _nextVideoTimeStreamController.add(_nextVideoTime);
-    _postEvent(PlayerEvent(PlayerEventType.changedPlaylistItem));
-    cancelNextVideoTimer();
-  }
-
-  ///Setup track parameters for currently played video. Can be only used for HLS or DASH
-  ///data source.
-  void setTrack(PlayerAsmsTrack track) {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    _postEvent(
-      PlayerEvent(
-        PlayerEventType.changedTrack,
-        parameters: <String, dynamic>{
-          'id': track.id,
-          'width': track.width,
-          'height': track.height,
-          'bitrate': track.bitrate,
-          'frameRate': track.frameRate,
-          'codecs': track.codecs,
-          'mimeType': track.mimeType,
-        },
-      ),
-    );
-
-    _engine!.setTrackParameters(
-      width: track.width,
-      height: track.height,
-      bitrate: track.bitrate,
-    );
-    _betterPlayerAsmsTrack = track;
-  }
-
-  ///Check if player can be played/paused automatically
-  bool _isAutomaticPlayPauseHandled() {
-    return !(_betterPlayerDataSource
-                ?.notificationConfiguration
-                ?.showNotification ==
-            true) &&
-        betterPlayerConfiguration.handleLifecycle;
-  }
-
-  ///Listener which handles state of player visibility. If player visibility is
-  ///below 0.0 then video will be paused. When value is greater than 0, video
-  ///will play again. If there's different handler of visibility then it will be
-  ///used. If showNotification is set in data source or handleLifecycle is false
-  /// then this logic will be ignored.
-  Future<void> onPlayerVisibilityChanged(double visibilityFraction) async {
-    _isPlayerVisible = visibilityFraction > 0;
-    if (_disposed) {
-      return;
-    }
-    _postEvent(PlayerEvent(PlayerEventType.changedPlayerVisibility));
-
-    if (_isAutomaticPlayPauseHandled()) {
-      if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
-        betterPlayerConfiguration.playerVisibilityChangedBehavior!(
-          visibilityFraction,
-        );
-      } else {
-        if (visibilityFraction == 0) {
-          _wasPlayingBeforePause ??= isPlaying();
-          pause();
-        } else {
-          if (_wasPlayingBeforePause == true && !isPlaying()!) {
-            play();
-          }
-        }
-      }
-    }
-  }
-
-  ///Set different resolution (quality) for video
-  Future<void> setResolution(String url) async {
-    PlayerLogger.info(
-      message: 'Resolution changed to: $url',
-      textureId: textureId,
-    );
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    final position = await _engine!.position;
-    final wasPlayingBeforeChange = isPlaying()!;
-    pause();
-    await setupDataSource(betterPlayerDataSource!.copyWith(url: url));
-    seekTo(position!);
-    if (wasPlayingBeforeChange) {
-      play();
-    }
-    _postEvent(
-      PlayerEvent(
-        PlayerEventType.changedResolution,
-        parameters: <String, dynamic>{'url': url},
-      ),
-    );
-  }
-
-  ///Setup translations for given locale. In normal use cases it shouldn't be
-  ///called manually.
-  void setupTranslations(Locale locale) {
-    final languageCode = locale.languageCode;
-    translations =
-        betterPlayerConfiguration.translations?.firstWhereOrNull(
-          (t) => t.languageCode == languageCode,
-        ) ??
-        _getDefaultTranslations(locale);
-  }
-
-  ///Setup default translations for selected user locale. These translations
-  ///are pre-build in.
-  PlayerTranslations _getDefaultTranslations(Locale locale) {
-    final languageCode = locale.languageCode;
-    switch (languageCode) {
-      case 'pl':
-        return PlayerTranslations.polish();
-      case 'zh':
-        return PlayerTranslations.chinese();
-      case 'hi':
-        return PlayerTranslations.hindi();
-      case 'tr':
-        return PlayerTranslations.turkish();
-      case 'vi':
-        return PlayerTranslations.vietnamese();
-      case 'es':
-        return PlayerTranslations.spanish();
-      default:
-        return PlayerTranslations();
-    }
-  }
-
-  ///Flag which determines whenever current data source has started.
-  bool get hasCurrentDataSourceStarted => _hasCurrentDataSourceStarted;
-
-  ///Set current lifecycle state. If state is [AppLifecycleState.resumed] then
-  ///player starts playing again. if lifecycle is in [AppLifecycleState.paused]
-  ///state, then video playback will stop. If showNotification is set in data
-  ///source or handleLifecycle is false then this logic will be ignored.
-  void setAppLifecycleState(AppLifecycleState appLifecycleState) {
-    PlayerLogger.debug(
-      message: 'App lifecycle: $appLifecycleState',
-      textureId: textureId,
-    );
-    if (_isAutomaticPlayPauseHandled()) {
-      _appLifecycleState = appLifecycleState;
-      if (appLifecycleState == AppLifecycleState.resumed) {
-        if (_wasPlayingBeforePause == true && _isPlayerVisible) {
-          play();
-        }
-      }
-      if (appLifecycleState == AppLifecycleState.paused) {
-        _wasPlayingBeforePause ??= isPlaying();
-        pause();
-      }
-    }
-  }
-
-  ///Setup overridden aspect ratio.
-  void setOverriddenAspectRatio(double aspectRatio) {
-    _overriddenAspectRatio = aspectRatio;
-  }
-
-  ///Get aspect ratio used in current video. Returns the first non-null value
-  ///from the following priority order: [_overriddenAspectRatio] ->
-  ///[PlayerConfiguration.aspectRatio] -> the video player's actual aspect
-  ///ratio ([_engine.value.aspectRatio]).
-  ///If the video player is not initialized or the video size is not yet
-  ///available, it returns null unless an override or configuration is set.
-  double? getAspectRatio() {
-    if (_overriddenAspectRatio != null) {
-      return _overriddenAspectRatio;
-    }
-    if (betterPlayerConfiguration.aspectRatio != null) {
-      return betterPlayerConfiguration.aspectRatio;
-    }
-
-    final videoValue = _engine?.value;
-    if (videoValue != null && videoValue.size != null) {
-      return videoValue.aspectRatio;
-    }
-
-    return null;
-  }
-
-  ///Setup overridden fit.
-  void setOverriddenFit(BoxFit fit) {
-    _overriddenFit = fit;
-  }
-
-  ///Get fit used in current video. If fit is null, then fit from
-  ///PlayerConfiguration will be used. Otherwise [_overriddenFit] will be
-  ///used.
-  BoxFit getFit() {
-    return _overriddenFit ?? betterPlayerConfiguration.fit;
-  }
-
-  ///Enable Picture in Picture (PiP) mode. [betterPlayerGlobalKey] is required
-  ///to open PiP mode in iOS. When device is not supported, PiP mode won't be
-  ///open.
-  Future<void>? enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-
-    final isPipSupported =
-        (await _engine!.isPictureInPictureSupported()) ?? false;
-
-    if (isPipSupported) {
-      _wasInFullScreenBeforePiP = _isFullScreen;
-      _wasControlsEnabledBeforePiP = _controlsEnabled;
-      setControlsEnabled(false);
-      if (defaultTargetPlatform == TargetPlatform.android) {
-        _wasInFullScreenBeforePiP = _isFullScreen;
-        await _engine?.enablePictureInPicture(
-          left: 0,
-          top: 0,
-          width: 0,
-          height: 0,
-        );
-        enterFullScreen();
-        _postEvent(PlayerEvent(PlayerEventType.pipStart));
-        return;
-      }
-      if (defaultTargetPlatform == TargetPlatform.iOS) {
-        final renderBox =
-            betterPlayerGlobalKey.currentContext!.findRenderObject()
-                as RenderBox?;
-        if (renderBox == null) {
-          PlayerLogger.warning(
-            message:
-                "Can't show PiP. RenderBox is null. Did you provide valid global"
-                ' key?',
-            textureId: textureId,
-          );
-          return;
-        }
-        final position = renderBox.localToGlobal(Offset.zero);
-        return _engine?.enablePictureInPicture(
-          left: position.dx,
-          top: position.dy,
-          width: renderBox.size.width,
-          height: renderBox.size.height,
-        );
-      } else {
-        PlayerLogger.warning(
-          message: 'Unsupported PiP in current platform.',
-          textureId: textureId,
-        );
-      }
-    } else {
-      PlayerLogger.warning(
-        message:
-            "Picture in picture is not supported in this device. If you're "
-            "using Android, please check if you're using activity v2 "
-            'embedding.',
-        textureId: textureId,
-      );
-    }
-  }
-
-  ///Disable Picture in Picture mode if it's enabled.
-  Future<void>? disablePictureInPicture() {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-    return _engine!.disablePictureInPicture();
-  }
-
-  ///Set GlobalKey of BetterPlayer. Used in PiP methods called from controls.
-  void setBetterPlayerGlobalKey(GlobalKey betterPlayerGlobalKey) {
-    _betterPlayerGlobalKey = betterPlayerGlobalKey;
-  }
-
-  ///Check if picture in picture mode is supported in this device.
-  Future<bool> isPictureInPictureSupported() async {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-
-    final isPipSupported =
-        (await _engine!.isPictureInPictureSupported()) ?? false;
-
-    return isPipSupported && !_isFullScreen;
-  }
-
-  ///Handle VideoEvent when remote controls notification / PiP is shown
+  /// Internal callback that routes native [VideoEvent]s (from platform channels)
+  /// into the controller's high-level [PlayerEvent] stream.
   Future<void> _handleVideoEvent(VideoEvent event) async {
     PlayerLogger.debug(
       message: 'Video event: ${event.eventType}',
@@ -1312,8 +361,8 @@ class BetterPlayerController {
           PlayerEvent(
             PlayerEventType.finished,
             parameters: <String, dynamic>{
-              _progressParameter: videoValue?.position,
-              _durationParameter: videoValue?.duration,
+              PlayerEventConstants.progressParameter: videoValue?.position,
+              PlayerEventConstants.durationParameter: videoValue?.duration,
             },
           ),
         );
@@ -1324,7 +373,7 @@ class BetterPlayerController {
           PlayerEvent(
             PlayerEventType.bufferingUpdate,
             parameters: <String, dynamic>{
-              _bufferedParameter: event.buffered,
+              PlayerEventConstants.bufferedParameter: event.buffered,
             },
           ),
         );
@@ -1337,127 +386,9 @@ class BetterPlayerController {
     }
   }
 
-  ///Setup controls always visible mode
-  void setControlsAlwaysVisible(bool controlsAlwaysVisible) {
-    _controlsAlwaysVisible = controlsAlwaysVisible;
-    _controlsVisibilityStreamController.add(controlsAlwaysVisible);
-  }
-
-  ///Retry data source if playback failed.
-  Future retryDataSource() async {
-    PlayerLogger.warning(
-      message: 'Retrying data source',
-      textureId: textureId,
-    );
-    await _setupDataSource(_betterPlayerDataSource!);
-    if (_videoPlayerValueOnError != null) {
-      final position = _videoPlayerValueOnError!.position;
-      await seekTo(position);
-      await play();
-      _videoPlayerValueOnError = null;
-    }
-  }
-
-  ///Set [audioTrack] in player. Works only for HLS or DASH streams.
-  void setAudioTrack(PlayerAsmsAudioTrack audioTrack) {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-
-    if (audioTrack.language == null) {
-      _betterPlayerAsmsAudioTrack = null;
-      return;
-    }
-
-    _betterPlayerAsmsAudioTrack = audioTrack;
-    _engine!.setAudioTrack(audioTrack.label, audioTrack.id);
-  }
-
-  ///Enable or disable audio mixing with other sound within device.
-  void setMixWithOthers(bool mixWithOthers) {
-    if (_engine == null) {
-      throw StateError('The data source has not been initialized');
-    }
-
-    _engine!.setMixWithOthers(mixWithOthers);
-  }
-
-  ///Clear all cached data. Video player controller must be initialized to
-  ///clear the cache.
-  Future<void> clearCache() async {
-    return PlayerEngineController.clearCache();
-  }
-
-  ///Build headers map that will be used to setup video player controller. Apply
-  ///DRM headers if available.
-  Map<String, String?> _getHeaders() {
-    final headers = betterPlayerDataSource!.headers ?? {};
-    if (betterPlayerDataSource?.drmConfiguration?.drmType == DrmType.token &&
-        betterPlayerDataSource?.drmConfiguration?.token != null) {
-      headers[_authorizationHeader] =
-          betterPlayerDataSource!.drmConfiguration!.token!;
-    }
-    return headers;
-  }
-
-  ///PreCache a video. On Android, the future succeeds when
-  ///the requested size, specified in
-  ///[CacheConfiguration.preCacheSize], is downloaded or when the
-  ///complete file is downloaded if the file is smaller than the requested size.
-  ///On iOS, the whole file will be downloaded, since [maxCacheFileSize] is
-  ///currently not supported on iOS. On iOS, the video format must be in this
-  ///list: https://github.com/sendyhalim/Swime/blob/master/Sources/MimeType.swift
-  Future<void> preCache(PlayerDataSource betterPlayerDataSource) async {
-    final cacheConfig =
-        betterPlayerDataSource.cacheConfiguration ??
-        const CacheConfiguration(useCache: true);
-
-    final dataSource = DataSource(
-      sourceType: DataSourceType.network,
-      uri: betterPlayerDataSource.url,
-      headers: betterPlayerDataSource.headers,
-      cacheConfiguration: CacheConfiguration(
-        useCache: true,
-        maxCacheSize: cacheConfig.maxCacheSize,
-        maxCacheFileSize: cacheConfig.maxCacheFileSize,
-        key: cacheConfig.key,
-      ),
-      videoExtension: betterPlayerDataSource.videoExtension,
-    );
-
-    return PlayerEngineController.preCache(
-      dataSource,
-      cacheConfig.preCacheSize,
-    );
-  }
-
-  ///Stop pre cache for given [betterPlayerDataSource]. If there was no pre
-  ///cache started for given [betterPlayerDataSource] then it will be ignored.
-  Future<void> stopPreCache(PlayerDataSource betterPlayerDataSource) async {
-    return PlayerEngineController.stopPreCache(
-      betterPlayerDataSource.url,
-      betterPlayerDataSource.cacheConfiguration?.key,
-    );
-  }
-
-  /// Sets the new [betterPlayerControlsConfiguration] instance in the
-  /// controller.
-  void setPlayerControlsConfiguration(
-    PlayerControlsConfiguration betterPlayerControlsConfiguration,
-  ) {
-    _betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
-  }
-
-  /// Add controller internal event.
-  void _postControllerEvent(PlayerControllerEvent event) {
-    if (!_controllerEventStreamController.isClosed) {
-      _controllerEventStreamController.add(event);
-    }
-  }
-
-  ///Dispose BetterPlayerController. When [forceDispose] parameter is true, then
-  ///autoDispose parameter will be overridden and controller will be disposed
-  ///(if it wasn't disposed before).
+  /// Disposes of the [BetterPlayerController] and gracefully tears down all resources.
+  /// If [forceDispose] is false, this will abort if [PlayerConfiguration.autoDispose] is false.
+  /// Automatically clears listeners, stops the engine, closes streams, and deletes temp files.
   void dispose({bool forceDispose = false}) {
     PlayerLogger.info(message: 'Disposed', textureId: textureId);
     if (!betterPlayerConfiguration.autoDispose && !forceDispose) {
@@ -1466,6 +397,7 @@ class BetterPlayerController {
     if (!_disposed) {
       if (_engine != null) {
         pause();
+        // Removing listeners is safe even if they were never registered.
         _engine!.removeListener(_onFullScreenStateChanged);
         _engine!.removeListener(_onVideoPlayerChanged);
         _engine!.dispose();

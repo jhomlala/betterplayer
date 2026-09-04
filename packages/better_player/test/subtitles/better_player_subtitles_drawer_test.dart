@@ -33,7 +33,7 @@ void main() {
       false,
     );
     final subtitles = [subtitle];
-    controller.subtitlesLines.addAll(subtitles);
+    controller.subtitlesLines = [...controller.subtitlesLines, ...subtitles];
 
     await tester.pumpWidget(
       MaterialApp(
@@ -72,7 +72,7 @@ void main() {
       false,
     );
     final subtitles = [subtitle];
-    controller.subtitlesLines.addAll(subtitles);
+    controller.subtitlesLines = [...controller.subtitlesLines, ...subtitles];
 
     await tester.pumpWidget(
       MaterialApp(
@@ -110,7 +110,7 @@ void main() {
       false,
     );
     final subtitles = [subtitle];
-    controller.subtitlesLines.addAll(subtitles);
+    controller.subtitlesLines = [...controller.subtitlesLines, ...subtitles];
 
     await tester.pumpWidget(
       MaterialApp(
