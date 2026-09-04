@@ -362,7 +362,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         final audioTrack = asmsTracks[index];
         children.add(
           _buildBottomSheetMenuItem(
-            label: audioTrack.label ?? '',
+            label: audioTrack.label ?? betterPlayerController!.translations.generalDefault,
             isSelected: isSelected,
             onTap: () {
               Navigator.of(context).pop();
@@ -417,19 +417,29 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     String? semanticsIdentifier,
   }) {
     if (_isCupertinoTheme) {
-      return CupertinoActionSheetAction(
+      final action = CupertinoActionSheetAction(
         onPressed: onTap,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (icon != null) Icon(icon, size: 20),
             if (icon != null) const SizedBox(width: 8),
-            if (isSelected && icon == null) const Icon(Icons.check, size: 18),
+            if (isSelected && icon == null)
+              const Icon(CupertinoIcons.check_mark, size: 18),
             if (isSelected && icon == null) const SizedBox(width: 8),
             Text(label),
           ],
         ),
       );
+      
+      if (semanticsIdentifier != null) {
+        return Semantics(
+          identifier: semanticsIdentifier,
+          button: true,
+          child: action,
+        );
+      }
+      return action;
     }
 
     if (icon != null) {
@@ -467,8 +477,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             actions: children,
             cancelButton: CupertinoActionSheetAction(
               onPressed: () => Navigator.of(context).pop(),
-              isDestructiveAction: true,
-              child: const Text('Cancel'),
+              isDestructiveAction: false,
+              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
             ),
           ),
         );
