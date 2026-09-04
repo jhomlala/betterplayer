@@ -74,7 +74,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (betterPlayerControlsConfiguration.enablePlaybackSpeed) {
       children.add(
-        _buildBottomSheetMenuItem(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           icon: betterPlayerControlsConfiguration.playbackSpeedIcon,
           label: translations.overflowMenuPlaybackSpeed,
           onTap: () {
@@ -91,7 +93,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (betterPlayerControlsConfiguration.enableSubtitles) {
       children.add(
-        _buildBottomSheetMenuItem(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           icon: betterPlayerControlsConfiguration.subtitlesIcon,
           label: translations.overflowMenuSubtitles,
           onTap: () {
@@ -108,7 +112,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (betterPlayerControlsConfiguration.enableQualities) {
       children.add(
-        _buildBottomSheetMenuItem(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           icon: betterPlayerControlsConfiguration.qualitiesIcon,
           label: translations.overflowMenuQuality,
           onTap: () {
@@ -125,7 +131,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (betterPlayerControlsConfiguration.enableAudioTracks) {
       children.add(
-        _buildBottomSheetMenuItem(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           icon: betterPlayerControlsConfiguration.audioTracksIcon,
           label: translations.overflowMenuAudioTracks,
           onTap: () {
@@ -144,7 +152,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       for (final customItem
           in betterPlayerControlsConfiguration.overflowMenuCustomItems) {
         children.add(
-          _buildBottomSheetMenuItem(
+          _BetterPlayerBottomSheetMenuItem(
+            isCupertinoTheme: _isCupertinoTheme,
+            betterPlayerControlsConfiguration:
+                betterPlayerControlsConfiguration,
             icon: customItem.icon,
             label: customItem.title,
             onTap: () {
@@ -166,7 +177,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0].map((speed) {
         final isSelected =
             betterPlayerController?.videoPlayerValue?.speed == speed;
-        return _buildBottomSheetMenuItem(
+        return _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: '$speed x',
           isSelected: isSelected,
           onTap: () {
@@ -235,7 +248,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             : subtitlesSource.name ??
                   betterPlayerController!.translations.generalDefault;
 
-        return _buildBottomSheetMenuItem(
+        return _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: name,
           isSelected: isSelected,
           onTap: () {
@@ -288,7 +303,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           preferredName == betterPlayerController!.translations.qualityAuto;
 
       children.add(
-        _buildBottomSheetMenuItem(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: trackName,
           isSelected: isSelected,
           onTap: () {
@@ -311,7 +328,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       final isSelected =
           value == betterPlayerController!.betterPlayerDataSource!.url;
       children.add(
-        _buildBottomSheetMenuItem(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: key,
           isSelected: isSelected,
           onTap: () {
@@ -330,7 +349,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         message: 'Quality children empty, adding Auto fallback',
       );
       children.add(
-        _buildBottomSheetMenuItem(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: betterPlayerController!.translations.qualityAuto,
           isSelected: true,
           onTap: () {
@@ -361,7 +382,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             selectedAsmsAudioTrack == asmsTracks[index];
         final audioTrack = asmsTracks[index];
         children.add(
-          _buildBottomSheetMenuItem(
+          _BetterPlayerBottomSheetMenuItem(
+            isCupertinoTheme: _isCupertinoTheme,
+            betterPlayerControlsConfiguration:
+                betterPlayerControlsConfiguration,
             label:
                 audioTrack.label ??
                 betterPlayerController!.translations.generalDefault,
@@ -377,7 +401,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (children.isEmpty) {
       children.add(
-        _buildBottomSheetMenuItem(
+        _BetterPlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: betterPlayerController!.translations.generalDefault,
           isSelected: true,
           onTap: () {
@@ -409,58 +435,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             PlayerTheme.cupertino ||
         (betterPlayerControlsConfiguration.playerTheme == null &&
             defaultTargetPlatform == TargetPlatform.iOS);
-  }
-
-  Widget _buildBottomSheetMenuItem({
-    required String label,
-    required VoidCallback onTap,
-    bool isSelected = false,
-    IconData? icon,
-    String? semanticsIdentifier,
-  }) {
-    if (_isCupertinoTheme) {
-      final action = CupertinoActionSheetAction(
-        onPressed: onTap,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null) Icon(icon, size: 20),
-            if (icon != null) const SizedBox(width: 8),
-            if (isSelected && icon == null)
-              const Icon(CupertinoIcons.check_mark, size: 18),
-            if (isSelected && icon == null) const SizedBox(width: 8),
-            Text(label),
-          ],
-        ),
-      );
-
-      if (semanticsIdentifier != null) {
-        return Semantics(
-          identifier: semanticsIdentifier,
-          button: true,
-          child: action,
-        );
-      }
-      return action;
-    }
-
-    if (icon != null) {
-      return PlayerOverflowMenuItemWidget(
-        icon: icon,
-        name: label,
-        onTap: onTap,
-        controlsConfiguration: betterPlayerControlsConfiguration,
-        semanticsIdentifier: semanticsIdentifier,
-      );
-    } else {
-      return BetterPlayerSelectionListItemWidget(
-        label: label,
-        isSelected: isSelected,
-        onTap: onTap,
-        controlsConfiguration: betterPlayerControlsConfiguration,
-        semanticsIdentifier: semanticsIdentifier,
-      );
-    }
   }
 
   void _showCupertinoModalBottomSheet(List<Widget> children) {
@@ -526,5 +500,71 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       }
       controlsNotVisible = notVisible;
     });
+  }
+}
+
+class _BetterPlayerBottomSheetMenuItem extends StatelessWidget {
+  final String label;
+  final VoidCallback onTap;
+  final bool isSelected;
+  final IconData? icon;
+  final String? semanticsIdentifier;
+  final bool isCupertinoTheme;
+  final PlayerControlsConfiguration betterPlayerControlsConfiguration;
+
+  const _BetterPlayerBottomSheetMenuItem({
+    required this.label,
+    required this.onTap,
+    required this.isCupertinoTheme, required this.betterPlayerControlsConfiguration, this.isSelected = false,
+    this.icon,
+    this.semanticsIdentifier,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (isCupertinoTheme) {
+      final action = CupertinoActionSheetAction(
+        onPressed: onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) Icon(icon, size: 20),
+            if (icon != null) const SizedBox(width: 8),
+            if (isSelected && icon == null)
+              const Icon(CupertinoIcons.check_mark, size: 18),
+            if (isSelected && icon == null) const SizedBox(width: 8),
+            Text(label),
+          ],
+        ),
+      );
+
+      if (semanticsIdentifier != null) {
+        return Semantics(
+          identifier: semanticsIdentifier,
+          button: true,
+          child: action,
+        );
+      }
+      return action;
+    }
+
+    final localIcon = icon;
+    if (localIcon != null) {
+      return PlayerOverflowMenuItemWidget(
+        icon: localIcon,
+        name: label,
+        onTap: onTap,
+        controlsConfiguration: betterPlayerControlsConfiguration,
+        semanticsIdentifier: semanticsIdentifier,
+      );
+    } else {
+      return BetterPlayerSelectionListItemWidget(
+        label: label,
+        isSelected: isSelected,
+        onTap: onTap,
+        controlsConfiguration: betterPlayerControlsConfiguration,
+        semanticsIdentifier: semanticsIdentifier,
+      );
+    }
   }
 }
