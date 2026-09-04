@@ -515,7 +515,9 @@ class _BetterPlayerBottomSheetMenuItem extends StatelessWidget {
   const _BetterPlayerBottomSheetMenuItem({
     required this.label,
     required this.onTap,
-    required this.isCupertinoTheme, required this.betterPlayerControlsConfiguration, this.isSelected = false,
+    required this.isCupertinoTheme,
+    required this.betterPlayerControlsConfiguration,
+    this.isSelected = false,
     this.icon,
     this.semanticsIdentifier,
   });
