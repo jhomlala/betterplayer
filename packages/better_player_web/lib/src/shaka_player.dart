@@ -1,10 +1,10 @@
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'package:web/web.dart' as web;
 
 // ─── Shaka namespace ───────────────────────────────────────────────────────
 
-@JS('shaka')
-external ShakaNamespace get shaka;
+ShakaNamespace get shaka => globalContext['shaka']! as ShakaNamespace;
 
 @JS()
 @staticInterop
