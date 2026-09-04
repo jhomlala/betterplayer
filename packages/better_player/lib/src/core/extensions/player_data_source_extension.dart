@@ -101,13 +101,13 @@ extension PlayerDataSourceExtension on BetterPlayerController {
   ///master playlist.
   Future<void> _setupAsmsDataSource(PlayerDataSource source) async {
     final data = await BetterPlayerAsmsUtils.getDataFromUrl(
-      betterPlayerDataSource!.url,
+      source.url,
       _getHeaders(),
     );
     if (data != null) {
       final response = await BetterPlayerAsmsUtils.parse(
         data,
-        betterPlayerDataSource!.url,
+        source.url,
       );
 
       /// Load tracks

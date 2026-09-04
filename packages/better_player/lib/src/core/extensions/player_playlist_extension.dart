@@ -7,11 +7,11 @@ extension PlayerPlaylistExtension on BetterPlayerController {
     if (_nextVideoTimer == null) {
       if (betterPlayerPlaylistConfiguration == null) {
         PlayerLogger.warning(
-          message: 'BettterPlayerPlaylistConifugration has not been set!',
+          message: 'BetterPlayerPlaylistConfiguration has not been set!',
           textureId: textureId,
         );
         throw StateError(
-          'BettterPlayerPlaylistConifugration has not been set!',
+          'BetterPlayerPlaylistConfiguration has not been set!',
         );
       }
 

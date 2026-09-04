@@ -135,7 +135,9 @@ class BetterPlayerController {
 
   /// Exposes a read-only list of all currently active event listeners subscribed to the player.
   /// Used primarily for debugging or routing global event streams without modifying active subscriptions.
-  List<Function(PlayerEvent)?> get eventListeners => _eventListeners.sublist(1);
+  List<Function(PlayerEvent)?> get eventListeners => _eventListeners.length <= 1
+      ? const <Function(PlayerEvent)>[]
+      : _eventListeners.sublist(1);
 
   /// Retrieves the primary global event listener defined within the configuration.
   /// This listener receives every state change and interaction event emitted by the player.
@@ -395,8 +397,7 @@ class BetterPlayerController {
     if (!_disposed) {
       if (_engine != null) {
         pause();
-        // This listener is added dynamically in enterFullScreen().
-        // Removing it here is a safe no-op if the player never entered full-screen.
+        // Removing listeners is safe even if they were never registered.
         _engine!.removeListener(_onFullScreenStateChanged);
         _engine!.removeListener(_onVideoPlayerChanged);
         _engine!.dispose();

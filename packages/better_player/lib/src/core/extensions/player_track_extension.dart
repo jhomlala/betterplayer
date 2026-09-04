@@ -41,9 +41,9 @@ extension PlayerTrackExtension on BetterPlayerController {
     }
     final position = await _engine!.position;
     final wasPlayingBeforeChange = isPlaying()!;
-    pause();
+    await pause();
     await setupDataSource(betterPlayerDataSource!.copyWith(url: url));
-    seekTo(position!);
+    await seekTo(position!);
     if (wasPlayingBeforeChange) {
       play();
     }
