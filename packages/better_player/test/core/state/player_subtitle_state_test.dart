@@ -18,9 +18,15 @@ void main() {
 
     test('should allow updating fields', () {
       final state = PlayerSubtitleState();
-      
-      final source = PlayerSubtitlesSource(type: PlayerSubtitlesSourceType.network, urls: ['url']);
-      final subtitle = PlayerSubtitle('00:00:01.000 --> 00:00:02.000\nHello', false);
+
+      final source = PlayerSubtitlesSource(
+        type: PlayerSubtitlesSourceType.network,
+        urls: ['url'],
+      );
+      final subtitle = PlayerSubtitle(
+        '00:00:01.000 --> 00:00:02.000\nHello',
+        false,
+      );
 
       state.subtitlesSourceList.add(source);
       state.subtitlesSource = source;

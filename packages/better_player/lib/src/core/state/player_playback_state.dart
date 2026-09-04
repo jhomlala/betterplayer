@@ -1,6 +1,7 @@
 import 'dart:ui';
-import 'package:flutter/widgets.dart';
+
 import 'package:better_player/better_player.dart';
+import 'package:flutter/widgets.dart';
 
 /// Tracks the low-level playback and lifecycle state of the media player.
 class PlayerPlaybackState {

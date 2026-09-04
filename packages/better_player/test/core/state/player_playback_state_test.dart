@@ -18,8 +18,10 @@ void main() {
 
     test('should allow updating fields', () {
       final state = PlayerPlaybackState();
-      
-      final errorValue = VideoPlayerValue(duration: const Duration(seconds: 10));
+
+      final errorValue = VideoPlayerValue(
+        duration: const Duration(seconds: 10),
+      );
 
       state.hasCurrentDataSourceStarted = true;
       state.hasCurrentDataSourceInitialized = true;

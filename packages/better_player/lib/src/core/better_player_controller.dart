@@ -3,6 +3,11 @@ import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
+import 'package:better_player/src/core/player_event_constants.dart';
+import 'package:better_player/src/core/state/player_playback_state.dart';
+import 'package:better_player/src/core/state/player_subtitle_state.dart';
+import 'package:better_player/src/core/state/player_track_state.dart';
+import 'package:better_player/src/core/state/player_view_state.dart';
 import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
@@ -11,12 +16,6 @@ import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:path_provider/path_provider.dart';
-
-import 'package:better_player/src/core/player_event_constants.dart';
-import 'package:better_player/src/core/state/player_playback_state.dart';
-import 'package:better_player/src/core/state/player_subtitle_state.dart';
-import 'package:better_player/src/core/state/player_track_state.dart';
-import 'package:better_player/src/core/state/player_view_state.dart';
 
 part 'extensions/player_data_source_extension.dart';
 part 'extensions/player_playback_extension.dart';

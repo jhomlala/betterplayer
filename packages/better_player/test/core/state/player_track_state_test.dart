@@ -15,9 +15,22 @@ void main() {
 
     test('should allow updating fields', () {
       final state = PlayerTrackState();
-      
-      final videoTrack = PlayerAsmsTrack('1', 1080, 1920, 5000000, 0, 'en', 'url');
-      final audioTrack = PlayerAsmsAudioTrack(id: 1, label: 'English', language: 'en', url: 'url');
+
+      final videoTrack = PlayerAsmsTrack(
+        '1',
+        1080,
+        1920,
+        5000000,
+        0,
+        'en',
+        'url',
+      );
+      final audioTrack = PlayerAsmsAudioTrack(
+        id: 1,
+        label: 'English',
+        language: 'en',
+        url: 'url',
+      );
 
       state.asmsTracks.add(videoTrack);
       state.asmsTrack = videoTrack;
