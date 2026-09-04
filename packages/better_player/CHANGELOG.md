@@ -1,3 +1,9 @@
+## 1.5.1
+- Fixed: Resolved Cupertino action sheet fallback label and destructive styling for the cancel button, restoring proper localization and iOS consistency.
+- Updated: Reworked the Cupertino overflow menu bottom sheet to use the native CupertinoActionSheet widget instead of the Material fallback when the theme is explicitly set to Cupertino.
+- Fixed: Hardcoded Cupertino play/pause and skip icon sizes in the bottom control bar to avoid improper scaling on resizing or entering fullscreen.
+- Added: Enhanced automated UI tests to explicitly verify Cupertino styling, sizes, and action sheets.
+
 ## 1.5.0
 - Updated: Refactored `BetterPlayerController` by segregating internal state variables into immutable data classes (`PlayerViewState`, `PlayerSubtitleState`, `PlayerTrackState`, `PlayerPlaybackState`), improving architectural scalability.
 - Updated: Refactored widget helper methods (e.g. `Widget _build...()`) into inline `Builder` patterns and proper `StatelessWidget` classes to strictly comply with project standards, specifically across UI controls, route builders, and example apps.
