@@ -282,14 +282,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         message: 'Quality children empty, adding Auto fallback',
       );
       children.add(
-        BetterPlayerSelectionListItemWidget(
+        _buildBottomSheetMenuItem(
           label: betterPlayerController!.translations.qualityAuto,
           isSelected: true,
           onTap: () {
             Navigator.of(context).pop();
             betterPlayerController!.setTrack(PlayerAsmsTrack.defaultTrack());
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
           semanticsIdentifier: 'better_player_overflow_menu_quality_auto',
         ),
       );
@@ -314,14 +313,13 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             selectedAsmsAudioTrack == asmsTracks[index];
         final audioTrack = asmsTracks[index];
         children.add(
-          BetterPlayerSelectionListItemWidget(
-            label: audioTrack.label!,
+          _buildBottomSheetMenuItem(
+            label: audioTrack.label ?? '',
             isSelected: isSelected,
             onTap: () {
               Navigator.of(context).pop();
               betterPlayerController!.setAudioTrack(audioTrack);
             },
-            controlsConfiguration: betterPlayerControlsConfiguration,
           ),
         );
       }
@@ -329,7 +327,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (children.isEmpty) {
       children.add(
-        BetterPlayerSelectionListItemWidget(
+        _buildBottomSheetMenuItem(
           label: betterPlayerController!.translations.generalDefault,
           isSelected: true,
           onTap: () {
@@ -340,7 +338,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               ),
             );
           },
-          controlsConfiguration: betterPlayerControlsConfiguration,
         ),
       );
     }
@@ -357,6 +354,49 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         : _showCupertinoModalBottomSheet(children);
   }
 
+
+  Widget _buildBottomSheetMenuItem({
+    required String label,
+    required VoidCallback onTap,
+    bool isSelected = false,
+    IconData? icon,
+    String? semanticsIdentifier,
+  }) {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return CupertinoActionSheetAction(
+        onPressed: onTap,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (icon != null) Icon(icon, size: 20, color: betterPlayerControlsConfiguration.overflowMenuIconsColor),
+            if (icon != null) const SizedBox(width: 8),
+            if (isSelected && icon == null) const Icon(Icons.check, size: 18),
+            if (isSelected && icon == null) const SizedBox(width: 8),
+            Text(label, style: TextStyle(color: betterPlayerControlsConfiguration.overflowModalTextColor)),
+          ],
+        ),
+      );
+    }
+    
+    if (icon != null) {
+      return PlayerOverflowMenuItemWidget(
+        icon: icon,
+        name: label,
+        onTap: onTap,
+        controlsConfiguration: betterPlayerControlsConfiguration,
+        semanticsIdentifier: semanticsIdentifier,
+      );
+    } else {
+      return BetterPlayerSelectionListItemWidget(
+        label: label,
+        isSelected: isSelected,
+        onTap: onTap,
+        controlsConfiguration: betterPlayerControlsConfiguration,
+        semanticsIdentifier: semanticsIdentifier,
+      );
+    }
+  }
+
   void _showCupertinoModalBottomSheet(List<Widget> children) {
     showCupertinoModalPopup<void>(
       barrierColor: Colors.transparent,
@@ -365,22 +405,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           betterPlayerController?.betterPlayerConfiguration.useRootNavigator ??
           false,
       builder: (context) {
-        return SafeArea(
-          top: false,
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-              decoration: BoxDecoration(
-                color: betterPlayerControlsConfiguration.overflowModalColor,
-                /*shape: RoundedRectangleBorder(side: Bor,borderRadius: 24,)*/
-                borderRadius: const BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-              ),
-              child: Column(children: children),
-            ),
+        return CupertinoActionSheet(
+          actions: children,
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () => Navigator.of(context).pop(),
+            isDestructiveAction: true,
+            child: const Text('Cancel'),
           ),
         );
       },
