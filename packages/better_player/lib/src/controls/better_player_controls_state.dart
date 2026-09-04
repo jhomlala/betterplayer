@@ -73,78 +73,88 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final children = <Widget>[];
 
     if (betterPlayerControlsConfiguration.enablePlaybackSpeed) {
-      children.add(_buildBottomSheetMenuItem(
-        icon: betterPlayerControlsConfiguration.playbackSpeedIcon,
-        label: translations.overflowMenuPlaybackSpeed,
-        onTap: () {
-          Navigator.of(context).pop();
-          Future.delayed(
-            const Duration(milliseconds: 500),
-            _showSpeedChooserWidget,
-          );
-        },
-        semanticsIdentifier: 'better_player_overflow_menu_playback_speed',
-      ));
+      children.add(
+        _buildBottomSheetMenuItem(
+          icon: betterPlayerControlsConfiguration.playbackSpeedIcon,
+          label: translations.overflowMenuPlaybackSpeed,
+          onTap: () {
+            Navigator.of(context).pop();
+            Future.delayed(
+              const Duration(milliseconds: 500),
+              _showSpeedChooserWidget,
+            );
+          },
+          semanticsIdentifier: 'better_player_overflow_menu_playback_speed',
+        ),
+      );
     }
 
     if (betterPlayerControlsConfiguration.enableSubtitles) {
-      children.add(_buildBottomSheetMenuItem(
-        icon: betterPlayerControlsConfiguration.subtitlesIcon,
-        label: translations.overflowMenuSubtitles,
-        onTap: () {
-          Navigator.of(context).pop();
-          Future.delayed(
-            const Duration(milliseconds: 500),
-            _showSubtitlesSelectionWidget,
-          );
-        },
-        semanticsIdentifier: 'better_player_overflow_menu_subtitles',
-      ));
+      children.add(
+        _buildBottomSheetMenuItem(
+          icon: betterPlayerControlsConfiguration.subtitlesIcon,
+          label: translations.overflowMenuSubtitles,
+          onTap: () {
+            Navigator.of(context).pop();
+            Future.delayed(
+              const Duration(milliseconds: 500),
+              _showSubtitlesSelectionWidget,
+            );
+          },
+          semanticsIdentifier: 'better_player_overflow_menu_subtitles',
+        ),
+      );
     }
 
     if (betterPlayerControlsConfiguration.enableQualities) {
-      children.add(_buildBottomSheetMenuItem(
-        icon: betterPlayerControlsConfiguration.qualitiesIcon,
-        label: translations.overflowMenuQuality,
-        onTap: () {
-          Navigator.of(context).pop();
-          Future.delayed(
-            const Duration(milliseconds: 500),
-            showQualitiesSelectionWidget,
-          );
-        },
-        semanticsIdentifier: 'better_player_overflow_menu_quality',
-      ));
+      children.add(
+        _buildBottomSheetMenuItem(
+          icon: betterPlayerControlsConfiguration.qualitiesIcon,
+          label: translations.overflowMenuQuality,
+          onTap: () {
+            Navigator.of(context).pop();
+            Future.delayed(
+              const Duration(milliseconds: 500),
+              showQualitiesSelectionWidget,
+            );
+          },
+          semanticsIdentifier: 'better_player_overflow_menu_quality',
+        ),
+      );
     }
 
     if (betterPlayerControlsConfiguration.enableAudioTracks) {
-      children.add(_buildBottomSheetMenuItem(
-        icon: betterPlayerControlsConfiguration.audioTracksIcon,
-        label: translations.overflowMenuAudioTracks,
-        onTap: () {
-          Navigator.of(context).pop();
-          Future.delayed(
-            const Duration(milliseconds: 300),
-            _showAudioTracksSelectionWidget,
-          );
-        },
-        semanticsIdentifier: 'better_player_overflow_menu_audio_tracks',
-      ));
+      children.add(
+        _buildBottomSheetMenuItem(
+          icon: betterPlayerControlsConfiguration.audioTracksIcon,
+          label: translations.overflowMenuAudioTracks,
+          onTap: () {
+            Navigator.of(context).pop();
+            Future.delayed(
+              const Duration(milliseconds: 300),
+              _showAudioTracksSelectionWidget,
+            );
+          },
+          semanticsIdentifier: 'better_player_overflow_menu_audio_tracks',
+        ),
+      );
     }
 
     if (betterPlayerControlsConfiguration.overflowMenuCustomItems.isNotEmpty) {
       for (final customItem
           in betterPlayerControlsConfiguration.overflowMenuCustomItems) {
-        children.add(_buildBottomSheetMenuItem(
-          icon: customItem.icon,
-          label: customItem.title,
-          onTap: () {
-            Navigator.of(context).pop();
-            customItem.onClicked.call();
-          },
-          semanticsIdentifier:
-              'better_player_overflow_menu_custom_item_${customItem.title.toLowerCase().replaceAll(' ', '_')}',
-        ));
+        children.add(
+          _buildBottomSheetMenuItem(
+            icon: customItem.icon,
+            label: customItem.title,
+            onTap: () {
+              Navigator.of(context).pop();
+              customItem.onClicked.call();
+            },
+            semanticsIdentifier:
+                'better_player_overflow_menu_custom_item_${customItem.title.toLowerCase().replaceAll(' ', '_')}',
+          ),
+        );
       }
     }
 
@@ -387,12 +397,16 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     PlayerLogger.debug(
       message: 'Showing bottom sheet with ${children.length} items',
     );
-    !_isCupertinoTheme ? _showMaterialBottomSheet(children) : _showCupertinoModalBottomSheet(children);
+    !_isCupertinoTheme
+        ? _showMaterialBottomSheet(children)
+        : _showCupertinoModalBottomSheet(children);
   }
 
-
   bool get _isCupertinoTheme {
-    return betterPlayerControlsConfiguration.playerTheme == PlayerTheme.cupertino || (betterPlayerControlsConfiguration.playerTheme == null && defaultTargetPlatform == TargetPlatform.iOS);
+    return betterPlayerControlsConfiguration.playerTheme ==
+            PlayerTheme.cupertino ||
+        (betterPlayerControlsConfiguration.playerTheme == null &&
+            defaultTargetPlatform == TargetPlatform.iOS);
   }
 
   Widget _buildBottomSheetMenuItem({
@@ -417,7 +431,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         ),
       );
     }
-    
+
     if (icon != null) {
       return PlayerOverflowMenuItemWidget(
         icon: icon,
@@ -503,5 +517,3 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     });
   }
 }
-
-
