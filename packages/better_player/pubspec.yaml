@@ -15,6 +15,7 @@ dependencies:
   better_player_platform_interface: ^1.2.0
   better_player_android: ^1.2.0
   better_player_ios: ^1.2.0
+  better_player_web: ^1.0.0
   material_ui: ^1.1.0
   cupertino_ui: ^1.0.1
   cupertino_icons: ^1.0.9
@@ -38,3 +39,5 @@ flutter:
         default_package: better_player_android
       ios:
         default_package: better_player_ios
+      web:
+        default_package: better_player_web

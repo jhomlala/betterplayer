@@ -1,0 +1,30 @@
+name: better_player_web
+description: The web implementation of the better_player plugin using Shaka Player.
+version: 1.0.0
+homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_web
+resolution: workspace
+
+environment:
+  sdk: "^3.12.0"
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  better_player_platform_interface: ^1.2.0
+  web: ^1.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  very_good_analysis: ^10.3.0
+
+flutter:
+  plugin:
+    implements: better_player
+    platforms:
+      web:
+        pluginClass: BetterPlayerWeb
+        fileName: src/better_player_web.dart
