@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
+import 'package:http/http.dart' as http;
 
 class PlayerSubtitlesFactory {
   static Future<List<PlayerSubtitle>> parseSubtitles(
@@ -50,18 +51,22 @@ class PlayerSubtitlesFactory {
     PlayerSubtitlesSource source,
   ) async {
     try {
-      final client = HttpClient();
+      final client = http.Client();
       final subtitles = <PlayerSubtitle>[];
       for (final url in source.urls!) {
-        final request = await client.getUrl(Uri.parse(url!));
-        source.headers?.keys.forEach((key) {
-          final value = source.headers![key];
-          if (value != null) {
-            request.headers.add(key, value);
-          }
-        });
-        final response = await request.close();
-        final data = await response.transform(const Utf8Decoder()).join();
+        final nonNullHeaders = <String, String>{};
+        if (source.headers != null) {
+          source.headers!.forEach((key, value) {
+            if (value != null) {
+              nonNullHeaders[key] = value;
+            }
+          });
+        }
+        final response = await client.get(
+          Uri.parse(url!),
+          headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
+        );
+        final data = response.body;
         final cacheList = _parseString(data);
         subtitles.addAll(cacheList);
       }

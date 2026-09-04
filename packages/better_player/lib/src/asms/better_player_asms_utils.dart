@@ -1,18 +1,21 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/dash/better_player_dash_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/logging/player_logger.dart';
+import 'package:http/http.dart' as http;
 
 ///Base helper class for ASMS parsing.
 class BetterPlayerAsmsUtils {
   static const String _hlsExtension = 'm3u8';
   static const String _dashExtension = 'mpd';
 
-  static final HttpClient _httpClient = HttpClient()
-    ..connectionTimeout = const Duration(seconds: 5);
+  static http.Client? _httpClientCache;
+  static http.Client get _httpClient {
+    _httpClientCache ??= http.Client();
+    return _httpClientCache!;
+  }
 
   ///Check if given url is HLS / DASH-type data source.
   static bool isDataSourceAsms(String url) =>
@@ -41,13 +44,28 @@ class BetterPlayerAsmsUtils {
     Map<String, String?>? headers,
   ]) async {
     try {
-      final request = await _httpClient.getUrl(Uri.parse(url));
+      final nonNullHeaders = <String, String>{};
       if (headers != null) {
-        headers.forEach((name, value) => request.headers.add(name, value!));
+        headers.forEach((key, value) {
+          if (value != null) {
+            nonNullHeaders[key] = value;
+          }
+        });
       }
 
-      final response = await request.close();
-      return await response.transform(const Utf8Decoder()).join();
+      final response = await _httpClient.get(
+        Uri.parse(url),
+        headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return response.body;
+      } else {
+        PlayerLogger.error(
+          message: 'GetDataFromUrl failed: HTTP status ${response.statusCode}',
+        );
+        return null;
+      }
     } catch (exception) {
       PlayerLogger.error(
         message: 'GetDataFromUrl failed: $exception',

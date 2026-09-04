@@ -69,24 +69,38 @@ class WebVideoPlayer {
       }).toJS,
     );
 
+    Timer? _bufferingTimer;
+    bool _isBuffering = false;
+
     videoElement.addEventListener(
       'waiting',
       ((web.Event _) {
-        _eventController.add(
-          VideoEvent(
-            eventType: VideoEventType.bufferingStart,
-            key: _currentKey,
-          ),
-        );
+        print('[WebVideoPlayer] Event: WAITING (Buffering started)');
+        _bufferingTimer?.cancel();
+        _bufferingTimer = Timer(const Duration(milliseconds: 200), () {
+          if (_disposed) return;
+          _isBuffering = true;
+          _eventController.add(
+            VideoEvent(
+              eventType: VideoEventType.bufferingStart,
+              key: _currentKey,
+            ),
+          );
+        });
       }).toJS,
     );
 
     videoElement.addEventListener(
       'playing',
       ((web.Event _) {
-        _eventController.add(
-          VideoEvent(eventType: VideoEventType.bufferingEnd, key: _currentKey),
-        );
+        print('[WebVideoPlayer] Event: PLAYING (Buffering ended)');
+        _bufferingTimer?.cancel();
+        if (_isBuffering) {
+          _isBuffering = false;
+          _eventController.add(
+            VideoEvent(eventType: VideoEventType.bufferingEnd, key: _currentKey),
+          );
+        }
         _emitBufferingUpdate();
       }).toJS,
     );
@@ -99,8 +113,23 @@ class WebVideoPlayer {
     );
 
     videoElement.addEventListener(
+      'error',
+      ((web.Event _) {
+        print('[WebVideoPlayer] Event: ERROR on VideoElement');
+      }).toJS,
+    );
+
+    videoElement.addEventListener(
+      'stalled',
+      ((web.Event _) {
+        print('[WebVideoPlayer] Event: STALLED');
+      }).toJS,
+    );
+
+    videoElement.addEventListener(
       'play',
       ((web.Event _) {
+        print('[WebVideoPlayer] Event: PLAY');
         _eventController.add(
           VideoEvent(eventType: VideoEventType.play, key: _currentKey),
         );
@@ -110,24 +139,32 @@ class WebVideoPlayer {
     videoElement.addEventListener(
       'pause',
       ((web.Event _) {
+        print('[WebVideoPlayer] Event: PAUSE');
         _eventController.add(
           VideoEvent(eventType: VideoEventType.pause, key: _currentKey),
         );
       }).toJS,
     );
 
+    DateTime _lastSeekUpdate = DateTime.now();
+
     videoElement.addEventListener(
       'seeked',
       ((web.Event _) {
-        _eventController.add(
-          VideoEvent(
-            eventType: VideoEventType.seek,
-            key: _currentKey,
-            position: Duration(
-              milliseconds: (videoElement.currentTime * 1000).toInt(),
+        print('[WebVideoPlayer] Event: SEEKED');
+        final now = DateTime.now();
+        if (now.difference(_lastSeekUpdate).inMilliseconds > 200) {
+          _lastSeekUpdate = now;
+          _eventController.add(
+            VideoEvent(
+              eventType: VideoEventType.seek,
+              key: _currentKey,
+              position: Duration(
+                milliseconds: (videoElement.currentTime * 1000).toInt(),
+              ),
             ),
-          ),
-        );
+          );
+        }
       }).toJS,
     );
 
@@ -166,7 +203,15 @@ class WebVideoPlayer {
     );
   }
 
+  DateTime _lastBufferingUpdate = DateTime.now();
+
   void _emitBufferingUpdate() {
+    final now = DateTime.now();
+    if (now.difference(_lastBufferingUpdate).inMilliseconds < 500) {
+      return;
+    }
+    _lastBufferingUpdate = now;
+
     final buffered = <DurationRange>[];
     final timeRanges = videoElement.buffered;
     for (var i = 0; i < timeRanges.length; i++) {
@@ -273,6 +318,7 @@ class WebVideoPlayer {
   void setLooping(bool looping) => videoElement.loop = looping;
 
   void seekTo(Duration position) {
+    print('[WebVideoPlayer] Flutter is calling seekTo: $position');
     videoElement.currentTime = position.inMilliseconds / 1000.0;
   }
 
@@ -287,6 +333,15 @@ class WebVideoPlayer {
   }
 
   void setTrackParameters(int? width, int? height, int? bitrate) {
+    print('[WebVideoPlayer] setTrackParameters(width: $width, height: $height, bitrate: $bitrate)');
+    if ((width == null || width == 0) &&
+        (height == null || height == 0) &&
+        (bitrate == null || bitrate == 0)) {
+      print('[WebVideoPlayer] Default track detected, configuring ABR: true');
+      _shakaPlayer.configure({'abr': {'enabled': true}}.jsify()! as JSObject);
+      return;
+    }
+
     final tracks = _shakaPlayer.getVariantTracks().toDart;
 
     JSObject? best;
@@ -309,11 +364,14 @@ class WebVideoPlayer {
     }
 
     if (best != null) {
+      print('[WebVideoPlayer] Forcing variant track and disabling ABR');
+      _shakaPlayer.configure({'abr': {'enabled': false}}.jsify()! as JSObject);
       _shakaPlayer.selectVariantTrack(best, true.toJS);
     }
   }
 
   void setAudioTrack(String? language, int? index) {
+    print('[WebVideoPlayer] setAudioTrack(language: $language, index: $index)');
     if (language != null) {
       _shakaPlayer.selectAudioLanguage(language.toJS);
     }

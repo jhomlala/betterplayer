@@ -26,6 +26,7 @@ dependencies:
   path_provider: ^2.1.6
   collection: ^1.19.1
   xml: ^7.0.1
+  http: ^1.2.0
 
 dev_dependencies:
   very_good_analysis: ^10.3.0
