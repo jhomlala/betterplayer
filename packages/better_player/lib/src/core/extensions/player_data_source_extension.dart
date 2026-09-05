@@ -216,33 +216,51 @@ extension PlayerDataSourceExtension on BetterPlayerController {
           clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
         );
       case DataSourceType.memory:
-        final file = await _createFile(
-          _betterPlayerDataSource!.bytes!,
-          extension: _betterPlayerDataSource!.videoExtension,
-        );
-
-        if (file.existsSync()) {
-          await _engine?.setFileDataSource(
-            file,
-            showNotification: _betterPlayerDataSource
-                ?.notificationConfiguration
-                ?.showNotification,
+        if (kIsWeb) {
+          final bytes = _betterPlayerDataSource!.bytes!;
+          final ext = _betterPlayerDataSource!.videoExtension ?? 'mp4';
+          final base64String = base64Encode(bytes);
+          final dataUri = 'data:video/$ext;base64,$base64String';
+          await _engine?.setNetworkDataSource(
+            dataUri,
+            showNotification: _betterPlayerDataSource?.notificationConfiguration?.showNotification,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
-            imageUrl:
-                _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
-            notificationChannelName: _betterPlayerDataSource
-                ?.notificationConfiguration
-                ?.notificationChannelName,
+            imageUrl: _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+            notificationChannelName: _betterPlayerDataSource?.notificationConfiguration?.notificationChannelName,
             overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-            activityName: _betterPlayerDataSource
-                ?.notificationConfiguration
-                ?.activityName,
+            activityName: _betterPlayerDataSource?.notificationConfiguration?.activityName,
             clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
           );
-          _tempFiles.add(file);
         } else {
-          throw ArgumentError("Couldn't create file from memory.");
+          final file = await _createFile(
+            _betterPlayerDataSource!.bytes!,
+            extension: _betterPlayerDataSource!.videoExtension,
+          );
+
+          if (file.existsSync()) {
+            await _engine?.setFileDataSource(
+              file,
+              showNotification: _betterPlayerDataSource
+                  ?.notificationConfiguration
+                  ?.showNotification,
+              title: _betterPlayerDataSource?.notificationConfiguration?.title,
+              author: _betterPlayerDataSource?.notificationConfiguration?.author,
+              imageUrl:
+                  _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+              notificationChannelName: _betterPlayerDataSource
+                  ?.notificationConfiguration
+                  ?.notificationChannelName,
+              overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
+              activityName: _betterPlayerDataSource
+                  ?.notificationConfiguration
+                  ?.activityName,
+              clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
+            );
+            _tempFiles.add(file);
+          } else {
+            throw ArgumentError("Couldn't create file from memory.");
+          }
         }
 
       default:

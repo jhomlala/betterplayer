@@ -5,6 +5,7 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/controls/better_player_cupertino_controls.dart';
 import 'package:better_player/src/controls/better_player_material_controls.dart';
+import 'package:better_player/src/controls/better_player_web_controls.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
 
@@ -158,17 +159,19 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
           ),
           betterPlayerController.betterPlayerConfiguration.overlay ??
               const SizedBox(),
-          PlayerSubtitlesDrawer(
-            betterPlayerController: betterPlayerController,
-            betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
-            subtitles: betterPlayerController.subtitlesLines,
-            playerVisibilityStream: playerVisibilityStreamController.stream,
-          ),
           if (!placeholderOnTop)
             BetterPlayerPlaceholder(controller: betterPlayerController),
           BetterPlayerControlsSelectionWidget(
             controller: betterPlayerController,
             onControlsVisibilityChanged: onControlsVisibilityChanged,
+          ),
+          IgnorePointer(
+            child: PlayerSubtitlesDrawer(
+              betterPlayerController: betterPlayerController,
+              betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
+              subtitles: betterPlayerController.subtitlesLines,
+              playerVisibilityStream: playerVisibilityStreamController.stream,
+            ),
           ),
         ],
       ),
@@ -214,7 +217,9 @@ class BetterPlayerControlsSelectionWidget extends StatelessWidget {
     if (controlsConfiguration.showControls) {
       var playerTheme = controlsConfiguration.playerTheme;
       if (playerTheme == null) {
-        if (defaultTargetPlatform == TargetPlatform.android) {
+        if (kIsWeb) {
+          playerTheme = PlayerTheme.web;
+        } else if (defaultTargetPlatform == TargetPlatform.android) {
           playerTheme = PlayerTheme.material;
         } else {
           playerTheme = PlayerTheme.cupertino;
@@ -234,6 +239,11 @@ class BetterPlayerControlsSelectionWidget extends StatelessWidget {
         );
       } else if (playerTheme == PlayerTheme.cupertino) {
         return BetterPlayerCupertinoControls(
+          onControlsVisibilityChanged: onControlsVisibilityChanged,
+          controlsConfiguration: controlsConfiguration,
+        );
+      } else if (playerTheme == PlayerTheme.web) {
+        return BetterPlayerWebControls(
           onControlsVisibilityChanged: onControlsVisibilityChanged,
           controlsConfiguration: controlsConfiguration,
         );

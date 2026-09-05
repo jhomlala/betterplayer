@@ -31,7 +31,7 @@ class Constants {
   static String logo = 'logo.svg';
   static String placeholderUrl = 'https://picsum.photos/id/10/1000/1000';
   static String elephantDreamStreamUrl =
-      'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8';
+      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
   static String tokenEncodedHlsUrl =
       'https://media.axprod.net/TestVectors/v7-MultiDRM-SingleKey/Manifest_1080p.mpd';
   static String tokenEncodedHlsToken =

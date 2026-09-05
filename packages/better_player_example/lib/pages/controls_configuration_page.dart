@@ -48,7 +48,7 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Controls configuration')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(

@@ -15,7 +15,7 @@ class _BasicPlayerPageState extends State<BasicPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Basic player')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(
@@ -40,7 +40,7 @@ class _BasicPlayerPageState extends State<BasicPlayerPage> {
           FutureBuilder<String>(
             future: Utils.getFileUrl(Constants.fileTestVideoUrl),
             builder: (context, snapshot) {
-              if (snapshot.data != null) {
+              if (snapshot.data != null && snapshot.data!.isNotEmpty) {
                 return BetterPlayer.file(snapshot.data!);
               } else {
                 return const SizedBox();

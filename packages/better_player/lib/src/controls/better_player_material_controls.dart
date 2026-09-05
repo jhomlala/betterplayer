@@ -13,6 +13,7 @@ import 'package:better_player/src/controls/better_player_video_area_semantics.da
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 // Flutter imports:
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerMaterialControls extends StatefulWidget {
@@ -80,7 +81,11 @@ class _BetterPlayerMaterialControlsState
           }
           return BetterPlayerVideoAreaSemantics(
             semanticsIdentifier: 'better_player_material_video_area',
-            child: GestureDetector(
+            child: MouseRegion(
+              onHover: (_) {
+                if (kIsWeb) cancelAndRestartTimer();
+              },
+              child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
                 if (BetterPlayerMultipleGestureDetector.of(context) != null) {
@@ -166,6 +171,7 @@ class _BetterPlayerMaterialControlsState
                   ],
                 ),
               ),
+            ),
             ),
           );
         },

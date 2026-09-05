@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Web platform support via `better_player_web`.
+
 ## 1.5.1
 - Fixed: Resolved Cupertino action sheet fallback label and destructive styling for the cancel button, restoring proper localization and iOS consistency.
 - Updated: Reworked the Cupertino overflow menu bottom sheet to use the native CupertinoActionSheet widget instead of the Material fallback when the theme is explicitly set to Cupertino.

@@ -57,7 +57,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Placeholder until play')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(

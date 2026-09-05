@@ -30,6 +30,7 @@ import 'package:better_player_example/pages/reusable_video_list/reusable_video_l
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
@@ -45,10 +46,12 @@ class WelcomePage extends StatefulWidget {
 class _WelcomePageState extends State<WelcomePage> {
   @override
   void initState() {
-    _saveAssetSubtitleToFile();
-    _saveAssetVideoToFile();
-    _saveAssetEncryptVideoToFile();
-    _saveLogoToFile();
+    if (!kIsWeb) {
+      _saveAssetSubtitleToFile();
+      _saveAssetVideoToFile();
+      _saveAssetEncryptVideoToFile();
+      _saveLogoToFile();
+    }
     super.initState();
   }
 
@@ -232,6 +235,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save subtitles to file, so we can use it later
   Future _saveAssetSubtitleToFile() async {
+    if (kIsWeb) return;
     final content = await rootBundle.loadString('assets/example_subtitles.srt');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/example_subtitles.srt');
@@ -240,6 +244,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save video to file, so we can use it later
   Future _saveAssetVideoToFile() async {
+    if (kIsWeb) return;
     final content = await rootBundle.load('assets/testvideo.mp4');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/testvideo.mp4');
@@ -248,6 +253,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save video to file, so we can use it later
   Future _saveAssetEncryptVideoToFile() async {
+    if (kIsWeb) return;
     final content = await rootBundle.load('assets/testvideo_encrypt.mp4');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/testvideo_encrypt.mp4');
@@ -256,6 +262,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save logo to file, so we can use it later
   Future _saveLogoToFile() async {
+    if (kIsWeb) return;
     final content = await rootBundle.load('assets/${Constants.logo}');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/${Constants.logo}');

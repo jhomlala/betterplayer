@@ -31,7 +31,7 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Controller controls')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(
