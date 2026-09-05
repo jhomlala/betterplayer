@@ -27,7 +27,7 @@ class _BetterPlayerWebControlsState
   Timer? _hideTimer;
   bool _controlsNotVisible = true;
   VideoPlayerValue? _latestValue;
-  double? _latestVolume;
+  
   bool _isVolumeHovered = false;
   double? _hoverPosition;
   Duration? _hoverDuration;
@@ -170,9 +170,9 @@ class _BetterPlayerWebControlsState
             } else if (event.logicalKey == LogicalKeyboardKey.keyM) {
               final isMuted = _latestValue?.volume == 0;
               if (isMuted) {
-                _betterPlayerController?.setVolume(_latestVolume ?? 1.0);
+                _betterPlayerController?.setVolume(1);
               } else {
-                _latestVolume = _latestValue?.volume;
+                
                 _betterPlayerController?.setVolume(0);
               }
               return KeyEventResult.handled;
@@ -335,9 +335,9 @@ class _BetterPlayerWebControlsState
                   ),
                   onPressed: () {
                     if (isMuted) {
-                      _betterPlayerController?.setVolume(_latestVolume ?? 1.0);
+                      _betterPlayerController?.setVolume(1);
                     } else {
-                      _latestVolume = _latestValue?.volume;
+                      
                       _betterPlayerController?.setVolume(0);
                     }
                   },
@@ -372,7 +372,7 @@ class _BetterPlayerWebControlsState
                             value: _latestValue?.volume ?? 1.0,
                             onChanged: (val) {
                               _betterPlayerController?.setVolume(val);
-                              if (val > 0) _latestVolume = val;
+                              
                             },
                           ),
                         ),
