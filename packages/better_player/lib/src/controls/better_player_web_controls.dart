@@ -590,7 +590,10 @@ class _BetterPlayerWebControlsState
 
   String _getResolutionLabel() {
     final asmsTrack = _betterPlayerController?.betterPlayerAsmsTrack;
-    if (asmsTrack != null && asmsTrack.height != 0) {
+    if (asmsTrack != null) {
+      if ((asmsTrack.width ?? 0) == 0 && (asmsTrack.height ?? 0) == 0) {
+        return 'Auto';
+      }
       return '${asmsTrack.height}p';
     }
     final resolutions =
@@ -626,24 +629,18 @@ class _BetterPlayerWebControlsState
       }
     } else {
       final tracks = _betterPlayerController?.betterPlayerAsmsTracks ?? [];
-      final value = await _showSubMenu<PlayerAsmsTrack>([
-        PopupMenuItem<PlayerAsmsTrack>(
-          value: PlayerAsmsTrack.defaultTrack(),
-          child: _buildCheckRow(
-            'Auto',
-            _betterPlayerController?.betterPlayerAsmsTrack?.width == 0,
-          ),
-        ),
-        ...tracks.map(
-          (t) => PopupMenuItem<PlayerAsmsTrack>(
+      final value = await _showSubMenu<PlayerAsmsTrack>(
+        tracks.map((t) {
+          final isAuto = (t.width ?? 0) == 0 && (t.height ?? 0) == 0;
+          final label = isAuto ? 'Auto' : '${t.height}p';
+          final isSelected =
+              _betterPlayerController?.betterPlayerAsmsTrack == t;
+          return PopupMenuItem<PlayerAsmsTrack>(
             value: t,
-            child: _buildCheckRow(
-              '${t.height}p',
-              _betterPlayerController?.betterPlayerAsmsTrack == t,
-            ),
-          ),
-        ),
-      ]);
+            child: _buildCheckRow(label, isSelected),
+          );
+        }).toList(),
+      );
       if (value != null) {
         _betterPlayerController?.setTrack(value);
       }
