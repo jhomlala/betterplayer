@@ -57,9 +57,7 @@ class PlayerSubtitlesFactory {
         final nonNullHeaders = <String, String>{};
         if (source.headers != null) {
           source.headers!.forEach((key, value) {
-            if (value != null) {
-              nonNullHeaders[key] = value;
-            }
+            nonNullHeaders[key] = value;
           });
         }
         final response = await client.get(
