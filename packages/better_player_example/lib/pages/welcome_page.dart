@@ -235,6 +235,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save subtitles to file, so we can use it later
   Future _saveAssetSubtitleToFile() async {
+    if (kIsWeb) return;
     final content = await rootBundle.loadString('assets/example_subtitles.srt');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/example_subtitles.srt');
@@ -243,6 +244,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save video to file, so we can use it later
   Future _saveAssetVideoToFile() async {
+    if (kIsWeb) return;
     final content = await rootBundle.load('assets/testvideo.mp4');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/testvideo.mp4');
@@ -251,6 +253,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save video to file, so we can use it later
   Future _saveAssetEncryptVideoToFile() async {
+    if (kIsWeb) return;
     final content = await rootBundle.load('assets/testvideo_encrypt.mp4');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/testvideo_encrypt.mp4');
@@ -259,6 +262,7 @@ class _WelcomePageState extends State<WelcomePage> {
 
   ///Save logo to file, so we can use it later
   Future _saveLogoToFile() async {
+    if (kIsWeb) return;
     final content = await rootBundle.load('assets/${Constants.logo}');
     final directory = await getApplicationDocumentsDirectory();
     final file = File('${directory.path}/${Constants.logo}');

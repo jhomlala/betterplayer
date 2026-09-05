@@ -1,6 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -37,10 +38,15 @@ class _PlaylistPageState extends State<PlaylistPage> {
       PlayerDataSource(
         DataSourceType.network,
         Constants.bugBuckBunnyVideoUrl,
-        subtitles: PlayerSubtitlesSource.single(
-          type: PlayerSubtitlesSourceType.file,
-          url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
-        ),
+        subtitles: kIsWeb
+            ? PlayerSubtitlesSource.single(
+                type: PlayerSubtitlesSourceType.memory,
+                content: await rootBundle.loadString('assets/example_subtitles.srt'),
+              )
+            : PlayerSubtitlesSource.single(
+                type: PlayerSubtitlesSourceType.file,
+                url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
+              ),
         placeholder: Image.network(Constants.catImageUrl, fit: BoxFit.cover),
       ),
     );

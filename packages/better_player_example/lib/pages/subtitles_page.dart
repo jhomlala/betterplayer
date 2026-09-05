@@ -1,6 +1,8 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/utils.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 class SubtitlesPage extends StatefulWidget {
@@ -37,15 +39,28 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
   }
 
   Future<void> _setupDataSource() async {
-    final dataSource = PlayerDataSource(
-      DataSourceType.network,
-      Constants.bugBuckBunnyVideoUrl,
-      subtitles: PlayerSubtitlesSource.single(
+    List<PlayerSubtitlesSource>? subtitlesSource;
+    if (kIsWeb) {
+      final content = await rootBundle.loadString('assets/example_subtitles.srt');
+      subtitlesSource = PlayerSubtitlesSource.single(
+        type: PlayerSubtitlesSourceType.memory,
+        content: content,
+        name: 'My subtitles',
+        selectedByDefault: true,
+      );
+    } else {
+      subtitlesSource = PlayerSubtitlesSource.single(
         type: PlayerSubtitlesSourceType.file,
         url: await Utils.getFileUrl(Constants.fileExampleSubtitlesUrl),
         name: 'My subtitles',
         selectedByDefault: true,
-      ),
+      );
+    }
+
+    final dataSource = PlayerDataSource(
+      DataSourceType.network,
+      Constants.bugBuckBunnyVideoUrl,
+      subtitles: subtitlesSource,
     );
     _betterPlayerController.setupDataSource(dataSource);
   }
