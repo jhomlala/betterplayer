@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class CachePage extends StatefulWidget {
@@ -44,10 +45,12 @@ class _CachePageState extends State<CachePage> {
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Text(
-              'Player with cache enabled. To test this feature, first plays '
-              'video, then leave this page, turn internet off and enter '
-              'page again. You should be able to play video without '
-              'internet connection.',
+              kIsWeb
+                  ? 'Cache is not supported on the web platform.'
+                  : 'Player with cache enabled. To test this feature, first plays '
+                      'video, then leave this page, turn internet off and enter '
+                      'page again. You should be able to play video without '
+                      'internet connection.',
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -55,30 +58,33 @@ class _CachePageState extends State<CachePage> {
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerController),
           ),
-          TextButton(
-            child: const Text('Start pre cache'),
-            onPressed: () {
-              _betterPlayerController.preCache(_betterPlayerDataSource);
-            },
-          ),
-          TextButton(
-            child: const Text('Stop pre cache'),
-            onPressed: () {
-              _betterPlayerController.stopPreCache(_betterPlayerDataSource);
-            },
-          ),
+          if (!kIsWeb) ...[
+            TextButton(
+              child: const Text('Start pre cache'),
+              onPressed: () {
+                _betterPlayerController.preCache(_betterPlayerDataSource);
+              },
+            ),
+            TextButton(
+              child: const Text('Stop pre cache'),
+              onPressed: () {
+                _betterPlayerController.stopPreCache(_betterPlayerDataSource);
+              },
+            ),
+          ],
           TextButton(
             child: const Text('Play video'),
             onPressed: () {
               _betterPlayerController.setupDataSource(_betterPlayerDataSource);
             },
           ),
-          TextButton(
-            child: const Text('Clear cache'),
-            onPressed: () {
-              _betterPlayerController.clearCache();
-            },
-          ),
+          if (!kIsWeb)
+            TextButton(
+              child: const Text('Clear cache'),
+              onPressed: () {
+                _betterPlayerController.clearCache();
+              },
+            ),
         ],
       ),
     );
