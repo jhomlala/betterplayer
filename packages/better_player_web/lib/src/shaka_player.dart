@@ -40,7 +40,7 @@ extension ShakaPlayerExtension on ShakaPlayer {
   external JSPromise<JSAny?> destroy();
   external void configure(JSObject config);
   external JSBoolean isLive();
-  external JSNumber getPlayheadTimeAsDate();
+  external JSAny? getPlayheadTimeAsDate();
   external JSArray<JSObject> getVariantTracks();
   external JSArray<JSObject> getAudioLanguagesAndRoles();
   external void selectVariantTrack(JSObject track, [JSBoolean clearBuffer]);

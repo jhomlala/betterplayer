@@ -417,11 +417,8 @@ class _BetterPlayerWebControlsState
               ),
               onPressed: () {
                 final key = _betterPlayerController?.betterPlayerGlobalKey;
-                print('PIP button tapped. betterPlayerGlobalKey: $key');
                 if (key != null) {
                   _betterPlayerController?.enablePictureInPicture(key);
-                } else {
-                  print('Cannot enable PIP because betterPlayerGlobalKey is null.');
                 }
               },
             ),

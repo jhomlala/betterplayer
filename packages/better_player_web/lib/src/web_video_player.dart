@@ -328,8 +328,17 @@ class WebVideoPlayer {
 
   DateTime? getAbsolutePosition() {
     if (!_shakaPlayer.isLive().toDart) return null;
-    final ms = _shakaPlayer.getPlayheadTimeAsDate().toDartDouble.toInt();
-    return DateTime.fromMillisecondsSinceEpoch(ms);
+    final dateObj = _shakaPlayer.getPlayheadTimeAsDate();
+    if (dateObj == null) return null;
+    try {
+      final jsNum =
+          (dateObj as JSObject).callMethod('getTime'.toJS) as JSNumber?;
+      if (jsNum == null) return null;
+      final ms = jsNum.toDartInt;
+      return DateTime.fromMillisecondsSinceEpoch(ms);
+    } catch (_) {
+      return null;
+    }
   }
 
   void setTrackParameters(int? width, int? height, int? bitrate) {
