@@ -58,9 +58,13 @@ class _BetterPlayerState extends State<BetterPlayer>
   ///Subscription for controller events
   StreamSubscription? _controllerEventSubscription;
 
+  late GlobalKey _betterPlayerGlobalKey;
+
   @override
   void initState() {
     super.initState();
+    _betterPlayerGlobalKey = GlobalKey();
+    widget.controller.setBetterPlayerGlobalKey(_betterPlayerGlobalKey);
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -161,6 +165,7 @@ class _BetterPlayerState extends State<BetterPlayer>
   @override
   Widget build(BuildContext context) {
     return BetterPlayerControllerProvider(
+      key: _betterPlayerGlobalKey,
       controller: widget.controller,
       child: _BetterPlayerVideoWithVisibility(controller: widget.controller),
     );

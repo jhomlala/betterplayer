@@ -313,6 +313,9 @@ class _BetterPlayerWebControlsState
       child: Row(
         children: [
           IconButton(
+            tooltip: isPlaying
+                ? _betterPlayerController!.translations.controlsPauseLabel
+                : _betterPlayerController!.translations.controlsPlayLabel,
             icon: Icon(
               isPlaying
                   ? widget.controlsConfiguration.pauseIcon
@@ -327,6 +330,9 @@ class _BetterPlayerWebControlsState
             child: Row(
               children: [
                 IconButton(
+                  tooltip: isMuted
+                      ? _betterPlayerController!.translations.controlsUnmuteLabel
+                      : _betterPlayerController!.translations.controlsMuteLabel,
                   icon: Icon(
                     isMuted
                         ? widget.controlsConfiguration.unMuteIcon
@@ -404,16 +410,26 @@ class _BetterPlayerWebControlsState
           _buildSettingsMenu(),
           if (widget.controlsConfiguration.enablePip)
             IconButton(
+              tooltip: _betterPlayerController!.translations.controlsPipLabel,
               icon: Icon(
                 widget.controlsConfiguration.pipMenuIcon,
                 color: widget.controlsConfiguration.iconsColor,
               ),
-              onPressed: () => _betterPlayerController?.enablePictureInPicture(
-                _betterPlayerController!.betterPlayerGlobalKey!,
-              ),
+              onPressed: () {
+                final key = _betterPlayerController?.betterPlayerGlobalKey;
+                print('PIP button tapped. betterPlayerGlobalKey: $key');
+                if (key != null) {
+                  _betterPlayerController?.enablePictureInPicture(key);
+                } else {
+                  print('Cannot enable PIP because betterPlayerGlobalKey is null.');
+                }
+              },
             ),
           if (widget.controlsConfiguration.enableFullscreen)
             IconButton(
+              tooltip: _betterPlayerController!.isFullScreen
+                  ? _betterPlayerController!.translations.controlsExitFullscreenLabel
+                  : _betterPlayerController!.translations.controlsFullscreenLabel,
               icon: Icon(
                 _betterPlayerController!.isFullScreen
                     ? widget.controlsConfiguration.fullscreenDisableIcon

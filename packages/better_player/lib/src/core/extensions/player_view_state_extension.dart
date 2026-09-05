@@ -232,6 +232,13 @@ extension PlayerViewStateExtension on BetterPlayerController {
           width: renderBox.size.width,
           height: renderBox.size.height,
         );
+      } else if (kIsWeb) {
+        return _engine?.enablePictureInPicture(
+          left: 0,
+          top: 0,
+          width: 0,
+          height: 0,
+        );
       } else {
         PlayerLogger.warning(
           message: 'Unsupported PiP in current platform.',
