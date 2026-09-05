@@ -32,7 +32,7 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
   Future<void> _setupDataSource() async {
     List<int> bytes;
     if (kIsWeb) {
-      final ByteData data = await rootBundle.load('assets/testvideo.mp4');
+      final data = await rootBundle.load('assets/testvideo.mp4');
       bytes = data.buffer.asUint8List();
     } else {
       final filePath = await Utils.getFileUrl(Constants.fileTestVideoUrl);
