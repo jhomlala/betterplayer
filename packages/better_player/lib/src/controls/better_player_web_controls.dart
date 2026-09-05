@@ -496,13 +496,16 @@ class _BetterPlayerWebControlsState
                 Icons.subtitles,
               ),
             ),
-          if (_betterPlayerController!.betterPlayerAsmsTracks.isNotEmpty ==
-              true)
+          if ((_betterPlayerController!.betterPlayerAsmsTracks.isNotEmpty ==
+                  true) ||
+              (_betterPlayerController!.betterPlayerDataSource?.resolutions
+                      ?.isNotEmpty ==
+                  true))
             PopupMenuItem(
               value: 'quality',
               child: _buildMenuRow(
                 'Resolution',
-                '${_betterPlayerController!.betterPlayerAsmsTrack?.height ?? 'Auto'}',
+                _getResolutionLabel(),
                 Icons.tune,
               ),
             ),
@@ -585,27 +588,66 @@ class _BetterPlayerWebControlsState
     if (value != null) _betterPlayerController?.setSpeed(value);
   }
 
+  String _getResolutionLabel() {
+    final asmsTrack = _betterPlayerController?.betterPlayerAsmsTrack;
+    if (asmsTrack != null && asmsTrack.height != 0) {
+      return '${asmsTrack.height}p';
+    }
+    final resolutions =
+        _betterPlayerController?.betterPlayerDataSource?.resolutions;
+    if (resolutions != null && resolutions.isNotEmpty) {
+      final currentUrl = _betterPlayerController?.betterPlayerDataSource?.url;
+      for (final entry in resolutions.entries) {
+        if (entry.value == currentUrl) {
+          return entry.key;
+        }
+      }
+      return resolutions.keys.first;
+    }
+    return 'Auto';
+  }
+
   Future<void> _showQualityMenu() async {
-    final tracks = _betterPlayerController?.betterPlayerAsmsTracks ?? [];
-    final value = await _showSubMenu<PlayerAsmsTrack>([
-      PopupMenuItem<PlayerAsmsTrack>(
-        value: PlayerAsmsTrack.defaultTrack(),
-        child: _buildCheckRow(
-          'Auto',
-          _betterPlayerController?.betterPlayerAsmsTrack?.width == 0,
-        ),
-      ),
-      ...tracks.map(
-        (t) => PopupMenuItem<PlayerAsmsTrack>(
-          value: t,
+    final resolutions =
+        _betterPlayerController?.betterPlayerDataSource?.resolutions;
+    if (resolutions != null && resolutions.isNotEmpty) {
+      final currentUrl = _betterPlayerController?.betterPlayerDataSource?.url;
+      final value = await _showSubMenu<String>(
+        resolutions.entries.map((entry) {
+          final isSelected = entry.value == currentUrl;
+          return PopupMenuItem<String>(
+            value: entry.value,
+            child: _buildCheckRow(entry.key, isSelected),
+          );
+        }).toList(),
+      );
+      if (value != null) {
+        _betterPlayerController?.setResolution(value);
+      }
+    } else {
+      final tracks = _betterPlayerController?.betterPlayerAsmsTracks ?? [];
+      final value = await _showSubMenu<PlayerAsmsTrack>([
+        PopupMenuItem<PlayerAsmsTrack>(
+          value: PlayerAsmsTrack.defaultTrack(),
           child: _buildCheckRow(
-            '${t.height}p',
-            _betterPlayerController?.betterPlayerAsmsTrack == t,
+            'Auto',
+            _betterPlayerController?.betterPlayerAsmsTrack?.width == 0,
           ),
         ),
-      ),
-    ]);
-    if (value != null) _betterPlayerController?.setTrack(value);
+        ...tracks.map(
+          (t) => PopupMenuItem<PlayerAsmsTrack>(
+            value: t,
+            child: _buildCheckRow(
+              '${t.height}p',
+              _betterPlayerController?.betterPlayerAsmsTrack == t,
+            ),
+          ),
+        ),
+      ]);
+      if (value != null) {
+        _betterPlayerController?.setTrack(value);
+      }
+    }
   }
 
   Future<void> _showAudioMenu() async {
