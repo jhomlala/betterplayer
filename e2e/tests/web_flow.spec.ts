@@ -24,6 +24,7 @@ test('web flow', async ({ page }) => {
   // Playback speed
   const settings = page.locator('[aria-label="better_player_material_controls_more_button"]');
   await settings.click({ force: true });
+  await page.waitForTimeout(1000);
   const speedMenu = page.locator('[aria-label^="better_player_overflow_menu_playback_speed"]');
   await expect(speedMenu).toBeVisible();
   await speedMenu.click({ force: true });
@@ -34,6 +35,7 @@ test('web flow', async ({ page }) => {
 
   // Quality (Resolution)
   await settings.click({ force: true });
+  await page.waitForTimeout(1000);
   const qualityMenu = page.locator('[aria-label^="better_player_overflow_menu_quality"]');
   await expect(qualityMenu).toBeVisible();
   await qualityMenu.click({ force: true });

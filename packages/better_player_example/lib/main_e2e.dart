@@ -163,7 +163,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   ),
                 ),
               ),
-            const SizedBox(height: 50),
+            const SizedBox(height: 100),
             Wrap(
               spacing: 8,
               children: [
