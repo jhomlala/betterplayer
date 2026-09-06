@@ -6,7 +6,8 @@ test('web ffi flow', async ({ page }) => {
   const ffiButton = page.locator('[aria-label^="better_player_e2e_navigate_ffi"]');
   await ffiButton.scrollIntoViewIfNeeded();
   await ffiButton.click({ force: true });
-  
+  await page.waitForTimeout(1000);
+
   const initializedStatus = page.locator('[aria-label^="ffi_test_initialized_status"]');
   await expect(initializedStatus).toHaveText('initialized=true', { timeout: 60000 });
 

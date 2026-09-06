@@ -25,7 +25,7 @@ test('web hls flow', async ({ page }) => {
   await expect(speedMenu).toBeVisible();
   await speedMenu.click({ force: true });
   
-  const speed2x = page.locator('[aria-label^="better_player_overflow_menu_speed_2.0"]');
+  const speed2x = page.locator('[aria-label^="better_player_overflow_menu_speed_2"]');
   await expect(speed2x).toBeVisible();
   await speed2x.click({ force: true });
 
