@@ -6,8 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:material_ui/material_ui.dart' as m3;
 
+import 'package:flutter/semantics.dart';
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SemanticsBinding.instance.ensureSemantics();
   runApp(const BetterPlayerE2EApp());
 }
 
