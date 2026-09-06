@@ -3,6 +3,8 @@ import 'dart:math';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/better_player_material_progress_bar.dart';
+import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
+import 'package:better_player/src/controls/better_player_web_error_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -27,7 +29,8 @@ class _BetterPlayerWebControlsState
   Timer? _hideTimer;
   bool _controlsNotVisible = true;
   VideoPlayerValue? _latestValue;
-  
+  String? _errorDescription;
+
   bool _isVolumeHovered = false;
   double? _hoverPosition;
   Duration? _hoverDuration;
@@ -55,6 +58,7 @@ class _BetterPlayerWebControlsState
 
   void _initialize() {
     _betterPlayerController!.addEventsListener(_onPlayerEvent);
+    _betterPlayerController!.addVideoListener(_updateState);
     _latestValue = _betterPlayerController!.videoPlayerValue;
     _controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
     widget.onControlsVisibilityChanged(!_controlsNotVisible);
@@ -65,6 +69,7 @@ class _BetterPlayerWebControlsState
 
   void _dispose() {
     _betterPlayerController?.removeEventsListener(_onPlayerEvent);
+    _betterPlayerController?.removeVideoListener(_updateState);
     _hideTimer?.cancel();
   }
 
@@ -76,13 +81,30 @@ class _BetterPlayerWebControlsState
 
   void _onPlayerEvent(PlayerEvent event) {
     if (mounted) {
-      setState(() {
-        _latestValue = _betterPlayerController?.videoPlayerValue;
-      });
+      if (event.betterPlayerEventType == PlayerEventType.exception) {
+        setState(() {
+          _errorDescription = event.parameters?['exception'] as String?;
+        });
+      } else if (event.betterPlayerEventType ==
+          PlayerEventType.setupDataSource) {
+        setState(() {
+          _errorDescription = null;
+        });
+      }
+
+      _updateState();
       if (event.betterPlayerEventType == PlayerEventType.play ||
           event.betterPlayerEventType == PlayerEventType.pause) {
         cancelAndRestartTimer();
       }
+    }
+  }
+
+  void _updateState() {
+    if (mounted) {
+      setState(() {
+        _latestValue = _betterPlayerController?.videoPlayerValue;
+      });
     }
   }
 
@@ -125,114 +147,136 @@ class _BetterPlayerWebControlsState
 
   @override
   Widget build(BuildContext context) {
-    if (_betterPlayerController == null) return const SizedBox();
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: Builder(
+        builder: (BuildContext context) {
+          if (_betterPlayerController == null) return const SizedBox();
 
-    return MouseRegion(
-        onHover: (_) => cancelAndRestartTimer(),
-        onExit: (_) {
-        if (!_betterPlayerController!.controlsAlwaysVisible && !_isMenuOpen) {
-          _hideTimer?.cancel();
-          setState(() {
-            _controlsNotVisible = true;
-            widget.onControlsVisibilityChanged(false);
-          });
-        }
-      },
-      child: Focus(
-        autofocus: true,
-        onKeyEvent: (node, event) {
-          if (event is KeyDownEvent) {
-            if (event.logicalKey == LogicalKeyboardKey.space ||
-                event.logicalKey == LogicalKeyboardKey.keyK) {
-              _onPlayPause();
-              return KeyEventResult.handled;
-            } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-              final position = _latestValue?.position;
-              if (position != null) {
-                _betterPlayerController?.seekTo(
-                  position - const Duration(seconds: 10),
-                );
-              }
-              return KeyEventResult.handled;
-            } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-              final position = _latestValue?.position;
-              if (position != null) {
-                _betterPlayerController?.seekTo(
-                  position + const Duration(seconds: 10),
-                );
-              }
-              return KeyEventResult.handled;
-            } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-              final volume = (_latestValue?.volume ?? 1.0) + 0.1;
-              _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
-              return KeyEventResult.handled;
-            } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-              final volume = (_latestValue?.volume ?? 1.0) - 0.1;
-              _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
-              return KeyEventResult.handled;
-            } else if (event.logicalKey == LogicalKeyboardKey.keyM) {
-              final isMuted = _latestValue?.volume == 0;
-              if (isMuted) {
-                _betterPlayerController?.setVolume(1);
-              } else {
-                
-                _betterPlayerController?.setVolume(0);
-              }
-              return KeyEventResult.handled;
-            } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
-              _betterPlayerController?.toggleFullScreen();
-              return KeyEventResult.handled;
-            }
+          if (_latestValue?.hasError == true || _errorDescription != null) {
+            return BetterPlayerVideoAreaSemantics(
+              semanticsIdentifier: 'better_player_web_video_area',
+              child: ColoredBox(
+                color: Colors.black,
+                child: BetterPlayerWebErrorWidget(
+                  controlsConfiguration: widget.controlsConfiguration,
+                  errorDescription: _errorDescription,
+                ),
+              ),
+            );
           }
-          return KeyEventResult.ignored;
-        },
-        child: GestureDetector(
-          onTap: _onPlayPause,
-          onDoubleTap: () => _betterPlayerController?.toggleFullScreen(),
-          behavior: HitTestBehavior.opaque,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // Controls overlay
-              AnimatedOpacity(
-                opacity: _controlsNotVisible ? 0.0 : 1.0,
-                duration: const Duration(milliseconds: 250),
-                child: IgnorePointer(
-                  ignoring: _controlsNotVisible,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      // Gradient background for bottom controls
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [Colors.transparent, Colors.black87],
-                          ),
-                        ),
+
+          return MouseRegion(
+            onHover: (_) => cancelAndRestartTimer(),
+            onExit: (_) {
+              if (!_betterPlayerController!.controlsAlwaysVisible &&
+                  !_isMenuOpen) {
+                _hideTimer?.cancel();
+                setState(() {
+                  _controlsNotVisible = true;
+                  widget.onControlsVisibilityChanged(false);
+                });
+              }
+            },
+            child: Focus(
+              autofocus: true,
+              onKeyEvent: (node, event) {
+                if (event is KeyDownEvent) {
+                  if (event.logicalKey == LogicalKeyboardKey.space ||
+                      event.logicalKey == LogicalKeyboardKey.keyK) {
+                    _onPlayPause();
+                    return KeyEventResult.handled;
+                  } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
+                    final position = _latestValue?.position;
+                    if (position != null) {
+                      _betterPlayerController?.seekTo(
+                        position - const Duration(seconds: 10),
+                      );
+                    }
+                    return KeyEventResult.handled;
+                  } else if (event.logicalKey ==
+                      LogicalKeyboardKey.arrowRight) {
+                    final position = _latestValue?.position;
+                    if (position != null) {
+                      _betterPlayerController?.seekTo(
+                        position + const Duration(seconds: 10),
+                      );
+                    }
+                    return KeyEventResult.handled;
+                  } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+                    final volume = (_latestValue?.volume ?? 1.0) + 0.1;
+                    _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
+                    return KeyEventResult.handled;
+                  } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+                    final volume = (_latestValue?.volume ?? 1.0) - 0.1;
+                    _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
+                    return KeyEventResult.handled;
+                  } else if (event.logicalKey == LogicalKeyboardKey.keyM) {
+                    final isMuted = _latestValue?.volume == 0;
+                    if (isMuted) {
+                      _betterPlayerController?.setVolume(1);
+                    } else {
+                      _betterPlayerController?.setVolume(0);
+                    }
+                    return KeyEventResult.handled;
+                  } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
+                    _betterPlayerController?.toggleFullScreen();
+                    return KeyEventResult.handled;
+                  }
+                }
+                return KeyEventResult.ignored;
+              },
+              child: GestureDetector(
+                onTap: _onPlayPause,
+                onDoubleTap: () => _betterPlayerController?.toggleFullScreen(),
+                behavior: HitTestBehavior.opaque,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    // Controls overlay
+                    AnimatedOpacity(
+                      opacity: _controlsNotVisible ? 0.0 : 1.0,
+                      duration: const Duration(milliseconds: 250),
+                      child: IgnorePointer(
+                        ignoring: _controlsNotVisible,
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            if (!_betterPlayerController!.isLiveStream()) ...[
-                              _buildProgressBar(),
-                              const SizedBox(height: 8),
-                            ],
-                            _buildBottomBar(),
+                            // Gradient background for bottom controls
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: const BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [Colors.transparent, Colors.black87],
+                                ),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (!_betterPlayerController!
+                                      .isLiveStream()) ...[
+                                    _buildProgressBar(),
+                                    const SizedBox(height: 8),
+                                  ],
+                                  _buildBottomBar(),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -264,25 +308,27 @@ class _BetterPlayerWebControlsState
             clipBehavior: Clip.none,
             children: [
               Semantics(
-                label: 'better_player_material_progress_bar', identifier: 'better_player_material_progress_bar',
+                label: 'better_player_material_progress_bar',
+                identifier: 'better_player_material_progress_bar',
                 child: SizedBox(
                   height: 12,
                   child: BetterPlayerMaterialVideoProgressBar(
                     _betterPlayerController,
                     onDragStart: () => _hideTimer?.cancel(),
-                  onDragEnd: cancelAndRestartTimer,
-                  colors: PlayerProgressColors(
-                    playedColor:
-                        widget.controlsConfiguration.progressBarPlayedColor,
-                    handleColor:
-                        widget.controlsConfiguration.progressBarHandleColor,
-                    bufferedColor:
-                        widget.controlsConfiguration.progressBarBufferedColor,
-                    backgroundColor:
-                        widget.controlsConfiguration.progressBarBackgroundColor,
+                    onDragEnd: cancelAndRestartTimer,
+                    colors: PlayerProgressColors(
+                      playedColor:
+                          widget.controlsConfiguration.progressBarPlayedColor,
+                      handleColor:
+                          widget.controlsConfiguration.progressBarHandleColor,
+                      bufferedColor:
+                          widget.controlsConfiguration.progressBarBufferedColor,
+                      backgroundColor: widget
+                          .controlsConfiguration
+                          .progressBarBackgroundColor,
+                    ),
                   ),
                 ),
-              ),
               ),
               if (_hoverPosition != null && _hoverDuration != null)
                 Positioned(
@@ -319,7 +365,8 @@ class _BetterPlayerWebControlsState
       child: Row(
         children: [
           Semantics(
-            label: 'better_player_material_controls_play_pause_button', identifier: 'better_player_material_controls_play_pause_button',
+            label: 'better_player_material_controls_play_pause_button',
+            identifier: 'better_player_material_controls_play_pause_button',
             child: IconButton(
               tooltip: isPlaying
                   ? _betterPlayerController!.translations.controlsPauseLabel
@@ -339,11 +386,16 @@ class _BetterPlayerWebControlsState
             child: Row(
               children: [
                 Semantics(
-                  label: 'better_player_material_controls_mute_button', identifier: 'better_player_material_controls_mute_button',
+                  label: 'better_player_material_controls_mute_button',
+                  identifier: 'better_player_material_controls_mute_button',
                   child: IconButton(
                     tooltip: isMuted
-                        ? _betterPlayerController!.translations.controlsUnmuteLabel
-                        : _betterPlayerController!.translations.controlsMuteLabel,
+                        ? _betterPlayerController!
+                              .translations
+                              .controlsUnmuteLabel
+                        : _betterPlayerController!
+                              .translations
+                              .controlsMuteLabel,
                     icon: Icon(
                       isMuted
                           ? widget.controlsConfiguration.unMuteIcon
@@ -354,7 +406,6 @@ class _BetterPlayerWebControlsState
                       if (isMuted) {
                         _betterPlayerController?.setVolume(1);
                       } else {
-                        
                         _betterPlayerController?.setVolume(0);
                       }
                     },
@@ -390,7 +441,6 @@ class _BetterPlayerWebControlsState
                             value: _latestValue?.volume ?? 1.0,
                             onChanged: (val) {
                               _betterPlayerController?.setVolume(val);
-                              
                             },
                           ),
                         ),
@@ -422,7 +472,8 @@ class _BetterPlayerWebControlsState
           _buildSettingsMenu(),
           if (widget.controlsConfiguration.enablePip)
             Semantics(
-              label: 'better_player_material_controls_pip_button', identifier: 'better_player_material_controls_pip_button',
+              label: 'better_player_material_controls_pip_button',
+              identifier: 'better_player_material_controls_pip_button',
               child: IconButton(
                 tooltip: _betterPlayerController!.translations.controlsPipLabel,
                 icon: Icon(
@@ -439,11 +490,16 @@ class _BetterPlayerWebControlsState
             ),
           if (widget.controlsConfiguration.enableFullscreen)
             Semantics(
-              label: 'better_player_material_controls_expand_button', identifier: 'better_player_material_controls_expand_button',
+              label: 'better_player_material_controls_expand_button',
+              identifier: 'better_player_material_controls_expand_button',
               child: IconButton(
                 tooltip: _betterPlayerController!.isFullScreen
-                    ? _betterPlayerController!.translations.controlsExitFullscreenLabel
-                    : _betterPlayerController!.translations.controlsFullscreenLabel,
+                    ? _betterPlayerController!
+                          .translations
+                          .controlsExitFullscreenLabel
+                    : _betterPlayerController!
+                          .translations
+                          .controlsFullscreenLabel,
                 icon: Icon(
                   _betterPlayerController!.isFullScreen
                       ? widget.controlsConfiguration.fullscreenDisableIcon
@@ -471,7 +527,8 @@ class _BetterPlayerWebControlsState
 
   Widget _buildSettingsMenu() {
     return Semantics(
-      label: 'better_player_material_controls_more_button', identifier: 'better_player_material_controls_more_button',
+      label: 'better_player_material_controls_more_button',
+      identifier: 'better_player_material_controls_more_button',
       child: PopupMenuButton<String>(
         icon: Icon(
           widget.controlsConfiguration.overflowMenuIcon,
@@ -507,10 +564,13 @@ class _BetterPlayerWebControlsState
               PopupMenuItem(
                 value: 'subtitles',
                 child: Semantics(
-                  label: 'better_player_overflow_menu_subtitles', identifier: 'better_player_overflow_menu_subtitles',
+                  label: 'better_player_overflow_menu_subtitles',
+                  identifier: 'better_player_overflow_menu_subtitles',
                   child: _buildMenuRow(
                     'Subtitles',
-                    _betterPlayerController!.betterPlayerSubtitlesSource?.name ??
+                    _betterPlayerController!
+                            .betterPlayerSubtitlesSource
+                            ?.name ??
                         'Off',
                     Icons.subtitles,
                   ),
@@ -520,7 +580,8 @@ class _BetterPlayerWebControlsState
               PopupMenuItem(
                 value: 'quality',
                 child: Semantics(
-                  label: 'better_player_overflow_menu_quality', identifier: 'better_player_overflow_menu_quality',
+                  label: 'better_player_overflow_menu_quality',
+                  identifier: 'better_player_overflow_menu_quality',
                   child: _buildMenuRow(
                     'Resolution',
                     _getResolutionLabel(),
@@ -532,28 +593,32 @@ class _BetterPlayerWebControlsState
               PopupMenuItem(
                 value: 'audio',
                 child: Semantics(
-                  label: 'better_player_overflow_menu_audio_tracks', identifier: 'better_player_overflow_menu_audio_tracks',
+                  label: 'better_player_overflow_menu_audio_tracks',
+                  identifier: 'better_player_overflow_menu_audio_tracks',
                   child: _buildMenuRow(
                     'Language',
-                    _betterPlayerController!.betterPlayerAsmsAudioTrack?.label ??
+                    _betterPlayerController!
+                            .betterPlayerAsmsAudioTrack
+                            ?.label ??
                         'Default',
                     Icons.language,
                   ),
                 ),
               ),
-              if (widget.controlsConfiguration.enablePlaybackSpeed)
-                PopupMenuItem(
-                  value: 'speed',
-                  child: Semantics(
-                    label: 'better_player_overflow_menu_playback_speed', identifier: 'better_player_overflow_menu_playback_speed',
-                    child: _buildMenuRow(
-                      'Playback speed',
-                      '${_latestValue?.speed ?? 1.0}x',
-                      Icons.slow_motion_video,
-                    ),
+            if (widget.controlsConfiguration.enablePlaybackSpeed)
+              PopupMenuItem(
+                value: 'speed',
+                child: Semantics(
+                  label: 'better_player_overflow_menu_playback_speed',
+                  identifier: 'better_player_overflow_menu_playback_speed',
+                  child: _buildMenuRow(
+                    'Playback speed',
+                    '${_latestValue?.speed ?? 1.0}x',
+                    Icons.slow_motion_video,
                   ),
                 ),
-            ];
+              ),
+          ];
         },
       ),
     );
@@ -607,7 +672,8 @@ class _BetterPlayerWebControlsState
             (s) => PopupMenuItem<double>(
               value: s,
               child: Semantics(
-                label: 'better_player_overflow_menu_speed_$s', identifier: 'better_player_overflow_menu_speed_$s',
+                label: 'better_player_overflow_menu_speed_$s',
+                identifier: 'better_player_overflow_menu_speed_$s',
                 child: _buildCheckRow('${s}x', _latestValue?.speed == s),
               ),
             ),
@@ -650,7 +716,8 @@ class _BetterPlayerWebControlsState
           return PopupMenuItem<String>(
             value: entry.value,
             child: Semantics(
-              label: 'better_player_overflow_menu_quality_${entry.key}', identifier: 'better_player_overflow_menu_quality_${entry.key}',
+              label: 'better_player_overflow_menu_quality_${entry.key}',
+              identifier: 'better_player_overflow_menu_quality_${entry.key}',
               child: _buildCheckRow(entry.key, isSelected),
             ),
           );
@@ -665,16 +732,16 @@ class _BetterPlayerWebControlsState
       final items = tracks.map((t) {
         final isAuto = (t.width ?? 0) == 0 && (t.height ?? 0) == 0;
         final label = isAuto ? 'Auto' : '${t.height}p';
-        final isSelected =
-            _betterPlayerController?.betterPlayerAsmsTrack == t;
-        final identifier = isAuto 
+        final isSelected = _betterPlayerController?.betterPlayerAsmsTrack == t;
+        final identifier = isAuto
             ? 'better_player_overflow_menu_quality_auto'
             : 'better_player_overflow_menu_quality_$index';
         if (!isAuto) index++;
         return PopupMenuItem<PlayerAsmsTrack>(
           value: t,
           child: Semantics(
-            label: identifier, identifier: identifier,
+            label: identifier,
+            identifier: identifier,
             child: _buildCheckRow(label, isSelected),
           ),
         );
@@ -685,7 +752,8 @@ class _BetterPlayerWebControlsState
           PopupMenuItem<PlayerAsmsTrack>(
             value: PlayerAsmsTrack.defaultTrack(),
             child: Semantics(
-              label: 'better_player_overflow_menu_quality_auto', identifier: 'better_player_overflow_menu_quality_auto',
+              label: 'better_player_overflow_menu_quality_auto',
+              identifier: 'better_player_overflow_menu_quality_auto',
               child: _buildCheckRow('Auto', true),
             ),
           ),
@@ -705,7 +773,10 @@ class _BetterPlayerWebControlsState
       return PopupMenuItem<PlayerAsmsAudioTrack>(
         value: t,
         child: Semantics(
-          label: 'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}', identifier: 'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}',
+          label:
+              'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}',
+          identifier:
+              'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}',
           child: _buildCheckRow(
             t.label ?? 'Track ${t.id}',
             _betterPlayerController?.betterPlayerAsmsAudioTrack == t,
@@ -722,7 +793,8 @@ class _BetterPlayerWebControlsState
             label: 'Default',
           ),
           child: Semantics(
-            label: 'better_player_overflow_menu_audio_tracks_default', identifier: 'better_player_overflow_menu_audio_tracks_default',
+            label: 'better_player_overflow_menu_audio_tracks_default',
+            identifier: 'better_player_overflow_menu_audio_tracks_default',
             child: _buildCheckRow('Default', true),
           ),
         ),
@@ -739,7 +811,10 @@ class _BetterPlayerWebControlsState
       return PopupMenuItem<PlayerSubtitlesSource>(
         value: s,
         child: Semantics(
-          label: 'better_player_overflow_menu_subtitles_${s.type?.name ?? 'none'}', identifier: 'better_player_overflow_menu_subtitles_${s.type?.name ?? 'none'}',
+          label:
+              'better_player_overflow_menu_subtitles_${s.type?.name ?? 'none'}',
+          identifier:
+              'better_player_overflow_menu_subtitles_${s.type?.name ?? 'none'}',
           child: _buildCheckRow(
             s.name ?? 'Unknown',
             _betterPlayerController?.betterPlayerSubtitlesSource == s,
@@ -753,7 +828,8 @@ class _BetterPlayerWebControlsState
         PopupMenuItem<PlayerSubtitlesSource>(
           value: PlayerSubtitlesSource(type: PlayerSubtitlesSourceType.none),
           child: Semantics(
-            label: 'better_player_overflow_menu_subtitles_none', identifier: 'better_player_overflow_menu_subtitles_none',
+            label: 'better_player_overflow_menu_subtitles_none',
+            identifier: 'better_player_overflow_menu_subtitles_none',
             child: _buildCheckRow('None', true),
           ),
         ),
