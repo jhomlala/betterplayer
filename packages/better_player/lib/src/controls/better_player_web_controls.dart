@@ -233,6 +233,7 @@ class _BetterPlayerWebControlsState
           ),
         ),
       ),
+      ),
     );
   }
 
@@ -281,6 +282,7 @@ class _BetterPlayerWebControlsState
                         widget.controlsConfiguration.progressBarBackgroundColor,
                   ),
                 ),
+              ),
               ),
               if (_hoverPosition != null && _hoverDuration != null)
                 Positioned(
