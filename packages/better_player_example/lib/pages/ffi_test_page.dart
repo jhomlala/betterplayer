@@ -307,8 +307,12 @@ class _FFITestPageState extends State<FFITestPage> {
             child: Semantics(
               identifier: 'ffi_test_button_$name',
               label: 'ffi_test_button_$name',
+              container: true,
               child: ElevatedButton(
-                onPressed: () => _runTest(name, action),
+                onPressed: () {
+                  debugPrint('FFI TEST PAGE: Button clicked: $name');
+                  _runTest(name, action);
+                },
                 child: Text('Test $name'),
               ),
             ),

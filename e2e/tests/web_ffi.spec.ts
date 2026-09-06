@@ -12,6 +12,7 @@ test('web ffi flow', async ({ page }) => {
   const initializedStatus = page.locator('[aria-label*="ffi_test_initialized_status"], flt-semantics:has-text("initialized=true")').first();
   await expect(initializedStatus).toBeVisible({ timeout: 60000 });
   await expect(initializedStatus).toContainText('initialized=true', { timeout: 10000 });
+  await page.waitForTimeout(5000); // Wait extra time for engine to be ready for commands
 
   const methods = [
     'play',
@@ -32,11 +33,14 @@ test('web ffi flow', async ({ page }) => {
   ];
 
   for (const method of methods) {
-    const btn = page.locator(`[aria-label*="ffi_test_button_${method}"], button:has-text("Test ${method}")`).first();
+    console.log(`Testing FFI method: ${method}`);
+    const btn = page.getByRole('button', { name: `Test ${method}` });
     await btn.scrollIntoViewIfNeeded();
     await btn.click({ force: true });
     
-    const status = page.locator(`[aria-label*="ffi_test_status_${method}"], flt-semantics:has-text("success=true")`).first();
-    await expect(status).toContainText('success=true', { timeout: 10000 });
+    // Wait for the status to change from "not started"
+    const status = page.locator(`[aria-label*="ffi_test_status_${method}"]`);
+    await expect(status).not.toContainText('not started', { timeout: 15000 });
+    await expect(status).toContainText('success=true', { timeout: 5000 });
   }
 });

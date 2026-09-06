@@ -9,7 +9,7 @@ test('web hls flow', async ({ page }) => {
 
   const hlsButton = page.locator('[aria-label^="better_player_e2e_setup_hls"]');
   await hlsButton.click({ force: true });
-  await page.waitForTimeout(3000); // Wait for HLS to initialize
+  await page.waitForTimeout(5000); // Wait for HLS to initialize and Shaka to parse manifest
 
   // Play/pause
   await playPause.click({ force: true });
@@ -34,18 +34,22 @@ test('web hls flow', async ({ page }) => {
   await speed2x.click({ force: true });
 
   // Quality (Resolution)
-  await settings.click({ force: true });
-  const qualityMenu = page.locator('[aria-label^="better_player_overflow_menu_quality"]');
-  await expect(qualityMenu).toBeVisible();
-  await qualityMenu.click({ force: true });
+  // We might need to wait for Shaka to parse variants and populate the menu
+  await expect(async () => {
+    // Close any open menu first by clicking outside
+    await page.mouse.click(10, 10);
+    await settings.click({ force: true });
+    const qualityMenu = page.locator('[aria-label^="better_player_overflow_menu_quality"]');
+    await expect(qualityMenu).toBeVisible();
+    await qualityMenu.click({ force: true });
+
+    const quality1 = page.locator('[aria-label^="better_player_overflow_menu_quality_1"]');
+    await expect(quality1).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 30000, intervals: [3000] });
   
   const qualityAuto = page.locator('[aria-label^="better_player_overflow_menu_quality_auto"]');
   await expect(qualityAuto).toBeVisible();
-  
-  // Verify at least one other quality exists
-  const quality1 = page.locator('[aria-label^="better_player_overflow_menu_quality_1"]');
-  await expect(quality1).toBeVisible();
-  
+
   await qualityAuto.click({ force: true });
 
   // Seek
