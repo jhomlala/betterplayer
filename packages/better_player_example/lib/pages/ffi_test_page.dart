@@ -125,8 +125,8 @@ class _FFITestPageState extends State<FFITestPage> {
               Padding(
                 padding: const EdgeInsets.all(8),
                 child: Semantics(
-                  identifier: 'ffi_test_initialized_status_true',
-                  label: 'ffi_test_initialized_status_true',
+                  identifier: 'ffi_test_initialized_status',
+                  label: 'ffi_test_initialized_status',
                   container: true,
                   child: const Text(
                     'initialized=true',
@@ -319,8 +319,8 @@ class _FFITestPageState extends State<FFITestPage> {
           ),
           const SizedBox(width: 16),
           Semantics(
-            identifier: 'ffi_test_status_${name}_$status',
-            label: 'ffi_test_status_${name}_$status',
+            identifier: 'ffi_test_status_$name',
+            label: 'ffi_test_status_$name',
             container: true,
             child: Text(
               status,

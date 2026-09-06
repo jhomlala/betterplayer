@@ -15,9 +15,10 @@ test('web ffi flow', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'FFI Method Test' })).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 30000, intervals: [2000] });
 
-  // Wait for the player to initialize (Flutter Web Text nodes → flt-semantics-identifier)
-  const initializedStatus = page.locator('[flt-semantics-identifier="ffi_test_initialized_status_true"]').first();
+  // Flutter Web Text nodes get flt-semantics-identifier (not aria-label)
+  const initializedStatus = page.locator('[flt-semantics-identifier="ffi_test_initialized_status"]').first();
   await expect(initializedStatus).toBeVisible({ timeout: 60000 });
+  await expect(initializedStatus).toContainText('initialized=true', { timeout: 5000 });
 
   // Scroll down so all buttons are in viewport and the engine has time to settle
   await page.mouse.wheel(0, 500);
@@ -56,7 +57,8 @@ test('web ffi flow', async ({ page }) => {
     }
 
     // Flutter Web Text nodes use flt-semantics-identifier, not aria-label
-    const status = page.locator(`[flt-semantics-identifier="ffi_test_status_${method}_success=true"]`).first();
-    await expect(status).toBeVisible({ timeout: 20000 });
+    // Check inner text just like Maestro does (id + text separately)
+    const status = page.locator(`[flt-semantics-identifier="ffi_test_status_${method}"]`).first();
+    await expect(status).toContainText('success=true', { timeout: 20000 });
   }
 });
