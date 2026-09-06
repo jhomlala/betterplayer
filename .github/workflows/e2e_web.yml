@@ -43,7 +43,7 @@ jobs:
       - name: Build web (e2e target)
         run: |
           cd packages/better_player_example
-          flutter build web --target lib/main_e2e.dart --no-tree-shake-icons
+          flutter build web --target lib/main_e2e.dart --no-tree-shake-icons --web-renderer html
 
       - name: Install Playwright deps
         run: cd e2e && npm install && npx playwright install --with-deps chromium
