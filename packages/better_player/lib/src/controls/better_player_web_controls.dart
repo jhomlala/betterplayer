@@ -124,9 +124,11 @@ class _BetterPlayerWebControlsState
   Widget build(BuildContext context) {
     if (_betterPlayerController == null) return const SizedBox();
 
-    return MouseRegion(
-      onHover: (_) => cancelAndRestartTimer(),
-      onExit: (_) {
+    return Semantics(
+      identifier: 'better_player_material_video_area',
+      child: MouseRegion(
+        onHover: (_) => cancelAndRestartTimer(),
+        onExit: (_) {
         if (!_betterPlayerController!.controlsAlwaysVisible && !_isMenuOpen) {
           _hideTimer?.cancel();
           setState(() {
@@ -260,11 +262,13 @@ class _BetterPlayerWebControlsState
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              SizedBox(
-                height: 12,
-                child: BetterPlayerMaterialVideoProgressBar(
-                  _betterPlayerController,
-                  onDragStart: () => _hideTimer?.cancel(),
+              Semantics(
+                identifier: 'better_player_material_progress_bar',
+                child: SizedBox(
+                  height: 12,
+                  child: BetterPlayerMaterialVideoProgressBar(
+                    _betterPlayerController,
+                    onDragStart: () => _hideTimer?.cancel(),
                   onDragEnd: cancelAndRestartTimer,
                   colors: PlayerProgressColors(
                     playedColor:
@@ -312,41 +316,47 @@ class _BetterPlayerWebControlsState
       height: widget.controlsConfiguration.controlBarHeight,
       child: Row(
         children: [
-          IconButton(
-            tooltip: isPlaying
-                ? _betterPlayerController!.translations.controlsPauseLabel
-                : _betterPlayerController!.translations.controlsPlayLabel,
-            icon: Icon(
-              isPlaying
-                  ? widget.controlsConfiguration.pauseIcon
-                  : widget.controlsConfiguration.playIcon,
-              color: widget.controlsConfiguration.iconsColor,
+          Semantics(
+            identifier: 'better_player_material_controls_play_pause_button',
+            child: IconButton(
+              tooltip: isPlaying
+                  ? _betterPlayerController!.translations.controlsPauseLabel
+                  : _betterPlayerController!.translations.controlsPlayLabel,
+              icon: Icon(
+                isPlaying
+                    ? widget.controlsConfiguration.pauseIcon
+                    : widget.controlsConfiguration.playIcon,
+                color: widget.controlsConfiguration.iconsColor,
+              ),
+              onPressed: _onPlayPause,
             ),
-            onPressed: _onPlayPause,
           ),
           MouseRegion(
             onEnter: (_) => setState(() => _isVolumeHovered = true),
             onExit: (_) => setState(() => _isVolumeHovered = false),
             child: Row(
               children: [
-                IconButton(
-                  tooltip: isMuted
-                      ? _betterPlayerController!.translations.controlsUnmuteLabel
-                      : _betterPlayerController!.translations.controlsMuteLabel,
-                  icon: Icon(
-                    isMuted
-                        ? widget.controlsConfiguration.unMuteIcon
-                        : widget.controlsConfiguration.muteIcon,
-                    color: widget.controlsConfiguration.iconsColor,
+                Semantics(
+                  identifier: 'better_player_material_controls_mute_button',
+                  child: IconButton(
+                    tooltip: isMuted
+                        ? _betterPlayerController!.translations.controlsUnmuteLabel
+                        : _betterPlayerController!.translations.controlsMuteLabel,
+                    icon: Icon(
+                      isMuted
+                          ? widget.controlsConfiguration.unMuteIcon
+                          : widget.controlsConfiguration.muteIcon,
+                      color: widget.controlsConfiguration.iconsColor,
+                    ),
+                    onPressed: () {
+                      if (isMuted) {
+                        _betterPlayerController?.setVolume(1);
+                      } else {
+                        
+                        _betterPlayerController?.setVolume(0);
+                      }
+                    },
                   ),
-                  onPressed: () {
-                    if (isMuted) {
-                      _betterPlayerController?.setVolume(1);
-                    } else {
-                      
-                      _betterPlayerController?.setVolume(0);
-                    }
-                  },
                 ),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
@@ -409,31 +419,37 @@ class _BetterPlayerWebControlsState
           const Spacer(),
           _buildSettingsMenu(),
           if (widget.controlsConfiguration.enablePip)
-            IconButton(
-              tooltip: _betterPlayerController!.translations.controlsPipLabel,
-              icon: Icon(
-                widget.controlsConfiguration.pipMenuIcon,
-                color: widget.controlsConfiguration.iconsColor,
+            Semantics(
+              identifier: 'better_player_material_controls_pip_button',
+              child: IconButton(
+                tooltip: _betterPlayerController!.translations.controlsPipLabel,
+                icon: Icon(
+                  widget.controlsConfiguration.pipMenuIcon,
+                  color: widget.controlsConfiguration.iconsColor,
+                ),
+                onPressed: () {
+                  final key = _betterPlayerController?.betterPlayerGlobalKey;
+                  if (key != null) {
+                    _betterPlayerController?.enablePictureInPicture(key);
+                  }
+                },
               ),
-              onPressed: () {
-                final key = _betterPlayerController?.betterPlayerGlobalKey;
-                if (key != null) {
-                  _betterPlayerController?.enablePictureInPicture(key);
-                }
-              },
             ),
           if (widget.controlsConfiguration.enableFullscreen)
-            IconButton(
-              tooltip: _betterPlayerController!.isFullScreen
-                  ? _betterPlayerController!.translations.controlsExitFullscreenLabel
-                  : _betterPlayerController!.translations.controlsFullscreenLabel,
-              icon: Icon(
-                _betterPlayerController!.isFullScreen
-                    ? widget.controlsConfiguration.fullscreenDisableIcon
-                    : widget.controlsConfiguration.fullscreenEnableIcon,
-                color: widget.controlsConfiguration.iconsColor,
+            Semantics(
+              identifier: 'better_player_material_controls_expand_button',
+              child: IconButton(
+                tooltip: _betterPlayerController!.isFullScreen
+                    ? _betterPlayerController!.translations.controlsExitFullscreenLabel
+                    : _betterPlayerController!.translations.controlsFullscreenLabel,
+                icon: Icon(
+                  _betterPlayerController!.isFullScreen
+                      ? widget.controlsConfiguration.fullscreenDisableIcon
+                      : widget.controlsConfiguration.fullscreenEnableIcon,
+                  color: widget.controlsConfiguration.iconsColor,
+                ),
+                onPressed: () => _betterPlayerController?.toggleFullScreen(),
               ),
-              onPressed: () => _betterPlayerController?.toggleFullScreen(),
             ),
         ],
       ),
@@ -452,84 +468,99 @@ class _BetterPlayerWebControlsState
   }
 
   Widget _buildSettingsMenu() {
-    return PopupMenuButton<String>(
-      icon: Icon(
-        widget.controlsConfiguration.overflowMenuIcon,
-        color: widget.controlsConfiguration.iconsColor,
-      ),
-      color: const Color(0xFF212121),
-      offset: const Offset(0, -50),
-      tooltip: 'Settings',
-      onOpened: () {
-        _isMenuOpen = true;
-      },
-      onCanceled: () {
-        _isMenuOpen = false;
-        cancelAndRestartTimer();
-      },
-      onSelected: (value) async {
-        if (value == 'speed') {
-          await _showSpeedMenu();
-        } else if (value == 'quality') {
-          await _showQualityMenu();
-        } else if (value == 'audio') {
-          await _showAudioMenu();
-        } else if (value == 'subtitles') {
-          await _showSubtitlesMenu();
-        }
+    return Semantics(
+      identifier: 'better_player_material_controls_more_button',
+      child: PopupMenuButton<String>(
+        icon: Icon(
+          widget.controlsConfiguration.overflowMenuIcon,
+          color: widget.controlsConfiguration.iconsColor,
+        ),
+        color: const Color(0xFF212121),
+        offset: const Offset(0, -50),
+        tooltip: 'Settings',
+        onOpened: () {
+          _isMenuOpen = true;
+        },
+        onCanceled: () {
+          _isMenuOpen = false;
+          cancelAndRestartTimer();
+        },
+        onSelected: (value) async {
+          if (value == 'speed') {
+            await _showSpeedMenu();
+          } else if (value == 'quality') {
+            await _showQualityMenu();
+          } else if (value == 'audio') {
+            await _showAudioMenu();
+          } else if (value == 'subtitles') {
+            await _showSubtitlesMenu();
+          }
 
-        _isMenuOpen = false;
-        cancelAndRestartTimer();
-      },
-      itemBuilder: (context) {
-        return [
-          if (_betterPlayerController!
-                  .betterPlayerSubtitlesSourceList
-                  .isNotEmpty ==
-              true)
+          _isMenuOpen = false;
+          cancelAndRestartTimer();
+        },
+        itemBuilder: (context) {
+          return [
+            if (_betterPlayerController!
+                    .betterPlayerSubtitlesSourceList
+                    .isNotEmpty ==
+                true)
+              PopupMenuItem(
+                value: 'subtitles',
+                child: Semantics(
+                  identifier: 'better_player_overflow_menu_subtitles',
+                  child: _buildMenuRow(
+                    'Subtitles',
+                    _betterPlayerController!.betterPlayerSubtitlesSource?.name ??
+                        'Off',
+                    Icons.subtitles,
+                  ),
+                ),
+              ),
+            if ((_betterPlayerController!.betterPlayerAsmsTracks.isNotEmpty ==
+                    true) ||
+                (_betterPlayerController!.betterPlayerDataSource?.resolutions
+                        ?.isNotEmpty ==
+                    true))
+              PopupMenuItem(
+                value: 'quality',
+                child: Semantics(
+                  identifier: 'better_player_overflow_menu_quality',
+                  child: _buildMenuRow(
+                    'Resolution',
+                    _getResolutionLabel(),
+                    Icons.tune,
+                  ),
+                ),
+              ),
+            if (_betterPlayerController!.betterPlayerAsmsAudioTracks.isNotEmpty ==
+                true)
+              PopupMenuItem(
+                value: 'audio',
+                child: Semantics(
+                  identifier: 'better_player_overflow_menu_audio_tracks',
+                  child: _buildMenuRow(
+                    'Language',
+                    _betterPlayerController!.betterPlayerAsmsAudioTrack?.label ??
+                        'Default',
+                    Icons.language,
+                  ),
+                ),
+              ),
             PopupMenuItem(
-              value: 'subtitles',
-              child: _buildMenuRow(
-                'Subtitles',
-                _betterPlayerController!.betterPlayerSubtitlesSource?.name ??
-                    'Off',
-                Icons.subtitles,
+              value: 'speed',
+              child: Semantics(
+                identifier: 'better_player_overflow_menu_playback_speed',
+                child: _buildMenuRow(
+                  'Playback speed',
+                  '${_latestValue?.speed ?? 1.0}x',
+                  Icons.slow_motion_video,
+                ),
               ),
             ),
-          if ((_betterPlayerController!.betterPlayerAsmsTracks.isNotEmpty ==
-                  true) ||
-              (_betterPlayerController!.betterPlayerDataSource?.resolutions
-                      ?.isNotEmpty ==
-                  true))
-            PopupMenuItem(
-              value: 'quality',
-              child: _buildMenuRow(
-                'Resolution',
-                _getResolutionLabel(),
-                Icons.tune,
-              ),
-            ),
-          if (_betterPlayerController!.betterPlayerAsmsAudioTracks.isNotEmpty ==
-              true)
-            PopupMenuItem(
-              value: 'audio',
-              child: _buildMenuRow(
-                'Language',
-                _betterPlayerController!.betterPlayerAsmsAudioTrack?.label ??
-                    'Default',
-                Icons.language,
-              ),
-            ),
-          PopupMenuItem(
-            value: 'speed',
-            child: _buildMenuRow(
-              'Playback speed',
-              '${_latestValue?.speed ?? 1.0}x',
-              Icons.slow_motion_video,
-            ),
-          ),
-        ];
-      },
+          ];
+        },
+      ),
     );
   }
 
@@ -580,7 +611,10 @@ class _BetterPlayerWebControlsState
           .map(
             (s) => PopupMenuItem<double>(
               value: s,
-              child: _buildCheckRow('${s}x', _latestValue?.speed == s),
+              child: Semantics(
+                identifier: 'better_player_overflow_menu_speed_$s',
+                child: _buildCheckRow('${s}x', _latestValue?.speed == s),
+              ),
             ),
           )
           .toList(),
@@ -620,7 +654,10 @@ class _BetterPlayerWebControlsState
           final isSelected = entry.value == currentUrl;
           return PopupMenuItem<String>(
             value: entry.value,
-            child: _buildCheckRow(entry.key, isSelected),
+            child: Semantics(
+              identifier: 'better_player_overflow_menu_quality_${entry.key}',
+              child: _buildCheckRow(entry.key, isSelected),
+            ),
           );
         }).toList(),
       );
@@ -629,15 +666,23 @@ class _BetterPlayerWebControlsState
       }
     } else {
       final tracks = _betterPlayerController?.betterPlayerAsmsTracks ?? [];
+      var index = 0;
       final value = await _showSubMenu<PlayerAsmsTrack>(
         tracks.map((t) {
           final isAuto = (t.width ?? 0) == 0 && (t.height ?? 0) == 0;
           final label = isAuto ? 'Auto' : '${t.height}p';
           final isSelected =
               _betterPlayerController?.betterPlayerAsmsTrack == t;
+          final identifier = isAuto 
+              ? 'better_player_overflow_menu_quality_auto'
+              : 'better_player_overflow_menu_quality_$index';
+          if (!isAuto) index++;
           return PopupMenuItem<PlayerAsmsTrack>(
             value: t,
-            child: _buildCheckRow(label, isSelected),
+            child: Semantics(
+              identifier: identifier,
+              child: _buildCheckRow(label, isSelected),
+            ),
           );
         }).toList(),
       );
