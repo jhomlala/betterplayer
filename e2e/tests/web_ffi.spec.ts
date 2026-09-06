@@ -1,22 +1,27 @@
 import { test, expect } from '@playwright/test';
 
 test('web ffi flow', async ({ page }) => {
+  // 15 methods × up to ~22s each needs more than the 60s default
+  test.setTimeout(180_000);
+
   await page.goto('/');
-  
+
+  // Navigate to FFI page. Retry the click until the FFI page heading is visible
+  // — a plain force-click sometimes doesn't trigger Flutter navigation.
   const ffiButton = page.locator('[aria-label^="better_player_e2e_navigate_ffi"]');
   await ffiButton.scrollIntoViewIfNeeded();
-  await ffiButton.click({ force: true });
-  await page.waitForTimeout(5000); // Increased wait for FFI page to load and initialize
+  await expect(async () => {
+    await ffiButton.click({ force: true });
+    await expect(page.getByRole('heading', { name: 'FFI Method Test' })).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 30000, intervals: [2000] });
 
-  // Flutter Web sets flt-semantics-identifier (not aria-label) for Text widget containers
+  // Wait for the player to initialize (Flutter Web Text nodes → flt-semantics-identifier)
   const initializedStatus = page.locator('[flt-semantics-identifier="ffi_test_initialized_status_true"]').first();
   await expect(initializedStatus).toBeVisible({ timeout: 60000 });
 
-  // Explicitly scroll down to make sure buttons are in view for Flutter Web
+  // Scroll down so all buttons are in viewport and the engine has time to settle
   await page.mouse.wheel(0, 500);
-  await page.waitForTimeout(2000);
-
-  await page.waitForTimeout(5000); // Wait extra time for engine to be ready for commands
+  await page.waitForTimeout(3000);
 
   const methods = [
     'play',
@@ -33,30 +38,25 @@ test('web ffi flow', async ({ page }) => {
     'playerValue',
     'duration',
     'isInitialized',
-    'isPictureInPictureSupported'
+    'isPictureInPictureSupported',
   ];
 
   for (const method of methods) {
     console.log(`Testing FFI method: ${method}`);
     const btn = page.locator(`[aria-label*="ffi_test_button_${method}"]`).first();
 
-    // Explicitly scroll the element into view and wait a bit
     await btn.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(1000);
 
-    // Attempt click without force first to check actionability, fallback to force if needed
+    // Click — fall back to force if the Flutter semantics layer intercepts
     try {
       await btn.click({ timeout: 5000 });
-    } catch (e) {
+    } catch {
       console.warn(`Click failed for ${method}, retrying with force: true`);
       await btn.click({ force: true });
     }
-    
+
     // Flutter Web Text nodes use flt-semantics-identifier, not aria-label
     const status = page.locator(`[flt-semantics-identifier="ffi_test_status_${method}_success=true"]`).first();
     await expect(status).toBeVisible({ timeout: 20000 });
-
-    // Small delay between tests
-    await page.waitForTimeout(1000);
   }
 });
