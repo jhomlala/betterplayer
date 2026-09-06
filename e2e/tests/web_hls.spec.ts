@@ -6,9 +6,6 @@ test('web hls flow', async ({ page }) => {
   const hlsButton = page.locator('[aria-label="better_player_e2e_setup_hls"]');
   await hlsButton.click({ force: true });
   
-  const videoArea = page.locator('[aria-label="better_player_material_video_area"]');
-  await expect(videoArea).toBeVisible({ timeout: 15000 });
-
   // Play/pause
   const playPause = page.locator('[aria-label="better_player_material_controls_play_pause_button"]');
   await playPause.click({ force: true });

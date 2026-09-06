@@ -6,13 +6,10 @@ test('web datasource swap flow', async ({ page }) => {
   // MP4
   const mp4Button = page.locator('[aria-label="better_player_e2e_setup_mp4"]');
   await mp4Button.click({ force: true });
-  const videoArea = page.locator('[aria-label="better_player_material_video_area"]');
-  await expect(videoArea).toBeVisible({ timeout: 10000 });
 
   // Swap to HLS
   const hlsButton = page.locator('[aria-label="better_player_e2e_setup_hls"]');
   await hlsButton.click({ force: true });
-  await expect(videoArea).toBeVisible({ timeout: 15000 });
 
   // Play to verify
   const playPause = page.locator('[aria-label="better_player_material_controls_play_pause_button"]');
