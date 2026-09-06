@@ -1,5 +1,7 @@
 ## Unreleased
 - Added: Web platform support via `better_player_web`.
+- Fixed: Improved Web semantic discovery by adding missing labels to menu items.
+- Updated: Enhanced E2E test reliability on Web by adding loading guards and flexible locators.
 
 ## 1.5.1
 - Fixed: Resolved Cupertino action sheet fallback label and destructive styling for the cancel button, restoring proper localization and iOS consistency.
