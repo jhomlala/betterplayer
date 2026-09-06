@@ -83,8 +83,8 @@ Use these commands when drafting or updating flows.
 
 ## Development Workflow
 1.  **Add Identifier**: Wrap the target widget in `Semantics(identifier: '...')` or use a supporting widget in the library code.
-2.  **Update Flow**: Add the interaction to `maestro/ios_flow.yaml` (or a new flow file).
+2.  **Update Flow**: Add the interaction to `e2e/maestro/ios/ios_flow.yaml` (or a new flow file).
 3.  **Verify**: Run the test locally on an iOS Simulator:
     ```bash
-    maestro test maestro/ios_flow.yaml
+    maestro test e2e/maestro/ios/ios_flow.yaml
     ```

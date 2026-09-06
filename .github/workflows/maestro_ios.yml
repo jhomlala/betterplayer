@@ -113,7 +113,7 @@ jobs:
       - name: Run Maestro
         run: |
           cd better_player
-          maestro test maestro/ios/
+          maestro test e2e/maestro/ios/
 
       - name: Upload Maestro Artifacts
         if: always()

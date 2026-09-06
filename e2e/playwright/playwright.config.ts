@@ -14,7 +14,7 @@ export default defineConfig({
   },
   projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],
   webServer: {
-    command: 'npx serve -s ../packages/better_player_example/build/web -l 8080 --no-clipboard',
+    command: 'npx serve -s ../../packages/better_player_example/build/web -l 8080 --no-clipboard',
     url: 'http://localhost:8080',
     reuseExistingServer: !process.env.CI,
   },

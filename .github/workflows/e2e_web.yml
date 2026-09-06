@@ -46,15 +46,15 @@ jobs:
           flutter build web --target lib/main_e2e.dart --no-tree-shake-icons --dart-define=FLUTTER_WEB_RENDERER=html
 
       - name: Install Playwright deps
-        run: cd e2e && npm install && npx playwright install --with-deps chromium
+        run: cd e2e/playwright && npm install && npx playwright install --with-deps chromium
 
       - name: Run Playwright tests
-        run: cd e2e && npx playwright test
+        run: cd e2e/playwright && npx playwright test
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-web-report
-          path: e2e/playwright-report/
+          path: e2e/playwright/playwright-report/
           retention-days: 14

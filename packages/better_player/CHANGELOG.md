@@ -1,7 +1,6 @@
 ## Unreleased
-- Added: Web platform support via `better_player_web`.
-- Fixed: Improved Web semantic discovery by adding missing labels and container flags to menu items and test pages.
-- Updated: Enhanced E2E test reliability on Web with robust locators, explicit scrolling, HLS track discovery retries, and increased stability delays.
+- Updated: Moved all E2E tests (Maestro and Playwright) into a centralized `e2e` directory and updated all configuration and workflow paths.
+- Fixed: Resolved `BetterPlayerAsmsUtils` and `PlayerSubtitlesFactory` network test failures by adding injectable `http.Client` for testing.
 - Fixed: Resolved `better_player_cupertino_controls_test.dart` failure by using proper widget interaction and pumping.
 
 ## 1.5.1
