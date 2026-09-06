@@ -5,8 +5,22 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 class PlayerSubtitlesFactory {
+  static http.Client? _httpClientCache;
+
+  static http.Client get _httpClient {
+    _httpClientCache ??= http.Client();
+    return _httpClientCache!;
+  }
+
+  ///Set custom http client. Used for testing.
+  @visibleForTesting
+  static set httpClient(http.Client? client) {
+    _httpClientCache = client;
+  }
+
   static Future<List<PlayerSubtitle>> parseSubtitles(
     PlayerSubtitlesSource source,
   ) async {
@@ -51,7 +65,6 @@ class PlayerSubtitlesFactory {
     PlayerSubtitlesSource source,
   ) async {
     try {
-      final client = http.Client();
       final subtitles = <PlayerSubtitle>[];
       for (final url in source.urls!) {
         final nonNullHeaders = <String, String>{};
@@ -60,7 +73,7 @@ class PlayerSubtitlesFactory {
             nonNullHeaders[key] = value;
           });
         }
-        final response = await client.get(
+        final response = await _httpClient.get(
           Uri.parse(url!),
           headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
         );
@@ -68,7 +81,6 @@ class PlayerSubtitlesFactory {
         final cacheList = _parseString(data);
         subtitles.addAll(cacheList);
       }
-      client.close();
 
       PlayerLogger.debug(
         message: 'Parsed total subtitles: ${subtitles.length}',

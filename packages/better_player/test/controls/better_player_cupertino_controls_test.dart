@@ -1,6 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/better_player_with_controls.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -76,6 +77,8 @@ void main() {
       expect(moreButton, findsOneWidget);
 
       await tester.tap(moreButton);
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
       // Check if CupertinoActionSheet is displayed instead of Material bottom sheet
@@ -101,5 +104,6 @@ void main() {
         findsOneWidget,
       );
     },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
   );
 }

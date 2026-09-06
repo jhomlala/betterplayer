@@ -5,6 +5,7 @@ import 'package:better_player/src/dash/better_player_dash_utils.dart';
 import 'package:better_player/src/hls/better_player_hls_utils.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 ///Base helper class for ASMS parsing.
 class BetterPlayerAsmsUtils {
@@ -15,6 +16,12 @@ class BetterPlayerAsmsUtils {
   static http.Client get _httpClient {
     _httpClientCache ??= http.Client();
     return _httpClientCache!;
+  }
+
+  ///Set custom http client. Used for testing.
+  @visibleForTesting
+  static set httpClient(http.Client? client) {
+    _httpClientCache = client;
   }
 
   ///Check if given url is HLS / DASH-type data source.
