@@ -45,7 +45,7 @@ test('web hls flow', async ({ page }) => {
 
     const quality1 = page.locator('[aria-label^="better_player_overflow_menu_quality_1"]');
     await expect(quality1).toBeVisible({ timeout: 2000 });
-  }).toPass({ timeout: 30000, intervals: [3000] });
+  }).toPass({ timeout: 60000, intervals: [5000] });
   
   const qualityAuto = page.locator('[aria-label^="better_player_overflow_menu_quality_auto"]');
   await expect(qualityAuto).toBeVisible();

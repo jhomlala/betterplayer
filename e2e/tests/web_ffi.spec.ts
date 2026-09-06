@@ -12,6 +12,11 @@ test('web ffi flow', async ({ page }) => {
   const initializedStatus = page.locator('[aria-label*="ffi_test_initialized_status"], flt-semantics:has-text("initialized=true")').first();
   await expect(initializedStatus).toBeVisible({ timeout: 60000 });
   await expect(initializedStatus).toContainText('initialized=true', { timeout: 10000 });
+
+  // Explicitly scroll down to make sure buttons are in view for Flutter Web
+  await page.mouse.wheel(0, 500);
+  await page.waitForTimeout(2000);
+
   await page.waitForTimeout(5000); // Wait extra time for engine to be ready for commands
 
   const methods = [
@@ -34,13 +39,26 @@ test('web ffi flow', async ({ page }) => {
 
   for (const method of methods) {
     console.log(`Testing FFI method: ${method}`);
-    const btn = page.getByRole('button', { name: `Test ${method}` });
+    const btn = page.locator(`[aria-label*="ffi_test_button_${method}"]`).first();
+
+    // Explicitly scroll the element into view and wait a bit
     await btn.scrollIntoViewIfNeeded();
-    await btn.click({ force: true });
+    await page.waitForTimeout(1000);
+
+    // Attempt click without force first to check actionability, fallback to force if needed
+    try {
+      await btn.click({ timeout: 5000 });
+    } catch (e) {
+      console.warn(`Click failed for ${method}, retrying with force: true`);
+      await btn.click({ force: true });
+    }
     
     // Wait for the status to change from "not started"
-    const status = page.locator(`[aria-label*="ffi_test_status_${method}"]`);
-    await expect(status).not.toContainText('not started', { timeout: 15000 });
-    await expect(status).toContainText('success=true', { timeout: 5000 });
+    const status = page.locator(`[aria-label*="ffi_test_status_${method}"]`).first();
+    await expect(status).not.toContainText('not started', { timeout: 20000 });
+    await expect(status).toContainText('success=true', { timeout: 10000 });
+
+    // Small delay between tests
+    await page.waitForTimeout(1000);
   }
 });

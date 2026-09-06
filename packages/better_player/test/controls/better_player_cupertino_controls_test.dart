@@ -75,15 +75,9 @@ void main() {
       final moreButton = find.byIcon(controlsConfiguration.overflowMenuIcon);
       expect(moreButton, findsOneWidget);
 
-      final gestureDetector = tester.widget<GestureDetector>(
-        find
-            .ancestor(of: moreButton, matching: find.byType(GestureDetector))
-            .first,
-      );
-      gestureDetector.onTap!();
+      await tester.tap(moreButton);
       await tester.pumpAndSettle();
 
-      debugDumpApp();
       // Check if CupertinoActionSheet is displayed instead of Material bottom sheet
       expect(find.byType(CupertinoActionSheet), findsOneWidget);
 
