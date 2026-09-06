@@ -12,7 +12,7 @@ test('web datasource swap flow', async ({ page }) => {
   await hlsButton.click({ force: true });
 
   // Play to verify
-  const playPause = page.locator('[aria-label="better_player_material_controls_play_pause_button"]');
+  const playPause = page.locator('[aria-label^="better_player_material_controls_play_pause_button"]');
   await expect(playPause).toBeVisible();
   await playPause.click({ force: true });
 });
