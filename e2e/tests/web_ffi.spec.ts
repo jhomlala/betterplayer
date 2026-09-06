@@ -44,7 +44,7 @@ test('web ffi flow', async ({ page }) => {
 
   for (const method of methods) {
     console.log(`Testing FFI method: ${method}`);
-    const btn = page.locator(`[aria-label*="ffi_test_button_${method}"]`).first();
+    const btn = page.locator(`[flt-semantics-identifier="ffi_test_button_${method}"]`).first();
 
     await btn.scrollIntoViewIfNeeded();
 
