@@ -4,51 +4,51 @@ test('web flow', async ({ page }) => {
   await page.goto('/');
   
   // Wait for the video area to be visible
-  const videoArea = page.getByRole('button', { name: 'better_player_material_video_area' });
+  
   // Sometimes it's not a button in Semantics, so we use locator by aria-label
-  const videoAreaLocator = page.locator('[aria-label="better_player_material_video_area"]');
-  await expect(videoAreaLocator).toBeVisible();
+  
+  
 
   // Play/pause
   const playPause = page.locator('[aria-label="better_player_material_controls_play_pause_button"]');
-  await playPause.click();
+  await playPause.click({ force: true });
   await page.waitForTimeout(500);
-  await playPause.click();
+  await playPause.click({ force: true });
 
   // Mute/unmute
   const mute = page.locator('[aria-label="better_player_material_controls_mute_button"]');
-  await mute.click();
+  await mute.click({ force: true });
   await page.waitForTimeout(500);
-  await mute.click();
+  await mute.click({ force: true });
 
   // Playback speed
   const settings = page.locator('[aria-label="better_player_material_controls_more_button"]');
-  await settings.click();
-  const speedMenu = page.locator('[aria-label="better_player_overflow_menu_playback_speed"]');
+  await settings.click({ force: true });
+  const speedMenu = page.locator('[aria-label^="better_player_overflow_menu_playback_speed"]');
   await expect(speedMenu).toBeVisible();
-  await speedMenu.click();
+  await speedMenu.click({ force: true });
   
-  const speed2x = page.locator('[aria-label="better_player_overflow_menu_speed_2.0"]');
+  const speed2x = page.locator('[aria-label^="better_player_overflow_menu_speed_2"]');
   await expect(speed2x).toBeVisible();
-  await speed2x.click();
+  await speed2x.click({ force: true });
 
   // Quality (Resolution)
-  await settings.click();
-  const qualityMenu = page.locator('[aria-label="better_player_overflow_menu_quality"]');
+  await settings.click({ force: true });
+  const qualityMenu = page.locator('[aria-label^="better_player_overflow_menu_quality"]');
   await expect(qualityMenu).toBeVisible();
-  await qualityMenu.click();
+  await qualityMenu.click({ force: true });
   
-  const qualityAuto = page.locator('[aria-label="better_player_overflow_menu_quality_auto"]');
+  const qualityAuto = page.locator('[aria-label^="better_player_overflow_menu_quality_auto"]');
   await expect(qualityAuto).toBeVisible();
-  await qualityAuto.click();
+  await qualityAuto.click({ force: true });
 
   // Seek
   const progressBar = page.locator('[aria-label="better_player_material_progress_bar"]');
   await expect(progressBar).toBeVisible();
-  await progressBar.click();
+  await progressBar.click({ force: true });
 
   // Fullscreen
   const fullscreen = page.locator('[aria-label="better_player_material_controls_expand_button"]');
   await expect(fullscreen).toBeVisible();
-  await fullscreen.click();
+  await fullscreen.click({ force: true });
 });

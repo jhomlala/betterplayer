@@ -12,7 +12,7 @@ class BetterPlayerVideoAreaSemantics extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'Video player',
+      label: semanticsIdentifier,
       identifier: semanticsIdentifier,
       container: true,
       button: true,

@@ -98,6 +98,9 @@ class _BetterPlayerWebControlsState
       });
     }
     _hideTimer = Timer(const Duration(seconds: 3), () {
+      if (_betterPlayerController?.controlsAlwaysVisible == true) {
+        return;
+      }
       if (mounted && !_isMenuOpen) {
         setState(() {
           _controlsNotVisible = true;
@@ -124,9 +127,7 @@ class _BetterPlayerWebControlsState
   Widget build(BuildContext context) {
     if (_betterPlayerController == null) return const SizedBox();
 
-    return Semantics(
-      identifier: 'better_player_material_video_area',
-      child: MouseRegion(
+    return MouseRegion(
         onHover: (_) => cancelAndRestartTimer(),
         onExit: (_) {
         if (!_betterPlayerController!.controlsAlwaysVisible && !_isMenuOpen) {
@@ -233,7 +234,6 @@ class _BetterPlayerWebControlsState
           ),
         ),
       ),
-      ),
     );
   }
 
@@ -264,7 +264,7 @@ class _BetterPlayerWebControlsState
             clipBehavior: Clip.none,
             children: [
               Semantics(
-                identifier: 'better_player_material_progress_bar',
+                label: 'better_player_material_progress_bar', identifier: 'better_player_material_progress_bar',
                 child: SizedBox(
                   height: 12,
                   child: BetterPlayerMaterialVideoProgressBar(
@@ -319,7 +319,7 @@ class _BetterPlayerWebControlsState
       child: Row(
         children: [
           Semantics(
-            identifier: 'better_player_material_controls_play_pause_button',
+            label: 'better_player_material_controls_play_pause_button', identifier: 'better_player_material_controls_play_pause_button',
             child: IconButton(
               tooltip: isPlaying
                   ? _betterPlayerController!.translations.controlsPauseLabel
@@ -339,7 +339,7 @@ class _BetterPlayerWebControlsState
             child: Row(
               children: [
                 Semantics(
-                  identifier: 'better_player_material_controls_mute_button',
+                  label: 'better_player_material_controls_mute_button', identifier: 'better_player_material_controls_mute_button',
                   child: IconButton(
                     tooltip: isMuted
                         ? _betterPlayerController!.translations.controlsUnmuteLabel
@@ -422,7 +422,7 @@ class _BetterPlayerWebControlsState
           _buildSettingsMenu(),
           if (widget.controlsConfiguration.enablePip)
             Semantics(
-              identifier: 'better_player_material_controls_pip_button',
+              label: 'better_player_material_controls_pip_button', identifier: 'better_player_material_controls_pip_button',
               child: IconButton(
                 tooltip: _betterPlayerController!.translations.controlsPipLabel,
                 icon: Icon(
@@ -439,7 +439,7 @@ class _BetterPlayerWebControlsState
             ),
           if (widget.controlsConfiguration.enableFullscreen)
             Semantics(
-              identifier: 'better_player_material_controls_expand_button',
+              label: 'better_player_material_controls_expand_button', identifier: 'better_player_material_controls_expand_button',
               child: IconButton(
                 tooltip: _betterPlayerController!.isFullScreen
                     ? _betterPlayerController!.translations.controlsExitFullscreenLabel
@@ -471,7 +471,7 @@ class _BetterPlayerWebControlsState
 
   Widget _buildSettingsMenu() {
     return Semantics(
-      identifier: 'better_player_material_controls_more_button',
+      label: 'better_player_material_controls_more_button', identifier: 'better_player_material_controls_more_button',
       child: PopupMenuButton<String>(
         icon: Icon(
           widget.controlsConfiguration.overflowMenuIcon,
@@ -503,14 +503,11 @@ class _BetterPlayerWebControlsState
         },
         itemBuilder: (context) {
           return [
-            if (_betterPlayerController!
-                    .betterPlayerSubtitlesSourceList
-                    .isNotEmpty ==
-                true)
+            if (widget.controlsConfiguration.enableSubtitles)
               PopupMenuItem(
                 value: 'subtitles',
                 child: Semantics(
-                  identifier: 'better_player_overflow_menu_subtitles',
+                  label: 'better_player_overflow_menu_subtitles', identifier: 'better_player_overflow_menu_subtitles',
                   child: _buildMenuRow(
                     'Subtitles',
                     _betterPlayerController!.betterPlayerSubtitlesSource?.name ??
@@ -519,15 +516,11 @@ class _BetterPlayerWebControlsState
                   ),
                 ),
               ),
-            if ((_betterPlayerController!.betterPlayerAsmsTracks.isNotEmpty ==
-                    true) ||
-                (_betterPlayerController!.betterPlayerDataSource?.resolutions
-                        ?.isNotEmpty ==
-                    true))
+            if (widget.controlsConfiguration.enableQualities)
               PopupMenuItem(
                 value: 'quality',
                 child: Semantics(
-                  identifier: 'better_player_overflow_menu_quality',
+                  label: 'better_player_overflow_menu_quality', identifier: 'better_player_overflow_menu_quality',
                   child: _buildMenuRow(
                     'Resolution',
                     _getResolutionLabel(),
@@ -535,12 +528,11 @@ class _BetterPlayerWebControlsState
                   ),
                 ),
               ),
-            if (_betterPlayerController!.betterPlayerAsmsAudioTracks.isNotEmpty ==
-                true)
+            if (widget.controlsConfiguration.enableAudioTracks)
               PopupMenuItem(
                 value: 'audio',
                 child: Semantics(
-                  identifier: 'better_player_overflow_menu_audio_tracks',
+                  label: 'better_player_overflow_menu_audio_tracks', identifier: 'better_player_overflow_menu_audio_tracks',
                   child: _buildMenuRow(
                     'Language',
                     _betterPlayerController!.betterPlayerAsmsAudioTrack?.label ??
@@ -549,18 +541,19 @@ class _BetterPlayerWebControlsState
                   ),
                 ),
               ),
-            PopupMenuItem(
-              value: 'speed',
-              child: Semantics(
-                identifier: 'better_player_overflow_menu_playback_speed',
-                child: _buildMenuRow(
-                  'Playback speed',
-                  '${_latestValue?.speed ?? 1.0}x',
-                  Icons.slow_motion_video,
+              if (widget.controlsConfiguration.enablePlaybackSpeed)
+                PopupMenuItem(
+                  value: 'speed',
+                  child: Semantics(
+                    label: 'better_player_overflow_menu_playback_speed', identifier: 'better_player_overflow_menu_playback_speed',
+                    child: _buildMenuRow(
+                      'Playback speed',
+                      '${_latestValue?.speed ?? 1.0}x',
+                      Icons.slow_motion_video,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ];
+            ];
         },
       ),
     );
@@ -614,7 +607,7 @@ class _BetterPlayerWebControlsState
             (s) => PopupMenuItem<double>(
               value: s,
               child: Semantics(
-                identifier: 'better_player_overflow_menu_speed_$s',
+                label: 'better_player_overflow_menu_speed_$s', identifier: 'better_player_overflow_menu_speed_$s',
                 child: _buildCheckRow('${s}x', _latestValue?.speed == s),
               ),
             ),
@@ -657,7 +650,7 @@ class _BetterPlayerWebControlsState
           return PopupMenuItem<String>(
             value: entry.value,
             child: Semantics(
-              identifier: 'better_player_overflow_menu_quality_${entry.key}',
+              label: 'better_player_overflow_menu_quality_${entry.key}', identifier: 'better_player_overflow_menu_quality_${entry.key}',
               child: _buildCheckRow(entry.key, isSelected),
             ),
           );
@@ -669,25 +662,37 @@ class _BetterPlayerWebControlsState
     } else {
       final tracks = _betterPlayerController?.betterPlayerAsmsTracks ?? [];
       var index = 0;
-      final value = await _showSubMenu<PlayerAsmsTrack>(
-        tracks.map((t) {
-          final isAuto = (t.width ?? 0) == 0 && (t.height ?? 0) == 0;
-          final label = isAuto ? 'Auto' : '${t.height}p';
-          final isSelected =
-              _betterPlayerController?.betterPlayerAsmsTrack == t;
-          final identifier = isAuto 
-              ? 'better_player_overflow_menu_quality_auto'
-              : 'better_player_overflow_menu_quality_$index';
-          if (!isAuto) index++;
-          return PopupMenuItem<PlayerAsmsTrack>(
-            value: t,
+      final items = tracks.map((t) {
+        final isAuto = (t.width ?? 0) == 0 && (t.height ?? 0) == 0;
+        final label = isAuto ? 'Auto' : '${t.height}p';
+        final isSelected =
+            _betterPlayerController?.betterPlayerAsmsTrack == t;
+        final identifier = isAuto 
+            ? 'better_player_overflow_menu_quality_auto'
+            : 'better_player_overflow_menu_quality_$index';
+        if (!isAuto) index++;
+        return PopupMenuItem<PlayerAsmsTrack>(
+          value: t,
+          child: Semantics(
+            label: identifier, identifier: identifier,
+            child: _buildCheckRow(label, isSelected),
+          ),
+        );
+      }).toList();
+
+      if (items.isEmpty) {
+        items.add(
+          PopupMenuItem<PlayerAsmsTrack>(
+            value: PlayerAsmsTrack.defaultTrack(),
             child: Semantics(
-              identifier: identifier,
-              child: _buildCheckRow(label, isSelected),
+              label: 'better_player_overflow_menu_quality_auto', identifier: 'better_player_overflow_menu_quality_auto',
+              child: _buildCheckRow('Auto', true),
             ),
-          );
-        }).toList(),
-      );
+          ),
+        );
+      }
+
+      final value = await _showSubMenu<PlayerAsmsTrack>(items);
       if (value != null) {
         _betterPlayerController?.setTrack(value);
       }
@@ -696,37 +701,66 @@ class _BetterPlayerWebControlsState
 
   Future<void> _showAudioMenu() async {
     final tracks = _betterPlayerController?.betterPlayerAsmsAudioTracks ?? [];
-    final value = await _showSubMenu<PlayerAsmsAudioTrack>(
-      tracks
-          .map(
-            (t) => PopupMenuItem<PlayerAsmsAudioTrack>(
-              value: t,
-              child: _buildCheckRow(
-                t.label ?? 'Track ${t.id}',
-                _betterPlayerController?.betterPlayerAsmsAudioTrack == t,
-              ),
-            ),
-          )
-          .toList(),
-    );
+    final items = tracks.map((t) {
+      return PopupMenuItem<PlayerAsmsAudioTrack>(
+        value: t,
+        child: Semantics(
+          label: 'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}', identifier: 'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}',
+          child: _buildCheckRow(
+            t.label ?? 'Track ${t.id}',
+            _betterPlayerController?.betterPlayerAsmsAudioTrack == t,
+          ),
+        ),
+      );
+    }).toList();
+
+    if (items.isEmpty) {
+      items.add(
+        PopupMenuItem<PlayerAsmsAudioTrack>(
+          value: PlayerAsmsAudioTrack(
+            id: 0,
+            label: 'Default',
+          ),
+          child: Semantics(
+            label: 'better_player_overflow_menu_audio_tracks_default', identifier: 'better_player_overflow_menu_audio_tracks_default',
+            child: _buildCheckRow('Default', true),
+          ),
+        ),
+      );
+    }
+
+    final value = await _showSubMenu<PlayerAsmsAudioTrack>(items);
     if (value != null) _betterPlayerController?.setAudioTrack(value);
   }
 
   Future<void> _showSubtitlesMenu() async {
     final subs = _betterPlayerController?.betterPlayerSubtitlesSourceList ?? [];
-    final value = await _showSubMenu<PlayerSubtitlesSource>(
-      subs
-          .map(
-            (s) => PopupMenuItem<PlayerSubtitlesSource>(
-              value: s,
-              child: _buildCheckRow(
-                s.name ?? 'Unknown',
-                _betterPlayerController?.betterPlayerSubtitlesSource == s,
-              ),
-            ),
-          )
-          .toList(),
-    );
+    final items = subs.map((s) {
+      return PopupMenuItem<PlayerSubtitlesSource>(
+        value: s,
+        child: Semantics(
+          label: 'better_player_overflow_menu_subtitles_${s.type?.name ?? 'none'}', identifier: 'better_player_overflow_menu_subtitles_${s.type?.name ?? 'none'}',
+          child: _buildCheckRow(
+            s.name ?? 'Unknown',
+            _betterPlayerController?.betterPlayerSubtitlesSource == s,
+          ),
+        ),
+      );
+    }).toList();
+
+    if (items.isEmpty) {
+      items.add(
+        PopupMenuItem<PlayerSubtitlesSource>(
+          value: PlayerSubtitlesSource(type: PlayerSubtitlesSourceType.none),
+          child: Semantics(
+            label: 'better_player_overflow_menu_subtitles_none', identifier: 'better_player_overflow_menu_subtitles_none',
+            child: _buildCheckRow('None', true),
+          ),
+        ),
+      );
+    }
+
+    final value = await _showSubMenu<PlayerSubtitlesSource>(items);
     if (value != null) _betterPlayerController?.setupSubtitleSource(value);
   }
 
