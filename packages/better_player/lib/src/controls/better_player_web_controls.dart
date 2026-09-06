@@ -153,128 +153,141 @@ class _BetterPlayerWebControlsState
         builder: (BuildContext context) {
           if (_betterPlayerController == null) return const SizedBox();
 
+          Widget currentWidget;
           if (_latestValue?.hasError == true || _errorDescription != null) {
-            return BetterPlayerVideoAreaSemantics(
-              semanticsIdentifier: 'better_player_web_video_area',
-              child: ColoredBox(
-                color: Colors.black,
-                child: BetterPlayerWebErrorWidget(
-                  controlsConfiguration: widget.controlsConfiguration,
-                  errorDescription: _errorDescription,
+            currentWidget = ColoredBox(
+              color: Colors.black,
+              child: BetterPlayerWebErrorWidget(
+                controlsConfiguration: widget.controlsConfiguration,
+                errorDescription: _errorDescription,
+              ),
+            );
+          } else {
+            currentWidget = MouseRegion(
+              onHover: (_) => cancelAndRestartTimer(),
+              onExit: (_) {
+                if (!_betterPlayerController!.controlsAlwaysVisible &&
+                    !_isMenuOpen) {
+                  _hideTimer?.cancel();
+                  setState(() {
+                    _controlsNotVisible = true;
+                    widget.onControlsVisibilityChanged(false);
+                  });
+                }
+              },
+              child: Focus(
+                autofocus: true,
+                onKeyEvent: (node, event) {
+                  if (event is KeyDownEvent) {
+                    if (event.logicalKey == LogicalKeyboardKey.space ||
+                        event.logicalKey == LogicalKeyboardKey.keyK) {
+                      _onPlayPause();
+                      return KeyEventResult.handled;
+                    } else if (event.logicalKey ==
+                        LogicalKeyboardKey.arrowLeft) {
+                      final position = _latestValue?.position;
+                      if (position != null) {
+                        _betterPlayerController?.seekTo(
+                          position - const Duration(seconds: 10),
+                        );
+                      }
+                      return KeyEventResult.handled;
+                    } else if (event.logicalKey ==
+                        LogicalKeyboardKey.arrowRight) {
+                      final position = _latestValue?.position;
+                      if (position != null) {
+                        _betterPlayerController?.seekTo(
+                          position + const Duration(seconds: 10),
+                        );
+                      }
+                      return KeyEventResult.handled;
+                    } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
+                      final volume = (_latestValue?.volume ?? 1.0) + 0.1;
+                      _betterPlayerController?.setVolume(
+                        volume.clamp(0.0, 1.0),
+                      );
+                      return KeyEventResult.handled;
+                    } else if (event.logicalKey ==
+                        LogicalKeyboardKey.arrowDown) {
+                      final volume = (_latestValue?.volume ?? 1.0) - 0.1;
+                      _betterPlayerController?.setVolume(
+                        volume.clamp(0.0, 1.0),
+                      );
+                      return KeyEventResult.handled;
+                    } else if (event.logicalKey == LogicalKeyboardKey.keyM) {
+                      final isMuted = _latestValue?.volume == 0;
+                      if (isMuted) {
+                        _betterPlayerController?.setVolume(1);
+                      } else {
+                        _betterPlayerController?.setVolume(0);
+                      }
+                      return KeyEventResult.handled;
+                    } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
+                      _betterPlayerController?.toggleFullScreen();
+                      return KeyEventResult.handled;
+                    }
+                  }
+                  return KeyEventResult.ignored;
+                },
+                child: GestureDetector(
+                  onTap: _onPlayPause,
+                  onDoubleTap: () =>
+                      _betterPlayerController?.toggleFullScreen(),
+                  behavior: HitTestBehavior.opaque,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // Controls overlay
+                      AnimatedOpacity(
+                        opacity: _controlsNotVisible ? 0.0 : 1.0,
+                        duration: const Duration(milliseconds: 250),
+                        child: IgnorePointer(
+                          ignoring: _controlsNotVisible,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // Gradient background for bottom controls
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 8,
+                                ),
+                                decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.transparent,
+                                      Colors.black87,
+                                    ],
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (!_betterPlayerController!
+                                        .isLiveStream()) ...[
+                                      _buildProgressBar(),
+                                      const SizedBox(height: 8),
+                                    ],
+                                    _buildBottomBar(),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
           }
 
-          return MouseRegion(
-            onHover: (_) => cancelAndRestartTimer(),
-            onExit: (_) {
-              if (!_betterPlayerController!.controlsAlwaysVisible &&
-                  !_isMenuOpen) {
-                _hideTimer?.cancel();
-                setState(() {
-                  _controlsNotVisible = true;
-                  widget.onControlsVisibilityChanged(false);
-                });
-              }
-            },
-            child: Focus(
-              autofocus: true,
-              onKeyEvent: (node, event) {
-                if (event is KeyDownEvent) {
-                  if (event.logicalKey == LogicalKeyboardKey.space ||
-                      event.logicalKey == LogicalKeyboardKey.keyK) {
-                    _onPlayPause();
-                    return KeyEventResult.handled;
-                  } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-                    final position = _latestValue?.position;
-                    if (position != null) {
-                      _betterPlayerController?.seekTo(
-                        position - const Duration(seconds: 10),
-                      );
-                    }
-                    return KeyEventResult.handled;
-                  } else if (event.logicalKey ==
-                      LogicalKeyboardKey.arrowRight) {
-                    final position = _latestValue?.position;
-                    if (position != null) {
-                      _betterPlayerController?.seekTo(
-                        position + const Duration(seconds: 10),
-                      );
-                    }
-                    return KeyEventResult.handled;
-                  } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-                    final volume = (_latestValue?.volume ?? 1.0) + 0.1;
-                    _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
-                    return KeyEventResult.handled;
-                  } else if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
-                    final volume = (_latestValue?.volume ?? 1.0) - 0.1;
-                    _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
-                    return KeyEventResult.handled;
-                  } else if (event.logicalKey == LogicalKeyboardKey.keyM) {
-                    final isMuted = _latestValue?.volume == 0;
-                    if (isMuted) {
-                      _betterPlayerController?.setVolume(1);
-                    } else {
-                      _betterPlayerController?.setVolume(0);
-                    }
-                    return KeyEventResult.handled;
-                  } else if (event.logicalKey == LogicalKeyboardKey.keyF) {
-                    _betterPlayerController?.toggleFullScreen();
-                    return KeyEventResult.handled;
-                  }
-                }
-                return KeyEventResult.ignored;
-              },
-              child: GestureDetector(
-                onTap: _onPlayPause,
-                onDoubleTap: () => _betterPlayerController?.toggleFullScreen(),
-                behavior: HitTestBehavior.opaque,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Controls overlay
-                    AnimatedOpacity(
-                      opacity: _controlsNotVisible ? 0.0 : 1.0,
-                      duration: const Duration(milliseconds: 250),
-                      child: IgnorePointer(
-                        ignoring: _controlsNotVisible,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            // Gradient background for bottom controls
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [Colors.transparent, Colors.black87],
-                                ),
-                              ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (!_betterPlayerController!
-                                      .isLiveStream()) ...[
-                                    _buildProgressBar(),
-                                    const SizedBox(height: 8),
-                                  ],
-                                  _buildBottomBar(),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          return BetterPlayerVideoAreaSemantics(
+            semanticsIdentifier: 'better_player_material_video_area',
+            child: ClipRect(child: currentWidget),
           );
         },
       ),
