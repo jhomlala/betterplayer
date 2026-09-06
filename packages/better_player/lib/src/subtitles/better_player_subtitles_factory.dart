@@ -21,6 +21,9 @@ class PlayerSubtitlesFactory {
     _httpClientCache = client;
   }
 
+  ///Get current http client.
+  static http.Client? get httpClient => _httpClientCache;
+
   static Future<List<PlayerSubtitle>> parseSubtitles(
     PlayerSubtitlesSource source,
   ) async {

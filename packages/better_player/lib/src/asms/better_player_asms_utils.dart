@@ -24,6 +24,9 @@ class BetterPlayerAsmsUtils {
     _httpClientCache = client;
   }
 
+  ///Get current http client.
+  static http.Client? get httpClient => _httpClientCache;
+
   ///Check if given url is HLS / DASH-type data source.
   static bool isDataSourceAsms(String url) =>
       isDataSourceHls(url) || isDataSourceDash(url);
