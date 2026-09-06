@@ -170,7 +170,6 @@ class _BetterPlayerWebControlsState
         }
       },
       child: Focus(
-        autofocus: true,
         onKeyEvent: (node, event) {
           if (event is KeyDownEvent) {
             if (event.logicalKey == LogicalKeyboardKey.space ||
