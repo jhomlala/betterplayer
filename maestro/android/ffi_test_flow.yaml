@@ -12,7 +12,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "ffi_test_initialized_status"
-      text: "initialized=true"
+      text: ".*initialized=true.*"
     timeout: 60000
 
 - scrollUntilVisible:
@@ -24,7 +24,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_play"
 - assertVisible:
     id: "ffi_test_status_play"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -35,7 +35,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_pause"
 - assertVisible:
     id: "ffi_test_status_pause"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -46,7 +46,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_seekTo"
 - assertVisible:
     id: "ffi_test_status_seekTo"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -57,7 +57,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_setVolume"
 - assertVisible:
     id: "ffi_test_status_setVolume"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -68,7 +68,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_setSpeed"
 - assertVisible:
     id: "ffi_test_status_setSpeed"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -79,7 +79,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_setTrackParameters"
 - assertVisible:
     id: "ffi_test_status_setTrackParameters"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -90,7 +90,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_setAudioTrack"
 - assertVisible:
     id: "ffi_test_status_setAudioTrack"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -101,7 +101,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_setMixWithOthers"
 - assertVisible:
     id: "ffi_test_status_setMixWithOthers"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -112,7 +112,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_setLooping"
 - assertVisible:
     id: "ffi_test_status_setLooping"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -123,7 +123,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_getPosition"
 - assertVisible:
     id: "ffi_test_status_getPosition"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -134,7 +134,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_getAbsolutePosition"
 - assertVisible:
     id: "ffi_test_status_getAbsolutePosition"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -145,7 +145,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_playerValue"
 - assertVisible:
     id: "ffi_test_status_playerValue"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -156,7 +156,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_duration"
 - assertVisible:
     id: "ffi_test_status_duration"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -167,7 +167,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_isInitialized"
 - assertVisible:
     id: "ffi_test_status_isInitialized"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -178,7 +178,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_isPictureInPictureSupported"
 - assertVisible:
     id: "ffi_test_status_isPictureInPictureSupported"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -189,7 +189,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_preCache"
 - assertVisible:
     id: "ffi_test_status_preCache"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -200,7 +200,7 @@ appId: pl.hasoft.example
     id: "ffi_test_button_stopPreCache"
 - assertVisible:
     id: "ffi_test_status_stopPreCache"
-    text: "success=true"
+    text: ".*success=true.*"
 
 - scrollUntilVisible:
     element:
@@ -211,4 +211,4 @@ appId: pl.hasoft.example
     id: "ffi_test_button_clearCache"
 - assertVisible:
     id: "ffi_test_status_clearCache"
-    text: "success=true"
+    text: ".*success=true.*"

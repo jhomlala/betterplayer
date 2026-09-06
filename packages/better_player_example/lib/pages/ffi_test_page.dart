@@ -113,7 +113,6 @@ class _FFITestPageState extends State<FFITestPage> {
                 padding: const EdgeInsets.all(8),
                 child: Semantics(
                   identifier: 'ffi_test_waiting_status',
-                  label: 'ffi_test_waiting_status',
                   container: true,
                   child: const Text(
                     'Waiting for initialization...',
@@ -126,7 +125,6 @@ class _FFITestPageState extends State<FFITestPage> {
                 padding: const EdgeInsets.all(8),
                 child: Semantics(
                   identifier: 'ffi_test_initialized_status',
-                  label: 'ffi_test_initialized_status',
                   container: true,
                   child: const Text(
                     'initialized=true',
@@ -306,7 +304,6 @@ class _FFITestPageState extends State<FFITestPage> {
           Expanded(
             child: Semantics(
               identifier: 'ffi_test_button_$name',
-              label: 'ffi_test_button_$name',
               container: true,
               child: ElevatedButton(
                 onPressed: () {
@@ -320,7 +317,6 @@ class _FFITestPageState extends State<FFITestPage> {
           const SizedBox(width: 16),
           Semantics(
             identifier: 'ffi_test_status_$name',
-            label: 'ffi_test_status_$name',
             container: true,
             child: Text(
               status,
