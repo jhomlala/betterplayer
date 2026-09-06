@@ -9,9 +9,9 @@ class Constants {
       'https://raw.githubusercontent.com/jhomlala/betterplayer/master/packages/better_player_example/assets/testvideo_encrypt.mp4';
   static const String fileExampleSubtitlesUrl = 'example_subtitles.srt';
   static const String hlsTestStreamUrl =
-      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
+      'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
   static const String hlsPlaylistUrl =
-      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
+      'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8';
   static const Map<String, String> exampleResolutionsUrls = {
     'LOW':
         'https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4',

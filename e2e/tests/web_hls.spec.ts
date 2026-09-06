@@ -3,12 +3,15 @@ import { test, expect } from '@playwright/test';
 test('web hls flow', async ({ page }) => {
   await page.goto('/');
   
-  const hlsButton = page.locator('[aria-label="better_player_e2e_setup_hls"]');
+  // Wait for initial MP4 to load to avoid interrupting it and causing Shaka Error 7000
+  const playPause = page.locator('[aria-label^="better_player_material_controls_play_pause_button"]');
+  await expect(playPause).toBeVisible({ timeout: 10000 });
+
+  const hlsButton = page.locator('[aria-label^="better_player_e2e_setup_hls"]');
   await hlsButton.click({ force: true });
-  await page.waitForTimeout(2000); // Wait for player to stabilize
+  await page.waitForTimeout(3000); // Wait for HLS to initialize
 
   // Play/pause
-  const playPause = page.locator('[aria-label^="better_player_material_controls_play_pause_button"]');
   await playPause.click({ force: true });
   await page.waitForTimeout(500);
   await playPause.click({ force: true });

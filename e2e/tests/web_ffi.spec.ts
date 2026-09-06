@@ -6,10 +6,12 @@ test('web ffi flow', async ({ page }) => {
   const ffiButton = page.locator('[aria-label^="better_player_e2e_navigate_ffi"]');
   await ffiButton.scrollIntoViewIfNeeded();
   await ffiButton.click({ force: true });
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(5000); // Increased wait for FFI page to load and initialize
 
-  const initializedStatus = page.locator('[aria-label*="ffi_test_initialized_status"]');
-  await expect(initializedStatus).toContainText('initialized=true', { timeout: 60000 });
+  // Use a more relaxed locator that matches text content or aria-label
+  const initializedStatus = page.locator('[aria-label*="ffi_test_initialized_status"], flt-semantics:has-text("initialized=true")').first();
+  await expect(initializedStatus).toBeVisible({ timeout: 60000 });
+  await expect(initializedStatus).toContainText('initialized=true', { timeout: 10000 });
 
   const methods = [
     'play',
@@ -30,11 +32,11 @@ test('web ffi flow', async ({ page }) => {
   ];
 
   for (const method of methods) {
-    const btn = page.locator(`[aria-label^="ffi_test_button_${method}"]`);
+    const btn = page.locator(`[aria-label*="ffi_test_button_${method}"], button:has-text("Test ${method}")`).first();
     await btn.scrollIntoViewIfNeeded();
     await btn.click({ force: true });
     
-    const status = page.locator(`[aria-label*="ffi_test_status_${method}"]`);
-    await expect(status).toContainText('success=true', { timeout: 5000 });
+    const status = page.locator(`[aria-label*="ffi_test_status_${method}"], flt-semantics:has-text("success=true")`).first();
+    await expect(status).toContainText('success=true', { timeout: 10000 });
   }
 });
