@@ -8,10 +8,9 @@ test('web ffi flow', async ({ page }) => {
   await ffiButton.click({ force: true });
   await page.waitForTimeout(5000); // Increased wait for FFI page to load and initialize
 
-  // Use a more relaxed locator that matches text content or aria-label
-  const initializedStatus = page.locator('[aria-label*="ffi_test_initialized_status"], flt-semantics:has-text("initialized=true")').first();
+  // Use the updated semantic label that includes the status
+  const initializedStatus = page.locator('[aria-label*="ffi_test_initialized_status_true"]').first();
   await expect(initializedStatus).toBeVisible({ timeout: 60000 });
-  await expect(initializedStatus).toContainText('initialized=true', { timeout: 10000 });
 
   // Explicitly scroll down to make sure buttons are in view for Flutter Web
   await page.mouse.wheel(0, 500);
@@ -53,10 +52,9 @@ test('web ffi flow', async ({ page }) => {
       await btn.click({ force: true });
     }
     
-    // Wait for the status to change from "not started"
-    const status = page.locator(`[aria-label*="ffi_test_status_${method}"]`).first();
-    await expect(status).not.toContainText('not started', { timeout: 20000 });
-    await expect(status).toContainText('success=true', { timeout: 10000 });
+    // Wait for the status to change to success using the updated aria-label
+    const status = page.locator(`[aria-label*="ffi_test_status_${method}_success=true"]`).first();
+    await expect(status).toBeVisible({ timeout: 20000 });
 
     // Small delay between tests
     await page.waitForTimeout(1000);
