@@ -223,13 +223,20 @@ extension PlayerDataSourceExtension on BetterPlayerController {
           final dataUri = 'data:video/$ext;base64,$base64String';
           await _engine?.setNetworkDataSource(
             dataUri,
-            showNotification: _betterPlayerDataSource?.notificationConfiguration?.showNotification,
+            showNotification: _betterPlayerDataSource
+                ?.notificationConfiguration
+                ?.showNotification,
             title: _betterPlayerDataSource?.notificationConfiguration?.title,
             author: _betterPlayerDataSource?.notificationConfiguration?.author,
-            imageUrl: _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
-            notificationChannelName: _betterPlayerDataSource?.notificationConfiguration?.notificationChannelName,
+            imageUrl:
+                _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
+            notificationChannelName: _betterPlayerDataSource
+                ?.notificationConfiguration
+                ?.notificationChannelName,
             overriddenDuration: _betterPlayerDataSource!.overriddenDuration,
-            activityName: _betterPlayerDataSource?.notificationConfiguration?.activityName,
+            activityName: _betterPlayerDataSource
+                ?.notificationConfiguration
+                ?.activityName,
             clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
           );
         } else {
@@ -245,7 +252,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
                   ?.notificationConfiguration
                   ?.showNotification,
               title: _betterPlayerDataSource?.notificationConfiguration?.title,
-              author: _betterPlayerDataSource?.notificationConfiguration?.author,
+              author:
+                  _betterPlayerDataSource?.notificationConfiguration?.author,
               imageUrl:
                   _betterPlayerDataSource?.notificationConfiguration?.imageUrl,
               notificationChannelName: _betterPlayerDataSource

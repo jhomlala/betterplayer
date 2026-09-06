@@ -41,7 +41,9 @@ class _PlaylistPageState extends State<PlaylistPage> {
         subtitles: kIsWeb
             ? PlayerSubtitlesSource.single(
                 type: PlayerSubtitlesSourceType.memory,
-                content: await rootBundle.loadString('assets/example_subtitles.srt'),
+                content: await rootBundle.loadString(
+                  'assets/example_subtitles.srt',
+                ),
               )
             : PlayerSubtitlesSource.single(
                 type: PlayerSubtitlesSourceType.file,

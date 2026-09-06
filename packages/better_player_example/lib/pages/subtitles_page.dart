@@ -41,7 +41,9 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
   Future<void> _setupDataSource() async {
     List<PlayerSubtitlesSource>? subtitlesSource;
     if (kIsWeb) {
-      final content = await rootBundle.loadString('assets/example_subtitles.srt');
+      final content = await rootBundle.loadString(
+        'assets/example_subtitles.srt',
+      );
       subtitlesSource = PlayerSubtitlesSource.single(
         type: PlayerSubtitlesSourceType.memory,
         content: content,

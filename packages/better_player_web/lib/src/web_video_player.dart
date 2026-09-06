@@ -98,7 +98,10 @@ class WebVideoPlayer {
         if (isBuffering) {
           isBuffering = false;
           _eventController.add(
-            VideoEvent(eventType: VideoEventType.bufferingEnd, key: _currentKey),
+            VideoEvent(
+              eventType: VideoEventType.bufferingEnd,
+              key: _currentKey,
+            ),
           );
         }
         _emitBufferingUpdate();
@@ -347,7 +350,12 @@ class WebVideoPlayer {
         (height == null || height == 0) &&
         (bitrate == null || bitrate == 0)) {
       // print('[WebVideoPlayer] Default track detected, configuring ABR: true');
-      _shakaPlayer.configure({'abr': {'enabled': true}}.jsify()! as JSObject);
+      _shakaPlayer.configure(
+        {
+              'abr': {'enabled': true},
+            }.jsify()!
+            as JSObject,
+      );
       return;
     }
 
@@ -374,7 +382,12 @@ class WebVideoPlayer {
 
     if (best != null) {
       // print('[WebVideoPlayer] Forcing variant track and disabling ABR');
-      _shakaPlayer.configure({'abr': {'enabled': false}}.jsify()! as JSObject);
+      _shakaPlayer.configure(
+        {
+              'abr': {'enabled': false},
+            }.jsify()!
+            as JSObject,
+      );
       _shakaPlayer.selectVariantTrack(best, true.toJS);
     }
   }

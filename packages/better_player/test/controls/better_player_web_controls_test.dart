@@ -36,7 +36,7 @@ void main() {
     );
   }
 
-    testWidgets(
+  testWidgets(
     'BetterPlayerWebControls is rendered when theme is web',
     (tester) async {
       final mockMethodChannel = MockMethodChannel();
@@ -48,12 +48,13 @@ void main() {
       const controlsConfiguration = PlayerControlsConfiguration(
         playerTheme: PlayerTheme.web,
       );
-      final customMockController = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockPlayerEngineController(),
-        configuration: const PlayerConfiguration(
-          controlsConfiguration: controlsConfiguration,
-        ),
-      );
+      final customMockController =
+          BetterPlayerTestUtils.setupBetterPlayerMockController(
+            controller: MockPlayerEngineController(),
+            configuration: const PlayerConfiguration(
+              controlsConfiguration: controlsConfiguration,
+            ),
+          );
       await customMockController.setupDataSource(
         PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
       );

@@ -48,9 +48,9 @@ class _CachePageState extends State<CachePage> {
               kIsWeb
                   ? 'Cache is not supported on the web platform.'
                   : 'Player with cache enabled. To test this feature, first plays '
-                      'video, then leave this page, turn internet off and enter '
-                      'page again. You should be able to play video without '
-                      'internet connection.',
+                        'video, then leave this page, turn internet off and enter '
+                        'page again. You should be able to play video without '
+                        'internet connection.',
               style: TextStyle(fontSize: 16),
             ),
           ),
