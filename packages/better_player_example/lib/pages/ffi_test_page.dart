@@ -114,6 +114,7 @@ class _FFITestPageState extends State<FFITestPage> {
                 child: Semantics(
                   identifier: 'ffi_test_waiting_status',
                   label: 'ffi_test_waiting_status',
+                  container: true,
                   child: const Text(
                     'Waiting for initialization...',
                     style: TextStyle(color: Colors.orange),
@@ -126,6 +127,7 @@ class _FFITestPageState extends State<FFITestPage> {
                 child: Semantics(
                   identifier: 'ffi_test_initialized_status',
                   label: 'ffi_test_initialized_status',
+                  container: true,
                   child: const Text(
                     'initialized=true',
                     style: TextStyle(color: Colors.green),
@@ -315,6 +317,7 @@ class _FFITestPageState extends State<FFITestPage> {
           Semantics(
             identifier: 'ffi_test_status_$name',
             label: 'ffi_test_status_$name',
+            container: true,
             child: Text(
               status,
               style: TextStyle(color: color, fontWeight: FontWeight.bold),

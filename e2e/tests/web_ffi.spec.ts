@@ -8,8 +8,8 @@ test('web ffi flow', async ({ page }) => {
   await ffiButton.click({ force: true });
   await page.waitForTimeout(3000);
 
-  const initializedStatus = page.locator('[aria-label^="ffi_test_initialized_status"]');
-  await expect(initializedStatus).toHaveText('initialized=true', { timeout: 60000 });
+  const initializedStatus = page.locator('[aria-label*="ffi_test_initialized_status"]');
+  await expect(initializedStatus).toContainText('initialized=true', { timeout: 60000 });
 
   const methods = [
     'play',
@@ -34,7 +34,7 @@ test('web ffi flow', async ({ page }) => {
     await btn.scrollIntoViewIfNeeded();
     await btn.click({ force: true });
     
-    const status = page.locator(`[aria-label^="ffi_test_status_${method}"]`);
-    await expect(status).toHaveText('success=true', { timeout: 5000 });
+    const status = page.locator(`[aria-label*="ffi_test_status_${method}"]`);
+    await expect(status).toContainText('success=true', { timeout: 5000 });
   }
 });

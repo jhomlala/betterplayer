@@ -6,6 +6,7 @@ test('web datasource swap flow', async ({ page }) => {
   // MP4
   const mp4Button = page.locator('[aria-label^="better_player_e2e_setup_mp4"]');
   await mp4Button.click({ force: true });
+  await page.waitForTimeout(2000); // Wait for first load to at least start
 
   // Swap to HLS
   const hlsButton = page.locator('[aria-label^="better_player_e2e_setup_hls"]');
