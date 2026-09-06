@@ -23,28 +23,31 @@ class BetterPlayerWebErrorWidget extends StatelessWidget {
     } else {
       final textStyle = TextStyle(color: controlsConfiguration.textColor);
       return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.warning,
-              color: controlsConfiguration.iconsColor,
-              size: 42,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              controller.translations.generalDefaultError,
-              style: textStyle,
-            ),
-            if (controlsConfiguration.enableRetry)
-              TextButton(
-                onPressed: controller.retryDataSource,
-                child: Text(
-                  controller.translations.generalRetry,
-                  style: textStyle.copyWith(fontWeight: FontWeight.bold),
-                ),
+        child: Semantics(
+          label: 'better_player_web_error_widget',
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.warning,
+                color: controlsConfiguration.iconsColor,
+                size: 42,
               ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                controller.translations.generalDefaultError,
+                style: textStyle,
+              ),
+              if (controlsConfiguration.enableRetry)
+                TextButton(
+                  onPressed: controller.retryDataSource,
+                  child: Text(
+                    controller.translations.generalRetry,
+                    style: textStyle.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                ),
+            ],
+          ),
         ),
       );
     }
