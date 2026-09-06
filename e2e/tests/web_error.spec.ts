@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test('web error flow', async ({ page }) => {
   await page.goto('/');
   
-  const errorButton = page.locator('[aria-label="better_player_e2e_setup_error"]');
+  const errorButton = page.locator('[aria-label^="better_player_e2e_setup_error"]');
   await errorButton.click({ force: true });
   await page.waitForTimeout(2000);
 

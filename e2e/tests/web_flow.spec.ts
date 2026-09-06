@@ -10,19 +10,19 @@ test('web flow', async ({ page }) => {
   
 
   // Play/pause
-  const playPause = page.locator('[aria-label="better_player_material_controls_play_pause_button"]');
+  const playPause = page.locator('[aria-label^="better_player_material_controls_play_pause_button"]');
   await playPause.click({ force: true });
   await page.waitForTimeout(500);
   await playPause.click({ force: true });
 
   // Mute/unmute
-  const mute = page.locator('[aria-label="better_player_material_controls_mute_button"]');
+  const mute = page.locator('[aria-label^="better_player_material_controls_mute_button"]');
   await mute.click({ force: true });
   await page.waitForTimeout(500);
   await mute.click({ force: true });
 
   // Playback speed
-  const settings = page.locator('[aria-label="better_player_material_controls_more_button"]');
+  const settings = page.locator('[aria-label^="better_player_material_controls_more_button"]');
   await settings.click({ force: true });
   await page.waitForTimeout(1000);
   const speedMenu = page.locator('[aria-label^="better_player_overflow_menu_playback_speed"]');
@@ -45,12 +45,12 @@ test('web flow', async ({ page }) => {
   await qualityAuto.click({ force: true });
 
   // Seek
-  const progressBar = page.locator('[aria-label="better_player_material_progress_bar"]');
+  const progressBar = page.locator('[aria-label^="better_player_material_progress_bar"]');
   await expect(progressBar).toBeVisible();
   await progressBar.click({ force: true });
 
   // Fullscreen
-  const fullscreen = page.locator('[aria-label="better_player_material_controls_expand_button"]');
+  const fullscreen = page.locator('[aria-label^="better_player_material_controls_expand_button"]');
   await expect(fullscreen).toBeVisible();
   await fullscreen.click({ force: true });
 });
