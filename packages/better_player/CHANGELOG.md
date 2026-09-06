@@ -1,7 +1,8 @@
 ## Unreleased
 - Added: Web platform support via `better_player_web`.
 - Fixed: Improved Web semantic discovery by adding missing labels and container flags to menu items and test pages.
-- Updated: Enhanced E2E test reliability on Web with robust locators, HLS track discovery retries, and stability delays.
+- Updated: Enhanced E2E test reliability on Web with robust locators, explicit scrolling, HLS track discovery retries, and increased stability delays.
+- Fixed: Resolved `better_player_cupertino_controls_test.dart` failure by using proper widget interaction and pumping.
 
 ## 1.5.1
 - Fixed: Resolved Cupertino action sheet fallback label and destructive styling for the cancel button, restoring proper localization and iOS consistency.
