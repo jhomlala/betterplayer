@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer_item.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class PlayerSubtitlesDrawer extends StatefulWidget {
@@ -110,7 +111,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
       child: Padding(
         padding: EdgeInsets.only(
           bottom: _playerVisible
-              ? _configuration!.bottomPadding + 65
+              ? _configuration!.bottomPadding + (kIsWeb ? 65 : 30)
               : _configuration!.bottomPadding,
           left: _configuration!.leftPadding,
           right: _configuration!.rightPadding,

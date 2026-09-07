@@ -91,21 +91,21 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
   ///Check if given [betterPlayerDataSource] is HLS / DASH-type data source.
   bool _isDataSourceAsms(PlayerDataSource betterPlayerDataSource) =>
-      (BetterPlayerAsmsUtils.isDataSourceHls(betterPlayerDataSource.url) ||
+      (BetterPlayerAsmsUtils().isDataSourceHls(betterPlayerDataSource.url) ||
           betterPlayerDataSource.videoFormat == VideoFormat.hls) ||
-      (BetterPlayerAsmsUtils.isDataSourceDash(betterPlayerDataSource.url) ||
+      (BetterPlayerAsmsUtils().isDataSourceDash(betterPlayerDataSource.url) ||
           betterPlayerDataSource.videoFormat == VideoFormat.dash);
 
   ///Configure HLS / DASH data source based on provided data source and configuration.
   ///This method configures tracks, subtitles and audio tracks from given
   ///master playlist.
   Future<void> _setupAsmsDataSource(PlayerDataSource source) async {
-    final data = await BetterPlayerAsmsUtils.getDataFromUrl(
+    final data = await BetterPlayerAsmsUtils().getDataFromUrl(
       source.url,
       _getHeaders(),
     );
     if (data != null) {
-      final response = await BetterPlayerAsmsUtils.parse(
+      final response = await BetterPlayerAsmsUtils().parse(
         data,
         source.url,
       );

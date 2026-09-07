@@ -116,7 +116,7 @@ class BetterPlayerHlsUtils {
   ) async {
     try {
       final hlsPlaylistParser = HlsPlaylistParser.create();
-      final subtitleData = await BetterPlayerAsmsUtils.getDataFromUrl(
+      final subtitleData = await BetterPlayerAsmsUtils().getDataFromUrl(
         rendition.url.toString(),
       );
       if (subtitleData == null) {

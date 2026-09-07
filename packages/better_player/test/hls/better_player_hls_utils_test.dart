@@ -8,22 +8,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('BetterPlayerHlsUtils advanced tests', () {
-    setUp(() {
-      BetterPlayerAsmsUtils.httpClient = null;
-    });
-
     test('parseSubtitles handles segmented subtitles', () async {
-      BetterPlayerAsmsUtils.httpClient = MockClient((request) async {
-        return http.Response('''
-#EXTM3U
-#EXT-X-TARGETDURATION:10
-#EXTINF:10.0,
-segment1.vtt
-#EXTINF:10.0,
-segment2.vtt
-''', 200);
-      });
-
       const masterData = '''
 #EXTM3U
 #EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="English",URI="subs.m3u8"

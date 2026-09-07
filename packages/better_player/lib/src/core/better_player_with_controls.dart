@@ -165,6 +165,8 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
             controller: betterPlayerController,
             onControlsVisibilityChanged: onControlsVisibilityChanged,
           ),
+          // IgnorePointer is required so that the subtitles layer (which expands to fill the screen)
+          // doesn't block touch events from reaching the video controls below it.
           IgnorePointer(
             child: PlayerSubtitlesDrawer(
               betterPlayerController: betterPlayerController,

@@ -7,16 +7,13 @@ import 'package:http/testing.dart';
 
 void main() {
   group('PlayerSubtitlesFactory tests', () {
-    setUp(() {
-      PlayerSubtitlesFactory.httpClient = null;
-    });
-
     test('parseSubtitles from memory', () async {
+      final factory = PlayerSubtitlesFactory();
       final source = PlayerSubtitlesSource(
         type: PlayerSubtitlesSourceType.memory,
         content: '1\n00:00:01,000 --> 00:00:02,000\nHello\n\n',
       );
-      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await factory.parseSubtitles(
         source,
       );
       expect(subtitles.length, 1);
@@ -24,29 +21,32 @@ void main() {
     });
 
     test('parseSubtitles from network', () async {
-      PlayerSubtitlesFactory.httpClient = MockClient((request) async {
-        return http.Response(
-          '1\n00:00:01,000 --> 00:00:02,000\nHello\n\n',
-          200,
-        );
-      });
+      final factory = PlayerSubtitlesFactory(
+        httpClient: MockClient((request) async {
+          return http.Response(
+            '1\n00:00:01,000 --> 00:00:02,000\nHello\n\n',
+            200,
+          );
+        }),
+      );
 
       final source = PlayerSubtitlesSource(
         type: PlayerSubtitlesSourceType.network,
         urls: ['https://example.com/subs.srt'],
       );
-      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await factory.parseSubtitles(
         source,
       );
       expect(subtitles.length, 1);
     });
 
     test('parseSubtitles from file handles non-existent file', () async {
+      final factory = PlayerSubtitlesFactory();
       final source = PlayerSubtitlesSource(
         type: PlayerSubtitlesSourceType.file,
         urls: ['non_existent_file.srt'],
       );
-      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await factory.parseSubtitles(
         source,
       );
       expect(subtitles.length, 0);

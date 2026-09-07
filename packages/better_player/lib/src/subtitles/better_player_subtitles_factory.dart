@@ -8,23 +8,12 @@ import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
 class PlayerSubtitlesFactory {
-  static http.Client? _httpClientCache;
+  PlayerSubtitlesFactory({http.Client? httpClient})
+    : _httpClient = httpClient ?? http.Client();
 
-  static http.Client get _httpClient {
-    _httpClientCache ??= http.Client();
-    return _httpClientCache!;
-  }
+  final http.Client _httpClient;
 
-  ///Set custom http client. Used for testing.
-  @visibleForTesting
-  static set httpClient(http.Client? client) {
-    _httpClientCache = client;
-  }
-
-  ///Get current http client.
-  static http.Client? get httpClient => _httpClientCache;
-
-  static Future<List<PlayerSubtitle>> parseSubtitles(
+  Future<List<PlayerSubtitle>> parseSubtitles(
     PlayerSubtitlesSource source,
   ) async {
     switch (source.type) {
@@ -39,7 +28,7 @@ class PlayerSubtitlesFactory {
     }
   }
 
-  static Future<List<PlayerSubtitle>> _parseSubtitlesFromFile(
+  Future<List<PlayerSubtitle>> _parseSubtitlesFromFile(
     PlayerSubtitlesSource source,
   ) async {
     try {
@@ -64,7 +53,7 @@ class PlayerSubtitlesFactory {
     return [];
   }
 
-  static Future<List<PlayerSubtitle>> _parseSubtitlesFromNetwork(
+  Future<List<PlayerSubtitle>> _parseSubtitlesFromNetwork(
     PlayerSubtitlesSource source,
   ) async {
     try {
@@ -98,7 +87,7 @@ class PlayerSubtitlesFactory {
     return [];
   }
 
-  static List<PlayerSubtitle> _parseSubtitlesFromMemory(
+  List<PlayerSubtitle> _parseSubtitlesFromMemory(
     PlayerSubtitlesSource source,
   ) {
     try {
@@ -112,7 +101,7 @@ class PlayerSubtitlesFactory {
     return [];
   }
 
-  static List<PlayerSubtitle> _parseString(String value) {
+  List<PlayerSubtitle> _parseString(String value) {
     var components = value.split('\r\n\r\n');
     if (components.length == 1) {
       components = value.split('\n\n');

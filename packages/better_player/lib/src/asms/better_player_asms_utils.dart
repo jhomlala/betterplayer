@@ -9,36 +9,26 @@ import 'package:meta/meta.dart';
 
 ///Base helper class for ASMS parsing.
 class BetterPlayerAsmsUtils {
+  BetterPlayerAsmsUtils({http.Client? httpClient})
+    : _httpClient = httpClient ?? http.Client();
+
+  final http.Client _httpClient;
+
   static const String _hlsExtension = 'm3u8';
   static const String _dashExtension = 'mpd';
 
-  static http.Client? _httpClientCache;
-  static http.Client get _httpClient {
-    _httpClientCache ??= http.Client();
-    return _httpClientCache!;
-  }
-
-  ///Set custom http client. Used for testing.
-  @visibleForTesting
-  static set httpClient(http.Client? client) {
-    _httpClientCache = client;
-  }
-
-  ///Get current http client.
-  static http.Client? get httpClient => _httpClientCache;
-
   ///Check if given url is HLS / DASH-type data source.
-  static bool isDataSourceAsms(String url) =>
+  bool isDataSourceAsms(String url) =>
       isDataSourceHls(url) || isDataSourceDash(url);
 
   ///Check if given url is HLS-type data source.
-  static bool isDataSourceHls(String url) => url.contains(_hlsExtension);
+  bool isDataSourceHls(String url) => url.contains(_hlsExtension);
 
   ///Check if given url is DASH-type data source.
-  static bool isDataSourceDash(String url) => url.contains(_dashExtension);
+  bool isDataSourceDash(String url) => url.contains(_dashExtension);
 
   ///Parse playlist based on type of stream.
-  static Future<PlayerAsmsDataHolder> parse(
+  Future<PlayerAsmsDataHolder> parse(
     String data,
     String masterPlaylistUrl,
   ) async {
@@ -49,7 +39,7 @@ class BetterPlayerAsmsUtils {
 
   ///Request data from given uri along with headers. May return null if resource
   ///is not available or on error.
-  static Future<String?> getDataFromUrl(
+  Future<String?> getDataFromUrl(
     String url, [
     Map<String, String?>? headers,
   ]) async {

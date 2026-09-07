@@ -35,7 +35,7 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
     );
     final dataSource = PlayerDataSource(
       DataSourceType.network,
-      Constants.hlsPlaylistUrl,
+      Constants.hlsTestStreamUrl,
     );
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
     _betterPlayerController.setupDataSource(dataSource);
