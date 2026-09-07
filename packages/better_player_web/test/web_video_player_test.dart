@@ -287,11 +287,18 @@ void main() {
       final mockVideo = JSObject();
       mockVideo.setProperty('style'.toJS, JSObject());
       mockVideo.setProperty('setAttribute'.toJS, ((JSString name, JSString value) {}).toJS);
+      
+      final listeners = <String, List<JSFunction>>{};
       mockVideo.setProperty('addEventListener'.toJS, ((JSString type, JSFunction listener) {
-        (mockVideo as web.EventTarget).addEventListener(type.toDart, listener);
+        listeners.putIfAbsent(type.toDart, () => []).add(listener);
       }).toJS);
+      
       mockVideo.setProperty('dispatchEvent'.toJS, ((web.Event event) {
-         return (mockVideo as web.EventTarget).dispatchEvent(event);
+        final type = event.type;
+        for (final l in (listeners[type] ?? [])) {
+          l.callAsFunction(mockVideo, event);
+        }
+        return true.toJS;
       }).toJS);
 
       player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
@@ -306,7 +313,9 @@ void main() {
       mockVideo.setProperty('videoHeight'.toJS, 720.toJS);
 
       // Dispatch loadedmetadata
-      (mockVideo as web.EventTarget).dispatchEvent(web.Event('loadedmetadata'));
+      for (final l in (listeners['loadedmetadata'] ?? [])) {
+        l.callAsFunction(mockVideo, web.Event('loadedmetadata'));
+      }
       
       await Future.delayed(const Duration(milliseconds: 100));
       expect(receivedEvent, isNotNull);
@@ -418,7 +427,13 @@ void main() {
 
     test('Seeked events are emitted with throttle', () async {
       print('--- test: Seeked events start ---');
-      player.initialize();
+      final mockVideo = player.videoElement as JSObject;
+      final listeners = <JSFunction>[];
+      mockVideo.setProperty('addEventListener'.toJS, ((JSString type, JSFunction listener) {
+        if (type.toDart == 'seeked') listeners.add(listener);
+      }).toJS);
+      
+      player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
       
       int seekEvents = 0;
       final sub = player.events.listen((e) {
@@ -426,8 +441,10 @@ void main() {
       });
       await Future.delayed(const Duration(milliseconds: 100));
 
-      player.videoElement.dispatchEvent(web.Event('seeked'));
-      player.videoElement.dispatchEvent(web.Event('seeked')); // Should be throttled
+      for (final l in listeners) {
+        l.callAsFunction(mockVideo, web.Event('seeked'));
+        l.callAsFunction(mockVideo, web.Event('seeked')); // Should be throttled
+      }
       
       await Future.delayed(const Duration(milliseconds: 100));
       expect(seekEvents, 1);
@@ -438,17 +455,27 @@ void main() {
 
     test('Buffering events (waiting/playing) emit bufferingStart/End', () async {
       print('--- test: Buffering events start ---');
-      player.initialize();
+      final mockVideo = player.videoElement as JSObject;
+      final listeners = <String, List<JSFunction>>{};
+      mockVideo.setProperty('addEventListener'.toJS, ((JSString type, JSFunction listener) {
+        listeners.putIfAbsent(type.toDart, () => []).add(listener);
+      }).toJS);
+      
+      player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
       
       final events = <VideoEventType>[];
       final sub = player.events.listen((e) => events.add(e.eventType));
       await Future.delayed(const Duration(milliseconds: 100));
 
-      player.videoElement.dispatchEvent(web.Event('waiting'));
+      for (final l in (listeners['waiting'] ?? [])) {
+        l.callAsFunction(mockVideo, web.Event('waiting'));
+      }
       // Wait > 200ms as there is a timer in the implementation
       await Future.delayed(const Duration(milliseconds: 300));
       
-      player.videoElement.dispatchEvent(web.Event('playing'));
+      for (final l in (listeners['playing'] ?? [])) {
+        l.callAsFunction(mockVideo, web.Event('playing'));
+      }
       await Future.delayed(const Duration(milliseconds: 100));
       
       expect(events, contains(VideoEventType.bufferingStart));
@@ -460,15 +487,27 @@ void main() {
 
     test('UI events (resize/pip) emit correct VideoEvents', () async {
       print('--- test: UI events start ---');
-      player.initialize();
+      final mockVideo = player.videoElement as JSObject;
+      final listeners = <String, List<JSFunction>>{};
+      mockVideo.setProperty('addEventListener'.toJS, ((JSString type, JSFunction listener) {
+        listeners.putIfAbsent(type.toDart, () => []).add(listener);
+      }).toJS);
+      
+      player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
       
       final events = <VideoEventType>[];
       final sub = player.events.listen((e) => events.add(e.eventType));
       await Future.delayed(const Duration(milliseconds: 100));
 
-      player.videoElement.dispatchEvent(web.Event('resize'));
-      player.videoElement.dispatchEvent(web.Event('enterpictureinpicture'));
-      player.videoElement.dispatchEvent(web.Event('leavepictureinpicture'));
+      for (final l in (listeners['resize'] ?? [])) {
+        l.callAsFunction(mockVideo, web.Event('resize'));
+      }
+      for (final l in (listeners['enterpictureinpicture'] ?? [])) {
+        l.callAsFunction(mockVideo, web.Event('enterpictureinpicture'));
+      }
+      for (final l in (listeners['leavepictureinpicture'] ?? [])) {
+        l.callAsFunction(mockVideo, web.Event('leavepictureinpicture'));
+      }
       
       await Future.delayed(const Duration(milliseconds: 100));
       expect(events, contains(VideoEventType.changedSize));

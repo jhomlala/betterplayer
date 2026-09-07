@@ -35,10 +35,12 @@ void main() {
       print('>>> Running web_video_player_test.main()');
       web_video_player_test.main();
       
-      tearDownAll(() {
+      tearDownAll(() async {
         print('=== ALL WEB TESTS FINISHED ===');
         // Attempt to close the browser window/tab to stop the runner
         try {
+          // Ownership trick to allow closing windows not opened by script
+          web.window.open('', '_self');
           web.window.close();
         } catch (e) {
           print('Could not close window: $e');
