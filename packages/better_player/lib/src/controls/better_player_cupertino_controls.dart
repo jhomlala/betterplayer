@@ -148,44 +148,39 @@ class _BetterPlayerCupertinoControlsState
               _betterPlayerController?.isFullScreen == true;
           return BetterPlayerVideoAreaSemantics(
             semanticsIdentifier: 'better_player_cupertino_video_area',
-            child: MouseRegion(
-              onHover: (_) {
-                if (kIsWeb) cancelAndRestartTimer();
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+                  BetterPlayerMultipleGestureDetector.of(
+                    context,
+                  )!.onTap?.call();
+                }
+                controlsNotVisible
+                    ? cancelAndRestartTimer()
+                    : changePlayerControlsNotVisible(true);
               },
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-                    BetterPlayerMultipleGestureDetector.of(
-                      context,
-                    )!.onTap?.call();
-                  }
-                  controlsNotVisible
-                      ? cancelAndRestartTimer()
-                      : changePlayerControlsNotVisible(true);
-                },
-                onDoubleTap: () {
-                  if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-                    BetterPlayerMultipleGestureDetector.of(
-                      context,
-                    )!.onDoubleTap?.call();
-                  }
-                  cancelAndRestartTimer();
-                  _onPlayPause();
-                },
-                onLongPress: () {
-                  if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-                    BetterPlayerMultipleGestureDetector.of(
-                      context,
-                    )!.onLongPress?.call();
-                  }
-                },
-                child: AbsorbPointer(
-                  absorbing: controlsNotVisible,
-                  child: isFullScreenSafe
-                      ? SafeArea(child: controlsColumn)
-                      : controlsColumn,
-                ),
+              onDoubleTap: () {
+                if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+                  BetterPlayerMultipleGestureDetector.of(
+                    context,
+                  )!.onDoubleTap?.call();
+                }
+                cancelAndRestartTimer();
+                _onPlayPause();
+              },
+              onLongPress: () {
+                if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+                  BetterPlayerMultipleGestureDetector.of(
+                    context,
+                  )!.onLongPress?.call();
+                }
+              },
+              child: AbsorbPointer(
+                absorbing: controlsNotVisible,
+                child: isFullScreenSafe
+                    ? SafeArea(child: controlsColumn)
+                    : controlsColumn,
               ),
             ),
           );
