@@ -124,3 +124,7 @@ Swiftgen and jnigen bindings are automatically generated on CI/CD (or triggered 
 3. **Swift Setter Clashes**: Similarly in Swift, an `@objc public static var callback` creates an Objective-C setter `setCallback:`. Defining a manual `@objc public static func setCallback()` will cause a selector conflict. Use `private static var _callback`.
 4. **JNI Auto-Setters**: `jnigen` automatically maps Kotlin `setX(...)` functions to Dart setter properties. For example, `setLogCallback(callback)` in Kotlin becomes `Api.Companion.logCallback = callback;` in Dart.
 5. **Swiftgen Allow-Lists**: Don't forget to explicitly add new Swift protocols to the `protocols:` allow-list inside `swiftgen.dart`. If you forget, it will only generate a stub class without the required Builder implementation.
+
+## GitHub Workflows
+When asked to fetch or analyze Pull Request comments, agents should utilize the scripts/fetch_pr_comments.dart utility.
+See ules/github.md for detailed usage instructions. Ensure the GITHUB_TOKEN environment variable is available.
