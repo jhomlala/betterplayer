@@ -41,7 +41,7 @@ void main() {
       ),
       playerEngineController: mockEngine,
     );
-    
+
     await controller.setupDataSource(
       PlayerDataSource.network(
         BetterPlayerTestUtils.forBiggerBlazesUrl,
@@ -60,11 +60,11 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    
+
     // Force visibility via controller
     controller.setControlsVisibility(true);
     await tester.pumpAndSettle();
-    
+
     controller.setControlsAlwaysVisible(true);
     await tester.pumpAndSettle();
   }
@@ -74,12 +74,28 @@ void main() {
     (tester) async {
       await setupControls(tester);
       expect(find.byType(BetterPlayerWebControls), findsOneWidget);
-      
+
       // Verify basic buttons exist by semantics
-      expect(find.bySemanticsLabel('better_player_material_controls_play_pause_button'), findsOneWidget);
-      expect(find.bySemanticsLabel('better_player_material_controls_mute_button'), findsOneWidget);
-      expect(find.bySemanticsLabel('better_player_material_controls_fullscreen_button'), findsOneWidget);
-      expect(find.bySemanticsLabel('better_player_material_controls_more_button'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          'better_player_material_controls_play_pause_button',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_material_controls_mute_button'),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel(
+          'better_player_material_controls_fullscreen_button',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_material_controls_more_button'),
+        findsOneWidget,
+      );
     },
   );
 
@@ -114,14 +130,26 @@ void main() {
 
     // Initial width should be 0 (volume slider is hidden)
     final volumeSliderFinder = find.byType(AnimatedContainer).first;
-    expect(tester.widget<AnimatedContainer>(volumeSliderFinder).constraints?.maxWidth, 0.0);
+    expect(
+      tester
+          .widget<AnimatedContainer>(volumeSliderFinder)
+          .constraints
+          ?.maxWidth,
+      0.0,
+    );
 
     // Hover mute button area to expand slider
     final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
     await gesture.addPointer(location: tester.getCenter(muteButton));
     await tester.pumpAndSettle();
 
-    expect(tester.widget<AnimatedContainer>(volumeSliderFinder).constraints?.maxWidth, 100.0);
+    expect(
+      tester
+          .widget<AnimatedContainer>(volumeSliderFinder)
+          .constraints
+          ?.maxWidth,
+      100.0,
+    );
 
     await tester.tap(muteButton);
     await tester.pumpAndSettle();
@@ -161,7 +189,7 @@ void main() {
 
     final speedItem = find.text('Playback speed');
     expect(speedItem, findsOneWidget);
-    
+
     await tester.tap(speedItem);
     await tester.pumpAndSettle();
 

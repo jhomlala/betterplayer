@@ -7,7 +7,7 @@ import 'web_video_player_test.dart' as web_video_player_test;
 void main() {
   // Simple app to trigger test execution
   runApp(
-    MaterialApp(
+    const MaterialApp(
       home: Scaffold(
         body: Center(
           child: Column(
@@ -25,30 +25,23 @@ void main() {
   );
 
   // We use a small delay to let the app settle
-  Future.delayed(Duration(seconds: 3), () async {
-    print('--- Starting All Web Tests ---');
-    
+  Future<void>.delayed(const Duration(seconds: 3), () async {
+    debugPrint('--- Starting All Web Tests ---');
+
     try {
-      print('>>> Running better_player_web_test.main()');
+      debugPrint('>>> Running better_player_web_test.main()');
       better_player_web_test.main();
-      
-      print('>>> Running web_video_player_test.main()');
+
+      debugPrint('>>> Running web_video_player_test.main()');
       web_video_player_test.main();
-      
+
       tearDownAll(() async {
-        print('=== ALL WEB TESTS FINISHED ===');
+        debugPrint('=== ALL WEB TESTS FINISHED ===');
         // Attempt to close the browser window/tab to stop the runner
-        try {
-          // Ownership trick to allow closing windows not opened by script
-          web.window.open('', '_self');
-          web.window.close();
-        } catch (e) {
-          print('Could not close window: $e');
-        }
       });
     } catch (e, stack) {
-      print('Error during test registration: $e');
-      print(stack);
+      debugPrint('Error during test registration: $e');
+      debugPrint(stack.toString());
     }
   });
 }

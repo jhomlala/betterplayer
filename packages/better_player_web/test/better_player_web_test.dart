@@ -1,7 +1,9 @@
 import 'dart:js_interop';
+
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_web/src/better_player_web.dart';
 import 'package:better_player_web/src/web_video_player.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
@@ -18,37 +20,42 @@ void main() {
     late MockBetterPlayerWebPlayer mockPlayer;
 
     setUp(() {
-      print('--- setUp start ---');
+      debugPrint('--- setUp start ---');
       mockPlayer = MockBetterPlayerWebPlayer();
 
       when(() => mockPlayer.initialize()).thenReturn(null);
       // Return a dummy JSObject cast to HTMLVideoElement to avoid DOM calls
-      when(() => mockPlayer.videoElement).thenReturn(JSObject() as web.HTMLVideoElement);
+      when(
+        () => mockPlayer.videoElement,
+      ).thenReturn(JSObject() as web.HTMLVideoElement);
       when(() => mockPlayer.viewId).thenReturn('test_view_id');
 
       plugin = BetterPlayerWeb(
         playerFactory: ({required viewId, required onLog}) => mockPlayer,
       );
-      
+
       plugin.setupLogCallback(({required levelIndex, required message}) {
-        print('[LOG] $message');
+        debugPrint('[LOG $levelIndex] $message');
       });
-      print('--- setUp end ---');
+      debugPrint('--- setUp end ---');
     });
 
-    test('create assigns sequential texture IDs and initializes player', () async {
-      print('--- test: create assigns sequential texture IDs start ---');
-      final id1 = await plugin.create();
-      final id2 = await plugin.create();
+    test(
+      'create assigns sequential texture IDs and initializes player',
+      () async {
+        debugPrint('--- test: create assigns sequential texture IDs start ---');
+        final id1 = await plugin.create();
+        final id2 = await plugin.create();
 
-      expect(id1, 0);
-      expect(id2, 1);
-      verify(() => mockPlayer.initialize()).called(2);
-      print('--- test: create assigns sequential texture IDs end ---');
-    });
+        expect(id1, 0);
+        expect(id2, 1);
+        verify(() => mockPlayer.initialize()).called(2);
+        debugPrint('--- test: create assigns sequential texture IDs end ---');
+      },
+    );
 
     test('dispose calls player.dispose and removes from map', () async {
-      print('--- test: dispose calls player.dispose start ---');
+      debugPrint('--- test: dispose calls player.dispose start ---');
       when(() => mockPlayer.dispose()).thenAnswer((_) async {});
 
       final id = await plugin.create();
@@ -56,11 +63,11 @@ void main() {
 
       verify(() => mockPlayer.dispose()).called(1);
       expect(() => plugin.play(id), throwsStateError);
-      print('--- test: dispose calls player.dispose end ---');
+      debugPrint('--- test: dispose calls player.dispose end ---');
     });
 
     test('methods delegate to player correctly', () async {
-      print('--- test: methods delegate to player correctly start ---');
+      debugPrint('--- test: methods delegate to player correctly start ---');
       final id = await plugin.create();
 
       when(() => mockPlayer.play()).thenReturn(null);
@@ -87,7 +94,9 @@ void main() {
       await plugin.seekTo(id, const Duration(seconds: 10));
       verify(() => mockPlayer.seekTo(const Duration(seconds: 10))).called(1);
 
-      when(() => mockPlayer.getPosition()).thenReturn(const Duration(seconds: 5));
+      when(
+        () => mockPlayer.getPosition(),
+      ).thenReturn(const Duration(seconds: 5));
       final pos = await plugin.getPosition(id);
       expect(pos, const Duration(seconds: 5));
 
@@ -118,7 +127,9 @@ void main() {
         ),
       ).thenReturn(null);
       await plugin.setAudioTrack(id, 'en', 1);
-      verify(() => mockPlayer.setAudioTrack(language: 'en', index: 1)).called(1);
+      verify(
+        () => mockPlayer.setAudioTrack(language: 'en', index: 1),
+      ).called(1);
 
       when(() => mockPlayer.enablePictureInPicture()).thenAnswer((_) async {});
       await plugin.enablePictureInPicture(id, null, null, null, null);
@@ -131,17 +142,35 @@ void main() {
       when(() => mockPlayer.isPictureInPictureSupported()).thenReturn(true);
       final pipSupported = await plugin.isPictureInPictureSupported(id);
       expect(pipSupported, true);
-      print('--- test: methods delegate to player correctly end ---');
+      debugPrint('--- test: methods delegate to player correctly end ---');
     });
 
-    test('no-op methods do not throw', () async {
+    test('no-op methods log warnings', () async {
+      int? lastLevel;
+      String? lastMessage;
+      await plugin.setupLogCallback(({required levelIndex, required message}) {
+        lastLevel = levelIndex;
+        lastMessage = message;
+      });
+
       await plugin.preCache(
         DataSource(sourceType: DataSourceType.network, uri: 'url'),
         0,
       );
+      expect(lastLevel, 2);
+      expect(lastMessage, contains('preCache is not supported on web'));
+
       await plugin.stopPreCache('url', null);
+      expect(lastLevel, 2);
+      expect(lastMessage, contains('stopPreCache is not supported on web'));
+
       await plugin.clearCache();
+      expect(lastLevel, 2);
+      expect(lastMessage, contains('clearCache is not supported on web'));
+
       await plugin.setMixWithOthers(0, true);
+      expect(lastLevel, 2);
+      expect(lastMessage, contains('setMixWithOthers is not supported on web'));
     });
 
     test('seekTo with null position is a no-op', () async {
@@ -150,16 +179,19 @@ void main() {
       verifyNever(() => mockPlayer.seekTo(any()));
     });
 
-    test('setupLogCallback wires up callback', () async {
-      String? loggedMessage;
+    test('setupLogCallback wires up callback and logs info', () async {
+      int? lastLevel;
+      String? lastMessage;
       await plugin.setupLogCallback(({
         required levelIndex,
         required String message,
       }) {
-        loggedMessage = message;
+        lastLevel = levelIndex;
+        lastMessage = message;
       });
 
-      expect(loggedMessage, contains('Log callback wired up for web'));
+      expect(lastLevel, 1);
+      expect(lastMessage, contains('Log callback wired up for web'));
     });
   });
 }

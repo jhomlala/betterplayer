@@ -63,8 +63,9 @@ class _BetterPlayerWebControlsState
   void _initialize() {
     _betterPlayerController!.addEventsListener(_onPlayerEvent);
     _betterPlayerController!.addVideoListener(_updateState);
-    _controlsVisibilitySubscription =
-        _betterPlayerController!.controlsVisibilityStream.listen((visibility) {
+    _controlsVisibilitySubscription = _betterPlayerController!
+        .controlsVisibilityStream
+        .listen((visibility) {
           if (mounted) {
             setState(() {
               _controlsNotVisible = !visibility;

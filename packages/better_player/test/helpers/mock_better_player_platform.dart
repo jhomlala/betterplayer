@@ -67,7 +67,12 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   @override
   Future<void> setSpeed(int? textureId, double speed) async {}
   @override
-  Future<void> setTrackParameters(int? textureId, int? width, int? height, int? bitrate) async {}
+  Future<void> setTrackParameters(
+    int? textureId,
+    int? width,
+    int? height,
+    int? bitrate,
+  ) async {}
   @override
   Future<void> seekTo(int? textureId, Duration? position) async {}
   @override
@@ -75,7 +80,13 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async => null;
   @override
-  Future<void> enablePictureInPicture(int? textureId, double? top, double? left, double? width, double? height) async {}
+  Future<void> enablePictureInPicture(
+    int? textureId,
+    double? top,
+    double? left,
+    double? width,
+    double? height,
+  ) async {}
   @override
   Future<void> disablePictureInPicture(int? textureId) async {}
   @override
@@ -86,8 +97,18 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {}
   @override
   Future<void> clearCache() async {}
+  int setupLogCallbackCount = 0;
+  void Function({required int levelIndex, required String message})?
+  lastLogCallback;
+
   @override
-  Future<void> setupLogCallback(void Function({required int levelIndex, required String message})? callback) async {}
+  Future<void> setupLogCallback(
+    void Function({required int levelIndex, required String message})? callback,
+  ) async {
+    setupLogCallbackCount++;
+    lastLogCallback = callback;
+  }
+
   @override
   Widget buildView(int? textureId) => const SizedBox();
 }
