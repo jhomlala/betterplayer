@@ -2,8 +2,7 @@ import 'dart:js_interop';
 
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_web/src/better_player_web.dart';
-import 'package:better_player_web/src/web_video_player.dart';
-import 'package:flutter/foundation.dart';
+import 'package:better_player_web/src/better_player_web_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
@@ -20,7 +19,6 @@ void main() {
     late MockBetterPlayerWebPlayer mockPlayer;
 
     setUp(() {
-      debugPrint('--- setUp start ---');
       mockPlayer = MockBetterPlayerWebPlayer();
 
       when(() => mockPlayer.initialize()).thenReturn(null);
@@ -34,28 +32,22 @@ void main() {
         playerFactory: ({required viewId, required onLog}) => mockPlayer,
       );
 
-      plugin.setupLogCallback(({required levelIndex, required message}) {
-        debugPrint('[LOG $levelIndex] $message');
-      });
-      debugPrint('--- setUp end ---');
+      plugin.setupLogCallback(({required levelIndex, required message}) {});
     });
 
     test(
       'create assigns sequential texture IDs and initializes player',
       () async {
-        debugPrint('--- test: create assigns sequential texture IDs start ---');
         final id1 = await plugin.create();
         final id2 = await plugin.create();
 
         expect(id1, 0);
         expect(id2, 1);
         verify(() => mockPlayer.initialize()).called(2);
-        debugPrint('--- test: create assigns sequential texture IDs end ---');
       },
     );
 
     test('dispose calls player.dispose and removes from map', () async {
-      debugPrint('--- test: dispose calls player.dispose start ---');
       when(() => mockPlayer.dispose()).thenAnswer((_) async {});
 
       final id = await plugin.create();
@@ -63,11 +55,9 @@ void main() {
 
       verify(() => mockPlayer.dispose()).called(1);
       expect(() => plugin.play(id), throwsStateError);
-      debugPrint('--- test: dispose calls player.dispose end ---');
     });
 
     test('methods delegate to player correctly', () async {
-      debugPrint('--- test: methods delegate to player correctly start ---');
       final id = await plugin.create();
 
       when(() => mockPlayer.play()).thenReturn(null);
@@ -142,7 +132,6 @@ void main() {
       when(() => mockPlayer.isPictureInPictureSupported()).thenReturn(true);
       final pipSupported = await plugin.isPictureInPictureSupported(id);
       expect(pipSupported, true);
-      debugPrint('--- test: methods delegate to player correctly end ---');
     });
 
     test('no-op methods log warnings', () async {

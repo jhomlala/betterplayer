@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:ui_web' as ui_web;
 
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
-import 'package:better_player_web/src/web_video_player.dart';
+import 'package:better_player_web/src/better_player_web_player.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 

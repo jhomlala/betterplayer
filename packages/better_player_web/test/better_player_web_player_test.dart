@@ -2,9 +2,8 @@ import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 import 'dart:ui' as ui;
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:better_player_web/src/better_player_web_player.dart';
 import 'package:better_player_web/src/shaka_player.dart';
-import 'package:better_player_web/src/web_video_player.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
@@ -20,24 +19,18 @@ void main() {
     late List<int> logLevels;
 
     setUp(() {
-      debugPrint('--- setUp start ---');
-
       // Mock global shaka object if it doesn't exist
       if (!globalContext.has('shaka')) {
-        debugPrint('[LOG] Mocking global shaka object');
         final mockShaka = JSObject();
         final mockPolyfill = JSObject();
         mockPolyfill.setProperty(
           'installAll'.toJS,
-          (() {
-            debugPrint('[LOG] shaka.polyfill.installAll called');
-          }).toJS,
+          (() {}).toJS,
         );
         mockShaka.setProperty('polyfill'.toJS, mockPolyfill);
 
         // Mock shaka.Player constructor
         final mockPlayerConstructor = ((web.HTMLVideoElement element) {
-          debugPrint('[LOG] shaka.Player constructor called');
           final p = JSObject();
           p.setProperty('configure'.toJS, ((JSObject config) {}).toJS);
           p.setProperty(
@@ -86,14 +79,12 @@ void main() {
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
         onLog: (msg, {levelIndex = 0}) {
-          debugPrint('[LOG $levelIndex] $msg');
           logs.add(msg);
           logLevels.add(levelIndex);
         },
       );
 
       // Use a plain JSObject as the mock video element
-      debugPrint('[LOG] Creating mock video element');
       final mockVideo = JSObject();
       // Add a dummy buffered property (TimeRanges) with length
       final mockBuffered = JSObject();
@@ -122,7 +113,6 @@ void main() {
       mockVideo.setProperty('videoHeight'.toJS, 0.toJS);
       mockVideo.setProperty('duration'.toJS, 0.0.toJS);
       player.videoElement = mockVideo as web.HTMLVideoElement;
-      debugPrint('--- setUp end ---');
     });
 
     test('initialize logs info level', () {
@@ -132,7 +122,6 @@ void main() {
     });
 
     test('buildShakaConfig handles Widevine DRM', () {
-      debugPrint('--- test: buildShakaConfig handles Widevine DRM start ---');
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
         uri: 'https://example.com/video.mp4',
@@ -152,11 +141,9 @@ void main() {
         servers.getProperty('com.widevine.alpha'.toJS).dartify(),
         'https://license.widevine.com',
       );
-      debugPrint('--- test: buildShakaConfig handles Widevine DRM end ---');
     });
 
     test('buildShakaConfig handles FairPlay DRM', () {
-      debugPrint('--- test: buildShakaConfig handles FairPlay DRM start ---');
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
         uri: 'https://example.com/video.mp4',
@@ -185,11 +172,9 @@ void main() {
         fpsAdvanced.getProperty('serverCertificateUri'.toJS).dartify(),
         'https://cert.fairplay.com',
       );
-      debugPrint('--- test: buildShakaConfig handles FairPlay DRM end ---');
     });
 
     test('buildShakaConfig handles Token DRM', () {
-      debugPrint('--- test: buildShakaConfig handles Token DRM start ---');
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
         uri: 'https://example.com/video.mp4',
@@ -214,34 +199,26 @@ void main() {
         headers.getProperty('Authorization'.toJS).dartify(),
         'Bearer test_token',
       );
-      debugPrint('--- test: buildShakaConfig handles Token DRM end ---');
     });
 
     test('buildShakaConfig returns null for no DRM', () {
-      debugPrint(
-        '--- test: buildShakaConfig returns null for no DRM start ---',
-      );
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
         uri: 'https://example.com/video.mp4',
       );
       expect(player.buildShakaConfig(dataSource), isNull);
-      debugPrint('--- test: buildShakaConfig returns null for no DRM end ---');
     });
 
     test('getPosition returns correct duration from video element', () {
-      debugPrint('--- test: getPosition returns correct duration start ---');
       // Set currentTime on our mock JSObject
       (player.videoElement as JSObject).setProperty(
         'currentTime'.toJS,
         42.5.toJS,
       );
       expect(player.getPosition(), const Duration(milliseconds: 42500));
-      debugPrint('--- test: getPosition returns correct duration end ---');
     });
 
     test('getAbsolutePosition returns date from live stream', () {
-      debugPrint('--- test: getAbsolutePosition returns date start ---');
       final mockShaka = JSObject();
       mockShaka.setProperty('isLive'.toJS, (() => true.toJS).toJS);
 
@@ -256,7 +233,6 @@ void main() {
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
         onLog: (msg, {levelIndex = 0}) {
-          debugPrint('[LOG $levelIndex] $msg');
           logs.add(msg);
         },
         shakaPlayer: mockShaka as ShakaPlayer,
@@ -265,11 +241,9 @@ void main() {
       final absPos = player.getAbsolutePosition()!;
       expect(absPos, isNotNull);
       expect(absPos.millisecondsSinceEpoch, nowMs);
-      debugPrint('--- test: getAbsolutePosition returns date end ---');
     });
 
     test('dispose is idempotent and calls shaka.destroy', () async {
-      debugPrint('--- test: dispose is idempotent start ---');
       final mockShaka = JSObject();
       var destroyCalled = 0;
       mockShaka['destroy'] = (() {
@@ -280,27 +254,19 @@ void main() {
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
         onLog: (msg, {levelIndex = 0}) {
-          debugPrint('[LOG $levelIndex] $msg');
           logs.add(msg);
         },
         shakaPlayer: mockShaka as ShakaPlayer,
       );
-      debugPrint('Initializing player for dispose test');
       player.initialize();
 
-      debugPrint('Calling dispose 1');
       await player.dispose();
-      debugPrint('Calling dispose 2');
       await player.dispose();
 
       expect(destroyCalled, 1);
-      debugPrint('--- test: dispose is idempotent end ---');
     });
 
     test('setTrackParameters selects best variant track', () {
-      debugPrint(
-        '--- test: setTrackParameters selects best variant track start ---',
-      );
       final mockShaka = JSObject();
 
       final tracks = [
@@ -332,13 +298,9 @@ void main() {
       expect(selectedTrack, isNotNull);
       final track = selectedTrack!;
       expect((track['width']! as JSNumber).toDartInt, 1920);
-      debugPrint(
-        '--- test: setTrackParameters selects best variant track end ---',
-      );
     });
 
     test('setAudioTrack calls selectAudioLanguage', () {
-      debugPrint('--- test: setAudioTrack calls selectAudioLanguage start ---');
       final mockShaka = JSObject();
       String? selectedLang;
       mockShaka.setProperty(
@@ -356,12 +318,9 @@ void main() {
 
       player.setAudioTrack(language: 'es');
       expect(selectedLang, 'es');
-      debugPrint('--- test: setAudioTrack calls selectAudioLanguage end ---');
     });
 
     test('Initialization events are emitted from video element', () async {
-      debugPrint('--- test: Initialization events start ---');
-
       final mockVideo = JSObject();
       mockVideo.setProperty('style'.toJS, JSObject());
       mockVideo.setProperty(
@@ -416,11 +375,9 @@ void main() {
       expect(receivedEvent!.size, const ui.Size(1280, 720));
 
       await sub.cancel();
-      debugPrint('--- test: Initialization events end ---');
     });
 
     test('getAbsolutePosition returns null when not a live stream', () {
-      debugPrint('--- test: getAbsolutePosition returns null start ---');
       final mockShaka = JSObject();
       mockShaka.setProperty('isLive'.toJS, (() => false.toJS).toJS);
 
@@ -431,11 +388,9 @@ void main() {
       );
 
       expect(player.getAbsolutePosition(), isNull);
-      debugPrint('--- test: getAbsolutePosition returns null end ---');
     });
 
     test('emitBufferingUpdate respects 500ms throttle', () async {
-      debugPrint('--- test: emitBufferingUpdate respects throttle start ---');
       player.initialize();
       var eventsReceived = 0;
       final subscription = player.events.listen((event) {
@@ -446,21 +401,16 @@ void main() {
 
       await Future<void>.delayed(const Duration(milliseconds: 100));
 
-      debugPrint('Emitting buffering update 1');
       player.emitBufferingUpdate(); // Should emit
-
-      debugPrint('Emitting buffering update 2 (should be throttled)');
       player.emitBufferingUpdate(); // Should be throttled
 
       await Future<void>.delayed(const Duration(milliseconds: 100));
       expect(eventsReceived, 1);
 
       await subscription.cancel();
-      debugPrint('--- test: emitBufferingUpdate respects throttle end ---');
     });
 
     test('Request filter sets headers correctly', () async {
-      debugPrint('--- test: Request filter start ---');
       JSFunction? filter;
       final mockShaka = JSObject();
       final mockNetworkingEngine = JSObject();
@@ -509,11 +459,9 @@ void main() {
 
       final headers = mockRequest.getProperty('headers'.toJS)! as JSObject;
       expect(headers.getProperty('Auth'.toJS).dartify(), 'Bearer test');
-      debugPrint('--- test: Request filter end ---');
     });
 
     test('Other DOM events emit correct VideoEvents', () async {
-      debugPrint('--- test: Other DOM events start ---');
       player.initialize();
 
       final events = <VideoEventType>[];
@@ -530,11 +478,9 @@ void main() {
       expect(events, contains(VideoEventType.completed));
 
       await sub.cancel();
-      debugPrint('--- test: Other DOM events end ---');
     });
 
     test('Seeked events are emitted with throttle', () async {
-      debugPrint('--- test: Seeked events start ---');
       final mockVideo = player.videoElement as JSObject;
       final listeners = <JSFunction>[];
       mockVideo.setProperty(
@@ -565,13 +511,11 @@ void main() {
       expect(seekEvents, 1);
 
       await sub.cancel();
-      debugPrint('--- test: Seeked events end ---');
     });
 
     test(
       'Buffering events (waiting/playing) emit bufferingStart/End',
       () async {
-        debugPrint('--- test: Buffering events start ---');
         final mockVideo = player.videoElement as JSObject;
         final listeners = <String, List<JSFunction>>{};
         mockVideo.setProperty(
@@ -610,12 +554,10 @@ void main() {
         expect(events, contains(VideoEventType.bufferingEnd));
 
         await sub.cancel();
-        debugPrint('--- test: Buffering events end ---');
       },
     );
 
     test('UI events (resize/pip) emit correct VideoEvents', () async {
-      debugPrint('--- test: UI events start ---');
       final mockVideo = player.videoElement as JSObject;
       final listeners = <String, List<JSFunction>>{};
       mockVideo.setProperty(
@@ -655,11 +597,9 @@ void main() {
       expect(events, contains(VideoEventType.pipStop));
 
       await sub.cancel();
-      debugPrint('--- test: UI events end ---');
     });
 
     test('setTrackParameters with null/zero values enables ABR', () {
-      debugPrint('--- test: setTrackParameters enables ABR start ---');
       final mockShaka = JSObject();
       JSObject? lastConfig;
       mockShaka.setProperty(
@@ -681,11 +621,9 @@ void main() {
       expect(config, isNotNull);
       final abr = config.getProperty('abr'.toJS)! as JSObject;
       expect(abr.getProperty('enabled'.toJS).dartify(), isTrue);
-      debugPrint('--- test: setTrackParameters enables ABR end ---');
     });
 
     test('getTextTracks and selectTextTrack delegate correctly', () {
-      debugPrint('--- test: Text tracks delegation start ---');
       final mockShaka = JSObject();
       final mockTrack = JSObject();
       mockShaka.setProperty(
@@ -713,7 +651,6 @@ void main() {
 
       player.selectTextTrack(mockTrack);
       expect(selectedTrack, mockTrack);
-      debugPrint('--- test: Text tracks delegation end ---');
     });
 
     group('Methods', () {
@@ -800,7 +737,6 @@ void main() {
       );
 
       test('enablePictureInPicture calls requestPictureInPicture', () async {
-        debugPrint('--- test: enablePictureInPicture start ---');
         // Only test if the method exists/is callable if PiP is enabled in the test environment
         if (web.document.pictureInPictureEnabled) {
           var called = false;
@@ -815,7 +751,6 @@ void main() {
           await player.enablePictureInPicture();
           expect(called, isTrue);
         }
-        debugPrint('--- test: enablePictureInPicture end ---');
       });
 
       test('disablePictureInPicture calls exitPictureInPicture', () async {
