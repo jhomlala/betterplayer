@@ -4,10 +4,7 @@ test('web flow', async ({ page }) => {
   await page.goto('/');
   
   // Wait for the video area to be visible
-  
   // Sometimes it's not a button in Semantics, so we use locator by aria-label
-  
-  
 
   // Play/pause
   const playPause = page.locator('[aria-label^="better_player_material_controls_play_pause_button"]');

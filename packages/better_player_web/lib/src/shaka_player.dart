@@ -2,7 +2,7 @@ import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
 import 'package:web/web.dart' as web;
 
-// ─── Shaka namespace ───────────────────────────────────────────────────────
+/// Shaka namespace
 
 ShakaNamespace get shaka => globalContext['shaka']! as ShakaNamespace;
 
@@ -27,7 +27,7 @@ extension ShakaPolyfillExtension on ShakaPolyfill {
 @staticInterop
 class ShakaUtil {}
 
-// ─── Player ────────────────────────────────────────────────────────────────
+/// Player
 
 @JS('shaka.Player')
 @staticInterop
@@ -52,7 +52,7 @@ extension ShakaPlayerExtension on ShakaPlayer {
   external ShakaNetworkingEngine getNetworkingEngine();
 }
 
-// ─── Networking Engine ─────────────────────────────────────────────────────
+/// Networking Engine
 
 @JS()
 @staticInterop
