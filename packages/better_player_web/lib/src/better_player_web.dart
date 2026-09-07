@@ -6,6 +6,15 @@ import 'package:better_player_web/src/web_video_player.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
+void Function({required int levelIndex, required String message})?
+_customLogCallback;
+
+void logWeb(String message) {
+  if (_customLogCallback != null) {
+    _customLogCallback!(levelIndex: 0, message: message);
+  }
+}
+
 class BetterPlayerWeb extends BetterPlayerPlatform {
   /// Called by the plugin system to register this implementation.
   static void registerWith(Registrar registrar) {
@@ -13,10 +22,10 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   }
 
   // Map from textureId (we use int counter) to player instance
-  final Map<int, WebVideoPlayer> _players = {};
+  final Map<int, BetterPlayerWebPlayer> _players = {};
   int _nextId = 0;
 
-  WebVideoPlayer _player(int? textureId) {
+  BetterPlayerWebPlayer _getPlayer(int? textureId) {
     final player = _players[textureId];
     if (player == null) throw StateError('No player for textureId $textureId');
     return player;
@@ -27,7 +36,7 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     final id = _nextId++;
     final viewId = 'better_player_web_$id';
 
-    final player = WebVideoPlayer(viewId: viewId);
+    final player = BetterPlayerWebPlayer(viewId: viewId, onLog: logWeb);
     player.initialize();
 
     // Register the video element as a Flutter platform view
@@ -41,50 +50,50 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
 
   @override
   Future<void> dispose(int? textureId) async {
-    await _player(textureId).dispose();
+    await _getPlayer(textureId).dispose();
     _players.remove(textureId);
   }
 
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
-    await _player(textureId).setDataSource(dataSource);
+    await _getPlayer(textureId).setDataSource(dataSource);
   }
 
   @override
   Stream<VideoEvent> videoEventsFor(int? textureId) {
-    return _player(textureId).events;
+    return _getPlayer(textureId).events;
   }
 
   @override
-  Future<void> play(int? textureId) async => _player(textureId).play();
+  Future<void> play(int? textureId) async => _getPlayer(textureId).play();
 
   @override
-  Future<void> pause(int? textureId) async => _player(textureId).pause();
+  Future<void> pause(int? textureId) async => _getPlayer(textureId).pause();
 
   @override
   Future<void> setVolume(int? textureId, double volume) async =>
-      _player(textureId).setVolume(volume);
+      _getPlayer(textureId).setVolume(volume);
 
   @override
   Future<void> setSpeed(int? textureId, double speed) async =>
-      _player(textureId).setSpeed(speed);
+      _getPlayer(textureId).setSpeed(speed);
 
   @override
   Future<void> setLooping(int? textureId, bool looping) async =>
-      _player(textureId).setLooping(looping);
+      _getPlayer(textureId).setLooping(looping);
 
   @override
   Future<void> seekTo(int? textureId, Duration? position) async {
-    if (position != null) _player(textureId).seekTo(position);
+    if (position != null) _getPlayer(textureId).seekTo(position);
   }
 
   @override
   Future<Duration> getPosition(int? textureId) async =>
-      _player(textureId).getPosition();
+      _getPlayer(textureId).getPosition();
 
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async =>
-      _player(textureId).getAbsolutePosition();
+      _getPlayer(textureId).getAbsolutePosition();
 
   @override
   Future<void> setTrackParameters(
@@ -93,12 +102,14 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     int? height,
     int? bitrate,
   ) async {
-    _player(textureId).setTrackParameters(width, height, bitrate);
+    _getPlayer(
+      textureId,
+    ).setTrackParameters(width: width, height: height, bitrate: bitrate);
   }
 
   @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async =>
-      _player(textureId).setAudioTrack(name, index);
+      _getPlayer(textureId).setAudioTrack(language: name, index: index);
 
   @override
   Future<void> enablePictureInPicture(
@@ -108,44 +119,50 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     double? width,
     double? height,
   ) async {
-    await _player(textureId).enablePictureInPicture();
+    await _getPlayer(textureId).enablePictureInPicture();
   }
 
   @override
   Future<void> disablePictureInPicture(int? textureId) async =>
-      _player(textureId).disablePictureInPicture();
+      _getPlayer(textureId).disablePictureInPicture();
 
   @override
   Future<bool?> isPictureInPictureSupported(int? textureId) async =>
-      _player(textureId).isPictureInPictureSupported();
+      _getPlayer(textureId).isPictureInPictureSupported();
 
   @override
   Widget buildView(int? textureId) {
-    final viewId = _player(textureId).viewId;
+    final viewId = _getPlayer(textureId).viewId;
     return HtmlElementView(viewType: viewId);
   }
 
-  // ── No-ops (not applicable on web) ─────────────────────────────────────
+  // Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬ No-ops / Unsupported on web Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬
 
   @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) async {}
+  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+    logWeb('preCache is not supported on web');
+  }
 
   @override
-  Future<void> stopPreCache(String url, String? cacheKey) async {}
+  Future<void> stopPreCache(String url, String? cacheKey) async {
+    logWeb('stopPreCache is not supported on web');
+  }
 
   @override
-  Future<void> clearCache() async {}
+  Future<void> clearCache() async {
+    logWeb('clearCache is not supported on web');
+  }
 
   @override
-  Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {}
+  Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
+    logWeb('setMixWithOthers is not supported on web');
+  }
 
   @override
   Future<void> setupLogCallback(
     void Function({required int levelIndex, required String message})? callback,
   ) async {
-    // Shaka error events wiring
-    /*for (final player in _players.values) {
-      // player._shakaPlayer needs exposing or setup in web_video_player
-    }*/
+    _customLogCallback = callback;
+    logWeb('Log callback wired up for web');
   }
 }
