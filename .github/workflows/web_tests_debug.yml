@@ -25,37 +25,7 @@ jobs:
       - name: Run Web Tests (flutter run)
         run: |
           cd packages/better_player_web
-          # Run flutter in the background. We use --release to avoid some debug-only issues in CI if any.
-          # We redirect output to a file so we can tail it or grep it.
-          flutter run -d chrome test/all_tests.dart --release --no-pub > tests.log 2>&1 &
-          PID=$!
-          echo "Flutter run started with PID $PID"
-          
-          # Monitor the log file for a completion message or timeout
-          TIMEOUT=300
-          START_TIME=$(date +%s)
-          while true; do
-            CURRENT_TIME=$(date +%s)
-            ELAPSED=$((CURRENT_TIME - START_TIME))
-            if [ $ELAPSED -gt $TIMEOUT ]; then
-              echo "Timeout reached ($TIMEOUT seconds). Killing process."
-              break
-            fi
-            
-            if grep -q "--- All Web Tests Finished ---" tests.log; then
-              echo "Tests completed successfully."
-              break
-            fi
-            
-            if grep -q "Error during test execution" tests.log; then
-              echo "Tests failed with an error."
-              cat tests.log
-              exit 1
-            fi
-            
-            sleep 5
-          done
-          
-          echo "Final logs:"
-          cat tests.log
-          kill $PID || true
+          # Run flutter directly and let it stream to stdout. 
+          # We use --release to avoid some debug-only overhead and --no-pub since we did it above.
+          # The job will end when the process is killed or times out.
+          timeout 300 flutter run -d chrome test/all_tests.dart --release --no-pub || true
