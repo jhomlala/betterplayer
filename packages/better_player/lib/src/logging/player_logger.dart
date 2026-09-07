@@ -1,10 +1,8 @@
-import 'dart:io';
-
 import 'package:better_player/src/logging/player_log_level.dart';
 import 'package:better_player/src/logging/player_log_record.dart';
 import 'package:better_player/src/logging/player_logger_configuration.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 /// Logger for Better Player.
 @internal
@@ -104,9 +102,9 @@ class PlayerLogger {
     // Clamp to valid loggable levels (exclude 'none')
     final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 2);
     final level = PlayerLogLevel.values[clampedIndex];
-    final tag = Platform.isAndroid
+    final tag = defaultTargetPlatform == TargetPlatform.android
         ? 'Android'
-        : (Platform.isIOS ? 'iOS' : 'Native');
+        : (defaultTargetPlatform == TargetPlatform.iOS ? 'iOS' : 'Native');
     _log(
       level: level,
       message: message,
