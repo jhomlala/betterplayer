@@ -15,10 +15,27 @@ void main() {
 #EXT-X-STREAM-INF:BANDWIDTH=1280000,SUBTITLES="subs"
 video.m3u8
 ''';
-      final subtitles = await BetterPlayerHlsUtils.parseSubtitles(
-        masterData,
-        'https://example.com/master.m3u8',
-      );
+
+      const subsData = '''
+#EXTM3U
+#EXT-X-TARGETDURATION:10
+#EXTINF:10.0,
+segment1.vtt
+#EXTINF:10.0,
+segment2.vtt
+#EXT-X-ENDLIST
+''';
+
+      final client = MockClient((request) async {
+        if (request.url.toString() == 'https://example.com/subs.m3u8') {
+          return http.Response(subsData, 200);
+        }
+        return http.Response('', 404);
+      });
+
+      final subtitles = await BetterPlayerHlsUtils(
+        httpClient: client,
+      ).parseSubtitles(masterData, 'https://example.com/master.m3u8');
 
       expect(subtitles.length, 1);
       expect(subtitles[0].name, 'English');

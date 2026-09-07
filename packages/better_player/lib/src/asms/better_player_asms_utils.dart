@@ -34,7 +34,10 @@ class BetterPlayerAsmsUtils {
   ) async {
     return isDataSourceDash(masterPlaylistUrl)
         ? BetterPlayerDashUtils.parse(data, masterPlaylistUrl)
-        : BetterPlayerHlsUtils.parse(data, masterPlaylistUrl);
+        : BetterPlayerHlsUtils(httpClient: _httpClient).parse(
+            data,
+            masterPlaylistUrl,
+          );
   }
 
   ///Request data from given uri along with headers. May return null if resource
