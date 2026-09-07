@@ -4,25 +4,32 @@ import 'dart:js_interop_unsafe';
 import 'dart:ui';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_web/src/shaka_player.dart';
+import 'package:meta/meta.dart';
 import 'package:web/web.dart' as web;
 
 class BetterPlayerWebPlayer {
-  BetterPlayerWebPlayer({required this.viewId, required this.onLog});
+  BetterPlayerWebPlayer({
+    required this.viewId,
+    required this.onLog,
+    @visibleForTesting ShakaPlayer? shakaPlayer,
+  }) : _shakaPlayer = shakaPlayer;
 
   final void Function(String) onLog;
 
   final String viewId;
   late web.HTMLVideoElement videoElement;
-  late ShakaPlayer _shakaPlayer;
+  ShakaPlayer? _shakaPlayer;
   late StreamController<VideoEvent> _eventController;
   String? _currentKey;
   bool _disposed = false;
   DateTime _lastBufferingUpdate = DateTime.now();
+  @visibleForTesting
   Duration? overriddenDuration;
 
   Stream<VideoEvent> get events => _eventController.stream;
 
   void initialize() {
+    onLog('Initializing BetterPlayerWebPlayer: $viewId');
     _eventController = StreamController<VideoEvent>.broadcast();
 
     videoElement = web.HTMLVideoElement();
@@ -31,17 +38,23 @@ class BetterPlayerWebPlayer {
     videoElement.setAttribute('playsinline', '');
     videoElement.setAttribute('webkit-playsinline', '');
 
+    onLog('Installing Shaka polyfills');
     shaka.polyfill.installAll();
 
-    _shakaPlayer = ShakaPlayer(videoElement);
+    onLog('Creating Shaka player');
+    _shakaPlayer ??= ShakaPlayer(videoElement);
 
+    onLog('Attaching listeners');
     _attachListeners();
+    onLog('Initialization complete');
   }
 
   void _attachListeners() {
+    onLog('Attaching listener: loadedmetadata');
     videoElement.addEventListener(
       'loadedmetadata',
       ((web.Event _) {
+        onLog('Event: loadedmetadata');
         final raw = videoElement.duration;
         final duration =
             overriddenDuration ??
@@ -66,6 +79,7 @@ class BetterPlayerWebPlayer {
     videoElement.addEventListener(
       'ended',
       ((web.Event _) {
+        onLog('Event: ended');
         _eventController.add(
           VideoEvent(eventType: VideoEventType.completed, key: _currentKey),
         );
@@ -107,14 +121,14 @@ class BetterPlayerWebPlayer {
             ),
           );
         }
-        _emitBufferingUpdate();
+        emitBufferingUpdate();
       }).toJS,
     );
 
     videoElement.addEventListener(
       'progress',
       ((web.Event _) {
-        _emitBufferingUpdate();
+        emitBufferingUpdate();
       }).toJS,
     );
 
@@ -177,6 +191,7 @@ class BetterPlayerWebPlayer {
     videoElement.addEventListener(
       'resize',
       ((web.Event _) {
+        onLog('Event: resize');
         _eventController.add(
           VideoEvent(
             eventType: VideoEventType.changedSize,
@@ -209,7 +224,8 @@ class BetterPlayerWebPlayer {
     );
   }
 
-  void _emitBufferingUpdate() {
+  @visibleForTesting
+  void emitBufferingUpdate() {
     final now = DateTime.now();
     if (now.difference(_lastBufferingUpdate).inMilliseconds < 500) {
       return;
@@ -236,26 +252,34 @@ class BetterPlayerWebPlayer {
   }
 
   Future<void> setDataSource(DataSource dataSource) async {
+    onLog('Setting data source: ${dataSource.uri}');
     _currentKey = dataSource.key;
     overriddenDuration = dataSource.overriddenDuration;
 
-    final config = _buildShakaConfig(dataSource);
+    onLog('Building Shaka config');
+    final config = buildShakaConfig(dataSource);
     if (config != null) {
-      _shakaPlayer.configure(config);
+      onLog('Configuring Shaka player');
+      _shakaPlayer!.configure(config);
     }
 
     if (dataSource.headers != null && dataSource.headers!.isNotEmpty) {
+      onLog('Attaching request filter for headers');
       _attachRequestFilter(dataSource.headers!);
     }
 
     // Convert data to URI if memory data source is handled outside by better_player_controller
     // The controller layer sets uri for memory data sources, so uri! should be present.
-    await _shakaPlayer.load(dataSource.uri!.toJS).toDart;
+    onLog('Loading URI: ${dataSource.uri}');
+    await _shakaPlayer!.load(dataSource.uri!.toJS).toDart;
+    onLog('URI loaded successfully');
   }
 
-  JSObject? _buildShakaConfig(DataSource dataSource) {
+  @visibleForTesting
+  JSObject? buildShakaConfig(DataSource dataSource) {
     final drm = dataSource.drmConfiguration;
     if (drm == null) return null;
+// ... (rest of the code)
 
     final servers = <String, String>{};
     final advanced = <String, Object>{};
@@ -303,7 +327,7 @@ class BetterPlayerWebPlayer {
   }
 
   void _attachRequestFilter(Map<String, String?> headers) {
-    _shakaPlayer.getNetworkingEngine().registerRequestFilter(
+    _shakaPlayer!.getNetworkingEngine().registerRequestFilter(
       ((JSNumber type, JSObject request) {
         final requestHeaders = request['headers']! as JSObject;
         for (final entry in headers.entries) {
@@ -331,8 +355,8 @@ class BetterPlayerWebPlayer {
   }
 
   DateTime? getAbsolutePosition() {
-    if (!_shakaPlayer.isLive().toDart) return null;
-    final dateObj = _shakaPlayer.getPlayheadTimeAsDate();
+    if (!_shakaPlayer!.isLive().toDart) return null;
+    final dateObj = _shakaPlayer!.getPlayheadTimeAsDate();
     if (dateObj == null) return null;
     try {
       final jsNum =
@@ -353,7 +377,7 @@ class BetterPlayerWebPlayer {
         (height == null || height == 0) &&
         (bitrate == null || bitrate == 0)) {
       onLog('Default track detected, configuring ABR: true');
-      _shakaPlayer.configure(
+      _shakaPlayer!.configure(
         {
               'abr': {'enabled': true},
             }.jsify()!
@@ -362,7 +386,7 @@ class BetterPlayerWebPlayer {
       return;
     }
 
-    final tracks = _shakaPlayer.getVariantTracks().toDart;
+    final tracks = _shakaPlayer!.getVariantTracks().toDart;
 
     JSObject? best;
     int? bestScore;
@@ -386,26 +410,26 @@ class BetterPlayerWebPlayer {
 
     if (best != null) {
       onLog('Forcing variant track and disabling ABR');
-      _shakaPlayer.configure(
+      _shakaPlayer!.configure(
         {
               'abr': {'enabled': false},
             }.jsify()!
             as JSObject,
       );
-      _shakaPlayer.selectVariantTrack(best, true.toJS);
+      _shakaPlayer!.selectVariantTrack(best, true.toJS);
     }
   }
 
   void setAudioTrack({String? language, int? index}) {
     onLog('setAudioTrack(language: $language, index: $index)');
     if (language != null) {
-      _shakaPlayer.selectAudioLanguage(language.toJS);
+      _shakaPlayer!.selectAudioLanguage(language.toJS);
     }
   }
 
-  List<JSObject> getTextTracks() => _shakaPlayer.getTextTracks().toDart;
+  List<JSObject> getTextTracks() => _shakaPlayer!.getTextTracks().toDart;
 
-  void selectTextTrack(JSObject track) => _shakaPlayer.selectTextTrack(track);
+  void selectTextTrack(JSObject track) => _shakaPlayer!.selectTextTrack(track);
 
   Future<void> enablePictureInPicture() async {
     if (!web.document.pictureInPictureEnabled) return;
@@ -422,9 +446,19 @@ class BetterPlayerWebPlayer {
   }
 
   Future<void> dispose() async {
-    if (_disposed) return;
+    onLog('Disposing BetterPlayerWebPlayer: $viewId');
+    if (_disposed) {
+      onLog('Already disposed');
+      return;
+    }
     _disposed = true;
-    await _shakaPlayer.destroy().toDart;
+    if (_shakaPlayer != null) {
+      onLog('Destroying Shaka player');
+      await _shakaPlayer!.destroy().toDart;
+      onLog('Shaka player destroyed');
+    }
+    onLog('Closing event controller');
     await _eventController.close();
+    onLog('Dispose complete');
   }
 }

@@ -15,11 +15,24 @@ void logWeb(String message) {
   }
 }
 
+typedef WebPlayerFactory = BetterPlayerWebPlayer Function({
+  required String viewId,
+  required void Function(String) onLog,
+});
+
 class BetterPlayerWeb extends BetterPlayerPlatform {
+  BetterPlayerWeb({WebPlayerFactory? playerFactory})
+    : _playerFactory =
+          playerFactory ??
+          (({required viewId, required onLog}) =>
+              BetterPlayerWebPlayer(viewId: viewId, onLog: onLog));
+
   /// Called by the plugin system to register this implementation.
   static void registerWith(Registrar registrar) {
     BetterPlayerPlatform.instance = BetterPlayerWeb();
   }
+
+  final WebPlayerFactory _playerFactory;
 
   // Map from textureId (we use int counter) to player instance
   final Map<int, BetterPlayerWebPlayer> _players = {};
@@ -34,29 +47,37 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   @override
   Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
     final id = _nextId++;
+    logWeb('Creating player with id: $id');
     final viewId = 'better_player_web_$id';
 
-    final player = BetterPlayerWebPlayer(viewId: viewId, onLog: logWeb);
+    final player = _playerFactory(viewId: viewId, onLog: logWeb);
+    logWeb('Initializing player: $viewId');
     player.initialize();
 
     // Register the video element as a Flutter platform view
+    logWeb('Registering view factory for: $viewId');
     ui_web.platformViewRegistry.registerViewFactory(viewId, (int _) {
       return player.videoElement;
     });
 
     _players[id] = player;
+    logWeb('Player created and registered: $id');
     return id;
   }
 
   @override
   Future<void> dispose(int? textureId) async {
+    logWeb('Disposing player: $textureId');
     await _getPlayer(textureId).dispose();
     _players.remove(textureId);
+    logWeb('Player disposed: $textureId');
   }
 
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
+    logWeb('Setting data source for player $textureId: ${dataSource.uri}');
     await _getPlayer(textureId).setDataSource(dataSource);
+    logWeb('Data source set for player $textureId');
   }
 
   @override
@@ -65,25 +86,38 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   }
 
   @override
-  Future<void> play(int? textureId) async => _getPlayer(textureId).play();
+  Future<void> play(int? textureId) async {
+    logWeb('Play called for player: $textureId');
+    return _getPlayer(textureId).play();
+  }
 
   @override
-  Future<void> pause(int? textureId) async => _getPlayer(textureId).pause();
+  Future<void> pause(int? textureId) async {
+    logWeb('Pause called for player: $textureId');
+    return _getPlayer(textureId).pause();
+  }
 
   @override
-  Future<void> setVolume(int? textureId, double volume) async =>
-      _getPlayer(textureId).setVolume(volume);
+  Future<void> setVolume(int? textureId, double volume) async {
+    logWeb('SetVolume called for player $textureId: $volume');
+    return _getPlayer(textureId).setVolume(volume);
+  }
 
   @override
-  Future<void> setSpeed(int? textureId, double speed) async =>
-      _getPlayer(textureId).setSpeed(speed);
+  Future<void> setSpeed(int? textureId, double speed) async {
+    logWeb('SetSpeed called for player $textureId: $speed');
+    return _getPlayer(textureId).setSpeed(speed);
+  }
 
   @override
-  Future<void> setLooping(int? textureId, bool looping) async =>
-      _getPlayer(textureId).setLooping(looping);
+  Future<void> setLooping(int? textureId, bool looping) async {
+    logWeb('SetLooping called for player $textureId: $looping');
+    return _getPlayer(textureId).setLooping(looping);
+  }
 
   @override
   Future<void> seekTo(int? textureId, Duration? position) async {
+    logWeb('SeekTo called for player $textureId: $position');
     if (position != null) _getPlayer(textureId).seekTo(position);
   }
 

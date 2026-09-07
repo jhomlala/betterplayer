@@ -37,6 +37,7 @@ class _BetterPlayerWebControlsState
   VideoPlayerValue? _latestValue;
   String? _errorDescription;
   bool _isMenuOpen = false;
+  StreamSubscription<bool>? _controlsVisibilitySubscription;
 
   @override
   BetterPlayerController? get betterPlayerController => _betterPlayerController;
@@ -62,6 +63,14 @@ class _BetterPlayerWebControlsState
   void _initialize() {
     _betterPlayerController!.addEventsListener(_onPlayerEvent);
     _betterPlayerController!.addVideoListener(_updateState);
+    _controlsVisibilitySubscription =
+        _betterPlayerController!.controlsVisibilityStream.listen((visibility) {
+          if (mounted) {
+            setState(() {
+              _controlsNotVisible = !visibility;
+            });
+          }
+        });
     _latestValue = _betterPlayerController!.videoPlayerValue;
     _controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
     widget.onControlsVisibilityChanged(!_controlsNotVisible);
@@ -73,6 +82,7 @@ class _BetterPlayerWebControlsState
   void _dispose() {
     _betterPlayerController?.removeEventsListener(_onPlayerEvent);
     _betterPlayerController?.removeVideoListener(_updateState);
+    _controlsVisibilitySubscription?.cancel();
     _hideTimer?.cancel();
   }
 
