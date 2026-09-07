@@ -5,7 +5,7 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:better_player_web/src/shaka_player.dart';
 import 'package:better_player_web/src/web_video_player.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart' as mocktail;
+import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
 
 void main() {
@@ -147,20 +147,26 @@ void main() {
       print('--- test: emitBufferingUpdate respects throttle start ---');
       player.initialize();
       int eventsReceived = 0;
-      player.events.listen((event) {
+      final subscription = player.events.listen((event) {
         if (event.eventType == VideoEventType.bufferingUpdate) {
           eventsReceived++;
         }
       });
 
+      // Give the broadcast stream a moment to settle
+      await Future.delayed(const Duration(milliseconds: 100));
+
       print('Emitting buffering update 1');
-      await Future.delayed(Duration.zero);
       player.emitBufferingUpdate(); // Should emit
+      
       print('Emitting buffering update 2 (should be throttled)');
       player.emitBufferingUpdate(); // Should be throttled
       
-      await Future.delayed(Duration.zero);
+      // Wait for event delivery
+      await Future.delayed(const Duration(milliseconds: 100));
       expect(eventsReceived, 1);
+      
+      await subscription.cancel();
       print('--- test: emitBufferingUpdate respects throttle end ---');
     });
   });

@@ -3,10 +3,10 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:better_player_web/src/better_player_web.dart';
 import 'package:better_player_web/src/web_video_player.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocktail/mocktail.dart' as mocktail;
+import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
 
-class MockBetterPlayerWebPlayer extends mocktail.Mock implements BetterPlayerWebPlayer {}
+class MockBetterPlayerWebPlayer extends Mock implements BetterPlayerWebPlayer {}
 
 void main() {
   setUpAll(() {
