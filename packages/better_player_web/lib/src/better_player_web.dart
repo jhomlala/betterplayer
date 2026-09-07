@@ -9,7 +9,7 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 typedef WebPlayerFactory =
     BetterPlayerWebPlayer Function({
       required String viewId,
-      required void Function(String message, {int levelIndex}) onLog,
+      required void Function({required String message, int levelIndex}) onLog,
     });
 
 class BetterPlayerWeb extends BetterPlayerPlatform {
@@ -33,7 +33,7 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   void Function({required int levelIndex, required String message})?
   _logCallback;
 
-  void _log(String message, {int levelIndex = 0}) {
+  void _log({required String message, int levelIndex = 0}) {
     _logCallback?.call(levelIndex: levelIndex, message: message);
   }
 
@@ -57,7 +57,7 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     });
 
     _players[id] = player;
-    _log('Player created: $id', levelIndex: 1);
+    _log(message: 'Player created: $id', levelIndex: 1);
     return id;
   }
 
@@ -65,7 +65,7 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   Future<void> dispose(int? textureId) async {
     await _getPlayer(textureId).dispose();
     _players.remove(textureId);
-    _log('Player disposed: $textureId', levelIndex: 1);
+    _log(message: 'Player disposed: $textureId', levelIndex: 1);
   }
 
   @override
@@ -161,22 +161,22 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) async {
-    _log('preCache is not supported on web', levelIndex: 2);
+    _log(message: 'preCache is not supported on web', levelIndex: 2);
   }
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) async {
-    _log('stopPreCache is not supported on web', levelIndex: 2);
+    _log(message: 'stopPreCache is not supported on web', levelIndex: 2);
   }
 
   @override
   Future<void> clearCache() async {
-    _log('clearCache is not supported on web', levelIndex: 2);
+    _log(message: 'clearCache is not supported on web', levelIndex: 2);
   }
 
   @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
-    _log('setMixWithOthers is not supported on web', levelIndex: 2);
+    _log(message: 'setMixWithOthers is not supported on web', levelIndex: 2);
   }
 
   @override
@@ -184,6 +184,6 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     void Function({required int levelIndex, required String message})? callback,
   ) async {
     _logCallback = callback;
-    _log('Log callback wired up for web', levelIndex: 1);
+    _log(message: 'Log callback wired up for web', levelIndex: 1);
   }
 }

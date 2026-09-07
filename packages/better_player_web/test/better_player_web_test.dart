@@ -137,7 +137,7 @@ void main() {
     test('no-op methods log warnings', () async {
       int? lastLevel;
       String? lastMessage;
-      await plugin.setupLogCallback(({required levelIndex, required message}) {
+      await plugin.setupLogCallback(({required int levelIndex, required String message}) {
         lastLevel = levelIndex;
         lastMessage = message;
       });
@@ -172,7 +172,7 @@ void main() {
       int? lastLevel;
       String? lastMessage;
       await plugin.setupLogCallback(({
-        required levelIndex,
+        required int levelIndex,
         required String message,
       }) {
         lastLevel = levelIndex;

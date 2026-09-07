@@ -15,7 +15,7 @@ class BetterPlayerWebPlayer {
     // ignore: prefer_initializing_formals
   }) : _shakaPlayer = shakaPlayer;
 
-  final void Function(String message, {int levelIndex}) onLog;
+  final void Function({required String message, int levelIndex}) onLog;
 
   final String viewId;
   late web.HTMLVideoElement videoElement;
@@ -44,7 +44,7 @@ class BetterPlayerWebPlayer {
     _shakaPlayer ??= ShakaPlayer(this.videoElement);
 
     _attachListeners();
-    onLog('BetterPlayerWebPlayer initialized: $viewId', levelIndex: 1);
+    onLog(message: 'BetterPlayerWebPlayer initialized: $viewId', levelIndex: 1);
   }
 
   void _attachListeners() {
@@ -128,14 +128,14 @@ class BetterPlayerWebPlayer {
     videoElement.addEventListener(
       'error',
       ((web.Event _) {
-        onLog('Event: ERROR on VideoElement', levelIndex: 3);
+        onLog(message: 'Event: ERROR on VideoElement', levelIndex: 3);
       }).toJS,
     );
 
     videoElement.addEventListener(
       'stalled',
       ((web.Event _) {
-        onLog('Event: STALLED', levelIndex: 2);
+        onLog(message: 'Event: STALLED', levelIndex: 2);
       }).toJS,
     );
 
@@ -254,7 +254,7 @@ class BetterPlayerWebPlayer {
     // Convert data to URI if memory data source is handled outside by better_player_controller
     // The controller layer sets uri for memory data sources, so uri! should be present.
     await _shakaPlayer!.load(dataSource.uri!.toJS).toDart;
-    onLog('BetterPlayerWebPlayer: data source loaded', levelIndex: 1);
+    onLog(message: 'BetterPlayerWebPlayer: data source loaded', levelIndex: 1);
   }
 
   @visibleForTesting
@@ -428,6 +428,6 @@ class BetterPlayerWebPlayer {
       await _shakaPlayer!.destroy().toDart;
     }
     await _eventController.close();
-    onLog('BetterPlayerWebPlayer disposed: $viewId', levelIndex: 1);
+    onLog(message: 'BetterPlayerWebPlayer disposed: $viewId', levelIndex: 1);
   }
 }
