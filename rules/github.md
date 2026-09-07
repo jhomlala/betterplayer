@@ -1,4 +1,4 @@
-﻿# GitHub Rules & Utilities
+# GitHub Rules & Utilities
 
 ## Fetching PR Comments
 To fetch all comments (issue comments, inline review comments, and review summaries) from a Pull Request, use the Dart script located at scripts/fetch_pr_comments.dart.
@@ -19,4 +19,4 @@ dart run scripts/fetch_pr_comments.dart <PR_NUMBER> [owner/repo]
 - Custom repository:
   dart run scripts/fetch_pr_comments.dart 1234 flutter/flutter
 
-The script will save the results chronologically in scripts/pr_<PR_NUMBER>_comments.json.
+The script will automatically save the results chronologically in your system's temporary directory as `pr_<PR_NUMBER>_comments.json` to avoid cluttering the repository with tracked files.

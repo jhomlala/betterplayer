@@ -185,10 +185,10 @@ query PRComments($owner: String!, $repo: String!, $number: Int!, $cursor: String
       (a, b) => (a['createdAt'] as String).compareTo(b['createdAt'] as String),
     );
 
-    // Save to JSON file dynamically named by PR number
-    final scriptDir = File(Platform.script.toFilePath()).parent.path;
+    // Save to JSON file dynamically named by PR number in temp dir
+    final tempDir = Directory.systemTemp.path;
     final fileName = 'pr_${prNumber}_comments.json';
-    final outputFile = File('$scriptDir${Platform.pathSeparator}$fileName');
+    final outputFile = File('$tempDir${Platform.pathSeparator}$fileName');
 
     await outputFile.writeAsString(
       const JsonEncoder.withIndent('  ').convert(allComments),
