@@ -289,7 +289,8 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) => logs.add(message),
+        onLog: ({required String message, int levelIndex = 0}) =>
+            logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -312,7 +313,8 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) => logs.add(message),
+        onLog: ({required String message, int levelIndex = 0}) =>
+            logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -383,7 +385,8 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) => logs.add(message),
+        onLog: ({required String message, int levelIndex = 0}) =>
+            logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -432,7 +435,8 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) => logs.add(message),
+        onLog: ({required String message, int levelIndex = 0}) =>
+            logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -611,7 +615,8 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) => logs.add(message),
+        onLog: ({required String message, int levelIndex = 0}) =>
+            logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -641,7 +646,8 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) => logs.add(message),
+        onLog: ({required String message, int levelIndex = 0}) =>
+            logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
