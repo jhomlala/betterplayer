@@ -1,6 +1,8 @@
 # better_player_web
 
-The web implementation of `better_player`.
+The official web implementation of the `better_player` plugin, utilizing Shaka Player for advanced playback, HLS, and DASH support. 
+
+You should not depend on this package directly. Simply depend on `better_player` and the web implementation will be automatically used when compiling for web platforms.
 
 ## Setup
 

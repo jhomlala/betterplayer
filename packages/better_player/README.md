@@ -91,7 +91,14 @@ AspectRatio(
 )
 ```
 
-### 3. Advanced Controller Usage
+### 4. Web Setup
+To use Better Player on the web, you must include the Shaka Player library in your `web/index.html` file before the closing `</body>` tag:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/shaka-player@4/dist/shaka-player.compiled.js"></script>
+```
+
+### 5. Advanced Controller Usage
 For full control, use the `BetterPlayerController`:
 
 ```dart
