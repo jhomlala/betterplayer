@@ -25,5 +25,31 @@ jobs:
       - name: Run Web Tests (flutter run)
         run: |
           cd packages/better_player_web
-          # Run flutter directly in debug mode for better logs.
-          flutter run -d chrome test/all_tests.dart --no-pub
+          # Ensure minimal web directory exists for compilation
+          mkdir -p web
+          echo '<!DOCTYPE html><html><body><script src="main.dart.js"></script></body></html>' > web/index.html
+          
+          # Install and use xvfb to provide a virtual display for Chrome
+          sudo apt-get update && sudo apt-get install -y xvfb
+          
+          # Run in background and pipe logs
+          xvfb-run --auto-servernum flutter run -d chrome test/all_tests.dart --no-pub > tests.log 2>&1 &
+          RUN_PID=$!
+          echo "Flutter run started with PID $RUN_PID"
+          
+          # Periodically print logs to console for 2 minutes
+          for i in {1..24}; do
+            if [ -f tests.log ]; then
+              cat tests.log
+              # Use a temporary file to check for completion to avoid clearing logs too aggressively
+              if grep -q "--- All Web Tests Finished ---" tests.log; then
+                echo "Tests finished detected."
+                break
+              fi
+              # Clear log after printing to avoid duplicates in next iteration
+              > tests.log
+            fi
+            sleep 5
+          done
+          
+          kill $RUN_PID || true
