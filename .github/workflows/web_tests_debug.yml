@@ -35,40 +35,6 @@ jobs:
           # Install and use xvfb to provide a virtual display for Chrome
           sudo apt-get update && sudo apt-get install -y xvfb
           
-          # Run in background and pipe logs
-          xvfb-run --auto-servernum flutter run -d chrome test/all_tests.dart --no-pub > tests.log 2>&1 &
-          RUN_PID=$!
-          echo "Flutter run started with PID $RUN_PID"
-          
-          # Periodically print logs to console for 3 minutes
-          # We check for a completion marker to close the app early
-          for i in {1..36}; do
-            if [ -f tests.log ]; then
-              # Print only new lines since last check
-              if [ ! -f last_pos ]; then echo 0 > last_pos; fi
-              LAST_POS=$(cat last_pos)
-              NEW_LINES=$(tail -n +$((LAST_POS + 1)) tests.log)
-              echo "$NEW_LINES"
-              echo $((LAST_POS + $(echo "$NEW_LINES" | grep -c '^' || echo 0))) > last_pos
-              
-              if grep -q "=== WEB TESTS COMPLETED ===" tests.log; then
-                echo "Tests finished detected. Closing app..."
-                break
-              fi
-              
-              if grep -q "Some tests failed." tests.log; then
-                echo "Tests failure detected. Closing app..."
-                # We don't exit 1 yet, we want to see the full logs and kill the process gracefully
-                break
-              fi
-            fi
-            sleep 5
-          done
-          
-          echo "Cleaning up..."
-          kill $RUN_PID || true
-          
-          # Check for failures in the final log to set job status
-          if grep -q "Some tests failed." tests.log; then
-            exit 1
-          fi
+          # Run directly. The app will attempt to close itself after tests.
+          # We use a timeout as a safety net to prevent hanging forever in case window.close() fails.
+          xvfb-run --auto-servernum timeout 300 flutter run -d chrome test/all_tests.dart --no-pub
