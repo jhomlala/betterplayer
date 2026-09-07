@@ -25,5 +25,5 @@ jobs:
       - name: Run Web Tests (flutter run)
         run: |
           cd packages/better_player_web
-          # Run flutter directly and let it stream to stdout.
-          flutter run -d chrome test/all_tests.dart --release --no-pub
+          # Run flutter directly in debug mode for better logs.
+          flutter run -d chrome test/all_tests.dart --no-pub
