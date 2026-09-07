@@ -8,7 +8,7 @@ on:
 
 jobs:
   run-web-tests:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -25,7 +25,5 @@ jobs:
       - name: Run Web Tests (flutter run)
         run: |
           cd packages/better_player_web
-          # Run flutter directly and let it stream to stdout. 
-          # We use --release to avoid some debug-only overhead and --no-pub since we did it above.
-          # The job will end when the process is killed or times out.
-          timeout 300 flutter run -d chrome test/all_tests.dart --release --no-pub || true
+          # Run flutter directly and let it stream to stdout.
+          flutter run -d chrome test/all_tests.dart --release --no-pub
