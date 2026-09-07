@@ -48,6 +48,7 @@ void main() {
             engine.setProperty('registerRequestFilter'.toJS, ((JSFunction filter) {}).toJS);
             return engine;
           }).toJS);
+          p.setProperty('getTextTracks'.toJS, (() => <JSObject>[].jsify() as JSArray).toJS);
           return p;
         }).toJS;
         mockShaka.setProperty('Player'.toJS, mockPlayerConstructor);
@@ -296,7 +297,7 @@ void main() {
       mockVideo.setProperty('dispatchEvent'.toJS, ((web.Event event) {
         final type = event.type;
         for (final l in (listeners[type] ?? [])) {
-          l.callAsFunction(mockVideo, event);
+          (l as JSObject).callMethod('call'.toJS, mockVideo, event);
         }
         return true.toJS;
       }).toJS);
@@ -314,7 +315,7 @@ void main() {
 
       // Dispatch loadedmetadata
       for (final l in (listeners['loadedmetadata'] ?? [])) {
-        l.callAsFunction(mockVideo, web.Event('loadedmetadata'));
+        (l as JSObject).callMethod('call'.toJS, mockVideo, web.Event('loadedmetadata'));
       }
       
       await Future.delayed(const Duration(milliseconds: 100));
@@ -397,7 +398,7 @@ void main() {
       mockRequest.setProperty('headers'.toJS, JSObject());
       
       // Call filter: type is not used in our implementation currently but passed by Shaka
-      (filter! as JSFunction).callAsFunction(null, 0.toJS, mockRequest);
+      (filter! as JSObject).callMethod('call'.toJS, null, 0.toJS, mockRequest);
 
       final headers = mockRequest.getProperty('headers'.toJS) as JSObject;
       expect(headers.getProperty('Auth'.toJS).dartify(), 'Bearer test');
@@ -442,8 +443,8 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 100));
 
       for (final l in listeners) {
-        l.callAsFunction(mockVideo, web.Event('seeked'));
-        l.callAsFunction(mockVideo, web.Event('seeked')); // Should be throttled
+        (l as JSObject).callMethod('call'.toJS, mockVideo, web.Event('seeked'));
+        (l as JSObject).callMethod('call'.toJS, mockVideo, web.Event('seeked')); // Should be throttled
       }
       
       await Future.delayed(const Duration(milliseconds: 100));
@@ -468,13 +469,13 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 100));
 
       for (final l in (listeners['waiting'] ?? [])) {
-        l.callAsFunction(mockVideo, web.Event('waiting'));
+        (l as JSObject).callMethod('call'.toJS, mockVideo, web.Event('waiting'));
       }
       // Wait > 200ms as there is a timer in the implementation
       await Future.delayed(const Duration(milliseconds: 300));
       
       for (final l in (listeners['playing'] ?? [])) {
-        l.callAsFunction(mockVideo, web.Event('playing'));
+        (l as JSObject).callMethod('call'.toJS, mockVideo, web.Event('playing'));
       }
       await Future.delayed(const Duration(milliseconds: 100));
       
@@ -500,13 +501,13 @@ void main() {
       await Future.delayed(const Duration(milliseconds: 100));
 
       for (final l in (listeners['resize'] ?? [])) {
-        l.callAsFunction(mockVideo, web.Event('resize'));
+        (l as JSObject).callMethod('call'.toJS, mockVideo, web.Event('resize'));
       }
       for (final l in (listeners['enterpictureinpicture'] ?? [])) {
-        l.callAsFunction(mockVideo, web.Event('enterpictureinpicture'));
+        (l as JSObject).callMethod('call'.toJS, mockVideo, web.Event('enterpictureinpicture'));
       }
       for (final l in (listeners['leavepictureinpicture'] ?? [])) {
-        l.callAsFunction(mockVideo, web.Event('leavepictureinpicture'));
+        (l as JSObject).callMethod('call'.toJS, mockVideo, web.Event('leavepictureinpicture'));
       }
       
       await Future.delayed(const Duration(milliseconds: 100));
