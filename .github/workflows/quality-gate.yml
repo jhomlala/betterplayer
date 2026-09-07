@@ -63,6 +63,9 @@ jobs:
       - name: Run tests
         run: |
           for dir in packages/*; do
+            if [ "$dir" == "packages/better_player_web" ]; then
+              continue
+            fi
             if [ -d "$dir/test" ]; then
               echo "Testing $dir..."
               (cd "$dir" && flutter test --coverage)
@@ -108,3 +111,29 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+
+  test-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install dependencies
+        run: |
+          flutter pub get
+          cd packages/better_player_web && flutter pub get
+
+      - name: Install xvfb
+        run: sudo apt-get update && sudo apt-get install -y xvfb
+
+      - name: Run Web Tests
+        run: |
+          cd packages/better_player_web
+          mkdir -p web
+          echo '<!DOCTYPE html><html><body><script src="main.dart.js"></script></body></html>' > web/index.html
+          cd ../..
+          xvfb-run --auto-servernum dart run scripts/run_web_tests.dart
