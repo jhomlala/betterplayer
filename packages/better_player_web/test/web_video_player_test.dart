@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
+import 'dart:ui';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_web/src/shaka_player.dart';
 import 'package:better_player_web/src/web_video_player.dart';
@@ -39,7 +40,7 @@ void main() {
           p.setProperty('load'.toJS, ((JSString url) => Future.value().toJS).toJS);
           p.setProperty('isLive'.toJS, (() => false.toJS).toJS);
           p.setProperty('getPlayheadTimeAsDate'.toJS, (() => null).toJS);
-          p.setProperty('getVariantTracks'.toJS, (() => [].toJS).toJS);
+          p.setProperty('getVariantTracks'.toJS, (() => [].jsify() as JSArray).toJS);
           p.setProperty('selectVariantTrack'.toJS, ((JSObject track, JSBoolean clear) {}).toJS);
           p.setProperty('selectAudioLanguage'.toJS, ((JSString lang) {}).toJS);
           p.setProperty('getNetworkingEngine'.toJS, (() {
@@ -376,7 +377,7 @@ void main() {
       mockRequest.setProperty('headers'.toJS, JSObject());
       
       // Call filter: type is not used in our implementation currently but passed by Shaka
-      filter!.call(0.toJS, mockRequest);
+      (filter! as JSFunction).callAsFunction(null, 0.toJS, mockRequest);
 
       final headers = mockRequest.getProperty('headers'.toJS) as JSObject;
       expect(headers.getProperty('Auth'.toJS).dartify(), 'Bearer test');
