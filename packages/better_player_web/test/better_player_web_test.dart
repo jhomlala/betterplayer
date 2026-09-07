@@ -10,7 +10,7 @@ class MockBetterPlayerWebPlayer extends Mock implements BetterPlayerWebPlayer {}
 
 void main() {
   setUpAll(() {
-    mocktail.registerFallbackValue(Duration.zero);
+    registerFallbackValue(Duration.zero);
   });
 
   group('BetterPlayerWeb', () {

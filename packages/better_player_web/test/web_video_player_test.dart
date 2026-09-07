@@ -10,7 +10,7 @@ import 'package:web/web.dart' as web;
 
 void main() {
   setUpAll(() {
-    mocktail.registerFallbackValue(Duration.zero);
+    registerFallbackValue(Duration.zero);
   });
 
   group('BetterPlayerWebPlayer', () {
