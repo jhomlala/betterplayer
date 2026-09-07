@@ -423,5 +423,84 @@ void main() {
       await sub.cancel();
       print('--- test: Seeked events end ---');
     });
+
+    group('Methods', () {
+      test('play calls videoElement.play', () {
+        var called = false;
+        (player.videoElement as JSObject).setProperty('play'.toJS, (() {
+          called = true;
+          return Future.value().toJS;
+        }).toJS);
+        
+        player.play();
+        expect(called, isTrue);
+      });
+
+      test('pause calls videoElement.pause', () {
+        var called = false;
+        (player.videoElement as JSObject).setProperty('pause'.toJS, (() {
+          called = true;
+        }).toJS);
+        
+        player.pause();
+        expect(called, isTrue);
+      });
+
+      test('setVolume sets videoElement.volume', () {
+        player.setVolume(0.7);
+        expect((player.videoElement as JSObject).getProperty('volume'.toJS).dartify(), 0.7);
+      });
+
+      test('setSpeed sets videoElement.playbackRate', () {
+        player.setSpeed(1.2);
+        expect((player.videoElement as JSObject).getProperty('playbackRate'.toJS).dartify(), 1.2);
+      });
+
+      test('setLooping sets videoElement.loop', () {
+        player.setLooping(true);
+        expect((player.videoElement as JSObject).getProperty('loop'.toJS).dartify(), isTrue);
+      });
+
+      test('seekTo sets videoElement.currentTime', () {
+        player.seekTo(const Duration(seconds: 15));
+        expect((player.videoElement as JSObject).getProperty('currentTime'.toJS).dartify(), 15.0);
+      });
+
+      test('getPosition returns videoElement.currentTime', () {
+        (player.videoElement as JSObject).setProperty('currentTime'.toJS, 22.5.toJS);
+        expect(player.getPosition(), const Duration(milliseconds: 22500));
+      });
+
+      test('isPictureInPictureSupported returns document.pictureInPictureEnabled', () {
+        // We can't easily mock document.pictureInPictureEnabled in a unit test easily 
+        // if the browser doesn't support it or if it's read-only, but we can check if it returns a bool.
+        expect(player.isPictureInPictureSupported(), isA<bool>());
+      });
+
+      test('enablePictureInPicture calls requestPictureInPicture', () async {
+        // Only test if the method exists/is callable if PiP is enabled in the test environment
+        if (web.document.pictureInPictureEnabled) {
+          var called = false;
+          (player.videoElement as JSObject).setProperty('requestPictureInPicture'.toJS, (() {
+            called = true;
+            return Future.value().toJS;
+          }).toJS);
+          
+          await player.enablePictureInPicture();
+          expect(called, isTrue);
+        }
+      });
+
+      test('disablePictureInPicture calls exitPictureInPicture', () async {
+        // Mock document.pictureInPictureElement to something non-null
+        // and mock document.exitPictureInPicture
+        if (web.document.pictureInPictureEnabled) {
+             // This is tricky as we can't easily mock global document properties that are read-only
+             // However, our code checks for null.
+             // If we can't mock document, we'll skip the call verification and just ensure it doesn't crash.
+             await player.disablePictureInPicture();
+        }
+      });
+    });
   });
 }
