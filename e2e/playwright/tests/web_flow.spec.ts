@@ -47,7 +47,7 @@ test('web flow', async ({ page }) => {
   await progressBar.click({ force: true });
 
   // Fullscreen
-  const fullscreen = page.locator('[aria-label^="better_player_material_controls_expand_button"]');
+  const fullscreen = page.locator('[aria-label^="better_player_material_controls_fullscreen_button"]');
   await expect(fullscreen).toBeVisible();
   await fullscreen.click({ force: true });
 });

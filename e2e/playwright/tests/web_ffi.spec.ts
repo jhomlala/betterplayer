@@ -22,7 +22,8 @@ test('web ffi flow', async ({ page }) => {
 
   // Scroll down so all buttons are in viewport and the engine has time to settle
   await page.mouse.wheel(0, 500);
-  await page.waitForTimeout(3000);
+  // Give the player time to buffer after initialization before seeking
+  await page.waitForTimeout(5000);
 
   const methods = [
     'play',

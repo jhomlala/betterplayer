@@ -144,23 +144,21 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'seekTo',
               () async {
-                // Try to seek even if not initialized to test FFI bridge
-                try {
-                  await _betterPlayerController.seekTo(
-                    const Duration(seconds: 5),
-                  );
-                } catch (e) {
-                  // Fallback to direct platform call if controller logic fails
-                  final textureId = _betterPlayerController.textureId;
-                  if (textureId != null) {
-                    await BetterPlayerPlatform.instance.seekTo(
-                      textureId,
-                      const Duration(seconds: 5),
-                    );
-                  } else {
-                    rethrow;
+                // Wait until the engine is truly initialized before seeking.
+                // The controller may still be buffering even after the
+                // initialized event fires on web.
+                var attempts = 0;
+                while (attempts < 10) {
+                  if (_betterPlayerController.videoPlayerValue?.initialized ==
+                      true) {
+                    break;
                   }
+                  await Future<void>.delayed(const Duration(milliseconds: 500));
+                  attempts++;
                 }
+                await _betterPlayerController.seekTo(
+                  const Duration(seconds: 5),
+                );
               },
             ),
             _buildTestButton(
