@@ -176,7 +176,7 @@ query PRComments($owner: String!, $repo: String!, $number: Int!, $cursor: String
       }
 
       final pageInfo = pr['comments']['pageInfo'];
-      hasNextPage = pageInfo['hasNextPage'] ?? false;
+      hasNextPage = (pageInfo['hasNextPage'] as bool?) ?? false;
       variables['cursor'] = pageInfo['endCursor'];
     }
 
