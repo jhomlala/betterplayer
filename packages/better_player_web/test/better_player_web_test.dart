@@ -9,6 +9,10 @@ import 'package:web/web.dart' as web;
 class MockBetterPlayerWebPlayer extends Mock implements BetterPlayerWebPlayer {}
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(Duration.zero);
+  });
+
   group('BetterPlayerWeb', () {
     late BetterPlayerWeb plugin;
     late MockBetterPlayerWebPlayer mockPlayer;

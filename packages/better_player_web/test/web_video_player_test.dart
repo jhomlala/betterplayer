@@ -8,6 +8,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:web/web.dart' as web;
 
 void main() {
+  setUpAll(() {
+    registerFallbackValue(Duration.zero);
+  });
+
   group('BetterPlayerWebPlayer', () {
     late BetterPlayerWebPlayer player;
     late List<String> logs;
@@ -16,7 +20,7 @@ void main() {
       print('--- setUp start ---');
       
       // Mock global shaka object if it doesn't exist
-      if (!globalContext.has('shaka')) {
+      if (!globalContext.has('shaka'.toJS).toDart) {
         print('[LOG] Mocking global shaka object');
         final mockShaka = JSObject();
         final mockPolyfill = JSObject();
@@ -149,6 +153,7 @@ void main() {
       });
 
       print('Emitting buffering update 1');
+      await Future.delayed(Duration.zero);
       player.emitBufferingUpdate(); // Should emit
       print('Emitting buffering update 2 (should be throttled)');
       player.emitBufferingUpdate(); // Should be throttled

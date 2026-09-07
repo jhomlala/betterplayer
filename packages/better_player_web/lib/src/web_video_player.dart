@@ -22,7 +22,7 @@ class BetterPlayerWebPlayer {
   late StreamController<VideoEvent> _eventController;
   String? _currentKey;
   bool _disposed = false;
-  DateTime _lastBufferingUpdate = DateTime.now();
+  DateTime _lastBufferingUpdate = DateTime.fromMillisecondsSinceEpoch(0);
   @visibleForTesting
   Duration? overriddenDuration;
 
