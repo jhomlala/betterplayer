@@ -5,11 +5,12 @@ import 'package:better_player_platform_interface/better_player_platform_interfac
 import 'package:better_player_web/src/shaka_player.dart';
 import 'package:better_player_web/src/web_video_player.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart' as mocktail;
 import 'package:web/web.dart' as web;
 
 void main() {
   setUpAll(() {
-    registerFallbackValue(Duration.zero);
+    mocktail.registerFallbackValue(Duration.zero);
   });
 
   group('BetterPlayerWebPlayer', () {
@@ -20,7 +21,7 @@ void main() {
       print('--- setUp start ---');
       
       // Mock global shaka object if it doesn't exist
-      if (!globalContext.has('shaka'.toJS).toDart) {
+      if (!globalContext.has('shaka')) {
         print('[LOG] Mocking global shaka object');
         final mockShaka = JSObject();
         final mockPolyfill = JSObject();
