@@ -930,7 +930,7 @@ class _BetterPlayerWebBottomBarState extends State<_BetterPlayerWebBottomBar> {
             )
           else
             Text(
-              ' / ',
+              '${BetterPlayerUiUtils.formatDuration(latestValue?.position ?? Duration.zero)} / ${BetterPlayerUiUtils.formatDuration(latestValue?.duration ?? Duration.zero)}',
               style: TextStyle(
                 color: widget.configuration.textColor,
                 fontSize: 14,
