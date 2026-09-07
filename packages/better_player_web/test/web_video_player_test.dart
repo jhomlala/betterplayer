@@ -424,6 +424,97 @@ void main() {
       print('--- test: Seeked events end ---');
     });
 
+    test('Buffering events (waiting/playing) emit bufferingStart/End', () async {
+      print('--- test: Buffering events start ---');
+      player.initialize();
+      
+      final events = <VideoEventType>[];
+      final sub = player.events.listen((e) => events.add(e.eventType));
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      player.videoElement.dispatchEvent(web.Event('waiting'));
+      // Wait > 200ms as there is a timer in the implementation
+      await Future.delayed(const Duration(milliseconds: 300));
+      
+      player.videoElement.dispatchEvent(web.Event('playing'));
+      await Future.delayed(const Duration(milliseconds: 100));
+      
+      expect(events, contains(VideoEventType.bufferingStart));
+      expect(events, contains(VideoEventType.bufferingEnd));
+      
+      await sub.cancel();
+      print('--- test: Buffering events end ---');
+    });
+
+    test('UI events (resize/pip) emit correct VideoEvents', () async {
+      print('--- test: UI events start ---');
+      player.initialize();
+      
+      final events = <VideoEventType>[];
+      final sub = player.events.listen((e) => events.add(e.eventType));
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      player.videoElement.dispatchEvent(web.Event('resize'));
+      player.videoElement.dispatchEvent(web.Event('enterpictureinpicture'));
+      player.videoElement.dispatchEvent(web.Event('leavepictureinpicture'));
+      
+      await Future.delayed(const Duration(milliseconds: 100));
+      expect(events, contains(VideoEventType.changedSize));
+      expect(events, contains(VideoEventType.pipStart));
+      expect(events, contains(VideoEventType.pipStop));
+      
+      await sub.cancel();
+      print('--- test: UI events end ---');
+    });
+
+    test('setTrackParameters with null/zero values enables ABR', () {
+      print('--- test: setTrackParameters enables ABR start ---');
+      final mockShaka = JSObject();
+      JSObject? lastConfig;
+      mockShaka.setProperty('configure'.toJS, ((JSObject config) {
+        lastConfig = config;
+      }).toJS);
+
+      player = BetterPlayerWebPlayer(
+        viewId: 'test_view',
+        onLog: (msg) => logs.add(msg),
+        shakaPlayer: mockShaka as ShakaPlayer,
+      );
+
+      player.setTrackParameters(width: 0, height: 0, bitrate: 0);
+      
+      expect(lastConfig, isNotNull);
+      final abr = lastConfig!.getProperty('abr'.toJS) as JSObject;
+      expect(abr.getProperty('enabled'.toJS).dartify(), isTrue);
+      print('--- test: setTrackParameters enables ABR end ---');
+    });
+
+    test('getTextTracks and selectTextTrack delegate correctly', () {
+      print('--- test: Text tracks delegation start ---');
+      final mockShaka = JSObject();
+      final mockTrack = JSObject();
+      mockShaka.setProperty('getTextTracks'.toJS, (() => [mockTrack].toJS).toJS);
+      
+      JSObject? selectedTrack;
+      mockShaka.setProperty('selectTextTrack'.toJS, ((JSObject track) {
+        selectedTrack = track;
+      }).toJS);
+
+      player = BetterPlayerWebPlayer(
+        viewId: 'test_view',
+        onLog: (msg) => logs.add(msg),
+        shakaPlayer: mockShaka as ShakaPlayer,
+      );
+
+      final tracks = player.getTextTracks();
+      expect(tracks, hasLength(1));
+      expect(tracks.first, mockTrack);
+
+      player.selectTextTrack(mockTrack);
+      expect(selectedTrack, mockTrack);
+      print('--- test: Text tracks delegation end ---');
+    });
+
     group('Methods', () {
       test('play calls videoElement.play', () {
         var called = false;
