@@ -19,6 +19,7 @@ analyzer:
     - linux/**
     - "packages/better_player_ios/lib/src/**/*.g.dart"
     - "packages/better_player_android/lib/src/**/*.g.dart"
+    - scripts/**
 
 linter:
   rules:

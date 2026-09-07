@@ -42,3 +42,6 @@ rules/
 **/tool/jnigen.dart
 **/tool/swiftgen.dart
 **/example_ffi/
+
+# Exclude local scripts
+scripts/
