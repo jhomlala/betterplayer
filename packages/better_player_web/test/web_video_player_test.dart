@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
-import 'dart:ui';
+import 'dart:ui' as ui;
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_web/src/shaka_player.dart';
 import 'package:better_player_web/src/web_video_player.dart';
@@ -40,7 +40,7 @@ void main() {
           p.setProperty('load'.toJS, ((JSString url) => Future.value().toJS).toJS);
           p.setProperty('isLive'.toJS, (() => false.toJS).toJS);
           p.setProperty('getPlayheadTimeAsDate'.toJS, (() => null).toJS);
-          p.setProperty('getVariantTracks'.toJS, (() => [].jsify() as JSArray).toJS);
+          p.setProperty('getVariantTracks'.toJS, (() => <JSObject>[].jsify() as JSArray).toJS);
           p.setProperty('selectVariantTrack'.toJS, ((JSObject track, JSBoolean clear) {}).toJS);
           p.setProperty('selectAudioLanguage'.toJS, ((JSString lang) {}).toJS);
           p.setProperty('getNetworkingEngine'.toJS, (() {
@@ -283,25 +283,36 @@ void main() {
 
     test('Initialization events are emitted from video element', () async {
       print('--- test: Initialization events start ---');
-      player.initialize();
+      
+      final mockVideo = JSObject();
+      mockVideo.setProperty('style'.toJS, JSObject());
+      mockVideo.setProperty('setAttribute'.toJS, ((JSString name, JSString value) {}).toJS);
+      mockVideo.setProperty('addEventListener'.toJS, ((JSString type, JSFunction listener) {
+        (mockVideo as web.EventTarget).addEventListener(type.toDart, listener);
+      }).toJS);
+      mockVideo.setProperty('dispatchEvent'.toJS, ((web.Event event) {
+         return (mockVideo as web.EventTarget).dispatchEvent(event);
+      }).toJS);
+
+      player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
       
       VideoEvent? receivedEvent;
       final sub = player.events.listen((event) => receivedEvent = event);
       await Future.delayed(const Duration(milliseconds: 100));
 
       // Mock duration and size on video element
-      (player.videoElement as JSObject).setProperty('duration'.toJS, 60.toJS);
-      (player.videoElement as JSObject).setProperty('videoWidth'.toJS, 1280.toJS);
-      (player.videoElement as JSObject).setProperty('videoHeight'.toJS, 720.toJS);
+      mockVideo.setProperty('duration'.toJS, 60.toJS);
+      mockVideo.setProperty('videoWidth'.toJS, 1280.toJS);
+      mockVideo.setProperty('videoHeight'.toJS, 720.toJS);
 
       // Dispatch loadedmetadata
-      player.videoElement.dispatchEvent(web.Event('loadedmetadata'));
+      (mockVideo as web.EventTarget).dispatchEvent(web.Event('loadedmetadata'));
       
       await Future.delayed(const Duration(milliseconds: 100));
       expect(receivedEvent, isNotNull);
       expect(receivedEvent!.eventType, VideoEventType.initialized);
       expect(receivedEvent!.duration, const Duration(seconds: 60));
-      expect(receivedEvent!.size, const Size(1280, 720));
+      expect(receivedEvent!.size, const ui.Size(1280, 720));
       
       await sub.cancel();
       print('--- test: Initialization events end ---');
@@ -570,17 +581,19 @@ void main() {
       });
 
       test('enablePictureInPicture calls requestPictureInPicture', () async {
+        print('--- test: enablePictureInPicture start ---');
         // Only test if the method exists/is callable if PiP is enabled in the test environment
         if (web.document.pictureInPictureEnabled) {
           var called = false;
           (player.videoElement as JSObject).setProperty('requestPictureInPicture'.toJS, (() {
             called = true;
-            return Future.value().toJS;
+            return Future.value(JSObject()).toJS;
           }).toJS);
           
           await player.enablePictureInPicture();
           expect(called, isTrue);
         }
+        print('--- test: enablePictureInPicture end ---');
       });
 
       test('disablePictureInPicture calls exitPictureInPicture', () async {

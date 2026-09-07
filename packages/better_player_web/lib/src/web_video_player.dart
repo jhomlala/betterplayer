@@ -23,26 +23,27 @@ class BetterPlayerWebPlayer {
   String? _currentKey;
   bool _disposed = false;
   DateTime _lastBufferingUpdate = DateTime.fromMillisecondsSinceEpoch(0);
+  DateTime _lastSeekUpdate = DateTime.fromMillisecondsSinceEpoch(0);
   @visibleForTesting
   Duration? overriddenDuration;
 
   Stream<VideoEvent> get events => _eventController.stream;
 
-  void initialize() {
+  void initialize({web.HTMLVideoElement? videoElement}) {
     onLog('Initializing BetterPlayerWebPlayer: $viewId');
     _eventController = StreamController<VideoEvent>.broadcast();
 
-    videoElement = web.HTMLVideoElement();
-    videoElement.style.width = '100%';
-    videoElement.style.height = '100%';
-    videoElement.setAttribute('playsinline', '');
-    videoElement.setAttribute('webkit-playsinline', '');
+    this.videoElement = videoElement ?? web.HTMLVideoElement();
+    this.videoElement.style.width = '100%';
+    this.videoElement.style.height = '100%';
+    this.videoElement.setAttribute('playsinline', '');
+    this.videoElement.setAttribute('webkit-playsinline', '');
 
     onLog('Installing Shaka polyfills');
     shaka.polyfill.installAll();
 
     onLog('Creating Shaka player');
-    _shakaPlayer ??= ShakaPlayer(videoElement);
+    _shakaPlayer ??= ShakaPlayer(this.videoElement);
 
     onLog('Attaching listeners');
     _attachListeners();
@@ -166,15 +167,13 @@ class BetterPlayerWebPlayer {
       }).toJS,
     );
 
-    var lastSeekUpdate = DateTime.now();
-
     videoElement.addEventListener(
       'seeked',
       ((web.Event _) {
         onLog('Event: SEEKED');
         final now = DateTime.now();
-        if (now.difference(lastSeekUpdate).inMilliseconds > 200) {
-          lastSeekUpdate = now;
+        if (now.difference(_lastSeekUpdate).inMilliseconds > 200) {
+          _lastSeekUpdate = now;
           _eventController.add(
             VideoEvent(
               eventType: VideoEventType.seek,
