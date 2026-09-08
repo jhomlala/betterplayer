@@ -42,7 +42,7 @@ class _NotificationPlayerPageState extends State<NotificationPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Notification player')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(

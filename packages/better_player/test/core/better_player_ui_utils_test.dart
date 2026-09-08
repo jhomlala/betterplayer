@@ -58,7 +58,7 @@ void main() {
 #EXT-X-STREAM-INF:BANDWIDTH=1280000,RESOLUTION=1280x720
 video_720p.m3u8
 ''';
-      final tracks = await BetterPlayerHlsUtils.parseTracks(
+      final tracks = await BetterPlayerHlsUtils().parseTracks(
         data,
         'https://example.com/master.m3u8',
       );
@@ -74,7 +74,7 @@ video_720p.m3u8
 #EXT-X-STREAM-INF:BANDWIDTH=1280000,AUDIO="audio"
 video.m3u8
 ''';
-      final audios = await BetterPlayerHlsUtils.parseLanguages(
+      final audios = await BetterPlayerHlsUtils().parseLanguages(
         data,
         'https://example.com/master.m3u8',
       );

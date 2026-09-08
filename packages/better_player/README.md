@@ -12,8 +12,8 @@
 Better Player is a powerful video player for Flutter, originally based on the official video_player plugin but now fully independent. It solves common playback issues, provides extensive configuration options, and handles complex media use cases out of the box.
 
 
-> **[IMPORTANT] Migrating to 1.x.x?**
-> We've introduced a cleaner federated architecture, direct native bridges (JNI/FFI) in v1.2.0, and unified model names (e.g. `BetterPlayerConfiguration` is now `PlayerConfiguration`). See the [Migration Guide to 1.x.x](https://jhomlala.github.io/betterplayer/migration_to_1.x.x) to learn how to upgrade your project.
+> **[IMPORTANT] Migrating from 0.0.84 to 1.x.x?**
+> See the [Migration Guide](https://jhomlala.github.io/betterplayer/migration_to_1.x.x) to learn how to upgrade your project.
 
 ---
 
@@ -91,7 +91,14 @@ AspectRatio(
 )
 ```
 
-### 3. Advanced Controller Usage
+### 4. Web Setup
+To use Better Player on the web, you must include the Shaka Player library in your `web/index.html` file before the closing `</body>` tag:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/shaka-player@4/dist/shaka-player.compiled.js"></script>
+```
+
+### 5. Advanced Controller Usage
 For full control, use the `BetterPlayerController`:
 
 ```dart

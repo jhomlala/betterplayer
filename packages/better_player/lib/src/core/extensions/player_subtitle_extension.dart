@@ -36,7 +36,7 @@ extension PlayerSubtitleExtension on BetterPlayerController {
       if (subtitlesSource.asmsIsSegmented == true) {
         return;
       }
-      final subtitlesParsed = await PlayerSubtitlesFactory.parseSubtitles(
+      final subtitlesParsed = await PlayerSubtitlesFactory().parseSubtitles(
         subtitlesSource,
       );
       _subtitleState = _subtitleState.copyWith(
@@ -80,7 +80,7 @@ extension PlayerSubtitleExtension on BetterPlayerController {
           .toList();
 
       if (segmentsToLoad != null && segmentsToLoad.isNotEmpty) {
-        final subtitlesParsed = await PlayerSubtitlesFactory.parseSubtitles(
+        final subtitlesParsed = await PlayerSubtitlesFactory().parseSubtitles(
           PlayerSubtitlesSource(
             type: _subtitleState.subtitlesSource!.type,
             headers: _subtitleState.subtitlesSource!.headers,

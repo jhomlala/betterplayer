@@ -2,8 +2,7 @@ import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
-final BetterPlayerPlatform _betterPlayerPlatform =
-    BetterPlayerPlatform.instance;
+BetterPlayerPlatform get _betterPlayerPlatform => BetterPlayerPlatform.instance;
 
 /// Widget that displays the video controlled by [controller].
 class PlayerEngineView extends StatefulWidget {

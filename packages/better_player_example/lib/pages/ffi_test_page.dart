@@ -56,7 +56,7 @@ class _FFITestPageState extends State<FFITestPage> {
 
       final betterPlayerDataSource = PlayerDataSource(
         DataSourceType.network,
-        Constants.hlsTestStreamUrl,
+        Constants.bugBuckBunnyVideoUrl,
       );
       debugPrint(
         'FFI TEST PAGE: Setting up data source: ${betterPlayerDataSource.url}',
@@ -113,6 +113,7 @@ class _FFITestPageState extends State<FFITestPage> {
                 padding: const EdgeInsets.all(8),
                 child: Semantics(
                   identifier: 'ffi_test_waiting_status',
+                  container: true,
                   child: const Text(
                     'Waiting for initialization...',
                     style: TextStyle(color: Colors.orange),
@@ -124,6 +125,7 @@ class _FFITestPageState extends State<FFITestPage> {
                 padding: const EdgeInsets.all(8),
                 child: Semantics(
                   identifier: 'ffi_test_initialized_status',
+                  container: true,
                   child: const Text(
                     'initialized=true',
                     style: TextStyle(color: Colors.green),
@@ -142,23 +144,21 @@ class _FFITestPageState extends State<FFITestPage> {
             _buildTestButton(
               'seekTo',
               () async {
-                // Try to seek even if not initialized to test FFI bridge
-                try {
-                  await _betterPlayerController.seekTo(
-                    const Duration(seconds: 5),
-                  );
-                } catch (e) {
-                  // Fallback to direct platform call if controller logic fails
-                  final textureId = _betterPlayerController.textureId;
-                  if (textureId != null) {
-                    await BetterPlayerPlatform.instance.seekTo(
-                      textureId,
-                      const Duration(seconds: 5),
-                    );
-                  } else {
-                    rethrow;
+                // Wait until the engine is truly initialized before seeking.
+                // The controller may still be buffering even after the
+                // initialized event fires on web.
+                var attempts = 0;
+                while (attempts < 10) {
+                  if (_betterPlayerController.videoPlayerValue?.initialized ==
+                      true) {
+                    break;
                   }
+                  await Future<void>.delayed(const Duration(milliseconds: 500));
+                  attempts++;
                 }
+                await _betterPlayerController.seekTo(
+                  const Duration(seconds: 5),
+                );
               },
             ),
             _buildTestButton(
@@ -302,8 +302,12 @@ class _FFITestPageState extends State<FFITestPage> {
           Expanded(
             child: Semantics(
               identifier: 'ffi_test_button_$name',
+              container: true,
               child: ElevatedButton(
-                onPressed: () => _runTest(name, action),
+                onPressed: () {
+                  debugPrint('FFI TEST PAGE: Button clicked: $name');
+                  _runTest(name, action);
+                },
                 child: Text('Test $name'),
               ),
             ),
@@ -311,6 +315,7 @@ class _FFITestPageState extends State<FFITestPage> {
           const SizedBox(width: 16),
           Semantics(
             identifier: 'ffi_test_status_$name',
+            container: true,
             child: Text(
               status,
               style: TextStyle(color: color, fontWeight: FontWeight.bold),

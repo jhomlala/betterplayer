@@ -42,7 +42,7 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Fade placeholder player')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(

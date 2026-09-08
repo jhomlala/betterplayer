@@ -86,7 +86,7 @@ jobs:
           force-avd-creation: false
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 4096 -cache-size 2048 -accel on
-          script: until adb shell pm list packages > /dev/null 2>&1; do echo "Waiting for package manager..."; sleep 5; done; adb shell input keyevent 82; adb install packages/better_player_example/build/app/outputs/flutter-apk/app-debug.apk; maestro test maestro/android/
+          script: until adb shell pm list packages > /dev/null 2>&1; do echo "Waiting for package manager..."; sleep 5; done; adb shell input keyevent 82; adb install packages/better_player_example/build/app/outputs/flutter-apk/app-debug.apk; maestro test e2e/maestro/android/
 
       - name: Upload Maestro Artifacts
         if: always()

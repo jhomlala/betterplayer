@@ -31,7 +31,7 @@ class BetterPlayerMaterialClickableWidget extends StatelessWidget {
           onTap();
         },
         child: Semantics(
-          label: semanticsLabel,
+          label: semanticsLabel ?? semanticsIdentifier,
           identifier: semanticsIdentifier,
           button: true,
           child: child,

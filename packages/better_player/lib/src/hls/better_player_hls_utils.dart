@@ -5,10 +5,16 @@ import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
 import 'package:better_player/src/hls/hls_parser/rendition.dart';
 import 'package:better_player/src/hls/hls_parser/util.dart';
 import 'package:better_player/src/logging/player_logger.dart';
+import 'package:http/http.dart' as http;
 
 ///HLS helper class
 class BetterPlayerHlsUtils {
-  static Future<PlayerAsmsDataHolder> parse(
+  BetterPlayerHlsUtils({http.Client? httpClient})
+    : _httpClient = httpClient ?? http.Client();
+
+  final http.Client _httpClient;
+
+  Future<PlayerAsmsDataHolder> parse(
     String data,
     String masterPlaylistUrl,
   ) async {
@@ -37,7 +43,7 @@ class BetterPlayerHlsUtils {
     );
   }
 
-  static Future<List<PlayerAsmsTrack>> parseTracks(
+  Future<List<PlayerAsmsTrack>> parseTracks(
     String data,
     String masterPlaylistUrl,
   ) async {
@@ -76,7 +82,7 @@ class BetterPlayerHlsUtils {
   }
 
   ///Parse subtitles from provided m3u8 url
-  static Future<List<PlayerAsmsSubtitle>> parseSubtitles(
+  Future<List<PlayerAsmsSubtitle>> parseSubtitles(
     String data,
     String masterPlaylistUrl,
   ) async {
@@ -111,14 +117,14 @@ class BetterPlayerHlsUtils {
   ///to prevent massive load od video start. Segmented subtitles will have
   ///filled segments list which contains start, end and url of subtitles based
   ///on time in playlist.
-  static Future<PlayerAsmsSubtitle?> _parseSubtitlesPlaylist(
+  Future<PlayerAsmsSubtitle?> _parseSubtitlesPlaylist(
     Rendition rendition,
   ) async {
     try {
       final hlsPlaylistParser = HlsPlaylistParser.create();
-      final subtitleData = await BetterPlayerAsmsUtils.getDataFromUrl(
-        rendition.url.toString(),
-      );
+      final subtitleData = await BetterPlayerAsmsUtils(
+        httpClient: _httpClient,
+      ).getDataFromUrl(rendition.url.toString());
       if (subtitleData == null) {
         return null;
       }
@@ -194,7 +200,7 @@ class BetterPlayerHlsUtils {
     }
   }
 
-  static Future<List<PlayerAsmsAudioTrack>> parseLanguages(
+  Future<List<PlayerAsmsAudioTrack>> parseLanguages(
     String data,
     String masterPlaylistUrl,
   ) async {

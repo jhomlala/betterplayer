@@ -18,7 +18,7 @@ Better Player Subtitles
         type: PlayerSubtitlesSourceType.memory,
         content: srtContent,
       );
-      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await PlayerSubtitlesFactory().parseSubtitles(
         source,
       );
 
@@ -42,7 +42,7 @@ Better Player Subtitles VTT
         type: PlayerSubtitlesSourceType.memory,
         content: vttContent,
       );
-      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await PlayerSubtitlesFactory().parseSubtitles(
         source,
       );
 
@@ -56,7 +56,7 @@ Better Player Subtitles VTT
         type: PlayerSubtitlesSourceType.memory,
         content: invalidContent,
       );
-      final subtitles = await PlayerSubtitlesFactory.parseSubtitles(
+      final subtitles = await PlayerSubtitlesFactory().parseSubtitles(
         source,
       );
       expect(subtitles.isEmpty, true);

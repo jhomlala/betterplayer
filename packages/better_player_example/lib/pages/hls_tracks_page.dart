@@ -31,7 +31,7 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('HLS tracks')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(

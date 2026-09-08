@@ -12,6 +12,7 @@ import 'package:better_player/src/controls/better_player_multiple_gesture_detect
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoControls extends StatefulWidget {

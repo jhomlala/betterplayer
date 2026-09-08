@@ -2,12 +2,14 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/ffi_test_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:material_ui/material_ui.dart' as m3;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  SemanticsBinding.instance.ensureSemantics();
   runApp(const BetterPlayerE2EApp());
 }
 
@@ -106,6 +108,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       appBar: AppBar(
         title: Semantics(
           identifier: 'better_player_e2e_app_bar_title',
+          label: 'better_player_e2e_app_bar_title',
           child: const Text('Better Player Example'),
         ),
       ),
@@ -122,6 +125,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 padding: const EdgeInsets.all(8),
                 child: Semantics(
                   identifier: 'better_player_e2e_error_text',
+                  label: 'better_player_e2e_error_text',
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -159,12 +163,13 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   ),
                 ),
               ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 100),
             Wrap(
               spacing: 8,
               children: [
                 Semantics(
                   identifier: 'better_player_e2e_setup_mp4',
+                  label: 'better_player_e2e_setup_mp4',
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
                       Constants.bugBuckBunnyVideoUrl,
@@ -175,6 +180,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 ),
                 Semantics(
                   identifier: 'better_player_e2e_setup_hls',
+                  label: 'better_player_e2e_setup_hls',
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
                       Constants.hlsTestStreamUrl,
@@ -185,6 +191,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 ),
                 Semantics(
                   identifier: 'better_player_e2e_setup_error',
+                  label: 'better_player_e2e_setup_error',
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
                       'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/404.mp4',
@@ -195,6 +202,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 ),
                 Semantics(
                   identifier: 'better_player_e2e_navigate_ffi',
+                  label: 'better_player_e2e_navigate_ffi',
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.push(

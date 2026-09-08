@@ -1,0 +1,3 @@
+## 1.0.0
+
+* Initial release of better_player_web package.

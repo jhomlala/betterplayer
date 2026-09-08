@@ -1,0 +1,60 @@
+name: E2E Web (Playwright)
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Get Flutter deps
+        run: flutter pub get; cd packages/better_player_example; flutter pub get
+
+      - name: Build web (e2e target)
+        run: |
+          cd packages/better_player_example
+          flutter build web --target lib/main_e2e.dart --no-tree-shake-icons --dart-define=FLUTTER_WEB_RENDERER=html
+
+      - name: Install Playwright deps
+        run: cd e2e/playwright && npm install && npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        run: cd e2e/playwright && npx playwright test
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-web-report
+          path: e2e/playwright/playwright-report/
+          retention-days: 14

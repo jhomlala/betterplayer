@@ -51,7 +51,7 @@ class _EventListenerPageState extends State<EventListenerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Event listener')),
-      body: Column(
+      body: ListView(
         children: [
           const SizedBox(height: 8),
           const Padding(
@@ -68,28 +68,28 @@ class _EventListenerPageState extends State<EventListenerPage> {
             child: BetterPlayer(controller: _betterPlayerController),
           ),
           const SizedBox(height: 8),
-          Expanded(
-            child: StreamBuilder(
-              stream: _eventStreamController.stream,
-              builder: (context, snapshot) {
-                return ListView(
-                  children: events
-                      .map(
-                        (event) => Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Event: ${event.betterPlayerEventType} '
-                              'parameters: ${event.parameters ?? <String, dynamic>{}}',
-                            ),
-                            const Divider(),
-                          ],
-                        ),
-                      )
-                      .toList(),
-                );
-              },
-            ),
+          StreamBuilder(
+            stream: _eventStreamController.stream,
+            builder: (context, snapshot) {
+              return ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: events
+                    .map(
+                      (event) => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Event: ${event.betterPlayerEventType} '
+                            'parameters: ${event.parameters ?? <String, dynamic>{}}',
+                          ),
+                          const Divider(),
+                        ],
+                      ),
+                    )
+                    .toList(),
+              );
+            },
           ),
         ],
       ),

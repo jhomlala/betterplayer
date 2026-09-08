@@ -543,6 +543,7 @@ class _BetterPlayerBottomSheetMenuItem extends StatelessWidget {
       if (semanticsIdentifier != null) {
         return Semantics(
           identifier: semanticsIdentifier,
+          label: semanticsIdentifier,
           button: true,
           child: action,
         );

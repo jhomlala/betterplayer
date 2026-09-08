@@ -13,7 +13,7 @@ Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  better_player: ^1.5.1
+  better_player: ^1.6.0
 ```
 
 ## 2. Install Package
@@ -48,6 +48,16 @@ Apply the following settings for Android support:
 *   **SDK Version**: Set `compileSdkVersion` to **36**.
 *   **Flutter Version**: Use **Flutter 3.47.0** or higher (required for latest architectural improvements).
 *   **MultiDex**: Ensure MultiDex is enabled in your project.
+
+### Web Configuration (Required)
+
+To use Better Player on the web, you must include the Shaka Player library in your `web/index.html` file before the closing `</body>` tag:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/shaka-player@4/dist/shaka-player.compiled.js"></script>
+```
+
+Alternatively, you can download the script and host it locally.
 
 ## 5. Additional Configurations (Optional)
 

@@ -4,9 +4,16 @@ import 'dart:io';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
+import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart';
 
 class PlayerSubtitlesFactory {
-  static Future<List<PlayerSubtitle>> parseSubtitles(
+  PlayerSubtitlesFactory({http.Client? httpClient})
+    : _httpClient = httpClient ?? http.Client();
+
+  final http.Client _httpClient;
+
+  Future<List<PlayerSubtitle>> parseSubtitles(
     PlayerSubtitlesSource source,
   ) async {
     switch (source.type) {
@@ -21,7 +28,7 @@ class PlayerSubtitlesFactory {
     }
   }
 
-  static Future<List<PlayerSubtitle>> _parseSubtitlesFromFile(
+  Future<List<PlayerSubtitle>> _parseSubtitlesFromFile(
     PlayerSubtitlesSource source,
   ) async {
     try {
@@ -46,26 +53,26 @@ class PlayerSubtitlesFactory {
     return [];
   }
 
-  static Future<List<PlayerSubtitle>> _parseSubtitlesFromNetwork(
+  Future<List<PlayerSubtitle>> _parseSubtitlesFromNetwork(
     PlayerSubtitlesSource source,
   ) async {
     try {
-      final client = HttpClient();
       final subtitles = <PlayerSubtitle>[];
       for (final url in source.urls!) {
-        final request = await client.getUrl(Uri.parse(url!));
-        source.headers?.keys.forEach((key) {
-          final value = source.headers![key];
-          if (value != null) {
-            request.headers.add(key, value);
-          }
-        });
-        final response = await request.close();
-        final data = await response.transform(const Utf8Decoder()).join();
+        final nonNullHeaders = <String, String>{};
+        if (source.headers != null) {
+          source.headers!.forEach((key, value) {
+            nonNullHeaders[key] = value;
+          });
+        }
+        final response = await _httpClient.get(
+          Uri.parse(url!),
+          headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
+        );
+        final data = response.body;
         final cacheList = _parseString(data);
         subtitles.addAll(cacheList);
       }
-      client.close();
 
       PlayerLogger.debug(
         message: 'Parsed total subtitles: ${subtitles.length}',
@@ -80,7 +87,7 @@ class PlayerSubtitlesFactory {
     return [];
   }
 
-  static List<PlayerSubtitle> _parseSubtitlesFromMemory(
+  List<PlayerSubtitle> _parseSubtitlesFromMemory(
     PlayerSubtitlesSource source,
   ) {
     try {
@@ -94,7 +101,7 @@ class PlayerSubtitlesFactory {
     return [];
   }
 
-  static List<PlayerSubtitle> _parseString(String value) {
+  List<PlayerSubtitle> _parseString(String value) {
     var components = value.split('\r\n\r\n');
     if (components.length == 1) {
       components = value.split('\n\n');
