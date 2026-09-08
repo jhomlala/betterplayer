@@ -9,7 +9,6 @@ Better Player 1.x.x introduces a **federated plugin architecture** and a signifi
 The package was split into smaller specialized packages, and redundant `BetterPlayer` prefixes were removed from model names.
 
 ## Version History & Key Architecture Changes
-- **v1.6.x**: Introduced Web platform support (`better_player_web`) via Shaka Player.
 - **v1.5.x**: Refactored `BetterPlayerController` state into immutable data classes.
 - **v1.4.x**: Replaced `VideoPlayerController` with `PlayerEngineController`.
 - **v1.3.x**: Introduced the extensible `PlayerLogger` logging system.
@@ -273,13 +272,29 @@ This architectural shift provides higher performance, better type safety, and mo
 If you have extended Better Player or implemented a custom platform backend, you must update your references:
 
 1.  **Replace `VideoPlayerPlatform` with `BetterPlayerPlatform`**:
-    ```dart
-    // Before
-    class MyCustomPlatform extends VideoPlayerPlatform { ... }
-    
-    // After
-    class MyCustomPlatform extends BetterPlayerPlatform { ... }
-    ```
+
+<table>
+<tr>
+<th width="50%">Before</th>
+<th width="50%">After</th>
+</tr>
+<tr>
+<td>
+
+```dart
+class MyCustomPlatform extends VideoPlayerPlatform { ... }
+```
+
+</td>
+<td>
+
+```dart
+class MyCustomPlatform extends BetterPlayerPlatform { ... }
+```
+
+</td>
+</tr>
+</table>
 
 2.  **Legacy `MethodChannelVideoPlayer` Removal**:
     The class `MethodChannelVideoPlayer` is no longer available. All logic has been moved to the respective FFI/JNI implementations in `better_player_android` and `better_player_ios`.
@@ -295,36 +310,84 @@ The `VideoPlayerController` type is no longer exported, and the `videoPlayerCont
 If you were accessing the underlying video player controller directly, you should now use the proxied methods on `BetterPlayerController`:
 
 **Playback Controls:**
+
+<table>
+<tr>
+<th width="50%">Before</th>
+<th width="50%">After</th>
+</tr>
+<tr>
+<td>
+
 ```dart
-// Before
 controller.videoPlayerController!.play();
 controller.videoPlayerController!.seekTo(Duration.zero);
+```
 
-// After
+</td>
+<td>
+
+```dart
 controller.play();
 controller.seekTo(Duration.zero);
 ```
 
+</td>
+</tr>
+</table>
+
 **State Access:**
+
+<table>
+<tr>
+<th width="50%">Before</th>
+<th width="50%">After</th>
+</tr>
+<tr>
+<td>
+
 ```dart
-// Before
 final value = controller.videoPlayerController!.value;
 final isPlaying = value.isPlaying;
+```
 
-// After
+</td>
+<td>
+
+```dart
 final value = controller.videoPlayerValue;
 final isPlaying = value?.isPlaying ?? false;
 ```
 
+</td>
+</tr>
+</table>
+
 **Event Listeners:**
+
+<table>
+<tr>
+<th width="50%">Before</th>
+<th width="50%">After</th>
+</tr>
+<tr>
+<td>
+
 ```dart
-// Before
 void listener() { ... }
 controller.videoPlayerController!.addListener(listener);
 controller.videoPlayerController!.removeListener(listener);
+```
 
-// After
+</td>
+<td>
+
+```dart
 void listener() { ... }
 controller.addVideoListener(listener);
 controller.removeVideoListener(listener);
 ```
+
+</td>
+</tr>
+</table>
