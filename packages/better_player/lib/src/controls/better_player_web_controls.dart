@@ -648,9 +648,12 @@ class _BetterPlayerWebCheckRow extends StatelessWidget {
         else
           const SizedBox(width: 16),
         const SizedBox(width: 8),
-        Text(
-          title,
-          style: TextStyle(color: controlsConfiguration.textColor),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(color: controlsConfiguration.textColor),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );
@@ -673,39 +676,36 @@ class _BetterPlayerWebMenuRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Icon(
-              icon,
-              color: controlsConfiguration.iconsColor,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              title,
-              style: TextStyle(color: controlsConfiguration.textColor),
-            ),
-          ],
+        Icon(
+          icon,
+          color: controlsConfiguration.iconsColor,
+          size: 20,
         ),
-        const SizedBox(width: 24),
-        Row(
-          children: [
-            Text(
-              value,
-              style: TextStyle(
-                color: controlsConfiguration.textColor,
-                fontSize: 12,
-              ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(color: controlsConfiguration.textColor),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Flexible(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: controlsConfiguration.textColor,
+              fontSize: 12,
             ),
-            const SizedBox(width: 8),
-            Icon(
-              Icons.chevron_right,
-              color: controlsConfiguration.iconsColor,
-              size: 16,
-            ),
-          ],
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Icon(
+          Icons.chevron_right,
+          color: controlsConfiguration.iconsColor,
+          size: 16,
         ),
       ],
     );
