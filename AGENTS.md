@@ -167,6 +167,12 @@ Swiftgen and jnigen bindings are automatically generated on CI/CD (or triggered 
   ```powershell
   $names=@{}; Get-ChildItem -Path packages -Directory | ForEach-Object { cd $_.FullName; if (Test-Path test) { flutter test --machine | ForEach-Object { if ($_ -match '^{.*}$') { $_ | ConvertFrom-Json } } | ForEach-Object { if($_.type -eq "testStart"){$names[$_.test.id]=$_.test.name} elseif($_.type -eq "error"){[PSCustomObject]@{test=$names[$_.testID]; error=$_.error; package=$_.FullName}} } } }; cd ../.. | ConvertTo-Json -Compress
   ```
+- **Web Testing**: For web-specific tests (e.g. `packages/better_player_web`), run them using the Chrome platform:
+  - Run `dart scripts/run_web_tests.dart` from the workspace root to automate launching tests in Chrome and correctly terminating the process.
+  - Alternatively, use `flutter test --platform=chrome` inside the web package directory.
+- **E2E Web Testing**: Web E2E tests use Playwright. To run them locally:
+  1. Build the web target: `cd packages/better_player_example && flutter build web --target lib/main_e2e.dart --no-tree-shake-icons --dart-define=FLUTTER_WEB_RENDERER=html`
+  2. Run the tests: `cd e2e/playwright && npm install && npx playwright install --with-deps chromium && npx playwright test`
 
 ## Project Structure
 - **Test Organization**: The `test/` directory MUST mirror the `lib/src/` directory structure.
