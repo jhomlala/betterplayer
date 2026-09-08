@@ -2,28 +2,40 @@ import 'dart:async';
 import 'dart:ui_web' as ui_web;
 
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
-import 'package:better_player_web/src/web_video_player.dart';
+import 'package:better_player_web/src/better_player_web_player.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 
-void Function({required int levelIndex, required String message})?
-_customLogCallback;
-
-void logWeb(String message) {
-  if (_customLogCallback != null) {
-    _customLogCallback!(levelIndex: 0, message: message);
-  }
-}
+typedef WebPlayerFactory =
+    BetterPlayerWebPlayer Function({
+      required String viewId,
+      required void Function({required String message, int levelIndex}) onLog,
+    });
 
 class BetterPlayerWeb extends BetterPlayerPlatform {
+  BetterPlayerWeb({WebPlayerFactory? playerFactory})
+    : _playerFactory =
+          playerFactory ??
+          (({required viewId, required onLog}) =>
+              BetterPlayerWebPlayer(viewId: viewId, onLog: onLog));
+
   /// Called by the plugin system to register this implementation.
   static void registerWith(Registrar registrar) {
     BetterPlayerPlatform.instance = BetterPlayerWeb();
   }
 
+  final WebPlayerFactory _playerFactory;
+
   // Map from textureId (we use int counter) to player instance
   final Map<int, BetterPlayerWebPlayer> _players = {};
   int _nextId = 0;
+
+  void Function({required int levelIndex, required String message})?
+  _logCallback;
+
+  void _log({required String message, int levelIndex = 0}) {
+    _logCallback?.call(levelIndex: levelIndex, message: message);
+  }
 
   BetterPlayerWebPlayer _getPlayer(int? textureId) {
     final player = _players[textureId];
@@ -36,7 +48,7 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     final id = _nextId++;
     final viewId = 'better_player_web_$id';
 
-    final player = BetterPlayerWebPlayer(viewId: viewId, onLog: logWeb);
+    final player = _playerFactory(viewId: viewId, onLog: _log);
     player.initialize();
 
     // Register the video element as a Flutter platform view
@@ -45,6 +57,7 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     });
 
     _players[id] = player;
+    _log(message: 'Player created: $id', levelIndex: 1);
     return id;
   }
 
@@ -52,6 +65,7 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   Future<void> dispose(int? textureId) async {
     await _getPlayer(textureId).dispose();
     _players.remove(textureId);
+    _log(message: 'Player disposed: $textureId', levelIndex: 1);
   }
 
   @override
@@ -65,22 +79,29 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   }
 
   @override
-  Future<void> play(int? textureId) async => _getPlayer(textureId).play();
+  Future<void> play(int? textureId) async {
+    return _getPlayer(textureId).play();
+  }
 
   @override
-  Future<void> pause(int? textureId) async => _getPlayer(textureId).pause();
+  Future<void> pause(int? textureId) async {
+    return _getPlayer(textureId).pause();
+  }
 
   @override
-  Future<void> setVolume(int? textureId, double volume) async =>
-      _getPlayer(textureId).setVolume(volume);
+  Future<void> setVolume(int? textureId, double volume) async {
+    return _getPlayer(textureId).setVolume(volume);
+  }
 
   @override
-  Future<void> setSpeed(int? textureId, double speed) async =>
-      _getPlayer(textureId).setSpeed(speed);
+  Future<void> setSpeed(int? textureId, double speed) async {
+    return _getPlayer(textureId).setSpeed(speed);
+  }
 
   @override
-  Future<void> setLooping(int? textureId, bool looping) async =>
-      _getPlayer(textureId).setLooping(looping);
+  Future<void> setLooping(int? textureId, bool looping) async {
+    return _getPlayer(textureId).setLooping(looping);
+  }
 
   @override
   Future<void> seekTo(int? textureId, Duration? position) async {
@@ -136,33 +157,33 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     return HtmlElementView(viewType: viewId);
   }
 
-  // Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬ No-ops / Unsupported on web Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬Ă˘â€ťâ‚¬
+  // ── No-ops / Unsupported on web ──────────────────────────────────────────
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) async {
-    logWeb('preCache is not supported on web');
+    _log(message: 'preCache is not supported on web', levelIndex: 2);
   }
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) async {
-    logWeb('stopPreCache is not supported on web');
+    _log(message: 'stopPreCache is not supported on web', levelIndex: 2);
   }
 
   @override
   Future<void> clearCache() async {
-    logWeb('clearCache is not supported on web');
+    _log(message: 'clearCache is not supported on web', levelIndex: 2);
   }
 
   @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
-    logWeb('setMixWithOthers is not supported on web');
+    _log(message: 'setMixWithOthers is not supported on web', levelIndex: 2);
   }
 
   @override
   Future<void> setupLogCallback(
     void Function({required int levelIndex, required String message})? callback,
   ) async {
-    _customLogCallback = callback;
-    logWeb('Log callback wired up for web');
+    _logCallback = callback;
+    _log(message: 'Log callback wired up for web', levelIndex: 1);
   }
 }

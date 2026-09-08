@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 
 class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
+  int _nextTextureId = 1;
 
   @override
   Future<void> dispose(int? textureId) async {
@@ -15,7 +16,7 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,
   }) async {
-    const textureId = 1;
+    final textureId = _nextTextureId++;
     _eventControllers[textureId] = StreamController<VideoEvent>.broadcast();
     return textureId;
   }
@@ -29,15 +30,18 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
     if (textureId != null) {
-      sendEvent(
-        textureId,
-        VideoEvent(
-          eventType: VideoEventType.initialized,
-          duration: const Duration(seconds: 10),
-          size: const Size(1280, 720),
-          key: dataSource.key,
-        ),
-      );
+      // Use microtask to avoid blocking and ensure listener is ready
+      Future.microtask(() {
+        sendEvent(
+          textureId,
+          VideoEvent(
+            eventType: VideoEventType.initialized,
+            duration: const Duration(seconds: 10),
+            size: const Size(1280, 720),
+            key: dataSource.key,
+          ),
+        );
+      });
     }
   }
 
@@ -47,24 +51,21 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   }
 
   void sendEvent(int textureId, VideoEvent event) {
-    _eventControllers[textureId]?.add(event);
+    if (_eventControllers.containsKey(textureId)) {
+      _eventControllers[textureId]?.add(event);
+    }
   }
 
   @override
   Future<void> setLooping(int? textureId, bool looping) async {}
-
   @override
   Future<void> play(int? textureId) async {}
-
   @override
   Future<void> pause(int? textureId) async {}
-
   @override
   Future<void> setVolume(int? textureId, double volume) async {}
-
   @override
   Future<void> setSpeed(int? textureId, double speed) async {}
-
   @override
   Future<void> setTrackParameters(
     int? textureId,
@@ -72,20 +73,12 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
     int? height,
     int? bitrate,
   ) async {}
-
   @override
   Future<void> seekTo(int? textureId, Duration? position) async {}
-
   @override
-  Future<Duration> getPosition(int? textureId) async {
-    return Duration.zero;
-  }
-
+  Future<Duration> getPosition(int? textureId) async => Duration.zero;
   @override
-  Future<DateTime?> getAbsolutePosition(int? textureId) async {
-    return null;
-  }
-
+  Future<DateTime?> getAbsolutePosition(int? textureId) async => null;
   @override
   Future<void> enablePictureInPicture(
     int? textureId,
@@ -94,45 +87,28 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
     double? width,
     double? height,
   ) async {}
-
   @override
   Future<void> disablePictureInPicture(int? textureId) async {}
-
   @override
-  Future<bool?> isPictureInPictureSupported(int? textureId) async {
-    return false;
-  }
-
+  Future<bool?> isPictureInPictureSupported(int? textureId) async => false;
   @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async {}
-
   @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {}
-
   @override
   Future<void> clearCache() async {}
-
   int setupLogCallbackCount = 0;
-  void Function({
-    required int levelIndex,
-    required String message,
-  })?
+  void Function({required int levelIndex, required String message})?
   lastLogCallback;
 
   @override
   Future<void> setupLogCallback(
-    void Function({
-      required int levelIndex,
-      required String message,
-    })?
-    callback,
+    void Function({required int levelIndex, required String message})? callback,
   ) async {
     setupLogCallbackCount++;
     lastLogCallback = callback;
   }
 
   @override
-  Widget buildView(int? textureId) {
-    return const SizedBox();
-  }
+  Widget buildView(int? textureId) => const SizedBox();
 }

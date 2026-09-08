@@ -11,8 +11,7 @@ import 'package:better_player/src/logging/player_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-final BetterPlayerPlatform _betterPlayerPlatform =
-    BetterPlayerPlatform.instance;
+BetterPlayerPlatform get _betterPlayerPlatform => BetterPlayerPlatform.instance;
 
 /// Controls a platform video player, and provides updates when the state is
 /// changing.

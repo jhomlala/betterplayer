@@ -5,7 +5,7 @@
 
 ## 1.5.1
 - Fixed: Resolved Cupertino action sheet fallback label and destructive styling for the cancel button, restoring proper localization and iOS consistency.
-- Updated: Reworked the Cupertino overflow menu bottom sheet to use the native CupertinoActionSheet widget instead of the Material fallback when the theme is explicitly set to Cupertino.
+- Updated: Reworked the Cplsupertino overflow menu bottom sheet to use the native CupertinoActionSheet widget instead of the Material fallback when the theme is explicitly set to Cupertino.
 - Fixed: Hardcoded Cupertino play/pause and skip icon sizes in the bottom control bar to avoid improper scaling on resizing or entering fullscreen.
 - Added: Enhanced automated UI tests to explicitly verify Cupertino styling, sizes, and action sheets.
 

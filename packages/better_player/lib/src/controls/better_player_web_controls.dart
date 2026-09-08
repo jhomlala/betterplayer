@@ -37,6 +37,7 @@ class _BetterPlayerWebControlsState
   VideoPlayerValue? _latestValue;
   String? _errorDescription;
   bool _isMenuOpen = false;
+  StreamSubscription<bool>? _controlsVisibilitySubscription;
 
   @override
   BetterPlayerController? get betterPlayerController => _betterPlayerController;
@@ -62,6 +63,15 @@ class _BetterPlayerWebControlsState
   void _initialize() {
     _betterPlayerController!.addEventsListener(_onPlayerEvent);
     _betterPlayerController!.addVideoListener(_updateState);
+    _controlsVisibilitySubscription = _betterPlayerController!
+        .controlsVisibilityStream
+        .listen((visibility) {
+          if (mounted) {
+            setState(() {
+              _controlsNotVisible = !visibility;
+            });
+          }
+        });
     _latestValue = _betterPlayerController!.videoPlayerValue;
     _controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
     widget.onControlsVisibilityChanged(!_controlsNotVisible);
@@ -73,6 +83,7 @@ class _BetterPlayerWebControlsState
   void _dispose() {
     _betterPlayerController?.removeEventsListener(_onPlayerEvent);
     _betterPlayerController?.removeVideoListener(_updateState);
+    _controlsVisibilitySubscription?.cancel();
     _hideTimer?.cancel();
   }
 
@@ -637,9 +648,12 @@ class _BetterPlayerWebCheckRow extends StatelessWidget {
         else
           const SizedBox(width: 16),
         const SizedBox(width: 8),
-        Text(
-          title,
-          style: TextStyle(color: controlsConfiguration.textColor),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(color: controlsConfiguration.textColor),
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ],
     );
@@ -662,39 +676,36 @@ class _BetterPlayerWebMenuRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
-          children: [
-            Icon(
-              icon,
-              color: controlsConfiguration.iconsColor,
-              size: 20,
-            ),
-            const SizedBox(width: 12),
-            Text(
-              title,
-              style: TextStyle(color: controlsConfiguration.textColor),
-            ),
-          ],
+        Icon(
+          icon,
+          color: controlsConfiguration.iconsColor,
+          size: 20,
         ),
-        const SizedBox(width: 24),
-        Row(
-          children: [
-            Text(
-              value,
-              style: TextStyle(
-                color: controlsConfiguration.textColor,
-                fontSize: 12,
-              ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(color: controlsConfiguration.textColor),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Flexible(
+          child: Text(
+            value,
+            style: TextStyle(
+              color: controlsConfiguration.textColor,
+              fontSize: 12,
             ),
-            const SizedBox(width: 8),
-            Icon(
-              Icons.chevron_right,
-              color: controlsConfiguration.iconsColor,
-              size: 16,
-            ),
-          ],
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Icon(
+          Icons.chevron_right,
+          color: controlsConfiguration.iconsColor,
+          size: 16,
         ),
       ],
     );

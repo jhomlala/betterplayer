@@ -15,10 +15,12 @@ dependencies:
     sdk: flutter
   better_player_platform_interface: ^1.2.0
   web: ^1.1.1
+  meta: ^1.11.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mocktail: ^1.0.5
   very_good_analysis: ^10.3.0
 
 flutter:
