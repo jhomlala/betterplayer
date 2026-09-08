@@ -12,8 +12,8 @@
 Better Player is a powerful video player for Flutter, originally based on the official video_player plugin but now fully independent. It solves common playback issues, provides extensive configuration options, and handles complex media use cases out of the box.
 
 
-> **[IMPORTANT] Migrating to 1.x.x?**
-> We've introduced a cleaner federated architecture, direct native bridges (JNI/FFI) in v1.2.0, and unified model names (e.g. `BetterPlayerConfiguration` is now `PlayerConfiguration`). See the [Migration Guide to 1.x.x](https://jhomlala.github.io/betterplayer/migration_to_1.x.x) to learn how to upgrade your project.
+> **[IMPORTANT] Migrating from 0.0.84 to 1.x.x?**
+> See the [Migration Guide](https://jhomlala.github.io/betterplayer/migration_to_1.x.x) to learn how to upgrade your project.
 
 ---
 

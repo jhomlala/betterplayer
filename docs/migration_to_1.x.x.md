@@ -3,10 +3,19 @@ id: migration_to_1.x.x
 title: Migrating to v1.x.x
 ---
 
-# Migrating to Better Player 1.x.x
+# Migrating from 0.0.84 to Better Player 1.x.x
 
 Better Player 1.x.x introduces a **federated plugin architecture** and a significantly cleaner public API. 
 The package was split into smaller specialized packages, and redundant `BetterPlayer` prefixes were removed from model names.
+
+## Version History & Key Architecture Changes
+- **v1.6.x**: Introduced Web platform support (`better_player_web`) via Shaka Player.
+- **v1.5.x**: Refactored `BetterPlayerController` state into immutable data classes.
+- **v1.4.x**: Replaced `VideoPlayerController` with `PlayerEngineController`.
+- **v1.3.x**: Introduced the extensible `PlayerLogger` logging system.
+- **v1.2.x**: Migrated to modern JNI/Swift architecture (FFI) for native bridges.
+- **v1.1.x**: Unified model names and introduced `fix_data.yaml` for automated migration.
+- **v1.0.x**: Initial federated plugin architecture, delegating to `better_player_android` and `better_player_ios`.
 
 ## 1. Automated Migration (Recommended)
 
@@ -25,7 +34,7 @@ To make the API cleaner and more idiomatic, almost all configuration and data mo
 
 <table>
 <tr>
-<th width="50%">Before (0.8.x)</th>
+<th width="50%">Before (0.0.84)</th>
 <th width="50%">After (1.x.x)</th>
 </tr>
 <tr>
@@ -96,7 +105,7 @@ BetterPlayerController(
 
 <table>
 <tr>
-<th width="50%">Before (0.8.x)</th>
+<th width="50%">Before (0.0.84)</th>
 <th width="50%">After (1.x.x)</th>
 </tr>
 <tr>
@@ -141,7 +150,7 @@ PlayerControlsConfiguration(
 
 <table>
 <tr>
-<th width="50%">Before (0.8.x)</th>
+<th width="50%">Before (0.0.84)</th>
 <th width="50%">After (1.x.x)</th>
 </tr>
 <tr>
@@ -182,7 +191,7 @@ final config = PlayerSubtitlesConfiguration(
 
 <table>
 <tr>
-<th width="50%">Before (0.8.x)</th>
+<th width="50%">Before (0.0.84)</th>
 <th width="50%">After (1.x.x)</th>
 </tr>
 <tr>
@@ -213,7 +222,7 @@ final playlistConfig = PlayerPlaylistConfiguration(
 
 <table>
 <tr>
-<th width="50%">Before (0.8.x)</th>
+<th width="50%">Before (0.0.84)</th>
 <th width="50%">After (1.x.x)</th>
 </tr>
 <tr>
