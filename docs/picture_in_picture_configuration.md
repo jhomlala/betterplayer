@@ -12,6 +12,7 @@ Picture-in-Picture (PiP) allows users to continue watching videos in a small, fl
 PiP support varies significantly by device and operating system version:
 *   **iOS**: Requires iOS 14.0 or higher.
 *   **Android**: Requires Android 8.0 or higher, sufficient RAM, and the v2 Flutter Android embedding.
+*   **Web**: Supported via standard HTML5 browser APIs.
 
 ### Verification
 You can programmatically check if the current device supports PiP:

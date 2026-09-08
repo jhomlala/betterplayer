@@ -1,4 +1,5 @@
 ## Unreleased
+- Added: Web platform support documentation, including a detailed feature matrix and setup instructions for `Shaka Player`.
 - Updated: Moved all E2E tests (Maestro and Playwright) into a centralized `e2e` directory and updated all configuration and workflow paths.
 - Fixed: Resolved `BetterPlayerAsmsUtils`, `PlayerSubtitlesFactory`, and `BetterPlayerHlsUtils` network test failures by adding injectable `http.Client` for testing.
 - Fixed: Resolved `better_player_cupertino_controls_test.dart` failure by using proper widget interaction and pumping.

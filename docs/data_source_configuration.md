@@ -39,6 +39,9 @@ When using `PlayerDataSource.memory`, providing a `videoExtension` (e.g., `"mp4"
 *   **`useAsmsAudioTracks`**: Enables HLS/DASH manifest-based audio tracks.
 *   **`hlsTrackNames`**: Custom names for HLS tracks.
 
+> [!NOTE]
+> Adaptive streaming formats (HLS and DASH) are fully supported on the **Web** platform via the embedded Shaka Player.
+
 :::tip
 You can programmatically control adaptive tracks. Use `controller.betterPlayerAsmsTracks` to retrieve available qualities and `controller.setTrack(track)` to force a specific one. For multi-language content, use `controller.betterPlayerAsmsAudioTracks` and `controller.setAudioTrack(audioTrack)`.
 

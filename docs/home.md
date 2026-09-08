@@ -26,7 +26,8 @@ Better Player provides a robust set of features designed for production-ready ap
 *   **Performance & Optimization**: Integrated cache support and alternative resolution selection.
 *   **Advanced Capabilities**: Support for Picture-in-Picture (PiP), DRM (Token, Widevine, FairPlay EZDRM), and custom HTTP headers.
 *   **Platform Features**: Native notifications and comprehensive BoxFit support.
-*   ... and much more!
+*   **Web Support**: Advanced web playback utilizing Shaka Player for HLS, DASH, and DRM.
+*   ... and much more! See the detailed [Platform Support](platform_support.md) matrix.
 
 ## Important Information
 

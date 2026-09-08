@@ -57,10 +57,10 @@ betterPlayerController.stopPreCache(_betterPlayerDataSource);
 
 ## Platform Support
 
-The underlying implementation varies by platform. Android uses ExoPlayer's internal caching mechanism. On iOS, [HLSCachingReverseProxyServer](https://github.com/StyleShare/HLSCachingReverseProxyServer) is used for HLS streams, and [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) is used for other formats.
+The underlying implementation varies by platform. Android uses ExoPlayer's internal caching mechanism. On iOS, [HLSCachingReverseProxyServer](https://github.com/StyleShare/HLSCachingReverseProxyServer) is used for HLS streams, and [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) is used for other formats. On the Web, fine-grained caching control (`preCache`, `clearCache`) is not currently supported natively by the Shaka Player wrapper.
 
-| Feature | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS |
-| :--- | :---: | :---: | :---: | :---: |
-| **Normal Caching** | ✓ | ✓ | ✓ | ✓ |
-| **Pre-Caching** | ✓ | ✓ | x | ✓ |
-| **Stop Caching** | ✓ | ✓ | x | ✓ |
+| Feature | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS | Web |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Normal Caching** | ✓ | ✓ | ✓ | ✓ | x |
+| **Pre-Caching** | ✓ | ✓ | x | ✓ | x |
+| **Stop Caching** | ✓ | ✓ | x | ✓ | x |

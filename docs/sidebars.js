@@ -7,6 +7,7 @@ const sidebars = {
       items: [
         'home',
         'install',
+        'platform_support',
         'general_player_usage',
         'playlist_player_usage',
         'list_player_usage',

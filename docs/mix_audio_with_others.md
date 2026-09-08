@@ -15,3 +15,7 @@ Use the `setMixWithOthers` method on your controller:
 // Enable audio mixing (Default is false)
 betterPlayerController.setMixWithOthers(true);
 ```
+
+:::warning
+Audio mixing behavior (`setMixWithOthers`) relies on native OS audio sessions and is explicitly ignored on the **Web** platform.
+:::
