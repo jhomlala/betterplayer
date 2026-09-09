@@ -196,6 +196,33 @@ void main() {
       },
     );
 
+    test(
+      'setDataSource with file source successfully delegates to wrapper with file:// URI',
+      () async {
+        await iosPlayer.create();
+        await iosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.file,
+            uri: 'file:///path/to/video.mp4',
+          ),
+        );
+        verify(
+          () => mockPlayer.setDataSourceURLString(
+            'file:///path/to/video.mp4',
+            key: any(named: 'key'),
+            certificateUrl: any(named: 'certificateUrl'),
+            licenseUrl: any(named: 'licenseUrl'),
+            useCache: any(named: 'useCache'),
+            cacheKey: any(named: 'cacheKey'),
+            cacheManager: any(named: 'cacheManager'),
+            overriddenDuration: any(named: 'overriddenDuration'),
+            videoExtension: any(named: 'videoExtension'),
+          ),
+        ).called(1);
+      },
+    );
+
     test('setDataSource successfully delegates Asset to wrapper', () async {
       await iosPlayer.create();
       await iosPlayer.setDataSource(
