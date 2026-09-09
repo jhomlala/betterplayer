@@ -1,3 +1,7 @@
+## Unreleased
+- Fixed: Corrected `source_files` path in `better_player_ios.podspec` and included Objective-C files required for FFI.
+- Fixed: Added `PrivacyInfo.xcprivacy` to `resource_bundles` in `better_player_ios.podspec`.
+
 ## 1.2.0
 - Added: Support for native-to-Dart log streaming (`setupLogCallback`) via FFI for AVPlayer.
 - Added: Reintroduced `example` directory with documentation to the package.
