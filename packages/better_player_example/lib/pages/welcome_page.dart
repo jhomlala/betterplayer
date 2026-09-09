@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/auto_fullscreen_on_rotation_example_page.dart';
 import 'package:better_player_example/pages/auto_fullscreen_orientation_page.dart';
@@ -30,6 +28,7 @@ import 'package:better_player_example/pages/reusable_video_list/reusable_video_l
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_page.dart';
+import 'package:better_player_example/utils/example_io_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -238,8 +237,8 @@ class _WelcomePageState extends State<WelcomePage> {
     if (kIsWeb) return;
     final content = await rootBundle.loadString('assets/example_subtitles.srt');
     final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/example_subtitles.srt');
-    await file.writeAsString(content);
+    final path = '${directory.path}/example_subtitles.srt';
+    await ExampleIoUtils.writeStringToFile(path, content);
   }
 
   ///Save video to file, so we can use it later
@@ -247,8 +246,8 @@ class _WelcomePageState extends State<WelcomePage> {
     if (kIsWeb) return;
     final content = await rootBundle.load('assets/testvideo.mp4');
     final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/testvideo.mp4');
-    await file.writeAsBytes(content.buffer.asUint8List());
+    final path = '${directory.path}/testvideo.mp4';
+    await ExampleIoUtils.writeBytesToFile(path, content.buffer.asUint8List());
   }
 
   ///Save video to file, so we can use it later
@@ -256,8 +255,8 @@ class _WelcomePageState extends State<WelcomePage> {
     if (kIsWeb) return;
     final content = await rootBundle.load('assets/testvideo_encrypt.mp4');
     final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/testvideo_encrypt.mp4');
-    await file.writeAsBytes(content.buffer.asUint8List());
+    final path = '${directory.path}/testvideo_encrypt.mp4';
+    await ExampleIoUtils.writeBytesToFile(path, content.buffer.asUint8List());
   }
 
   ///Save logo to file, so we can use it later
@@ -265,8 +264,8 @@ class _WelcomePageState extends State<WelcomePage> {
     if (kIsWeb) return;
     final content = await rootBundle.load('assets/${Constants.logo}');
     final directory = await getApplicationDocumentsDirectory();
-    final file = File('${directory.path}/${Constants.logo}');
-    await file.writeAsBytes(content.buffer.asUint8List());
+    final path = '${directory.path}/${Constants.logo}';
+    await ExampleIoUtils.writeBytesToFile(path, content.buffer.asUint8List());
   }
 }
 

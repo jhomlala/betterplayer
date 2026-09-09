@@ -1,10 +1,7 @@
-import 'dart:io';
-
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/utils.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:better_player_example/utils/example_io_utils.dart';
 import 'package:material_ui/material_ui.dart';
 
 class MemoryPlayerPage extends StatefulWidget {
@@ -30,21 +27,19 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
   }
 
   Future<void> _setupDataSource() async {
-    List<int> bytes;
-    if (kIsWeb) {
-      final data = await rootBundle.load('assets/testvideo.mp4');
-      bytes = data.buffer.asUint8List();
-    } else {
+    try {
       final filePath = await Utils.getFileUrl(Constants.fileTestVideoUrl);
-      final file = File(filePath);
-      bytes = file.readAsBytesSync().buffer.asUint8List();
+      final bytes = await ExampleIoUtils.readBytesFromFile(filePath);
+      final dataSource = PlayerDataSource(
+        DataSourceType.memory,
+        '',
+        videoExtension: 'mp4',
+        bytes: bytes,
+      );
+      _betterPlayerController.setupDataSource(dataSource);
+    } catch (e) {
+      debugPrint('Failed to load memory data source: $e');
     }
-
-    final dataSource = PlayerDataSource.memory(
-      bytes,
-      videoExtension: 'mp4',
-    );
-    _betterPlayerController.setupDataSource(dataSource);
   }
 
   @override
