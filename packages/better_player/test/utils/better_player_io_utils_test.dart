@@ -35,9 +35,9 @@ void main() {
     test('deleteFile deletes file', () async {
       final file = File('${Directory.systemTemp.path}/test_file_delete.txt');
       await file.writeAsString('test');
-      expect(await file.exists(), true);
+      expect(file.existsSync(), true);
       await BetterPlayerIoUtils.deleteFile(file.path);
-      expect(await file.exists(), false);
+      expect(file.existsSync(), false);
     });
   });
 }
