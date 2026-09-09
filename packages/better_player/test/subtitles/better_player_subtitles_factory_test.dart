@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_source_type.dart';
 import 'package:better_player/src/subtitles/player_subtitles_source.dart';
@@ -50,6 +52,24 @@ void main() {
         source,
       );
       expect(subtitles.length, 0);
+    });
+
+    test('parseSubtitles from file', () async {
+      final factory = PlayerSubtitlesFactory();
+      final file = File('${Directory.systemTemp.path}/test_subs.srt');
+      await file.writeAsString(
+        '1\n00:00:01,000 --> 00:00:02,000\nHello from file\n\n',
+      );
+
+      final source = PlayerSubtitlesSource(
+        type: PlayerSubtitlesSourceType.file,
+        urls: [file.path],
+      );
+      final subtitles = await factory.parseSubtitles(source);
+      expect(subtitles.length, 1);
+      expect(subtitles[0].texts![0], 'Hello from file');
+
+      await file.delete();
     });
   });
 }
