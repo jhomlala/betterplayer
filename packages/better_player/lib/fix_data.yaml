@@ -265,3 +265,13 @@ transforms:
     changes:
       - kind: 'rename'
         newName: 'PlayerEngineProgressColors'
+  - title: 'Rename setFileDataSource parameter and type'
+    date: 2026-09-09
+    element:
+      uris: ['package:better_player/better_player.dart']
+      method: 'setFileDataSource'
+      inClass: 'PlayerEngineController'
+    changes:
+      - kind: 'renameParameter'
+        oldName: 'file'
+        newName: 'filePath'
