@@ -529,8 +529,7 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
       drmHeadersMap,
       cacheKey?.toJString(),
       clearKey?.toJString(),
-      // TODO: Uncomment after JNI regeneration
-      // drmSecurityLevel?.toJString(),
+      drmSecurityLevel?.toJString(),
     );
   }
 
