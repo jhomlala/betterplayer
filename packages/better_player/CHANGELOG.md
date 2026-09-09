@@ -1,5 +1,5 @@
 ## Unreleased
-- Updated: Clarified in documentation and KDoc that `customControlsBuilder` requires `playerTheme` to be set to `PlayerTheme.custom`.
+- Updated: Clarified in documentation that `customControlsBuilder` requires `playerTheme` to be set to `PlayerTheme.custom`.
 - Added: Documentation for unit and widget testing with platform mocking.
 
 ## 1.7.0
