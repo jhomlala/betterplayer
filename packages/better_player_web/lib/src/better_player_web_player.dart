@@ -270,9 +270,12 @@ class BetterPlayerWebPlayer {
         if (drm.licenseUrl != null) {
           servers['com.widevine.alpha'] = drm.licenseUrl!;
         }
-        if (drm.headers != null && drm.headers!.isNotEmpty) {
+        if ((drm.headers != null && drm.headers!.isNotEmpty) ||
+            drm.drmSecurityLevel != null) {
           advanced['com.widevine.alpha'] = {
-            'licenseRequestHeaders': drm.headers!,
+            if (drm.headers != null) 'licenseRequestHeaders': drm.headers!,
+            if (drm.drmSecurityLevel != null)
+              'videoRobustness': drm.drmSecurityLevel!,
           };
         }
       case DrmType.fairplay:
@@ -290,9 +293,12 @@ class BetterPlayerWebPlayer {
         if (drm.licenseUrl != null) {
           servers['com.widevine.alpha'] = drm.licenseUrl!;
         }
-        if (drm.token != null) {
+        if (drm.token != null || drm.drmSecurityLevel != null) {
           advanced['com.widevine.alpha'] = {
-            'licenseRequestHeaders': {'Authorization': 'Bearer ${drm.token}'},
+            if (drm.token != null)
+              'licenseRequestHeaders': {'Authorization': 'Bearer ${drm.token}'},
+            if (drm.drmSecurityLevel != null)
+              'videoRobustness': drm.drmSecurityLevel!,
           };
         }
       case null:

@@ -148,6 +148,11 @@ void main() {
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
         uri: 'https://example.com/video.mp4',
+        drmConfiguration: const DrmConfiguration(
+          drmType: DrmType.widevine,
+          licenseUrl: 'https://license.com',
+          drmSecurityLevel: 'L1',
+        ),
       );
 
       await androidPlayer.setDataSource(1, dataSource);
@@ -165,6 +170,7 @@ void main() {
           any(),
           any(),
           any(),
+          'L1',
         ),
       ).called(1);
     });
@@ -184,6 +190,7 @@ void main() {
           () => mockPlayer.setDataSource(
             any(),
             'file:///path/to/video.mp4',
+            any(),
             any(),
             any(),
             any(),

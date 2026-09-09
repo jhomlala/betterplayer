@@ -129,6 +129,7 @@ void main() {
           drmType: DrmType.widevine,
           licenseUrl: 'https://license.widevine.com',
           headers: {'Authorization': 'Bearer test'},
+          drmSecurityLevel: 'SW_SECURE_CRYPTO',
         ),
       );
 
@@ -140,6 +141,14 @@ void main() {
       expect(
         servers.getProperty('com.widevine.alpha'.toJS).dartify(),
         'https://license.widevine.com',
+      );
+
+      final advanced = drm.getProperty('advanced'.toJS)! as JSObject;
+      final wvAdvanced =
+          advanced.getProperty('com.widevine.alpha'.toJS)! as JSObject;
+      expect(
+        wvAdvanced.getProperty('videoRobustness'.toJS).dartify(),
+        'SW_SECURE_CRYPTO',
       );
     });
 
@@ -182,6 +191,7 @@ void main() {
           drmType: DrmType.token,
           licenseUrl: 'https://license.token.com',
           token: 'test_token',
+          drmSecurityLevel: 'HW_SECURE_ALL',
         ),
       );
 
@@ -189,12 +199,22 @@ void main() {
       expect(config, isNotNull);
 
       final drm = config.getProperty('drm'.toJS)! as JSObject;
+      final servers = drm.getProperty('servers'.toJS)! as JSObject;
+      expect(
+        servers.getProperty('com.widevine.alpha'.toJS).dartify(),
+        'https://license.token.com',
+      );
+
       final advanced = drm.getProperty('advanced'.toJS)! as JSObject;
       final wvAdvanced =
           advanced.getProperty('com.widevine.alpha'.toJS)! as JSObject;
+      expect(
+        wvAdvanced.getProperty('videoRobustness'.toJS).dartify(),
+        'HW_SECURE_ALL',
+      );
+
       final headers =
           wvAdvanced.getProperty('licenseRequestHeaders'.toJS)! as JSObject;
-
       expect(
         headers.getProperty('Authorization'.toJS).dartify(),
         'Bearer test_token',

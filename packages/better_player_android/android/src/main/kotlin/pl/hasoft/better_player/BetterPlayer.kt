@@ -130,7 +130,8 @@ class BetterPlayer(
         licenseUrl: String?,
         drmHeaders: Map<String, String>?,
         cacheKey: String?,
-        clearKey: String?
+        clearKey: String?,
+        drmSecurityLevel: String?
     ) {
         BetterPlayerApi.log(1, "setDataSource: $dataSource")
         this.key = key
@@ -158,8 +159,9 @@ class BetterPlayer(
                         ) { uuid: UUID? ->
                             try {
                                 val mediaDrm = FrameworkMediaDrm.newInstance(uuid!!)
-                                // Force L3.
-                                mediaDrm.setPropertyString("securityLevel", "L3")
+                                val securityLevel = drmSecurityLevel ?: "L3"
+                                BetterPlayerApi.log(1, "DRM Security level: $securityLevel")
+                                mediaDrm.setPropertyString("securityLevel", securityLevel)
                                 return@setUuidAndExoMediaDrmProvider mediaDrm
                             } catch (e: UnsupportedDrmException) {
                                 return@setUuidAndExoMediaDrmProvider DummyExoMediaDrm()

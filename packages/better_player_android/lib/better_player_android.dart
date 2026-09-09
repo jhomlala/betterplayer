@@ -229,6 +229,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       dataSource.drmConfiguration?.headers,
       dataSource.cacheConfiguration?.key,
       dataSource.drmConfiguration?.clearKey,
+      dataSource.drmConfiguration?.drmSecurityLevel,
     );
 
     final notificationConfig = dataSource.notificationConfiguration;
@@ -453,6 +454,7 @@ abstract class BetterPlayerWrapper {
     Map<String, String>? drmHeaders,
     String? cacheKey,
     String? clearKey,
+    String? drmSecurityLevel,
   );
   void setTrackParameters(int width, int height, int bitrate);
   void setAudioTrack(String name, int index);
@@ -494,6 +496,7 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
     Map<String, String>? drmHeaders,
     String? cacheKey,
     String? clearKey,
+    String? drmSecurityLevel,
   ) {
     // Convert headers to JMap
     JMap<JString, JString>? headersMap;
@@ -526,6 +529,8 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
       drmHeadersMap,
       cacheKey?.toJString(),
       clearKey?.toJString(),
+      // TODO: Uncomment after JNI regeneration
+      // drmSecurityLevel?.toJString(),
     );
   }
 
