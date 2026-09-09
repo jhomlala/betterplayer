@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Clarified in documentation and KDoc that `customControlsBuilder` requires `playerTheme` to be set to `PlayerTheme.custom`.
+
 ## 1.7.0
 - [BREAKING_CHANGE] Decoupled `PlayerEngineController` from `dart:io`. `setFileDataSource` now accepts a `String filePath` instead of a `File` object.
 - Added: Web and WASM compatibility support.

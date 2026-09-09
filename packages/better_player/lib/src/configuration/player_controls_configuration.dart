@@ -160,14 +160,16 @@ class PlayerControlsConfiguration {
   ///Time to hide controls
   final Duration controlsHideTime;
 
-  ///Parameter used to build custom controls
+  /// Parameter used to build custom controls.
+  /// NOTE: This will only be used if [playerTheme] is set to [PlayerTheme.custom].
   final Widget Function(
     BetterPlayerController controller,
     Function(bool) onPlayerVisibilityChanged,
   )?
   customControlsBuilder;
 
-  ///Parameter used to change theme of the player
+  /// Parameter used to change theme of the player.
+  /// If you want to use [customControlsBuilder], set this to [PlayerTheme.custom].
   final PlayerTheme? playerTheme;
 
   ///Flag used to show/hide controls

@@ -63,7 +63,7 @@ Customize the look of the seek bar:
 ## Advanced Control Options
 
 *   **`controlsHideTime`**: The duration of inactivity before controls fade out.
-*   **`customControlsBuilder`**: Provide a completely custom widget to handle the player UI.
+*   **`customControlsBuilder`**: Provide a completely custom widget to handle the player UI. **Note**: This will only be used if `playerTheme` is set to `PlayerTheme.custom`.
 *   **`showControls`**: Globally show or hide all controls.
 *   **`showControlsOnInitialize`**: Show controls immediately upon initialization.
 *   **`controlBarHeight`**: Adjust the height of the control bar.
