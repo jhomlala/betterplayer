@@ -4,7 +4,6 @@
 
 // Dart imports:
 import 'dart:async';
-import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
@@ -219,9 +218,9 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   /// Set data source for playing a video from a file.
   ///
   /// This will load the file from the file-URI given by:
-  /// `'file://${file.path}'`.
+  /// `'file://$filePath'`.
   Future<void> setFileDataSource(
-    File file, {
+    String filePath, {
     bool? showNotification,
     String? title,
     String? author,
@@ -234,7 +233,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     return _setDataSource(
       DataSource(
         sourceType: DataSourceType.file,
-        uri: 'file://${file.path}',
+        uri: 'file://$filePath',
         notificationConfiguration: NotificationConfiguration(
           showNotification: showNotification,
           title: title,

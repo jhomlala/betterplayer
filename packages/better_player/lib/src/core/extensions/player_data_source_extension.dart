@@ -187,11 +187,11 @@ extension PlayerDataSourceExtension on BetterPlayerController {
         );
 
       case DataSourceType.file:
-        final file = File(betterPlayerDataSource.url);
-        if (!file.existsSync()) {
+        final filePath = betterPlayerDataSource.url;
+        if (!BetterPlayerIoUtils.fileExists(filePath)) {
           PlayerLogger.warning(
             message:
-                "File ${file.path} doesn't exists. This may be because "
+                "File $filePath doesn't exists. This may be because "
                 "you're acessing file from native path and Flutter doesn't "
                 'recognize this path.',
             textureId: textureId,
@@ -199,7 +199,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
         }
 
         await _engine?.setFileDataSource(
-          File(betterPlayerDataSource.url),
+          filePath,
           showNotification: _betterPlayerDataSource
               ?.notificationConfiguration
               ?.showNotification,
@@ -240,14 +240,14 @@ extension PlayerDataSourceExtension on BetterPlayerController {
             clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
           );
         } else {
-          final file = await _createFile(
+          final filePath = await _createFile(
             _betterPlayerDataSource!.bytes!,
             extension: _betterPlayerDataSource!.videoExtension,
           );
 
-          if (file.existsSync()) {
+          if (BetterPlayerIoUtils.fileExists(filePath)) {
             await _engine?.setFileDataSource(
-              file,
+              filePath,
               showNotification: _betterPlayerDataSource
                   ?.notificationConfiguration
                   ?.showNotification,
@@ -265,7 +265,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
                   ?.activityName,
               clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
             );
-            _tempFiles.add(file);
+            _tempFiles.add(filePath);
           } else {
             throw ArgumentError("Couldn't create file from memory.");
           }
@@ -281,16 +281,15 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
   ///Create file from provided list of bytes. File will be created in temporary
   ///directory.
-  Future<File> _createFile(
+  Future<String> _createFile(
     List<int> bytes, {
     String? extension = 'temp',
   }) async {
-    final dir = (await getTemporaryDirectory()).path;
-    final temp = File(
-      '$dir/better_player_${DateTime.now().millisecondsSinceEpoch}.$extension',
-    );
-    await temp.writeAsBytes(bytes);
-    return temp;
+    final fileName =
+        'better_player_${DateTime.now().millisecondsSinceEpoch}.$extension';
+    final filePath = await BetterPlayerIoUtils.getTempPath(fileName);
+    await BetterPlayerIoUtils.writeBytes(filePath, bytes);
+    return filePath;
   }
 
   ///Initializes video based on configuration. Invoke actions which need to be

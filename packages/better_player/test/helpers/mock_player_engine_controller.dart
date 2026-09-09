@@ -1,5 +1,5 @@
-import 'dart:io';
 import 'package:better_player/src/engine/player_engine_controller.dart';
+import 'package:better_player/src/utils/better_player_io_utils.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 
@@ -101,7 +101,7 @@ class MockPlayerEngineController extends PlayerEngineController {
 
   @override
   Future<void> setFileDataSource(
-    File file, {
+    String filePath, {
     bool? showNotification,
     String? title,
     String? author,
