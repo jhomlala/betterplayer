@@ -1,4 +1,9 @@
-/// Stub implementation of IO utils.
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+
+/// Stub implementation of IO utils for unsupported platforms.
+@internal
 class BetterPlayerIoUtils {
   /// Deletes a file at the given [path].
   static Future<void> deleteFile(String path) async {

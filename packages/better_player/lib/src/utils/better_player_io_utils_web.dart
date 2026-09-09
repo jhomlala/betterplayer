@@ -1,5 +1,10 @@
+import 'dart:typed_data';
+
+import 'package:meta/meta.dart';
+
 /// Web implementation of IO utils.
 /// Most operations are no-ops or throw as they are not supported on web.
+@internal
 class BetterPlayerIoUtils {
   /// Deletes a file at the given [path]. No-op on web.
   static Future<void> deleteFile(String path) async {

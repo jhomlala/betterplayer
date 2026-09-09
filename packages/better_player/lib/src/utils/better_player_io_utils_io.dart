@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// Mobile/Desktop implementation of IO utils using dart:io.
+@internal
 class BetterPlayerIoUtils {
   /// Deletes a file at the given [path].
   static Future<void> deleteFile(String path) async {

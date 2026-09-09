@@ -1,7 +1,6 @@
 ## 1.7.0
 - [BREAKING_CHANGE] Decoupled `PlayerEngineController` from `dart:io`. `setFileDataSource` now accepts a `String filePath` instead of a `File` object.
 - Added: Web and WASM compatibility support.
-- Added: `BetterPlayerIoUtils` for platform-agnostic file operations.
 - Fixed: Transitive `dart:io` imports that prevented web compilation.
 
 ## 1.6.0

@@ -434,6 +434,3 @@ controller.engineController.setFileDataSource(filePath);
 > [!NOTE]
 > If you are using `PlayerDataSource.file(path)`, no changes are required as it already used a `String` path internally. This change only affects direct calls to the engine controller.
 
-### IO Utilities
-
-If you need to perform platform-agnostic file operations (like checking if a file exists or reading it), you can now use the internal `BetterPlayerIoUtils` class, which handles the conditional logic for you.
