@@ -391,3 +391,46 @@ controller.removeVideoListener(listener);
 </td>
 </tr>
 </table>
+
+## 6. Migrating to v1.7.0 (Web & WASM Support)
+
+Better Player 1.7.0 introduces full support for **Flutter Web and WASM**. To achieve this, the core library has been decoupled from the `dart:io` library, which is not available on web platforms.
+
+### Breaking Change: `setFileDataSource`
+
+The method `setFileDataSource` in `PlayerEngineController` (and its mock version) now accepts a `String filePath` instead of a `dart:io` `File` object.
+
+**How to migrate:**
+
+<table>
+<tr>
+<th width="50%">Before (v1.6.x)</th>
+<th width="50%">After (v1.7.0)</th>
+</tr>
+<tr>
+<td>
+
+```dart
+import 'dart:io';
+
+// ...
+final file = File('/path/to/video.mp4');
+controller.engineController.setFileDataSource(file);
+```
+
+</td>
+<td>
+
+```dart
+// No dart:io import needed for this call
+final filePath = '/path/to/video.mp4';
+controller.engineController.setFileDataSource(filePath);
+```
+
+</td>
+</tr>
+</table>
+
+> [!NOTE]
+> If you are using `PlayerDataSource.file(path)`, no changes are required as it already used a `String` path internally. This change only affects direct calls to the engine controller.
+

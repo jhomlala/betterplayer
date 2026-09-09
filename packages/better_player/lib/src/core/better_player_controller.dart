@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
@@ -12,10 +11,10 @@ import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
+import 'package:better_player/src/utils/better_player_io_utils.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:path_provider/path_provider.dart';
 
 part 'extensions/player_data_source_extension.dart';
 part 'extensions/player_playback_extension.dart';
@@ -66,7 +65,7 @@ class BetterPlayerController {
 
   /// List of temporary files created during playback (e.g. cached files or subtitles)
   /// that are scheduled to be deleted once the player disposes, to prevent storage leaks.
-  final List<File> _tempFiles = [];
+  final List<String> _tempFiles = [];
 
   /// Broadcast stream controller used to notify the UI when the player's control overlay
   /// becomes visible or hidden. Helps coordinate animations and PIP state.
@@ -413,7 +412,7 @@ class BetterPlayerController {
 
       ///Delete files async
       for (final file in _tempFiles) {
-        file.delete();
+        unawaited(BetterPlayerIoUtils.deleteFile(file));
       }
     }
   }

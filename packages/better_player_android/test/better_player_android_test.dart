@@ -170,6 +170,36 @@ void main() {
     });
 
     test(
+      'setDataSource with file source delegates to wrapper with file:// URI',
+      () async {
+        await androidPlayer.create();
+
+        final dataSource = DataSource(
+          sourceType: DataSourceType.file,
+          uri: 'file:///path/to/video.mp4',
+        );
+
+        await androidPlayer.setDataSource(1, dataSource);
+        verify(
+          () => mockPlayer.setDataSource(
+            any(),
+            'file:///path/to/video.mp4',
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+            any(),
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
       'preCache, stopPreCache, clearCache complete normally in test',
       () async {
         final dataSource = DataSource(

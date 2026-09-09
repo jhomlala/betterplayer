@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
+import 'package:better_player/src/utils/better_player_io_utils.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
@@ -34,9 +34,11 @@ class PlayerSubtitlesFactory {
     try {
       final subtitles = <PlayerSubtitle>[];
       for (final url in source.urls!) {
-        final file = File(url!);
-        if (file.existsSync()) {
-          final fileContent = await file.readAsString();
+        final filePath = url!;
+        if (BetterPlayerIoUtils.fileExists(filePath)) {
+          final fileContent = await BetterPlayerIoUtils.readFileAsString(
+            filePath,
+          );
           final subtitlesCache = _parseString(fileContent);
           subtitles.addAll(subtitlesCache);
         } else {

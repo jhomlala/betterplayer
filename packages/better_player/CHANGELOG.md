@@ -1,3 +1,8 @@
+## 1.7.0
+- [BREAKING_CHANGE] Decoupled `PlayerEngineController` from `dart:io`. `setFileDataSource` now accepts a `String filePath` instead of a `File` object.
+- Added: Web and WASM compatibility support.
+- Fixed: Transitive `dart:io` imports that prevented web compilation.
+
 ## 1.6.0
 - Added: Web platform support documentation, including a detailed feature matrix and setup instructions for `Shaka Player`.
 - Updated: Moved all E2E tests (Maestro and Playwright) into a centralized `e2e` directory and updated all configuration and workflow paths.
@@ -726,3 +731,4 @@
 
 ## 0.0.1
 * Initial release.
+

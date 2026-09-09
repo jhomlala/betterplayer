@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/utils.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:better_player_example/utils/example_io_utils.dart';
+import 'package:flutter/material.dart';
 
 class ClearKeyPage extends StatefulWidget {
   const ClearKeyPage({super.key});
@@ -89,12 +88,13 @@ class _ClearKeyState extends State<ClearKeyPage> {
 
     _clearKeyControllerNetwork.setupDataSource(clearKeyDataSourceNetwork);
 
+    final path = await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl);
+    final bytes = await ExampleIoUtils.readBytesFromFile(path);
+
     final clearKeyDataSourceMemory = PlayerDataSource(
       DataSourceType.memory,
       '',
-      bytes: File(
-        await Utils.getFileUrl(Constants.fileTestVideoEncryptUrl),
-      ).readAsBytesSync(),
+      bytes: bytes,
       drmConfiguration: DrmConfiguration(
         drmType: DrmType.clearKey,
         clearKey: BetterPlayerClearKeyUtils.generateKey({
