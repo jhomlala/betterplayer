@@ -255,5 +255,6 @@ Swiftgen and jnigen bindings are automatically generated on CI/CD (or triggered 
 
 ## GitHub Workflows
 When asked to fetch or analyze Pull Request comments, agents should utilize the `scripts/fetch_pr_comments.dart` utility.
+When asked to fetch or analyze GitHub Issue data, agents should utilize the `scripts/fetch_issue_data.dart` utility.
 See `rules/github.md` for detailed usage instructions. Ensure the `GITHUB_TOKEN` environment variable is available.
-When fetching comments, the output JSON will automatically be placed in the system's temporary directory. Never commit the fetched PR comments JSON file to the repository.
+When fetching data, the output JSON will automatically be placed in the system's temporary directory. Never commit the fetched JSON files to the repository.
