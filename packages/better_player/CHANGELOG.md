@@ -491,7 +491,7 @@
 * Fixed event play/pause event not triggered when controlling video with PiP or remote notification.
 * Fixed playerTheme not set correctly.
 * Fixed progress bar able to drag over other buttons.
-* Fixed iOS player last second issue (player did complete on last second of resource).
+* Fixed iOS player last second issue (player did not complete on last second of resource).
 
 ## 0.0.44
 * Added placeholder until play example
@@ -571,13 +571,6 @@
 * Added setControlsVisibility to BetterPlayerController
 * [BREAKING_CHANGE] Removed showControlsOnInitialize from PlayerConfiguration. Use PlayerControlsConfiguration to set showControlsOnInitialize parameter.
 * Fixed cupertino controls issue with hasError
-
-## 0.0.33
-* Fixed PlayerEvent visibility
-* Fixed lazy initialization, when first data source is passed after player finishes first render
-* Added selectedByDefault to PlayerSubtitlesConfiguration
-* Fixed HLS tracks android native code
-* Updated example
 
 ## 0.0.33
 * Fixed PlayerEvent visibility
@@ -738,3 +731,4 @@
 
 ## 0.0.1
 * Initial release.
+
