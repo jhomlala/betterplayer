@@ -1,7 +1,6 @@
 ## Unreleased
 - Fixed: Resolved a race condition where video duration was reported as zero on iOS for non-live sources.
-- Fixed: Corrected `source_files` path in `better_player_ios.podspec` and included Objective-C files required for FFI.
-- Fixed: Added `PrivacyInfo.xcprivacy` to `resource_bundles` in `better_player_ios.podspec`.
+- Fixed: Resolved CocoaPods build issues including protocol loading exceptions, static linking stripping, and podspec alignments.
 
 ## 1.2.0
 - Added: Support for native-to-Dart log streaming (`setupLogCallback`) via FFI for AVPlayer.
