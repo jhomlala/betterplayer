@@ -2,6 +2,7 @@
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
 
+
 #if !__has_feature(objc_arc)
 #error "This file must be compiled with ARC enabled"
 #endif
@@ -529,5 +530,3 @@ void  _x224me_protocolTrampoline_1tz5yf(id target, void * sel, id arg1, id arg2,
 #undef BLOCKING_BLOCK_IMPL
 
 #pragma clang diagnostic pop
-
-void better_player_ios_force_load_symbols(void) {}
