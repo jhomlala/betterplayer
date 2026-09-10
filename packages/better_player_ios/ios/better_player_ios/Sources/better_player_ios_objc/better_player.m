@@ -1,8 +1,6 @@
 #include <stdint.h>
 #import <Foundation/Foundation.h>
 #import <objc/message.h>
-@protocol BetterPlayerCallback;
-@protocol BetterPlayerLogCallback;
 
 #if !__has_feature(objc_arc)
 #error "This file must be compiled with ARC enabled"
@@ -58,10 +56,10 @@ id objc_retainBlock(id);
 
 
 __attribute__((visibility("default"))) __attribute__((used))
-Protocol* _x224me_BetterPlayerCallback(void) { return @protocol(BetterPlayerCallback); }
+Protocol* _x224me_BetterPlayerCallback(void) { return NSProtocolFromString(@"BetterPlayerCallback"); }
 
 __attribute__((visibility("default"))) __attribute__((used))
-Protocol* _x224me_BetterPlayerLogCallback(void) { return @protocol(BetterPlayerLogCallback); }
+Protocol* _x224me_BetterPlayerLogCallback(void) { return NSProtocolFromString(@"BetterPlayerLogCallback"); }
 
 __attribute__((visibility("default")))
 @interface _x224me_BlockArgs_1s56lr9 : NSObject
@@ -531,3 +529,5 @@ void  _x224me_protocolTrampoline_1tz5yf(id target, void * sel, id arg1, id arg2,
 #undef BLOCKING_BLOCK_IMPL
 
 #pragma clang diagnostic pop
+
+void better_player_ios_force_load_symbols(void) {}

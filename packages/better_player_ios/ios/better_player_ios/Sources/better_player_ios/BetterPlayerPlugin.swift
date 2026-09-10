@@ -8,7 +8,11 @@ import UIKit
 @objc(BetterPlayerPlugin)
 public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFactory {
     
+    @_silgen_name("better_player_ios_force_load_symbols")
+    private static func better_player_ios_force_load_symbols()
+
     public static func register(with registrar: FlutterPluginRegistrar) {
+        better_player_ios_force_load_symbols()
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
     }

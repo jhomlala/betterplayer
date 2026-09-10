@@ -1,6 +1,7 @@
 ## Unreleased
 - Updated: Clarified in documentation that `customControlsBuilder` requires `playerTheme` to be set to `PlayerTheme.custom`.
 - Added: Documentation for unit and widget testing with platform mocking.
+- Fixed: Resolved CocoaPods build issues including protocol loading exceptions, static linking stripping, and podspec alignments.
 
 ## 1.7.0
 - [BREAKING_CHANGE] Decoupled `PlayerEngineController` from `dart:io`. `setFileDataSource` now accepts a `String filePath` instead of a `File` object.
