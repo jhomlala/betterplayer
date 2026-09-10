@@ -36,6 +36,9 @@ Future<void> main() async {
           packageRoot.resolve(
             'ios/better_player_ios/Sources/better_player_ios/BetterPlayer.swift',
           ),
+          packageRoot.resolve(
+            'ios/better_player_ios/Sources/better_player_ios/BetterPlayerTimeUtils.swift',
+          ),
         ],
       ),
     ],
