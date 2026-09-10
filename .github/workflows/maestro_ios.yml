@@ -65,10 +65,10 @@ jobs:
           cd packages/better_player_example
           flutter pub get
 
-      - name: Disable Swift Package Manager
+      - name: Enable Swift Package Manager
         run: |
           cd better_player
-          flutter config --no-enable-swift-package-manager
+          flutter config --enable-swift-package-manager
 
       - name: Install Maestro
         run: |
