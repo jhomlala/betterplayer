@@ -1,5 +1,6 @@
 ## Unreleased
 - [BREAKING_CHANGE] Updated: Upgraded `androidx.media3` version from `1.1.1` to `1.11.0` and raised `minSdkVersion` to `24`.
+- Fixed: Resolved MediaSession token resolution error (`sessionCompatToken`) introduced in the Media3 upgrade.
 
 ## 1.2.0
 - Added: Support for native-to-Dart log streaming (`setupLogCallback`) via JNI for ExoPlayer.
