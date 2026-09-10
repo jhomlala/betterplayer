@@ -151,7 +151,7 @@ void main() {
         drmConfiguration: const DrmConfiguration(
           drmType: DrmType.widevine,
           licenseUrl: 'https://license.com',
-          drmSecurityLevel: 'L1',
+          drmSecurityLevel: DrmSecurityLevel.l1,
         ),
       );
 
@@ -174,6 +174,28 @@ void main() {
         ),
       ).called(1);
     });
+
+    test(
+      'setDataSource throws UnsupportedError for Web-specific DrmSecurityLevel',
+      () async {
+        await androidPlayer.create();
+
+        final dataSource = DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.mp4',
+          drmConfiguration: const DrmConfiguration(
+            drmType: DrmType.widevine,
+            licenseUrl: 'https://license.com',
+            drmSecurityLevel: DrmSecurityLevel.hwSecureAll,
+          ),
+        );
+
+        expect(
+          () => androidPlayer.setDataSource(1, dataSource),
+          throwsA(isA<UnsupportedError>()),
+        );
+      },
+    );
 
     test(
       'setDataSource with file source delegates to wrapper with file:// URI',

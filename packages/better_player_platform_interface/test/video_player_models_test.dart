@@ -82,11 +82,11 @@ void main() {
       const config = DrmConfiguration(
         drmType: DrmType.widevine,
         licenseUrl: 'https://license.com',
-        drmSecurityLevel: 'L1',
+        drmSecurityLevel: DrmSecurityLevel.l1,
       );
       expect(config.drmType, DrmType.widevine);
       expect(config.licenseUrl, 'https://license.com');
-      expect(config.drmSecurityLevel, 'L1');
+      expect(config.drmSecurityLevel, DrmSecurityLevel.l1);
     });
   });
 }

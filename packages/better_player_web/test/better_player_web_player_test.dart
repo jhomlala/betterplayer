@@ -129,7 +129,7 @@ void main() {
           drmType: DrmType.widevine,
           licenseUrl: 'https://license.widevine.com',
           headers: {'Authorization': 'Bearer test'},
-          drmSecurityLevel: 'SW_SECURE_CRYPTO',
+          drmSecurityLevel: DrmSecurityLevel.swSecureCrypto,
         ),
       );
 
@@ -183,6 +183,26 @@ void main() {
       );
     });
 
+    test(
+      'buildShakaConfig throws UnsupportedError for Android-specific DrmSecurityLevel',
+      () {
+        final dataSource = DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/video.mp4',
+          drmConfiguration: const DrmConfiguration(
+            drmType: DrmType.widevine,
+            licenseUrl: 'https://license.com',
+            drmSecurityLevel: DrmSecurityLevel.l1,
+          ),
+        );
+
+        expect(
+          () => player.buildShakaConfig(dataSource),
+          throwsA(isA<UnsupportedError>()),
+        );
+      },
+    );
+
     test('buildShakaConfig handles Token DRM', () {
       final dataSource = DataSource(
         sourceType: DataSourceType.network,
@@ -191,7 +211,7 @@ void main() {
           drmType: DrmType.token,
           licenseUrl: 'https://license.token.com',
           token: 'test_token',
-          drmSecurityLevel: 'HW_SECURE_ALL',
+          drmSecurityLevel: DrmSecurityLevel.hwSecureAll,
         ),
       );
 

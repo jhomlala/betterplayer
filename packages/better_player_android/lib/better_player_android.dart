@@ -216,6 +216,10 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     final player = _players[textureId];
     if (player == null) return;
 
+    final drmSecurityLevel = _mapDrmSecurityLevel(
+      dataSource.drmConfiguration?.drmSecurityLevel,
+    );
+
     player.setDataSource(
       dataSource.key,
       dataSource.uri ?? dataSource.asset ?? '',
@@ -229,7 +233,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       dataSource.drmConfiguration?.headers,
       dataSource.cacheConfiguration?.key,
       dataSource.drmConfiguration?.clearKey,
-      dataSource.drmConfiguration?.drmSecurityLevel,
+      drmSecurityLevel,
     );
 
     final notificationConfig = dataSource.notificationConfiguration;
@@ -435,6 +439,24 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   @visibleForTesting
   void jniClearCache() {
     BetterPlayer.Companion.clearCache(androidApplicationContext as Context);
+  }
+
+  String? _mapDrmSecurityLevel(DrmSecurityLevel? level) {
+    if (level == null) return null;
+    switch (level) {
+      case DrmSecurityLevel.l1:
+        return 'L1';
+      case DrmSecurityLevel.l3:
+        return 'L3';
+      case DrmSecurityLevel.swSecureCrypto:
+      case DrmSecurityLevel.swSecureDecode:
+      case DrmSecurityLevel.hwSecureCrypto:
+      case DrmSecurityLevel.hwSecureDecode:
+      case DrmSecurityLevel.hwSecureAll:
+        throw UnsupportedError(
+          'BetterPlayer: DrmSecurityLevel.${level.name} is only supported on Web platform.',
+        );
+    }
   }
 }
 

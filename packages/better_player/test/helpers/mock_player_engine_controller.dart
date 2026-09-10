@@ -93,7 +93,7 @@ class MockPlayerEngineController extends PlayerEngineController {
     Map<String, String>? drmHeaders,
     String? activityName,
     String? clearKey,
-    String? drmSecurityLevel,
+    DrmSecurityLevel? drmSecurityLevel,
     String? videoExtension,
   }) async {
     this.headers = headers;
@@ -132,5 +132,5 @@ class MockPlayerEngineController extends PlayerEngineController {
   }
 
   Map<String, String?>? headers;
-  String? drmSecurityLevel;
+  DrmSecurityLevel? drmSecurityLevel;
 }

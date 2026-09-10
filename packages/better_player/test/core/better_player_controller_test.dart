@@ -967,12 +967,12 @@ void main() {
           drmConfiguration: const DrmConfiguration(
             drmType: DrmType.widevine,
             licenseUrl: 'https://license.com',
-            drmSecurityLevel: 'L1',
+            drmSecurityLevel: DrmSecurityLevel.l1,
           ),
         );
 
         await betterPlayerMockController.setupDataSource(dataSource);
-        expect(engineController.drmSecurityLevel, 'L1');
+        expect(engineController.drmSecurityLevel, DrmSecurityLevel.l1);
       });
     },
   );
