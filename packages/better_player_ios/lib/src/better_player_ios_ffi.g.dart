@@ -516,6 +516,12 @@ extension BetterPlayer$Methods on BetterPlayer {
     );
   }
 
+  /// onReadyToPlay
+  void onReadyToPlay() {
+    final _$$ref = object$.ref;
+    _objc_msgSend_1pl9qdv(_$$ref.pointer, _sel_onReadyToPlay);
+  }
+
   /// Pauses playback.
   void pause() {
     final _$$ref = object$.ref;
@@ -5289,6 +5295,7 @@ late final _sel_onPauseWithKey_ = objc.registerName("onPauseWithKey:");
 late final _sel_onPipStart = objc.registerName("onPipStart");
 late final _sel_onPipStop = objc.registerName("onPipStop");
 late final _sel_onPlayWithKey_ = objc.registerName("onPlayWithKey:");
+late final _sel_onReadyToPlay = objc.registerName("onReadyToPlay");
 late final _sel_onSeekWithPositionMs_key_ = objc.registerName(
   "onSeekWithPositionMs:key:",
 );

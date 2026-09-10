@@ -32,10 +32,6 @@ public typealias FlutterResult = (Any?) -> Void
 public class BetterPlayerView: UIView {
     public var player: AVPlayer?
 }
-public class BetterPlayerTimeUtils {
-    public static func cmTimeToMillis(_ time: CMTime) -> Int64 { return 0 }
-    public static func timeIntervalToMillis(_ interval: TimeInterval) -> Int64 { return 0 }
-}
 #endif
 import Foundation
 import UIKit
@@ -482,28 +478,37 @@ private var presentationSizeContext = 0
         }
     }
 
-    /// Handles transition to ready-to-play state.
-    public func onReadyToPlay() {
+    @objc public func onReadyToPlay() {
         guard callback != nil, !isInitialized, key != nil else { return }
-        guard player.currentItem != nil else { return }
+        guard let currentItem = player.currentItem else { return }
         guard player.status == .readyToPlay else { return }
 
-        let size = player.currentItem?.presentationSize ?? .zero
+        let size = currentItem.presentationSize
         var width = size.width
         var height = size.height
 
-        let asset = player.currentItem!.asset
+        let asset = currentItem.asset
         let onlyAudio = asset.tracks(withMediaType: .video).count == 0
 
         if !onlyAudio && height == .zero && width == .zero {
             return
         }
-        let isLive = CMTIME_IS_INDEFINITE(player.currentItem!.duration)
+
+        // A stream is truly live only if both the item and the asset report indefinite duration.
+        // For progressive downloads (like MP4), asset.duration is usually available even if currentItem.duration is not.
+        let itemDuration = currentItem.duration
+        let assetDuration = asset.duration
+        let isLive = CMTIME_IS_INDEFINITE(itemDuration) && CMTIME_IS_INDEFINITE(assetDuration)
+
         let dur = duration()
 
-        if !isLive && dur == 0 { return }
+        // If not live, wait until we have a non-zero duration to avoid race conditions
+        // where Dart receives 0ms for a static file.
+        if !isLive && dur <= 0 {
+            return
+        }
 
-        if let track = player.currentItem?.tracks.first?.assetTrack {
+        if let track = currentItem.tracks.first?.assetTrack {
             let naturalSize = track.naturalSize
             let prefTrans = track.preferredTransform
             let realSize = naturalSize.applying(prefTrans)
@@ -511,15 +516,21 @@ private var presentationSizeContext = 0
             height = abs(realSize.height) != 0 ? abs(realSize.height) : height
         }
 
-        let durMs = BetterPlayerTimeUtils.cmTimeToMillis(player.currentItem!.asset.duration)
+        let durMs = BetterPlayerTimeUtils.cmTimeToMillis(assetDuration)
         if overriddenDuration > 0 && durMs > Int64(overriddenDuration) {
-            player.currentItem?.forwardPlaybackEndTime = CMTimeMake(value: Int64(overriddenDuration/1000), timescale: 1)
+            currentItem.forwardPlaybackEndTime = CMTimeMake(
+                value: Int64(overriddenDuration / 1000),
+                timescale: 1
+            )
         }
 
         isInitialized = true
         updatePlayingState()
+
+        BetterPlayerApi.log(1, "onInitialized: dur=\(dur)ms, isLive=\(isLive), size=\(width)x\(height)")
+
         callback?.onInitialized(
-            durationMs: Int64(duration()),
+            durationMs: dur,
             width: Double(width),
             height: Double(height),
             key: key
@@ -555,12 +566,15 @@ private var presentationSizeContext = 0
 
     /// Returns the total duration of the media in milliseconds.
     @objc public func duration() -> Int64 {
-        let time: CMTime
-        if #available(iOS 13, *) {
-            time = player.currentItem?.duration ?? .zero
-        } else {
-            time = player.currentItem?.asset.duration ?? .zero
+        var time: CMTime = .zero
+        if let currentItem = player.currentItem {
+            time = currentItem.duration
+            // Fallback to asset duration if item duration is indefinite/invalid (common race condition on init)
+            if CMTIME_IS_INDEFINITE(time) || CMTIME_IS_INVALID(time) || time.value == 0 {
+                time = currentItem.asset.duration
+            }
         }
+
         if let endTime = player.currentItem?.forwardPlaybackEndTime, !CMTIME_IS_INVALID(endTime) {
             return BetterPlayerTimeUtils.cmTimeToMillis(endTime)
         }
