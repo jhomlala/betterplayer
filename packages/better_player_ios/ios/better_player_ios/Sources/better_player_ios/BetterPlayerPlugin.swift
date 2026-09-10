@@ -5,6 +5,9 @@ import Foundation
 import MediaPlayer
 import UIKit
 
+@_silgen_name("better_player_ios_force_load_symbols")
+func better_player_ios_force_load_symbols()
+
 @objc(BetterPlayerPlugin)
 public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFactory {
     
@@ -13,10 +16,6 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
     }
-
-    // Force linker to include Objective-C source files
-    @_cdecl("better_player_ios_force_load_symbols")
-    public static func better_player_ios_force_load_symbols() {}
 
     public func createArgsCodec() -> (FlutterMessageCodec & NSObjectProtocol) {
         return FlutterStandardMessageCodec.sharedInstance()
