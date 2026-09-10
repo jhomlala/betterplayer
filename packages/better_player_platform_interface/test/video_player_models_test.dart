@@ -76,4 +76,17 @@ void main() {
       expect(range1.hashCode == range2.hashCode, true);
     });
   });
+
+  group('DrmConfiguration tests', () {
+    test('DrmConfiguration initialization', () {
+      const config = DrmConfiguration(
+        drmType: DrmType.widevine,
+        licenseUrl: 'https://license.com',
+        drmSecurityLevel: DrmSecurityLevel.l1,
+      );
+      expect(config.drmType, DrmType.widevine);
+      expect(config.licenseUrl, 'https://license.com');
+      expect(config.drmSecurityLevel, DrmSecurityLevel.l1);
+    });
+  });
 }

@@ -181,6 +181,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     Map<String, String>? drmHeaders,
     String? activityName,
     String? clearKey,
+    DrmSecurityLevel? drmSecurityLevel,
     String? videoExtension,
   }) {
     return _setDataSource(
@@ -209,6 +210,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
           certificateUrl: certificateUrl,
           headers: drmHeaders,
           clearKey: clearKey,
+          drmSecurityLevel: drmSecurityLevel,
         ),
         videoExtension: videoExtension,
       ),

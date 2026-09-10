@@ -954,6 +954,26 @@ void main() {
           ),
         );
       });
+
+      test('setupDataSource passes drmSecurityLevel to engine', () async {
+        final engineController = MockPlayerEngineController();
+        final betterPlayerMockController = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: engineController,
+        );
+
+        final dataSource = PlayerDataSource.network(
+          'https://example.com/video.mp4',
+          drmConfiguration: const DrmConfiguration(
+            drmType: DrmType.widevine,
+            licenseUrl: 'https://license.com',
+            drmSecurityLevel: DrmSecurityLevel.l1,
+          ),
+        );
+
+        await betterPlayerMockController.setupDataSource(dataSource);
+        expect(engineController.drmSecurityLevel, DrmSecurityLevel.l1);
+      });
     },
   );
 }

@@ -93,9 +93,11 @@ class MockPlayerEngineController extends PlayerEngineController {
     Map<String, String>? drmHeaders,
     String? activityName,
     String? clearKey,
+    DrmSecurityLevel? drmSecurityLevel,
     String? videoExtension,
   }) async {
     this.headers = headers;
+    this.drmSecurityLevel = drmSecurityLevel;
     value = value.copyWith(duration: const Duration(seconds: 1));
   }
 
@@ -130,4 +132,5 @@ class MockPlayerEngineController extends PlayerEngineController {
   }
 
   Map<String, String?>? headers;
+  DrmSecurityLevel? drmSecurityLevel;
 }

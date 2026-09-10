@@ -35,8 +35,8 @@ PlayerDataSource dataSource = PlayerDataSource(
 );
 ```
 
-### Widevine DRM (Android)
-Used for license retrieval based on a license URL.
+### Widevine DRM (Android & Web)
+Used for license retrieval based on a license URL. You can also configure the security level using the `DrmSecurityLevel` enum.
 
 ```dart
 PlayerDataSource _widevineDataSource = PlayerDataSource(
@@ -45,10 +45,37 @@ PlayerDataSource _widevineDataSource = PlayerDataSource(
     drmConfiguration: DrmConfiguration(
         drmType: DrmType.widevine,
         licenseUrl: "https://your-license-server.com/license",
-        headers: {"Authorization": "Bearer token"}
+        headers: {"Authorization": "Bearer token"},
+        // Optional: use DrmSecurityLevel enum.
+        // For Android: .l1 or .l3
+        // For Web: .swSecureCrypto, .hwSecureAll etc.
+        drmSecurityLevel: DrmSecurityLevel.l3,
     ),
 );
 ```
+
+---
+
+## DRM Security Level
+
+The `drmSecurityLevel` parameter allows you to specify the required security level or robustness for DRM playback using the `DrmSecurityLevel` enum. This is particularly important for high-definition content that may require hardware-backed security.
+
+### Platform Specifics
+
+*   **Android**: Maps to Widevine security levels. Supported values:
+    *   `DrmSecurityLevel.l1`: Hardware-backed crypto and root of trust. Required for HD/4K on many devices.
+    *   `DrmSecurityLevel.l3`: Software-based crypto. (Default)
+*   **Web (Shaka Player)**: Maps to the `videoRobustness` field. Supported values:
+    *   `DrmSecurityLevel.swSecureCrypto`
+    *   `DrmSecurityLevel.swSecureDecode`
+    *   `DrmSecurityLevel.hwSecureCrypto`
+    *   `DrmSecurityLevel.hwSecureDecode`
+    *   `DrmSecurityLevel.hwSecureAll`
+
+> [!WARNING]
+> Using a platform-specific level on the wrong platform (e.g., using `DrmSecurityLevel.l1` on Web) will throw an `UnsupportedError`.
+
+---
 
 ### FairPlay DRM (iOS)
 Requires a certificate URL and a license URL.

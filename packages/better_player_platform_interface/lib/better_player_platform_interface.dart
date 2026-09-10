@@ -4,6 +4,7 @@ export 'package:better_player_platform_interface/src/models/cache_configuration.
 export 'package:better_player_platform_interface/src/models/data_source.dart';
 export 'package:better_player_platform_interface/src/models/data_source_type.dart';
 export 'package:better_player_platform_interface/src/models/drm_configuration.dart';
+export 'package:better_player_platform_interface/src/models/drm_security_level.dart';
 export 'package:better_player_platform_interface/src/models/drm_type.dart';
 export 'package:better_player_platform_interface/src/models/duration_range.dart';
 export 'package:better_player_platform_interface/src/models/notification_configuration.dart';

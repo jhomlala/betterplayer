@@ -1,3 +1,6 @@
+## Unreleased
+- Added: `drmSecurityLevel` to `DrmConfiguration` to support Widevine L1 on Android and video robustness on Web.
+
 ## 1.2.0
 - Added: `setupLogCallback` to the platform interface to support native-to-Dart log streaming.
 - Updated: Enhanced package description in `pubspec.yaml` for better discoverability.

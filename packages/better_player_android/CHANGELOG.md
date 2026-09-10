@@ -3,6 +3,7 @@
 - [BREAKING_CHANGE] Updated: Raised `minSdkVersion` to `24`.
 - [BREAKING_CHANGE] Updated: Upgraded `androidx.media:media` to `1.7.0`.
 - Fixed: Resolved MediaSession token resolution error (`sessionCompatToken`) introduced in the Media3 upgrade.
+- Added: Supported configurable `drmSecurityLevel` to enable Widevine L1 playback.
 
 ## 1.2.0
 - Added: Support for native-to-Dart log streaming (`setupLogCallback`) via JNI for ExoPlayer.

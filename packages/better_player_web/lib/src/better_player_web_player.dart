@@ -265,14 +265,18 @@ class BetterPlayerWebPlayer {
     final servers = <String, String>{};
     final advanced = <String, Object>{};
 
+    final securityLevel = _mapDrmSecurityLevel(drm.drmSecurityLevel);
+
     switch (drm.drmType) {
       case DrmType.widevine:
         if (drm.licenseUrl != null) {
           servers['com.widevine.alpha'] = drm.licenseUrl!;
         }
-        if (drm.headers != null && drm.headers!.isNotEmpty) {
+        if ((drm.headers != null && drm.headers!.isNotEmpty) ||
+            securityLevel != null) {
           advanced['com.widevine.alpha'] = {
-            'licenseRequestHeaders': drm.headers!,
+            if (drm.headers != null) 'licenseRequestHeaders': drm.headers!,
+            'videoRobustness': ?securityLevel,
           };
         }
       case DrmType.fairplay:
@@ -290,9 +294,11 @@ class BetterPlayerWebPlayer {
         if (drm.licenseUrl != null) {
           servers['com.widevine.alpha'] = drm.licenseUrl!;
         }
-        if (drm.token != null) {
+        if (drm.token != null || securityLevel != null) {
           advanced['com.widevine.alpha'] = {
-            'licenseRequestHeaders': {'Authorization': 'Bearer ${drm.token}'},
+            if (drm.token != null)
+              'licenseRequestHeaders': {'Authorization': 'Bearer ${drm.token}'},
+            'videoRobustness': ?securityLevel,
           };
         }
       case null:
@@ -429,5 +435,26 @@ class BetterPlayerWebPlayer {
     }
     await _eventController.close();
     onLog(message: 'BetterPlayerWebPlayer disposed: $viewId', levelIndex: 1);
+  }
+
+  String? _mapDrmSecurityLevel(DrmSecurityLevel? level) {
+    if (level == null) return null;
+    switch (level) {
+      case DrmSecurityLevel.swSecureCrypto:
+        return 'SW_SECURE_CRYPTO';
+      case DrmSecurityLevel.swSecureDecode:
+        return 'SW_SECURE_DECODE';
+      case DrmSecurityLevel.hwSecureCrypto:
+        return 'HW_SECURE_CRYPTO';
+      case DrmSecurityLevel.hwSecureDecode:
+        return 'HW_SECURE_DECODE';
+      case DrmSecurityLevel.hwSecureAll:
+        return 'HW_SECURE_ALL';
+      case DrmSecurityLevel.l1:
+      case DrmSecurityLevel.l3:
+        throw UnsupportedError(
+          'BetterPlayer: DrmSecurityLevel.${level.name} is only supported on Android platform.',
+        );
+    }
   }
 }

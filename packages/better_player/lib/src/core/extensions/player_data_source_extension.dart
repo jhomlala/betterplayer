@@ -183,6 +183,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
           activityName:
               _betterPlayerDataSource?.notificationConfiguration?.activityName,
           clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
+          drmSecurityLevel:
+              _betterPlayerDataSource?.drmConfiguration?.drmSecurityLevel,
           videoExtension: _betterPlayerDataSource!.videoExtension,
         );
 
@@ -238,6 +240,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
                 ?.notificationConfiguration
                 ?.activityName,
             clearKey: _betterPlayerDataSource?.drmConfiguration?.clearKey,
+            drmSecurityLevel:
+                _betterPlayerDataSource?.drmConfiguration?.drmSecurityLevel,
           );
         } else {
           final filePath = await _createFile(

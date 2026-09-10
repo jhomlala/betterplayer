@@ -1899,7 +1899,7 @@ extension BetterPlayer$$Methods on BetterPlayer {
 
   static final _id_setDataSource = BetterPlayer._class.instanceMethodId(
     r'setDataSource',
-    r'(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ZJJJLjava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;)V',
+    r'(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ZJJJLjava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V',
   );
 
   static final _setDataSource =
@@ -1919,6 +1919,7 @@ extension BetterPlayer$$Methods on BetterPlayer {
                     jni$_.Int64,
                     jni$_.Int64,
                     jni$_.Int64,
+                    jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
                     jni$_.Pointer<jni$_.Void>,
@@ -1945,10 +1946,11 @@ extension BetterPlayer$$Methods on BetterPlayer {
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
               jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
             )
           >();
 
-  /// from: `public fun setDataSource(context: android.content.Context, key: kotlin.String?, dataSource: kotlin.String?, formatHint: kotlin.String?, headers: kotlin.collections.Map<kotlin.String, kotlin.String>?, useCache: kotlin.Boolean, maxCacheSize: kotlin.Long, maxCacheFileSize: kotlin.Long, overriddenDuration: kotlin.Long, licenseUrl: kotlin.String?, drmHeaders: kotlin.collections.Map<kotlin.String, kotlin.String>?, cacheKey: kotlin.String?, clearKey: kotlin.String?): kotlin.Unit`
+  /// from: `public fun setDataSource(context: android.content.Context, key: kotlin.String?, dataSource: kotlin.String?, formatHint: kotlin.String?, headers: kotlin.collections.Map<kotlin.String, kotlin.String>?, useCache: kotlin.Boolean, maxCacheSize: kotlin.Long, maxCacheFileSize: kotlin.Long, overriddenDuration: kotlin.Long, licenseUrl: kotlin.String?, drmHeaders: kotlin.collections.Map<kotlin.String, kotlin.String>?, cacheKey: kotlin.String?, clearKey: kotlin.String?, drmSecurityLevel: kotlin.String?): kotlin.Unit`
   void setDataSource(
     Context context,
     jni$_.JString? string,
@@ -1963,6 +1965,7 @@ extension BetterPlayer$$Methods on BetterPlayer {
     jni$_.JMap<jni$_.JString, jni$_.JString>? map1,
     jni$_.JString? string4,
     jni$_.JString? string5,
+    jni$_.JString? string6,
   ) {
     final _$$selfRef = reference;
     final _$context = context.reference;
@@ -1974,6 +1977,7 @@ extension BetterPlayer$$Methods on BetterPlayer {
     final _$map1 = map1?.reference ?? jni$_.jNullReference;
     final _$string4 = string4?.reference ?? jni$_.jNullReference;
     final _$string5 = string5?.reference ?? jni$_.jNullReference;
+    final _$string6 = string6?.reference ?? jni$_.jNullReference;
     _setDataSource(
       _$$selfRef.pointer,
       _id_setDataSource.pointer,
@@ -1990,6 +1994,7 @@ extension BetterPlayer$$Methods on BetterPlayer {
       _$map1.pointer,
       _$string4.pointer,
       _$string5.pointer,
+      _$string6.pointer,
     ).check();
   }
 

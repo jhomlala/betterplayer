@@ -216,6 +216,10 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     final player = _players[textureId];
     if (player == null) return;
 
+    final drmSecurityLevel = _mapDrmSecurityLevel(
+      dataSource.drmConfiguration?.drmSecurityLevel,
+    );
+
     player.setDataSource(
       dataSource.key,
       dataSource.uri ?? dataSource.asset ?? '',
@@ -229,6 +233,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       dataSource.drmConfiguration?.headers,
       dataSource.cacheConfiguration?.key,
       dataSource.drmConfiguration?.clearKey,
+      drmSecurityLevel,
     );
 
     final notificationConfig = dataSource.notificationConfiguration;
@@ -435,6 +440,24 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   void jniClearCache() {
     BetterPlayer.Companion.clearCache(androidApplicationContext as Context);
   }
+
+  String? _mapDrmSecurityLevel(DrmSecurityLevel? level) {
+    if (level == null) return null;
+    switch (level) {
+      case DrmSecurityLevel.l1:
+        return 'L1';
+      case DrmSecurityLevel.l3:
+        return 'L3';
+      case DrmSecurityLevel.swSecureCrypto:
+      case DrmSecurityLevel.swSecureDecode:
+      case DrmSecurityLevel.hwSecureCrypto:
+      case DrmSecurityLevel.hwSecureDecode:
+      case DrmSecurityLevel.hwSecureAll:
+        throw UnsupportedError(
+          'BetterPlayer: DrmSecurityLevel.${level.name} is only supported on Web platform.',
+        );
+    }
+  }
 }
 
 abstract class BetterPlayerWrapper {
@@ -453,6 +476,7 @@ abstract class BetterPlayerWrapper {
     Map<String, String>? drmHeaders,
     String? cacheKey,
     String? clearKey,
+    String? drmSecurityLevel,
   );
   void setTrackParameters(int width, int height, int bitrate);
   void setAudioTrack(String name, int index);
@@ -494,6 +518,7 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
     Map<String, String>? drmHeaders,
     String? cacheKey,
     String? clearKey,
+    String? drmSecurityLevel,
   ) {
     // Convert headers to JMap
     JMap<JString, JString>? headersMap;
@@ -526,6 +551,7 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
       drmHeadersMap,
       cacheKey?.toJString(),
       clearKey?.toJString(),
+      drmSecurityLevel?.toJString(),
     );
   }
 

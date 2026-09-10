@@ -1,6 +1,8 @@
 ## Unreleased
-- Updated: Clarified in documentation that `customControlsBuilder` requires `playerTheme` to be set to `PlayerTheme.custom`.
+- Added: Support for configurable DRM security level (Widevine L1/L3) via `PlayerDataSource`.
+- Updated: Enhanced DRM documentation with details on `drmSecurityLevel` configuration for Android and Web.
 - Added: Documentation for unit and widget testing with platform mocking.
+- Updated: Clarified in documentation that `customControlsBuilder` requires `playerTheme` to be set to `PlayerTheme.custom`.
 
 ## 1.7.0
 - [BREAKING_CHANGE] Decoupled `PlayerEngineController` from `dart:io`. `setFileDataSource` now accepts a `String filePath` instead of a `File` object.
