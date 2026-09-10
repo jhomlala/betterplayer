@@ -14,6 +14,11 @@ iOS implementation of the better_player plugin.
   s.author           = { 'BetterPlayer' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.source_files = 'better_player_ios/Sources/**/*.{swift,m,h}'
+  s.exclude_files = [
+    'better_player_ios/Sources/GCDWebServer/**/*',
+    'better_player_ios/Sources/HLSCachingReverseProxyServer/**/*',
+    'better_player_ios/Sources/PINCache/**/*'
+  ]
   s.resource_bundles = {
     'better_player_ios_privacy' => ['better_player_ios/Sources/better_player_ios/PrivacyInfo.xcprivacy']
   }

@@ -74,8 +74,17 @@ Future<void> main() async {
     var content = file.readAsStringSync();
     content = content.replaceAll(
       RegExp(r'#import\s+"[^"]+better_player_ios\.h"'),
-      '@protocol BetterPlayerCallback;\n@protocol BetterPlayerLogCallback;',
+      '',
     );
+    content = content.replaceAll(
+      '@protocol(BetterPlayerCallback)',
+      'NSProtocolFromString(@"BetterPlayerCallback")',
+    );
+    content = content.replaceAll(
+      '@protocol(BetterPlayerLogCallback)',
+      'NSProtocolFromString(@"BetterPlayerLogCallback")',
+    );
+    content += '\nvoid better_player_ios_force_load_symbols(void) {}\n';
     file.writeAsStringSync(content);
 
     // Fix protocol name in Dart file

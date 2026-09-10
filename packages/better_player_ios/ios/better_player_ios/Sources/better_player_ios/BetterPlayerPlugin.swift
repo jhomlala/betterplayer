@@ -5,10 +5,14 @@ import Foundation
 import MediaPlayer
 import UIKit
 
+@_silgen_name("better_player_ios_force_load_symbols")
+func better_player_ios_force_load_symbols()
+
 @objc(BetterPlayerPlugin)
 public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFactory {
     
     public static func register(with registrar: FlutterPluginRegistrar) {
+        better_player_ios_force_load_symbols()
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
     }
