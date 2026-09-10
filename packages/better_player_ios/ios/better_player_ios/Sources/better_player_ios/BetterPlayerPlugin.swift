@@ -8,14 +8,15 @@ import UIKit
 @objc(BetterPlayerPlugin)
 public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFactory {
     
-    @_silgen_name("better_player_ios_force_load_symbols")
-    private static func better_player_ios_force_load_symbols()
-
     public static func register(with registrar: FlutterPluginRegistrar) {
         better_player_ios_force_load_symbols()
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
     }
+
+    // Force linker to include Objective-C source files
+    @_cdecl("better_player_ios_force_load_symbols")
+    public static func better_player_ios_force_load_symbols() {}
 
     public func createArgsCodec() -> (FlutterMessageCodec & NSObjectProtocol) {
         return FlutterStandardMessageCodec.sharedInstance()
