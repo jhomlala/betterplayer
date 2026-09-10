@@ -22,11 +22,11 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 24
     }
 
     dependencies {
-        def media3Version = "1.1.1"
+        def media3Version = "1.11.0"
         def lifecycleVersion = "2.4.0-beta01"
         def annotationVersion = "1.2.0"
         def workVersion = "2.7.0"
