@@ -323,7 +323,7 @@ class BetterPlayer(
             }
 
             setupMediaSession(context)?.let {
-                setMediaSessionToken(it.sessionCompatToken)
+                setMediaSessionToken(it.platformToken)
             }
         }
         
