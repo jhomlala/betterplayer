@@ -17,5 +17,5 @@ class BetterPlayerMaterialLocalizations extends DefaultMaterialLocalizations {
 
   @override
   String scrimOnTapHint(String modalRouteContentName) =>
-      'Close $modalRouteContentName';
+      '${_translations.overflowMenuScrimHint} $modalRouteContentName';
 }

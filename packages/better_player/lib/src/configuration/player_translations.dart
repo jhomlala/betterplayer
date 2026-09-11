@@ -27,6 +27,7 @@ class PlayerTranslations {
     this.controlsPipLabel = 'Picture-in-Picture',
     this.overflowMenuCancelLabel = 'Cancel',
     this.overflowMenuScrimLabel = 'Dismiss',
+    this.overflowMenuScrimHint = 'Close',
   });
 
   factory PlayerTranslations.polish() => PlayerTranslations(
@@ -55,6 +56,7 @@ class PlayerTranslations {
     controlsPipLabel: 'Obraz w obrazie',
     overflowMenuCancelLabel: 'Anuluj',
     overflowMenuScrimLabel: 'Odrzuć',
+    overflowMenuScrimHint: 'Zamknij',
   );
 
   factory PlayerTranslations.chinese() => PlayerTranslations(
@@ -84,6 +86,7 @@ class PlayerTranslations {
     controlsPipLabel: '畫中畫',
     overflowMenuCancelLabel: '取消',
     overflowMenuScrimLabel: '關閉',
+    overflowMenuScrimHint: '關閉',
   );
 
   factory PlayerTranslations.hindi() => PlayerTranslations(
@@ -113,6 +116,7 @@ class PlayerTranslations {
     controlsPipLabel: 'पिक्चर-इन-पिक्चर',
     overflowMenuCancelLabel: 'रद्द करें',
     overflowMenuScrimLabel: 'खारिज करें',
+    overflowMenuScrimHint: 'बंद करें',
   );
 
   factory PlayerTranslations.arabic() => PlayerTranslations(
@@ -142,6 +146,7 @@ class PlayerTranslations {
     controlsPipLabel: 'صورة داخل صورة',
     overflowMenuCancelLabel: 'إلغاء',
     overflowMenuScrimLabel: 'رفض',
+    overflowMenuScrimHint: 'إغلاق',
   );
 
   factory PlayerTranslations.turkish() => PlayerTranslations(
@@ -171,6 +176,7 @@ class PlayerTranslations {
     controlsPipLabel: 'Resim içinde Resim',
     overflowMenuCancelLabel: 'İptal',
     overflowMenuScrimLabel: 'Kapat',
+    overflowMenuScrimHint: 'Kapat',
   );
 
   factory PlayerTranslations.vietnamese() => PlayerTranslations(
@@ -200,6 +206,7 @@ class PlayerTranslations {
     controlsPipLabel: 'Hình trong hình',
     overflowMenuCancelLabel: 'Hủy',
     overflowMenuScrimLabel: 'Đóng',
+    overflowMenuScrimHint: 'Đóng',
   );
 
   factory PlayerTranslations.spanish() => PlayerTranslations(
@@ -228,6 +235,7 @@ class PlayerTranslations {
     controlsPipLabel: 'Imagen en imagen',
     overflowMenuCancelLabel: 'Cancelar',
     overflowMenuScrimLabel: 'Cerrar',
+    overflowMenuScrimHint: 'Cerrar',
   );
 
   factory PlayerTranslations.persian() => PlayerTranslations(
@@ -257,6 +265,7 @@ class PlayerTranslations {
     controlsPipLabel: 'تصویر در تصویر',
     overflowMenuCancelLabel: 'لغو',
     overflowMenuScrimLabel: 'بستن',
+    overflowMenuScrimHint: 'بستن',
   );
 
   factory PlayerTranslations.portuguese() => PlayerTranslations(
@@ -285,6 +294,7 @@ class PlayerTranslations {
     overflowMenuLabel: 'Mais opções',
     overflowMenuCancelLabel: 'Cancelar',
     overflowMenuScrimLabel: 'Fechar',
+    overflowMenuScrimHint: 'Fechar',
   );
 
   final String languageCode;
@@ -315,4 +325,5 @@ class PlayerTranslations {
   final String controlsPipLabel;
   final String overflowMenuCancelLabel;
   final String overflowMenuScrimLabel;
+  final String overflowMenuScrimHint;
 }
