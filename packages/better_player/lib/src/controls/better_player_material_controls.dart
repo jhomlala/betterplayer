@@ -2,10 +2,11 @@ import 'dart:async';
 
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_controls_state.dart';
-import 'package:better_player/src/controls/better_player_localizations.dart';
+import 'package:better_player/src/controls/better_player_cupertino_localizations_delegate.dart';
 import 'package:better_player/src/controls/better_player_material_bottom_bar.dart';
 import 'package:better_player/src/controls/better_player_material_error_widget.dart';
 import 'package:better_player/src/controls/better_player_material_loading_widget.dart';
+import 'package:better_player/src/controls/better_player_material_localizations_delegate.dart';
 import 'package:better_player/src/controls/better_player_material_middle_row.dart';
 import 'package:better_player/src/controls/better_player_material_next_video_widget.dart';
 import 'package:better_player/src/controls/better_player_material_top_bar.dart';

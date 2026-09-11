@@ -6,9 +6,10 @@ import 'package:better_player/src/controls/better_player_cupertino_bottom_bar.da
 import 'package:better_player/src/controls/better_player_cupertino_error_widget.dart';
 import 'package:better_player/src/controls/better_player_cupertino_hit_area.dart';
 import 'package:better_player/src/controls/better_player_cupertino_loading_widget.dart';
+import 'package:better_player/src/controls/better_player_cupertino_localizations_delegate.dart';
 import 'package:better_player/src/controls/better_player_cupertino_next_video_widget.dart';
 import 'package:better_player/src/controls/better_player_cupertino_top_bar.dart';
-import 'package:better_player/src/controls/better_player_localizations.dart';
+import 'package:better_player/src/controls/better_player_material_localizations_delegate.dart';
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
