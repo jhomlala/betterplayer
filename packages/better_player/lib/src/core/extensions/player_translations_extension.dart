@@ -29,6 +29,10 @@ extension PlayerTranslationsExtension on BetterPlayerController {
         return PlayerTranslations.vietnamese();
       case 'es':
         return PlayerTranslations.spanish();
+      case 'fa':
+        return PlayerTranslations.persian();
+      case 'pt':
+        return PlayerTranslations.portuguese();
       default:
         return PlayerTranslations();
     }
