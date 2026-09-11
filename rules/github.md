@@ -43,3 +43,23 @@ dart run scripts/fetch_issue_data.dart <ISSUE_URL_OR_NUMBER> [owner/repo]
   `dart run scripts/fetch_issue_data.dart 123 flutter/flutter`
 
 The script will save the issue details and comments in your system's temporary directory as `issue_<ISSUE_NUMBER>_data.json`.
+
+## Publishing a GitHub Release
+
+To automate creating a GitHub release via the REST API (after pushing your tag), you can use PowerShell. If your current session hasn't picked up the latest `$env:GITHUB_TOKEN`, you can fetch it directly from the User environment variables.
+
+### Usage
+Run the following commands from the root of the project. Make sure your combined release notes are saved in a file (e.g., `release_notes.md`) and replace `VERSION_HERE` with your actual tag (e.g., `1.8.1`).
+
+```powershell
+$env:GITHUB_TOKEN = [Environment]::GetEnvironmentVariable("GITHUB_TOKEN", "User")
+$bodyRaw = [string](Get-Content release_notes.md -Raw)
+$bodyJson = @{
+    tag_name = "VERSION_HERE"
+    name = "VERSION_HERE"
+    body = $bodyRaw
+} | ConvertTo-Json -Depth 10
+
+Invoke-RestMethod -Uri "https://api.github.com/repos/jhomlala/betterplayer/releases" -Method Post -Headers @{ "Authorization" = "Bearer $($env:GITHUB_TOKEN)"; "Accept" = "application/vnd.github.v3+json" } -Body $bodyJson -ContentType "application/json"
+```
+
