@@ -17,18 +17,18 @@ const _packages = [
 const _repo = 'jhomlala/betterplayer';
 
 void main(List<String> args) async {
-  // ¦¦ Token ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+  // Â¦Â¦ Token Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦
   final token = Platform.environment['GITHUB_TOKEN'];
   if (token == null || token.isEmpty) {
     _die(
       'Error: GITHUB_TOKEN environment variable is not set.\n'
-      'Run: $$env:GITHUB_TOKEN = [Environment]::GetEnvironmentVariable("GITHUB_TOKEN", "User")',
+      'Run: \$env:GITHUB_TOKEN = [Environment]::GetEnvironmentVariable("GITHUB_TOKEN", "User")',
     );
   }
 
   final client = HttpClient();
 
-  // ¦¦ Collect info for each package ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+  // Â¦Â¦ Collect info for each package Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦
   print('Checking packages against pub.dev...\n');
 
   final releaseEntries = <String>[];
@@ -46,7 +46,7 @@ void main(List<String> args) async {
     final pubInfo = await _fetchPubVersion(client, pubName, localVersion);
 
     if (pubInfo == null) {
-      print('  [$pubName $localVersion] NOT found on pub.dev — skip from notes (publish first!)');
+      print('  [$pubName $localVersion] NOT found on pub.dev â€” skip from notes (publish first!)');
       continue;
     }
 
@@ -56,11 +56,11 @@ void main(List<String> args) async {
         DateTime.now().toUtc().difference(publishedAt.toUtc()).inHours < 1;
 
     if (!isNew) {
-      print('  [$pubName $localVersion] already existed on pub.dev before today — SKIPPING from release notes.');
+      print('  [$pubName $localVersion] already existed on pub.dev before today â€” SKIPPING from release notes.');
       continue;
     }
 
-    print('  [$pubName $localVersion] newly published — INCLUDED in release notes.');
+    print('  [$pubName $localVersion] newly published â€” INCLUDED in release notes.');
 
     // Extract latest changelog entry
     final changelog = _readLatestChangelog(localPath, localVersion);
@@ -74,7 +74,9 @@ void main(List<String> args) async {
     exit(0);
   }
 
-  // ¦¦ Release version comes from the main package ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+  final isDryRun = args.contains('--dry-run');
+
+  // Â¦Â¦ Release version comes from the main package Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦
   final releaseVersion = _readLocalVersion('packages/better_player');
   if (releaseVersion == null) {
     _die('Could not read version from packages/better_player/pubspec.yaml');
@@ -85,7 +87,14 @@ void main(List<String> args) async {
   print('\nRelease version : $releaseVersion');
   print('Release body:\n$releaseBody\n');
 
-  // ¦¦ Create & push git tag ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+  if (isDryRun) {
+    print('--- DRY RUN ---');
+    print('Would tag and push $releaseVersion');
+    print('Would create GitHub Release');
+    exit(0);
+  }
+
+  // Â¦Â¦ Create & push git tag Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦
   // First check if tag already exists
   final tagExistsResult = await Process.run('git', ['rev-parse', releaseVersion]);
   if (tagExistsResult.exitCode == 0) {
@@ -96,7 +105,7 @@ void main(List<String> args) async {
     print('Git tag $releaseVersion created and pushed.');
   }
 
-  // ¦¦ Create GitHub Release ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+  // Â¦Â¦ Create GitHub Release Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦
   final request = await client.postUrl(
     Uri.parse('https://api.github.com/repos/$_repo/releases'),
   )
@@ -132,7 +141,7 @@ void main(List<String> args) async {
   }
 }
 
-// ¦¦ Helpers ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
+// Â¦Â¦ Helpers Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦Â¦
 
 /// Reads the `version:` field from [packagePath]/pubspec.yaml.
 String? _readLocalVersion(String packagePath) {
@@ -180,7 +189,7 @@ String? _readLatestChangelog(String packagePath, String version) {
 
   for (final line in lines) {
     if (line.startsWith('## ')) {
-      if (inEntry) break; // next section — stop
+      if (inEntry) break; // next section â€” stop
       if (line.contains(version)) {
         inEntry = true;
         entryLines.add(line); // include the ## header
