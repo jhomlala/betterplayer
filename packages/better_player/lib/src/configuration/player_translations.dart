@@ -25,6 +25,8 @@ class PlayerTranslations {
     this.progressBarLabel = 'Video progress',
     this.overflowMenuLabel = 'More options',
     this.controlsPipLabel = 'Picture-in-Picture',
+    this.overflowMenuCancelLabel = 'Cancel',
+    this.overflowMenuScrimLabel = 'Dismiss',
   });
 
   factory PlayerTranslations.polish() => PlayerTranslations(
@@ -51,6 +53,8 @@ class PlayerTranslations {
     progressBarLabel: 'Pasek postępu',
     overflowMenuLabel: 'Więcej opcji',
     controlsPipLabel: 'Obraz w obrazie',
+    overflowMenuCancelLabel: 'Anuluj',
+    overflowMenuScrimLabel: 'Odrzuć',
   );
 
   factory PlayerTranslations.chinese() => PlayerTranslations(
@@ -78,6 +82,8 @@ class PlayerTranslations {
     progressBarLabel: '視頻進度',
     overflowMenuLabel: '更多選項',
     controlsPipLabel: '畫中畫',
+    overflowMenuCancelLabel: '取消',
+    overflowMenuScrimLabel: '關閉',
   );
 
   factory PlayerTranslations.hindi() => PlayerTranslations(
@@ -105,6 +111,8 @@ class PlayerTranslations {
     progressBarLabel: 'वीडियो प्रगति',
     overflowMenuLabel: 'अधिक विकल्प',
     controlsPipLabel: 'पिक्चर-इन-पिक्चर',
+    overflowMenuCancelLabel: 'रद्द करें',
+    overflowMenuScrimLabel: 'खारिज करें',
   );
 
   factory PlayerTranslations.arabic() => PlayerTranslations(
@@ -132,6 +140,8 @@ class PlayerTranslations {
     progressBarLabel: 'تقدم الفيديو',
     overflowMenuLabel: 'المزيد من الخيارات',
     controlsPipLabel: 'صورة داخل صورة',
+    overflowMenuCancelLabel: 'إلغاء',
+    overflowMenuScrimLabel: 'رفض',
   );
 
   factory PlayerTranslations.turkish() => PlayerTranslations(
@@ -159,6 +169,8 @@ class PlayerTranslations {
     progressBarLabel: 'Video İlerlemesi',
     overflowMenuLabel: 'Daha Fazla Seçenek',
     controlsPipLabel: 'Resim içinde Resim',
+    overflowMenuCancelLabel: 'İptal',
+    overflowMenuScrimLabel: 'Kapat',
   );
 
   factory PlayerTranslations.vietnamese() => PlayerTranslations(
@@ -186,6 +198,8 @@ class PlayerTranslations {
     progressBarLabel: 'Tiến trình video',
     overflowMenuLabel: 'Thêm tùy chọn',
     controlsPipLabel: 'Hình trong hình',
+    overflowMenuCancelLabel: 'Hủy',
+    overflowMenuScrimLabel: 'Đóng',
   );
 
   factory PlayerTranslations.spanish() => PlayerTranslations(
@@ -212,7 +226,67 @@ class PlayerTranslations {
     progressBarLabel: 'Barra de progreso',
     overflowMenuLabel: 'Menú de opciones',
     controlsPipLabel: 'Imagen en imagen',
+    overflowMenuCancelLabel: 'Cancelar',
+    overflowMenuScrimLabel: 'Cerrar',
   );
+
+  factory PlayerTranslations.persian() => PlayerTranslations(
+    languageCode: 'fa',
+    generalDefaultError: 'ویدیو نمیتواند پخش شود',
+    generalNone: 'خالی',
+    generalDefault: 'پیش فرض',
+    generalRetry: 'تلاش دوباره',
+    playlistLoadingNextVideo: 'بارگزاری ویدیو بعدی',
+    controlsLive: 'زنده',
+    controlsNextVideoIn: 'ویدیو بعدی',
+    overflowMenuPlaybackSpeed: 'سرعت پخش',
+    overflowMenuSubtitles: 'زیرنویس',
+    overflowMenuQuality: 'کیفیت',
+    overflowMenuAudioTracks: 'صدا',
+    qualityAuto: 'خودکار',
+    controlsPlayLabel: 'پخش',
+    controlsPauseLabel: 'مکث',
+    controlsMuteLabel: 'بی‌صدا',
+    controlsUnmuteLabel: 'صدادار',
+    controlsFullscreenLabel: 'تمام صفحه',
+    controlsExitFullscreenLabel: 'خروج از تمام صفحه',
+    controlsSkipForwardLabel: 'جلو',
+    controlsSkipBackwardLabel: 'عقب',
+    progressBarLabel: 'پیشرفت ویدیو',
+    overflowMenuLabel: 'گزینه‌های بیشتر',
+    controlsPipLabel: 'تصویر در تصویر',
+    overflowMenuCancelLabel: 'لغو',
+    overflowMenuScrimLabel: 'بستن',
+  );
+
+  factory PlayerTranslations.portuguese() => PlayerTranslations(
+    languageCode: 'pt',
+    generalDefaultError: 'Não foi possível reproduzir o vídeo',
+    generalNone: 'Nenhum',
+    generalDefault: 'Padrão',
+    generalRetry: 'Tentar novamente',
+    playlistLoadingNextVideo: 'Carregando próximo vídeo',
+    controlsLive: 'AO VIVO',
+    controlsNextVideoIn: 'Próximo vídeo em',
+    overflowMenuPlaybackSpeed: 'Velocidade de reprodução',
+    overflowMenuSubtitles: 'Legendas',
+    overflowMenuQuality: 'Qualidade',
+    overflowMenuAudioTracks: 'Áudio',
+    qualityAuto: 'Automática',
+    controlsPlayLabel: 'Reproduzir',
+    controlsPauseLabel: 'Pausar',
+    controlsMuteLabel: 'Silenciar',
+    controlsUnmuteLabel: 'Ativar som',
+    controlsFullscreenLabel: 'Tela cheia',
+    controlsExitFullscreenLabel: 'Sair da tela cheia',
+    controlsSkipForwardLabel: 'Avançar',
+    controlsSkipBackwardLabel: 'Retroceder',
+    progressBarLabel: 'Progresso do vídeo',
+    overflowMenuLabel: 'Mais opções',
+    overflowMenuCancelLabel: 'Cancelar',
+    overflowMenuScrimLabel: 'Fechar',
+  );
+
   final String languageCode;
   final String generalDefaultError;
   final String generalNone;
@@ -239,4 +313,6 @@ class PlayerTranslations {
   final String progressBarLabel;
   final String overflowMenuLabel;
   final String controlsPipLabel;
+  final String overflowMenuCancelLabel;
+  final String overflowMenuScrimLabel;
 }

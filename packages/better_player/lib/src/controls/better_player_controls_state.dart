@@ -453,7 +453,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             actions: children,
             cancelButton: CupertinoActionSheetAction(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+              child: Text(
+                betterPlayerController!.translations.overflowMenuCancelLabel,
+              ),
             ),
           ),
         );

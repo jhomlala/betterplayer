@@ -8,6 +8,7 @@ import 'package:better_player/src/controls/better_player_cupertino_hit_area.dart
 import 'package:better_player/src/controls/better_player_cupertino_loading_widget.dart';
 import 'package:better_player/src/controls/better_player_cupertino_next_video_widget.dart';
 import 'package:better_player/src/controls/better_player_cupertino_top_bar.dart';
+import 'package:better_player/src/controls/better_player_localizations.dart';
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
@@ -62,129 +63,137 @@ class _BetterPlayerCupertinoControlsState
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Builder(
-        builder: (BuildContext context) {
-          _betterPlayerController = BetterPlayerController.of(context);
+    final translations = BetterPlayerController.of(context).translations;
+    return Localizations.override(
+      context: context,
+      delegates: [
+        BetterPlayerMaterialLocalizationsDelegate(translations),
+        BetterPlayerCupertinoLocalizationsDelegate(translations),
+      ],
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Builder(
+          builder: (BuildContext context) {
+            _betterPlayerController = BetterPlayerController.of(context);
 
-          if (_latestValue?.hasError == true) {
+            if (_latestValue?.hasError == true) {
+              return BetterPlayerVideoAreaSemantics(
+                semanticsIdentifier: 'better_player_cupertino_video_area',
+                child: ColoredBox(
+                  color: Colors.black,
+                  child: BetterPlayerCupertinoErrorWidget(
+                    controlsConfiguration: _controlsConfiguration,
+                  ),
+                ),
+              );
+            }
+
+            final backgroundColor = _controlsConfiguration.controlBarColor;
+            final iconColor = _controlsConfiguration.iconsColor;
+            final orientation = MediaQuery.of(context).orientation;
+            final barHeight = orientation == Orientation.portrait
+                ? _controlsConfiguration.controlBarHeight
+                : _controlsConfiguration.controlBarHeight + 10;
+            const buttonPadding = 10.0;
+
+            _wasLoading = isLoading(_latestValue);
+            final controlsColumn = Column(
+              children: <Widget>[
+                BetterPlayerCupertinoTopBar(
+                  controlsConfiguration: _controlsConfiguration,
+                  controlsNotVisible: controlsNotVisible,
+                  barHeight: barHeight * 0.8,
+                  iconSize: barHeight * 0.4,
+                  buttonPadding: buttonPadding,
+                  marginSize: marginSize,
+                  backgroundColor: backgroundColor,
+                  iconColor: iconColor,
+                  onExpandCollapse: _onExpandCollapse,
+                  onShowMoreClicked: onShowMoreClicked,
+                  onMute: _onMute,
+                  latestValue: _latestValue,
+                ),
+                if (_wasLoading)
+                  Expanded(
+                    child: Center(
+                      child: BetterPlayerCupertinoLoadingWidget(
+                        controlsConfiguration: _controlsConfiguration,
+                      ),
+                    ),
+                  )
+                else
+                  BetterPlayerCupertinoHitArea(
+                    latestValue: _latestValue,
+                    controlsNotVisible: controlsNotVisible,
+                    onCancelAndRestartTimer: cancelAndRestartTimer,
+                    onHideTimerCancel: () => _hideTimer?.cancel(),
+                    onChangePlayerControlsNotVisible:
+                        changePlayerControlsNotVisible,
+                  ),
+                BetterPlayerCupertinoNextVideoWidget(
+                  controlsConfiguration: _controlsConfiguration,
+                ),
+                BetterPlayerCupertinoBottomBar(
+                  controlsConfiguration: _controlsConfiguration,
+                  controlsNotVisible: controlsNotVisible,
+                  barHeight: barHeight,
+                  marginSize: marginSize,
+                  backgroundColor: backgroundColor,
+                  iconColor: iconColor,
+                  onPlayPause: _onPlayPause,
+                  onSkipBack: skipBack,
+                  onSkipForward: skipForward,
+                  onProgressBarDragStart: () => _hideTimer?.cancel(),
+                  onProgressBarDragEnd: _startHideTimer,
+                  onProgressBarTapDown: cancelAndRestartTimer,
+                  onPlayerHide: _onPlayerHide,
+                  latestValue: _latestValue,
+                ),
+              ],
+            );
+
+            final isFullScreenSafe =
+                _betterPlayerController?.isFullScreen == true;
             return BetterPlayerVideoAreaSemantics(
               semanticsIdentifier: 'better_player_cupertino_video_area',
-              child: ColoredBox(
-                color: Colors.black,
-                child: BetterPlayerCupertinoErrorWidget(
-                  controlsConfiguration: _controlsConfiguration,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+                    BetterPlayerMultipleGestureDetector.of(
+                      context,
+                    )!.onTap?.call();
+                  }
+                  controlsNotVisible
+                      ? cancelAndRestartTimer()
+                      : changePlayerControlsNotVisible(true);
+                },
+                onDoubleTap: () {
+                  if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+                    BetterPlayerMultipleGestureDetector.of(
+                      context,
+                    )!.onDoubleTap?.call();
+                  }
+                  cancelAndRestartTimer();
+                  _onPlayPause();
+                },
+                onLongPress: () {
+                  if (BetterPlayerMultipleGestureDetector.of(context) != null) {
+                    BetterPlayerMultipleGestureDetector.of(
+                      context,
+                    )!.onLongPress?.call();
+                  }
+                },
+                child: AbsorbPointer(
+                  absorbing: controlsNotVisible,
+                  child: isFullScreenSafe
+                      ? SafeArea(child: controlsColumn)
+                      : controlsColumn,
                 ),
               ),
             );
-          }
-
-          final backgroundColor = _controlsConfiguration.controlBarColor;
-          final iconColor = _controlsConfiguration.iconsColor;
-          final orientation = MediaQuery.of(context).orientation;
-          final barHeight = orientation == Orientation.portrait
-              ? _controlsConfiguration.controlBarHeight
-              : _controlsConfiguration.controlBarHeight + 10;
-          const buttonPadding = 10.0;
-
-          _wasLoading = isLoading(_latestValue);
-          final controlsColumn = Column(
-            children: <Widget>[
-              BetterPlayerCupertinoTopBar(
-                controlsConfiguration: _controlsConfiguration,
-                controlsNotVisible: controlsNotVisible,
-                barHeight: barHeight * 0.8,
-                iconSize: barHeight * 0.4,
-                buttonPadding: buttonPadding,
-                marginSize: marginSize,
-                backgroundColor: backgroundColor,
-                iconColor: iconColor,
-                onExpandCollapse: _onExpandCollapse,
-                onShowMoreClicked: onShowMoreClicked,
-                onMute: _onMute,
-                latestValue: _latestValue,
-              ),
-              if (_wasLoading)
-                Expanded(
-                  child: Center(
-                    child: BetterPlayerCupertinoLoadingWidget(
-                      controlsConfiguration: _controlsConfiguration,
-                    ),
-                  ),
-                )
-              else
-                BetterPlayerCupertinoHitArea(
-                  latestValue: _latestValue,
-                  controlsNotVisible: controlsNotVisible,
-                  onCancelAndRestartTimer: cancelAndRestartTimer,
-                  onHideTimerCancel: () => _hideTimer?.cancel(),
-                  onChangePlayerControlsNotVisible:
-                      changePlayerControlsNotVisible,
-                ),
-              BetterPlayerCupertinoNextVideoWidget(
-                controlsConfiguration: _controlsConfiguration,
-              ),
-              BetterPlayerCupertinoBottomBar(
-                controlsConfiguration: _controlsConfiguration,
-                controlsNotVisible: controlsNotVisible,
-                barHeight: barHeight,
-                marginSize: marginSize,
-                backgroundColor: backgroundColor,
-                iconColor: iconColor,
-                onPlayPause: _onPlayPause,
-                onSkipBack: skipBack,
-                onSkipForward: skipForward,
-                onProgressBarDragStart: () => _hideTimer?.cancel(),
-                onProgressBarDragEnd: _startHideTimer,
-                onProgressBarTapDown: cancelAndRestartTimer,
-                onPlayerHide: _onPlayerHide,
-                latestValue: _latestValue,
-              ),
-            ],
-          );
-
-          final isFullScreenSafe =
-              _betterPlayerController?.isFullScreen == true;
-          return BetterPlayerVideoAreaSemantics(
-            semanticsIdentifier: 'better_player_cupertino_video_area',
-            child: GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onTap: () {
-                if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-                  BetterPlayerMultipleGestureDetector.of(
-                    context,
-                  )!.onTap?.call();
-                }
-                controlsNotVisible
-                    ? cancelAndRestartTimer()
-                    : changePlayerControlsNotVisible(true);
-              },
-              onDoubleTap: () {
-                if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-                  BetterPlayerMultipleGestureDetector.of(
-                    context,
-                  )!.onDoubleTap?.call();
-                }
-                cancelAndRestartTimer();
-                _onPlayPause();
-              },
-              onLongPress: () {
-                if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-                  BetterPlayerMultipleGestureDetector.of(
-                    context,
-                  )!.onLongPress?.call();
-                }
-              },
-              child: AbsorbPointer(
-                absorbing: controlsNotVisible,
-                child: isFullScreenSafe
-                    ? SafeArea(child: controlsColumn)
-                    : controlsColumn,
-              ),
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }
