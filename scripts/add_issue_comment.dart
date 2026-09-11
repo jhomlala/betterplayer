@@ -3,7 +3,9 @@ import 'dart:io';
 
 void main(List<String> args) async {
   if (args.length < 2) {
-    print('Usage: dart run scripts/add_issue_comment.dart <ISSUE_NUMBER> <COMMENT_FILE_PATH> [owner/repo]');
+    print(
+      'Usage: dart run scripts/add_issue_comment.dart <ISSUE_NUMBER> <COMMENT_FILE_PATH> [owner/repo]',
+    );
     exit(1);
   }
 
@@ -24,7 +26,9 @@ void main(List<String> args) async {
   }
 
   final bodyRaw = await file.readAsString();
-  final uri = Uri.parse('https://api.github.com/repos/$repo/issues/$issueNumber/comments');
+  final uri = Uri.parse(
+    'https://api.github.com/repos/$repo/issues/$issueNumber/comments',
+  );
 
   final request = await HttpClient().postUrl(uri)
     ..headers.add(HttpHeaders.authorizationHeader, 'token $token')

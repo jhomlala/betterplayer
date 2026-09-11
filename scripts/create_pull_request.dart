@@ -3,7 +3,9 @@ import 'dart:io';
 
 void main(List<String> args) async {
   if (args.length < 4) {
-    print('Usage: dart run scripts/create_pull_request.dart <TITLE> <HEAD_BRANCH> <BASE_BRANCH> <BODY_FILE_PATH> [owner/repo]');
+    print(
+      'Usage: dart run scripts/create_pull_request.dart <TITLE> <HEAD_BRANCH> <BASE_BRANCH> <BODY_FILE_PATH> [owner/repo]',
+    );
     exit(1);
   }
 
@@ -32,12 +34,14 @@ void main(List<String> args) async {
     ..headers.add(HttpHeaders.authorizationHeader, 'token $token')
     ..headers.add(HttpHeaders.acceptHeader, 'application/vnd.github.v3+json')
     ..headers.contentType = ContentType.json
-    ..write(jsonEncode({
-      'title': title,
-      'head': headBranch,
-      'base': baseBranch,
-      'body': bodyRaw,
-    }));
+    ..write(
+      jsonEncode({
+        'title': title,
+        'head': headBranch,
+        'base': baseBranch,
+        'body': bodyRaw,
+      }),
+    );
 
   final response = await request.close();
   final responseBody = await response.transform(utf8.decoder).join();
