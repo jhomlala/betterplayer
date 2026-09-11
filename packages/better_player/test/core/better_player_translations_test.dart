@@ -43,5 +43,19 @@ void main() {
       final translations = PlayerTranslations.spanish();
       expect(translations.languageCode, 'es');
     });
+
+    test('Persian factory', () {
+      final translations = PlayerTranslations.persian();
+      expect(translations.languageCode, 'fa');
+      expect(translations.overflowMenuCancelLabel, 'لغو');
+      expect(translations.overflowMenuScrimHint, 'بستن');
+    });
+
+    test('Portuguese factory', () {
+      final translations = PlayerTranslations.portuguese();
+      expect(translations.languageCode, 'pt');
+      expect(translations.overflowMenuCancelLabel, 'Cancelar');
+      expect(translations.overflowMenuScrimHint, 'Fechar');
+    });
   });
 }

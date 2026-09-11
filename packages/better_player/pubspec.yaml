@@ -29,6 +29,8 @@ dependencies:
   http: ^1.2.0
 
 dev_dependencies:
+  flutter_localizations:
+    sdk: flutter
   very_good_analysis: ^10.3.0
   flutter_test:
     sdk: flutter
