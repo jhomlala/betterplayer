@@ -51,30 +51,16 @@ flutter pub publish --force
 
 If any package fails to publish, **stop immediately** and do not proceed to the next step.
 
-## 3. Prepare Combined Changelog
+## 3. Create GitHub Tag and Release
 
-After all packages have been published successfully:
-- Read the most recent changelog entry from the `CHANGELOG.md` of each published package:
-  - `packages/better_player_platform_interface/CHANGELOG.md`
-  - `packages/better_player_android/CHANGELOG.md`
-  - `packages/better_player_ios/CHANGELOG.md`
-  - `packages/better_player_web/CHANGELOG.md`
-  - `packages/better_player/CHANGELOG.md`
-- Combine all entries into a single release changelog, grouped by package name.
-- The release version is taken from `packages/better_player/pubspec.yaml`.
+After all packages have been published successfully, you must create a GitHub Release using the automated script.
 
-## 4. Create GitHub Tag and Release
+This script will read the most recent changelog entries for any packages published within the last hour, combine them into a single release body, and automatically create and push the Git tag and GitHub Release.
 
-- The tag name must exactly match the `better_player` package version **without a `v` prefix** (e.g., `1.8.0`).
-- Create and push the tag:
-  ```powershell
-  git tag <VERSION>
-  git push origin <VERSION>
-  ```
-- Create a GitHub Release on the tag using the combined changelog as the release body.
-  - Repository: `jhomlala/betterplayer`
-  - Release title: `<VERSION>`
-  - Body: the combined changelog prepared in Step 2.
+```powershell
+# Make sure your user token is set
+$env:GITHUB_TOKEN = [Environment]::GetEnvironmentVariable("GITHUB_TOKEN", "User")
 
-
-
+# Run the release script
+dart run scripts/create_github_release.dart
+```
