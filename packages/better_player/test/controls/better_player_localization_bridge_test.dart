@@ -14,18 +14,12 @@ import '../helpers/better_player_test_utils.dart';
 import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
-  late BetterPlayerMockController mockController;
-
   setUpAll(() {
     BetterPlayerTestUtils.setupMockPlatform();
     VisibilityDetectorController.instance.updateInterval = Duration.zero;
   });
 
-  setUp(() {
-    mockController = BetterPlayerMockController(
-      const PlayerConfiguration(),
-    );
-  });
+  setUp(() {});
 
   testWidgets(
     'Material localization bridge provides translated labels within Material controls',
@@ -65,12 +59,15 @@ void main() {
 
       expect(controller.translations.languageCode, 'fa');
 
-      final context =
-          tester.element(find.byType(BetterPlayerVideoAreaSemantics).first);
+      final context = tester.element(
+        find.byType(BetterPlayerVideoAreaSemantics).first,
+      );
       materialLoc = material_ui.MaterialLocalizations.of(context);
 
       expect(
-          materialLoc.cancelButtonLabel, translations.overflowMenuCancelLabel);
+        materialLoc.cancelButtonLabel,
+        translations.overflowMenuCancelLabel,
+      );
       expect(materialLoc.scrimLabel, translations.overflowMenuScrimLabel);
       expect(
         materialLoc.scrimOnTapHint('Test'),
@@ -117,12 +114,15 @@ void main() {
 
       expect(controller.translations.languageCode, 'pt');
 
-      final context =
-          tester.element(find.byType(BetterPlayerVideoAreaSemantics).first);
+      final context = tester.element(
+        find.byType(BetterPlayerVideoAreaSemantics).first,
+      );
       cupertinoLoc = cupertino_ui.CupertinoLocalizations.of(context);
 
       expect(
-          cupertinoLoc.cancelButtonLabel, translations.overflowMenuCancelLabel);
+        cupertinoLoc.cancelButtonLabel,
+        translations.overflowMenuCancelLabel,
+      );
       expect(
         cupertinoLoc.modalBarrierDismissLabel,
         translations.overflowMenuScrimLabel,
