@@ -2,8 +2,6 @@ import 'package:better_player/src/configuration/player_translations.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
-// ─── Material ──────────────────────────────────────────────────────────────
-
 class BetterPlayerMaterialLocalizations extends DefaultMaterialLocalizations {
   const BetterPlayerMaterialLocalizations(this._translations);
 
@@ -40,8 +38,6 @@ class BetterPlayerMaterialLocalizationsDelegate
   bool shouldReload(BetterPlayerMaterialLocalizationsDelegate old) =>
       old._translations != _translations;
 }
-
-// ─── Cupertino ─────────────────────────────────────────────────────────────
 
 class BetterPlayerCupertinoLocalizations extends DefaultCupertinoLocalizations {
   const BetterPlayerCupertinoLocalizations(this._translations);
