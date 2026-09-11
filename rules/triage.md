@@ -9,7 +9,7 @@ Always be pessimistic about issues reported by users if the evidence isn't clear
 
 > **Tooling Note**: Refer to [github.md](rules/github.md) for instructions on how to use the provided scripts to fetch issue data and comments before starting your analysis. When you need to post a reply or update an issue with your decision, use the GitHub REST API (see `rules/github.md` for the token setup).
 > **Temporary Files**: Any temporary files created during triage (like draft comment bodies, fetched JSON, etc.) should be written to the `.tmp/` directory in the root of the repository.
-> **CRITICAL**: Never post a comment to GitHub without obtaining explicit user approval first.
+> **CRITICAL**: Never post a comment to GitHub without obtaining explicit user approval first. Before posting, you MUST present the exact text of the proposed comment to the operator and wait for their confirmation.
 > **CRITICAL**: Comments should be natural and human-like. Avoid using labels like "Triage Analysis" or "Issue Triage Report" in the actual comments posted to GitHub.
 
 ---
