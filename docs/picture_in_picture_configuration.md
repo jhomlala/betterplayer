@@ -20,6 +20,22 @@ You can programmatically check if the current device supports PiP:
 bool isSupported = await _betterPlayerController.isPictureInPictureSupported();
 ```
 
+## Setup Requirements
+
+### Android
+To enable Picture-in-Picture on Android, you must declare it in your `android/app/src/main/AndroidManifest.xml` within the `<activity>` tag:
+```xml
+<activity
+    ...
+    android:supportsPictureInPicture="true">
+```
+
+### iOS
+To enable Picture-in-Picture on iOS, you need to configure background modes:
+1. Open your project in Xcode.
+2. Go to **Signing & Capabilities** -> **Background Modes**.
+3. Check the necessary boxes (specifically **Audio, AirPlay, and Picture in Picture**).
+
 ## Implementation
 
 ### 1. Enable PiP Mode
