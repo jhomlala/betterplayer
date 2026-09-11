@@ -1,4 +1,4 @@
-## Unreleased
+## 1.9.0
 - Fixed: Resolved "No MaterialLocalizations found" and "No CupertinoLocalizations found" errors when opening the overflow menu by injecting localized types into the widget subtree.
 - Added: Persian and Portuguese translations for player controls and menus.
 - Updated: Added `overflowMenuCancelLabel`, `overflowMenuScrimLabel`, and `overflowMenuScrimHint` to `PlayerTranslations` for better localization of menu actions.
