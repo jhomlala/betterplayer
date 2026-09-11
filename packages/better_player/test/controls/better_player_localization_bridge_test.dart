@@ -23,15 +23,16 @@ void main() {
       'Material localization bridge provides translated labels within Material controls',
       (tester) async {
         final translations = PlayerTranslations.persian();
-        final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-          controller: MockPlayerEngineController(),
-          configuration: PlayerConfiguration(
-            translations: [translations],
-            controlsConfiguration: const PlayerControlsConfiguration(
-              playerTheme: PlayerTheme.material,
-            ),
-          ),
-        );
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: MockPlayerEngineController(),
+              configuration: PlayerConfiguration(
+                translations: [translations],
+                controlsConfiguration: const PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.material,
+                ),
+              ),
+            );
 
         late material_ui.MaterialLocalizations materialLoc;
         await controller.setupDataSource(
@@ -78,15 +79,16 @@ void main() {
       'Cupertino localization bridge provides translated labels within Cupertino controls',
       (tester) async {
         final translations = PlayerTranslations.portuguese();
-        final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-          controller: MockPlayerEngineController(),
-          configuration: PlayerConfiguration(
-            translations: [translations],
-            controlsConfiguration: const PlayerControlsConfiguration(
-              playerTheme: PlayerTheme.cupertino,
-            ),
-          ),
-        );
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: MockPlayerEngineController(),
+              configuration: PlayerConfiguration(
+                translations: [translations],
+                controlsConfiguration: const PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.cupertino,
+                ),
+              ),
+            );
 
         late cupertino_ui.CupertinoLocalizations cupertinoLoc;
         await controller.setupDataSource(
