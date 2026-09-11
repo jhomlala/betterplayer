@@ -1,4 +1,7 @@
-## Unreleased
+## 1.8.1
+- Updated: package metadata
+
+## 1.8.0
 - Added: Support for configurable DRM security level (Widevine L1/L3) via `PlayerDataSource`.
 - Updated: Enhanced DRM documentation with details on `drmSecurityLevel` configuration for Android and Web.
 - Added: Documentation for unit and widget testing with platform mocking.
@@ -738,4 +741,6 @@
 
 ## 0.0.1
 * Initial release.
+
+
 
