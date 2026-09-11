@@ -1,4 +1,7 @@
-## Unreleased
+## 1.3.1
+- Updated: package metadata
+
+## 1.3.0
 - Fixed: Resolved a race condition where video duration was reported as zero on iOS for non-live sources.
 - Fixed: Resolved CocoaPods build issues including protocol loading exceptions, static linking stripping, and podspec alignments.
 
@@ -22,5 +25,7 @@
 ## 1.0.0
 * Updated: Extracted iOS native code from the core package into a standalone federated plugin package (`better_player_ios`).
 * Fixed: Restored remote notification (lock screen) controls by correctly storing data source information.
+
+
 
 

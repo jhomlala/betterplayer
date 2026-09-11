@@ -1,4 +1,7 @@
-## Unreleased
+## 1.3.1
+- Updated: package metadata
+
+## 1.3.0
 - [BREAKING_CHANGE] Updated: Upgraded `androidx.media3` version from `1.1.1` to `1.11.0`.
 - [BREAKING_CHANGE] Updated: Raised `minSdkVersion` to `24`.
 - [BREAKING_CHANGE] Updated: Upgraded `androidx.media:media` to `1.7.0`.
@@ -25,5 +28,7 @@
 ## 1.0.0
 * Updated: Extracted Android native code from the core package into a standalone federated plugin package (`better_player_android`).
 * Fixed: Added missing `result.success(null)` for `setMixWithOthers` method channel call.
+
+
 
 

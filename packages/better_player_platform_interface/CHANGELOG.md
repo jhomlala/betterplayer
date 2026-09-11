@@ -1,4 +1,7 @@
-## Unreleased
+## 1.3.1
+- Updated: package metadata
+
+## 1.3.0
 - Added: `drmSecurityLevel` to `DrmConfiguration` to support Widevine L1 on Android and video robustness on Web.
 
 ## 1.2.0
@@ -24,5 +27,7 @@
 * Updated: Consolidated core models (`DataSource`, `VideoEvent`, etc.) and `MethodChannelVideoPlayer` into this package.
 * Updated: Renamed `isPictureInPictureEnabled` to `isPictureInPictureSupported` for API consistency.
 * Added: `dataSourceToMap` serialization in `MethodChannelVideoPlayer` to allow platform-specific extensions.
+
+
 
 
