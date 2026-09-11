@@ -6,7 +6,10 @@ import 'dart:io';
 /// Packages to include in the release, in dependency order.
 /// Each entry is [pubPackageName, localRelativePath].
 const _packages = [
-  ['better_player_platform_interface', 'packages/better_player_platform_interface'],
+  [
+    'better_player_platform_interface',
+    'packages/better_player_platform_interface',
+  ],
   ['better_player_android', 'packages/better_player_android'],
   ['better_player_ios', 'packages/better_player_ios'],
   ['better_player_web', 'packages/better_player_web'],
@@ -36,7 +39,7 @@ void main(List<String> args) async {
   for (final entry in _packages) {
     final pubName = entry[0];
     final localPath = entry[1];
-    
+
     // Read local version from pubspec.yaml
     final localVersion = _readLocalVersion(localPath);
     if (localVersion == null) {
@@ -46,21 +49,30 @@ void main(List<String> args) async {
     final pubInfo = await _fetchPubVersion(client, pubName, localVersion);
 
     if (pubInfo == null) {
-      print('  [$pubName $localVersion] NOT found on pub.dev — skip from notes (publish first!)');
+      print(
+        '  [$pubName $localVersion] NOT found on pub.dev — skip from notes (publish first!)',
+      );
       continue;
     }
 
-    final publishedAt = DateTime.tryParse(pubInfo['published'] as String? ?? '');
+    final publishedAt = DateTime.tryParse(
+      pubInfo['published'] as String? ?? '',
+    );
     // Consider "new" if published within the last 1 hour
-    final isNew = publishedAt != null &&
+    final isNew =
+        publishedAt != null &&
         DateTime.now().toUtc().difference(publishedAt.toUtc()).inHours < 1;
 
     if (!isNew) {
-      print('  [$pubName $localVersion] already existed on pub.dev before today — SKIPPING from release notes.');
+      print(
+        '  [$pubName $localVersion] already existed on pub.dev before today — SKIPPING from release notes.',
+      );
       continue;
     }
 
-    print('  [$pubName $localVersion] newly published — INCLUDED in release notes.');
+    print(
+      '  [$pubName $localVersion] newly published — INCLUDED in release notes.',
+    );
 
     // Extract latest changelog entry
     final changelog = _readLatestChangelog(localPath, localVersion);
@@ -96,7 +108,10 @@ void main(List<String> args) async {
 
   // ¦¦ Create & push git tag ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
   // First check if tag already exists
-  final tagExistsResult = await Process.run('git', ['rev-parse', releaseVersion]);
+  final tagExistsResult = await Process.run('git', [
+    'rev-parse',
+    releaseVersion,
+  ]);
   if (tagExistsResult.exitCode == 0) {
     print('Git tag $releaseVersion already exists. Skipping tag creation.');
   } else {
@@ -106,20 +121,24 @@ void main(List<String> args) async {
   }
 
   // ¦¦ Create GitHub Release ¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦¦
-  final request = await client.postUrl(
-    Uri.parse('https://api.github.com/repos/$_repo/releases'),
-  )
-    ..headers.add(HttpHeaders.authorizationHeader, 'Bearer $token')
-    ..headers.add(HttpHeaders.acceptHeader, 'application/vnd.github.v3+json')
-    ..headers.add('User-Agent', 'Dart/3.0')
-    ..headers.contentType = ContentType.json
-    ..write(
-      jsonEncode({
-        'tag_name': releaseVersion,
-        'name': releaseVersion,
-        'body': releaseBody,
-      }),
-    );
+  final request =
+      await client.postUrl(
+          Uri.parse('https://api.github.com/repos/$_repo/releases'),
+        )
+        ..headers.add(HttpHeaders.authorizationHeader, 'Bearer $token')
+        ..headers.add(
+          HttpHeaders.acceptHeader,
+          'application/vnd.github.v3+json',
+        )
+        ..headers.add('User-Agent', 'Dart/3.0')
+        ..headers.contentType = ContentType.json
+        ..write(
+          jsonEncode({
+            'tag_name': releaseVersion,
+            'name': releaseVersion,
+            'body': releaseBody,
+          }),
+        );
 
   final response = await request.close();
   final responseBody = await response.transform(utf8.decoder).join();
@@ -164,9 +183,13 @@ Future<Map<String, dynamic>?> _fetchPubVersion(
   String version,
 ) async {
   try {
-    final request = await client.getUrl(
-      Uri.parse('https://pub.dev/api/packages/$packageName/versions/$version'),
-    )..headers.add('User-Agent', 'Dart/3.0');
+    final request =
+        await client.getUrl(
+            Uri.parse(
+              'https://pub.dev/api/packages/$packageName/versions/$version',
+            ),
+          )
+          ..headers.add('User-Agent', 'Dart/3.0');
     final response = await request.close();
     final body = await response.transform(utf8.decoder).join();
     if (response.statusCode == 200) {
