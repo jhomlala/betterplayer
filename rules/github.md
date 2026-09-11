@@ -63,3 +63,26 @@ $bodyJson = @{
 Invoke-RestMethod -Uri "https://api.github.com/repos/jhomlala/betterplayer/releases" -Method Post -Headers @{ "Authorization" = "Bearer $($env:GITHUB_TOKEN)"; "Accept" = "application/vnd.github.v3+json" } -Body $bodyJson -ContentType "application/json"
 ```
 
+
+## Publishing a GitHub Issue Comment
+
+To automate posting a comment on a GitHub Issue, use the Dart script located at `scripts/add_issue_comment.dart`.
+
+### Requirements
+- Make sure you have a GitHub Personal Access Token exported in your environment variables:
+  `$env:GITHUB_TOKEN="your_token_here"`
+  *(If your current PowerShell session has a stale token, you can run `$env:GITHUB_TOKEN = [Environment]::GetEnvironmentVariable("GITHUB_TOKEN", "User")` first).*
+
+### Usage
+Run the following command from the root of the project:
+```powershell
+dart run scripts/add_issue_comment.dart <ISSUE_NUMBER> <COMMENT_FILE_PATH> [owner/repo]
+```
+
+### Examples
+- Default repository (jhomlala/betterplayer):
+  `dart run scripts/add_issue_comment.dart 1377 comment.md`
+- Custom repository:
+  `dart run scripts/add_issue_comment.dart 1234 comment.md flutter/flutter`
+
+

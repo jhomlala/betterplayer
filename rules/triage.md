@@ -52,6 +52,12 @@ If the **always-required** items are missing, the issue is considered **badly wr
 
 ---
 
+## Step 3.5: Code Verification
+
+Before giving a final answer, always try to scan the code quickly. Even if the issue seems obvious, fetching the code and verifying the underlying implementations (e.g. looking for references to native features, constraints, or configurations) ensures that triage responses are accurate and directly address the project's architecture.
+
+---
+
 ## Step 4: Resolution Strategy
 
 If the issue is well-prepared and confirmed on the latest version, follow this strict resolution hierarchy:
