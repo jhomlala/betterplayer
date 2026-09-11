@@ -8,6 +8,8 @@ description: Standardized triage method for analyzing and classifying GitHub iss
 Always be pessimistic about issues reported by users if the evidence isn't clear. Most issues do not require changes to the core `better_player` packages. Changing anything in the core player is a **last resort**. Follow this triage methodology strictly and in order.
 
 > **Tooling Note**: Refer to [github.md](rules/github.md) for instructions on how to use the provided scripts to fetch issue data and comments before starting your analysis. When you need to post a reply or update an issue with your decision, use the GitHub REST API (see `rules/github.md` for the token setup).
+> **CRITICAL**: Never post a comment to GitHub without obtaining explicit user approval first.
+> **CRITICAL**: Comments should be natural and human-like. Avoid using labels like "Triage Analysis" or "Issue Triage Report" in the actual comments posted to GitHub.
 
 ---
 
