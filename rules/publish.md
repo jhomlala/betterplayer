@@ -14,7 +14,11 @@ When instructed to publish the `betterplayer` packages, you must follow this wor
   ```
 - All packages must be versioned and their `CHANGELOG.md` files must be up-to-date before publishing.
 
-## 1. Publish Order
+## 1. Check for Unreleased Sections
+
+Before starting the publish process, verify that there are no `## Unreleased` sections in any `CHANGELOG.md` file. **If there is any `## Unreleased` section, then block the process and do not proceed!**
+
+## 2. Publish Order
 
 Packages must be published from least dependent to most complicated. Run `flutter pub publish --force` inside each package directory in this **strict order**:
 
@@ -47,7 +51,7 @@ flutter pub publish --force
 
 If any package fails to publish, **stop immediately** and do not proceed to the next step.
 
-## 2. Prepare Combined Changelog
+## 3. Prepare Combined Changelog
 
 After all packages have been published successfully:
 - Read the most recent changelog entry from the `CHANGELOG.md` of each published package:
@@ -59,7 +63,7 @@ After all packages have been published successfully:
 - Combine all entries into a single release changelog, grouped by package name.
 - The release version is taken from `packages/better_player/pubspec.yaml`.
 
-## 3. Create GitHub Tag and Release
+## 4. Create GitHub Tag and Release
 
 - The tag name must exactly match the `better_player` package version **without a `v` prefix** (e.g., `1.8.0`).
 - Create and push the tag:
@@ -71,3 +75,6 @@ After all packages have been published successfully:
   - Repository: `jhomlala/betterplayer`
   - Release title: `<VERSION>`
   - Body: the combined changelog prepared in Step 2.
+
+
+
