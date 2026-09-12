@@ -28,7 +28,6 @@ import 'package:better_player_example/pages/reusable_video_list/reusable_video_l
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_page.dart';
-import 'package:better_player_example/pages/vtt_subtitles_page.dart';
 import 'package:better_player_example/utils/example_io_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -100,14 +99,9 @@ class _WelcomePageState extends State<WelcomePage> {
         onClicked: () => _navigateToPage(const EventListenerPage()),
       ),
       _WelcomePageItem(
-        name: 'Subtitles',
+        name: 'Subtitles & WebVTT',
         identifier: 'welcome_page_item_subtitles',
         onClicked: () => _navigateToPage(const SubtitlesPage()),
-      ),
-      _WelcomePageItem(
-        name: 'WebVTT Subtitles',
-        identifier: 'welcome_page_item_vtt_subtitles',
-        onClicked: () => _navigateToPage(const VttSubtitlesPage()),
       ),
       _WelcomePageItem(
         name: 'Resolutions',

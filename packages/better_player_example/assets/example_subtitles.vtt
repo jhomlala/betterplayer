@@ -1,13 +1,17 @@
-WEBVTT - Better Player VTT Subtitles Example
+WEBVTT - Better Player Advanced VTT Subtitles Example
 
 1
-00:00:00.000 --> 00:00:02.000 align:start
-<b>Welcome</b> to Big Buck Bunny with <c.yellow>WebVTT</c.yellow>!
+00:00:00.000 --> 00:00:02.500 align:start
+<b>Welcome</b> (Left/Start aligned)
 
 2
-00:00:02.000 --> 00:00:06.000 align:center
-This supports <i>inline tags</i> and <u>formatting</u>.
+00:00:02.500 --> 00:00:05.000 align:center
+This is <i>Center</i> aligned text.
 
 3
-00:00:06.000 --> 00:00:10.000 align:end
-Enjoy the video!
+00:00:05.000 --> 00:00:07.500 align:end
+Colors: <c.red>Red</c.red>, <c.green>Right/End</c.green>!
+
+4
+00:00:07.500 --> 00:00:10.000 align:center
+<v Narrator>Voice tags and nested <b><i>formatting</i></b>.</v>
