@@ -24,8 +24,8 @@ void main() {
         urls: ['url'],
       );
       final subtitle = PlayerSubtitle(
-        '00:00:01.000 --> 00:00:02.000\nHello',
-        false,
+        value: '00:00:01.000 --> 00:00:02.000\nHello',
+        isWebVTT: false,
       );
 
       state = state.copyWith(

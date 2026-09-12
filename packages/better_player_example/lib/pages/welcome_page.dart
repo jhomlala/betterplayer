@@ -99,7 +99,7 @@ class _WelcomePageState extends State<WelcomePage> {
         onClicked: () => _navigateToPage(const EventListenerPage()),
       ),
       _WelcomePageItem(
-        name: 'Subtitles',
+        name: 'Subtitles & WebVTT',
         identifier: 'welcome_page_item_subtitles',
         onClicked: () => _navigateToPage(const SubtitlesPage()),
       ),
@@ -239,6 +239,12 @@ class _WelcomePageState extends State<WelcomePage> {
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/example_subtitles.srt';
     await ExampleIoUtils.writeStringToFile(path, content);
+
+    final vttContent = await rootBundle.loadString(
+      'assets/example_subtitles.vtt',
+    );
+    final vttPath = '${directory.path}/example_subtitles.vtt';
+    await ExampleIoUtils.writeStringToFile(vttPath, vttContent);
   }
 
   ///Save video to file, so we can use it later

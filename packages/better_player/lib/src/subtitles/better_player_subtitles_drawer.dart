@@ -24,11 +24,7 @@ class PlayerSubtitlesDrawer extends StatefulWidget {
 }
 
 class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
-  final RegExp htmlRegExp =
-      // ignore: unnecessary_raw_strings
-      RegExp(r'<[^>]*>', multiLine: true);
   late TextStyle _innerTextStyle;
-  late TextStyle _outerTextStyle;
 
   VideoPlayerValue? _latestValue;
   PlayerSubtitlesConfiguration? _configuration;
@@ -55,15 +51,6 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
 
     widget.betterPlayerController.addVideoListener(
       _updateState,
-    );
-
-    _outerTextStyle = TextStyle(
-      fontSize: _configuration!.fontSize,
-      fontFamily: _configuration!.fontFamily,
-      foreground: Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = _configuration!.outlineSize
-        ..color = _configuration!.outlineColor,
     );
 
     _innerTextStyle = TextStyle(
@@ -99,11 +86,12 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
     widget.betterPlayerController.renderedSubtitle = subtitle;
     final subtitles = subtitle?.texts ?? [];
     final textWidgets = subtitles.map((subtitleText) {
+      final itemAlignment = subtitle?.alignment ?? _configuration!.alignment;
       return PlayerSubtitlesDrawerItem(
         subtitleText: subtitleText,
         configuration: _configuration!,
         innerTextStyle: _innerTextStyle,
-        outerTextStyle: _outerTextStyle,
+        cueAlignment: itemAlignment,
       );
     }).toList();
 

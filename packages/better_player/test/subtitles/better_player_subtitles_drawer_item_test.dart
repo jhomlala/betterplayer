@@ -24,7 +24,6 @@ void main() {
             outlineEnabled: false,
           ),
           innerTextStyle: TextStyle(),
-          outerTextStyle: TextStyle(),
         ),
       ),
     );
@@ -33,15 +32,14 @@ void main() {
   });
 
   testWidgets(
-    'Subtitles drawer item renders HTML text twice when outline enabled',
+    'Subtitles drawer item renders text when outline enabled',
     (tester) async {
       await tester.pumpWidget(
         wrapWidget(
           const PlayerSubtitlesDrawerItem(
-            subtitleText: '<b>HTML</b> Subtitle',
+            subtitleText: 'HTML Subtitle',
             configuration: PlayerSubtitlesConfiguration(),
             innerTextStyle: TextStyle(),
-            outerTextStyle: TextStyle(),
           ),
         ),
       );

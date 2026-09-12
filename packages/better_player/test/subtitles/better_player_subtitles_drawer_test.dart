@@ -4,7 +4,6 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/subtitles/better_player_subtitles_drawer.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../helpers/better_player_test_utils.dart';
@@ -29,8 +28,8 @@ void main() {
 
   testWidgets('Subtitles are displayed correctly', (tester) async {
     final subtitle = PlayerSubtitle(
-      '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
-      false,
+      value: '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
+      isWebVTT: false,
     );
     final subtitles = [subtitle];
     controller.subtitlesLines = [...controller.subtitlesLines, ...subtitles];
@@ -60,7 +59,7 @@ void main() {
     mockEngine.notifyListeners();
     await tester.pumpAndSettle();
 
-    expect(find.byType(HtmlWidget), findsNWidgets(2));
+    expect(find.byType(RichText), findsNWidgets(2));
     // expect(find.textContaining('Test Subtitle'), findsNWidgets(2));
   });
 
@@ -68,8 +67,8 @@ void main() {
     tester,
   ) async {
     final subtitle = PlayerSubtitle(
-      '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
-      false,
+      value: '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
+      isWebVTT: false,
     );
     final subtitles = [subtitle];
     controller.subtitlesLines = [...controller.subtitlesLines, ...subtitles];
@@ -93,21 +92,21 @@ void main() {
     mockEngine.notifyListeners();
     await tester.pump();
 
-    expect(find.byType(HtmlWidget), findsNWidgets(2));
+    expect(find.byType(RichText), findsNWidgets(2));
 
     // Hide controls
     visibilityStreamController.add(true);
     await tester.pump();
     // This mostly checks if it builds without error when visibility changes
-    expect(find.byType(HtmlWidget), findsNWidgets(2));
+    expect(find.byType(RichText), findsNWidgets(2));
   });
 
   testWidgets('Subtitles with custom configuration', (
     tester,
   ) async {
     final subtitle = PlayerSubtitle(
-      '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
-      false,
+      value: '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
+      isWebVTT: false,
     );
     final subtitles = [subtitle];
     controller.subtitlesLines = [...controller.subtitlesLines, ...subtitles];
@@ -136,7 +135,7 @@ void main() {
     mockEngine.notifyListeners();
     await tester.pumpAndSettle();
 
-    // Only 1 HtmlWidget because outline is disabled
-    expect(find.byType(HtmlWidget), findsOneWidget);
+    // Only 1 RichText because outline is disabled
+    expect(find.byType(RichText), findsOneWidget);
   });
 }
