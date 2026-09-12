@@ -31,7 +31,6 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
       subtitlesConfiguration: PlayerSubtitlesConfiguration(
         backgroundColor: Colors.black87,
         fontSize: 18,
-        outlineColor: Colors.black,
       ),
     );
 

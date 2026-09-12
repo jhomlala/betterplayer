@@ -29,6 +29,11 @@ class PlayerSubtitlesDrawerItem extends StatelessWidget {
         ? TextAlign.right
         : TextAlign.center;
 
+    final outlinePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = configuration.outlineSize
+      ..color = configuration.outlineColor;
+
     return Row(
       children: [
         Expanded(
@@ -42,21 +47,17 @@ class PlayerSubtitlesDrawerItem extends StatelessWidget {
                         RichText(
                           textAlign: textAlign,
                           text: WebVttInlineParser.parse(
-                            subtitleText,
-                            innerTextStyle.copyWith(
-                              foreground: Paint()
-                                ..style = PaintingStyle.stroke
-                                ..strokeWidth = configuration.outlineSize
-                                ..color = configuration.outlineColor,
-                              shadows: null,
+                            rawText: subtitleText,
+                            baseStyle: innerTextStyle.copyWith(
+                              foreground: outlinePaint,
                             ),
                           ),
                         ),
                         RichText(
                           textAlign: textAlign,
                           text: WebVttInlineParser.parse(
-                            subtitleText,
-                            innerTextStyle,
+                            rawText: subtitleText,
+                            baseStyle: innerTextStyle,
                           ),
                         ),
                       ],
@@ -64,8 +65,8 @@ class PlayerSubtitlesDrawerItem extends StatelessWidget {
                   : RichText(
                       textAlign: textAlign,
                       text: WebVttInlineParser.parse(
-                        subtitleText,
-                        innerTextStyle,
+                        rawText: subtitleText,
+                        baseStyle: innerTextStyle,
                       ),
                     ),
             ),

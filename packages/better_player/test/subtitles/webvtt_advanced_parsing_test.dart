@@ -29,7 +29,7 @@ void main() {
 
       final subtitles = await factory.parseSubtitles(source);
       expect(subtitles.length, 1);
-      expect(subtitles[0].start, const Duration(seconds: 0));
+      expect(subtitles[0].start, Duration.zero);
       expect(subtitles[0].end, const Duration(seconds: 5));
       expect(subtitles[0].alignment, Alignment.bottomLeft);
       expect(
@@ -43,7 +43,10 @@ void main() {
       () {
         const input =
             '<b>Hello <i>nested</i></b><c.red>Red Cue</c.red><font color="#00ff00">Green Font</font><br/>New Line';
-        final spans = WebVttInlineParser.parse(input, const TextStyle());
+        final spans = WebVttInlineParser.parse(
+          rawText: input,
+          baseStyle: const TextStyle(),
+        );
         expect(spans.children, isNotEmpty);
         // Verify that children contain TextSpans with expected styles or text
         expect(
@@ -55,7 +58,10 @@ void main() {
 
     test('WebVttInlineParser ignores timestamp tags', () {
       const input = '00:00:01.000 Hello 01:23.456 World';
-      final spans = WebVttInlineParser.parse(input, const TextStyle());
+      final spans = WebVttInlineParser.parse(
+        rawText: input,
+        baseStyle: const TextStyle(),
+      );
       expect(spans.children, isNotEmpty);
     });
   });

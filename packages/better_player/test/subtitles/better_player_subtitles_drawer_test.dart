@@ -28,8 +28,8 @@ void main() {
 
   testWidgets('Subtitles are displayed correctly', (tester) async {
     final subtitle = PlayerSubtitle(
-      '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
-      false,
+      value: '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
+      isWebVTT: false,
     );
     final subtitles = [subtitle];
     controller.subtitlesLines = [...controller.subtitlesLines, ...subtitles];
@@ -67,8 +67,8 @@ void main() {
     tester,
   ) async {
     final subtitle = PlayerSubtitle(
-      '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
-      false,
+      value: '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
+      isWebVTT: false,
     );
     final subtitles = [subtitle];
     controller.subtitlesLines = [...controller.subtitlesLines, ...subtitles];
@@ -105,8 +105,8 @@ void main() {
     tester,
   ) async {
     final subtitle = PlayerSubtitle(
-      '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
-      false,
+      value: '00:00:01,000 --> 00:00:05,000\nTest Subtitle',
+      isWebVTT: false,
     );
     final subtitles = [subtitle];
     controller.subtitlesLines = [...controller.subtitlesLines, ...subtitles];

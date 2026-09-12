@@ -3,26 +3,29 @@ import 'package:better_player/src/subtitles/webvtt_cue_alignment.dart';
 import 'package:material_ui/material_ui.dart';
 
 class PlayerSubtitle {
-  factory PlayerSubtitle(
-    String value,
-    bool isWebVTT, [
+  factory PlayerSubtitle({
+    required String value,
+    required bool isWebVTT,
     Duration timestampOffset = Duration.zero,
-  ]) {
+  }) {
     try {
       final scanner = value.split('\n');
       if (scanner.length == 2) {
-        return _handle2LinesSubtitles(scanner, timestampOffset);
+        return _handle2LinesSubtitles(
+          scanner: scanner,
+          timestampOffset: timestampOffset,
+        );
       }
       if (scanner.length > 2) {
         return _handle3LinesAndMoreSubtitles(
-          scanner,
-          isWebVTT,
-          timestampOffset,
+          scanner: scanner,
+          isWebVTT: isWebVTT,
+          timestampOffset: timestampOffset,
         );
       }
       return PlayerSubtitle._();
     } catch (exception) {
-      PlayerLogger.warning(message: 'Failed to parse subtitle line: $value');
+      PlayerLogger.error(message: 'Failed to parse subtitle line: $value');
       return PlayerSubtitle._();
     }
   }
@@ -41,10 +44,10 @@ class PlayerSubtitle {
   final List<String>? texts;
   final Alignment? alignment;
 
-  static PlayerSubtitle _handle2LinesSubtitles(
-    List<String> scanner,
-    Duration timestampOffset,
-  ) {
+  static PlayerSubtitle _handle2LinesSubtitles({
+    required List<String> scanner,
+    required Duration timestampOffset,
+  }) {
     try {
       final timeAndSettings = scanner[0];
       final timeSplit = timeAndSettings.split(timerSeparator);
@@ -70,16 +73,16 @@ class PlayerSubtitle {
         alignment: alignment,
       );
     } catch (exception) {
-      PlayerLogger.warning(message: 'Failed to parse subtitle line: $scanner');
+      PlayerLogger.error(message: 'Failed to parse subtitle line: $scanner');
       return PlayerSubtitle._();
     }
   }
 
-  static PlayerSubtitle _handle3LinesAndMoreSubtitles(
-    List<String> scanner,
-    bool isWebVTT,
-    Duration timestampOffset,
-  ) {
+  static PlayerSubtitle _handle3LinesAndMoreSubtitles({
+    required List<String> scanner,
+    required bool isWebVTT,
+    required Duration timestampOffset,
+  }) {
     try {
       int? index = -1;
       var timeSplit = <String>[];
@@ -122,25 +125,30 @@ class PlayerSubtitle {
         alignment: alignment,
       );
     } catch (exception) {
-      PlayerLogger.warning(message: 'Failed to parse subtitle line: $scanner');
+      PlayerLogger.error(message: 'Failed to parse subtitle line: $scanner');
       return PlayerSubtitle._();
     }
   }
 
   static Alignment? _parseCueSettings(String settings) {
-    // Example: align:start line:0% position:20%
-    final parts = settings.split(' ');
-    for (final part in parts) {
-      if (part.startsWith('align:')) {
-        final alignVal = part.replaceFirst('align:', '').toLowerCase();
-        final cueAlign = WebVttCueAlignment.values.firstWhere(
-          (e) => e.name == alignVal,
-          orElse: () => WebVttCueAlignment.center,
-        );
-        return cueAlign.toAlignment();
+    try {
+      // Example: align:start line:0% position:20%
+      final parts = settings.split(' ');
+      for (final part in parts) {
+        if (part.startsWith('align:')) {
+          final alignVal = part.replaceFirst('align:', '').toLowerCase();
+          final cueAlign = WebVttCueAlignment.values.firstWhere(
+            (e) => e.name == alignVal,
+            orElse: () => WebVttCueAlignment.center,
+          );
+          return cueAlign.toAlignment();
+        }
       }
+      return null;
+    } catch (exception) {
+      PlayerLogger.error(message: 'Failed to parse cue settings: $settings');
+      return null;
     }
-    return null;
   }
 
   static Duration stringToDuration(String value) {

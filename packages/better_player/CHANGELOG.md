@@ -3,6 +3,7 @@
 - Fixed WebVTT block parsing for NOTE, STYLE, and REGION blocks.
 - Restored stroke-based text outlines for subtitles via `Stack`.
 - Restored HTML formatting and nested tag support in subtitles.
+- Fixed subtitle and WebVTT parsing code quality, added named parameters, cached regular expressions, and improved log tracking.
 
 ## 1.9.0
 - Fixed: Resolved "No MaterialLocalizations found" and "No CupertinoLocalizations found" errors when opening the overflow menu by injecting localized types into the widget subtree.

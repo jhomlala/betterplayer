@@ -8,6 +8,9 @@ class PlayerSubtitlesFactory {
   PlayerSubtitlesFactory({http.Client? httpClient})
     : _httpClient = httpClient ?? http.Client();
 
+  static const int _mpegTsRollover = 8589934592;
+  static const int _mpegTsClockRate = 90000;
+
   final http.Client _httpClient;
 
   Future<List<PlayerSubtitle>> parseSubtitles(
@@ -161,9 +164,9 @@ class PlayerSubtitlesFactory {
       }
 
       final subtitle = PlayerSubtitle(
-        cleanComponent,
-        isWebVTT,
-        timestampOffset,
+        value: cleanComponent,
+        isWebVTT: isWebVTT,
+        timestampOffset: timestampOffset,
       );
       if (subtitle.start != null &&
           subtitle.end != null &&
@@ -199,12 +202,13 @@ class PlayerSubtitlesFactory {
       if (mpegtsStr != null) {
         final mpegtsValue = int.tryParse(mpegtsStr) ?? 0;
         // MPEG-TS timestamps are 90kHz clock. Also account for 33-bit rollover (2^33 = 8589934592)
-        final rolloverCount = mpegtsValue ~/ 8589934592;
-        final adjustedMpegts = mpegtsValue % 8589934592;
+        final rolloverCount = mpegtsValue ~/ _mpegTsRollover;
+        final adjustedMpegts = mpegtsValue % _mpegTsRollover;
         final mpegtsDuration =
-            Duration(milliseconds: adjustedMpegts * 1000 ~/ 90000) +
+            Duration(milliseconds: adjustedMpegts * 1000 ~/ _mpegTsClockRate) +
             Duration(
-              milliseconds: rolloverCount * 8589934592 * 1000 ~/ 90000,
+              milliseconds:
+                  rolloverCount * _mpegTsRollover * 1000 ~/ _mpegTsClockRate,
             );
 
         return localDuration - mpegtsDuration;
@@ -212,7 +216,7 @@ class PlayerSubtitlesFactory {
 
       return localDuration;
     } catch (exception) {
-      PlayerLogger.warning(message: 'Failed to parse X-TIMESTAMP-MAP: $line');
+      PlayerLogger.error(message: 'Failed to parse X-TIMESTAMP-MAP: $line');
       return Duration.zero;
     }
   }
