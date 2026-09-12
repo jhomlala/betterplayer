@@ -1,5 +1,4 @@
 ## 1.10.0
-
 - Fixed WebVTT block parsing for NOTE, STYLE, and REGION blocks.
 - Restored stroke-based text outlines for subtitles via `Stack`.
 - Restored HTML formatting and nested tag support in subtitles.
