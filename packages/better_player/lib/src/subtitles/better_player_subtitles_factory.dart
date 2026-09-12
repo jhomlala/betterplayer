@@ -1,11 +1,8 @@
-import 'dart:convert';
-
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/utils/better_player_io_utils.dart';
 import 'package:http/http.dart' as http;
-import 'package:meta/meta.dart';
 
 class PlayerSubtitlesFactory {
   PlayerSubtitlesFactory({http.Client? httpClient})
@@ -104,24 +101,55 @@ class PlayerSubtitlesFactory {
   }
 
   List<PlayerSubtitle> _parseString(String value) {
-    var components = value.split('\r\n\r\n');
-    if (components.length == 1) {
-      components = value.split('\n\n');
+    // 1. Handle UTF-8 BOM
+    var content = value;
+    if (content.startsWith('\uFEFF')) {
+      content = content.substring(1);
     }
 
+    // 2. Normalize line endings (CRLF -> LF, CR -> LF)
+    content = content.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
+
+    // 3. Parse X-TIMESTAMP-MAP
+    var timestampOffset = Duration.zero;
+    final lines = content.split('\n');
+    final cueLines = <String>[];
+    var isWebVTT = false;
+
+    for (final line in lines) {
+      if (line.trim().startsWith('WEBVTT')) {
+        isWebVTT = true;
+        continue;
+      }
+      if (line.trim().startsWith('X-TIMESTAMP-MAP=')) {
+        timestampOffset = _parseTimestampMap(line.trim());
+        continue;
+      }
+      // Skip NOTE, REGION, STYLE blocks or comments
+      if (line.trim().startsWith('NOTE') ||
+          line.trim().startsWith('REGION') ||
+          line.trim().startsWith('STYLE')) {
+        continue;
+      }
+      cueLines.add(line);
+    }
+
+    // Rejoin and split by double newlines for cues
+    final normalizedContent = cueLines.join('\n');
+    final components = normalizedContent.split('\n\n');
+
     // Skip parsing files with no cues
-    if (components.length == 1) {
-      return [];
+    if (components.length <= 1 && !isWebVTT) {
+      // Check if it's single cue or split by single newline if needed
     }
 
     final subtitlesObj = <PlayerSubtitle>[];
 
-    final isWebVTT = components.contains('WEBVTT');
     for (final component in components) {
-      if (component.isEmpty) {
+      if (component.trim().isEmpty) {
         continue;
       }
-      final subtitle = PlayerSubtitle(component, isWebVTT);
+      final subtitle = PlayerSubtitle(component, isWebVTT, timestampOffset);
       if (subtitle.start != null &&
           subtitle.end != null &&
           subtitle.texts != null) {
@@ -130,5 +158,47 @@ class PlayerSubtitlesFactory {
     }
 
     return subtitlesObj;
+  }
+
+  Duration _parseTimestampMap(String line) {
+    // Example: X-TIMESTAMP-MAP=MPEGTS:900000, LOCAL:00:00:20.000
+    try {
+      final parts = line.replaceFirst('X-TIMESTAMP-MAP=', '').split(',');
+      String? mpegtsStr;
+      String? localStr;
+
+      for (final part in parts) {
+        final trimmed = part.trim();
+        if (trimmed.startsWith('MPEGTS:')) {
+          mpegtsStr = trimmed.replaceFirst('MPEGTS:', '');
+        } else if (trimmed.startsWith('LOCAL:')) {
+          localStr = trimmed.replaceFirst('LOCAL:', '');
+        }
+      }
+
+      var localDuration = Duration.zero;
+      if (localStr != null) {
+        localDuration = PlayerSubtitle.stringToDuration(localStr);
+      }
+
+      if (mpegtsStr != null) {
+        final mpegtsValue = int.tryParse(mpegtsStr) ?? 0;
+        // MPEG-TS timestamps are 90kHz clock. Also account for 33-bit rollover (2^33 = 8589934592)
+        final rolloverCount = mpegtsValue ~/ 8589934592;
+        final adjustedMpegts = mpegtsValue % 8589934592;
+        final mpegtsDuration =
+            Duration(milliseconds: adjustedMpegts * 1000 ~/ 90000) +
+            Duration(
+              milliseconds: rolloverCount * 8589934592 * 1000 ~/ 90000,
+            );
+
+        return localDuration - mpegtsDuration;
+      }
+
+      return localDuration;
+    } catch (exception) {
+      PlayerLogger.warning(message: 'Failed to parse X-TIMESTAMP-MAP: $line');
+      return Duration.zero;
+    }
   }
 }
