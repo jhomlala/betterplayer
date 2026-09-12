@@ -4,7 +4,6 @@
 - Added: Supported parsing of `X-TIMESTAMP-MAP` blocks with 33-bit MPEG-TS rollover timing adjustment corrections.
 - Added: Supported WebVTT cue positioning attributes for individual text alignment customization (`align:left`, `align:right`, `align:center`).
 - Fixed: Resolved layout and visibility calculation overlap for stroke-based text outlines using layered `RichText` stacks.
-- Fixed: Stripped UTF-8 Byte Order Mark (BOM) patterns during file content initialization to avoid parsing failures.
 
 ## 1.9.0
 - Fixed: Resolved "No MaterialLocalizations found" and "No CupertinoLocalizations found" errors when opening the overflow menu by injecting localized types into the widget subtree.
