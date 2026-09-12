@@ -16,16 +16,17 @@ class WebVttInlineParser {
     required String rawText,
     required TextStyle baseStyle,
   }) {
-    // 1. Decode HTML entities
-    final text = rawText
+    return _parseStack(text: rawText, baseStyle: baseStyle);
+  }
+
+  static String _decodeEntities(String input) {
+    return input
         .replaceAll('&amp;', '&')
         .replaceAll('&lt;', '<')
         .replaceAll('&gt;', '>')
         .replaceAll('&nbsp;', '\u00A0')
         .replaceAll('&lrm;', '\u200E')
         .replaceAll('&rlm;', '\u200F');
-
-    return _parseStack(text: text, baseStyle: baseStyle);
   }
 
   static TextSpan _parseStack({
@@ -66,7 +67,9 @@ class WebVttInlineParser {
           }
         }
       } else if (plainText != null) {
-        children.add(TextSpan(text: plainText, style: styleStack.last));
+        children.add(
+          TextSpan(text: _decodeEntities(plainText), style: styleStack.last),
+        );
       }
     }
 

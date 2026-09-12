@@ -39,6 +39,57 @@ void main() {
     });
 
     test(
+      'Parse WebVTT with 33-bit MPEG-TS timestamp rollover map line',
+      () async {
+        final factory = PlayerSubtitlesFactory();
+        // 8589934592 + 900000 = 8590834592 (which is 10s + 1 rollover count)
+        const vttContent =
+            'WEBVTT\n'
+            'X-TIMESTAMP-MAP=MPEGTS:8590834592, LOCAL:00:00:20.000\n\n'
+            '00:00:10.000 --> 00:00:15.000\n'
+            'Rollover subtitle';
+
+        final source = PlayerSubtitlesSource(
+          type: PlayerSubtitlesSourceType.memory,
+          content: vttContent,
+        );
+
+        final subtitles = await factory.parseSubtitles(source);
+        expect(subtitles.length, 1);
+        expect(
+          subtitles[0].start,
+          const Duration(
+            hours: -26,
+            minutes: -30,
+            seconds: -23,
+            milliseconds: -717,
+          ),
+        );
+      },
+    );
+
+    test(
+      'Parse WebVTT with corrupted or malformed X-TIMESTAMP-MAP lines',
+      () async {
+        final factory = PlayerSubtitlesFactory();
+        const vttContent =
+            'WEBVTT\n'
+            'X-TIMESTAMP-MAP=MALFORMED\n\n'
+            '00:00:01.000 --> 00:00:03.000\n'
+            'Fallback subtitle';
+
+        final source = PlayerSubtitlesSource(
+          type: PlayerSubtitlesSourceType.memory,
+          content: vttContent,
+        );
+
+        final subtitles = await factory.parseSubtitles(source);
+        expect(subtitles.length, 1);
+        expect(subtitles[0].start, const Duration(seconds: 1));
+      },
+    );
+
+    test(
       'WebVttInlineParser handles nested tags, color codes, and line breaks',
       () {
         const input =
