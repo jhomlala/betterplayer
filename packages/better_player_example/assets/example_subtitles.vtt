@@ -1,0 +1,13 @@
+WEBVTT - Better Player VTT Subtitles Example
+
+1
+00:00:00.000 --> 00:00:02.000 align:start
+<b>Welcome</b> to Big Buck Bunny with <c.yellow>WebVTT</c.yellow>!
+
+2
+00:00:02.000 --> 00:00:06.000 align:center
+This supports <i>inline tags</i> and <u>formatting</u>.
+
+3
+00:00:06.000 --> 00:00:10.000 align:end
+Enjoy the video!

@@ -28,6 +28,7 @@ import 'package:better_player_example/pages/reusable_video_list/reusable_video_l
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_page.dart';
+import 'package:better_player_example/pages/vtt_subtitles_page.dart';
 import 'package:better_player_example/utils/example_io_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -102,6 +103,11 @@ class _WelcomePageState extends State<WelcomePage> {
         name: 'Subtitles',
         identifier: 'welcome_page_item_subtitles',
         onClicked: () => _navigateToPage(const SubtitlesPage()),
+      ),
+      _WelcomePageItem(
+        name: 'WebVTT Subtitles',
+        identifier: 'welcome_page_item_vtt_subtitles',
+        onClicked: () => _navigateToPage(const VttSubtitlesPage()),
       ),
       _WelcomePageItem(
         name: 'Resolutions',
@@ -239,6 +245,12 @@ class _WelcomePageState extends State<WelcomePage> {
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/example_subtitles.srt';
     await ExampleIoUtils.writeStringToFile(path, content);
+
+    final vttContent = await rootBundle.loadString(
+      'assets/example_subtitles.vtt',
+    );
+    final vttPath = '${directory.path}/example_subtitles.vtt';
+    await ExampleIoUtils.writeStringToFile(vttPath, vttContent);
   }
 
   ///Save video to file, so we can use it later
