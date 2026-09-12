@@ -36,23 +36,38 @@ class PlayerSubtitlesDrawerItem extends StatelessWidget {
             alignment: effectiveAlignment,
             child: ColoredBox(
               color: configuration.backgroundColor,
-              child: RichText(
-                textAlign: textAlign,
-                text: WebVttInlineParser.parse(
-                  subtitleText,
-                  innerTextStyle.copyWith(
-                    shadows: configuration.outlineEnabled
-                        ? [
-                            Shadow(
-                              color: configuration.outlineColor,
-                              blurRadius: configuration.outlineSize * 2,
-                              offset: const Offset(1, 1),
+              child: configuration.outlineEnabled
+                  ? Stack(
+                      children: [
+                        RichText(
+                          textAlign: textAlign,
+                          text: WebVttInlineParser.parse(
+                            subtitleText,
+                            innerTextStyle.copyWith(
+                              foreground: Paint()
+                                ..style = PaintingStyle.stroke
+                                ..strokeWidth = configuration.outlineSize
+                                ..color = configuration.outlineColor,
+                              shadows: null,
                             ),
-                          ]
-                        : null,
-                  ),
-                ),
-              ),
+                          ),
+                        ),
+                        RichText(
+                          textAlign: textAlign,
+                          text: WebVttInlineParser.parse(
+                            subtitleText,
+                            innerTextStyle,
+                          ),
+                        ),
+                      ],
+                    )
+                  : RichText(
+                      textAlign: textAlign,
+                      text: WebVttInlineParser.parse(
+                        subtitleText,
+                        innerTextStyle,
+                      ),
+                    ),
             ),
           ),
         ),

@@ -13,6 +13,8 @@ void main() {
           '\uFEFFWEBVTT\n'
           'X-TIMESTAMP-MAP=MPEGTS:900000, LOCAL:00:00:10.000\n\n'
           'NOTE This is a note block\n\n'
+          'STYLE\n'
+          '::cue { background-color: yellow; }\n\n'
           '1\n'
           '00:00:00.000 --> 00:00:05.000 align:start\n'
           'Hello &amp; Welcome &lt;b&gt;Bold&lt;/b&gt;';
@@ -27,8 +29,6 @@ void main() {
       expect(subtitles[0].start, const Duration(seconds: 0));
       expect(subtitles[0].end, const Duration(seconds: 5));
       expect(subtitles[0].alignment, Alignment.bottomLeft);
-      // Note: HTML entities are intentionally preserved in the raw model texts
-      // and decoded dynamically at render time by WebVttInlineParser.
       expect(
         subtitles[0].texts![0],
         'Hello &amp; Welcome &lt;b&gt;Bold&lt;/b&gt;',
@@ -36,7 +36,8 @@ void main() {
     });
 
     test('WebVttInlineParser decodes entities and parses tags', () {
-      const input = 'Hello &amp; &lt;World&gt; <b>Bold</b> and <i>Italic</i>';
+      const input =
+          'Hello &amp; &lt;World&gt; <b>Bold</b> and <i>Italic</i><br><font color="#ff0000">Red</font>';
       final spans = WebVttInlineParser.parse(input, const TextStyle());
       expect(spans.children!.length, greaterThan(1));
     });

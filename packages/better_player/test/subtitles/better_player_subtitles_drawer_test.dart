@@ -59,7 +59,7 @@ void main() {
     mockEngine.notifyListeners();
     await tester.pumpAndSettle();
 
-    expect(find.byType(RichText), findsOneWidget);
+    expect(find.byType(RichText), findsNWidgets(2));
     // expect(find.textContaining('Test Subtitle'), findsNWidgets(2));
   });
 
@@ -92,13 +92,13 @@ void main() {
     mockEngine.notifyListeners();
     await tester.pump();
 
-    expect(find.byType(RichText), findsOneWidget);
+    expect(find.byType(RichText), findsNWidgets(2));
 
     // Hide controls
     visibilityStreamController.add(true);
     await tester.pump();
     // This mostly checks if it builds without error when visibility changes
-    expect(find.byType(RichText), findsOneWidget);
+    expect(find.byType(RichText), findsNWidgets(2));
   });
 
   testWidgets('Subtitles with custom configuration', (
@@ -135,7 +135,7 @@ void main() {
     mockEngine.notifyListeners();
     await tester.pumpAndSettle();
 
-    // Only 1 HtmlWidget because outline is disabled
+    // Only 1 RichText because outline is disabled
     expect(find.byType(RichText), findsOneWidget);
   });
 }

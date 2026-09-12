@@ -28,12 +28,9 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
     );
 
     const betterPlayerConfigurationVtt = PlayerConfiguration(
-      aspectRatio: 16 / 9,
-      fit: BoxFit.contain,
       subtitlesConfiguration: PlayerSubtitlesConfiguration(
         backgroundColor: Colors.black87,
         fontSize: 18,
-        outlineEnabled: true,
         outlineColor: Colors.black,
       ),
     );

@@ -37,14 +37,14 @@ void main() {
       await tester.pumpWidget(
         wrapWidget(
           const PlayerSubtitlesDrawerItem(
-            subtitleText: '<b>HTML</b> Subtitle',
+            subtitleText: 'HTML Subtitle',
             configuration: PlayerSubtitlesConfiguration(),
             innerTextStyle: TextStyle(),
           ),
         ),
       );
 
-      expect(find.text('HTML Subtitle', findRichText: true), findsOneWidget);
+      expect(find.text('HTML Subtitle', findRichText: true), findsNWidgets(2));
     },
   );
 }

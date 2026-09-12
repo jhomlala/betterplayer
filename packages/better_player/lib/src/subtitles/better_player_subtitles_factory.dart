@@ -115,20 +115,29 @@ class PlayerSubtitlesFactory {
     final lines = content.split('\n');
     final cueLines = <String>[];
     var isWebVTT = false;
+    var inSkipBlock = false;
 
     for (final line in lines) {
-      if (line.trim().startsWith('WEBVTT')) {
+      final trimmedLine = line.trim();
+      if (trimmedLine.startsWith('WEBVTT')) {
         isWebVTT = true;
         continue;
       }
-      if (line.trim().startsWith('X-TIMESTAMP-MAP=')) {
-        timestampOffset = _parseTimestampMap(line.trim());
+      if (trimmedLine.startsWith('X-TIMESTAMP-MAP=')) {
+        timestampOffset = _parseTimestampMap(trimmedLine);
         continue;
       }
-      // Skip NOTE, REGION, STYLE blocks or comments
-      if (line.trim().startsWith('NOTE') ||
-          line.trim().startsWith('REGION') ||
-          line.trim().startsWith('STYLE')) {
+      if (inSkipBlock) {
+        if (trimmedLine.isEmpty) {
+          inSkipBlock = false;
+        }
+        continue;
+      }
+      if (trimmedLine.startsWith('NOTE') ||
+          trimmedLine.startsWith('REGION') ||
+          trimmedLine.startsWith('STYLE') ||
+          trimmedLine.startsWith('::cue')) {
+        inSkipBlock = true;
         continue;
       }
       cueLines.add(line);
@@ -138,18 +147,24 @@ class PlayerSubtitlesFactory {
     final normalizedContent = cueLines.join('\n');
     final components = normalizedContent.split('\n\n');
 
-    // Skip parsing files with no cues
-    if (components.length <= 1 && !isWebVTT) {
-      // Check if it's single cue or split by single newline if needed
-    }
-
     final subtitlesObj = <PlayerSubtitle>[];
 
     for (final component in components) {
       if (component.trim().isEmpty) {
         continue;
       }
-      final subtitle = PlayerSubtitle(component, isWebVTT, timestampOffset);
+      // If the component itself still contains WEBVTT or header lines, skip them
+      final cleanComponent = component.trim();
+      if (cleanComponent.startsWith('WEBVTT') ||
+          cleanComponent.startsWith('X-TIMESTAMP-MAP')) {
+        continue;
+      }
+
+      final subtitle = PlayerSubtitle(
+        cleanComponent,
+        isWebVTT,
+        timestampOffset,
+      );
       if (subtitle.start != null &&
           subtitle.end != null &&
           subtitle.texts != null) {

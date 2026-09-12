@@ -13,75 +13,66 @@ class WebVttInlineParser {
         .replaceAll('&lrm;', '\u200E')
         .replaceAll('&rlm;', '\u200F');
 
-    return _parseSpans(text, baseStyle);
+    return _parseStack(text, baseStyle);
   }
 
-  static TextSpan _parseSpans(String text, TextStyle currentStyle) {
+  static TextSpan _parseStack(String text, TextStyle baseStyle) {
+    final styleStack = <TextStyle>[baseStyle];
     final children = <InlineSpan>[];
-    final regex = RegExp(r'<([^>]+)>([^<]*)</\1>|<([^>]+)>|([^<]+)');
+
+    // Tokenize tags and text: matches <tag> or plain text
+    final regex = RegExp('(<[^>]+>)|([^<]+)');
     final matches = regex.allMatches(text);
 
-    var lastIndex = 0;
     for (final match in matches) {
-      if (match.start > lastIndex) {
-        children.add(
-          TextSpan(
-            text: text.substring(lastIndex, match.start),
-            style: currentStyle,
-          ),
-        );
-      }
+      final tag = match.group(1);
+      final plainText = match.group(2);
 
-      // Case 1: Tag with body and closing tag e.g. <b>text</b>
-      final fullTag = match.group(1);
-      final body = match.group(2);
-      // Case 2: Self-contained or opening tag e.g. <b.yellow> or timestamp <00:00:01.000>
-      final singleTag = match.group(3);
-      // Case 3: Plain text
-      final plainText = match.group(4);
-
-      if (fullTag != null && body != null) {
-        final newStyle = _applyTagStyle(fullTag, currentStyle);
-        children.add(_parseSpans(body, newStyle));
-      } else if (singleTag != null) {
-        // Check if it's a timestamp tag e.g. <00:00:01.000> or karaoke tag
-        if (_isTimestampTag(singleTag)) {
-          // Skip timestamp/karaoke tags entirely
+      if (tag != null) {
+        if (tag.startsWith('</')) {
+          // Closing tag
+          if (styleStack.length > 1) {
+            styleStack.removeLast();
+          }
+        } else if (tag.endsWith('/>') || tag == '<br>' || tag == '<br/>') {
+          // Self-closing or break tag
+          if (tag.toLowerCase().contains('br')) {
+            children.add(TextSpan(text: '\n', style: styleStack.last));
+          }
         } else {
-          // Might be voice tag like <v Speaker> or ignored tag
-          // For <v Speaker>, we strip the tag and keep nothing or just keep body if handled.
-          // Usually voice tags are <v Speaker>text</v> (matched by Case 1). If self-contained, ignore.
+          // Opening tag
+          if (_isTimestampTag(tag.substring(1, tag.length - 1))) {
+            // Ignore timestamp tags
+          } else {
+            final newStyle = _applyTagStyle(tag, styleStack.last);
+            styleStack.add(newStyle);
+          }
         }
       } else if (plainText != null) {
-        children.add(TextSpan(text: plainText, style: currentStyle));
+        children.add(TextSpan(text: plainText, style: styleStack.last));
       }
-
-      lastIndex = match.end;
     }
 
-    if (lastIndex < text.length) {
-      children.add(
-        TextSpan(text: text.substring(lastIndex), style: currentStyle),
-      );
-    }
-
-    return TextSpan(style: currentStyle, children: children);
+    return TextSpan(style: baseStyle, children: children);
   }
 
   static bool _isTimestampTag(String tag) {
-    return RegExp(r'^\d{2}:\d{2}[\.:]\d{3}$').hasMatch(tag) ||
-        RegExp(r'^\d+[\.:]\d{3}$').hasMatch(tag);
+    final cleaned = tag.trim();
+    return RegExp(r'^\d{2}:\d{2}[\.:]\d{3}$').hasMatch(cleaned) ||
+        RegExp(r'^\d+[\.:]\d{3}$').hasMatch(cleaned);
   }
 
-  static TextStyle _applyTagStyle(String tag, TextStyle currentStyle) {
-    final lowerTag = tag.toLowerCase().trim();
-    if (lowerTag == 'b') {
+  static TextStyle _applyTagStyle(String fullTag, TextStyle currentStyle) {
+    final inner = fullTag.substring(1, fullTag.length - 1).trim();
+    final lowerTag = inner.toLowerCase();
+
+    if (lowerTag == 'b' || lowerTag.startsWith('b ')) {
       return currentStyle.copyWith(fontWeight: FontWeight.bold);
     }
-    if (lowerTag == 'i') {
+    if (lowerTag == 'i' || lowerTag.startsWith('i ')) {
       return currentStyle.copyWith(fontStyle: FontStyle.italic);
     }
-    if (lowerTag == 'u') {
+    if (lowerTag == 'u' || lowerTag.startsWith('u ')) {
       return currentStyle.copyWith(decoration: TextDecoration.underline);
     }
     if (lowerTag.startsWith('c.')) {
@@ -91,10 +82,47 @@ class WebVttInlineParser {
         return currentStyle.copyWith(color: color);
       }
     }
-    if (lowerTag.startsWith('lang ')) {
-      return currentStyle;
+    if (lowerTag.startsWith('font')) {
+      return _parseFontTag(inner, currentStyle);
     }
     return currentStyle;
+  }
+
+  static TextStyle _parseFontTag(String tagContent, TextStyle currentStyle) {
+    var style = currentStyle;
+    final colorRegex = RegExp(
+      r'color\s*=\s*["\x27]?([^"\x27\s>]+)["\x27]?',
+      caseSensitive: false,
+    );
+    final match = colorRegex.firstMatch(tagContent);
+    if (match != null) {
+      final colorValue = match.group(1);
+      if (colorValue != null) {
+        final color = _parseColorValue(colorValue);
+        if (color != null) {
+          style = style.copyWith(color: color);
+        }
+      }
+    }
+    return style;
+  }
+
+  static Color? _parseColorValue(String value) {
+    if (value.startsWith('#')) {
+      try {
+        var hex = value.replaceFirst('#', '');
+        if (hex.length == 3) {
+          hex = hex.split('').map((c) => '$c$c').join();
+        }
+        if (hex.length == 6) {
+          hex = 'FF$hex';
+        }
+        return Color(int.parse(hex, radix: 16));
+      } catch (_) {
+        return null;
+      }
+    }
+    return _parseColor(value.toLowerCase());
   }
 
   static Color? _parseColor(String name) {
@@ -114,11 +142,12 @@ class WebVttInlineParser {
       case 'cyan':
         return Colors.cyan;
       case 'magenta':
-        return Colors.purple;
+      case 'fuchsia':
+        return Colors.pink;
       case 'lime':
         return Colors.lime;
       case 'maroon':
-        return Colors.brown; // Approximation or custom color
+        return Colors.brown;
       case 'navy':
         return Colors.indigo;
       case 'olive':
@@ -131,8 +160,6 @@ class WebVttInlineParser {
         return Colors.grey;
       case 'aqua':
         return Colors.cyan;
-      case 'fuchsia':
-        return Colors.pink;
       default:
         return null;
     }
