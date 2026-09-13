@@ -1,3 +1,6 @@
+﻿## Unreleased
+- Fixed: Double/Triple screen glitch on `setResolution()` by sequencing `setupDataSource` controller events.
+
 ## 1.10.0
 - Added: WebVTT metadata block parsing support for `NOTE`, `STYLE`, and `REGION` headers.
 - Added: Integrated custom inline tag parser for WebVTT cues, supporting HTML bold, italic, underline, and variable color classes.
@@ -754,6 +757,7 @@
 
 ## 0.0.1
 * Initial release.
+
 
 
 

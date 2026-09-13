@@ -7,16 +7,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       message: 'setupDataSource starting',
       textureId: textureId,
     );
-    postEvent(
-      PlayerEvent(
-        PlayerEventType.setupDataSource,
-        parameters: <String, dynamic>{
-          PlayerEventConstants.dataSourceParameter: betterPlayerDataSource,
-        },
-      ),
-    );
 
-    _postControllerEvent(PlayerControllerEvent.setupDataSource);
     _playbackState = _playbackState.copyWith(
       hasCurrentDataSourceStarted: false,
     );
@@ -60,6 +51,18 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     }
     try {
       await Future.wait(setupFutures);
+      // Both the public player event and the internal controller event are
+      // posted after setup completes to avoid triggering widget rebuilds
+      // before the new data source is fully initialised (fixes #1311).
+      postEvent(
+        PlayerEvent(
+          PlayerEventType.setupDataSource,
+          parameters: <String, dynamic>{
+            PlayerEventConstants.dataSourceParameter: betterPlayerDataSource,
+          },
+        ),
+      );
+      _postControllerEvent(PlayerControllerEvent.setupDataSource);
       PlayerLogger.info(
         message: 'Data source setup complete: ${betterPlayerDataSource.url}',
         textureId: textureId,

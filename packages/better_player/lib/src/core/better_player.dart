@@ -144,6 +144,8 @@ class _BetterPlayerState extends State<BetterPlayer>
         onFullScreenChanged();
       case PlayerControllerEvent.hideFullscreen:
         onFullScreenChanged();
+      case PlayerControllerEvent.setupDataSource:
+        break;
       default:
         setState(() {});
     }

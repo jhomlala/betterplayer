@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -106,6 +107,60 @@ void main() {
         PlayerDataSource.memory([1, 2, 3]),
       );
       expect(controller.betterPlayerDataSource != null, true);
+    });
+
+    test(
+      'setupDataSource controller event is posted after setup completes',
+      () async {
+        final mock = MockPlayerEngineController();
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mock,
+            );
+
+        final events = <PlayerControllerEvent>[];
+        controller.controllerEventStream.listen(events.add);
+
+        await controller.setupDataSource(
+          PlayerDataSource.network('https://example.com/test.mp4'),
+        );
+
+        await Future.microtask(() {});
+
+        // Verify that setupDataSource controller event was posted
+        expect(events.contains(PlayerControllerEvent.setupDataSource), true);
+      },
+    );
+
+    test('setResolution emits changedResolution event exactly once and setupDataSource after', () async {
+      final mock = MockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mock,
+      );
+
+      await controller.setupDataSource(
+        PlayerDataSource.network('https://example.com/video1.mp4'),
+      );
+
+      int changedResolutionCount = 0;
+      controller.addEventsListener((event) {
+        if (event.betterPlayerEventType == PlayerEventType.changedResolution) {
+          changedResolutionCount++;
+        }
+      });
+
+      final controllerEvents = <PlayerControllerEvent>[];
+      final subscription = controller.controllerEventStream.listen(controllerEvents.add);
+
+      await controller.setResolution('https://example.com/video2.mp4');
+
+      await Future.microtask(() {});
+
+      expect(changedResolutionCount, 1);
+      expect(controllerEvents.isNotEmpty, true);
+      expect(controllerEvents.last, PlayerControllerEvent.setupDataSource);
+      
+      await subscription.cancel();
     });
   });
 }
