@@ -16,7 +16,6 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       ),
     );
 
-    _postControllerEvent(PlayerControllerEvent.setupDataSource);
     _playbackState = _playbackState.copyWith(
       hasCurrentDataSourceStarted: false,
     );
@@ -60,6 +59,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     }
     try {
       await Future.wait(setupFutures);
+      _postControllerEvent(PlayerControllerEvent.setupDataSource);
       PlayerLogger.info(
         message: 'Data source setup complete: ${betterPlayerDataSource.url}',
         textureId: textureId,
