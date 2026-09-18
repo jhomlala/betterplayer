@@ -1,4 +1,5 @@
 ﻿## Unreleased
+- Fixed: Dispatch `changedPlaylistItem` event on playlist video change.
 - Fixed: Double/Triple screen glitch on `setResolution()` by sequencing `setupDataSource` controller events.
 - Fixed: Race conditions in unit tests for data source setup.
 
