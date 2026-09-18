@@ -1,9 +1,15 @@
 name: better_player
 resolution: workspace
-description: Advanced video player. It solves many typical use cases and it's easy to run.
+description: Advanced video player for Flutter with HLS, DASH, DRM, subtitles, caching, PiP, playlists, and custom controls.
 version: 1.10.0
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player
 documentation: https://jhomlala.github.io/betterplayer/
+topics:
+  - video
+  - player
+  - media
+  - streaming
+  - hls
 
 environment:
   sdk: "^3.12.0"

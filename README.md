@@ -70,7 +70,7 @@ Better Player is a powerful video player for Flutter, originally based on the of
 Add Better Player to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  better_player: ^1.9.0
+  better_player: ^1.10.0
 ```
 
 ### 2. Basic Usage
@@ -107,6 +107,35 @@ BetterPlayerController _controller = BetterPlayerController(
 
 BetterPlayer(controller: _controller)
 ```
+
+---
+
+## 🏆 vs Competitors
+
+| Feature | Better Player | video_player | chewie | media_kit |
+|---|:---:|:---:|:---:|:---:|
+| **Underlying Engine** | ExoPlayer/AVPlayer/Shaka | ExoPlayer/AVPlayer | video_player | libmpv |
+| **All-in-one Controls** | ✅ Built-in & Customizable | ❌ No UI | ✅ Built-in | ✅ Built-in |
+| **HLS / DASH Support** | ✅ Native | ⚠️ Basic | ⚠️ Basic | ✅ Native |
+| **DRM Support** | ✅ Widevine/FairPlay/ClearKey | ❌ None | ❌ None | ❌ None |
+| **Subtitle Parsing** | ✅ Advanced (WebVTT, HTML, SRT) | ⚠️ Basic (SRT only) | ⚠️ Basic | ✅ Advanced |
+| **Caching/Pre-caching** | ✅ Built-in | ❌ None | ❌ None | ❌ None |
+| **Playlists** | ✅ Built-in | ❌ None | ❌ None | ✅ Built-in |
+
+---
+
+## 🤖 AI Agent Quick Reference
+
+If you are an AI coding assistant, use this quick reference when generating code for Better Player:
+
+- **Initialization**: Always initialize `BetterPlayerController` in `initState()` and provide a `PlayerConfiguration` and `PlayerDataSource`.
+- **Core Classes**:
+  - `BetterPlayerController`: Manages state and configuration.
+  - `PlayerDataSource`: Wraps video URL, DRM config, subtitles, headers.
+  - `PlayerConfiguration`: UI, looping, autoPlay, aspect ratio.
+  - `PlayerControlsConfiguration`: Colors, icons, padding for the control bar.
+- **Subtitles**: Pass `PlayerSubtitlesSource` directly into `PlayerDataSource`.
+- **Disposal**: Avoid using `controller.dispose()` manually unless you set `autoDispose: false`. It disposes automatically by default.
 
 ---
 
