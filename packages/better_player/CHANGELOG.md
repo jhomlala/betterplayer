@@ -1,4 +1,5 @@
 ## Unreleased
+- Fixed: Fullscreen mode on Android now extends behind notches and system UI elements to remove black strips (#1246).
 - Added: `pubspec.yaml` descriptions and `topics` across all packages for better pub.dev discoverability.
 - Updated: `README.md` and documentation to include AI agent guidelines, `llms.txt`, and competitor comparisons.
 - Fixed: Dispatch `changedPlaylistItem` event on playlist video change.
