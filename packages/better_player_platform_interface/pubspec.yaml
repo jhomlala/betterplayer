@@ -3,7 +3,12 @@ resolution: workspace
 description: A common platform interface for the better_player plugin, defining the shared API and data structures used across various platform implementations.
 version: 1.3.1
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_platform_interface
-
+topics:
+  - video
+  - player
+  - interface
+  - plugin
+  - streaming
 environment:
   sdk: "^3.12.0"
   flutter: ">=3.47.0"
