@@ -111,6 +111,9 @@ class BetterPlayerPlaylistController {
       _betterPlayerController!.setupDataSource(
         _betterPlayerDataSourceList[index],
       );
+      _betterPlayerController!.postEvent(
+        PlayerEvent(PlayerEventType.changedPlaylistItem),
+      );
     }
   }
 

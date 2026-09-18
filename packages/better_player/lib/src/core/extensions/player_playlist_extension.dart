@@ -49,7 +49,6 @@ extension PlayerPlaylistExtension on BetterPlayerController {
   void playNextVideo() {
     _nextVideoTime = 0;
     _nextVideoTimeStreamController.add(_nextVideoTime);
-    _postEvent(PlayerEvent(PlayerEventType.changedPlaylistItem));
     cancelNextVideoTimer();
   }
 }

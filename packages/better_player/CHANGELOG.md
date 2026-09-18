@@ -1,6 +1,7 @@
 ## Unreleased
 - Updated: `pubspec.yaml` descriptions and added `topics` across all packages for better pub.dev discoverability.
 - Updated: `README.md` and documentation to include AI agent guidelines, `llms.txt`, and competitor comparisons.
+- Fixed: Dispatch `changedPlaylistItem` event on playlist video change.
 - Fixed: Double/Triple screen glitch on `setResolution()` by sequencing `setupDataSource` controller events.
 - Fixed: Race conditions in unit tests for data source setup.
 
