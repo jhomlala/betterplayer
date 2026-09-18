@@ -1,5 +1,6 @@
 ﻿## Unreleased
 - Fixed: Double/Triple screen glitch on `setResolution()` by sequencing `setupDataSource` controller events.
+- Fixed: Race conditions in unit tests for data source setup.
 
 ## 1.10.0
 - Added: WebVTT metadata block parsing support for `NOTE`, `STYLE`, and `REGION` headers.

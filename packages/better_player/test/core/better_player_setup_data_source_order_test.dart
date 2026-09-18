@@ -21,6 +21,7 @@ void main() {
         PlayerDataSource.file('test/video.mp4'),
       );
 
+      await Future<void>.delayed(Duration.zero);
       // Verify that setupDataSource controller event was posted
       expect(events.contains(PlayerControllerEvent.setupDataSource), true);
     },
