@@ -10,9 +10,16 @@ test('web ffi flow', async ({ page }) => {
   // — a plain force-click sometimes doesn't trigger Flutter navigation.
   const ffiButton = page.locator('[aria-label^="better_player_e2e_navigate_ffi"]');
   await ffiButton.scrollIntoViewIfNeeded();
+  
   await expect(async () => {
-    await ffiButton.click({ force: true });
-    await expect(page.getByRole('heading', { name: 'FFI Method Test' })).toBeVisible({ timeout: 3000 });
+    const ffiTarget = page.locator('[flt-semantics-identifier^="ffi_test_"]').first();
+    if (await ffiTarget.isVisible()) return;
+
+    if (await ffiButton.isVisible()) {
+      await ffiButton.click({ force: true });
+    }
+    
+    await expect(ffiTarget).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 30000, intervals: [2000] });
 
   // Flutter Web Text nodes get flt-semantics-identifier (not aria-label)
