@@ -33,7 +33,7 @@ class BetterPlayerMaterialHitArea extends StatelessWidget {
       child: Center(
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
-          duration: controlsConfiguration.controlsHideTime,
+          duration: controlsConfiguration.controlsTransitionTime,
           child: BetterPlayerMaterialMiddleRow(
             controlsConfiguration: controlsConfiguration,
             onSkipBack: onSkipBack,
