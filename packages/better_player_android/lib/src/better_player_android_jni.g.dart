@@ -1897,6 +1897,39 @@ extension BetterPlayer$$Methods on BetterPlayer {
     return _get$textureId(_$$selfRef.pointer, _id_get$textureId.pointer).long;
   }
 
+  static final _id_set$matchFrameRate = BetterPlayer._class.instanceMethodId(
+    r'setMatchFrameRate',
+    r'(Z)V',
+  );
+
+  static final _set$matchFrameRate =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int32,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+            )
+          >();
+
+  /// from: `public fun setMatchFrameRate(match: kotlin.Boolean): kotlin.Unit`
+  set matchFrameRate(core$_.bool z) {
+    final _$$selfRef = reference;
+    _set$matchFrameRate(
+      _$$selfRef.pointer,
+      _id_set$matchFrameRate.pointer,
+      z ? 1 : 0,
+    ).check();
+  }
+
   static final _id_setDataSource = BetterPlayer._class.instanceMethodId(
     r'setDataSource',
     r'(Landroid/content/Context;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/Map;ZJJJLjava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V',
