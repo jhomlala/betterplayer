@@ -26,6 +26,8 @@ Here is a comprehensive breakdown of supported formats, streaming protocols, and
 | **Low-latency DASH** | ✓ | x | ✓ |
 
 > **Note on iOS:** iOS is heavily HLS-centric. Apple does not provide native support for DASH or SmoothStreaming in AVFoundation. If you need to support iOS, HLS is strongly recommended.
+> 
+> **Note on RTSP:** RTSP streaming is supported on Android via the ExoPlayer RTSP module. Native support for RTSP is not available on iOS (`AVPlayer`) or Web, and typically requires server-side proxying (e.g. transmuxing to WebRTC or HLS).
 
 ---
 

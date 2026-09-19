@@ -929,10 +929,67 @@ void main() {
             exceptionEvent?.parameters?['exception'],
             'DASH streams are not supported on iOS platform. Please use HLS instead.',
           );
-          expect(controller.isEngineReady, false);
+          expect(controller.isEngineReady, true);
         } finally {
           debugDefaultTargetPlatformOverride = previousPlatform;
           BetterPlayerPlatform.instance = previousInstance;
+        }
+      });
+
+      test('setupDataSource emits exception for RTSP on iOS', () async {
+        final previousPlatform = debugDefaultTargetPlatformOverride;
+        debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+        try {
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+          );
+          PlayerEvent? exceptionEvent;
+          controller.addEventsListener((event) {
+            if (event.betterPlayerEventType == PlayerEventType.exception) {
+              exceptionEvent = event;
+            }
+          });
+
+          await controller.setupDataSource(
+            PlayerDataSource.network('rtsp://example.com/video.mp4'),
+          );
+
+          expect(exceptionEvent != null, true);
+          expect(
+            exceptionEvent?.parameters?['exception'],
+            'Exception: RTSP is only supported on Android.',
+          );
+          expect(controller.isEngineReady, false);
+        } finally {
+          debugDefaultTargetPlatformOverride = previousPlatform;
+        }
+      });
+
+      test('setupDataSource allows RTSP on Android', () async {
+        final previousPlatform = debugDefaultTargetPlatformOverride;
+        debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        try {
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+          );
+          PlayerEvent? exceptionEvent;
+          controller.addEventsListener((event) {
+            if (event.betterPlayerEventType == PlayerEventType.exception) {
+              exceptionEvent = event;
+            }
+          });
+
+          await controller.setupDataSource(
+            PlayerDataSource.network('rtsp://example.com/video.mp4'),
+          );
+
+          expect(exceptionEvent == null, true);
+          expect(
+            controller.betterPlayerDataSource?.url,
+            'rtsp://example.com/video.mp4',
+          );
+        } finally {
+          debugDefaultTargetPlatformOverride = previousPlatform;
         }
       });
 

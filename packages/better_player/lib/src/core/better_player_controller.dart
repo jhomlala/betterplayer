@@ -293,7 +293,7 @@ class BetterPlayerController {
     }
 
     final currentVideoPlayerValue =
-        _engine?.value ?? VideoPlayerValue(duration: const Duration());
+        _engine?.value ?? VideoPlayerValue.uninitialized();
 
     if (currentVideoPlayerValue.initialized &&
         !_playbackState.hasCurrentDataSourceInitialized) {
