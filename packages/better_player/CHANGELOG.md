@@ -1,4 +1,6 @@
 ## Unreleased
+- Added: Supported RTSP streaming on Android via `androidx.media3:media3-exoplayer-rtsp`.
+- Fixed: Corrected class names and types in `rtsp_page.dart` example to fix compilation errors.
 - Fixed: Fullscreen mode on Android now extends behind notches and system UI elements to remove black strips (#1246).
 - Added: `pubspec.yaml` descriptions and `topics` across all packages for better pub.dev discoverability.
 - Updated: `README.md` and documentation to include AI agent guidelines, `llms.txt`, and competitor comparisons.

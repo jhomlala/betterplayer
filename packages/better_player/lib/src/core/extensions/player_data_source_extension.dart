@@ -85,6 +85,11 @@ extension PlayerDataSourceExtension on BetterPlayerController {
           },
         ),
       );
+      if (_engine != null) {
+        _engine!.value = _engine!.value.copyWith(
+          errorDescription: exception.toString(),
+        );
+      }
       return;
     }
 

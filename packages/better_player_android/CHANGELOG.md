@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Supported RTSP streaming on Android via `androidx.media3:media3-exoplayer-rtsp`.
+
 ## 1.3.1
 - Updated: package metadata
 

@@ -34,6 +34,7 @@ import androidx.media3.exoplayer.source.MediaSource
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.exoplayer.smoothstreaming.DefaultSsChunkSource
 import androidx.media3.exoplayer.smoothstreaming.SsMediaSource
+import androidx.media3.exoplayer.rtsp.RtspMediaSource
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.MediaSession
@@ -355,6 +356,7 @@ class BetterPlayer(
                 FORMAT_SS -> C.CONTENT_TYPE_SS
                 FORMAT_DASH -> C.CONTENT_TYPE_DASH
                 FORMAT_HLS -> C.CONTENT_TYPE_HLS
+                FORMAT_RTSP -> C.CONTENT_TYPE_RTSP
                 FORMAT_OTHER -> C.CONTENT_TYPE_OTHER
                 else -> -1
             }
@@ -395,6 +397,8 @@ class BetterPlayer(
                 DefaultExtractorsFactory()
             )
                 .setDrmSessionManagerProvider(drmSessionManagerProvider)
+                .createMediaSource(mediaItem)
+            C.CONTENT_TYPE_RTSP -> RtspMediaSource.Factory()
                 .createMediaSource(mediaItem)
             else -> {
                 throw IllegalStateException("Unsupported type: $type")
@@ -727,6 +731,7 @@ class BetterPlayer(
         private const val FORMAT_SS = "ss"
         private const val FORMAT_DASH = "dash"
         private const val FORMAT_HLS = "hls"
+        private const val FORMAT_RTSP = "rtsp"
         private const val FORMAT_OTHER = "other"
         private const val DEFAULT_NOTIFICATION_CHANNEL = "BETTER_PLAYER_NOTIFICATION"
         private const val NOTIFICATION_ID = 20772077

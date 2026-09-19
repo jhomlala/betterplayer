@@ -26,6 +26,7 @@ import 'package:better_player_example/pages/playlist_page.dart';
 import 'package:better_player_example/pages/resolutions_page.dart';
 import 'package:better_player_example/pages/reusable_video_list/reusable_video_list_page.dart';
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
+import 'package:better_player_example/pages/rtsp_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_page.dart';
 import 'package:better_player_example/utils/example_io_utils.dart';
@@ -223,6 +224,11 @@ class _WelcomePageState extends State<WelcomePage> {
         name: 'Controls always visible',
         identifier: 'welcome_page_item_controls_always_visible',
         onClicked: () => _navigateToPage(const ControlsAlwaysVisiblePage()),
+      ),
+      _WelcomePageItem(
+        name: 'RTSP (Android only)',
+        identifier: 'welcome_page_item_rtsp',
+        onClicked: () => _navigateToPage(const RtspPage()),
       ),
     ];
   }
