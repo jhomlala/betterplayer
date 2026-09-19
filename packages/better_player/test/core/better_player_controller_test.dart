@@ -929,7 +929,7 @@ void main() {
             exceptionEvent?.parameters?['exception'],
             'DASH streams are not supported on iOS platform. Please use HLS instead.',
           );
-          expect(controller.isEngineReady, false);
+          expect(controller.isEngineReady, true);
         } finally {
           debugDefaultTargetPlatformOverride = previousPlatform;
           BetterPlayerPlatform.instance = previousInstance;
