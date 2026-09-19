@@ -33,12 +33,12 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     _trackState = _trackState.copyWith(clearAsmsAudioTrack: true);
 
     ///Setup subtitles
-    final betterPlayerSubtitlesSourceList = betterPlayerDataSource.subtitles;
-    if (betterPlayerSubtitlesSourceList != null) {
+    final subtitles = betterPlayerDataSource.subtitles;
+    if (subtitles != null) {
       _subtitleState = _subtitleState.copyWith(
         subtitlesSourceList: [
           ..._subtitleState.subtitlesSourceList,
-          ...betterPlayerDataSource.subtitles!,
+          ...subtitles,
         ],
       );
     }
@@ -90,6 +90,19 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
     _setupSubtitles();
     setTrack(PlayerAsmsTrack.defaultTrack());
+
+    _postEvent(
+      PlayerEvent(
+        PlayerEventType.metadataReady,
+        parameters: <String, dynamic>{
+          PlayerEventConstants.asmsTracksParameter: betterPlayerAsmsTracks,
+          PlayerEventConstants.asmsAudioTracksParameter:
+              betterPlayerAsmsAudioTracks,
+          PlayerEventConstants.subtitlesParameter:
+              betterPlayerSubtitlesSourceList,
+        },
+      ),
+    );
   }
 
   ///Check if given [betterPlayerDataSource] is HLS / DASH-type data source.

@@ -25,4 +25,5 @@ enum PlayerEventType {
   bufferingUpdate,
   bufferingEnd,
   changedPlaylistItem,
+  metadataReady,
 }
