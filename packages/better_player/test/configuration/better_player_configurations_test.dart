@@ -27,6 +27,12 @@ void main() {
       expect(config.showNotification, null);
     });
 
+    test('PlayerControlsConfiguration default values', () {
+      const config = PlayerControlsConfiguration();
+      expect(config.controlsHideTime, const Duration(seconds: 3));
+      expect(config.controlsTransitionTime, const Duration(milliseconds: 300));
+    });
+
     test('PlayerControlsConfiguration factories', () {
       final white = PlayerControlsConfiguration.white();
       expect(white.controlBarColor, Colors.white);

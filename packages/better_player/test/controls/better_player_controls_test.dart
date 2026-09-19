@@ -124,6 +124,46 @@ void main() {
   );
 
   testWidgets(
+    'BetterPlayerMultipleGestureDetector double tap is handled',
+    (tester) async {
+      var doubleTapped = false;
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockPlayerEngineController(),
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
+          ),
+        ),
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayerMultipleGestureDetector(
+            onDoubleTap: () => doubleTapped = true,
+            child: BetterPlayer(
+              controller: controller,
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      await tester.tap(find.byType(BetterPlayer));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(find.byType(BetterPlayer));
+      await tester.pumpAndSettle();
+
+      expect(doubleTapped, true);
+    },
+  );
+
+  testWidgets(
     'Cupertino controls show play/pause button',
     (tester) async {
       final mockPlayerEngineController = MockPlayerEngineController();
