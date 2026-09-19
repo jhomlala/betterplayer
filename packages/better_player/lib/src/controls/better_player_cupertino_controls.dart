@@ -169,7 +169,8 @@ class _BetterPlayerCupertinoControlsState
                       ? cancelAndRestartTimer()
                       : changePlayerControlsNotVisible(true);
                 },
-                onDoubleTap: BetterPlayerMultipleGestureDetector.of(context) != null
+                onDoubleTap:
+                    BetterPlayerMultipleGestureDetector.of(context) != null
                     ? () {
                         BetterPlayerMultipleGestureDetector.of(
                           context,

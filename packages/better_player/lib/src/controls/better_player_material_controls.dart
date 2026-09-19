@@ -105,7 +105,8 @@ class _BetterPlayerMaterialControlsState
                       ? cancelAndRestartTimer()
                       : changePlayerControlsNotVisible(true);
                 },
-                onDoubleTap: BetterPlayerMultipleGestureDetector.of(context) != null
+                onDoubleTap:
+                    BetterPlayerMultipleGestureDetector.of(context) != null
                     ? () {
                         BetterPlayerMultipleGestureDetector.of(
                           context,
