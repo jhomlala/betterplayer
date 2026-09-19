@@ -62,7 +62,10 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
   }
 
   /// Sets the Android specific match frame rate setting
-  Future<void> setAndroidMatchFrameRate(int? textureId, bool matchFrameRate) async {
+  Future<void> setAndroidMatchFrameRate(
+    int? textureId,
+    bool matchFrameRate,
+  ) async {
     // No-op by default.
   }
 

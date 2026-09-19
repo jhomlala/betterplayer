@@ -25,6 +25,7 @@ The following matrix details the current feature support for Better Player acros
 | **Pre-caching & Stop Caching** | ✓ | ✓ | x |
 | **Background Audio / Notifications** | ✓ | ✓ | x |
 | **Mix Audio with Others** | ✓ | ✓ | x |
+| **Auto Frame Rate (AFR)** | ✓ | x | x |
 
 ## Platform Specific Details
 
@@ -32,6 +33,7 @@ The following matrix details the current feature support for Better Player acros
 * Android playback is powered by [ExoPlayer](https://exoplayer.dev/).
 * Full support for almost all streaming formats and advanced DRM (Widevine, ClearKey, PlayReady).
 * Robust caching capabilities through native ExoPlayer cache systems.
+* Support for **Auto Frame Rate (AFR)** matching via `_betterPlayerController.setAndroidMatchFrameRate(true)`, which seamlessly matches the device display refresh rate to the video's frame rate.
 
 ### iOS
 * iOS playback is powered by native `AVPlayer`.

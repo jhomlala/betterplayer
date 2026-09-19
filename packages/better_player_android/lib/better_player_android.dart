@@ -251,7 +251,10 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }
 
   @override
-  Future<void> setAndroidMatchFrameRate(int? textureId, bool matchFrameRate) async {
+  Future<void> setAndroidMatchFrameRate(
+    int? textureId,
+    bool matchFrameRate,
+  ) async {
     _players[textureId]?.setMatchFrameRate(matchFrameRate);
   }
 

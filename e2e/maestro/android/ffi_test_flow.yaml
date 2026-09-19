@@ -105,6 +105,17 @@ appId: pl.hasoft.example
 
 - scrollUntilVisible:
     element:
+      id: "ffi_test_status_setAndroidMatchFrameRate"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "ffi_test_button_setAndroidMatchFrameRate"
+- assertVisible:
+    id: "ffi_test_status_setAndroidMatchFrameRate"
+    text: ".*success=true.*"
+
+- scrollUntilVisible:
+    element:
       id: "ffi_test_status_setLooping"
     direction: DOWN
     centerElement: true

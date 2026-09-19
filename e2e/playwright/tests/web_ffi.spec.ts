@@ -41,6 +41,7 @@ test('web ffi flow', async ({ page }) => {
     'setTrackParameters',
     'setAudioTrack',
     'setMixWithOthers',
+    'setAndroidMatchFrameRate',
     'setLooping',
     'getPosition',
     'getAbsolutePosition',
