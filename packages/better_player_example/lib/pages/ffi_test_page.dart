@@ -133,150 +133,152 @@ class _FFITestPageState extends State<FFITestPage> {
                 ),
               ),
             const SizedBox(height: 16),
-            _buildTestButton(
-              'play',
-              () async => _betterPlayerController.play(),
-            ),
-            _buildTestButton(
-              'pause',
-              () async => _betterPlayerController.pause(),
-            ),
-            _buildTestButton(
-              'seekTo',
-              () async {
-                // Wait until the engine is truly initialized before seeking.
-                // The controller may still be buffering even after the
-                // initialized event fires on web.
-                var attempts = 0;
-                while (attempts < 10) {
-                  if (_betterPlayerController.videoPlayerValue?.initialized ==
-                      true) {
-                    break;
-                  }
-                  await Future<void>.delayed(const Duration(milliseconds: 500));
-                  attempts++;
-                }
-                await _betterPlayerController.seekTo(
-                  const Duration(seconds: 5),
-                );
-              },
-            ),
-            _buildTestButton(
-              'setVolume',
-              () async => _betterPlayerController.setVolume(0.8),
-            ),
-            _buildTestButton(
-              'setSpeed',
-              () async => _betterPlayerController.setSpeed(1.2),
-            ),
-            _buildTestButton(
-              'setTrackParameters',
-              () async {
-                await _betterPlayerController.setTrackParameters(
-                  width: 1280,
-                  height: 720,
-                  bitrate: 2000,
-                );
-              },
-            ),
-            _buildTestButton(
-              'setAudioTrack',
-              () async {
-                _betterPlayerController.setAudioTrack(
-                  PlayerAsmsAudioTrack(label: 'English', id: 0),
-                );
-              },
-            ),
-            _buildTestButton(
-              'setMixWithOthers',
-              () async {
-                _betterPlayerController.setMixWithOthers(true);
-              },
-            ),
-            _buildTestButton(
-              'setLooping',
-              () async => _betterPlayerController.setLooping(true),
-            ),
-            _buildTestButton(
-              'getPosition',
-              () async {
-                final pos = await _betterPlayerController.position;
-                if (pos == null) {
-                  throw Exception('getPosition returned null');
-                }
-                debugPrint('FFI Test getPosition result: $pos');
-              },
-            ),
-            _buildTestButton(
-              'getAbsolutePosition',
-              () async {
-                final absPos = await _betterPlayerController.absolutePosition;
-                debugPrint('FFI Test getAbsolutePosition result: $absPos');
-              },
-            ),
-            _buildTestButton(
-              'playerValue',
-              () async {
-                final value = _betterPlayerController.videoPlayerValue;
-                if (value == null) {
-                  throw Exception('videoPlayerValue returned null');
-                }
-                debugPrint('FFI Test playerValue result: $value');
-              },
-            ),
-            _buildTestButton(
-              'duration',
-              () async {
-                final dur = _betterPlayerController.duration;
-                if (dur == null || dur <= Duration.zero) {
-                  throw Exception('duration returned invalid value: $dur');
-                }
-                debugPrint('FFI Test duration result: $dur');
-              },
-            ),
-            _buildTestButton(
-              'isInitialized',
-              () async {
-                final initialized = _betterPlayerController.isInitialized;
-                if (!initialized) {
-                  throw Exception('isInitialized returned false');
-                }
-                debugPrint('FFI Test isInitialized result: $initialized');
-              },
-            ),
-            _buildTestButton(
-              'isPictureInPictureSupported',
-              () async {
-                final supported = await _betterPlayerController
-                    .isPictureInPictureSupported();
-                debugPrint(
-                  'FFI Test isPictureInPictureSupported result: $supported',
-                );
-              },
-            ),
-            _buildTestButton(
-              'preCache',
-              () async => _betterPlayerController.preCache(
-                PlayerDataSource(
-                  DataSourceType.network,
-                  Constants.bugBuckBunnyVideoUrl,
+            Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                _buildTestButton(
+                  'play',
+                  () async => _betterPlayerController.play(),
                 ),
-              ),
-            ),
-            _buildTestButton(
-              'stopPreCache',
-              () async => _betterPlayerController.stopPreCache(
-                PlayerDataSource(
-                  DataSourceType.network,
-                  Constants.bugBuckBunnyVideoUrl,
+                _buildTestButton(
+                  'pause',
+                  () async => _betterPlayerController.pause(),
                 ),
-              ),
+                _buildTestButton(
+                  'seekTo',
+                  () async {
+                    var attempts = 0;
+                    while (attempts < 10) {
+                      if (_betterPlayerController.videoPlayerValue?.initialized ==
+                          true) {
+                        break;
+                      }
+                      await Future<void>.delayed(const Duration(milliseconds: 500));
+                      attempts++;
+                    }
+                    await _betterPlayerController.seekTo(
+                      const Duration(seconds: 5),
+                    );
+                  },
+                ),
+                _buildTestButton(
+                  'setVolume',
+                  () async => _betterPlayerController.setVolume(0.8),
+                ),
+                _buildTestButton(
+                  'setSpeed',
+                  () async => _betterPlayerController.setSpeed(1.2),
+                ),
+                _buildTestButton(
+                  'setTrackParameters',
+                  () async {
+                    await _betterPlayerController.setTrackParameters(
+                      width: 1280,
+                      height: 720,
+                      bitrate: 2000,
+                    );
+                  },
+                ),
+                _buildTestButton(
+                  'setAudioTrack',
+                  () async {
+                    _betterPlayerController.setAudioTrack(
+                      PlayerAsmsAudioTrack(label: 'English', id: 0),
+                    );
+                  },
+                ),
+                _buildTestButton(
+                  'setMixWithOthers',
+                  () async {
+                    _betterPlayerController.setMixWithOthers(true);
+                  },
+                ),
+                _buildTestButton(
+                  'setLooping',
+                  () async => _betterPlayerController.setLooping(true),
+                ),
+                _buildTestButton(
+                  'getPosition',
+                  () async {
+                    final pos = await _betterPlayerController.position;
+                    if (pos == null) {
+                      throw Exception('getPosition returned null');
+                    }
+                    debugPrint('FFI Test getPosition result: $pos');
+                  },
+                ),
+                _buildTestButton(
+                  'getAbsolutePosition',
+                  () async {
+                    final absPos = await _betterPlayerController.absolutePosition;
+                    debugPrint('FFI Test getAbsolutePosition result: $absPos');
+                  },
+                ),
+                _buildTestButton(
+                  'playerValue',
+                  () async {
+                    final value = _betterPlayerController.videoPlayerValue;
+                    if (value == null) {
+                      throw Exception('videoPlayerValue returned null');
+                    }
+                    debugPrint('FFI Test playerValue result: $value');
+                  },
+                ),
+                _buildTestButton(
+                  'duration',
+                  () async {
+                    final dur = _betterPlayerController.duration;
+                    if (dur == null || dur <= Duration.zero) {
+                      throw Exception('duration returned invalid value: $dur');
+                    }
+                    debugPrint('FFI Test duration result: $dur');
+                  },
+                ),
+                _buildTestButton(
+                  'isInitialized',
+                  () async {
+                    final initialized = _betterPlayerController.isInitialized;
+                    if (!initialized) {
+                      throw Exception('isInitialized returned false');
+                    }
+                    debugPrint('FFI Test isInitialized result: $initialized');
+                  },
+                ),
+                _buildTestButton(
+                  'isPictureInPictureSupported',
+                  () async {
+                    final supported = await _betterPlayerController
+                        .isPictureInPictureSupported();
+                    debugPrint(
+                      'FFI Test isPictureInPictureSupported result: $supported',
+                    );
+                  },
+                ),
+                _buildTestButton(
+                  'preCache',
+                  () async => _betterPlayerController.preCache(
+                    PlayerDataSource(
+                      DataSourceType.network,
+                      Constants.bugBuckBunnyVideoUrl,
+                    ),
+                  ),
+                ),
+                _buildTestButton(
+                  'stopPreCache',
+                  () async => _betterPlayerController.stopPreCache(
+                    PlayerDataSource(
+                      DataSourceType.network,
+                      Constants.bugBuckBunnyVideoUrl,
+                    ),
+                  ),
+                ),
+                _buildTestButton(
+                  'clearCache',
+                  () async => _betterPlayerController.clearCache(),
+                ),
+              ],
             ),
-            _buildTestButton(
-              'clearCache',
-              () async => _betterPlayerController.clearCache(),
-            ),
-            const SizedBox(height: 400),
+            const SizedBox(height: 100),
           ],
         ),
       ),
@@ -295,9 +297,11 @@ class _FFITestPageState extends State<FFITestPage> {
       color = Colors.red;
     }
 
-    return Padding(
+    return Container(
+      width: 300,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Expanded(
             child: Semantics(
