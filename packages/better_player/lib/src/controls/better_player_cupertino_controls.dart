@@ -169,15 +169,15 @@ class _BetterPlayerCupertinoControlsState
                       ? cancelAndRestartTimer()
                       : changePlayerControlsNotVisible(true);
                 },
-                onDoubleTap: () {
-                  if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-                    BetterPlayerMultipleGestureDetector.of(
-                      context,
-                    )!.onDoubleTap?.call();
-                  }
-                  cancelAndRestartTimer();
-                  _onPlayPause();
-                },
+                onDoubleTap: BetterPlayerMultipleGestureDetector.of(context) != null
+                    ? () {
+                        BetterPlayerMultipleGestureDetector.of(
+                          context,
+                        )!.onDoubleTap?.call();
+                        cancelAndRestartTimer();
+                        _onPlayPause();
+                      }
+                    : null,
                 onLongPress: () {
                   if (BetterPlayerMultipleGestureDetector.of(context) != null) {
                     BetterPlayerMultipleGestureDetector.of(

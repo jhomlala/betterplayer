@@ -105,14 +105,14 @@ class _BetterPlayerMaterialControlsState
                       ? cancelAndRestartTimer()
                       : changePlayerControlsNotVisible(true);
                 },
-                onDoubleTap: () {
-                  if (BetterPlayerMultipleGestureDetector.of(context) != null) {
-                    BetterPlayerMultipleGestureDetector.of(
-                      context,
-                    )!.onDoubleTap?.call();
-                  }
-                  cancelAndRestartTimer();
-                },
+                onDoubleTap: BetterPlayerMultipleGestureDetector.of(context) != null
+                    ? () {
+                        BetterPlayerMultipleGestureDetector.of(
+                          context,
+                        )!.onDoubleTap?.call();
+                        cancelAndRestartTimer();
+                      }
+                    : null,
                 onLongPress: () {
                   if (BetterPlayerMultipleGestureDetector.of(context) != null) {
                     BetterPlayerMultipleGestureDetector.of(
