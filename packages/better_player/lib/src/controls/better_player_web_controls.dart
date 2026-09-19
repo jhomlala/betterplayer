@@ -245,7 +245,7 @@ class _BetterPlayerWebControlsState
                     // Controls overlay
                     AnimatedOpacity(
                       opacity: _controlsNotVisible ? 0.0 : 1.0,
-                      duration: widget.controlsConfiguration.controlsHideTime,
+                      duration: widget.controlsConfiguration.controlsTransitionTime,
                       child: IgnorePointer(
                         ignoring: _controlsNotVisible,
                         child: Column(

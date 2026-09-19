@@ -30,7 +30,8 @@ class PlayerControlsConfiguration {
     this.progressBarHandleColor = Colors.white,
     this.progressBarBufferedColor = Colors.white70,
     this.progressBarBackgroundColor = Colors.white60,
-    this.controlsHideTime = const Duration(milliseconds: 300),
+    this.controlsHideTime = const Duration(seconds: 3),
+    this.controlsTransitionTime = const Duration(milliseconds: 300),
     this.customControlsBuilder,
     this.playerTheme,
     this.showControls = true,
@@ -159,6 +160,9 @@ class PlayerControlsConfiguration {
 
   ///Time to hide controls
   final Duration controlsHideTime;
+
+  ///Time of the transition animation
+  final Duration controlsTransitionTime;
 
   /// Parameter used to build custom controls.
   /// NOTE: This will only be used if [playerTheme] is set to [PlayerTheme.custom].

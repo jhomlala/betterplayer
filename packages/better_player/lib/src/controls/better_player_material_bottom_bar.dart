@@ -40,7 +40,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
     }
     return AnimatedOpacity(
       opacity: controlsNotVisible ? 0.0 : 1.0,
-      duration: controlsConfiguration.controlsHideTime,
+      duration: controlsConfiguration.controlsTransitionTime,
       onEnd: onPlayerHide,
       child: SizedBox(
         height: controlsConfiguration.controlBarHeight + 20.0,
@@ -170,7 +170,7 @@ class _BetterPlayerMaterialMuteButton extends StatelessWidget {
       semanticsIdentifier: 'better_player_material_controls_mute_button',
       child: AnimatedOpacity(
         opacity: controlsNotVisible ? 0.0 : 1.0,
-        duration: controlsConfiguration.controlsHideTime,
+        duration: controlsConfiguration.controlsTransitionTime,
         child: ClipRect(
           child: Container(
             height: controlsConfiguration.controlBarHeight,
@@ -212,7 +212,7 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
         semanticsIdentifier: 'better_player_material_controls_expand_button',
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
-          duration: controlsConfiguration.controlsHideTime,
+          duration: controlsConfiguration.controlsTransitionTime,
           child: Container(
             height: controlsConfiguration.controlBarHeight,
             padding: const EdgeInsets.symmetric(horizontal: 8),
