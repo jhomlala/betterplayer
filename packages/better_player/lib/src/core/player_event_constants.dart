@@ -20,4 +20,13 @@ class PlayerEventConstants {
 
   /// HTTP Header key used specifically for DRM authentication tokens.
   static const String authorizationHeader = 'Authorization';
+
+  /// Parameter key used to pass the list of ASMS (HLS/DASH) video tracks.
+  static const String asmsTracksParameter = 'asmsTracks';
+
+  /// Parameter key used to pass the list of ASMS (HLS/DASH) audio tracks.
+  static const String asmsAudioTracksParameter = 'asmsAudioTracks';
+
+  /// Parameter key used to pass the list of available subtitle sources.
+  static const String subtitlesParameter = 'subtitles';
 }

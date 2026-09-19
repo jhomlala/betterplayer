@@ -6,8 +6,10 @@
 - Fixed: Double/Triple screen glitch on `setResolution()` by sequencing `setupDataSource` controller events.
 - Fixed: Race conditions in unit tests for data source setup.
 - Fixed: `controlsHideTime` not respected in Material and Cupertino controls (#1278).
+- Added: `metadataReady` event to signal when all adaptive tracks and subtitles are fully parsed and available (#1370).
 - Fixed: Conditionally disabled `onDoubleTap` in player controls to eliminate the 300ms single-tap lag when no custom double-tap gesture is provided.
 - Fixed: Separated controls visibility timer (`controlsHideTime`) and transition animation duration (`controlsTransitionTime`) to prevent instantaneous hiding of controls.
+
 
 ## 1.10.0
 - Added: WebVTT metadata block parsing support for `NOTE`, `STYLE`, and `REGION` headers.
