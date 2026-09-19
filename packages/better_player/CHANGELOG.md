@@ -5,6 +5,7 @@
 - Fixed: Double/Triple screen glitch on `setResolution()` by sequencing `setupDataSource` controller events.
 - Fixed: Race conditions in unit tests for data source setup.
 - Fixed: `controlsHideTime` not respected in Material and Cupertino controls (#1278).
+- Fixed: Separated controls visibility timer (`controlsHideTime`) and transition animation duration (`controlsTransitionTime`) to prevent instantaneous hiding of controls.
 
 ## 1.10.0
 - Added: WebVTT metadata block parsing support for `NOTE`, `STYLE`, and `REGION` headers.
