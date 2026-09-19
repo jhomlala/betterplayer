@@ -161,7 +161,9 @@ Switching from another package? Check out our step-by-step migration guides:
 ## 🤝 Contributing
 Valuable contributions are welcome! Better Player is a community-driven project. If you encounter bugs or have feature requests, please open an issue. If you want to contribute code, feel free to submit a Pull Request.
 
-## 📄 License
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+## 💼 Custom Integrations & Enterprise Support
+Better Player has been the go-to Flutter video player since its first release, powering countless applications. If your team needs something beyond what's available out of the box — a custom video source adapter, bespoke DRM implementations, tailored UI controls, specialized caching architectures, or anything else — I'm available for consulting.
+
+[Let's talk on LinkedIn →](https://pl.linkedin.com/in/jhomlala)
 
 
