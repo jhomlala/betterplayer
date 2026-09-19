@@ -73,10 +73,9 @@ extension PlayerDataSourceExtension on BetterPlayerController {
         textureId: textureId,
         error: exception,
       );
-      if (createdNewController) {
-        _engine?.dispose();
-        _engine = null;
-      }
+      // We no longer dispose the engine here, because we need it to broadcast
+      // the error state to the UI via `hasError`. It will be disposed when
+      // the controller itself is disposed.
       _postEvent(
         PlayerEvent(
           PlayerEventType.exception,
