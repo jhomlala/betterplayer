@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Configurable Android Auto Frame Rate (AFR) matching via ExoPlayer's `setVideoChangeFrameRateStrategy`.
+
 ## 1.4.0
 - Added: Supported RTSP streaming on Android via `androidx.media3:media3-exoplayer-rtsp`.
 

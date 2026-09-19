@@ -118,6 +118,9 @@ void main() {
 
         await androidPlayer.setMixWithOthers(1, true);
         verify(() => mockPlayer.mixWithOthers = true).called(1);
+
+        await androidPlayer.setAndroidMatchFrameRate(1, true);
+        verify(() => mockPlayer.setMatchFrameRate(true)).called(1);
       },
     );
 
