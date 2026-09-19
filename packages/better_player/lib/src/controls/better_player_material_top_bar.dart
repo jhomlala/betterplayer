@@ -28,7 +28,7 @@ class BetterPlayerMaterialTopBar extends StatelessWidget {
       child: (controlsConfiguration.enableOverflowMenu)
           ? AnimatedOpacity(
               opacity: controlsNotVisible ? 0.0 : 1.0,
-              duration: controlsConfiguration.controlsHideTime,
+              duration: controlsConfiguration.controlsTransitionTime,
               onEnd: onPlayerHide,
               child: SizedBox(
                 height: controlsConfiguration.controlBarHeight,
@@ -105,7 +105,7 @@ class _BetterPlayerMaterialPipButtonWrapperState
         if (isPipSupported && widget.controller.betterPlayerGlobalKey != null) {
           return AnimatedOpacity(
             opacity: widget.controlsNotVisible ? 0.0 : 1.0,
-            duration: widget.controlsConfiguration.controlsHideTime,
+            duration: widget.controlsConfiguration.controlsTransitionTime,
             onEnd: widget.onPlayerHide,
             child: SizedBox(
               height: widget.controlsConfiguration.controlBarHeight,

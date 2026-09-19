@@ -143,7 +143,7 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
         button: true,
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
-          duration: controlsConfiguration.controlsHideTime,
+          duration: controlsConfiguration.controlsTransitionTime,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Container(
@@ -224,7 +224,7 @@ class _BetterPlayerCupertinoPipButtonState
               button: true,
               child: AnimatedOpacity(
                 opacity: widget.controlsNotVisible ? 0.0 : 1.0,
-                duration: widget.controlsConfiguration.controlsHideTime,
+                duration: widget.controlsConfiguration.controlsTransitionTime,
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
@@ -293,7 +293,7 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
         button: true,
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
-          duration: controlsConfiguration.controlsHideTime,
+          duration: controlsConfiguration.controlsTransitionTime,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Container(
@@ -348,7 +348,7 @@ class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
         button: true,
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
-          duration: controlsConfiguration.controlsHideTime,
+          duration: controlsConfiguration.controlsTransitionTime,
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Container(

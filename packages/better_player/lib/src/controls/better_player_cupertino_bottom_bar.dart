@@ -47,7 +47,7 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
     }
     return AnimatedOpacity(
       opacity: controlsNotVisible ? 0.0 : 1.0,
-      duration: controlsConfiguration.controlsHideTime,
+      duration: controlsConfiguration.controlsTransitionTime,
       onEnd: onPlayerHide,
       child: Container(
         alignment: Alignment.bottomCenter,
