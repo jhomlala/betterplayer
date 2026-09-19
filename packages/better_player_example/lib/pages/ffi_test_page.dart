@@ -149,11 +149,15 @@ class _FFITestPageState extends State<FFITestPage> {
                   () async {
                     var attempts = 0;
                     while (attempts < 10) {
-                      if (_betterPlayerController.videoPlayerValue?.initialized ==
+                      if (_betterPlayerController
+                              .videoPlayerValue
+                              ?.initialized ==
                           true) {
                         break;
                       }
-                      await Future<void>.delayed(const Duration(milliseconds: 500));
+                      await Future<void>.delayed(
+                        const Duration(milliseconds: 500),
+                      );
                       attempts++;
                     }
                     await _betterPlayerController.seekTo(
@@ -210,7 +214,8 @@ class _FFITestPageState extends State<FFITestPage> {
                 _buildTestButton(
                   'getAbsolutePosition',
                   () async {
-                    final absPos = await _betterPlayerController.absolutePosition;
+                    final absPos =
+                        await _betterPlayerController.absolutePosition;
                     debugPrint('FFI Test getAbsolutePosition result: $absPos');
                   },
                 ),
