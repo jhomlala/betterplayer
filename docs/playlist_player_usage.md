@@ -41,3 +41,15 @@ Widget build(BuildContext context) {
   );
 }
 ```
+
+## Playlist Navigation
+
+You can manually control playlist playback using the `BetterPlayerPlaylistController`:
+
+```dart
+// To play the next video in the playlist
+betterPlayerPlaylistController.playNextVideo();
+
+// To play the previous video in the playlist
+betterPlayerPlaylistController.playPreviousVideo();
+```
