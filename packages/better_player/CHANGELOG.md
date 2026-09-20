@@ -1,5 +1,6 @@
 ## Unreleased
 - Added: Support for playback speeds up to 4x (lifting the previous 2x cap).
+- Added: Configurable Android Auto Frame Rate (AFR) matching via `BetterPlayerController.setAndroidMatchFrameRate(bool)`.
 
 ## 1.11.0
 - Added: Supported RTSP streaming on Android via `androidx.media3:media3-exoplayer-rtsp`.

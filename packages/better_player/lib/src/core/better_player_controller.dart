@@ -128,6 +128,21 @@ class BetterPlayerController {
     }
   }
 
+  /// Enables automatic display frame rate matching on Android.
+  ///
+  /// When enabled, ExoPlayer will attempt to match the display's refresh
+  /// rate to the video's frame rate using [C.VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS].
+  ///
+  /// ⚠️ Hardware-dependent. Some Android TV devices may flicker or
+  /// briefly black out during frame rate transitions.
+  /// Android only, no-op on iOS and web.
+  void setAndroidMatchFrameRate(bool matchFrameRate) {
+    BetterPlayerPlatform.instance.setAndroidMatchFrameRate(
+      _engine?.textureId,
+      matchFrameRate,
+    );
+  }
+
   /// Retrieves the current configuration used for the player's UI controls.
   /// Allows external components to inspect how controls are structured (e.g., icons, colors, layout).
   PlayerControlsConfiguration get betterPlayerControlsConfiguration =>

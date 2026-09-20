@@ -251,6 +251,14 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setAndroidMatchFrameRate(
+    int? textureId,
+    bool matchFrameRate,
+  ) async {
+    _players[textureId]?.setMatchFrameRate(matchFrameRate);
+  }
+
+  @override
   Future<void> setLooping(int? textureId, bool looping) async {
     _players[textureId]?.looping = looping;
   }
@@ -489,6 +497,7 @@ abstract class BetterPlayerWrapper {
   void seekTo(int positionMs);
   int get position;
   int get absolutePosition;
+  void setMatchFrameRate(bool matchFrameRate);
 }
 
 class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
@@ -590,4 +599,9 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
 
   @override
   int get absolutePosition => _player.absolutePosition;
+
+  @override
+  void setMatchFrameRate(bool matchFrameRate) {
+    (_player as dynamic).setMatchFrameRate(matchFrameRate);
+  }
 }
