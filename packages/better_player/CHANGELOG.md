@@ -1,5 +1,6 @@
 ## Unreleased
 - Added: Configurable Android Auto Frame Rate (AFR) matching via `BetterPlayerController.setAndroidMatchFrameRate(bool)`.
+- Added: `playPreviousVideo()` method to `BetterPlayerController` and `BetterPlayerPlaylistController` to support playlist backward navigation.
 
 ## 1.11.0
 - Added: Supported RTSP streaming on Android via `androidx.media3:media3-exoplayer-rtsp`.

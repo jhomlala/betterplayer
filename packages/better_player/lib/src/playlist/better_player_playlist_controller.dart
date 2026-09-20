@@ -54,8 +54,12 @@ class BetterPlayerPlaylistController {
     _nextVideoTimeStreamSubscription = _betterPlayerController!
         .nextVideoTimeStream
         .listen((time) {
-          if (time != null && time == 0) {
-            _onVideoChange();
+          if (time != null) {
+            if (time == 0) {
+              _onVideoChange();
+            } else if (time == -1) {
+              playPreviousVideo();
+            }
           }
         });
   }
@@ -67,6 +71,23 @@ class BetterPlayerPlaylistController {
     _betterPlayerDataSourceList.clear();
     _betterPlayerDataSourceList.addAll(dataSourceList);
     _setup();
+  }
+
+  ///Play next video.
+  void playNextVideo() {
+    _onVideoChange();
+  }
+
+  ///Play previous video.
+  void playPreviousVideo() {
+    final previousDataSourceIndex = _getPreviousDataSourceIndex();
+    if (previousDataSourceIndex == -1) {
+      return;
+    }
+    if (_betterPlayerController!.isFullScreen) {
+      _betterPlayerController!.exitFullScreen();
+    }
+    setupDataSource(previousDataSourceIndex);
   }
 
   ///Handle video change signal from BetterPlayerController. Setup new data
@@ -129,6 +150,23 @@ class BetterPlayerPlaylistController {
     } else {
       if (betterPlayerPlaylistConfiguration.loopVideos) {
         return 0;
+      } else {
+        return -1;
+      }
+    }
+  }
+
+  ///Get index of previous data source. If current index is greater than 0,
+  ///then previous element will be picked, otherwise if loops is enabled
+  ///then last element of [_betterPlayerDataSourceList] will be picked,
+  ///otherwise -1 will be returned.
+  int _getPreviousDataSourceIndex() {
+    final currentIndex = _currentDataSourceIndex;
+    if (currentIndex - 1 >= 0) {
+      return currentIndex - 1;
+    } else {
+      if (betterPlayerPlaylistConfiguration.loopVideos) {
+        return _dataSourceLength - 1;
       } else {
         return -1;
       }

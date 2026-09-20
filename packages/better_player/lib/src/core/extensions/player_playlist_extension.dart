@@ -51,4 +51,11 @@ extension PlayerPlaylistExtension on BetterPlayerController {
     _nextVideoTimeStreamController.add(_nextVideoTime);
     cancelNextVideoTimer();
   }
+
+  ///Play previous video form playlist. Do not use manually.
+  void playPreviousVideo() {
+    _nextVideoTime = -1;
+    _nextVideoTimeStreamController.add(_nextVideoTime);
+    cancelNextVideoTimer();
+  }
 }

@@ -30,4 +30,27 @@ void main() {
       PlayerEventType.changedPlaylistItem,
     );
   });
+
+  test('playPreviousVideo changes current data source index', () async {
+    BetterPlayerTestUtils.setupMockPlatform();
+
+    final dataSourceList = [
+      PlayerDataSource.network('https://example.com/video1.mp4'),
+      PlayerDataSource.network('https://example.com/video2.mp4'),
+      PlayerDataSource.network('https://example.com/video3.mp4'),
+    ];
+
+    final playlistController = BetterPlayerPlaylistController(
+      dataSourceList,
+      betterPlayerPlaylistConfiguration: const PlayerPlaylistConfiguration(
+        initialStartIndex: 1,
+      ),
+    );
+
+    expect(playlistController.currentDataSourceIndex, 1);
+
+    playlistController.playPreviousVideo();
+
+    expect(playlistController.currentDataSourceIndex, 0);
+  });
 }

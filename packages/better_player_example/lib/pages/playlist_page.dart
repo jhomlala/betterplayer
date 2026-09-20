@@ -107,6 +107,12 @@ class _PlaylistPageState extends State<PlaylistPage> {
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    _betterPlayerPlaylistController!.playPreviousVideo();
+                  },
+                  child: const Text('Play previous video'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
                     _betterPlayerPlaylistController!.setupDataSource(2);
                   },
                   child: const Text('Change to last source'),
