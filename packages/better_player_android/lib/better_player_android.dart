@@ -71,13 +71,13 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }) async {
     int? currentTextureId;
 
-    StreamController<VideoEvent>? eventController() =>
+    StreamController<VideoEvent>? getEventController() =>
         currentTextureId == null ? null : _eventControllers[currentTextureId];
 
     final callback = buildCallback(
       $BetterPlayerCallback(
         onInitialized: (int durationMs, int width, int height, JString? key) {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(
               eventType: VideoEventType.initialized,
               key: key?.toDartString(),
@@ -88,7 +88,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onInitialized$async: true,
         onCompleted: (JString? key) {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(
               eventType: VideoEventType.completed,
               key: key?.toDartString(),
@@ -97,19 +97,19 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onCompleted$async: true,
         onPlay: () {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(eventType: VideoEventType.play, key: null),
           );
         },
         onPlay$async: true,
         onPause: () {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(eventType: VideoEventType.pause, key: null),
           );
         },
         onPause$async: true,
         onSeek: (int positionMs) {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(
               eventType: VideoEventType.seek,
               key: null,
@@ -119,19 +119,19 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onSeek$async: true,
         onBufferingStart: () {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(eventType: VideoEventType.bufferingStart, key: null),
           );
         },
         onBufferingStart$async: true,
         onBufferingEnd: () {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(eventType: VideoEventType.bufferingEnd, key: null),
           );
         },
         onBufferingEnd$async: true,
         onBufferingUpdate: (int bufferedMs) {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
               key: null,
@@ -146,19 +146,19 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onBufferingUpdate$async: true,
         onPipStart: () {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(eventType: VideoEventType.pipStart, key: null),
           );
         },
         onPipStart$async: true,
         onPipStop: () {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(eventType: VideoEventType.pipStop, key: null),
           );
         },
         onPipStop$async: true,
         onChangedSize: (int width, int height, JString? key) {
-          eventController()?.add(
+          getEventController()?.add(
             VideoEvent(
               eventType: VideoEventType.changedSize,
               key: key?.toDartString(),
@@ -169,7 +169,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         onChangedSize$async: true,
         onError:
             (JString errorCode, JString errorMessage, JString errorDetails) {
-              eventController()?.addError(
+              getEventController()?.addError(
                 PlatformException(
                   code: errorCode.toDartString(),
                   message: errorMessage.toDartString(),

@@ -109,19 +109,25 @@ void main() {
         verify(() => androidPlayer.mockPlayer.speed = 1.5).called(1);
 
         await androidPlayer.setTrackParameters(1, 1920, 1080, 5000);
-        verify(() => androidPlayer.mockPlayer.setTrackParameters(1920, 1080, 5000)).called(1);
+        verify(
+          () => androidPlayer.mockPlayer.setTrackParameters(1920, 1080, 5000),
+        ).called(1);
 
         await androidPlayer.setLooping(1, true);
         verify(() => androidPlayer.mockPlayer.looping = true).called(1);
 
         await androidPlayer.setAudioTrack(1, 'eng', 1);
-        verify(() => androidPlayer.mockPlayer.setAudioTrack(any(), 1)).called(1);
+        verify(
+          () => androidPlayer.mockPlayer.setAudioTrack(any(), 1),
+        ).called(1);
 
         await androidPlayer.setMixWithOthers(1, true);
         verify(() => androidPlayer.mockPlayer.mixWithOthers = true).called(1);
 
         await androidPlayer.setAndroidMatchFrameRate(1, true);
-        verify(() => androidPlayer.mockPlayer.setMatchFrameRate(true)).called(1);
+        verify(
+          () => androidPlayer.mockPlayer.setMatchFrameRate(true),
+        ).called(1);
       },
     );
 
@@ -258,8 +264,10 @@ void main() {
       final sub2 = stream2.listen(events2.add);
 
       // Extract the captured JNI callbacks
-      final callback1 = androidPlayer.capturedCallbacks[0] as $BetterPlayerCallback;
-      final callback2 = androidPlayer.capturedCallbacks[1] as $BetterPlayerCallback;
+      final callback1 =
+          androidPlayer.capturedCallbacks[0] as $BetterPlayerCallback;
+      final callback2 =
+          androidPlayer.capturedCallbacks[1] as $BetterPlayerCallback;
 
       // Fire an event on player 2's callback
       callback2.onPlay();
@@ -269,7 +277,11 @@ void main() {
 
       expect(events2, hasLength(1));
       expect(events2.first.eventType, VideoEventType.play);
-      expect(events1, isEmpty, reason: 'Player 1 should not receive player 2 events');
+      expect(
+        events1,
+        isEmpty,
+        reason: 'Player 1 should not receive player 2 events',
+      );
 
       await sub1.cancel();
       await sub2.cancel();
