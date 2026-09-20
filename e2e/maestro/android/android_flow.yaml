@@ -44,10 +44,10 @@ appId: pl.hasoft.example
     id: "better_player_overflow_menu_playback_speed"
 - scrollUntilVisible:
     element:
-      id: "better_player_overflow_menu_speed_4.0"
+      id: "better_player_overflow_menu_speed_2.0"
     direction: DOWN
 - tapOn:
-    id: "better_player_overflow_menu_speed_4.0"
+    id: "better_player_overflow_menu_speed_2.0"
 
 # Quality Selection test (Auto)
 - tapOn:
