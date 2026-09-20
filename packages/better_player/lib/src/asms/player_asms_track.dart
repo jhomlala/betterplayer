@@ -36,8 +36,8 @@ class PlayerAsmsTrack {
   final String? mimeType;
 
   @override
-  // ignore: unnecessary_overrides
-  int get hashCode => super.hashCode;
+  int get hashCode =>
+      Object.hash(id, width, height, bitrate, frameRate, codecs, mimeType);
 
   @override
   bool operator ==(dynamic other) {
