@@ -56,8 +56,10 @@ segment2.vtt
       );
     });
 
-    test('parseTracks filters out zero-info variants and populates id with URL', () async {
-      const masterData = '''
+    test(
+      'parseTracks filters out zero-info variants and populates id with URL',
+      () async {
+        const masterData = '''
 #EXTM3U
 #EXT-X-STREAM-INF:BANDWIDTH=1280000
 video_with_bandwidth.m3u8
@@ -65,22 +67,23 @@ video_with_bandwidth.m3u8
 video_without_anything.m3u8
 ''';
 
-      final client = MockClient((request) async {
-        return http.Response('', 404);
-      });
+        final client = MockClient((request) async {
+          return http.Response('', 404);
+        });
 
-      final tracks = await BetterPlayerHlsUtils(
-        httpClient: client,
-      ).parseTracks(masterData, 'https://example.com/master.m3u8');
+        final tracks = await BetterPlayerHlsUtils(
+          httpClient: client,
+        ).parseTracks(masterData, 'https://example.com/master.m3u8');
 
-      // 1 default track + 1 parsed track = 2 tracks
-      expect(tracks.length, 2);
-      
-      final parsedTrack = tracks[1];
-      expect(parsedTrack.id, 'https://example.com/video_with_bandwidth.m3u8');
-      expect(parsedTrack.bitrate, 1280000);
-      expect(parsedTrack.width, isNull);
-      expect(parsedTrack.height, isNull);
-    });
+        // 1 default track + 1 parsed track = 2 tracks
+        expect(tracks.length, 2);
+
+        final parsedTrack = tracks[1];
+        expect(parsedTrack.id, 'https://example.com/video_with_bandwidth.m3u8');
+        expect(parsedTrack.bitrate, 1280000);
+        expect(parsedTrack.width, isNull);
+        expect(parsedTrack.height, isNull);
+      },
+    );
   });
 }
