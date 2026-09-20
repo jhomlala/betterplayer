@@ -107,3 +107,27 @@ dart run scripts/create_pull_request.dart <TITLE> <HEAD_BRANCH> <BASE_BRANCH> <B
   `dart run scripts/create_pull_request.dart "docs: update PIP" "docs/pip-configuration" "master" "pr_body.md"`
 - Custom repository:
   `dart run scripts/create_pull_request.dart "fix: some bug" "fix/bug-branch" "main" "pr_body.md" flutter/flutter`
+
+
+## Changing an Issue State
+
+To automate changing a GitHub Issue state (e.g., closing or re-opening), use the Dart script located at `scripts/change_issue_state.dart`.
+
+### Requirements
+- Make sure you have a GitHub Personal Access Token exported in your environment variables:
+  `$env:GITHUB_TOKEN="your_token_here"`
+
+### Usage
+Run the following command from the root of the project:
+```powershell
+dart run scripts/change_issue_state.dart <ISSUE_NUMBER> <STATE> [owner/repo]
+```
+
+### Examples
+- Close an issue:
+  `dart run scripts/change_issue_state.dart 1377 closed`
+- Re-open an issue:
+  `dart run scripts/change_issue_state.dart 1377 open`
+- Custom repository:
+  `dart run scripts/change_issue_state.dart 1234 closed flutter/flutter`
+
