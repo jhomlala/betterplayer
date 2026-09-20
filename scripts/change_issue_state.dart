@@ -25,7 +25,9 @@ void main(List<String> args) async {
     exit(1);
   }
 
-  final uri = Uri.parse('https://api.github.com/repos/$repo/issues/$issueNumber');
+  final uri = Uri.parse(
+    'https://api.github.com/repos/$repo/issues/$issueNumber',
+  );
 
   // We use PATCH method to update the issue state
   final request = await HttpClient().patchUrl(uri)
