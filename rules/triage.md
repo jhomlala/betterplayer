@@ -11,6 +11,7 @@ Always be pessimistic about issues reported by users if the evidence isn't clear
 > **Temporary Files**: Any temporary files created during triage (like draft comment bodies, fetched JSON, etc.) should be written to the `.tmp/` directory in the root of the repository.
 > **CRITICAL**: Never post a comment to GitHub without obtaining explicit user approval first. Before posting, you MUST present the exact text of the proposed comment to the operator and wait for their confirmation.
 > **CRITICAL**: Comments should be natural and human-like. Avoid using labels like "Triage Analysis" or "Issue Triage Report" in the actual comments posted to GitHub.
+> **CRITICAL**: Never use the web browser or any web search tool during triage. All GitHub data must be fetched exclusively using the scripts documented in `rules/github.md`. Reading any web page — including the GitHub issue page directly in a browser — is strictly forbidden.
 
 ---
 
@@ -37,6 +38,7 @@ You MUST complete all of the following before doing any analysis:
 ❌ **Do NOT** jump to "core bug fix" without checking docs/example first.  
 ❌ **Do NOT** assume the version is current — check what the user reported.  
 ❌ **Do NOT** treat a Question/Support issue as a bug.  
+❌ **Do NOT** use the web browser or web search — use only the scripts in `rules/github.md` and the data they return.  
 ✅ **DO** write the draft comment to `.tmp/` and present it in full before asking for approval.  
 ✅ **DO** check the Known Patterns section before concluding.  
 ✅ **DO** scan the source code before giving a final decision.
