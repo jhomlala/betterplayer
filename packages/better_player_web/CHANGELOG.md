@@ -1,3 +1,6 @@
+## 1.1.2
+- Updated: etter_player_platform_interface version bump.
+
 ## 1.1.1
 - Updated: package metadata
 
@@ -11,6 +14,7 @@
 ## 1.0.0
 
 * Initial release of better_player_web package.
+
 
 
 

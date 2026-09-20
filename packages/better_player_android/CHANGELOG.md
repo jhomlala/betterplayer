@@ -1,4 +1,4 @@
-## Unreleased
+## 1.5.0
 - Added: Configurable Android Auto Frame Rate (AFR) matching via ExoPlayer's `setVideoChangeFrameRateStrategy`.
 - Fixed: Resolved issue where video events were broadcast to all active players instead of the specific player instance by correctly capturing the texture ID.
 

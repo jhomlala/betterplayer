@@ -1,4 +1,4 @@
-## Unreleased
+## 1.4.0
 - Updated: Increased playback speed limit to 4x and improved audio quality at high speeds using `.timeDomain` pitch algorithm.
 - Fixed: Programmatic PiP dismissal no longer stops the parent media player.
 

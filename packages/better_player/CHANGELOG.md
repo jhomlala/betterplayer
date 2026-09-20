@@ -1,4 +1,4 @@
-## Unreleased
+## 1.12.0
 - Added: Configurable list of playback speeds via `PlayerControlsConfiguration.playbackSpeeds` (defaults to `0.25` - `2.0`).
 - Added: Configurable Android Auto Frame Rate (AFR) matching via `BetterPlayerController.setAndroidMatchFrameRate(bool)`.
 - Added: `playPreviousVideo()` method to `BetterPlayerController` and `BetterPlayerPlaylistController` to support playlist backward navigation.

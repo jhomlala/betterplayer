@@ -1,4 +1,4 @@
-## Unreleased
+## 1.3.2
 - Updated: Updated doc comment for setSpeed to reflect the new 4.0 limit.
 
 ## 1.3.1
