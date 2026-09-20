@@ -264,8 +264,6 @@ void main() {
       final sub2 = stream2.listen(events2.add);
 
       // Extract the captured JNI callbacks
-      final callback1 =
-          androidPlayer.capturedCallbacks[0] as $BetterPlayerCallback;
       final callback2 =
           androidPlayer.capturedCallbacks[1] as $BetterPlayerCallback;
 
