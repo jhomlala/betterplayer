@@ -251,7 +251,10 @@ class HlsPlaylistParser {
         noClosedCaptions |= line.contains(
           attrClosedCaptionsNone,
         ); // TODO: Revisit
-        final bitrateString = _parseStringAttr(source: line, pattern: regexpBandwidth);
+        final bitrateString = _parseStringAttr(
+          source: line,
+          pattern: regexpBandwidth,
+        );
         final bitrate = bitrateString != null ? int.parse(bitrateString) : null;
         var averageBitrate = 0;
         final averageBandwidthString = _parseStringAttr(

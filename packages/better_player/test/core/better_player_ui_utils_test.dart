@@ -102,9 +102,9 @@ video.m3u8
         data,
         'https://example.com/manifest.mpd',
       );
-      expect(holder.tracks!.length, 1);
+      expect(holder.tracks!.length, 2); // Auto track + 1080p track
       expect(holder.audios!.length, 1);
-      expect(holder.tracks![0].width, 1920);
+      expect(holder.tracks![1].width, 1920);
       expect(holder.audios![0].language, 'en');
     });
 
@@ -122,8 +122,8 @@ video.m3u8
         data,
         'https://example.com/manifest.mpd',
       );
-      expect(holder.tracks!.length, 1);
-      expect(holder.tracks![0].width, 0);
+      expect(holder.tracks!.length, 2); // Auto track + 1 track
+      expect(holder.tracks![1].width, 0);
     });
 
     test('parse correctly parses DASH subtitles', () async {
