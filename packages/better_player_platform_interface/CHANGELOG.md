@@ -1,5 +1,5 @@
 ## Unreleased
-- Updated: Documentation to reflect support for playback speeds up to 4x.
+- Updated: Updated doc comment for setSpeed to reflect the new 4.0 limit.
 
 ## 1.3.1
 - Updated: package metadata
