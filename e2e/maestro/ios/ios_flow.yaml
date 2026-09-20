@@ -37,8 +37,10 @@ appId: pl.hasoft.example
     timeout: 5000
 - tapOn:
     id: "better_player_overflow_menu_playback_speed"
+- assertVisible:
+    id: "better_player_overflow_menu_speed_4.0"
 - tapOn:
-    id: "better_player_overflow_menu_speed_2.0"
+    id: "better_player_overflow_menu_speed_4.0"
 
 # Quality Selection test (Auto)
 - tapOn:
