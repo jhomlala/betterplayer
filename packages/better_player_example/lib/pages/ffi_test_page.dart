@@ -198,6 +198,12 @@ class _FFITestPageState extends State<FFITestPage> {
                   },
                 ),
                 _buildTestButton(
+                  'setAndroidMatchFrameRate',
+                  () async {
+                    _betterPlayerController.setAndroidMatchFrameRate(true);
+                  },
+                ),
+                _buildTestButton(
                   'setLooping',
                   () async => _betterPlayerController.setLooping(true),
                 ),

@@ -118,6 +118,15 @@ class BetterPlayer(
     }
 
     @Keep
+    fun setMatchFrameRate(match: Boolean) {
+        if (match) {
+            exoPlayer?.setVideoChangeFrameRateStrategy(C.VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS)
+        } else {
+            exoPlayer?.setVideoChangeFrameRateStrategy(C.VIDEO_CHANGE_FRAME_RATE_STRATEGY_OFF)
+        }
+    }
+
+    @Keep
     fun setDataSource(
         context: Context,
         key: String?,

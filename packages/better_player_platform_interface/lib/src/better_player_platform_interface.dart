@@ -61,6 +61,14 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setDataSource() has not been implemented.');
   }
 
+  /// Sets the Android specific match frame rate setting
+  Future<void> setAndroidMatchFrameRate(
+    int? textureId,
+    bool matchFrameRate,
+  ) async {
+    // No-op by default.
+  }
+
   /// Returns a Stream of [VideoEvent]s.
   Stream<VideoEvent> videoEventsFor(int? textureId) {
     throw UnimplementedError('videoEventsFor() has not been implemented.');

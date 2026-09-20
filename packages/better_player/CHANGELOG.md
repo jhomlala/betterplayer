@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Configurable Android Auto Frame Rate (AFR) matching via `BetterPlayerController.setAndroidMatchFrameRate(bool)`.
+
 ## 1.11.0
 - Added: Supported RTSP streaming on Android via `androidx.media3:media3-exoplayer-rtsp`.
 - Added: Prevented player initialization for RTSP streams on iOS, Web, and Desktop, gracefully failing with a clear UI error instead of a native crash.
