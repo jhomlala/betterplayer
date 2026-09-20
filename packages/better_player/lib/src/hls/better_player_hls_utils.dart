@@ -59,7 +59,7 @@ class BetterPlayerHlsUtils {
               variant.format.bitrate ?? variant.format.averageBitrate;
           if (variant.format.width == null &&
               variant.format.height == null &&
-3              (effectiveBitrate == null || effectiveBitrate == 0)) {
+              (effectiveBitrate == null || effectiveBitrate == 0)) {
             continue;
           }
           tracks.add(
