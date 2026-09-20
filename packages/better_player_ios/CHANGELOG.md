@@ -1,4 +1,4 @@
-## 1.4.0
+## Unreleased
 - Updated: Increased playback speed limit to 4x and improved audio quality at high speeds using `.timeDomain` pitch algorithm.
 
 ## 1.3.1

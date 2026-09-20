@@ -1,4 +1,4 @@
-## 1.12.0
+## Unreleased
 - Added: Support for playback speeds up to 4x (lifting the previous 2x cap).
 
 ## 1.11.0
