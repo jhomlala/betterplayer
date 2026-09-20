@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Support for playback speeds up to 4x (lifting the previous 2x cap).
+
 ## 1.11.0
 - Added: Supported RTSP streaming on Android via `androidx.media3:media3-exoplayer-rtsp`.
 - Added: Prevented player initialization for RTSP streams on iOS, Web, and Desktop, gracefully failing with a clear UI error instead of a native crash.

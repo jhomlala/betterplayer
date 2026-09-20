@@ -174,7 +174,9 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   void _showSpeedChooserWidget() {
     _showModalBottomSheet(
-      [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0].map((speed) {
+      [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.5, 3.0, 3.5, 4.0].map((
+        speed,
+      ) {
         final isSelected =
             betterPlayerController?.videoPlayerValue?.speed == speed;
         return _BetterPlayerBottomSheetMenuItem(

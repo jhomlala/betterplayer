@@ -457,16 +457,18 @@ void main() {
         expect(mockPlayerEngineController.speed, 1.1);
         await betterPlayerMockController.setSpeed(0.5);
         expect(mockPlayerEngineController.speed, 0.5);
+        await betterPlayerMockController.setSpeed(2.5);
+        expect(mockPlayerEngineController.speed, 2.5);
         expect(
-          betterPlayerMockController.setSpeed(2.5),
+          betterPlayerMockController.setSpeed(4.1),
           throwsA(isA<ArgumentError>()),
         );
-        expect(mockPlayerEngineController.speed, 0.5);
+        expect(mockPlayerEngineController.speed, 2.5);
         expect(
           betterPlayerMockController.setSpeed(0),
           throwsA(isA<ArgumentError>()),
         );
-        expect(mockPlayerEngineController.speed, 0.5);
+        expect(mockPlayerEngineController.speed, 2.5);
       });
 
       test(

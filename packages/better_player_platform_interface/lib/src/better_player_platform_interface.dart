@@ -86,7 +86,7 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setVolume() has not been implemented.');
   }
 
-  /// Sets the video speed to a range between 0.0 and 2.0
+  /// Sets the video speed to a range between 0.0 and 4.0
   Future<void> setSpeed(int? textureId, double speed) {
     throw UnimplementedError('setSpeed() has not been implemented.');
   }
