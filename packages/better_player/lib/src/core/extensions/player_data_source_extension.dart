@@ -36,7 +36,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
           },
         ),
       );
-      if (_engine != null) {
+      if (_engine != null && !_disposed) {
         _engine!.value = _engine!.value.copyWith(
           errorDescription: exception.toString(),
         );
@@ -78,6 +78,9 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     }
     try {
       await Future.wait(setupFutures);
+      if (_disposed) {
+        return;
+      }
       // Both the public player event and the internal controller event are
       // posted after setup completes to avoid triggering widget rebuilds
       // before the new data source is fully initialised (fixes #1311).
@@ -111,7 +114,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
           },
         ),
       );
-      if (_engine != null) {
+      if (_engine != null && !_disposed) {
         _engine!.value = _engine!.value.copyWith(
           errorDescription: exception.toString(),
         );
