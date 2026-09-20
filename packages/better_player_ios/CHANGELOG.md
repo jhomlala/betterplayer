@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Programmatic PiP dismissal no longer stops the parent media player.
+
 ## 1.3.1
 - Updated: package metadata
 
