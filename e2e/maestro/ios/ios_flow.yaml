@@ -37,8 +37,10 @@ appId: pl.hasoft.example
     timeout: 5000
 - tapOn:
     id: "better_player_overflow_menu_playback_speed"
-- assertVisible:
-    id: "better_player_overflow_menu_speed_4.0"
+- scrollUntilVisible:
+    element:
+      id: "better_player_overflow_menu_speed_4.0"
+    direction: DOWN
 - tapOn:
     id: "better_player_overflow_menu_speed_4.0"
 
