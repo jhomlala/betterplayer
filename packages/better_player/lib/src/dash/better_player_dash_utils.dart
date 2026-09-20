@@ -36,6 +36,9 @@ class BetterPlayerDashUtils {
         error: exception,
       );
     }
+    if (tracks.isNotEmpty) {
+      tracks.insert(0, PlayerAsmsTrack.defaultTrack());
+    }
     return PlayerAsmsDataHolder(
       tracks: tracks,
       audios: audios,

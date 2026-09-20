@@ -55,12 +55,19 @@ class BetterPlayerHlsUtils {
       );
       if (parsedPlaylist is HlsMasterPlaylist) {
         for (final variant in parsedPlaylist.variants) {
+          final effectiveBitrate =
+              variant.format.bitrate ?? variant.format.averageBitrate;
+          if (variant.format.width == null &&
+              variant.format.height == null &&
+              effectiveBitrate == null) {
+            continue;
+          }
           tracks.add(
             PlayerAsmsTrack(
-              '',
+              variant.url.toString(),
               variant.format.width,
               variant.format.height,
-              variant.format.bitrate,
+              effectiveBitrate,
               0,
               '',
               '',
