@@ -69,15 +69,12 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,
   }) async {
-    int? currentTextureId;
-
-    StreamController<VideoEvent>? getEventController() =>
-        currentTextureId == null ? null : _eventControllers[currentTextureId];
+    final tempController = StreamController<VideoEvent>.broadcast();
 
     final callback = buildCallback(
       $BetterPlayerCallback(
         onInitialized: (int durationMs, int width, int height, JString? key) {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(
               eventType: VideoEventType.initialized,
               key: key?.toDartString(),
@@ -88,7 +85,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onInitialized$async: true,
         onCompleted: (JString? key) {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(
               eventType: VideoEventType.completed,
               key: key?.toDartString(),
@@ -97,19 +94,19 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onCompleted$async: true,
         onPlay: () {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(eventType: VideoEventType.play, key: null),
           );
         },
         onPlay$async: true,
         onPause: () {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(eventType: VideoEventType.pause, key: null),
           );
         },
         onPause$async: true,
         onSeek: (int positionMs) {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(
               eventType: VideoEventType.seek,
               key: null,
@@ -119,19 +116,19 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onSeek$async: true,
         onBufferingStart: () {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(eventType: VideoEventType.bufferingStart, key: null),
           );
         },
         onBufferingStart$async: true,
         onBufferingEnd: () {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(eventType: VideoEventType.bufferingEnd, key: null),
           );
         },
         onBufferingEnd$async: true,
         onBufferingUpdate: (int bufferedMs) {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
               key: null,
@@ -146,19 +143,19 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         },
         onBufferingUpdate$async: true,
         onPipStart: () {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(eventType: VideoEventType.pipStart, key: null),
           );
         },
         onPipStart$async: true,
         onPipStop: () {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(eventType: VideoEventType.pipStop, key: null),
           );
         },
         onPipStop$async: true,
         onChangedSize: (int width, int height, JString? key) {
-          getEventController()?.add(
+          tempController.add(
             VideoEvent(
               eventType: VideoEventType.changedSize,
               key: key?.toDartString(),
@@ -169,7 +166,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         onChangedSize$async: true,
         onError:
             (JString errorCode, JString errorMessage, JString errorDetails) {
-              getEventController()?.addError(
+              tempController.addError(
                 PlatformException(
                   code: errorCode.toDartString(),
                   message: errorMessage.toDartString(),
@@ -182,15 +179,17 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     );
 
     final player = createJniPlayer(callback);
-    if (player == null) return null;
+    if (player == null) {
+      await tempController.close();
+      return null;
+    }
 
-    currentTextureId = getTextureIdFromPlayer(player);
-    _players[currentTextureId] = createWrapper(player);
-    _callbacks[currentTextureId] = callback;
-    _eventControllers[currentTextureId] =
-        StreamController<VideoEvent>.broadcast();
+    final textureId = getTextureIdFromPlayer(player);
+    _players[textureId] = createWrapper(player);
+    _callbacks[textureId] = callback;
+    _eventControllers[textureId] = tempController;
 
-    return currentTextureId;
+    return textureId;
   }
 
   @override

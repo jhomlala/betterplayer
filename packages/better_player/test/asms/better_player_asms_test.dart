@@ -56,7 +56,8 @@ void main() {
 
       expect(track1 == track2, true);
       expect(track1 == track3, false);
-      expect(track1.hashCode, track1.hashCode);
+      expect(track1.hashCode, track2.hashCode);
+      expect(track1.hashCode == track3.hashCode, false);
     });
 
     test('PlayerAsmsTrack.defaultTrack initialization', () {
