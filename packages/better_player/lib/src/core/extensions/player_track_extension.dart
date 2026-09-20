@@ -22,11 +22,18 @@ extension PlayerTrackExtension on BetterPlayerController {
       ),
     );
 
-    _engine!.setTrackParameters(
-      width: track.width,
-      height: track.height,
-      bitrate: track.bitrate,
-    );
+    final isDefaultTrack = track == PlayerAsmsTrack.defaultTrack();
+    if (isDefaultTrack) {
+      _engine!.setTrackParameters(width: 0, height: 0, bitrate: 0);
+    } else {
+      final effectiveBitrate = (track.bitrate ?? 0) > 0 ? track.bitrate : null;
+      final hasSize = (track.width ?? 0) > 0 && (track.height ?? 0) > 0;
+      _engine!.setTrackParameters(
+        width: hasSize ? track.width : null,
+        height: hasSize ? track.height : null,
+        bitrate: effectiveBitrate,
+      );
+    }
     _trackState = _trackState.copyWith(asmsTrack: track);
   }
 

@@ -191,9 +191,21 @@ class BetterPlayerController {
   /// Useful for populating a quality selection menu.
   List<PlayerAsmsTrack> get betterPlayerAsmsTracks => _trackState.asmsTracks;
 
-  /// Retrieves the specifically selected ASMS video track dictating current resolution and bitrate.
-  /// Returns null if the player is utilizing automatic adaptive streaming.
   PlayerAsmsTrack? get betterPlayerAsmsTrack => _trackState.asmsTrack;
+
+  /// The best available dimensions for the currently playing rendition.
+  ///
+  /// When a specific track is selected its declared [PlayerAsmsTrack.width] /
+  /// [PlayerAsmsTrack.height] are used. When in Auto mode (or when the manifest
+  /// omitted dimensions), falls back to the runtime size reported by the engine.
+  Size? get currentVideoSize {
+    final trackWidth = betterPlayerAsmsTrack?.width ?? 0;
+    final trackHeight = betterPlayerAsmsTrack?.height ?? 0;
+    if (trackWidth > 0 && trackHeight > 0) {
+      return Size(trackWidth.toDouble(), trackHeight.toDouble());
+    }
+    return _engine?.value.size;
+  }
 
   /// Retrieves the complete list of alternative audio tracks parsed from ASMS (HLS/DASH) streams.
   /// Useful for populating a language or descriptive audio selection menu.

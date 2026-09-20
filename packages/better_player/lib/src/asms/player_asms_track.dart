@@ -42,6 +42,7 @@ class PlayerAsmsTrack {
   @override
   bool operator ==(dynamic other) {
     return other is PlayerAsmsTrack &&
+        id == other.id &&
         width == other.width &&
         height == other.height &&
         bitrate == other.bitrate &&
@@ -49,4 +50,8 @@ class PlayerAsmsTrack {
         codecs == other.codecs &&
         mimeType == other.mimeType;
   }
+
+  @override
+  String toString() =>
+      'PlayerAsmsTrack(id: $id, ${width}x$height @ ${bitrate}bps)';
 }
