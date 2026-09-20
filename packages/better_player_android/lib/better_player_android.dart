@@ -69,132 +69,113 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   Future<int?> create({
     BufferingConfiguration? bufferingConfiguration,
   }) async {
+    int? currentTextureId;
+
+    StreamController<VideoEvent>? getEventController() =>
+        currentTextureId == null ? null : _eventControllers[currentTextureId];
+
     final callback = buildCallback(
       $BetterPlayerCallback(
         onInitialized: (int durationMs, int width, int height, JString? key) {
-          // Broadcast to all since we don't know textureId yet, or match by key.
-          final videoEvent = VideoEvent(
-            eventType: VideoEventType.initialized,
-            key: key?.toDartString(),
-            duration: Duration(milliseconds: durationMs),
-            size: Size(width.toDouble(), height.toDouble()),
+          getEventController()?.add(
+            VideoEvent(
+              eventType: VideoEventType.initialized,
+              key: key?.toDartString(),
+              duration: Duration(milliseconds: durationMs),
+              size: Size(width.toDouble(), height.toDouble()),
+            ),
           );
-          for (final controller in _eventControllers.values) {
-            controller.add(videoEvent);
-          }
         },
         onInitialized$async: true,
         onCompleted: (JString? key) {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(
-                eventType: VideoEventType.completed,
-                key: key?.toDartString(),
-              ),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(
+              eventType: VideoEventType.completed,
+              key: key?.toDartString(),
+            ),
+          );
         },
         onCompleted$async: true,
         onPlay: () {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(eventType: VideoEventType.play, key: null),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(eventType: VideoEventType.play, key: null),
+          );
         },
         onPlay$async: true,
         onPause: () {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(eventType: VideoEventType.pause, key: null),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(eventType: VideoEventType.pause, key: null),
+          );
         },
         onPause$async: true,
         onSeek: (int positionMs) {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(
-                eventType: VideoEventType.seek,
-                key: null,
-                position: Duration(milliseconds: positionMs),
-              ),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(
+              eventType: VideoEventType.seek,
+              key: null,
+              position: Duration(milliseconds: positionMs),
+            ),
+          );
         },
         onSeek$async: true,
         onBufferingStart: () {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(eventType: VideoEventType.bufferingStart, key: null),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(eventType: VideoEventType.bufferingStart, key: null),
+          );
         },
         onBufferingStart$async: true,
         onBufferingEnd: () {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(eventType: VideoEventType.bufferingEnd, key: null),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(eventType: VideoEventType.bufferingEnd, key: null),
+          );
         },
         onBufferingEnd$async: true,
         onBufferingUpdate: (int bufferedMs) {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(
-                eventType: VideoEventType.bufferingUpdate,
-                key: null,
-                buffered: [
-                  DurationRange(
-                    Duration.zero,
-                    Duration(milliseconds: bufferedMs),
-                  ),
-                ],
-              ),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(
+              eventType: VideoEventType.bufferingUpdate,
+              key: null,
+              buffered: [
+                DurationRange(
+                  Duration.zero,
+                  Duration(milliseconds: bufferedMs),
+                ),
+              ],
+            ),
+          );
         },
         onBufferingUpdate$async: true,
         onPipStart: () {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(eventType: VideoEventType.pipStart, key: null),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(eventType: VideoEventType.pipStart, key: null),
+          );
         },
         onPipStart$async: true,
         onPipStop: () {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(eventType: VideoEventType.pipStop, key: null),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(eventType: VideoEventType.pipStop, key: null),
+          );
         },
         onPipStop$async: true,
         onChangedSize: (int width, int height, JString? key) {
-          for (final controller in _eventControllers.values) {
-            controller.add(
-              VideoEvent(
-                eventType: VideoEventType.changedSize,
-                key: key?.toDartString(),
-                size: Size(width.toDouble(), height.toDouble()),
-              ),
-            );
-          }
+          getEventController()?.add(
+            VideoEvent(
+              eventType: VideoEventType.changedSize,
+              key: key?.toDartString(),
+              size: Size(width.toDouble(), height.toDouble()),
+            ),
+          );
         },
         onChangedSize$async: true,
         onError:
             (JString errorCode, JString errorMessage, JString errorDetails) {
-              for (final controller in _eventControllers.values) {
-                controller.addError(
-                  PlatformException(
-                    code: errorCode.toDartString(),
-                    message: errorMessage.toDartString(),
-                    details: errorDetails.toDartString(),
-                  ),
-                );
-              }
+              getEventController()?.addError(
+                PlatformException(
+                  code: errorCode.toDartString(),
+                  message: errorMessage.toDartString(),
+                  details: errorDetails.toDartString(),
+                ),
+              );
             },
         onError$async: true,
       ),
@@ -203,12 +184,13 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     final player = createJniPlayer(callback);
     if (player == null) return null;
 
-    final textureId = getTextureIdFromPlayer(player);
-    _players[textureId] = createWrapper(player);
-    _callbacks[textureId] = callback;
-    _eventControllers[textureId] = StreamController<VideoEvent>.broadcast();
+    currentTextureId = getTextureIdFromPlayer(player);
+    _players[currentTextureId] = createWrapper(player);
+    _callbacks[currentTextureId] = callback;
+    _eventControllers[currentTextureId] =
+        StreamController<VideoEvent>.broadcast();
 
-    return textureId;
+    return currentTextureId;
   }
 
   @override

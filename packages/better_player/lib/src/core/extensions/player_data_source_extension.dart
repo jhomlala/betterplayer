@@ -357,7 +357,16 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     _videoEventStreamSubscription = null;
 
     _videoEventStreamSubscription = _engine?.videoEventStreamController.stream
-        .listen(_handleVideoEvent);
+        .listen(
+          _handleVideoEvent,
+          onError: (dynamic error) {
+            PlayerLogger.error(
+              message: 'Video event stream error: $error',
+              textureId: textureId,
+              error: error,
+            );
+          },
+        );
 
     final fullScreenByDefault = betterPlayerConfiguration.fullScreenByDefault;
     if (betterPlayerConfiguration.autoPlay) {
