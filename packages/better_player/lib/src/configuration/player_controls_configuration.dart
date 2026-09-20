@@ -59,6 +59,16 @@ class PlayerControlsConfiguration {
     this.backgroundColor = Colors.black,
     this.overflowModalColor = Colors.white,
     this.overflowModalTextColor = Colors.black,
+    this.playbackSpeeds = const [
+      0.25,
+      0.5,
+      0.75,
+      1.0,
+      1.25,
+      1.5,
+      1.75,
+      2.0,
+    ],
   });
 
   factory PlayerControlsConfiguration.white() {
@@ -254,4 +264,7 @@ class PlayerControlsConfiguration {
 
   ///Color of text in bottom modal sheet used for overflow menu items.
   final Color overflowModalTextColor;
+
+  ///List of available playback speeds in the overflow menu
+  final List<double> playbackSpeeds;
 }

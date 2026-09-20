@@ -71,6 +71,7 @@ Customize the look of the seek bar:
 *   **`controlBarHeight`**: Adjust the height of the control bar.
 *   **`liveTextColor`**: The color of the "LIVE" indicator text.
 *   **`overflowMenuCustomItems`**: A list of `PlayerOverflowMenuItem` to add custom actions to the overflow menu.
+*   **`playbackSpeeds`**: Define a custom list of speeds available in the playback speed menu (default: `[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]`).
 *   **`forwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped forward (default: 15s).
 *   **`backwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped backward (default: 15s).
 *   **`sigmaX`, `sigmaY`**: (iOS only) The quality of the Gaussian Blur applied to the background.

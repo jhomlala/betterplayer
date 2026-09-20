@@ -467,6 +467,9 @@ private var presentationSizeContext = 0
     }
 
     private func applyPlayerRate() {
+        if #available(iOS 10.0, *) {
+            player.currentItem?.audioTimePitchAlgorithm = .timeDomain
+        }
         if #available(iOS 16, *) {
             player.defaultRate = playerRate
         }
@@ -606,7 +609,7 @@ private var presentationSizeContext = 0
     ///   - speed: The playback speed.
     @objc public func setSpeed(_ speed: Double) {
         BetterPlayerApi.log(0, "setSpeed: \(speed)")
-        guard speed >= 0, speed <= 2.0 else { return }
+        guard speed >= 0, speed <= 4.0 else { return }
         playerRate = Float(speed == 0.0 ? 1.0 : speed)
         if isPlaying {
             applyPlayerRate()

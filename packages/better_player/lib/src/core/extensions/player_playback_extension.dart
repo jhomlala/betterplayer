@@ -90,10 +90,10 @@ extension PlayerPlaybackExtension on BetterPlayerController {
     );
   }
 
-  ///Set playback speed of video. Allows to set speed value between 0 and 2.
+  ///Set playback speed of video. Allows to set speed value between 0 and 4.
   Future<void> setSpeed(double speed) async {
-    if (speed <= 0 || speed > 2) {
-      throw ArgumentError('Speed must be between 0 and 2');
+    if (speed <= 0 || speed > 4) {
+      throw ArgumentError('Speed must be between 0 and 4');
     }
     if (_engine == null) {
       throw StateError('The data source has not been initialized');
