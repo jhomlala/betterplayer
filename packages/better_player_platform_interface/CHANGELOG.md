@@ -1,4 +1,4 @@
-## Unreleased
+## 1.3.2
 - Updated: Documentation to reflect support for playback speeds up to 4x.
 
 ## 1.3.1
