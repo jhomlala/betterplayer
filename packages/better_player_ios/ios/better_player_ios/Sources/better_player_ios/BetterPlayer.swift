@@ -716,7 +716,7 @@ private var presentationSizeContext = 0
     /// Disables Picture-in-Picture.
     @objc public func disablePictureInPicture() {
         BetterPlayerApi.log(1, "disablePictureInPicture()")
-        setPictureInPicture(true)
+        setPictureInPicture(false)
         if let layer = playerLayerRef {
             layer.removeFromSuperlayer()
             playerLayerRef = nil
