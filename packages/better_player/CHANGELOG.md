@@ -1,5 +1,5 @@
 ## Unreleased
-- Added: Support for playback speeds up to 4x (lifting the previous 2x cap).
+- Added: Configurable list of playback speeds via `PlayerControlsConfiguration.playbackSpeeds` (defaults to `0.25` - `2.0`).
 - Added: Configurable Android Auto Frame Rate (AFR) matching via `BetterPlayerController.setAndroidMatchFrameRate(bool)`.
 
 ## 1.11.0
