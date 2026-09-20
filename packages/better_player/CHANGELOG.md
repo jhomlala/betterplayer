@@ -2,6 +2,9 @@
 - Added: Configurable list of playback speeds via `PlayerControlsConfiguration.playbackSpeeds` (defaults to `0.25` - `2.0`).
 - Added: Configurable Android Auto Frame Rate (AFR) matching via `BetterPlayerController.setAndroidMatchFrameRate(bool)`.
 - Added: `playPreviousVideo()` method to `BetterPlayerController` and `BetterPlayerPlaylistController` to support playlist backward navigation.
+- Fixed: Improved track detection and selection logic for ASMS (HLS/DASH) streams, including better fallback for missing dimensions and proper variant identification.
+- Added: `BetterPlayerController.currentVideoSize` getter to retrieve the runtime dimensions of the currently playing stream rendition.
+- Updated: Enhanced `PlayerLogger` to include `textureId` in logs, facilitating better debugging for multi-player scenarios.
 
 ## 1.11.0
 - Added: Supported RTSP streaming on Android via `androidx.media3:media3-exoplayer-rtsp`.

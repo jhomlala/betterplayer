@@ -36,12 +36,13 @@ class PlayerAsmsTrack {
   final String? mimeType;
 
   @override
-  // ignore: unnecessary_overrides
-  int get hashCode => super.hashCode;
+  int get hashCode =>
+      Object.hash(id, width, height, bitrate, frameRate, codecs, mimeType);
 
   @override
   bool operator ==(dynamic other) {
     return other is PlayerAsmsTrack &&
+        id == other.id &&
         width == other.width &&
         height == other.height &&
         bitrate == other.bitrate &&
@@ -49,4 +50,8 @@ class PlayerAsmsTrack {
         codecs == other.codecs &&
         mimeType == other.mimeType;
   }
+
+  @override
+  String toString() =>
+      'PlayerAsmsTrack(id: $id, ${width}x$height @ ${bitrate}bps)';
 }
