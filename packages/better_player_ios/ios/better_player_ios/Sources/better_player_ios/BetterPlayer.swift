@@ -79,6 +79,9 @@ private var presentationSizeContext = 0
     /// Whether the player is currently playing.
     public private(set) var isPlaying: Bool = false
 
+    /// Whether a seek operation is currently in progress.
+    public private(set) var isSeeking: Bool = false
+
     /// Whether the player should loop playback.
     public var isLooping: Bool = false
 
@@ -425,9 +428,13 @@ private var presentationSizeContext = 0
                 switch item.status {
                 case .failed:
                     if callback != nil {
-                        BetterPlayerApi.log(3, "item status failed: \(item.error?.localizedDescription ?? "unknown")")
-                        let message = "Failed to load video: \(item.error?.localizedDescription ?? "unknown")"
-                        let error = FlutterError(code: "VideoError", message: message, details: nil)
+                        let nsError = item.error as NSError?
+                        let description = item.error?.localizedDescription ?? "unknown"
+                        let details = nsError?.debugDescription ?? "unknown"
+                        
+                        BetterPlayerApi.log(3, "item status failed: \(description), details: \(details)")
+                        let message = "Failed to load video: \(description)"
+                        let error = FlutterError(code: "VideoError", message: message, details: details)
                         sendError(error)
                     }
                 case .unknown:
@@ -588,11 +595,19 @@ private var presentationSizeContext = 0
     /// - Parameter location: The position to seek to.
     @objc public func seekTo(_ location: Int) {
         BetterPlayerApi.log(1, "seekTo: \(location)")
+        player.currentItem?.cancelPendingSeeks()
         let wasPlaying = isPlaying
         if wasPlaying { player.pause() }
-        player.seek(to: CMTimeMake(value: Int64(location), timescale: 1000), toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] _ in
+        isSeeking = true
+        player.seek(
+            to: CMTimeMake(value: Int64(location), timescale: 1000),
+            toleranceBefore: .positiveInfinity,
+            toleranceAfter: .positiveInfinity
+        ) { [weak self] finished in
             guard let self = self else { return }
-            if wasPlaying { self.applyPlayerRate() }
+            self.isSeeking = false
+            // Only resume if this seek actually completed (not cancelled by a subsequent one)
+            if finished && wasPlaying { self.applyPlayerRate() }
         }
     }
 

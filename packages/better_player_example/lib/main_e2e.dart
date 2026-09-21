@@ -1,6 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/ffi_test_page.dart';
+import 'package:better_player_example/pages/seek_e2e_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
@@ -213,6 +214,21 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                       );
                     },
                     child: const Text('FFI Test'),
+                  ),
+                ),
+                Semantics(
+                  identifier: 'better_player_e2e_navigate_seek',
+                  label: 'better_player_e2e_navigate_seek',
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (context) => const SeekE2EPage(),
+                        ),
+                      );
+                    },
+                    child: const Text('Seek Test'),
                   ),
                 ),
               ],
