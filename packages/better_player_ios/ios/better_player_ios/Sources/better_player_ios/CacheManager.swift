@@ -158,6 +158,7 @@ import Cache
                 self.existsInStorage = true
                 let mimeTypeResult = getMimeType(url: url, explicitVideoExtension: videoExtension)
                 if mimeTypeResult.1.isEmpty {
+                    // Fallback to mp4 if the extension is unknown or missing, as AVAsset requires a valid format to parse the data buffer.
                     playerItem = CachingPlayerItem(data: data, mimeType: "video/mp4", fileExtension: "mp4")
                 } else {
                     playerItem = CachingPlayerItem(data: data, mimeType: mimeTypeResult.1, fileExtension: mimeTypeResult.0)

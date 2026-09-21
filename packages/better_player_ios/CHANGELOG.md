@@ -1,7 +1,8 @@
 ## Unreleased
+- Fixed: Blocked HLS pre-caching attempts. Pre-caching HLS streams natively caches only the playlist file (causing silent bypasses on iOS).
+- Updated: Documented the fallback to `mp4` in `CacheManager` for streams with unknown extensions.
 - Fixed: Enhanced error logging to include `NSError` details in `FlutterError` payload for `AVPlayerItem` failures.
 - Fixed: iOS player crash and freeze during seek operations (#1342).
-
 ## 1.4.0
 - Updated: Increased playback speed limit to 4x and improved audio quality at high speeds using `.timeDomain` pitch algorithm.
 - Fixed: Programmatic PiP dismissal no longer stops the parent media player.
