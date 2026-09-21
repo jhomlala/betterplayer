@@ -208,8 +208,8 @@ extension PlayerViewStateExtension on BetterPlayerController {
           width: 0,
           height: 0,
         );
-        enterFullScreen();
         _postEvent(PlayerEvent(PlayerEventType.pipStart));
+        enterFullScreen();
         return;
       }
       if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -261,6 +261,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
     if (_engine == null) {
       throw StateError('The data source has not been initialized');
     }
+    _postEvent(PlayerEvent(PlayerEventType.pipStop));
     return _engine!.disablePictureInPicture();
   }
 

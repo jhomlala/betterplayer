@@ -810,8 +810,12 @@ class BetterPlayer(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 val activity = BetterPlayerApi.activity
                 if (activity != null) {
-                    val params = android.app.PictureInPictureParams.Builder().build()
-                    activity.enterPictureInPictureMode(params)
+                    try {
+                        val params = android.app.PictureInPictureParams.Builder().build()
+                        activity.enterPictureInPictureMode(params)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
                 }
             }
         }

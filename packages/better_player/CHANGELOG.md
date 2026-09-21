@@ -1,5 +1,6 @@
 ## Unreleased
 - Fixed: Blocked HLS pre-caching attempts on Android, iOS, and Dart. Pre-caching HLS streams natively caches only the playlist file (causing 0% progress bugs on Android and silent bypasses on iOS).
+- Fixed: Picture in Picture (PiP) start and stop events (`PlayerEventType.pipStart` and `PlayerEventType.pipStop`) are now properly emitted on Android when PiP is toggled programmatically via `enablePictureInPicture` and `disablePictureInPicture`.
 - Fixed: Enhanced `VideoError` payload on iOS to include underlying `NSError` details instead of a generic failure message.
 - Fixed: Exception where `PlayerEngineController` was used after being disposed by aborting background initialization when the controller is destroyed.
 - Fixed: iOS player crash and freeze during seek operations (#1342).
