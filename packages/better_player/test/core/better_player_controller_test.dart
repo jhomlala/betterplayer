@@ -63,6 +63,30 @@ void main() {
         expect(mockPlatform.preCacheCalls.isEmpty, true);
       });
 
+      test('PiP events are posted correctly on engine state change', () async {
+        final engineController = MockPlayerEngineController();
+        final betterPlayerMockController = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: engineController,
+        );
+
+        final events = <PlayerEventType>[];
+        betterPlayerMockController.addEventsListener((event) {
+          events.add(event.betterPlayerEventType);
+        });
+
+        engineController.emitInitialized();
+
+        engineController.value = engineController.value.copyWith(isPip: true);
+        engineController.notifyListeners();
+
+        engineController.value = engineController.value.copyWith(isPip: false);
+        engineController.notifyListeners();
+
+        expect(events, contains(PlayerEventType.pipStart));
+        expect(events, contains(PlayerEventType.pipStop));
+      });
+
       test('setSpeed changes speed', () async {
         final engineController = MockPlayerEngineController();
         final betterPlayerMockController = BetterPlayerMockController(

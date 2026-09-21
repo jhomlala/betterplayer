@@ -334,6 +334,9 @@ class BetterPlayerController {
       _postEvent(PlayerEvent(PlayerEventType.initialized));
     }
     if (currentVideoPlayerValue.isPip) {
+      if (!_viewState.wasInPipMode) {
+        _postEvent(PlayerEvent(PlayerEventType.pipStart));
+      }
       _viewState = _viewState.copyWith(wasInPipMode: true);
     } else if (_viewState.wasInPipMode) {
       _postEvent(PlayerEvent(PlayerEventType.pipStop));
@@ -382,6 +385,10 @@ class BetterPlayerController {
         _postEvent(PlayerEvent(PlayerEventType.pause));
       case VideoEventType.seek:
         _postEvent(PlayerEvent(PlayerEventType.seekTo));
+      case VideoEventType.pipStart:
+        _postEvent(PlayerEvent(PlayerEventType.pipStart));
+      case VideoEventType.pipStop:
+        _postEvent(PlayerEvent(PlayerEventType.pipStop));
       case VideoEventType.completed:
         final videoValue = _engine?.value;
         _postEvent(

@@ -7,8 +7,8 @@ import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:material_ui/material_ui.dart';
 
 BetterPlayerPlatform get _betterPlayerPlatform => BetterPlayerPlatform.instance;
 
@@ -491,10 +491,16 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
       width,
       height,
     );
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      value = value.copyWith(isPip: true);
+    }
   }
 
   Future<void> disablePictureInPicture() async {
     await _betterPlayerPlatform.disablePictureInPicture(textureId);
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      value = value.copyWith(isPip: false);
+    }
   }
 
   void _updatePosition(Duration? position, {DateTime? absolutePosition}) {

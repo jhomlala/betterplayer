@@ -1,5 +1,6 @@
 ## Unreleased
 - Fixed: Blocked HLS pre-caching attempts. Pre-caching HLS streams natively caches only the playlist file (causing 0% progress bugs on Android).
+- Fixed: Added try-catch block to `enterPictureInPictureMode` to prevent crashes when the activity is not in a valid state for PiP.
 
 ## 1.5.0
 - Added: Configurable Android Auto Frame Rate (AFR) matching via ExoPlayer's `setVideoChangeFrameRateStrategy`.
