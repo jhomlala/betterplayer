@@ -53,14 +53,31 @@ class BetterPlayerDashUtils {
 
     for (final representation in representations) {
       final id = representation.getAttribute('id');
-      final width = int.parse(representation.getAttribute('width') ?? '0');
-      final height = int.parse(representation.getAttribute('height') ?? '0');
-      final bitrate = int.parse(
-        representation.getAttribute('bandwidth') ?? '0',
-      );
-      final frameRate = int.parse(
-        representation.getAttribute('frameRate') ?? '0',
-      );
+      final width =
+          int.tryParse(representation.getAttribute('width') ?? '0') ?? 0;
+      final height =
+          int.tryParse(representation.getAttribute('height') ?? '0') ?? 0;
+      final bitrate =
+          int.tryParse(
+            representation.getAttribute('bandwidth') ?? '0',
+          ) ??
+          0;
+
+      var frameRate = 0;
+      final frameRateAttribute = representation.getAttribute('frameRate');
+      if (frameRateAttribute != null) {
+        if (frameRateAttribute.contains('/')) {
+          final parts = frameRateAttribute.split('/');
+          final numerator = double.tryParse(parts[0]) ?? 0.0;
+          final denominator = double.tryParse(parts[1]) ?? 1.0;
+          if (denominator > 0) {
+            frameRate = (numerator / denominator).round();
+          }
+        } else {
+          frameRate = (double.tryParse(frameRateAttribute) ?? 0.0).round();
+        }
+      }
+
       final codecs = representation.getAttribute('codecs');
       final mimeType = MimeTypes.getMediaMimeType(codecs ?? '');
       tracks.add(
@@ -107,14 +124,7 @@ class BetterPlayerDashUtils {
     var url = node.getElement('Representation')?.getElement('BaseURL')?.text;
     if (url?.contains('http') == false) {
       final masterPlaylistUri = Uri.parse(masterPlaylistUrl);
-      final pathSegments = <String>[...masterPlaylistUri.pathSegments];
-      pathSegments[pathSegments.length - 1] = url!;
-      url = Uri(
-        scheme: masterPlaylistUri.scheme,
-        host: masterPlaylistUri.host,
-        port: masterPlaylistUri.port,
-        pathSegments: pathSegments,
-      ).toString();
+      url = masterPlaylistUri.resolve(url!).toString();
     }
 
     if (url != null && url.startsWith('//')) {
