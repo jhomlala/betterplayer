@@ -1,4 +1,5 @@
 ## Unreleased
+- Fixed: Blocked HLS pre-caching attempts on Android, iOS, and Dart. Pre-caching HLS streams natively caches only the playlist file (causing 0% progress bugs on Android and silent bypasses on iOS).
 - Fixed: Exception where `PlayerEngineController` was used after being disposed by aborting background initialization when the controller is destroyed.
 
 ## 1.12.0
