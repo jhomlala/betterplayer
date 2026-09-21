@@ -12,6 +12,7 @@ class SeekE2EPage extends StatefulWidget {
 class _SeekE2EPageState extends State<SeekE2EPage> {
   late BetterPlayerController _betterPlayerController;
   Duration _currentPosition = Duration.zero;
+  bool _isPlaying = false;
 
   @override
   void initState() {
@@ -31,8 +32,11 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
     });
 
     _betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == PlayerEventType.progress) {
+      if (event.betterPlayerEventType == PlayerEventType.progress ||
+          event.betterPlayerEventType == PlayerEventType.play ||
+          event.betterPlayerEventType == PlayerEventType.pause) {
         setState(() {
+          _isPlaying = _betterPlayerController.videoPlayerValue?.isPlaying ?? false;
           _currentPosition =
               event.parameters?['progress'] as Duration? ??
               _betterPlayerController.videoPlayerValue?.position ??
@@ -62,7 +66,15 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
           Text(
             'Position: ${_currentPosition.inSeconds}s',
             key: const ValueKey('position_text'),
+            semanticsLabel: 'better_player_e2e_position',
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'State: ${_isPlaying ? "Playing" : "Paused"}',
+            key: const ValueKey('state_text'),
+            semanticsLabel: 'better_player_e2e_state',
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
           ),
           const SizedBox(height: 16),
           Wrap(

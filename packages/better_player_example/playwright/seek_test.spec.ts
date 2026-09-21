@@ -14,24 +14,29 @@ test('Rapid seeking updates video position without crashing', async ({ page }) =
   // Wait for the video to start
   await page.waitForTimeout(4000);
 
-  // Assert position text exists
+  // Assert position text and state exist
   const positionText = page.locator('[aria-label="better_player_e2e_position"]');
+  const stateText = page.locator('[aria-label="better_player_e2e_state"]');
   await expect(positionText).toBeVisible();
+  await expect(stateText).toHaveText('State: Playing');
 
   // Tap 00:03
   await page.click('[aria-label="better_player_e2e_seek_3s"]');
   await page.waitForTimeout(2000);
   
-  // Verify position text changed to 3s (or slightly more due to playback)
+  // Verify position text changed to 3s and state is still playing
   await expect(positionText).toHaveText(/Position: [3-5]s/);
+  await expect(stateText).toHaveText('State: Playing');
 
   // Tap 00:10
   await page.click('[aria-label="better_player_e2e_seek_10s"]');
   await page.waitForTimeout(2000);
   await expect(positionText).toHaveText(/Position: 1[0-2]s/);
+  await expect(stateText).toHaveText('State: Playing');
 
   // Tap 00:30
   await page.click('[aria-label="better_player_e2e_seek_30s"]');
   await page.waitForTimeout(2000);
   await expect(positionText).toHaveText(/Position: 3[0-2]s/);
+  await expect(stateText).toHaveText('State: Playing');
 });

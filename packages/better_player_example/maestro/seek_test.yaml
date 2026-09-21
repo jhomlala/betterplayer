@@ -11,15 +11,19 @@ appId: pl.hasoft.example
 
 # Wait for the Seek page to load and video to start
 - assertVisible: "Seek E2E Test"
+- assertVisible: "State: Playing"
 
 # Test seeking to 00:03
 - tapOn: "Seek 00:03"
 - assertVisible: "Position: [3-6]s"
+- assertVisible: "State: Playing"
 
 # Test seeking to 00:10
 - tapOn: "Seek 00:10"
 - assertVisible: "Position: 1[0-3]s"
+- assertVisible: "State: Playing"
 
 # Test seeking to 00:30
 - tapOn: "Seek 00:30"
 - assertVisible: "Position: 3[0-3]s"
+- assertVisible: "State: Playing"
