@@ -1,6 +1,7 @@
 ## Unreleased
 - Fixed: Enhanced `VideoError` payload on iOS to include underlying `NSError` details instead of a generic failure message.
 - Fixed: Exception where `PlayerEngineController` was used after being disposed by aborting background initialization when the controller is destroyed.
+- Fixed: iOS player crash and freeze during seek operations (#1342).
 
 ## 1.12.0
 - Added: Configurable list of playback speeds via `PlayerControlsConfiguration.playbackSpeeds` (defaults to `0.25` - `2.0`).
