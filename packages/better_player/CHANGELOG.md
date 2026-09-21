@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Exception where `PlayerEngineController` was used after being disposed by aborting background initialization when the controller is destroyed.
+
 ## 1.12.0
 - Added: Configurable list of playback speeds via `PlayerControlsConfiguration.playbackSpeeds` (defaults to `0.25` - `2.0`).
 - Added: Configurable Android Auto Frame Rate (AFR) matching via `BetterPlayerController.setAndroidMatchFrameRate(bool)`.
