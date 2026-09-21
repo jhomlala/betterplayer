@@ -414,13 +414,6 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   /// and silently clamped.
   Future<void> seekTo(Duration? position) async {
     _timer?.cancel();
-    var isPlaying = value.isPlaying;
-    final positionInMs = value.position.inMilliseconds;
-    final durationInMs = value.duration?.inMilliseconds ?? 0;
-
-    if (positionInMs >= durationInMs && position?.inMilliseconds == 0) {
-      isPlaying = true;
-    }
     if (_isDisposed) {
       return;
     }
@@ -439,11 +432,9 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     await _betterPlayerPlatform.seekTo(_textureId, positionToSeek);
     _updatePosition(position);
 
-    if (isPlaying) {
-      play();
-    } else {
-      pause();
-    }
+    // Note: The native iOS implementation of seekTo is responsible for resuming
+    // playback after the seek operation completes. Calling play() or pause() here
+    // would race with the native completion handler, leading to unpredictable behavior.
   }
 
   /// Sets the audio volume of [this].
