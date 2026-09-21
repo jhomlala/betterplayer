@@ -36,7 +36,8 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
           event.betterPlayerEventType == PlayerEventType.play ||
           event.betterPlayerEventType == PlayerEventType.pause) {
         setState(() {
-          _isPlaying = _betterPlayerController.videoPlayerValue?.isPlaying ?? false;
+          _isPlaying =
+              _betterPlayerController.videoPlayerValue?.isPlaying ?? false;
           _currentPosition =
               event.parameters?['progress'] as Duration? ??
               _betterPlayerController.videoPlayerValue?.position ??
@@ -74,7 +75,11 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
             'State: ${_isPlaying ? "Playing" : "Paused"}',
             key: const ValueKey('state_text'),
             semanticsLabel: 'better_player_e2e_state',
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue),
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue,
+            ),
           ),
           const SizedBox(height: 16),
           Wrap(

@@ -69,14 +69,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     });
 
     _betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == PlayerEventType.progress) {
-        setState(() {
-          _currentPosition =
-              event.parameters?['progress'] as Duration? ??
-              _betterPlayerController.videoPlayerValue?.position ??
-              Duration.zero;
-        });
-      } else if (event.betterPlayerEventType == PlayerEventType.exception) {
+      if (event.betterPlayerEventType == PlayerEventType.exception) {
         setState(() {
           _errorDescription =
               event.parameters?['exception']?.toString() ??
