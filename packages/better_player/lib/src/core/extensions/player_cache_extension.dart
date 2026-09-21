@@ -22,7 +22,9 @@ extension PlayerCacheExtension on BetterPlayerController {
         url.contains('.m3u') ||
         videoExtension == 'm3u8' ||
         videoExtension == 'm3u') {
-      PlayerLogger.warning('Pre-caching HLS streams is not supported.');
+      PlayerLogger.warning(
+        message: 'Pre-caching HLS streams is not supported.',
+      );
       return;
     }
 
