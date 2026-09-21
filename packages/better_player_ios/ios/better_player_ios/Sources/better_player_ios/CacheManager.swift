@@ -76,6 +76,11 @@ import Cache
     @objc public func preCacheURL(_ url: URL, cacheKey: String?, videoExtension: String?, withHeaders headers: [NSObject: AnyObject], completionHandler: ((_ success: Bool) -> Void)?) {
         self.completionHandler = completionHandler
 
+        if !isPreCacheSupported(url: url, videoExtension: videoExtension) {
+            self.completionHandler?(false)
+            return
+        }
+
         let key: String = cacheKey ?? url.absoluteString
         // Make sure the item is not already being downloaded
         if self.preCachedURLs[key] == nil {
@@ -158,7 +163,7 @@ import Cache
                 self.existsInStorage = true
                 let mimeTypeResult = getMimeType(url: url, explicitVideoExtension: videoExtension)
                 if mimeTypeResult.1.isEmpty {
-                    playerItem = CachingPlayerItem(url: url, cacheKey: key, headers: headers)
+                    playerItem = CachingPlayerItem(data: data, mimeType: "video/mp4", fileExtension: "mp4")
                 } else {
                     playerItem = CachingPlayerItem(data: data, mimeType: mimeTypeResult.1, fileExtension: mimeTypeResult.0)
                 }
