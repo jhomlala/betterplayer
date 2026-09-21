@@ -1,4 +1,5 @@
 ## Unreleased
+- Fixed: Enhanced error logging to include `NSError` details in `FlutterError` payload for `AVPlayerItem` failures.
 - Fixed: iOS player crash and freeze during seek operations (#1342).
 
 ## 1.4.0

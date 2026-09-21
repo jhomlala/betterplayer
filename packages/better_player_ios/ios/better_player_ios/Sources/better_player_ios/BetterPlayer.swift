@@ -428,9 +428,13 @@ private var presentationSizeContext = 0
                 switch item.status {
                 case .failed:
                     if callback != nil {
-                        BetterPlayerApi.log(3, "item status failed: \(item.error?.localizedDescription ?? "unknown")")
-                        let message = "Failed to load video: \(item.error?.localizedDescription ?? "unknown")"
-                        let error = FlutterError(code: "VideoError", message: message, details: nil)
+                        let nsError = item.error as NSError?
+                        let description = item.error?.localizedDescription ?? "unknown"
+                        let details = nsError?.debugDescription ?? "unknown"
+                        
+                        BetterPlayerApi.log(3, "item status failed: \(description), details: \(details)")
+                        let message = "Failed to load video: \(description)"
+                        let error = FlutterError(code: "VideoError", message: message, details: details)
                         sendError(error)
                     }
                 case .unknown:
