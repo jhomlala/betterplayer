@@ -64,6 +64,7 @@ class CacheWorker(
                     val completedData = (bytesCached * 100f / preCacheSize).toDouble()
                     if (completedData >= lastCacheReportIndex * 10) {
                         lastCacheReportIndex += 1
+                        Log.d(TAG, "Completed pre cache of $url: ${lastCacheReportIndex * 10}%")
                     }
                 }
                 cacheWriter?.cache()
@@ -71,7 +72,9 @@ class CacheWorker(
                 return Result.failure()
             }
         } catch (exception: Exception) {
-            return if (exception is HttpDataSourceException) {
+            Log.e(TAG, "Pre cache exception", exception)
+            // If it's HttpDataSourceException or EOFException (file smaller than preCacheSize) we can consider it success
+            return if (exception is HttpDataSourceException || exception is java.io.EOFException) {
                 Result.success()
             } else {
                 Result.failure()

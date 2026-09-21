@@ -1,4 +1,5 @@
 ## Unreleased
+- Fixed: Blocked HLS pre-caching attempts on Android, iOS, and Dart. Pre-caching HLS streams natively caches only the playlist file (causing 0% progress bugs on Android and silent bypasses on iOS).
 - Fixed: Enhanced `VideoError` payload on iOS to include underlying `NSError` details instead of a generic failure message.
 - Fixed: Exception where `PlayerEngineController` was used after being disposed by aborting background initialization when the controller is destroyed.
 - Fixed: iOS player crash and freeze during seek operations (#1342).

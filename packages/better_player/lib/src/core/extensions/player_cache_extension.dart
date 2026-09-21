@@ -15,6 +15,19 @@ extension PlayerCacheExtension on BetterPlayerController {
   ///currently not supported on iOS. On iOS, the video format must be in this
   ///list: https://github.com/sendyhalim/Swime/blob/master/Sources/MimeType.swift
   Future<void> preCache(PlayerDataSource betterPlayerDataSource) async {
+    final url = betterPlayerDataSource.url.toLowerCase();
+    final videoExtension =
+        betterPlayerDataSource.videoExtension?.toLowerCase() ?? '';
+    if (url.contains('.m3u8') ||
+        url.contains('.m3u') ||
+        videoExtension == 'm3u8' ||
+        videoExtension == 'm3u') {
+      PlayerLogger.warning(
+        message: 'Pre-caching HLS streams is not supported.',
+      );
+      return;
+    }
+
     final cacheConfig =
         betterPlayerDataSource.cacheConfiguration ??
         const CacheConfiguration(useCache: true);

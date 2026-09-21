@@ -21,8 +21,14 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
     return textureId;
   }
 
+  List<DataSource> preCacheCalls = [];
+  List<int> preCacheSizeCalls = [];
+
   @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) async {}
+  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+    preCacheCalls.add(dataSource);
+    preCacheSizeCalls.add(preCacheSize);
+  }
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) async {}
