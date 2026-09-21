@@ -43,10 +43,6 @@ class CacheWorker(
                 }
             }
             val uri = Uri.parse(url)
-            if (url != null && (url.contains(".m3u8") || url.contains(".m3u"))) {
-                Log.w(TAG, "Pre-caching HLS streams is not supported.")
-                return Result.success()
-            }
             if (isHTTP(uri)) {
                 val userAgent = getUserAgent(headers)
                 val dataSourceFactory = getDataSourceFactory(userAgent, headers)

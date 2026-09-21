@@ -76,11 +76,6 @@ import Cache
     @objc public func preCacheURL(_ url: URL, cacheKey: String?, videoExtension: String?, withHeaders headers: [NSObject: AnyObject], completionHandler: ((_ success: Bool) -> Void)?) {
         self.completionHandler = completionHandler
 
-        if !isPreCacheSupported(url: url, videoExtension: videoExtension) {
-            self.completionHandler?(false)
-            return
-        }
-
         let key: String = cacheKey ?? url.absoluteString
         // Make sure the item is not already being downloaded
         if self.preCachedURLs[key] == nil {
