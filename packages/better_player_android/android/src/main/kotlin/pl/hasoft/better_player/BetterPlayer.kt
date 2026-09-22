@@ -338,8 +338,6 @@ class BetterPlayer(
                 setMediaSessionToken(it.platformToken)
             }
         }
-        
-        exoPlayer?.seekTo(0)
     }
 
     @Keep
