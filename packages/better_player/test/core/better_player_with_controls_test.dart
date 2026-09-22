@@ -207,5 +207,44 @@ void main() {
       expect(sizedBox.width, 1920);
       expect(sizedBox.height, 1080);
     });
+
+    testWidgets(
+      'Uses customControlsBuilder by default if provided and playerTheme is null',
+      (
+        tester,
+      ) async {
+        final mockPlayerEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          PlayerConfiguration(
+            controlsConfiguration: PlayerControlsConfiguration(
+              customControlsBuilder: (controller, onPlayerVisibilityChanged) {
+                return const Text('My Custom Controls 123');
+              },
+            ),
+          ),
+          playerEngineController: mockPlayerEngineController,
+        );
+
+        await controller.setupDataSource(
+          PlayerDataSource.network('url'),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: BetterPlayerControllerProvider(
+              controller: controller,
+              child: BetterPlayerWithControls(
+                controller: controller,
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text('My Custom Controls 123'), findsOneWidget);
+      },
+    );
   });
 }

@@ -219,7 +219,9 @@ class BetterPlayerControlsSelectionWidget extends StatelessWidget {
     if (controlsConfiguration.showControls) {
       var playerTheme = controlsConfiguration.playerTheme;
       if (playerTheme == null) {
-        if (kIsWeb) {
+        if (controlsConfiguration.customControlsBuilder != null) {
+          playerTheme = PlayerTheme.custom;
+        } else if (kIsWeb) {
           playerTheme = PlayerTheme.web;
         } else if (defaultTargetPlatform == TargetPlatform.android) {
           playerTheme = PlayerTheme.material;
