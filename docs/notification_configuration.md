@@ -46,5 +46,9 @@ To allow playback to continue after the user leaves the application, ensure `han
 Setting `handleLifecycle: false` is essential for audio-only apps or video apps that support background audio, as it prevents the system from automatically pausing playback when the app is minimized.
 :::
 
+:::warning
+**Android OS Limitations:** Better Player does not run a true foreground `Service`. On Android, the OS may kill background apps after 5-10 minutes of screen lock to save battery. To prevent this, you can request the user to ignore battery optimizations for your app using the `permission_handler` package (`Permission.ignoreBatteryOptimizations.request()`) and adding `REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` to your AndroidManifest.
+:::
+
 ### Custom Activity Name (Android)
 By default, Better Player tries to launch the main activity when the notification is tapped. If your app has a specific entry point or you want to route the user to a specific screen, provide the `activityName` (e.g., `"com.your.package.MainActivity"`).
