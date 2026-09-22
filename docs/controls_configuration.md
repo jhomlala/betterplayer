@@ -51,6 +51,8 @@ Enable or disable specific UI features:
 *   **`enablePlaybackSpeed`**, `enableSubtitles`, `enableQualities`, `enableAudioTracks`: Toggles for specific overflow menu items.
 *   **`enablePip`**: Enable the Picture-in-Picture (PiP) button.
 *   **`enableRetry`**: Toggle the retry button on error.
+*   **`enableReplay`**: Show/hide the replay button when the video ends.
+
 
 ## Progress Bar Styling
 
