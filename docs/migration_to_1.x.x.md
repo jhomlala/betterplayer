@@ -9,6 +9,7 @@ Better Player 1.x.x introduces a **federated plugin architecture** and a signifi
 The package was split into smaller specialized packages, and redundant `BetterPlayer` prefixes were removed from model names.
 
 ## Version History & Key Architecture Changes
+- **v1.13.x**: Bug-fix release — HLS pre-cache blocking, PiP event fixes, DASH parsing fixes, `enableReplay` control, iOS seek stability, and enhanced error payloads.
 - **v1.5.x**: Refactored `BetterPlayerController` state into immutable data classes.
 - **v1.4.x**: Replaced `VideoPlayerController` with `PlayerEngineController`.
 - **v1.3.x**: Introduced the extensible `PlayerLogger` logging system.
