@@ -193,6 +193,13 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
       semanticsLabel = controller.translations.controlsPlayLabel;
     }
 
+    if (isVideoFinished && !controlsConfiguration.enableReplay) {
+      return const SizedBox();
+    }
+    if (!isVideoFinished && !controlsConfiguration.enablePlayPause) {
+      return const SizedBox();
+    }
+
     return _BetterPlayerMaterialHitAreaClickableButton(
       semanticsLabel: semanticsLabel,
       semanticsIdentifier: 'better_player_material_controls_replay_button',

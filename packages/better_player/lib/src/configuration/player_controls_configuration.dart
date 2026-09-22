@@ -24,6 +24,7 @@ class PlayerControlsConfiguration {
     this.enableProgressBar = true,
     this.enableProgressBarDrag = true,
     this.enablePlayPause = true,
+    this.enableReplay = true,
     this.enableSkips = true,
     this.enableAudioTracks = true,
     this.progressBarPlayedColor = Colors.white,
@@ -152,6 +153,9 @@ class PlayerControlsConfiguration {
 
   ///Flag used to enable/disable play-pause
   final bool enablePlayPause;
+
+  ///Flag used to enable/disable replay button
+  final bool enableReplay;
 
   ///Flag used to enable skip forward and skip back
   final bool enableSkips;
