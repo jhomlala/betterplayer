@@ -1,5 +1,6 @@
 ## Unreleased
 - Added: `enableReplay` to `BetterPlayerControlsConfiguration` to allow hiding the replay button when a video finishes.
+- Fixed: Video playback ignoring `startAt` configuration on Android when `showNotification` is enabled (#1024).
 - Fixed: Blocked HLS pre-caching attempts on Android, iOS, and Dart. Pre-caching HLS streams natively caches only the playlist file (causing 0% progress bugs on Android and silent bypasses on iOS).
 - Fixed: Picture in Picture (PiP) start and stop events (`PlayerEventType.pipStart` and `PlayerEventType.pipStop`) are now properly emitted on Android when PiP is toggled programmatically via `enablePictureInPicture` and `disablePictureInPicture`.
 - Fixed: Enhanced `VideoError` payload on iOS to include underlying `NSError` details instead of a generic failure message.
