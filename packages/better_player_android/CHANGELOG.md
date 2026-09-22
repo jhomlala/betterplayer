@@ -1,4 +1,4 @@
-## Unreleased
+## 1.6.0
 - Fixed: Resolved Android cache clearing failure and OutOfMemory bugs by properly delegating `clearCache()` to ExoPlayer's `SimpleCache.removeResource()`.
 - Fixed: Blocked HLS pre-caching attempts. Pre-caching HLS streams natively caches only the playlist file (causing 0% progress bugs on Android).
 - Fixed: Added try-catch block to `enterPictureInPictureMode` to prevent crashes when the activity is not in a valid state for PiP.

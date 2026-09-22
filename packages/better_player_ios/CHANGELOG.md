@@ -1,4 +1,4 @@
-## Unreleased
+## 1.5.0
 - Fixed: Blocked HLS pre-caching attempts. Pre-caching HLS streams natively caches only the playlist file (causing silent bypasses on iOS).
 - Updated: Documented the fallback to `mp4` in `CacheManager` for streams with unknown extensions.
 - Fixed: Enhanced error logging to include `NSError` details in `FlutterError` payload for `AVPlayerItem` failures.

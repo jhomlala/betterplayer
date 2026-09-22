@@ -66,7 +66,7 @@ Why choose Better Player? Here is how it stacks up against the alternatives.
 Add Better Player to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  better_player: ^1.12.0
+  better_player: ^1.13.0
 ```
 
 ### 2. Basic Usage
