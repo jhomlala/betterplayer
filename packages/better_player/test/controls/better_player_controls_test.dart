@@ -471,6 +471,45 @@ void main() {
       await tester.pump();
     },
   );
+  testWidgets(
+    'Material controls hide replay button if enableReplay is false and video is finished',
+    (tester) async {
+      final mockEngine = MockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockEngine,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
+            enableReplay: false,
+          ),
+        ),
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      // Mock video finished
+      mockEngine.setDuration(const Duration(seconds: 10));
+      await mockEngine.seekTo(const Duration(seconds: 10));
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(
+        find.byIcon(Icons.replay),
+        findsNothing,
+      );
+    },
+  );
 }
 
 ///Wrap widget with material app to handle all features like navigation and
