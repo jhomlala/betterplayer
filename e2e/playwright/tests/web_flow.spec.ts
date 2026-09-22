@@ -2,12 +2,14 @@ import { test, expect } from '@playwright/test';
 
 test('web flow', async ({ page }) => {
   await page.goto('/');
-  
-  // Wait for the video area to be visible
-  // Sometimes it's not a button in Semantics, so we use locator by aria-label
+
+  // Wait for the player controls to be ready before interacting — without
+  // this, clicks fire before Flutter has rendered the controls and the
+  // overflow menu never opens. (Same pattern used in web_datasource_swap.spec.ts)
+  const playPause = page.locator('[aria-label^="better_player_material_controls_play_pause_button"]');
+  await expect(playPause).toBeVisible({ timeout: 15000 });
 
   // Play/pause
-  const playPause = page.locator('[aria-label^="better_player_material_controls_play_pause_button"]');
   await playPause.click({ force: true });
   await page.waitForTimeout(500);
   await playPause.click({ force: true });
@@ -20,8 +22,9 @@ test('web flow', async ({ page }) => {
 
   // Playback speed
   const settings = page.locator('[aria-label^="better_player_material_controls_more_button"]');
+  await expect(settings).toBeVisible({ timeout: 5000 });
   await settings.click({ force: true });
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(2000);
   const speedMenu = page.locator('[aria-label^="better_player_overflow_menu_playback_speed"]');
   await expect(speedMenu).toBeVisible();
   await speedMenu.click({ force: true });
@@ -32,7 +35,7 @@ test('web flow', async ({ page }) => {
 
   // Quality (Resolution)
   await settings.click({ force: true });
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(2000);
   const qualityMenu = page.locator('[aria-label^="better_player_overflow_menu_quality"]');
   await expect(qualityMenu).toBeVisible();
   await qualityMenu.click({ force: true });
