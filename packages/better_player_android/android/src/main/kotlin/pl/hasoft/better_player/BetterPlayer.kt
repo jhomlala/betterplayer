@@ -746,13 +746,15 @@ class BetterPlayer(
         @Keep
     fun clearCache(context: Context?) {
             try {
+                BetterPlayerCache.clearCache()
                 context?.let { context ->
                     val file = File(context.cacheDir, "betterPlayerCache")
                     deleteDirectory(file)
                 }
                 
             } catch (exception: Exception) {
-                            }
+                Log.e("BetterPlayer", "Failed to clear cache", exception)
+            }
         }
 
         private fun deleteDirectory(file: File) {

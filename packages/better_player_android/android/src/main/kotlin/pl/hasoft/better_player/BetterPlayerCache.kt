@@ -39,4 +39,18 @@ object BetterPlayerCache {
         } catch (exception: Exception) {
         }
     }
+
+    @JvmStatic
+    fun clearCache() {
+        try {
+            instance?.let { cache ->
+                val keys = cache.keys
+                for (key in keys) {
+                    cache.removeResource(key)
+                }
+            }
+        } catch (exception: Exception) {
+            Log.e("BetterPlayerCache", "Failed to clear cache", exception)
+        }
+    }
 }
