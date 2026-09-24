@@ -6,19 +6,29 @@ test('web ffi flow', async ({ page }) => {
 
   await page.goto('/');
 
-  // Navigate to FFI page. Retry the click until the FFI page heading is visible
-  // — a plain force-click sometimes doesn't trigger Flutter navigation.
+  // Wait for the FFI button to actually be in the DOM and visible before
+  // attempting navigation — scrollIntoViewIfNeeded silently no-ops when
+  // Flutter hasn't rendered the semantics tree yet.
   const ffiButton = page.locator('[aria-label^="better_player_e2e_navigate_ffi"]');
-  await ffiButton.scrollIntoViewIfNeeded();
-  
+  await expect(ffiButton).toBeVisible({ timeout: 15000 });
+
+  // Retry navigation until the FFI page heading is visible.
+  // Use coordinate-based clicks — Flutter Web's hit testing happens at pixel
+  // level, so page.mouse.click is more reliable than Playwright's synthetic
+  // click on flt-semantics wrapper elements.
   await expect(async () => {
     const ffiTarget = page.locator('[flt-semantics-identifier^="ffi_test_"]').first();
     if (await ffiTarget.isVisible()) return;
 
     if (await ffiButton.isVisible()) {
-      await ffiButton.click({ force: true });
+      const box = await ffiButton.boundingBox();
+      if (box) {
+        await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+      } else {
+        await ffiButton.click({ force: true });
+      }
     }
-    
+
     await expect(ffiTarget).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 30000, intervals: [2000] });
 
@@ -57,13 +67,18 @@ test('web ffi flow', async ({ page }) => {
 
     await btn.scrollIntoViewIfNeeded();
 
-    // Click — fall back to force if the Flutter semantics layer intercepts
-    try {
-      await btn.click({ timeout: 5000 });
-    } catch {
-      console.warn(`Click failed for ${method}, retrying with force: true`);
+    // Use coordinate-based click — Flutter's hit-test pipeline picks these up
+    // more reliably than synthetic Playwright clicks on flt-semantics wrappers.
+    const box = await btn.boundingBox();
+    if (box) {
+      await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+    } else {
+      console.warn(`No bounding box for ${method}, falling back to force click`);
       await btn.click({ force: true });
     }
+
+    // Short pause to let Flutter process the tap and setState before checking
+    await page.waitForTimeout(300);
 
     // Flutter Web Text nodes use flt-semantics-identifier, not aria-label
     // Check inner text just like Maestro does (id + text separately)
