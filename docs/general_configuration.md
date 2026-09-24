@@ -34,7 +34,6 @@ Below is a detailed list of available options within `PlayerConfiguration`:
 *   **`showPlaceholderUntilPlay`**: Keep the placeholder visible until the play button is pressed.
 *   **`placeholderOnTop`**: If true, the placeholder is placed on top of the video stack.
 *   **`overlay`**: A widget placed between the video and the player controls.
-*   **`showControlsOnInitialize`**: Determines if controls should be visible when the widget is first initialized.
 *   **`expandToFill`**: If true, the player will expand to fill the available space.
 
 ### Fullscreen Management

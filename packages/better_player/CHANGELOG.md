@@ -1,3 +1,6 @@
+## 1.14.0
+- Fixed: Resolved various documentation inconsistencies where properties were either missing, misassigned, or misspelled across `general_configuration.md`, `controls_configuration.md`, `data_source_configuration.md`, and `subtitles_configuration.md`.
+
 ## 1.13.0
 - Added: `enableReplay` to `BetterPlayerControlsConfiguration` to allow hiding the replay button when a video finishes.
 - Fixed: Video playback ignoring `startAt` configuration on Android when `showNotification` is enabled (#1024).

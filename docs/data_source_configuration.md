@@ -37,7 +37,7 @@ When using `PlayerDataSource.memory`, providing a `videoExtension` (e.g., `"mp4"
 *   **`useAsmsSubtitles`**: Enables HLS/DASH manifest-based subtitles.
 *   **`useAsmsTracks`**: Enables HLS/DASH manifest-based video tracks.
 *   **`useAsmsAudioTracks`**: Enables HLS/DASH manifest-based audio tracks.
-*   **`hlsTrackNames`**: Custom names for HLS tracks.
+*   **`asmsTrackNames`**: Custom names for HLS/DASH tracks.
 
 > [!NOTE]
 > Adaptive streaming formats (HLS and DASH) are fully supported on the **Web** platform via the embedded Shaka Player.
@@ -53,5 +53,7 @@ You can programmatically control adaptive tracks. Use `controller.betterPlayerAs
 *   **`notificationConfiguration`**: Settings for native platform notifications.
 *   **`overriddenDuration`**: A custom duration to return instead of the actual video length.
 *   **`videoFormat`**: A hint for the video format (e.g., `.m3u8`, `.mp4`).
+*   **`videoExtension`**: The extension of the video without the dot (useful for memory sources).
 *   **`drmConfiguration`**: Digital Rights Management settings.
+*   **`bufferingConfiguration`**: Configuration for video buffering (currently supported on Android).
 *   **`placeholder`**: A source-specific placeholder widget.

@@ -35,7 +35,7 @@ Better Player allows you to override all default icons:
 *   `playIcon`, `pauseIcon`, `muteIcon`, `unMuteIcon`
 *   `fullscreenEnableIcon`, `fullscreenDisableIcon`
 *   `skipBackIcon`, `skipForwardIcon` (Cupertino only)
-*   `overflowMenuIcon`, `playbackSpeedIcon`, `subtitlesIcon`, `qualitiesIcon`, `audioTracksIcon`
+*   `overflowMenuIcon`, `pipMenuIcon`, `playbackSpeedIcon`, `subtitlesIcon`, `qualitiesIcon`, `audioTracksIcon`
 
 ## Functional Toggles
 
@@ -65,6 +65,7 @@ Customize the look of the seek bar:
 ## Advanced Control Options
 
 *   **`controlsHideTime`**: The duration of inactivity before controls fade out.
+*   **`controlsTransitionTime`**: The duration of the transition animation.
 *   **`customControlsBuilder`**: Provide a completely custom widget to handle the player UI. **Note**: This will only be used if `playerTheme` is set to `PlayerTheme.custom`.
     > [!IMPORTANT]
     > When using `customControlsBuilder` with `PlayerTheme.custom`, you are entirely responsible for managing your custom widget's state, visibility timers, animations, tap detectors, and interaction handling (such as auto-hiding or responding to `onControlsVisibilityChanged`). Unlike the built-in Material or Cupertino themes, Better Player does not automatically wrap or animate custom widgets in fade transitions or hide timers.
@@ -76,6 +77,8 @@ Customize the look of the seek bar:
 *   **`playbackSpeeds`**: Define a custom list of speeds available in the playback speed menu (default: `[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]`).
 *   **`forwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped forward (default: 15s).
 *   **`backwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped backward (default: 15s).
+*   **`overflowModalColor`**: Color of the bottom modal sheet used for overflow menu items.
+*   **`overflowModalTextColor`**: Color of text in bottom modal sheet used for overflow menu items.
 *   **`sigmaX`, `sigmaY`**: (iOS only) The quality of the Gaussian Blur applied to the background.
 
 ## Dynamic Configuration Updates

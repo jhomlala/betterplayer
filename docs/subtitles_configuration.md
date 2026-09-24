@@ -65,7 +65,6 @@ var betterPlayerConfiguration = PlayerConfiguration(
 *   **`leftPadding`**, **`rightPadding`**, **`bottomPadding`**: Adjust subtitle positioning.
 *   **`alignment`**: The alignment of the subtitle text on the screen.
 *   **`backgroundColor`**: The background color of the subtitle text box.
-*   **`selectedByDefault`**: Whether to enable subtitles automatically.
 
 ## Accessing Current Subtitles
 To retrieve the text of the currently displayed subtitle, use the `renderedSubtitle` property on the `BetterPlayerController`.
