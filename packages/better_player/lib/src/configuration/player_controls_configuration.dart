@@ -2,6 +2,15 @@ import 'package:better_player/better_player.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
+///Defines the loading indicator style used while the video is buffering.
+enum PlayerLoadingStyle {
+  /// A thin animated line pinned to the bottom of the player (YouTube-style).
+  line,
+
+  /// The classic centered circular spinner.
+  spinner,
+}
+
 ///UI configuration of Better Player. Allows to change colors/icons/behavior
 ///of controls. Used in PlayerConfiguration. Configuration applies only
 ///for player displayed in app, not in notification or PiP mode.
@@ -70,6 +79,11 @@ class PlayerControlsConfiguration {
       1.75,
       2.0,
     ],
+    this.controlBarGradientBackground = true,
+    this.showCenterButtonBackground = true,
+    this.enableDoubleTapSeek = true,
+    this.doubleTapSeekSeconds = 10,
+    this.loadingStyle = PlayerLoadingStyle.line,
   });
 
   factory PlayerControlsConfiguration.white() {
@@ -271,4 +285,23 @@ class PlayerControlsConfiguration {
 
   ///List of available playback speeds in the overflow menu
   final List<double> playbackSpeeds;
+
+  /// When true (default), the control bars use a gradient fade instead of a
+  /// solid [controlBarColor] background.
+  final bool controlBarGradientBackground;
+
+  /// When true (default), center play/pause and skip buttons are wrapped in a
+  /// semi-transparent circle container.
+  final bool showCenterButtonBackground;
+
+  /// When true (default), double-tapping the left/right third of the player
+  /// seeks backward/forward by [doubleTapSeekSeconds].
+  final bool enableDoubleTapSeek;
+
+  /// Number of seconds to seek on a double-tap gesture. Default: 10.
+  final int doubleTapSeekSeconds;
+
+  /// Controls the style of the buffering/loading indicator.
+  /// Defaults to [PlayerLoadingStyle.line].
+  final PlayerLoadingStyle loadingStyle;
 }

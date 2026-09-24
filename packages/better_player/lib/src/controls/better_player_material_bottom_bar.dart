@@ -275,17 +275,21 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
         text: TextSpan(
           text: BetterPlayerUiUtils.formatDuration(position),
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 12,
+            fontWeight: FontWeight.w500,
             color: controlsConfiguration.textColor,
             decoration: TextDecoration.none,
+            fontFeatures: const [FontFeature.tabularFigures()],
           ),
           children: <TextSpan>[
             TextSpan(
               text: ' / ${BetterPlayerUiUtils.formatDuration(duration)}',
               style: TextStyle(
-                fontSize: 10,
-                color: controlsConfiguration.textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.w400,
+                color: controlsConfiguration.textColor.withValues(alpha: 0.7),
                 decoration: TextDecoration.none,
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
           ],
