@@ -42,70 +42,75 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
       opacity: controlsNotVisible ? 0.0 : 1.0,
       duration: controlsConfiguration.controlsTransitionTime,
       onEnd: onPlayerHide,
-      child: SizedBox(
-        height: controlsConfiguration.controlBarHeight + 32.0,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              flex: 75,
-              child: Row(
-                children: [
-                  if (controlsConfiguration.enablePlayPause &&
-                      controller.isLiveStream())
-                    _BetterPlayerMaterialPlayPauseButton(
-                      controlsConfiguration: controlsConfiguration,
-                      onPlayPause: onPlayPause,
-                      latestValue: latestValue,
-                    )
-                  else
-                    const SizedBox(),
-                  if (controller.isLiveStream())
-                    _BetterPlayerMaterialLiveWidget(
-                      controlsConfiguration: controlsConfiguration,
-                    )
-                  else if (controlsConfiguration.enableProgressText)
-                    Expanded(
-                      child: _BetterPlayerMaterialPositionWidget(
+      child: AnimatedSlide(
+        offset: controlsNotVisible ? const Offset(0, 0.2) : Offset.zero,
+        duration: controlsConfiguration.controlsTransitionTime,
+        curve: Curves.easeOut,
+        child: SizedBox(
+          height: controlsConfiguration.controlBarHeight + 32.0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                flex: 75,
+                child: Row(
+                  children: [
+                    if (controlsConfiguration.enablePlayPause &&
+                        controller.isLiveStream())
+                      _BetterPlayerMaterialPlayPauseButton(
                         controlsConfiguration: controlsConfiguration,
+                        onPlayPause: onPlayPause,
                         latestValue: latestValue,
-                      ),
-                    )
-                  else
-                    const SizedBox(),
-                  const Spacer(),
-                  if (controlsConfiguration.enableMute)
-                    _BetterPlayerMaterialMuteButton(
-                      controlsConfiguration: controlsConfiguration,
-                      onMute: onMute,
-                      controlsNotVisible: controlsNotVisible,
-                      latestValue: latestValue,
-                    )
-                  else
-                    const SizedBox(),
-                  if (controlsConfiguration.enableFullscreen)
-                    _BetterPlayerMaterialFullscreenButton(
-                      controlsConfiguration: controlsConfiguration,
-                      onExpandCollapse: onExpandCollapse,
-                      controlsNotVisible: controlsNotVisible,
-                    )
-                  else
-                    const SizedBox(),
-                ],
+                      )
+                    else
+                      const SizedBox(),
+                    if (controller.isLiveStream())
+                      _BetterPlayerMaterialLiveWidget(
+                        controlsConfiguration: controlsConfiguration,
+                      )
+                    else if (controlsConfiguration.enableProgressText)
+                      Expanded(
+                        child: _BetterPlayerMaterialPositionWidget(
+                          controlsConfiguration: controlsConfiguration,
+                          latestValue: latestValue,
+                        ),
+                      )
+                    else
+                      const SizedBox(),
+                    const Spacer(),
+                    if (controlsConfiguration.enableMute)
+                      _BetterPlayerMaterialMuteButton(
+                        controlsConfiguration: controlsConfiguration,
+                        onMute: onMute,
+                        controlsNotVisible: controlsNotVisible,
+                        latestValue: latestValue,
+                      )
+                    else
+                      const SizedBox(),
+                    if (controlsConfiguration.enableFullscreen)
+                      _BetterPlayerMaterialFullscreenButton(
+                        controlsConfiguration: controlsConfiguration,
+                        onExpandCollapse: onExpandCollapse,
+                        controlsNotVisible: controlsNotVisible,
+                      )
+                    else
+                      const SizedBox(),
+                  ],
+                ),
               ),
-            ),
-            if (controller.isLiveStream())
-              const SizedBox()
-            else if (controlsConfiguration.enableProgressBar)
-              _BetterPlayerMaterialProgressBarWrapper(
-                controlsConfiguration: controlsConfiguration,
-                onProgressBarDragStart: onProgressBarDragStart,
-                onProgressBarDragEnd: onProgressBarDragEnd,
-                onProgressBarTapDown: onProgressBarTapDown,
-              )
-            else
-              const SizedBox(),
-          ],
+              if (controller.isLiveStream())
+                const SizedBox()
+              else if (controlsConfiguration.enableProgressBar)
+                _BetterPlayerMaterialProgressBarWrapper(
+                  controlsConfiguration: controlsConfiguration,
+                  onProgressBarDragStart: onProgressBarDragStart,
+                  onProgressBarDragEnd: onProgressBarDragEnd,
+                  onProgressBarTapDown: onProgressBarTapDown,
+                )
+              else
+                const SizedBox(),
+            ],
+          ),
         ),
       ),
     );

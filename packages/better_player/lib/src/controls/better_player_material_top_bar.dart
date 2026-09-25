@@ -30,29 +30,34 @@ class BetterPlayerMaterialTopBar extends StatelessWidget {
               opacity: controlsNotVisible ? 0.0 : 1.0,
               duration: controlsConfiguration.controlsTransitionTime,
               onEnd: onPlayerHide,
-              child: SizedBox(
-                height: controlsConfiguration.controlBarHeight,
-                width: double.infinity,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (controlsConfiguration.enablePip)
-                        _BetterPlayerMaterialPipButtonWrapper(
+              child: AnimatedSlide(
+                offset: controlsNotVisible ? const Offset(0, -0.2) : Offset.zero,
+                duration: controlsConfiguration.controlsTransitionTime,
+                curve: Curves.easeOut,
+                child: SizedBox(
+                  height: controlsConfiguration.controlBarHeight,
+                  width: double.infinity,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (controlsConfiguration.enablePip)
+                          _BetterPlayerMaterialPipButtonWrapper(
+                            controller: controller,
+                            controlsConfiguration: controlsConfiguration,
+                            controlsNotVisible: controlsNotVisible,
+                            onPlayerHide: onPlayerHide,
+                          )
+                        else
+                          const SizedBox(),
+                        _BetterPlayerMaterialMoreButton(
                           controller: controller,
                           controlsConfiguration: controlsConfiguration,
-                          controlsNotVisible: controlsNotVisible,
-                          onPlayerHide: onPlayerHide,
-                        )
-                      else
-                        const SizedBox(),
-                      _BetterPlayerMaterialMoreButton(
-                        controller: controller,
-                        controlsConfiguration: controlsConfiguration,
-                        onShowMoreClicked: onShowMoreClicked,
-                      ),
-                    ],
+                          onShowMoreClicked: onShowMoreClicked,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

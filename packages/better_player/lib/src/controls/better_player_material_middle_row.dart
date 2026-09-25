@@ -99,7 +99,7 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
                       key: const Key(
                         'better_player_material_controls_skip_back_button',
                       ),
-                      icon: Container(
+                      icon: Ink(
                         padding: EdgeInsets.all(skipPadding),
                         decoration: const BoxDecoration(
                           color: Colors.black26,
@@ -134,7 +134,7 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
                       key: const Key(
                         'better_player_material_controls_skip_forward_button',
                       ),
-                      icon: Container(
+                      icon: Ink(
                         padding: EdgeInsets.all(skipPadding),
                         decoration: const BoxDecoration(
                           color: Colors.black26,
@@ -237,20 +237,24 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
     return _BetterPlayerMaterialHitAreaClickableButton(
       semanticsLabel: semanticsLabel,
       semanticsIdentifier: 'better_player_material_controls_replay_button',
-      icon: Container(
+      icon: Ink(
         padding: EdgeInsets.all(padding),
         decoration: const BoxDecoration(
           color: Colors.black38,
           shape: BoxShape.circle,
         ),
-        child: Icon(
-          isVideoFinished
-              ? Icons.replay
-              : (isPlaying
-                    ? controlsConfiguration.pauseIcon
-                    : controlsConfiguration.playIcon),
-          size: iconSize,
-          color: controlsConfiguration.iconsColor,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          child: Icon(
+            isVideoFinished
+                ? Icons.replay
+                : (isPlaying
+                      ? controlsConfiguration.pauseIcon
+                      : controlsConfiguration.playIcon),
+            key: ValueKey<bool>(isPlaying),
+            size: iconSize,
+            color: controlsConfiguration.iconsColor,
+          ),
         ),
       ),
       onClicked: onReplay,
