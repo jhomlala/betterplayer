@@ -11,10 +11,7 @@ class BetterPlayerMaterialLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (controlsConfiguration.loadingWidget != null) {
-      return ColoredBox(
-        color: controlsConfiguration.controlBarColor,
-        child: controlsConfiguration.loadingWidget,
-      );
+      return controlsConfiguration.loadingWidget!;
     }
 
     return CircularProgressIndicator(

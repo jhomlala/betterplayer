@@ -68,8 +68,24 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
+    final isFullScreen = controller.isFullScreen;
+    final skipIconSize = isFullScreen ? 36.0 : 28.0;
+    final skipPadding = isFullScreen ? 12.0 : 8.0;
+
     return Container(
-      color: controlsConfiguration.controlBarColor,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            Colors.black54,
+            Colors.black26,
+            Colors.black26,
+            Colors.black87,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          stops: [0.0, 0.2, 0.7, 1.0],
+        ),
+      ),
       width: double.infinity,
       height: double.infinity,
       child: controller.isLiveStream()
@@ -83,10 +99,17 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
                       key: const Key(
                         'better_player_material_controls_skip_back_button',
                       ),
-                      icon: Icon(
-                        controlsConfiguration.skipBackIcon,
-                        size: 24,
-                        color: controlsConfiguration.iconsColor,
+                      icon: Container(
+                        padding: EdgeInsets.all(skipPadding),
+                        decoration: const BoxDecoration(
+                          color: Colors.black26,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          controlsConfiguration.skipBackIcon,
+                          size: skipIconSize,
+                          color: controlsConfiguration.iconsColor,
+                        ),
                       ),
                       onClicked: onSkipBack,
                       semanticsLabel:
@@ -111,10 +134,17 @@ class BetterPlayerMaterialMiddleRow extends StatelessWidget {
                       key: const Key(
                         'better_player_material_controls_skip_forward_button',
                       ),
-                      icon: Icon(
-                        controlsConfiguration.skipForwardIcon,
-                        size: 24,
-                        color: controlsConfiguration.iconsColor,
+                      icon: Container(
+                        padding: EdgeInsets.all(skipPadding),
+                        decoration: const BoxDecoration(
+                          color: Colors.black26,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          controlsConfiguration.skipForwardIcon,
+                          size: skipIconSize,
+                          color: controlsConfiguration.iconsColor,
+                        ),
                       ),
                       onClicked: onSkipForward,
                       semanticsLabel:
@@ -147,7 +177,7 @@ class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      constraints: const BoxConstraints(maxHeight: 80, maxWidth: 80),
+      constraints: const BoxConstraints(maxHeight: 100, maxWidth: 100),
       child: BetterPlayerMaterialClickableWidget(
         onTap: onClicked,
         semanticsLabel: semanticsLabel,
@@ -185,6 +215,10 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
     final isPlaying = controller.videoPlayerValue?.isPlaying == true;
+    final isFullScreen = controller.isFullScreen;
+
+    final iconSize = isFullScreen ? 56.0 : 42.0;
+    final padding = isFullScreen ? 14.0 : 10.0;
 
     var semanticsLabel = isPlaying
         ? controller.translations.controlsPauseLabel
@@ -203,19 +237,22 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
     return _BetterPlayerMaterialHitAreaClickableButton(
       semanticsLabel: semanticsLabel,
       semanticsIdentifier: 'better_player_material_controls_replay_button',
-      icon: isVideoFinished
-          ? Icon(
-              Icons.replay,
-              size: 42,
-              color: controlsConfiguration.iconsColor,
-            )
-          : Icon(
-              isPlaying
-                  ? controlsConfiguration.pauseIcon
-                  : controlsConfiguration.playIcon,
-              size: 42,
-              color: controlsConfiguration.iconsColor,
-            ),
+      icon: Container(
+        padding: EdgeInsets.all(padding),
+        decoration: const BoxDecoration(
+          color: Colors.black38,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          isVideoFinished
+              ? Icons.replay
+              : (isPlaying
+                    ? controlsConfiguration.pauseIcon
+                    : controlsConfiguration.playIcon),
+          size: iconSize,
+          color: controlsConfiguration.iconsColor,
+        ),
+      ),
       onClicked: onReplay,
     );
   }

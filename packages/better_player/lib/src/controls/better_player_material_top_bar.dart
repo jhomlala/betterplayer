@@ -33,24 +33,27 @@ class BetterPlayerMaterialTopBar extends StatelessWidget {
               child: SizedBox(
                 height: controlsConfiguration.controlBarHeight,
                 width: double.infinity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    if (controlsConfiguration.enablePip)
-                      _BetterPlayerMaterialPipButtonWrapper(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (controlsConfiguration.enablePip)
+                        _BetterPlayerMaterialPipButtonWrapper(
+                          controller: controller,
+                          controlsConfiguration: controlsConfiguration,
+                          controlsNotVisible: controlsNotVisible,
+                          onPlayerHide: onPlayerHide,
+                        )
+                      else
+                        const SizedBox(),
+                      _BetterPlayerMaterialMoreButton(
                         controller: controller,
                         controlsConfiguration: controlsConfiguration,
-                        controlsNotVisible: controlsNotVisible,
-                        onPlayerHide: onPlayerHide,
-                      )
-                    else
-                      const SizedBox(),
-                    _BetterPlayerMaterialMoreButton(
-                      controller: controller,
-                      controlsConfiguration: controlsConfiguration,
-                      onShowMoreClicked: onShowMoreClicked,
-                    ),
-                  ],
+                        onShowMoreClicked: onShowMoreClicked,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             )

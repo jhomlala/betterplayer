@@ -43,7 +43,7 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
       duration: controlsConfiguration.controlsTransitionTime,
       onEnd: onPlayerHide,
       child: SizedBox(
-        height: controlsConfiguration.controlBarHeight + 20.0,
+        height: controlsConfiguration.controlBarHeight + 32.0,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -51,7 +51,8 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
               flex: 75,
               child: Row(
                 children: [
-                  if (controlsConfiguration.enablePlayPause)
+                  if (controlsConfiguration.enablePlayPause &&
+                      controller.isLiveStream())
                     _BetterPlayerMaterialPlayPauseButton(
                       controlsConfiguration: controlsConfiguration,
                       onPlayPause: onPlayPause,
@@ -202,7 +203,7 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
     return Padding(
-      padding: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.only(right: 8),
       child: BetterPlayerMaterialClickableWidget(
         key: const Key('better_player_material_controls_expand_button'),
         onTap: onExpandCollapse,
@@ -260,22 +261,26 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     final position = latestValue != null
         ? latestValue!.position
         : Duration.zero;
     final duration = latestValue != null && latestValue!.duration != null
         ? latestValue!.duration!
         : Duration.zero;
+    final hasPlayPause =
+        controlsConfiguration.enablePlayPause && controller.isLiveStream();
 
     return Padding(
-      padding: controlsConfiguration.enablePlayPause
+      padding: hasPlayPause
           ? const EdgeInsets.only(right: 24)
-          : const EdgeInsets.symmetric(horizontal: 22),
+          : const EdgeInsets.only(left: 16, right: 24),
       child: RichText(
         text: TextSpan(
           text: BetterPlayerUiUtils.formatDuration(position),
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
             color: controlsConfiguration.textColor,
             decoration: TextDecoration.none,
           ),
@@ -283,8 +288,9 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
             TextSpan(
               text: ' / ${BetterPlayerUiUtils.formatDuration(duration)}',
               style: TextStyle(
-                fontSize: 10,
-                color: controlsConfiguration.textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
+                color: controlsConfiguration.textColor.withValues(alpha: 0.75),
                 decoration: TextDecoration.none,
               ),
             ),
@@ -314,7 +320,7 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
       flex: 40,
       child: Container(
         alignment: Alignment.bottomCenter,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
         child: BetterPlayerMaterialVideoProgressBar(
           controller,
           onDragStart: onProgressBarDragStart,

@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Modernized Material UI controls with gradient overlays, refined button hierarchies, full-width progress bars, and cleaner bottom sheet spacing.
+
 ## 1.14.0
 - Fixed: Resolved various documentation inconsistencies where properties were either missing, misassigned, or misspelled across `general_configuration.md`, `controls_configuration.md`, `data_source_configuration.md`, and `subtitles_configuration.md`.
 
