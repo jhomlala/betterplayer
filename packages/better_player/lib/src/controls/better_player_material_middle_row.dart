@@ -226,6 +226,7 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
     }
 
     return _BetterPlayerMaterialHitAreaClickableButton(
+      key: const Key('better_player_material_controls_replay_button'),
       semanticsLabel: semanticsLabel,
       semanticsIdentifier: 'better_player_material_controls_replay_button',
       icon: Ink(

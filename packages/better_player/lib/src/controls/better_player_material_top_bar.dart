@@ -31,7 +31,9 @@ class BetterPlayerMaterialTopBar extends StatelessWidget {
               duration: controlsConfiguration.controlsTransitionTime,
               onEnd: onPlayerHide,
               child: AnimatedSlide(
-                offset: controlsNotVisible ? const Offset(0, -0.2) : Offset.zero,
+                offset: controlsNotVisible
+                    ? const Offset(0, -0.2)
+                    : Offset.zero,
                 duration: controlsConfiguration.controlsTransitionTime,
                 curve: Curves.easeOut,
                 child: SizedBox(

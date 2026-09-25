@@ -49,7 +49,7 @@ void main() {
   );
 
   testWidgets(
-    'Material controls show play/pause button',
+    'Material controls show play/pause and skip buttons',
     (tester) async {
       tester.view.physicalSize = const Size(1024, 768);
       tester.view.devicePixelRatio = 1.0;
@@ -81,7 +81,19 @@ void main() {
 
       expect(
         find.byKey(
-          const Key('better_player_material_controls_play_pause_button'),
+          const Key('better_player_material_controls_replay_button'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const Key('better_player_material_controls_skip_back_button'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const Key('better_player_material_controls_skip_forward_button'),
         ),
         findsOneWidget,
       );
