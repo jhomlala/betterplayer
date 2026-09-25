@@ -178,21 +178,12 @@ class _BetterPlayerMaterialHitAreaClickableButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(maxHeight: 100, maxWidth: 100),
-      child: BetterPlayerMaterialClickableWidget(
-        onTap: onClicked,
-        semanticsLabel: semanticsLabel,
-        semanticsIdentifier: semanticsIdentifier,
-        child: Align(
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(48),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Stack(children: [icon]),
-            ),
-          ),
+      child: Center(
+        child: BetterPlayerMaterialClickableWidget(
+          onTap: onClicked,
+          semanticsLabel: semanticsLabel,
+          semanticsIdentifier: semanticsIdentifier,
+          child: icon,
         ),
       ),
     );
