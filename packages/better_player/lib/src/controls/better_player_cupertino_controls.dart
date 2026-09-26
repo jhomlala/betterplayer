@@ -378,20 +378,22 @@ class _BetterPlayerCupertinoControlsState
 
   void _updateState() {
     if (mounted) {
-      final isFinished = isVideoFinished(_betterPlayerController!.videoPlayerValue);
-      final isBuff = _betterPlayerController!.videoPlayerValue?.isBuffering ?? false;
-      final isPlay = _betterPlayerController!.videoPlayerValue?.isPlaying ?? false;
+      final isFinished = isVideoFinished(
+        _betterPlayerController!.videoPlayerValue,
+      );
+      final isBuff =
+          _betterPlayerController!.videoPlayerValue?.isBuffering ?? false;
+      final isPlay =
+          _betterPlayerController!.videoPlayerValue?.isPlaying ?? false;
       final isLoad = isLoading(_betterPlayerController!.videoPlayerValue);
-      final hasDur = _betterPlayerController!.videoPlayerValue?.duration != null;
+      final hasDur =
+          _betterPlayerController!.videoPlayerValue?.duration != null;
       PlayerLogger.debug(
         message:
             'E2E_LOG: Cupertino _updateState | controlsNotVisible: $controlsNotVisible | wasLoading: $_wasLoading | isVideoFinished: $isFinished | isBuffering: $isBuff | isPlaying: $isPlay | isLoading: $isLoad | hasDuration: $hasDur',
       );
 
-      if (!controlsNotVisible ||
-          isFinished ||
-          _wasLoading ||
-          isLoad) {
+      if (!controlsNotVisible || isFinished || _wasLoading || isLoad) {
         setState(() {
           _latestValue = _betterPlayerController!.videoPlayerValue;
           if (isVideoFinished(_latestValue)) {

@@ -58,10 +58,9 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
                             size: iconSize,
                             onTap: onSkipBack,
                             iconColor: iconColor,
-                            semanticsLabel:
-                                controller
-                                    .translations
-                                    .controlsSkipBackwardLabel,
+                            semanticsLabel: controller
+                                .translations
+                                .controlsSkipBackwardLabel,
                           ),
                         ),
                       )
@@ -73,17 +72,15 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
                           child: _BetterPlayerCupertinoHitAreaButton(
                             semanticsIdentifier:
                                 'better_player_cupertino_controls_play_pause_button',
-                            icon:
-                                latestValue?.isPlaying == true
-                                    ? controlsConfiguration.pauseIcon
-                                    : controlsConfiguration.playIcon,
+                            icon: latestValue?.isPlaying == true
+                                ? controlsConfiguration.pauseIcon
+                                : controlsConfiguration.playIcon,
                             size: iconSize + 8.0, // Play button slightly larger
                             onTap: onPlayPause,
                             iconColor: iconColor,
-                            semanticsLabel:
-                                latestValue?.isPlaying == true
-                                    ? controller.translations.controlsPauseLabel
-                                    : controller.translations.controlsPlayLabel,
+                            semanticsLabel: latestValue?.isPlaying == true
+                                ? controller.translations.controlsPauseLabel
+                                : controller.translations.controlsPlayLabel,
                           ),
                         ),
                       )
@@ -99,10 +96,9 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
                             size: iconSize,
                             onTap: onSkipForward,
                             iconColor: iconColor,
-                            semanticsLabel:
-                                controller
-                                    .translations
-                                    .controlsSkipForwardLabel,
+                            semanticsLabel: controller
+                                .translations
+                                .controlsSkipForwardLabel,
                           ),
                         ),
                       )
