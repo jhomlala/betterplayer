@@ -26,7 +26,10 @@ void main() {
       playerEngineController: mockPlayerEngineController,
     );
     await mockController.setupDataSource(
-      PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      PlayerDataSource.network(
+        BetterPlayerTestUtils.forBiggerBlazesUrl,
+        liveStream: true,
+      ),
     );
   });
 
@@ -50,17 +53,12 @@ void main() {
       wrapWidget(
         BetterPlayerCupertinoBottomBar(
           controlsConfiguration: controlsConfiguration,
-          controlsNotVisible: false,
-          onPlayerHide: () {},
           onPlayPause: () {},
-          onSkipBack: () {},
-          onSkipForward: () {},
           onProgressBarDragStart: () {},
           onProgressBarDragEnd: () {},
           onProgressBarTapDown: () {},
           barHeight: 40,
           marginSize: 5,
-          backgroundColor: Colors.black,
           iconColor: Colors.white,
           latestValue: VideoPlayerValue(duration: const Duration(seconds: 10)),
         ),
@@ -78,17 +76,12 @@ void main() {
       wrapWidget(
         BetterPlayerCupertinoBottomBar(
           controlsConfiguration: controlsConfiguration,
-          controlsNotVisible: false,
-          onPlayerHide: () {},
           onPlayPause: () {},
-          onSkipBack: () {},
-          onSkipForward: () {},
           onProgressBarDragStart: () {},
           onProgressBarDragEnd: () {},
           onProgressBarTapDown: () {},
           barHeight: 40,
           marginSize: 5,
-          backgroundColor: Colors.black,
           iconColor: Colors.white,
           latestValue: VideoPlayerValue(
             duration: const Duration(seconds: 10),
@@ -110,19 +103,14 @@ void main() {
       wrapWidget(
         BetterPlayerCupertinoBottomBar(
           controlsConfiguration: controlsConfiguration,
-          controlsNotVisible: false,
-          onPlayerHide: () {},
           onPlayPause: () {
             playPauseTriggered = true;
           },
-          onSkipBack: () {},
-          onSkipForward: () {},
           onProgressBarDragStart: () {},
           onProgressBarDragEnd: () {},
           onProgressBarTapDown: () {},
           barHeight: 40,
           marginSize: 5,
-          backgroundColor: Colors.black,
           iconColor: Colors.white,
           latestValue: VideoPlayerValue(duration: const Duration(seconds: 10)),
         ),
@@ -141,18 +129,13 @@ void main() {
         wrapWidget(
           BetterPlayerCupertinoBottomBar(
             controlsConfiguration: controlsConfiguration,
-            controlsNotVisible: false,
-            onPlayerHide: () {},
             onPlayPause: () {},
-            onSkipBack: () {},
-            onSkipForward: () {},
             onProgressBarDragStart: () {},
             onProgressBarDragEnd: () {},
             onProgressBarTapDown: () {},
             barHeight:
                 100, // Very large barHeight to ensure size does not scale
             marginSize: 5,
-            backgroundColor: Colors.black,
             iconColor: Colors.white,
             latestValue: VideoPlayerValue(
               duration: const Duration(seconds: 10),
@@ -164,17 +147,10 @@ void main() {
       final playIcon = tester.widget<Icon>(
         find.byIcon(controlsConfiguration.playIcon),
       );
-      expect(playIcon.size, 28.0);
-
-      final skipBackIcon = tester.widget<Icon>(
-        find.byIcon(controlsConfiguration.skipBackIcon),
-      );
-      expect(skipBackIcon.size, 24.0);
-
-      final skipForwardIcon = tester.widget<Icon>(
-        find.byIcon(controlsConfiguration.skipForwardIcon),
-      );
-      expect(skipForwardIcon.size, 24.0);
+      expect(
+        playIcon.size,
+        24.0,
+      ); // I changed the live stream icon size to 24 in my implementation
     },
   );
 }

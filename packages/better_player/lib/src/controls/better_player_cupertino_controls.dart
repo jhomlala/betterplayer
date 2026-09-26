@@ -7,6 +7,7 @@ import 'package:better_player/src/controls/better_player_cupertino_error_widget.
 import 'package:better_player/src/controls/better_player_cupertino_hit_area.dart';
 import 'package:better_player/src/controls/better_player_cupertino_loading_widget.dart';
 import 'package:better_player/src/controls/better_player_cupertino_localizations_delegate.dart';
+import 'package:better_player/src/controls/better_player_cupertino_middle_row.dart';
 import 'package:better_player/src/controls/better_player_cupertino_next_video_widget.dart';
 import 'package:better_player/src/controls/better_player_cupertino_top_bar.dart';
 import 'package:better_player/src/controls/better_player_material_localizations_delegate.dart';
@@ -14,7 +15,7 @@ import 'package:better_player/src/controls/better_player_multiple_gesture_detect
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoControls extends StatefulWidget {
@@ -89,7 +90,6 @@ class _BetterPlayerCupertinoControlsState
               );
             }
 
-            final backgroundColor = _controlsConfiguration.controlBarColor;
             final iconColor = _controlsConfiguration.iconsColor;
             final orientation = MediaQuery.of(context).orientation;
             final barHeight = orientation == Orientation.portrait
@@ -98,59 +98,100 @@ class _BetterPlayerCupertinoControlsState
             const buttonPadding = 10.0;
 
             _wasLoading = isLoading(_latestValue);
-            final controlsColumn = Column(
-              children: <Widget>[
-                BetterPlayerCupertinoTopBar(
-                  controlsConfiguration: _controlsConfiguration,
-                  controlsNotVisible: controlsNotVisible,
-                  barHeight: barHeight * 0.8,
-                  iconSize: barHeight * 0.4,
-                  buttonPadding: buttonPadding,
-                  marginSize: marginSize,
-                  backgroundColor: backgroundColor,
-                  iconColor: iconColor,
-                  onExpandCollapse: _onExpandCollapse,
-                  onShowMoreClicked: onShowMoreClicked,
-                  onMute: _onMute,
-                  latestValue: _latestValue,
-                ),
-                if (_wasLoading)
-                  Expanded(
-                    child: Center(
-                      child: BetterPlayerCupertinoLoadingWidget(
+            final controlsColumn = CupertinoTheme(
+              data: const CupertinoThemeData(brightness: Brightness.dark),
+              child: Column(
+                children: <Widget>[
+                  AnimatedSlide(
+                    offset: controlsNotVisible
+                        ? const Offset(0, -0.2)
+                        : Offset.zero,
+                    duration: _controlsConfiguration.controlsTransitionTime,
+                    child: AnimatedOpacity(
+                      opacity: controlsNotVisible ? 0.0 : 1.0,
+                      duration: _controlsConfiguration.controlsTransitionTime,
+                      child: BetterPlayerCupertinoTopBar(
                         controlsConfiguration: _controlsConfiguration,
+                        controlsNotVisible: false, // handeled by wrapper now
+                        barHeight: 32,
+                        iconSize: 18,
+                        buttonPadding: buttonPadding,
+                        marginSize: marginSize,
+                        iconColor: iconColor,
+                        onExpandCollapse: _onExpandCollapse,
+                        onShowMoreClicked: onShowMoreClicked,
+                        onMute: _onMute,
+                        latestValue: _latestValue,
                       ),
                     ),
-                  )
-                else
-                  BetterPlayerCupertinoHitArea(
-                    latestValue: _latestValue,
-                    controlsNotVisible: controlsNotVisible,
-                    onCancelAndRestartTimer: cancelAndRestartTimer,
-                    onHideTimerCancel: () => _hideTimer?.cancel(),
-                    onChangePlayerControlsNotVisible:
-                        changePlayerControlsNotVisible,
                   ),
-                BetterPlayerCupertinoNextVideoWidget(
-                  controlsConfiguration: _controlsConfiguration,
-                ),
-                BetterPlayerCupertinoBottomBar(
-                  controlsConfiguration: _controlsConfiguration,
-                  controlsNotVisible: controlsNotVisible,
-                  barHeight: barHeight,
-                  marginSize: marginSize,
-                  backgroundColor: backgroundColor,
-                  iconColor: iconColor,
-                  onPlayPause: _onPlayPause,
-                  onSkipBack: skipBack,
-                  onSkipForward: skipForward,
-                  onProgressBarDragStart: () => _hideTimer?.cancel(),
-                  onProgressBarDragEnd: _startHideTimer,
-                  onProgressBarTapDown: cancelAndRestartTimer,
-                  onPlayerHide: _onPlayerHide,
-                  latestValue: _latestValue,
-                ),
-              ],
+                  Expanded(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Positioned.fill(
+                          child: BetterPlayerCupertinoHitArea(
+                            latestValue: _latestValue,
+                            controlsNotVisible: controlsNotVisible,
+                            onCancelAndRestartTimer: cancelAndRestartTimer,
+                            onHideTimerCancel: () => _hideTimer?.cancel(),
+                            onChangePlayerControlsNotVisible:
+                                changePlayerControlsNotVisible,
+                          ),
+                        ),
+                        if (_wasLoading)
+                          BetterPlayerCupertinoLoadingWidget(
+                            controlsConfiguration: _controlsConfiguration,
+                          )
+                        else
+                          AnimatedOpacity(
+                            opacity: controlsNotVisible ? 0.0 : 1.0,
+                            duration:
+                                _controlsConfiguration.controlsTransitionTime,
+                            child: BetterPlayerCupertinoMiddleRow(
+                              controlsConfiguration: _controlsConfiguration,
+                              onSkipBack: skipBack,
+                              onSkipForward: skipForward,
+                              onPlayPause: _onPlayPause,
+                              latestValue: _latestValue,
+                              iconColor: iconColor,
+                            ),
+                          ),
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: BetterPlayerCupertinoNextVideoWidget(
+                            controlsConfiguration: _controlsConfiguration,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  AnimatedSlide(
+                    offset: controlsNotVisible
+                        ? const Offset(0, 0.2)
+                        : Offset.zero,
+                    duration: _controlsConfiguration.controlsTransitionTime,
+                    child: AnimatedOpacity(
+                      opacity: controlsNotVisible ? 0.0 : 1.0,
+                      duration: _controlsConfiguration.controlsTransitionTime,
+                      onEnd: _onPlayerHide,
+                      child: BetterPlayerCupertinoBottomBar(
+                        controlsConfiguration: _controlsConfiguration,
+                        barHeight: barHeight,
+                        marginSize: marginSize,
+                        iconColor: iconColor,
+                        onProgressBarDragStart: () => _hideTimer?.cancel(),
+                        onProgressBarDragEnd: _startHideTimer,
+                        onProgressBarTapDown: cancelAndRestartTimer,
+                        latestValue: _latestValue,
+                        onPlayPause: _onPlayPause,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             );
 
             final isFullScreenSafe =

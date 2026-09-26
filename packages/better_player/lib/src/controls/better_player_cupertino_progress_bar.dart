@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoVideoProgressBar extends StatefulWidget {
@@ -47,6 +48,8 @@ class _VideoProgressBarState
   Duration? lastSeek;
   Timer? _updateBlockTimer;
 
+  bool _isDragging = false;
+
   @override
   void initState() {
     super.initState();
@@ -75,6 +78,8 @@ class _VideoProgressBarState
             !enableProgressBarDrag) {
           return;
         }
+        HapticFeedback.selectionClick();
+        setState(() => _isDragging = true);
         _controllerWasPlaying = videoPlayerValue.isPlaying;
         if (_controllerWasPlaying) {
           betterPlayerController?.pause();
@@ -101,6 +106,8 @@ class _VideoProgressBarState
         if (!enableProgressBarDrag) {
           return;
         }
+        HapticFeedback.selectionClick();
+        setState(() => _isDragging = false);
         if (_controllerWasPlaying) {
           betterPlayerController?.play();
           shouldPlayAfterDragEnd = true;
@@ -146,8 +153,19 @@ class _VideoProgressBarState
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
             color: Colors.transparent,
-            child: CustomPaint(
-              painter: _ProgressBarPainter(_getValue(), widget.colors),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 1, end: _isDragging ? 1.5 : 1.0),
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
+              builder: (context, scale, child) {
+                return CustomPaint(
+                  painter: _ProgressBarPainter(
+                    _getValue(),
+                    widget.colors,
+                    scale: scale,
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -183,6 +201,7 @@ class _VideoProgressBarState
   }
 
   void _setupUpdateBlockTimer() {
+    _updateBlockTimer?.cancel();
     _updateBlockTimer = Timer(const Duration(milliseconds: 1000), () {
       lastSeek = null;
       _cancelUpdateBlockTimer();
@@ -203,49 +222,29 @@ class _VideoProgressBarState
       return videoPlayerValue.copyWith(
         position: lastSeek,
       );
-    } else {
-      return videoPlayerValue;
     }
+    return videoPlayerValue;
   }
 
-  Future<void> seekToRelativePosition(Offset globalPosition) async {
-    final videoPlayerValue = betterPlayerController?.videoPlayerValue;
-    final duration = videoPlayerValue?.duration;
-    if (videoPlayerValue == null || duration == null) {
-      return;
-    }
-    final renderObject = context.findRenderObject();
-    if (renderObject != null) {
-      final box = renderObject as RenderBox;
-      final tapPos = box.globalToLocal(globalPosition);
-      final relative = tapPos.dx / box.size.width;
-      if (relative > 0) {
-        final position = duration * relative;
-        lastSeek = position;
-        await betterPlayerController?.seekTo(position);
-        onFinishedLastSeek();
-        if (relative >= 1) {
-          lastSeek = duration;
-          await betterPlayerController?.seekTo(duration);
-          onFinishedLastSeek();
-        }
-      }
-    }
-  }
-
-  void onFinishedLastSeek() {
-    if (shouldPlayAfterDragEnd) {
-      shouldPlayAfterDragEnd = false;
-      betterPlayerController?.play();
+  void seekToRelativePosition(Offset globalPosition) {
+    final box = context.findRenderObject()! as RenderBox;
+    final tapPos = box.globalToLocal(globalPosition);
+    final relative = tapPos.dx / box.size.width;
+    if (relative > 0) {
+      final position =
+          betterPlayerController!.videoPlayerValue!.duration! * relative;
+      lastSeek = position;
+      betterPlayerController!.seekTo(position);
     }
   }
 }
 
 class _ProgressBarPainter extends CustomPainter {
-  _ProgressBarPainter(this.value, this.colors);
+  _ProgressBarPainter(this.value, this.colors, {this.scale = 1.0});
 
   VideoPlayerValue value;
   PlayerProgressColors colors;
+  final double scale;
 
   @override
   bool shouldRepaint(CustomPainter painter) {
@@ -254,8 +253,9 @@ class _ProgressBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    const barHeight = 5.0;
-    const handleHeight = 6.0;
+    final barHeight = 4.0 * scale;
+    final handleWidth = 4.0 * scale;
+    final handleHeight = 12.0 * scale;
     final baseOffset = size.height / 2 - barHeight / 2.0;
 
     canvas.drawRRect(
@@ -301,19 +301,19 @@ class _ProgressBarPainter extends CustomPainter {
       colors.playedPaint,
     );
 
-    final shadowPath = Path()
-      ..addOval(
-        Rect.fromCircle(
-          center: Offset(playedPart, baseOffset + barHeight / 2),
-          radius: handleHeight,
-        ),
-      );
-
-    canvas.drawShadow(shadowPath, Colors.black, 0.2, false);
-    canvas.drawCircle(
-      Offset(playedPart, baseOffset + barHeight / 2),
-      handleHeight,
-      colors.handlePaint,
+    // iOS 16 pill-shaped handle
+    final handleRect = Rect.fromCenter(
+      center: Offset(playedPart, baseOffset + barHeight / 2),
+      width: handleWidth,
+      height: handleHeight,
     );
+    final handleRRect = RRect.fromRectAndRadius(
+      handleRect,
+      const Radius.circular(4),
+    );
+
+    final shadowPath = Path()..addRRect(handleRRect);
+    canvas.drawShadow(shadowPath, Colors.black, 0.2, false);
+    canvas.drawRRect(handleRRect, colors.handlePaint);
   }
 }
