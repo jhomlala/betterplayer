@@ -67,7 +67,7 @@ class _BetterPlayerCupertinoControlsState
   @override
   Widget build(BuildContext context) {
     PlayerLogger.debug(
-      message: "E2E_LOG: BetterPlayerCupertinoControlsState.build start",
+      message: 'E2E_LOG: BetterPlayerCupertinoControlsState.build start',
     );
     final translations = BetterPlayerController.of(context).translations;
     return Localizations.override(
@@ -85,7 +85,7 @@ class _BetterPlayerCupertinoControlsState
             if (_latestValue?.hasError == true) {
               PlayerLogger.debug(
                 message:
-                    "E2E_LOG: BetterPlayerCupertinoControlsState returning BetterPlayerVideoAreaSemantics | isFullScreenSafe:  | controlsNotVisible: ",
+                    'E2E_LOG: BetterPlayerCupertinoControlsState returning BetterPlayerVideoAreaSemantics | isFullScreenSafe:  | controlsNotVisible: ',
               );
               return BetterPlayerVideoAreaSemantics(
                 semanticsIdentifier: 'better_player_cupertino_video_area',
@@ -155,7 +155,6 @@ class _BetterPlayerCupertinoControlsState
                             opacity: controlsNotVisible ? 0.0 : 1.0,
                             duration:
                                 _controlsConfiguration.controlsTransitionTime,
-                            alwaysIncludeSemantics: false,
                             child: ExcludeSemantics(
                               excluding: controlsNotVisible,
                               child: BetterPlayerCupertinoMiddleRow(
@@ -208,7 +207,7 @@ class _BetterPlayerCupertinoControlsState
                 _betterPlayerController?.isFullScreen == true;
             PlayerLogger.debug(
               message:
-                  "E2E_LOG: BetterPlayerCupertinoControlsState returning BetterPlayerVideoAreaSemantics | isFullScreenSafe:  | controlsNotVisible: ",
+                  'E2E_LOG: BetterPlayerCupertinoControlsState returning BetterPlayerVideoAreaSemantics | isFullScreenSafe:  | controlsNotVisible: ',
             );
             return BetterPlayerVideoAreaSemantics(
               semanticsIdentifier: 'better_player_cupertino_video_area',
@@ -390,13 +389,7 @@ class _BetterPlayerCupertinoControlsState
       final isFinished = isVideoFinished(
         _betterPlayerController!.videoPlayerValue,
       );
-      final isBuff =
-          _betterPlayerController!.videoPlayerValue?.isBuffering ?? false;
-      final isPlay =
-          _betterPlayerController!.videoPlayerValue?.isPlaying ?? false;
       final isLoad = isLoading(_betterPlayerController!.videoPlayerValue);
-      final hasDur =
-          _betterPlayerController!.videoPlayerValue?.duration != null;
 
       if (!controlsNotVisible || isFinished || _wasLoading || isLoad) {
         setState(() {

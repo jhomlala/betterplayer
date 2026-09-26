@@ -98,49 +98,53 @@ class _BetterPlayerCupertinoVodRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
-    return Row(
-      children: [
-        if (controlsConfiguration.enableProgressText)
-          Text(
-            BetterPlayerUiUtils.formatDuration(
-              latestValue?.position ?? Duration.zero,
-            ),
-            style: TextStyle(
-              color: controlsConfiguration.textColor,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        if (controlsConfiguration.enableProgressBar)
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: BetterPlayerCupertinoVideoProgressBar(
-                controller,
-                colors: PlayerProgressColors(
-                  playedColor: controlsConfiguration.progressBarPlayedColor,
-                  handleColor: controlsConfiguration.progressBarHandleColor,
-                  bufferedColor: controlsConfiguration.progressBarBufferedColor,
-                  backgroundColor:
-                      controlsConfiguration.progressBarBackgroundColor,
-                ),
-                onDragStart: onProgressBarDragStart,
-                onDragEnd: onProgressBarDragEnd,
-                onTapDown: onProgressBarTapDown,
+    return Semantics(
+      explicitChildNodes: true,
+      child: Row(
+        children: [
+          if (controlsConfiguration.enableProgressText)
+            Text(
+              BetterPlayerUiUtils.formatDuration(
+                latestValue?.position ?? Duration.zero,
+              ),
+              style: TextStyle(
+                color: controlsConfiguration.textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-        if (controlsConfiguration.enableProgressText)
-          Text(
-            '-${BetterPlayerUiUtils.formatDuration(
-              (latestValue?.duration ?? Duration.zero) - (latestValue?.position ?? Duration.zero),
-            )}',
-            style: TextStyle(
-              color: controlsConfiguration.textColor.withValues(alpha: 0.7),
-              fontSize: 12,
+          if (controlsConfiguration.enableProgressBar)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: BetterPlayerCupertinoVideoProgressBar(
+                  controller,
+                  colors: PlayerProgressColors(
+                    playedColor: controlsConfiguration.progressBarPlayedColor,
+                    handleColor: controlsConfiguration.progressBarHandleColor,
+                    bufferedColor:
+                        controlsConfiguration.progressBarBufferedColor,
+                    backgroundColor:
+                        controlsConfiguration.progressBarBackgroundColor,
+                  ),
+                  onDragStart: onProgressBarDragStart,
+                  onDragEnd: onProgressBarDragEnd,
+                  onTapDown: onProgressBarTapDown,
+                ),
+              ),
             ),
-          ),
-      ],
+          if (controlsConfiguration.enableProgressText)
+            Text(
+              '-${BetterPlayerUiUtils.formatDuration(
+                (latestValue?.duration ?? Duration.zero) - (latestValue?.position ?? Duration.zero),
+              )}',
+              style: TextStyle(
+                color: controlsConfiguration.textColor.withValues(alpha: 0.7),
+                fontSize: 12,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }
