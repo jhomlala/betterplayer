@@ -322,9 +322,12 @@ class _BetterPlayerCupertinoControlsState
   void _onExpandCollapse() {
     changePlayerControlsNotVisible(true);
     _betterPlayerController!.toggleFullScreen();
-    _expandCollapseTimer = Timer(_controlsConfiguration.controlsHideTime, () {
-      setState(cancelAndRestartTimer);
-    });
+    _expandCollapseTimer = Timer(
+      _controlsConfiguration.controlsTransitionTime,
+      () {
+        setState(cancelAndRestartTimer);
+      },
+    );
   }
 
   void _onPlayPause() {
