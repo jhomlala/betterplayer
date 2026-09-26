@@ -271,8 +271,14 @@ class _BetterPlayerVideoWithVisibility extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    PlayerLogger.debug(
+      "E2E_LOG: _BetterPlayerVideoWithVisibility.build | "
+      "isFullScreenRoute: $isFullScreenRoute | "
+      "key: ${controller.hashCode}_key_${isFullScreenRoute ? "fs" : "in"}",
+    );
+
     return VisibilityDetector(
-      key: Key('${controller.hashCode}_key'),
+      key: Key('${controller.hashCode}_key_${isFullScreenRoute ? "fs" : "in"}'),
       onVisibilityChanged: (info) =>
           controller.onPlayerVisibilityChanged(info.visibleFraction),
       child: BetterPlayerWithControls(

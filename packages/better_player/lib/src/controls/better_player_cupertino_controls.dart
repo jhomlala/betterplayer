@@ -66,6 +66,9 @@ class _BetterPlayerCupertinoControlsState
 
   @override
   Widget build(BuildContext context) {
+    PlayerLogger.debug(
+      "E2E_LOG: BetterPlayerCupertinoControlsState.build start",
+    );
     final translations = BetterPlayerController.of(context).translations;
     return Localizations.override(
       context: context,

@@ -125,9 +125,17 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       result = Center(child: innerContainer);
     }
 
+    final excluding =
+        betterPlayerController.isFullScreen && !widget.isFullScreenRoute;
+    PlayerLogger.debug(
+      "E2E_LOG: BetterPlayerWithControls.build | "
+      "isFullScreenRoute: ${widget.isFullScreenRoute} | "
+      "controller.isFullScreen: ${betterPlayerController.isFullScreen} | "
+      "excluding: $excluding",
+    );
+
     return ExcludeSemantics(
-      excluding:
-          betterPlayerController.isFullScreen && !widget.isFullScreenRoute,
+      excluding: excluding,
       child: result,
     );
   }
