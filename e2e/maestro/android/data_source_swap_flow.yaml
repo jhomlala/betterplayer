@@ -27,4 +27,4 @@ appId: pl.hasoft.example
 
 # Verify it's playing
 - tapOn:
-    id: "better_player_material_controls_replay_button"
+    id: "better_player_material_controls_play_pause_button"
