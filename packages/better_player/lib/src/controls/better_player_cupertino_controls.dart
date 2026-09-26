@@ -116,7 +116,6 @@ class _BetterPlayerCupertinoControlsState
                         barHeight: 32,
                         iconSize: 18,
                         buttonPadding: buttonPadding,
-                        marginSize: marginSize,
                         iconColor: iconColor,
                         onExpandCollapse: _onExpandCollapse,
                         onShowMoreClicked: onShowMoreClicked,
@@ -180,7 +179,6 @@ class _BetterPlayerCupertinoControlsState
                       child: BetterPlayerCupertinoBottomBar(
                         controlsConfiguration: _controlsConfiguration,
                         barHeight: barHeight,
-                        marginSize: marginSize,
                         iconColor: iconColor,
                         onProgressBarDragStart: () => _hideTimer?.cancel(),
                         onProgressBarDragEnd: _startHideTimer,

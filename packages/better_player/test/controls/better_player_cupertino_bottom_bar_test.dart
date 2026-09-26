@@ -58,7 +58,7 @@ void main() {
           onProgressBarDragEnd: () {},
           onProgressBarTapDown: () {},
           barHeight: 40,
-          marginSize: 5,
+
           iconColor: Colors.white,
           latestValue: VideoPlayerValue(duration: const Duration(seconds: 10)),
         ),
@@ -81,7 +81,7 @@ void main() {
           onProgressBarDragEnd: () {},
           onProgressBarTapDown: () {},
           barHeight: 40,
-          marginSize: 5,
+
           iconColor: Colors.white,
           latestValue: VideoPlayerValue(
             duration: const Duration(seconds: 10),
@@ -110,7 +110,7 @@ void main() {
           onProgressBarDragEnd: () {},
           onProgressBarTapDown: () {},
           barHeight: 40,
-          marginSize: 5,
+
           iconColor: Colors.white,
           latestValue: VideoPlayerValue(duration: const Duration(seconds: 10)),
         ),
@@ -135,7 +135,7 @@ void main() {
             onProgressBarTapDown: () {},
             barHeight:
                 100, // Very large barHeight to ensure size does not scale
-            marginSize: 5,
+
             iconColor: Colors.white,
             latestValue: VideoPlayerValue(
               duration: const Duration(seconds: 10),

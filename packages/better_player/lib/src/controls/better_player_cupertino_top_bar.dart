@@ -11,7 +11,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
     required this.barHeight,
     required this.iconSize,
     required this.buttonPadding,
-    required this.marginSize,
     required this.iconColor,
     required this.onExpandCollapse,
     required this.onShowMoreClicked,
@@ -24,7 +23,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
   final double barHeight;
   final double iconSize;
   final double buttonPadding;
-  final double marginSize;
   final Color iconColor;
   final VoidCallback onExpandCollapse;
   final VoidCallback onShowMoreClicked;
@@ -38,12 +36,16 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
       return const SizedBox();
     }
 
+    final isFullScreen = controller.isFullScreen;
+    final horizontalMargin = isFullScreen ? 48.0 : 16.0;
+    final topMargin = isFullScreen ? 24.0 : 16.0;
+
     return Container(
       height: barHeight,
       margin: EdgeInsets.only(
-        top: marginSize,
-        right: marginSize,
-        left: marginSize,
+        top: topMargin,
+        right: horizontalMargin,
+        left: horizontalMargin,
       ),
       child: Row(
         children: <Widget>[

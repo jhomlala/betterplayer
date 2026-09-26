@@ -13,7 +13,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
   const BetterPlayerCupertinoBottomBar({
     required this.controlsConfiguration,
     required this.barHeight,
-    required this.marginSize,
     required this.iconColor,
     required this.onProgressBarDragStart,
     required this.onProgressBarDragEnd,
@@ -25,7 +24,6 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
 
   final PlayerControlsConfiguration controlsConfiguration;
   final double barHeight;
-  final double marginSize;
   final Color iconColor;
   final VoidCallback onProgressBarDragStart;
   final VoidCallback onProgressBarDragEnd;
@@ -40,9 +38,17 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
       return const SizedBox();
     }
 
+    final isFullScreen = controller.isFullScreen;
+    final horizontalMargin = isFullScreen ? 48.0 : 16.0;
+    final bottomMargin = isFullScreen ? 24.0 : 16.0;
+
     return Container(
       alignment: Alignment.bottomCenter,
-      margin: EdgeInsets.all(marginSize).copyWith(bottom: marginSize * 2),
+      margin: EdgeInsets.only(
+        left: horizontalMargin,
+        right: horizontalMargin,
+        bottom: bottomMargin,
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(60),
         child: BackdropFilter(
