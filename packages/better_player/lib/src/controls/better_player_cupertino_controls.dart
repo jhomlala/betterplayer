@@ -82,7 +82,8 @@ class _BetterPlayerCupertinoControlsState
             _betterPlayerController = BetterPlayerController.of(context);
 
             if (_latestValue?.hasError == true) {
-              return BetterPlayerVideoAreaSemantics(
+                          PlayerLogger.debug(message: "E2E_LOG: BetterPlayerCupertinoControlsState returning BetterPlayerVideoAreaSemantics | isFullScreenSafe:  | controlsNotVisible: ");
+            return BetterPlayerVideoAreaSemantics(
                 semanticsIdentifier: 'better_player_cupertino_video_area',
                 child: ColoredBox(
                   color: Colors.black,
@@ -197,6 +198,7 @@ class _BetterPlayerCupertinoControlsState
 
             final isFullScreenSafe =
                 _betterPlayerController?.isFullScreen == true;
+                        PlayerLogger.debug(message: "E2E_LOG: BetterPlayerCupertinoControlsState returning BetterPlayerVideoAreaSemantics | isFullScreenSafe:  | controlsNotVisible: ");
             return BetterPlayerVideoAreaSemantics(
               semanticsIdentifier: 'better_player_cupertino_video_area',
               child: GestureDetector(
