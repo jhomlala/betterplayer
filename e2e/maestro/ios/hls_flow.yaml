@@ -11,8 +11,8 @@ appId: pl.hasoft.example
 # Wait for video area
 - extendedWaitUntil:
     visible:
-      id: "better_player_cupertino_video_area"
-    timeout: 15000
+      id: "better_player_cupertino_controls_play_pause_button"
+    timeout: 30000
 
 # Play/Pause toggle
 - tapOn:

@@ -288,7 +288,7 @@ class _BetterPlayerMaterialControlsState
     changePlayerControlsNotVisible(true);
     _betterPlayerController!.toggleFullScreen();
     _showAfterExpandCollapseTimer = Timer(
-      _controlsConfiguration.controlsHideTime,
+      _controlsConfiguration.controlsTransitionTime,
       () {
         setState(cancelAndRestartTimer);
       },

@@ -20,7 +20,7 @@ class BetterPlayerCupertinoHitArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return ExcludeSemantics(
       child: GestureDetector(
         onTap: latestValue != null && latestValue!.isPlaying
             ? () {

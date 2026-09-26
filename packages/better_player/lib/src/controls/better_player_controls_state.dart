@@ -13,7 +13,7 @@ import 'package:material_ui/material_ui.dart';
 abstract class BetterPlayerControlsState<T extends StatefulWidget>
     extends State<T> {
   ///Min. time of buffered video to hide loading timer (in milliseconds)
-  static const int _bufferingInterval = 20000;
+  static const int _bufferingInterval = -1;
 
   BetterPlayerController? get betterPlayerController;
 
@@ -211,9 +211,12 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       if (bufferedEndPosition != null) {
         final difference = bufferedEndPosition - position;
 
-        if (latestValue.isPlaying &&
+        final loading =
+            latestValue.isPlaying &&
             latestValue.isBuffering &&
-            difference.inMilliseconds < _bufferingInterval) {
+            difference.inMilliseconds < _bufferingInterval;
+
+        if (loading) {
           return true;
         }
       }
@@ -448,8 +451,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           false,
       builder: (context) {
         return CupertinoTheme(
-          data: CupertinoThemeData(
-            brightness: Theme.of(context).brightness,
+          data: const CupertinoThemeData(
+            brightness: Brightness.dark,
           ),
           child: CupertinoActionSheet(
             actions: children,

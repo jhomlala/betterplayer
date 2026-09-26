@@ -1,5 +1,8 @@
 ## Unreleased
-- Updated: Modernized Material UI controls with gradient overlays, refined button hierarchies, full-width progress bars, and cleaner bottom sheet spacing.
+- Fixed: Controls disappearing indefinitely after toggling fullscreen, and iOS HLS streams getting stuck in a loading state due to buffering thresholds.
+- Fixed: Resolved accessibility tree clipping and missing Semantics identifiers for play/pause buttons in Cupertino UI.
+- Updated: Modernized Material UI controls with gradient overlays, refined button hierarchies, full-width progress bars, cleaner bottom sheet spacing, rounded progress bar edges, accurate ripple behaviors, and larger tap targets.
+- Updated: Modernized Cupertino UI with frosted glass top/bottom bars, centered Play/Pause/Skip buttons, animated sliding layouts, and iOS 16 style expanding scrubber pill.
 
 ## 1.14.0
 - Fixed: Resolved various documentation inconsistencies where properties were either missing, misassigned, or misspelled across `general_configuration.md`, `controls_configuration.md`, `data_source_configuration.md`, and `subtitles_configuration.md`.
