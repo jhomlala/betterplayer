@@ -519,6 +519,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   ///Called when player controls visibility should be changed.
   void changePlayerControlsNotVisible(bool notVisible) {
+    PlayerLogger.debug(
+      message:
+          'E2E_LOG: changePlayerControlsNotVisible | current: $controlsNotVisible | new: $notVisible',
+    );
     setState(() {
       if (notVisible) {
         betterPlayerController?.postEvent(
