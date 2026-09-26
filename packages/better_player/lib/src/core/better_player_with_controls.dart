@@ -127,8 +127,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
 
     final excluding =
         betterPlayerController.isFullScreen && !widget.isFullScreenRoute;
-    PlayerLogger.debug(
-      "E2E_LOG: BetterPlayerWithControls.build | "
+    PlayerLogger.debug(message: "E2E_LOG: BetterPlayerWithControls.build | "
       "isFullScreenRoute: ${widget.isFullScreenRoute} | "
       "controller.isFullScreen: ${betterPlayerController.isFullScreen} | "
       "excluding: $excluding",

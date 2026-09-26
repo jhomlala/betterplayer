@@ -30,8 +30,7 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
     final isFullScreen = controller.isFullScreen;
     final iconSize = isFullScreen ? 32.0 : 24.0;
 
-    PlayerLogger.debug(
-      "E2E_LOG: BetterPlayerCupertinoMiddleRow.build | "
+    PlayerLogger.debug(message: "E2E_LOG: BetterPlayerCupertinoMiddleRow.build | "
       "isFullScreen: $isFullScreen | enableSkips: ${controlsConfiguration.enableSkips} | "
       "enablePlayPause: ${controlsConfiguration.enablePlayPause} | "
       "isPlaying: ${latestValue?.isPlaying}",
@@ -128,8 +127,7 @@ class _BetterPlayerCupertinoHitAreaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PlayerLogger.debug(
-      "E2E_LOG: _BetterPlayerCupertinoHitAreaButton.build | identifier: $semanticsIdentifier | label: $semanticsLabel | icon: $icon",
+    PlayerLogger.debug(message: "E2E_LOG: _BetterPlayerCupertinoHitAreaButton.build | identifier: $semanticsIdentifier | label: $semanticsLabel | icon: $icon",
     );
     return Semantics(
       identifier: semanticsIdentifier,
@@ -137,8 +135,7 @@ class _BetterPlayerCupertinoHitAreaButton extends StatelessWidget {
       button: true,
       child: GestureDetector(
         onTap: () {
-          PlayerLogger.debug(
-            "E2E_LOG: onTap triggered for $semanticsIdentifier",
+          PlayerLogger.debug(message: "E2E_LOG: onTap triggered for $semanticsIdentifier",
           );
           onTap();
         },
