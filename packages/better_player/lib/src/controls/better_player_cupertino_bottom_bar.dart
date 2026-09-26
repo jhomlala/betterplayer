@@ -122,12 +122,19 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
         if (controlsConfiguration.enablePlayPause)
           GestureDetector(
             onTap: onPlayPause,
-            child: Icon(
-              latestValue?.isPlaying == true
-                  ? CupertinoIcons.pause_solid
-                  : CupertinoIcons.play_arrow_solid,
-              color: iconColor,
-              size: 24,
+            child: Semantics(
+              identifier: 'better_player_cupertino_controls_play_pause_button',
+              label: latestValue?.isPlaying == true
+                  ? controller.translations.controlsPauseLabel
+                  : controller.translations.controlsPlayLabel,
+              button: true,
+              child: Icon(
+                latestValue?.isPlaying == true
+                    ? CupertinoIcons.pause_solid
+                    : CupertinoIcons.play_arrow_solid,
+                color: iconColor,
+                size: 24,
+              ),
             ),
           )
         else

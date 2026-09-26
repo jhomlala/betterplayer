@@ -226,9 +226,9 @@ class _BetterPlayerMaterialReplayButton extends StatelessWidget {
     }
 
     return _BetterPlayerMaterialHitAreaClickableButton(
-      key: const Key('better_player_material_controls_replay_button'),
+      key: const Key('better_player_material_controls_play_pause_button'),
       semanticsLabel: semanticsLabel,
-      semanticsIdentifier: 'better_player_material_controls_replay_button',
+      semanticsIdentifier: 'better_player_material_controls_play_pause_button',
       icon: Ink(
         padding: EdgeInsets.all(padding),
         decoration: const BoxDecoration(

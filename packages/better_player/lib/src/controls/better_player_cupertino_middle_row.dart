@@ -1,6 +1,5 @@
 import 'dart:ui';
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
-import 'package:better_player/src/controls/better_player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
@@ -88,21 +87,24 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
     required VoidCallback onTap,
     String? semanticsLabel,
   }) {
-    return BetterPlayerMaterialClickableWidget(
-      semanticsIdentifier: semanticsIdentifier,
-      semanticsLabel: semanticsLabel,
+    return GestureDetector(
       onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(48),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.black.withOpacity(0.3),
-            child: Icon(
-              icon,
-              color: iconColor,
-              size: size,
+      child: Semantics(
+        identifier: semanticsIdentifier,
+        label: semanticsLabel ?? semanticsIdentifier,
+        button: true,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(48),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              color: Colors.black.withValues(alpha: 0.3),
+              child: Icon(
+                icon,
+                color: iconColor,
+                size: size,
+              ),
             ),
           ),
         ),
