@@ -103,19 +103,19 @@ class _BetterPlayerCupertinoHitAreaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(48),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            color: Colors.black.withValues(alpha: 0.3),
-            child: Semantics(
-              identifier: semanticsIdentifier,
-              label: semanticsLabel ?? semanticsIdentifier,
-              button: true,
+    return Semantics(
+      identifier: semanticsIdentifier,
+      label: semanticsLabel ?? semanticsIdentifier,
+      button: true,
+      child: GestureDetector(
+        onTap: onTap,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(48),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              color: Colors.black.withValues(alpha: 0.3),
               child: Icon(
                 icon,
                 color: iconColor,

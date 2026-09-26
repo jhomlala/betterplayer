@@ -20,21 +20,23 @@ class BetterPlayerCupertinoHitArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: latestValue != null && latestValue!.isPlaying
-          ? () {
-              if (controlsNotVisible) {
-                onCancelAndRestartTimer();
-              } else {
-                onHideTimerCancel();
-                onChangePlayerControlsNotVisible(true);
+    return ExcludeSemantics(
+      child: GestureDetector(
+        onTap: latestValue != null && latestValue!.isPlaying
+            ? () {
+                if (controlsNotVisible) {
+                  onCancelAndRestartTimer();
+                } else {
+                  onHideTimerCancel();
+                  onChangePlayerControlsNotVisible(true);
+                }
               }
-            }
-          : () {
-              onHideTimerCancel();
-              onChangePlayerControlsNotVisible(false);
-            },
-      child: Container(color: Colors.transparent),
+            : () {
+                onHideTimerCancel();
+                onChangePlayerControlsNotVisible(false);
+              },
+        child: Container(color: Colors.transparent),
+      ),
     );
   }
 }
