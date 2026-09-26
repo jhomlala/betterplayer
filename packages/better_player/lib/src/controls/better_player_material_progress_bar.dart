@@ -44,6 +44,7 @@ class _VideoProgressBarState
   bool shouldPlayAfterDragEnd = false;
   Duration? lastSeek;
   Timer? _updateBlockTimer;
+  bool _isDragging = false;
 
   @override
   void initState() {
@@ -80,6 +81,10 @@ class _VideoProgressBarState
           betterPlayerController?.pause();
         }
 
+        setState(() {
+          _isDragging = true;
+        });
+
         if (widget.onDragStart != null) {
           widget.onDragStart!();
         }
@@ -109,9 +114,18 @@ class _VideoProgressBarState
         }
         _setupUpdateBlockTimer();
 
+        setState(() {
+          _isDragging = false;
+        });
+
         if (widget.onDragEnd != null) {
           widget.onDragEnd!();
         }
+      },
+      onHorizontalDragCancel: () {
+        setState(() {
+          _isDragging = false;
+        });
       },
       onTapDown: (details) {
         final videoPlayerValue = betterPlayerController?.videoPlayerValue;
@@ -147,8 +161,19 @@ class _VideoProgressBarState
             height: MediaQuery.of(context).size.height / 2,
             width: MediaQuery.of(context).size.width,
             color: Colors.transparent,
-            child: CustomPaint(
-              painter: _ProgressBarPainter(_getValue(), widget.colors),
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 1, end: _isDragging ? 1.5 : 1),
+              duration: const Duration(milliseconds: 150),
+              curve: Curves.easeOut,
+              builder: (context, scale, child) {
+                return CustomPaint(
+                  painter: _ProgressBarPainter(
+                    _getValue(),
+                    widget.colors,
+                    scale: scale,
+                  ),
+                );
+              },
             ),
           ),
         ),
@@ -243,10 +268,11 @@ class _VideoProgressBarState
 }
 
 class _ProgressBarPainter extends CustomPainter {
-  _ProgressBarPainter(this.value, this.colors);
+  _ProgressBarPainter(this.value, this.colors, {this.scale = 1.0});
 
   VideoPlayerValue value;
   PlayerProgressColors colors;
+  final double scale;
 
   @override
   bool shouldRepaint(CustomPainter painter) {
@@ -255,7 +281,7 @@ class _ProgressBarPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    const height = 2.0;
+    final height = 3.0 * scale;
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
@@ -310,7 +336,7 @@ class _ProgressBarPainter extends CustomPainter {
     );
     canvas.drawCircle(
       Offset(playedPart, size.height / 2 + height / 2),
-      height * 3,
+      height * 2,
       colors.handlePaint,
     );
   }

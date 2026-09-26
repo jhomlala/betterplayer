@@ -486,7 +486,22 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
                   topRight: Radius.circular(24),
                 ),
               ),
-              child: Column(children: children),
+              child: Column(
+                children: [
+                  Center(
+                    child: Container(
+                      width: 32,
+                      height: 4,
+                      margin: const EdgeInsets.only(bottom: 12, top: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade400,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  ...children,
+                ],
+              ),
             ),
           ),
         );

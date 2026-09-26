@@ -24,7 +24,7 @@ class BetterPlayerSelectionListItemWidget extends StatelessWidget {
       semanticsLabel: label,
       semanticsIdentifier: semanticsIdentifier,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
         child: Row(
           children: [
             SizedBox(width: isSelected ? 8 : 16),

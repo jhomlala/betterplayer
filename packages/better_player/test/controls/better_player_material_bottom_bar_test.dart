@@ -26,7 +26,10 @@ void main() {
       playerEngineController: mockPlayerEngineController,
     );
     await mockController.setupDataSource(
-      PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      PlayerDataSource.network(
+        BetterPlayerTestUtils.forBiggerBlazesUrl,
+        liveStream: true,
+      ),
     );
   });
 

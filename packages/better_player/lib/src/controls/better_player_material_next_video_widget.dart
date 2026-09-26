@@ -25,11 +25,11 @@ class BetterPlayerMaterialNextVideoWidget extends StatelessWidget {
               alignment: Alignment.bottomRight,
               child: Container(
                 margin: EdgeInsets.only(
-                  bottom: controlsConfiguration.controlBarHeight + 20,
-                  right: 24,
+                  bottom: controlsConfiguration.controlBarHeight + 32,
+                  right: 16,
                 ),
                 decoration: BoxDecoration(
-                  color: controlsConfiguration.controlBarColor,
+                  color: Colors.black54,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Padding(

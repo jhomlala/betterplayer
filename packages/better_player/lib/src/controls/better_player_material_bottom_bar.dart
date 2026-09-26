@@ -42,69 +42,75 @@ class BetterPlayerMaterialBottomBar extends StatelessWidget {
       opacity: controlsNotVisible ? 0.0 : 1.0,
       duration: controlsConfiguration.controlsTransitionTime,
       onEnd: onPlayerHide,
-      child: SizedBox(
-        height: controlsConfiguration.controlBarHeight + 20.0,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Expanded(
-              flex: 75,
-              child: Row(
-                children: [
-                  if (controlsConfiguration.enablePlayPause)
-                    _BetterPlayerMaterialPlayPauseButton(
-                      controlsConfiguration: controlsConfiguration,
-                      onPlayPause: onPlayPause,
-                      latestValue: latestValue,
-                    )
-                  else
-                    const SizedBox(),
-                  if (controller.isLiveStream())
-                    _BetterPlayerMaterialLiveWidget(
-                      controlsConfiguration: controlsConfiguration,
-                    )
-                  else if (controlsConfiguration.enableProgressText)
-                    Expanded(
-                      child: _BetterPlayerMaterialPositionWidget(
+      child: AnimatedSlide(
+        offset: controlsNotVisible ? const Offset(0, 0.2) : Offset.zero,
+        duration: controlsConfiguration.controlsTransitionTime,
+        curve: Curves.easeOut,
+        child: SizedBox(
+          height: controlsConfiguration.controlBarHeight + 32.0,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Expanded(
+                flex: 75,
+                child: Row(
+                  children: [
+                    if (controlsConfiguration.enablePlayPause &&
+                        controller.isLiveStream())
+                      _BetterPlayerMaterialPlayPauseButton(
                         controlsConfiguration: controlsConfiguration,
+                        onPlayPause: onPlayPause,
                         latestValue: latestValue,
-                      ),
-                    )
-                  else
-                    const SizedBox(),
-                  const Spacer(),
-                  if (controlsConfiguration.enableMute)
-                    _BetterPlayerMaterialMuteButton(
-                      controlsConfiguration: controlsConfiguration,
-                      onMute: onMute,
-                      controlsNotVisible: controlsNotVisible,
-                      latestValue: latestValue,
-                    )
-                  else
-                    const SizedBox(),
-                  if (controlsConfiguration.enableFullscreen)
-                    _BetterPlayerMaterialFullscreenButton(
-                      controlsConfiguration: controlsConfiguration,
-                      onExpandCollapse: onExpandCollapse,
-                      controlsNotVisible: controlsNotVisible,
-                    )
-                  else
-                    const SizedBox(),
-                ],
+                      )
+                    else
+                      const SizedBox(),
+                    if (controller.isLiveStream())
+                      _BetterPlayerMaterialLiveWidget(
+                        controlsConfiguration: controlsConfiguration,
+                      )
+                    else if (controlsConfiguration.enableProgressText)
+                      Expanded(
+                        child: _BetterPlayerMaterialPositionWidget(
+                          controlsConfiguration: controlsConfiguration,
+                          latestValue: latestValue,
+                        ),
+                      )
+                    else
+                      const SizedBox(),
+                    const Spacer(),
+                    if (controlsConfiguration.enableMute)
+                      _BetterPlayerMaterialMuteButton(
+                        controlsConfiguration: controlsConfiguration,
+                        onMute: onMute,
+                        controlsNotVisible: controlsNotVisible,
+                        latestValue: latestValue,
+                      )
+                    else
+                      const SizedBox(),
+                    if (controlsConfiguration.enableFullscreen)
+                      _BetterPlayerMaterialFullscreenButton(
+                        controlsConfiguration: controlsConfiguration,
+                        onExpandCollapse: onExpandCollapse,
+                        controlsNotVisible: controlsNotVisible,
+                      )
+                    else
+                      const SizedBox(),
+                  ],
+                ),
               ),
-            ),
-            if (controller.isLiveStream())
-              const SizedBox()
-            else if (controlsConfiguration.enableProgressBar)
-              _BetterPlayerMaterialProgressBarWrapper(
-                controlsConfiguration: controlsConfiguration,
-                onProgressBarDragStart: onProgressBarDragStart,
-                onProgressBarDragEnd: onProgressBarDragEnd,
-                onProgressBarTapDown: onProgressBarTapDown,
-              )
-            else
-              const SizedBox(),
-          ],
+              if (controller.isLiveStream())
+                const SizedBox()
+              else if (controlsConfiguration.enableProgressBar)
+                _BetterPlayerMaterialProgressBarWrapper(
+                  controlsConfiguration: controlsConfiguration,
+                  onProgressBarDragStart: onProgressBarDragStart,
+                  onProgressBarDragEnd: onProgressBarDragEnd,
+                  onProgressBarTapDown: onProgressBarTapDown,
+                )
+              else
+                const SizedBox(),
+            ],
+          ),
         ),
       ),
     );
@@ -202,7 +208,7 @@ class _BetterPlayerMaterialFullscreenButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
     return Padding(
-      padding: const EdgeInsets.only(right: 12),
+      padding: const EdgeInsets.only(right: 8),
       child: BetterPlayerMaterialClickableWidget(
         key: const Key('better_player_material_controls_expand_button'),
         onTap: onExpandCollapse,
@@ -260,22 +266,26 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     final position = latestValue != null
         ? latestValue!.position
         : Duration.zero;
     final duration = latestValue != null && latestValue!.duration != null
         ? latestValue!.duration!
         : Duration.zero;
+    final hasPlayPause =
+        controlsConfiguration.enablePlayPause && controller.isLiveStream();
 
     return Padding(
-      padding: controlsConfiguration.enablePlayPause
+      padding: hasPlayPause
           ? const EdgeInsets.only(right: 24)
-          : const EdgeInsets.symmetric(horizontal: 22),
+          : const EdgeInsets.only(left: 16, right: 24),
       child: RichText(
         text: TextSpan(
           text: BetterPlayerUiUtils.formatDuration(position),
           style: TextStyle(
-            fontSize: 10,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
             color: controlsConfiguration.textColor,
             decoration: TextDecoration.none,
           ),
@@ -283,8 +293,9 @@ class _BetterPlayerMaterialPositionWidget extends StatelessWidget {
             TextSpan(
               text: ' / ${BetterPlayerUiUtils.formatDuration(duration)}',
               style: TextStyle(
-                fontSize: 10,
-                color: controlsConfiguration.textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.normal,
+                color: controlsConfiguration.textColor.withValues(alpha: 0.75),
                 decoration: TextDecoration.none,
               ),
             ),
@@ -314,7 +325,7 @@ class _BetterPlayerMaterialProgressBarWrapper extends StatelessWidget {
       flex: 40,
       child: Container(
         alignment: Alignment.bottomCenter,
-        padding: const EdgeInsets.symmetric(horizontal: 12),
+        padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
         child: BetterPlayerMaterialVideoProgressBar(
           controller,
           onDragStart: onProgressBarDragStart,
