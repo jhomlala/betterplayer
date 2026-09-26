@@ -60,15 +60,44 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
             ),
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: controller.isLiveStream()
-                ? _buildLiveStreamRow(controller)
-                : _buildVodRow(controller),
+                ? _BetterPlayerCupertinoLiveStreamRow(
+                    controlsConfiguration: controlsConfiguration,
+                    latestValue: latestValue,
+                    onPlayPause: onPlayPause,
+                    iconColor: iconColor,
+                  )
+                : _BetterPlayerCupertinoVodRow(
+                    controlsConfiguration: controlsConfiguration,
+                    latestValue: latestValue,
+                    onProgressBarDragStart: onProgressBarDragStart,
+                    onProgressBarDragEnd: onProgressBarDragEnd,
+                    onProgressBarTapDown: onProgressBarTapDown,
+                  ),
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildVodRow(BetterPlayerController controller) {
+class _BetterPlayerCupertinoVodRow extends StatelessWidget {
+  const _BetterPlayerCupertinoVodRow({
+    required this.controlsConfiguration,
+    required this.latestValue,
+    required this.onProgressBarDragStart,
+    required this.onProgressBarDragEnd,
+    required this.onProgressBarTapDown,
+  });
+
+  final PlayerControlsConfiguration controlsConfiguration;
+  final VideoPlayerValue? latestValue;
+  final VoidCallback onProgressBarDragStart;
+  final VoidCallback onProgressBarDragEnd;
+  final VoidCallback onProgressBarTapDown;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Row(
       children: [
         if (controlsConfiguration.enableProgressText)
@@ -107,15 +136,31 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
               (latestValue?.duration ?? Duration.zero) - (latestValue?.position ?? Duration.zero),
             )}',
             style: TextStyle(
-              color: controlsConfiguration.textColor.withOpacity(0.7),
+              color: controlsConfiguration.textColor.withValues(alpha: 0.7),
               fontSize: 12,
             ),
           ),
       ],
     );
   }
+}
 
-  Widget _buildLiveStreamRow(BetterPlayerController controller) {
+class _BetterPlayerCupertinoLiveStreamRow extends StatelessWidget {
+  const _BetterPlayerCupertinoLiveStreamRow({
+    required this.controlsConfiguration,
+    required this.latestValue,
+    required this.onPlayPause,
+    required this.iconColor,
+  });
+
+  final PlayerControlsConfiguration controlsConfiguration;
+  final VideoPlayerValue? latestValue;
+  final VoidCallback onPlayPause;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

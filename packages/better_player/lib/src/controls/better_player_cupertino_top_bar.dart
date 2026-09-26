@@ -132,7 +132,7 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
           duration: controlsConfiguration.controlsTransitionTime,
-          child: _buildGlassButton(
+          child: _BetterPlayerCupertinoGlassButton(
             barHeight: barHeight,
             icon: controller.isFullScreen
                 ? controlsConfiguration.fullscreenDisableIcon
@@ -200,7 +200,7 @@ class _BetterPlayerCupertinoPipButtonState
               child: AnimatedOpacity(
                 opacity: widget.controlsNotVisible ? 0.0 : 1.0,
                 duration: widget.controlsConfiguration.controlsTransitionTime,
-                child: _buildGlassButton(
+                child: _BetterPlayerCupertinoGlassButton(
                   barHeight: widget.barHeight,
                   icon: widget.controlsConfiguration.pipMenuIcon,
                   iconColor: widget.iconColor,
@@ -252,7 +252,7 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
           duration: controlsConfiguration.controlsTransitionTime,
-          child: _buildGlassButton(
+          child: _BetterPlayerCupertinoGlassButton(
             barHeight: barHeight,
             icon: (latestValue != null && latestValue!.volume > 0)
                 ? controlsConfiguration.muteIcon
@@ -294,7 +294,7 @@ class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
         child: AnimatedOpacity(
           opacity: controlsNotVisible ? 0.0 : 1.0,
           duration: controlsConfiguration.controlsTransitionTime,
-          child: _buildGlassButton(
+          child: _BetterPlayerCupertinoGlassButton(
             barHeight: barHeight,
             icon: controlsConfiguration.overflowMenuIcon,
             iconColor: iconColor,
@@ -306,28 +306,38 @@ class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
   }
 }
 
-Widget _buildGlassButton({
-  required double barHeight,
-  required IconData icon,
-  required Color iconColor,
-  required double iconSize,
-}) {
-  return ClipRRect(
-    borderRadius: BorderRadius.circular(48),
-    child: BackdropFilter(
-      filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-      child: Container(
-        height: barHeight,
-        width: barHeight,
-        decoration: BoxDecoration(color: Colors.black.withOpacity(0.3)),
-        child: Center(
-          child: Icon(
-            icon,
-            color: iconColor,
-            size: iconSize,
+class _BetterPlayerCupertinoGlassButton extends StatelessWidget {
+  const _BetterPlayerCupertinoGlassButton({
+    required this.barHeight,
+    required this.icon,
+    required this.iconColor,
+    required this.iconSize,
+  });
+
+  final double barHeight;
+  final IconData icon;
+  final Color iconColor;
+  final double iconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(48),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          height: barHeight,
+          width: barHeight,
+          decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.3)),
+          child: Center(
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: iconSize,
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }

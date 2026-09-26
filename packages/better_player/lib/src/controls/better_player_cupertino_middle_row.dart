@@ -35,12 +35,13 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (controlsConfiguration.enableSkips)
-                  _buildHitAreaButton(
+                  _BetterPlayerCupertinoHitAreaButton(
                     semanticsIdentifier:
                         'better_player_cupertino_controls_skip_back_button',
                     icon: controlsConfiguration.skipBackIcon,
                     size: iconSize,
                     onTap: onSkipBack,
+                    iconColor: iconColor,
                     semanticsLabel:
                         controller.translations.controlsSkipBackwardLabel,
                   )
@@ -48,7 +49,7 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
                   const SizedBox(),
                 SizedBox(width: isFullScreen ? 48 : 24),
                 if (controlsConfiguration.enablePlayPause)
-                  _buildHitAreaButton(
+                  _BetterPlayerCupertinoHitAreaButton(
                     semanticsIdentifier:
                         'better_player_cupertino_controls_play_pause_button',
                     icon: latestValue?.isPlaying == true
@@ -56,6 +57,7 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
                         : controlsConfiguration.playIcon,
                     size: iconSize + 8.0, // Play button slightly larger
                     onTap: onPlayPause,
+                    iconColor: iconColor,
                     semanticsLabel: latestValue?.isPlaying == true
                         ? controller.translations.controlsPauseLabel
                         : controller.translations.controlsPlayLabel,
@@ -64,12 +66,13 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
                   const SizedBox(),
                 SizedBox(width: isFullScreen ? 48 : 24),
                 if (controlsConfiguration.enableSkips)
-                  _buildHitAreaButton(
+                  _BetterPlayerCupertinoHitAreaButton(
                     semanticsIdentifier:
                         'better_player_cupertino_controls_skip_forward_button',
                     icon: controlsConfiguration.skipForwardIcon,
                     size: iconSize,
                     onTap: onSkipForward,
+                    iconColor: iconColor,
                     semanticsLabel:
                         controller.translations.controlsSkipForwardLabel,
                   )
@@ -79,14 +82,27 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
             ),
     );
   }
+}
 
-  Widget _buildHitAreaButton({
-    required String semanticsIdentifier,
-    required IconData icon,
-    required double size,
-    required VoidCallback onTap,
-    String? semanticsLabel,
-  }) {
+class _BetterPlayerCupertinoHitAreaButton extends StatelessWidget {
+  const _BetterPlayerCupertinoHitAreaButton({
+    required this.semanticsIdentifier,
+    required this.icon,
+    required this.size,
+    required this.onTap,
+    required this.iconColor,
+    this.semanticsLabel,
+  });
+
+  final String semanticsIdentifier;
+  final IconData icon;
+  final double size;
+  final VoidCallback onTap;
+  final String? semanticsLabel;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Semantics(
