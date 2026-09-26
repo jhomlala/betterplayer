@@ -181,6 +181,7 @@ class _BetterPlayerState extends State<BetterPlayer>
           controller: widget.controller,
           child: _BetterPlayerVideoWithVisibility(
             controller: widget.controller,
+            isFullScreenRoute: true,
           ),
         );
 
@@ -261,8 +262,12 @@ class _BetterPlayerState extends State<BetterPlayer>
 }
 
 class _BetterPlayerVideoWithVisibility extends StatelessWidget {
-  const _BetterPlayerVideoWithVisibility({required this.controller});
+  const _BetterPlayerVideoWithVisibility({
+    required this.controller,
+    this.isFullScreenRoute = false,
+  });
   final BetterPlayerController controller;
+  final bool isFullScreenRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +275,10 @@ class _BetterPlayerVideoWithVisibility extends StatelessWidget {
       key: Key('${controller.hashCode}_key'),
       onVisibilityChanged: (info) =>
           controller.onPlayerVisibilityChanged(info.visibleFraction),
-      child: BetterPlayerWithControls(controller: controller),
+      child: BetterPlayerWithControls(
+        controller: controller,
+        isFullScreenRoute: isFullScreenRoute,
+      ),
     );
   }
 }

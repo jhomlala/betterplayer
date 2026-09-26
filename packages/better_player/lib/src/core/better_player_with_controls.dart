@@ -13,8 +13,13 @@ import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
-  const BetterPlayerWithControls({super.key, this.controller});
+  const BetterPlayerWithControls({
+    super.key,
+    this.controller,
+    this.isFullScreenRoute = false,
+  });
   final BetterPlayerController? controller;
+  final bool isFullScreenRoute;
 
   @override
   _BetterPlayerWithControlsState createState() =>
@@ -115,11 +120,16 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       ),
     );
 
+    Widget result = innerContainer;
     if (betterPlayerController.betterPlayerConfiguration.expandToFill) {
-      return Center(child: innerContainer);
-    } else {
-      return innerContainer;
+      result = Center(child: innerContainer);
     }
+
+    if (betterPlayerController.isFullScreen && !widget.isFullScreenRoute) {
+      result = ExcludeSemantics(child: result);
+    }
+
+    return result;
   }
 
   Container _buildPlayerWithControls(
