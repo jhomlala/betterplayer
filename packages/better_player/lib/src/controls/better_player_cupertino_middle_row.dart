@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/logging/player_logger.dart';
@@ -32,138 +30,132 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
 
     PlayerLogger.debug(
       message:
-          "E2E_LOG: BetterPlayerCupertinoMiddleRow.build | "
-          "isFullScreen: $isFullScreen | enableSkips: ${controlsConfiguration.enableSkips} | "
-          "enablePlayPause: ${controlsConfiguration.enablePlayPause} | "
-          "isPlaying: ${latestValue?.isPlaying}",
+          'E2E_LOG: BetterPlayerCupertinoMiddleRow.build | '
+          'isFullScreen: $isFullScreen | enableSkips: ${controlsConfiguration.enableSkips} | '
+          'enablePlayPause: ${controlsConfiguration.enablePlayPause} | '
+          'isPlaying: ${latestValue?.isPlaying}',
     );
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Center(
-          child: controller.isLiveStream()
-              ? const SizedBox()
-              : Semantics(
-                  explicitChildNodes: true,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      if (controlsConfiguration.enableSkips)
-                        Expanded(
-                          child: Center(
-                            child: _BetterPlayerCupertinoHitAreaButton(
-                              semanticsIdentifier:
-                                  'better_player_cupertino_controls_skip_back_button',
-                              icon: controlsConfiguration.skipBackIcon,
-                              size: iconSize,
-                              onTap: onSkipBack,
-                              iconColor: iconColor,
-                              semanticsLabel: controller
-                                  .translations
-                                  .controlsSkipBackwardLabel,
-                            ),
-                          ),
-                        )
-                      else
-                        const SizedBox(),
-                      if (controlsConfiguration.enablePlayPause)
-                        Expanded(
-                          child: Center(
-                            child: _BetterPlayerCupertinoHitAreaButton(
-                              semanticsIdentifier:
-                                  'better_player_cupertino_controls_play_pause_button',
-                              icon: latestValue?.isPlaying == true
-                                  ? controlsConfiguration.pauseIcon
-                                  : controlsConfiguration.playIcon,
-                              size:
-                                  iconSize + 8.0, // Play button slightly larger
-                              onTap: onPlayPause,
-                              iconColor: iconColor,
-                              semanticsLabel: latestValue?.isPlaying == true
-                                  ? controller.translations.controlsPauseLabel
-                                  : controller.translations.controlsPlayLabel,
-                            ),
-                          ),
-                        )
-                      else
-                        const SizedBox(),
-                      if (controlsConfiguration.enableSkips)
-                        Expanded(
-                          child: Center(
-                            child: _BetterPlayerCupertinoHitAreaButton(
-                              semanticsIdentifier:
-                                  'better_player_cupertino_controls_skip_forward_button',
-                              icon: controlsConfiguration.skipForwardIcon,
-                              size: iconSize,
-                              onTap: onSkipForward,
-                              iconColor: iconColor,
-                              semanticsLabel: controller
-                                  .translations
-                                  .controlsSkipForwardLabel,
-                            ),
-                          ),
-                        )
-                      else
-                        const SizedBox(),
-                    ],
-                  ),
-                ),
-        );
-      },
-    );
-  }
-}
+    final buttonSize = iconSize + 16.0;
+    final playButtonSize = iconSize + 8.0 + 16.0;
 
-class _BetterPlayerCupertinoHitAreaButton extends StatelessWidget {
-  const _BetterPlayerCupertinoHitAreaButton({
-    required this.semanticsIdentifier,
-    required this.icon,
-    required this.size,
-    required this.onTap,
-    required this.iconColor,
-    this.semanticsLabel,
-  });
-
-  final String semanticsIdentifier;
-  final IconData icon;
-  final double size;
-  final VoidCallback onTap;
-  final String? semanticsLabel;
-  final Color iconColor;
-
-  @override
-  Widget build(BuildContext context) {
-    PlayerLogger.debug(
-      message:
-          "E2E_LOG: _BetterPlayerCupertinoHitAreaButton.build | identifier: $semanticsIdentifier | label: $semanticsLabel | icon: $icon",
-    );
-    return Semantics(
-      identifier: semanticsIdentifier,
-      label: semanticsLabel ?? semanticsIdentifier,
-      button: true,
-      child: GestureDetector(
-        onTap: () {
-          PlayerLogger.debug(
-            message: "E2E_LOG: onTap triggered for $semanticsIdentifier",
-          );
-          onTap();
-        },
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(48),
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              color: Colors.black.withValues(alpha: 0.3),
-              child: Icon(
-                icon,
-                color: iconColor,
-                size: size,
-              ),
+    return Center(
+      child: controller.isLiveStream()
+          ? const SizedBox()
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                if (controlsConfiguration.enableSkips)
+                  Semantics(
+                    identifier:
+                        'better_player_cupertino_controls_skip_back_button',
+                    label: controller.translations.controlsSkipBackwardLabel,
+                    button: true,
+                    child: SizedBox(
+                      width: buttonSize,
+                      height: buttonSize,
+                      child: GestureDetector(
+                        onTap: () {
+                          PlayerLogger.debug(
+                            message: 'E2E_LOG: onTap skip_back_button',
+                          );
+                          onSkipBack();
+                        },
+                        child: Container(
+                          width: buttonSize,
+                          height: buttonSize,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            controlsConfiguration.skipBackIcon,
+                            color: iconColor,
+                            size: iconSize,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  const SizedBox(),
+                if (controlsConfiguration.enablePlayPause)
+                  Semantics(
+                    identifier:
+                        'better_player_cupertino_controls_play_pause_button',
+                    label: latestValue?.isPlaying == true
+                        ? controller.translations.controlsPauseLabel
+                        : controller.translations.controlsPlayLabel,
+                    button: true,
+                    child: SizedBox(
+                      width: playButtonSize,
+                      height: playButtonSize,
+                      child: GestureDetector(
+                        onTap: () {
+                          PlayerLogger.debug(
+                            message: 'E2E_LOG: onTap play_pause_button',
+                          );
+                          onPlayPause();
+                        },
+                        child: Container(
+                          width: playButtonSize,
+                          height: playButtonSize,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            latestValue?.isPlaying == true
+                                ? controlsConfiguration.pauseIcon
+                                : controlsConfiguration.playIcon,
+                            color: iconColor,
+                            size: iconSize + 8.0,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  const SizedBox(),
+                if (controlsConfiguration.enableSkips)
+                  Semantics(
+                    identifier:
+                        'better_player_cupertino_controls_skip_forward_button',
+                    label: controller.translations.controlsSkipForwardLabel,
+                    button: true,
+                    child: SizedBox(
+                      width: buttonSize,
+                      height: buttonSize,
+                      child: GestureDetector(
+                        onTap: () {
+                          PlayerLogger.debug(
+                            message: 'E2E_LOG: onTap skip_forward_button',
+                          );
+                          onSkipForward();
+                        },
+                        child: Container(
+                          width: buttonSize,
+                          height: buttonSize,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            controlsConfiguration.skipForwardIcon,
+                            color: iconColor,
+                            size: iconSize,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  const SizedBox(),
+              ],
             ),
-          ),
-        ),
-      ),
     );
   }
 }
