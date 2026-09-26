@@ -41,66 +41,69 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
         return Center(
           child: controller.isLiveStream()
               ? const SizedBox()
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    if (controlsConfiguration.enableSkips)
-                      Expanded(
-                        child: Center(
-                          child: _BetterPlayerCupertinoHitAreaButton(
-                            semanticsIdentifier:
-                                'better_player_cupertino_controls_skip_back_button',
-                            icon: controlsConfiguration.skipBackIcon,
-                            size: iconSize,
-                            onTap: onSkipBack,
-                            iconColor: iconColor,
-                            semanticsLabel: controller
-                                .translations
-                                .controlsSkipBackwardLabel,
+              : Semantics(
+                  explicitChildNodes: true,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      if (controlsConfiguration.enableSkips)
+                        Expanded(
+                          child: Center(
+                            child: _BetterPlayerCupertinoHitAreaButton(
+                              semanticsIdentifier:
+                                  'better_player_cupertino_controls_skip_back_button',
+                              icon: controlsConfiguration.skipBackIcon,
+                              size: iconSize,
+                              onTap: onSkipBack,
+                              iconColor: iconColor,
+                              semanticsLabel: controller
+                                  .translations
+                                  .controlsSkipBackwardLabel,
+                            ),
                           ),
-                        ),
-                      )
-                    else
-                      const SizedBox(),
-                    if (controlsConfiguration.enablePlayPause)
-                      Expanded(
-                        child: Center(
-                          child: _BetterPlayerCupertinoHitAreaButton(
-                            semanticsIdentifier:
-                                'better_player_cupertino_controls_play_pause_button',
-                            icon: latestValue?.isPlaying == true
-                                ? controlsConfiguration.pauseIcon
-                                : controlsConfiguration.playIcon,
-                            size: iconSize + 8.0, // Play button slightly larger
-                            onTap: onPlayPause,
-                            iconColor: iconColor,
-                            semanticsLabel: latestValue?.isPlaying == true
-                                ? controller.translations.controlsPauseLabel
-                                : controller.translations.controlsPlayLabel,
+                        )
+                      else
+                        const SizedBox(),
+                      if (controlsConfiguration.enablePlayPause)
+                        Expanded(
+                          child: Center(
+                            child: _BetterPlayerCupertinoHitAreaButton(
+                              semanticsIdentifier:
+                                  'better_player_cupertino_controls_play_pause_button',
+                              icon: latestValue?.isPlaying == true
+                                  ? controlsConfiguration.pauseIcon
+                                  : controlsConfiguration.playIcon,
+                              size: iconSize + 8.0, // Play button slightly larger
+                              onTap: onPlayPause,
+                              iconColor: iconColor,
+                              semanticsLabel: latestValue?.isPlaying == true
+                                  ? controller.translations.controlsPauseLabel
+                                  : controller.translations.controlsPlayLabel,
+                            ),
                           ),
-                        ),
-                      )
-                    else
-                      const SizedBox(),
-                    if (controlsConfiguration.enableSkips)
-                      Expanded(
-                        child: Center(
-                          child: _BetterPlayerCupertinoHitAreaButton(
-                            semanticsIdentifier:
-                                'better_player_cupertino_controls_skip_forward_button',
-                            icon: controlsConfiguration.skipForwardIcon,
-                            size: iconSize,
-                            onTap: onSkipForward,
-                            iconColor: iconColor,
-                            semanticsLabel: controller
-                                .translations
-                                .controlsSkipForwardLabel,
+                        )
+                      else
+                        const SizedBox(),
+                      if (controlsConfiguration.enableSkips)
+                        Expanded(
+                          child: Center(
+                            child: _BetterPlayerCupertinoHitAreaButton(
+                              semanticsIdentifier:
+                                  'better_player_cupertino_controls_skip_forward_button',
+                              icon: controlsConfiguration.skipForwardIcon,
+                              size: iconSize,
+                              onTap: onSkipForward,
+                              iconColor: iconColor,
+                              semanticsLabel: controller
+                                  .translations
+                                  .controlsSkipForwardLabel,
+                            ),
                           ),
-                        ),
-                      )
-                    else
-                      const SizedBox(),
-                  ],
+                        )
+                      else
+                        const SizedBox(),
+                    ],
+                  ),
                 ),
         );
       },

@@ -15,6 +15,7 @@ class BetterPlayerVideoAreaSemantics extends StatelessWidget {
       label: semanticsIdentifier,
       identifier: semanticsIdentifier,
       container: true,
+      explicitChildNodes: true,
       child: child,
     );
   }
