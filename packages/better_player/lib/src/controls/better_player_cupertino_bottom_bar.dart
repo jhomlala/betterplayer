@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/better_player_cupertino_progress_bar.dart';
 import 'package:better_player/src/controls/player_progress_colors.dart';
@@ -49,32 +47,27 @@ class BetterPlayerCupertinoBottomBar extends StatelessWidget {
         right: horizontalMargin,
         bottom: bottomMargin,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(60),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-          child: Container(
-            height: barHeight,
-            decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.3),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: controller.isLiveStream()
-                ? _BetterPlayerCupertinoLiveStreamRow(
-                    controlsConfiguration: controlsConfiguration,
-                    latestValue: latestValue,
-                    onPlayPause: onPlayPause,
-                    iconColor: iconColor,
-                  )
-                : _BetterPlayerCupertinoVodRow(
-                    controlsConfiguration: controlsConfiguration,
-                    latestValue: latestValue,
-                    onProgressBarDragStart: onProgressBarDragStart,
-                    onProgressBarDragEnd: onProgressBarDragEnd,
-                    onProgressBarTapDown: onProgressBarTapDown,
-                  ),
-          ),
+      child: Container(
+        height: barHeight,
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(60),
         ),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: controller.isLiveStream()
+            ? _BetterPlayerCupertinoLiveStreamRow(
+                controlsConfiguration: controlsConfiguration,
+                latestValue: latestValue,
+                onPlayPause: onPlayPause,
+                iconColor: iconColor,
+              )
+            : _BetterPlayerCupertinoVodRow(
+                controlsConfiguration: controlsConfiguration,
+                latestValue: latestValue,
+                onProgressBarDragStart: onProgressBarDragStart,
+                onProgressBarDragEnd: onProgressBarDragEnd,
+                onProgressBarTapDown: onProgressBarTapDown,
+              ),
       ),
     );
   }

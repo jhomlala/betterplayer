@@ -110,26 +110,20 @@ class _BetterPlayerCupertinoControlsState
               data: const CupertinoThemeData(brightness: Brightness.dark),
               child: Column(
                 children: <Widget>[
-                  AnimatedSlide(
-                    offset: controlsNotVisible
-                        ? const Offset(0, -0.2)
-                        : Offset.zero,
+                  AnimatedOpacity(
+                    opacity: controlsNotVisible ? 0.0 : 1.0,
                     duration: _controlsConfiguration.controlsTransitionTime,
-                    child: AnimatedOpacity(
-                      opacity: controlsNotVisible ? 0.0 : 1.0,
-                      duration: _controlsConfiguration.controlsTransitionTime,
-                      child: BetterPlayerCupertinoTopBar(
-                        controlsConfiguration: _controlsConfiguration,
-                        controlsNotVisible: false, // handeled by wrapper now
-                        barHeight: 32,
-                        iconSize: 18,
-                        buttonPadding: buttonPadding,
-                        iconColor: iconColor,
-                        onExpandCollapse: _onExpandCollapse,
-                        onShowMoreClicked: onShowMoreClicked,
-                        onMute: _onMute,
-                        latestValue: _latestValue,
-                      ),
+                    child: BetterPlayerCupertinoTopBar(
+                      controlsConfiguration: _controlsConfiguration,
+                      controlsNotVisible: false,
+                      barHeight: 32,
+                      iconSize: 18,
+                      buttonPadding: buttonPadding,
+                      iconColor: iconColor,
+                      onExpandCollapse: _onExpandCollapse,
+                      onShowMoreClicked: onShowMoreClicked,
+                      onMute: _onMute,
+                      latestValue: _latestValue,
                     ),
                   ),
                   Expanded(
@@ -150,22 +144,14 @@ class _BetterPlayerCupertinoControlsState
                           BetterPlayerCupertinoLoadingWidget(
                             controlsConfiguration: _controlsConfiguration,
                           )
-                        else
-                          AnimatedOpacity(
-                            opacity: controlsNotVisible ? 0.0 : 1.0,
-                            duration:
-                                _controlsConfiguration.controlsTransitionTime,
-                            child: ExcludeSemantics(
-                              excluding: controlsNotVisible,
-                              child: BetterPlayerCupertinoMiddleRow(
-                                controlsConfiguration: _controlsConfiguration,
-                                onSkipBack: skipBack,
-                                onSkipForward: skipForward,
-                                onPlayPause: _onPlayPause,
-                                latestValue: _latestValue,
-                                iconColor: iconColor,
-                              ),
-                            ),
+                        else if (!controlsNotVisible)
+                          BetterPlayerCupertinoMiddleRow(
+                            controlsConfiguration: _controlsConfiguration,
+                            onSkipBack: skipBack,
+                            onSkipForward: skipForward,
+                            onPlayPause: _onPlayPause,
+                            latestValue: _latestValue,
+                            iconColor: iconColor,
                           ),
                         Positioned(
                           bottom: 0,
@@ -178,25 +164,19 @@ class _BetterPlayerCupertinoControlsState
                       ],
                     ),
                   ),
-                  AnimatedSlide(
-                    offset: controlsNotVisible
-                        ? const Offset(0, 0.2)
-                        : Offset.zero,
+                  AnimatedOpacity(
+                    opacity: controlsNotVisible ? 0.0 : 1.0,
                     duration: _controlsConfiguration.controlsTransitionTime,
-                    child: AnimatedOpacity(
-                      opacity: controlsNotVisible ? 0.0 : 1.0,
-                      duration: _controlsConfiguration.controlsTransitionTime,
-                      onEnd: _onPlayerHide,
-                      child: BetterPlayerCupertinoBottomBar(
-                        controlsConfiguration: _controlsConfiguration,
-                        barHeight: barHeight,
-                        iconColor: iconColor,
-                        onProgressBarDragStart: () => _hideTimer?.cancel(),
-                        onProgressBarDragEnd: _startHideTimer,
-                        onProgressBarTapDown: cancelAndRestartTimer,
-                        latestValue: _latestValue,
-                        onPlayPause: _onPlayPause,
-                      ),
+                    onEnd: _onPlayerHide,
+                    child: BetterPlayerCupertinoBottomBar(
+                      controlsConfiguration: _controlsConfiguration,
+                      barHeight: barHeight,
+                      iconColor: iconColor,
+                      onProgressBarDragStart: () => _hideTimer?.cancel(),
+                      onProgressBarDragEnd: _startHideTimer,
+                      onProgressBarTapDown: cancelAndRestartTimer,
+                      latestValue: _latestValue,
+                      onPlayPause: _onPlayPause,
                     ),
                   ),
                 ],
@@ -335,7 +315,9 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _onExpandCollapse() {
-    changePlayerControlsNotVisible(true);
+    if (!_betterPlayerController!.controlsAlwaysVisible) {
+      changePlayerControlsNotVisible(true);
+    }
     _betterPlayerController!.toggleFullScreen();
     _expandCollapseTimer = Timer(
       _controlsConfiguration.controlsTransitionTime,
