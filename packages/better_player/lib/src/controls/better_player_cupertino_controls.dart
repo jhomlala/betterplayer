@@ -78,10 +78,6 @@ class _BetterPlayerCupertinoControlsState
         child: Builder(
           builder: (BuildContext context) {
             _betterPlayerController = BetterPlayerController.of(context);
-            PlayerLogger.debug(
-              message:
-                  'E2E_LOG: CupertinoControls Builder | controlsNotVisible: $controlsNotVisible | _wasLoading: $_wasLoading | isFullScreen: ${_betterPlayerController?.isFullScreen}',
-            );
 
             if (_latestValue?.hasError == true) {
               return BetterPlayerVideoAreaSemantics(
@@ -325,7 +321,6 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _onExpandCollapse() {
-    PlayerLogger.debug(message: 'E2E_LOG: _onExpandCollapse triggered');
     changePlayerControlsNotVisible(true);
     _betterPlayerController!.toggleFullScreen();
     _expandCollapseTimer = Timer(
@@ -337,7 +332,6 @@ class _BetterPlayerCupertinoControlsState
   }
 
   void _onPlayPause() {
-    PlayerLogger.debug(message: 'E2E_LOG: _onPlayPause triggered');
     var isFinished = false;
 
     if (_latestValue?.position != null && _latestValue?.duration != null) {
@@ -388,10 +382,6 @@ class _BetterPlayerCupertinoControlsState
       final isLoad = isLoading(_betterPlayerController!.videoPlayerValue);
       final hasDur =
           _betterPlayerController!.videoPlayerValue?.duration != null;
-      PlayerLogger.debug(
-        message:
-            'E2E_LOG: Cupertino _updateState | controlsNotVisible: $controlsNotVisible | wasLoading: $_wasLoading | isVideoFinished: $isFinished | isBuffering: $isBuff | isPlaying: $isPlay | isLoading: $isLoad | hasDuration: $hasDur',
-      );
 
       if (!controlsNotVisible || isFinished || _wasLoading || isLoad) {
         setState(() {

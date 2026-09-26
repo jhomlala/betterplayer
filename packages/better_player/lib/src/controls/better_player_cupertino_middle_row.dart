@@ -30,18 +30,8 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
     final isFullScreen = controller.isFullScreen;
     final iconSize = isFullScreen ? 32.0 : 24.0;
 
-    PlayerLogger.debug(
-      message:
-          'E2E_LOG: CupertinoMiddleRow | isFullScreen: $isFullScreen | isLiveStream: ${controller.isLiveStream()} | enablePlayPause: ${controlsConfiguration.enablePlayPause}',
-    );
-
     return LayoutBuilder(
       builder: (context, constraints) {
-        PlayerLogger.debug(
-          message:
-              'E2E_LOG: CupertinoMiddleRow LayoutBuilder | constraints: $constraints | isFullScreen: $isFullScreen | isLiveStream: ${controller.isLiveStream()} | enablePlayPause: ${controlsConfiguration.enablePlayPause}',
-        );
-
         return Center(
           child: controller.isLiveStream()
               ? const SizedBox()

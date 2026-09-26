@@ -216,11 +216,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             latestValue.isBuffering &&
             difference.inMilliseconds < _bufferingInterval;
 
-        PlayerLogger.debug(
-          message:
-              'E2E_LOG: isLoading check | isPlaying: ${latestValue.isPlaying} | isBuffering: ${latestValue.isBuffering} | diff: ${difference.inMilliseconds}ms | _bufferingInterval: $_bufferingInterval | result: $loading',
-        );
-
         if (loading) {
           return true;
         }
@@ -519,10 +514,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
   ///Called when player controls visibility should be changed.
   void changePlayerControlsNotVisible(bool notVisible) {
-    PlayerLogger.debug(
-      message:
-          'E2E_LOG: changePlayerControlsNotVisible | current: $controlsNotVisible | new: $notVisible',
-    );
     setState(() {
       if (notVisible) {
         betterPlayerController?.postEvent(

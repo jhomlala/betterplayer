@@ -34,7 +34,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       widget.controller!.betterPlayerControlsConfiguration;
 
   final StreamController<bool> playerVisibilityStreamController =
-      StreamController();
+      StreamController.broadcast();
 
   bool _initialized = false;
 
@@ -125,11 +125,11 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       result = Center(child: innerContainer);
     }
 
-    if (betterPlayerController.isFullScreen && !widget.isFullScreenRoute) {
-      result = ExcludeSemantics(child: result);
-    }
-
-    return result;
+    return ExcludeSemantics(
+      excluding:
+          betterPlayerController.isFullScreen && !widget.isFullScreenRoute,
+      child: result,
+    );
   }
 
   Container _buildPlayerWithControls(
