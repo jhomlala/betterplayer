@@ -14,6 +14,7 @@ import 'package:better_player/src/controls/better_player_material_localizations_
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:material_ui/material_ui.dart';
@@ -77,6 +78,10 @@ class _BetterPlayerCupertinoControlsState
         child: Builder(
           builder: (BuildContext context) {
             _betterPlayerController = BetterPlayerController.of(context);
+            PlayerLogger.debug(
+              message:
+                  'E2E_LOG: CupertinoControls Builder | controlsNotVisible: $controlsNotVisible | _wasLoading: $_wasLoading | isFullScreen: ${_betterPlayerController?.isFullScreen}',
+            );
 
             if (_latestValue?.hasError == true) {
               return BetterPlayerVideoAreaSemantics(

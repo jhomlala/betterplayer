@@ -211,9 +211,17 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       if (bufferedEndPosition != null) {
         final difference = bufferedEndPosition - position;
 
-        if (latestValue.isPlaying &&
+        final loading =
+            latestValue.isPlaying &&
             latestValue.isBuffering &&
-            difference.inMilliseconds < _bufferingInterval) {
+            difference.inMilliseconds < _bufferingInterval;
+
+        PlayerLogger.debug(
+          message:
+              'E2E_LOG: isLoading check | isPlaying: ${latestValue.isPlaying} | isBuffering: ${latestValue.isBuffering} | diff: ${difference.inMilliseconds}ms | _bufferingInterval: $_bufferingInterval | result: $loading',
+        );
+
+        if (loading) {
           return true;
         }
       }

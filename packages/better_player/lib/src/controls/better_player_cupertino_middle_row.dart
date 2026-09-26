@@ -1,6 +1,8 @@
 import 'dart:ui';
+
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -27,6 +29,11 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
     final controller = BetterPlayerController.of(context);
     final isFullScreen = controller.isFullScreen;
     final iconSize = isFullScreen ? 32.0 : 24.0;
+
+    PlayerLogger.debug(
+      message:
+          'E2E_LOG: CupertinoMiddleRow | isFullScreen: $isFullScreen | isLiveStream: ${controller.isLiveStream()} | enablePlayPause: ${controlsConfiguration.enablePlayPause}',
+    );
 
     return Center(
       child: controller.isLiveStream()
