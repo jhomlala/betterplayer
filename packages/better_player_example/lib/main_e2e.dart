@@ -52,6 +52,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         DeviceOrientation.portraitDown,
         DeviceOrientation.portraitUp,
       ],
+      controlsConfiguration: PlayerControlsConfiguration(
+        controlsHideTime: Duration(days: 30),
+      ),
       playerLogConfiguration: PlayerLoggerConfiguration(
         logLevel: PlayerLogLevel.debug,
         outputs: [ConsoleLogOutput(usePrint: true)],
