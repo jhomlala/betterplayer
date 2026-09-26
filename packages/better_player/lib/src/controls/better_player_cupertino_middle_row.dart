@@ -32,49 +32,59 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
       child: controller.isLiveStream()
           ? const SizedBox()
           : Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 if (controlsConfiguration.enableSkips)
-                  _BetterPlayerCupertinoHitAreaButton(
-                    semanticsIdentifier:
-                        'better_player_cupertino_controls_skip_back_button',
-                    icon: controlsConfiguration.skipBackIcon,
-                    size: iconSize,
-                    onTap: onSkipBack,
-                    iconColor: iconColor,
-                    semanticsLabel:
-                        controller.translations.controlsSkipBackwardLabel,
+                  Expanded(
+                    child: Center(
+                      child: _BetterPlayerCupertinoHitAreaButton(
+                        semanticsIdentifier:
+                            'better_player_cupertino_controls_skip_back_button',
+                        icon: controlsConfiguration.skipBackIcon,
+                        size: iconSize,
+                        onTap: onSkipBack,
+                        iconColor: iconColor,
+                        semanticsLabel:
+                            controller.translations.controlsSkipBackwardLabel,
+                      ),
+                    ),
                   )
                 else
                   const SizedBox(),
-                SizedBox(width: isFullScreen ? 48 : 24),
                 if (controlsConfiguration.enablePlayPause)
-                  _BetterPlayerCupertinoHitAreaButton(
-                    semanticsIdentifier:
-                        'better_player_cupertino_controls_play_pause_button',
-                    icon: latestValue?.isPlaying == true
-                        ? controlsConfiguration.pauseIcon
-                        : controlsConfiguration.playIcon,
-                    size: iconSize + 8.0, // Play button slightly larger
-                    onTap: onPlayPause,
-                    iconColor: iconColor,
-                    semanticsLabel: latestValue?.isPlaying == true
-                        ? controller.translations.controlsPauseLabel
-                        : controller.translations.controlsPlayLabel,
+                  Expanded(
+                    child: Center(
+                      child: _BetterPlayerCupertinoHitAreaButton(
+                        semanticsIdentifier:
+                            'better_player_cupertino_controls_play_pause_button',
+                        icon: latestValue?.isPlaying == true
+                            ? controlsConfiguration.pauseIcon
+                            : controlsConfiguration.playIcon,
+                        size: iconSize + 8.0, // Play button slightly larger
+                        onTap: onPlayPause,
+                        iconColor: iconColor,
+                        semanticsLabel: latestValue?.isPlaying == true
+                            ? controller.translations.controlsPauseLabel
+                            : controller.translations.controlsPlayLabel,
+                      ),
+                    ),
                   )
                 else
                   const SizedBox(),
-                SizedBox(width: isFullScreen ? 48 : 24),
                 if (controlsConfiguration.enableSkips)
-                  _BetterPlayerCupertinoHitAreaButton(
-                    semanticsIdentifier:
-                        'better_player_cupertino_controls_skip_forward_button',
-                    icon: controlsConfiguration.skipForwardIcon,
-                    size: iconSize,
-                    onTap: onSkipForward,
-                    iconColor: iconColor,
-                    semanticsLabel:
-                        controller.translations.controlsSkipForwardLabel,
+                  Expanded(
+                    child: Center(
+                      child: _BetterPlayerCupertinoHitAreaButton(
+                        semanticsIdentifier:
+                            'better_player_cupertino_controls_skip_forward_button',
+                        icon: controlsConfiguration.skipForwardIcon,
+                        size: iconSize,
+                        onTap: onSkipForward,
+                        iconColor: iconColor,
+                        semanticsLabel:
+                            controller.translations.controlsSkipForwardLabel,
+                      ),
+                    ),
                   )
                 else
                   const SizedBox(),
