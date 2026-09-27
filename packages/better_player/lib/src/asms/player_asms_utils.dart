@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/dash/player_dash_utils.dart';
@@ -30,19 +30,31 @@ class PlayerAsmsUtils {
   ///Parse playlist based on type of stream.
   Future<PlayerAsmsDataHolder> parse(
     String data,
-    String masterPlaylistUrl,
-  ) async {
+    String masterPlaylistUrl, {
+    Map<String, String?>? headers,
+  }) async {
     return isDataSourceDash(masterPlaylistUrl)
         ? PlayerDashUtils.parse(data, masterPlaylistUrl)
         : PlayerHlsUtils(httpClient: _httpClient).parse(
             data,
             masterPlaylistUrl,
+            headers: headers,
           );
   }
 
   ///Request data from given uri along with headers. May return null if resource
   ///is not available or on error.
   Future<String?> getDataFromUrl(
+    String url, [
+    Map<String, String?>? headers,
+  ]) async {
+    final result = await getDataWithRedirectUrl(url, headers);
+    return result.data;
+  }
+
+  ///Request data from given uri along with headers and return the final
+  ///effective URL after any HTTP redirects.
+  Future<({String? data, String effectiveUrl})> getDataWithRedirectUrl(
     String url, [
     Map<String, String?>? headers,
   ]) async {
@@ -62,19 +74,20 @@ class PlayerAsmsUtils {
       );
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        return response.body;
+        final effectiveUrl = response.request?.url.toString() ?? url;
+        return (data: response.body, effectiveUrl: effectiveUrl);
       } else {
         PlayerLogger.error(
           message: 'GetDataFromUrl failed: HTTP status ${response.statusCode}',
         );
-        return null;
+        return (data: null, effectiveUrl: url);
       }
     } catch (exception) {
       PlayerLogger.error(
         message: 'GetDataFromUrl failed: $exception',
         error: exception,
       );
-      return null;
+      return (data: null, effectiveUrl: url);
     }
   }
 }

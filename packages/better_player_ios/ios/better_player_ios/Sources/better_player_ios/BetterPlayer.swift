@@ -130,6 +130,7 @@ private var presentationSizeContext = 0
         self.player = AVPlayer()
         super.init()
         self.player.actionAtItemEnd = .none
+        self.player.appliesMediaSelectionCriteriaAutomatically = false
         if #available(iOS 10.0, *) {
             self.player.automaticallyWaitsToMinimizeStalling = false
         }

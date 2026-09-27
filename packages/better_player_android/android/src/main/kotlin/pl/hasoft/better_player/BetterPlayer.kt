@@ -233,11 +233,20 @@ class BetterPlayer(
             @SuppressLint("UnspecifiedImmutableFlag")
             override fun createCurrentContentIntent(player: Player): PendingIntent? {
                 val packageName = context.applicationContext.packageName
-                val notificationIntent = Intent()
-                notificationIntent.setClassName(
-                    packageName,
-                    "$packageName.$activityName"
-                )
+                val notificationIntent = if (activityName.isNotBlank() && activityName != "MainActivity") {
+                    Intent().apply {
+                        val className = if (activityName.contains(".")) {
+                            activityName
+                        } else {
+                            "$packageName.$activityName"
+                        }
+                        setClassName(packageName, className)
+                    }
+                } else {
+                    context.packageManager.getLaunchIntentForPackage(packageName) ?: Intent().apply {
+                        setClassName(packageName, "$packageName.MainActivity")
+                    }
+                }
                 notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
                         or Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 return PendingIntent.getActivity(
