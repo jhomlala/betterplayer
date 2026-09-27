@@ -31,10 +31,10 @@ var betterPlayerConfiguration = PlayerConfiguration(
 
 ## Icon Customization
 
-Better Player allows you to override all default icons:
+Better Player automatically uses Material `Icons` on Android (`PlayerTheme.material`) and `CupertinoIcons` on iOS (`PlayerTheme.cupertino`). You can override any default icon in `PlayerControlsConfiguration` or start from `PlayerControlsConfiguration.cupertino()`:
 *   `playIcon`, `pauseIcon`, `muteIcon`, `unMuteIcon`
 *   `fullscreenEnableIcon`, `fullscreenDisableIcon`
-*   `skipBackIcon`, `skipForwardIcon` (Cupertino only)
+*   `skipBackIcon`, `skipForwardIcon`
 *   `overflowMenuIcon`, `pipMenuIcon`, `playbackSpeedIcon`, `subtitlesIcon`, `qualitiesIcon`, `audioTracksIcon`
 
 ## Functional Toggles
@@ -75,11 +75,10 @@ Customize the look of the seek bar:
 *   **`liveTextColor`**: The color of the "LIVE" indicator text.
 *   **`overflowMenuCustomItems`**: A list of `PlayerOverflowMenuItem` to add custom actions to the overflow menu.
 *   **`playbackSpeeds`**: Define a custom list of speeds available in the playback speed menu (default: `[0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0]`).
-*   **`forwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped forward (default: 15s).
-*   **`backwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped backward (default: 15s).
+*   **`forwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped forward (default: 10s).
+*   **`backwardSkipTimeInMilliseconds`**: Adjust the amount of time skipped backward (default: 10s).
 *   **`overflowModalColor`**: Color of the bottom modal sheet used for overflow menu items.
 *   **`overflowModalTextColor`**: Color of text in bottom modal sheet used for overflow menu items.
-*   **`sigmaX`, `sigmaY`**: (iOS only) The quality of the Gaussian Blur applied to the background.
 
 ## Dynamic Configuration Updates
 

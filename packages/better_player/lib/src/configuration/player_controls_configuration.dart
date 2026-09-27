@@ -227,10 +227,10 @@ class PlayerControlsConfiguration {
   ///Icon of fullscreen mode disable
   final IconData fullscreenDisableIcon;
 
-  ///Cupertino only icon, icon of skip
+  ///Icon of skip backward
   final IconData skipBackIcon;
 
-  ///Cupertino only icon, icon of forward
+  ///Icon of skip forward
   final IconData skipForwardIcon;
 
   ///Flag used to enable/disable fullscreen
