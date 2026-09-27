@@ -1,4 +1,4 @@
-﻿import 'package:better_player/better_player.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/player_with_controls.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -244,6 +244,97 @@ void main() {
         await tester.pump();
 
         expect(find.text('My Custom Controls 123'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Falls back to 16/9 aspect ratio when video size is zero (audio-only)',
+      (tester) async {
+        final mockPlayerEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: mockPlayerEngineController,
+        );
+
+        await controller.setupDataSource(
+          PlayerDataSource.network('url'),
+        );
+
+        mockPlayerEngineController.value = mockPlayerEngineController.value
+            .copyWith(
+              size: Size.zero,
+              duration: Duration.zero,
+            );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: BetterPlayerControllerProvider(
+              controller: controller,
+              child: PlayerWithControls(
+                controller: controller,
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        final aspectRatio = tester
+            .widget<AspectRatio>(find.byType(AspectRatio))
+            .aspectRatio;
+        expect(aspectRatio, 16 / 9);
+      },
+    );
+
+    testWidgets(
+      'Rebuilds controls when setPlayerControlsConfiguration is called',
+      (tester) async {
+        final mockPlayerEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          PlayerConfiguration(
+            controlsConfiguration: PlayerControlsConfiguration(
+              playerTheme: PlayerTheme.custom,
+              customControlsBuilder: (controller, onPlayerVisibilityChanged) {
+                return const Text('Initial Controls');
+              },
+            ),
+          ),
+          playerEngineController: mockPlayerEngineController,
+        );
+
+        await controller.setupDataSource(
+          PlayerDataSource.network('url'),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: BetterPlayerControllerProvider(
+              controller: controller,
+              child: PlayerWithControls(
+                controller: controller,
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.text('Initial Controls'), findsOneWidget);
+
+        controller.setPlayerControlsConfiguration(
+          PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.custom,
+            customControlsBuilder: (controller, onPlayerVisibilityChanged) {
+              return const Text('Updated Controls');
+            },
+          ),
+        );
+        await tester.pump();
+        await tester.pump();
+
+        expect(find.text('Updated Controls'), findsOneWidget);
       },
     );
   });

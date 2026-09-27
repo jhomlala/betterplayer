@@ -84,9 +84,6 @@ class BetterPlayerPlaylistController {
     if (previousDataSourceIndex == -1) {
       return;
     }
-    if (_betterPlayerController!.isFullScreen) {
-      _betterPlayerController!.exitFullScreen();
-    }
     setupDataSource(previousDataSourceIndex);
   }
 
@@ -99,9 +96,6 @@ class BetterPlayerPlaylistController {
     final nextDataSourceId = _getNextDataSourceIndex();
     if (nextDataSourceId == -1) {
       return;
-    }
-    if (_betterPlayerController!.isFullScreen) {
-      _betterPlayerController!.exitFullScreen();
     }
     _changingToNextVideo = true;
     setupDataSource(nextDataSourceId);

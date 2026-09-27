@@ -83,22 +83,24 @@ extension PlayerViewStateExtension on BetterPlayerController {
     }
     _postEvent(PlayerEvent(PlayerEventType.changedPlayerVisibility));
 
-    if (_isAutomaticPlayPauseHandled()) {
-      if (betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
-        betterPlayerConfiguration.playerVisibilityChangedBehavior!(
-          visibilityFraction,
+    if (!(_betterPlayerDataSource
+                ?.notificationConfiguration
+                ?.showNotification ==
+            true) &&
+        betterPlayerConfiguration.playerVisibilityChangedBehavior != null) {
+      betterPlayerConfiguration.playerVisibilityChangedBehavior!(
+        visibilityFraction,
+      );
+    } else if (_isAutomaticPlayPauseHandled() && isEngineReady) {
+      if (visibilityFraction == 0) {
+        _playbackState = _playbackState.copyWith(
+          wasPlayingBeforePause:
+              _playbackState.wasPlayingBeforePause || isPlaying()!,
         );
-      } else if (isEngineReady) {
-        if (visibilityFraction == 0) {
-          _playbackState = _playbackState.copyWith(
-            wasPlayingBeforePause:
-                _playbackState.wasPlayingBeforePause || isPlaying()!,
-          );
-          pause();
-        } else {
-          if (_playbackState.wasPlayingBeforePause == true && !isPlaying()!) {
-            play();
-          }
+        pause();
+      } else {
+        if (_playbackState.wasPlayingBeforePause == true && !isPlaying()!) {
+          play();
         }
       }
     }
@@ -161,7 +163,10 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
     final videoValue = _engine?.value;
     if (videoValue != null && videoValue.size != null) {
-      return videoValue.aspectRatio;
+      final aspectRatio = videoValue.aspectRatio;
+      if (aspectRatio > 0 && aspectRatio.isFinite) {
+        return aspectRatio;
+      }
     }
 
     return null;

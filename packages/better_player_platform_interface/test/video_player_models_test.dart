@@ -63,6 +63,15 @@ void main() {
       expect(range.endFraction(total), 0.8);
     });
 
+    test('DurationRange fractions return 0 when duration is zero', () {
+      final range = DurationRange(
+        const Duration(seconds: 2),
+        const Duration(seconds: 8),
+      );
+      expect(range.startFraction(Duration.zero), 0);
+      expect(range.endFraction(Duration.zero), 0);
+    });
+
     test('DurationRange equality', () {
       final range1 = DurationRange(
         const Duration(seconds: 1),

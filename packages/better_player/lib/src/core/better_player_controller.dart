@@ -313,6 +313,9 @@ class BetterPlayerController {
     _betterPlayerControlsConfiguration = _resolveControlsConfiguration(
       betterPlayerControlsConfiguration,
     );
+    if (!_disposed) {
+      _postControllerEvent(PlayerControllerEvent.changeControlsConfiguration);
+    }
   }
 
   PlayerControlsConfiguration _resolveControlsConfiguration(

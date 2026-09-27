@@ -1,3 +1,9 @@
+## Unreleased
+- Fixed: Prevented `NaN` and `Infinity` errors in progress bars and aspect ratio calculations when media duration or size is zero (#1157, #1044, #901, #884).
+- Fixed: Preserved fullscreen state when advancing or returning to a track in `BetterPlayerPlaylistController` (#1037).
+- Fixed: Executed `playerVisibilityChangedBehavior` callback even when `handleLifecycle` is `false` (#939).
+- Fixed: Rebuilt player controls immediately when `setPlayerControlsConfiguration` is called (#1000).
+
 ## 1.17.0
 - [BREAKING_CHANGE] Updated: Standardized class and file naming by replacing the `BetterPlayer` prefix with `Player` across internal widgets and utilities (including exported `PlayerAsmsUtils` and `PlayerUiUtils`; automatable via `dart fix --apply`).
 

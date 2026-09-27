@@ -187,7 +187,7 @@ class _PlayerProgressIndicatorState extends State<PlayerProgressIndicator> {
   Widget build(BuildContext context) {
     Widget progressIndicator;
     if (controller.value.initialized) {
-      final duration = controller.value.duration!.inMilliseconds;
+      final duration = controller.value.duration?.inMilliseconds ?? 0;
       final position = controller.value.position.inMilliseconds;
 
       var maxBuffering = 0;
@@ -202,12 +202,12 @@ class _PlayerProgressIndicatorState extends State<PlayerProgressIndicator> {
         fit: StackFit.passthrough,
         children: <Widget>[
           LinearProgressIndicator(
-            value: maxBuffering / duration,
+            value: duration > 0 ? maxBuffering / duration : 0.0,
             valueColor: AlwaysStoppedAnimation<Color>(colors.bufferedColor),
             backgroundColor: colors.backgroundColor,
           ),
           LinearProgressIndicator(
-            value: position / duration,
+            value: duration > 0 ? position / duration : 0.0,
             valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
             backgroundColor: Colors.transparent,
           ),
