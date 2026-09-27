@@ -12,12 +12,14 @@ test('web flow', async ({ page }) => {
   await playPause.click({ force: true });
   await page.waitForTimeout(500);
   await playPause.click({ force: true });
+  await page.waitForTimeout(500);
 
   // Mute/unmute
   const mute = page.locator('[aria-label^="better_player_material_controls_mute_button"]');
   await mute.click({ force: true });
   await page.waitForTimeout(500);
   await mute.click({ force: true });
+  await page.waitForTimeout(500);
 
   // Playback speed
   const settings = page.locator('[aria-label^="better_player_material_controls_more_button"]');
