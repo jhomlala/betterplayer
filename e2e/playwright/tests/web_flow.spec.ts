@@ -47,6 +47,25 @@ test('web flow', async ({ page }) => {
   await expect(qualityAuto).toBeVisible();
   await qualityAuto.click({ force: true });
 
+  // Subtitles selection (Memory -> None -> Memory)
+  const subtitlesMenu = page.locator('[aria-label^="better_player_overflow_menu_subtitles"]');
+  await expect(async () => {
+    if (await subtitlesMenu.isVisible()) return;
+    await settings.click({ force: true });
+    await expect(subtitlesMenu).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
+  await subtitlesMenu.click({ force: true });
+
+  const subtitlesNone = page.locator('[aria-label^="better_player_overflow_menu_subtitles_none"]');
+  await expect(subtitlesNone).toBeVisible();
+  await subtitlesNone.click({ force: true });
+
+  // Runtime Controls Configuration Hotswap (#1000)
+  const runtimeConfigButton = page.locator('[aria-label^="better_player_e2e_runtime_config_button"]');
+  await runtimeConfigButton.click({ force: true });
+  const runtimeConfigStatus = page.locator('[aria-label^="better_player_e2e_runtime_config_status"]');
+  await expect(runtimeConfigStatus).toBeVisible({ timeout: 5000 });
+
   // Seek
   const progressBar = page.locator('[aria-label^="better_player_material_progress_bar"]');
   await expect(progressBar).toBeVisible();
