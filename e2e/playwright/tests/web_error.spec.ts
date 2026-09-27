@@ -20,4 +20,10 @@ test('web error flow', async ({ page }) => {
     await errorButton.click({ force: true });
     await expect(errorContainer.first()).toBeVisible({ timeout: 5000 });
   }).toPass({ timeout: 30000, intervals: [1000] });
+
+  // Recover from error by switching back to valid MP4 data source
+  const mp4Button = page.locator('[aria-label^="better_player_e2e_setup_mp4"]');
+  await mp4Button.click({ force: true });
+  await expect(errorContainer.first()).toBeHidden({ timeout: 15000 });
+  await expect(playPause).toBeVisible({ timeout: 15000 });
 });

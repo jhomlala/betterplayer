@@ -13,3 +13,19 @@ appId: pl.hasoft.example
     timeout: 10000
 - assertVisible:
     id: "better_player_e2e_error_text"
+
+# Recover from error by setting valid MP4 data source
+- tapOn:
+    id: "better_player_e2e_setup_mp4"
+- extendedWaitUntil:
+    notVisible:
+      id: "better_player_e2e_error_text"
+    timeout: 10000
+- assertNotVisible:
+    id: "better_player_e2e_error_text"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_controls_play_pause_button"
+    timeout: 15000
+- tapOn:
+    id: "better_player_cupertino_controls_play_pause_button"

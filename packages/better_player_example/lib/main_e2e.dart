@@ -39,23 +39,36 @@ class E2EPlayerPage extends StatefulWidget {
 class _E2EPlayerPageState extends State<E2EPlayerPage> {
   late BetterPlayerController _betterPlayerController;
   String? _errorDescription;
+  bool _runtimeConfigUpdated = false;
+  bool _visibilityCallbackFired = false;
+
+  static const String _e2eWebVttSubtitle =
+      'WEBVTT\n\n1\n00:00:00.000 --> 00:10:00.000\nE2E Test Subtitle\n';
 
   @override
   void initState() {
     super.initState();
-    const betterPlayerConfiguration = PlayerConfiguration(
+    final betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       autoPlay: true,
       looping: true,
-      deviceOrientationsAfterFullScreen: [
+      handleLifecycle: false,
+      playerVisibilityChangedBehavior: (visibilityFraction) {
+        if (mounted) {
+          setState(() {
+            _visibilityCallbackFired = true;
+          });
+        }
+      },
+      deviceOrientationsAfterFullScreen: const [
         DeviceOrientation.portraitDown,
         DeviceOrientation.portraitUp,
       ],
-      controlsConfiguration: PlayerControlsConfiguration(
+      controlsConfiguration: const PlayerControlsConfiguration(
         controlsHideTime: Duration(days: 30),
       ),
-      playerLogConfiguration: PlayerLoggerConfiguration(
+      playerLogConfiguration: const PlayerLoggerConfiguration(
         logLevel: PlayerLogLevel.debug,
         outputs: [ConsoleLogOutput(usePrint: true)],
       ),
@@ -63,11 +76,10 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final betterPlayerDataSource = PlayerDataSource(
-        DataSourceType.network,
+      _setupDataSource(
         Constants.bugBuckBunnyVideoUrl,
+        DataSourceType.network,
       );
-      _betterPlayerController.setupDataSource(betterPlayerDataSource);
       _betterPlayerController.setControlsAlwaysVisible(true);
     });
 
@@ -102,8 +114,44 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       type,
       url,
       drmConfiguration: drmConfiguration,
+      subtitles: url == Constants.bugBuckBunnyVideoUrl
+          ? [
+              PlayerSubtitlesSource(
+                type: PlayerSubtitlesSourceType.memory,
+                name: 'English',
+                content: _e2eWebVttSubtitle,
+                selectedByDefault: true,
+              ),
+            ]
+          : null,
+      asmsTrackNames: url == Constants.hlsTestStreamUrl
+          ? const [
+              'Track 1',
+              'Track 2',
+              'Track 3',
+              'Track 4',
+              'Track 5',
+            ]
+          : null,
     );
     _betterPlayerController.setupDataSource(betterPlayerDataSource);
+  }
+
+  void _applyRuntimeControlsConfiguration() {
+    _betterPlayerController.setPlayerControlsConfiguration(
+      const PlayerControlsConfiguration(
+        controlsHideTime: Duration(days: 30),
+        progressBarPlayedColor: Colors.green,
+      ),
+    );
+    setState(() {
+      _runtimeConfigUpdated = true;
+    });
+  }
+
+  Future<void> _triggerVisibilityCycle() async {
+    await _betterPlayerController.onPlayerVisibilityChanged(0);
+    await _betterPlayerController.onPlayerVisibilityChanged(1);
   }
 
   @override
@@ -171,6 +219,24 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   ),
                 ),
               ),
+            if (_runtimeConfigUpdated)
+              Semantics(
+                identifier: 'better_player_e2e_runtime_config_status',
+                label: 'better_player_e2e_runtime_config_status',
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Runtime Config Updated'),
+                ),
+              ),
+            if (_visibilityCallbackFired)
+              Semantics(
+                identifier: 'better_player_e2e_visibility_callback_status',
+                label: 'better_player_e2e_visibility_callback_status',
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Visibility Callback Fired'),
+                ),
+              ),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
@@ -206,6 +272,22 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                       DataSourceType.network,
                     ),
                     child: const Text('Invalid'),
+                  ),
+                ),
+                Semantics(
+                  identifier: 'better_player_e2e_runtime_config_button',
+                  label: 'better_player_e2e_runtime_config_button',
+                  child: ElevatedButton(
+                    onPressed: _applyRuntimeControlsConfiguration,
+                    child: const Text('Runtime Config'),
+                  ),
+                ),
+                Semantics(
+                  identifier: 'better_player_e2e_visibility_cycle_button',
+                  label: 'better_player_e2e_visibility_cycle_button',
+                  child: ElevatedButton(
+                    onPressed: _triggerVisibilityCycle,
+                    child: const Text('Visibility Cycle'),
                   ),
                 ),
                 Semantics(

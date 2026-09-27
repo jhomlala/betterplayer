@@ -65,6 +65,48 @@ appId: pl.hasoft.example
 - tapOn:
     id: "better_player_overflow_menu_quality_auto"
 
+# Subtitles Selection test (Memory -> None -> Memory)
+- tapOn:
+    id: "better_player_material_controls_more_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_subtitles"
+    timeout: 10000
+- tapOn:
+    id: "better_player_overflow_menu_subtitles"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_subtitles_none"
+    timeout: 10000
+- assertVisible:
+    id: "better_player_overflow_menu_subtitles_memory"
+- tapOn:
+    id: "better_player_overflow_menu_subtitles_none"
+- tapOn:
+    id: "better_player_material_controls_more_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_subtitles"
+    timeout: 10000
+- tapOn:
+    id: "better_player_overflow_menu_subtitles"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_subtitles_memory"
+    timeout: 10000
+- tapOn:
+    id: "better_player_overflow_menu_subtitles_memory"
+
+# Runtime Controls Configuration Hotswap (#1000)
+- tapOn:
+    id: "better_player_e2e_runtime_config_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_runtime_config_status"
+    timeout: 5000
+- assertVisible:
+    id: "better_player_e2e_runtime_config_status"
+
 # Seeking (middle of the video)
 - extendedWaitUntil:
     visible:

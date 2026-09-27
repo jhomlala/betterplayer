@@ -33,6 +33,7 @@ test('web flow', async ({ page }) => {
   const speed2x = page.locator('[aria-label^="better_player_overflow_menu_speed_2"]');
   await expect(speed2x).toBeVisible();
   await speed2x.click({ force: true });
+  await page.waitForTimeout(400);
 
   // Quality (Resolution)
   const qualityMenu = page.locator('[aria-label^="better_player_overflow_menu_quality"]');
@@ -46,6 +47,32 @@ test('web flow', async ({ page }) => {
   const qualityAuto = page.locator('[aria-label^="better_player_overflow_menu_quality_auto"]');
   await expect(qualityAuto).toBeVisible();
   await qualityAuto.click({ force: true });
+  await page.waitForTimeout(400);
+
+  // Subtitles selection (Memory -> None -> Memory)
+  const subtitlesMenu = page.locator('[aria-label^="better_player_overflow_menu_subtitles"]');
+  await expect(async () => {
+    if (await subtitlesMenu.isVisible()) return;
+    await settings.click({ force: true });
+    await expect(subtitlesMenu).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
+  await subtitlesMenu.click({ force: true });
+
+  const subtitlesNone = page.locator('[aria-label^="better_player_overflow_menu_subtitles_none"]');
+  await expect(subtitlesNone).toBeVisible();
+  await subtitlesNone.click({ force: true });
+  await page.waitForTimeout(400);
+
+  // Runtime Controls Configuration Hotswap (#1000)
+  const runtimeConfigButton = page.locator('[aria-label^="better_player_e2e_runtime_config_button"]');
+  const runtimeConfigStatus = page.locator(
+    '[aria-label^="better_player_e2e_runtime_config_status"], [flt-semantics-identifier="better_player_e2e_runtime_config_status"]'
+  );
+  await expect(async () => {
+    if (await runtimeConfigStatus.first().isVisible()) return;
+    await runtimeConfigButton.click({ force: true });
+    await expect(runtimeConfigStatus.first()).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
 
   // Seek
   const progressBar = page.locator('[aria-label^="better_player_material_progress_bar"]');

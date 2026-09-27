@@ -78,6 +78,20 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "better_player_overflow_menu_quality_5"
 - tapOn:
+    id: "better_player_overflow_menu_quality_1"
+- tapOn:
+    id: "better_player_cupertino_controls_more_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_quality"
+    timeout: 5000
+- tapOn:
+    id: "better_player_overflow_menu_quality"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_overflow_menu_quality_auto"
+    timeout: 5000
+- tapOn:
     id: "better_player_overflow_menu_quality_auto"
 
 # Seeking (middle of the video)

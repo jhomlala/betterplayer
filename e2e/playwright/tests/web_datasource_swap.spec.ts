@@ -20,4 +20,18 @@ test('web datasource swap flow', async ({ page }) => {
   // Play to verify
   await expect(playPause).toBeVisible({ timeout: 10000 });
   await playPause.click({ force: true });
+
+  // Swap back to MP4 and verify visibility callback (#939)
+  await mp4Button.click({ force: true });
+  await expect(playPause).toBeVisible({ timeout: 10000 });
+
+  const visibilityCycleButton = page.locator('[aria-label^="better_player_e2e_visibility_cycle_button"]');
+  const visibilityStatus = page.locator(
+    '[aria-label^="better_player_e2e_visibility_callback_status"], [flt-semantics-identifier="better_player_e2e_visibility_callback_status"]'
+  );
+  await expect(async () => {
+    if (await visibilityStatus.first().isVisible()) return;
+    await visibilityCycleButton.click({ force: true });
+    await expect(visibilityStatus.first()).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
 });
