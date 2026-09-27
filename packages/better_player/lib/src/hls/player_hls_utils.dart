@@ -1,4 +1,4 @@
-﻿import 'package:better_player/better_player.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/hls/hls_parser/hls_master_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_media_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
@@ -16,15 +16,16 @@ class PlayerHlsUtils {
 
   Future<PlayerAsmsDataHolder> parse(
     String data,
-    String masterPlaylistUrl,
-  ) async {
+    String masterPlaylistUrl, {
+    Map<String, String?>? headers,
+  }) async {
     var tracks = <PlayerAsmsTrack>[];
     var subtitles = <PlayerAsmsSubtitle>[];
     var audios = <PlayerAsmsAudioTrack>[];
     try {
       final list = await Future.wait([
         parseTracks(data, masterPlaylistUrl),
-        parseSubtitles(data, masterPlaylistUrl),
+        parseSubtitles(data, masterPlaylistUrl, headers: headers),
         parseLanguages(data, masterPlaylistUrl),
       ]);
       tracks = list[0] as List<PlayerAsmsTrack>;
@@ -91,8 +92,9 @@ class PlayerHlsUtils {
   ///Parse subtitles from provided m3u8 url
   Future<List<PlayerAsmsSubtitle>> parseSubtitles(
     String data,
-    String masterPlaylistUrl,
-  ) async {
+    String masterPlaylistUrl, {
+    Map<String, String?>? headers,
+  }) async {
     final subtitles = <PlayerAsmsSubtitle>[];
     try {
       final parsedPlaylist = await HlsPlaylistParser.create().parseString(
@@ -102,7 +104,10 @@ class PlayerHlsUtils {
 
       if (parsedPlaylist is HlsMasterPlaylist) {
         for (final element in parsedPlaylist.subtitles) {
-          final hlsSubtitle = await _parseSubtitlesPlaylist(element);
+          final hlsSubtitle = await _parseSubtitlesPlaylist(
+            element,
+            headers: headers,
+          );
           if (hlsSubtitle != null) {
             subtitles.add(hlsSubtitle);
           }
@@ -125,13 +130,14 @@ class PlayerHlsUtils {
   ///filled segments list which contains start, end and url of subtitles based
   ///on time in playlist.
   Future<PlayerAsmsSubtitle?> _parseSubtitlesPlaylist(
-    Rendition rendition,
-  ) async {
+    Rendition rendition, {
+    Map<String, String?>? headers,
+  }) async {
     try {
       final hlsPlaylistParser = HlsPlaylistParser.create();
       final subtitleData = await PlayerAsmsUtils(
         httpClient: _httpClient,
-      ).getDataFromUrl(rendition.url.toString());
+      ).getDataFromUrl(rendition.url.toString(), headers);
       if (subtitleData == null) {
         return null;
       }
@@ -147,17 +153,12 @@ class PlayerHlsUtils {
       final isSegmented = hlsMediaPlaylist.segments.length > 1;
       var microSecondsFromStart = 0;
       for (final segment in hlsMediaPlaylist.segments) {
-        final split = rendition.url.toString().split('/');
-        var realUrl = '';
-        for (var index = 0; index < split.length - 1; index++) {
-          // ignore: use_string_buffers
-          realUrl += '${split[index]}/';
+        final segmentUrl = segment.url;
+        if (segmentUrl == null) {
+          continue;
         }
-        if (segment.url?.startsWith('http') == true) {
-          realUrl = segment.url!;
-        } else {
-          realUrl += segment.url!;
-        }
+        final realUrl =
+            rendition.url?.resolve(segmentUrl).toString() ?? segmentUrl;
         hlsSubtitlesUrls.add(realUrl);
 
         if (isSegmented) {

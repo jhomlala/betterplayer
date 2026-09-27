@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/asms/player_asms_utils.dart';
+import 'package:better_player/src/asms/player_asms_utils.dart';
 import 'package:better_player/src/hls/player_hls_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
@@ -83,6 +83,52 @@ video_without_anything.m3u8
         expect(parsedTrack.bitrate, 1280000);
         expect(parsedTrack.width, isNull);
         expect(parsedTrack.height, isNull);
+      },
+    );
+
+    test(
+      'parseSubtitles resolves relative segments when rendition URL has query token with slash and forwards headers',
+      () async {
+        const masterData = '''
+#EXTM3U
+#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="English",URI="subs/en.m3u8?token=abc/def"
+#EXT-X-STREAM-INF:BANDWIDTH=1280000,SUBTITLES="subs"
+video.m3u8
+''';
+
+        const subsData = '''
+#EXTM3U
+#EXT-X-TARGETDURATION:10
+#EXTINF:10.0,
+../vtt/segment1.vtt?sig=123
+#EXT-X-ENDLIST
+''';
+
+        String? capturedAuthHeader;
+        final client = MockClient((request) async {
+          if (request.url.toString() ==
+              'https://example.com/hls/subs/en.m3u8?token=abc/def') {
+            capturedAuthHeader = request.headers['Authorization'];
+            return http.Response(subsData, 200);
+          }
+          return http.Response('', 404);
+        });
+
+        final subtitles =
+            await PlayerHlsUtils(
+              httpClient: client,
+            ).parseSubtitles(
+              masterData,
+              'https://example.com/hls/master.m3u8?token=abc/def',
+              headers: {'Authorization': 'Bearer secret'},
+            );
+
+        expect(capturedAuthHeader, 'Bearer secret');
+        expect(subtitles.length, 1);
+        expect(
+          subtitles[0].realUrls,
+          ['https://example.com/hls/vtt/segment1.vtt?sig=123'],
+        );
       },
     );
   });

@@ -3,6 +3,8 @@
 - Fixed: Preserved fullscreen state when advancing or returning to a track in `BetterPlayerPlaylistController` (#1037).
 - Fixed: Executed `playerVisibilityChangedBehavior` callback even when `handleLifecycle` is `false` (#939).
 - Fixed: Rebuilt player controls immediately when `setPlayerControlsConfiguration` is called (#1000).
+- Fixed: Resolved HLS subtitle segment URLs via `Uri.resolve` and forwarded data source headers when fetching HLS subtitle playlists (#992).
+- Fixed: Resolved relative HLS/DASH variant and subtitle URLs against the final redirected URL when the master playlist redirects (#1005).
 
 ## 1.17.0
 - [BREAKING_CHANGE] Updated: Standardized class and file naming by replacing the `BetterPlayer` prefix with `Player` across internal widgets and utilities (including exported `PlayerAsmsUtils` and `PlayerUiUtils`; automatable via `dart fix --apply`).

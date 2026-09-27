@@ -1,4 +1,4 @@
-﻿part of '../better_player_controller.dart';
+part of '../better_player_controller.dart';
 
 extension PlayerDataSourceExtension on BetterPlayerController {
   ///Setup new data source in Better Player.
@@ -155,14 +155,18 @@ extension PlayerDataSourceExtension on BetterPlayerController {
   ///This method configures tracks, subtitles and audio tracks from given
   ///master playlist.
   Future<void> _setupAsmsDataSource(PlayerDataSource source) async {
-    final data = await PlayerAsmsUtils().getDataFromUrl(
+    final headers = _getHeaders();
+    final asmsUtils = PlayerAsmsUtils();
+    final result = await asmsUtils.getDataWithRedirectUrl(
       source.url,
-      _getHeaders(),
+      headers,
     );
+    final data = result.data;
     if (data != null) {
-      final response = await PlayerAsmsUtils().parse(
+      final response = await asmsUtils.parse(
         data,
-        source.url,
+        result.effectiveUrl,
+        headers: headers,
       );
 
       /// Load tracks
@@ -173,6 +177,10 @@ extension PlayerDataSourceExtension on BetterPlayerController {
       /// Load subtitles
       if (betterPlayerDataSource?.useAsmsSubtitles == true) {
         final asmsSubtitles = response.subtitles ?? [];
+        final subtitleHeaders = <String, String>{
+          for (final entry in headers.entries)
+            if (entry.value != null) entry.key: entry.value!,
+        };
         for (final asmsSubtitle in asmsSubtitles) {
           _subtitleState = _subtitleState.copyWith(
             subtitlesSourceList: [
@@ -181,6 +189,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
                 type: PlayerSubtitlesSourceType.network,
                 name: asmsSubtitle.name,
                 urls: asmsSubtitle.realUrls,
+                headers: subtitleHeaders.isEmpty ? null : subtitleHeaders,
                 asmsIsSegmented: asmsSubtitle.isSegmented,
                 asmsSegmentsTime: asmsSubtitle.segmentsTime,
                 asmsSegments: asmsSubtitle.segments,

@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/asms/player_asms_utils.dart';
+import 'package:better_player/src/asms/player_asms_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -67,5 +67,33 @@ void main() {
       );
       expect(data, 'test data');
     });
+
+    test(
+      'getDataWithRedirectUrl returns final redirected URL when response has request url',
+      () async {
+        final utils = PlayerAsmsUtils(
+          httpClient: MockClient((request) async {
+            final redirectedRequest = http.Request(
+              'GET',
+              Uri.parse('https://cdn.example.com/hls/stream/master.m3u8'),
+            );
+            return http.Response(
+              '#EXTM3U',
+              200,
+              request: redirectedRequest,
+            );
+          }),
+        );
+
+        final result = await utils.getDataWithRedirectUrl(
+          'https://loadbalancer.example.com/video.m3u8',
+        );
+        expect(result.data, '#EXTM3U');
+        expect(
+          result.effectiveUrl,
+          'https://cdn.example.com/hls/stream/master.m3u8',
+        );
+      },
+    );
   });
 }

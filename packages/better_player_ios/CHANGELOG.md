@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Disabled automatic native closed caption selection (`appliesMediaSelectionCriteriaAutomatically = false`) on `AVPlayer` to prevent duplicate subtitles on iOS (#1103).
+
 ## 1.5.1
 - Fixed: Reset `isInitialized` when swapping `AVPlayerItem` data sources so the new stream emits `onInitialized` properly.
 
