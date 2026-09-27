@@ -234,25 +234,31 @@ class _PlayerWebControlsState
             },
             child: Focus(
               onKeyEvent: _onKeyEvent,
-              child: GestureDetector(
-                onTap: _onPlayPause,
-                onDoubleTap: () => _betterPlayerController?.toggleFullScreen(),
-                behavior: HitTestBehavior.opaque,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: [
-                    // Controls overlay
-                    AnimatedOpacity(
-                      opacity: _controlsNotVisible ? 0.0 : 1.0,
-                      duration:
-                          widget.controlsConfiguration.controlsTransitionTime,
-                      child: IgnorePointer(
-                        ignoring: _controlsNotVisible,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            // Gradient background for bottom controls
-                            Container(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  GestureDetector(
+                    onTap: _onPlayPause,
+                    onDoubleTap: () =>
+                        _betterPlayerController?.toggleFullScreen(),
+                    behavior: HitTestBehavior.opaque,
+                    child: const SizedBox.expand(),
+                  ),
+                  // Controls overlay
+                  AnimatedOpacity(
+                    opacity: _controlsNotVisible ? 0.0 : 1.0,
+                    duration:
+                        widget.controlsConfiguration.controlsTransitionTime,
+                    child: IgnorePointer(
+                      ignoring: _controlsNotVisible,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          // Gradient background for bottom controls
+                          GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () {},
+                            child: Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 8,
@@ -293,12 +299,12 @@ class _PlayerWebControlsState
                                 ],
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           );

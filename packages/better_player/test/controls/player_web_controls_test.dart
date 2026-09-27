@@ -1,4 +1,4 @@
-﻿import 'package:better_player/better_player.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_web_controls.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -218,4 +218,26 @@ void main() {
 
     expect(controller.videoPlayerValue?.speed, 2.0);
   });
+
+  testWidgets(
+    'Rapidly tapping play/pause then mute does not trigger fullscreen',
+    (tester) async {
+      await setupControls(tester);
+
+      final playPauseButton = find.bySemanticsLabel(
+        'better_player_material_controls_play_pause_button',
+      );
+      final muteButton = find.bySemanticsLabel(
+        'better_player_material_controls_mute_button',
+      );
+
+      await tester.tap(playPauseButton);
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(muteButton);
+      await tester.pumpAndSettle();
+
+      expect(controller.isFullScreen, isFalse);
+      expect(controller.videoPlayerValue?.volume, 0.0);
+    },
+  );
 }

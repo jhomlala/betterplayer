@@ -44,3 +44,14 @@ appId: pl.hasoft.example
     timeout: 5000
 - assertVisible:
     id: "better_player_e2e_visibility_callback_status"
+
+# Verify BetterPlayerPlaylist transition (#1037)
+- tapOn:
+    id: "better_player_e2e_playlist_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_playlist_status"
+    timeout: 10000
+- assertVisible:
+    id: "better_player_e2e_playlist_status"
+
