@@ -448,8 +448,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           false,
       builder: (context) {
         return CupertinoTheme(
-          data: CupertinoThemeData(
-            brightness: Theme.of(context).brightness,
+          data: const CupertinoThemeData(
+            brightness: Brightness.dark,
           ),
           child: CupertinoActionSheet(
             actions: children,

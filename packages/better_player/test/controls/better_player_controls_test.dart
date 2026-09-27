@@ -81,7 +81,7 @@ void main() {
 
       expect(
         find.byKey(
-          const Key('better_player_material_controls_replay_button'),
+          const Key('better_player_material_controls_play_pause_button'),
         ),
         findsOneWidget,
       );

@@ -117,8 +117,9 @@ class BetterPlayerController {
   }) : _engine = playerEngineController {
     PlayerLogger.setup(betterPlayerConfiguration.playerLogConfiguration);
     PlayerLogger.info(message: 'Created', textureId: textureId);
-    _betterPlayerControlsConfiguration =
-        betterPlayerConfiguration.controlsConfiguration;
+    _betterPlayerControlsConfiguration = _resolveControlsConfiguration(
+      betterPlayerConfiguration.controlsConfiguration,
+    );
     _eventListeners.add(eventListener);
     if (_engine != null) {
       _engine!.addListener(_onVideoPlayerChanged);
@@ -309,7 +310,20 @@ class BetterPlayerController {
   void setPlayerControlsConfiguration(
     PlayerControlsConfiguration betterPlayerControlsConfiguration,
   ) {
-    _betterPlayerControlsConfiguration = betterPlayerControlsConfiguration;
+    _betterPlayerControlsConfiguration = _resolveControlsConfiguration(
+      betterPlayerControlsConfiguration,
+    );
+  }
+
+  PlayerControlsConfiguration _resolveControlsConfiguration(
+    PlayerControlsConfiguration configuration,
+  ) {
+    final isCupertino =
+        configuration.playerTheme == PlayerTheme.cupertino ||
+        (configuration.playerTheme == null &&
+            !kIsWeb &&
+            defaultTargetPlatform == TargetPlatform.iOS);
+    return isCupertino ? configuration.withCupertinoIcons() : configuration;
   }
 
   /// Internal callback invoked whenever the underlying video engine reports a state change.

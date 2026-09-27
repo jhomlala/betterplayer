@@ -311,6 +311,7 @@ private var presentationSizeContext = 0
         self.stalledCount = 0
         self.isStalledCheckStarted = false
         self.playerRate = 1
+        self.isInitialized = false
         
         removeObservers()
         
@@ -420,6 +421,9 @@ private var presentationSizeContext = 0
                    let jsonString = String(data: jsonData, encoding: .utf8) {
                     callback?.onBufferingUpdate(jsonRanges: jsonString, key: key)
                 }
+                if !isInitialized {
+                    onReadyToPlay()
+                }
             }
         } else if context == &presentationSizeContext {
             onReadyToPlay()
@@ -448,6 +452,9 @@ private var presentationSizeContext = 0
         } else if context == &playbackLikelyToKeepUpContext {
             if player.currentItem?.isPlaybackLikelyToKeepUp == true {
                 BetterPlayerApi.log(1, "playbackLikelyToKeepUp: true")
+                if !isInitialized {
+                    onReadyToPlay()
+                }
                 updatePlayingState()
                 callback?.onBufferingEnd(key: key)
             }

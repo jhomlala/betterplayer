@@ -1,18 +1,14 @@
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
-import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoTopBar extends StatelessWidget {
   const BetterPlayerCupertinoTopBar({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
     required this.buttonPadding,
-    required this.marginSize,
-    required this.backgroundColor,
     required this.iconColor,
     required this.onExpandCollapse,
     required this.onShowMoreClicked,
@@ -21,12 +17,9 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
     super.key,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
   final double buttonPadding;
-  final double marginSize;
-  final Color backgroundColor;
   final Color iconColor;
   final VoidCallback onExpandCollapse;
   final VoidCallback onShowMoreClicked;
@@ -40,71 +33,66 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
       return const SizedBox();
     }
 
+    final isFullScreen = controller.isFullScreen;
+    final horizontalMargin = isFullScreen ? 48.0 : 16.0;
+    final topMargin = isFullScreen ? 24.0 : 16.0;
+
     return Container(
       height: barHeight,
       margin: EdgeInsets.only(
-        top: marginSize,
-        right: marginSize,
-        left: marginSize,
+        top: topMargin,
+        right: horizontalMargin,
+        left: horizontalMargin,
       ),
-      child: Row(
-        children: <Widget>[
-          if (controlsConfiguration.enableFullscreen)
-            _BetterPlayerCupertinoExpandButton(
-              controlsConfiguration: controlsConfiguration,
-              controlsNotVisible: controlsNotVisible,
-              barHeight: barHeight,
-              iconSize: iconSize,
-              buttonPadding: buttonPadding,
-              backgroundColor: backgroundColor,
-              iconColor: iconColor,
-              onExpandCollapse: onExpandCollapse,
-            )
-          else
-            const SizedBox(),
-          const SizedBox(width: 4),
-          if (controlsConfiguration.enablePip)
-            _BetterPlayerCupertinoPipButton(
-              controlsConfiguration: controlsConfiguration,
-              controlsNotVisible: controlsNotVisible,
-              barHeight: barHeight,
-              iconSize: iconSize,
-              buttonPadding: buttonPadding,
-              backgroundColor: backgroundColor,
-              iconColor: iconColor,
-            )
-          else
-            const SizedBox(),
-          const Spacer(),
-          if (controlsConfiguration.enableMute)
-            _BetterPlayerCupertinoMuteButton(
-              controlsConfiguration: controlsConfiguration,
-              controlsNotVisible: controlsNotVisible,
-              barHeight: barHeight,
-              iconSize: iconSize,
-              buttonPadding: buttonPadding,
-              backgroundColor: backgroundColor,
-              iconColor: iconColor,
-              onMute: onMute,
-              latestValue: latestValue,
-            )
-          else
-            const SizedBox(),
-          const SizedBox(width: 4),
-          if (controlsConfiguration.enableOverflowMenu)
-            _BetterPlayerCupertinoMoreButton(
-              controlsConfiguration: controlsConfiguration,
-              controlsNotVisible: controlsNotVisible,
-              barHeight: barHeight,
-              iconSize: iconSize,
-              buttonPadding: buttonPadding,
-              backgroundColor: backgroundColor,
-              iconColor: iconColor,
-              onShowMoreClicked: onShowMoreClicked,
-            )
-          else
-            const SizedBox(),
-        ],
+      child: Semantics(
+        explicitChildNodes: true,
+        child: Row(
+          children: <Widget>[
+            if (controlsConfiguration.enableFullscreen)
+              _BetterPlayerCupertinoExpandButton(
+                controlsConfiguration: controlsConfiguration,
+                barHeight: barHeight,
+                iconSize: iconSize,
+                iconColor: iconColor,
+                onExpandCollapse: onExpandCollapse,
+              )
+            else
+              const SizedBox(),
+            const SizedBox(width: 8),
+            if (controlsConfiguration.enablePip)
+              _BetterPlayerCupertinoPipButton(
+                controlsConfiguration: controlsConfiguration,
+                barHeight: barHeight,
+                iconSize: iconSize,
+                iconColor: iconColor,
+              )
+            else
+              const SizedBox(),
+            const Spacer(),
+            if (controlsConfiguration.enableMute)
+              _BetterPlayerCupertinoMuteButton(
+                controlsConfiguration: controlsConfiguration,
+                barHeight: barHeight,
+                iconSize: iconSize,
+                iconColor: iconColor,
+                onMute: onMute,
+                latestValue: latestValue,
+              )
+            else
+              const SizedBox(),
+            const SizedBox(width: 8),
+            if (controlsConfiguration.enableOverflowMenu)
+              _BetterPlayerCupertinoMoreButton(
+                controlsConfiguration: controlsConfiguration,
+                barHeight: barHeight,
+                iconSize: iconSize,
+                iconColor: iconColor,
+                onShowMoreClicked: onShowMoreClicked,
+              )
+            else
+              const SizedBox(),
+          ],
+        ),
       ),
     );
   }
@@ -113,54 +101,36 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
 class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
   const _BetterPlayerCupertinoExpandButton({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
-    required this.buttonPadding,
-    required this.backgroundColor,
     required this.iconColor,
     required this.onExpandCollapse,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
-  final double buttonPadding;
-  final Color backgroundColor;
   final Color iconColor;
   final VoidCallback onExpandCollapse;
 
   @override
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
-    return GestureDetector(
-      onTap: onExpandCollapse,
-      child: Semantics(
-        label: controller.isFullScreen
-            ? controller.translations.controlsExitFullscreenLabel
-            : controller.translations.controlsFullscreenLabel,
-        identifier: 'better_player_cupertino_controls_expand_button',
-        button: true,
-        child: AnimatedOpacity(
-          opacity: controlsNotVisible ? 0.0 : 1.0,
-          duration: controlsConfiguration.controlsTransitionTime,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              height: barHeight,
-              padding: EdgeInsets.symmetric(horizontal: buttonPadding),
-              decoration: BoxDecoration(color: backgroundColor),
-              child: Center(
-                child: Icon(
-                  controller.isFullScreen
-                      ? controlsConfiguration.fullscreenDisableIcon
-                      : controlsConfiguration.fullscreenEnableIcon,
-                  color: iconColor,
-                  size: iconSize,
-                ),
-              ),
-            ),
-          ),
+    return Semantics(
+      label: controller.isFullScreen
+          ? controller.translations.controlsExitFullscreenLabel
+          : controller.translations.controlsFullscreenLabel,
+      identifier: 'better_player_cupertino_controls_expand_button',
+      button: true,
+      container: true,
+      child: GestureDetector(
+        onTap: onExpandCollapse,
+        child: _BetterPlayerCupertinoGlassButton(
+          barHeight: barHeight,
+          icon: controller.isFullScreen
+              ? controlsConfiguration.fullscreenDisableIcon
+              : controlsConfiguration.fullscreenEnableIcon,
+          iconColor: iconColor,
+          iconSize: iconSize,
         ),
       ),
     );
@@ -170,19 +140,13 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
 class _BetterPlayerCupertinoPipButton extends StatefulWidget {
   const _BetterPlayerCupertinoPipButton({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
-    required this.buttonPadding,
-    required this.backgroundColor,
     required this.iconColor,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
-  final double buttonPadding;
-  final Color backgroundColor;
   final Color iconColor;
 
   @override
@@ -214,36 +178,20 @@ class _BetterPlayerCupertinoPipButtonState
       builder: (context, snapshot) {
         final isPipSupported = snapshot.data ?? false;
         if (isPipSupported && controller.betterPlayerGlobalKey != null) {
-          return GestureDetector(
-            onTap: () => controller.enablePictureInPicture(
-              controller.betterPlayerGlobalKey!,
-            ),
-            child: Semantics(
-              label: controller.translations.controlsPipLabel,
-              identifier: 'better_player_cupertino_controls_pip_button',
-              button: true,
-              child: AnimatedOpacity(
-                opacity: widget.controlsNotVisible ? 0.0 : 1.0,
-                duration: widget.controlsConfiguration.controlsTransitionTime,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    height: widget.barHeight,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: widget.buttonPadding,
-                    ),
-                    decoration: BoxDecoration(
-                      color: widget.backgroundColor.withValues(alpha: 0.5),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        widget.controlsConfiguration.pipMenuIcon,
-                        color: widget.iconColor,
-                        size: widget.iconSize,
-                      ),
-                    ),
-                  ),
-                ),
+          return Semantics(
+            label: controller.translations.controlsPipLabel,
+            identifier: 'better_player_cupertino_controls_pip_button',
+            button: true,
+            container: true,
+            child: GestureDetector(
+              onTap: () => controller.enablePictureInPicture(
+                controller.betterPlayerGlobalKey!,
+              ),
+              child: _BetterPlayerCupertinoGlassButton(
+                barHeight: widget.barHeight,
+                icon: widget.controlsConfiguration.pipMenuIcon,
+                iconColor: widget.iconColor,
+                iconSize: widget.iconSize,
               ),
             ),
           );
@@ -258,21 +206,15 @@ class _BetterPlayerCupertinoPipButtonState
 class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
   const _BetterPlayerCupertinoMuteButton({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
-    required this.buttonPadding,
-    required this.backgroundColor,
     required this.iconColor,
     required this.onMute,
     required this.latestValue,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
-  final double buttonPadding;
-  final Color backgroundColor;
   final Color iconColor;
   final VoidCallback onMute;
   final VideoPlayerValue? latestValue;
@@ -285,32 +227,20 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
         ? controller.translations.controlsUnmuteLabel
         : controller.translations.controlsMuteLabel;
 
-    return GestureDetector(
-      onTap: onMute,
-      child: Semantics(
-        label: semanticsLabel,
-        identifier: 'better_player_cupertino_controls_mute_button',
-        button: true,
-        child: AnimatedOpacity(
-          opacity: controlsNotVisible ? 0.0 : 1.0,
-          duration: controlsConfiguration.controlsTransitionTime,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              decoration: BoxDecoration(color: backgroundColor),
-              child: Container(
-                height: barHeight,
-                padding: EdgeInsets.symmetric(horizontal: buttonPadding),
-                child: Icon(
-                  (latestValue != null && latestValue!.volume > 0)
-                      ? controlsConfiguration.muteIcon
-                      : controlsConfiguration.unMuteIcon,
-                  color: iconColor,
-                  size: iconSize,
-                ),
-              ),
-            ),
-          ),
+    return Semantics(
+      label: semanticsLabel,
+      identifier: 'better_player_cupertino_controls_mute_button',
+      button: true,
+      container: true,
+      child: GestureDetector(
+        onTap: onMute,
+        child: _BetterPlayerCupertinoGlassButton(
+          barHeight: barHeight,
+          icon: (latestValue != null && latestValue!.volume > 0)
+              ? controlsConfiguration.muteIcon
+              : controlsConfiguration.unMuteIcon,
+          iconColor: iconColor,
+          iconSize: iconSize,
         ),
       ),
     );
@@ -320,50 +250,65 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
 class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
   const _BetterPlayerCupertinoMoreButton({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
-    required this.buttonPadding,
-    required this.backgroundColor,
     required this.iconColor,
     required this.onShowMoreClicked,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
-  final double buttonPadding;
-  final Color backgroundColor;
   final Color iconColor;
   final VoidCallback onShowMoreClicked;
 
   @override
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
-    return GestureDetector(
-      onTap: onShowMoreClicked,
-      child: Semantics(
-        label: controller.translations.overflowMenuLabel,
-        identifier: 'better_player_cupertino_controls_more_button',
-        button: true,
-        child: AnimatedOpacity(
-          opacity: controlsNotVisible ? 0.0 : 1.0,
-          duration: controlsConfiguration.controlsTransitionTime,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              decoration: BoxDecoration(color: backgroundColor),
-              child: Container(
-                height: barHeight,
-                padding: EdgeInsets.symmetric(horizontal: buttonPadding),
-                child: Icon(
-                  controlsConfiguration.overflowMenuIcon,
-                  color: iconColor,
-                  size: iconSize,
-                ),
-              ),
-            ),
-          ),
+    return Semantics(
+      label: controller.translations.overflowMenuLabel,
+      identifier: 'better_player_cupertino_controls_more_button',
+      button: true,
+      container: true,
+      child: GestureDetector(
+        onTap: onShowMoreClicked,
+        child: _BetterPlayerCupertinoGlassButton(
+          barHeight: barHeight,
+          icon: controlsConfiguration.overflowMenuIcon,
+          iconColor: iconColor,
+          iconSize: iconSize,
+        ),
+      ),
+    );
+  }
+}
+
+class _BetterPlayerCupertinoGlassButton extends StatelessWidget {
+  const _BetterPlayerCupertinoGlassButton({
+    required this.barHeight,
+    required this.icon,
+    required this.iconColor,
+    required this.iconSize,
+  });
+
+  final double barHeight;
+  final IconData icon;
+  final Color iconColor;
+  final double iconSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: barHeight,
+      width: barHeight,
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.3),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Icon(
+          icon,
+          color: iconColor,
+          size: iconSize,
         ),
       ),
     );

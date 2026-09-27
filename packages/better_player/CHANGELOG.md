@@ -1,5 +1,6 @@
 ## Unreleased
-- Updated: Modernized Material UI controls with gradient overlays, refined button hierarchies, full-width progress bars, and cleaner bottom sheet spacing.
+- Updated: Modernized Material UI controls with gradient overlays, refined button hierarchies, full-width progress bars, cleaner bottom sheet spacing, rounded progress bar edges, accurate ripple behaviors, and larger tap targets.
+- Updated: Modernized Cupertino UI controls with pill-shaped bottom bar, centered play/pause/skip buttons, and expanding scrubber handle.
 
 ## 1.14.0
 - Fixed: Resolved various documentation inconsistencies where properties were either missing, misassigned, or misspelled across `general_configuration.md`, `controls_configuration.md`, `data_source_configuration.md`, and `subtitles_configuration.md`.

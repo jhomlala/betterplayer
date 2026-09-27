@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Reset `isInitialized` when swapping `AVPlayerItem` data sources so the new stream emits `onInitialized` properly.
+
 ## 1.5.0
 - Fixed: Blocked HLS pre-caching attempts. Pre-caching HLS streams natively caches only the playlist file (causing silent bypasses on iOS).
 - Updated: Documented the fallback to `mp4` in `CacheManager` for streams with unknown extensions.

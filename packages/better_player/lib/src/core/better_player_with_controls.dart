@@ -29,7 +29,7 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       widget.controller!.betterPlayerControlsConfiguration;
 
   final StreamController<bool> playerVisibilityStreamController =
-      StreamController();
+      StreamController.broadcast();
 
   bool _initialized = false;
 
