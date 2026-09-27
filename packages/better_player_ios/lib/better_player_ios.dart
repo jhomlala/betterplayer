@@ -354,11 +354,15 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     getPlayer(textureId)?.disablePictureInPicture();
   }
 
+  static const int _maxMillisecondsSinceEpoch = 8640000000000000;
+
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
     if (textureId == null) return null;
     final pos = getPlayer(textureId)?.absolutePosition();
-    if (pos == null || pos <= 0) return null;
+    if (pos == null || pos <= 0 || pos > _maxMillisecondsSinceEpoch) {
+      return null;
+    }
     return DateTime.fromMillisecondsSinceEpoch(pos);
   }
 

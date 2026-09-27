@@ -264,7 +264,7 @@ class BetterPlayer(
                 player: Player,
                 callback: BitmapCallback
             ): Bitmap? {
-                if (imageUrl == null) {
+                if (imageUrl.isNullOrEmpty()) {
                     return null
                 }
                 if (bitmap != null) {
@@ -571,8 +571,10 @@ class BetterPlayer(
                 if (!timeline.isEmpty) {
                     val windowStartTimeMs =
                         timeline.getWindow(0, Timeline.Window()).windowStartTimeMs
-                    val pos = exoPlayer?.currentPosition ?: 0L
-                    return windowStartTimeMs + pos
+                    if (windowStartTimeMs != C.TIME_UNSET) {
+                        val pos = exoPlayer?.currentPosition ?: 0L
+                        return windowStartTimeMs + pos
+                    }
                 }
             }
             return exoPlayer?.currentPosition ?: 0L
@@ -702,10 +704,6 @@ class BetterPlayer(
 
             trackSelector.setParameters(builder)
         }
-    }
-
-    private fun sendSeekToEvent(positionMs: Long) {
-        callback.onSeek(positionMs = positionMs)
     }
 
     @Keep

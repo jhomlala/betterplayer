@@ -1,3 +1,8 @@
+## Unreleased
+- Fixed: Guarded `getAbsolutePosition` against out-of-range epoch values on live streams (#1206) (by @RtypeStudios).
+- Fixed: Forwarded `videoExtension` as `customFileExtension` when creating uncached `CachingPlayerItem` instances in `CacheManager` (#990) (by @ajzome).
+- Fixed: Passed `assetId` instead of the full URL string as `contentIdentifier` in `BetterPlayerEzDrmAssetsLoaderDelegate` (#866) (by @aeonmine).
+
 ## 1.5.2
 - Fixed: Disabled automatic native closed caption selection (`appliesMediaSelectionCriteriaAutomatically = false`) on `AVPlayer` to prevent duplicate subtitles on iOS (#1103).
 

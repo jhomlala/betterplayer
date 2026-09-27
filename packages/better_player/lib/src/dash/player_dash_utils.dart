@@ -1,4 +1,4 @@
-﻿import 'package:better_player/better_player.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:xml/xml.dart';
@@ -17,7 +17,18 @@ class PlayerDashUtils {
       final document = XmlDocument.parse(data);
       final adaptationSets = document.findAllElements('AdaptationSet');
       for (final node in adaptationSets) {
-        final mimeType = node.getAttribute('mimeType');
+        var mimeType = node.getAttribute('mimeType');
+        if (mimeType == null) {
+          final contentType = node.getAttribute('contentType');
+          if (contentType != null) {
+            mimeType = '$contentType/';
+          } else {
+            mimeType = node
+                .findElements('Representation')
+                .firstOrNull
+                ?.getAttribute('mimeType');
+          }
+        }
 
         if (mimeType != null) {
           if (MimeTypes.isVideo(mimeType)) {
@@ -100,7 +111,12 @@ class PlayerDashUtils {
     final segmentAlignmentStr = node.getAttribute('segmentAlignment') ?? '';
     var label = node.getAttribute('label');
     final language = node.getAttribute('lang');
-    final mimeType = node.getAttribute('mimeType');
+    final mimeType =
+        node.getAttribute('mimeType') ??
+        node
+            .findElements('Representation')
+            .firstOrNull
+            ?.getAttribute('mimeType');
 
     label ??= language;
 
@@ -120,7 +136,12 @@ class PlayerDashUtils {
     final segmentAlignmentStr = node.getAttribute('segmentAlignment') ?? '';
     var name = node.getAttribute('label');
     final language = node.getAttribute('lang');
-    final mimeType = node.getAttribute('mimeType');
+    final mimeType =
+        node.getAttribute('mimeType') ??
+        node
+            .findElements('Representation')
+            .firstOrNull
+            ?.getAttribute('mimeType');
     var url = node.getElement('Representation')?.getElement('BaseURL')?.text;
     if (url?.contains('http') == false) {
       final masterPlaylistUri = Uri.parse(masterPlaylistUrl);

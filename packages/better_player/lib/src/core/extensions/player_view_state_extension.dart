@@ -11,6 +11,9 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Enables full screen mode in player. This will trigger route change.
   void enterFullScreen() {
+    if (_viewState.isFullScreen) {
+      return;
+    }
     _viewState = _viewState.copyWith(isFullScreen: true);
     _postControllerEvent(PlayerControllerEvent.openFullscreen);
   }

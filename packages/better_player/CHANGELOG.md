@@ -1,3 +1,7 @@
+## Unreleased
+- Fixed: Parsed DASH `<AdaptationSet>` nodes that specify `contentType` or child `<Representation>` `mimeType` instead of an `<AdaptationSet>` `mimeType` attribute (#872) (by @rounce).
+- Fixed: Guarded `enterFullScreen` when already in fullscreen so entering PiP from fullscreen on Android does not pop the fullscreen route (#866) (by @aeonmine).
+
 ## 1.18.0
 - Added: `setPlayerSubtitlesConfiguration` on `BetterPlayerController` to dynamically update subtitle styling at runtime (#1141).
 - Fixed: Prevented `NaN` and `Infinity` errors in progress bars and aspect ratio calculations when media duration or size is zero (#1157, #1044, #901, #884).

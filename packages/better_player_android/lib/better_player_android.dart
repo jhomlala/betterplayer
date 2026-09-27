@@ -280,10 +280,12 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     return Duration(milliseconds: pos);
   }
 
+  static const int _maxMillisecondsSinceEpoch = 8640000000000000;
+
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
     final pos = _players[textureId]?.absolutePosition ?? 0;
-    if (pos <= 0) return null;
+    if (pos <= 0 || pos > _maxMillisecondsSinceEpoch) return null;
     return DateTime.fromMillisecondsSinceEpoch(pos);
   }
 

@@ -131,6 +131,28 @@ void main() {
       await iosPlayer.create();
       final absPos = await iosPlayer.getAbsolutePosition(1);
       expect(absPos, DateTime.fromMillisecondsSinceEpoch(1600000000000));
+
+      when(
+        () => mockPlayer.absolutePosition(),
+      ).thenReturn(8640000000000000);
+      expect(
+        await iosPlayer.getAbsolutePosition(1),
+        DateTime.fromMillisecondsSinceEpoch(8640000000000000),
+      );
+
+      when(
+        () => mockPlayer.absolutePosition(),
+      ).thenReturn(8640000000000001);
+      expect(await iosPlayer.getAbsolutePosition(1), isNull);
+
+      when(() => mockPlayer.absolutePosition()).thenReturn(0);
+      expect(await iosPlayer.getAbsolutePosition(1), isNull);
+
+      when(() => mockPlayer.absolutePosition()).thenReturn(-5000);
+      expect(await iosPlayer.getAbsolutePosition(1), isNull);
+
+      expect(await iosPlayer.getAbsolutePosition(null), isNull);
+      expect(await iosPlayer.getAbsolutePosition(999), isNull);
     });
 
     test('seekTo calls seekTo in ms', () async {
