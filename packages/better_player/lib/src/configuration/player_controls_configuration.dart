@@ -90,16 +90,113 @@ class PlayerControlsConfiguration {
       fullscreenDisableIcon: CupertinoIcons.arrow_down_right_arrow_up_left,
       playIcon: CupertinoIcons.play_arrow_solid,
       pauseIcon: CupertinoIcons.pause_solid,
-      skipBackIcon: CupertinoIcons.gobackward_15,
-      skipForwardIcon: CupertinoIcons.goforward_15,
+      skipBackIcon: CupertinoIcons.gobackward_10,
+      skipForwardIcon: CupertinoIcons.goforward_10,
+      muteIcon: CupertinoIcons.volume_up,
+      unMuteIcon: CupertinoIcons.volume_off,
+      overflowMenuIcon: CupertinoIcons.ellipsis,
+      pipMenuIcon: CupertinoIcons.rectangle_on_rectangle,
+      playbackSpeedIcon: CupertinoIcons.speedometer,
+      qualitiesIcon: CupertinoIcons.slider_horizontal_3,
+      subtitlesIcon: CupertinoIcons.captions_bubble,
+      audioTracksIcon: CupertinoIcons.music_note_2,
     );
   }
 
-  ///Setup PlayerControlsConfiguration based on Theme options.
+  /// Setup PlayerControlsConfiguration based on Theme options.
   factory PlayerControlsConfiguration.theme(ThemeData theme) {
     return PlayerControlsConfiguration(
       textColor: theme.textTheme.bodySmall?.color ?? Colors.white,
       iconsColor: theme.buttonTheme.colorScheme?.primary ?? Colors.white,
+    );
+  }
+
+  /// Returns a copy with default Material icons replaced by Cupertino icons.
+  PlayerControlsConfiguration withCupertinoIcons() {
+    return PlayerControlsConfiguration(
+      controlBarColor: controlBarColor,
+      textColor: textColor,
+      iconsColor: iconsColor,
+      playIcon: playIcon == Icons.play_arrow_outlined
+          ? CupertinoIcons.play_arrow_solid
+          : playIcon,
+      pauseIcon: pauseIcon == Icons.pause_outlined
+          ? CupertinoIcons.pause_solid
+          : pauseIcon,
+      muteIcon: muteIcon == Icons.volume_up_outlined
+          ? CupertinoIcons.volume_up
+          : muteIcon,
+      unMuteIcon: unMuteIcon == Icons.volume_off_outlined
+          ? CupertinoIcons.volume_off
+          : unMuteIcon,
+      fullscreenEnableIcon: fullscreenEnableIcon == Icons.fullscreen_outlined
+          ? CupertinoIcons.arrow_up_left_arrow_down_right
+          : fullscreenEnableIcon,
+      fullscreenDisableIcon:
+          fullscreenDisableIcon == Icons.fullscreen_exit_outlined
+          ? CupertinoIcons.arrow_down_right_arrow_up_left
+          : fullscreenDisableIcon,
+      skipBackIcon: skipBackIcon == Icons.replay_10_outlined
+          ? CupertinoIcons.gobackward_10
+          : skipBackIcon,
+      skipForwardIcon: skipForwardIcon == Icons.forward_10_outlined
+          ? CupertinoIcons.goforward_10
+          : skipForwardIcon,
+      enableFullscreen: enableFullscreen,
+      enableMute: enableMute,
+      enableProgressText: enableProgressText,
+      enableProgressBar: enableProgressBar,
+      enableProgressBarDrag: enableProgressBarDrag,
+      enablePlayPause: enablePlayPause,
+      enableReplay: enableReplay,
+      enableSkips: enableSkips,
+      enableAudioTracks: enableAudioTracks,
+      progressBarPlayedColor: progressBarPlayedColor,
+      progressBarHandleColor: progressBarHandleColor,
+      progressBarBufferedColor: progressBarBufferedColor,
+      progressBarBackgroundColor: progressBarBackgroundColor,
+      controlsHideTime: controlsHideTime,
+      controlsTransitionTime: controlsTransitionTime,
+      customControlsBuilder: customControlsBuilder,
+      playerTheme: playerTheme,
+      showControls: showControls,
+      showControlsOnInitialize: showControlsOnInitialize,
+      controlBarHeight: controlBarHeight,
+      liveTextColor: liveTextColor,
+      enableOverflowMenu: enableOverflowMenu,
+      enablePlaybackSpeed: enablePlaybackSpeed,
+      enableSubtitles: enableSubtitles,
+      enableQualities: enableQualities,
+      enablePip: enablePip,
+      enableRetry: enableRetry,
+      overflowMenuCustomItems: overflowMenuCustomItems,
+      overflowMenuIcon: overflowMenuIcon == Icons.more_vert_outlined
+          ? CupertinoIcons.ellipsis
+          : overflowMenuIcon,
+      pipMenuIcon: pipMenuIcon == Icons.picture_in_picture_outlined
+          ? CupertinoIcons.rectangle_on_rectangle
+          : pipMenuIcon,
+      playbackSpeedIcon: playbackSpeedIcon == Icons.shutter_speed_outlined
+          ? CupertinoIcons.speedometer
+          : playbackSpeedIcon,
+      qualitiesIcon: qualitiesIcon == Icons.hd_outlined
+          ? CupertinoIcons.slider_horizontal_3
+          : qualitiesIcon,
+      subtitlesIcon: subtitlesIcon == Icons.closed_caption_outlined
+          ? CupertinoIcons.captions_bubble
+          : subtitlesIcon,
+      audioTracksIcon: audioTracksIcon == Icons.audiotrack_outlined
+          ? CupertinoIcons.music_note_2
+          : audioTracksIcon,
+      overflowMenuIconsColor: overflowMenuIconsColor,
+      forwardSkipTimeInMilliseconds: forwardSkipTimeInMilliseconds,
+      backwardSkipTimeInMilliseconds: backwardSkipTimeInMilliseconds,
+      loadingColor: loadingColor,
+      loadingWidget: loadingWidget,
+      backgroundColor: backgroundColor,
+      overflowModalColor: overflowModalColor,
+      overflowModalTextColor: overflowModalTextColor,
+      playbackSpeeds: playbackSpeeds,
     );
   }
 

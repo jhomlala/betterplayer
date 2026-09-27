@@ -88,3 +88,71 @@ Use these commands when drafting or updating flows.
     ```bash
     maestro test e2e/maestro/ios/ios_flow.yaml
     ```
+
+---
+
+## Debugging Maestro CI Artifacts (Mandatory 4-Step Protocol)
+
+When investigating a failed Maestro run from a debug artifact bundle (`maestro-ios-debug-artifacts`), **NEVER guess from the `Element not found` error message alone or blindly edit `Semantics` wrappers.** You must complete and report these 4 checks in order before touching any code:
+
+### Step 1: Visual Check (`<flow>/screenshots/step-XXX-*-FAILED.png`)
+Open the failure screenshot first and verify what is actually rendered on screen:
+- **Target widget is NOT on screen** (e.g., loading spinner, black screen, error widget, or auto-hidden controls): **STOP.** Do not touch `Semantics`. The failure is a player lifecycle, initialization, or visibility timer bug. Proceed to **Step 2**.
+- **Target widget IS visible on screen**, but Maestro could not find it: The failure is an accessibility tree or coordinate bounds issue. Proceed to **Step 3**.
+
+### Step 2: Native-to-Dart Lifecycle Check (`device-simulator.log`)
+If the player is stuck on a loading spinner or not rendering controls:
+1. Search `device-simulator.log` around the failure timestamp for `setDataSource`, `waiting for init event`, `onInitialized`, and error logs.
+2. Verify that `VideoEventType.initialized` and a valid `duration` were emitted after the data source was set or swapped.
+   - *Common pitfall:* In `BetterPlayerControlsState.isLoading()`, `if (!latestValue.isPlaying && latestValue.duration == null) return true;` keeps the loading spinner visible (and hides middle controls) if the native player fails to send `onInitialized` after a data source swap.
+
+### Step 3: Accessibility Bounds Diff (`<flow>/commands.json`)
+Inspect the `hierarchy` JSON object inside `<flow>/commands.json` at the failed step and compare it with the last passing step:
+1. List the sibling elements that **did** survive in the hierarchy and note their `bounds` (`[minX, minY][maxX, maxY]`).
+2. Calculate where the missing element is positioned on screen relative to the surviving elements.
+
+### Step 4: XCTest Orientation & Screen Frame Check (`device-xctest.log`)
+If a flow passes in Portrait and fails right after entering Fullscreen Landscape:
+1. Check `device-xctest.log` for:
+   - `Device orientation is 1`
+   - `Returning cached screen size`
+   - `Skipping offset adjustment: device and app frames are same size but different orientation`
+2. Apply **Rule 1 (Fullscreen Landscape `minX < portraitWidth` Cutoff)** below.
+
+---
+
+## iOS Flutter + XCTest Pitfalls & Canonical Patterns
+
+### Rule 1: Fullscreen Landscape `minX < portraitWidth` Cutoff
+When Flutter enters fullscreen landscape via `SystemChrome.setPreferredOrientations`, Flutter rotates its canvas (e.g., `852 x 393` on iPhone 16 Pro), but the iOS Simulator hardware orientation (`XCUIDevice.shared.orientation`) remains Portrait (`1`, `393 x 852`).
+- XCTest filters out any leaf accessibility node whose bounding box does not intersect the Portrait width (`minX >= 393`).
+- For example, a `56px`-wide play/pause button centered at `x = 426` has `bounds = [398, 145][454, 201]`. Because `398 >= 393`, XCTest drops it completely from the accessibility hierarchy!
+- **Solution:** Wrap horizontally distributed buttons in `Expanded -> Semantics(container: true, button: true, ...) -> GestureDetector(behavior: HitTestBehavior.opaque) -> Center`. This expands the semantic bounding box of the center button to `[309, 145][542, 201]` (`minX = 309 < 393`, so it survives XCTest's filter) while keeping its center point `(426, 173)` and visual size unchanged.
+
+### Rule 2: Canonical Button `Semantics` Structure
+1. **Place `Semantics` OUTSIDE `GestureDetector`**, never inside it. `GestureDetector` creates its own implicit semantics node for tap actions; nesting `Semantics(identifier: ...)` inside `GestureDetector` can cause iOS `UIAccessibility` to merge or drop the inner identifier.
+2. **Always set `container: true` and `button: true`** on interactive button semantics, and wrap parent `Row`s in `Semantics(explicitChildNodes: true)`:
+   ```dart
+   Semantics(
+     explicitChildNodes: true,
+     child: Row(
+       children: [
+         Expanded(
+           child: Semantics(
+             identifier: 'better_player_cupertino_controls_play_pause_button',
+             label: label,
+             button: true,
+             container: true,
+             child: GestureDetector(
+               behavior: HitTestBehavior.opaque,
+               onTap: onPlayPause,
+               child: Center(child: buttonIcon),
+             ),
+           ),
+         ),
+       ],
+     ),
+   )
+   ```
+3. **Keep control bar compositing simple:** Avoid stacking `BackdropFilter` + `ClipRRect` + `AnimatedSlide` + nested `AnimatedOpacity` on interactive controls, as multi-layer offscreen compositing breaks iOS `UIAccessibilityElement` hit-testing during transitions.
+

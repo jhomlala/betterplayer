@@ -1,5 +1,5 @@
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 
 class BetterPlayerCupertinoLoadingWidget extends StatelessWidget {
   const BetterPlayerCupertinoLoadingWidget({
@@ -14,10 +14,9 @@ class BetterPlayerCupertinoLoadingWidget extends StatelessWidget {
       return controlsConfiguration.loadingWidget!;
     }
 
-    return CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation<Color>(
-        controlsConfiguration.loadingColor,
-      ),
+    return CupertinoActivityIndicator(
+      color: controlsConfiguration.loadingColor,
+      radius: 14,
     );
   }
 }

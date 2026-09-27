@@ -4,7 +4,6 @@ import 'package:better_player/src/controls/player_progress_colors.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/core/better_player_ui_utils.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerCupertinoBottomBar extends StatelessWidget {
@@ -172,8 +171,8 @@ class _BetterPlayerCupertinoLiveStreamRow extends StatelessWidget {
               button: true,
               child: Icon(
                 latestValue?.isPlaying == true
-                    ? CupertinoIcons.pause_solid
-                    : CupertinoIcons.play_arrow_solid,
+                    ? controlsConfiguration.pauseIcon
+                    : controlsConfiguration.playIcon,
                 color: iconColor,
                 size: 24,
               ),
