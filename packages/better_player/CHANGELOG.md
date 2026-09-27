@@ -11,6 +11,8 @@
 - Fixed: Corrected off-by-one index mapping for `asmsTrackNames` in the quality selection menu when the `Auto` track is present (#1352).
 - Fixed: Prevented rapid clicks on adjacent bottom bar controls in `PlayerWebControls` from triggering the video area's double-tap fullscreen gesture, and ensured `PlayerWebControls` acquires keyboard focus for shortcuts.
 - Fixed: Guarded `PlayerEngineController` against post-dispose platform calls and `ValueNotifier` updates when disposed mid-initialization, and prevented duplicate event listeners on `BetterPlayerPlaylistController.setupDataSourceList`.
+- Fixed: Restarted the position polling timer in `PlayerEngineController.seekTo` when already playing so the seekbar continues advancing after skip forward/backward or tap-to-seek.
+- Fixed: Increased bottom padding in `PlayerSubtitlesDrawer` when controls are visible so subtitles do not overlap the bottom control bar, and preserved zero-based WebVTT cues when `X-TIMESTAMP-MAP` specifies `LOCAL:00:00:00.000`.
 
 ## 1.17.0
 - [BREAKING_CHANGE] Updated: Standardized class and file naming by replacing the `BetterPlayer` prefix with `Player` across internal widgets and utilities (including exported `PlayerAsmsUtils` and `PlayerUiUtils`; automatable via `dart fix --apply`).

@@ -66,5 +66,32 @@ void main() {
 
       await controller.dispose();
     });
+
+    test(
+      'PlayerEngineController continues polling position after seekTo while playing',
+      () async {
+        final controller = PlayerEngineController();
+
+        int? textureId;
+        while (textureId == null) {
+          textureId = controller.textureId;
+          await Future<void>.delayed(const Duration(milliseconds: 10));
+        }
+
+        await controller.setNetworkDataSource('https://example.com/video.mp4');
+        await controller.play();
+
+        mockPlatform.currentPosition = const Duration(seconds: 5);
+        await controller.seekTo(const Duration(seconds: 5));
+        expect(controller.value.position, const Duration(seconds: 5));
+
+        // Simulate playback advancing past the seek target and wait for a timer tick
+        mockPlatform.currentPosition = const Duration(seconds: 6);
+        await Future<void>.delayed(const Duration(milliseconds: 350));
+        expect(controller.value.position, const Duration(seconds: 6));
+
+        await controller.dispose();
+      },
+    );
   });
 }

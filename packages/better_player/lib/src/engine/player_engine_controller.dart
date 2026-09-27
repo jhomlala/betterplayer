@@ -370,28 +370,33 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     _timer?.cancel();
     if (value.isPlaying) {
       await _betterPlayerPlatform.play(_textureId);
-      _timer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
-        if (_isDisposed) {
-          return;
-        }
-        final newPosition = await position;
-        final newAbsolutePosition = await absolutePosition;
-        // ignore: invariant_booleans
-        if (_isDisposed) {
-          return;
-        }
-        _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
-        if (_seekPosition != null && newPosition != null) {
-          final difference =
-              newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
-          if (difference > 0) {
-            _seekPosition = null;
-          }
-        }
-      });
+      _startTimer();
     } else {
       await _betterPlayerPlatform.pause(_textureId);
     }
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
+      if (_isDisposed) {
+        return;
+      }
+      final newPosition = await position;
+      final newAbsolutePosition = await absolutePosition;
+      // ignore: invariant_booleans
+      if (_isDisposed) {
+        return;
+      }
+      if (_seekPosition != null && newPosition != null) {
+        final difference =
+            newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
+        if (difference >= 0) {
+          _seekPosition = null;
+        }
+      }
+      _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
+    });
   }
 
   Future<void> _applyVolume() async {
@@ -448,11 +453,14 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     _seekPosition = positionToSeek;
 
     await _betterPlayerPlatform.seekTo(_textureId, positionToSeek);
-    _updatePosition(position);
+    _updatePosition(positionToSeek);
 
-    // Note: The native iOS implementation of seekTo is responsible for resuming
-    // playback after the seek operation completes. Calling play() or pause() here
-    // would race with the native completion handler, leading to unpredictable behavior.
+    // Restart position polling if already playing. Native iOS seekTo resumes
+    // playback via its own completion handler, so we only restart the Dart
+    // polling timer here rather than calling platform play().
+    if (value.isPlaying && !_isDisposed) {
+      _startTimer();
+    }
   }
 
   /// Sets the audio volume of [this].

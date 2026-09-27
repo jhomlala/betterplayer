@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class FadePlaceholderPage extends StatefulWidget {
@@ -13,14 +12,24 @@ class FadePlaceholderPage extends StatefulWidget {
 
 class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
   late BetterPlayerController _betterPlayerController;
-  final StreamController<bool> _playController = StreamController.broadcast();
+  final ValueNotifier<bool> _showPlaceholderNotifier = ValueNotifier<bool>(
+    true,
+  );
+
+  @override
+  void dispose() {
+    _showPlaceholderNotifier.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
     final betterPlayerConfiguration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-      placeholder: _FadePlaceholder(playStream: _playController.stream),
+      placeholder: _FadePlaceholder(
+        showPlaceholderListenable: _showPlaceholderNotifier,
+      ),
       showPlaceholderUntilPlay: true,
       placeholderOnTop: false,
     );
@@ -32,7 +41,7 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == PlayerEventType.play) {
-        _playController.add(false);
+        _showPlaceholderNotifier.value = false;
       }
     });
     super.initState();
@@ -63,16 +72,15 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
 }
 
 class _FadePlaceholder extends StatelessWidget {
-  const _FadePlaceholder({required this.playStream});
+  const _FadePlaceholder({required this.showPlaceholderListenable});
 
-  final Stream<bool> playStream;
+  final ValueListenable<bool> showPlaceholderListenable;
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<bool>(
-      stream: playStream,
-      builder: (context, snapshot) {
-        final showPlaceholder = snapshot.data ?? true;
+    return ValueListenableBuilder<bool>(
+      valueListenable: showPlaceholderListenable,
+      builder: (context, showPlaceholder, _) {
         return AnimatedOpacity(
           duration: const Duration(milliseconds: 500),
           opacity: showPlaceholder ? 1.0 : 0.0,

@@ -112,7 +112,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
       child: Padding(
         padding: EdgeInsets.only(
           bottom: _playerVisible
-              ? _configuration!.bottomPadding + (kIsWeb ? 65 : 30)
+              ? _configuration!.bottomPadding + (kIsWeb ? 65 : 55)
               : _configuration!.bottomPadding,
           left: _configuration!.leftPadding,
           right: _configuration!.rightPadding,

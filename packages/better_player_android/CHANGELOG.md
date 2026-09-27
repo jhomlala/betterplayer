@@ -1,6 +1,7 @@
 ## Unreleased
 - Fixed: Resolved Android media notification tap intent via `packageManager.getLaunchIntentForPackage` by default and supported fully qualified `activityName` values (#1138).
 - Fixed: Supported `file://` URIs and proper bitmap bounds sampling when loading local notification images in `ImageWorker` (#883).
+- Fixed: Restored `sendBufferingUpdate` emission during position polling and playback readiness so buffered progress updates on the seekbar.
 
 ## 1.6.0
 - Fixed: Resolved Android cache clearing failure and OutOfMemory bugs by properly delegating `clearCache()` to ExoPlayer's `SimpleCache.removeResource()`.

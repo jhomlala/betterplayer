@@ -34,14 +34,20 @@ extension PlayerSubtitleExtension on BetterPlayerController {
 
     if (subtitlesSource.type != PlayerSubtitlesSourceType.none) {
       if (subtitlesSource.asmsIsSegmented == true) {
-        return;
+        await _loadAsmsSubtitlesSegments(
+          _engine?.value.position ?? Duration.zero,
+        );
+      } else {
+        final subtitlesParsed = await PlayerSubtitlesFactory().parseSubtitles(
+          subtitlesSource,
+        );
+        _subtitleState = _subtitleState.copyWith(
+          subtitlesLines: [
+            ..._subtitleState.subtitlesLines,
+            ...subtitlesParsed,
+          ],
+        );
       }
-      final subtitlesParsed = await PlayerSubtitlesFactory().parseSubtitles(
-        subtitlesSource,
-      );
-      _subtitleState = _subtitleState.copyWith(
-        subtitlesLines: [..._subtitleState.subtitlesLines, ...subtitlesParsed],
-      );
     }
 
     _postEvent(PlayerEvent(PlayerEventType.changedSubtitles));
@@ -104,6 +110,9 @@ extension PlayerSubtitleExtension on BetterPlayerController {
               ...segmentsToLoad,
             ],
           );
+          for (final listener in List<VoidCallback>.from(_videoListeners)) {
+            listener();
+          }
         }
       }
       _subtitleState = _subtitleState.copyWith(asmsSegmentsLoading: false);

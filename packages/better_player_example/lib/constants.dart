@@ -51,6 +51,6 @@ class Constants {
       'https://livesim.dashif.org/livesim/testpic_2s/multi_subs.mpd';
   static String dashBigBuckBunnyUrl =
       'https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd';
-  static String segmentedSubtitlesHlsUrl =
-      'https://eng-demo.cablecast.tv/segmented-captions/vod.m3u8';
+  static const String segmentedSubtitlesHlsUrl =
+      'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_ts/master.m3u8';
 }

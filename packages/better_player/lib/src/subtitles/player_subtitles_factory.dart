@@ -1,4 +1,4 @@
-﻿import 'package:better_player/better_player.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/utils/player_io_utils.dart';
@@ -197,6 +197,10 @@ class PlayerSubtitlesFactory {
       var localDuration = Duration.zero;
       if (localStr != null) {
         localDuration = PlayerSubtitle.stringToDuration(localStr);
+      }
+
+      if (localDuration == Duration.zero) {
+        return Duration.zero;
       }
 
       if (mpegtsStr != null) {
