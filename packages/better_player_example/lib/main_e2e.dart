@@ -411,6 +411,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                       children: [
                         Text(
                           'Error: $_errorDescription',
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             color: Colors.red,
                             fontWeight: FontWeight.bold,
@@ -601,7 +603,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 200),
+            if (!kIsWeb) const SizedBox(height: 200),
           ],
         ),
       ),
