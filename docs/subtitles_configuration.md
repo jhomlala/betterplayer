@@ -9,7 +9,11 @@ Better Player provides comprehensive support for subtitles, allowing you to load
 
 ## Subtitle Sources
 
-Subtitles can be loaded from **Network**, **File**, or **Memory** sources. You can also provide multiple subtitle tracks for a single video.
+Subtitles can be loaded from **Network**, **File**, or **Memory** sources (`.srt` or `.vtt`), or parsed automatically from HLS/DASH manifests (`useAsmsSubtitles: true`). You can also provide multiple subtitle tracks for a single video.
+
+:::note
+Soft-subtitles embedded directly inside standalone `.mkv` or `.mp4` container files are not extracted by the Dart subtitle renderer. Extract them to an external `.srt`/`.vtt` source or serve the stream via HLS/DASH with `useAsmsSubtitles: true`.
+:::
 
 ### Example: Network Subtitles
 ```dart

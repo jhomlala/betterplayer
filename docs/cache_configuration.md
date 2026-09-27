@@ -18,7 +18,7 @@ PlayerDataSource _betterPlayerDataSource = PlayerDataSource(
         preCacheSize: 10 * 1024 * 1024,
         maxCacheSize: 10 * 1024 * 1024,
         maxCacheFileSize: 10 * 1024 * 1024,
-        /// (Android only) Key to persist cache between application sessions
+        /// Key to persist cache between application sessions
         key: "uniqueCacheKey",
       ),
     );
@@ -29,11 +29,10 @@ PlayerDataSource _betterPlayerDataSource = PlayerDataSource(
 *   **`useCache`**: Enables or disables caching for the data source.
 *   **`maxCacheSize`**: (Android only) The maximum total size of the cache on disk in bytes.
 *   **`maxCacheFileSize`**: (Android only) The maximum size allowed for an individual cached file in bytes.
-*   **`key`**: A unique identifier used to persist and reuse cached data across application sessions.
+*   **`key`**: A unique identifier used to persist and reuse cached data across application sessions on both Android and iOS.
 
 :::important
-On Android, providing a unique `key` is essential if you want the cached data to be available after the application is closed and reopened. Without a key, the cache may be treated as session-only.
-
+Provide a unique `key` per video (especially in lists) so cached segments are persisted across sessions and never collide between different data sources.
 :::
 ## Cache Management
 
