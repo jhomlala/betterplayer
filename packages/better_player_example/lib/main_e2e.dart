@@ -223,15 +223,19 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
               Semantics(
                 identifier: 'better_player_e2e_runtime_config_status',
                 label: 'better_player_e2e_runtime_config_status',
-                container: true,
-                child: const Text('Runtime Config Updated'),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Runtime Config Updated'),
+                ),
               ),
             if (_visibilityCallbackFired)
               Semantics(
                 identifier: 'better_player_e2e_visibility_callback_status',
                 label: 'better_player_e2e_visibility_callback_status',
-                container: true,
-                child: const Text('Visibility Callback Fired'),
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Visibility Callback Fired'),
+                ),
               ),
             const SizedBox(height: 16),
             Wrap(

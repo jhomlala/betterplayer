@@ -26,7 +26,12 @@ test('web datasource swap flow', async ({ page }) => {
   await expect(playPause).toBeVisible({ timeout: 10000 });
 
   const visibilityCycleButton = page.locator('[aria-label^="better_player_e2e_visibility_cycle_button"]');
-  await visibilityCycleButton.click({ force: true });
-  const visibilityStatus = page.locator('[aria-label^="better_player_e2e_visibility_callback_status"]');
-  await expect(visibilityStatus).toBeVisible({ timeout: 5000 });
+  const visibilityStatus = page.locator(
+    '[aria-label^="better_player_e2e_visibility_callback_status"], [flt-semantics-identifier="better_player_e2e_visibility_callback_status"]'
+  );
+  await expect(async () => {
+    if (await visibilityStatus.first().isVisible()) return;
+    await visibilityCycleButton.click({ force: true });
+    await expect(visibilityStatus.first()).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
 });
