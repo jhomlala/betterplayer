@@ -36,7 +36,7 @@ test('web flow', async ({ page }) => {
   await page.waitForTimeout(400);
 
   // Quality (Resolution)
-  const qualityMenu = page.locator('[aria-label="better_player_overflow_menu_quality"]');
+  const qualityMenu = page.locator('[aria-label^="better_player_overflow_menu_quality"]');
   await expect(async () => {
     if (await qualityMenu.isVisible()) return;
     await settings.click({ force: true });
@@ -50,7 +50,7 @@ test('web flow', async ({ page }) => {
   await page.waitForTimeout(400);
 
   // Subtitles selection (Memory -> None -> Memory)
-  const subtitlesMenu = page.locator('[aria-label="better_player_overflow_menu_subtitles"]');
+  const subtitlesMenu = page.locator('[aria-label^="better_player_overflow_menu_subtitles"]');
   await expect(async () => {
     if (await subtitlesMenu.isVisible()) return;
     await settings.click({ force: true });
