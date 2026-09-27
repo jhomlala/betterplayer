@@ -43,23 +43,36 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
       });
     });
 
+    _updateConfiguration();
+
+    widget.betterPlayerController.addVideoListener(
+      _updateState,
+    );
+
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(PlayerSubtitlesDrawer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.betterPlayerSubtitlesConfiguration !=
+        widget.betterPlayerSubtitlesConfiguration) {
+      _updateConfiguration();
+    }
+  }
+
+  void _updateConfiguration() {
     if (widget.betterPlayerSubtitlesConfiguration != null) {
       _configuration = widget.betterPlayerSubtitlesConfiguration;
     } else {
       _configuration = setupDefaultConfiguration();
     }
 
-    widget.betterPlayerController.addVideoListener(
-      _updateState,
-    );
-
     _innerTextStyle = TextStyle(
       fontFamily: _configuration!.fontFamily,
       color: _configuration!.fontColor,
       fontSize: _configuration!.fontSize,
     );
-
-    super.initState();
   }
 
   @override

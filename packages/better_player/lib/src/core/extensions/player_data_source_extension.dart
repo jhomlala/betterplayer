@@ -382,6 +382,14 @@ extension PlayerDataSourceExtension on BetterPlayerController {
               textureId: textureId,
               error: error,
             );
+            _postEvent(
+              PlayerEvent(
+                PlayerEventType.exception,
+                parameters: <String, dynamic>{
+                  'exception': error.toString(),
+                },
+              ),
+            );
           },
         );
 

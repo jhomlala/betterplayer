@@ -47,6 +47,10 @@ class BetterPlayerController {
   /// Used to customize colors, icons, padding, and interactive behaviors of the UI overlay.
   late PlayerControlsConfiguration _betterPlayerControlsConfiguration;
 
+  /// Defines the visual and behavioral configuration for the player's subtitles.
+  /// Used to customize font size, colors, alignment, and padding of the subtitle overlay.
+  late PlayerSubtitlesConfiguration _betterPlayerSubtitlesConfiguration;
+
   /// The data source currently loaded into the player.
   /// Defines the video URL, format (HLS, DASH, MP4), headers, DRM, and resolution.
   PlayerDataSource? _betterPlayerDataSource;
@@ -120,6 +124,8 @@ class BetterPlayerController {
     _betterPlayerControlsConfiguration = _resolveControlsConfiguration(
       betterPlayerConfiguration.controlsConfiguration,
     );
+    _betterPlayerSubtitlesConfiguration =
+        betterPlayerConfiguration.subtitlesConfiguration;
     _eventListeners.add(eventListener);
     if (_engine != null) {
       _engine!.addListener(_onVideoPlayerChanged);
@@ -148,6 +154,11 @@ class BetterPlayerController {
   /// Allows external components to inspect how controls are structured (e.g., icons, colors, layout).
   PlayerControlsConfiguration get betterPlayerControlsConfiguration =>
       _betterPlayerControlsConfiguration;
+
+  /// Retrieves the current configuration used for the player's subtitles.
+  /// Allows external components to inspect how subtitles are styled and positioned.
+  PlayerSubtitlesConfiguration get betterPlayerSubtitlesConfiguration =>
+      _betterPlayerSubtitlesConfiguration;
 
   /// Exposes a read-only list of all currently active event listeners subscribed to the player.
   /// Used primarily for debugging or routing global event streams without modifying active subscriptions.
@@ -315,6 +326,17 @@ class BetterPlayerController {
     );
     if (!_disposed) {
       _postControllerEvent(PlayerControllerEvent.changeControlsConfiguration);
+    }
+  }
+
+  /// Hotswaps the active [PlayerSubtitlesConfiguration] dictating subtitle styling.
+  /// Allows dynamically changing subtitle font size, colors, or background during playback.
+  void setPlayerSubtitlesConfiguration(
+    PlayerSubtitlesConfiguration betterPlayerSubtitlesConfiguration,
+  ) {
+    _betterPlayerSubtitlesConfiguration = betterPlayerSubtitlesConfiguration;
+    if (!_disposed) {
+      _postControllerEvent(PlayerControllerEvent.changeSubtitlesConfiguration);
     }
   }
 

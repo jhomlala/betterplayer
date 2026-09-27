@@ -22,7 +22,7 @@ class PlayerWithControls extends StatefulWidget {
 
 class _PlayerWithControlsState extends State<PlayerWithControls> {
   PlayerSubtitlesConfiguration get subtitlesConfiguration =>
-      widget.controller!.betterPlayerConfiguration.subtitlesConfiguration;
+      widget.controller!.betterPlayerSubtitlesConfiguration;
 
   PlayerControlsConfiguration get controlsConfiguration =>
       widget.controller!.betterPlayerControlsConfiguration;

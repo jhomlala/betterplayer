@@ -17,4 +17,7 @@ enum PlayerControllerEvent {
 
   ///Controls configuration has been updated.
   changeControlsConfiguration,
+
+  ///Subtitles configuration has been updated.
+  changeSubtitlesConfiguration,
 }
