@@ -92,13 +92,19 @@ class ImageWorker(
 
     private fun getBitmapFromInternalURL(src: String): Bitmap? {
         return try {
+            val filePath = if (src.startsWith("file://")) {
+                Uri.parse(src).path ?: src
+            } else {
+                src
+            }
             val options = BitmapFactory.Options()
             options.inJustDecodeBounds = true
+            BitmapFactory.decodeFile(filePath, options)
             options.inSampleSize = calculateBitmapInSampleSize(
                 options
             )
             options.inJustDecodeBounds = false
-            BitmapFactory.decodeFile(src)
+            BitmapFactory.decodeFile(filePath, options)
         } catch (exception: Exception) {
             null
         }

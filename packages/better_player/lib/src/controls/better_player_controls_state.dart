@@ -1,4 +1,4 @@
-﻿import 'dart:math';
+import 'dart:math';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_overflow_menu.dart';
@@ -277,6 +277,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     final asmsTracks = betterPlayerController!.betterPlayerAsmsTracks;
     PlayerLogger.debug(message: 'ASMS Tracks: ${asmsTracks.length}');
     final children = <Widget>[];
+    var trackNameIndex = 0;
     for (var index = 0; index < asmsTracks.length; index++) {
       final track = asmsTracks[index];
 
@@ -286,9 +287,10 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           (track.bitrate ?? 0) == 0) {
         preferredName = betterPlayerController!.translations.qualityAuto;
       } else {
-        preferredName = asmsTrackNames.length > index
-            ? asmsTrackNames[index]
+        preferredName = asmsTrackNames.length > trackNameIndex
+            ? asmsTrackNames[trackNameIndex]
             : null;
+        trackNameIndex++;
       }
 
       final width = track.width ?? 0;

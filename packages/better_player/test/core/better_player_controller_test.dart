@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
+import 'package:better_player/src/core/player_full_screen_video.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -1092,6 +1093,97 @@ void main() {
         await betterPlayerMockController.setupDataSource(dataSource);
         expect(engineController.drmSecurityLevel, DrmSecurityLevel.l1);
       });
+
+      test(
+        'setPlayerSubtitlesConfiguration updates configuration and emits event',
+        () async {
+          final controller =
+              BetterPlayerTestUtils.setupBetterPlayerMockController();
+          final events = <PlayerControllerEvent>[];
+          final sub = controller.controllerEventStream.listen(events.add);
+
+          const newSubtitlesConfig = PlayerSubtitlesConfiguration(
+            fontSize: 24,
+            fontColor: Colors.yellow,
+            backgroundColor: Colors.black54,
+          );
+          controller.setPlayerSubtitlesConfiguration(newSubtitlesConfig);
+          await Future<void>.delayed(Duration.zero);
+
+          expect(
+            controller.betterPlayerSubtitlesConfiguration,
+            newSubtitlesConfig,
+          );
+          expect(
+            events,
+            contains(PlayerControllerEvent.changeSubtitlesConfiguration),
+          );
+          await sub.cancel();
+        },
+      );
+
+      test(
+        'runtime videoEventStreamController error emits PlayerEventType.exception',
+        () async {
+          final engineController =
+              BetterPlayerTestUtils.setupMockPlayerEngineController();
+          final controller =
+              BetterPlayerTestUtils.setupBetterPlayerMockController(
+                controller: engineController,
+              );
+          await controller.setupDataSource(
+            PlayerDataSource(
+              DataSourceType.network,
+              BetterPlayerTestUtils.forBiggerBlazesUrl,
+            ),
+          );
+
+          PlayerEvent? receivedExceptionEvent;
+          controller.addEventsListener((event) {
+            if (event.betterPlayerEventType == PlayerEventType.exception) {
+              receivedExceptionEvent = event;
+            }
+          });
+
+          engineController.videoEventStreamController.addError(
+            Exception('Playback error'),
+          );
+          await Future<void>.delayed(Duration.zero);
+
+          expect(receivedExceptionEvent, isNotNull);
+          expect(
+            receivedExceptionEvent!.parameters!['exception'],
+            contains('Playback error'),
+          );
+        },
+      );
+
+      testWidgets(
+        'PlayerFullScreenVideo uses controlsConfiguration.backgroundColor',
+        (tester) async {
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(
+              controlsConfiguration: PlayerControlsConfiguration(
+                backgroundColor: Colors.blue,
+              ),
+            ),
+          );
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: PlayerFullScreenVideo(
+                controllerProvider: BetterPlayerControllerProvider(
+                  controller: controller,
+                  child: const SizedBox(),
+                ),
+              ),
+            ),
+          );
+
+          final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
+          expect(scaffold.backgroundColor, Colors.blue);
+        },
+      );
     },
   );
 }
