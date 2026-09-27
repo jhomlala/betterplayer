@@ -72,7 +72,9 @@ void main() {
       mockController.setControlsAlwaysVisible(true);
       await tester.pumpAndSettle();
 
-      final moreButton = find.byIcon(controlsConfiguration.overflowMenuIcon);
+      final moreButton = find.byIcon(
+        mockController.betterPlayerControlsConfiguration.overflowMenuIcon,
+      );
       expect(moreButton, findsOneWidget);
 
       await tester.tap(moreButton);
