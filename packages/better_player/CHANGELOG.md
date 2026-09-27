@@ -1,4 +1,4 @@
-## Unreleased
+## 1.18.0
 - Added: `setPlayerSubtitlesConfiguration` on `BetterPlayerController` to dynamically update subtitle styling at runtime (#1141).
 - Fixed: Prevented `NaN` and `Infinity` errors in progress bars and aspect ratio calculations when media duration or size is zero (#1157, #1044, #901, #884).
 - Fixed: Preserved fullscreen state when advancing or returning to a track in `BetterPlayerPlaylistController` (#1037).

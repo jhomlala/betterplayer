@@ -1,4 +1,4 @@
-## Unreleased
+## 1.3.3
 - Fixed: Guarded `DurationRange.startFraction` and `DurationRange.endFraction` against zero or negative durations to prevent `NaN`/`Infinity` exceptions.
 
 ## 1.3.2

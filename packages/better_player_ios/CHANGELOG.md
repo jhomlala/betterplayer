@@ -1,4 +1,4 @@
-## Unreleased
+## 1.5.2
 - Fixed: Disabled automatic native closed caption selection (`appliesMediaSelectionCriteriaAutomatically = false`) on `AVPlayer` to prevent duplicate subtitles on iOS (#1103).
 
 ## 1.5.1

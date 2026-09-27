@@ -70,5 +70,17 @@ var betterPlayerConfiguration = PlayerConfiguration(
 *   **`alignment`**: The alignment of the subtitle text on the screen.
 *   **`backgroundColor`**: The background color of the subtitle text box.
 
+### Updating Styling at Runtime
+Call `setPlayerSubtitlesConfiguration` on `BetterPlayerController` to update subtitle styling dynamically during playback:
+
+```dart
+betterPlayerController.setPlayerSubtitlesConfiguration(
+  const PlayerSubtitlesConfiguration(
+    fontSize: 22,
+    fontColor: Colors.yellow,
+  ),
+);
+```
+
 ## Accessing Current Subtitles
 To retrieve the text of the currently displayed subtitle, use the `renderedSubtitle` property on the `BetterPlayerController`.
