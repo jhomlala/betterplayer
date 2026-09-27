@@ -1,4 +1,4 @@
-## Unreleased
+## 1.17.0
 - [BREAKING_CHANGE] Updated: Standardized class and file naming by replacing the `BetterPlayer` prefix with `Player` across internal widgets and utilities (including exported `PlayerAsmsUtils` and `PlayerUiUtils`; automatable via `dart fix --apply`).
 
 ## 1.16.0
