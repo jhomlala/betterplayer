@@ -68,7 +68,7 @@ extension PlayerTrackExtension on BetterPlayerController {
       throw StateError('The data source has not been initialized');
     }
 
-    if (audioTrack.language == null) {
+    if (audioTrack.language == null && audioTrack.id == null) {
       _trackState = _trackState.copyWith(clearAsmsAudioTrack: true);
       return;
     }

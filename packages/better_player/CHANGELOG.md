@@ -1,6 +1,6 @@
 ## Unreleased
-- Fixed: Parsed DASH `<AdaptationSet>` nodes that specify `contentType` or child `<Representation>` `mimeType` instead of an `<AdaptationSet>` `mimeType` attribute (#872) (by @rounce).
-- Fixed: Guarded `enterFullScreen` when already in fullscreen so entering PiP from fullscreen on Android does not pop the fullscreen route (#866) (by @aeonmine).
+- Fixed: Parsed DASH `<AdaptationSet>` nodes that specify `contentType` or child `<Representation>` `mimeType` instead of an `<AdaptationSet>` `mimeType` attribute, and kept manifest audio tracks selected when `language` is omitted (#872) (by @rounce).
+- Fixed: Guarded `enterFullScreen` when already in fullscreen and restored controls visibility on `AppLifecycleState.resumed` when returning from Picture-in-Picture on Android (#866) (by @aeonmine).
 
 ## 1.18.0
 - Added: `setPlayerSubtitlesConfiguration` on `BetterPlayerController` to dynamically update subtitle styling at runtime (#1141).

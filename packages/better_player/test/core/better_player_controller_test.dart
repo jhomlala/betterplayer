@@ -1473,6 +1473,69 @@ void main() {
           }
         },
       );
+
+      test(
+        'returning from PiP on Android via AppLifecycleState.resumed restores controls and visibility',
+        () async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.android;
+          try {
+            final engineController = MockPlayerEngineController()
+              ..isPipSupported = true;
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(),
+              playerEngineController: engineController,
+            );
+            engineController.emitInitialized();
+
+            final visibilityStates = <bool>[];
+            final sub = controller.controlsVisibilityStream.listen(
+              visibilityStates.add,
+            );
+
+            await controller.enablePictureInPicture(GlobalKey());
+            engineController.value = engineController.value.copyWith(
+              isPip: true,
+            );
+            engineController.notifyListeners();
+            await Future<void>.delayed(Duration.zero);
+
+            expect(controller.isFullScreen, isTrue);
+            expect(controller.controlsEnabled, isFalse);
+            expect(visibilityStates.last, isFalse);
+
+            // Simulate Android Activity returning from PiP to resumed state
+            controller.setAppLifecycleState(AppLifecycleState.resumed);
+            await Future<void>.delayed(Duration.zero);
+
+            expect(engineController.value.isPip, isFalse);
+            expect(controller.isFullScreen, isFalse);
+            expect(controller.controlsEnabled, isTrue);
+            expect(visibilityStates.last, isTrue);
+
+            await sub.cancel();
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        },
+      );
+
+      test(
+        'setAudioTrack selects track when id is provided even if language is null',
+        () {
+          final engineController = MockPlayerEngineController();
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+            playerEngineController: engineController,
+          );
+
+          final audioTrack = PlayerAsmsAudioTrack(
+            id: 0,
+            mimeType: 'audio/mp4',
+          );
+          controller.setAudioTrack(audioTrack);
+          expect(controller.betterPlayerAsmsAudioTrack, equals(audioTrack));
+        },
+      );
     },
   );
 }
