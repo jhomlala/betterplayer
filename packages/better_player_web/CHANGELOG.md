@@ -1,3 +1,6 @@
+## 1.1.3
+- Updated: `better_player_platform_interface` version bump.
+
 ## 1.1.2
 - Updated: etter_player_platform_interface version bump.
 

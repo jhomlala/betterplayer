@@ -271,7 +271,12 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
 
   @override
   Future<Duration> getPosition(int? textureId) async {
-    final pos = _players[textureId]?.position ?? 0;
+    final player = _players[textureId];
+    if (player == null) {
+      return Duration.zero;
+    }
+    player.sendBufferingUpdate(isFromBufferingStart: false);
+    final pos = player.position;
     return Duration(milliseconds: pos);
   }
 
@@ -478,6 +483,7 @@ abstract class BetterPlayerWrapper {
   void seekTo(int positionMs);
   int get position;
   int get absolutePosition;
+  void sendBufferingUpdate({required bool isFromBufferingStart});
   void setMatchFrameRate(bool matchFrameRate);
 }
 
@@ -580,6 +586,10 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
 
   @override
   int get absolutePosition => _player.absolutePosition;
+
+  @override
+  void sendBufferingUpdate({required bool isFromBufferingStart}) =>
+      _player.sendBufferingUpdate(isFromBufferingStart);
 
   @override
   void setMatchFrameRate(bool matchFrameRate) {

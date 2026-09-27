@@ -337,5 +337,38 @@ void main() {
         expect(find.text('Updated Controls'), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'Renders video view when mounted before setupDataSource completes with autoPlay',
+      (tester) async {
+        final mockPlayerEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(autoPlay: true),
+          playerEngineController: mockPlayerEngineController,
+        );
+
+        final setupFuture = controller.setupDataSource(
+          PlayerDataSource.network('https://example.com/video.mp4'),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: BetterPlayerControllerProvider(
+              controller: controller,
+              child: PlayerWithControls(
+                controller: controller,
+              ),
+            ),
+          ),
+        );
+
+        await setupFuture;
+        await tester.pump();
+
+        expect(find.byType(FittedBox), findsOneWidget);
+      },
+    );
   });
 }

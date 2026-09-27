@@ -79,10 +79,17 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
     int? height,
     int? bitrate,
   ) async {}
+  Duration currentPosition = Duration.zero;
+
   @override
-  Future<void> seekTo(int? textureId, Duration? position) async {}
+  Future<void> seekTo(int? textureId, Duration? position) async {
+    if (position != null) {
+      currentPosition = position;
+    }
+  }
+
   @override
-  Future<Duration> getPosition(int? textureId) async => Duration.zero;
+  Future<Duration> getPosition(int? textureId) async => currentPosition;
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async => null;
   @override

@@ -144,6 +144,11 @@ void main() {
 
       expect(pos, const Duration(milliseconds: 5000));
       expect(absPos, DateTime.fromMillisecondsSinceEpoch(1600000000000));
+      verify(
+        () => androidPlayer.mockPlayer.sendBufferingUpdate(
+          isFromBufferingStart: false,
+        ),
+      ).called(1);
     });
 
     test('videoEventsFor returns stream', () async {

@@ -78,6 +78,12 @@ const configuration = PlayerConfiguration(
     PlayerSubtitlesSource(type: PlayerSubtitlesSourceType.none),
   );
   ```
+* Update subtitle styling at runtime:
+  ```dart
+  _controller.setPlayerSubtitlesConfiguration(
+    const PlayerSubtitlesConfiguration(fontSize: 22, fontColor: Colors.yellow),
+  );
+  ```
 * Read currently displayed subtitle line:
   ```dart
   final currentLine = _controller.renderedSubtitle;

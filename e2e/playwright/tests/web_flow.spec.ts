@@ -99,6 +99,19 @@ test('web flow', async ({ page }) => {
     await expect(playPause.first()).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 10000, intervals: [1000] });
 
+  // Keyboard shortcuts (ArrowDown volume 0.9 -> ArrowUp volume 1.0 -> ArrowRight seek)
+  const keyboardStatus = page.locator(
+    '[aria-label^="better_player_e2e_keyboard_shortcut_status"], [flt-semantics-identifier="better_player_e2e_keyboard_shortcut_status"]'
+  );
+  await expect(async () => {
+    if (await keyboardStatus.first().isVisible()) return;
+    await playPause.first().click({ force: true });
+    await page.keyboard.press('ArrowDown');
+    await expect(keyboardStatus.first()).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
+  await page.keyboard.press('ArrowUp');
+  await page.keyboard.press('ArrowRight');
+
   // Seek
   const progressBar = page.locator('[aria-label^="better_player_material_progress_bar"]');
   await expect(progressBar).toBeVisible();

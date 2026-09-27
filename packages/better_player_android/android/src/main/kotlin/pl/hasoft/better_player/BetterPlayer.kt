@@ -440,6 +440,7 @@ class BetterPlayer(
                             isInitialized = true
                             sendInitialized()
                         }
+                        sendBufferingUpdate(false)
                         callback.onBufferingEnd()
                     }
                     Player.STATE_ENDED -> {
@@ -450,6 +451,10 @@ class BetterPlayer(
                         BetterPlayerApi.log(1, "PlaybackState: IDLE")
                     }
                 }
+            }
+
+            override fun onIsLoadingChanged(isLoading: Boolean) {
+                sendBufferingUpdate(false)
             }
 
             override fun onPlayerError(error: PlaybackException) {
@@ -554,7 +559,10 @@ class BetterPlayer(
     }
 
     val position: Long
-        get() = exoPlayer?.currentPosition ?: 0L
+        get() {
+            sendBufferingUpdate(false)
+            return exoPlayer?.currentPosition ?: 0L
+        }
 
     val absolutePosition: Long
         get() {

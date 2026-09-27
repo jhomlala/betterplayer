@@ -90,6 +90,29 @@ void main() {
     );
 
     test(
+      'Parse WebVTT with X-TIMESTAMP-MAP where LOCAL is 00:00:00.000 preserves zero-based cues',
+      () async {
+        final factory = PlayerSubtitlesFactory();
+        const vttContent =
+            'WEBVTT\n'
+            'X-TIMESTAMP-MAP=MPEGTS:900000,LOCAL:00:00:00.000\n\n'
+            '1\n'
+            '00:00:00.008 --> 00:00:00.992\n'
+            'Subtitles: Bip!';
+
+        final source = PlayerSubtitlesSource(
+          type: PlayerSubtitlesSourceType.memory,
+          content: vttContent,
+        );
+
+        final subtitles = await factory.parseSubtitles(source);
+        expect(subtitles.length, 1);
+        expect(subtitles[0].start, const Duration(milliseconds: 8));
+        expect(subtitles[0].end, const Duration(milliseconds: 992));
+      },
+    );
+
+    test(
       'WebVttInlineParser handles nested tags, color codes, and line breaks',
       () {
         const input =

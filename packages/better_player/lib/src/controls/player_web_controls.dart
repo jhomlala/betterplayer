@@ -37,6 +37,7 @@ class _PlayerWebControlsState
   String? _errorDescription;
   bool _isMenuOpen = false;
   StreamSubscription<bool>? _controlsVisibilitySubscription;
+  final FocusNode _focusNode = FocusNode();
 
   @override
   BetterPlayerController? get betterPlayerController => _betterPlayerController;
@@ -89,6 +90,7 @@ class _PlayerWebControlsState
   @override
   void dispose() {
     _dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
@@ -190,6 +192,9 @@ class _PlayerWebControlsState
   }
 
   void _onPlayPause() {
+    if (!_focusNode.hasFocus) {
+      _focusNode.requestFocus();
+    }
     if (_latestValue?.isPlaying == true) {
       _betterPlayerController?.pause();
     } else {
@@ -233,12 +238,17 @@ class _PlayerWebControlsState
               }
             },
             child: Focus(
+              focusNode: _focusNode,
+              autofocus: true,
               onKeyEvent: _onKeyEvent,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
                   GestureDetector(
-                    onTap: _onPlayPause,
+                    onTap: () {
+                      _focusNode.requestFocus();
+                      _onPlayPause();
+                    },
                     onDoubleTap: () =>
                         _betterPlayerController?.toggleFullScreen(),
                     behavior: HitTestBehavior.opaque,

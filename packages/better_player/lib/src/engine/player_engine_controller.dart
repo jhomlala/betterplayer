@@ -55,6 +55,9 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
       bufferingConfiguration: bufferingConfiguration,
     );
     _creatingCompleter.complete(null);
+    if (_isDisposed) {
+      return;
+    }
 
     unawaited(_applyLooping());
     unawaited(_applyVolume());
@@ -105,6 +108,9 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     }
 
     void errorListener(Object object) {
+      if (_isDisposed) {
+        return;
+      }
       if (object is PlatformException) {
         final e = object;
         value = value.copyWith(errorDescription: e.message);
@@ -262,6 +268,9 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     );
 
     if (!_creatingCompleter.isCompleted) await _creatingCompleter.future;
+    if (_isDisposed) {
+      return;
+    }
 
     final completer = Completer<void>();
     final subscription = videoEventStreamController.stream.listen(
@@ -302,16 +311,16 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
 
   @override
   Future<void> dispose() async {
-    await _creatingCompleter.future;
-    if (!_isDisposed) {
-      _isDisposed = true;
-      value = VideoPlayerValue.uninitialized();
-      _timer?.cancel();
-      await _eventSubscription?.cancel();
-      await _betterPlayerPlatform.dispose(_textureId);
-      videoEventStreamController.close();
+    if (_isDisposed) {
+      return;
     }
     _isDisposed = true;
+    _timer?.cancel();
+    await _creatingCompleter.future;
+    value = VideoPlayerValue.uninitialized();
+    await _eventSubscription?.cancel();
+    await _betterPlayerPlatform.dispose(_textureId);
+    await videoEventStreamController.close();
     super.dispose();
   }
 
@@ -321,6 +330,9 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   /// has been sent to the platform, not when playback itself is totally
   /// finished.
   Future<void> play() async {
+    if (_isDisposed) {
+      return;
+    }
     value = value.copyWith(isPlaying: true);
     await _applyPlayPause();
   }
@@ -328,12 +340,18 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   /// Sets whether or not the video should loop after playing once. See also
   /// [VideoPlayerValue.isLooping].
   Future<void> setLooping(bool looping) async {
+    if (_isDisposed) {
+      return;
+    }
     value = value.copyWith(isLooping: looping);
     await _applyLooping();
   }
 
   /// Pauses the video.
   Future<void> pause() async {
+    if (_isDisposed) {
+      return;
+    }
     value = value.copyWith(isPlaying: false);
     await _applyPlayPause();
   }
@@ -352,28 +370,33 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     _timer?.cancel();
     if (value.isPlaying) {
       await _betterPlayerPlatform.play(_textureId);
-      _timer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
-        if (_isDisposed) {
-          return;
-        }
-        final newPosition = await position;
-        final newAbsolutePosition = await absolutePosition;
-        // ignore: invariant_booleans
-        if (_isDisposed) {
-          return;
-        }
-        _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
-        if (_seekPosition != null && newPosition != null) {
-          final difference =
-              newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
-          if (difference > 0) {
-            _seekPosition = null;
-          }
-        }
-      });
+      _startTimer();
     } else {
       await _betterPlayerPlatform.pause(_textureId);
     }
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(milliseconds: 300), (timer) async {
+      if (_isDisposed) {
+        return;
+      }
+      final newPosition = await position;
+      final newAbsolutePosition = await absolutePosition;
+      // ignore: invariant_booleans
+      if (_isDisposed) {
+        return;
+      }
+      if (_seekPosition != null && newPosition != null) {
+        final difference =
+            newPosition.inMilliseconds - _seekPosition!.inMilliseconds;
+        if (difference >= 0) {
+          _seekPosition = null;
+        }
+      }
+      _updatePosition(newPosition, absolutePosition: newAbsolutePosition);
+    });
   }
 
   Future<void> _applyVolume() async {
@@ -430,11 +453,14 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     _seekPosition = positionToSeek;
 
     await _betterPlayerPlatform.seekTo(_textureId, positionToSeek);
-    _updatePosition(position);
+    _updatePosition(positionToSeek);
 
-    // Note: The native iOS implementation of seekTo is responsible for resuming
-    // playback after the seek operation completes. Calling play() or pause() here
-    // would race with the native completion handler, leading to unpredictable behavior.
+    // Restart position polling if already playing. Native iOS seekTo resumes
+    // playback via its own completion handler, so we only restart the Dart
+    // polling timer here rather than calling platform play().
+    if (value.isPlaying && !_isDisposed) {
+      _startTimer();
+    }
   }
 
   /// Sets the audio volume of [this].
@@ -442,6 +468,9 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   /// [volume] indicates a value between 0.0 (silent) and 1.0 (full volume) on a
   /// linear scale.
   Future<void> setVolume(double volume) async {
+    if (_isDisposed) {
+      return;
+    }
     value = value.copyWith(volume: volume.clamp(0.0, 1.0));
     await _applyVolume();
   }
@@ -450,12 +479,17 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   ///
   /// [speed] indicates a value between 0.0 and 2.0 on a linear scale.
   Future<void> setSpeed(double speed) async {
+    if (_isDisposed) {
+      return;
+    }
     final previousSpeed = value.speed;
     try {
       value = value.copyWith(speed: speed);
       await _applySpeed();
     } catch (exception) {
-      value = value.copyWith(speed: previousSpeed);
+      if (!_isDisposed) {
+        value = value.copyWith(speed: previousSpeed);
+      }
       rethrow;
     }
   }
@@ -491,19 +525,22 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
       width,
       height,
     );
-    if (defaultTargetPlatform == TargetPlatform.android) {
+    if (!_isDisposed && defaultTargetPlatform == TargetPlatform.android) {
       value = value.copyWith(isPip: true);
     }
   }
 
   Future<void> disablePictureInPicture() async {
     await _betterPlayerPlatform.disablePictureInPicture(textureId);
-    if (defaultTargetPlatform == TargetPlatform.android) {
+    if (!_isDisposed && defaultTargetPlatform == TargetPlatform.android) {
       value = value.copyWith(isPip: false);
     }
   }
 
   void _updatePosition(Duration? position, {DateTime? absolutePosition}) {
+    if (_isDisposed) {
+      return;
+    }
     value = value.copyWith(position: _seekPosition ?? position);
     if (_seekPosition == null) {
       value = value.copyWith(absolutePosition: absolutePosition);
@@ -518,6 +555,9 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   }
 
   void refresh() {
+    if (_isDisposed) {
+      return;
+    }
     value = value.copyWith();
   }
 

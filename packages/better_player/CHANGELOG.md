@@ -1,4 +1,4 @@
-## Unreleased
+## 1.18.0
 - Added: `setPlayerSubtitlesConfiguration` on `BetterPlayerController` to dynamically update subtitle styling at runtime (#1141).
 - Fixed: Prevented `NaN` and `Infinity` errors in progress bars and aspect ratio calculations when media duration or size is zero (#1157, #1044, #901, #884).
 - Fixed: Preserved fullscreen state when advancing or returning to a track in `BetterPlayerPlaylistController` (#1037).
@@ -9,7 +9,11 @@
 - Fixed: Applied `controlsConfiguration.backgroundColor` to the fullscreen `Scaffold` in `PlayerFullScreenVideo` (#1054).
 - Fixed: Emitted `PlayerEventType.exception` when runtime errors occur on the video event stream after initialization (#1014).
 - Fixed: Corrected off-by-one index mapping for `asmsTrackNames` in the quality selection menu when the `Auto` track is present (#1352).
-- Fixed: Prevented rapid clicks on adjacent bottom bar controls in `PlayerWebControls` from triggering the video area's double-tap fullscreen gesture.
+- Fixed: Prevented rapid clicks on adjacent bottom bar controls in `PlayerWebControls` from triggering the video area's double-tap fullscreen gesture, and ensured `PlayerWebControls` acquires keyboard focus for shortcuts.
+- Fixed: Guarded `PlayerEngineController` against post-dispose platform calls and `ValueNotifier` updates when disposed mid-initialization, and prevented duplicate event listeners on `BetterPlayerPlaylistController.setupDataSourceList`.
+- Fixed: Restarted the position polling timer in `PlayerEngineController.seekTo` when already playing so the seekbar continues advancing after skip forward/backward or tap-to-seek.
+- Fixed: Increased bottom padding in `PlayerSubtitlesDrawer` when controls are visible so subtitles do not overlap the bottom control bar, and preserved zero-based WebVTT cues when `X-TIMESTAMP-MAP` specifies `LOCAL:00:00:00.000`.
+- Fixed: Synced video fit widget initialization and playback flags when `PlayerControllerEvent.setupDataSource` fires after setup completes, preventing the video texture from staying hidden on initial `autoPlay`.
 
 ## 1.17.0
 - [BREAKING_CHANGE] Updated: Standardized class and file naming by replacing the `BetterPlayer` prefix with `Player` across internal widgets and utilities (including exported `PlayerAsmsUtils` and `PlayerUiUtils`; automatable via `dart fix --apply`).

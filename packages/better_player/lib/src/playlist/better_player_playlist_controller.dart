@@ -50,7 +50,10 @@ class BetterPlayerPlaylistController {
 
     _currentDataSourceIndex = initialStartIndex;
     setupDataSource(_currentDataSourceIndex);
-    _betterPlayerController!.addEventsListener(_handleEvent);
+    _betterPlayerController!
+      ..removeEventsListener(_handleEvent)
+      ..addEventsListener(_handleEvent);
+    _nextVideoTimeStreamSubscription?.cancel();
     _nextVideoTimeStreamSubscription = _betterPlayerController!
         .nextVideoTimeStream
         .listen((time) {

@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class PlaceholderUntilPlayPage extends StatefulWidget {
@@ -14,13 +13,13 @@ class PlaceholderUntilPlayPage extends StatefulWidget {
 
 class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
   late BetterPlayerController _betterPlayerController;
-  final StreamController<bool> _placeholderStreamController =
-      StreamController.broadcast();
-  bool _showPlaceholder = true;
+  final ValueNotifier<bool> _showPlaceholderNotifier = ValueNotifier<bool>(
+    true,
+  );
 
   @override
   void dispose() {
-    _placeholderStreamController.close();
+    _showPlaceholderNotifier.dispose();
     super.dispose();
   }
 
@@ -29,8 +28,7 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
     final betterPlayerConfiguration = PlayerConfiguration(
       fit: BoxFit.contain,
       placeholder: _VideoPlaceholder(
-        placeholderStream: _placeholderStreamController.stream,
-        showPlaceholder: _showPlaceholder,
+        showPlaceholderListenable: _showPlaceholderNotifier,
       ),
       showPlaceholderUntilPlay: true,
     );
@@ -42,15 +40,10 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
     _betterPlayerController.setupDataSource(dataSource);
     _betterPlayerController.addEventsListener((event) {
       if (event.betterPlayerEventType == PlayerEventType.play) {
-        _setPlaceholderVisibleState(false);
+        _showPlaceholderNotifier.value = false;
       }
     });
     super.initState();
-  }
-
-  void _setPlaceholderVisibleState(bool hidden) {
-    _placeholderStreamController.add(hidden);
-    _showPlaceholder = hidden;
   }
 
   @override
@@ -79,19 +72,17 @@ class _PlaceholderUntilPlayPageState extends State<PlaceholderUntilPlayPage> {
 
 class _VideoPlaceholder extends StatelessWidget {
   const _VideoPlaceholder({
-    required this.placeholderStream,
-    required this.showPlaceholder,
+    required this.showPlaceholderListenable,
   });
 
-  final Stream<bool> placeholderStream;
-  final bool showPlaceholder;
+  final ValueListenable<bool> showPlaceholderListenable;
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<bool>(
-      stream: placeholderStream,
-      builder: (context, snapshot) {
-        return (snapshot.data ?? showPlaceholder)
+    return ValueListenableBuilder<bool>(
+      valueListenable: showPlaceholderListenable,
+      builder: (context, showPlaceholder, _) {
+        return showPlaceholder
             ? Image.network(Constants.placeholderUrl)
             : const SizedBox();
       },

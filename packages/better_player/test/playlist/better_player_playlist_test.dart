@@ -98,6 +98,44 @@ void main() {
       playlistController.dispose();
     });
 
+    test(
+      'playNextVideo, playPreviousVideo, and setupDataSourceList work cleanly',
+      () {
+        final playlistController = BetterPlayerPlaylistController([
+          PlayerDataSource.network('https://example.com/1.mp4'),
+          PlayerDataSource.network('https://example.com/2.mp4'),
+        ]);
+
+        playlistController.playNextVideo();
+        expect(playlistController.currentDataSourceIndex, 1);
+
+        playlistController.playPreviousVideo();
+        expect(playlistController.currentDataSourceIndex, 0);
+
+        playlistController.playNextVideo();
+        expect(playlistController.currentDataSourceIndex, 1);
+
+        playlistController.setupDataSourceList([
+          PlayerDataSource.network('https://example.com/3.mp4'),
+          PlayerDataSource.network('https://example.com/4.mp4'),
+        ]);
+        expect(playlistController.currentDataSourceIndex, 0);
+        playlistController.dispose();
+      },
+    );
+
+    test(
+      'disposing BetterPlayerController mid-setupDataSource does not throw',
+      () async {
+        final controller = BetterPlayerController(const PlayerConfiguration());
+        final future = controller.setupDataSource(
+          PlayerDataSource.network('https://example.com/1.mp4'),
+        );
+        controller.dispose(forceDispose: true);
+        await expectLater(future, completes);
+      },
+    );
+
     testWidgets('BetterPlayerPlaylist widget initialization', (
       tester,
     ) async {

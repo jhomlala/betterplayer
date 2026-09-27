@@ -322,8 +322,10 @@ class _PlayerVideoFitWidgetState extends State<_PlayerVideoFitWidget> {
         }
       case PlayerControllerEvent.setupDataSource:
         setState(() {
-          _started = false;
-          _initialized = false;
+          _updateStartedFlag();
+          _initialized =
+              widget.betterPlayerController.videoPlayerValue?.initialized ??
+              false;
         });
       default:
         break;
@@ -336,13 +338,10 @@ class _PlayerVideoFitWidgetState extends State<_PlayerVideoFitWidget> {
     }
     final isInitialized =
         widget.betterPlayerController.videoPlayerValue?.initialized ?? false;
-    if (isInitialized != _initialized) {
-      setState(() {
-        _initialized = isInitialized;
-      });
-    } else {
-      setState(() {});
-    }
+    setState(() {
+      _initialized = isInitialized;
+      _updateStartedFlag();
+    });
   }
 
   @override
