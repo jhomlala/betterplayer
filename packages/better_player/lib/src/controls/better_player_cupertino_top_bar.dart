@@ -6,7 +6,6 @@ import 'package:material_ui/material_ui.dart';
 class BetterPlayerCupertinoTopBar extends StatelessWidget {
   const BetterPlayerCupertinoTopBar({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
     required this.buttonPadding,
@@ -18,7 +17,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
     super.key,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
   final double buttonPadding;
@@ -53,7 +51,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
             if (controlsConfiguration.enableFullscreen)
               _BetterPlayerCupertinoExpandButton(
                 controlsConfiguration: controlsConfiguration,
-                controlsNotVisible: controlsNotVisible,
                 barHeight: barHeight,
                 iconSize: iconSize,
                 iconColor: iconColor,
@@ -65,7 +62,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
             if (controlsConfiguration.enablePip)
               _BetterPlayerCupertinoPipButton(
                 controlsConfiguration: controlsConfiguration,
-                controlsNotVisible: controlsNotVisible,
                 barHeight: barHeight,
                 iconSize: iconSize,
                 iconColor: iconColor,
@@ -76,7 +72,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
             if (controlsConfiguration.enableMute)
               _BetterPlayerCupertinoMuteButton(
                 controlsConfiguration: controlsConfiguration,
-                controlsNotVisible: controlsNotVisible,
                 barHeight: barHeight,
                 iconSize: iconSize,
                 iconColor: iconColor,
@@ -89,7 +84,6 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
             if (controlsConfiguration.enableOverflowMenu)
               _BetterPlayerCupertinoMoreButton(
                 controlsConfiguration: controlsConfiguration,
-                controlsNotVisible: controlsNotVisible,
                 barHeight: barHeight,
                 iconSize: iconSize,
                 iconColor: iconColor,
@@ -107,14 +101,12 @@ class BetterPlayerCupertinoTopBar extends StatelessWidget {
 class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
   const _BetterPlayerCupertinoExpandButton({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
     required this.iconColor,
     required this.onExpandCollapse,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
   final Color iconColor;
@@ -148,13 +140,11 @@ class _BetterPlayerCupertinoExpandButton extends StatelessWidget {
 class _BetterPlayerCupertinoPipButton extends StatefulWidget {
   const _BetterPlayerCupertinoPipButton({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
     required this.iconColor,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
   final Color iconColor;
@@ -216,7 +206,6 @@ class _BetterPlayerCupertinoPipButtonState
 class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
   const _BetterPlayerCupertinoMuteButton({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
     required this.iconColor,
@@ -224,7 +213,6 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
     required this.latestValue,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
   final Color iconColor;
@@ -262,14 +250,12 @@ class _BetterPlayerCupertinoMuteButton extends StatelessWidget {
 class _BetterPlayerCupertinoMoreButton extends StatelessWidget {
   const _BetterPlayerCupertinoMoreButton({
     required this.controlsConfiguration,
-    required this.controlsNotVisible,
     required this.barHeight,
     required this.iconSize,
     required this.iconColor,
     required this.onShowMoreClicked,
   });
   final PlayerControlsConfiguration controlsConfiguration;
-  final bool controlsNotVisible;
   final double barHeight;
   final double iconSize;
   final Color iconColor;

@@ -226,15 +226,35 @@ class _VideoProgressBarState
     return videoPlayerValue;
   }
 
-  void seekToRelativePosition(Offset globalPosition) {
-    final box = context.findRenderObject()! as RenderBox;
-    final tapPos = box.globalToLocal(globalPosition);
-    final relative = tapPos.dx / box.size.width;
-    if (relative > 0) {
-      final position =
-          betterPlayerController!.videoPlayerValue!.duration! * relative;
-      lastSeek = position;
-      betterPlayerController!.seekTo(position);
+  Future<void> seekToRelativePosition(Offset globalPosition) async {
+    final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+    final duration = videoPlayerValue?.duration;
+    if (videoPlayerValue == null || duration == null) {
+      return;
+    }
+    final renderObject = context.findRenderObject();
+    if (renderObject != null) {
+      final box = renderObject as RenderBox;
+      final tapPos = box.globalToLocal(globalPosition);
+      final relative = tapPos.dx / box.size.width;
+      if (relative > 0) {
+        final position = duration * relative;
+        lastSeek = position;
+        await betterPlayerController?.seekTo(position);
+        onFinishedLastSeek();
+        if (relative >= 1) {
+          lastSeek = duration;
+          await betterPlayerController?.seekTo(duration);
+          onFinishedLastSeek();
+        }
+      }
+    }
+  }
+
+  void onFinishedLastSeek() {
+    if (shouldPlayAfterDragEnd) {
+      shouldPlayAfterDragEnd = false;
+      betterPlayerController?.play();
     }
   }
 }

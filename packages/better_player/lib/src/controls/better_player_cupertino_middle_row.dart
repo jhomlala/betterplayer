@@ -1,6 +1,5 @@
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -27,15 +26,6 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
     final controller = BetterPlayerController.of(context);
     final isFullScreen = controller.isFullScreen;
     final iconSize = isFullScreen ? 32.0 : 24.0;
-
-    PlayerLogger.debug(
-      message:
-          'E2E_LOG: BetterPlayerCupertinoMiddleRow.build | '
-          'isFullScreen: $isFullScreen | enableSkips: ${controlsConfiguration.enableSkips} | '
-          'enablePlayPause: ${controlsConfiguration.enablePlayPause} | '
-          'isPlaying: ${latestValue?.isPlaying}',
-    );
-
     final buttonSize = iconSize + 16.0;
     final playButtonSize = iconSize + 8.0 + 16.0;
 
@@ -58,12 +48,7 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
                         container: true,
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            PlayerLogger.debug(
-                              message: 'E2E_LOG: onTap skip_back_button',
-                            );
-                            onSkipBack();
-                          },
+                          onTap: onSkipBack,
                           child: Center(
                             child: Container(
                               width: buttonSize,
@@ -97,12 +82,7 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
                         container: true,
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            PlayerLogger.debug(
-                              message: 'E2E_LOG: onTap play_pause_button',
-                            );
-                            onPlayPause();
-                          },
+                          onTap: onPlayPause,
                           child: Center(
                             child: Container(
                               width: playButtonSize,
@@ -136,12 +116,7 @@ class BetterPlayerCupertinoMiddleRow extends StatelessWidget {
                         container: true,
                         child: GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTap: () {
-                            PlayerLogger.debug(
-                              message: 'E2E_LOG: onTap skip_forward_button',
-                            );
-                            onSkipForward();
-                          },
+                          onTap: onSkipForward,
                           child: Center(
                             child: Container(
                               width: buttonSize,

@@ -14,7 +14,6 @@ import 'package:better_player/src/controls/better_player_material_localizations_
 import 'package:better_player/src/controls/better_player_multiple_gesture_detector.dart';
 import 'package:better_player/src/controls/better_player_video_area_semantics.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
-import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:material_ui/material_ui.dart';
@@ -66,9 +65,6 @@ class _BetterPlayerCupertinoControlsState
 
   @override
   Widget build(BuildContext context) {
-    PlayerLogger.debug(
-      message: 'E2E_LOG: BetterPlayerCupertinoControlsState.build start',
-    );
     final translations = BetterPlayerController.of(context).translations;
     return Localizations.override(
       context: context,
@@ -83,10 +79,6 @@ class _BetterPlayerCupertinoControlsState
             _betterPlayerController = BetterPlayerController.of(context);
 
             if (_latestValue?.hasError == true) {
-              PlayerLogger.debug(
-                message:
-                    'E2E_LOG: BetterPlayerCupertinoControlsState returning BetterPlayerVideoAreaSemantics | isFullScreenSafe:  | controlsNotVisible: ',
-              );
               return BetterPlayerVideoAreaSemantics(
                 semanticsIdentifier: 'better_player_cupertino_video_area',
                 child: ColoredBox(
@@ -115,7 +107,6 @@ class _BetterPlayerCupertinoControlsState
                     duration: _controlsConfiguration.controlsTransitionTime,
                     child: BetterPlayerCupertinoTopBar(
                       controlsConfiguration: _controlsConfiguration,
-                      controlsNotVisible: false,
                       barHeight: 32,
                       iconSize: 18,
                       buttonPadding: buttonPadding,
@@ -185,10 +176,6 @@ class _BetterPlayerCupertinoControlsState
 
             final isFullScreenSafe =
                 _betterPlayerController?.isFullScreen == true;
-            PlayerLogger.debug(
-              message:
-                  'E2E_LOG: BetterPlayerCupertinoControlsState returning BetterPlayerVideoAreaSemantics | isFullScreenSafe:  | controlsNotVisible: ',
-            );
             return BetterPlayerVideoAreaSemantics(
               semanticsIdentifier: 'better_player_cupertino_video_area',
               child: GestureDetector(

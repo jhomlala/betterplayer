@@ -181,7 +181,6 @@ class _BetterPlayerState extends State<BetterPlayer>
           controller: widget.controller,
           child: _BetterPlayerVideoWithVisibility(
             controller: widget.controller,
-            isFullScreenRoute: true,
           ),
         );
 
@@ -262,30 +261,16 @@ class _BetterPlayerState extends State<BetterPlayer>
 }
 
 class _BetterPlayerVideoWithVisibility extends StatelessWidget {
-  const _BetterPlayerVideoWithVisibility({
-    required this.controller,
-    this.isFullScreenRoute = false,
-  });
+  const _BetterPlayerVideoWithVisibility({required this.controller});
   final BetterPlayerController controller;
-  final bool isFullScreenRoute;
 
   @override
   Widget build(BuildContext context) {
-    PlayerLogger.debug(
-      message:
-          'E2E_LOG: _BetterPlayerVideoWithVisibility.build | '
-          'isFullScreenRoute: $isFullScreenRoute | '
-          'key: ${controller.hashCode}_key_${isFullScreenRoute ? "fs" : "in"}',
-    );
-
     return VisibilityDetector(
-      key: Key('${controller.hashCode}_key_${isFullScreenRoute ? "fs" : "in"}'),
+      key: Key('${controller.hashCode}_key'),
       onVisibilityChanged: (info) =>
           controller.onPlayerVisibilityChanged(info.visibleFraction),
-      child: BetterPlayerWithControls(
-        controller: controller,
-        isFullScreenRoute: isFullScreenRoute,
-      ),
+      child: BetterPlayerWithControls(controller: controller),
     );
   }
 }

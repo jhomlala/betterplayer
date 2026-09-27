@@ -13,13 +13,8 @@ import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class BetterPlayerWithControls extends StatefulWidget {
-  const BetterPlayerWithControls({
-    super.key,
-    this.controller,
-    this.isFullScreenRoute = false,
-  });
+  const BetterPlayerWithControls({super.key, this.controller});
   final BetterPlayerController? controller;
-  final bool isFullScreenRoute;
 
   @override
   _BetterPlayerWithControlsState createState() =>
@@ -120,25 +115,11 @@ class _BetterPlayerWithControlsState extends State<BetterPlayerWithControls> {
       ),
     );
 
-    Widget result = innerContainer;
     if (betterPlayerController.betterPlayerConfiguration.expandToFill) {
-      result = Center(child: innerContainer);
+      return Center(child: innerContainer);
+    } else {
+      return innerContainer;
     }
-
-    final excluding =
-        betterPlayerController.isFullScreen && !widget.isFullScreenRoute;
-    PlayerLogger.debug(
-      message:
-          'E2E_LOG: BetterPlayerWithControls.build | '
-          'isFullScreenRoute: ${widget.isFullScreenRoute} | '
-          'controller.isFullScreen: ${betterPlayerController.isFullScreen} | '
-          'excluding: $excluding',
-    );
-
-    return ExcludeSemantics(
-      excluding: excluding,
-      child: result,
-    );
   }
 
   Container _buildPlayerWithControls(
