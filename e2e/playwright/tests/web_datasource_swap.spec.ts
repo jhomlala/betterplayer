@@ -34,4 +34,15 @@ test('web datasource swap flow', async ({ page }) => {
     await visibilityCycleButton.click({ force: true });
     await expect(visibilityStatus.first()).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 10000, intervals: [1000] });
+
+  // Verify BetterPlayerPlaylist transition (#1037)
+  const playlistButton = page.locator('[aria-label^="better_player_e2e_playlist_button"]');
+  const playlistStatus = page.locator(
+    '[aria-label^="better_player_e2e_playlist_status"], [flt-semantics-identifier="better_player_e2e_playlist_status"]'
+  );
+  await expect(async () => {
+    if (await playlistStatus.first().isVisible()) return;
+    await playlistButton.click({ force: true });
+    await expect(playlistStatus.first()).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 15000, intervals: [1000] });
 });

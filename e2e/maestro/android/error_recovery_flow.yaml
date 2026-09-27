@@ -35,3 +35,24 @@ appId: pl.hasoft.example
     timeout: 15000
 - tapOn:
     id: "better_player_material_controls_play_pause_button"
+
+# Navigate to Seek E2E Page and verify accurate seek position (#1342, #1068, #802)
+- scrollUntilVisible:
+    element:
+      id: "better_player_e2e_navigate_seek"
+    direction: DOWN
+- tapOn:
+    id: "better_player_e2e_navigate_seek"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_seek_initialized"
+    timeout: 20000
+- tapOn:
+    id: "better_player_e2e_seek_10s_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_seek_10s_verified"
+    timeout: 10000
+- assertVisible:
+    id: "better_player_e2e_seek_10s_verified"
+

@@ -63,6 +63,12 @@ test('web flow', async ({ page }) => {
   await subtitlesNone.click({ force: true });
   await page.waitForTimeout(400);
 
+  // Verify all core PlayerEventType events fired (#945)
+  const eventsVerified = page.locator(
+    '[aria-label^="better_player_e2e_events_verified"], [flt-semantics-identifier="better_player_e2e_events_verified"]'
+  );
+  await expect(eventsVerified.first()).toBeVisible({ timeout: 5000 });
+
   // Runtime Controls Configuration Hotswap (#1000)
   const runtimeConfigButton = page.locator('[aria-label^="better_player_e2e_runtime_config_button"]');
   const runtimeConfigStatus = page.locator(
@@ -72,6 +78,23 @@ test('web flow', async ({ page }) => {
     if (await runtimeConfigStatus.first().isVisible()) return;
     await runtimeConfigButton.click({ force: true });
     await expect(runtimeConfigStatus.first()).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
+
+  // Controls Theme Hotswap (Web -> Cupertino -> Web)
+  const toggleThemeButton = page.locator('[aria-label^="better_player_e2e_toggle_theme_button"]');
+  const cupertinoPlayPause = page.locator(
+    '[flt-semantics-identifier="better_player_cupertino_controls_play_pause_button"], [aria-label^="better_player_cupertino_controls_play_pause_button"]'
+  );
+  await expect(async () => {
+    if (await cupertinoPlayPause.first().isVisible()) return;
+    await toggleThemeButton.click({ force: true });
+    await expect(cupertinoPlayPause.first()).toBeVisible({ timeout: 3000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
+
+  await expect(async () => {
+    if (await playPause.first().isVisible()) return;
+    await toggleThemeButton.click({ force: true });
+    await expect(playPause.first()).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 10000, intervals: [1000] });
 
   // Seek
