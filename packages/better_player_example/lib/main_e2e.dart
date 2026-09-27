@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/ffi_test_page.dart';
@@ -41,13 +43,18 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   late BetterPlayerController _betterPlayerController;
   final GlobalKey<BetterPlayerPlaylistState> _playlistKey =
       GlobalKey<BetterPlayerPlaylistState>();
+  final BetterPlayerListVideoPlayerController _listVideoPlayerController =
+      BetterPlayerListVideoPlayerController();
   String? _errorDescription;
   bool _runtimeConfigUpdated = false;
   bool _visibilityCallbackFired = false;
   bool _allCoreEventsVerified = false;
+  bool _keyboardShortcutVerified = false;
   bool _usingAlternateTheme = false;
   bool _isPlaylistMode = false;
   bool _playlistVerified = false;
+  bool _isListPlayerMode = false;
+  bool _listPlayerVerified = false;
   final Set<PlayerEventType> _emittedEvents = {};
 
   static const Set<PlayerEventType> _requiredCoreEvents = {
@@ -111,6 +118,14 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
           });
         }
       }
+      if (event.betterPlayerEventType == PlayerEventType.setVolume) {
+        final volume = event.parameters?['volume'] as double?;
+        if (volume != null && volume > 0.0 && volume < 1.0 && mounted) {
+          setState(() {
+            _keyboardShortcutVerified = true;
+          });
+        }
+      }
       if (event.betterPlayerEventType == PlayerEventType.exception) {
         setState(() {
           _errorDescription =
@@ -165,15 +180,34 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   }
 
   void _applyRuntimeControlsConfiguration() {
-    _betterPlayerController.setPlayerControlsConfiguration(
-      const PlayerControlsConfiguration(
-        controlsHideTime: Duration(days: 30),
-        progressBarPlayedColor: Colors.green,
-      ),
-    );
-    setState(() {
-      _runtimeConfigUpdated = true;
-    });
+    _betterPlayerController
+      ..setPlayerControlsConfiguration(
+        const PlayerControlsConfiguration(
+          controlsHideTime: Duration(days: 30),
+          progressBarPlayedColor: Colors.green,
+        ),
+      )
+      ..setPlayerSubtitlesConfiguration(
+        const PlayerSubtitlesConfiguration(
+          fontSize: 22,
+          fontColor: Colors.yellow,
+        ),
+      );
+    final controlsApplied =
+        _betterPlayerController
+            .betterPlayerControlsConfiguration
+            .progressBarPlayedColor ==
+        Colors.green;
+    final subtitlesApplied =
+        _betterPlayerController.betterPlayerSubtitlesConfiguration.fontSize ==
+            22 &&
+        _betterPlayerController.betterPlayerSubtitlesConfiguration.fontColor ==
+            Colors.yellow;
+    if (controlsApplied && subtitlesApplied) {
+      setState(() {
+        _runtimeConfigUpdated = true;
+      });
+    }
   }
 
   void _toggleAlternateControlsTheme() {
@@ -210,6 +244,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     await _betterPlayerController.pause();
     setState(() {
       _isPlaylistMode = true;
+      _isListPlayerMode = false;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final playlistController =
@@ -217,18 +252,74 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       if (playlistController == null) {
         return;
       }
-      var changedPlaylistFired = false;
+      var changedPlaylistCount = 0;
       playlistController.betterPlayerController?.addEventsListener((event) {
         if (event.betterPlayerEventType ==
             PlayerEventType.changedPlaylistItem) {
-          changedPlaylistFired = true;
+          changedPlaylistCount++;
         }
       });
       playlistController.playNextVideo();
       final movedToSecond = playlistController.currentDataSourceIndex == 1;
-      if (movedToSecond && changedPlaylistFired && mounted) {
+      playlistController.playPreviousVideo();
+      final movedBackToFirst = playlistController.currentDataSourceIndex == 0;
+      playlistController.playNextVideo();
+      final movedAgainToSecond = playlistController.currentDataSourceIndex == 1;
+      playlistController.setupDataSourceList([
+        PlayerDataSource(
+          DataSourceType.network,
+          Constants.bugBuckBunnyVideoUrl,
+        ),
+        PlayerDataSource(
+          DataSourceType.network,
+          Constants.forBiggerBlazesUrl,
+        ),
+      ]);
+      final resetToFirst = playlistController.currentDataSourceIndex == 0;
+      if (movedToSecond &&
+          movedBackToFirst &&
+          movedAgainToSecond &&
+          resetToFirst &&
+          changedPlaylistCount >= 4 &&
+          mounted) {
         setState(() {
           _playlistVerified = true;
+        });
+      }
+    });
+  }
+
+  Future<void> _runListAndDisposeTest() async {
+    // 1. Mid-initialization disposal stress test (#976, #895)
+    final tempController = BetterPlayerController(
+      const PlayerConfiguration(),
+    );
+    unawaited(
+      tempController.setupDataSource(
+        PlayerDataSource(
+          DataSourceType.network,
+          Constants.bugBuckBunnyVideoUrl,
+        ),
+      ),
+    );
+    tempController.dispose(forceDispose: true);
+
+    // 2. Mount BetterPlayerListVideoPlayer and exercise its controller (#864)
+    await _betterPlayerController.pause();
+    setState(() {
+      _isPlaylistMode = false;
+      _isListPlayerMode = true;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _listVideoPlayerController
+        ..setVolume(0.5)
+        ..play()
+        ..pause()
+        ..seekTo(const Duration(seconds: 2))
+        ..setMixWithOthers(true);
+      if (mounted) {
+        setState(() {
+          _listPlayerVerified = true;
         });
       }
     });
@@ -274,6 +365,27 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                           PlayerDataSource(
                             DataSourceType.network,
                             Constants.forBiggerBlazesUrl,
+                          ),
+                        ],
+                      )
+                    : _isListPlayerMode
+                    ? ListView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          BetterPlayerListVideoPlayer(
+                            PlayerDataSource(
+                              DataSourceType.network,
+                              Constants.bugBuckBunnyVideoUrl,
+                            ),
+                            configuration: const PlayerConfiguration(
+                              aspectRatio: 16 / 9,
+                              controlsConfiguration:
+                                  PlayerControlsConfiguration(
+                                    controlsHideTime: Duration(days: 30),
+                                  ),
+                            ),
+                            betterPlayerListVideoPlayerController:
+                                _listVideoPlayerController,
                           ),
                         ],
                       )
@@ -333,6 +445,15 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   child: const Text('Core Events Verified'),
                 ),
               ),
+            if (_keyboardShortcutVerified)
+              Semantics(
+                identifier: 'better_player_e2e_keyboard_shortcut_status',
+                label: 'better_player_e2e_keyboard_shortcut_status',
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Keyboard Shortcut Verified'),
+                ),
+              ),
             if (_runtimeConfigUpdated)
               Semantics(
                 identifier: 'better_player_e2e_runtime_config_status',
@@ -358,6 +479,15 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Playlist Verified'),
+                ),
+              ),
+            if (_listPlayerVerified)
+              Semantics(
+                identifier: 'better_player_e2e_list_player_status',
+                label: 'better_player_e2e_list_player_status',
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('List Player Verified'),
                 ),
               ),
             const SizedBox(height: 16),
@@ -427,6 +557,14 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   child: ElevatedButton(
                     onPressed: _runPlaylistTest,
                     child: const Text('Playlist Test'),
+                  ),
+                ),
+                Semantics(
+                  identifier: 'better_player_e2e_list_player_button',
+                  label: 'better_player_e2e_list_player_button',
+                  child: ElevatedButton(
+                    onPressed: _runListAndDisposeTest,
+                    child: const Text('List Player Test'),
                   ),
                 ),
                 Semantics(

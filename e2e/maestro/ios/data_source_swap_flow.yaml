@@ -49,3 +49,17 @@ appId: pl.hasoft.example
 - assertVisible:
     id: "better_player_e2e_playlist_status"
 
+# Verify BetterPlayerListVideoPlayer & mid-initialization disposal (#864, #976)
+- scrollUntilVisible:
+    element:
+      id: "better_player_e2e_list_player_button"
+    direction: DOWN
+    centerElement: true
+- tapOn:
+    id: "better_player_e2e_list_player_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_list_player_status"
+    timeout: 10000
+- assertVisible:
+    id: "better_player_e2e_list_player_status"

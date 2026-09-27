@@ -9,7 +9,8 @@
 - Fixed: Applied `controlsConfiguration.backgroundColor` to the fullscreen `Scaffold` in `PlayerFullScreenVideo` (#1054).
 - Fixed: Emitted `PlayerEventType.exception` when runtime errors occur on the video event stream after initialization (#1014).
 - Fixed: Corrected off-by-one index mapping for `asmsTrackNames` in the quality selection menu when the `Auto` track is present (#1352).
-- Fixed: Prevented rapid clicks on adjacent bottom bar controls in `PlayerWebControls` from triggering the video area's double-tap fullscreen gesture.
+- Fixed: Prevented rapid clicks on adjacent bottom bar controls in `PlayerWebControls` from triggering the video area's double-tap fullscreen gesture, and ensured `PlayerWebControls` acquires keyboard focus for shortcuts.
+- Fixed: Guarded `PlayerEngineController` against post-dispose platform calls and `ValueNotifier` updates when disposed mid-initialization, and prevented duplicate event listeners on `BetterPlayerPlaylistController.setupDataSourceList`.
 
 ## 1.17.0
 - [BREAKING_CHANGE] Updated: Standardized class and file naming by replacing the `BetterPlayer` prefix with `Player` across internal widgets and utilities (including exported `PlayerAsmsUtils` and `PlayerUiUtils`; automatable via `dart fix --apply`).
