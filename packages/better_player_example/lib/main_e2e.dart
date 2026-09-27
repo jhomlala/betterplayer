@@ -120,9 +120,12 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         child: Column(
           children: [
             const SizedBox(height: 8),
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer(controller: _betterPlayerController),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 320),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
             ),
             if (_errorDescription != null)
               Padding(
@@ -130,6 +133,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 child: Semantics(
                   identifier: 'better_player_e2e_error_text',
                   label: 'better_player_e2e_error_text',
+                  container: true,
                   child: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
@@ -167,7 +171,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   ),
                 ),
               ),
-            const SizedBox(height: 100),
+            const SizedBox(height: 16),
             Wrap(
               spacing: 8,
               children: [

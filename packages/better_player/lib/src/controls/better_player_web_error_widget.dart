@@ -24,7 +24,9 @@ class BetterPlayerWebErrorWidget extends StatelessWidget {
       final textStyle = TextStyle(color: controlsConfiguration.textColor);
       return Center(
         child: Semantics(
+          identifier: 'better_player_web_error_widget',
           label: 'better_player_web_error_widget',
+          container: true,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

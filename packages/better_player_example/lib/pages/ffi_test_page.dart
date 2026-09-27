@@ -93,9 +93,12 @@ class _FFITestPageState extends State<FFITestPage> {
         padding: const EdgeInsets.only(bottom: 100),
         child: Column(
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer(controller: _betterPlayerController),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 220),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
             ),
             if (_errorMessage != null)
               Padding(

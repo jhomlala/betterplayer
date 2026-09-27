@@ -78,7 +78,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     }
     try {
       await Future.wait(setupFutures);
-      if (_disposed) {
+      if (_disposed ||
+          !identical(_betterPlayerDataSource, betterPlayerDataSource)) {
         return;
       }
       // Both the public player event and the internal controller event are
@@ -98,6 +99,10 @@ extension PlayerDataSourceExtension on BetterPlayerController {
         textureId: textureId,
       );
     } catch (exception) {
+      if (_disposed ||
+          !identical(_betterPlayerDataSource, betterPlayerDataSource)) {
+        return;
+      }
       PlayerLogger.error(
         message: 'Data source setup failed: $exception',
         textureId: textureId,
