@@ -8,6 +8,7 @@ test('web flow', async ({ page }) => {
 
   // Play/pause
   const playPause = page.locator('[aria-label^="better_player_material_controls_play_pause_button"]');
+  await expect(playPause).toBeVisible({ timeout: 15000 });
   await playPause.click({ force: true });
   await page.waitForTimeout(500);
   await playPause.click({ force: true });
@@ -20,10 +21,13 @@ test('web flow', async ({ page }) => {
 
   // Playback speed
   const settings = page.locator('[aria-label^="better_player_material_controls_more_button"]');
-  await settings.click({ force: true });
-  await page.waitForTimeout(1000);
+  await expect(settings).toBeVisible({ timeout: 5000 });
   const speedMenu = page.locator('[aria-label^="better_player_overflow_menu_playback_speed"]');
-  await expect(speedMenu).toBeVisible();
+  await expect(async () => {
+    if (await speedMenu.isVisible()) return;
+    await settings.click({ force: true });
+    await expect(speedMenu).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
   await speedMenu.click({ force: true });
   
   const speed2x = page.locator('[aria-label^="better_player_overflow_menu_speed_2"]');
@@ -31,10 +35,12 @@ test('web flow', async ({ page }) => {
   await speed2x.click({ force: true });
 
   // Quality (Resolution)
-  await settings.click({ force: true });
-  await page.waitForTimeout(1000);
   const qualityMenu = page.locator('[aria-label^="better_player_overflow_menu_quality"]');
-  await expect(qualityMenu).toBeVisible();
+  await expect(async () => {
+    if (await qualityMenu.isVisible()) return;
+    await settings.click({ force: true });
+    await expect(qualityMenu).toBeVisible({ timeout: 2000 });
+  }).toPass({ timeout: 10000, intervals: [1000] });
   await qualityMenu.click({ force: true });
   
   const qualityAuto = page.locator('[aria-label^="better_player_overflow_menu_quality_auto"]');

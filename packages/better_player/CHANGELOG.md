@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Ignored stale completion and error events when a `setupDataSource` call is superseded by a newer data source, and added semantics container/identifier to `BetterPlayerWebErrorWidget`.
+
 ## 1.15.0
 - Updated: Modernized Material UI controls with gradient overlays, refined button hierarchies, full-width progress bars, cleaner bottom sheet spacing, rounded progress bar edges, accurate ripple behaviors, and larger tap targets.
 - Updated: Modernized Cupertino UI controls with pill-shaped bottom bar, centered play/pause/skip buttons, and expanding scrubber handle.
