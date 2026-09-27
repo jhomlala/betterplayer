@@ -41,7 +41,7 @@ import 'package:better_player/better_player.dart';
   * ✅ `PlayerConfiguration`, `PlayerDataSource`, `PlayerControlsConfiguration`, `PlayerSubtitlesSource`, `PlayerSubtitlesConfiguration`, `PlayerPlaylistConfiguration`, `PlayerEvent`, `PlayerEventType`, `DrmConfiguration`, `DrmType`, `CacheConfiguration`, `NotificationConfiguration`, `BufferingConfiguration`, `VideoFormat`, `DataSourceType`.
   * ❌ Never use 0.0.84 names like `BetterPlayerConfiguration`, `BetterPlayerDataSource`, `BetterPlayerDrmConfiguration`, or `BetterPlayerEvent`.
 * **Keep `BetterPlayer` prefix only where it still exists**:
-  * ✅ `BetterPlayer`, `BetterPlayerController`, `BetterPlayerPlaylist`, `BetterPlayerPlaylistController`, `BetterPlayerListVideoPlayer`, `BetterPlayerListVideoPlayerController`, `BetterPlayerClearKeyUtils`, `BetterPlayerControlsState`.
+  * ✅ `BetterPlayer`, `BetterPlayerController`, `BetterPlayerPlaylist`, `BetterPlayerPlaylistController`, `BetterPlayerListVideoPlayer`, `BetterPlayerListVideoPlayerController`, `BetterPlayerClearKeyUtils`, `BetterPlayerControlsState`, `BetterPlayerMultipleGestureDetector`.
 * **Initialize in `initState()`**: Create `BetterPlayerController` inside `State.initState()`, never inside `build()`.
 * **Provide bounded layout constraints**: Wrap `BetterPlayer` in an `AspectRatio` widget (for example, `aspectRatio: 16 / 9`) so the video view has concrete dimensions.
 * **Do not double-dispose**: `PlayerConfiguration.autoDispose` defaults to `true`, so `BetterPlayer` automatically disposes its `BetterPlayerController` when the widget unmounts. Only call `_controller.dispose()` manually in `State.dispose()` if you set `autoDispose: false`.

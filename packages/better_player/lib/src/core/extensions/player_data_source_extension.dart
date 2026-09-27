@@ -1,4 +1,4 @@
-part of '../better_player_controller.dart';
+﻿part of '../better_player_controller.dart';
 
 extension PlayerDataSourceExtension on BetterPlayerController {
   ///Setup new data source in Better Player.
@@ -146,21 +146,21 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
   ///Check if given [betterPlayerDataSource] is HLS / DASH-type data source.
   bool _isDataSourceAsms(PlayerDataSource betterPlayerDataSource) =>
-      (BetterPlayerAsmsUtils().isDataSourceHls(betterPlayerDataSource.url) ||
+      (PlayerAsmsUtils().isDataSourceHls(betterPlayerDataSource.url) ||
           betterPlayerDataSource.videoFormat == VideoFormat.hls) ||
-      (BetterPlayerAsmsUtils().isDataSourceDash(betterPlayerDataSource.url) ||
+      (PlayerAsmsUtils().isDataSourceDash(betterPlayerDataSource.url) ||
           betterPlayerDataSource.videoFormat == VideoFormat.dash);
 
   ///Configure HLS / DASH data source based on provided data source and configuration.
   ///This method configures tracks, subtitles and audio tracks from given
   ///master playlist.
   Future<void> _setupAsmsDataSource(PlayerDataSource source) async {
-    final data = await BetterPlayerAsmsUtils().getDataFromUrl(
+    final data = await PlayerAsmsUtils().getDataFromUrl(
       source.url,
       _getHeaders(),
     );
     if (data != null) {
-      final response = await BetterPlayerAsmsUtils().parse(
+      final response = await PlayerAsmsUtils().parse(
         data,
         source.url,
       );
@@ -245,7 +245,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
       case DataSourceType.file:
         final filePath = betterPlayerDataSource.url;
-        if (!BetterPlayerIoUtils.fileExists(filePath)) {
+        if (!PlayerIoUtils.fileExists(filePath)) {
           PlayerLogger.warning(
             message:
                 "File $filePath doesn't exists. This may be because "
@@ -304,7 +304,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
             extension: _betterPlayerDataSource!.videoExtension,
           );
 
-          if (BetterPlayerIoUtils.fileExists(filePath)) {
+          if (PlayerIoUtils.fileExists(filePath)) {
             await _engine?.setFileDataSource(
               filePath,
               showNotification: _betterPlayerDataSource
@@ -346,8 +346,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
   }) async {
     final fileName =
         'better_player_${DateTime.now().millisecondsSinceEpoch}.$extension';
-    final filePath = await BetterPlayerIoUtils.getTempPath(fileName);
-    await BetterPlayerIoUtils.writeBytes(filePath, bytes);
+    final filePath = await PlayerIoUtils.getTempPath(fileName);
+    await PlayerIoUtils.writeBytes(filePath, bytes);
     return filePath;
   }
 

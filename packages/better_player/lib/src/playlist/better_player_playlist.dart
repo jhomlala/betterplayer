@@ -1,4 +1,4 @@
-import 'package:better_player/better_player.dart';
+﻿import 'package:better_player/better_player.dart';
 
 // Flutter imports:
 import 'package:material_ui/material_ui.dart';
@@ -46,7 +46,7 @@ class BetterPlayerPlaylistState extends State<BetterPlayerPlaylist> {
     return AspectRatio(
       aspectRatio:
           _betterPlayerController!.getAspectRatio() ??
-          BetterPlayerUiUtils.calculateAspectRatio(context),
+          PlayerUiUtils.calculateAspectRatio(context),
       child: BetterPlayer(controller: _betterPlayerController!),
     );
   }

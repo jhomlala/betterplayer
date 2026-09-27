@@ -223,7 +223,7 @@ controlsConfiguration: PlayerControlsConfiguration(
         PlayerOverflowMenuItem(
             Icons.account_circle_rounded,
             "User Profile",
-            () => BetterPlayerUtils.log("Custom Action Executed!"),
+            () => print("Custom Action Executed!"),
         )
     ],
 ),
@@ -505,7 +505,7 @@ Once you have initialized your `BetterPlayerController`, you can attach a listen
 
 ```dart
 _betterPlayerController.addEventsListener((event) {
-    BetterPlayerUtils.log("Better Player Event: ${event.betterPlayerEventType}");
+    print("Player Event: ${event.betterPlayerEventType}");
 });
 ```
 
@@ -1620,6 +1620,9 @@ _controller.addEventsListener((BetterPlayerEvent event) {
     print("Video is playing");
   }
 });
+
+final durationStr = BetterPlayerUtils.formatDuration(position);
+final isAsms = BetterPlayerAsmsUtils().isDataSourceAsms(url);
 ```
 
 </td>
@@ -1631,6 +1634,9 @@ _controller.addEventsListener((PlayerEvent event) {
     print("Video is playing");
   }
 });
+
+final durationStr = PlayerUiUtils.formatDuration(position);
+final isAsms = PlayerAsmsUtils().isDataSourceAsms(url);
 ```
 
 </td>
@@ -1870,7 +1876,7 @@ BetterPlayerMultipleGestureDetector(
       child: BetterPlayer(controller: _betterPlayerController),
     ),
     onTap: () {
-      BetterPlayerUtils.log("Outer Tap Detected!");
+      print("Outer Tap Detected!");
     },
 );
 ```
@@ -2297,7 +2303,7 @@ betterPlayerController!.setupDataSource(source)
 })
 .catchError((error) async {
   // Failed to load data source (e.g., invalid URL)
-  BetterPlayerUtils.log("Failed to load video: $error");
+  print("Failed to load video: $error");
 });
 ```
 

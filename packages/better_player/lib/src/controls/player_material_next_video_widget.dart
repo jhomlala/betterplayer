@@ -1,0 +1,51 @@
+﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/src/controls/player_clickable_widget.dart';
+import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:material_ui/material_ui.dart';
+
+class PlayerMaterialNextVideoWidget extends StatelessWidget {
+  const PlayerMaterialNextVideoWidget({
+    required this.controller,
+    required this.controlsConfiguration,
+    super.key,
+  });
+  final BetterPlayerController controller;
+  final PlayerControlsConfiguration controlsConfiguration;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<int?>(
+      stream: controller.nextVideoTimeStream,
+      builder: (context, snapshot) {
+        final time = snapshot.data;
+        if (time != null && time > 0) {
+          return PlayerMaterialClickableWidget(
+            onTap: controller.playNextVideo,
+            child: Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                margin: EdgeInsets.only(
+                  bottom: controlsConfiguration.controlBarHeight + 32,
+                  right: 16,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(
+                    '${controller.translations.controlsNextVideoIn} $time...',
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+}

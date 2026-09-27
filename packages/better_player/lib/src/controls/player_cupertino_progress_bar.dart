@@ -1,0 +1,338 @@
+import 'dart:async';
+
+import 'package:better_player/src/controls/player_progress_colors.dart';
+import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
+
+class PlayerCupertinoVideoProgressBar extends StatefulWidget {
+  PlayerCupertinoVideoProgressBar(
+    this.betterPlayerController, {
+    PlayerProgressColors? colors,
+    this.onDragEnd,
+    this.onDragStart,
+    this.onDragUpdate,
+    this.onTapDown,
+    super.key,
+  }) : colors = colors ?? PlayerProgressColors();
+
+  final BetterPlayerController? betterPlayerController;
+  final PlayerProgressColors colors;
+  final Function()? onDragStart;
+  final Function()? onDragEnd;
+  final Function()? onDragUpdate;
+  final Function()? onTapDown;
+
+  @override
+  _VideoProgressBarState createState() {
+    return _VideoProgressBarState();
+  }
+}
+
+class _VideoProgressBarState extends State<PlayerCupertinoVideoProgressBar> {
+  _VideoProgressBarState() {
+    listener = () {
+      if (mounted) setState(() {});
+    };
+  }
+
+  late VoidCallback listener;
+  bool _controllerWasPlaying = false;
+
+  BetterPlayerController? get betterPlayerController =>
+      widget.betterPlayerController;
+
+  bool shouldPlayAfterDragEnd = false;
+  Duration? lastSeek;
+  Timer? _updateBlockTimer;
+
+  bool _isDragging = false;
+
+  @override
+  void initState() {
+    super.initState();
+    betterPlayerController?.addVideoListener(listener);
+  }
+
+  @override
+  void deactivate() {
+    betterPlayerController?.removeVideoListener(listener);
+    _cancelUpdateBlockTimer();
+    super.deactivate();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final enableProgressBarDrag =
+        betterPlayerController
+            ?.betterPlayerControlsConfiguration
+            .enableProgressBarDrag ??
+        true;
+    return GestureDetector(
+      onHorizontalDragStart: (details) {
+        final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+        if (videoPlayerValue == null ||
+            !videoPlayerValue.initialized ||
+            !enableProgressBarDrag) {
+          return;
+        }
+        HapticFeedback.selectionClick();
+        setState(() => _isDragging = true);
+        _controllerWasPlaying = videoPlayerValue.isPlaying;
+        if (_controllerWasPlaying) {
+          betterPlayerController?.pause();
+        }
+
+        if (widget.onDragStart != null) {
+          widget.onDragStart!();
+        }
+      },
+      onHorizontalDragUpdate: (details) {
+        final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+        if (videoPlayerValue == null ||
+            !videoPlayerValue.initialized ||
+            !enableProgressBarDrag) {
+          return;
+        }
+        seekToRelativePosition(details.globalPosition);
+
+        if (widget.onDragUpdate != null) {
+          widget.onDragUpdate!();
+        }
+      },
+      onHorizontalDragEnd: (details) {
+        if (!enableProgressBarDrag) {
+          return;
+        }
+        HapticFeedback.selectionClick();
+        setState(() => _isDragging = false);
+        if (_controllerWasPlaying) {
+          betterPlayerController?.play();
+          shouldPlayAfterDragEnd = true;
+        }
+        _setupUpdateBlockTimer();
+
+        if (widget.onDragEnd != null) {
+          widget.onDragEnd!();
+        }
+      },
+      onTapDown: (details) {
+        final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+        if (videoPlayerValue == null ||
+            !videoPlayerValue.initialized ||
+            !enableProgressBarDrag) {
+          return;
+        }
+
+        seekToRelativePosition(details.globalPosition);
+        _setupUpdateBlockTimer();
+        if (widget.onTapDown != null) {
+          widget.onTapDown!();
+        }
+      },
+      child: Semantics(
+        label:
+            betterPlayerController?.translations.progressBarLabel ??
+            'Video progress',
+        identifier: 'better_player_cupertino_progress_bar',
+        value: _getSemanticsValue(),
+        increasedValue: _getSemanticsValue(relative: 0.1),
+        decreasedValue: _getSemanticsValue(relative: -0.1),
+        container: true,
+        slider: true,
+        onIncrease: () {
+          _seekRelative(0.1);
+        },
+        onDecrease: () {
+          _seekRelative(-0.1);
+        },
+        child: Center(
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.transparent,
+            child: TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 1, end: _isDragging ? 1.5 : 1.0),
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
+              builder: (context, scale, child) {
+                return CustomPaint(
+                  painter: _ProgressBarPainter(
+                    _getValue(),
+                    widget.colors,
+                    scale: scale,
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  String _getSemanticsValue({double relative = 0}) {
+    final value = _getValue();
+    if (!value.initialized) {
+      return '0%';
+    }
+    final duration = value.duration?.inMilliseconds ?? 0;
+    final position = value.position.inMilliseconds;
+    if (duration == 0) {
+      return '0%';
+    }
+
+    final currentPercent = position / duration;
+    final targetPercent = (currentPercent + relative).clamp(0.0, 1.0);
+
+    return '${(targetPercent * 100).round()}%';
+  }
+
+  void _seekRelative(double relative) {
+    final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+    final duration = videoPlayerValue?.duration;
+    if (videoPlayerValue != null && duration != null) {
+      final position = videoPlayerValue.position;
+      final newPosition = position + duration * relative;
+      betterPlayerController?.seekTo(newPosition);
+    }
+  }
+
+  void _setupUpdateBlockTimer() {
+    _updateBlockTimer?.cancel();
+    _updateBlockTimer = Timer(const Duration(milliseconds: 1000), () {
+      lastSeek = null;
+      _cancelUpdateBlockTimer();
+    });
+  }
+
+  void _cancelUpdateBlockTimer() {
+    _updateBlockTimer?.cancel();
+    _updateBlockTimer = null;
+  }
+
+  VideoPlayerValue _getValue() {
+    final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+    if (videoPlayerValue == null) {
+      return VideoPlayerValue.uninitialized();
+    }
+    if (lastSeek != null) {
+      return videoPlayerValue.copyWith(
+        position: lastSeek,
+      );
+    }
+    return videoPlayerValue;
+  }
+
+  Future<void> seekToRelativePosition(Offset globalPosition) async {
+    final videoPlayerValue = betterPlayerController?.videoPlayerValue;
+    final duration = videoPlayerValue?.duration;
+    if (videoPlayerValue == null || duration == null) {
+      return;
+    }
+    final renderObject = context.findRenderObject();
+    if (renderObject != null) {
+      final box = renderObject as RenderBox;
+      final tapPos = box.globalToLocal(globalPosition);
+      final relative = tapPos.dx / box.size.width;
+      if (relative > 0) {
+        final position = duration * relative;
+        lastSeek = position;
+        await betterPlayerController?.seekTo(position);
+        onFinishedLastSeek();
+        if (relative >= 1) {
+          lastSeek = duration;
+          await betterPlayerController?.seekTo(duration);
+          onFinishedLastSeek();
+        }
+      }
+    }
+  }
+
+  void onFinishedLastSeek() {
+    if (shouldPlayAfterDragEnd) {
+      shouldPlayAfterDragEnd = false;
+      betterPlayerController?.play();
+    }
+  }
+}
+
+class _ProgressBarPainter extends CustomPainter {
+  _ProgressBarPainter(this.value, this.colors, {this.scale = 1.0});
+
+  VideoPlayerValue value;
+  PlayerProgressColors colors;
+  final double scale;
+
+  @override
+  bool shouldRepaint(CustomPainter painter) {
+    return true;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final barHeight = 4.0 * scale;
+    final handleWidth = 4.0 * scale;
+    final handleHeight = 12.0 * scale;
+    final baseOffset = size.height / 2 - barHeight / 2.0;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromPoints(
+          Offset(0, baseOffset),
+          Offset(size.width, baseOffset + barHeight),
+        ),
+        const Radius.circular(4),
+      ),
+      colors.backgroundPaint,
+    );
+    if (!value.initialized) {
+      return;
+    }
+    final playedPartPercent =
+        value.position.inMilliseconds / value.duration!.inMilliseconds;
+    final playedPart = playedPartPercent > 1
+        ? size.width
+        : playedPartPercent * size.width;
+    for (final range in value.buffered) {
+      final start = range.startFraction(value.duration!) * size.width;
+      final end = range.endFraction(value.duration!) * size.width;
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          Rect.fromPoints(
+            Offset(start, baseOffset),
+            Offset(end, baseOffset + barHeight),
+          ),
+          const Radius.circular(4),
+        ),
+        colors.bufferedPaint,
+      );
+    }
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromPoints(
+          Offset(0, baseOffset),
+          Offset(playedPart, baseOffset + barHeight),
+        ),
+        const Radius.circular(4),
+      ),
+      colors.playedPaint,
+    );
+
+    // iOS 16 pill-shaped handle
+    final handleRect = Rect.fromCenter(
+      center: Offset(playedPart, baseOffset + barHeight / 2),
+      width: handleWidth,
+      height: handleHeight,
+    );
+    final handleRRect = RRect.fromRectAndRadius(
+      handleRect,
+      const Radius.circular(4),
+    );
+
+    final shadowPath = Path()..addRRect(handleRRect);
+    canvas.drawShadow(shadowPath, Colors.black, 0.2, false);
+    canvas.drawRRect(handleRRect, colors.handlePaint);
+  }
+}

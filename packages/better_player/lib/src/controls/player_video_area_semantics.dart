@@ -1,0 +1,22 @@
+﻿import 'package:material_ui/material_ui.dart';
+
+class PlayerVideoAreaSemantics extends StatelessWidget {
+  const PlayerVideoAreaSemantics({
+    required this.child,
+    required this.semanticsIdentifier,
+    super.key,
+  });
+  final Widget child;
+  final String semanticsIdentifier;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: semanticsIdentifier,
+      identifier: semanticsIdentifier,
+      container: true,
+      explicitChildNodes: true,
+      child: child,
+    );
+  }
+}

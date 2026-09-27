@@ -1,4 +1,4 @@
-import 'package:better_player/better_player.dart';
+﻿import 'package:better_player/better_player.dart';
 import 'package:material_ui/material_ui.dart';
 
 ///Special version of Better Player which is used to play video in list view.
@@ -78,7 +78,7 @@ class _BetterPlayerListVideoPlayerState
     return AspectRatio(
       aspectRatio:
           _betterPlayerController!.getAspectRatio() ??
-          BetterPlayerUiUtils.calculateAspectRatio(context),
+          PlayerUiUtils.calculateAspectRatio(context),
       child: BetterPlayer(
         key: Key('${_getUniqueKey()}_player'),
         controller: _betterPlayerController!,

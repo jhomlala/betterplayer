@@ -1,5 +1,5 @@
-import 'package:better_player/src/engine/player_engine_controller.dart';
-import 'package:better_player/src/utils/better_player_io_utils.dart';
+﻿import 'package:better_player/src/engine/player_engine_controller.dart';
+import 'package:better_player/src/utils/player_io_utils.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/material.dart';
 

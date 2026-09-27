@@ -1,0 +1,207 @@
+﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/src/controls/player_cupertino_progress_bar.dart';
+import 'package:better_player/src/controls/player_progress_colors.dart';
+import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:better_player/src/core/player_ui_utils.dart';
+import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:material_ui/material_ui.dart';
+
+class PlayerCupertinoBottomBar extends StatelessWidget {
+  const PlayerCupertinoBottomBar({
+    required this.controlsConfiguration,
+    required this.barHeight,
+    required this.iconColor,
+    required this.onProgressBarDragStart,
+    required this.onProgressBarDragEnd,
+    required this.onProgressBarTapDown,
+    required this.latestValue,
+    required this.onPlayPause,
+    super.key,
+  });
+
+  final PlayerControlsConfiguration controlsConfiguration;
+  final double barHeight;
+  final Color iconColor;
+  final VoidCallback onProgressBarDragStart;
+  final VoidCallback onProgressBarDragEnd;
+  final VoidCallback onProgressBarTapDown;
+  final VideoPlayerValue? latestValue;
+  final VoidCallback onPlayPause;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
+    if (!controller.controlsEnabled) {
+      return const SizedBox();
+    }
+
+    final isFullScreen = controller.isFullScreen;
+    final horizontalMargin = isFullScreen ? 48.0 : 16.0;
+    final bottomMargin = isFullScreen ? 24.0 : 16.0;
+
+    return Container(
+      alignment: Alignment.bottomCenter,
+      margin: EdgeInsets.only(
+        left: horizontalMargin,
+        right: horizontalMargin,
+        bottom: bottomMargin,
+      ),
+      child: Container(
+        height: barHeight,
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: 0.3),
+          borderRadius: BorderRadius.circular(60),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: controller.isLiveStream()
+            ? _PlayerCupertinoLiveStreamRow(
+                controlsConfiguration: controlsConfiguration,
+                latestValue: latestValue,
+                onPlayPause: onPlayPause,
+                iconColor: iconColor,
+              )
+            : _PlayerCupertinoVodRow(
+                controlsConfiguration: controlsConfiguration,
+                latestValue: latestValue,
+                onProgressBarDragStart: onProgressBarDragStart,
+                onProgressBarDragEnd: onProgressBarDragEnd,
+                onProgressBarTapDown: onProgressBarTapDown,
+              ),
+      ),
+    );
+  }
+}
+
+class _PlayerCupertinoVodRow extends StatelessWidget {
+  const _PlayerCupertinoVodRow({
+    required this.controlsConfiguration,
+    required this.latestValue,
+    required this.onProgressBarDragStart,
+    required this.onProgressBarDragEnd,
+    required this.onProgressBarTapDown,
+  });
+
+  final PlayerControlsConfiguration controlsConfiguration;
+  final VideoPlayerValue? latestValue;
+  final VoidCallback onProgressBarDragStart;
+  final VoidCallback onProgressBarDragEnd;
+  final VoidCallback onProgressBarTapDown;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
+    return Semantics(
+      explicitChildNodes: true,
+      child: Row(
+        children: [
+          if (controlsConfiguration.enableProgressText)
+            Text(
+              PlayerUiUtils.formatDuration(
+                latestValue?.position ?? Duration.zero,
+              ),
+              style: TextStyle(
+                color: controlsConfiguration.textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          if (controlsConfiguration.enableProgressBar)
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                child: PlayerCupertinoVideoProgressBar(
+                  controller,
+                  colors: PlayerProgressColors(
+                    playedColor: controlsConfiguration.progressBarPlayedColor,
+                    handleColor: controlsConfiguration.progressBarHandleColor,
+                    bufferedColor:
+                        controlsConfiguration.progressBarBufferedColor,
+                    backgroundColor:
+                        controlsConfiguration.progressBarBackgroundColor,
+                  ),
+                  onDragStart: onProgressBarDragStart,
+                  onDragEnd: onProgressBarDragEnd,
+                  onTapDown: onProgressBarTapDown,
+                ),
+              ),
+            ),
+          if (controlsConfiguration.enableProgressText)
+            Text(
+              '-${PlayerUiUtils.formatDuration(
+                (latestValue?.duration ?? Duration.zero) - (latestValue?.position ?? Duration.zero),
+              )}',
+              style: TextStyle(
+                color: controlsConfiguration.textColor.withValues(alpha: 0.7),
+                fontSize: 12,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlayerCupertinoLiveStreamRow extends StatelessWidget {
+  const _PlayerCupertinoLiveStreamRow({
+    required this.controlsConfiguration,
+    required this.latestValue,
+    required this.onPlayPause,
+    required this.iconColor,
+  });
+
+  final PlayerControlsConfiguration controlsConfiguration;
+  final VideoPlayerValue? latestValue;
+  final VoidCallback onPlayPause;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        if (controlsConfiguration.enablePlayPause)
+          GestureDetector(
+            onTap: onPlayPause,
+            child: Semantics(
+              identifier: 'better_player_cupertino_controls_play_pause_button',
+              label: latestValue?.isPlaying == true
+                  ? controller.translations.controlsPauseLabel
+                  : controller.translations.controlsPlayLabel,
+              button: true,
+              child: Icon(
+                latestValue?.isPlaying == true
+                    ? controlsConfiguration.pauseIcon
+                    : controlsConfiguration.playIcon,
+                color: iconColor,
+                size: 24,
+              ),
+            ),
+          )
+        else
+          const SizedBox(),
+        Row(
+          children: [
+            Container(
+              width: 8,
+              height: 8,
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              controller.translations.controlsLive,
+              style: TextStyle(
+                color: controlsConfiguration.textColor,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}

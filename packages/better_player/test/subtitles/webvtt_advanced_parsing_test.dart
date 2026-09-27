@@ -1,6 +1,6 @@
-import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
-import 'package:better_player/src/subtitles/better_player_subtitles_source_type.dart';
+import 'package:better_player/src/subtitles/player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/player_subtitles_source.dart';
+import 'package:better_player/src/subtitles/player_subtitles_source_type.dart';
 import 'package:better_player/src/subtitles/webvtt_inline_parser.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';

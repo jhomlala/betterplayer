@@ -234,6 +234,9 @@ _controller.addEventsListener((BetterPlayerEvent event) {
     print("Video is playing");
   }
 });
+
+final durationStr = BetterPlayerUtils.formatDuration(position);
+final isAsms = BetterPlayerAsmsUtils().isDataSourceAsms(url);
 ```
 
 </td>
@@ -245,6 +248,9 @@ _controller.addEventsListener((PlayerEvent event) {
     print("Video is playing");
   }
 });
+
+final durationStr = PlayerUiUtils.formatDuration(position);
+final isAsms = PlayerAsmsUtils().isDataSourceAsms(url);
 ```
 
 </td>

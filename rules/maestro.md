@@ -18,7 +18,7 @@ Use the `identifier` property of the `Semantics` widget (requires Flutter 3.19+)
 **Naming Convention:** `better_player_<theme>_<component>_<element>` (e.g., `better_player_material_controls_play_pause_button`).
 
 #### Widgets with Semantic Identifier Support:
-- `BetterPlayerMaterialClickableWidget`: Uses `semanticsIdentifier`.
+- `PlayerMaterialClickableWidget`: Uses `semanticsIdentifier`.
 - Custom `Semantics` wrappers in Cupertino controls.
 - Progress bars: `better_player_material_progress_bar`, `better_player_cupertino_progress_bar`.
 
