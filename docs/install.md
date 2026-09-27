@@ -13,7 +13,7 @@ Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  better_player: ^1.15.0
+  better_player: ^1.16.0
 ```
 
 ## 2. Install Package
@@ -73,3 +73,12 @@ To support automatic screen rotation when entering fullscreen mode, add the foll
    <string>UIInterfaceOrientationLandscapeRight</string>
 </array>
 ```
+
+### AI Agent Skills
+
+Better Player bundles [Dart package skills](https://dart.dev/ai/package-skills) with setup rules, 1.x API patterns, and examples for DRM, subtitles, caching, and playlists. Install the skill into your workspace `.agents/skills/` directory:
+
+```bash
+dart run skills@ get -p better_player
+```
+

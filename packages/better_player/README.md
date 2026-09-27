@@ -66,7 +66,7 @@ Why choose Better Player? Here is how it stacks up against the alternatives.
 Add Better Player to your `pubspec.yaml`:
 ```yaml
 dependencies:
-  better_player: ^1.10.0
+  better_player: ^1.16.0
 ```
 
 ### 2. Basic Usage
@@ -108,7 +108,13 @@ BetterPlayer(controller: _controller)
 
 ## 🤖 AI Agent Quick Reference
 
-Writing a script or prompt? Feed this to your AI to get the right code on the first try.
+Better Player ships with [Dart package skills](https://dart.dev/ai/package-skills) so your AI coding agent (Cursor, Gemini, Claude Code, Copilot) knows the 1.x API out of the box. Install the skill into your project:
+
+```bash
+dart run skills@ get -p better_player
+```
+
+Writing a script or prompt? Feed this to your AI to get the right code on the first try:
 
 - **Initialization**: Always initialize `BetterPlayerController` in `initState()` with a `PlayerConfiguration` and `PlayerDataSource`.
 - **Core Classes**:
