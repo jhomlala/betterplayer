@@ -45,8 +45,8 @@ BetterPlayerController controller = BetterPlayerController(
 PlayerDataSource dataSource = PlayerDataSource(
     DataSourceType.network,
     "https://example.com/protected.mpd",
-    drmConfiguration: PlayerDrmConfiguration(
-        drmType: PlayerDrmType.widevine,
+    drmConfiguration: DrmConfiguration(
+        drmType: DrmType.widevine,
         licenseUrl: "https://license-server.com",
         headers: {"Authorization": "Bearer token"},
     ),

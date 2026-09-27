@@ -90,7 +90,7 @@ BetterPlayerController(
       title: "My Video",
     ),
     drmConfiguration: DrmConfiguration(
-      drmType: BetterPlayerDrmType.widevine,
+      drmType: DrmType.widevine,
       licenseUrl: "https://example.com/license",
     ),
   ),
