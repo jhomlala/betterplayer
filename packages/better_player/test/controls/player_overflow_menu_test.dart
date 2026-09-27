@@ -1,0 +1,159 @@
+﻿import 'package:better_player/better_player.dart';
+import 'package:better_player/src/controls/player_overflow_menu.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
+
+import '../helpers/better_player_mock_controller.dart';
+import '../helpers/mock_method_channel.dart';
+
+void main() {
+  late BetterPlayerMockController mockController;
+
+  setUp(() {
+    final mockMethodChannel = MockMethodChannel();
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          mockMethodChannel.channel,
+          mockMethodChannel.handle,
+        );
+
+    mockController = BetterPlayerMockController(
+      const PlayerConfiguration(),
+    );
+  });
+
+  Widget wrapWidget(Widget widget) {
+    return MaterialApp(
+      theme: ThemeData(useMaterial3: false),
+      home: Scaffold(
+        body: widget,
+      ),
+    );
+  }
+
+  testWidgets('Overflow menu shows all items when enabled', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      wrapWidget(
+        PlayerOverflowMenu(
+          controller: mockController,
+          controlsConfiguration: const PlayerControlsConfiguration(),
+          onPlaybackSpeedClicked: () {},
+          onSubtitlesClicked: () {},
+          onQualitiesClicked: () {},
+          onAudioTracksClicked: () {},
+        ),
+      ),
+    );
+
+    expect(
+      find.text(mockController.translations.overflowMenuPlaybackSpeed),
+      findsOneWidget,
+    );
+    expect(
+      find.text(mockController.translations.overflowMenuSubtitles),
+      findsOneWidget,
+    );
+    expect(
+      find.text(mockController.translations.overflowMenuQuality),
+      findsOneWidget,
+    );
+    expect(
+      find.text(mockController.translations.overflowMenuAudioTracks),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('Overflow menu hides items when disabled', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      wrapWidget(
+        PlayerOverflowMenu(
+          controller: mockController,
+          controlsConfiguration: const PlayerControlsConfiguration(
+            enablePlaybackSpeed: false,
+            enableSubtitles: false,
+            enableQualities: false,
+            enableAudioTracks: false,
+          ),
+          onPlaybackSpeedClicked: () {},
+          onSubtitlesClicked: () {},
+          onQualitiesClicked: () {},
+          onAudioTracksClicked: () {},
+        ),
+      ),
+    );
+
+    expect(
+      find.text(mockController.translations.overflowMenuPlaybackSpeed),
+      findsNothing,
+    );
+    expect(
+      find.text(mockController.translations.overflowMenuSubtitles),
+      findsNothing,
+    );
+    expect(
+      find.text(mockController.translations.overflowMenuQuality),
+      findsNothing,
+    );
+    expect(
+      find.text(mockController.translations.overflowMenuAudioTracks),
+      findsNothing,
+    );
+  });
+
+  testWidgets('Overflow menu triggers callbacks', (tester) async {
+    var speedTriggered = false;
+    await tester.pumpWidget(
+      wrapWidget(
+        PlayerOverflowMenu(
+          controller: mockController,
+          controlsConfiguration: const PlayerControlsConfiguration(),
+          onPlaybackSpeedClicked: () {
+            speedTriggered = true;
+          },
+          onSubtitlesClicked: () {},
+          onQualitiesClicked: () {},
+          onAudioTracksClicked: () {},
+        ),
+      ),
+    );
+
+    await tester.tap(
+      find.text(mockController.translations.overflowMenuPlaybackSpeed),
+    );
+    expect(speedTriggered, isTrue);
+  });
+
+  testWidgets('Overflow menu shows custom items', (tester) async {
+    var customTriggered = false;
+    await tester.pumpWidget(
+      wrapWidget(
+        PlayerOverflowMenu(
+          controller: mockController,
+          controlsConfiguration: PlayerControlsConfiguration(
+            overflowMenuCustomItems: [
+              PlayerOverflowMenuItem(
+                Icons.star,
+                'Custom Item',
+                () {
+                  customTriggered = true;
+                },
+              ),
+            ],
+          ),
+          onPlaybackSpeedClicked: () {},
+          onSubtitlesClicked: () {},
+          onQualitiesClicked: () {},
+          onAudioTracksClicked: () {},
+        ),
+      ),
+    );
+
+    expect(find.text('Custom Item'), findsOneWidget);
+    await tester.tap(find.text('Custom Item'));
+    expect(customTriggered, isTrue);
+  });
+}

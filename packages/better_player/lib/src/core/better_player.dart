@@ -1,9 +1,9 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
-import 'package:better_player/src/core/better_player_full_screen_video.dart';
-import 'package:better_player/src/core/better_player_with_controls.dart';
+import 'package:better_player/src/core/player_full_screen_video.dart';
+import 'package:better_player/src/core/player_with_controls.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
@@ -169,7 +169,7 @@ class _BetterPlayerState extends State<BetterPlayer>
     return BetterPlayerControllerProvider(
       key: _betterPlayerGlobalKey,
       controller: widget.controller,
-      child: _BetterPlayerVideoWithVisibility(controller: widget.controller),
+      child: _PlayerVideoWithVisibility(controller: widget.controller),
     );
   }
 
@@ -179,7 +179,7 @@ class _BetterPlayerState extends State<BetterPlayer>
       pageBuilder: (context, animation, secondaryAnimation) {
         final controllerProvider = BetterPlayerControllerProvider(
           controller: widget.controller,
-          child: _BetterPlayerVideoWithVisibility(
+          child: _PlayerVideoWithVisibility(
             controller: widget.controller,
           ),
         );
@@ -189,7 +189,7 @@ class _BetterPlayerState extends State<BetterPlayer>
           return AnimatedBuilder(
             animation: animation,
             builder: (context, child) {
-              return BetterPlayerFullScreenVideo(
+              return PlayerFullScreenVideo(
                 controllerProvider: controllerProvider,
               );
             },
@@ -260,8 +260,8 @@ class _BetterPlayerState extends State<BetterPlayer>
   }
 }
 
-class _BetterPlayerVideoWithVisibility extends StatelessWidget {
-  const _BetterPlayerVideoWithVisibility({required this.controller});
+class _PlayerVideoWithVisibility extends StatelessWidget {
+  const _PlayerVideoWithVisibility({required this.controller});
   final BetterPlayerController controller;
 
   @override
@@ -270,7 +270,7 @@ class _BetterPlayerVideoWithVisibility extends StatelessWidget {
       key: Key('${controller.hashCode}_key'),
       onVisibilityChanged: (info) =>
           controller.onPlayerVisibilityChanged(info.visibleFraction),
-      child: BetterPlayerWithControls(controller: controller),
+      child: PlayerWithControls(controller: controller),
     );
   }
 }

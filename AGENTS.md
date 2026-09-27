@@ -104,11 +104,16 @@ PlayerDataSource dataSource = PlayerDataSource(
     - They have 2 or more parameters.
     - They have only 1 parameter and that parameter is a `bool`.
   - **Widget Creation**: NEVER create widgets using helper methods (e.g., `Widget _buildSomething()`). ALWAYS create them as separate `StatelessWidget` or `StatefulWidget` classes, or define the widget tree directly within the `build` method. This ensures better performance, cleaner code, and correct lifecycle management.
-  - **Logging**: ALWAYS use `BetterPlayerUtils.log` for logging instead of `print` or `debugPrint`. This ensures that logs are correctly handled by the project's logging mechanism.
+  - **Logging**: ALWAYS use `PlayerLogger` for logging instead of `print` or `debugPrint`. This ensures that logs are correctly handled by the project's logging mechanism.
+  - **Class & File Naming**:
+    - Keep the `BetterPlayer*` (`better_player_*.dart`) prefix strictly for top-level public entry-point widgets/controllers (`BetterPlayer`, `BetterPlayerController`, `BetterPlayerControllerProvider`, `BetterPlayerPlaylist`, `BetterPlayerPlaylistState`, `BetterPlayerPlaylistController`, `BetterPlayerListVideoPlayer`, `BetterPlayerListVideoPlayerController`, `BetterPlayerRoutePageBuilder`), consumer-facing base/helper classes (`BetterPlayerControlsState`, `BetterPlayerMultipleGestureDetector`, `BetterPlayerClearKeyUtils`), and federated platform classes (`BetterPlayerPlatform`, `BetterPlayerAndroid`, `BetterPlayerIOS`, `BetterPlayerWeb`).
+    - Use the `Player*` (`player_*.dart`) prefix (and `_Player*` for private classes) for all other classes in `better_player`, including configurations, data models, events, engine classes, logging, internal control widgets, internal core widgets, and internal utilities.
+    - Platform interface models in `better_player_platform_interface` use no prefix (`DataSource`, `DataSourceType`, `DrmConfiguration`, `CacheConfiguration`, `BufferingConfiguration`, `NotificationConfiguration`, `VideoFormat`, `VideoEvent`).
+    - Filenames MUST match the primary class they declare (`Player*` -> `player_*.dart`, `BetterPlayer*` -> `better_player_*.dart`).
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
-- **Mocking**: Use `BetterPlayerMockController` and `MockVideoPlayerController` for unit tests.
+- **Mocking**: Use `BetterPlayerMockController` and `MockPlayerEngineController` for unit tests.
 - **Verification**: ALWAYS run tests using the following command at the workspace root or within the relevant package directory to efficiently identify failures and avoid token limit issues:
   - Use `flutter test` within a specific package directory (e.g., `cd packages/better_player; flutter test`).
   - For workspace-wide testing, use:

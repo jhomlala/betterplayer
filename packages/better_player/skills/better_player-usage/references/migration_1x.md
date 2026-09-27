@@ -37,6 +37,8 @@ dart fix --apply
 | `BetterPlayerAsmsTrack` | `PlayerAsmsTrack` |
 | `BetterPlayerAsmsAudioTrack` | `PlayerAsmsAudioTrack` |
 | `BetterPlayerAsmsSubtitle` | `PlayerAsmsSubtitle` |
+| `BetterPlayerAsmsUtils` | `PlayerAsmsUtils` |
+| `BetterPlayerUiUtils` | `PlayerUiUtils` |
 
 > **Unchanged classes**: `BetterPlayer`, `BetterPlayerController`, `BetterPlayerControllerProvider`, `BetterPlayerPlaylist`, `BetterPlayerPlaylistController`, `BetterPlayerListVideoPlayer`, `BetterPlayerListVideoPlayerController`, `BetterPlayerClearKeyUtils`, `BetterPlayerControlsState`, and `BetterPlayerMultipleGestureDetector` keep the `BetterPlayer` prefix.
 

@@ -275,3 +275,19 @@ transforms:
       - kind: 'renameParameter'
         oldName: 'file'
         newName: 'filePath'
+  - title: 'Rename BetterPlayerAsmsUtils'
+    date: 2026-09-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerAsmsUtils'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerAsmsUtils'
+  - title: 'Rename BetterPlayerUiUtils'
+    date: 2026-09-27
+    element:
+      uris: ['package:better_player/better_player.dart']
+      class: 'BetterPlayerUiUtils'
+    changes:
+      - kind: 'rename'
+        newName: 'PlayerUiUtils'

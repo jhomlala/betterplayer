@@ -1,8 +1,8 @@
-import 'dart:math';
+﻿import 'dart:math';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/controls/better_player_overflow_menu.dart';
-import 'package:better_player/src/controls/better_player_selection_list_item_widget.dart';
+import 'package:better_player/src/controls/player_overflow_menu.dart';
+import 'package:better_player/src/controls/player_selection_list_item_widget.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:cupertino_ui/cupertino_ui.dart';
@@ -74,7 +74,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (betterPlayerControlsConfiguration.enablePlaybackSpeed) {
       children.add(
-        _BetterPlayerBottomSheetMenuItem(
+        _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           icon: betterPlayerControlsConfiguration.playbackSpeedIcon,
@@ -93,7 +93,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (betterPlayerControlsConfiguration.enableSubtitles) {
       children.add(
-        _BetterPlayerBottomSheetMenuItem(
+        _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           icon: betterPlayerControlsConfiguration.subtitlesIcon,
@@ -112,7 +112,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (betterPlayerControlsConfiguration.enableQualities) {
       children.add(
-        _BetterPlayerBottomSheetMenuItem(
+        _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           icon: betterPlayerControlsConfiguration.qualitiesIcon,
@@ -131,7 +131,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (betterPlayerControlsConfiguration.enableAudioTracks) {
       children.add(
-        _BetterPlayerBottomSheetMenuItem(
+        _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           icon: betterPlayerControlsConfiguration.audioTracksIcon,
@@ -152,7 +152,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       for (final customItem
           in betterPlayerControlsConfiguration.overflowMenuCustomItems) {
         children.add(
-          _BetterPlayerBottomSheetMenuItem(
+          _PlayerBottomSheetMenuItem(
             isCupertinoTheme: _isCupertinoTheme,
             betterPlayerControlsConfiguration:
                 betterPlayerControlsConfiguration,
@@ -179,7 +179,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       ) {
         final isSelected =
             betterPlayerController?.videoPlayerValue?.speed == speed;
-        return _BetterPlayerBottomSheetMenuItem(
+        return _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: '$speed x',
@@ -250,7 +250,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             : subtitlesSource.name ??
                   betterPlayerController!.translations.generalDefault;
 
-        return _BetterPlayerBottomSheetMenuItem(
+        return _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: name,
@@ -297,7 +297,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       final mimeType = (track.mimeType ?? '').replaceAll('video/', '');
       final trackName =
           preferredName ??
-          '${width}x$height ${BetterPlayerUiUtils.formatBitrate(bitrate)} $mimeType';
+          '${width}x$height ${PlayerUiUtils.formatBitrate(bitrate)} $mimeType';
 
       final selectedTrack = betterPlayerController!.betterPlayerAsmsTrack;
       final isSelected = selectedTrack != null && selectedTrack == track;
@@ -305,7 +305,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           preferredName == betterPlayerController!.translations.qualityAuto;
 
       children.add(
-        _BetterPlayerBottomSheetMenuItem(
+        _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: trackName,
@@ -330,7 +330,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
       final isSelected =
           value == betterPlayerController!.betterPlayerDataSource!.url;
       children.add(
-        _BetterPlayerBottomSheetMenuItem(
+        _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: key,
@@ -351,7 +351,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
         message: 'Quality children empty, adding Auto fallback',
       );
       children.add(
-        _BetterPlayerBottomSheetMenuItem(
+        _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: betterPlayerController!.translations.qualityAuto,
@@ -384,7 +384,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
             selectedAsmsAudioTrack == asmsTracks[index];
         final audioTrack = asmsTracks[index];
         children.add(
-          _BetterPlayerBottomSheetMenuItem(
+          _PlayerBottomSheetMenuItem(
             isCupertinoTheme: _isCupertinoTheme,
             betterPlayerControlsConfiguration:
                 betterPlayerControlsConfiguration,
@@ -403,7 +403,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 
     if (children.isEmpty) {
       children.add(
-        _BetterPlayerBottomSheetMenuItem(
+        _PlayerBottomSheetMenuItem(
           isCupertinoTheme: _isCupertinoTheme,
           betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
           label: betterPlayerController!.translations.generalDefault,
@@ -522,7 +522,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   }
 }
 
-class _BetterPlayerBottomSheetMenuItem extends StatelessWidget {
+class _PlayerBottomSheetMenuItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final bool isSelected;
@@ -531,7 +531,7 @@ class _BetterPlayerBottomSheetMenuItem extends StatelessWidget {
   final bool isCupertinoTheme;
   final PlayerControlsConfiguration betterPlayerControlsConfiguration;
 
-  const _BetterPlayerBottomSheetMenuItem({
+  const _PlayerBottomSheetMenuItem({
     required this.label,
     required this.onTap,
     required this.isCupertinoTheme,
@@ -580,7 +580,7 @@ class _BetterPlayerBottomSheetMenuItem extends StatelessWidget {
         semanticsIdentifier: semanticsIdentifier,
       );
     } else {
-      return BetterPlayerSelectionListItemWidget(
+      return PlayerSelectionListItemWidget(
         label: label,
         isSelected: isSelected,
         onTap: onTap,

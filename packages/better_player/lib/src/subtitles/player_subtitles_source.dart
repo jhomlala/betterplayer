@@ -1,6 +1,6 @@
-import 'package:better_player/src/asms/player_asms_subtitle_segment.dart';
+﻿import 'package:better_player/src/asms/player_asms_subtitle_segment.dart';
 
-import 'package:better_player/src/subtitles/better_player_subtitles_source_type.dart';
+import 'package:better_player/src/subtitles/player_subtitles_source_type.dart';
 
 ///Representation of subtitles source. Used to define subtitles in Better
 /// Player.

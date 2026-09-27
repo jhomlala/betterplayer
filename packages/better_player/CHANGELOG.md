@@ -1,3 +1,6 @@
+## 1.17.0
+- [BREAKING_CHANGE] Updated: Standardized class and file naming by replacing the `BetterPlayer` prefix with `Player` across internal widgets and utilities (including exported `PlayerAsmsUtils` and `PlayerUiUtils`; automatable via `dart fix --apply`).
+
 ## 1.16.0
 - Added: Bundled `better_player-usage` Dart package skill (`skills/better_player-usage/`) with 1.x setup, controls, DRM, subtitles, caching, playlist, and migration references for AI coding agents.
 - Fixed: Ignored stale completion and error events when a `setupDataSource` call is superseded by a newer data source, and added semantics container/identifier to `BetterPlayerWebErrorWidget`.

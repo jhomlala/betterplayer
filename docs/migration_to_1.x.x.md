@@ -9,6 +9,7 @@ Better Player 1.x.x introduces a **federated plugin architecture** and a signifi
 The package was split into smaller specialized packages, and redundant `BetterPlayer` prefixes were removed from model names.
 
 ## Version History & Key Architecture Changes
+- **v1.17.x**: Standardized internal widget and utility naming under the `Player*` prefix (including exported `PlayerAsmsUtils` and `PlayerUiUtils`).
 - **v1.13.x**: Bug-fix release — HLS pre-cache blocking, PiP event fixes, DASH parsing fixes, `enableReplay` control, iOS seek stability, and enhanced error payloads.
 - **v1.5.x**: Refactored `BetterPlayerController` state into immutable data classes.
 - **v1.4.x**: Replaced `VideoPlayerController` with `PlayerEngineController`.
@@ -234,6 +235,9 @@ _controller.addEventsListener((BetterPlayerEvent event) {
     print("Video is playing");
   }
 });
+
+final durationStr = BetterPlayerUtils.formatDuration(position);
+final isAsms = BetterPlayerAsmsUtils().isDataSourceAsms(url);
 ```
 
 </td>
@@ -245,6 +249,9 @@ _controller.addEventsListener((PlayerEvent event) {
     print("Video is playing");
   }
 });
+
+final durationStr = PlayerUiUtils.formatDuration(position);
+final isAsms = PlayerAsmsUtils().isDataSourceAsms(url);
 ```
 
 </td>

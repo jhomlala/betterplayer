@@ -16,7 +16,7 @@ BetterPlayerMultipleGestureDetector(
       child: BetterPlayer(controller: _betterPlayerController),
     ),
     onTap: () {
-      BetterPlayerUtils.log("Outer Tap Detected!");
+      print("Outer Tap Detected!");
     },
 );
 ```

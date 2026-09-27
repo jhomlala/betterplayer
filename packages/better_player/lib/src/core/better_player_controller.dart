@@ -9,22 +9,22 @@ import 'package:better_player/src/core/state/player_track_state.dart';
 import 'package:better_player/src/core/state/player_view_state.dart';
 import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player/src/logging/player_logger.dart';
-import 'package:better_player/src/subtitles/better_player_subtitles_factory.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
-import 'package:better_player/src/utils/better_player_io_utils.dart';
+import 'package:better_player/src/subtitles/player_subtitles_factory.dart';
+import 'package:better_player/src/utils/player_io_utils.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
-part 'extensions/player_data_source_extension.dart';
-part 'extensions/player_playback_extension.dart';
-part 'extensions/player_track_extension.dart';
-part 'extensions/player_subtitle_extension.dart';
-part 'extensions/player_playlist_extension.dart';
-part 'extensions/player_view_state_extension.dart';
 part 'extensions/player_cache_extension.dart';
-part 'extensions/player_translations_extension.dart';
+part 'extensions/player_data_source_extension.dart';
 part 'extensions/player_events_extension.dart';
+part 'extensions/player_playback_extension.dart';
+part 'extensions/player_playlist_extension.dart';
+part 'extensions/player_subtitle_extension.dart';
+part 'extensions/player_track_extension.dart';
+part 'extensions/player_translations_extension.dart';
+part 'extensions/player_view_state_extension.dart';
 
 /// Class used to control overall Better Player behavior. Main class to change
 /// state of Better Player and orchestrate its subsystems (subtitles, caching, analytics, etc).
@@ -460,7 +460,7 @@ class BetterPlayerController {
 
       ///Delete files async
       for (final file in _tempFiles) {
-        unawaited(BetterPlayerIoUtils.deleteFile(file));
+        unawaited(PlayerIoUtils.deleteFile(file));
       }
     }
   }
