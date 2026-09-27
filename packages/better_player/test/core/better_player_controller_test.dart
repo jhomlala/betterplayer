@@ -840,6 +840,25 @@ void main() {
         expect(controller.isPlaying(), true);
       });
 
+      test(
+        'onPlayerVisibilityChanged invokes playerVisibilityChangedBehavior when handleLifecycle is false',
+        () async {
+          double? reportedFraction;
+          final controller = BetterPlayerMockController(
+            PlayerConfiguration(
+              handleLifecycle: false,
+              playerVisibilityChangedBehavior: (fraction) {
+                reportedFraction = fraction;
+              },
+            ),
+            playerEngineController: MockPlayerEngineController(),
+          );
+
+          await controller.onPlayerVisibilityChanged(0.5);
+          expect(reportedFraction, 0.5);
+        },
+      );
+
       test('setAppLifecycleState handles play/pause', () async {
         final controller =
             BetterPlayerTestUtils.setupBetterPlayerMockController(

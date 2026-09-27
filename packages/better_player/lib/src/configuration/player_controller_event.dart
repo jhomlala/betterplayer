@@ -14,4 +14,7 @@ enum PlayerControllerEvent {
 
   //Video has started.
   play,
+
+  ///Controls configuration has been updated.
+  changeControlsConfiguration,
 }

@@ -53,4 +53,28 @@ void main() {
 
     expect(playlistController.currentDataSourceIndex, 0);
   });
+
+  test(
+    'playNextVideo and playPreviousVideo preserve fullscreen state',
+    () async {
+      BetterPlayerTestUtils.setupMockPlatform();
+
+      final dataSourceList = [
+        PlayerDataSource.network('https://example.com/video1.mp4'),
+        PlayerDataSource.network('https://example.com/video2.mp4'),
+      ];
+
+      final playlistController = BetterPlayerPlaylistController(dataSourceList);
+      playlistController.betterPlayerController!.enterFullScreen();
+      expect(playlistController.betterPlayerController!.isFullScreen, isTrue);
+
+      playlistController.playNextVideo();
+      expect(playlistController.currentDataSourceIndex, 1);
+      expect(playlistController.betterPlayerController!.isFullScreen, isTrue);
+
+      playlistController.playPreviousVideo();
+      expect(playlistController.currentDataSourceIndex, 0);
+      expect(playlistController.betterPlayerController!.isFullScreen, isTrue);
+    },
+  );
 }

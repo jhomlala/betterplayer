@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Guarded `DurationRange.startFraction` and `DurationRange.endFraction` against zero or negative durations to prevent `NaN`/`Infinity` exceptions.
+
 ## 1.3.2
 - Updated: Updated doc comment for setSpeed to reflect the new 4.0 limit.
 

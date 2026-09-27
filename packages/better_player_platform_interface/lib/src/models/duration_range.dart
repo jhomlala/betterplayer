@@ -28,6 +28,9 @@ class DurationRange {
   /// a duration of one minute, this will return `0.25` since the DurationRange
   /// starts 25% of the way through the video's total length.
   double startFraction(Duration duration) {
+    if (duration.inMilliseconds <= 0) {
+      return 0;
+    }
     return start.inMilliseconds / duration.inMilliseconds;
   }
 
@@ -39,6 +42,9 @@ class DurationRange {
   /// duration of two minutes, this will return `0.5` since the DurationRange
   /// ends 50% of the way through the video's total length.
   double endFraction(Duration duration) {
+    if (duration.inMilliseconds <= 0) {
+      return 0;
+    }
     return end.inMilliseconds / duration.inMilliseconds;
   }
 

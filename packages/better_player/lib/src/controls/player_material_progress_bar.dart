@@ -295,21 +295,26 @@ class _ProgressBarPainter extends CustomPainter {
     if (!value.initialized) {
       return;
     }
-    var playedPartPercent =
-        value.position.inMilliseconds / value.duration!.inMilliseconds;
-    if (playedPartPercent.isNaN) {
+    final duration = value.duration ?? Duration.zero;
+    final durationMs = duration.inMilliseconds;
+    var playedPartPercent = durationMs > 0
+        ? value.position.inMilliseconds / durationMs
+        : 0.0;
+    if (playedPartPercent.isNaN ||
+        !playedPartPercent.isFinite ||
+        playedPartPercent < 0) {
       playedPartPercent = 0;
     }
     final playedPart = playedPartPercent > 1
         ? size.width
         : playedPartPercent * size.width;
     for (final range in value.buffered) {
-      var start = range.startFraction(value.duration!) * size.width;
-      if (start.isNaN) {
+      var start = range.startFraction(duration) * size.width;
+      if (start.isNaN || !start.isFinite || start < 0) {
         start = 0;
       }
-      var end = range.endFraction(value.duration!) * size.width;
-      if (end.isNaN) {
+      var end = range.endFraction(duration) * size.width;
+      if (end.isNaN || !end.isFinite || end < 0) {
         end = 0;
       }
       canvas.drawRRect(
