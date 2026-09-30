@@ -2,8 +2,10 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/core/player_full_screen_video.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_mock_controller.dart';
 import '../helpers/better_player_test_utils.dart';
@@ -1182,6 +1184,356 @@ void main() {
 
           final scaffold = tester.widget<Scaffold>(find.byType(Scaffold));
           expect(scaffold.backgroundColor, Colors.blue);
+        },
+      );
+
+      test(
+        'enterFullScreen does not emit duplicate openFullscreen event when already in fullscreen',
+        () async {
+          final controller =
+              BetterPlayerTestUtils.setupBetterPlayerMockController();
+          final events = <PlayerControllerEvent>[];
+          final sub = controller.controllerEventStream.listen(events.add);
+
+          controller.enterFullScreen();
+          controller.enterFullScreen();
+          await Future<void>.delayed(Duration.zero);
+
+          expect(
+            events.where((e) => e == PlayerControllerEvent.openFullscreen),
+            hasLength(1),
+          );
+          await sub.cancel();
+        },
+      );
+
+      testWidgets(
+        'BetterPlayer widget stays in fullscreen when enterFullScreen is called repeatedly and exits on exitFullScreen',
+        (tester) async {
+          VisibilityDetectorController.instance.updateInterval = Duration.zero;
+          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+              .setMockMethodCallHandler(
+                SystemChannels.platform,
+                (methodCall) async => null,
+              );
+          final engineController =
+              BetterPlayerTestUtils.setupMockPlayerEngineController();
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(
+              controlsConfiguration: PlayerControlsConfiguration(
+                showControls: false,
+              ),
+            ),
+            playerEngineController: engineController,
+          );
+
+          final playerEvents = <PlayerEventType>[];
+          controller.addEventsListener(
+            (event) => playerEvents.add(event.betterPlayerEventType),
+          );
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(
+                body: BetterPlayer(controller: controller),
+              ),
+            ),
+          );
+
+          expect(find.byType(PlayerFullScreenVideo), findsNothing);
+          expect(controller.isFullScreen, isFalse);
+
+          // First enterFullScreen pushes fullscreen route
+          controller.enterFullScreen();
+          await tester.pump();
+          await tester.pump();
+          await tester.pumpAndSettle();
+
+          expect(
+            playerEvents.where((e) => e == PlayerEventType.openFullscreen),
+            hasLength(1),
+          );
+          expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
+          expect(controller.isFullScreen, isTrue);
+
+          // Calling enterFullScreen again while in fullscreen must NOT pop the route
+          controller.enterFullScreen();
+          await tester.pump();
+          await tester.pump();
+          await tester.pumpAndSettle();
+
+          expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
+          expect(controller.isFullScreen, isTrue);
+          expect(
+            playerEvents.where((e) => e == PlayerEventType.openFullscreen),
+            hasLength(1),
+          );
+          expect(
+            playerEvents.where((e) => e == PlayerEventType.hideFullscreen),
+            isEmpty,
+          );
+
+          // Exiting fullscreen pops the route cleanly
+          controller.exitFullScreen();
+          await tester.pump();
+          await tester.pump();
+          await tester.pumpAndSettle();
+
+          expect(find.byType(PlayerFullScreenVideo), findsNothing);
+          expect(controller.isFullScreen, isFalse);
+          expect(
+            playerEvents.where((e) => e == PlayerEventType.hideFullscreen),
+            hasLength(1),
+          );
+        },
+      );
+
+      testWidgets(
+        'BetterPlayer widget keeps fullscreen route open when entering and exiting PiP from fullscreen on Android',
+        (tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.android;
+          try {
+            VisibilityDetectorController.instance.updateInterval =
+                Duration.zero;
+            TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+                .setMockMethodCallHandler(
+                  SystemChannels.platform,
+                  (methodCall) async => null,
+                );
+            final engineController = MockPlayerEngineController()
+              ..isPipSupported = true;
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  showControls: false,
+                ),
+              ),
+              playerEngineController: engineController,
+            );
+            engineController.emitInitialized();
+
+            await tester.pumpWidget(
+              MaterialApp(
+                home: Scaffold(
+                  body: BetterPlayer(controller: controller),
+                ),
+              ),
+            );
+
+            // Enter fullscreen first
+            controller.enterFullScreen();
+            await tester.pump();
+            await tester.pump();
+            await tester.pumpAndSettle();
+            expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
+
+            // Trigger PiP on Android while already in fullscreen
+            await controller.enablePictureInPicture(GlobalKey());
+            engineController.value = engineController.value.copyWith(
+              isPip: true,
+            );
+            engineController.notifyListeners();
+            await tester.pump();
+            await tester.pump();
+            await tester.pumpAndSettle();
+
+            // Fullscreen route must still be on screen
+            expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
+            expect(controller.isFullScreen, isTrue);
+
+            // Stop PiP -> fullscreen route must remain on screen
+            engineController.value = engineController.value.copyWith(
+              isPip: false,
+            );
+            engineController.notifyListeners();
+            await tester.pump();
+            await tester.pump();
+            await tester.pumpAndSettle();
+
+            expect(find.byType(PlayerFullScreenVideo), findsOneWidget);
+            expect(controller.isFullScreen, isTrue);
+
+            // Clean up fullscreen route before test finishes
+            controller.exitFullScreen();
+            await tester.pump();
+            await tester.pump();
+            await tester.pumpAndSettle();
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        },
+      );
+
+      test(
+        'enablePictureInPicture on Android while already in fullscreen preserves fullscreen during and after PiP',
+        () async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.android;
+          try {
+            final engineController = MockPlayerEngineController()
+              ..isPipSupported = true;
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(),
+              playerEngineController: engineController,
+            );
+            engineController.emitInitialized();
+
+            final controllerEvents = <PlayerControllerEvent>[];
+            final sub = controller.controllerEventStream.listen(
+              controllerEvents.add,
+            );
+
+            // Start in fullscreen
+            controller.enterFullScreen();
+            await Future<void>.delayed(Duration.zero);
+            expect(controller.isFullScreen, isTrue);
+            expect(
+              controllerEvents.where(
+                (e) => e == PlayerControllerEvent.openFullscreen,
+              ),
+              hasLength(1),
+            );
+
+            // Enter PiP while already in fullscreen
+            await controller.enablePictureInPicture(GlobalKey());
+            engineController.value = engineController.value.copyWith(
+              isPip: true,
+            );
+            engineController.notifyListeners();
+            await Future<void>.delayed(Duration.zero);
+
+            expect(controller.isFullScreen, isTrue);
+            expect(controller.controlsEnabled, isFalse);
+            // No second openFullscreen event emitted
+            expect(
+              controllerEvents.where(
+                (e) => e == PlayerControllerEvent.openFullscreen,
+              ),
+              hasLength(1),
+            );
+
+            // Exit PiP -> should stay in fullscreen because wasInFullScreenBeforePiP was true
+            engineController.value = engineController.value.copyWith(
+              isPip: false,
+            );
+            engineController.notifyListeners();
+            await Future<void>.delayed(Duration.zero);
+
+            expect(controller.isFullScreen, isTrue);
+            expect(controller.controlsEnabled, isTrue);
+            expect(
+              controllerEvents.where(
+                (e) => e == PlayerControllerEvent.hideFullscreen,
+              ),
+              isEmpty,
+            );
+
+            await sub.cancel();
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        },
+      );
+
+      test(
+        'enablePictureInPicture on Android when not in fullscreen enters fullscreen during PiP and exits after PiP',
+        () async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.android;
+          try {
+            final engineController = MockPlayerEngineController()
+              ..isPipSupported = true;
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(),
+              playerEngineController: engineController,
+            );
+            engineController.emitInitialized();
+
+            expect(controller.isFullScreen, isFalse);
+
+            await controller.enablePictureInPicture(GlobalKey());
+            engineController.value = engineController.value.copyWith(
+              isPip: true,
+            );
+            engineController.notifyListeners();
+            await Future<void>.delayed(Duration.zero);
+
+            expect(controller.isFullScreen, isTrue);
+            expect(controller.controlsEnabled, isFalse);
+
+            // Exit PiP -> should exit fullscreen since wasInFullScreenBeforePiP was false
+            engineController.value = engineController.value.copyWith(
+              isPip: false,
+            );
+            engineController.notifyListeners();
+            await Future<void>.delayed(Duration.zero);
+
+            expect(controller.isFullScreen, isFalse);
+            expect(controller.controlsEnabled, isTrue);
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        },
+      );
+
+      test(
+        'returning from PiP on Android via AppLifecycleState.resumed restores controls and visibility',
+        () async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.android;
+          try {
+            final engineController = MockPlayerEngineController()
+              ..isPipSupported = true;
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(),
+              playerEngineController: engineController,
+            );
+            engineController.emitInitialized();
+
+            final visibilityStates = <bool>[];
+            final sub = controller.controlsVisibilityStream.listen(
+              visibilityStates.add,
+            );
+
+            await controller.enablePictureInPicture(GlobalKey());
+            engineController.value = engineController.value.copyWith(
+              isPip: true,
+            );
+            engineController.notifyListeners();
+            await Future<void>.delayed(Duration.zero);
+
+            expect(controller.isFullScreen, isTrue);
+            expect(controller.controlsEnabled, isFalse);
+            expect(visibilityStates.last, isFalse);
+
+            // Simulate Android Activity returning from PiP to resumed state
+            controller.setAppLifecycleState(AppLifecycleState.resumed);
+            await Future<void>.delayed(Duration.zero);
+
+            expect(engineController.value.isPip, isFalse);
+            expect(controller.isFullScreen, isFalse);
+            expect(controller.controlsEnabled, isTrue);
+            expect(visibilityStates.last, isTrue);
+
+            await sub.cancel();
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        },
+      );
+
+      test(
+        'setAudioTrack selects track when id is provided even if language is null',
+        () {
+          final engineController = MockPlayerEngineController();
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+            playerEngineController: engineController,
+          );
+
+          final audioTrack = PlayerAsmsAudioTrack(
+            id: 0,
+            mimeType: 'audio/mp4',
+          );
+          controller.setAudioTrack(audioTrack);
+          expect(controller.betterPlayerAsmsAudioTrack, equals(audioTrack));
         },
       );
     },

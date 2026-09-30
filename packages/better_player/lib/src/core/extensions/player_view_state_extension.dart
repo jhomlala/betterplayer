@@ -11,6 +11,9 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Enables full screen mode in player. This will trigger route change.
   void enterFullScreen() {
+    if (_viewState.isFullScreen) {
+      return;
+    }
     _viewState = _viewState.copyWith(isFullScreen: true);
     _postControllerEvent(PlayerControllerEvent.openFullscreen);
   }
@@ -19,6 +22,18 @@ extension PlayerViewStateExtension on BetterPlayerController {
   void exitFullScreen() {
     _viewState = _viewState.copyWith(isFullScreen: false);
     _postControllerEvent(PlayerControllerEvent.hideFullscreen);
+    // Guard for direct callsites only (e.g. user exits fullscreen while PiP
+    // is still active on Android). When this method is invoked from
+    // _playerValueChanged, wasInPipMode has already been cleared to false
+    // before the call, so this block is always a no-op in that path.
+    // Forcing isPip: false here ensures _playerValueChanged fires and performs
+    // the full PiP-exit cleanup (pipStop event, control restoration, etc.).
+    if (defaultTargetPlatform == TargetPlatform.android &&
+        _viewState.wasInPipMode &&
+        _engine != null &&
+        _engine!.value.isPip) {
+      _engine!.value = _engine!.value.copyWith(isPip: false);
+    }
   }
 
   ///Enables/disables full screen mode based on current fullscreen state.
@@ -115,6 +130,13 @@ extension PlayerViewStateExtension on BetterPlayerController {
       message: 'App lifecycle: $appLifecycleState',
       textureId: textureId,
     );
+    if (appLifecycleState == AppLifecycleState.resumed &&
+        defaultTargetPlatform == TargetPlatform.android &&
+        _viewState.wasInPipMode &&
+        _engine != null &&
+        _engine!.value.isPip) {
+      _engine!.value = _engine!.value.copyWith(isPip: false);
+    }
     if (_isAutomaticPlayPauseHandled()) {
       _playbackState = _playbackState.copyWith(
         appLifecycleState: appLifecycleState,

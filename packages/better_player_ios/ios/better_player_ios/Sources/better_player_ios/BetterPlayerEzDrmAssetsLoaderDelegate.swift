@@ -73,7 +73,7 @@ public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoa
 
         let requestBytes: Data
         do {
-            guard let contentIdData = urlString.data(using: .utf8) else {
+            guard let contentIdData = assetId.data(using: .utf8) else {
                 loadingRequest.finishLoading(with: nil)
                 return true
             }

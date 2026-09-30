@@ -165,7 +165,7 @@ import Cache
                 }
             } else {
                 // The file is not cached.
-                playerItem = CachingPlayerItem(url: url, cacheKey: key, headers: headers)
+                playerItem = CachingPlayerItem(url: url, customFileExtension: videoExtension, cacheKey: key, headers: headers)
                 self.existsInStorage = false
             }
         }

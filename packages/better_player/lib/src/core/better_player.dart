@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
@@ -157,7 +157,7 @@ class _BetterPlayerState extends State<BetterPlayer>
       _isFullScreen = true;
       controller.postEvent(PlayerEvent(PlayerEventType.openFullscreen));
       await _pushFullScreenWidget(context);
-    } else if (_isFullScreen) {
+    } else if (!controller.isFullScreen && _isFullScreen) {
       Navigator.of(context, rootNavigator: true).pop();
       _isFullScreen = false;
       controller.postEvent(PlayerEvent(PlayerEventType.hideFullscreen));

@@ -149,6 +149,27 @@ void main() {
           isFromBufferingStart: false,
         ),
       ).called(1);
+
+      when(
+        () => androidPlayer.mockPlayer.absolutePosition,
+      ).thenReturn(8640000000000000);
+      expect(
+        await androidPlayer.getAbsolutePosition(1),
+        DateTime.fromMillisecondsSinceEpoch(8640000000000000),
+      );
+
+      when(
+        () => androidPlayer.mockPlayer.absolutePosition,
+      ).thenReturn(8640000000000001);
+      expect(await androidPlayer.getAbsolutePosition(1), isNull);
+
+      when(() => androidPlayer.mockPlayer.absolutePosition).thenReturn(0);
+      expect(await androidPlayer.getAbsolutePosition(1), isNull);
+
+      when(() => androidPlayer.mockPlayer.absolutePosition).thenReturn(-1000);
+      expect(await androidPlayer.getAbsolutePosition(1), isNull);
+
+      expect(await androidPlayer.getAbsolutePosition(999), isNull);
     });
 
     test('videoEventsFor returns stream', () async {

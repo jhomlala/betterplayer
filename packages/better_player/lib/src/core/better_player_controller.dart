@@ -385,6 +385,7 @@ class BetterPlayerController {
       }
       if (_viewState.wasControlsEnabledBeforePiP) {
         setControlsEnabled(true);
+        setControlsVisibility(true);
       }
       _engine?.refresh();
     }

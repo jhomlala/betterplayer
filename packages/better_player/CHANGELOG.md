@@ -1,3 +1,7 @@
+## 1.19.0
+- Fixed: Parsed DASH `<AdaptationSet>` nodes that specify `contentType` or child `<Representation>` `mimeType` instead of an `<AdaptationSet>` `mimeType` attribute, and kept manifest audio tracks selected when `language` is omitted (#872) (by @rounce).
+- Fixed: Guarded `enterFullScreen` when already in fullscreen and restored controls visibility on `AppLifecycleState.resumed` when returning from Picture-in-Picture on Android (#866) (by @aeonmine).
+
 ## 1.18.0
 - Added: `setPlayerSubtitlesConfiguration` on `BetterPlayerController` to dynamically update subtitle styling at runtime (#1141).
 - Fixed: Prevented `NaN` and `Infinity` errors in progress bars and aspect ratio calculations when media duration or size is zero (#1157, #1044, #901, #884).
