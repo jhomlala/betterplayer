@@ -1,4 +1,4 @@
-## Unreleased
+## 1.19.0
 - Fixed: Parsed DASH `<AdaptationSet>` nodes that specify `contentType` or child `<Representation>` `mimeType` instead of an `<AdaptationSet>` `mimeType` attribute, and kept manifest audio tracks selected when `language` is omitted (#872) (by @rounce).
 - Fixed: Guarded `enterFullScreen` when already in fullscreen and restored controls visibility on `AppLifecycleState.resumed` when returning from Picture-in-Picture on Android (#866) (by @aeonmine).
 
