@@ -22,6 +22,12 @@ extension PlayerViewStateExtension on BetterPlayerController {
   void exitFullScreen() {
     _viewState = _viewState.copyWith(isFullScreen: false);
     _postControllerEvent(PlayerControllerEvent.hideFullscreen);
+    // Guard for direct callsites only (e.g. user exits fullscreen while PiP
+    // is still active on Android). When this method is invoked from
+    // _playerValueChanged, wasInPipMode has already been cleared to false
+    // before the call, so this block is always a no-op in that path.
+    // Forcing isPip: false here ensures _playerValueChanged fires and performs
+    // the full PiP-exit cleanup (pipStop event, control restoration, etc.).
     if (defaultTargetPlatform == TargetPlatform.android &&
         _viewState.wasInPipMode &&
         _engine != null &&

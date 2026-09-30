@@ -21,6 +21,10 @@ class PlayerDashUtils {
         if (mimeType == null) {
           final contentType = node.getAttribute('contentType');
           if (contentType != null) {
+            // MimeTypes.isVideo/isAudio/isText all use String.startsWith, so
+            // synthesising "$contentType/" (e.g. "video/", "audio/", "text/")
+            // is enough to route the AdaptationSet correctly without requiring
+            // the full MIME type string.
             mimeType = '$contentType/';
           } else {
             mimeType = node
