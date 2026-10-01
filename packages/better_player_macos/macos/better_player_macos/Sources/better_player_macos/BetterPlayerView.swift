@@ -3,6 +3,7 @@ import AVKit
 import AppKit
 
 /// A custom NSView that hosts an AVPlayerLayer for macOS video playback.
+@objc(BetterPlayerView)
 public class BetterPlayerView: NSView {
 
     /// The AVPlayerLayer used for video rendering.
@@ -20,6 +21,10 @@ public class BetterPlayerView: NSView {
         super.init(frame: frameRect)
         self.wantsLayer = true
         self.layer = AVPlayerLayer()
+    }
+
+    public convenience init() {
+        self.init(frame: .zero)
     }
 
     public required init?(coder: NSCoder) {
