@@ -1,0 +1,76 @@
+name: E2E macOS (Integration Tests)
+
+on:
+  push:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_macos/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_macos.yml'
+  pull_request:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_macos/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_macos.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Enable macOS Desktop
+        run: flutter config --enable-macos-desktop
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Get Workspace Dependencies
+        run: flutter pub get
+
+      - name: Build macOS Example (e2e target)
+        working-directory: packages/better_player_example
+        run: flutter build macos --target lib/main_e2e.dart --debug
+
+      - name: Run macOS Flow Test
+        working-directory: packages/better_player_example
+        run: flutter test integration_test/macos_flow_test.dart -d macos
+
+      - name: Run macOS HLS Test
+        working-directory: packages/better_player_example
+        run: flutter test integration_test/macos_hls_test.dart -d macos
+
+      - name: Run macOS Data Source Swap Test
+        working-directory: packages/better_player_example
+        run: flutter test integration_test/macos_datasource_swap_test.dart -d macos
+
+      - name: Run macOS Error Recovery Test
+        working-directory: packages/better_player_example
+        run: flutter test integration_test/macos_error_recovery_test.dart -d macos
+
+      - name: Run macOS FFI API Test
+        working-directory: packages/better_player_example
+        run: flutter test integration_test/macos_ffi_test.dart -d macos
