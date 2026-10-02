@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
 macOS implementation of the better_player plugin.
                        DESC
   s.homepage         = 'https://github.com/jhomlala/betterplayer'
-  s.license          = { :file => '../../LICENSE' }
+  s.license          = { :file => '../LICENSE' }
   s.author           = { 'BetterPlayer' => 'email@example.com' }
   s.source           = { :path => '.' }
   s.source_files     = 'better_player_macos/Sources/**/*.{swift,m,h}'

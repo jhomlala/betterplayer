@@ -42,8 +42,8 @@ import Cache
     // MARK: - Lifecycle
 
     /// Setups cache server for HLS streams.
-    /// - Note: No setup is required for iOS HLS playback as it is routed directly through AVURLAsset.
-    @available(*, deprecated, message: "No setup is required for iOS HLS playback.")
+    /// - Note: No setup is required for Apple HLS playback as it is routed directly through AVURLAsset.
+    @available(*, deprecated, message: "No setup is required for Apple HLS playback.")
     @objc public func setup() {
         // Intentionally left blank. HLS playback is routed directly through AVURLAsset
         // to keep compatibility with modern fMP4/CMAF playlists.
