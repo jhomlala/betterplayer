@@ -59,42 +59,36 @@ void main() {
       await pumpUntilFound(tester: tester, finder: playPauseButton);
     });
 
-    testWidgets('Playlist Mode Verification', (tester) async {
+    testWidgets('Visibility cycle, playlist mode, and list player', (
+      tester,
+    ) async {
       app.main();
       await tester.pumpAndSettle();
 
-      final togglePlaylistButton = findById(
-        'better_player_e2e_toggle_playlist',
+      // 1. Visibility cycle verification
+      final visibilityCycleButton = findById(
+        'better_player_e2e_visibility_cycle_button',
       );
-      await scrollAndTap(tester: tester, finder: togglePlaylistButton);
+      await scrollAndTap(tester: tester, finder: visibilityCycleButton);
 
-      final playlistVerified = findById(
-        'better_player_e2e_playlist_mode_verified',
+      final visibilityStatus = findById(
+        'better_player_e2e_visibility_callback_status',
       );
-      await pumpUntilFound(
-        tester: tester,
-        finder: playlistVerified,
-      );
-      expect(playlistVerified, findsOneWidget);
-    });
+      await pumpUntilFound(tester: tester, finder: visibilityStatus);
 
-    testWidgets('List Video Player Mode Verification', (tester) async {
-      app.main();
-      await tester.pumpAndSettle();
+      // 2. Playlist verification
+      final playlistButton = findById('better_player_e2e_playlist_button');
+      await scrollAndTap(tester: tester, finder: playlistButton);
 
-      final toggleListPlayerButton = findById(
-        'better_player_e2e_toggle_list_player',
-      );
-      await scrollAndTap(tester: tester, finder: toggleListPlayerButton);
+      final playlistStatus = findById('better_player_e2e_playlist_status');
+      await pumpUntilFound(tester: tester, finder: playlistStatus);
 
-      final listPlayerVerified = findById(
-        'better_player_e2e_list_player_verified',
-      );
-      await pumpUntilFound(
-        tester: tester,
-        finder: listPlayerVerified,
-      );
-      expect(listPlayerVerified, findsOneWidget);
+      // 3. List player and mid-initialization disposal verification
+      final listPlayerButton = findById('better_player_e2e_list_player_button');
+      await scrollAndTap(tester: tester, finder: listPlayerButton);
+
+      final listPlayerStatus = findById('better_player_e2e_list_player_status');
+      await pumpUntilFound(tester: tester, finder: listPlayerStatus);
     });
   });
 }

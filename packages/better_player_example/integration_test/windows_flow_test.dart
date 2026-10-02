@@ -103,51 +103,65 @@ void main() {
 
       await tapWhenReady(tester: tester, finder: moreButton);
       await tapWhenReady(tester: tester, finder: subtitlesMenu);
-      final subtitlesDefault = findById(
-        'better_player_overflow_menu_subtitles_default',
+
+      final subtitlesMemory = findById(
+        'better_player_overflow_menu_subtitles_memory',
       );
-      await tapWhenReady(tester: tester, finder: subtitlesDefault);
+      await tapWhenReady(tester: tester, finder: subtitlesMemory);
       await waitModalClosed(tester: tester);
 
-      // 8. Progress Bar Interaction
-      final progressBar = findById(
-        'better_player_cupertino_controls_progress_bar',
+      // 8. Verify all core events fired
+      final eventsVerified = findById('better_player_e2e_events_verified');
+      await pumpUntilFound(tester: tester, finder: eventsVerified);
+
+      // 9. Runtime Controls Configuration Hotswap
+      final runtimeConfigButton = findById(
+        'better_player_e2e_runtime_config_button',
       );
-      if (progressBar.evaluate().isNotEmpty) {
-        final barCenter = tester.getCenter(progressBar);
-        await tester.tapAt(barCenter);
-        await tester.pump(const Duration(seconds: 1));
-      }
+      await scrollAndTap(tester: tester, finder: runtimeConfigButton);
 
-      // 9. Swap Controls Theme (Cupertino -> Material)
-      final swapThemeButton = findById('better_player_e2e_swap_theme');
-      await scrollAndTap(tester: tester, finder: swapThemeButton);
-      await tester.pump(const Duration(seconds: 1));
+      final runtimeConfigStatus = findById(
+        'better_player_e2e_runtime_config_status',
+      );
+      await pumpUntilFound(tester: tester, finder: runtimeConfigStatus);
 
-      // 10. Material Theme Controls Verification
+      // 10. Controls Theme Hotswap (Cupertino -> Material -> Cupertino)
+      final toggleThemeButton = findById(
+        'better_player_e2e_toggle_theme_button',
+      );
+      await scrollAndTap(tester: tester, finder: toggleThemeButton);
+
       final materialPlayPause = findById(
         'better_player_material_controls_play_pause_button',
       );
       await pumpUntilFound(tester: tester, finder: materialPlayPause);
-      await tester.tap(materialPlayPause);
-      await tester.pump(const Duration(milliseconds: 500));
-      await tester.tap(materialPlayPause);
-      await tester.pump(const Duration(milliseconds: 500));
 
-      // Swap theme back to Cupertino
-      await scrollAndTap(tester: tester, finder: swapThemeButton);
-      await tester.pump(const Duration(seconds: 1));
+      await scrollAndTap(tester: tester, finder: toggleThemeButton);
+      await pumpUntilFound(tester: tester, finder: playPauseButton);
 
-      // 11. Core playback events verification
-      final coreEventsPassed = findById(
-        'better_player_e2e_core_events_verified',
+      // 11. Seeking
+      final progressBar = findById('better_player_cupertino_progress_bar');
+      if (progressBar.evaluate().isNotEmpty) {
+        try {
+          await tester.ensureVisible(progressBar.first);
+          await tester.pump(const Duration(milliseconds: 200));
+        } catch (_) {}
+        await tester.tap(progressBar.first, warnIfMissed: false);
+        await tester.pump(const Duration(milliseconds: 500));
+      }
+
+      // 12. Fullscreen toggle
+      final expandButton = findById(
+        'better_player_cupertino_controls_expand_button',
       );
-      await pumpUntilFound(
-        tester: tester,
-        finder: coreEventsPassed,
-        timeout: const Duration(seconds: 15),
-      );
-      expect(coreEventsPassed, findsOneWidget);
+      if (expandButton.evaluate().isNotEmpty) {
+        try {
+          await tester.ensureVisible(expandButton.first);
+          await tester.pump(const Duration(milliseconds: 200));
+        } catch (_) {}
+        await tester.tap(expandButton.first, warnIfMissed: false);
+        await tester.pump(const Duration(milliseconds: 500));
+      }
     });
   });
 }

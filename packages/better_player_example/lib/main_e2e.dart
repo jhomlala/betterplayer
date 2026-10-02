@@ -216,17 +216,17 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     setState(() {
       _usingAlternateTheme = !_usingAlternateTheme;
     });
-    final isApple =
-        !kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.iOS ||
-            defaultTargetPlatform == TargetPlatform.macOS);
+    final isCupertinoDefault =
+        !kIsWeb && defaultTargetPlatform != TargetPlatform.android;
     final PlayerTheme targetTheme;
     if (_usingAlternateTheme) {
-      targetTheme = isApple ? PlayerTheme.material : PlayerTheme.cupertino;
+      targetTheme = isCupertinoDefault
+          ? PlayerTheme.material
+          : PlayerTheme.cupertino;
     } else {
       targetTheme = kIsWeb
           ? PlayerTheme.web
-          : (isApple ? PlayerTheme.cupertino : PlayerTheme.material);
+          : (isCupertinoDefault ? PlayerTheme.cupertino : PlayerTheme.material);
     }
     _betterPlayerController.setPlayerControlsConfiguration(
       PlayerControlsConfiguration(

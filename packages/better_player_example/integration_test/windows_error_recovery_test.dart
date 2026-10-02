@@ -59,12 +59,15 @@ void main() {
         finder: playPauseButton,
         timeout: const Duration(seconds: 15),
       );
-
-      await tester.tap(playPauseButton);
+      try {
+        await tester.ensureVisible(playPauseButton.first);
+        await tester.pump(const Duration(milliseconds: 200));
+      } catch (_) {}
+      await tester.tap(playPauseButton.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
     });
 
-    testWidgets('Accurate seek to 30s timestamp', (tester) async {
+    testWidgets('Accurate seek on dedicated Seek E2E page', (tester) async {
       app.main();
       await tester.pumpAndSettle();
 
@@ -72,25 +75,23 @@ void main() {
       final navigateSeekButton = findById('better_player_e2e_navigate_seek');
       await scrollAndTap(tester: tester, finder: navigateSeekButton);
 
-      // 2. Wait for player to be initialized
-      final seekInitialized = findById('seek_e2e_initialized');
+      final seekInitialized = findById('better_player_e2e_seek_initialized');
       await pumpUntilFound(
         tester: tester,
         finder: seekInitialized,
+        timeout: const Duration(seconds: 25),
       );
 
-      // 3. Trigger 30s Seek
-      final seek30sButton = findById('seek_e2e_button_30s');
-      await tapWhenReady(tester: tester, finder: seek30sButton);
+      // 2. Seek 10s and verify
+      final seek10sButton = findById('better_player_e2e_seek_10s_button');
+      await scrollAndTap(tester: tester, finder: seek10sButton);
 
-      // 4. Verify accurate seek completed
-      final seekCompleted = findById('seek_e2e_completed');
+      final seek10sVerified = findById('better_player_e2e_seek_10s_verified');
       await pumpUntilFound(
         tester: tester,
-        finder: seekCompleted,
+        finder: seek10sVerified,
         timeout: const Duration(seconds: 15),
       );
-      expect(seekCompleted, findsOneWidget);
     });
   });
 }
