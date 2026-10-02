@@ -8,7 +8,7 @@ Configure Digital Rights Management (DRM) using `DrmConfiguration` inside `Playe
 
 | `DrmType` | Platforms | Required Fields |
 | :--- | :--- | :--- |
-| `DrmType.token` | Android, iOS, macOS | `token` |
+| `DrmType.token` | Android, iOS, macOS, Windows | `token` |
 | `DrmType.widevine` | Android, Web (Shaka) | `licenseUrl` (optional `headers`, `drmSecurityLevel`) |
 | `DrmType.fairplay` | iOS, macOS, Web (Shaka) | `certificateUrl`, `licenseUrl` |
 | `DrmType.clearKey` | Android, iOS, macOS, Web | `clearKey` (generated via `BetterPlayerClearKeyUtils.generate`) |
@@ -67,7 +67,7 @@ final dataSource = PlayerDataSource(
 );
 ```
 
-## 4. Token-Based Authorization (Android, iOS & macOS)
+## 4. Token-Based Authorization (Android, iOS, macOS & Windows)
 
 ```dart
 final dataSource = PlayerDataSource(

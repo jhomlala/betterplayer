@@ -20,7 +20,7 @@ final dataSource = PlayerDataSource(
 
 ### Pre-caching & cache management
 
-* **Pre-cache before playback** (supported for non-HLS network streams on Android, iOS, and macOS, plus HLS on Android playback cache; note that `preCache()` is a no-op for HLS streams because HLS manifests reference dynamic segments):
+* **Pre-cache before playback** (supported for non-HLS network streams on Android, iOS, and macOS; on Windows, libmpv manages demuxer cache internally during playback; `preCache()` is a no-op for HLS streams):
   ```dart
   await _controller.preCache(dataSource);
   ```

@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Windows desktop platform support backed by `libmpv` and Direct3D 11 via federated package `better_player_windows`.
+
 ## 1.20.0
 - Added: macOS desktop platform support backed by AVPlayer and AppKitView via federated package `better_player_macos`.
 - Fixed: Prevented unintended UI listener notifications during teardown by removing engine listeners before `pause` in `BetterPlayerController.dispose`, and guarded `BetterPlayerListVideoPlayerController` against calling `seekTo` or `play` before initialization completes.

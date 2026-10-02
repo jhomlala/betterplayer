@@ -14,6 +14,7 @@ PiP support varies significantly by device and operating system version:
 *   **macOS**: Requires macOS 10.15 (Catalina) or higher (uses `AVPictureInPictureController`).
 *   **Android**: Requires Android 8.0 or higher, sufficient RAM, and the v2 Flutter Android embedding.
 *   **Web**: Supported via standard HTML5 browser APIs.
+*   **Windows**: Not supported natively (requires custom window-level floating overlays).
 
 ### Verification
 You can programmatically check if the current device supports PiP:

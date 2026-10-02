@@ -31,7 +31,7 @@ var betterPlayerConfiguration = PlayerConfiguration(
 
 ## Icon Customization
 
-Better Player automatically uses Material `Icons` on Android (`PlayerTheme.material`) and `CupertinoIcons` on Apple platforms (iOS and macOS, `PlayerTheme.cupertino`). You can override any default icon in `PlayerControlsConfiguration` or start from `PlayerControlsConfiguration.cupertino()`:
+Better Player automatically uses Material `Icons` on Android and Windows (`PlayerTheme.material`), and `CupertinoIcons` on Apple platforms (iOS and macOS, `PlayerTheme.cupertino`). You can override any default icon in `PlayerControlsConfiguration` or start from `PlayerControlsConfiguration.cupertino()`:
 *   `playIcon`, `pauseIcon`, `muteIcon`, `unMuteIcon`
 *   `fullscreenEnableIcon`, `fullscreenDisableIcon`
 *   `skipBackIcon`, `skipForwardIcon`

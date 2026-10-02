@@ -61,6 +61,14 @@ Apply the following settings for macOS support:
 <true/>
 ```
 
+### Windows Configuration (Required)
+
+Apply the following settings for Windows support:
+
+*   **Target OS**: Windows 10 version 1809 (Build 17763) or higher.
+*   **Graphics**: DirectX 11 capable graphics adapter (D3D11 shared texture rendering).
+*   **libmpv Runtime**: The Windows plugin dynamically loads `mpv-2.dll`. Ensure `mpv-2.dll` is located next to your built application executable (`Runner.exe`) or in your system `PATH`.
+
 ### Web Configuration (Required)
 
 To use Better Player on the web, you must include the Shaka Player library in your `web/index.html` file before the closing `</body>` tag:

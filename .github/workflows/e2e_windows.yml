@@ -1,0 +1,56 @@
+name: E2E Windows (Integration Tests)
+
+on:
+  push:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_windows/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_windows.yml'
+  pull_request:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_windows/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_windows.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Enable Windows Desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~\AppData\Local\Pub\Cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Get Workspace Dependencies
+        run: flutter pub get
+
+      - name: Run Windows Integration Tests
+        working-directory: packages/better_player_example
+        run: flutter test integration_test/windows_all_tests.dart -d windows --no-pub

@@ -5,7 +5,7 @@ title: Notification Configuration
 
 # Notification Configuration
 
-Better Player supports native platform notifications on mobile (Android and iOS), allowing users to control playback from their device's lock screen or notification area. On desktop (macOS) and Web, playback continues in the background when `handleLifecycle` is set to `false`.
+Better Player supports native platform notifications on mobile (Android and iOS), allowing users to control playback from their device's lock screen or notification area. On desktop (macOS and Windows) and Web, playback continues in the background when `handleLifecycle` is set to `false`.
 
 | Android | iOS |
 | :---: | :---: |

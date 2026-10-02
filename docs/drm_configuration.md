@@ -11,7 +11,7 @@ Better Player provides support for Digital Rights Management (DRM) to protect yo
 
 Currently, Better Player supports the following DRM mechanisms:
 
-*   **Token-Based (Authorization Header)**: Supported on Android, iOS, and macOS.
+*   **Token-Based (Authorization Header)**: Supported on Android, iOS, macOS, and Windows.
 *   **Widevine (License URL + Headers)**: Supported on Android and Web (via Shaka Player).
 *   **FairPlay EZDRM (Certificate URL + License URL)**: Supported on iOS, macOS, and Web (via Shaka Player).
     > [!IMPORTANT]

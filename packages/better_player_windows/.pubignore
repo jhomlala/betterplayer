@@ -1,0 +1,2 @@
+# Exclude Swift generation tool
+tool/swiftgen.dart
