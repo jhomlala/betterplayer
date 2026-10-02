@@ -5,7 +5,7 @@ title: Testing
 
 # Testing
 
-When writing widget or integration tests for components that use Better Player, you need to account for its reliance on native platform implementations. By default, `BetterPlayerController` communicates with the native Android/iOS side via `BetterPlayerPlatform.instance`. In a standard Dart test environment, these native calls will fail.
+When writing widget or integration tests for components that use Better Player, you need to account for its reliance on native platform implementations. By default, `BetterPlayerController` communicates with native platforms (Android, iOS, macOS, Web) via `BetterPlayerPlatform.instance`. In a standard Dart test environment, these native calls will fail.
 
 To successfully test your UI, you should mock the underlying platform implementation.
 

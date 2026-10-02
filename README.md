@@ -41,6 +41,7 @@ Why choose Better Player? Here is how it stacks up against the alternatives.
 | Feature | Better Player | video_player | chewie | media_kit |
 |---|:---:|:---:|:---:|:---:|
 | **Engine** | ExoPlayer/AVPlayer/Shaka | ExoPlayer/AVPlayer | video_player | libmpv |
+| **Platforms** | Android, iOS, macOS, Web | Android, iOS, Web | Android, iOS, Web | Android, iOS, macOS, Linux, Windows |
 | **UI Controls** | ✅ Built-in & Customizable | ❌ None | ✅ Built-in | ✅ Built-in |
 | **HLS / DASH** | ✅ Native | ⚠️ Basic | ⚠️ Basic | ✅ Native |
 | **DRM Support** | ✅ Widevine/FairPlay/ClearKey | ❌ None | ❌ None | ❌ None |
@@ -54,9 +55,10 @@ Why choose Better Player? Here is how it stacks up against the alternatives.
 
 - **Adaptive Streaming**: Play HLS, DASH, and Smooth Streaming with automatic track selection.
 - **DRM Support**: Protect your content with Widevine, FairPlay, and ClearKey.
-- **Smart Caching**: Cache videos for seamless offline playback.
+- **Smart Caching**: Cache videos for offline playback.
 - **Picture in Picture (PiP)**: Keep videos playing while users multitask.
 - **Advanced Subtitles**: Parse SRT and WebVTT, including HTML tags.
+- **Cross-Platform**: First-class support across Android, iOS, macOS, and Web.
 
 ---
 

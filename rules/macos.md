@@ -35,7 +35,7 @@ To avoid maintaining duplicate logic across iOS and macOS while keeping packages
 | `BetterPlayerTimeUtils.swift` | **Shared** (Synced) | CoreMedia time conversion utilities. |
 | `CacheManager.swift` | **Shared** (Synced) | Disk/memory caching logic via `Cache` package. |
 | `CachingPlayerItem.swift` | **Shared** (Synced) | Custom AVAssetResourceLoader byte range interception. |
-| `BetterPlayerView.swift` | **Platform-specific** | Inherits `NSView` on macOS (with `wantsLayer = true` and `layer = AVPlayerLayer()`), vs `UIView` on iOS. |
+| `BetterPlayerView.swift` | **Platform-specific** | Layer-backed `NSView` on macOS (`wantsLayer = true`, `makeBackingLayer()` returning `AVPlayerLayer`, and bounds sync in `layout()`), vs `UIView` on iOS. |
 | `BetterPlayerPlugin.swift` | **Platform-specific** | Implements `FlutterPlatformViewFactory` returning an `NSView`. |
 | `BetterPlayer.swift` | **Platform-specific** | macOS version strips `AVAudioSession` calls and uses native PiP/window management. |
 

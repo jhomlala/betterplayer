@@ -49,6 +49,18 @@ Apply the following settings for Android support:
 *   **Flutter Version**: Use **Flutter 3.47.0** or higher (required for latest architectural improvements).
 *   **MultiDex**: Ensure MultiDex is enabled in your project.
 
+### macOS Configuration (Required)
+
+Apply the following settings for macOS support:
+
+*   **Deployment Target**: Set the minimum macOS deployment version to **10.15** (Catalina) or higher.
+*   **Network Client Entitlement**: Flutter macOS apps run inside an App Sandbox by default. To stream network videos, add the incoming/outgoing client network entitlement to both `macos/Runner/DebugProfile.entitlements` and `macos/Runner/Release.entitlements`:
+
+```xml
+<key>com.apple.security.network.client</key>
+<true/>
+```
+
 ### Web Configuration (Required)
 
 To use Better Player on the web, you must include the Shaka Player library in your `web/index.html` file before the closing `</body>` tag:

@@ -5,7 +5,7 @@ title: Logging Configuration
 
 # Logging Configuration
 
-Better Player provides an extensible logging system centered around the `PlayerLogger`. It supports native-to-Dart log streaming from Android (ExoPlayer) and iOS (AVPlayer), automatic caller derivation, and custom output backends.
+Better Player provides an extensible logging system centered around the `PlayerLogger`. It supports native-to-Dart log streaming from Android (ExoPlayer), iOS, and macOS (AVPlayer), automatic caller derivation, and custom output backends.
 
 ## Setup
 
@@ -45,9 +45,9 @@ Better Player uses the following hierarchy (from lowest to highest):
 
 Better Player automatically captures logs from the native playback engines:
 - **Android**: Internal events from ExoPlayer's `Player.Listener` and lifecycle logs.
-- **iOS**: State changes via KVO (Key-Value Observing) on `AVPlayer` and lifecycle logs.
+- **iOS & macOS**: State changes via KVO (Key-Value Observing) on `AVPlayer` and native lifecycle logs.
 
-These logs are forwarded to Dart and routed through `PlayerLogger` with the `Android` or `iOS` tag, allowing you to see exactly what is happening in the native layer within your Flutter console or custom log backends.
+These logs are forwarded to Dart and routed through `PlayerLogger` with the `Android`, `iOS`, or `macOS` tag, allowing you to see exactly what is happening in the native layer within your Flutter console or custom log backends.
 
 ## Custom Log Outputs
 

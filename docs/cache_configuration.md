@@ -29,7 +29,7 @@ PlayerDataSource _betterPlayerDataSource = PlayerDataSource(
 *   **`useCache`**: Enables or disables caching for the data source.
 *   **`maxCacheSize`**: (Android only) The maximum total size of the cache on disk in bytes.
 *   **`maxCacheFileSize`**: (Android only) The maximum size allowed for an individual cached file in bytes.
-*   **`key`**: A unique identifier used to persist and reuse cached data across application sessions on both Android and iOS.
+*   **`key`**: A unique identifier used to persist and reuse cached data across application sessions on Android, iOS, and macOS.
 
 :::important
 Provide a unique `key` per video (especially in lists) so cached segments are persisted across sessions and never collide between different data sources.
@@ -56,9 +56,9 @@ betterPlayerController.stopPreCache(_betterPlayerDataSource);
 
 ## Platform Support
 
-The underlying implementation varies by platform. Android uses ExoPlayer's internal caching mechanism. On iOS, [HLSCachingReverseProxyServer](https://github.com/StyleShare/HLSCachingReverseProxyServer) is used for HLS streams, and [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) is used for other formats. On the Web, fine-grained caching control (`preCache`, `clearCache`) is not currently supported natively by the Shaka Player wrapper.
+The underlying implementation varies by platform. Android uses ExoPlayer's internal caching mechanism. On iOS and macOS, [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) and local cache storage manage media caching. On the Web, fine-grained caching control (`preCache`, `clearCache`) is not currently supported natively by the Shaka Player wrapper.
 
-| Feature | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS | Web |
+| Feature | Android HLS | Android non-HLS | Apple (iOS/macOS) HLS | Apple (iOS/macOS) non-HLS | Web |
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Normal Caching** | ✓ | ✓ | ✓ | ✓ | x |
 | **Pre-Caching** | ✓ | ✓ | x | ✓ | x |
