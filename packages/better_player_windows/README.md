@@ -14,12 +14,12 @@ dependencies:
 ## Requirements
 
 * **Windows**: Windows 10 (version 1809) or higher (64-bit).
-* **DirectX**: Direct3D 11 capable graphics hardware or driver.
+* **Graphics**: DirectX 11 or compatible graphics hardware or driver.
 
 ## Features
 
 * High-performance playback engine powered by `libmpv` and FFmpeg.
-* Direct3D 11 hardware-accelerated video rendering via Flutter's `TextureRegistrar`.
+* Video rendering via Flutter's `TextureRegistrar`.
 * Full HLS adaptive bitrate streaming (`.m3u8`) and MPEG-DASH (`.mpd`).
 * RTSP live streaming support.
 * Subtitle parsing and audio track switching.

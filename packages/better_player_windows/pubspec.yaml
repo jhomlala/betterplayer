@@ -1,6 +1,6 @@
 name: better_player_windows
 resolution: workspace
-description: The Windows implementation of the better_player plugin, providing video playback using libmpv, Direct3D 11, and FFI for Flutter desktop apps.
+description: The Windows implementation of the better_player plugin, providing video playback using libmpv and FFI for Flutter desktop apps.
 version: 1.0.0
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_windows
 topics:

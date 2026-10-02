@@ -2,10 +2,9 @@
 #define BETTER_PLAYER_WINDOWS_TEXTURE_BRIDGE_H_
 
 #include <flutter/texture_registrar.h>
-#include <d3d11.h>
-#include <wrl/client.h>
 #include <memory>
 #include <mutex>
+#include <vector>
 
 #include "include/mpv/client.h"
 #include "include/mpv/render.h"
@@ -25,7 +24,7 @@ class TextureBridge {
 
  private:
   static void OnMpvUpdate(void* ctx);
-  const FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptor(size_t width, size_t height);
+  const FlutterDesktopPixelBuffer* CopyPixelBuffer(size_t width, size_t height);
 
   flutter::TextureRegistrar* texture_registrar_ = nullptr;
   int64_t texture_id_ = -1;
@@ -34,12 +33,9 @@ class TextureBridge {
   mpv_handle* mpv_ = nullptr;
   mpv_render_context* mpv_render_ = nullptr;
 
-  Microsoft::WRL::ComPtr<ID3D11Device> d3d11_device_;
-  Microsoft::WRL::ComPtr<ID3D11DeviceContext> d3d11_context_;
-  Microsoft::WRL::ComPtr<ID3D11Texture2D> texture_;
-  HANDLE shared_handle_ = nullptr;
+  std::vector<uint8_t> pixel_buffer_;
+  FlutterDesktopPixelBuffer desktop_pixel_buffer_{};
 
-  FlutterDesktopGpuSurfaceDescriptor gpu_surface_descriptor_{};
   std::mutex mutex_;
   bool is_disposed_ = false;
 };

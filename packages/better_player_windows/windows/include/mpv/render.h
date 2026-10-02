@@ -9,6 +9,9 @@ extern "C" {
 
 typedef struct mpv_render_context mpv_render_context;
 
+#define MPV_RENDER_API_TYPE_SW "sw"
+#define MPV_RENDER_API_TYPE_OPENGL "opengl"
+
 typedef enum mpv_render_param_type {
     MPV_RENDER_PARAM_INVALID = 0,
     MPV_RENDER_PARAM_API_TYPE = 1,
@@ -30,8 +33,7 @@ typedef enum mpv_render_param_type {
     MPV_RENDER_PARAM_SW_SIZE = 17,
     MPV_RENDER_PARAM_SW_FORMAT = 18,
     MPV_RENDER_PARAM_SW_STRIDE = 19,
-    MPV_RENDER_PARAM_SW_POINTER = 20,
-    MPV_RENDER_PARAM_DXGI_INIT_PARAMS = 21
+    MPV_RENDER_PARAM_SW_POINTER = 20
 } mpv_render_param_type;
 
 typedef struct mpv_render_param {
