@@ -100,6 +100,9 @@ class BetterPlayerController {
   /// Used as a safeguard to prevent method calls or stream emissions after teardown.
   bool _disposed = false;
 
+  /// Whether this controller has been disposed.
+  bool get isDisposed => _disposed;
+
   /// Tracks visual UI states (fullscreen, PIP, control visibility).
   PlayerViewState _viewState = const PlayerViewState();
 
@@ -354,6 +357,9 @@ class BetterPlayerController {
   /// Internal callback invoked whenever the underlying video engine reports a state change.
   /// Responsible for syncing engine state (PIP, initialization, progress) to the high-level controller.
   Future<void> _onVideoPlayerChanged() async {
+    if (_disposed) {
+      return;
+    }
     for (final listener in List<VoidCallback>.from(_videoListeners)) {
       listener();
     }
@@ -469,19 +475,20 @@ class BetterPlayerController {
       return;
     }
     if (!_disposed) {
+      _disposed = true;
       if (_engine != null) {
-        pause();
-        // Removing listeners is safe even if they were never registered.
+        // Removing listeners first avoids notifying UI during teardown.
         _engine!.removeListener(_onFullScreenStateChanged);
         _engine!.removeListener(_onVideoPlayerChanged);
+        pause();
         _engine!.dispose();
       }
+      _videoListeners.clear();
       _eventListeners.clear();
       _nextVideoTimer?.cancel();
       _nextVideoTimeStreamController.close();
       _controlsVisibilityStreamController.close();
       _videoEventStreamSubscription?.cancel();
-      _disposed = true;
       _controllerEventStreamController.close();
 
       ///Delete files async

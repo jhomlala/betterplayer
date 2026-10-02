@@ -59,9 +59,10 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
   }
 
   void _onVideoPlayerChanged() {
-    if (mounted) {
-      setState(() {});
+    if (!mounted || (widget.controller?.isDisposed ?? false)) {
+      return;
     }
+    setState(() {});
   }
 
   @override
@@ -73,6 +74,9 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
   }
 
   void _onControllerChanged(PlayerControllerEvent event) {
+    if (!mounted || (widget.controller?.isDisposed ?? false)) {
+      return;
+    }
     setState(() {
       if (!_initialized) {
         _initialized = true;
@@ -315,6 +319,9 @@ class _PlayerVideoFitWidgetState extends State<_PlayerVideoFitWidget> {
   }
 
   void _onControllerEvent(PlayerControllerEvent event) {
+    if (!mounted || widget.betterPlayerController.isDisposed) {
+      return;
+    }
     switch (event) {
       case PlayerControllerEvent.play:
         if (!_started) {
@@ -333,7 +340,7 @@ class _PlayerVideoFitWidgetState extends State<_PlayerVideoFitWidget> {
   }
 
   void _onVideoPlayerChanged() {
-    if (!mounted) {
+    if (!mounted || widget.betterPlayerController.isDisposed) {
       return;
     }
     final isInitialized =

@@ -4,20 +4,27 @@ import 'package:better_player/better_player.dart';
 class BetterPlayerListVideoPlayerController {
   BetterPlayerController? _betterPlayerController;
 
+  /// Underlying [BetterPlayerController], or null if not yet attached.
+  BetterPlayerController? get betterPlayerController => _betterPlayerController;
+
   void setVolume(double volume) {
     _betterPlayerController?.setVolume(volume);
   }
 
   void pause() {
-    _betterPlayerController?.pause();
+    _betterPlayerController?.pause().catchError((_) {});
   }
 
   void play() {
-    _betterPlayerController?.play();
+    if (_betterPlayerController?.isVideoInitialized() ?? false) {
+      _betterPlayerController?.play().catchError((_) {});
+    }
   }
 
   void seekTo(Duration duration) {
-    _betterPlayerController?.seekTo(duration);
+    if (_betterPlayerController?.isVideoInitialized() ?? false) {
+      _betterPlayerController?.seekTo(duration).catchError((_) {});
+    }
   }
 
   // ignore: use_setters_to_change_properties

@@ -313,12 +313,18 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       _isListPlayerMode = true;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _listVideoPlayerController
-        ..setVolume(0.5)
-        ..play()
-        ..pause()
-        ..seekTo(const Duration(seconds: 2))
-        ..setMixWithOthers(true);
+      try {
+        _listVideoPlayerController
+          ..setVolume(0.5)
+          ..play()
+          ..pause();
+        if (_listVideoPlayerController.betterPlayerController
+                ?.isVideoInitialized() ??
+            false) {
+          _listVideoPlayerController.seekTo(const Duration(seconds: 2));
+        }
+        _listVideoPlayerController.setMixWithOthers(true);
+      } catch (_) {}
       if (mounted) {
         setState(() {
           _listPlayerVerified = true;
