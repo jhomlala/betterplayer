@@ -11,6 +11,7 @@ Picture-in-Picture (PiP) allows users to continue watching videos in a small, fl
 
 PiP support varies significantly by device and operating system version:
 *   **iOS**: Requires iOS 14.0 or higher.
+*   **macOS**: Requires macOS 10.15 (Catalina) or higher (uses `AVPictureInPictureController`).
 *   **Android**: Requires Android 8.0 or higher, sufficient RAM, and the v2 Flutter Android embedding.
 *   **Web**: Supported via standard HTML5 browser APIs.
 
@@ -35,6 +36,9 @@ To enable Picture-in-Picture on iOS, you need to configure background modes:
 1. Open your project in Xcode.
 2. Go to **Signing & Capabilities** -> **Background Modes**.
 3. Check the necessary boxes (specifically **Audio, AirPlay, and Picture in Picture**).
+
+### macOS
+No additional capabilities or entitlements are required. PiP operates natively using `AVPictureInPictureController`.
 
 ## Implementation
 

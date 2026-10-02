@@ -1,0 +1,849 @@
+// Better Player Swift implementation
+
+import AVFoundation
+import AVKit
+#if canImport(FlutterMacOS)
+import FlutterMacOS
+#else
+public class FlutterError: NSObject {
+    @objc public var code: String
+    @objc public var message: String?
+    @objc public var details: Any?
+    @objc public init(code: String, message: String?, details: Any?) {
+        self.code = code
+        self.message = message
+        self.details = details
+        super.init()
+    }
+}
+public typealias FlutterResult = (Any?) -> Void
+
+@objc public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoaderDelegate {
+    public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) { super.init() }
+}
+@objc public class CacheManager: NSObject {
+    @objc public static let shared = CacheManager()
+    public func getCachingPlayerItemForNormalPlayback(_ url: URL, cacheKey: String?, videoExtension: String?, headers: [NSObject: AnyObject]) -> AVPlayerItem? { return nil }
+    @objc public func preCacheURL(_ url: URL, cacheKey: String?, videoExtension: String?, withHeaders headers: [NSObject: AnyObject], completionHandler: ((_ success: Bool) -> Void)?) {}
+    @objc public func stopPreCache(_ url: URL, cacheKey: String?, completionHandler: ((_ success: Bool) -> Void)?) {}
+    @objc public func clearCache() {}
+}
+#endif
+import Foundation
+import AppKit
+
+private var timeRangeContext = 0
+private var statusContext = 0
+private var playbackLikelyToKeepUpContext = 0
+private var playbackBufferEmptyContext = 0
+private var playbackBufferFullContext = 0
+private var presentationSizeContext = 0
+
+/// A platform view implementation that wraps AVPlayer for video playback.
+/// Handles player initialization, lifecycle, and event reporting to Flutter.
+@objc public class BetterPlayer: NSObject, AVPictureInPictureControllerDelegate {
+
+    private func sendError(_ error: FlutterError) {
+        callback?.onError(error.code, errorMessage: error.message ?? "", errorDetails: (error.details as? String) ?? "")
+    }
+
+
+    // MARK: - Properties
+
+    public var textureId: Int64 = -1
+
+    /// The underlying AVPlayer instance.
+    public private(set) var player: AVPlayer
+
+    /// The delegate for handling DRM asset loading.
+    public private(set) var loaderDelegate: BetterPlayerEzDrmAssetsLoaderDelegate?
+
+    /// The Flutter event channel for sending player events.
+    
+
+    /// The sink for emitting events to Flutter.
+    @objc public var callback: BetterPlayerCallback?
+
+    
+
+    /// The preferred transform for the video.
+    public var preferredTransform: CGAffineTransform = .identity
+
+    /// Whether the player has been disposed.
+    public private(set) var disposed: Bool = false
+
+    /// Whether the player is currently playing.
+    public private(set) var isPlaying: Bool = false
+
+    /// Whether a seek operation is currently in progress.
+    public private(set) var isSeeking: Bool = false
+
+    /// Whether the player should loop playback.
+    public var isLooping: Bool = false
+
+    /// Whether the player has been initialized.
+    public private(set) var isInitialized: Bool = false
+
+    /// The unique key identifying the current data source.
+    public private(set) var key: String? = nil
+
+    /// The number of times playback failed.
+    public private(set) var failedCount: Int = 0
+
+    private var videoGravity: AVLayerVideoGravity = .resizeAspect
+    private weak var playerView: NSView?
+
+    /// Reference to the AVPlayerLayer used for Picture-in-Picture.
+    public var playerLayerRef: AVPlayerLayer?
+
+    /// Whether Picture-in-Picture is active.
+    public var pictureInPicture: Bool = false
+
+    /// Whether KVO observers have been added.
+    public var observersAdded: Bool = false
+
+    /// The number of times playback stalled.
+    public var stalledCount: Int = 0
+
+    /// Whether the stalled check is currently running.
+    public var isStalledCheckStarted: Bool = false
+
+    /// The current playback rate.
+    public var playerRate: Float = 1.0
+
+    /// The overridden duration of the video in milliseconds.
+    public var overriddenDuration: Int = 0
+
+    /// The last recorded time control status of the AVPlayer.
+    public var lastAvPlayerTimeControlStatus: AVPlayer.TimeControlStatus? = nil
+
+    private var pipController: AVPictureInPictureController?
+    private var restoreUIOnPipStop: ((Bool) -> Void)?
+
+    // MARK: - Lifecycle
+
+    public override init() {
+        self.player = AVPlayer()
+        super.init()
+        self.player.actionAtItemEnd = .none
+        self.player.appliesMediaSelectionCriteriaAutomatically = false
+        if #available(macOS 10.12, *) {
+            self.player.automaticallyWaitsToMinimizeStalling = false
+        }
+        self.observersAdded = false
+        self.isInitialized = false
+        self.isPlaying = false
+        self.disposed = false
+    }
+
+    public convenience init(frame: CGRect) {
+        self.init()
+    }
+
+    /// Returns the view to be displayed in Flutter.
+    @objc public func view() -> NSView {
+        if let existing = self.playerView {
+            return existing
+        }
+        let playerView = BetterPlayerView(frame: .zero)
+        playerView.player = player
+        playerView.playerLayer.videoGravity = self.videoGravity
+
+        self.playerView = playerView
+        return playerView
+    }
+
+    // MARK: - Aspect Ratio Handling
+
+    /// Sets the video aspect ratio gravity.
+    /// - Parameter gravity: The gravity to apply.
+    @objc public func setAspectRatio(_ gravity: AVLayerVideoGravity) {
+        self.videoGravity = gravity
+
+        if let playerLayer = playerView?.layer as? AVPlayerLayer {
+            playerLayer.videoGravity = gravity
+        }
+
+        if let pipLayer = playerLayerRef {
+            pipLayer.videoGravity = gravity
+        }
+    }
+
+    // MARK: - Observers
+
+    private func addObservers(_ item: AVPlayerItem) {
+        if !observersAdded {
+            player.addObserver(self, forKeyPath: "rate", options: [], context: nil)
+            item.addObserver(self, forKeyPath: "loadedTimeRanges", options: [], context: &timeRangeContext)
+            item.addObserver(self, forKeyPath: "status", options: [], context: &statusContext)
+            item.addObserver(self, forKeyPath: "presentationSize", options: [], context: &presentationSizeContext)
+            item.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: [], context: &playbackLikelyToKeepUpContext)
+            item.addObserver(self, forKeyPath: "playbackBufferEmpty", options: [], context: &playbackBufferEmptyContext)
+            item.addObserver(self, forKeyPath: "playbackBufferFull", options: [], context: &playbackBufferFullContext)
+            NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime(_:)), name: .AVPlayerItemDidPlayToEndTime, object: item)
+            observersAdded = true
+        }
+    }
+
+    private func removeObservers() {
+        if observersAdded {
+            player.removeObserver(self, forKeyPath: "rate", context: nil)
+            player.currentItem?.removeObserver(self, forKeyPath: "status", context: &statusContext)
+            player.currentItem?.removeObserver(self, forKeyPath: "presentationSize", context: &presentationSizeContext)
+            player.currentItem?.removeObserver(self, forKeyPath: "loadedTimeRanges", context: &timeRangeContext)
+            player.currentItem?.removeObserver(self, forKeyPath: "playbackLikelyToKeepUp", context: &playbackLikelyToKeepUpContext)
+            player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferEmpty", context: &playbackBufferEmptyContext)
+            player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferFull", context: &playbackBufferFullContext)
+            NotificationCenter.default.removeObserver(self)
+            observersAdded = false
+        }
+    }
+
+    @objc private func itemDidPlayToEndTime(_ notification: Notification) {
+        if isLooping {
+            if let p = notification.object as? AVPlayerItem {
+                p.seek(to: .zero, completionHandler: nil)
+            }
+        } else {
+            if callback != nil {
+                callback?.onCompleted(key: key)
+                removeObservers()
+            }
+        }
+    }
+
+    // MARK: - Video Transformation
+
+    private func radiansToDegrees(_ radians: CGFloat) -> CGFloat {
+        var degrees = CGFloat(radians * 180.0 / .pi)
+        if degrees < 0 { degrees += 360 }
+        return degrees
+    }
+
+    private func getVideoComposition(transform: CGAffineTransform, asset: AVAsset, videoTrack: AVAssetTrack) -> AVMutableVideoComposition {
+        let instruction = AVMutableVideoCompositionInstruction()
+        instruction.timeRange = CMTimeRangeMake(start: .zero, duration: asset.duration)
+        let layerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrack)
+        layerInstruction.setTransform(preferredTransform, at: .zero)
+
+        let videoComposition = AVMutableVideoComposition()
+        instruction.layerInstructions = [layerInstruction]
+        videoComposition.instructions = [instruction]
+
+        var width = videoTrack.naturalSize.width
+        var height = videoTrack.naturalSize.height
+        let rotationDegrees = Int(round(radiansToDegrees(atan2(preferredTransform.b, preferredTransform.a))))
+        if rotationDegrees == 90 || rotationDegrees == 270 {
+            width = videoTrack.naturalSize.height
+            height = videoTrack.naturalSize.width
+        }
+        videoComposition.renderSize = CGSize(width: width, height: height)
+
+        let nominalFrameRate = videoTrack.nominalFrameRate
+        var fps: Int32 = 30
+        if nominalFrameRate > 0 { fps = Int32(ceil(nominalFrameRate)) }
+        videoComposition.frameDuration = CMTimeMake(value: 1, timescale: fps)
+        return videoComposition
+    }
+
+    private func fixTransform(_ videoTrack: AVAssetTrack) -> CGAffineTransform {
+        var transform = videoTrack.preferredTransform
+        let rotationDegrees = Int(round(radiansToDegrees(atan2(transform.b, transform.a))))
+        if rotationDegrees == 90 {
+            transform.tx = videoTrack.naturalSize.height
+            transform.ty = 0
+        } else if rotationDegrees == 180 {
+            transform.tx = videoTrack.naturalSize.width
+            transform.ty = videoTrack.naturalSize.height
+        } else if rotationDegrees == 270 {
+            transform.tx = 0
+            transform.ty = videoTrack.naturalSize.width
+        }
+        return transform
+    }
+
+    // MARK: - Data Source Handling
+
+    /// Sets the data source from an asset path.
+    @objc public func setDataSourceAsset(_ assetPath: String, key: String?, certificateUrl: String?, licenseUrl: String?, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int) {
+        BetterPlayerApi.log(1, "setDataSourceAsset: \(assetPath)")
+        var resolvedPath: String? = Bundle.main.path(forResource: assetPath, ofType: nil)
+        if resolvedPath == nil {
+            resolvedPath = Bundle.main.path(forResource: assetPath, ofType: nil, inDirectory: "flutter_assets")
+        }
+        if resolvedPath == nil {
+            if let frameworkBundle = Bundle(identifier: "io.flutter.flutter.app") ?? Bundle(for: BetterPlayer.self) as Bundle? {
+                resolvedPath = frameworkBundle.path(forResource: assetPath, ofType: nil, inDirectory: "flutter_assets")
+            }
+        }
+        if resolvedPath == nil {
+            resolvedPath = Bundle.main.path(forResource: "flutter_assets/\(assetPath)", ofType: nil)
+        }
+
+        if let path = resolvedPath {
+            let url = URL(fileURLWithPath: path)
+            setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: false, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: nil)
+        } else {
+            BetterPlayerApi.log(3, "setDataSourceAsset failed: asset not found at \(assetPath)")
+            let error = FlutterError(code: "VideoError", message: "Failed to load video: asset not found at \(assetPath)", details: nil)
+            sendError(error)
+        }
+    }
+
+    /// Sets the data source from a URL.
+    @objc public func setDataSourceURL(_ url: URL, key: String?, certificateUrl: String?, licenseUrl: String?, headers: [AnyHashable: Any], useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
+        BetterPlayerApi.log(1, "setDataSourceURL: \(url.absoluteString)")
+        self.overriddenDuration = 0
+
+        let item: AVPlayerItem
+        if useCache {
+            let cacheKeyInternal = cacheKey
+            let videoExtInternal = videoExtension
+            item = cacheManager.getCachingPlayerItemForNormalPlayback(url, cacheKey: cacheKeyInternal, videoExtension: videoExtInternal, headers: headers as [NSObject: AnyObject]) ?? AVPlayerItem(url: url)
+        } else {
+            let asset = AVURLAsset(url: url, options: ["AVURLAssetHTTPHeaderFieldsKey": headers])
+            if let certificateUrl = certificateUrl, !certificateUrl.isEmpty {
+                let certURL = URL(string: certificateUrl)
+                let licURL = licenseUrl.flatMap { URL(string: $0) }
+                if let certURL = certURL {
+                    let delegate = BetterPlayerEzDrmAssetsLoaderDelegate(certURL, withLicenseURL: licURL)
+                    self.loaderDelegate = delegate
+                    let qos = DispatchQoS.QoSClass.default
+                    let streamQueue = DispatchQueue(label: "streamQueue", qos: DispatchQoS(qosClass: qos, relativePriority: -1), attributes: [])
+                    asset.resourceLoader.setDelegate(delegate, queue: streamQueue)
+                }
+            }
+            item = AVPlayerItem(asset: asset)
+        }
+        if overriddenDuration > 0 {
+            self.overriddenDuration = overriddenDuration
+        }
+        setDataSourcePlayerItem(item, key: key)
+    }
+
+    private func setDataSourcePlayerItem(_ item: AVPlayerItem, key: String?) {
+        self.key = key
+        self.stalledCount = 0
+        self.isStalledCheckStarted = false
+        self.playerRate = 1
+        self.isInitialized = false
+        
+        removeObservers()
+        
+        player.replaceCurrentItem(with: item)
+        BetterPlayerApi.log(1, "setDataSource: item replaced")
+
+        let asset = item.asset
+        asset.loadValuesAsynchronously(forKeys: ["tracks"]) {
+            if asset.statusOfValue(forKey: "tracks", error: nil) == .loaded {
+                let tracks = asset.tracks(withMediaType: .video)
+                if let videoTrack = tracks.first {
+                    videoTrack.loadValuesAsynchronously(forKeys: ["preferredTransform"]) { [weak self] in
+                        guard let self = self, !self.disposed else { return }
+                        if videoTrack.statusOfValue(forKey: "preferredTransform", error: nil) == .loaded {
+                            let fixedTransform = self.fixTransform(videoTrack)
+                            self.preferredTransform = fixedTransform
+                            // Only apply videoComposition if the video actually has rotation/transform metadata,
+                            // allowing normal videos to stay on zero-copy hardware presentation pipeline.
+                            if !fixedTransform.isIdentity {
+                                let videoComposition = self.getVideoComposition(transform: fixedTransform, asset: asset, videoTrack: videoTrack)
+                                item.videoComposition = videoComposition
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        addObservers(item)
+    }
+
+    // MARK: - Stalling Handling
+
+    private func handleStalled() {
+        if isStalledCheckStarted { return }
+        isStalledCheckStarted = true
+        startStalledCheck()
+    }
+
+    private func startStalledCheck() {
+        if let currentItem = player.currentItem {
+            if currentItem.isPlaybackLikelyToKeepUp || (availableDuration() - CMTimeGetSeconds(currentItem.currentTime())) > 10.0 {
+                play()
+            } else {
+                stalledCount += 1
+                if stalledCount > 60 {
+                    if callback != nil {
+                        let error = FlutterError(code: "VideoError", message: "Failed to load video: playback stalled", details: nil)
+                        sendError(error)
+                    }
+                    return
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                    self?.startStalledCheck()
+                }
+            }
+        }
+    }
+
+    private func availableDuration() -> TimeInterval {
+        guard let timeRange = player.currentItem?.loadedTimeRanges.first?.timeRangeValue else { return 0 }
+        let startSeconds = CMTimeGetSeconds(timeRange.start)
+        let durationSeconds = CMTimeGetSeconds(timeRange.duration)
+        return startSeconds + durationSeconds
+    }
+
+    // MARK: - KVO observeValue
+
+    public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "rate" {
+            if let pipController = pipController, pipController.isPictureInPictureActive {
+                if let last = lastAvPlayerTimeControlStatus, last == player.timeControlStatus {
+                    return
+                }
+                if player.timeControlStatus == .paused {
+                    lastAvPlayerTimeControlStatus = player.timeControlStatus
+                    callback?.onPause(key: key)
+                    return
+                }
+                if player.timeControlStatus == .playing {
+                    lastAvPlayerTimeControlStatus = player.timeControlStatus
+                    callback?.onPlay(key: key)
+                }
+            }
+
+            if isPlaying && playerRate > 0 && player.rate > 0 && abs(player.rate - playerRate) > 0.0001 {
+                DispatchQueue.main.async { [weak self] in
+                    guard let self = self, self.isPlaying, self.player.rate > 0,
+                          abs(self.player.rate - self.playerRate) > 0.0001 else { return }
+                    self.applyPlayerRate()
+                }
+            }
+
+            if player.rate == 0 && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, .zero) == 1 && (player.currentItem?.duration ?? .zero).isValid && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, player.currentItem?.duration ?? .zero) == -1 && isPlaying {
+                handleStalled()
+            }
+        }
+
+        if context == &timeRangeContext {
+            if callback != nil, let item = object as? AVPlayerItem {
+                var values: [[NSNumber]] = []
+                for rangeValue in item.loadedTimeRanges {
+                    let range = rangeValue.timeRangeValue
+                    let start = NSNumber(value: BetterPlayerTimeUtils.cmTimeToMillis(range.start))
+                    var end = NSNumber(value: BetterPlayerTimeUtils.cmTimeToMillis(range.start) + BetterPlayerTimeUtils.cmTimeToMillis(range.duration))
+                    if let endTime = player.currentItem?.forwardPlaybackEndTime, !CMTIME_IS_INVALID(endTime) {
+                        let endTimeMs = BetterPlayerTimeUtils.cmTimeToMillis(endTime)
+                        if end.int64Value > endTimeMs { end = NSNumber(value: endTimeMs) }
+                    }
+                    values.append([start, end])
+                }
+                if let jsonData = try? JSONSerialization.data(withJSONObject: values, options: []),
+                   let jsonString = String(data: jsonData, encoding: .utf8) {
+                    callback?.onBufferingUpdate(jsonRanges: jsonString, key: key)
+                }
+                if !isInitialized {
+                    onReadyToPlay()
+                }
+            }
+        } else if context == &presentationSizeContext {
+            onReadyToPlay()
+        } else if context == &statusContext {
+            if let item = object as? AVPlayerItem {
+                switch item.status {
+                case .failed:
+                    if callback != nil {
+                        let nsError = item.error as NSError?
+                        let description = item.error?.localizedDescription ?? "unknown"
+                        let details = nsError?.debugDescription ?? "unknown"
+                        
+                        BetterPlayerApi.log(3, "item status failed: \(description), details: \(details)")
+                        let message = "Failed to load video: \(description)"
+                        let error = FlutterError(code: "VideoError", message: message, details: details)
+                        sendError(error)
+                    }
+                case .unknown:
+                    break
+                case .readyToPlay:
+                    onReadyToPlay()
+                @unknown default:
+                    break
+                }
+            }
+        } else if context == &playbackLikelyToKeepUpContext {
+            if player.currentItem?.isPlaybackLikelyToKeepUp == true {
+                BetterPlayerApi.log(1, "playbackLikelyToKeepUp: true")
+                if !isInitialized {
+                    onReadyToPlay()
+                }
+                updatePlayingState()
+                callback?.onBufferingEnd(key: key)
+            }
+        } else if context == &playbackBufferEmptyContext {
+            BetterPlayerApi.log(1, "playbackBufferEmpty: true")
+            callback?.onBufferingStart(key: key)
+        } else if context == &playbackBufferFullContext {
+            BetterPlayerApi.log(1, "playbackBufferFull: true")
+            callback?.onBufferingEnd(key: key)
+        }
+    }
+
+    // MARK: - Playback Control
+
+    /// Updates the player state to match current playing status.
+    public func updatePlayingState() {
+        guard isInitialized, key != nil else { return }
+        if !observersAdded, let current = player.currentItem { addObservers(current) }
+        if isPlaying {
+            applyPlayerRate()
+        } else {
+            player.pause()
+        }
+    }
+
+    private func applyPlayerRate() {
+        if #available(macOS 10.12, *) {
+            player.currentItem?.audioTimePitchAlgorithm = .timeDomain
+        }
+        if #available(macOS 13.0, *) {
+            player.defaultRate = playerRate
+        }
+        if #available(macOS 10.12, *) {
+            player.playImmediately(atRate: playerRate)
+        } else {
+            player.play()
+            player.rate = playerRate
+        }
+    }
+
+    @objc public func onReadyToPlay() {
+        if !Thread.isMainThread {
+            DispatchQueue.main.async { [weak self] in
+                self?.onReadyToPlay()
+            }
+            return
+        }
+        guard callback != nil, !isInitialized, key != nil else { return }
+        guard let currentItem = player.currentItem else { return }
+        guard player.status == .readyToPlay else { return }
+
+        let size = currentItem.presentationSize
+        var width = size.width
+        var height = size.height
+
+        let asset = currentItem.asset
+        let onlyAudio = asset.tracks(withMediaType: .video).count == 0
+
+        if !onlyAudio && height == .zero && width == .zero {
+            return
+        }
+
+        // A stream is truly live only if both the item and the asset report indefinite duration.
+        // For progressive downloads (like MP4), asset.duration is usually available even if currentItem.duration is not.
+        let itemDuration = currentItem.duration
+        let assetDuration = asset.duration
+        let isLive = CMTIME_IS_INDEFINITE(itemDuration) && CMTIME_IS_INDEFINITE(assetDuration)
+
+        let dur = duration()
+
+        // If not live, wait until we have a non-zero duration to avoid race conditions
+        // where Dart receives 0ms for a static file.
+        if !isLive && dur <= 0 {
+            return
+        }
+
+        if let track = currentItem.tracks.first?.assetTrack {
+            let naturalSize = track.naturalSize
+            let prefTrans = track.preferredTransform
+            let realSize = naturalSize.applying(prefTrans)
+            width = abs(realSize.width) != 0 ? abs(realSize.width) : width
+            height = abs(realSize.height) != 0 ? abs(realSize.height) : height
+        }
+
+        let durMs = BetterPlayerTimeUtils.cmTimeToMillis(assetDuration)
+        if overriddenDuration > 0 && durMs > Int64(overriddenDuration) {
+            currentItem.forwardPlaybackEndTime = CMTimeMake(
+                value: Int64(overriddenDuration / 1000),
+                timescale: 1
+            )
+        }
+
+        isInitialized = true
+        updatePlayingState()
+
+        BetterPlayerApi.log(1, "onInitialized: dur=\(dur)ms, isLive=\(isLive), size=\(width)x\(height)")
+
+        callback?.onInitialized(
+            durationMs: dur,
+            width: Double(width),
+            height: Double(height),
+            key: key
+        )
+    }
+
+    /// Starts playback.
+    @objc public func play() {
+        BetterPlayerApi.log(1, "play()")
+        stalledCount = 0
+        isStalledCheckStarted = false
+        isPlaying = true
+        updatePlayingState()
+    }
+
+    /// Pauses playback.
+    @objc public func pause() {
+        BetterPlayerApi.log(1, "pause()")
+        isPlaying = false
+        updatePlayingState()
+    }
+
+    /// Returns the current playback position in milliseconds.
+    @objc public func position() -> Int64 {
+        return BetterPlayerTimeUtils.cmTimeToMillis(player.currentTime())
+    }
+
+    /// Returns the absolute position in milliseconds for live streams.
+    @objc public func absolutePosition() -> Int64 {
+        let interval = player.currentItem?.currentDate()?.timeIntervalSince1970 ?? 0
+        return BetterPlayerTimeUtils.timeIntervalToMillis(interval)
+    }
+
+    /// Returns the total duration of the media in milliseconds.
+    @objc public func duration() -> Int64 {
+        var time: CMTime = .zero
+        if let currentItem = player.currentItem {
+            time = currentItem.duration
+            // Fallback to asset duration if item duration is indefinite/invalid (common race condition on init)
+            if CMTIME_IS_INDEFINITE(time) || CMTIME_IS_INVALID(time) || time.value == 0 {
+                time = currentItem.asset.duration
+            }
+        }
+
+        if let endTime = player.currentItem?.forwardPlaybackEndTime, !CMTIME_IS_INVALID(endTime) {
+            return BetterPlayerTimeUtils.cmTimeToMillis(endTime)
+        }
+        return BetterPlayerTimeUtils.cmTimeToMillis(time)
+    }
+
+    /// Seeks to the specified position in milliseconds.
+    /// - Parameter location: The position to seek to.
+    @objc public func seekTo(_ location: Int) {
+        BetterPlayerApi.log(1, "seekTo: \(location)")
+        player.currentItem?.cancelPendingSeeks()
+        let wasPlaying = isPlaying
+        if wasPlaying { player.pause() }
+        isSeeking = true
+        player.seek(
+            to: CMTimeMake(value: Int64(location), timescale: 1000),
+            toleranceBefore: .positiveInfinity,
+            toleranceAfter: .positiveInfinity
+        ) { [weak self] finished in
+            guard let self = self else { return }
+            self.isSeeking = false
+            // Only resume if this seek actually completed (not cancelled by a subsequent one)
+            if finished && wasPlaying { self.applyPlayerRate() }
+        }
+    }
+
+    /// Sets the player volume.
+    /// - Parameter volume: The volume level (0.0 to 1.0).
+    @objc public func setVolume(_ volume: Double) {
+        BetterPlayerApi.log(0, "setVolume: \(volume)")
+        let v = max(0.0, min(1.0, volume))
+        player.volume = Float(v)
+    }
+
+    /// Sets the playback speed.
+    /// - Parameters:
+    ///   - speed: The playback speed.
+    @objc public func setSpeed(_ speed: Double) {
+        BetterPlayerApi.log(0, "setSpeed: \(speed)")
+        guard speed >= 0, speed <= 4.0 else { return }
+        playerRate = Float(speed == 0.0 ? 1.0 : speed)
+        if isPlaying {
+            applyPlayerRate()
+        }
+    }
+
+    @objc public func setLooping(_ looping: Bool) {
+        BetterPlayerApi.log(1, "setLooping: \(looping)")
+        isLooping = looping
+    }
+
+    @objc public func setDataSourceURLString(_ urlString: String, key: String?, certificateUrl: String?, licenseUrl: String?, useCache: Bool, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int, videoExtension: String?) {
+        guard let url = URL(string: urlString) else { return }
+        setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: useCache, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: videoExtension)
+    }
+
+    // MARK: - Track Parameters
+
+    /// Sets track parameters like bitrate and resolution.
+    @objc public func setTrackParameters(width: Int, height: Int, bitrate: Int) {
+        BetterPlayerApi.log(0, "setTrackParameters: width=\(width), height=\(height), bitrate=\(bitrate)")
+        player.currentItem?.preferredPeakBitRate = Double(bitrate)
+        if #available(macOS 10.13, *) {
+            if width == 0 && height == 0 {
+                player.currentItem?.preferredMaximumResolution = .zero
+            } else {
+                player.currentItem?.preferredMaximumResolution = CGSize(width: width, height: height)
+            }
+        }
+    }
+
+    // MARK: - Picture-in-Picture
+
+    /// Sets Picture-in-Picture state.
+    /// - Parameter pictureInPicture: Whether PiP should be active.
+    @objc public func setPictureInPicture(_ pictureInPicture: Bool) {
+        self.pictureInPicture = pictureInPicture
+        if let pip = pipController {
+            if self.pictureInPicture && !pip.isPictureInPictureActive {
+                DispatchQueue.main.async { pip.startPictureInPicture() }
+            } else if !self.pictureInPicture && pip.isPictureInPictureActive {
+                DispatchQueue.main.async { pip.stopPictureInPicture() }
+            }
+        }
+    }
+
+    /// Sets the completion handler for restoring UI after PiP stops.
+    @objc public func setRestoreUserInterfaceForPIPStopCompletionHandler(_ restore: Bool) {
+        restoreUIOnPipStop?(restore)
+        restoreUIOnPipStop = nil
+    }
+
+    private func setupPipController() {
+        if #available(macOS 10.15, *) {
+            if pipController == nil, let layer = playerLayerRef, AVPictureInPictureController.isPictureInPictureSupported() {
+                pipController = AVPictureInPictureController(playerLayer: layer)
+                pipController?.delegate = self
+            }
+        }
+    }
+
+    /// Enables Picture-in-Picture for the given frame.
+    /// - Parameter frame: The frame for PiP.
+    @objc public func enablePictureInPicture(_ frame: CGRect) {
+        BetterPlayerApi.log(1, "enablePictureInPicture: \(frame)")
+        disablePictureInPicture()
+        usePlayerLayer(frame)
+    }
+
+    private func usePlayerLayer(_ frame: CGRect) {
+        if let pv = playerView as? BetterPlayerView {
+            playerLayerRef = pv.playerLayer
+            setupPipController()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.setPictureInPicture(true)
+            }
+        } else {
+            let layer = AVPlayerLayer(player: player)
+            layer.videoGravity = self.videoGravity
+            layer.frame = frame
+            playerLayerRef = layer
+            setupPipController()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                self.setPictureInPicture(true)
+            }
+        }
+    }
+
+    /// Disables Picture-in-Picture.
+    @objc public func disablePictureInPicture() {
+        BetterPlayerApi.log(1, "disablePictureInPicture()")
+        setPictureInPicture(false)
+        if let layer = playerLayerRef {
+            if let pv = playerView as? BetterPlayerView, layer === pv.playerLayer {
+                // Do not remove the backing layer of the active BetterPlayerView!
+            } else {
+                layer.removeFromSuperlayer()
+            }
+            playerLayerRef = nil
+            pipController = nil
+            callback?.onPipStop()
+        }
+    }
+
+    // MARK: - AVPictureInPictureControllerDelegate
+
+    public func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        BetterPlayerApi.log(1, "pictureInPictureControllerDidStopPictureInPicture")
+        disablePictureInPicture()
+    }
+
+    public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        BetterPlayerApi.log(1, "pictureInPictureControllerDidStartPictureInPicture")
+        callback?.onPipStart()
+    }
+
+    public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
+        restoreUIOnPipStop = completionHandler
+        setRestoreUserInterfaceForPIPStopCompletionHandler(true)
+    }
+
+    // MARK: - Audio & Tracks
+
+    /// Sets the audio track by name and index.
+    /// - Parameters:
+    ///   - name: The name of the track.
+    ///   - index: The index of the track.
+    @objc public func setAudioTrack(name: String, index: Int) {
+        BetterPlayerApi.log(0, "setAudioTrack: name=\(name), index=\(index)")
+        guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.audible) else { return }
+        let options = group.options
+        for audioTrackIndex in 0..<options.count {
+            let option = options[audioTrackIndex]
+            let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle as (NSCopying & NSObjectProtocol), keySpace: .common)
+            if let title = metas.first?.stringValue, title == name && audioTrackIndex == index {
+                player.currentItem?.select(option, in: group)
+            }
+        }
+    }
+
+    /// Sets whether the audio should mix with others.
+    /// - Parameter mixWithOthers: Whether to mix audio.
+    @objc public func setMixWithOthers(_ mixWithOthers: Bool) {
+        BetterPlayerApi.log(1, "setMixWithOthers: \(mixWithOthers)")
+        // macOS routes audio via CoreAudio automatically without AVAudioSession.
+    }
+
+    // MARK: - FlutterStreamHandler
+
+    
+
+    
+
+    // MARK: - Disposal
+
+    /// Clears the player state.
+    @objc public func clear() {
+        BetterPlayerApi.log(1, "clear()")
+        isInitialized = false
+        isPlaying = false
+        disposed = false
+        failedCount = 0
+        key = nil
+        guard player.currentItem != nil else { return }
+        removeObservers()
+        player.currentItem?.asset.cancelLoading()
+    }
+
+    /// Disposes the player without affecting the event channel.
+    @objc public func disposeSansEventChannel() {
+        do {
+            clear()
+        }
+    }
+
+    /// Disposes the player and cleans up resources.
+    @objc public func dispose() {
+        BetterPlayerApi.log(1, "dispose()")
+        pause()
+        disposeSansEventChannel()
+        disablePictureInPicture()
+        setPictureInPicture(false)
+        disposed = true
+        
+        if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
+            BetterPlayerApi.players.removeValue(forKey: key)
+        }
+    }
+}

@@ -13,7 +13,9 @@ import 'package:material_ui/material_ui.dart' as m3;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SemanticsBinding.instance.ensureSemantics();
+  if (kIsWeb) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
   runApp(const BetterPlayerE2EApp());
 }
 
@@ -102,8 +104,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setupDataSource(
-        Constants.bugBuckBunnyVideoUrl,
-        DataSourceType.network,
+        url: Constants.bugBuckBunnyVideoUrl,
+        type: DataSourceType.network,
       );
       _betterPlayerController.setControlsAlwaysVisible(true);
     });
@@ -147,9 +149,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     super.dispose();
   }
 
-  void _setupDataSource(
-    String url,
-    DataSourceType type, {
+  void _setupDataSource({
+    required String url,
+    required DataSourceType type,
     DrmConfiguration? drmConfiguration,
   }) {
     final betterPlayerDataSource = PlayerDataSource(
@@ -214,17 +216,17 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     setState(() {
       _usingAlternateTheme = !_usingAlternateTheme;
     });
+    final isApple =
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.iOS ||
+            defaultTargetPlatform == TargetPlatform.macOS);
     final PlayerTheme targetTheme;
     if (_usingAlternateTheme) {
-      targetTheme = (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS)
-          ? PlayerTheme.material
-          : PlayerTheme.cupertino;
+      targetTheme = isApple ? PlayerTheme.material : PlayerTheme.cupertino;
     } else {
       targetTheme = kIsWeb
           ? PlayerTheme.web
-          : (defaultTargetPlatform == TargetPlatform.iOS
-                ? PlayerTheme.cupertino
-                : PlayerTheme.material);
+          : (isApple ? PlayerTheme.cupertino : PlayerTheme.material);
     }
     _betterPlayerController.setPlayerControlsConfiguration(
       PlayerControlsConfiguration(
@@ -311,12 +313,18 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       _isListPlayerMode = true;
     });
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _listVideoPlayerController
-        ..setVolume(0.5)
-        ..play()
-        ..pause()
-        ..seekTo(const Duration(seconds: 2))
-        ..setMixWithOthers(true);
+      try {
+        _listVideoPlayerController
+          ..setVolume(0.5)
+          ..play()
+          ..pause();
+        if (_listVideoPlayerController.betterPlayerController
+                ?.isVideoInitialized() ??
+            false) {
+          _listVideoPlayerController.seekTo(const Duration(seconds: 2));
+        }
+        _listVideoPlayerController.setMixWithOthers(true);
+      } catch (_) {}
       if (mounted) {
         setState(() {
           _listPlayerVerified = true;
@@ -421,8 +429,10 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                         ),
                         const SizedBox(height: 8),
                         _DebugLine(
-                          'URL',
-                          _betterPlayerController.betterPlayerDataSource?.url,
+                          label: 'URL',
+                          value: _betterPlayerController
+                              .betterPlayerDataSource
+                              ?.url,
                         ),
                         Text(
                           'Status: Init: ${_betterPlayerController.videoPlayerValue?.initialized}, '
@@ -501,8 +511,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   label: 'better_player_e2e_setup_mp4',
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
-                      Constants.bugBuckBunnyVideoUrl,
-                      DataSourceType.network,
+                      url: Constants.bugBuckBunnyVideoUrl,
+                      type: DataSourceType.network,
                     ),
                     child: const Text('MP4'),
                   ),
@@ -512,8 +522,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   label: 'better_player_e2e_setup_hls',
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
-                      Constants.hlsTestStreamUrl,
-                      DataSourceType.network,
+                      url: Constants.hlsTestStreamUrl,
+                      type: DataSourceType.network,
                     ),
                     child: const Text('HLS'),
                   ),
@@ -523,8 +533,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   label: 'better_player_e2e_setup_error',
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
-                      'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/404.mp4',
-                      DataSourceType.network,
+                      url:
+                          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/404.mp4',
+                      type: DataSourceType.network,
                     ),
                     child: const Text('Invalid'),
                   ),
@@ -612,7 +623,10 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
 }
 
 class _DebugLine extends StatelessWidget {
-  const _DebugLine(this.label, this.value);
+  const _DebugLine({
+    required this.label,
+    required this.value,
+  });
   final String label;
   final String? value;
 

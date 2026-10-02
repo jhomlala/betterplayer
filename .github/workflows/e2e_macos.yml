@@ -1,0 +1,56 @@
+name: E2E macOS (Integration Tests)
+
+on:
+  push:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_macos/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_macos.yml'
+  pull_request:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_macos/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_macos.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Enable macOS Desktop
+        run: flutter config --enable-macos-desktop
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Get Workspace Dependencies
+        run: flutter pub get
+
+      - name: Run macOS Integration Tests
+        working-directory: packages/better_player_example
+        run: flutter test integration_test/macos_all_tests.dart -d macos --no-pub

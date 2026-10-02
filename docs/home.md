@@ -19,14 +19,15 @@ Better Player provides a robust set of features designed for production-ready ap
 *   **Reliability**: Fixes for common bugs found in other players.
 *   **Advanced Configuration**: Granular control over player behavior and appearance.
 *   **Refactored Controls**: Modern, customizable user interface.
-*   **Playlist Support**: Seamlessly play sequences of videos.
+*   **Playlist Support**: Play sequences of videos continuously.
 *   **ListView Integration**: Optimized for video playback within scrollable lists.
 *   **Comprehensive Subtitles**: Support for SRT and WebVTT formats (with HTML tags), HLS segmented subtitles, and multiple subtitle tracks.
 *   **Adaptive Streaming**: Full support for HLS and DASH, including track, subtitle, and audio track selection.
 *   **Performance & Optimization**: Integrated cache support and alternative resolution selection.
 *   **Advanced Capabilities**: Support for Picture-in-Picture (PiP), DRM (Token, Widevine, FairPlay EZDRM), and custom HTTP headers.
 *   **Platform Features**: Native notifications and comprehensive BoxFit support.
-*   **Web Support**: Advanced web playback utilizing Shaka Player for HLS, DASH, and DRM.
+*   **macOS Support**: Dedicated desktop playback powered by native AVPlayer, AppKitView, and FFI bindings.
+*   **Web Support**: Advanced web playback using Shaka Player for HLS, DASH, and DRM.
 *   ... and much more! See the detailed [Platform Support](platform_support.md) matrix.
 
 ## Important Information

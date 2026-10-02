@@ -1,0 +1,45 @@
+name: Generate macOS FFI
+
+on:
+  push:
+    paths:
+      - 'packages/better_player_macos/macos/**'
+      - 'packages/better_player_macos/tool/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ffi-macos-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate-macos-ffi:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Install macOS Dependencies
+        working-directory: packages/better_player_macos
+        run: flutter pub get
+
+      - name: Generate macOS FFI (swiftgen)
+        working-directory: packages/better_player_macos
+        run: dart run tool/swiftgen.dart
+
+      - name: Commit Generated Bindings
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: Generate macOS FFI bindings"
+          file_pattern: "packages/better_player_macos/lib/src/*.dart packages/better_player_macos/macos/better_player_macos/Sources/better_player_macos_objc/*.m"
+          branch: ${{ github.ref }}

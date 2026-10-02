@@ -5,18 +5,18 @@ title: DRM Configuration
 
 # DRM Configuration
 
-Better Player provides robust support for Digital Rights Management (DRM) to protect your video content. DRM is configured using the `drmConfiguration` parameter within the `PlayerDataSource`.
+Better Player provides support for Digital Rights Management (DRM) to protect your video content. DRM is configured using the `drmConfiguration` parameter within the `PlayerDataSource`.
 
 ## Supported DRM Types
 
 Currently, Better Player supports the following DRM mechanisms:
 
-*   **Token-Based (Authorization Header)**: Supported on Android and iOS.
+*   **Token-Based (Authorization Header)**: Supported on Android, iOS, and macOS.
 *   **Widevine (License URL + Headers)**: Supported on Android and Web (via Shaka Player).
-*   **FairPlay EZDRM (Certificate URL + License URL)**: Supported on iOS and Web (via Shaka Player).
+*   **FairPlay EZDRM (Certificate URL + License URL)**: Supported on iOS, macOS, and Web (via Shaka Player).
     > [!IMPORTANT]
     > **Real Device Required**: Native DRM playback typically requires a physical device. Playback on emulators or simulators is not supported and may fail.
-*   **ClearKey**: Supported on Android and Web.
+*   **ClearKey**: Supported on Android, iOS (HLS AES-128), macOS (HLS AES-128), and Web.
 
 ---
 
@@ -77,7 +77,7 @@ The `drmSecurityLevel` parameter allows you to specify the required security lev
 
 ---
 
-### FairPlay DRM (iOS)
+### FairPlay DRM (iOS & macOS)
 Requires a certificate URL and a license URL.
 
 ```dart

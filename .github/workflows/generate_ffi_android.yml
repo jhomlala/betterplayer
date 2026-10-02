@@ -1,20 +1,22 @@
-name: Generate FFI Bindings
+name: Generate Android FFI
 
 on:
   push:
     paths:
-      - 'packages/better_player_ios/ios/**'
       - 'packages/better_player_android/android/**'
-      - 'packages/better_player_ios/tool/**'
       - 'packages/better_player_android/tool/**'
   workflow_dispatch:
 
 permissions:
   contents: write
 
+concurrency:
+  group: ffi-android-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  generate:
-    runs-on: macos-latest
+  generate-android-ffi:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
@@ -32,14 +34,6 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-
-      - name: Install iOS Dependencies
-        working-directory: packages/better_player_ios
-        run: flutter pub get
-
-      - name: Generate iOS FFI (swiftgen)
-        working-directory: packages/better_player_ios
-        run: dart run tool/swiftgen.dart
 
       - name: Install Android Dependencies
         working-directory: packages/better_player_android
@@ -59,6 +53,6 @@ jobs:
       - name: Commit Generated Bindings
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: Generate Android and iOS FFI bindings"
-          file_pattern: "packages/better_player_android/lib/src/*.dart packages/better_player_ios/lib/src/*.dart packages/better_player_ios/ios/better_player_ios/Sources/better_player_ios_objc/*.m"
+          commit_message: "chore: Generate Android FFI bindings"
+          file_pattern: "packages/better_player_android/lib/src/*.dart"
           branch: ${{ github.ref }}

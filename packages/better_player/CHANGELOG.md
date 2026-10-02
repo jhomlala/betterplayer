@@ -1,3 +1,7 @@
+## Unreleased
+- Added: macOS desktop platform support backed by AVPlayer and AppKitView via federated package `better_player_macos`.
+- Fixed: Prevented unintended UI listener notifications during teardown by removing engine listeners before `pause` in `BetterPlayerController.dispose`, and guarded `BetterPlayerListVideoPlayerController` against calling `seekTo` or `play` before initialization completes.
+
 ## 1.19.0
 - Fixed: Parsed DASH `<AdaptationSet>` nodes that specify `contentType` or child `<Representation>` `mimeType` instead of an `<AdaptationSet>` `mimeType` attribute, and kept manifest audio tracks selected when `language` is omitted (#872) (by @rounce).
 - Fixed: Guarded `enterFullScreen` when already in fullscreen and restored controls visibility on `AppLifecycleState.resumed` when returning from Picture-in-Picture on Android (#866) (by @aeonmine).

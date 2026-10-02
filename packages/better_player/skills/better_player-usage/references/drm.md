@@ -8,10 +8,10 @@ Configure Digital Rights Management (DRM) using `DrmConfiguration` inside `Playe
 
 | `DrmType` | Platforms | Required Fields |
 | :--- | :--- | :--- |
-| `DrmType.token` | Android, iOS | `token` |
+| `DrmType.token` | Android, iOS, macOS | `token` |
 | `DrmType.widevine` | Android, Web (Shaka) | `licenseUrl` (optional `headers`, `drmSecurityLevel`) |
-| `DrmType.fairplay` | iOS, Web (Shaka) | `certificateUrl`, `licenseUrl` |
-| `DrmType.clearKey` | Android, Web | `clearKey` (generated via `BetterPlayerClearKeyUtils.generate`) |
+| `DrmType.fairplay` | iOS, macOS, Web (Shaka) | `certificateUrl`, `licenseUrl` |
+| `DrmType.clearKey` | Android, iOS, macOS, Web | `clearKey` (generated via `BetterPlayerClearKeyUtils.generate`) |
 
 ## 1. Widevine (Android & Web)
 
@@ -35,7 +35,7 @@ final dataSource = PlayerDataSource(
 * **Web (Shaka Player)**: Maps to `videoRobustness`. Use `DrmSecurityLevel.swSecureCrypto`, `DrmSecurityLevel.swSecureDecode`, `DrmSecurityLevel.hwSecureCrypto`, `DrmSecurityLevel.hwSecureDecode`, or `DrmSecurityLevel.hwSecureAll`.
 * Do not pass an Android level (`l1`/`l3`) on Web or vice versa; doing so throws an `UnsupportedError`. If targeting both Android and Web, select the `DrmSecurityLevel` conditionally with `kIsWeb`.
 
-## 2. FairPlay (iOS & Web)
+## 2. FairPlay (iOS, macOS & Web)
 
 ```dart
 final dataSource = PlayerDataSource(
@@ -67,7 +67,7 @@ final dataSource = PlayerDataSource(
 );
 ```
 
-## 4. Token-Based Authorization (Android & iOS)
+## 4. Token-Based Authorization (Android, iOS & macOS)
 
 ```dart
 final dataSource = PlayerDataSource(

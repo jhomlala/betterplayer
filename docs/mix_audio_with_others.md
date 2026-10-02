@@ -16,6 +16,6 @@ Use the `setMixWithOthers` method on your controller:
 betterPlayerController.setMixWithOthers(true);
 ```
 
-:::warning
-Audio mixing behavior (`setMixWithOthers`) relies on native OS audio sessions and is explicitly ignored on the **Web** platform.
+:::note
+On **macOS**, CoreAudio mixes active audio sources automatically by default. On **Web**, `setMixWithOthers` is ignored as the browser manages audio mixing.
 :::

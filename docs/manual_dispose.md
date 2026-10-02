@@ -9,7 +9,7 @@ By default, Better Player automatically manages the disposal of the `BetterPlaye
 
 ## When to Use Manual Disposal
 
-In certain complex UI scenarios—such as when navigating between screens or using specific navigation patterns—you may encounter the following error:
+In certain complex UI scenarios (such as navigating between screens or using custom transitions), you may encounter the following error:
 `A VideoPlayerController was used after being disposed`.
 
 This error typically indicates that the `BetterPlayer` widget was disposed of prematurely, causing the underlying `BetterPlayerController` to be disposed of while it was still needed. In such cases, you should manage the controller's lifecycle manually.
