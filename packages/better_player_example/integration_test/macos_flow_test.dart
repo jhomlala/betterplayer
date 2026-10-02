@@ -24,7 +24,7 @@ void main() {
       );
     });
 
-    testWidgets('Playback controls, skip, and volume', (tester) async {
+    testWidgets('macOS core playback flow test', (tester) async {
       app.main();
       await tester.pumpAndSettle();
 
@@ -67,20 +67,8 @@ void main() {
         await tester.tap(muteButton);
         await tester.pump(const Duration(milliseconds: 500));
       }
-    });
 
-    testWidgets('Overflow settings: speed, quality, and subtitles', (
-      tester,
-    ) async {
-      app.main();
-      await tester.pumpAndSettle();
-
-      final playPauseButton = findById(
-        'better_player_cupertino_controls_play_pause_button',
-      );
-      await pumpUntilFound(tester, playPauseButton);
-
-      // Speed Selection test (2.0x)
+      // 5. Speed Selection test (2.0x)
       final moreButton = findById(
         'better_player_cupertino_controls_more_button',
       );
@@ -93,7 +81,7 @@ void main() {
       await scrollAndTap(tester, speed2x);
       await waitModalClosed(tester);
 
-      // Quality Selection test (Auto)
+      // 6. Quality Selection test (Auto)
       await tapWhenReady(tester, moreButton);
       final qualityMenu = findById('better_player_overflow_menu_quality');
       await tapWhenReady(tester, qualityMenu);
@@ -102,7 +90,7 @@ void main() {
       await tapWhenReady(tester, qualityAuto);
       await waitModalClosed(tester);
 
-      // Subtitles Selection test (Memory -> None -> Memory)
+      // 7. Subtitles Selection test (Memory -> None -> Memory)
       await tapWhenReady(tester, moreButton);
       final subtitlesMenu = findById('better_player_overflow_menu_subtitles');
       await tapWhenReady(tester, subtitlesMenu);
@@ -122,23 +110,11 @@ void main() {
       await tapWhenReady(tester, subtitlesMemory);
       await waitModalClosed(tester);
 
-      // Verify all core events fired
+      // 8. Verify all core events fired
       final eventsVerified = findById('better_player_e2e_events_verified');
       await pumpUntilFound(tester, eventsVerified);
-    });
 
-    testWidgets('Runtime config, theme toggle, seeking, and fullscreen', (
-      tester,
-    ) async {
-      app.main();
-      await tester.pumpAndSettle();
-
-      final playPauseButton = findById(
-        'better_player_cupertino_controls_play_pause_button',
-      );
-      await pumpUntilFound(tester, playPauseButton);
-
-      // Runtime Controls Configuration Hotswap
+      // 9. Runtime Controls Configuration Hotswap
       final runtimeConfigButton = findById(
         'better_player_e2e_runtime_config_button',
       );
@@ -149,7 +125,7 @@ void main() {
       );
       await pumpUntilFound(tester, runtimeConfigStatus);
 
-      // Controls Theme Hotswap (Cupertino -> Material -> Cupertino)
+      // 10. Controls Theme Hotswap (Cupertino -> Material -> Cupertino)
       final toggleThemeButton = findById(
         'better_player_e2e_toggle_theme_button',
       );
@@ -163,7 +139,7 @@ void main() {
       await scrollAndTap(tester, toggleThemeButton);
       await pumpUntilFound(tester, playPauseButton);
 
-      // Seeking
+      // 11. Seeking
       final progressBar = findById('better_player_cupertino_progress_bar');
       if (progressBar.evaluate().isNotEmpty) {
         try {
@@ -174,7 +150,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 500));
       }
 
-      // Fullscreen toggle
+      // 12. Fullscreen toggle
       final expandButton = findById(
         'better_player_cupertino_controls_expand_button',
       );
