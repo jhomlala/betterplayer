@@ -295,7 +295,7 @@ private var presentationSizeContext = 0
             }
             item = AVPlayerItem(asset: asset)
         }
-        if #available(iOS 10.0, *), overriddenDuration > 0 {
+        if overriddenDuration > 0 {
             self.overriddenDuration = overriddenDuration
         }
         setDataSourcePlayerItem(item, key: key)
@@ -371,7 +371,7 @@ private var presentationSizeContext = 0
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == "rate" {
-            if #available(iOS 10.0, *), let pipController = pipController, pipController.isPictureInPictureActive {
+            if let pipController = pipController, pipController.isPictureInPictureActive {
                 if let last = lastAvPlayerTimeControlStatus, last == player.timeControlStatus {
                     return
                 }
@@ -476,13 +476,13 @@ private var presentationSizeContext = 0
     }
 
     private func applyPlayerRate() {
-        if #available(iOS 10.0, *) {
+        if #available(macOS 10.12, iOS 10.0, *) {
             player.currentItem?.audioTimePitchAlgorithm = .timeDomain
         }
-        if #available(iOS 16, *) {
+        if #available(macOS 13.0, iOS 16.0, *) {
             player.defaultRate = playerRate
         }
-        if #available(iOS 10.0, *) {
+        if #available(macOS 10.12, iOS 10.0, *) {
             player.playImmediately(atRate: playerRate)
         } else {
             player.play()
@@ -649,7 +649,7 @@ private var presentationSizeContext = 0
     @objc public func setTrackParameters(width: Int, height: Int, bitrate: Int) {
         BetterPlayerApi.log(0, "setTrackParameters: width=\(width), height=\(height), bitrate=\(bitrate)")
         player.currentItem?.preferredPeakBitRate = Double(bitrate)
-        if #available(iOS 11.0, *) {
+        if #available(macOS 10.13, iOS 11.0, *) {
             if width == 0 && height == 0 {
                 player.currentItem?.preferredMaximumResolution = .zero
             } else {
@@ -664,10 +664,10 @@ private var presentationSizeContext = 0
     /// - Parameter pictureInPicture: Whether PiP should be active.
     @objc public func setPictureInPicture(_ pictureInPicture: Bool) {
         self.pictureInPicture = pictureInPicture
-        if #available(iOS 9.0, *) {
-            if let pip = pipController, self.pictureInPicture && !pip.isPictureInPictureActive {
+        if let pip = pipController {
+            if self.pictureInPicture && !pip.isPictureInPictureActive {
                 DispatchQueue.main.async { pip.startPictureInPicture() }
-            } else if let pip = pipController, !self.pictureInPicture && pip.isPictureInPictureActive {
+            } else if !self.pictureInPicture && pip.isPictureInPictureActive {
                 DispatchQueue.main.async { pip.stopPictureInPicture() }
             }
         }
