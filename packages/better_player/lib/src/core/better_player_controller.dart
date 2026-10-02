@@ -100,9 +100,6 @@ class BetterPlayerController {
   /// Used as a safeguard to prevent method calls or stream emissions after teardown.
   bool _disposed = false;
 
-  /// Whether this controller has been disposed.
-  bool get isDisposed => _disposed;
-
   /// Tracks visual UI states (fullscreen, PIP, control visibility).
   PlayerViewState _viewState = const PlayerViewState();
 
