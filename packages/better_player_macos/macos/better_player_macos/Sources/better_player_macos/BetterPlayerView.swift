@@ -6,6 +6,10 @@ import AppKit
 @objc(BetterPlayerView)
 public class BetterPlayerView: NSView {
 
+    public override func makeBackingLayer() -> CALayer {
+        return AVPlayerLayer()
+    }
+
     /// The AVPlayerLayer used for video rendering.
     public var playerLayer: AVPlayerLayer {
         return layer as! AVPlayerLayer
@@ -20,7 +24,6 @@ public class BetterPlayerView: NSView {
     public override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         self.wantsLayer = true
-        self.layer = AVPlayerLayer()
     }
 
     public convenience init() {
@@ -30,6 +33,10 @@ public class BetterPlayerView: NSView {
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
         self.wantsLayer = true
-        self.layer = AVPlayerLayer()
+    }
+
+    public override func layout() {
+        super.layout()
+        playerLayer.frame = bounds
     }
 }

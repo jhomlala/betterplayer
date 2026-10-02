@@ -142,6 +142,9 @@ private var presentationSizeContext = 0
 
     /// Returns the view to be displayed in Flutter.
     @objc public func view() -> NSView {
+        if let existing = self.playerView {
+            return existing
+        }
         let playerView = BetterPlayerView(frame: .zero)
         playerView.player = player
         playerView.playerLayer.videoGravity = self.videoGravity
@@ -264,9 +267,26 @@ private var presentationSizeContext = 0
     /// Sets the data source from an asset path.
     @objc public func setDataSourceAsset(_ assetPath: String, key: String?, certificateUrl: String?, licenseUrl: String?, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int) {
         BetterPlayerApi.log(1, "setDataSourceAsset: \(assetPath)")
-        if let path = Bundle.main.path(forResource: assetPath, ofType: nil) {
+        var resolvedPath: String? = Bundle.main.path(forResource: assetPath, ofType: nil)
+        if resolvedPath == nil {
+            resolvedPath = Bundle.main.path(forResource: assetPath, ofType: nil, inDirectory: "flutter_assets")
+        }
+        if resolvedPath == nil {
+            if let frameworkBundle = Bundle(identifier: "io.flutter.flutter.app") ?? Bundle(for: BetterPlayer.self) as Bundle? {
+                resolvedPath = frameworkBundle.path(forResource: assetPath, ofType: nil, inDirectory: "flutter_assets")
+            }
+        }
+        if resolvedPath == nil {
+            resolvedPath = Bundle.main.path(forResource: "flutter_assets/\(assetPath)", ofType: nil)
+        }
+
+        if let path = resolvedPath {
             let url = URL(fileURLWithPath: path)
             setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: false, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: nil)
+        } else {
+            BetterPlayerApi.log(3, "setDataSourceAsset failed: asset not found at \(assetPath)")
+            let error = FlutterError(code: "VideoError", message: "Failed to load video: asset not found at \(assetPath)", details: nil)
+            sendError(error)
         }
     }
 
@@ -321,9 +341,14 @@ private var presentationSizeContext = 0
                     videoTrack.loadValuesAsynchronously(forKeys: ["preferredTransform"]) { [weak self] in
                         guard let self = self, !self.disposed else { return }
                         if videoTrack.statusOfValue(forKey: "preferredTransform", error: nil) == .loaded {
-                            self.preferredTransform = self.fixTransform(videoTrack)
-                            let videoComposition = self.getVideoComposition(transform: self.preferredTransform, asset: asset, videoTrack: videoTrack)
-                            item.videoComposition = videoComposition
+                            let fixedTransform = self.fixTransform(videoTrack)
+                            self.preferredTransform = fixedTransform
+                            // Only apply videoComposition if the video actually has rotation/transform metadata,
+                            // allowing normal videos to stay on zero-copy hardware presentation pipeline.
+                            if !fixedTransform.isIdentity {
+                                let videoComposition = self.getVideoComposition(transform: fixedTransform, asset: asset, videoTrack: videoTrack)
+                                item.videoComposition = videoComposition
+                            }
                         }
                     }
                 }
@@ -353,12 +378,12 @@ private var presentationSizeContext = 0
                     }
                     return
                 }
-                perform(#selector(startStalledCheckObjC), with: nil, afterDelay: 1)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                    self?.startStalledCheck()
+                }
             }
         }
     }
-
-    @objc private func startStalledCheckObjC() { startStalledCheck() }
 
     private func availableDuration() -> TimeInterval {
         guard let timeRange = player.currentItem?.loadedTimeRanges.first?.timeRangeValue else { return 0 }
@@ -476,13 +501,13 @@ private var presentationSizeContext = 0
     }
 
     private func applyPlayerRate() {
-        if #available(macOS 10.12, iOS 10.0, *) {
+        if #available(macOS 10.12, *) {
             player.currentItem?.audioTimePitchAlgorithm = .timeDomain
         }
-        if #available(macOS 13.0, iOS 16.0, *) {
+        if #available(macOS 13.0, *) {
             player.defaultRate = playerRate
         }
-        if #available(macOS 10.12, iOS 10.0, *) {
+        if #available(macOS 10.12, *) {
             player.playImmediately(atRate: playerRate)
         } else {
             player.play()
@@ -491,6 +516,12 @@ private var presentationSizeContext = 0
     }
 
     @objc public func onReadyToPlay() {
+        if !Thread.isMainThread {
+            DispatchQueue.main.async { [weak self] in
+                self?.onReadyToPlay()
+            }
+            return
+        }
         guard callback != nil, !isInitialized, key != nil else { return }
         guard let currentItem = player.currentItem else { return }
         guard player.status == .readyToPlay else { return }
@@ -649,7 +680,7 @@ private var presentationSizeContext = 0
     @objc public func setTrackParameters(width: Int, height: Int, bitrate: Int) {
         BetterPlayerApi.log(0, "setTrackParameters: width=\(width), height=\(height), bitrate=\(bitrate)")
         player.currentItem?.preferredPeakBitRate = Double(bitrate)
-        if #available(macOS 10.13, iOS 11.0, *) {
+        if #available(macOS 10.13, *) {
             if width == 0 && height == 0 {
                 player.currentItem?.preferredMaximumResolution = .zero
             } else {
@@ -720,8 +751,13 @@ private var presentationSizeContext = 0
         BetterPlayerApi.log(1, "disablePictureInPicture()")
         setPictureInPicture(false)
         if let layer = playerLayerRef {
-            layer.removeFromSuperlayer()
+            if let pv = playerView as? BetterPlayerView, layer === pv.playerLayer {
+                // Do not remove the backing layer of the active BetterPlayerView!
+            } else {
+                layer.removeFromSuperlayer()
+            }
             playerLayerRef = nil
+            pipController = nil
             callback?.onPipStop()
         }
     }
