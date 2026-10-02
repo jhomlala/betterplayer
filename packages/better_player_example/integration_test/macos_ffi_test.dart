@@ -8,66 +8,83 @@ import 'test_utils.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('macOS native FFI API integration test', (tester) async {
-    app.main();
-    await tester.pumpAndSettle();
-
-    // 1. Navigate to FFI Test Page
-    final navigateFfiButton = findById('better_player_e2e_navigate_ffi');
-    await scrollAndTap(tester, navigateFfiButton);
-
-    // 2. Wait for player to be initialized
-    final initializedStatus = findById('ffi_test_initialized_status');
-    await pumpUntilFound(
-      tester,
-      initializedStatus,
-      timeout: const Duration(seconds: 40),
-    );
-
-    // 3. Test core FFI methods
-    final ffiMethods = [
-      'play',
-      'pause',
-      'seekTo',
-      'setVolume',
-      'setSpeed',
-      'setTrackParameters',
-      'setAudioTrack',
-      'setMixWithOthers',
-      'setLooping',
-      'getPosition',
-      'playerValue',
-      'duration',
-      'isInitialized',
-    ];
-
-    for (final method in ffiMethods) {
-      final button = findById('ffi_test_button_$method');
-      await scrollAndTap(tester, button);
-
-      final statusFinder = find.byWidgetPredicate(
-        (widget) =>
-            widget is Semantics &&
-            widget.properties.identifier == 'ffi_test_status_$method',
+  group('Suite 5: Native FFI API', () {
+    setUpAll(() {
+      debugPrint(
+        '========================================\n'
+        '  [E2E macOS] STARTING: Native FFI API\n'
+        '========================================',
       );
+    });
+    tearDownAll(() {
+      debugPrint(
+        '========================================\n'
+        '  [E2E macOS] FINISHED: Native FFI API\n'
+        '========================================',
+      );
+    });
+
+    testWidgets('Execute and verify all native FFI methods', (tester) async {
+      app.main();
+      await tester.pumpAndSettle();
+
+      // 1. Navigate to FFI Test Page
+      final navigateFfiButton = findById('better_player_e2e_navigate_ffi');
+      await scrollAndTap(tester, navigateFfiButton);
+
+      // 2. Wait for player to be initialized
+      final initializedStatus = findById('ffi_test_initialized_status');
       await pumpUntilFound(
         tester,
-        statusFinder,
-        timeout: const Duration(seconds: 15),
+        initializedStatus,
+        timeout: const Duration(seconds: 40),
       );
 
-      // Verify that the status text is success=true
-      final textWidgetFinder = find.descendant(
-        of: statusFinder,
-        matching: find.byType(Text),
-      );
-      expect(textWidgetFinder, findsOneWidget);
-      final textWidget = tester.widget<Text>(textWidgetFinder);
-      expect(
-        textWidget.data,
-        'success=true',
-        reason: 'FFI method $method failed to execute successfully',
-      );
-    }
+      // 3. Test core FFI methods
+      final ffiMethods = [
+        'play',
+        'pause',
+        'seekTo',
+        'setVolume',
+        'setSpeed',
+        'setTrackParameters',
+        'setAudioTrack',
+        'setMixWithOthers',
+        'setLooping',
+        'getPosition',
+        'playerValue',
+        'duration',
+        'isInitialized',
+      ];
+
+      for (final method in ffiMethods) {
+        final button = findById('ffi_test_button_$method');
+        await scrollAndTap(tester, button);
+
+        final statusFinder = find.byWidgetPredicate(
+          (widget) =>
+              widget is Semantics &&
+              widget.properties.identifier == 'ffi_test_status_$method',
+        );
+        await pumpUntilFound(
+          tester,
+          statusFinder,
+          timeout: const Duration(seconds: 15),
+        );
+
+        // Verify that the status text is success=true
+        final textWidgetFinder = find.descendant(
+          of: statusFinder,
+          matching: find.byType(Text),
+        );
+        expect(textWidgetFinder, findsOneWidget);
+        final textWidget = tester.widget<Text>(textWidgetFinder);
+        expect(
+          textWidget.data,
+          'success=true',
+          reason: 'FFI method $method failed to execute successfully',
+        );
+      }
+    });
   });
 }

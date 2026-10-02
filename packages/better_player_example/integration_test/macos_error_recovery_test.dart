@@ -1,4 +1,5 @@
 import 'package:better_player_example/main_e2e.dart' as app;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -7,66 +8,90 @@ import 'test_utils.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('macOS error recovery and accurate seek test', (tester) async {
-    app.main();
-    await tester.pumpAndSettle();
+  group('Suite 4: Error Recovery & Accurate Seek', () {
+    setUpAll(() {
+      debugPrint(
+        '========================================\n'
+        '  [E2E macOS] STARTING: Error Recovery & Accurate Seek\n'
+        '========================================',
+      );
+    });
+    tearDownAll(() {
+      debugPrint(
+        '========================================\n'
+        '  [E2E macOS] FINISHED: Error Recovery & Accurate Seek\n'
+        '========================================',
+      );
+    });
 
-    // 1. Trigger error state with invalid URL
-    final setupErrorButton = findById('better_player_e2e_setup_error');
-    await scrollAndTap(tester, setupErrorButton);
-
-    final errorText = findById('better_player_e2e_error_text');
-    await pumpUntilFound(
+    testWidgets('Error recovery from invalid URL to valid MP4', (
       tester,
-      errorText,
-      timeout: const Duration(seconds: 15),
-    );
+    ) async {
+      app.main();
+      await tester.pumpAndSettle();
 
-    // 2. Recover from error with valid MP4
-    final setupMp4Button = findById('better_player_e2e_setup_mp4');
-    await scrollAndTap(tester, setupMp4Button);
+      // 1. Trigger error state with invalid URL
+      final setupErrorButton = findById('better_player_e2e_setup_error');
+      await scrollAndTap(tester, setupErrorButton);
 
-    await pumpUntilNotFound(
-      tester,
-      errorText,
-      timeout: const Duration(seconds: 15),
-    );
+      final errorText = findById('better_player_e2e_error_text');
+      await pumpUntilFound(
+        tester,
+        errorText,
+        timeout: const Duration(seconds: 15),
+      );
 
-    final playPauseButton = findById(
-      'better_player_cupertino_controls_play_pause_button',
-    );
-    await pumpUntilFound(
-      tester,
-      playPauseButton,
-      timeout: const Duration(seconds: 15),
-    );
-    try {
-      await tester.ensureVisible(playPauseButton.first);
-      await tester.pump(const Duration(milliseconds: 200));
-    } catch (_) {}
-    await tester.tap(playPauseButton.first, warnIfMissed: false);
-    await tester.pump(const Duration(milliseconds: 500));
+      // 2. Recover from error with valid MP4
+      final setupMp4Button = findById('better_player_e2e_setup_mp4');
+      await scrollAndTap(tester, setupMp4Button);
 
-    // 3. Navigate to Seek E2E Page
-    final navigateSeekButton = findById('better_player_e2e_navigate_seek');
-    await scrollAndTap(tester, navigateSeekButton);
+      await pumpUntilNotFound(
+        tester,
+        errorText,
+        timeout: const Duration(seconds: 15),
+      );
 
-    final seekInitialized = findById('better_player_e2e_seek_initialized');
-    await pumpUntilFound(
-      tester,
-      seekInitialized,
-      timeout: const Duration(seconds: 25),
-    );
+      final playPauseButton = findById(
+        'better_player_cupertino_controls_play_pause_button',
+      );
+      await pumpUntilFound(
+        tester,
+        playPauseButton,
+        timeout: const Duration(seconds: 15),
+      );
+      try {
+        await tester.ensureVisible(playPauseButton.first);
+        await tester.pump(const Duration(milliseconds: 200));
+      } catch (_) {}
+      await tester.tap(playPauseButton.first, warnIfMissed: false);
+      await tester.pump(const Duration(milliseconds: 500));
+    });
 
-    // 4. Seek 10s and verify
-    final seek10sButton = findById('better_player_e2e_seek_10s_button');
-    await scrollAndTap(tester, seek10sButton);
+    testWidgets('Accurate seek on dedicated Seek E2E page', (tester) async {
+      app.main();
+      await tester.pumpAndSettle();
 
-    final seek10sVerified = findById('better_player_e2e_seek_10s_verified');
-    await pumpUntilFound(
-      tester,
-      seek10sVerified,
-      timeout: const Duration(seconds: 15),
-    );
+      // 1. Navigate to Seek E2E Page
+      final navigateSeekButton = findById('better_player_e2e_navigate_seek');
+      await scrollAndTap(tester, navigateSeekButton);
+
+      final seekInitialized = findById('better_player_e2e_seek_initialized');
+      await pumpUntilFound(
+        tester,
+        seekInitialized,
+        timeout: const Duration(seconds: 25),
+      );
+
+      // 2. Seek 10s and verify
+      final seek10sButton = findById('better_player_e2e_seek_10s_button');
+      await scrollAndTap(tester, seek10sButton);
+
+      final seek10sVerified = findById('better_player_e2e_seek_10s_verified');
+      await pumpUntilFound(
+        tester,
+        seek10sVerified,
+        timeout: const Duration(seconds: 15),
+      );
+    });
   });
 }
