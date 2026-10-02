@@ -45,6 +45,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   Timer? _pollingTimer;
 
   Duration _duration = Duration.zero;
+  Duration _currentPosition = Duration.zero;
   double _width = 0;
   double _height = 0;
   String? _currentKey;
@@ -97,17 +98,47 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       case MpvEventId.propertyChange:
         _onPropertyChange(event.ref.data.cast<MpvEventProperty>());
       case MpvEventId.seek:
+        break;
+      case MpvEventId.playbackRestart:
+        final posMs = _getPositionMs();
+        if (posMs > 0) {
+          _currentPosition = Duration(milliseconds: posMs);
+        }
         _eventController.add(
           VideoEvent(
             eventType: VideoEventType.seek,
             key: _currentKey,
-            position: Duration(milliseconds: _getPositionMs()),
+            position: _currentPosition,
           ),
         );
       case MpvEventId.endFile:
-        _eventController.add(
-          VideoEvent(eventType: VideoEventType.completed, key: _currentKey),
-        );
+        final endFileData = event.ref.data.cast<MpvEventEndFile>();
+        final isError =
+            event.ref.error < 0 ||
+            (endFileData != ffi.nullptr &&
+                (endFileData.ref.reason == MpvEndFileReason.error ||
+                    endFileData.ref.error < 0));
+        if (isError) {
+          final errorCode =
+              endFileData != ffi.nullptr && endFileData.ref.error < 0
+              ? endFileData.ref.error
+              : event.ref.error;
+          final reason = endFileData != ffi.nullptr
+              ? endFileData.ref.reason
+              : -1;
+          final errorStr = _bindings.errorString(errorCode);
+          _eventController.addError(
+            PlatformException(
+              code: 'MPV_ERROR',
+              message:
+                  'Failed to load video: $errorStr (reason: $reason, code: $errorCode)',
+            ),
+          );
+        } else {
+          _eventController.add(
+            VideoEvent(eventType: VideoEventType.completed, key: _currentKey),
+          );
+        }
     }
   }
 
@@ -180,6 +211,13 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           final durSecs = prop.ref.data.cast<ffi.Double>().value;
           if (durSecs > 0) {
             _duration = Duration(milliseconds: (durSecs * 1000).toInt());
+          }
+        }
+      case 'time-pos':
+        if (prop.ref.data != ffi.nullptr) {
+          final posSecs = prop.ref.data.cast<ffi.Double>().value;
+          if (posSecs >= 0) {
+            _currentPosition = Duration(milliseconds: (posSecs * 1000).toInt());
           }
         }
     }
@@ -268,6 +306,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> setDataSource(DataSource dataSource) async {
+    _currentPosition = Duration.zero;
     _currentKey = dataSource.key;
 
     // Configure headers if present
@@ -312,13 +351,18 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> seekTo(Duration position) async {
+    _currentPosition = position;
     final seconds = position.inMilliseconds / 1000.0;
-    _command(['seek', seconds.toString(), 'absolute']);
+    _command(['seek', seconds.toString(), 'absolute+exact']);
   }
 
   @override
   Future<Duration> getPosition() async {
-    return Duration(milliseconds: _getPositionMs());
+    final ms = _getPositionMs();
+    if (ms > 0) {
+      _currentPosition = Duration(milliseconds: ms);
+    }
+    return _currentPosition;
   }
 
   @override

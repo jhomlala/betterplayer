@@ -35,6 +35,15 @@ abstract class MpvEventId {
   static const int propertyChange = 22;
 }
 
+// mpv_end_file_reason enum constants
+abstract class MpvEndFileReason {
+  static const int eof = 0;
+  static const int stop = 2;
+  static const int quit = 3;
+  static const int error = 4;
+  static const int redirect = 5;
+}
+
 // Native struct definitions
 final class MpvHandle extends ffi.Opaque {}
 
@@ -58,6 +67,23 @@ final class MpvEventProperty extends ffi.Struct {
   external int format;
 
   external ffi.Pointer<ffi.Void> data;
+}
+
+final class MpvEventEndFile extends ffi.Struct {
+  @ffi.Int32()
+  external int reason;
+
+  @ffi.Int32()
+  external int error;
+
+  @ffi.Int64()
+  external int playlistEntryId;
+
+  @ffi.Int64()
+  external int playlistInsertId;
+
+  @ffi.Int32()
+  external int playlistInsertNumEntries;
 }
 
 // C function typedefs
@@ -171,6 +197,9 @@ typedef MpvObservePropertyDart =
       int format,
     );
 
+typedef MpvErrorStringC = ffi.Pointer<Utf8> Function(ffi.Int32 error);
+typedef MpvErrorStringDart = ffi.Pointer<Utf8> Function(int error);
+
 typedef MpvWaitEventC =
     ffi.Pointer<MpvEvent> Function(
       ffi.Pointer<MpvHandle> ctx,
@@ -221,6 +250,9 @@ class MpvBindings {
           ),
       mpvWaitEvent = lib.lookupFunction<MpvWaitEventC, MpvWaitEventDart>(
         'mpv_wait_event',
+      ),
+      mpvErrorString = lib.lookupFunction<MpvErrorStringC, MpvErrorStringDart>(
+        'mpv_error_string',
       );
 
   final MpvCreateDart mpvCreate;
@@ -236,6 +268,17 @@ class MpvBindings {
   final MpvSetOptionStringDart mpvSetOptionString;
   final MpvObservePropertyDart mpvObserveProperty;
   final MpvWaitEventDart mpvWaitEvent;
+  final MpvErrorStringDart mpvErrorString;
+
+  String errorString(int error) {
+    try {
+      final ptr = mpvErrorString(error);
+      if (ptr != ffi.nullptr) {
+        return ptr.toDartString();
+      }
+    } catch (_) {}
+    return 'Error $error';
+  }
 
   static MpvBindings? _instance;
 
