@@ -102,9 +102,21 @@ class PlayerLogger {
     // Clamp to valid loggable levels (exclude 'none')
     final clampedIndex = levelIndex.clamp(0, PlayerLogLevel.values.length - 2);
     final level = PlayerLogLevel.values[clampedIndex];
-    final tag = defaultTargetPlatform == TargetPlatform.android
-        ? 'Android'
-        : (defaultTargetPlatform == TargetPlatform.iOS ? 'iOS' : 'Native');
+    final String tag;
+    switch (defaultTargetPlatform) {
+      case TargetPlatform.android:
+        tag = 'Android';
+      case TargetPlatform.iOS:
+        tag = 'iOS';
+      case TargetPlatform.macOS:
+        tag = 'macOS';
+      case TargetPlatform.windows:
+        tag = 'Windows';
+      case TargetPlatform.linux:
+        tag = 'Linux';
+      case TargetPlatform.fuchsia:
+        tag = 'Fuchsia';
+    }
     _log(
       level: level,
       message: message,
