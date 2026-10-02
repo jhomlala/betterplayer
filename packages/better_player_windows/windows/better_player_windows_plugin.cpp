@@ -1,4 +1,12 @@
+#include "include/better_player_windows/better_player_windows_plugin.h"
 #include "better_player_windows_plugin.h"
+
+void BetterPlayerWindowsPluginRegisterWithRegistrar(
+    FlutterDesktopPluginRegistrarRef registrar) {
+  better_player_windows::BetterPlayerWindowsPlugin::RegisterWithRegistrar(
+      flutter::PluginRegistrarManager::GetInstance()
+          ->GetRegistrar<flutter::PluginRegistrarWindows>(registrar));
+}
 
 namespace better_player_windows {
 

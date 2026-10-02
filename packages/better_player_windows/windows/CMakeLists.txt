@@ -8,6 +8,7 @@ add_library(${PLUGIN_NAME} SHARED
   "better_player_windows_plugin.h"
   "texture_bridge.cpp"
   "texture_bridge.h"
+  "include/better_player_windows/better_player_windows_plugin.h"
 )
 
 apply_standard_settings(${PLUGIN_NAME})
