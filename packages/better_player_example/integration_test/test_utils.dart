@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -51,7 +52,8 @@ Future<void> waitModalClosed(
   final end = DateTime.now().add(timeout);
   while (DateTime.now().isBefore(end)) {
     await tester.pump(const Duration(milliseconds: 100));
-    if (find.byType(BottomSheet).evaluate().isEmpty) {
+    if (find.byType(BottomSheet).evaluate().isEmpty &&
+        find.byType(CupertinoActionSheet).evaluate().isEmpty) {
       await tester.pump(const Duration(milliseconds: 200));
       return;
     }
@@ -90,12 +92,18 @@ Future<void> scrollAndTap(
       return;
     }
     final scrollables = find.byType(Scrollable);
-    final targetScrollable =
-        scrollable ??
-        (scrollables.evaluate().length > 1
-            ? scrollables.last
-            : scrollables.first);
-    await tester.drag(targetScrollable, const Offset(0, -150));
+    if (scrollables.evaluate().isNotEmpty) {
+      final targetScrollable =
+          scrollable ??
+          (scrollables.evaluate().length > 1
+              ? scrollables.last
+              : scrollables.first);
+      await tester.drag(
+        targetScrollable,
+        const Offset(0, -150),
+        warnIfMissed: false,
+      );
+    }
     await tester.pump(const Duration(milliseconds: 200));
   }
   expect(finder, findsOneWidget);

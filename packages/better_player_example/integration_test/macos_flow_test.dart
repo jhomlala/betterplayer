@@ -119,7 +119,11 @@ void main() {
     // 11. Seeking
     final progressBar = findById('better_player_cupertino_progress_bar');
     if (progressBar.evaluate().isNotEmpty) {
-      await tester.tap(progressBar);
+      try {
+        await tester.ensureVisible(progressBar.first);
+        await tester.pump(const Duration(milliseconds: 200));
+      } catch (_) {}
+      await tester.tap(progressBar.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
     }
 
@@ -128,7 +132,11 @@ void main() {
       'better_player_cupertino_controls_expand_button',
     );
     if (expandButton.evaluate().isNotEmpty) {
-      await tester.tap(expandButton);
+      try {
+        await tester.ensureVisible(expandButton.first);
+        await tester.pump(const Duration(milliseconds: 200));
+      } catch (_) {}
+      await tester.tap(expandButton.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
     }
   });

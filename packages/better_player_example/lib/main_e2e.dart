@@ -13,7 +13,9 @@ import 'package:material_ui/material_ui.dart' as m3;
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  SemanticsBinding.instance.ensureSemantics();
+  if (kIsWeb) {
+    SemanticsBinding.instance.ensureSemantics();
+  }
   runApp(const BetterPlayerE2EApp());
 }
 
