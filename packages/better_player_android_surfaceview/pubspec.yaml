@@ -1,0 +1,36 @@
+name: better_player_android_surfaceview
+resolution: workspace
+description: SurfaceView (platform view) rendering for better_player on Android, as a drop-in alternative to the Texture pipeline for devices where Texture sharing shows a black screen.
+version: 0.1.0
+homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_android_surfaceview
+topics:
+  - video
+  - player
+  - android
+  - surfaceview
+environment:
+  sdk: "^3.12.0"
+  flutter: ">=3.47.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  better_player_android: ^1.7.0
+  better_player_platform_interface: ^1.3.3
+  jni: ^1.0.3
+  jni_flutter: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  mocktail: ^1.0.5
+  very_good_analysis: ^10.3.0
+
+# No `implements` / `dartPluginClass` on purpose: this package never registers
+# itself. The app opts in with BetterPlayerAndroidSurfaceView.registerWith().
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: pl.hasoft.better_player_surfaceview
+        pluginClass: BetterPlayerSurfaceViewPlugin
