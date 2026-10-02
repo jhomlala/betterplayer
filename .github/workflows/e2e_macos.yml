@@ -51,26 +51,6 @@ jobs:
       - name: Get Workspace Dependencies
         run: flutter pub get
 
-      - name: Build macOS Example (e2e target)
+      - name: Run macOS Integration Tests
         working-directory: packages/better_player_example
-        run: flutter build macos --target lib/main_e2e.dart --debug
-
-      - name: Run macOS Flow Test
-        working-directory: packages/better_player_example
-        run: flutter test integration_test/macos_flow_test.dart -d macos
-
-      - name: Run macOS HLS Test
-        working-directory: packages/better_player_example
-        run: flutter test integration_test/macos_hls_test.dart -d macos
-
-      - name: Run macOS Data Source Swap Test
-        working-directory: packages/better_player_example
-        run: flutter test integration_test/macos_datasource_swap_test.dart -d macos
-
-      - name: Run macOS Error Recovery Test
-        working-directory: packages/better_player_example
-        run: flutter test integration_test/macos_error_recovery_test.dart -d macos
-
-      - name: Run macOS FFI API Test
-        working-directory: packages/better_player_example
-        run: flutter test integration_test/macos_ffi_test.dart -d macos
+        run: flutter test integration_test/macos_all_tests.dart -d macos --no-pub

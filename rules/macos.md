@@ -72,6 +72,10 @@ dart run scripts/sync_apple_core.dart
 E2E testing on macOS is handled by Flutter's built-in `integration_test` framework:
 
 ```bash
+# Run full suite (builds once)
+flutter test integration_test/macos_all_tests.dart -d macos
+
+# Or run an individual suite
 flutter test integration_test/macos_flow_test.dart -d macos
 ```
 
