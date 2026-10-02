@@ -102,6 +102,8 @@ bool TextureBridge::Initialize() {
   g_mpv.set_option_string(mpv_, "vo", "libmpv");
   g_mpv.set_option_string(mpv_, "hwdec", "auto-safe");
   g_mpv.set_option_string(mpv_, "keep-open", "yes");
+  g_mpv.set_option_string(mpv_, "ao", "wasapi,null");
+  g_mpv.set_option_string(mpv_, "audio-fallback-to-null", "yes");
 
   if (g_mpv.initialize(mpv_) < 0) {
     g_mpv.destroy(mpv_);

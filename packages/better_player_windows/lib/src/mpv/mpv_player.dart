@@ -98,34 +98,26 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       case MpvEventId.propertyChange:
         _onPropertyChange(event.ref.data.cast<MpvEventProperty>());
       case MpvEventId.seek:
-        break;
       case MpvEventId.playbackRestart:
         final posMs = _getPositionMs();
         if (posMs > 0) {
           _currentPosition = Duration(milliseconds: posMs);
         }
-        _eventController.add(
-          VideoEvent(
-            eventType: VideoEventType.seek,
-            key: _currentKey,
-            position: _currentPosition,
-          ),
-        );
       case MpvEventId.endFile:
         final endFileData = event.ref.data.cast<MpvEventEndFile>();
+        final errorCode =
+            endFileData != ffi.nullptr && endFileData.ref.error < 0
+            ? endFileData.ref.error
+            : event.ref.error;
+        final reason = endFileData != ffi.nullptr ? endFileData.ref.reason : -1;
+        // Ignore audio initialization failures (-14: MPV_ERROR_AO_INIT_FAILED) on headless environments
         final isError =
-            event.ref.error < 0 ||
-            (endFileData != ffi.nullptr &&
-                (endFileData.ref.reason == MpvEndFileReason.error ||
-                    endFileData.ref.error < 0));
+            (event.ref.error < 0 ||
+                (endFileData != ffi.nullptr &&
+                    (endFileData.ref.reason == MpvEndFileReason.error ||
+                        endFileData.ref.error < 0))) &&
+            errorCode != -14;
         if (isError) {
-          final errorCode =
-              endFileData != ffi.nullptr && endFileData.ref.error < 0
-              ? endFileData.ref.error
-              : event.ref.error;
-          final reason = endFileData != ffi.nullptr
-              ? endFileData.ref.reason
-              : -1;
           final errorStr = _bindings.errorString(errorCode);
           _eventController.addError(
             PlatformException(
