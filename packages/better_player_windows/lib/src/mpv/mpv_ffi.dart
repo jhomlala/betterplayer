@@ -86,6 +86,25 @@ final class MpvEventEndFile extends ffi.Struct {
   external int playlistInsertNumEntries;
 }
 
+abstract class MpvLogLevel {
+  static const int none = 0;
+  static const int fatal = 10;
+  static const int error = 20;
+  static const int warn = 30;
+  static const int info = 40;
+  static const int v = 50;
+  static const int debug = 60;
+  static const int trace = 70;
+}
+
+final class MpvEventLogMessage extends ffi.Struct {
+  external ffi.Pointer<Utf8> prefix;
+  external ffi.Pointer<Utf8> level;
+  external ffi.Pointer<Utf8> text;
+  @ffi.Int32()
+  external int logLevel;
+}
+
 // C function typedefs
 typedef MpvCreateC = ffi.Pointer<MpvHandle> Function();
 typedef MpvCreateDart = ffi.Pointer<MpvHandle> Function();
@@ -200,6 +219,11 @@ typedef MpvObservePropertyDart =
 typedef MpvErrorStringC = ffi.Pointer<Utf8> Function(ffi.Int32 error);
 typedef MpvErrorStringDart = ffi.Pointer<Utf8> Function(int error);
 
+typedef MpvRequestLogMessagesC =
+    ffi.Int32 Function(ffi.Pointer<MpvHandle> ctx, ffi.Pointer<Utf8> minLevel);
+typedef MpvRequestLogMessagesDart =
+    int Function(ffi.Pointer<MpvHandle> ctx, ffi.Pointer<Utf8> minLevel);
+
 typedef MpvWaitEventC =
     ffi.Pointer<MpvEvent> Function(
       ffi.Pointer<MpvHandle> ctx,
@@ -253,7 +277,11 @@ class MpvBindings {
       ),
       mpvErrorString = lib.lookupFunction<MpvErrorStringC, MpvErrorStringDart>(
         'mpv_error_string',
-      );
+      ),
+      mpvRequestLogMessages = lib
+          .lookupFunction<MpvRequestLogMessagesC, MpvRequestLogMessagesDart>(
+            'mpv_request_log_messages',
+          );
 
   final MpvCreateDart mpvCreate;
   final MpvInitializeDart mpvInitialize;
@@ -269,6 +297,7 @@ class MpvBindings {
   final MpvObservePropertyDart mpvObserveProperty;
   final MpvWaitEventDart mpvWaitEvent;
   final MpvErrorStringDart mpvErrorString;
+  final MpvRequestLogMessagesDart mpvRequestLogMessages;
 
   String errorString(int error) {
     try {

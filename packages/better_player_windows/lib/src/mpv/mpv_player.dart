@@ -30,6 +30,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     required this.textureId,
     required this.handle,
     MpvBindings? bindings,
+    this.onLog,
   }) : _bindings = bindings ?? MpvBindings.instance! {
     _initEventStream();
   }
@@ -38,6 +39,12 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   final int textureId;
   final ffi.Pointer<MpvHandle> handle;
   final MpvBindings _bindings;
+  final void Function({required String message, required int levelIndex})?
+  onLog;
+
+  void _log(String message, {int levelIndex = 1}) {
+    onLog?.call(message: message, levelIndex: levelIndex);
+  }
 
   final StreamController<VideoEvent> _eventController =
       StreamController<VideoEvent>.broadcast();
@@ -63,6 +70,16 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     _observeProperty('paused-for-cache', MpvFormat.flag);
     _observeProperty('width', MpvFormat.int64);
     _observeProperty('height', MpvFormat.int64);
+
+    // Request mpv warnings and errors for logging
+    final warnStr = 'warn'.toNativeUtf8();
+    try {
+      _bindings.mpvRequestLogMessages(handle, warnStr);
+    } catch (_) {
+      // mpvRequestLogMessages might not be implemented in mock bindings
+    } finally {
+      calloc.free(warnStr);
+    }
 
     // Event polling timer
     _pollingTimer = Timer.periodic(const Duration(milliseconds: 16), (_) {
@@ -93,6 +110,21 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   void _handleEvent(ffi.Pointer<MpvEvent> event) {
     switch (event.ref.eventId) {
+      case MpvEventId.logMessage:
+        final logData = event.ref.data.cast<MpvEventLogMessage>();
+        if (logData != ffi.nullptr) {
+          final prefix = logData.ref.prefix != ffi.nullptr
+              ? logData.ref.prefix.toDartString()
+              : 'mpv';
+          final text = logData.ref.text != ffi.nullptr
+              ? logData.ref.text.toDartString().trim()
+              : '';
+          if (text.isNotEmpty) {
+            final level = logData.ref.logLevel;
+            final levelIndex = level <= MpvLogLevel.error ? 3 : 2;
+            _log('[$prefix] $text', levelIndex: levelIndex);
+          }
+        }
       case MpvEventId.fileLoaded:
         _onFileLoaded();
       case MpvEventId.propertyChange:
@@ -119,6 +151,10 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
             errorCode != -14;
         if (isError) {
           final errorStr = _bindings.errorString(errorCode);
+          _log(
+            'PlayerError: $errorStr (reason: $reason, code: $errorCode)',
+            levelIndex: 3,
+          );
           _eventController.addError(
             PlatformException(
               code: 'MPV_ERROR',
@@ -127,6 +163,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
             ),
           );
         } else {
+          _log('PlaybackState: ENDED');
           _eventController.add(
             VideoEvent(eventType: VideoEventType.completed, key: _currentKey),
           );
@@ -138,6 +175,10 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     _duration = Duration(milliseconds: _getDurationMs());
     _width = _getIntProperty('width').toDouble();
     _height = _getIntProperty('height').toDouble();
+
+    _log(
+      'onInitialized: dur=${_duration.inMilliseconds}ms, size=${_width.toInt()}x${_height.toInt()}',
+    );
 
     _eventController.add(
       VideoEvent(
@@ -167,6 +208,9 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       case 'paused-for-cache':
         if (prop.ref.data != ffi.nullptr) {
           final isBuffering = prop.ref.data.cast<ffi.Int32>().value != 0;
+          _log(
+            isBuffering ? 'PlaybackState: BUFFERING' : 'PlaybackState: READY',
+          );
           _eventController.add(
             VideoEvent(
               eventType: isBuffering
@@ -180,6 +224,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
         if (prop.ref.data != ffi.nullptr) {
           final isEof = prop.ref.data.cast<ffi.Int32>().value != 0;
           if (isEof) {
+            _log('PlaybackState: ENDED');
             _eventController.add(
               VideoEvent(
                 eventType: VideoEventType.completed,
@@ -290,6 +335,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> dispose() async {
+    _log('dispose()');
     _isDisposed = true;
     _pollingTimer?.cancel();
     _pollingTimer = null;
@@ -318,31 +364,37 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     }
 
     final url = dataSource.uri ?? dataSource.asset ?? '';
+    _log('setDataSource: $url');
     _command(['loadfile', url]);
   }
 
   @override
   Future<void> play() async {
+    _log('play()');
     _setPropertyFlag('pause', false);
   }
 
   @override
   Future<void> pause() async {
+    _log('pause()');
     _setPropertyFlag('pause', true);
   }
 
   @override
   Future<void> setVolume(double volume) async {
+    _log('setVolume: $volume', levelIndex: 0);
     _setPropertyDouble('volume', (volume * 100.0).clamp(0.0, 100.0));
   }
 
   @override
   Future<void> setSpeed(double speed) async {
+    _log('setSpeed: $speed', levelIndex: 0);
     _setPropertyDouble('speed', speed.clamp(0.0, 4.0));
   }
 
   @override
   Future<void> seekTo(Duration position) async {
+    _log('seekTo: ${position.inMilliseconds}');
     _currentPosition = position;
     final seconds = position.inMilliseconds / 1000.0;
     _command(['seek', seconds.toString(), 'absolute+exact']);
@@ -359,6 +411,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> setLooping({required bool looping}) async {
+    _log('setLooping: $looping');
     _setPropertyString('loop-file', looping ? 'inf' : 'no');
   }
 
@@ -368,6 +421,10 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     required int height,
     required int bitrate,
   }) async {
+    _log(
+      'setTrackParameters: width=$width, height=$height, bitrate=$bitrate',
+      levelIndex: 0,
+    );
     if (width > 0 && height > 0) {
       _setPropertyString('video-aspect-override', '${width / height}');
     }
@@ -375,6 +432,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> setAudioTrack({required String name, required int index}) async {
+    _log('setAudioTrack: name=$name, index=$index', levelIndex: 0);
     _setPropertyString('aid', '$index');
   }
 

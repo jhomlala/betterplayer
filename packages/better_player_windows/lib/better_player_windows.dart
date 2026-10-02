@@ -31,7 +31,7 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
   void Function({required int levelIndex, required String message})?
   _logCallback;
 
-  void _log({required String message, int levelIndex = 0}) {
+  void _log({required String message, required int levelIndex}) {
     _logCallback?.call(levelIndex: levelIndex, message: message);
   }
 
@@ -64,7 +64,11 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
     }
 
     final handle = ffi.Pointer<MpvHandle>.fromAddress(mpvHandleAddress);
-    return MpvPlayer(textureId: textureId, handle: handle);
+    return MpvPlayer(
+      textureId: textureId,
+      handle: handle,
+      onLog: _log,
+    );
   }
 
   @override
@@ -109,6 +113,10 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
 
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
+    _log(
+      message: 'setDataSource: textureId=$textureId, dataSource=$dataSource',
+      levelIndex: 1,
+    );
     final player = getPlayer(textureId);
     if (player == null) return;
     await player.setDataSource(dataSource);
@@ -122,26 +130,40 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
 
   @override
   Future<void> play(int? textureId) async {
+    _log(message: 'play: textureId=$textureId', levelIndex: 1);
     await getPlayer(textureId)?.play();
   }
 
   @override
   Future<void> pause(int? textureId) async {
+    _log(message: 'pause: textureId=$textureId', levelIndex: 1);
     await getPlayer(textureId)?.pause();
   }
 
   @override
   Future<void> setVolume(int? textureId, double volume) async {
+    _log(
+      message: 'setVolume: textureId=$textureId, volume=$volume',
+      levelIndex: 0,
+    );
     await getPlayer(textureId)?.setVolume(volume);
   }
 
   @override
   Future<void> setSpeed(int? textureId, double speed) async {
+    _log(
+      message: 'setSpeed: textureId=$textureId, speed=$speed',
+      levelIndex: 0,
+    );
     await getPlayer(textureId)?.setSpeed(speed);
   }
 
   @override
   Future<void> seekTo(int? textureId, Duration? position) async {
+    _log(
+      message: 'seekTo: textureId=$textureId, position=$position',
+      levelIndex: 1,
+    );
     if (position == null) return;
     await getPlayer(textureId)?.seekTo(position);
   }
@@ -160,6 +182,10 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
 
   @override
   Future<void> setLooping(int? textureId, bool looping) async {
+    _log(
+      message: 'setLooping: textureId=$textureId, looping=$looping',
+      levelIndex: 1,
+    );
     await getPlayer(textureId)?.setLooping(looping: looping);
   }
 
@@ -170,6 +196,11 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
     int? height,
     int? bitrate,
   ) async {
+    _log(
+      message:
+          'setTrackParameters: textureId=$textureId, width=$width, height=$height, bitrate=$bitrate',
+      levelIndex: 0,
+    );
     await getPlayer(textureId)?.setTrackParameters(
       width: width ?? 0,
       height: height ?? 0,
@@ -179,6 +210,10 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
 
   @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async {
+    _log(
+      message: 'setAudioTrack: textureId=$textureId, name=$name, index=$index',
+      levelIndex: 0,
+    );
     await getPlayer(
       textureId,
     )?.setAudioTrack(name: name ?? '', index: index ?? 0);

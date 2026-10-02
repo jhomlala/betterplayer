@@ -55,6 +55,13 @@ typedef struct mpv_event_property {
     void *data;
 } mpv_event_property;
 
+typedef struct mpv_event_log_message {
+    const char *prefix;
+    const char *level;
+    const char *text;
+    int log_level;
+} mpv_event_log_message;
+
 mpv_handle *mpv_create(void);
 int mpv_initialize(mpv_handle *ctx);
 void mpv_destroy(mpv_handle *ctx);
@@ -69,6 +76,7 @@ char *mpv_get_property_string(mpv_handle *ctx, const char *name);
 void mpv_free(void *data);
 int mpv_set_option_string(mpv_handle *ctx, const char *name, const char *data);
 int mpv_observe_property(mpv_handle *mpv, uint64_t reply_userdata, const char *name, mpv_format format);
+int mpv_request_log_messages(mpv_handle *ctx, const char *min_level);
 mpv_event *mpv_wait_event(mpv_handle *ctx, double timeout);
 
 #ifdef __cplusplus
