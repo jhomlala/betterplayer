@@ -25,7 +25,7 @@ class TextureBridge {
 
  private:
   static void OnMpvUpdate(void* ctx);
-  const FlutterDesktopGpuBuffer* CopyGpuBuffer(size_t width, size_t height);
+  const FlutterDesktopGpuSurfaceDescriptor* ObtainDescriptor(size_t width, size_t height);
 
   flutter::TextureRegistrar* texture_registrar_ = nullptr;
   int64_t texture_id_ = -1;
@@ -39,7 +39,7 @@ class TextureBridge {
   Microsoft::WRL::ComPtr<ID3D11Texture2D> texture_;
   HANDLE shared_handle_ = nullptr;
 
-  FlutterDesktopGpuBuffer gpu_buffer_{};
+  FlutterDesktopGpuSurfaceDescriptor gpu_surface_descriptor_{};
   std::mutex mutex_;
   bool is_disposed_ = false;
 };

@@ -31,6 +31,9 @@ struct MpvFunctions {
   bool Load() {
     if (module) return true;
     module = LoadLibraryA("mpv-2.dll");
+    if (!module) {
+      module = LoadLibraryA("libmpv-2.dll");
+    }
     if (!module) return false;
 
     create = (fn_mpv_create)GetProcAddress(module, "mpv_create");
@@ -106,11 +109,13 @@ bool TextureBridge::Initialize() {
     return false;
   }
 
-  // 3. Setup Texture Variant with GpuBufferCallback
+  // 3. Setup Texture Variant with GpuSurfaceTexture
   texture_variant_ = std::make_unique<flutter::TextureVariant>(
-      flutter::GpuBufferTexture([this](size_t width, size_t height) {
-        return CopyGpuBuffer(width, height);
-      }));
+      flutter::GpuSurfaceTexture(
+          kFlutterDesktopGpuSurfaceTypeDxgiSharedHandle,
+          [this](size_t width, size_t height) {
+            return ObtainDescriptor(width, height);
+          }));
 
   texture_id_ = texture_registrar_->RegisterTexture(texture_variant_.get());
 
@@ -137,7 +142,7 @@ void TextureBridge::OnMpvUpdate(void* ctx) {
   }
 }
 
-const FlutterDesktopGpuBuffer* TextureBridge::CopyGpuBuffer(size_t width, size_t height) {
+const FlutterDesktopGpuSurfaceDescriptor* TextureBridge::ObtainDescriptor(size_t width, size_t height) {
   std::lock_guard<std::mutex> lock(mutex_);
   if (is_disposed_ || !d3d11_device_) {
     return nullptr;
@@ -149,7 +154,7 @@ const FlutterDesktopGpuBuffer* TextureBridge::CopyGpuBuffer(size_t width, size_t
   }
 
   // Recreate D3D11 texture if dimensions changed
-  if (!texture_ || gpu_buffer_.width != width || gpu_buffer_.height != height) {
+  if (!texture_ || gpu_surface_descriptor_.width != width || gpu_surface_descriptor_.height != height) {
     D3D11_TEXTURE2D_DESC desc = {};
     desc.Width = static_cast<UINT>(width);
     desc.Height = static_cast<UINT>(height);
@@ -172,10 +177,14 @@ const FlutterDesktopGpuBuffer* TextureBridge::CopyGpuBuffer(size_t width, size_t
       dxgi_resource->GetSharedHandle(&shared_handle_);
     }
 
-    gpu_buffer_.struct_size = sizeof(FlutterDesktopGpuBuffer);
-    gpu_buffer_.width = width;
-    gpu_buffer_.height = height;
-    gpu_buffer_.buffer = shared_handle_;
+    gpu_surface_descriptor_.struct_size = sizeof(FlutterDesktopGpuSurfaceDescriptor);
+    gpu_surface_descriptor_.handle = shared_handle_;
+    gpu_surface_descriptor_.width = width;
+    gpu_surface_descriptor_.height = height;
+    gpu_surface_descriptor_.visible_width = width;
+    gpu_surface_descriptor_.visible_height = height;
+    gpu_surface_descriptor_.release_callback = nullptr;
+    gpu_surface_descriptor_.release_context = nullptr;
   }
 
   // Render mpv frame into D3D11 render target if render context is active
@@ -189,7 +198,7 @@ const FlutterDesktopGpuBuffer* TextureBridge::CopyGpuBuffer(size_t width, size_t
     }
   }
 
-  return &gpu_buffer_;
+  return &gpu_surface_descriptor_;
 }
 
 void TextureBridge::Dispose() {

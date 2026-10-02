@@ -25,12 +25,19 @@ target_include_directories(${PLUGIN_NAME} PRIVATE
 target_link_libraries(${PLUGIN_NAME} PRIVATE flutter flutter_wrapper_plugin)
 target_link_libraries(${PLUGIN_NAME} PRIVATE d3d11.lib dxgi.lib)
 
-# Copy mpv-2.dll to the runtime output directory if present in libs
+# Copy mpv-2.dll or libmpv-2.dll to the runtime output directory if present in libs
 set(MPV_DIR "${CMAKE_CURRENT_SOURCE_DIR}/libs")
 if(EXISTS "${MPV_DIR}/mpv-2.dll")
   add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
       "${MPV_DIR}/mpv-2.dll"
+      $<TARGET_FILE_DIR:${PLUGIN_NAME}>
+  )
+endif()
+if(EXISTS "${MPV_DIR}/libmpv-2.dll")
+  add_custom_command(TARGET ${PLUGIN_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+      "${MPV_DIR}/libmpv-2.dll"
       $<TARGET_FILE_DIR:${PLUGIN_NAME}>
   )
 endif()

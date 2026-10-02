@@ -245,7 +245,12 @@ class MpvBindings {
       final lib = ffi.DynamicLibrary.open('mpv-2.dll');
       return _instance = MpvBindings(lib);
     } catch (_) {
-      return null;
+      try {
+        final lib = ffi.DynamicLibrary.open('libmpv-2.dll');
+        return _instance = MpvBindings(lib);
+      } catch (_) {
+        return null;
+      }
     }
   }
 

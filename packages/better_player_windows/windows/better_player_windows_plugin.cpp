@@ -35,7 +35,7 @@ void BetterPlayerWindowsPlugin::HandleMethodCall(
     const flutter::MethodCall<flutter::EncodableValue> &method_call,
     std::unique_ptr<flutter::MethodResult<flutter::EncodableValue>> result) {
   if (method_call.method_name().compare("create") == 0) {
-    auto bridge = std::make_unique<TextureBridge>(registrar_->textures());
+    auto bridge = std::make_unique<TextureBridge>(registrar_->texture_registrar());
     if (!bridge->Initialize()) {
       result->Error("INITIALIZE_FAILED", "Failed to initialize D3D11 texture and mpv context.");
       return;

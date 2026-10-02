@@ -51,6 +51,20 @@ jobs:
       - name: Get Workspace Dependencies
         run: flutter pub get
 
+      - name: Download and setup libmpv
+        shell: pwsh
+        run: |
+          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/zhongfly/mpv-winbuild/releases/latest"
+          $asset = $release.assets | Where-Object { $_.name -like "mpv-dev-x86_64-*.7z" -and $_.name -notlike "*v3*" -and $_.name -notlike "*lgpl*" } | Select-Object -First 1
+          Write-Host "Downloading $($asset.name)..."
+          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile "mpv-dev.7z"
+          New-Item -ItemType Directory -Force -Path "packages/better_player_windows/windows/libs"
+          7z e mpv-dev.7z -o"packages/better_player_windows/windows/libs" *.dll -r -y
+          if (Test-Path "packages/better_player_windows/windows/libs/libmpv-2.dll") {
+            Copy-Item "packages/better_player_windows/windows/libs/libmpv-2.dll" "packages/better_player_windows/windows/libs/mpv-2.dll" -Force
+          }
+          Copy-Item "packages/better_player_windows/windows/libs/*mpv*.dll" "C:\Windows\System32\" -Force
+
       - name: Run Windows Integration Tests
         working-directory: packages/better_player_example
         run: flutter test integration_test/windows_all_tests.dart -d windows --no-pub
