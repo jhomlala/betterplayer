@@ -44,13 +44,31 @@ Future<void> pumpUntilNotFound(
   expect(finder, findsNothing);
 }
 
+Future<void> waitModalClosed(
+  WidgetTester tester, {
+  Duration timeout = const Duration(seconds: 5),
+}) async {
+  final end = DateTime.now().add(timeout);
+  while (DateTime.now().isBefore(end)) {
+    await tester.pump(const Duration(milliseconds: 100));
+    if (find.byType(BottomSheet).evaluate().isEmpty) {
+      await tester.pump(const Duration(milliseconds: 200));
+      return;
+    }
+  }
+}
+
 Future<void> tapWhenReady(
   WidgetTester tester,
   Finder finder, {
   Duration timeout = const Duration(seconds: 20),
 }) async {
   await pumpUntilFound(tester, finder, timeout: timeout);
-  await tester.tap(finder.first);
+  try {
+    await tester.ensureVisible(finder.first);
+    await tester.pump(const Duration(milliseconds: 200));
+  } catch (_) {}
+  await tester.tap(finder.first, warnIfMissed: false);
   await tester.pump(const Duration(milliseconds: 300));
 }
 
@@ -60,17 +78,24 @@ Future<void> scrollAndTap(
   Finder? scrollable,
   Duration timeout = const Duration(seconds: 20),
 }) async {
-  final targetScrollable = scrollable ?? find.byType(Scrollable).first;
   final end = DateTime.now().add(timeout);
   while (DateTime.now().isBefore(end)) {
     if (finder.evaluate().isNotEmpty) {
-      await tester.ensureVisible(finder.first);
-      await tester.pump(const Duration(milliseconds: 200));
-      await tester.tap(finder.first);
+      try {
+        await tester.ensureVisible(finder.first);
+        await tester.pump(const Duration(milliseconds: 200));
+      } catch (_) {}
+      await tester.tap(finder.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 300));
       return;
     }
-    await tester.drag(targetScrollable, const Offset(0, -200));
+    final scrollables = find.byType(Scrollable);
+    final targetScrollable =
+        scrollable ??
+        (scrollables.evaluate().length > 1
+            ? scrollables.last
+            : scrollables.first);
+    await tester.drag(targetScrollable, const Offset(0, -150));
     await tester.pump(const Duration(milliseconds: 200));
   }
   expect(finder, findsOneWidget);

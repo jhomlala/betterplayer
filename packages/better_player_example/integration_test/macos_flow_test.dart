@@ -58,6 +58,7 @@ void main() {
 
     final speed2x = findById('better_player_overflow_menu_speed_2.0');
     await scrollAndTap(tester, speed2x);
+    await waitModalClosed(tester);
 
     // 6. Quality Selection test (Auto)
     await tapWhenReady(tester, moreButton);
@@ -66,6 +67,7 @@ void main() {
 
     final qualityAuto = findById('better_player_overflow_menu_quality_auto');
     await tapWhenReady(tester, qualityAuto);
+    await waitModalClosed(tester);
 
     // 7. Subtitles Selection test (Memory -> None -> Memory)
     await tapWhenReady(tester, moreButton);
@@ -76,6 +78,7 @@ void main() {
       'better_player_overflow_menu_subtitles_none',
     );
     await tapWhenReady(tester, subtitlesNone);
+    await waitModalClosed(tester);
 
     await tapWhenReady(tester, moreButton);
     await tapWhenReady(tester, subtitlesMenu);
@@ -84,6 +87,7 @@ void main() {
       'better_player_overflow_menu_subtitles_memory',
     );
     await tapWhenReady(tester, subtitlesMemory);
+    await waitModalClosed(tester);
 
     // 8. Verify all core events fired
     final eventsVerified = findById('better_player_e2e_events_verified');

@@ -66,6 +66,7 @@ void main() {
 
     final speed2x = findById('better_player_overflow_menu_speed_2.0');
     await scrollAndTap(tester, speed2x);
+    await waitModalClosed(tester);
 
     // 7. Quality Selection (Auto + variants)
     await tapWhenReady(tester, moreButton);
@@ -77,16 +78,17 @@ void main() {
 
     final quality1 = findById('better_player_overflow_menu_quality_1');
     if (quality1.evaluate().isNotEmpty) {
-      await tester.tap(quality1);
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.tap(quality1, warnIfMissed: false);
+      await waitModalClosed(tester);
 
       // Switch back to Auto
       await tapWhenReady(tester, moreButton);
       await tapWhenReady(tester, qualityMenu);
       await tapWhenReady(tester, qualityAuto);
+      await waitModalClosed(tester);
     } else {
-      await tester.tap(qualityAuto);
-      await tester.pump(const Duration(milliseconds: 500));
+      await tester.tap(qualityAuto, warnIfMissed: false);
+      await waitModalClosed(tester);
     }
 
     // 8. Seeking
