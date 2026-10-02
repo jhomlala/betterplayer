@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:better_player_example/main_e2e.dart' as app;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -92,6 +94,13 @@ void main() {
         finder: seek10sVerified,
         timeout: const Duration(seconds: 15),
       );
+
+      try {
+        await Process.run('nircmd', [
+          'savescreenshot',
+          'windows_seek_page.png',
+        ]);
+      } catch (_) {}
     });
   });
 }

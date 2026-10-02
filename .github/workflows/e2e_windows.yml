@@ -65,6 +65,22 @@ jobs:
           }
           Copy-Item "packages/better_player_windows/windows/libs/*mpv*.dll" "C:\Windows\System32\" -Force
 
+      - name: Download and setup nircmd for screenshots
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://www.nirsoft.net/utils/nircmd-x64.zip" -OutFile "nircmd.zip"
+          Expand-Archive "nircmd.zip" -DestinationPath "C:\Windows" -Force
+
       - name: Run Windows Integration Tests
         working-directory: packages/better_player_example
         run: flutter test integration_test/windows_all_tests.dart -d windows --no-pub
+
+      - name: Upload Windows Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-e2e-screenshots
+          path: |
+            packages/better_player_example/*.png
+            *.png
+          if-no-files-found: ignore

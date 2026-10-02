@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:better_player_example/main_e2e.dart' as app;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -67,6 +69,13 @@ void main() {
 
       // 4. Verify all tested without fatal crash
       expect(initializedStatus, findsOneWidget);
+
+      try {
+        await Process.run('nircmd', [
+          'savescreenshot',
+          'windows_ffi_page.png',
+        ]);
+      } catch (_) {}
 
       // 5. Navigate back to home
       final navigator = Navigator.of(tester.element(initializedStatus));

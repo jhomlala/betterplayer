@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:better_player_example/main_e2e.dart' as app;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -33,6 +35,15 @@ void main() {
         'better_player_cupertino_controls_play_pause_button',
       );
       await pumpUntilFound(tester: tester, finder: playPauseButton);
+
+      try {
+        await Process.run('nircmd', [
+          'savescreenshot',
+          'windows_flow_playback.png',
+        ]);
+      } catch (e) {
+        debugPrint('Screenshot error: $e');
+      }
 
       // 2. Play / Pause toggle
       await tester.tap(playPauseButton);
@@ -135,6 +146,13 @@ void main() {
         'better_player_material_controls_play_pause_button',
       );
       await pumpUntilFound(tester: tester, finder: materialPlayPause);
+
+      try {
+        await Process.run('nircmd', [
+          'savescreenshot',
+          'windows_material_controls.png',
+        ]);
+      } catch (_) {}
 
       await scrollAndTap(tester: tester, finder: toggleThemeButton);
       await pumpUntilFound(tester: tester, finder: playPauseButton);
