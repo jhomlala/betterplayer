@@ -58,8 +58,8 @@ betterPlayerController.stopPreCache(_betterPlayerDataSource);
 
 The underlying implementation varies by platform. Android uses ExoPlayer's internal caching mechanism. On iOS and macOS, [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) and local cache storage manage media caching. On the Web, fine-grained caching control (`preCache`, `clearCache`) is not currently supported natively by the Shaka Player wrapper.
 
-| Feature | Android HLS | Android non-HLS | Apple (iOS/macOS) HLS | Apple (iOS/macOS) non-HLS | Web |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Normal Caching** | ✓ | ✓ | ✓ | ✓ | x |
-| **Pre-Caching** | ✓ | ✓ | x | ✓ | x |
-| **Stop Caching** | ✓ | ✓ | x | ✓ | x |
+| Feature | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS | macOS HLS | macOS non-HLS | Web |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Normal Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | x |
+| **Pre-Caching** | ✓ | ✓ | x | ✓ | x | ✓ | x |
+| **Stop Caching** | ✓ | ✓ | x | ✓ | x | ✓ | x |

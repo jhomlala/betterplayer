@@ -15,15 +15,15 @@ Here is a comprehensive breakdown of supported formats, streaming protocols, and
 
 ## 1. Streaming Protocols
 
-| Protocol | Android | iOS / macOS | Web |
-|---|---|---|---|
-| **HLS (HTTP Live Streaming)** | ✓ | ✓ (Native) | ✓ |
-| **MPEG-DASH** | ✓ | x | ✓ |
-| **SmoothStreaming (MSS)** | ✓ | x | ✓ |
-| **RTSP** | ✓ | x | x |
-| **Progressive HTTP (MP4, WebM…)**| ✓ | ✓ | ✓ |
-| **Low-latency HLS (LL-HLS)** | ✓ | ✓ (iOS 15+, macOS 12+) | ✓ |
-| **Low-latency DASH** | ✓ | x | ✓ |
+| Protocol | Android | iOS | macOS | Web |
+|---|---|---|---|---|
+| **HLS (HTTP Live Streaming)** | ✓ | ✓ (Native) | ✓ (Native) | ✓ |
+| **MPEG-DASH** | ✓ | x | x | ✓ |
+| **SmoothStreaming (MSS)** | ✓ | x | x | x |
+| **RTSP** | ✓ | x | x | x |
+| **Progressive HTTP (MP4, WebM…)**| ✓ | ✓ | ✓ | ✓ |
+| **Low-latency HLS (LL-HLS)** | ✓ | ✓ (iOS 15+) | ✓ (macOS 12+) | ✓ |
+| **Low-latency DASH** | ✓ | x | x | ✓ |
 
 > **Note on Apple platforms (iOS & macOS):** Apple platforms are heavily HLS-centric. Apple does not provide native support for DASH or SmoothStreaming in AVFoundation. If you need to support iOS or macOS, HLS is strongly recommended.
 > 
@@ -33,14 +33,14 @@ Here is a comprehensive breakdown of supported formats, streaming protocols, and
 
 ## 2. Video Codecs
 
-| Codec | Android | iOS / macOS | Web (Chrome) | Web (Safari) | Web (Firefox) |
-|---|---|---|---|---|---|
-| **H.264 / AVC** | ✓ All devices | ✓ | ✓ | ✓ | ✓ |
-| **H.265 / HEVC** | ⚠️ HW only (Android 5+) | ✓ (A9+, Apple Silicon, Intel) | ⚠️ Limited | ✓ (Safari 11+) | x |
-| **VP8** | ✓ | x | ✓ | x | ✓ |
-| **VP9** | ✓ (Android 4.4+) | ⚠️ Safari 14+ | ✓ | ✓ (Safari 14+) | ✓ |
-| **AV1** | ⚠️ HW only (Android 10+) | ⚠️ iOS 17+, macOS 14+ | ✓ | ⚠️ Safari 17+ | ✓ |
-| **MPEG-4 / H.263** | ✓ (Legacy) | ✓ | ⚠️ | x | ⚠️ |
+| Codec | Android | iOS | macOS | Web (Chrome) | Web (Safari) | Web (Firefox) |
+|---|---|---|---|---|---|---|
+| **H.264 / AVC** | ✓ All devices | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **H.265 / HEVC** | ⚠️ HW only (Android 5+) | ✓ (A9+) | ✓ (Apple Silicon, Intel) | ⚠️ Limited | ✓ (Safari 11+) | x |
+| **VP8** | ✓ | x | x | ✓ | x | ✓ |
+| **VP9** | ✓ (Android 4.4+) | ⚠️ iOS 14+ | ⚠️ macOS 11+ | ✓ | ✓ (Safari 14+) | ✓ |
+| **AV1** | ⚠️ HW only (Android 10+) | ⚠️ iOS 17+ | ⚠️ macOS 14+ | ✓ | ⚠️ Safari 17+ | ✓ |
+| **MPEG-4 / H.263** | ✓ (Legacy) | ✓ | ✓ | ⚠️ | x | ⚠️ |
 
 > **Recommendation:** **H.264 Baseline/Main/High** is the only universal codec that guarantees safe playback across all old and new devices across all platforms.
 
@@ -48,42 +48,42 @@ Here is a comprehensive breakdown of supported formats, streaming protocols, and
 
 ## 3. Audio Codecs
 
-| Codec | Android | iOS / macOS | Web |
-|---|---|---|---|
-| **AAC-LC** | ✓ | ✓ | ✓ |
-| **AAC-HE v1 / v2** | ✓ | ✓ | ✓ |
-| **MP3** | ✓ | ✓ | ✓ |
-| **Opus** | ✓ | ✓ (iOS 11+, macOS 10.13+) | ✓ |
-| **Vorbis** | ✓ | x | ✓ |
-| **FLAC** | ✓ (Android 3.1+) | ✓ | ✓ |
-| **AC-3 / E-AC-3 (Dolby)** | ⚠️ Passthrough / HW | ✓ | ⚠️ Browser-dependent|
-| **ALAC** | ✓ | ✓ | x |
-| **PCM / WAV** | ✓ | ✓ | ✓ |
+| Codec | Android | iOS | macOS | Web |
+|---|---|---|---|---|
+| **AAC-LC** | ✓ | ✓ | ✓ | ✓ |
+| **AAC-HE v1 / v2** | ✓ | ✓ | ✓ | ✓ |
+| **MP3** | ✓ | ✓ | ✓ | ✓ |
+| **Opus** | ✓ | ✓ (iOS 11+) | ✓ (macOS 10.13+) | ✓ |
+| **Vorbis** | ✓ | x | x | ✓ |
+| **FLAC** | ✓ (Android 3.1+) | ✓ | ✓ | ✓ |
+| **AC-3 / E-AC-3 (Dolby)** | ⚠️ Passthrough / HW | ✓ | ✓ | ⚠️ Browser-dependent|
+| **ALAC** | ✓ | ✓ | ✓ | x |
+| **PCM / WAV** | ✓ | ✓ | ✓ | ✓ |
 
 ---
 
 ## 4. Container Formats
 
-| Container | Android | iOS / macOS | Web |
-|---|---|---|---|
-| **MP4 / M4V** | ✓ | ✓ | ✓ |
-| **fMP4 (Fragmented MP4)** | ✓ | ✓ | ✓ |
-| **WebM** | ✓ | x | ✓ |
-| **MKV (Matroska)** | ✓ | x | x |
-| **MPEG-TS (.ts)** | ✓ via HLS | ✓ via HLS | ✓ via HLS |
-| **OGG** | ✓ | x | ✓ |
-| **MOV (QuickTime)** | ⚠️ Limited | ✓ | x |
+| Container | Android | iOS | macOS | Web |
+|---|---|---|---|---|
+| **MP4 / M4V** | ✓ | ✓ | ✓ | ✓ |
+| **fMP4 (Fragmented MP4)** | ✓ | ✓ | ✓ | ✓ |
+| **WebM** | ✓ | x | x | ✓ |
+| **MKV (Matroska)** | ✓ | x | x | x |
+| **MPEG-TS (.ts)** | ✓ via HLS | ✓ via HLS | ✓ via HLS | ✓ via HLS |
+| **OGG** | ✓ | x | x | ✓ |
+| **MOV (QuickTime)** | ⚠️ Limited | ✓ | ✓ | x |
 
 ---
 
 ## 5. DRM (Digital Rights Management)
 
-| DRM System | Android | iOS / macOS | Web |
-|---|---|---|---|
-| **Widevine L1/L3** | ✓ | x | ✓ (Chrome, Firefox) |
-| **FairPlay (FPS)** | x | ✓ | ✓ (Safari only) |
-| **PlayReady** | x | x | ⚠️ (Edge only) |
-| **ClearKey** | ✓ | ✓ (HLS AES-128) | ✓ |
+| DRM System | Android | iOS | macOS | Web |
+|---|---|---|---|---|
+| **Widevine L1/L3** | ✓ | x | x | ✓ (Chrome, Firefox) |
+| **FairPlay (FPS)** | x | ✓ | ✓ | ✓ (Safari only) |
+| **PlayReady** | x | x | x | ⚠️ (Edge only) |
+| **ClearKey** | ✓ | ✓ (HLS AES-128) | ✓ (HLS AES-128) | ✓ |
 
 > **Note on Multi-DRM:** To achieve full cross-platform DRM coverage, your backend streaming architecture must provide both **Widevine** (for Android and Chrome/Web) and **FairPlay** (for iOS, macOS, and Safari) in parallel.
 
@@ -104,14 +104,14 @@ These formats are loaded manually via `PlayerSubtitlesSource` and rendered using
 ### Embedded / In-Stream Subtitles (Native Layer)
 These tracks are embedded directly inside the HLS/DASH manifest or MP4 file. They are rendered natively by ExoPlayer/AVPlayer/Shaka, **not** by the Flutter overlay. 
 
-| Format | Android | iOS / macOS | Web (Shaka) |
-|---|---|---|---|
-| **WebVTT (in HLS / DASH)** | ✓ | ✓ | ✓ |
-| **TTML / DFXP** | ✓ | ✓ | ✓ |
-| **CEA-608 (EIA-608)** | ✓ | ✓ | ✓ |
-| **CEA-708** | ✓ | ✓ | ✓ |
-| **SMPTE-TT** | ✓ | x | ⚠️ |
-| **SubStation Alpha (SSA)** | x | x | x |
+| Format | Android | iOS | macOS | Web (Shaka) |
+|---|---|---|---|---|
+| **WebVTT (in HLS / DASH)** | ✓ | ✓ | ✓ | ✓ |
+| **TTML / DFXP** | ✓ | ✓ | ✓ | ✓ |
+| **CEA-608 (EIA-608)** | ✓ | ✓ | ✓ | ✓ |
+| **CEA-708** | ✓ | ✓ | ✓ | ✓ |
+| **SMPTE-TT** | ✓ | x | x | ⚠️ |
+| **SubStation Alpha (SSA)** | x | x | x | x |
 
 > ⚠️ **Important:** Because embedded subtitles are rendered by the native player's surface (below the Flutter widget tree), they **cannot** be customized using Better Player's `PlayerSubtitlesConfiguration`.
 
