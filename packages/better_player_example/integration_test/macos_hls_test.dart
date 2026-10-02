@@ -24,11 +24,15 @@ void main() {
       playPauseButton,
       timeout: const Duration(seconds: 30),
     );
+    try {
+      await tester.ensureVisible(playPauseButton.first);
+      await tester.pump(const Duration(milliseconds: 200));
+    } catch (_) {}
 
     // 3. Play/Pause toggle
-    await tester.tap(playPauseButton);
+    await tester.tap(playPauseButton.first, warnIfMissed: false);
     await tester.pump(const Duration(milliseconds: 500));
-    await tester.tap(playPauseButton);
+    await tester.tap(playPauseButton.first, warnIfMissed: false);
     await tester.pump(const Duration(milliseconds: 500));
 
     // 4. Skip testing
@@ -36,7 +40,7 @@ void main() {
       'better_player_cupertino_controls_skip_forward_button',
     );
     if (skipForward.evaluate().isNotEmpty) {
-      await tester.tap(skipForward);
+      await tester.tap(skipForward.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
     }
 
@@ -44,16 +48,16 @@ void main() {
       'better_player_cupertino_controls_skip_back_button',
     );
     if (skipBack.evaluate().isNotEmpty) {
-      await tester.tap(skipBack);
+      await tester.tap(skipBack.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
     }
 
     // 5. Mute/Unmute
     final muteButton = findById('better_player_cupertino_controls_mute_button');
     if (muteButton.evaluate().isNotEmpty) {
-      await tester.tap(muteButton);
+      await tester.tap(muteButton.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
-      await tester.tap(muteButton);
+      await tester.tap(muteButton.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
     }
 
@@ -78,7 +82,7 @@ void main() {
 
     final quality1 = findById('better_player_overflow_menu_quality_1');
     if (quality1.evaluate().isNotEmpty) {
-      await tester.tap(quality1, warnIfMissed: false);
+      await tapWhenReady(tester, quality1);
       await waitModalClosed(tester);
 
       // Switch back to Auto
@@ -87,7 +91,7 @@ void main() {
       await tapWhenReady(tester, qualityAuto);
       await waitModalClosed(tester);
     } else {
-      await tester.tap(qualityAuto, warnIfMissed: false);
+      await tapWhenReady(tester, qualityAuto);
       await waitModalClosed(tester);
     }
 

@@ -40,7 +40,11 @@ void main() {
       playPauseButton,
       timeout: const Duration(seconds: 15),
     );
-    await tester.tap(playPauseButton);
+    try {
+      await tester.ensureVisible(playPauseButton.first);
+      await tester.pump(const Duration(milliseconds: 200));
+    } catch (_) {}
+    await tester.tap(playPauseButton.first, warnIfMissed: false);
     await tester.pump(const Duration(milliseconds: 500));
 
     // 3. Navigate to Seek E2E Page

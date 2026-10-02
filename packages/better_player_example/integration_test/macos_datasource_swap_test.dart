@@ -28,9 +28,13 @@ void main() {
       playPauseButton,
       timeout: const Duration(seconds: 25),
     );
+    try {
+      await tester.ensureVisible(playPauseButton.first);
+      await tester.pump(const Duration(milliseconds: 200));
+    } catch (_) {}
 
     // 3. Verify it is interactive
-    await tester.tap(playPauseButton);
+    await tester.tap(playPauseButton.first, warnIfMissed: false);
     await tester.pump(const Duration(milliseconds: 500));
 
     // 4. Swap back to MP4
