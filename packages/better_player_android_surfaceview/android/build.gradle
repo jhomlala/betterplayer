@@ -1,0 +1,37 @@
+plugins {
+    id 'com.android.library'
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+    }
+}
+
+android {
+    namespace "pl.hasoft.better_player_surfaceview"
+    compileSdkVersion 36
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_21
+        targetCompatibility JavaVersion.VERSION_21
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        minSdkVersion 24
+    }
+
+    dependencies {
+        def media3Version = "1.11.0"
+
+        // BetterPlayer lives in the core plugin, which the app always has.
+        compileOnly project(':better_player_android')
+        // BetterPlayer is @UnstableApi, so callers must opt in with the
+        // annotation from media3-common.
+        compileOnly "androidx.media3:media3-common:$media3Version"
+    }
+}
