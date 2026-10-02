@@ -32,7 +32,7 @@ void main() {
       final playPauseButton = findById(
         'better_player_cupertino_controls_play_pause_button',
       );
-      await pumpUntilFound(tester, playPauseButton);
+      await pumpUntilFound(tester: tester, finder: playPauseButton);
 
       // 2. Play / Pause toggle
       await tester.tap(playPauseButton);
@@ -72,72 +72,72 @@ void main() {
       final moreButton = findById(
         'better_player_cupertino_controls_more_button',
       );
-      await tapWhenReady(tester, moreButton);
+      await tapWhenReady(tester: tester, finder: moreButton);
 
       final speedMenu = findById('better_player_overflow_menu_playback_speed');
-      await tapWhenReady(tester, speedMenu);
+      await tapWhenReady(tester: tester, finder: speedMenu);
 
       final speed2x = findById('better_player_overflow_menu_speed_2.0');
-      await scrollAndTap(tester, speed2x);
-      await waitModalClosed(tester);
+      await scrollAndTap(tester: tester, finder: speed2x);
+      await waitModalClosed(tester: tester);
 
       // 6. Quality Selection test (Auto)
-      await tapWhenReady(tester, moreButton);
+      await tapWhenReady(tester: tester, finder: moreButton);
       final qualityMenu = findById('better_player_overflow_menu_quality');
-      await tapWhenReady(tester, qualityMenu);
+      await tapWhenReady(tester: tester, finder: qualityMenu);
 
       final qualityAuto = findById('better_player_overflow_menu_quality_auto');
-      await tapWhenReady(tester, qualityAuto);
-      await waitModalClosed(tester);
+      await tapWhenReady(tester: tester, finder: qualityAuto);
+      await waitModalClosed(tester: tester);
 
       // 7. Subtitles Selection test (Memory -> None -> Memory)
-      await tapWhenReady(tester, moreButton);
+      await tapWhenReady(tester: tester, finder: moreButton);
       final subtitlesMenu = findById('better_player_overflow_menu_subtitles');
-      await tapWhenReady(tester, subtitlesMenu);
+      await tapWhenReady(tester: tester, finder: subtitlesMenu);
 
       final subtitlesNone = findById(
         'better_player_overflow_menu_subtitles_none',
       );
-      await tapWhenReady(tester, subtitlesNone);
-      await waitModalClosed(tester);
+      await tapWhenReady(tester: tester, finder: subtitlesNone);
+      await waitModalClosed(tester: tester);
 
-      await tapWhenReady(tester, moreButton);
-      await tapWhenReady(tester, subtitlesMenu);
+      await tapWhenReady(tester: tester, finder: moreButton);
+      await tapWhenReady(tester: tester, finder: subtitlesMenu);
 
       final subtitlesMemory = findById(
         'better_player_overflow_menu_subtitles_memory',
       );
-      await tapWhenReady(tester, subtitlesMemory);
-      await waitModalClosed(tester);
+      await tapWhenReady(tester: tester, finder: subtitlesMemory);
+      await waitModalClosed(tester: tester);
 
       // 8. Verify all core events fired
       final eventsVerified = findById('better_player_e2e_events_verified');
-      await pumpUntilFound(tester, eventsVerified);
+      await pumpUntilFound(tester: tester, finder: eventsVerified);
 
       // 9. Runtime Controls Configuration Hotswap
       final runtimeConfigButton = findById(
         'better_player_e2e_runtime_config_button',
       );
-      await scrollAndTap(tester, runtimeConfigButton);
+      await scrollAndTap(tester: tester, finder: runtimeConfigButton);
 
       final runtimeConfigStatus = findById(
         'better_player_e2e_runtime_config_status',
       );
-      await pumpUntilFound(tester, runtimeConfigStatus);
+      await pumpUntilFound(tester: tester, finder: runtimeConfigStatus);
 
       // 10. Controls Theme Hotswap (Cupertino -> Material -> Cupertino)
       final toggleThemeButton = findById(
         'better_player_e2e_toggle_theme_button',
       );
-      await scrollAndTap(tester, toggleThemeButton);
+      await scrollAndTap(tester: tester, finder: toggleThemeButton);
 
       final materialPlayPause = findById(
         'better_player_material_controls_play_pause_button',
       );
-      await pumpUntilFound(tester, materialPlayPause);
+      await pumpUntilFound(tester: tester, finder: materialPlayPause);
 
-      await scrollAndTap(tester, toggleThemeButton);
-      await pumpUntilFound(tester, playPauseButton);
+      await scrollAndTap(tester: tester, finder: toggleThemeButton);
+      await pumpUntilFound(tester: tester, finder: playPauseButton);
 
       // 11. Seeking
       final progressBar = findById('better_player_cupertino_progress_bar');

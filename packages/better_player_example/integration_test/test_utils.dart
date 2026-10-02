@@ -13,9 +13,9 @@ Finder findById(String id) {
   );
 }
 
-Future<void> pumpUntilFound(
-  WidgetTester tester,
-  Finder finder, {
+Future<void> pumpUntilFound({
+  required WidgetTester tester,
+  required Finder finder,
   Duration timeout = const Duration(seconds: 20),
   Duration pollInterval = const Duration(milliseconds: 200),
 }) async {
@@ -29,9 +29,9 @@ Future<void> pumpUntilFound(
   expect(finder, findsOneWidget);
 }
 
-Future<void> pumpUntilNotFound(
-  WidgetTester tester,
-  Finder finder, {
+Future<void> pumpUntilNotFound({
+  required WidgetTester tester,
+  required Finder finder,
   Duration timeout = const Duration(seconds: 20),
   Duration pollInterval = const Duration(milliseconds: 200),
 }) async {
@@ -45,8 +45,8 @@ Future<void> pumpUntilNotFound(
   expect(finder, findsNothing);
 }
 
-Future<void> waitModalClosed(
-  WidgetTester tester, {
+Future<void> waitModalClosed({
+  required WidgetTester tester,
   Duration timeout = const Duration(seconds: 5),
 }) async {
   final end = DateTime.now().add(timeout);
@@ -60,12 +60,12 @@ Future<void> waitModalClosed(
   }
 }
 
-Future<void> tapWhenReady(
-  WidgetTester tester,
-  Finder finder, {
+Future<void> tapWhenReady({
+  required WidgetTester tester,
+  required Finder finder,
   Duration timeout = const Duration(seconds: 20),
 }) async {
-  await pumpUntilFound(tester, finder, timeout: timeout);
+  await pumpUntilFound(tester: tester, finder: finder, timeout: timeout);
   try {
     await tester.ensureVisible(finder.first);
     await tester.pump(const Duration(milliseconds: 200));
@@ -74,9 +74,9 @@ Future<void> tapWhenReady(
   await tester.pump(const Duration(milliseconds: 300));
 }
 
-Future<void> scrollAndTap(
-  WidgetTester tester,
-  Finder finder, {
+Future<void> scrollAndTap({
+  required WidgetTester tester,
+  required Finder finder,
   Finder? scrollable,
   Duration timeout = const Duration(seconds: 20),
 }) async {

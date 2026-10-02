@@ -32,15 +32,15 @@ void main() {
 
       // 1. Setup HLS Data Source
       final setupHlsButton = findById('better_player_e2e_setup_hls');
-      await scrollAndTap(tester, setupHlsButton);
+      await scrollAndTap(tester: tester, finder: setupHlsButton);
 
       // 2. Wait for video controls
       final playPauseButton = findById(
         'better_player_cupertino_controls_play_pause_button',
       );
       await pumpUntilFound(
-        tester,
-        playPauseButton,
+        tester: tester,
+        finder: playPauseButton,
         timeout: const Duration(seconds: 30),
       );
       try {
@@ -86,36 +86,36 @@ void main() {
       final moreButton = findById(
         'better_player_cupertino_controls_more_button',
       );
-      await tapWhenReady(tester, moreButton);
+      await tapWhenReady(tester: tester, finder: moreButton);
 
       final speedMenu = findById('better_player_overflow_menu_playback_speed');
-      await tapWhenReady(tester, speedMenu);
+      await tapWhenReady(tester: tester, finder: speedMenu);
 
       final speed2x = findById('better_player_overflow_menu_speed_2.0');
-      await scrollAndTap(tester, speed2x);
-      await waitModalClosed(tester);
+      await scrollAndTap(tester: tester, finder: speed2x);
+      await waitModalClosed(tester: tester);
 
       // 7. Quality Selection (Auto + variants)
-      await tapWhenReady(tester, moreButton);
+      await tapWhenReady(tester: tester, finder: moreButton);
       final qualityMenu = findById('better_player_overflow_menu_quality');
-      await tapWhenReady(tester, qualityMenu);
+      await tapWhenReady(tester: tester, finder: qualityMenu);
 
       final qualityAuto = findById('better_player_overflow_menu_quality_auto');
-      await pumpUntilFound(tester, qualityAuto);
+      await pumpUntilFound(tester: tester, finder: qualityAuto);
 
       final quality1 = findById('better_player_overflow_menu_quality_1');
       if (quality1.evaluate().isNotEmpty) {
-        await tapWhenReady(tester, quality1);
-        await waitModalClosed(tester);
+        await tapWhenReady(tester: tester, finder: quality1);
+        await waitModalClosed(tester: tester);
 
         // Switch back to Auto
-        await tapWhenReady(tester, moreButton);
-        await tapWhenReady(tester, qualityMenu);
-        await tapWhenReady(tester, qualityAuto);
-        await waitModalClosed(tester);
+        await tapWhenReady(tester: tester, finder: moreButton);
+        await tapWhenReady(tester: tester, finder: qualityMenu);
+        await tapWhenReady(tester: tester, finder: qualityAuto);
+        await waitModalClosed(tester: tester);
       } else {
-        await tapWhenReady(tester, qualityAuto);
-        await waitModalClosed(tester);
+        await tapWhenReady(tester: tester, finder: qualityAuto);
+        await waitModalClosed(tester: tester);
       }
 
       // 8. Seeking

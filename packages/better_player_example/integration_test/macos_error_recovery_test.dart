@@ -32,22 +32,22 @@ void main() {
 
       // 1. Trigger error state with invalid URL
       final setupErrorButton = findById('better_player_e2e_setup_error');
-      await scrollAndTap(tester, setupErrorButton);
+      await scrollAndTap(tester: tester, finder: setupErrorButton);
 
       final errorText = findById('better_player_e2e_error_text');
       await pumpUntilFound(
-        tester,
-        errorText,
+        tester: tester,
+        finder: errorText,
         timeout: const Duration(seconds: 15),
       );
 
       // 2. Recover from error with valid MP4
       final setupMp4Button = findById('better_player_e2e_setup_mp4');
-      await scrollAndTap(tester, setupMp4Button);
+      await scrollAndTap(tester: tester, finder: setupMp4Button);
 
       await pumpUntilNotFound(
-        tester,
-        errorText,
+        tester: tester,
+        finder: errorText,
         timeout: const Duration(seconds: 15),
       );
 
@@ -55,8 +55,8 @@ void main() {
         'better_player_cupertino_controls_play_pause_button',
       );
       await pumpUntilFound(
-        tester,
-        playPauseButton,
+        tester: tester,
+        finder: playPauseButton,
         timeout: const Duration(seconds: 15),
       );
       try {
@@ -73,23 +73,23 @@ void main() {
 
       // 1. Navigate to Seek E2E Page
       final navigateSeekButton = findById('better_player_e2e_navigate_seek');
-      await scrollAndTap(tester, navigateSeekButton);
+      await scrollAndTap(tester: tester, finder: navigateSeekButton);
 
       final seekInitialized = findById('better_player_e2e_seek_initialized');
       await pumpUntilFound(
-        tester,
-        seekInitialized,
+        tester: tester,
+        finder: seekInitialized,
         timeout: const Duration(seconds: 25),
       );
 
       // 2. Seek 10s and verify
       final seek10sButton = findById('better_player_e2e_seek_10s_button');
-      await scrollAndTap(tester, seek10sButton);
+      await scrollAndTap(tester: tester, finder: seek10sButton);
 
       final seek10sVerified = findById('better_player_e2e_seek_10s_verified');
       await pumpUntilFound(
-        tester,
-        seek10sVerified,
+        tester: tester,
+        finder: seek10sVerified,
         timeout: const Duration(seconds: 15),
       );
     });

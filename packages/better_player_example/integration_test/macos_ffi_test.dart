@@ -30,13 +30,13 @@ void main() {
 
       // 1. Navigate to FFI Test Page
       final navigateFfiButton = findById('better_player_e2e_navigate_ffi');
-      await scrollAndTap(tester, navigateFfiButton);
+      await scrollAndTap(tester: tester, finder: navigateFfiButton);
 
       // 2. Wait for player to be initialized
       final initializedStatus = findById('ffi_test_initialized_status');
       await pumpUntilFound(
-        tester,
-        initializedStatus,
+        tester: tester,
+        finder: initializedStatus,
         timeout: const Duration(seconds: 40),
       );
 
@@ -59,7 +59,7 @@ void main() {
 
       for (final method in ffiMethods) {
         final button = findById('ffi_test_button_$method');
-        await scrollAndTap(tester, button);
+        await scrollAndTap(tester: tester, finder: button);
 
         final statusFinder = find.byWidgetPredicate(
           (widget) =>
@@ -67,8 +67,8 @@ void main() {
               widget.properties.identifier == 'ffi_test_status_$method',
         );
         await pumpUntilFound(
-          tester,
-          statusFinder,
+          tester: tester,
+          finder: statusFinder,
           timeout: const Duration(seconds: 15),
         );
 

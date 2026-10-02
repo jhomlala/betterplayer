@@ -214,14 +214,14 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
 
     if (dataSource.sourceType == DataSourceType.asset) {
       player.setDataSourceAsset(
-        dataSource.asset ?? dataSource.uri!,
+        asset: dataSource.asset ?? dataSource.uri!,
         key: key,
         cacheManager: cacheManager,
         overriddenDuration: overriddenDuration,
       );
     } else {
       player.setDataSourceURLString(
-        dataSource.uri!,
+        url: dataSource.uri!,
         key: key,
         certificateUrl: dataSource.drmConfiguration?.certificateUrl,
         licenseUrl: dataSource.drmConfiguration?.licenseUrl,
@@ -237,7 +237,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   @override
   Future<void> setLooping(int? textureId, bool looping) async {
     if (textureId == null) return;
-    getPlayer(textureId)?.setLooping(looping);
+    getPlayer(textureId)?.setLooping(looping: looping);
   }
 
   @override
@@ -308,7 +308,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   ) async {
     if (textureId == null) return;
     getPlayer(textureId)?.setTrackParameters(
-      width ?? 0,
+      width: width ?? 0,
       height: height ?? 0,
       bitrate: bitrate ?? 0,
     );
@@ -317,13 +317,13 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async {
     if (textureId == null) return;
-    getPlayer(textureId)?.setAudioTrack(name ?? '', index: index ?? 0);
+    getPlayer(textureId)?.setAudioTrack(name: name ?? '', index: index ?? 0);
   }
 
   @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
     if (textureId == null) return;
-    getPlayer(textureId)?.setMixWithOthers(mixWithOthers);
+    getPlayer(textureId)?.setMixWithOthers(mixWithOthers: mixWithOthers);
   }
 
   @override
@@ -375,8 +375,8 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
 
 abstract class BetterPlayerWrapper {
   void dispose();
-  void setDataSourceURLString(
-    String url, {
+  void setDataSourceURLString({
+    required String url,
     required String? key,
     required String? certificateUrl,
     required String? licenseUrl,
@@ -386,20 +386,20 @@ abstract class BetterPlayerWrapper {
     required int overriddenDuration,
     required String? videoExtension,
   });
-  void setDataSourceAsset(
-    String asset, {
+  void setDataSourceAsset({
+    required String asset,
     required String? key,
     required Object cacheManager,
     required int overriddenDuration,
   });
-  void setLooping(bool looping);
-  void setMixWithOthers(bool mixWithOthers);
-  void setTrackParameters(
-    int width, {
+  void setLooping({required bool looping});
+  void setMixWithOthers({required bool mixWithOthers});
+  void setTrackParameters({
+    required int width,
     required int height,
     required int bitrate,
   });
-  void setAudioTrack(String name, {required int index});
+  void setAudioTrack({required String name, required int index});
   void enablePictureInPicture(objc.CGRect frame);
   void disablePictureInPicture();
   int? absolutePosition();
@@ -420,8 +420,8 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   void dispose() => _player.dispose();
 
   @override
-  void setDataSourceURLString(
-    String url, {
+  void setDataSourceURLString({
+    required String url,
     required String? key,
     required String? certificateUrl,
     required String? licenseUrl,
@@ -445,8 +445,8 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   }
 
   @override
-  void setDataSourceAsset(
-    String asset, {
+  void setDataSourceAsset({
+    required String asset,
     required String? key,
     required Object cacheManager,
     required int overriddenDuration,
@@ -460,15 +460,15 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   }
 
   @override
-  void setLooping(bool looping) => _player.setLooping(looping);
+  void setLooping({required bool looping}) => _player.setLooping(looping);
 
   @override
-  void setMixWithOthers(bool mixWithOthers) =>
+  void setMixWithOthers({required bool mixWithOthers}) =>
       _player.setMixWithOthers(mixWithOthers);
 
   @override
-  void setTrackParameters(
-    int width, {
+  void setTrackParameters({
+    required int width,
     required int height,
     required int bitrate,
   }) => _player.setTrackParametersWithWidth(
@@ -478,7 +478,7 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   );
 
   @override
-  void setAudioTrack(String name, {required int index}) =>
+  void setAudioTrack({required String name, required int index}) =>
       _player.setAudioTrackWithName(name.toNSString(), index: index);
 
   @override

@@ -17,7 +17,10 @@ class TestBetterPlayerMacOS extends BetterPlayerMacOS {
   final MockBetterPlayer mockPlayer;
   final MockCacheManager mockCacheManager;
 
-  TestBetterPlayerMacOS(this.mockPlayer, this.mockCacheManager);
+  TestBetterPlayerMacOS({
+    required this.mockPlayer,
+    required this.mockCacheManager,
+  });
 
   @override
   Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
@@ -50,7 +53,10 @@ void main() {
     setUp(() {
       mockPlayer = MockBetterPlayer();
       mockCacheManager = MockCacheManager();
-      macosPlayer = TestBetterPlayerMacOS(mockPlayer, mockCacheManager);
+      macosPlayer = TestBetterPlayerMacOS(
+        mockPlayer: mockPlayer,
+        mockCacheManager: mockCacheManager,
+      );
 
       final frame = pkg_ffi.calloc.allocate<objc.CGRect>(
         ffi.sizeOf<objc.CGRect>(),
@@ -104,15 +110,22 @@ void main() {
 
         await macosPlayer.setTrackParameters(1, 1920, 1080, 5000);
         verify(
-          () =>
-              mockPlayer.setTrackParameters(1920, height: 1080, bitrate: 5000),
+          () => mockPlayer.setTrackParameters(
+            width: 1920,
+            height: 1080,
+            bitrate: 5000,
+          ),
         ).called(1);
 
         await macosPlayer.setAudioTrack(1, 'eng', 1);
-        verify(() => mockPlayer.setAudioTrack('eng', index: 1)).called(1);
+        verify(
+          () => mockPlayer.setAudioTrack(name: 'eng', index: 1),
+        ).called(1);
 
         await macosPlayer.setMixWithOthers(1, true);
-        verify(() => mockPlayer.setMixWithOthers(true)).called(1);
+        verify(
+          () => mockPlayer.setMixWithOthers(mixWithOthers: true),
+        ).called(1);
 
         await macosPlayer.enablePictureInPicture(1, 0, 0, 100, 100);
         verify(() => mockPlayer.enablePictureInPicture(any())).called(1);
@@ -159,7 +172,7 @@ void main() {
     test('setLooping interacts with player', () async {
       await macosPlayer.create();
       await macosPlayer.setLooping(1, true);
-      verify(() => mockPlayer.setLooping(true)).called(1);
+      verify(() => mockPlayer.setLooping(looping: true)).called(1);
     });
 
     test('getPosition returns correct value', () async {
@@ -198,7 +211,7 @@ void main() {
         );
         verify(
           () => mockPlayer.setDataSourceURLString(
-            'https://test.com',
+            url: 'https://test.com',
             key: any(named: 'key'),
             certificateUrl: any(named: 'certificateUrl'),
             licenseUrl: any(named: 'licenseUrl'),
@@ -225,7 +238,7 @@ void main() {
         );
         verify(
           () => mockPlayer.setDataSourceURLString(
-            'file:///path/to/video.mp4',
+            url: 'file:///path/to/video.mp4',
             key: any(named: 'key'),
             certificateUrl: any(named: 'certificateUrl'),
             licenseUrl: any(named: 'licenseUrl'),
@@ -247,7 +260,7 @@ void main() {
       );
       verify(
         () => mockPlayer.setDataSourceAsset(
-          'asset.mp4',
+          asset: 'asset.mp4',
           key: any(named: 'key'),
           cacheManager: any(named: 'cacheManager'),
           overriddenDuration: any(named: 'overriddenDuration'),
