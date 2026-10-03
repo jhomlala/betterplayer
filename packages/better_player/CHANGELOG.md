@@ -1,4 +1,4 @@
-## Unreleased
+## 1.22.0
 - Added: TTML (`.ttml`, `.dfxp`, `.xml`) subtitle format support across file, network, memory sources, and DASH manifests with style inheritance, colors, regions, and frame rate calculation (#1213).
 
 ## 1.21.0

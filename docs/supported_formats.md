@@ -100,6 +100,7 @@ These formats are loaded manually via `PlayerSubtitlesSource` and rendered using
 |---|---|---|
 | **SRT (SubRip)** | ✓ Full | Plain text, no styling. |
 | **WebVTT** | ✓ Full | Supports inline styling (`<b>`, `<i>`, `<c.color>`), HTML entity decoding, and `X-TIMESTAMP-MAP` sync for HLS live streams. |
+| **TTML / DFXP / XML** | ✓ Full | Timed Text Markup Language & IMSC1 with SMPTE frame rates, style inheritance, regions, and inline tags. |
 
 ### Embedded / In-Stream Subtitles (Native Layer)
 These tracks are embedded directly inside the HLS/DASH manifest or MP4 file. They are rendered natively by ExoPlayer/AVPlayer/mpv/Shaka, **not** by the Flutter overlay. 
