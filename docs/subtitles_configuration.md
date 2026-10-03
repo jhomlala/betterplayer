@@ -47,6 +47,25 @@ var dataSource = PlayerDataSource(
 );
 ```
 
+### Example: TTML / DFXP Subtitles
+```dart
+var dataSource = PlayerDataSource(
+    DataSourceType.network,
+    "video_url",
+    subtitles: PlayerSubtitlesSource.single(
+        type: PlayerSubtitlesSourceType.network,
+        url: "https://example.com/subtitles.ttml",
+        name: "English TTML",
+    ),
+);
+```
+
+Better Player automatically detects TTML / IMSC1 XML and parses:
+* Clock-time formats (`hh:mm:ss.fraction`, SMPTE frames `hh:mm:ss:ff`) and timecounts (`10s`, `500ms`, `dur`).
+* Style inheritance across `<tt>`, `<div>`, `<p>`, and `<span>` elements.
+* Custom colors (`tts:color`), weights, styles, and alignments.
+* Line breaks (`<br/>`) and inline tags.
+
 ## Styling & Customization
 
 The appearance of subtitles is controlled via `PlayerSubtitlesConfiguration`.
