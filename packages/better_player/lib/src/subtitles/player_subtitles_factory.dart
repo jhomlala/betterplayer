@@ -1,6 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
+import 'package:better_player/src/subtitles/player_ttml_parser.dart';
 import 'package:better_player/src/utils/player_io_utils.dart';
 import 'package:http/http.dart' as http;
 
@@ -110,7 +111,12 @@ class PlayerSubtitlesFactory {
       content = content.substring(1);
     }
 
-    // 2. Normalize line endings (CRLF -> LF, CR -> LF)
+    // 2. Check for TTML format
+    if (_isTtml(content)) {
+      return const PlayerTtmlParser().parse(content: content);
+    }
+
+    // 3. Normalize line endings (CRLF -> LF, CR -> LF)
     content = content.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
 
     // 3. Parse X-TIMESTAMP-MAP
@@ -223,5 +229,22 @@ class PlayerSubtitlesFactory {
       PlayerLogger.error(message: 'Failed to parse X-TIMESTAMP-MAP: $line');
       return Duration.zero;
     }
+  }
+
+  bool _isTtml(String content) {
+    final stripped = content
+        .replaceAll(RegExp(r'<!--[\s\S]*?-->'), '')
+        .trimLeft();
+    if (stripped.startsWith('WEBVTT')) {
+      return false;
+    }
+    final isXmlOrTt =
+        stripped.startsWith('<?xml') ||
+        RegExp(r'^<([a-zA-Z0-9]+:)?tt[\s>]').hasMatch(stripped);
+    if (!isXmlOrTt) {
+      return false;
+    }
+    return stripped.contains('http://www.w3.org/ns/ttml') ||
+        RegExp(r'<([a-zA-Z0-9]+:)?tt[\s>]').hasMatch(stripped);
   }
 }

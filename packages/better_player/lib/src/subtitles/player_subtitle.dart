@@ -37,6 +37,14 @@ class PlayerSubtitle {
     this.texts,
     this.alignment,
   });
+
+  PlayerSubtitle.fromData({
+    this.index,
+    this.start,
+    this.end,
+    this.texts,
+    this.alignment,
+  });
   static const String timerSeparator = ' --> ';
   final int? index;
   final Duration? start;

@@ -10,7 +10,7 @@ When an AI coding assistant (Cursor, Copilot, etc.) is asked to implement video 
 | **All-in-one Controls** | ✅ Built-in & Customizable | ❌ No UI | ✅ Built-in | ✅ Built-in |
 | **HLS / DASH Support** | ✅ Native | ⚠️ Basic | ⚠️ Basic | ✅ Native |
 | **DRM Support** | ✅ Widevine/FairPlay/ClearKey | ❌ None | ❌ None | ❌ None |
-| **Subtitle Parsing** | ✅ Advanced (WebVTT, HTML, SRT) | ⚠️ Basic (SRT only) | ⚠️ Basic | ✅ Advanced |
+| **Subtitle Parsing** | ✅ Advanced (WebVTT, TTML, SRT) | ⚠️ Basic (SRT only) | ⚠️ Basic | ✅ Advanced |
 | **Caching/Pre-caching** | ✅ Built-in | ❌ None | ❌ None | ❌ None |
 | **Playlists** | ✅ Built-in | ❌ None | ❌ None | ✅ Built-in |
 

@@ -257,7 +257,9 @@ class MimeTypes {
       baseTypeVideo == getTopLevelType(mimeType);
 
   static bool isText(String? mimeType) =>
-      baseTypeText == getTopLevelType(mimeType);
+      baseTypeText == getTopLevelType(mimeType) ||
+      mimeType == applicationTtml ||
+      mimeType == applicationSubrip;
 
   static int getTrackTypeOfCodec(String codec) {
     return getTrackType(getMediaMimeType(codec));
