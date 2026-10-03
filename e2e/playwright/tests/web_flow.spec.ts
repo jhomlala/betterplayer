@@ -82,22 +82,23 @@ test('web flow', async ({ page }) => {
     await expect(runtimeConfigStatus.first()).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 10000, intervals: [1000] });
 
-  // Controls Theme Hotswap (Web -> Cupertino -> Web)
+  // Controls Theme Hotswap (Web -> Material -> Web)
   const toggleThemeButton = page.locator('[aria-label^="better_player_e2e_toggle_theme_button"]');
-  const cupertinoPlayPause = page.locator(
-    '[flt-semantics-identifier="better_player_cupertino_controls_play_pause_button"], [aria-label^="better_player_cupertino_controls_play_pause_button"]'
+  const materialVideoArea = page.locator(
+    '[flt-semantics-identifier="better_player_material_video_area"], [aria-label^="better_player_material_video_area"]'
   );
   await expect(async () => {
-    if (await cupertinoPlayPause.first().isVisible()) return;
+    if (await materialVideoArea.first().isVisible()) return;
     await toggleThemeButton.click({ force: true });
-    await expect(cupertinoPlayPause.first()).toBeVisible({ timeout: 3000 });
+    await expect(materialVideoArea.first()).toBeVisible({ timeout: 3000 });
   }).toPass({ timeout: 10000, intervals: [1000] });
 
   await expect(async () => {
-    if (await playPause.first().isVisible()) return;
+    if (await materialVideoArea.first().isHidden()) return;
     await toggleThemeButton.click({ force: true });
-    await expect(playPause.first()).toBeVisible({ timeout: 3000 });
+    await expect(materialVideoArea.first()).toBeHidden({ timeout: 3000 });
   }).toPass({ timeout: 10000, intervals: [1000] });
+  await expect(playPause.first()).toBeVisible({ timeout: 3000 });
 
   // Keyboard shortcuts (ArrowDown volume 0.9 -> ArrowUp volume 1.0 -> ArrowRight seek)
   const keyboardStatus = page.locator(
