@@ -19,4 +19,10 @@ class ExampleIoUtils {
       'IO operations are not supported on this platform',
     );
   }
+
+  static Future<String> writeTempFile(String fileName, List<int> bytes) async {
+    throw UnimplementedError(
+      'IO operations are not supported on this platform',
+    );
+  }
 }

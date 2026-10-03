@@ -49,15 +49,17 @@ flutter test integration_test/windows_flow_test.dart -d windows
 
 ### Test Suite Parity (1:1 with macOS, Mobile, and Web)
 
-Windows replicates the 5 standard Better Player test suites:
+Windows desktop test suites:
 
 | Suite | File | What it verifies |
 |---|---|---|
-| **Core Flow** | `windows_flow_test.dart` | Play, pause, skip ±15s, mute, speed, resolution, subtitles, seek bar, Cupertino/Material theme swap. |
+| **Core Flow** | `windows_flow_test.dart` | Play, pause, keyboard seek, mute, speed, resolution, subtitles, seek bar, Web/Material theme swap. |
 | **HLS Stream** | `windows_hls_test.dart` | Adaptive bitrate, variant switching, live streams. |
 | **Data Source Swap** | `windows_datasource_swap_test.dart` | Dynamic URL changes, key handling, aspect ratio reactivity. |
 | **Error Recovery** | `windows_error_recovery_test.dart` | Invalid streams, error callbacks, retry behavior. |
 | **Native FFI** | `windows_ffi_test.dart` | Direct FFI method calls (`play`, `pause`, `seekTo`, `setVolume`, `setSpeed`, `setTrack`). |
+| **Shortcuts & Mouse** | `windows_shortcuts_test.dart` | Desktop hotkeys (Space/K play-pause, Left/Right seek, Up/Down volume, M mute) and mouse hover. |
+| **Local File** | `windows_local_file_test.dart` | Local filesystem video playback (`DataSourceType.file`), native Windows file path loading. |
 
 ---
 

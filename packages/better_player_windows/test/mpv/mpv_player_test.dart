@@ -340,5 +340,35 @@ void main() {
         await player.dispose();
       },
     );
+
+    test('setDataSource normalizes file URIs for Windows paths', () async {
+      final bindings = createFakeBindings();
+      final player = MpvPlayer(
+        textureId: 1,
+        handle: fakeHandle,
+        bindings: bindings,
+        onLog: ({required message, required levelIndex}) => logs.add(message),
+      );
+
+      // 1. file:///C:/path/to/video.mp4 -> C:/path/to/video.mp4
+      await player.setDataSource(
+        DataSource(
+          sourceType: DataSourceType.file,
+          uri: 'file:///C:/path/to/video.mp4',
+        ),
+      );
+      expect(executedCommands.last, ['loadfile', 'C:/path/to/video.mp4']);
+
+      // 2. file://C:\path\to\video.mp4 -> C:\path\to\video.mp4
+      await player.setDataSource(
+        DataSource(
+          sourceType: DataSourceType.file,
+          uri: r'file://C:\path\to\video.mp4',
+        ),
+      );
+      expect(executedCommands.last, ['loadfile', r'C:\path\to\video.mp4']);
+
+      await player.dispose();
+    });
   });
 }

@@ -13,4 +13,8 @@ class ExampleIoUtils {
   static Future<Uint8List> readBytesFromFile(String path) async {
     throw UnsupportedError('Reading local files is not supported on web');
   }
+
+  static Future<String> writeTempFile(String fileName, List<int> bytes) async {
+    throw UnsupportedError('Writing temp files is not supported on web');
+  }
 }

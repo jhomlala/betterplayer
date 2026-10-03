@@ -381,7 +381,15 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       _setPropertyString('demuxer-max-bytes', '150MiB');
     }
 
-    final url = dataSource.uri ?? dataSource.asset ?? '';
+    var url = dataSource.uri ?? dataSource.asset ?? '';
+    if (url.startsWith('file://')) {
+      final stripped = url.substring(7);
+      if (stripped.length >= 3 && stripped[0] == '/' && stripped[2] == ':') {
+        url = stripped.substring(1);
+      } else {
+        url = stripped;
+      }
+    }
     _log('setDataSource: $url');
     final code = _command(['loadfile', url]);
     if (code < 0) {

@@ -1,2 +1,7 @@
-# Exclude Swift generation tool
-tool/swiftgen.dart
+# Native binary downloads and build artifacts
+windows/libs/
+*.dll
+*.lib
+*.pdb
+*.exp
+

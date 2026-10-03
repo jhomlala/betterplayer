@@ -4,6 +4,7 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/ffi_test_page.dart';
 import 'package:better_player_example/pages/seek_e2e_page.dart';
+import 'package:better_player_example/utils/example_io_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -57,6 +58,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   bool _playlistVerified = false;
   bool _isListPlayerMode = false;
   bool _listPlayerVerified = false;
+  bool _localFileVerified = false;
   final Set<PlayerEventType> _emittedEvents = {};
 
   static const Set<PlayerEventType> _requiredCoreEvents = {
@@ -119,6 +121,14 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
             _allCoreEventsVerified = true;
           });
         }
+      }
+      if (_betterPlayerController.betterPlayerDataSource?.type ==
+              DataSourceType.file &&
+          event.betterPlayerEventType == PlayerEventType.play &&
+          mounted) {
+        setState(() {
+          _localFileVerified = true;
+        });
       }
       if (event.betterPlayerEventType == PlayerEventType.setVolume) {
         final volume = event.parameters?['volume'] as double?;
@@ -226,7 +236,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     final PlayerTheme targetTheme;
     if (_usingAlternateTheme) {
       if (isDesktopOrWeb) {
-        targetTheme = PlayerTheme.cupertino;
+        targetTheme = PlayerTheme.material;
       } else {
         targetTheme = isCupertinoDefault
             ? PlayerTheme.material
@@ -344,6 +354,30 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         });
       }
     });
+  }
+
+  Future<void> _setupLocalFileDataSource() async {
+    try {
+      final byteData = await rootBundle.load('assets/testvideo.mp4');
+      final filePath = await ExampleIoUtils.writeTempFile(
+        'better_player_windows_local_test.mp4',
+        byteData.buffer.asUint8List(
+          byteData.offsetInBytes,
+          byteData.lengthInBytes,
+        ),
+      );
+      _setupDataSource(
+        url: filePath,
+        type: DataSourceType.file,
+      );
+      if (mounted) {
+        setState(() {
+          _localFileVerified = true;
+        });
+      }
+    } catch (e) {
+      debugPrint('Failed to setup local file: $e');
+    }
   }
 
   @override
@@ -515,6 +549,15 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   child: const Text('List Player Verified'),
                 ),
               ),
+            if (_localFileVerified)
+              Semantics(
+                identifier: 'better_player_e2e_file_status',
+                label: 'better_player_e2e_file_status',
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Local File Verified'),
+                ),
+              ),
             const SizedBox(height: 16),
             Wrap(
               spacing: 8,
@@ -528,6 +571,14 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                       type: DataSourceType.network,
                     ),
                     child: const Text('MP4'),
+                  ),
+                ),
+                Semantics(
+                  identifier: 'better_player_e2e_setup_file',
+                  label: 'better_player_e2e_setup_file',
+                  child: ElevatedButton(
+                    onPressed: _setupLocalFileDataSource,
+                    child: const Text('Local File'),
                   ),
                 ),
                 Semantics(
