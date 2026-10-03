@@ -1,5 +1,6 @@
 import 'package:better_player_example/main_e2e.dart' as app;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -54,22 +55,11 @@ void main() {
       await tester.tap(playPauseButton.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
 
-      // 4. Skip testing
-      final skipForward = findById(
-        'better_player_cupertino_controls_skip_forward_button',
-      );
-      if (skipForward.evaluate().isNotEmpty) {
-        await tester.tap(skipForward.first, warnIfMissed: false);
-        await tester.pump(const Duration(milliseconds: 500));
-      }
-
-      final skipBack = findById(
-        'better_player_cupertino_controls_skip_back_button',
-      );
-      if (skipBack.evaluate().isNotEmpty) {
-        await tester.tap(skipBack.first, warnIfMissed: false);
-        await tester.pump(const Duration(milliseconds: 500));
-      }
+      // 4. Skip testing (Keyboard seeking via ArrowRight / ArrowLeft)
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pump(const Duration(milliseconds: 500));
 
       // 5. Mute/Unmute
       final muteButton = findById(

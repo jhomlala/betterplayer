@@ -91,7 +91,7 @@ macOS replicates the 5 standard Better Player test suites:
 
 | Suite | File | What it verifies |
 |---|---|---|
-| **Core Flow** | `macos_flow_test.dart` | Play, pause, skip ±15s, mute, speed, resolution, subtitles, seek bar, Cupertino/Material theme swap. |
+| **Core Flow** | `macos_flow_test.dart` | Play, pause, keyboard seek, mute, speed, resolution, subtitles, seek bar, Web/Material theme swap. |
 | **HLS Stream** | `macos_hls_test.dart` | Adaptive bitrate, variant switching, live streams. |
 | **Data Source Swap** | `macos_datasource_swap_test.dart` | Dynamic URL changes, key handling, aspect ratio reactivity. |
 | **Error Recovery** | `macos_error_recovery_test.dart` | Invalid streams, error callbacks, retry behavior. |

@@ -1,5 +1,6 @@
 import 'package:better_player_example/main_e2e.dart' as app;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -40,22 +41,11 @@ void main() {
       await tester.tap(playPauseButton);
       await tester.pump(const Duration(milliseconds: 500));
 
-      // 3. Skip testing (15s forward, 15s back)
-      final skipForward = findById(
-        'better_player_cupertino_controls_skip_forward_button',
-      );
-      if (skipForward.evaluate().isNotEmpty) {
-        await tester.tap(skipForward);
-        await tester.pump(const Duration(milliseconds: 500));
-      }
-
-      final skipBack = findById(
-        'better_player_cupertino_controls_skip_back_button',
-      );
-      if (skipBack.evaluate().isNotEmpty) {
-        await tester.tap(skipBack);
-        await tester.pump(const Duration(milliseconds: 500));
-      }
+      // 3. Skip testing (Keyboard seeking via ArrowRight / ArrowLeft)
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pump(const Duration(milliseconds: 500));
 
       // 4. Mute / Unmute
       final muteButton = findById(
@@ -125,18 +115,17 @@ void main() {
       );
       await pumpUntilFound(tester: tester, finder: runtimeConfigStatus);
 
-      // 10. Controls Theme Hotswap (Web -> Cupertino -> Web)
+      // 10. Controls Theme Hotswap (Web -> Material -> Web)
       final toggleThemeButton = findById(
         'better_player_e2e_toggle_theme_button',
       );
       await scrollAndTap(tester: tester, finder: toggleThemeButton);
 
-      final cupertinoPlayPause = findById(
-        'better_player_cupertino_controls_play_pause_button',
-      );
-      await pumpUntilFound(tester: tester, finder: cupertinoPlayPause);
+      final materialVideoArea = findById('better_player_material_video_area');
+      await pumpUntilFound(tester: tester, finder: materialVideoArea);
 
       await scrollAndTap(tester: tester, finder: toggleThemeButton);
+      await pumpUntilNotFound(tester: tester, finder: materialVideoArea);
       await pumpUntilFound(tester: tester, finder: playPauseButton);
 
       // 11. Seeking

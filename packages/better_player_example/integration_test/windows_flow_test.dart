@@ -143,6 +143,7 @@ void main() {
       } catch (_) {}
 
       await scrollAndTap(tester: tester, finder: toggleThemeButton);
+      await pumpUntilNotFound(tester: tester, finder: materialVideoArea);
       await pumpUntilFound(tester: tester, finder: playPauseButton);
 
       // 11. Seeking
