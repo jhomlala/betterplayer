@@ -1,0 +1,74 @@
+name: Feature Request
+description: Propose a new capability or API enhancement
+title: "[FEATURE]: "
+labels: ["enhancement", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Stability First
+        Better Player prioritizes stability over feature creep. If your request can be handled via existing configuration, custom controls, or event listeners, prefer that over altering core player internals.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem & Motivation
+      description: What problem are you trying to solve? Why is this feature needed?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Target Platform(s)
+      description: Which platforms must support this?
+      options:
+        - label: Android (ExoPlayer)
+        - label: iOS (AVPlayer)
+        - label: macOS (AVPlayer)
+        - label: Windows (libmpv)
+        - label: Web (Shaka Player)
+        - label: All platforms
+    validations:
+      required: true
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Implementation Scope
+      description: Does this belong in core player, a native platform package, or custom UI?
+      options:
+        - Core player (better_player)
+        - Native engine layer (ExoPlayer / AVPlayer / libmpv / Shaka)
+        - Platform interface (better_player_platform_interface)
+        - Controls / UI layer
+        - Unsure
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_api
+    attributes:
+      label: Proposed Solution & Dart API
+      description: Show how the code would look for a consumer using this feature.
+      render: dart
+      placeholder: |
+        final dataSource = PlayerDataSource(
+          DataSourceType.network,
+          'https://...',
+          // Proposed new field or configuration:
+        );
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives & Workarounds Considered
+      description: What other approaches did you try? Why were they insufficient?
+
+  - type: textarea
+    id: agent_notes
+    attributes:
+      label: Technical & Engine Notes (Optional)
+      description: Engine-specific capabilities or links to ExoPlayer/AVPlayer/libmpv APIs supporting this.

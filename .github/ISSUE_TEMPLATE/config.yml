@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Better Player Documentation
+    url: https://jhomlala.github.io/betterplayer/
+    about: Read setup guides, configuration options, and platform support matrix.
+  - name: Questions & Discussions
+    url: https://github.com/jhomlala/betterplayer/discussions
+    about: Ask implementation questions and share ideas.
