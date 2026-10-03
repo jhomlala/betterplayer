@@ -1,6 +1,7 @@
 #ifndef BETTER_PLAYER_WINDOWS_TEXTURE_BRIDGE_H_
 #define BETTER_PLAYER_WINDOWS_TEXTURE_BRIDGE_H_
 
+#include <atomic>
 #include <flutter/texture_registrar.h>
 #include <memory>
 #include <mutex>
@@ -37,7 +38,7 @@ class TextureBridge {
   FlutterDesktopPixelBuffer desktop_pixel_buffer_{};
 
   std::mutex mutex_;
-  bool is_disposed_ = false;
+  std::atomic<bool> is_disposed_{false};
 };
 
 }  // namespace better_player_windows

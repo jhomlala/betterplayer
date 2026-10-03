@@ -49,6 +49,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   final StreamController<VideoEvent> _eventController =
       StreamController<VideoEvent>.broadcast();
   bool _isDisposed = false;
+  bool _completedEmitted = false;
   Timer? _pollingTimer;
 
   Duration _duration = Duration.zero;
@@ -131,6 +132,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
         _onPropertyChange(event.ref.data.cast<MpvEventProperty>());
       case MpvEventId.seek:
       case MpvEventId.playbackRestart:
+        _completedEmitted = false;
         final posMs = _getPositionMs();
         if (posMs > 0) {
           _currentPosition = Duration(milliseconds: posMs);
@@ -162,7 +164,8 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
                   'Failed to load video: $errorStr (reason: $reason, code: $errorCode)',
             ),
           );
-        } else {
+        } else if (!_completedEmitted) {
+          _completedEmitted = true;
           _log('PlaybackState: ENDED');
           _eventController.add(
             VideoEvent(eventType: VideoEventType.completed, key: _currentKey),
@@ -223,7 +226,8 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       case 'eof-reached':
         if (prop.ref.data != ffi.nullptr) {
           final isEof = prop.ref.data.cast<ffi.Int32>().value != 0;
-          if (isEof) {
+          if (isEof && !_completedEmitted) {
+            _completedEmitted = true;
             _log('PlaybackState: ENDED');
             _eventController.add(
               VideoEvent(
@@ -235,13 +239,19 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
         }
       case 'width':
         if (prop.ref.data != ffi.nullptr) {
-          _width = prop.ref.data.cast<ffi.Int64>().value.toDouble();
-          _notifyDimensionUpdate();
+          final newWidth = prop.ref.data.cast<ffi.Int64>().value.toDouble();
+          if (newWidth > 0 && newWidth != _width) {
+            _width = newWidth;
+            _notifyDimensionUpdate();
+          }
         }
       case 'height':
         if (prop.ref.data != ffi.nullptr) {
-          _height = prop.ref.data.cast<ffi.Int64>().value.toDouble();
-          _notifyDimensionUpdate();
+          final newHeight = prop.ref.data.cast<ffi.Int64>().value.toDouble();
+          if (newHeight > 0 && newHeight != _height) {
+            _height = newHeight;
+            _notifyDimensionUpdate();
+          }
         }
       case 'duration':
         if (prop.ref.data != ffi.nullptr) {
@@ -264,7 +274,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     if (_width > 0 && _height > 0) {
       _eventController.add(
         VideoEvent(
-          eventType: VideoEventType.initialized,
+          eventType: VideoEventType.changedSize,
           key: _currentKey,
           duration: _duration,
           size: Size(_width, _height),
@@ -346,26 +356,45 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   Future<void> setDataSource(DataSource dataSource) async {
     _currentPosition = Duration.zero;
     _currentKey = dataSource.key;
+    _completedEmitted = false;
+    _duration = Duration.zero;
+    _width = 0;
+    _height = 0;
 
-    // Configure headers if present
+    // Configure headers: always set to avoid leaking previous headers
     if (dataSource.headers != null && dataSource.headers!.isNotEmpty) {
       final headerStrings = dataSource.headers!.entries
           .map((e) => '${e.key}: ${e.value}')
           .join(',');
       _setPropertyString('http-header-fields', headerStrings);
+    } else {
+      _setPropertyString('http-header-fields', '');
     }
 
-    // Configure caching parameters
+    // Configure caching parameters: reset to default if caching is not enabled
     if (dataSource.cacheConfiguration?.useCache == true) {
       final maxBytes = dataSource.cacheConfiguration?.maxCacheSize ?? 0;
       if (maxBytes > 0) {
         _setPropertyString('demuxer-max-bytes', maxBytes.toString());
       }
+    } else {
+      _setPropertyString('demuxer-max-bytes', '150MiB');
     }
 
     final url = dataSource.uri ?? dataSource.asset ?? '';
     _log('setDataSource: $url');
-    _command(['loadfile', url]);
+    final code = _command(['loadfile', url]);
+    if (code < 0) {
+      final errorStr = _bindings.errorString(code);
+      _log(
+        'Failed to execute loadfile: $errorStr (code: $code)',
+        levelIndex: 3,
+      );
+      throw PlatformException(
+        code: 'MPV_ERROR',
+        message: 'Failed to load video: $errorStr (code: $code)',
+      );
+    }
   }
 
   @override
@@ -389,15 +418,24 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   @override
   Future<void> setSpeed(double speed) async {
     _log('setSpeed: $speed', levelIndex: 0);
-    _setPropertyDouble('speed', speed.clamp(0.0, 4.0));
+    _setPropertyDouble('speed', speed.clamp(0.01, 4.0));
   }
 
   @override
   Future<void> seekTo(Duration position) async {
     _log('seekTo: ${position.inMilliseconds}');
     _currentPosition = position;
+    _completedEmitted = false;
     final seconds = position.inMilliseconds / 1000.0;
-    _command(['seek', seconds.toString(), 'absolute+exact']);
+    final code = _command(['seek', seconds.toString(), 'absolute+exact']);
+    if (code < 0) {
+      final errorStr = _bindings.errorString(code);
+      _log('Failed to execute seek: $errorStr (code: $code)', levelIndex: 2);
+      throw PlatformException(
+        code: 'MPV_ERROR',
+        message: 'Failed to seek: $errorStr (code: $code)',
+      );
+    }
   }
 
   @override
@@ -422,12 +460,10 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     required int bitrate,
   }) async {
     _log(
-      'setTrackParameters: width=$width, height=$height, bitrate=$bitrate',
+      'setTrackParameters: width=$width, height=$height, bitrate=$bitrate '
+      '(track selection not supported on Windows yet)',
       levelIndex: 0,
     );
-    if (width > 0 && height > 0) {
-      _setPropertyString('video-aspect-override', '${width / height}');
-    }
   }
 
   @override
@@ -436,7 +472,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     _setPropertyString('aid', '$index');
   }
 
-  void _command(List<String> args) {
+  int _command(List<String> args) {
     final pointers = calloc<ffi.Pointer<Utf8>>(args.length + 1);
     for (var i = 0; i < args.length; i++) {
       pointers[i] = args[i].toNativeUtf8();
@@ -444,7 +480,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     pointers[args.length] = ffi.nullptr;
 
     try {
-      _bindings.mpvCommand(handle, pointers);
+      return _bindings.mpvCommand(handle, pointers);
     } finally {
       for (var i = 0; i < args.length; i++) {
         calloc.free(pointers[i]);
@@ -457,7 +493,13 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     final namePtr = name.toNativeUtf8();
     final valuePtr = value.toNativeUtf8();
     try {
-      _bindings.mpvSetPropertyString(handle, namePtr, valuePtr);
+      final res = _bindings.mpvSetPropertyString(handle, namePtr, valuePtr);
+      if (res < 0) {
+        _log(
+          'Failed to set property string "$name": ${_bindings.errorString(res)} (code: $res)',
+          levelIndex: 2,
+        );
+      }
     } finally {
       calloc.free(namePtr);
       calloc.free(valuePtr);
@@ -468,12 +510,18 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     final namePtr = name.toNativeUtf8();
     final flagPtr = calloc<ffi.Int32>()..value = value ? 1 : 0;
     try {
-      _bindings.mpvSetProperty(
+      final res = _bindings.mpvSetProperty(
         handle,
         namePtr,
         MpvFormat.flag,
         flagPtr.cast(),
       );
+      if (res < 0) {
+        _log(
+          'Failed to set property flag "$name": ${_bindings.errorString(res)} (code: $res)',
+          levelIndex: 2,
+        );
+      }
     } finally {
       calloc.free(namePtr);
       calloc.free(flagPtr);
@@ -484,12 +532,18 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     final namePtr = name.toNativeUtf8();
     final doublePtr = calloc<ffi.Double>()..value = value;
     try {
-      _bindings.mpvSetProperty(
+      final res = _bindings.mpvSetProperty(
         handle,
         namePtr,
         MpvFormat.doubleFormat,
         doublePtr.cast(),
       );
+      if (res < 0) {
+        _log(
+          'Failed to set property double "$name": ${_bindings.errorString(res)} (code: $res)',
+          levelIndex: 2,
+        );
+      }
     } finally {
       calloc.free(namePtr);
       calloc.free(doublePtr);

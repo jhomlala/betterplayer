@@ -122,14 +122,14 @@ bool TextureBridge::Initialize() {
 
 void TextureBridge::OnMpvUpdate(void* ctx) {
   auto* self = static_cast<TextureBridge*>(ctx);
-  if (self && !self->is_disposed_ && self->texture_registrar_ && self->texture_id_ >= 0) {
+  if (self && !self->is_disposed_.load() && self->texture_registrar_ && self->texture_id_ >= 0) {
     self->texture_registrar_->MarkTextureFrameAvailable(self->texture_id_);
   }
 }
 
 const FlutterDesktopPixelBuffer* TextureBridge::CopyPixelBuffer(size_t width, size_t height) {
   std::lock_guard<std::mutex> lock(mutex_);
-  if (is_disposed_ || !mpv_render_) {
+  if (is_disposed_.load() || !mpv_render_) {
     return nullptr;
   }
 
@@ -172,8 +172,8 @@ const FlutterDesktopPixelBuffer* TextureBridge::CopyPixelBuffer(size_t width, si
 
 void TextureBridge::Dispose() {
   std::lock_guard<std::mutex> lock(mutex_);
-  if (is_disposed_) return;
-  is_disposed_ = true;
+  if (is_disposed_.load()) return;
+  is_disposed_.store(true);
 
   if (texture_id_ >= 0 && texture_registrar_) {
     texture_registrar_->UnregisterTexture(texture_id_);

@@ -59,7 +59,8 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
     if (textureId == null || mpvHandleAddress == null) {
       throw PlatformException(
         code: 'CREATION_FAILED',
-        message: 'Failed to create native Windows texture and mpv context.',
+        message:
+            'Failed to create native Windows texture and mpv context: mpv-2.dll not found, see README.',
       );
     }
 

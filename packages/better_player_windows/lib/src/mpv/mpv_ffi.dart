@@ -283,6 +283,24 @@ class MpvBindings {
             'mpv_request_log_messages',
           );
 
+  MpvBindings.custom({
+    required this.mpvCreate,
+    required this.mpvInitialize,
+    required this.mpvDestroy,
+    required this.mpvCommand,
+    required this.mpvCommandString,
+    required this.mpvSetProperty,
+    required this.mpvSetPropertyString,
+    required this.mpvGetProperty,
+    required this.mpvGetPropertyString,
+    required this.mpvFree,
+    required this.mpvSetOptionString,
+    required this.mpvObserveProperty,
+    required this.mpvWaitEvent,
+    required this.mpvErrorString,
+    required this.mpvRequestLogMessages,
+  });
+
   final MpvCreateDart mpvCreate;
   final MpvInitializeDart mpvInitialize;
   final MpvDestroyDart mpvDestroy;

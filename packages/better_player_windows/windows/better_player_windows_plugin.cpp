@@ -45,7 +45,7 @@ void BetterPlayerWindowsPlugin::HandleMethodCall(
   if (method_call.method_name().compare("create") == 0) {
     auto bridge = std::make_unique<TextureBridge>(registrar_->texture_registrar());
     if (!bridge->Initialize()) {
-      result->Error("INITIALIZE_FAILED", "Failed to initialize texture bridge and mpv context.");
+      result->Error("CREATION_FAILED", "Failed to initialize texture bridge and mpv context: mpv-2.dll not found, see README.");
       return;
     }
 

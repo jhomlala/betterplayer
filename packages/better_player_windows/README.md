@@ -24,3 +24,11 @@ dependencies:
 * RTSP live streaming support.
 * Subtitle parsing and audio track switching.
 * Custom HTTP headers and network buffering configuration.
+
+## `mpv-2.dll` requirement
+
+`better_player_windows` relies on `mpv-2.dll` (or `libmpv-2.dll`) for media playback and software frame rendering. Due to its binary size (~35 MB), the native DLL is not packaged with the pub.dev distribution by design.
+
+To run your Windows application:
+1. Download the `mpv-2.dll` Windows 64-bit build (e.g. from [mpv-player-windows on SourceForge](https://sourceforge.net/projects/mpv-player-windows/files/libmpv/)).
+2. Place `mpv-2.dll` into your application's output directory alongside the executable (e.g. `build/windows/x64/runner/Debug/` or `Release/`), or place it into `packages/better_player_windows/windows/libs/mpv-2.dll` so CMake automatically copies it on build.
