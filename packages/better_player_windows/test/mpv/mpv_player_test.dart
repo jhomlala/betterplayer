@@ -370,5 +370,69 @@ void main() {
 
       await player.dispose();
     });
+
+    test(
+      'setDataSource logs warning when DRM configuration is provided',
+      () async {
+        final bindings = createFakeBindings();
+        final player = MpvPlayer(
+          textureId: 1,
+          handle: fakeHandle,
+          bindings: bindings,
+          onLog: ({required message, required levelIndex}) => logs.add(message),
+        );
+
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.mpd',
+            drmConfiguration: const DrmConfiguration(
+              drmType: DrmType.widevine,
+              licenseUrl: 'https://license.example.com',
+            ),
+          ),
+        );
+
+        expect(
+          logs.any(
+            (l) => l.contains('DRM configuration is not supported on Windows'),
+          ),
+          isTrue,
+        );
+
+        await player.dispose();
+      },
+    );
+
+    test('logs seeking state change on seeking property change', () async {
+      final bindings = createFakeBindings();
+      final player = MpvPlayer(
+        textureId: 1,
+        handle: fakeHandle,
+        bindings: bindings,
+        onLog: ({required message, required levelIndex}) => logs.add(message),
+      );
+
+      final seekingName = 'seeking'.toNativeUtf8();
+      final seekingData = calloc<ffi.Int32>()..value = 1;
+      final seekingProp = calloc<MpvEventProperty>()
+        ..ref.name = seekingName
+        ..ref.format = MpvFormat.flag
+        ..ref.data = seekingData.cast();
+
+      eventQueue.add((ptr) {
+        ptr.ref.eventId = MpvEventId.propertyChange;
+        ptr.ref.error = 0;
+        ptr.ref.data = seekingProp.cast();
+      });
+
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(logs.any((l) => l.contains('SeekingState: SEEKING')), isTrue);
+
+      calloc.free(seekingName);
+      calloc.free(seekingData);
+      calloc.free(seekingProp);
+      await player.dispose();
+    });
   });
 }

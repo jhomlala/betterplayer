@@ -190,5 +190,63 @@ void main() {
       );
       await expectLater(windowsPlatform.disablePictureInPicture(42), completes);
     });
+
+    test(
+      'no-op and unsupported methods log information and complete gracefully',
+      () async {
+        final logs = <String>[];
+        await windowsPlatform.setupLogCallback(({
+          required int levelIndex,
+          required String message,
+        }) {
+          logs.add(message);
+        });
+
+        await windowsPlatform.create(
+          bufferingConfiguration: const BufferingConfiguration(),
+        );
+        expect(
+          logs.any(
+            (l) => l.contains('BufferingConfiguration is ignored on Windows'),
+          ),
+          isTrue,
+        );
+
+        final absPos = await windowsPlatform.getAbsolutePosition(42);
+        expect(absPos, isNull);
+        expect(logs.any((l) => l.contains('getAbsolutePosition')), isTrue);
+
+        await windowsPlatform.setMixWithOthers(42, true);
+        expect(logs.any((l) => l.contains('setMixWithOthers')), isTrue);
+
+        await windowsPlatform.setAndroidMatchFrameRate(42, true);
+        expect(logs.any((l) => l.contains('setAndroidMatchFrameRate')), isTrue);
+
+        await windowsPlatform.clearCache();
+        expect(logs.any((l) => l.contains('clearCache')), isTrue);
+
+        await windowsPlatform.preCache(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.mp4',
+          ),
+          1024,
+        );
+        expect(logs.any((l) => l.contains('preCache')), isTrue);
+
+        await windowsPlatform.stopPreCache(
+          'https://example.com/video.mp4',
+          null,
+        );
+        expect(logs.any((l) => l.contains('stopPreCache')), isTrue);
+
+        final pip = await windowsPlatform.isPictureInPictureSupported(42);
+        expect(pip, isFalse);
+        expect(
+          logs.any((l) => l.contains('isPictureInPictureSupported')),
+          isTrue,
+        );
+      },
+    );
   });
 }

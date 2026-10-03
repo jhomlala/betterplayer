@@ -227,6 +227,14 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
             ),
           );
         }
+      case 'seeking':
+        if (prop.ref.data != ffi.nullptr) {
+          final isSeeking = prop.ref.data.cast<ffi.Int32>().value != 0;
+          _log(
+            message: isSeeking ? 'SeekingState: SEEKING' : 'SeekingState: IDLE',
+            levelIndex: 0,
+          );
+        }
       case 'eof-reached':
         if (prop.ref.data != ffi.nullptr) {
           final isEof = prop.ref.data.cast<ffi.Int32>().value != 0;
@@ -373,6 +381,13 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       _setPropertyString(name: 'http-header-fields', value: headerStrings);
     } else {
       _setPropertyString(name: 'http-header-fields', value: '');
+    }
+
+    if (dataSource.drmConfiguration != null) {
+      _log(
+        message: 'DRM configuration is not supported on Windows (mpv)',
+        levelIndex: 2,
+      );
     }
 
     // Configure caching parameters: reset to default if caching is not enabled

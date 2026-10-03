@@ -88,6 +88,13 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
     BufferingConfiguration? bufferingConfiguration,
   }) async {
     try {
+      if (bufferingConfiguration != null) {
+        _log(
+          message:
+              'BufferingConfiguration is ignored on Windows (managed by mpv)',
+          levelIndex: 0,
+        );
+      }
       final player = await _playerFactory(
         bufferingConfiguration: bufferingConfiguration,
       );
@@ -178,6 +185,11 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
 
   @override
   Future<DateTime?> getAbsolutePosition(int? textureId) async {
+    _log(
+      message:
+          'getAbsolutePosition: textureId=$textureId (absolute position not supported on Windows)',
+      levelIndex: 0,
+    );
     return null;
   }
 
@@ -222,26 +234,61 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
 
   @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
-    // libmpv mixes with system audio automatically
+    _log(
+      message:
+          'setMixWithOthers: textureId=$textureId, mixWithOthers=$mixWithOthers '
+          '(system audio mixing is handled automatically by mpv)',
+      levelIndex: 0,
+    );
+  }
+
+  @override
+  Future<void> setAndroidMatchFrameRate(
+    int? textureId,
+    bool matchFrameRate,
+  ) async {
+    _log(
+      message:
+          'setAndroidMatchFrameRate: textureId=$textureId, matchFrameRate=$matchFrameRate '
+          '(frame rate matching is not applicable on Windows)',
+      levelIndex: 0,
+    );
   }
 
   @override
   Future<void> clearCache() async {
-    // Cache clearing is managed by mpv or local temporary directories
+    _log(
+      message: 'clearCache (cache lifecycle is managed by mpv)',
+      levelIndex: 0,
+    );
   }
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) async {
-    // mpv supports network demuxer buffering out of the box
+    _log(
+      message:
+          'preCache: url=${dataSource.uri ?? dataSource.asset}, preCacheSize=$preCacheSize '
+          '(network demuxer buffering is handled automatically by mpv)',
+      levelIndex: 0,
+    );
   }
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) async {
-    // No-op for demuxer-based buffering
+    _log(
+      message:
+          'stopPreCache: url=$url, cacheKey=$cacheKey (demuxer buffering handles cache)',
+      levelIndex: 0,
+    );
   }
 
   @override
   Future<bool?> isPictureInPictureSupported(int? textureId) async {
+    _log(
+      message:
+          'isPictureInPictureSupported: textureId=$textureId (picture-in-picture is not supported on Windows)',
+      levelIndex: 0,
+    );
     return false;
   }
 
