@@ -53,7 +53,8 @@ Future<void> waitModalClosed({
   while (DateTime.now().isBefore(end)) {
     await tester.pump(const Duration(milliseconds: 100));
     if (find.byType(BottomSheet).evaluate().isEmpty &&
-        find.byType(CupertinoActionSheet).evaluate().isEmpty) {
+        find.byType(CupertinoActionSheet).evaluate().isEmpty &&
+        find.byType(PopupMenuItem).evaluate().isEmpty) {
       await tester.pump(const Duration(milliseconds: 200));
       return;
     }

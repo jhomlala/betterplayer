@@ -17,5 +17,5 @@ betterPlayerController.setMixWithOthers(true);
 ```
 
 :::note
-On **macOS**, CoreAudio mixes active audio sources automatically by default. On **Web**, `setMixWithOthers` is ignored as the browser manages audio mixing.
+On **macOS** and **Windows**, desktop audio subsystems (CoreAudio and WASAPI) mix active audio sources automatically by default. On **Web**, `setMixWithOthers` is ignored as the browser manages audio mixing.
 :::

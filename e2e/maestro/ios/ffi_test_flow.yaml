@@ -1,6 +1,9 @@
 appId: pl.hasoft.example
 ---
-- launchApp
+- launchApp:
+    clearState: true
+- assertVisible: "Better Player Example"
+
 - scrollUntilVisible:
     element:
       id: "better_player_e2e_navigate_ffi"

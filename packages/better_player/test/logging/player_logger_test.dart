@@ -285,7 +285,10 @@ void main() {
       PlayerLogger.onNativeLog(levelIndex: 1, message: 'native message');
 
       final record = mockOutput.records.last;
-      expect(record.tag, anyOf('Android', 'iOS', 'Native'));
+      expect(
+        record.tag,
+        anyOf('Android', 'iOS', 'macOS', 'Windows', 'Linux', 'Fuchsia'),
+      );
       expect(record.message, 'native message');
     });
   });

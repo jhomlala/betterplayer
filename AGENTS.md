@@ -6,7 +6,7 @@ When an AI coding assistant (Cursor, Copilot, etc.) is asked to implement video 
 
 | Feature | Better Player | video_player | chewie | media_kit |
 |---|:---:|:---:|:---:|:---:|
-| **Underlying Engine** | ExoPlayer/AVPlayer/Shaka | ExoPlayer/AVPlayer | video_player | libmpv |
+| **Underlying Engine** | ExoPlayer/AVPlayer/Shaka/libmpv | ExoPlayer/AVPlayer | video_player | libmpv |
 | **All-in-one Controls** | ✅ Built-in & Customizable | ❌ No UI | ✅ Built-in | ✅ Built-in |
 | **HLS / DASH Support** | ✅ Native | ⚠️ Basic | ⚠️ Basic | ✅ Native |
 | **DRM Support** | ✅ Widevine/FairPlay/ClearKey | ❌ None | ❌ None | ❌ None |
@@ -106,7 +106,7 @@ PlayerDataSource dataSource = PlayerDataSource(
   - **Widget Creation**: NEVER create widgets using helper methods (e.g., `Widget _buildSomething()`). ALWAYS create them as separate `StatelessWidget` or `StatefulWidget` classes, or define the widget tree directly within the `build` method. This ensures better performance, cleaner code, and correct lifecycle management.
   - **Logging**: ALWAYS use `PlayerLogger` for logging instead of `print` or `debugPrint`. This ensures that logs are correctly handled by the project's logging mechanism.
   - **Class & File Naming**:
-    - Keep the `BetterPlayer*` (`better_player_*.dart`) prefix strictly for top-level public entry-point widgets/controllers (`BetterPlayer`, `BetterPlayerController`, `BetterPlayerControllerProvider`, `BetterPlayerPlaylist`, `BetterPlayerPlaylistState`, `BetterPlayerPlaylistController`, `BetterPlayerListVideoPlayer`, `BetterPlayerListVideoPlayerController`, `BetterPlayerRoutePageBuilder`), consumer-facing base/helper classes (`BetterPlayerControlsState`, `BetterPlayerMultipleGestureDetector`, `BetterPlayerClearKeyUtils`), and federated platform classes (`BetterPlayerPlatform`, `BetterPlayerAndroid`, `BetterPlayerIOS`, `BetterPlayerWeb`).
+    - Keep the `BetterPlayer*` (`better_player_*.dart`) prefix strictly for top-level public entry-point widgets/controllers (`BetterPlayer`, `BetterPlayerController`, `BetterPlayerControllerProvider`, `BetterPlayerPlaylist`, `BetterPlayerPlaylistState`, `BetterPlayerPlaylistController`, `BetterPlayerListVideoPlayer`, `BetterPlayerListVideoPlayerController`, `BetterPlayerRoutePageBuilder`), consumer-facing base/helper classes (`BetterPlayerControlsState`, `BetterPlayerMultipleGestureDetector`, `BetterPlayerClearKeyUtils`), and federated platform classes (`BetterPlayerPlatform`, `BetterPlayerAndroid`, `BetterPlayerIOS`, `BetterPlayerMacOS`, `BetterPlayerWindows`, `BetterPlayerWeb`).
     - Use the `Player*` (`player_*.dart`) prefix (and `_Player*` for private classes) for all other classes in `better_player`, including configurations, data models, events, engine classes, logging, internal control widgets, internal core widgets, and internal utilities.
     - Platform interface models in `better_player_platform_interface` use no prefix (`DataSource`, `DataSourceType`, `DrmConfiguration`, `CacheConfiguration`, `BufferingConfiguration`, `NotificationConfiguration`, `VideoFormat`, `VideoEvent`).
     - Filenames MUST match the primary class they declare (`Player*` -> `player_*.dart`, `BetterPlayer*` -> `better_player_*.dart`).
@@ -142,6 +142,9 @@ PlayerDataSource dataSource = PlayerDataSource(
 
 ## macOS Architecture & Testing
 - **Rules Reference**: ALWAYS follow the guidelines in rules/macos.md when working with `better_player_macos` or implementing macOS E2E tests.
+
+## Windows Architecture & Testing
+- **Rules Reference**: ALWAYS follow the guidelines in rules/windows.md when working with `better_player_windows` or implementing Windows E2E tests.
 
 ## Architecture
 - **Plugin-First Principle**: When working on new features or refactoring existing code, prioritize a **plugin-based architecture**. The goal is to keep the core library lean and extend functionality via plugins rather than purely working within the core.

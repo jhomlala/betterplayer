@@ -13,7 +13,7 @@ Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  better_player: ^1.20.0
+  better_player: ^1.21.0
 ```
 
 ## 2. Install Package
@@ -60,6 +60,14 @@ Apply the following settings for macOS support:
 <key>com.apple.security.network.client</key>
 <true/>
 ```
+
+### Windows Configuration (Required)
+
+Apply the following settings for Windows support:
+
+*   **Target OS**: Windows 10 version 1809 (Build 17763) or higher.
+*   **Graphics**: DirectX 11 capable graphics adapter (D3D11 shared texture rendering).
+*   **libmpv Runtime**: The Windows plugin dynamically loads `mpv-2.dll`. Ensure `mpv-2.dll` is located next to your built application executable (`Runner.exe`) or in your system `PATH`.
 
 ### Web Configuration (Required)
 

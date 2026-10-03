@@ -1,0 +1,7 @@
+# Native binary downloads and build artifacts
+windows/libs/
+*.dll
+*.lib
+*.pdb
+*.exp
+

@@ -244,13 +244,13 @@ class _WelcomePageState extends State<WelcomePage> {
     final content = await rootBundle.loadString('assets/example_subtitles.srt');
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/example_subtitles.srt';
-    await ExampleIoUtils.writeStringToFile(path, content);
+    await ExampleIoUtils.writeStringToFile(path: path, content: content);
 
     final vttContent = await rootBundle.loadString(
       'assets/example_subtitles.vtt',
     );
     final vttPath = '${directory.path}/example_subtitles.vtt';
-    await ExampleIoUtils.writeStringToFile(vttPath, vttContent);
+    await ExampleIoUtils.writeStringToFile(path: vttPath, content: vttContent);
   }
 
   ///Save video to file, so we can use it later
@@ -259,7 +259,10 @@ class _WelcomePageState extends State<WelcomePage> {
     final content = await rootBundle.load('assets/testvideo.mp4');
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/testvideo.mp4';
-    await ExampleIoUtils.writeBytesToFile(path, content.buffer.asUint8List());
+    await ExampleIoUtils.writeBytesToFile(
+      path: path,
+      bytes: content.buffer.asUint8List(),
+    );
   }
 
   ///Save video to file, so we can use it later
@@ -268,7 +271,10 @@ class _WelcomePageState extends State<WelcomePage> {
     final content = await rootBundle.load('assets/testvideo_encrypt.mp4');
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/testvideo_encrypt.mp4';
-    await ExampleIoUtils.writeBytesToFile(path, content.buffer.asUint8List());
+    await ExampleIoUtils.writeBytesToFile(
+      path: path,
+      bytes: content.buffer.asUint8List(),
+    );
   }
 
   ///Save logo to file, so we can use it later
@@ -277,7 +283,10 @@ class _WelcomePageState extends State<WelcomePage> {
     final content = await rootBundle.load('assets/${Constants.logo}');
     final directory = await getApplicationDocumentsDirectory();
     final path = '${directory.path}/${Constants.logo}';
-    await ExampleIoUtils.writeBytesToFile(path, content.buffer.asUint8List());
+    await ExampleIoUtils.writeBytesToFile(
+      path: path,
+      bytes: content.buffer.asUint8List(),
+    );
   }
 }
 

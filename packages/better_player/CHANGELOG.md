@@ -1,3 +1,7 @@
+## 1.21.0
+- Added: Windows desktop platform support backed by `libmpv` with software rendering via federated package `better_player_windows`.
+- Updated: Defaulted controls theme to Web/Desktop controls on Windows, macOS, and Linux, and added `PlayerTheme.desktop`.
+
 ## 1.20.0
 - Added: macOS desktop platform support backed by AVPlayer and AppKitView via federated package `better_player_macos`.
 - Fixed: Prevented unintended UI listener notifications during teardown by removing engine listeners before `pause` in `BetterPlayerController.dispose`, and guarded `BetterPlayerListVideoPlayerController` against calling `seekTo` or `play` before initialization completes.

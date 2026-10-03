@@ -91,7 +91,12 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Seek E2E Test')),
+      appBar: AppBar(
+        title: Semantics(
+          identifier: 'better_player_e2e_seek_title',
+          child: const Text('Seek E2E Test'),
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -104,6 +109,7 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
               Semantics(
                 identifier: 'better_player_e2e_seek_initialized',
                 label: 'better_player_e2e_seek_initialized',
+                container: true,
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Seek Player Initialized'),
@@ -113,6 +119,7 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
               Semantics(
                 identifier: 'better_player_e2e_seek_10s_verified',
                 label: 'better_player_e2e_seek_10s_verified',
+                container: true,
                 child: ElevatedButton(
                   onPressed: () {},
                   child: const Text('Seek 10s Verified'),
@@ -142,6 +149,8 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
                 Semantics(
                   identifier: 'better_player_e2e_seek_3s_button',
                   label: 'better_player_e2e_seek_3s_button',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     key: const ValueKey('seek_3s'),
                     onPressed: () => _betterPlayerController.seekTo(
@@ -153,6 +162,8 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
                 Semantics(
                   identifier: 'better_player_e2e_seek_10s_button',
                   label: 'better_player_e2e_seek_10s_button',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     key: const ValueKey('seek_10s'),
                     onPressed: _seekTo10s,
@@ -162,6 +173,8 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
                 Semantics(
                   identifier: 'better_player_e2e_seek_30s_button',
                   label: 'better_player_e2e_seek_30s_button',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     key: const ValueKey('seek_30s'),
                     onPressed: () => _betterPlayerController.seekTo(

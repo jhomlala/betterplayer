@@ -9,23 +9,23 @@ Better Player strives to provide a consistent and powerful playback experience a
 
 The following matrix details the current feature support for Better Player across platforms:
 
-| Feature | Android | iOS | macOS | Web |
-| :--- | :---: | :---: | :---: | :---: |
-| **Basic Playback (MP4/WebM)** | ✓ | ✓ | ✓ | ✓ |
-| **HLS (HTTP Live Streaming)** | ✓ | ✓ | ✓ | ✓ |
-| **DASH (Dynamic Adaptive Streaming)**| ✓ | x | x | ✓ |
-| **Smooth Streaming** | ✓ | x | x | x |
-| **Subtitles (SRT/WebVTT)** | ✓ | ✓ | ✓ | ✓ |
-| **Audio Track Selection** | ✓ | ✓ | ✓ | ✓ |
-| **Picture in Picture (PiP)** | ✓ | ✓ | ✓ | ✓ |
-| **DRM (Widevine)** | ✓ | x | x | ✓ |
-| **DRM (FairPlay)** | x | ✓ | ✓ | ✓ |
-| **DRM (ClearKey)** | ✓ | ✓ | ✓ | ✓ |
-| **Caching (Normal)** | ✓ | ✓ | ✓ | x |
-| **Pre-caching & Stop Caching** | ✓ | ✓ | ✓ | x |
-| **Background Audio / Notifications** | ✓ | ✓ | x | x |
-| **Mix Audio with Others** | ✓ | ✓ | ✓ | x |
-| **Auto Frame Rate (AFR)** | ✓ | x | x | x |
+| Feature | Android | iOS | macOS | Windows | Web |
+| :--- | :---: | :---: | :---: | :---: | :---: |
+| **Basic Playback (MP4/WebM)** | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **HLS (HTTP Live Streaming)** | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **DASH (Dynamic Adaptive Streaming)**| ✓ | x | x | ✓ | ✓ |
+| **Smooth Streaming** | ✓ | x | x | x | x |
+| **Subtitles (SRT/WebVTT)** | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Audio Track Selection** | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Picture in Picture (PiP)** | ✓ | ✓ | ✓ | x | ✓ |
+| **DRM (Widevine)** | ✓ | x | x | x | ✓ |
+| **DRM (FairPlay)** | x | ✓ | ✓ | x | ✓ |
+| **DRM (ClearKey)** | ✓ | ✓ | ✓ | x | ✓ |
+| **Caching (Normal)** | ✓ | ✓ | ✓ | ✓ | x |
+| **Pre-caching & Stop Caching** | ✓ | ✓ | ✓ | ✓ | x |
+| **Background Audio / Notifications** | ✓ | ✓ | x | x | x |
+| **Mix Audio with Others** | ✓ | ✓ | ✓ | ✓ | x |
+| **Auto Frame Rate (AFR)** | ✓ | x | x | x | x |
 
 ## Platform Specific Details
 
@@ -46,6 +46,12 @@ The following matrix details the current feature support for Better Player acros
 * FairPlay DRM and ClearKey are supported.
 * Audio mixing is handled automatically by CoreAudio.
 * Requires the App Sandbox network client entitlement (`com.apple.security.network.client`) for network streams.
+
+### Windows
+* Windows desktop playback is powered by `libmpv` and FFmpeg.
+* Direct3D 11 hardware-accelerated video rendering via Flutter's `TextureRegistrar`.
+* Native support for HLS (`.m3u8`), MPEG-DASH (`.mpd`), RTSP, and progressive video.
+* Direct Dart FFI bindings for low-overhead playback controls.
 
 ### Web
 * Web playback is powered by the open-source [Shaka Player](https://shaka-player-demo.appspot.com/docs/api/tutorial-welcome.html) library, connecting Flutter to web playback capabilities.

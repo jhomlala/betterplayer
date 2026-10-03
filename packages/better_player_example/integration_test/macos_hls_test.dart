@@ -1,5 +1,6 @@
 import 'package:better_player_example/main_e2e.dart' as app;
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -36,7 +37,7 @@ void main() {
 
       // 2. Wait for video controls
       final playPauseButton = findById(
-        'better_player_cupertino_controls_play_pause_button',
+        'better_player_material_controls_play_pause_button',
       );
       await pumpUntilFound(
         tester: tester,
@@ -54,26 +55,15 @@ void main() {
       await tester.tap(playPauseButton.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
 
-      // 4. Skip testing
-      final skipForward = findById(
-        'better_player_cupertino_controls_skip_forward_button',
-      );
-      if (skipForward.evaluate().isNotEmpty) {
-        await tester.tap(skipForward.first, warnIfMissed: false);
-        await tester.pump(const Duration(milliseconds: 500));
-      }
-
-      final skipBack = findById(
-        'better_player_cupertino_controls_skip_back_button',
-      );
-      if (skipBack.evaluate().isNotEmpty) {
-        await tester.tap(skipBack.first, warnIfMissed: false);
-        await tester.pump(const Duration(milliseconds: 500));
-      }
+      // 4. Skip testing (Keyboard seeking via ArrowRight / ArrowLeft)
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowRight);
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pump(const Duration(milliseconds: 500));
 
       // 5. Mute/Unmute
       final muteButton = findById(
-        'better_player_cupertino_controls_mute_button',
+        'better_player_material_controls_mute_button',
       );
       if (muteButton.evaluate().isNotEmpty) {
         await tester.tap(muteButton.first, warnIfMissed: false);
@@ -84,7 +74,7 @@ void main() {
 
       // 6. Speed Selection (2.0x)
       final moreButton = findById(
-        'better_player_cupertino_controls_more_button',
+        'better_player_material_controls_more_button',
       );
       await tapWhenReady(tester: tester, finder: moreButton);
 
@@ -119,7 +109,7 @@ void main() {
       }
 
       // 8. Seeking
-      final progressBar = findById('better_player_cupertino_progress_bar');
+      final progressBar = findById('better_player_material_progress_bar');
       if (progressBar.evaluate().isNotEmpty) {
         try {
           await tester.ensureVisible(progressBar.first);
@@ -131,7 +121,7 @@ void main() {
 
       // 9. Fullscreen
       final expandButton = findById(
-        'better_player_cupertino_controls_expand_button',
+        'better_player_material_controls_fullscreen_button',
       );
       if (expandButton.evaluate().isNotEmpty) {
         try {

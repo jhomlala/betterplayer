@@ -7,7 +7,7 @@ description: >-
 
 # Better Player Usage Guide
 
-Better Player is a full-featured video player for Flutter built on ExoPlayer (Android), AVPlayer (iOS & macOS), and Shaka Player (Web). Use this skill to add Better Player to an app and write idiomatic 1.x code.
+Better Player is a full-featured video player for Flutter built on ExoPlayer (Android), AVPlayer (iOS & macOS), libmpv (Windows), and Shaka Player (Web). Use this skill to add Better Player to an app and write idiomatic 1.x code.
 
 ## 1. Adding Better Player to a Flutter App
 
@@ -30,6 +30,7 @@ import 'package:better_player/better_player.dart';
 * **Android**: Set `compileSdkVersion` to `36` in `android/app/build.gradle` (or `build.gradle.kts`) and enable MultiDex. Requires Flutter 3.47.0+.
 * **iOS**: Set the minimum iOS deployment target to `13.0` in `ios/Podfile` and Xcode, and use Swift 5. For fullscreen auto-rotation, declare portrait and landscape orientations under `UISupportedInterfaceOrientations` in `ios/Runner/Info.plist`.
 * **macOS**: Set minimum macOS deployment target to `10.15` (Catalina). If using App Sandbox, add `com.apple.security.network.client` to `DebugProfile.entitlements` and `Release.entitlements` to stream network videos.
+* **Windows**: Requires Windows 10 version 1809+ and DirectX 11. Ensure `mpv-2.dll` is placed in the application directory or system `PATH`.
 * **Web**: Load Shaka Player in `web/index.html` before the closing `</body>` tag:
 
 ```html

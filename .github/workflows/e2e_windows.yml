@@ -1,0 +1,109 @@
+name: E2E Windows (Integration Tests)
+
+on:
+  push:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_windows/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_windows.yml'
+  pull_request:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_windows/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_windows.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-windows:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Enable Windows Desktop
+        run: flutter config --enable-windows-desktop
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~\AppData\Local\Pub\Cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Get Workspace Dependencies
+        run: flutter pub get
+
+      - name: Cache libmpv
+        id: cache-mpv
+        uses: actions/cache@v4
+        with:
+          path: packages/better_player_windows/windows/libs
+          key: ${{ runner.os }}-libmpv-20261002
+
+      - name: Download and setup libmpv
+        if: steps.cache-mpv.outputs.cache-hit != 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "2026-10-02-3186d369f9"
+          $file = "mpv-dev-x86_64-20261002-git-3186d369f9.7z"
+          $directUrl = "https://github.com/zhongfly/mpv-winbuild/releases/download/$tag/$file"
+          Write-Host "Downloading $file from direct CDN URL..."
+          curl.exe -L -o "mpv-dev.7z" $directUrl
+          if (-not (Test-Path "mpv-dev.7z") -or (Get-Item "mpv-dev.7z").Length -lt 1000000) {
+            Write-Host "Direct download failed, falling back to authenticated GitHub API..."
+            $headers = @{}
+            if ($env:GH_TOKEN) { $headers["Authorization"] = "Bearer $env:GH_TOKEN" }
+            $release = Invoke-RestMethod -Uri "https://api.github.com/repos/zhongfly/mpv-winbuild/releases/latest" -Headers $headers
+            $asset = $release.assets | Where-Object { $_.name -like "mpv-dev-x86_64-*.7z" -and $_.name -notlike "*v3*" -and $_.name -notlike "*lgpl*" } | Select-Object -First 1
+            curl.exe -L -o "mpv-dev.7z" $asset.browser_download_url
+          }
+          New-Item -ItemType Directory -Force -Path "packages/better_player_windows/windows/libs"
+          7z e mpv-dev.7z -o"packages/better_player_windows/windows/libs" *.dll -r -y
+          if (Test-Path "packages/better_player_windows/windows/libs/libmpv-2.dll") {
+            Copy-Item "packages/better_player_windows/windows/libs/libmpv-2.dll" "packages/better_player_windows/windows/libs/mpv-2.dll" -Force
+          }
+
+      - name: Install libmpv to system
+        shell: pwsh
+        run: |
+          Copy-Item "packages/better_player_windows/windows/libs/*mpv*.dll" "C:\Windows\System32\" -Force
+
+      - name: Download and setup nircmd for screenshots
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://www.nirsoft.net/utils/nircmd-x64.zip" -OutFile "nircmd.zip"
+          Expand-Archive "nircmd.zip" -DestinationPath "C:\Windows" -Force
+
+      - name: Run Windows Integration Tests
+        working-directory: packages/better_player_example
+        run: flutter test integration_test/windows_all_tests.dart -d windows --no-pub
+
+      - name: Upload Windows Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-e2e-screenshots
+          path: |
+            packages/better_player_example/*.png
+            *.png
+          if-no-files-found: ignore

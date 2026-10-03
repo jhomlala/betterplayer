@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/controls/player_cupertino_localizations_delegate.dart';
+import 'package:better_player/src/controls/player_material_localizations_delegate.dart';
 import 'package:better_player/src/controls/player_material_progress_bar.dart';
 import 'package:better_player/src/controls/player_web_error_widget.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum _PlayerMenuOption {
   subtitles,
@@ -209,116 +211,135 @@ class _PlayerWebControlsState
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-      textDirection: TextDirection.ltr,
-      child: Builder(
-        builder: (BuildContext context) {
-          if (_betterPlayerController == null) return const SizedBox();
+    return Localizations.override(
+      context: context,
+      delegates: [
+        PlayerMaterialLocalizationsDelegate(
+          _betterPlayerController?.translations ?? PlayerTranslations(),
+        ),
+        PlayerCupertinoLocalizationsDelegate(
+          _betterPlayerController?.translations ?? PlayerTranslations(),
+        ),
+      ],
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Material(
+          type: MaterialType.transparency,
+          child: Builder(
+            builder: (BuildContext context) {
+              if (_betterPlayerController == null) return const SizedBox();
 
-          if (_latestValue?.hasError == true || _errorDescription != null) {
-            return ColoredBox(
-              color: Colors.black,
-              child: PlayerWebErrorWidget(
-                controlsConfiguration: widget.controlsConfiguration,
-                errorDescription: _errorDescription,
-              ),
-            );
-          }
-
-          return MouseRegion(
-            onHover: (_) => cancelAndRestartTimer(),
-            onExit: (_) {
-              if (!_betterPlayerController!.controlsAlwaysVisible &&
-                  !_isMenuOpen) {
-                _hideTimer?.cancel();
-                setState(() {
-                  _controlsNotVisible = true;
-                  widget.onControlsVisibilityChanged(false);
-                });
-              }
-            },
-            child: Focus(
-              focusNode: _focusNode,
-              autofocus: true,
-              onKeyEvent: _onKeyEvent,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      _focusNode.requestFocus();
-                      _onPlayPause();
-                    },
-                    onDoubleTap: () =>
-                        _betterPlayerController?.toggleFullScreen(),
-                    behavior: HitTestBehavior.opaque,
-                    child: const SizedBox.expand(),
+              if (_latestValue?.hasError == true || _errorDescription != null) {
+                return ColoredBox(
+                  color: Colors.black,
+                  child: PlayerWebErrorWidget(
+                    controlsConfiguration: widget.controlsConfiguration,
+                    errorDescription: _errorDescription,
                   ),
-                  // Controls overlay
-                  AnimatedOpacity(
-                    opacity: _controlsNotVisible ? 0.0 : 1.0,
-                    duration:
-                        widget.controlsConfiguration.controlsTransitionTime,
-                    child: IgnorePointer(
-                      ignoring: _controlsNotVisible,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          // Gradient background for bottom controls
-                          GestureDetector(
-                            behavior: HitTestBehavior.opaque,
-                            onTap: () {},
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [Colors.transparent, Colors.black87],
+                );
+              }
+
+              return MouseRegion(
+                onHover: (_) => cancelAndRestartTimer(),
+                onExit: (_) {
+                  if (!_betterPlayerController!.controlsAlwaysVisible &&
+                      !_isMenuOpen) {
+                    _hideTimer?.cancel();
+                    setState(() {
+                      _controlsNotVisible = true;
+                      widget.onControlsVisibilityChanged(false);
+                    });
+                  }
+                },
+                child: Focus(
+                  focusNode: _focusNode,
+                  autofocus: true,
+                  onKeyEvent: _onKeyEvent,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          _focusNode.requestFocus();
+                          _onPlayPause();
+                        },
+                        onDoubleTap: () =>
+                            _betterPlayerController?.toggleFullScreen(),
+                        behavior: HitTestBehavior.opaque,
+                        child: const SizedBox.expand(),
+                      ),
+                      // Controls overlay
+                      AnimatedOpacity(
+                        opacity: _controlsNotVisible ? 0.0 : 1.0,
+                        duration:
+                            widget.controlsConfiguration.controlsTransitionTime,
+                        child: IgnorePointer(
+                          ignoring: _controlsNotVisible,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // Gradient background for bottom controls
+                              GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {},
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 8,
+                                  ),
+                                  decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black87,
+                                      ],
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      if (!_betterPlayerController!
+                                          .isLiveStream()) ...[
+                                        _PlayerWebProgressBar(
+                                          controller: _betterPlayerController,
+                                          configuration:
+                                              widget.controlsConfiguration,
+                                          onDragStart: () =>
+                                              _hideTimer?.cancel(),
+                                          onDragEnd: cancelAndRestartTimer,
+                                        ),
+                                        const SizedBox(height: 8),
+                                      ],
+                                      _PlayerWebBottomBar(
+                                        controller: _betterPlayerController,
+                                        configuration:
+                                            widget.controlsConfiguration,
+                                        onPlayPause: _onPlayPause,
+                                        onMenuToggle: () =>
+                                            setState(() => _isMenuOpen = true),
+                                        onMenuClose: () {
+                                          setState(() => _isMenuOpen = false);
+                                          cancelAndRestartTimer();
+                                        },
+                                        settingsMenu: _buildSettingsMenu(),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (!_betterPlayerController!
-                                      .isLiveStream()) ...[
-                                    _PlayerWebProgressBar(
-                                      controller: _betterPlayerController,
-                                      configuration:
-                                          widget.controlsConfiguration,
-                                      onDragStart: () => _hideTimer?.cancel(),
-                                      onDragEnd: cancelAndRestartTimer,
-                                    ),
-                                    const SizedBox(height: 8),
-                                  ],
-                                  _PlayerWebBottomBar(
-                                    controller: _betterPlayerController,
-                                    configuration: widget.controlsConfiguration,
-                                    onPlayPause: _onPlayPause,
-                                    onMenuToggle: () =>
-                                        setState(() => _isMenuOpen = true),
-                                    onMenuClose: () {
-                                      setState(() => _isMenuOpen = false);
-                                      cancelAndRestartTimer();
-                                    },
-                                    settingsMenu: _buildSettingsMenu(),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          );
-        },
+                ),
+              );
+            },
+          ),
+        ),
       ),
     );
   }

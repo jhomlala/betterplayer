@@ -52,7 +52,7 @@ void main() {
       );
 
       final playPauseButton = findById(
-        'better_player_cupertino_controls_play_pause_button',
+        'better_player_material_controls_play_pause_button',
       );
       await pumpUntilFound(
         tester: tester,
