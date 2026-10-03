@@ -88,7 +88,12 @@ class _FFITestPageState extends State<FFITestPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('FFI Method Test')),
+      appBar: AppBar(
+        title: Semantics(
+          identifier: 'ffi_test_page_title',
+          child: const Text('FFI Method Test'),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 100),
         child: Column(
@@ -321,6 +326,7 @@ class _FFITestPageState extends State<FFITestPage> {
             child: Semantics(
               identifier: 'ffi_test_button_$name',
               container: true,
+              button: true,
               child: ElevatedButton(
                 onPressed: () {
                   debugPrint('FFI TEST PAGE: Button clicked: $name');

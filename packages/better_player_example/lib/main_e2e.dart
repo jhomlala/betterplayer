@@ -565,6 +565,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_setup_mp4',
                   label: 'better_player_e2e_setup_mp4',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
                       url: Constants.bugBuckBunnyVideoUrl,
@@ -576,6 +578,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_setup_file',
                   label: 'better_player_e2e_setup_file',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     onPressed: _setupLocalFileDataSource,
                     child: const Text('Local File'),
@@ -584,6 +588,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_setup_hls',
                   label: 'better_player_e2e_setup_hls',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
                       url: Constants.hlsTestStreamUrl,
@@ -595,6 +601,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_setup_error',
                   label: 'better_player_e2e_setup_error',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     onPressed: () => _setupDataSource(
                       url:
@@ -607,6 +615,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_runtime_config_button',
                   label: 'better_player_e2e_runtime_config_button',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     onPressed: _applyRuntimeControlsConfiguration,
                     child: const Text('Runtime Config'),
@@ -615,6 +625,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_toggle_theme_button',
                   label: 'better_player_e2e_toggle_theme_button',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     onPressed: _toggleAlternateControlsTheme,
                     child: const Text('Toggle Theme'),
@@ -623,6 +635,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_visibility_cycle_button',
                   label: 'better_player_e2e_visibility_cycle_button',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     onPressed: _triggerVisibilityCycle,
                     child: const Text('Visibility Cycle'),
@@ -631,6 +645,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_playlist_button',
                   label: 'better_player_e2e_playlist_button',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     onPressed: _runPlaylistTest,
                     child: const Text('Playlist Test'),
@@ -639,6 +655,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_list_player_button',
                   label: 'better_player_e2e_list_player_button',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
                     onPressed: _runListAndDisposeTest,
                     child: const Text('List Player Test'),
@@ -647,15 +665,18 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_navigate_ffi',
                   label: 'better_player_e2e_navigate_ffi',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
-                    onPressed: () {
-                      _betterPlayerController.pause();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (context) => const FFITestPage(),
-                        ),
-                      );
+                    onPressed: () async {
+                      await _betterPlayerController.pause();
+                      if (context.mounted) {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (context) => const FFITestPage(),
+                          ),
+                        );
+                      }
                     },
                     child: const Text('FFI Test'),
                   ),
@@ -663,15 +684,18 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 Semantics(
                   identifier: 'better_player_e2e_navigate_seek',
                   label: 'better_player_e2e_navigate_seek',
+                  container: true,
+                  button: true,
                   child: ElevatedButton(
-                    onPressed: () {
-                      _betterPlayerController.pause();
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          builder: (context) => const SeekE2EPage(),
-                        ),
-                      );
+                    onPressed: () async {
+                      await _betterPlayerController.pause();
+                      if (context.mounted) {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (context) => const SeekE2EPage(),
+                          ),
+                        );
+                      }
                     },
                     child: const Text('Seek Test'),
                   ),
