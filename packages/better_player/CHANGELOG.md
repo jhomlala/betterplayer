@@ -1,4 +1,4 @@
-## Unreleased
+## 1.21.0
 - Added: Windows desktop platform support backed by `libmpv` with software rendering via federated package `better_player_windows`.
 - Updated: Defaulted controls theme to Web/Desktop controls on Windows, macOS, and Linux, and added `PlayerTheme.desktop`.
 
