@@ -51,18 +51,41 @@ jobs:
       - name: Get Workspace Dependencies
         run: flutter pub get
 
+      - name: Cache libmpv
+        id: cache-mpv
+        uses: actions/cache@v4
+        with:
+          path: packages/better_player_windows/windows/libs
+          key: ${{ runner.os }}-libmpv-20261002
+
       - name: Download and setup libmpv
+        if: steps.cache-mpv.outputs.cache-hit != 'true'
         shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          $release = Invoke-RestMethod -Uri "https://api.github.com/repos/zhongfly/mpv-winbuild/releases/latest"
-          $asset = $release.assets | Where-Object { $_.name -like "mpv-dev-x86_64-*.7z" -and $_.name -notlike "*v3*" -and $_.name -notlike "*lgpl*" } | Select-Object -First 1
-          Write-Host "Downloading $($asset.name)..."
-          Invoke-WebRequest -Uri $asset.browser_download_url -OutFile "mpv-dev.7z"
+          $tag = "2026-10-02-3186d369f9"
+          $file = "mpv-dev-x86_64-20261002-git-3186d369f9.7z"
+          $directUrl = "https://github.com/zhongfly/mpv-winbuild/releases/download/$tag/$file"
+          Write-Host "Downloading $file from direct CDN URL..."
+          curl.exe -L -o "mpv-dev.7z" $directUrl
+          if (-not (Test-Path "mpv-dev.7z") -or (Get-Item "mpv-dev.7z").Length -lt 1000000) {
+            Write-Host "Direct download failed, falling back to authenticated GitHub API..."
+            $headers = @{}
+            if ($env:GH_TOKEN) { $headers["Authorization"] = "Bearer $env:GH_TOKEN" }
+            $release = Invoke-RestMethod -Uri "https://api.github.com/repos/zhongfly/mpv-winbuild/releases/latest" -Headers $headers
+            $asset = $release.assets | Where-Object { $_.name -like "mpv-dev-x86_64-*.7z" -and $_.name -notlike "*v3*" -and $_.name -notlike "*lgpl*" } | Select-Object -First 1
+            curl.exe -L -o "mpv-dev.7z" $asset.browser_download_url
+          }
           New-Item -ItemType Directory -Force -Path "packages/better_player_windows/windows/libs"
           7z e mpv-dev.7z -o"packages/better_player_windows/windows/libs" *.dll -r -y
           if (Test-Path "packages/better_player_windows/windows/libs/libmpv-2.dll") {
             Copy-Item "packages/better_player_windows/windows/libs/libmpv-2.dll" "packages/better_player_windows/windows/libs/mpv-2.dll" -Force
           }
+
+      - name: Install libmpv to system
+        shell: pwsh
+        run: |
           Copy-Item "packages/better_player_windows/windows/libs/*mpv*.dll" "C:\Windows\System32\" -Force
 
       - name: Download and setup nircmd for screenshots
