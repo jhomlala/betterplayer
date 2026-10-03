@@ -45,7 +45,7 @@ Why choose Better Player? Here is how it stacks up against the alternatives.
 | **UI Controls** | ✅ Built-in & Customizable | ❌ None | ✅ Built-in | ✅ Built-in |
 | **HLS / DASH** | ✅ Native | ⚠️ Basic | ⚠️ Basic | ✅ Native |
 | **DRM Support** | ✅ Widevine/FairPlay/ClearKey | ❌ None | ❌ None | ❌ None |
-| **Subtitles** | ✅ Advanced (WebVTT, HTML, SRT) | ⚠️ Basic (SRT only) | ⚠️ Basic | ✅ Advanced |
+| **Subtitles** | ✅ Advanced (WebVTT, TTML, SRT) | ⚠️ Basic (SRT only) | ⚠️ Basic | ✅ Advanced |
 | **Caching** | ✅ Built-in | ❌ None | ❌ None | ❌ None |
 | **Playlists** | ✅ Built-in | ❌ None | ❌ None | ✅ Built-in |
 
@@ -57,7 +57,7 @@ Why choose Better Player? Here is how it stacks up against the alternatives.
 - **DRM Support**: Protect your content with Widevine, FairPlay, and ClearKey.
 - **Smart Caching**: Cache videos for offline playback.
 - **Picture in Picture (PiP)**: Keep videos playing while users multitask.
-- **Advanced Subtitles**: Parse SRT and WebVTT, including HTML tags.
+- **Advanced Subtitles**: Parse SRT, WebVTT, and TTML/DFXP with XML styles, regions, and colors.
 - **Cross-Platform**: First-class support across Android, iOS, macOS, Windows, and Web.
 
 ---

@@ -94,6 +94,35 @@ void main() {
       },
     );
 
+    test(
+      'parse identifies and parses DASH TTML subtitle tracks with BaseURL',
+      () async {
+        const data = '''
+<MPD>
+  <Period>
+    <AdaptationSet mimeType="application/ttml+xml" lang="en" label="English TTML">
+      <Representation id="sub-ttml">
+        <BaseURL>subs/en.ttml</BaseURL>
+      </Representation>
+    </AdaptationSet>
+  </Period>
+</MPD>
+''';
+        final holder = await PlayerDashUtils.parse(
+          data,
+          'https://example.com/stream/test.mpd',
+        );
+        expect(holder.subtitles != null, true);
+        expect(holder.subtitles!.length, 1);
+
+        final sub = holder.subtitles![0];
+        expect(sub.name, 'English TTML');
+        expect(sub.language, 'en');
+        expect(sub.mimeType, 'application/ttml+xml');
+        expect(sub.url, 'https://example.com/stream/subs/en.ttml');
+      },
+    );
+
     test('parse handles missing attributes gracefully', () async {
       const data = '''
 <MPD>
