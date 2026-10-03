@@ -232,12 +232,19 @@ class PlayerSubtitlesFactory {
   }
 
   bool _isTtml(String content) {
-    final trimmed = content.trimLeft();
-    if (trimmed.startsWith('WEBVTT') || trimmed.contains('-->')) {
+    final stripped = content
+        .replaceAll(RegExp(r'<!--[\s\S]*?-->'), '')
+        .trimLeft();
+    if (stripped.startsWith('WEBVTT')) {
       return false;
     }
-    return trimmed.startsWith('<tt') ||
-        (trimmed.startsWith('<?xml') && trimmed.contains('<tt')) ||
-        trimmed.contains('xmlns="http://www.w3.org/ns/ttml"');
+    final isXmlOrTt =
+        stripped.startsWith('<?xml') ||
+        RegExp(r'^<([a-zA-Z0-9]+:)?tt[\s>]').hasMatch(stripped);
+    if (!isXmlOrTt) {
+      return false;
+    }
+    return stripped.contains('http://www.w3.org/ns/ttml') ||
+        RegExp(r'<([a-zA-Z0-9]+:)?tt[\s>]').hasMatch(stripped);
   }
 }

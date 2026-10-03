@@ -268,5 +268,78 @@ WEBVTT
         expect(subtitles[0].texts![0], '<tt>Teletype text</tt>');
       },
     );
+
+    test(
+      'PlayerSubtitlesFactory parses TTML with XML comments containing arrows',
+      () async {
+        final factory = PlayerSubtitlesFactory();
+        const ttmlWithComments = '''
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created by SubtitleEdit 3.6.0 -->
+<!-- Arrow indicator comment: 00:00:01.000 --> 00:00:03.000 -->
+<tt xmlns="http://www.w3.org/ns/ttml">
+  <body>
+    <div>
+      <p begin="00:00:01.000" end="00:00:03.000">Subtitle with comment</p>
+    </div>
+  </body>
+</tt>
+''';
+
+        final source = PlayerSubtitlesSource(
+          type: PlayerSubtitlesSourceType.memory,
+          content: ttmlWithComments,
+        );
+
+        final subtitles = await factory.parseSubtitles(source);
+        expect(subtitles.length, 1);
+        expect(subtitles[0].texts![0], 'Subtitle with comment');
+      },
+    );
+
+    test(
+      'PlayerTtmlParser preserves paragraph color on mixed lines starting with span',
+      () {
+        const parser = PlayerTtmlParser();
+        const ttml = '''
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling">
+  <body>
+    <div>
+      <p begin="00:00:01.000" end="00:00:04.000" tts:color="red">
+        <span tts:color="blue">Blue prefix</span> and red suffix
+      </p>
+    </div>
+  </body>
+</tt>
+''';
+
+        final cues = parser.parse(content: ttml);
+        expect(cues.length, 1);
+        expect(
+          cues[0].texts![0],
+          '<font color="red"><font color="blue">Blue prefix</font> and red suffix</font>',
+        );
+      },
+    );
+
+    test('PlayerTtmlParser inherits styles from root tt element', () {
+      const parser = PlayerTtmlParser();
+      const ttml = '''
+<tt xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling" tts:color="magenta">
+  <body>
+    <div>
+      <p begin="00:00:01.000" end="00:00:04.000">Inherited from root tt</p>
+    </div>
+  </body>
+</tt>
+''';
+
+      final cues = parser.parse(content: ttml);
+      expect(cues.length, 1);
+      expect(
+        cues[0].texts![0],
+        '<font color="magenta">Inherited from root tt</font>',
+      );
+    });
   });
 }

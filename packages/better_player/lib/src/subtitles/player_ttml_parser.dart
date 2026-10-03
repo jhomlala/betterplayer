@@ -98,7 +98,7 @@ class PlayerTtmlParser {
         final pStyle = _resolveElementStyle(element: p, styles: styles);
         final rawContent = _extractTextWithStyles(
           element: p,
-          baseStyle: pStyle,
+          currentStyle: pStyle,
           styles: styles,
         );
         final rawLines = rawContent
@@ -400,11 +400,14 @@ class PlayerTtmlParser {
   }) {
     var resolved = const _TtmlStyle();
 
-    // Resolve ancestor (e.g. <div>) styles first
+    // Resolve ancestor (e.g. <tt>, <div>) styles first
     final ancestors = <XmlElement>[];
     var current = element.parentElement;
-    while (current != null && current.name.local.toLowerCase() != 'tt') {
+    while (current != null) {
       ancestors.insert(0, current);
+      if (current.name.local.toLowerCase() == 'tt') {
+        break;
+      }
       current = current.parentElement;
     }
 
@@ -441,10 +444,13 @@ class PlayerTtmlParser {
     required String localName,
   }) {
     XmlElement? current = element;
-    while (current != null && current.name.local.toLowerCase() != 'tt') {
+    while (current != null) {
       final val = _getAttribute(element: current, localName: localName);
       if (val != null) {
         return val;
+      }
+      if (current.name.local.toLowerCase() == 'tt') {
+        break;
       }
       current = current.parentElement;
     }
@@ -459,7 +465,7 @@ class PlayerTtmlParser {
   }) {
     var offset = Duration.zero;
     var current = element.parentElement;
-    while (current != null && current.name.local.toLowerCase() != 'tt') {
+    while (current != null) {
       final beginStr = _getAttribute(element: current, localName: 'begin');
       if (beginStr != null) {
         final dur = _parseTime(
@@ -472,6 +478,9 @@ class PlayerTtmlParser {
           offset += dur;
         }
       }
+      if (current.name.local.toLowerCase() == 'tt') {
+        break;
+      }
       current = current.parentElement;
     }
     return offset;
@@ -479,7 +488,7 @@ class PlayerTtmlParser {
 
   static String _extractTextWithStyles({
     required XmlElement element,
-    required _TtmlStyle baseStyle,
+    required _TtmlStyle currentStyle,
     required Map<String, _TtmlStyle> styles,
   }) {
     final buffer = StringBuffer();
@@ -496,18 +505,19 @@ class PlayerTtmlParser {
             element: node,
             styles: styles,
           );
-          final spanStyle = baseStyle.merge(spanResolved);
+          final mergedSpanStyle = currentStyle.merge(spanResolved);
+          final diffStyle = mergedSpanStyle.diffFrom(currentStyle);
           final innerContent = _extractTextWithStyles(
             element: node,
-            baseStyle: spanStyle,
+            currentStyle: mergedSpanStyle,
             styles: styles,
           );
-          buffer.write(_wrapWithStyles(text: innerContent, style: spanStyle));
+          buffer.write(_wrapWithStyles(text: innerContent, style: diffStyle));
         } else {
           buffer.write(
             _extractTextWithStyles(
               element: node,
-              baseStyle: baseStyle,
+              currentStyle: currentStyle,
               styles: styles,
             ),
           );
@@ -533,16 +543,16 @@ class PlayerTtmlParser {
     }
 
     var result = text;
-    if (style.isBold == true && !result.startsWith('<b>')) {
+    if (style.isBold == true) {
       result = '<b>$result</b>';
     }
-    if (style.isItalic == true && !result.startsWith('<i>')) {
+    if (style.isItalic == true) {
       result = '<i>$result</i>';
     }
-    if (style.isUnderline == true && !result.startsWith('<u>')) {
+    if (style.isUnderline == true) {
       result = '<u>$result</u>';
     }
-    if (style.color != null && !result.startsWith('<font')) {
+    if (style.color != null && style.color!.isNotEmpty) {
       result = '<font color="${style.color}">$result</font>';
     }
     return result;
@@ -632,6 +642,20 @@ class _TtmlStyle {
       textAlign: other.textAlign ?? textAlign,
       displayAlign: other.displayAlign ?? displayAlign,
       styleRef: other.styleRef ?? styleRef,
+    );
+  }
+
+  _TtmlStyle diffFrom(_TtmlStyle parent) {
+    return _TtmlStyle(
+      color: (color != null && color != parent.color) ? color : null,
+      isBold: (isBold == true && parent.isBold != true) ? true : null,
+      isItalic: (isItalic == true && parent.isItalic != true) ? true : null,
+      isUnderline: (isUnderline == true && parent.isUnderline != true)
+          ? true
+          : null,
+      textAlign: textAlign,
+      displayAlign: displayAlign,
+      styleRef: styleRef,
     );
   }
 }
