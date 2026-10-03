@@ -216,17 +216,30 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     setState(() {
       _usingAlternateTheme = !_usingAlternateTheme;
     });
+    final isDesktopOrWeb =
+        kIsWeb ||
+        defaultTargetPlatform == TargetPlatform.windows ||
+        defaultTargetPlatform == TargetPlatform.macOS ||
+        defaultTargetPlatform == TargetPlatform.linux;
     final isCupertinoDefault =
-        !kIsWeb && defaultTargetPlatform != TargetPlatform.android;
+        !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
     final PlayerTheme targetTheme;
     if (_usingAlternateTheme) {
-      targetTheme = isCupertinoDefault
-          ? PlayerTheme.material
-          : PlayerTheme.cupertino;
+      if (isDesktopOrWeb) {
+        targetTheme = PlayerTheme.cupertino;
+      } else {
+        targetTheme = isCupertinoDefault
+            ? PlayerTheme.material
+            : PlayerTheme.cupertino;
+      }
     } else {
-      targetTheme = kIsWeb
-          ? PlayerTheme.web
-          : (isCupertinoDefault ? PlayerTheme.cupertino : PlayerTheme.material);
+      if (isDesktopOrWeb) {
+        targetTheme = PlayerTheme.web;
+      } else {
+        targetTheme = isCupertinoDefault
+            ? PlayerTheme.cupertino
+            : PlayerTheme.material;
+      }
     }
     _betterPlayerController.setPlayerControlsConfiguration(
       PlayerControlsConfiguration(

@@ -438,8 +438,8 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
     return betterPlayerControlsConfiguration.playerTheme ==
             PlayerTheme.cupertino ||
         (betterPlayerControlsConfiguration.playerTheme == null &&
-            (defaultTargetPlatform == TargetPlatform.iOS ||
-                defaultTargetPlatform == TargetPlatform.macOS));
+            !kIsWeb &&
+            defaultTargetPlatform == TargetPlatform.iOS);
   }
 
   void _showCupertinoModalBottomSheet(List<Widget> children) {

@@ -221,7 +221,10 @@ class PlayerControlsSelectionWidget extends StatelessWidget {
       if (playerTheme == null) {
         if (controlsConfiguration.customControlsBuilder != null) {
           playerTheme = PlayerTheme.custom;
-        } else if (kIsWeb) {
+        } else if (kIsWeb ||
+            defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.macOS ||
+            defaultTargetPlatform == TargetPlatform.linux) {
           playerTheme = PlayerTheme.web;
         } else if (defaultTargetPlatform == TargetPlatform.android) {
           playerTheme = PlayerTheme.material;
@@ -246,7 +249,8 @@ class PlayerControlsSelectionWidget extends StatelessWidget {
           onControlsVisibilityChanged: onControlsVisibilityChanged,
           controlsConfiguration: controlsConfiguration,
         );
-      } else if (playerTheme == PlayerTheme.web) {
+      } else if (playerTheme == PlayerTheme.web ||
+          playerTheme == PlayerTheme.desktop) {
         return PlayerWebControls(
           onControlsVisibilityChanged: onControlsVisibilityChanged,
           controlsConfiguration: controlsConfiguration,

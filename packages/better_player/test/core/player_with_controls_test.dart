@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/controls/player_web_controls.dart';
 import 'package:better_player/src/core/player_with_controls.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -368,6 +370,79 @@ void main() {
         await tester.pump();
 
         expect(find.byType(FittedBox), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Renders PlayerWebControls on desktop platforms (Windows, macOS, Linux) by default',
+      (tester) async {
+        for (final platform in [
+          TargetPlatform.windows,
+          TargetPlatform.macOS,
+          TargetPlatform.linux,
+        ]) {
+          debugDefaultTargetPlatformOverride = platform;
+          try {
+            final mockPlayerEngineController =
+                BetterPlayerTestUtils.setupMockPlayerEngineController();
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(),
+              playerEngineController: mockPlayerEngineController,
+            );
+
+            await controller.setupDataSource(PlayerDataSource.network('url'));
+
+            await tester.pumpWidget(
+              MaterialApp(
+                theme: ThemeData(useMaterial3: false),
+                home: BetterPlayerControllerProvider(
+                  controller: controller,
+                  child: PlayerWithControls(controller: controller),
+                ),
+              ),
+            );
+            await tester.pump();
+
+            expect(
+              find.byType(PlayerWebControls),
+              findsOneWidget,
+              reason: 'Expected PlayerWebControls on $platform',
+            );
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        }
+      },
+    );
+
+    testWidgets(
+      'Renders PlayerWebControls when PlayerTheme.desktop is explicitly set',
+      (tester) async {
+        final mockPlayerEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(
+            controlsConfiguration: PlayerControlsConfiguration(
+              playerTheme: PlayerTheme.desktop,
+            ),
+          ),
+          playerEngineController: mockPlayerEngineController,
+        );
+
+        await controller.setupDataSource(PlayerDataSource.network('url'));
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: BetterPlayerControllerProvider(
+              controller: controller,
+              child: PlayerWithControls(controller: controller),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.byType(PlayerWebControls), findsOneWidget);
       },
     );
   });

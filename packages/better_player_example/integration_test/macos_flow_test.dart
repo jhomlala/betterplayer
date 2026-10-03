@@ -30,7 +30,7 @@ void main() {
 
       // 1. Wait for video controls
       final playPauseButton = findById(
-        'better_player_cupertino_controls_play_pause_button',
+        'better_player_material_controls_play_pause_button',
       );
       await pumpUntilFound(tester: tester, finder: playPauseButton);
 
@@ -59,7 +59,7 @@ void main() {
 
       // 4. Mute / Unmute
       final muteButton = findById(
-        'better_player_cupertino_controls_mute_button',
+        'better_player_material_controls_mute_button',
       );
       if (muteButton.evaluate().isNotEmpty) {
         await tester.tap(muteButton);
@@ -70,7 +70,7 @@ void main() {
 
       // 5. Speed Selection test (2.0x)
       final moreButton = findById(
-        'better_player_cupertino_controls_more_button',
+        'better_player_material_controls_more_button',
       );
       await tapWhenReady(tester: tester, finder: moreButton);
 
@@ -125,22 +125,22 @@ void main() {
       );
       await pumpUntilFound(tester: tester, finder: runtimeConfigStatus);
 
-      // 10. Controls Theme Hotswap (Cupertino -> Material -> Cupertino)
+      // 10. Controls Theme Hotswap (Web -> Cupertino -> Web)
       final toggleThemeButton = findById(
         'better_player_e2e_toggle_theme_button',
       );
       await scrollAndTap(tester: tester, finder: toggleThemeButton);
 
-      final materialPlayPause = findById(
-        'better_player_material_controls_play_pause_button',
+      final cupertinoPlayPause = findById(
+        'better_player_cupertino_controls_play_pause_button',
       );
-      await pumpUntilFound(tester: tester, finder: materialPlayPause);
+      await pumpUntilFound(tester: tester, finder: cupertinoPlayPause);
 
       await scrollAndTap(tester: tester, finder: toggleThemeButton);
       await pumpUntilFound(tester: tester, finder: playPauseButton);
 
       // 11. Seeking
-      final progressBar = findById('better_player_cupertino_progress_bar');
+      final progressBar = findById('better_player_material_progress_bar');
       if (progressBar.evaluate().isNotEmpty) {
         try {
           await tester.ensureVisible(progressBar.first);
@@ -152,7 +152,7 @@ void main() {
 
       // 12. Fullscreen toggle
       final expandButton = findById(
-        'better_player_cupertino_controls_expand_button',
+        'better_player_material_controls_fullscreen_button',
       );
       if (expandButton.evaluate().isNotEmpty) {
         try {

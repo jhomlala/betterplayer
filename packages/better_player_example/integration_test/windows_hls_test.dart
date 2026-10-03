@@ -36,7 +36,7 @@ void main() {
 
       // 2. Wait for video controls
       final playPauseButton = findById(
-        'better_player_cupertino_controls_play_pause_button',
+        'better_player_material_controls_play_pause_button',
       );
       await pumpUntilFound(
         tester: tester,
@@ -73,7 +73,7 @@ void main() {
 
       // 5. Mute/Unmute
       final muteButton = findById(
-        'better_player_cupertino_controls_mute_button',
+        'better_player_material_controls_mute_button',
       );
       if (muteButton.evaluate().isNotEmpty) {
         await tester.tap(muteButton.first, warnIfMissed: false);
@@ -84,7 +84,7 @@ void main() {
 
       // 6. Speed Selection (2.0x)
       final moreButton = findById(
-        'better_player_cupertino_controls_more_button',
+        'better_player_material_controls_more_button',
       );
       await tapWhenReady(tester: tester, finder: moreButton);
 
@@ -119,7 +119,7 @@ void main() {
       }
 
       // 8. Seeking
-      final progressBar = findById('better_player_cupertino_progress_bar');
+      final progressBar = findById('better_player_material_progress_bar');
       if (progressBar.evaluate().isNotEmpty) {
         try {
           await tester.ensureVisible(progressBar.first);
@@ -131,7 +131,7 @@ void main() {
 
       // 9. Fullscreen
       final expandButton = findById(
-        'better_player_cupertino_controls_expand_button',
+        'better_player_material_controls_fullscreen_button',
       );
       if (expandButton.evaluate().isNotEmpty) {
         try {
