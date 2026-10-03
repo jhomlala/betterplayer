@@ -235,7 +235,11 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
     final PlayerTheme targetTheme;
     if (_usingAlternateTheme) {
-      if (isDesktopOrWeb) {
+      if (defaultTargetPlatform == TargetPlatform.windows) {
+        targetTheme = PlayerTheme.material;
+      } else if (defaultTargetPlatform == TargetPlatform.macOS) {
+        targetTheme = PlayerTheme.cupertino;
+      } else if (isDesktopOrWeb) {
         targetTheme = PlayerTheme.material;
       } else {
         targetTheme = isCupertinoDefault
