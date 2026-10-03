@@ -1,0 +1,133 @@
+name: Bug Report
+description: Report a defect, crash, or playback failure
+title: "[BUG]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Filing for AI Agents & Humans
+        Before submitting, ensure you have a minimal reproduction code and a public stream URL.
+
+  - type: checkboxes
+    id: preflight
+    attributes:
+      label: Pre-flight Checks
+      description: Confirm the basics before opening a ticket.
+      options:
+        - label: I searched existing issues and verified this is not a duplicate.
+          required: true
+        - label: I tested on the latest released version of Better Player.
+          required: false
+
+  - type: checkboxes
+    id: platforms
+    attributes:
+      label: Affected Platform(s)
+      description: Select every platform where the issue occurs.
+      options:
+        - label: Android (ExoPlayer)
+        - label: iOS (AVPlayer)
+        - label: macOS (AVPlayer)
+        - label: Windows (libmpv)
+        - label: Web (Shaka Player)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Sub-package
+      description: Which package in the monorepo is affected?
+      options:
+        - better_player (Core Dart player / UI)
+        - better_player_android
+        - better_player_ios
+        - better_player_macos
+        - better_player_windows
+        - better_player_web
+        - better_player_platform_interface
+        - better_player_example
+        - Unknown / Multiple
+    validations:
+      required: true
+
+  - type: input
+    id: stream_url
+    attributes:
+      label: Stream URL / Data Source
+      description: Direct public URL (HLS, DASH, MP4, DRM stream) to reproduce the issue.
+      placeholder: https://commondatastorage.googleapis.com/...
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What went wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Precise steps to trigger the bug.
+      placeholder: |
+        1. Create PlayerDataSource with...
+        2. Call controller.play()
+        3. Seek to position X...
+    validations:
+      required: true
+
+  - type: textarea
+    id: code_sample
+    attributes:
+      label: Minimal Reproducible Code
+      description: Standalone Dart snippet ready to paste and run.
+      render: dart
+      placeholder: |
+        final dataSource = PlayerDataSource(
+          DataSourceType.network,
+          'https://...',
+        );
+        final controller = BetterPlayerController(
+          const PlayerConfiguration(),
+          betterPlayerDataSource: dataSource,
+        );
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs Actual Behavior
+      description: What should happen, and what happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs & Stack Trace
+      description: PlayerLogger output, crash stack trace, or native logs (Logcat, Xcode console, libmpv, browser console).
+      render: shell
+
+  - type: textarea
+    id: flutter_doctor
+    attributes:
+      label: Flutter Doctor
+      description: Output from `flutter doctor -v`.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: diagnosis
+    attributes:
+      label: Agent Diagnosis & Code Pointers (Optional)
+      description: If you or an AI agent already debugged this, list suspected files, line numbers, or potential root causes.
+      placeholder: |
+        Suspected file: packages/better_player_android/android/src/main/kotlin/...
+        Cause: Audio focus listener does not release MediaPlayer on transient loss.
