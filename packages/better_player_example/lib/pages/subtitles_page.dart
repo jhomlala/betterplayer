@@ -15,6 +15,7 @@ class SubtitlesPage extends StatefulWidget {
 class _SubtitlesPageState extends State<SubtitlesPage> {
   late BetterPlayerController _betterPlayerControllerSrt;
   late BetterPlayerController _betterPlayerControllerVtt;
+  late BetterPlayerController _betterPlayerControllerTtml;
 
   @override
   void initState() {
@@ -34,11 +35,21 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
       ),
     );
 
+    const betterPlayerConfigurationTtml = PlayerConfiguration(
+      subtitlesConfiguration: PlayerSubtitlesConfiguration(
+        backgroundColor: Colors.black87,
+        fontSize: 18,
+      ),
+    );
+
     _betterPlayerControllerSrt = BetterPlayerController(
       betterPlayerConfigurationSrt,
     );
     _betterPlayerControllerVtt = BetterPlayerController(
       betterPlayerConfigurationVtt,
+    );
+    _betterPlayerControllerTtml = BetterPlayerController(
+      betterPlayerConfigurationTtml,
     );
 
     _setupDataSources();
@@ -101,12 +112,48 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
       subtitles: vttSubtitlesSource,
     );
     _betterPlayerControllerVtt.setupDataSource(vttDataSource);
+
+    // TTML Source
+    List<PlayerSubtitlesSource>? ttmlSubtitlesSource;
+    if (kIsWeb) {
+      final content = await rootBundle.loadString(
+        'assets/example_subtitles.ttml',
+      );
+      ttmlSubtitlesSource = PlayerSubtitlesSource.single(
+        type: PlayerSubtitlesSourceType.memory,
+        content: content,
+        name: 'TTML Subtitles',
+        selectedByDefault: true,
+      );
+    } else {
+      ttmlSubtitlesSource = PlayerSubtitlesSource.single(
+        type: PlayerSubtitlesSourceType.file,
+        url: await Utils.getFileUrl('example_subtitles.ttml'),
+        name: 'TTML Subtitles',
+        selectedByDefault: true,
+      );
+    }
+
+    final ttmlDataSource = PlayerDataSource(
+      DataSourceType.network,
+      Constants.bugBuckBunnyVideoUrl,
+      subtitles: ttmlSubtitlesSource,
+    );
+    _betterPlayerControllerTtml.setupDataSource(ttmlDataSource);
+  }
+
+  @override
+  void dispose() {
+    _betterPlayerControllerSrt.dispose();
+    _betterPlayerControllerVtt.dispose();
+    _betterPlayerControllerTtml.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Subtitles & WebVTT Examples')),
+      appBar: AppBar(title: const Text('Subtitles & WebVTT & TTML Examples')),
       body: ListView(
         children: [
           const SizedBox(height: 8),
@@ -151,6 +198,28 @@ class _SubtitlesPageState extends State<SubtitlesPage> {
           AspectRatio(
             aspectRatio: 16 / 9,
             child: BetterPlayer(controller: _betterPlayerControllerVtt),
+          ),
+          const Divider(height: 32, thickness: 2),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              '3. TTML Subtitles Example',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 4),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              'Player with TTML (Timed Text Markup Language) subtitles '
+              'demonstrating XML styling, colors, regions, and line breaks.',
+              style: TextStyle(fontSize: 14),
+            ),
+          ),
+          const SizedBox(height: 8),
+          AspectRatio(
+            aspectRatio: 16 / 9,
+            child: BetterPlayer(controller: _betterPlayerControllerTtml),
           ),
           const SizedBox(height: 16),
         ],

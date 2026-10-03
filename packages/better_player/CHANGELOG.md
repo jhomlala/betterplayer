@@ -1,3 +1,6 @@
+## Unreleased
+- Added: TTML (`.ttml`, `.dfxp`, `.xml`) subtitle format support across file, network, memory sources, and DASH manifests with style inheritance, colors, regions, and frame rate calculation (#1213).
+
 ## 1.21.0
 - Added: Windows desktop platform support backed by `libmpv` with software rendering via federated package `better_player_windows`.
 - Updated: Defaulted controls theme to Web/Desktop controls on Windows, macOS, and Linux, and added `PlayerTheme.desktop`.

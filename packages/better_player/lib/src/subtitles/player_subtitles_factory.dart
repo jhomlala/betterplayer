@@ -1,6 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
+import 'package:better_player/src/subtitles/player_ttml_parser.dart';
 import 'package:better_player/src/utils/player_io_utils.dart';
 import 'package:http/http.dart' as http;
 
@@ -110,7 +111,12 @@ class PlayerSubtitlesFactory {
       content = content.substring(1);
     }
 
-    // 2. Normalize line endings (CRLF -> LF, CR -> LF)
+    // 2. Check for TTML format
+    if (_isTtml(content)) {
+      return const PlayerTtmlParser().parse(content: content);
+    }
+
+    // 3. Normalize line endings (CRLF -> LF, CR -> LF)
     content = content.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
 
     // 3. Parse X-TIMESTAMP-MAP
@@ -223,5 +229,15 @@ class PlayerSubtitlesFactory {
       PlayerLogger.error(message: 'Failed to parse X-TIMESTAMP-MAP: $line');
       return Duration.zero;
     }
+  }
+
+  bool _isTtml(String content) {
+    final trimmed = content.trimLeft();
+    if (trimmed.startsWith('WEBVTT') || trimmed.contains('-->')) {
+      return false;
+    }
+    return trimmed.startsWith('<tt') ||
+        (trimmed.startsWith('<?xml') && trimmed.contains('<tt')) ||
+        trimmed.contains('xmlns="http://www.w3.org/ns/ttml"');
   }
 }

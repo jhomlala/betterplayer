@@ -251,6 +251,15 @@ class _WelcomePageState extends State<WelcomePage> {
     );
     final vttPath = '${directory.path}/example_subtitles.vtt';
     await ExampleIoUtils.writeStringToFile(path: vttPath, content: vttContent);
+
+    final ttmlContent = await rootBundle.loadString(
+      'assets/example_subtitles.ttml',
+    );
+    final ttmlPath = '${directory.path}/example_subtitles.ttml';
+    await ExampleIoUtils.writeStringToFile(
+      path: ttmlPath,
+      content: ttmlContent,
+    );
   }
 
   ///Save video to file, so we can use it later
