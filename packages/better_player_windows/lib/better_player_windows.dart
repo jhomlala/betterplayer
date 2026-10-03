@@ -241,6 +241,33 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
   }
 
   @override
+  Future<bool?> isPictureInPictureSupported(int? textureId) async {
+    return false;
+  }
+
+  @override
+  Future<void> enablePictureInPicture(
+    int? textureId,
+    double? top,
+    double? left,
+    double? width,
+    double? height,
+  ) async {
+    _log(
+      message: 'Picture-in-picture is not supported on Windows',
+      levelIndex: 2,
+    );
+  }
+
+  @override
+  Future<void> disablePictureInPicture(int? textureId) async {
+    _log(
+      message: 'Picture-in-picture is not supported on Windows',
+      levelIndex: 2,
+    );
+  }
+
+  @override
   Widget buildView(int? textureId) {
     return Texture(textureId: textureId!);
   }

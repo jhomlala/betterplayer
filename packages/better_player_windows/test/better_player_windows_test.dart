@@ -179,5 +179,16 @@ void main() {
       expect(loggedMessage, contains('Created player with textureId: 42'));
       expect(loggedLevel, 1);
     });
+
+    test('picture-in-picture methods handle Windows gracefully', () async {
+      final supported = await windowsPlatform.isPictureInPictureSupported(42);
+      expect(supported, isFalse);
+
+      await expectLater(
+        windowsPlatform.enablePictureInPicture(42, 0, 0, 100, 100),
+        completes,
+      );
+      await expectLater(windowsPlatform.disablePictureInPicture(42), completes);
+    });
   });
 }
