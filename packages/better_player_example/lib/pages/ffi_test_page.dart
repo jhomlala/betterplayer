@@ -71,7 +71,10 @@ class _FFITestPageState extends State<FFITestPage> {
     super.dispose();
   }
 
-  Future<void> _runTest(String name, Future<void> Function() action) async {
+  Future<void> _runTest({
+    required String name,
+    required Future<void> Function() action,
+  }) async {
     try {
       await action();
       setState(() {
@@ -145,16 +148,16 @@ class _FFITestPageState extends State<FFITestPage> {
               alignment: WrapAlignment.center,
               children: [
                 _buildTestButton(
-                  'play',
-                  () async => _betterPlayerController.play(),
+                  name: 'play',
+                  action: () async => _betterPlayerController.play(),
                 ),
                 _buildTestButton(
-                  'pause',
-                  () async => _betterPlayerController.pause(),
+                  name: 'pause',
+                  action: () async => _betterPlayerController.pause(),
                 ),
                 _buildTestButton(
-                  'seekTo',
-                  () async {
+                  name: 'seekTo',
+                  action: () async {
                     var attempts = 0;
                     while (attempts < 10) {
                       if (_betterPlayerController
@@ -174,16 +177,16 @@ class _FFITestPageState extends State<FFITestPage> {
                   },
                 ),
                 _buildTestButton(
-                  'setVolume',
-                  () async => _betterPlayerController.setVolume(0.8),
+                  name: 'setVolume',
+                  action: () async => _betterPlayerController.setVolume(0.8),
                 ),
                 _buildTestButton(
-                  'setSpeed',
-                  () async => _betterPlayerController.setSpeed(1.2),
+                  name: 'setSpeed',
+                  action: () async => _betterPlayerController.setSpeed(1.2),
                 ),
                 _buildTestButton(
-                  'setTrackParameters',
-                  () async {
+                  name: 'setTrackParameters',
+                  action: () async {
                     await _betterPlayerController.setTrackParameters(
                       width: 1280,
                       height: 720,
@@ -192,32 +195,32 @@ class _FFITestPageState extends State<FFITestPage> {
                   },
                 ),
                 _buildTestButton(
-                  'setAudioTrack',
-                  () async {
+                  name: 'setAudioTrack',
+                  action: () async {
                     _betterPlayerController.setAudioTrack(
                       PlayerAsmsAudioTrack(label: 'English', id: 0),
                     );
                   },
                 ),
                 _buildTestButton(
-                  'setMixWithOthers',
-                  () async {
+                  name: 'setMixWithOthers',
+                  action: () async {
                     _betterPlayerController.setMixWithOthers(true);
                   },
                 ),
                 _buildTestButton(
-                  'setAndroidMatchFrameRate',
-                  () async {
+                  name: 'setAndroidMatchFrameRate',
+                  action: () async {
                     _betterPlayerController.setAndroidMatchFrameRate(true);
                   },
                 ),
                 _buildTestButton(
-                  'setLooping',
-                  () async => _betterPlayerController.setLooping(true),
+                  name: 'setLooping',
+                  action: () async => _betterPlayerController.setLooping(true),
                 ),
                 _buildTestButton(
-                  'getPosition',
-                  () async {
+                  name: 'getPosition',
+                  action: () async {
                     final pos = await _betterPlayerController.position;
                     if (pos == null) {
                       throw Exception('getPosition returned null');
@@ -226,16 +229,16 @@ class _FFITestPageState extends State<FFITestPage> {
                   },
                 ),
                 _buildTestButton(
-                  'getAbsolutePosition',
-                  () async {
+                  name: 'getAbsolutePosition',
+                  action: () async {
                     final absPos =
                         await _betterPlayerController.absolutePosition;
                     debugPrint('FFI Test getAbsolutePosition result: $absPos');
                   },
                 ),
                 _buildTestButton(
-                  'playerValue',
-                  () async {
+                  name: 'playerValue',
+                  action: () async {
                     final value = _betterPlayerController.videoPlayerValue;
                     if (value == null) {
                       throw Exception('videoPlayerValue returned null');
@@ -244,8 +247,8 @@ class _FFITestPageState extends State<FFITestPage> {
                   },
                 ),
                 _buildTestButton(
-                  'duration',
-                  () async {
+                  name: 'duration',
+                  action: () async {
                     final dur = _betterPlayerController.duration;
                     if (dur == null || dur <= Duration.zero) {
                       throw Exception('duration returned invalid value: $dur');
@@ -254,8 +257,8 @@ class _FFITestPageState extends State<FFITestPage> {
                   },
                 ),
                 _buildTestButton(
-                  'isInitialized',
-                  () async {
+                  name: 'isInitialized',
+                  action: () async {
                     final initialized = _betterPlayerController.isInitialized;
                     if (!initialized) {
                       throw Exception('isInitialized returned false');
@@ -264,8 +267,8 @@ class _FFITestPageState extends State<FFITestPage> {
                   },
                 ),
                 _buildTestButton(
-                  'isPictureInPictureSupported',
-                  () async {
+                  name: 'isPictureInPictureSupported',
+                  action: () async {
                     final supported = await _betterPlayerController
                         .isPictureInPictureSupported();
                     debugPrint(
@@ -274,8 +277,8 @@ class _FFITestPageState extends State<FFITestPage> {
                   },
                 ),
                 _buildTestButton(
-                  'preCache',
-                  () async => _betterPlayerController.preCache(
+                  name: 'preCache',
+                  action: () async => _betterPlayerController.preCache(
                     PlayerDataSource(
                       DataSourceType.network,
                       Constants.bugBuckBunnyVideoUrl,
@@ -283,8 +286,8 @@ class _FFITestPageState extends State<FFITestPage> {
                   ),
                 ),
                 _buildTestButton(
-                  'stopPreCache',
-                  () async => _betterPlayerController.stopPreCache(
+                  name: 'stopPreCache',
+                  action: () async => _betterPlayerController.stopPreCache(
                     PlayerDataSource(
                       DataSourceType.network,
                       Constants.bugBuckBunnyVideoUrl,
@@ -292,8 +295,8 @@ class _FFITestPageState extends State<FFITestPage> {
                   ),
                 ),
                 _buildTestButton(
-                  'clearCache',
-                  () async => _betterPlayerController.clearCache(),
+                  name: 'clearCache',
+                  action: () async => _betterPlayerController.clearCache(),
                 ),
               ],
             ),
@@ -304,7 +307,10 @@ class _FFITestPageState extends State<FFITestPage> {
     );
   }
 
-  Widget _buildTestButton(String name, Future<void> Function() action) {
+  Widget _buildTestButton({
+    required String name,
+    required Future<void> Function() action,
+  }) {
     final result = _results[name];
     var status = 'not started';
     var color = Colors.grey;
@@ -330,7 +336,7 @@ class _FFITestPageState extends State<FFITestPage> {
               child: ElevatedButton(
                 onPressed: () {
                   debugPrint('FFI TEST PAGE: Button clicked: $name');
-                  _runTest(name, action);
+                  _runTest(name: name, action: action);
                 },
                 child: Text('Test $name'),
               ),

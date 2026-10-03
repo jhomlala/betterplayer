@@ -42,7 +42,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   final void Function({required String message, required int levelIndex})?
   onLog;
 
-  void _log(String message, {int levelIndex = 1}) {
+  void _log({required String message, int levelIndex = 1}) {
     onLog?.call(message: message, levelIndex: levelIndex);
   }
 
@@ -63,14 +63,14 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   void _initEventStream() {
     // Observe core playback properties
-    _observeProperty('pause', MpvFormat.flag);
-    _observeProperty('time-pos', MpvFormat.doubleFormat);
-    _observeProperty('duration', MpvFormat.doubleFormat);
-    _observeProperty('eof-reached', MpvFormat.flag);
-    _observeProperty('seeking', MpvFormat.flag);
-    _observeProperty('paused-for-cache', MpvFormat.flag);
-    _observeProperty('width', MpvFormat.int64);
-    _observeProperty('height', MpvFormat.int64);
+    _observeProperty(name: 'pause', format: MpvFormat.flag);
+    _observeProperty(name: 'time-pos', format: MpvFormat.doubleFormat);
+    _observeProperty(name: 'duration', format: MpvFormat.doubleFormat);
+    _observeProperty(name: 'eof-reached', format: MpvFormat.flag);
+    _observeProperty(name: 'seeking', format: MpvFormat.flag);
+    _observeProperty(name: 'paused-for-cache', format: MpvFormat.flag);
+    _observeProperty(name: 'width', format: MpvFormat.int64);
+    _observeProperty(name: 'height', format: MpvFormat.int64);
 
     // Request mpv warnings and errors for logging
     final warnStr = 'warn'.toNativeUtf8();
@@ -88,7 +88,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     });
   }
 
-  void _observeProperty(String name, int format) {
+  void _observeProperty({required String name, required int format}) {
     final namePtr = name.toNativeUtf8();
     try {
       _bindings.mpvObserveProperty(handle, 0, namePtr, format);
@@ -123,7 +123,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           if (text.isNotEmpty) {
             final level = logData.ref.logLevel;
             final levelIndex = level <= MpvLogLevel.error ? 3 : 2;
-            _log('[$prefix] $text', levelIndex: levelIndex);
+            _log(message: '[$prefix] $text', levelIndex: levelIndex);
           }
         }
       case MpvEventId.fileLoaded:
@@ -154,7 +154,8 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
         if (isError) {
           final errorStr = _bindings.errorString(errorCode);
           _log(
-            'PlayerError: $errorStr (reason: $reason, code: $errorCode)',
+            message:
+                'PlayerError: $errorStr (reason: $reason, code: $errorCode)',
             levelIndex: 3,
           );
           _eventController.addError(
@@ -166,7 +167,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           );
         } else if (!_completedEmitted) {
           _completedEmitted = true;
-          _log('PlaybackState: ENDED');
+          _log(message: 'PlaybackState: ENDED');
           _eventController.add(
             VideoEvent(eventType: VideoEventType.completed, key: _currentKey),
           );
@@ -180,7 +181,8 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     _height = _getIntProperty('height').toDouble();
 
     _log(
-      'onInitialized: dur=${_duration.inMilliseconds}ms, size=${_width.toInt()}x${_height.toInt()}',
+      message:
+          'onInitialized: dur=${_duration.inMilliseconds}ms, size=${_width.toInt()}x${_height.toInt()}',
     );
 
     _eventController.add(
@@ -212,7 +214,9 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
         if (prop.ref.data != ffi.nullptr) {
           final isBuffering = prop.ref.data.cast<ffi.Int32>().value != 0;
           _log(
-            isBuffering ? 'PlaybackState: BUFFERING' : 'PlaybackState: READY',
+            message: isBuffering
+                ? 'PlaybackState: BUFFERING'
+                : 'PlaybackState: READY',
           );
           _eventController.add(
             VideoEvent(
@@ -228,7 +232,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           final isEof = prop.ref.data.cast<ffi.Int32>().value != 0;
           if (isEof && !_completedEmitted) {
             _completedEmitted = true;
-            _log('PlaybackState: ENDED');
+            _log(message: 'PlaybackState: ENDED');
             _eventController.add(
               VideoEvent(
                 eventType: VideoEventType.completed,
@@ -345,7 +349,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> dispose() async {
-    _log('dispose()');
+    _log(message: 'dispose()');
     _isDisposed = true;
     _pollingTimer?.cancel();
     _pollingTimer = null;
@@ -366,19 +370,22 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       final headerStrings = dataSource.headers!.entries
           .map((e) => '${e.key}: ${e.value}')
           .join(',');
-      _setPropertyString('http-header-fields', headerStrings);
+      _setPropertyString(name: 'http-header-fields', value: headerStrings);
     } else {
-      _setPropertyString('http-header-fields', '');
+      _setPropertyString(name: 'http-header-fields', value: '');
     }
 
     // Configure caching parameters: reset to default if caching is not enabled
     if (dataSource.cacheConfiguration?.useCache == true) {
       final maxBytes = dataSource.cacheConfiguration?.maxCacheSize ?? 0;
       if (maxBytes > 0) {
-        _setPropertyString('demuxer-max-bytes', maxBytes.toString());
+        _setPropertyString(
+          name: 'demuxer-max-bytes',
+          value: maxBytes.toString(),
+        );
       }
     } else {
-      _setPropertyString('demuxer-max-bytes', '150MiB');
+      _setPropertyString(name: 'demuxer-max-bytes', value: '150MiB');
     }
 
     var url = dataSource.uri ?? dataSource.asset ?? '';
@@ -390,12 +397,12 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
         url = stripped;
       }
     }
-    _log('setDataSource: $url');
+    _log(message: 'setDataSource: $url');
     final code = _command(['loadfile', url]);
     if (code < 0) {
       final errorStr = _bindings.errorString(code);
       _log(
-        'Failed to execute loadfile: $errorStr (code: $code)',
+        message: 'Failed to execute loadfile: $errorStr (code: $code)',
         levelIndex: 3,
       );
       throw PlatformException(
@@ -407,38 +414,44 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> play() async {
-    _log('play()');
-    _setPropertyFlag('pause', false);
+    _log(message: 'play()');
+    _setPropertyFlag(name: 'pause', value: false);
   }
 
   @override
   Future<void> pause() async {
-    _log('pause()');
-    _setPropertyFlag('pause', true);
+    _log(message: 'pause()');
+    _setPropertyFlag(name: 'pause', value: true);
   }
 
   @override
   Future<void> setVolume(double volume) async {
-    _log('setVolume: $volume', levelIndex: 0);
-    _setPropertyDouble('volume', (volume * 100.0).clamp(0.0, 100.0));
+    _log(message: 'setVolume: $volume', levelIndex: 0);
+    _setPropertyDouble(
+      name: 'volume',
+      value: (volume * 100.0).clamp(0.0, 100.0),
+    );
   }
 
   @override
   Future<void> setSpeed(double speed) async {
-    _log('setSpeed: $speed', levelIndex: 0);
-    _setPropertyDouble('speed', speed.clamp(0.01, 4.0));
+    _log(message: 'setSpeed: $speed', levelIndex: 0);
+    _setPropertyDouble(name: 'speed', value: speed.clamp(0.01, 4.0));
   }
 
   @override
   Future<void> seekTo(Duration position) async {
-    _log('seekTo: ${position.inMilliseconds}');
+    _log(message: 'seekTo: ${position.inMilliseconds}');
     _currentPosition = position;
     _completedEmitted = false;
     final seconds = position.inMilliseconds / 1000.0;
     final code = _command(['seek', seconds.toString(), 'absolute+exact']);
     if (code < 0) {
       final errorStr = _bindings.errorString(code);
-      _log('Failed to execute seek: $errorStr (code: $code)', levelIndex: 2);
+      _log(
+        message: 'Failed to execute seek: $errorStr (code: $code)',
+        levelIndex: 2,
+      );
       throw PlatformException(
         code: 'MPV_ERROR',
         message: 'Failed to seek: $errorStr (code: $code)',
@@ -457,8 +470,8 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> setLooping({required bool looping}) async {
-    _log('setLooping: $looping');
-    _setPropertyString('loop-file', looping ? 'inf' : 'no');
+    _log(message: 'setLooping: $looping');
+    _setPropertyString(name: 'loop-file', value: looping ? 'inf' : 'no');
   }
 
   @override
@@ -468,16 +481,17 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     required int bitrate,
   }) async {
     _log(
-      'setTrackParameters: width=$width, height=$height, bitrate=$bitrate '
-      '(track selection not supported on Windows yet)',
+      message:
+          'setTrackParameters: width=$width, height=$height, bitrate=$bitrate '
+          '(track selection not supported on Windows yet)',
       levelIndex: 0,
     );
   }
 
   @override
   Future<void> setAudioTrack({required String name, required int index}) async {
-    _log('setAudioTrack: name=$name, index=$index', levelIndex: 0);
-    _setPropertyString('aid', '$index');
+    _log(message: 'setAudioTrack: name=$name, index=$index', levelIndex: 0);
+    _setPropertyString(name: 'aid', value: '$index');
   }
 
   int _command(List<String> args) {
@@ -497,14 +511,15 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     }
   }
 
-  void _setPropertyString(String name, String value) {
+  void _setPropertyString({required String name, required String value}) {
     final namePtr = name.toNativeUtf8();
     final valuePtr = value.toNativeUtf8();
     try {
       final res = _bindings.mpvSetPropertyString(handle, namePtr, valuePtr);
       if (res < 0) {
         _log(
-          'Failed to set property string "$name": ${_bindings.errorString(res)} (code: $res)',
+          message:
+              'Failed to set property string "$name": ${_bindings.errorString(res)} (code: $res)',
           levelIndex: 2,
         );
       }
@@ -514,7 +529,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     }
   }
 
-  void _setPropertyFlag(String name, bool value) {
+  void _setPropertyFlag({required String name, required bool value}) {
     final namePtr = name.toNativeUtf8();
     final flagPtr = calloc<ffi.Int32>()..value = value ? 1 : 0;
     try {
@@ -526,7 +541,8 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       );
       if (res < 0) {
         _log(
-          'Failed to set property flag "$name": ${_bindings.errorString(res)} (code: $res)',
+          message:
+              'Failed to set property flag "$name": ${_bindings.errorString(res)} (code: $res)',
           levelIndex: 2,
         );
       }
@@ -536,7 +552,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     }
   }
 
-  void _setPropertyDouble(String name, double value) {
+  void _setPropertyDouble({required String name, required double value}) {
     final namePtr = name.toNativeUtf8();
     final doublePtr = calloc<ffi.Double>()..value = value;
     try {
@@ -548,7 +564,8 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       );
       if (res < 0) {
         _log(
-          'Failed to set property double "$name": ${_bindings.errorString(res)} (code: $res)',
+          message:
+              'Failed to set property double "$name": ${_bindings.errorString(res)} (code: $res)',
           levelIndex: 2,
         );
       }

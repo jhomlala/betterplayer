@@ -2,13 +2,19 @@ import 'dart:typed_data';
 
 /// Stub implementation of IO utils.
 class ExampleIoUtils {
-  static Future<void> writeStringToFile(String path, String content) async {
+  static Future<void> writeStringToFile({
+    required String path,
+    required String content,
+  }) async {
     throw UnimplementedError(
       'IO operations are not supported on this platform',
     );
   }
 
-  static Future<void> writeBytesToFile(String path, List<int> bytes) async {
+  static Future<void> writeBytesToFile({
+    required String path,
+    required List<int> bytes,
+  }) async {
     throw UnimplementedError(
       'IO operations are not supported on this platform',
     );
@@ -20,7 +26,10 @@ class ExampleIoUtils {
     );
   }
 
-  static Future<String> writeTempFile(String fileName, List<int> bytes) async {
+  static Future<String> writeTempFile({
+    required String fileName,
+    required List<int> bytes,
+  }) async {
     throw UnimplementedError(
       'IO operations are not supported on this platform',
     );

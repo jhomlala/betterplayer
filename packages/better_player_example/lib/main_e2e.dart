@@ -360,8 +360,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     try {
       final byteData = await rootBundle.load('assets/testvideo.mp4');
       final filePath = await ExampleIoUtils.writeTempFile(
-        'better_player_windows_local_test.mp4',
-        byteData.buffer.asUint8List(
+        fileName: 'better_player_windows_local_test.mp4',
+        bytes: byteData.buffer.asUint8List(
           byteData.offsetInBytes,
           byteData.lengthInBytes,
         ),
