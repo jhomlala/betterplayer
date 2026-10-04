@@ -63,10 +63,19 @@ import androidx.annotation.Keep
 @UnstableApi
 class BetterPlayer(
     context: Context,
-    val textureEntry: SurfaceTextureEntry,
+    // Null when no Flutter texture backs this player. The video is then
+    // rendered by a SurfaceView supplied through [setVideoSurface] (see the
+    // better_player_android_surfaceview package).
+    val textureEntry: SurfaceTextureEntry?,
     val callback: BetterPlayerCallback,
     customDefaultLoadControl: CustomDefaultLoadControl? = null,
+    surfacelessPlayerId: Long = NO_PLAYER_ID,
 ) {
+
+    /** Id Dart uses to address this player: the texture id, or the explicit id when there is no texture. */
+    val playerId: Long = textureEntry?.id() ?: surfacelessPlayerId.also {
+        require(it != NO_PLAYER_ID) { "A player without a texture needs an explicit id" }
+    }
     
     private val mainHandler = Handler(Looper.getMainLooper())
     private fun runOnMainThread(action: () -> Unit) {
@@ -82,6 +91,7 @@ class BetterPlayer(
     private val loadControl: LoadControl
     private var isInitialized = false
     private var isInitializedSent = false
+    private var released = false
     private var surface: Surface? = null
     private var key: String? = null
     private var playerNotificationManager: PlayerNotificationManager? = null
@@ -110,11 +120,12 @@ class BetterPlayer(
         workManager = WorkManager.getInstance(context)
         workerObserverMap = HashMap()
         setupVideoPlayer(textureEntry)
+        BetterPlayerRegistry.register(this)
     }
 
     @Keep
     fun getTextureId(): Long {
-        return textureEntry.id()
+        return playerId
     }
 
     @Keep
@@ -422,9 +433,29 @@ class BetterPlayer(
         }
     }
 
-    private fun setupVideoPlayer(textureEntry: SurfaceTextureEntry) {
-        surface = Surface(textureEntry.surfaceTexture())
-        exoPlayer?.setVideoSurface(surface)
+    /**
+     * Points the video output at [target]; null detaches. Only for players
+     * created without a texture, and a no-op once the player is disposed.
+     */
+    fun setVideoSurface(target: Surface?) {
+        val player = exoPlayer
+        if (released || player == null || textureEntry != null) return
+        if (target != null && !target.isValid) return
+        player.setVideoSurface(target)
+        // Android 9: the decoder sends no frames to a new surface while the
+        // player is paused, so without a tiny seek the screen stays black.
+        if (target != null && Build.VERSION.SDK_INT == Build.VERSION_CODES.P &&
+            !player.playWhenReady) {
+            val position = player.currentPosition
+            player.seekTo(if (position == 0L) 1L else position)
+        }
+    }
+
+    private fun setupVideoPlayer(textureEntry: SurfaceTextureEntry?) {
+        if (textureEntry != null) {
+            surface = Surface(textureEntry.surfaceTexture())
+            exoPlayer?.setVideoSurface(surface)
+        }
         setAudioAttributes(exoPlayer, true)
         exoPlayer?.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
@@ -728,8 +759,10 @@ class BetterPlayer(
         if (isInitialized) {
             exoPlayer?.stop()
         }
-        textureEntry.release()
-        
+        released = true
+        BetterPlayerRegistry.unregister(this)
+        textureEntry?.release()
+
         surface?.release()
         exoPlayer?.release()
     }
@@ -749,6 +782,9 @@ class BetterPlayer(
     }
 
     companion object {
+        /** Marks "no explicit id"; real ids are never negative. */
+        const val NO_PLAYER_ID = -1L
+
         
         private const val FORMAT_SS = "ss"
         private const val FORMAT_DASH = "dash"

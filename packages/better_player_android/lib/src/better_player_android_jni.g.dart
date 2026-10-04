@@ -300,6 +300,50 @@ extension BetterPlayerApi$Companion$$Methods on BetterPlayerApi$Companion {
       _$betterPlayerCallback.pointer,
     ).object<BetterPlayer?>();
   }
+
+  static final _id_createSurfacePlayer = BetterPlayerApi$Companion._class
+      .instanceMethodId(
+        r'createSurfacePlayer',
+        r'(Landroid/content/Context;Lpl/hasoft/better_player/BetterPlayerCallback;)Lpl/hasoft/better_player/BetterPlayer;',
+      );
+
+  static final _createSurfacePlayer =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JniResult Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallObjectMethod')
+          .asFunction<
+            jni$_.JniResult Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun createSurfacePlayer(context: android.content.Context, callback: pl.hasoft.better_player.BetterPlayerCallback): pl.hasoft.better_player.BetterPlayer`
+  /// The returned object must be released after use, by calling the [release] method.
+  BetterPlayer createSurfacePlayer(
+    Context context,
+    BetterPlayerCallback betterPlayerCallback,
+  ) {
+    final _$$selfRef = reference;
+    final _$context = context.reference;
+    final _$betterPlayerCallback = betterPlayerCallback.reference;
+    return _createSurfacePlayer(
+      _$$selfRef.pointer,
+      _id_createSurfacePlayer.pointer,
+      _$context.pointer,
+      _$betterPlayerCallback.pointer,
+    ).object<BetterPlayer>();
+  }
 }
 
 final class $BetterPlayerApi$Companion$Type$
