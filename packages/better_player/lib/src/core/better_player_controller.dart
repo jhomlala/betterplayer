@@ -7,7 +7,6 @@ import 'package:better_player/src/core/state/player_playback_state.dart';
 import 'package:better_player/src/core/state/player_subtitle_state.dart';
 import 'package:better_player/src/core/state/player_track_state.dart';
 import 'package:better_player/src/core/state/player_view_state.dart';
-import 'package:better_player/src/engine/player_engine_controller.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:better_player/src/subtitles/player_subtitles_factory.dart';
@@ -92,6 +91,32 @@ class BetterPlayerController {
 
   /// Timer managing the countdown delay before the next video in a playlist automatically starts.
   Timer? _nextVideoTimer;
+
+  Widget? _adOverlayWidget;
+
+  /// Ad overlay widget mounted directly above the main video texture.
+  Widget? get adOverlayWidget => _adOverlayWidget;
+
+  /// Sets or clears the active ad overlay widget.
+  void setAdOverlayWidget(Widget? widget) {
+    _adOverlayWidget = widget;
+    if (!_disposed) {
+      _postControllerEvent(PlayerControllerEvent.adStateChanged);
+    }
+  }
+
+  bool _isAdPlaying = false;
+
+  /// Whether an ad is currently playing and suppressing content controls.
+  bool get isAdPlaying => _isAdPlaying;
+
+  /// Sets ad playback state and updates control visibility.
+  void setAdPlaying(bool value) {
+    _isAdPlaying = value;
+    if (!_disposed) {
+      _postControllerEvent(PlayerControllerEvent.adStateChanged);
+    }
+  }
 
   /// The remaining time in seconds before the next video in the playlist starts.
   int? _nextVideoTime;
