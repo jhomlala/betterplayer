@@ -37,10 +37,16 @@ flutter pub publish --force
 cd packages/better_player_ios
 flutter pub publish --force
 
+cd packages/better_player_macos
+flutter pub publish --force
+
+cd packages/better_player_windows
+flutter pub publish --force
+
 cd packages/better_player_web
 flutter pub publish --force
 ```
-These three packages only depend on the platform interface, not on each other.  
+These platform packages only depend on the platform interface, not on each other.  
 Wait for each to complete successfully before moving on.
 
 ### Step 3 — Main Package

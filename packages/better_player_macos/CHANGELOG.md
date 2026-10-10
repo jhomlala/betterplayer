@@ -1,5 +1,7 @@
-## 1.1.0
+## 1.1.1
 - Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
+
+## 1.1.0
 - Updated: Defaulted controls to desktop theme and synchronized with core player 1.22.0.
 
 ## 1.0.0

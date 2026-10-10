@@ -1,3 +1,6 @@
+## 1.23.1
+- Updated: Bumped federated packages `better_player_android` to `^1.7.1`, `better_player_ios` to `^1.6.1`, `better_player_macos` to `^1.1.1`, and `better_player_windows` to `^1.0.1`.
+
 ## 1.23.0
 - Added: `BetterPlayerExtension` contract and `extensions` parameter on `PlayerConfiguration` for pluggable capability modules.
 - Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
