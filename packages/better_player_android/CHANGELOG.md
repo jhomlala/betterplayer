@@ -1,5 +1,7 @@
-## 1.7.0
+## 1.7.1
 - Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
+
+## 1.7.0
 - Fixed: Guarded `getAbsolutePosition` against unset timeline window start times (`C.TIME_UNSET`) and out-of-range epoch values on live streams (#1206, #1198) (by @RtypeStudios, @geriby23).
 - Fixed: Avoided enqueueing `ImageWorker` when notification `imageUrl` is empty and removed unused `sendSeekToEvent` method (#1041, #1135) (by @ptsekov).
 

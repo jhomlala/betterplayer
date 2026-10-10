@@ -12,6 +12,8 @@ const _packages = [
   ],
   ['better_player_android', 'packages/better_player_android'],
   ['better_player_ios', 'packages/better_player_ios'],
+  ['better_player_macos', 'packages/better_player_macos'],
+  ['better_player_windows', 'packages/better_player_windows'],
   ['better_player_web', 'packages/better_player_web'],
   ['better_player', 'packages/better_player'],
 ];
