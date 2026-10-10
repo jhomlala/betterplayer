@@ -8,6 +8,14 @@ extension PlayerPlaybackExtension on BetterPlayerController {
       throw StateError('The data source has not been initialized');
     }
 
+    if (_isAdPlaying) {
+      PlayerLogger.debug(
+        message: 'Playback blocked because an ad is currently playing',
+        textureId: textureId,
+      );
+      return;
+    }
+
     if (_playbackState.appLifecycleState == AppLifecycleState.resumed) {
       await _engine!.play();
       _playbackState = _playbackState.copyWith(

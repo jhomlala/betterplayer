@@ -113,6 +113,9 @@ class BetterPlayerController {
   /// Sets ad playback state and updates control visibility.
   void setAdPlaying(bool value) {
     _isAdPlaying = value;
+    if (value) {
+      _engine?.pause();
+    }
     if (!_disposed) {
       _postControllerEvent(PlayerControllerEvent.adStateChanged);
     }
