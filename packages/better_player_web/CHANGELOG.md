@@ -1,3 +1,10 @@
+## 1.1.4
+- Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
+- Fixed: Migrated from deprecated `shaka.Player(mediaElement)` constructor to `shaka.Player.attach(mediaElement)`.
+- Fixed: Configured resilient retry parameters (`maxAttempts`, `timeout`, `stallTimeout`) for streaming segments and manifests to prevent network timeout errors (`1003`).
+- Fixed: Guarded `play()` and `pause()` against redundant invocations when `videoElement` is already in the requested state.
+- Refactored: Made `BetterPlayerWebPlayer.initialize()` asynchronous to guarantee attachment before playback operations.
+
 ## 1.1.3
 - Updated: `better_player_platform_interface` version bump.
 

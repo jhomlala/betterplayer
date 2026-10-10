@@ -49,7 +49,7 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     final viewId = 'better_player_web_$id';
 
     final player = _playerFactory(viewId: viewId, onLog: _log);
-    player.initialize();
+    await player.initialize();
 
     // Register the video element as a Flutter platform view
     ui_web.platformViewRegistry.registerViewFactory(viewId, (int _) {

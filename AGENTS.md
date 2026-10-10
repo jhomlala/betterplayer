@@ -100,9 +100,9 @@ PlayerDataSource dataSource = PlayerDataSource(
   - Prefer single quotes over double quotes.
   - Require trailing commas for multi-line arguments and collections.
   - Maintain the existing suppressions in `analysis_options.yaml` for specific project needs (e.g., `public_member_api_docs: false`).
-  - **Named Parameters**: Use named parameters for all functions, methods, and constructors if:
-    - They have 2 or more parameters.
-    - They have only 1 parameter and that parameter is a `bool`.
+  - **Named Parameters**: When a function, method, or constructor has more than 1 parameter (or any boolean parameter), ALWAYS use named parameters. Never define multi-positional parameters.
+  - **Cognitive Complexity**: Max 12 levels per function or method. Break down complex branching or deeply nested logic into smaller, single-responsibility helpers.
+  - **Technical English (ASD-STE100)**: Follow the `asd-ste100` skill for all technical documentation, docstrings, error messages, code comments, and log messages. Use active voice, simple tenses, short sentences (≤20 words for instructions, ≤25 words for descriptions), and eliminate ambiguous phrases or marketing adjectives.
   - **Widget Creation**: NEVER create widgets using helper methods (e.g., `Widget _buildSomething()`). ALWAYS create them as separate `StatelessWidget` or `StatefulWidget` classes, or define the widget tree directly within the `build` method. This ensures better performance, cleaner code, and correct lifecycle management.
   - **Logging**: ALWAYS use `PlayerLogger` for logging instead of `print` or `debugPrint`. This ensures that logs are correctly handled by the project's logging mechanism.
   - **Class & File Naming**:
@@ -110,6 +110,7 @@ PlayerDataSource dataSource = PlayerDataSource(
     - Use the `Player*` (`player_*.dart`) prefix (and `_Player*` for private classes) for all other classes in `better_player`, including configurations, data models, events, engine classes, logging, internal control widgets, internal core widgets, and internal utilities.
     - Platform interface models in `better_player_platform_interface` use no prefix (`DataSource`, `DataSourceType`, `DrmConfiguration`, `CacheConfiguration`, `BufferingConfiguration`, `NotificationConfiguration`, `VideoFormat`, `VideoEvent`).
     - Filenames MUST match the primary class they declare (`Player*` -> `player_*.dart`, `BetterPlayer*` -> `better_player_*.dart`).
+    - **One Model or Class per File**: Every class, model, or enum MUST live in its own dedicated file matching its snake_case name (e.g., `VastAd` -> `vast_ad.dart`). NEVER bundle multiple models or classes into a single file (such as `*_models.dart`).
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
@@ -214,3 +215,13 @@ When asked to fetch or analyze Pull Request comments, agents should utilize the 
 When asked to fetch or analyze GitHub Issue data, agents should utilize the `scripts/fetch_issue_data.dart` utility.
 See `rules/github.md` for detailed usage instructions. Ensure the `GITHUB_TOKEN` environment variable is available.
 When fetching data, the output JSON will automatically be placed in the system's temporary directory. Never commit the fetched JSON files to the repository.
+ 
+## Git & Branch Safety
+- **Never Push Directly to Main / Master**: Direct pushes to `main` or `master` branches are strictly prohibited. Always push to a dedicated feature or bugfix branch (`feat/*`, `fix/*`) and merge via Pull Request.
+- **Explicit Approval Required**: Never run `git commit` or `git push` without explicit user instruction.
+
+## Feature Documentation
+- **Always Document Features**: When building any new feature, always provide comprehensive documentation in `docs/` or `doc/` (architecture, configuration options, usage guides, code snippets) and update `README.md`.
+
+## User-Facing String Localization (i18n)
+- **Always Internationalize User-Facing Strings**: When adding user-facing strings, ALWAYS internationalize them using the `PlayerTranslations` pattern. Provide a strongly typed translation class with English defaults, pre-built factory constructors for supported locales (e.g. `.polish()`, `.spanish()`), and allow caller overrides.
