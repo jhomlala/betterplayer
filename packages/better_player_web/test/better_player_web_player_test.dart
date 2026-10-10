@@ -30,11 +30,19 @@ void main() {
         mockShaka.setProperty('polyfill'.toJS, mockPolyfill);
 
         // Mock shaka.Player constructor
-        final mockPlayerConstructor = ((web.HTMLVideoElement element) {
+        final mockPlayerConstructor = (([web.HTMLVideoElement? element]) {
           final p = JSObject();
           p.setProperty('configure'.toJS, ((JSObject config) {}).toJS);
           p.setProperty(
             'destroy'.toJS,
+            (() => Future<JSAny?>.value().toJS).toJS,
+          );
+          p.setProperty(
+            'attach'.toJS,
+            (([web.HTMLVideoElement? el]) => Future<JSAny?>.value().toJS).toJS,
+          );
+          p.setProperty(
+            'detach'.toJS,
             (() => Future<JSAny?>.value().toJS).toJS,
           );
           p.setProperty(
@@ -115,10 +123,44 @@ void main() {
       player.videoElement = mockVideo as web.HTMLVideoElement;
     });
 
-    test('initialize logs info level', () {
-      player.initialize();
+    test('initialize logs info level', () async {
+      await player.initialize();
       expect(logLevels.contains(1), isTrue);
       expect(logs.any((m) => m.contains('initialized')), isTrue);
+    });
+
+    test('initialize attaches videoElement and applies default retry parameters', () async {
+      final mockShaka = JSObject();
+      var attachCalled = false;
+      JSObject? appliedConfig;
+      mockShaka.setProperty(
+        'attach'.toJS,
+        (([web.HTMLVideoElement? el]) {
+          attachCalled = true;
+          return Future<JSAny?>.value().toJS;
+        }).toJS,
+      );
+      mockShaka.setProperty(
+        'configure'.toJS,
+        ((JSObject config) {
+          appliedConfig = config;
+        }).toJS,
+      );
+
+      final p = BetterPlayerWebPlayer(
+        viewId: 'test_attach_view',
+        onLog: ({required String message, int levelIndex = 0}) {},
+        shakaPlayer: mockShaka as ShakaPlayer,
+      );
+      await p.initialize();
+
+      expect(attachCalled, isTrue);
+      expect(appliedConfig, isNotNull);
+      final streaming =
+          appliedConfig!.getProperty('streaming'.toJS)! as JSObject;
+      final retry = streaming.getProperty('retryParameters'.toJS)! as JSObject;
+      expect(retry.getProperty('maxAttempts'.toJS).dartify(), 5);
+      expect(retry.getProperty('timeout'.toJS).dartify(), 30000);
     });
 
     test('buildShakaConfig handles Widevine DRM', () {
@@ -298,7 +340,7 @@ void main() {
         },
         shakaPlayer: mockShaka as ShakaPlayer,
       );
-      player.initialize();
+      await player.initialize();
 
       await player.dispose();
       await player.dispose();
@@ -389,7 +431,7 @@ void main() {
         }).toJS,
       );
 
-      player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
+      await player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
 
       VideoEvent? receivedEvent;
       final sub = player.events.listen((event) => receivedEvent = event);
@@ -434,7 +476,7 @@ void main() {
     });
 
     test('emitBufferingUpdate respects 500ms throttle', () async {
-      player.initialize();
+      await player.initialize();
       var eventsReceived = 0;
       final subscription = player.events.listen((event) {
         if (event.eventType == VideoEventType.bufferingUpdate) {
@@ -506,7 +548,7 @@ void main() {
     });
 
     test('Other DOM events emit correct VideoEvents', () async {
-      player.initialize();
+      await player.initialize();
 
       final events = <VideoEventType>[];
       final sub = player.events.listen((e) => events.add(e.eventType));
@@ -534,7 +576,7 @@ void main() {
         }).toJS,
       );
 
-      player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
+      await player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
 
       var seekEvents = 0;
       final sub = player.events.listen((e) {
@@ -569,7 +611,7 @@ void main() {
           }).toJS,
         );
 
-        player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
+        await player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
 
         final events = <VideoEventType>[];
         final sub = player.events.listen((e) => events.add(e.eventType));
@@ -611,7 +653,7 @@ void main() {
         }).toJS,
       );
 
-      player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
+      await player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
 
       final events = <VideoEventType>[];
       final sub = player.events.listen((e) => events.add(e.eventType));

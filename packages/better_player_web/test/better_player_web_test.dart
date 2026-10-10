@@ -21,7 +21,7 @@ void main() {
     setUp(() {
       mockPlayer = MockBetterPlayerWebPlayer();
 
-      when(() => mockPlayer.initialize()).thenReturn(null);
+      when(() => mockPlayer.initialize()).thenAnswer((_) async {});
       // Return a dummy JSObject cast to HTMLVideoElement to avoid DOM calls
       when(
         () => mockPlayer.videoElement,

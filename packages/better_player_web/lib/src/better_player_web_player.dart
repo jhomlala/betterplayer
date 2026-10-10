@@ -30,7 +30,7 @@ class BetterPlayerWebPlayer {
 
   Stream<VideoEvent> get events => _eventController.stream;
 
-  void initialize({web.HTMLVideoElement? videoElement}) {
+  Future<void> initialize({web.HTMLVideoElement? videoElement}) async {
     _eventController = StreamController<VideoEvent>.broadcast();
 
     this.videoElement = videoElement ?? web.HTMLVideoElement();
@@ -41,10 +41,52 @@ class BetterPlayerWebPlayer {
 
     shaka.polyfill.installAll();
 
-    _shakaPlayer ??= ShakaPlayer(this.videoElement);
+    if (_shakaPlayer == null) {
+      final player = ShakaPlayer();
+      _shakaPlayer = player;
+      await player.attach(this.videoElement).toDart;
+      _applyDefaultConfiguration();
+    } else {
+      final jsPlayer = _shakaPlayer! as JSObject;
+      if (jsPlayer.has('attach')) {
+        await _shakaPlayer!.attach(this.videoElement).toDart;
+      }
+      if (jsPlayer.has('configure')) {
+        _applyDefaultConfiguration();
+      }
+    }
 
     _attachListeners();
     onLog(message: 'BetterPlayerWebPlayer initialized: $viewId', levelIndex: 1);
+  }
+
+  void _applyDefaultConfiguration() {
+    final defaultConfig = {
+      'streaming': {
+        'retryParameters': {
+          'maxAttempts': 5,
+          'baseDelay': 1000,
+          'backoffFactor': 2,
+          'fuzzFactor': 0.5,
+          'timeout': 30000,
+          'stallTimeout': 10000,
+          'connectionTimeout': 15000,
+        },
+      },
+      'manifest': {
+        'retryParameters': {
+          'maxAttempts': 5,
+          'baseDelay': 1000,
+          'backoffFactor': 2,
+          'fuzzFactor': 0.5,
+          'timeout': 30000,
+          'stallTimeout': 10000,
+          'connectionTimeout': 15000,
+        },
+      },
+    }.jsify()! as JSObject;
+
+    _shakaPlayer?.configure(defaultConfig);
   }
 
   void _attachListeners() {
@@ -326,8 +368,31 @@ class BetterPlayerWebPlayer {
     );
   }
 
-  void play() => videoElement.play();
-  void pause() => videoElement.pause();
+  void play() {
+    if (!videoElement.paused) return;
+    try {
+      final promise = videoElement.play();
+      promise.toDart.catchError((Object err) {
+        onLog(
+          message:
+              'BetterPlayerWebPlayer: videoElement.play() promise rejected: $err',
+          levelIndex: 3,
+        );
+        return null;
+      });
+    } catch (e) {
+      onLog(
+        message: 'BetterPlayerWebPlayer: videoElement.play() threw exception: $e',
+        levelIndex: 3,
+      );
+    }
+  }
+
+  void pause() {
+    if (videoElement.paused) return;
+    videoElement.pause();
+  }
+
   void setVolume(double volume) => videoElement.volume = volume;
   void setSpeed(double speed) => videoElement.playbackRate = speed;
   void setLooping(bool looping) => videoElement.loop = looping;
@@ -337,7 +402,8 @@ class BetterPlayerWebPlayer {
   }
 
   Duration getPosition() {
-    return Duration(milliseconds: (videoElement.currentTime * 1000).toInt());
+    final pos = Duration(milliseconds: (videoElement.currentTime * 1000).toInt());
+    return pos;
   }
 
   DateTime? getAbsolutePosition() {
