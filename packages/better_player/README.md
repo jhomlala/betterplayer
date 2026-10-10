@@ -1,17 +1,45 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/logo.png" width="250px">
+  <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/logo.png" width="220px" alt="Better Player Logo">
 </p>
 
 # Better Player
 
-[![pub package](https://img.shields.io/pub/v/better_player.svg)](https://pub.dartlang.org/packages/better_player)
-[![pub package](https://img.shields.io/github/license/jhomlala/betterplayer.svg?style=flat)](https://github.com/jhomlala/betterplayer)
-[![pub package](https://img.shields.io/badge/platform-flutter-blue.svg)](https://github.com/jhomlala/betterplayer)
+<p align="center">
+  <b>The complete, production-grade video player for Flutter.</b><br>
+  One unified controller. Native performance. Zero bloated binaries.
+</p>
 
-Better Player handles the complex video playback edge cases so you don't have to. Originally based on `video_player`, it's now fully independent. It tackles HLS, DRM, and caching out of the box.
+<p align="center">
+  <a href="https://pub.dev/packages/better_player"><img src="https://img.shields.io/pub/v/better_player.svg" alt="Pub Version"></a>
+  <a href="https://pub.dev/packages/better_player/score"><img src="https://img.shields.io/pub/points/better_player" alt="Pub Points"></a>
+  <a href="https://pub.dev/packages/better_player/score"><img src="https://img.shields.io/pub/likes/better_player" alt="Pub Likes"></a>
+  <a href="https://github.com/jhomlala/betterplayer"><img src="https://img.shields.io/github/stars/jhomlala/betterplayer?style=flat" alt="GitHub Stars"></a>
+  <a href="https://github.com/jhomlala/betterplayer/blob/master/LICENSE"><img src="https://img.shields.io/github/license/jhomlala/betterplayer.svg" alt="License"></a>
+</p>
 
-> **[IMPORTANT] Migrating from 0.0.84 to 1.x.x?**
-> See the [Migration Guides](#-migration-guides) section below.
+<p align="center">
+  <a href="https://jhomlala.github.io/betterplayer/"><b>Documentation</b></a> &bull;
+  <a href="https://jhomlala.github.io/betterplayer/migration_from_video_player"><b>Migrating from video_player</b></a> &bull;
+  <a href="https://jhomlala.github.io/betterplayer/migration_from_chewie"><b>Migrating from chewie</b></a> &bull;
+  <a href="https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_example"><b>Example App</b></a>
+</p>
+
+---
+
+## Why Better Player?
+
+Stop stitching `video_player`, separate UI packages, abandoned caching plugins, and custom DRM code together. Better Player packs the full video stack into a single, cohesive engine.
+
+| Feature | Better Player | video_player + chewie | media_kit |
+|---|:---:|:---:|:---:|
+| **App Size Overhead** | **~1-2 MB** (Native OS engines) | ~1-2 MB | **+30MB to 50MB** (Bundled mpv binaries) |
+| **Out-of-the-box UI** | Built-in & customizable | Chewie required | Built-in |
+| **HLS / DASH** | Full native support | Basic | Native |
+| **DRM (Widevine / FairPlay)** | Native support | None | None |
+| **Smart Caching** | Built-in offline cache | None (3rd party needed) | None |
+| **Subtitles** | SRT, WebVTT, TTML | SRT only | Advanced |
+| **Picture in Picture (PiP)** | Built-in | None | Platform-dependent |
+| **Playlists** | Built-in | None | Built-in |
 
 ---
 
@@ -34,124 +62,101 @@ Better Player handles the complex video playback edge cases so you don't have to
 
 ---
 
-## 🏆 vs Competitors
-
-Why choose Better Player? Here is how it stacks up against the alternatives.
-
-| Feature | Better Player | video_player | chewie | media_kit |
-|---|:---:|:---:|:---:|:---:|
-| **Engine** | ExoPlayer/AVPlayer/Shaka/libmpv | ExoPlayer/AVPlayer | video_player | libmpv |
-| **Platforms** | Android, iOS, macOS, Windows, Web | Android, iOS, Web | Android, iOS, Web | Android, iOS, macOS, Linux, Windows |
-| **UI Controls** | ✅ Built-in & Customizable | ❌ None | ✅ Built-in | ✅ Built-in |
-| **HLS / DASH** | ✅ Native | ⚠️ Basic | ⚠️ Basic | ✅ Native |
-| **DRM Support** | ✅ Widevine/FairPlay/ClearKey | ❌ None | ❌ None | ❌ None |
-| **Subtitles** | ✅ Advanced (WebVTT, TTML, SRT) | ⚠️ Basic (SRT only) | ⚠️ Basic | ✅ Advanced |
-| **Caching** | ✅ Built-in | ❌ None | ❌ None | ❌ None |
-| **Playlists** | ✅ Built-in | ❌ None | ❌ None | ✅ Built-in |
-
----
-
-## 🚀 Key Features
-
-- **Adaptive Streaming**: Play HLS, DASH, and Smooth Streaming with automatic track selection.
-- **DRM Support**: Protect your content with Widevine, FairPlay, and ClearKey.
-- **Smart Caching**: Cache videos for offline playback.
-- **Picture in Picture (PiP)**: Keep videos playing while users multitask.
-- **Advanced Subtitles**: Parse SRT, WebVTT, and TTML/DFXP with XML styles, regions, and colors.
-- **Cross-Platform**: First-class support across Android, iOS, macOS, Windows, and Web.
-
----
-
 ## 📦 Quick Start
 
-### 1. Add dependency
-Add Better Player to your `pubspec.yaml`:
-```yaml
-dependencies:
-  better_player: ^1.20.0
+### 1. Install
+```bash
+flutter pub add better_player
 ```
 
-### 2. Basic Usage
-Use the network factory to get a player up and running fast.
+### 2. Basic Playback
+Play a network video with full controls in three lines:
 
 ```dart
 import 'package:better_player/better_player.dart';
 
-// Inside your build method
 AspectRatio(
   aspectRatio: 16 / 9,
   child: BetterPlayer.network(
     "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-    betterPlayerConfiguration: PlayerConfiguration(
-      aspectRatio: 16 / 9,
-      looping: true,
-      autoPlay: true,
-    ),
   ),
 )
 ```
 
-### 3. Advanced Controller Usage
-Need full control? Initialize a `BetterPlayerController` manually.
+### 3. Production Playback (Caching, DRM & HLS)
+Configure caching, custom headers, or DRM with a single controller:
 
 ```dart
-BetterPlayerController _controller = BetterPlayerController(
-    const PlayerConfiguration(),
-    betterPlayerDataSource: PlayerDataSource(
-        DataSourceType.network,
-        "https://example.com/video.mp4",
+final controller = BetterPlayerController(
+  const PlayerConfiguration(
+    aspectRatio: 16 / 9,
+    autoPlay: true,
+  ),
+  betterPlayerDataSource: PlayerDataSource(
+    DataSourceType.network,
+    "https://example.com/stream.m3u8",
+    // Cache video locally for instant playback:
+    cacheConfiguration: const CacheConfiguration(useCache: true),
+    // Or protect content with DRM:
+    drmConfiguration: DrmConfiguration(
+      drmType: DrmType.widevine,
+      licenseUrl: "https://license.example.com",
     ),
+  ),
 );
 
-BetterPlayer(controller: _controller)
+BetterPlayer(controller: controller);
 ```
 
 ---
 
-## 🤖 AI Agent Quick Reference
+## 🌐 Platform Packages
 
-Better Player ships with [Dart package skills](https://dart.dev/ai/package-skills) so your AI coding agent (Cursor, Gemini, Claude Code, Copilot) knows the 1.x API out of the box. Install the skill into your project:
+Better Player uses a federated architecture. Each platform runs on its native, hardware-accelerated media engine:
 
-```bash
-dart run skills@ get -p better_player
-```
-
-Writing a script or prompt? Feed this to your AI to get the right code on the first try:
-
-- **Initialization**: Always initialize `BetterPlayerController` in `initState()` with a `PlayerConfiguration` and `PlayerDataSource`.
-- **Core Classes**:
-  - `BetterPlayerController`: Manages state and configuration.
-  - `PlayerDataSource`: Wraps video URL, DRM config, subtitles, headers.
-  - `PlayerConfiguration`: UI, looping, autoPlay, aspect ratio.
-  - `PlayerControlsConfiguration`: Colors, icons, padding for the control bar.
-- **Subtitles**: Pass `PlayerSubtitlesSource` directly into `PlayerDataSource`.
-- **Disposal**: Default is `autoDispose: true`. Avoid manual `controller.dispose()` unless you opt out.
+| Platform | Package | Engine | Status |
+|---|---|---|:---:|
+| **Android** | `better_player_android` | Google Media3 / ExoPlayer | [![pub](https://img.shields.io/pub/v/better_player_android.svg)](https://pub.dev/packages/better_player_android) |
+| **iOS** | `better_player_ios` | Apple AVPlayer | [![pub](https://img.shields.io/pub/v/better_player_ios.svg)](https://pub.dev/packages/better_player_ios) |
+| **macOS** | `better_player_macos` | Apple AVPlayer | [![pub](https://img.shields.io/pub/v/better_player_macos.svg)](https://pub.dev/packages/better_player_macos) |
+| **Web** | `better_player_web` | Shaka Player / HTML5 | [![pub](https://img.shields.io/pub/v/better_player_web.svg)](https://pub.dev/packages/better_player_web) |
+| **Windows** | `better_player_windows` | libmpv | [![pub](https://img.shields.io/pub/v/better_player_windows.svg)](https://pub.dev/packages/better_player_windows) |
 
 ---
 
 ## 🔄 Migration Guides
 
-Moving from another package? Follow these guides:
-- [Migrating from `video_player`](https://jhomlala.github.io/betterplayer/migration_from_video_player)
-- [Migrating from `chewie`](https://jhomlala.github.io/betterplayer/migration_from_chewie)
-- [Migrating from 0.0.84 to 1.x.x](https://jhomlala.github.io/betterplayer/migration_to_1.x.x)
+Switching from another package? Follow the step-by-step migration guides:
+
+- [Migrating from video_player](https://jhomlala.github.io/betterplayer/migration_from_video_player): Replace `VideoPlayerController` and remove separate UI packages.
+- [Migrating from chewie](https://jhomlala.github.io/betterplayer/migration_from_chewie): Consolidate your player and controls into a single controller.
 
 ---
 
-## 📖 Resources
+## 🤖 AI Coding Agents
 
-- [Official Documentation](https://jhomlala.github.io/betterplayer/)
-- [Example Application](https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_example)
-- [API Reference](https://pub.dev/documentation/better_player/latest/better_player/better_player-library.html)
+Better Player supports [Dart package skills](https://dart.dev/ai/package-skills) so tools like Cursor, Claude Code, Gemini, and Copilot understand the API out of the box:
+
+```bash
+dart run skills@ get -p better_player
+```
+
+---
+
+## 📖 Resources & Docs
+
+- [Official Documentation](https://jhomlala.github.io/betterplayer/): Full guides for caching, DRM, subtitles, and playlists.
+- [Example Application](https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_example): Complete working samples covering every feature.
+- [API Reference](https://pub.dev/documentation/better_player/latest/): Generated Dart doc reference.
 
 ---
 
 ## 🤝 Contributing
 
-Bugs? Feature requests? Open an issue. Better yet, submit a PR.
+Found a bug or missing a feature? Open an issue or submit a pull request.
 
 ## 💼 Enterprise Support
 
-Need a custom video source adapter, bespoke DRM implementation, or tailored UI controls? I'm available for consulting.
+Need a custom video source adapter, bespoke DRM implementation, or tailored UI controls? I am available for consulting.
 
-[Let's talk on LinkedIn →](https://pl.linkedin.com/in/jhomlala)
+[Contact on LinkedIn →](https://pl.linkedin.com/in/jhomlala)
