@@ -32,10 +32,12 @@ class ShakaUtil {}
 @JS('shaka.Player')
 @staticInterop
 class ShakaPlayer {
-  external factory ShakaPlayer(web.HTMLVideoElement element);
+  external factory ShakaPlayer([web.HTMLVideoElement? element]);
 }
 
 extension ShakaPlayerExtension on ShakaPlayer {
+  external JSPromise<JSAny?> attach(web.HTMLVideoElement element);
+  external JSPromise<JSAny?> detach();
   external JSPromise<JSAny?> load(JSString url);
   external JSPromise<JSAny?> destroy();
   external void configure(JSObject config);

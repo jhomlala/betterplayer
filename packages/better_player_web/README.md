@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/logo.png" width="180px" alt="Better Player Logo">
+</p>
+
 # better_player_web
 
 The official web implementation of the `better_player` plugin, utilizing Shaka Player for advanced playback, HLS, and DASH support. 

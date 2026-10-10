@@ -60,6 +60,14 @@ const sidebars = {
         'multiple_gesture_detector',
       ],
     },
+    {
+      type: 'category',
+      label: 'Enterprise',
+      items: [
+        'enterprise_overview',
+        'vast_vmap_ads',
+      ],
+    },
   ],
 };
 

@@ -10,6 +10,10 @@ topics:
   - avplayer
   - streaming
 
+screenshots:
+  - description: 'Better Player logo'
+    path: assets/logo.png
+
 environment:
   sdk: "^3.12.0"
   flutter: ">=3.47.0"

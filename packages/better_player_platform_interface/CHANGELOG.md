@@ -1,4 +1,5 @@
 ## 1.3.3
+- Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
 - Fixed: Guarded `DurationRange.startFraction` and `DurationRange.endFraction` against zero or negative durations to prevent `NaN`/`Infinity` exceptions.
 
 ## 1.3.2

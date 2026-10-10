@@ -20,4 +20,7 @@ enum PlayerControllerEvent {
 
   ///Subtitles configuration has been updated.
   changeSubtitlesConfiguration,
+
+  ///Ad playback or overlay state has been updated.
+  adStateChanged,
 }

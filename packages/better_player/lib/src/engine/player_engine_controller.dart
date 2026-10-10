@@ -87,9 +87,15 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
           }
 
         case VideoEventType.play:
-          play();
+          if (!value.isPlaying) {
+            value = value.copyWith(isPlaying: true);
+            _startTimer();
+          }
         case VideoEventType.pause:
-          pause();
+          if (value.isPlaying) {
+            value = value.copyWith(isPlaying: false);
+            _timer?.cancel();
+          }
         case VideoEventType.seek:
           seekTo(event.position);
         case VideoEventType.pipStart:
