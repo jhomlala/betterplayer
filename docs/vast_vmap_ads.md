@@ -15,11 +15,11 @@ Dual-texture video stacking runs the ad in a secondary player layer on top while
 
 <div style={{display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'center', margin: '24px 0'}}>
   <div style={{textAlign: 'center', maxWidth: '320px'}}>
-    <img src="/img/enterprise/vast_cupertino.png" alt="Cupertino VAST Ad Controls" style={{borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)'}} />
+    <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/static/img/enterprise/vast_cupertino.png" alt="Cupertino VAST Ad Controls" style={{borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)'}} />
     <p style={{marginTop: '8px', fontWeight: '600'}}>iOS Cupertino Glass Controls</p>
   </div>
   <div style={{textAlign: 'center', maxWidth: '320px'}}>
-    <img src="/img/enterprise/vast_material.png" alt="Material VAST Ad Controls" style={{borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)'}} />
+    <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/static/img/enterprise/vast_material.png" alt="Material VAST Ad Controls" style={{borderRadius: '12px', boxShadow: '0 4px 12px rgba(0,0,0,0.15)'}} />
     <p style={{marginTop: '8px', fontWeight: '600'}}>Material Controls</p>
   </div>
 </div>
