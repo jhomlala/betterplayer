@@ -1,4 +1,5 @@
 ## 1.22.0
+- Added: `BetterPlayerExtension` contract and `extensions` parameter on `PlayerConfiguration` for pluggable capability modules.
 - Added: TTML (`.ttml`, `.dfxp`, `.xml`) subtitle format support across file, network, memory sources, and DASH manifests with style inheritance, colors, regions, and frame rate calculation (#1213).
 - Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
 - Updated: Bumped federated package `better_player_macos` to `^1.1.0` with desktop controls integration.

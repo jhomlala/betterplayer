@@ -51,7 +51,7 @@ If the license is absent or invalid, the ad layer fails open: main video playbac
 
 ## Basic Ad Setup
 
-Attach a `BetterPlayerAdManager` to your existing `BetterPlayerController`:
+Add `BetterPlayerVastExtension` to your `PlayerConfiguration`:
 
 ```dart
 import 'package:better_player/better_player.dart';
@@ -67,29 +67,12 @@ class VideoPlayerWithAds extends StatefulWidget {
 
 class _VideoPlayerWithAdsState extends State<VideoPlayerWithAds> {
   late BetterPlayerController _controller;
-  late BetterPlayerAdManager _adManager;
 
   @override
   void initState() {
     super.initState();
 
-    _controller = BetterPlayerController(
-      const PlayerConfiguration(
-        aspectRatio: 16 / 9,
-        fit: BoxFit.contain,
-        autoPlay: true,
-      ),
-    );
-
-    _controller.setupDataSource(
-      PlayerDataSource(
-        DataSourceType.network,
-        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
-      ),
-    );
-
-    _adManager = BetterPlayerAdManager(
-      mainController: _controller,
+    final adExtension = BetterPlayerVastExtension(
       configuration: BetterPlayerAdConfiguration(
         adTagUrl: 'https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=',
         failOpen: true,
@@ -100,12 +83,26 @@ class _VideoPlayerWithAdsState extends State<VideoPlayerWithAds> {
       ),
     );
 
-    _adManager.initialize();
+    _controller = BetterPlayerController(
+      PlayerConfiguration(
+        aspectRatio: 16 / 9,
+        fit: BoxFit.contain,
+        autoPlay: true,
+        extensions: [adExtension],
+      ),
+    );
+
+    _controller.setupDataSource(
+      PlayerDataSource(
+        DataSourceType.network,
+        'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      ),
+    );
   }
 
   @override
   void dispose() {
-    _adManager.dispose();
+    // Controller disposal automatically tears down attached extensions
     _controller.dispose();
     super.dispose();
   }
@@ -116,6 +113,8 @@ class _VideoPlayerWithAdsState extends State<VideoPlayerWithAds> {
   }
 }
 ```
+
+Standalone usage: You can also instantiate `BetterPlayerAdManager(mainController: controller, configuration: config)` directly if you manage lifecycles manually.
 
 ---
 
