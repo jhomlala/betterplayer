@@ -152,12 +152,44 @@ class BetterPlayerController {
     _betterPlayerSubtitlesConfiguration =
         betterPlayerConfiguration.subtitlesConfiguration;
     _eventListeners.add(eventListener);
+    betterPlayerConfiguration.extensions.forEach(registerExtension);
     if (_engine != null) {
       _engine!.addListener(_onVideoPlayerChanged);
     }
     if (betterPlayerDataSource != null) {
       setupDataSource(betterPlayerDataSource);
     }
+  }
+
+  final List<BetterPlayerExtension> _extensions = [];
+
+  /// Read-only view of registered extensions.
+  List<BetterPlayerExtension> get extensions => List.unmodifiable(_extensions);
+
+  /// Registers and attaches an extension to this controller.
+  void registerExtension(BetterPlayerExtension extension) {
+    if (_disposed) return;
+    if (!_extensions.contains(extension)) {
+      _extensions.add(extension);
+      extension.onAttach(this);
+    }
+  }
+
+  /// Unregisters and detaches an extension from this controller.
+  void unregisterExtension(BetterPlayerExtension extension) {
+    if (_extensions.remove(extension)) {
+      extension.onDetach(this);
+    }
+  }
+
+  /// Finds and returns the first registered extension matching type [T], or null if not found.
+  T? getExtension<T extends BetterPlayerExtension>() {
+    for (final extension in _extensions) {
+      if (extension is T) {
+        return extension;
+      }
+    }
+    return null;
   }
 
   /// Enables automatic display frame rate matching on Android.
@@ -507,6 +539,10 @@ class BetterPlayerController {
       }
       _videoListeners.clear();
       _eventListeners.clear();
+      for (final extension in _extensions) {
+        extension.onDetach(this);
+      }
+      _extensions.clear();
       _nextVideoTimer?.cancel();
       _nextVideoTimeStreamController.close();
       _controlsVisibilityStreamController.close();
