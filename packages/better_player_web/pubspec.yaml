@@ -8,6 +8,10 @@ topics:
   - web
   - shaka
   - streaming
+
+screenshots:
+  - description: 'Better Player logo'
+    path: assets/logo.png
 resolution: workspace
 
 environment:

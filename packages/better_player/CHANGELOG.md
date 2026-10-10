@@ -1,5 +1,6 @@
 ## 1.22.0
 - Added: TTML (`.ttml`, `.dfxp`, `.xml`) subtitle format support across file, network, memory sources, and DASH manifests with style inheritance, colors, regions, and frame rate calculation (#1213).
+- Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
 - Updated: Bumped federated package `better_player_macos` to `^1.1.0` with desktop controls integration.
 - Updated: Bumped federated package `better_player_web` to `^1.1.4` with Shaka Player `attach` lifecycle migration and resilient retry configuration.
 - Fixed: Resolved play/pause oscillation loop and stuck progress bar on web by updating controller state directly on platform events without re-invoking platform playback commands.
