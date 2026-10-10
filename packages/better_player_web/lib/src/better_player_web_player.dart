@@ -61,30 +61,32 @@ class BetterPlayerWebPlayer {
   }
 
   void _applyDefaultConfiguration() {
-    final defaultConfig = {
-      'streaming': {
-        'retryParameters': {
-          'maxAttempts': 5,
-          'baseDelay': 1000,
-          'backoffFactor': 2,
-          'fuzzFactor': 0.5,
-          'timeout': 30000,
-          'stallTimeout': 10000,
-          'connectionTimeout': 15000,
-        },
-      },
-      'manifest': {
-        'retryParameters': {
-          'maxAttempts': 5,
-          'baseDelay': 1000,
-          'backoffFactor': 2,
-          'fuzzFactor': 0.5,
-          'timeout': 30000,
-          'stallTimeout': 10000,
-          'connectionTimeout': 15000,
-        },
-      },
-    }.jsify()! as JSObject;
+    final defaultConfig =
+        {
+              'streaming': {
+                'retryParameters': {
+                  'maxAttempts': 5,
+                  'baseDelay': 1000,
+                  'backoffFactor': 2,
+                  'fuzzFactor': 0.5,
+                  'timeout': 30000,
+                  'stallTimeout': 10000,
+                  'connectionTimeout': 15000,
+                },
+              },
+              'manifest': {
+                'retryParameters': {
+                  'maxAttempts': 5,
+                  'baseDelay': 1000,
+                  'backoffFactor': 2,
+                  'fuzzFactor': 0.5,
+                  'timeout': 30000,
+                  'stallTimeout': 10000,
+                  'connectionTimeout': 15000,
+                },
+              },
+            }.jsify()!
+            as JSObject;
 
     _shakaPlayer?.configure(defaultConfig);
   }
@@ -368,8 +370,21 @@ class BetterPlayerWebPlayer {
     );
   }
 
+  bool? get _isPaused {
+    try {
+      final jsObj = videoElement as JSObject;
+      if (jsObj.has('paused')) {
+        final val = jsObj.getProperty<JSBoolean?>('paused'.toJS);
+        if (val != null) {
+          return val.toDart;
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
   void play() {
-    if (!videoElement.paused) return;
+    if (_isPaused == false) return;
     try {
       final promise = videoElement.play();
       promise.toDart.catchError((Object err) {
@@ -382,14 +397,15 @@ class BetterPlayerWebPlayer {
       });
     } catch (e) {
       onLog(
-        message: 'BetterPlayerWebPlayer: videoElement.play() threw exception: $e',
+        message:
+            'BetterPlayerWebPlayer: videoElement.play() threw exception: $e',
         levelIndex: 3,
       );
     }
   }
 
   void pause() {
-    if (videoElement.paused) return;
+    if (_isPaused == true) return;
     videoElement.pause();
   }
 
@@ -402,7 +418,9 @@ class BetterPlayerWebPlayer {
   }
 
   Duration getPosition() {
-    final pos = Duration(milliseconds: (videoElement.currentTime * 1000).toInt());
+    final pos = Duration(
+      milliseconds: (videoElement.currentTime * 1000).toInt(),
+    );
     return pos;
   }
 

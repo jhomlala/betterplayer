@@ -129,39 +129,43 @@ void main() {
       expect(logs.any((m) => m.contains('initialized')), isTrue);
     });
 
-    test('initialize attaches videoElement and applies default retry parameters', () async {
-      final mockShaka = JSObject();
-      var attachCalled = false;
-      JSObject? appliedConfig;
-      mockShaka.setProperty(
-        'attach'.toJS,
-        (([web.HTMLVideoElement? el]) {
-          attachCalled = true;
-          return Future<JSAny?>.value().toJS;
-        }).toJS,
-      );
-      mockShaka.setProperty(
-        'configure'.toJS,
-        ((JSObject config) {
-          appliedConfig = config;
-        }).toJS,
-      );
+    test(
+      'initialize attaches videoElement and applies default retry parameters',
+      () async {
+        final mockShaka = JSObject();
+        var attachCalled = false;
+        JSObject? appliedConfig;
+        mockShaka.setProperty(
+          'attach'.toJS,
+          (([web.HTMLVideoElement? el]) {
+            attachCalled = true;
+            return Future<JSAny?>.value().toJS;
+          }).toJS,
+        );
+        mockShaka.setProperty(
+          'configure'.toJS,
+          ((JSObject config) {
+            appliedConfig = config;
+          }).toJS,
+        );
 
-      final p = BetterPlayerWebPlayer(
-        viewId: 'test_attach_view',
-        onLog: ({required String message, int levelIndex = 0}) {},
-        shakaPlayer: mockShaka as ShakaPlayer,
-      );
-      await p.initialize();
+        final p = BetterPlayerWebPlayer(
+          viewId: 'test_attach_view',
+          onLog: ({required String message, int levelIndex = 0}) {},
+          shakaPlayer: mockShaka as ShakaPlayer,
+        );
+        await p.initialize();
 
-      expect(attachCalled, isTrue);
-      expect(appliedConfig, isNotNull);
-      final streaming =
-          appliedConfig!.getProperty('streaming'.toJS)! as JSObject;
-      final retry = streaming.getProperty('retryParameters'.toJS)! as JSObject;
-      expect(retry.getProperty('maxAttempts'.toJS).dartify(), 5);
-      expect(retry.getProperty('timeout'.toJS).dartify(), 30000);
-    });
+        expect(attachCalled, isTrue);
+        expect(appliedConfig, isNotNull);
+        final streaming =
+            appliedConfig!.getProperty('streaming'.toJS)! as JSObject;
+        final retry =
+            streaming.getProperty('retryParameters'.toJS)! as JSObject;
+        expect(retry.getProperty('maxAttempts'.toJS).dartify(), 5);
+        expect(retry.getProperty('timeout'.toJS).dartify(), 30000);
+      },
+    );
 
     test('buildShakaConfig handles Widevine DRM', () {
       final dataSource = DataSource(
@@ -611,7 +615,9 @@ void main() {
           }).toJS,
         );
 
-        await player.initialize(videoElement: mockVideo as web.HTMLVideoElement);
+        await player.initialize(
+          videoElement: mockVideo as web.HTMLVideoElement,
+        );
 
         final events = <VideoEventType>[];
         final sub = player.events.listen((e) => events.add(e.eventType));
@@ -756,6 +762,24 @@ void main() {
         expect(called, isTrue);
       });
 
+      test('play is no-op if already playing', () {
+        var called = false;
+        (player.videoElement as JSObject).setProperty(
+          'paused'.toJS,
+          false.toJS,
+        );
+        (player.videoElement as JSObject).setProperty(
+          'play'.toJS,
+          (() {
+            called = true;
+            return Future<JSAny?>.value().toJS;
+          }).toJS,
+        );
+
+        player.play();
+        expect(called, isFalse);
+      });
+
       test('pause calls videoElement.pause', () {
         var called = false;
         (player.videoElement as JSObject).setProperty(
@@ -767,6 +791,20 @@ void main() {
 
         player.pause();
         expect(called, isTrue);
+      });
+
+      test('pause is no-op if already paused', () {
+        var called = false;
+        (player.videoElement as JSObject).setProperty('paused'.toJS, true.toJS);
+        (player.videoElement as JSObject).setProperty(
+          'pause'.toJS,
+          (() {
+            called = true;
+          }).toJS,
+        );
+
+        player.pause();
+        expect(called, isFalse);
       });
 
       test('setVolume sets videoElement.volume', () {
