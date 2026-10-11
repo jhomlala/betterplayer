@@ -3,6 +3,7 @@ import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/widgets/demo_container.dart';
 import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:better_player_example/widgets/platform_note_card.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class PictureInPicturePage extends StatefulWidget {
@@ -74,11 +75,13 @@ class _PictureInPicturePageState extends State<PictureInPicturePage> {
                 icon: Icons.picture_in_picture_alt_outlined,
               ),
               if (_isPipSupported == false)
-                const PlatformNoteCard(
+                PlatformNoteCard(
                   title: 'PiP Unsupported on This Platform',
-                  message:
-                      'Picture in Picture is not supported on Windows. '
-                      'It is supported on Android, iOS, and Web browsers.',
+                  message: kIsWeb
+                      ? 'Picture in Picture is not supported on Web in this example.'
+                      : defaultTargetPlatform == TargetPlatform.windows
+                      ? 'Picture in Picture is not supported on Windows.'
+                      : 'Picture in Picture is not supported or is disabled on this device.',
                   icon: Icons.picture_in_picture_alt_outlined,
                   isWarning: true,
                 ),

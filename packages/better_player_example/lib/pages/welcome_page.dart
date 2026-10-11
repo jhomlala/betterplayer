@@ -411,6 +411,7 @@ class _WelcomePageState extends State<WelcomePage> {
         TargetPlatform.iOS,
         TargetPlatform.macOS,
       },
+      supportsWeb: false,
       pageBuilder: (_) => const PictureInPicturePage(),
     ),
     ExampleItem(
