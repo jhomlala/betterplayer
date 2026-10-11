@@ -41,13 +41,13 @@ This plugin is developed as a community-driven project. If you require a feature
 
 ## Screenshots
 
-| Web & Desktop | Android |
+| Mobile Overview | Native Picture-in-Picture (PiP) |
 |:---:|:---:|
-| ![Web and Desktop](./static/img/screenshots/web_01_overview_dark.png) | ![Android](./static/img/screenshots/android_01_overview.png) |
+| ![Android](./static/img/screenshots/android_01_overview.png) | ![PiP](./static/img/screenshots/android_05_pip.png) |
 
-| Touch & Fullscreen Controls | Native Picture-in-Picture (PiP) |
+| Web & Desktop Overview | Touch & Fullscreen Controls |
 |:---:|:---:|
-| ![Fullscreen](./static/img/screenshots/android_04_fullscreen.png) | ![PiP](./static/img/screenshots/android_05_pip.png) |
+| ![Web and Desktop](./static/img/screenshots/web_01_overview_dark.png) | ![Fullscreen](./static/img/screenshots/android_04_fullscreen.png) |
 
 | Adaptive HLS Quality & Track Switching | Styled Subtitles (WebVTT / TTML / SRT) |
 |:---:|:---:|

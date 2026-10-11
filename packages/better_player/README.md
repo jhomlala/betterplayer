@@ -45,20 +45,25 @@ Stop stitching `video_player`, separate UI packages, abandoned caching plugins, 
 
 ## 📱 Visual Showcase
 
-<p align="center">
-  <img src="assets/screenshots/web_01_overview_dark.png" width="62%" alt="Better Player Web and Desktop Showcase" />
-  <img src="assets/screenshots/android_01_overview.png" width="35%" alt="Better Player Android Mobile Showcase" />
-</p>
-
 <table align="center">
   <tr>
     <td align="center" width="50%">
-      <img src="assets/screenshots/android_04_fullscreen.png" alt="Touch & Fullscreen Controls" /><br>
-      <b>Touch & Fullscreen Controls</b>
+      <img src="assets/screenshots/android_01_overview.png" alt="Better Player Android Mobile Showcase" /><br>
+      <b>Mobile Overview</b>
     </td>
     <td align="center" width="50%">
       <img src="assets/screenshots/android_05_pip.png" alt="Picture in Picture" /><br>
       <b>Native Picture-in-Picture (PiP)</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/web_01_overview_dark.png" alt="Better Player Web and Desktop Showcase" /><br>
+      <b>Web & Desktop Overview</b>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/android_04_fullscreen.png" alt="Touch & Fullscreen Controls" /><br>
+      <b>Touch & Fullscreen Controls</b>
     </td>
   </tr>
   <tr>
