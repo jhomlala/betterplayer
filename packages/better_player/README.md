@@ -176,7 +176,6 @@ Found a bug or missing a feature? Open an issue or submit a pull request.
 
 ## 💼 Enterprise Support
 
-Need client-side VAST/VMAP ad scheduling, a custom video source adapter, bespoke DRM implementation, or tailored UI controls?
+Need a custom video source adapter, bespoke DRM implementation, or tailored UI controls? I am available for consulting.
 
-- [VAST & VMAP Ads Guide](https://jhomlala.github.io/betterplayer/vast_vmap_ads) &bull; [Enterprise Overview](https://jhomlala.github.io/betterplayer/enterprise_overview)
-- [Contact on LinkedIn →](https://pl.linkedin.com/in/jhomlala) or email **betterplayer@hasoft.pl**.
+[Contact on LinkedIn →](https://pl.linkedin.com/in/jhomlala)

@@ -14,7 +14,7 @@ Better Player is an advanced video player plugin for Flutter, built upon the fou
 
 ## Key Features
 
-Better Player provides a complete video playback feature set for Flutter:
+Better Player provides a robust set of features designed for production-ready applications:
 
 *   **Reliability**: Fixes for common bugs found in other players.
 *   **Advanced Configuration**: Granular control over player behavior and appearance.
