@@ -1,4 +1,4 @@
-## Unreleased
+## 1.24.0
 - Added: `BetterPlayerFeed` and `BetterPlayerFeedController` for high-performance vertical and horizontal swipe video feeds with PageView integration.
 - Added: `BetterPlayerPool` with bounded controller capacity, distance-based slot eviction, and lookahead/lookbehind preloading (`prepared` and `muted` modes) to prevent hardware decoder exhaustion in infinite feeds.
 - Updated: `better_player_example` with vertical swipe video feed page (`BetterPlayerFeedPage`) and modernized `ReusableVideoListPage` using `BetterPlayerPool`.
