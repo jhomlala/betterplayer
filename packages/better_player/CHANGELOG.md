@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Anchored secondary overflow menus in `PlayerWebControls` to the settings button instead of the bottom-right viewport boundary.
+
 ## 1.24.0
 - Added: `BetterPlayerFeed` and `BetterPlayerFeedController` for high-performance vertical and horizontal swipe video feeds with PageView integration.
 - Added: `BetterPlayerPool` with bounded controller capacity, distance-based slot eviction, and lookahead/lookbehind preloading (`prepared` and `muted` modes) to prevent hardware decoder exhaustion in infinite feeds.
