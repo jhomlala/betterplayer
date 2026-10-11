@@ -4,8 +4,10 @@ title: Introduction
 slug: /
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-  <img src="./static/img/logo.png" alt="Better Player Logo" width="120" style={{borderRadius: '1rem', marginBottom: '1rem'}} />
+  <img src={useBaseUrl('/img/logo.png')} alt="Better Player Logo" width="120" style={{borderRadius: '1rem', marginBottom: '1rem'}} />
 </div>
 
 # Better Player
@@ -20,7 +22,7 @@ Better Player provides a robust set of features designed for production-ready ap
 *   **Advanced Configuration**: Granular control over player behavior and appearance.
 *   **Refactored Controls**: Modern, customizable user interface.
 *   **Playlist Support**: Play sequences of videos continuously.
-*   **ListView Integration**: Optimized for video playback within scrollable lists.
+*   **Feed & List Pooling**: High-performance vertical swipe feeds (`BetterPlayerFeed`) and bounded controller pooling (`BetterPlayerPool`) to prevent hardware decoder exhaustion.
 *   **Comprehensive Subtitles**: Support for SRT and WebVTT formats (with HTML tags), TTML, HLS segmented subtitles, and multiple subtitle tracks.
 *   **Adaptive Streaming**: Full support for HLS and DASH, including track, subtitle, and audio track selection.
 *   **Performance & Optimization**: Integrated cache support and alternative resolution selection.

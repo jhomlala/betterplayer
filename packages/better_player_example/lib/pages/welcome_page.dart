@@ -4,6 +4,7 @@ import 'package:better_player_example/model/tab_destination.dart';
 import 'package:better_player_example/pages/auto_fullscreen_on_rotation_example_page.dart';
 import 'package:better_player_example/pages/auto_fullscreen_orientation_page.dart';
 import 'package:better_player_example/pages/basic_player_page.dart';
+import 'package:better_player_example/pages/better_player_feed_page.dart';
 import 'package:better_player_example/pages/cache_page.dart';
 import 'package:better_player_example/pages/clearkey_page.dart';
 import 'package:better_player_example/pages/controller_controls_page.dart';
@@ -31,7 +32,6 @@ import 'package:better_player_example/pages/reusable_video_list/reusable_video_l
 import 'package:better_player_example/pages/rotation_and_fit_page.dart';
 import 'package:better_player_example/pages/rtsp_page.dart';
 import 'package:better_player_example/pages/subtitles_page.dart';
-import 'package:better_player_example/pages/video_list/video_list_page.dart';
 import 'package:better_player_example/utils/example_io_utils.dart';
 import 'package:better_player_example/widgets/category_tab.dart';
 import 'package:better_player_example/widgets/overview_tab.dart';
@@ -359,20 +359,20 @@ class _WelcomePageState extends State<WelcomePage> {
       pageBuilder: (_) => const PlaylistPage(),
     ),
     ExampleItem(
-      title: 'Video list',
-      description:
-          'Scrollable list of video feeds with autoplay on visibility.',
-      icon: Icons.view_agenda,
-      identifier: 'welcome_page_item_video_list',
-      pageBuilder: (_) => const VideoListPage(),
-    ),
-    ExampleItem(
       title: 'Reusable video list',
       description:
           'High-performance scrolling feed recycling player controllers.',
       icon: Icons.dynamic_feed,
       identifier: 'welcome_page_item_reusable_video_list',
       pageBuilder: (_) => const ReusableVideoListPage(),
+    ),
+    ExampleItem(
+      title: 'Video feed',
+      description:
+          'High-performance full-screen vertical video feed powered by BetterPlayerFeed and controller pooling.',
+      icon: Icons.view_carousel,
+      identifier: 'welcome_page_item_video_feed',
+      pageBuilder: (_) => const BetterPlayerFeedPage(),
     ),
     ExampleItem(
       title: 'Cache',

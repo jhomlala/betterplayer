@@ -1,8 +1,19 @@
+// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/model/video_list_data.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Legacy list item widget using deprecated [BetterPlayerListVideoPlayer].
+@Deprecated(
+  'Use BetterPlayerFeed or BetterPlayerPool instead. '
+  'BetterPlayerListVideoPlayer does not recycle native decoders and causes OOM.',
+)
 class VideoListWidget extends StatefulWidget {
+  /// Deprecated: use [BetterPlayerFeed] or [BetterPlayerPool].
+  @Deprecated(
+    'Use BetterPlayerFeed or BetterPlayerPool instead.',
+  )
   const VideoListWidget({super.key, this.videoListData});
   final VideoListData? videoListData;
 

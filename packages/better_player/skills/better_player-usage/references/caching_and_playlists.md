@@ -94,20 +94,42 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
 }
 ```
 
-## 3. Video Playback in Scrollable Lists (`BetterPlayerListVideoPlayer`)
+## 3. Video Playback in Scrollable Lists and Feeds
 
-For short lists where videos auto-play based on viewport visibility, use `BetterPlayerListVideoPlayer`:
+For vertical or horizontal swipe feeds (short-form video feeds) and long lists, use **`BetterPlayerFeed`**. It bounds native memory with an internal `BetterPlayerPool` (defaults to 3 controllers) and preloads upcoming items:
 
 ```dart
-AspectRatio(
-  aspectRatio: 16 / 9,
-  child: BetterPlayerListVideoPlayer(
-    PlayerDataSource(DataSourceType.network, videoUrl),
-    key: ValueKey(videoUrl),
-    playFraction: 0.8, // Plays when at least 80% of the widget is visible
-    autoPlay: true,
+BetterPlayerFeed(
+  controller: BetterPlayerFeedController(
+    dataSources: feedSources,
+    poolConfiguration: const PlayerPoolConfiguration(
+      poolSize: 3,
+      preloadForward: 1,
+      preloadBackward: 1,
+    ),
   ),
-)
+  configuration: PlayerFeedConfiguration(
+    placeholderBuilder: (context, index, dataSource) =>
+        const Center(child: CircularProgressIndicator()),
+  ),
+);
 ```
 
-> **Performance rule for long feeds**: Do not instantiate dozens of `BetterPlayerController` instances simultaneously in a long `ListView.builder`; native media decoders will exhaust device memory (OOM). Maintain a small pool of 2 to 3 reusable `BetterPlayerController` instances with `autoDispose: false` and attach them to visible items as the user scrolls.
+For custom lists where you manage your own viewport, use **`BetterPlayerPool`** directly:
+
+```dart
+final pool = BetterPlayerPool(
+  configuration: const PlayerPoolConfiguration(poolSize: 3),
+);
+
+final lease = await pool.acquire(
+  itemId: 'video_1',
+  index: 0,
+  dataSource: dataSource,
+);
+
+BetterPlayer(controller: lease.controller);
+lease.release();
+```
+
+For short static layouts without pooling, you can use `playerVisibilityChangedBehavior` directly on `BetterPlayerController`. Note: `BetterPlayerListVideoPlayer` is deprecated because it retains controllers indefinitely via `AutomaticKeepAliveClientMixin`, which causes OOM in scrolling lists. Migrate all feeds to `BetterPlayerFeed` or `BetterPlayerPool`.

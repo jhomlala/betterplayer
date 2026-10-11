@@ -19,6 +19,7 @@
 
 <p align="center">
   <a href="https://jhomlala.github.io/betterplayer/"><b>Documentation</b></a> &bull;
+  <a href="https://jhomlala.github.io/betterplayer/demo/"><b>Live Demo</b></a> &bull;
   <a href="https://jhomlala.github.io/betterplayer/migration_from_video_player"><b>Migrating from video_player</b></a> &bull;
   <a href="https://jhomlala.github.io/betterplayer/migration_from_chewie"><b>Migrating from chewie</b></a> &bull;
   <a href="https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_example"><b>Example App</b></a>
@@ -41,6 +42,7 @@ Stop stitching `video_player`, separate UI packages, abandoned caching plugins, 
 | **Picture in Picture (PiP)** | Built-in | None | Platform-dependent |
 | **Playlists** | Built-in | None | Built-in |
 | **VAST / VMAP Ads** | Client-side ad engine (VAST 2.0-4.x, VMAP) | None | None |
+| **Video Feeds & Pooling** | Built-in (`BetterPlayerFeed`, `BetterPlayerPool`) | None | None |
 
 ---
 

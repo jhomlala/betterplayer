@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/model/video_list_data.dart';
 import 'package:better_player_example/pages/reusable_video_list/reusable_video_list_controller.dart';
@@ -8,90 +6,84 @@ import 'package:visibility_detector/visibility_detector.dart';
 
 class ReusableVideoListWidget extends StatefulWidget {
   const ReusableVideoListWidget({
+    required this.videoListData,
+    required this.videoListController,
     super.key,
-    this.videoListData,
-    this.videoListController,
+    this.index = 0,
     this.canBuildVideo,
   });
-  final VideoListData? videoListData;
-  final ReusableVideoListController? videoListController;
+
+  final VideoListData videoListData;
+  final ReusableVideoListController videoListController;
+  final int index;
   final bool Function()? canBuildVideo;
 
   @override
-  _ReusableVideoListWidgetState createState() =>
+  State<ReusableVideoListWidget> createState() =>
       _ReusableVideoListWidgetState();
 }
 
 class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
-  VideoListData? get videoListData => widget.videoListData;
-  BetterPlayerController? controller;
-  StreamController<BetterPlayerController?>
-  betterPlayerControllerStreamController = StreamController.broadcast();
-  bool _initialized = false;
-  Timer? _timer;
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  PlayerPoolLease? _lease;
+  bool _isLoading = false;
 
   @override
   void dispose() {
-    betterPlayerControllerStreamController.close();
+    _releaseLease();
     super.dispose();
   }
 
-  void _setupController() {
-    if (controller == null) {
-      controller = widget.videoListController!.getBetterPlayerController();
-      if (controller != null) {
-        controller!.setupDataSource(
-          PlayerDataSource.network(
-            videoListData!.videoUrl,
-            cacheConfiguration: const CacheConfiguration(useCache: true),
-          ),
-        );
-        if (!betterPlayerControllerStreamController.isClosed) {
-          betterPlayerControllerStreamController.add(controller);
-        }
-        controller!.addEventsListener(onPlayerEvent);
-      }
+  void _releaseLease() {
+    if (_lease != null) {
+      _lease!.release();
+      _lease = null;
     }
   }
 
-  void _freeController() {
-    if (!_initialized) {
-      _initialized = true;
+  Future<void> _acquireController() async {
+    if (_lease != null || _isLoading || !mounted) {
       return;
     }
-    if (controller != null && _initialized) {
-      controller!.removeEventsListener(onPlayerEvent);
-      widget.videoListController!.freeBetterPlayerController(controller);
-      controller!.pause();
-      controller = null;
-      if (!betterPlayerControllerStreamController.isClosed) {
-        betterPlayerControllerStreamController.add(null);
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final lease = await widget.videoListController.pool.acquire(
+        itemId: 'list_item_${widget.index}_${widget.videoListData.videoUrl}',
+        index: widget.index,
+        dataSource: PlayerDataSource.network(
+          widget.videoListData.videoUrl,
+          cacheConfiguration: const CacheConfiguration(useCache: true),
+        ),
+      );
+
+      if (!mounted) {
+        lease.release();
+        return;
       }
-      _initialized = false;
+
+      setState(() {
+        _lease = lease;
+        _isLoading = false;
+      });
+
+      if (widget.videoListData.lastPosition != null) {
+        await lease.controller.seekTo(widget.videoListData.lastPosition!);
+      }
+      if (widget.videoListData.wasPlaying ?? true) {
+        await lease.controller.play();
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 
-  void onPlayerEvent(PlayerEvent event) {
-    if (event.betterPlayerEventType == PlayerEventType.progress) {
-      videoListData!.lastPosition = event.parameters!['progress'] as Duration?;
-    }
-    if (event.betterPlayerEventType == PlayerEventType.initialized) {
-      if (videoListData!.lastPosition != null) {
-        controller!.seekTo(videoListData!.lastPosition!);
-      }
-      if (videoListData!.wasPlaying!) {
-        controller!.play();
-      }
-    }
-  }
-
-  ///TODO: Handle "setState() or markNeedsBuild() called during build." error
-  ///when fast scrolling through the list
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -102,64 +94,55 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
           Padding(
             padding: const EdgeInsets.all(12),
             child: Text(
-              videoListData!.videoTitle,
+              widget.videoListData.videoTitle,
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
           VisibilityDetector(
-            key: Key(hashCode.toString() + DateTime.now().toString()),
+            key: ValueKey(
+              'detector_${widget.index}_${widget.videoListData.videoUrl}',
+            ),
             onVisibilityChanged: (info) {
-              final canBuildVideo = widget.canBuildVideo;
-              if (canBuildVideo != null && !canBuildVideo()) {
-                _timer?.cancel();
-                _timer = null;
-                _timer = Timer(const Duration(milliseconds: 500), () {
-                  if (info.visibleFraction >= 0.6) {
-                    _setupController();
-                  } else {
-                    _freeController();
-                  }
-                });
-                return;
-              }
-              if (info.visibleFraction >= 0.6) {
-                _setupController();
-              } else {
-                _freeController();
+              if (info.visibleFraction >= 0.5) {
+                _acquireController();
+              } else if (info.visibleFraction < 0.2) {
+                if (_lease != null) {
+                  widget.videoListData.wasPlaying =
+                      _lease?.controller.isPlaying() ?? false;
+                  setState(_releaseLease);
+                }
               }
             },
-            child: StreamBuilder<BetterPlayerController?>(
-              stream: betterPlayerControllerStreamController.stream,
-              builder: (context, snapshot) {
-                return AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: controller != null
-                      ? BetterPlayer(controller: controller!)
-                      : const ColoredBox(
-                          color: Colors.black,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: _lease != null
+                  ? BetterPlayer(controller: _lease!.controller)
+                  : ColoredBox(
+                      color: Colors.black,
+                      child: Center(
+                        child: _isLoading
+                            ? const CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              )
+                            : const Icon(
+                                Icons.play_circle_outline,
+                                color: Colors.white54,
+                                size: 48,
                               ),
-                            ),
-                          ),
-                        ),
-                );
-              },
+                      ),
+                    ),
             ),
           ),
           const Padding(
             padding: EdgeInsets.all(8),
             child: Text(
-              "Horror: In Steven Spielberg's Jaws, a shark terrorizes a beach "
-              'town. Plainspoken sheriff Roy Scheider, hippie shark '
-              'researcher Richard Dreyfuss, and a squirrely boat captain '
-              'set out to find the beast, but will they escape with their '
-              "lives? 70's special effects, legendary score, and trademark "
-              'humor set this classic apart.',
+              'Recycles controllers across list rows using BetterPlayerPool. '
+              'Only rows visible in viewport hold leases; distance-based eviction '
+              'safely frees furthest slots.',
             ),
           ),
           Center(
@@ -168,21 +151,21 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
                 ElevatedButton(
                   child: const Text('Play'),
                   onPressed: () {
-                    controller!.play();
+                    _lease?.controller.play();
                   },
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
                   child: const Text('Pause'),
                   onPressed: () {
-                    controller!.pause();
+                    _lease?.controller.pause();
                   },
                 ),
                 const SizedBox(width: 8),
                 ElevatedButton(
                   child: const Text('Set max volume'),
                   onPressed: () {
-                    controller!.setVolume(1);
+                    _lease?.controller.setVolume(1);
                   },
                 ),
               ],
@@ -191,14 +174,5 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
         ],
       ),
     );
-  }
-
-  @override
-  void deactivate() {
-    if (controller != null) {
-      videoListData!.wasPlaying = controller!.isPlaying();
-    }
-    _initialized = true;
-    super.deactivate();
   }
 }

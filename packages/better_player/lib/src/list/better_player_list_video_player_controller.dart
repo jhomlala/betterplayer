@@ -1,6 +1,9 @@
 import 'package:better_player/better_player.dart';
 
-///Controller of Better Player List Video Player.
+/// Controller of Better Player List Video Player.
+@Deprecated(
+  'Use BetterPlayerFeedController or BetterPlayerPool instead.',
+)
 class BetterPlayerListVideoPlayerController {
   BetterPlayerController? _betterPlayerController;
 
