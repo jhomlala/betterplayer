@@ -5,6 +5,7 @@ import 'package:better_player/src/configuration/player_data_source.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/list/player_pool_configuration.dart';
 import 'package:better_player/src/list/player_pool_lease.dart';
+import 'package:better_player/src/list/player_preload_mode.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 
 /// Entry representing a pooled controller and its allocation state.

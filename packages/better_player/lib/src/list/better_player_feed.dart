@@ -1,14 +1,13 @@
 import 'package:better_player/better_player.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Item widget rendered inside [BetterPlayerFeed].
-class BetterPlayerFeedItem extends StatefulWidget {
+/// Internal item widget rendered inside [BetterPlayerFeed].
+class _BetterPlayerFeedItem extends StatefulWidget {
   /// Creates a feed item widget.
-  const BetterPlayerFeedItem({
+  const _BetterPlayerFeedItem({
     required this.index,
     required this.controller,
     required this.configuration,
-    super.key,
   });
 
   /// Index of the item in the feed.
@@ -21,10 +20,10 @@ class BetterPlayerFeedItem extends StatefulWidget {
   final PlayerFeedConfiguration configuration;
 
   @override
-  State<BetterPlayerFeedItem> createState() => _BetterPlayerFeedItemState();
+  State<_BetterPlayerFeedItem> createState() => _BetterPlayerFeedItemState();
 }
 
-class _BetterPlayerFeedItemState extends State<BetterPlayerFeedItem> {
+class _BetterPlayerFeedItemState extends State<_BetterPlayerFeedItem> {
   bool _firstFrameRendered = false;
   PlayerPoolLease? _currentLease;
   late ValueNotifier<PlayerPoolLease?> _leaseNotifier;
@@ -38,7 +37,7 @@ class _BetterPlayerFeedItemState extends State<BetterPlayerFeedItem> {
   }
 
   @override
-  void didUpdateWidget(BetterPlayerFeedItem oldWidget) {
+  void didUpdateWidget(_BetterPlayerFeedItem oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.index != widget.index ||
         oldWidget.controller != widget.controller) {
@@ -167,7 +166,7 @@ class _BetterPlayerFeedState extends State<BetterPlayerFeed> {
         widget.controller.onIndexChanged(index);
       },
       itemBuilder: (context, index) {
-        return BetterPlayerFeedItem(
+        return _BetterPlayerFeedItem(
           index: index,
           controller: widget.controller,
           configuration: widget.configuration,

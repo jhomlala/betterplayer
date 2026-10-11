@@ -37,6 +37,7 @@ export 'src/list/better_player_pool.dart';
 export 'src/list/player_feed_configuration.dart';
 export 'src/list/player_pool_configuration.dart';
 export 'src/list/player_pool_lease.dart';
+export 'src/list/player_preload_mode.dart';
 export 'src/logging/player_log_level.dart';
 export 'src/logging/player_log_output.dart';
 export 'src/logging/player_log_record.dart';
