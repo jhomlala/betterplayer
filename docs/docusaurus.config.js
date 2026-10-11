@@ -63,6 +63,12 @@ const config = {
             position: 'left',
           },
           {
+            href: 'https://jhomlala.github.io/betterplayer/demo/',
+            label: 'Live Demo',
+            position: 'left',
+            target: '_self',
+          },
+          {
             href: 'https://pub.dev/packages/better_player',
             label: 'pub.dev',
             position: 'right',

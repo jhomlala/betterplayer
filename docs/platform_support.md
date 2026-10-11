@@ -55,5 +55,6 @@ The following matrix details the current feature support for Better Player acros
 
 ### Web
 * Web playback is powered by the open-source [Shaka Player](https://shaka-player-demo.appspot.com/docs/api/tutorial-welcome.html) library, connecting Flutter to web playback capabilities.
+* Try the [Live Demo](https://jhomlala.github.io/betterplayer/demo/) running in the browser. Note: web streams must use HTTPS and support CORS headers.
 * To use Better Player on the web, you **must** include the Shaka Player library in your `web/index.html` file (see the [Installation](install.md) page).
 * Background notifications and fine-grained caching (`preCache`) are not supported on standard web browsers.
