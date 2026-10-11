@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:material_ui/material_ui.dart';
 
 class HlsAudioPage extends StatefulWidget {
@@ -30,24 +32,29 @@ class _HlsAudioPageState extends State<HlsAudioPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HLS Audio')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Click on overflow menu (3 dots) and select Audio. You can choose '
-              'audio track from HLS stream. Better Player will setup audio'
-              ' automatically for you.',
-              style: TextStyle(fontSize: 16),
-            ),
+      appBar: AppBar(title: const Text('HLS Alternate Audio')),
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Multiple Audio Tracks (HLS)',
+                description:
+                    'Switches between alternative audio streams (commentary, language dubs) '
+                    'declared in the HLS manifest.',
+                instructions:
+                    'Tap overflow menu (three dots) > Audio to choose an audio track.',
+                icon: Icons.audiotrack_outlined,
+              ),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,3 +1,8 @@
+## 1.23.2
+- Updated: Modernized `better_player_example` with Material 3 responsive layout (NavigationRail on desktop/web, NavigationBar on mobile), unified title branding to Better Player, theme mode switcher, and refreshed demo page headers and descriptions.
+- Fixed: Resolved OS incompatibility issues in `better_player_example`: replaced infinite loading spinner for local files on Web with informative sandbox notice, loaded memory video bytes directly via asset bundle across all platforms, guarded DRM/ClearKey/DASH/RTSP/PiP against unsupported OS environments, and added `PlatformNoteCard` compatibility indicators.
+- Updated: Refreshed README and documentation screenshots with the new example app on web and Android, and added them to the pub.dev gallery.
+
 ## 1.23.1
 - Updated: Bumped federated packages `better_player_android` to `^1.7.1`, `better_player_ios` to `^1.6.1`, `better_player_macos` to `^1.1.1`, and `better_player_windows` to `^1.0.1`.
 

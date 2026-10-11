@@ -5,7 +5,7 @@ slug: /
 ---
 
 <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-  <img src="./img/logo.png" alt="Better Player Logo" width="120" style={{borderRadius: '1rem', marginBottom: '1rem'}} />
+  <img src="./static/img/logo.png" alt="Better Player Logo" width="120" style={{borderRadius: '1rem', marginBottom: '1rem'}} />
 </div>
 
 # Better Player
@@ -41,7 +41,14 @@ This plugin is developed as a community-driven project. If you require a feature
 
 ## Screenshots
 
-| | | | | | |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| ![1](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/1.png) | ![2](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/2.png) | ![3](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/3.png) | ![4](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/4.png) | ![5](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/5.png) | ![6](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/6.png) |
-| ![7](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/7.png) | ![8](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/8.png) | ![9](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/9.png) | ![10](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/10.png) | ![11](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/11.png) | ![12](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/12.png) |
+| Web & Desktop | Android |
+|:---:|:---:|
+| ![Web and Desktop](./static/img/screenshots/web_01_overview_dark.png) | ![Android](./static/img/screenshots/android_01_overview.png) |
+
+| Touch & Fullscreen Controls | Native Picture-in-Picture (PiP) |
+|:---:|:---:|
+| ![Fullscreen](./static/img/screenshots/android_04_fullscreen.png) | ![PiP](./static/img/screenshots/android_05_pip.png) |
+
+| Adaptive HLS Quality & Track Switching | Styled Subtitles (WebVTT / TTML / SRT) |
+|:---:|:---:|
+| ![HLS Tracks](./static/img/screenshots/web_05_hls_tracks.png) | ![Subtitles](./static/img/screenshots/web_04_subtitles.png) |

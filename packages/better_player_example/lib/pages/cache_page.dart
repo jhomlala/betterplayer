@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -38,54 +40,77 @@ class _CachePageState extends State<CachePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cache')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              kIsWeb
-                  ? 'Cache is not supported on the web platform.'
-                  : 'Player with cache enabled. To test this feature, first plays '
-                        'video, then leave this page, turn internet off and enter '
-                        'page again. You should be able to play video without '
-                        'internet connection.',
-              style: TextStyle(fontSize: 16),
-            ),
+      appBar: AppBar(title: const Text('Video Caching')),
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Native Cache & Pre-caching',
+                description: kIsWeb
+                    ? 'Caching is not supported on Flutter Web because browsers handle media caching.'
+                    : 'Caches downloaded segments locally. Play once, disconnect network, '
+                          'and verify seamless offline playback.',
+                instructions: kIsWeb
+                    ? null
+                    : 'Use pre-cache actions below to buffer 10 MB ahead of playback.',
+                icon: Icons.cached_outlined,
+              ),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    FilledButton.icon(
+                      icon: const Icon(Icons.play_arrow),
+                      label: const Text('Play Video'),
+                      onPressed: () {
+                        _betterPlayerController.setupDataSource(
+                          _betterPlayerDataSource,
+                        );
+                      },
+                    ),
+                    if (!kIsWeb) ...[
+                      FilledButton.tonalIcon(
+                        icon: const Icon(Icons.download),
+                        label: const Text('Start Pre-cache'),
+                        onPressed: () {
+                          _betterPlayerController.preCache(
+                            _betterPlayerDataSource,
+                          );
+                        },
+                      ),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.stop),
+                        label: const Text('Stop Pre-cache'),
+                        onPressed: () {
+                          _betterPlayerController.stopPreCache(
+                            _betterPlayerDataSource,
+                          );
+                        },
+                      ),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.delete_outline),
+                        label: const Text('Clear Cache'),
+                        onPressed: () {
+                          _betterPlayerController.clearCache();
+                        },
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-          if (!kIsWeb) ...[
-            TextButton(
-              child: const Text('Start pre cache'),
-              onPressed: () {
-                _betterPlayerController.preCache(_betterPlayerDataSource);
-              },
-            ),
-            TextButton(
-              child: const Text('Stop pre cache'),
-              onPressed: () {
-                _betterPlayerController.stopPreCache(_betterPlayerDataSource);
-              },
-            ),
-          ],
-          TextButton(
-            child: const Text('Play video'),
-            onPressed: () {
-              _betterPlayerController.setupDataSource(_betterPlayerDataSource);
-            },
-          ),
-          if (!kIsWeb)
-            TextButton(
-              child: const Text('Clear cache'),
-              onPressed: () {
-                _betterPlayerController.clearCache();
-              },
-            ),
-        ],
+        ),
       ),
     );
   }

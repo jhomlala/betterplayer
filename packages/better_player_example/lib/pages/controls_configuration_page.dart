@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:material_ui/material_ui.dart';
 
 class ControlsConfigurationPage extends StatefulWidget {
@@ -47,34 +49,46 @@ class _ControlsConfigurationPageState extends State<ControlsConfigurationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Controls configuration')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Player with customized controls via PlayerControlsConfiguration.',
-              style: TextStyle(fontSize: 16),
-            ),
+      appBar: AppBar(title: const Text('Controls Configuration')),
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Customized Built-in Controls',
+                description:
+                    'Tailors colors, control bar dimensions, icons, and action '
+                    'visibilities via PlayerControlsConfiguration.',
+                instructions:
+                    'Observe custom green play icon, tinted scrubber, and disabled skips.',
+                icon: Icons.palette_outlined,
+              ),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: FilledButton.tonalIcon(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () {
+                    setState(() {
+                      _betterPlayerController.setPlayerControlsConfiguration(
+                        const PlayerControlsConfiguration(
+                          overflowModalColor: Colors.amberAccent,
+                        ),
+                      );
+                    });
+                  },
+                  label: const Text('Switch Controls Theme Dynamically'),
+                ),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              setState(() {
-                _betterPlayerController.setPlayerControlsConfiguration(
-                  const PlayerControlsConfiguration(
-                    overflowModalColor: Colors.amberAccent,
-                  ),
-                );
-              });
-            },
-            child: const Text('Reset settings'),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:material_ui/material_ui.dart';
 
 class HlsSubtitlesPage extends StatefulWidget {
@@ -29,7 +31,7 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
       controlsConfiguration: controlsConfiguration,
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
-      subtitlesConfiguration: const PlayerSubtitlesConfiguration(
+      subtitlesConfiguration: PlayerSubtitlesConfiguration(
         fontSize: 16,
       ),
     );
@@ -45,24 +47,28 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HLS subtitles')),
+      appBar: AppBar(title: const Text('HLS Subtitles')),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Player with HLS stream which loads subtitles from HLS.'
-                ' You can choose subtitles by using overflow menu (3 dots in right corner).',
-                style: TextStyle(fontSize: 16),
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Segmented Subtitles in HLS',
+                description:
+                    'Parses embedded WebVTT subtitle playlists from an HLS manifest '
+                    'and syncs them with video stream playback.',
+                instructions:
+                    'Open the overflow menu (three dots) to select subtitle language.',
+                icon: Icons.closed_caption_outlined,
               ),
-            ),
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer(controller: _betterPlayerController),
-            ),
-          ],
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

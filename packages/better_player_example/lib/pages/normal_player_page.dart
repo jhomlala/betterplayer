@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -38,15 +40,28 @@ class _NormalPlayerPageState extends State<NormalPlayerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Normal player page')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
+      appBar: AppBar(title: const Text('Normal Player')),
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Standard Player Controller',
+                description:
+                    'Demonstrates playback initialized via BetterPlayerController '
+                    'with auto-play, looping, and portrait fullscreen recovery.',
+                instructions:
+                    'Tap controls or rotate screen to enter fullscreen.',
+                icon: Icons.play_circle_outline,
+              ),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

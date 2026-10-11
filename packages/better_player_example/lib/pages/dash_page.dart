@@ -1,5 +1,9 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
+import 'package:better_player_example/widgets/platform_note_card.dart';
+import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
 class DashPage extends StatefulWidget {
@@ -12,6 +16,11 @@ class DashPage extends StatefulWidget {
 class _DashPageState extends State<DashPage> {
   late BetterPlayerController _betterPlayerController;
   late BetterPlayerController _betterPlayerController2;
+
+  bool get _isApple =>
+      !kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.iOS ||
+          defaultTargetPlatform == TargetPlatform.macOS);
 
   @override
   void initState() {
@@ -50,38 +59,71 @@ class _DashPageState extends State<DashPage> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Dash page')),
+      appBar: AppBar(title: const Text('DASH Streaming')),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Player 1: Default DASH stream',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Dynamic Adaptive Streaming (DASH)',
+                description:
+                    'Plays MPEG-DASH (.mpd) manifests with adaptive bitrate switching '
+                    'and live stream timeline support.',
+                icon: Icons.stream,
               ),
-            ),
-            _ResolutionText(controller: _betterPlayerController),
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer(controller: _betterPlayerController),
-            ),
-            const SizedBox(height: 24),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Player 2: Big Buck Bunny',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              if (_isApple)
+                const PlatformNoteCard(
+                  title: 'DASH Not Supported on iOS/macOS',
+                  message:
+                      'Apple AVPlayer only supports HLS (.m3u8) manifests natively. '
+                      'DASH (.mpd) is supported on Android, Windows, and Web.',
+                  icon: Icons.warning_amber_rounded,
+                  isWarning: true,
+                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Text(
+                  '1. Live DASH Stream',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ),
-            ),
-            _ResolutionText(controller: _betterPlayerController2),
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer(controller: _betterPlayerController2),
-            ),
-          ],
+              _ResolutionText(controller: _betterPlayerController),
+              const SizedBox(height: 6),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Text(
+                  '2. VOD DASH Stream (Big Buck Bunny)',
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+              _ResolutionText(controller: _betterPlayerController2),
+              const SizedBox(height: 6),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController2),
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );

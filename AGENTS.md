@@ -111,6 +111,7 @@ PlayerDataSource dataSource = PlayerDataSource(
     - Platform interface models in `better_player_platform_interface` use no prefix (`DataSource`, `DataSourceType`, `DrmConfiguration`, `CacheConfiguration`, `BufferingConfiguration`, `NotificationConfiguration`, `VideoFormat`, `VideoEvent`).
     - Filenames MUST match the primary class they declare (`Player*` -> `player_*.dart`, `BetterPlayer*` -> `better_player_*.dart`).
     - **One Model or Class per File**: Every class, model, or enum MUST live in its own dedicated file matching its snake_case name (e.g., `VastAd` -> `vast_ad.dart`). NEVER bundle multiple models or classes into a single file (such as `*_models.dart`).
+  - **Material UI Imports**: ALWAYS use `package:material_ui/material_ui.dart` for Material widgets, theming, and icons across the project and example app. DO NOT replace it with `package:flutter/material.dart`. The repository uses Flutter's official modular `material_ui` package.
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).

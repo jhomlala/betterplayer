@@ -1,6 +1,8 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/pages/custom_controls/custom_controls_widget.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:material_ui/material_ui.dart';
 
 class ChangePlayerThemePage extends StatefulWidget {
@@ -30,87 +32,82 @@ class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {
     );
   }
 
+  void _updateTheme(PlayerTheme newTheme) {
+    setState(() {
+      _playerTheme = newTheme;
+      _betterPlayerController.pause();
+      _betterPlayerController = BetterPlayerController(
+        PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: _playerTheme,
+            customControlsBuilder: newTheme == PlayerTheme.custom
+                ? (controller, onControlsVisibilityChanged) =>
+                      CustomControlsWidget(
+                        controller: controller,
+                        onControlsVisibilityChanged:
+                            onControlsVisibilityChanged,
+                      )
+                : null,
+          ),
+        ),
+        betterPlayerDataSource: _dataSource,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Change player theme')),
+      appBar: AppBar(title: const Text('Player Themes & Custom Controls')),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            const SizedBox(height: 8),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
-              child: Text(
-                'Player with the possibility to change the theme. Click on '
-                'buttons below to change theme of player.',
-                style: TextStyle(fontSize: 16),
+        child: DemoContainer(
+          child: Column(
+            children: [
+              const DemoHeader(
+                title: 'Control Bar Themes',
+                description:
+                    'Switch instantly between Material, Cupertino, or completely custom '
+                    'built-in UI widgets via PlayerControlsConfiguration.',
+                instructions:
+                    'Select a theme below to rebuild player control overlays.',
+                icon: Icons.palette_outlined,
               ),
-            ),
-            BetterPlayer(controller: _betterPlayerController),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                MaterialButton(
-                  child: const Text('MATERIAL'),
-                  onPressed: () {
-                    setState(() {
-                      _playerTheme = PlayerTheme.material;
-                      _betterPlayerController.pause();
-                      _betterPlayerController = BetterPlayerController(
-                        PlayerConfiguration(
-                          controlsConfiguration: PlayerControlsConfiguration(
-                            playerTheme: _playerTheme,
-                          ),
-                        ),
-                        betterPlayerDataSource: _dataSource,
-                      );
-                    });
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SegmentedButton<PlayerTheme>(
+                  segments: const [
+                    ButtonSegment(
+                      value: PlayerTheme.material,
+                      label: Text('Material'),
+                      icon: Icon(Icons.android),
+                    ),
+                    ButtonSegment(
+                      value: PlayerTheme.cupertino,
+                      label: Text('Cupertino'),
+                      icon: Icon(Icons.apple),
+                    ),
+                    ButtonSegment(
+                      value: PlayerTheme.custom,
+                      label: Text('Custom UI'),
+                      icon: Icon(Icons.brush),
+                    ),
+                  ],
+                  selected: {_playerTheme},
+                  onSelectionChanged: (selected) {
+                    if (selected.isNotEmpty) {
+                      _updateTheme(selected.first);
+                    }
                   },
                 ),
-                MaterialButton(
-                  child: const Text('CUPERTINO'),
-                  onPressed: () {
-                    setState(() {
-                      _playerTheme = PlayerTheme.cupertino;
-                      _betterPlayerController.pause();
-                      _betterPlayerController = BetterPlayerController(
-                        PlayerConfiguration(
-                          controlsConfiguration: PlayerControlsConfiguration(
-                            playerTheme: _playerTheme,
-                          ),
-                        ),
-                        betterPlayerDataSource: _dataSource,
-                      );
-                    });
-                  },
-                ),
-                MaterialButton(
-                  child: const Text('CUSTOM'),
-                  onPressed: () {
-                    setState(() {
-                      _playerTheme = PlayerTheme.custom;
-                      _betterPlayerController.pause();
-                      _betterPlayerController = BetterPlayerController(
-                        PlayerConfiguration(
-                          controlsConfiguration: PlayerControlsConfiguration(
-                            playerTheme: _playerTheme,
-                            customControlsBuilder:
-                                (controller, onControlsVisibilityChanged) =>
-                                    CustomControlsWidget(
-                                      controller: controller,
-                                      onControlsVisibilityChanged:
-                                          onControlsVisibilityChanged,
-                                    ),
-                          ),
-                        ),
-                        betterPlayerDataSource: _dataSource,
-                      );
-                    });
-                  },
-                ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 32),
+            ],
+          ),
         ),
       ),
     );
