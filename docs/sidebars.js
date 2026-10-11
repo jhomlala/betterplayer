@@ -40,7 +40,6 @@ const sidebars = {
         'playlist_configuration',
         'translations_configuration',
         'logging_configuration',
-        'about_dialog',
       ],
     },
     {
