@@ -40,6 +40,7 @@ Stop stitching `video_player`, separate UI packages, abandoned caching plugins, 
 | **Subtitles** | SRT, WebVTT, TTML | SRT only | Advanced |
 | **Picture in Picture (PiP)** | Built-in | None | Platform-dependent |
 | **Playlists** | Built-in | None | Built-in |
+| **VAST / VMAP Ads** | Client-side ad engine (VAST 2.0-4.x, VMAP) | None | None |
 
 ---
 
@@ -163,7 +164,7 @@ dart run skills@ get -p better_player
 
 ## 📖 Resources & Docs
 
-- [Official Documentation](https://jhomlala.github.io/betterplayer/): Full guides for caching, DRM, subtitles, and playlists.
+- [Official Documentation](https://jhomlala.github.io/betterplayer/): Full guides for caching, DRM, subtitles, VAST ads, and playlists.
 - [Example Application](https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_example): Complete working samples covering every feature.
 - [API Reference](https://pub.dev/documentation/better_player/latest/): Generated Dart doc reference.
 
@@ -175,6 +176,7 @@ Found a bug or missing a feature? Open an issue or submit a pull request.
 
 ## 💼 Enterprise Support
 
-Need a custom video source adapter, bespoke DRM implementation, or tailored UI controls? I am available for consulting.
+Need client-side VAST/VMAP ad scheduling, a custom video source adapter, bespoke DRM implementation, or tailored UI controls?
 
-[Contact on LinkedIn →](https://pl.linkedin.com/in/jhomlala)
+- [VAST & VMAP Ads Guide](https://jhomlala.github.io/betterplayer/vast_vmap_ads) &bull; [Enterprise Overview](https://jhomlala.github.io/betterplayer/enterprise_overview)
+- [Contact on LinkedIn →](https://pl.linkedin.com/in/jhomlala) or email **betterplayer@hasoft.pl**.

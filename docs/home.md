@@ -14,17 +14,18 @@ Better Player is an advanced video player plugin for Flutter, built upon the fou
 
 ## Key Features
 
-Better Player provides a robust set of features designed for production-ready applications:
+Better Player provides a complete video playback feature set for Flutter:
 
 *   **Reliability**: Fixes for common bugs found in other players.
 *   **Advanced Configuration**: Granular control over player behavior and appearance.
 *   **Refactored Controls**: Modern, customizable user interface.
 *   **Playlist Support**: Play sequences of videos continuously.
 *   **ListView Integration**: Optimized for video playback within scrollable lists.
-*   **Comprehensive Subtitles**: Support for SRT and WebVTT formats (with HTML tags), HLS segmented subtitles, and multiple subtitle tracks.
+*   **Comprehensive Subtitles**: Support for SRT and WebVTT formats (with HTML tags), TTML, HLS segmented subtitles, and multiple subtitle tracks.
 *   **Adaptive Streaming**: Full support for HLS and DASH, including track, subtitle, and audio track selection.
 *   **Performance & Optimization**: Integrated cache support and alternative resolution selection.
 *   **Advanced Capabilities**: Support for Picture-in-Picture (PiP), DRM (Token, Widevine, FairPlay EZDRM), and custom HTTP headers.
+*   **VAST & VMAP Ads**: Client-side linear video ads (VAST 2.0/3.0/4.x, VMAP) with dual-texture player stacking, tracking beacons, and custom UI overlays (see [VAST & VMAP Ads](vast_vmap_ads.md)).
 *   **Platform Features**: Native notifications and comprehensive BoxFit support.
 *   **macOS Support**: Dedicated desktop playback powered by native AVPlayer, AppKitView, and FFI bindings.
 *   **Windows Support**: Desktop playback powered by libmpv and Direct3D 11 texture sharing.
