@@ -129,22 +129,6 @@ final controller = BetterPlayerController(
 BetterPlayer(controller: controller);
 ```
 
-### 4. High-Performance Video Feeds (TikTok / Reels)
-Render infinite vertical or horizontal swipe feeds using bounded controller pooling and lookahead preloading:
-
-```dart
-BetterPlayerFeed(
-  controller: BetterPlayerFeedController(
-    dataSources: feedSources,
-    poolConfiguration: const PlayerPoolConfiguration(
-      poolSize: 3,
-      preloadForward: 1,
-      preloadBackward: 1,
-    ),
-  ),
-);
-```
-
 ---
 
 ## 🌐 Platform Packages
