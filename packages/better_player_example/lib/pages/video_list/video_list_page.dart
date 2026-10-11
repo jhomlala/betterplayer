@@ -1,13 +1,29 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'dart:math';
 
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/model/video_list_data.dart';
+import 'package:better_player_example/pages/better_player_feed_page.dart';
+import 'package:better_player_example/pages/reusable_video_list/reusable_video_list_page.dart';
 import 'package:better_player_example/pages/video_list/video_list_widget.dart';
 import 'package:better_player_example/widgets/demo_container.dart';
 import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// Legacy scrollable video list page demonstrating BetterPlayerListVideoPlayer.
+///
+/// Deprecated: use [BetterPlayerFeedPage] for full-screen swipe feeds
+/// or [ReusableVideoListPage] for scrollable list controller pooling.
+@Deprecated(
+  'Use BetterPlayerFeedPage or ReusableVideoListPage instead. '
+  'BetterPlayerListVideoPlayer does not recycle native decoders and causes OOM.',
+)
 class VideoListPage extends StatefulWidget {
+  /// Deprecated: use [BetterPlayerFeedPage] or [ReusableVideoListPage].
+  @Deprecated(
+    'Use BetterPlayerFeedPage or ReusableVideoListPage instead.',
+  )
   const VideoListPage({super.key});
 
   @override
