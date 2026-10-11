@@ -4,8 +4,10 @@ title: Introduction
 slug: /
 ---
 
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
 <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-  <img src="./static/img/logo.png" alt="Better Player Logo" width="120" style={{borderRadius: '1rem', marginBottom: '1rem'}} />
+  <img src={useBaseUrl('/img/logo.png')} alt="Better Player Logo" width="120" style={{borderRadius: '1rem', marginBottom: '1rem'}} />
 </div>
 
 # Better Player
