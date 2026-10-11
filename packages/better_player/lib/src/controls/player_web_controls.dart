@@ -42,6 +42,7 @@ class _PlayerWebControlsState
   bool _isMenuOpen = false;
   StreamSubscription<bool>? _controlsVisibilitySubscription;
   final FocusNode _focusNode = FocusNode();
+  final GlobalKey _settingsMenuKey = GlobalKey();
 
   @override
   BetterPlayerController? get betterPlayerController => _betterPlayerController;
@@ -351,6 +352,7 @@ class _PlayerWebControlsState
       label: 'better_player_material_controls_more_button',
       identifier: 'better_player_material_controls_more_button',
       child: PopupMenuButton<_PlayerMenuOption>(
+        key: _settingsMenuKey,
         icon: Icon(
           widget.controlsConfiguration.overflowMenuIcon,
           color: widget.controlsConfiguration.iconsColor,
@@ -673,10 +675,32 @@ class _PlayerWebControlsState
     if (value != null) _betterPlayerController?.setupSubtitleSource(value);
   }
 
+  RelativeRect _calculateSubMenuPosition() {
+    final button =
+        _settingsMenuKey.currentContext?.findRenderObject() as RenderBox?;
+    final overlay =
+        Overlay.maybeOf(context)?.context.findRenderObject() as RenderBox?;
+
+    if (button != null && button.hasSize && overlay != null) {
+      const offset = Offset(0, -50);
+      return RelativeRect.fromRect(
+        Rect.fromPoints(
+          button.localToGlobal(offset, ancestor: overlay),
+          button.localToGlobal(
+            button.size.bottomRight(Offset.zero) + offset,
+            ancestor: overlay,
+          ),
+        ),
+        Offset.zero & overlay.size,
+      );
+    }
+    return const RelativeRect.fromLTRB(0, 0, 0, 0);
+  }
+
   Future<T?> _showSubMenu<T>(List<PopupMenuEntry<T>> items) {
     return showMenu<T>(
       context: context,
-      position: const RelativeRect.fromLTRB(1000, 1000, 0, 0),
+      position: _calculateSubMenuPosition(),
       color: const Color(0xFF212121),
       items: items,
     );

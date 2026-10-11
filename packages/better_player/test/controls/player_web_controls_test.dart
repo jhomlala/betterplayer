@@ -282,6 +282,72 @@ void main() {
       expect(find.text('About'), findsNothing);
     },
   );
+
+  testWidgets(
+    'Settings submenu is anchored to the more button on wide layouts',
+    (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      mockEngine = MockPlayerEngineController();
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+          ),
+        ),
+        playerEngineController: mockEngine,
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 640,
+                height: 360,
+                child: BetterPlayer(controller: controller),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final moreButton = find.bySemanticsLabel(
+        'better_player_material_controls_more_button',
+      );
+      expect(moreButton, findsOneWidget);
+      final moreButtonRect = tester.getRect(moreButton);
+
+      await tester.tap(moreButton);
+      await tester.pumpAndSettle();
+
+      final speedItem = find.text('Playback speed');
+      expect(speedItem, findsWidgets);
+      await tester.tap(speedItem.first);
+      await tester.pumpAndSettle();
+
+      final speed2x = find.text('2.0x');
+      expect(speed2x, findsWidgets);
+
+      final speed2xRect = tester.getRect(speed2x.first);
+
+      expect(speed2xRect.right, lessThan(moreButtonRect.right + 100));
+      expect(speed2xRect.right, isNot(closeTo(1920, 50)));
+    },
+  );
 }
 
 class _WebHidingBrandingExtension extends PlayerBrandingExtension {
