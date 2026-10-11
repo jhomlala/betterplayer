@@ -1,3 +1,7 @@
+## Unreleased
+- Added: `captionUpdate` event type and `captions` payload on `VideoEvent` for decoded subtitle and caption cues.
+- Added: `setTextTrack` method to `BetterPlayerPlatform` to select or disable native text and caption tracks.
+
 ## 1.3.4
 - Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
 

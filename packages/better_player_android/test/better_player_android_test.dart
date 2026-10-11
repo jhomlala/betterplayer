@@ -121,6 +121,11 @@ void main() {
           () => androidPlayer.mockPlayer.setAudioTrack(any(), 1),
         ).called(1);
 
+        await androidPlayer.setTextTrack(1, 'eng', 1);
+        verify(
+          () => androidPlayer.mockPlayer.setTextTrack(any(), 1),
+        ).called(1);
+
         await androidPlayer.setMixWithOthers(1, true);
         verify(() => androidPlayer.mockPlayer.mixWithOthers = true).called(1);
 

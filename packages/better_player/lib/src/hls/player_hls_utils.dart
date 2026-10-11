@@ -2,6 +2,7 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/hls/hls_parser/hls_master_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_media_playlist.dart';
 import 'package:better_player/src/hls/hls_parser/hls_playlist_parser.dart';
+import 'package:better_player/src/hls/hls_parser/mime_types.dart';
 import 'package:better_player/src/hls/hls_parser/rendition.dart';
 import 'package:better_player/src/hls/hls_parser/util.dart';
 import 'package:better_player/src/logging/player_logger.dart';
@@ -110,6 +111,33 @@ class PlayerHlsUtils {
           );
           if (hlsSubtitle != null) {
             subtitles.add(hlsSubtitle);
+          }
+        }
+
+        if (parsedPlaylist.muxedCaptionFormats != null) {
+          var captionIndex = 0;
+          for (final format in parsedPlaylist.muxedCaptionFormats!) {
+            final is608 = format.sampleMimeType == MimeTypes.applicationCea608;
+            final instreamId = format.accessibilityChannel != null
+                ? (is608
+                      ? 'CC${format.accessibilityChannel}'
+                      : 'SERVICE${format.accessibilityChannel}')
+                : null;
+            final trackName =
+                format.label ??
+                (instreamId != null
+                    ? 'Closed Captions ($instreamId)'
+                    : 'Closed Captions');
+            subtitles.add(
+              PlayerAsmsSubtitle(
+                name: trackName,
+                language: format.language,
+                mimeType: format.sampleMimeType,
+                isClosedCaption: true,
+                inStreamId: instreamId,
+                index: captionIndex++,
+              ),
+            );
           }
         }
       }

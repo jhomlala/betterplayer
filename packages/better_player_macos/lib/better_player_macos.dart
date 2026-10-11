@@ -321,6 +321,12 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setTextTrack(int? textureId, String? name, int? index) async {
+    if (textureId == null) return;
+    getPlayer(textureId)?.setTextTrack(name: name ?? '', index: index ?? 0);
+  }
+
+  @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
     if (textureId == null) return;
     getPlayer(textureId)?.setMixWithOthers(mixWithOthers: mixWithOthers);
@@ -400,6 +406,7 @@ abstract class BetterPlayerWrapper {
     required int bitrate,
   });
   void setAudioTrack({required String name, required int index});
+  void setTextTrack({required String name, required int index});
   void enablePictureInPicture(objc.CGRect frame);
   void disablePictureInPicture();
   int? absolutePosition();
@@ -480,6 +487,12 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   @override
   void setAudioTrack({required String name, required int index}) =>
       _player.setAudioTrackWithName(name.toNSString(), index: index);
+
+  @override
+  void setTextTrack({required String name, required int index}) {
+    // Note: CI Chicken-and-Egg: Un-comment after swiftgen runs on CI/CD:
+    // _player.setTextTrackWithName(name.toNSString(), index: index);
+  }
 
   @override
   void enablePictureInPicture(objc.CGRect frame) =>

@@ -102,8 +102,8 @@ These formats are loaded manually via `PlayerSubtitlesSource` and rendered using
 | **WebVTT** | ✓ Full | Supports inline styling (`<b>`, `<i>`, `<c.color>`), HTML entity decoding, and `X-TIMESTAMP-MAP` sync for HLS live streams. |
 | **TTML / DFXP / XML** | ✓ Full | Timed Text Markup Language & IMSC1 with SMPTE frame rates, style inheritance, regions, and inline tags. |
 
-### Embedded / In-Stream Subtitles (Native Layer)
-These tracks are embedded directly inside the HLS/DASH manifest or MP4 file. They are rendered natively by ExoPlayer/AVPlayer/mpv/Shaka, **not** by the Flutter overlay. 
+### Embedded / In-Stream Subtitles & Closed Captions
+These tracks are embedded directly inside the HLS manifest or video stream. Embedded CEA-608 / CEA-708 closed captions are decoded by the underlying platform engine and rendered in Flutter using `PlayerSubtitlesConfiguration`.
 
 | Format | Android | iOS | macOS | Windows | Web (Shaka) |
 |---|---|---|---|---|---|
@@ -114,7 +114,7 @@ These tracks are embedded directly inside the HLS/DASH manifest or MP4 file. The
 | **SMPTE-TT** | ✓ | x | x | ✓ | ⚠️ |
 | **SubStation Alpha (SSA)** | x | x | x | ✓ | x |
 
-> ⚠️ **Important:** Because embedded subtitles are rendered by the native player's surface (below the Flutter widget tree), they **cannot** be customized using Better Player's `PlayerSubtitlesConfiguration`.
+> **Customization:** Embedded CEA-608 and CEA-708 closed captions are rendered via `PlayerSubtitlesDrawer` in Flutter, respecting your `PlayerSubtitlesConfiguration` styling (font size, font family, colors, background, and outlines).
 
 ---
 

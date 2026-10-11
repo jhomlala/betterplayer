@@ -1,4 +1,6 @@
 ## Unreleased
+- Added: Embedded CEA-608 and CEA-708 closed caption support decoded by native platform engines and rendered via `PlayerSubtitlesDrawer` (#1066).
+- Added: Automatic parsing of `#EXT-X-MEDIA:TYPE=CLOSED-CAPTIONS` tags in HLS playlists to generate `PlayerSubtitlesSourceType.embedded` tracks.
 - Fixed: Anchored secondary overflow menus in `PlayerWebControls` to the settings button instead of the bottom-right viewport boundary.
 
 ## 1.24.0

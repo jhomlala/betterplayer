@@ -17,6 +17,7 @@ import android.view.Surface
 import androidx.annotation.OptIn
 import androidx.lifecycle.Observer
 import androidx.media3.common.*
+import androidx.media3.common.text.CueGroup
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.datasource.DataSource
@@ -481,6 +482,11 @@ class BetterPlayer(
                     callback.onChangedSize(width = width, height = height, key = key)
                 }
             }
+
+            override fun onCues(cueGroup: CueGroup) {
+                val cuesList = cueGroup.cues.mapNotNull { it.text?.toString() }
+                callback.onCues(cuesList)
+            }
         })
         
     }
@@ -703,6 +709,49 @@ class BetterPlayer(
                 )
 
             trackSelector.setParameters(builder)
+        }
+    }
+
+    @Keep
+    fun setTextTrack(name: String, index: Int) {
+        BetterPlayerApi.log(0, "setTextTrack: name=$name, index=$index")
+        try {
+            val mappedTrackInfo = trackSelector.currentMappedTrackInfo ?: return
+            for (rendererIndex in 0 until mappedTrackInfo.rendererCount) {
+                if (mappedTrackInfo.getRendererType(rendererIndex) != C.TRACK_TYPE_TEXT) {
+                    continue
+                }
+                if (index < 0) {
+                    val builder = trackSelector.parameters.buildUpon()
+                        .setRendererDisabled(rendererIndex, true)
+                        .clearOverridesOfType(C.TRACK_TYPE_TEXT)
+                    trackSelector.setParameters(builder)
+                    return
+                }
+                val trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex)
+                for (groupIndex in 0 until trackGroupArray.length) {
+                    val group = trackGroupArray[groupIndex]
+                    for (groupElementIndex in 0 until group.length) {
+                        val format = group.getFormat(groupElementIndex)
+                        val label = format.label ?: format.language ?: ""
+                        if ((name.isNotEmpty() && name == label) || index == groupIndex) {
+                            val builder = trackSelector.parameters.buildUpon()
+                                .setRendererDisabled(rendererIndex, false)
+                                .clearOverridesOfType(C.TRACK_TYPE_TEXT)
+                                .addOverride(
+                                    TrackSelectionOverride(
+                                        group,
+                                        groupElementIndex
+                                    )
+                                )
+                            trackSelector.setParameters(builder)
+                            return
+                        }
+                    }
+                }
+            }
+        } catch (exception: Exception) {
+            BetterPlayerApi.log(2, "setTextTrack error: ${exception.message}")
         }
     }
 

@@ -131,5 +131,36 @@ video.m3u8
         );
       },
     );
+
+    test('parseSubtitles handles closed caption in-stream tracks', () async {
+      const masterData = '''
+#EXTM3U
+#EXT-X-MEDIA:TYPE=CLOSED-CAPTIONS,GROUP-ID="cc",NAME="English CC",LANGUAGE="en",DEFAULT=YES,INSTREAM-ID="CC1"
+#EXT-X-MEDIA:TYPE=CLOSED-CAPTIONS,GROUP-ID="cc",NAME="Spanish CC",LANGUAGE="es",DEFAULT=NO,INSTREAM-ID="CC2"
+#EXT-X-STREAM-INF:BANDWIDTH=1280000,CLOSED-CAPTIONS="cc"
+video.m3u8
+''';
+
+      final client = MockClient((request) async {
+        return http.Response('', 404);
+      });
+
+      final subtitles = await PlayerHlsUtils(
+        httpClient: client,
+      ).parseSubtitles(masterData, 'https://example.com/master.m3u8');
+
+      expect(subtitles.length, 2);
+      expect(subtitles[0].name, 'English CC');
+      expect(subtitles[0].language, 'en');
+      expect(subtitles[0].isClosedCaption, true);
+      expect(subtitles[0].inStreamId, 'CC1');
+      expect(subtitles[0].index, 0);
+
+      expect(subtitles[1].name, 'Spanish CC');
+      expect(subtitles[1].language, 'es');
+      expect(subtitles[1].isClosedCaption, true);
+      expect(subtitles[1].inStreamId, 'CC2');
+      expect(subtitles[1].index, 1);
+    });
   });
 }

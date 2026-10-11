@@ -23,6 +23,7 @@ abstract class BetterPlayerWindowsPlayer {
     required int bitrate,
   });
   Future<void> setAudioTrack({required String name, required int index});
+  Future<void> setTextTrack({required String name, required int index});
 }
 
 class MpvPlayer implements BetterPlayerWindowsPlayer {
@@ -507,6 +508,15 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   Future<void> setAudioTrack({required String name, required int index}) async {
     _log(message: 'setAudioTrack: name=$name, index=$index', levelIndex: 0);
     _setPropertyString(name: 'aid', value: '$index');
+  }
+
+  @override
+  Future<void> setTextTrack({required String name, required int index}) async {
+    _log(message: 'setTextTrack: name=$name, index=$index', levelIndex: 0);
+    _setPropertyString(
+      name: 'sid',
+      value: (index < 0 || name.isEmpty) ? 'no' : '$index',
+    );
   }
 
   int _command(List<String> args) {

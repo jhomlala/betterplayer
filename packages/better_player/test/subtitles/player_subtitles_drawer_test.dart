@@ -138,4 +138,37 @@ void main() {
     // Only 1 RichText because outline is disabled
     expect(find.byType(RichText), findsOneWidget);
   });
+
+  testWidgets('Embedded active captions are displayed correctly', (
+    tester,
+  ) async {
+    final embeddedSource = PlayerSubtitlesSource(
+      type: PlayerSubtitlesSourceType.embedded,
+      name: 'English CC',
+      isClosedCaption: true,
+    );
+    await controller.setupSubtitleSource(embeddedSource);
+    controller.activeCaptions = ['Caption Line 1', 'Caption Line 2'];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: Scaffold(
+          body: PlayerSubtitlesDrawer(
+            subtitles: const [],
+            betterPlayerController: controller,
+            playerVisibilityStream: visibilityStreamController.stream,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Caption Line 1'), findsOneWidget);
+    expect(find.text('Caption Line 2'), findsOneWidget);
+
+    controller.activeCaptions = [];
+    await tester.pump();
+    expect(find.text('Caption Line 1'), findsNothing);
+    expect(find.text('Caption Line 2'), findsNothing);
+  });
 }

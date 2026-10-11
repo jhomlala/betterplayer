@@ -331,6 +331,11 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setTextTrack(int? textureId, String? name, int? index) async {
+    _players[textureId]?.setTextTrack(name ?? '', index ?? 0);
+  }
+
+  @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
     _players[textureId]?.mixWithOthers = mixWithOthers;
   }
@@ -476,6 +481,7 @@ abstract class BetterPlayerWrapper {
   );
   void setTrackParameters(int width, int height, int bitrate);
   void setAudioTrack(String name, int index);
+  void setTextTrack(String name, int index);
   set mixWithOthers(bool mixWithOthers);
   void play();
   void pause();
@@ -560,6 +566,12 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   @override
   void setAudioTrack(String name, int index) =>
       _player.setAudioTrack(name.toJString(), index);
+
+  @override
+  void setTextTrack(String name, int index) {
+    // Note: CI Chicken-and-Egg: Un-comment after jnigen runs on CI/CD:
+    // _player.setTextTrack(name.toJString(), index);
+  }
 
   @override
   set mixWithOthers(bool mixWithOthers) =>

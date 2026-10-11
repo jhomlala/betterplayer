@@ -491,6 +491,15 @@ class BetterPlayerWebPlayer {
     }
   }
 
+  void setTextTrack({String? language, int? index}) {
+    if (language == null || language.isEmpty || index == null || index < 0) {
+      _shakaPlayer?.setTextTrackVisibility(false.toJS);
+      return;
+    }
+    _shakaPlayer?.setTextTrackVisibility(true.toJS);
+    _shakaPlayer?.selectTextLanguage(language.toJS);
+  }
+
   List<JSObject> getTextTracks() => _shakaPlayer!.getTextTracks().toDart;
 
   void selectTextTrack(JSObject track) => _shakaPlayer!.selectTextTrack(track);

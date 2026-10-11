@@ -95,11 +95,27 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final subtitle = _getSubtitleAtCurrentPosition();
-    widget.betterPlayerController.renderedSubtitle = subtitle;
-    final subtitles = subtitle?.texts ?? [];
+    final controller = widget.betterPlayerController;
+    final isEmbedded =
+        controller.betterPlayerSubtitlesSource?.type ==
+            PlayerSubtitlesSourceType.embedded ||
+        (controller.activeCaptions.isNotEmpty &&
+            controller.betterPlayerSubtitlesSource?.type !=
+                PlayerSubtitlesSourceType.none);
+
+    final List<String> subtitles;
+    Alignment itemAlignment = _configuration!.alignment;
+
+    if (isEmbedded) {
+      subtitles = controller.activeCaptions;
+    } else {
+      final subtitle = _getSubtitleAtCurrentPosition();
+      controller.renderedSubtitle = subtitle;
+      subtitles = subtitle?.texts ?? [];
+      itemAlignment = subtitle?.alignment ?? _configuration!.alignment;
+    }
+
     final textWidgets = subtitles.map((subtitleText) {
-      final itemAlignment = subtitle?.alignment ?? _configuration!.alignment;
       return PlayerSubtitlesDrawerItem(
         subtitleText: subtitleText,
         configuration: _configuration!,

@@ -133,6 +133,10 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
       _getPlayer(textureId).setAudioTrack(language: name, index: index);
 
   @override
+  Future<void> setTextTrack(int? textureId, String? name, int? index) async =>
+      _getPlayer(textureId).setTextTrack(language: name, index: index);
+
+  @override
   Future<void> enablePictureInPicture(
     int? textureId,
     double? top,

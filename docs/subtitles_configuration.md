@@ -66,6 +66,37 @@ Better Player automatically detects TTML / IMSC1 XML and parses:
 * Custom colors (`tts:color`), weights, styles, and alignments.
 * Line breaks (`<br/>`) and inline tags.
 
+### Embedded Closed Captions (CEA-608 / CEA-708)
+
+For live broadcasts and HLS streams with CEA-608 / CEA-708 closed captions inside the video stream, Better Player parses them when `useAsmsSubtitles: true`:
+
+```dart
+var dataSource = PlayerDataSource(
+    DataSourceType.network,
+    "https://example.com/stream.m3u8",
+    useAsmsSubtitles: true,
+);
+```
+
+You can also specify embedded caption tracks manually on any data source:
+
+```dart
+var dataSource = PlayerDataSource(
+    DataSourceType.network,
+    "https://example.com/stream.m3u8",
+    subtitles: [
+        PlayerSubtitlesSource(
+            type: PlayerSubtitlesSourceType.embedded,
+            name: "CC1",
+            index: 0,
+            isClosedCaption: true,
+        ),
+    ],
+);
+```
+
+The underlying platform engine decodes the caption cues from the video stream, and Better Player renders them in Flutter using your `PlayerSubtitlesConfiguration`.
+
 ## Styling & Customization
 
 The appearance of subtitles is controlled via `PlayerSubtitlesConfiguration`.

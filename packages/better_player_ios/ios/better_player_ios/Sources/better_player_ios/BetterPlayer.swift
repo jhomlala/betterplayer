@@ -786,6 +786,32 @@ private var presentationSizeContext = 0
         }
     }
 
+    /// Sets the text or caption track by name and index. If index is negative, disables text tracks.
+    /// - Parameters:
+    ///   - name: The name of the track.
+    ///   - index: The index of the track, or negative to disable.
+    @objc public func setTextTrack(name: String, index: Int) {
+        BetterPlayerApi.log(0, "setTextTrack: name=\(name), index=\(index)")
+        guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) else { return }
+        if index < 0 {
+            player.currentItem?.select(nil, in: group)
+            return
+        }
+        let options = group.options
+        if index < options.count {
+            player.currentItem?.select(options[index], in: group)
+            return
+        }
+        for trackIndex in 0..<options.count {
+            let option = options[trackIndex]
+            let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle as (NSCopying & NSObjectProtocol), keySpace: .common)
+            if let title = metas.first?.stringValue, title == name {
+                player.currentItem?.select(option, in: group)
+                return
+            }
+        }
+    }
+
     /// Sets whether the audio should mix with others.
     /// - Parameter mixWithOthers: Whether to mix audio.
     @objc public func setMixWithOthers(_ mixWithOthers: Bool) {

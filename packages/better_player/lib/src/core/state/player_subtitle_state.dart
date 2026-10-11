@@ -23,6 +23,9 @@ class PlayerSubtitleState {
   /// A record of successfully loaded ASMS segment identifiers to prevent redundant network calls.
   final List<String> asmsSegmentsLoaded;
 
+  /// Active embedded closed caption text lines emitted by the native engine.
+  final List<String> activeCaptions;
+
   const PlayerSubtitleState({
     this.subtitlesSourceList = const [],
     this.subtitlesSource,
@@ -30,6 +33,7 @@ class PlayerSubtitleState {
     this.renderedSubtitle,
     this.asmsSegmentsLoading = false,
     this.asmsSegmentsLoaded = const [],
+    this.activeCaptions = const [],
   });
 
   PlayerSubtitleState copyWith({
@@ -39,6 +43,7 @@ class PlayerSubtitleState {
     PlayerSubtitle? renderedSubtitle,
     bool? asmsSegmentsLoading,
     List<String>? asmsSegmentsLoaded,
+    List<String>? activeCaptions,
     bool clearSubtitlesSource = false,
     bool clearRenderedSubtitle = false,
   }) {
@@ -53,6 +58,7 @@ class PlayerSubtitleState {
           : (renderedSubtitle ?? this.renderedSubtitle),
       asmsSegmentsLoading: asmsSegmentsLoading ?? this.asmsSegmentsLoading,
       asmsSegmentsLoaded: asmsSegmentsLoaded ?? this.asmsSegmentsLoaded,
+      activeCaptions: activeCaptions ?? this.activeCaptions,
     );
   }
 }

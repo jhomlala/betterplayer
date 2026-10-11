@@ -145,4 +145,13 @@ class MockPlayerEngineController extends PlayerEngineController {
     double? width,
     double? height,
   }) async {}
+
+  String? lastTextTrackName;
+  int? lastTextTrackIndex;
+
+  @override
+  void setTextTrack(String? name, int? index) {
+    lastTextTrackName = name;
+    lastTextTrackIndex = index;
+  }
 }

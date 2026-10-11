@@ -121,6 +121,17 @@ void main() {
         () => mockPlayer.setAudioTrack(language: 'en', index: 1),
       ).called(1);
 
+      when(
+        () => mockPlayer.setTextTrack(
+          language: any(named: 'language'),
+          index: any(named: 'index'),
+        ),
+      ).thenReturn(null);
+      await plugin.setTextTrack(id, 'en', 1);
+      verify(
+        () => mockPlayer.setTextTrack(language: 'en', index: 1),
+      ).called(1);
+
       when(() => mockPlayer.enablePictureInPicture()).thenAnswer((_) async {});
       await plugin.enablePictureInPicture(id, null, null, null, null);
       verify(() => mockPlayer.enablePictureInPicture()).called(1);

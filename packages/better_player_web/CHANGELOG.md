@@ -1,3 +1,6 @@
+## Unreleased
+- Added: `setTextTrack` method on `BetterPlayerWebPlayer` using Shaka Player `selectTextLanguage` and `setTextTrackVisibility` for embedded text tracks (#1066).
+
 ## 1.1.4
 - Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
 - Fixed: Migrated from deprecated `shaka.Player(mediaElement)` constructor to `shaka.Player.attach(mediaElement)`.

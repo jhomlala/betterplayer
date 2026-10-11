@@ -1,3 +1,7 @@
+## Unreleased
+- Added: `setTextTrack` method on `BetterPlayer` and `TrackSelectionOverride` on ExoPlayer text renderer for embedded closed captions (#1066).
+- Added: `onCues` callback on `BetterPlayerCallback` emitting decoded cues from Media3 `CueGroup`.
+
 ## 1.7.1
 - Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
 

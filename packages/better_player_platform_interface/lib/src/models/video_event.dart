@@ -18,6 +18,7 @@ class VideoEvent {
     this.size,
     this.buffered,
     this.position,
+    this.captions,
   });
 
   /// The type of the event.
@@ -46,6 +47,11 @@ class VideoEvent {
   ///Seek position
   final Duration? position;
 
+  /// Active closed caption or subtitle cues.
+  ///
+  /// Only used if [eventType] is [VideoEventType.captionUpdate].
+  final List<String>? captions;
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -55,7 +61,8 @@ class VideoEvent {
             eventType == other.eventType &&
             duration == other.duration &&
             size == other.size &&
-            listEquals(buffered, other.buffered);
+            listEquals(buffered, other.buffered) &&
+            listEquals(captions, other.captions);
   }
 
   @override
@@ -63,5 +70,6 @@ class VideoEvent {
       eventType.hashCode ^
       duration.hashCode ^
       size.hashCode ^
-      buffered.hashCode;
+      buffered.hashCode ^
+      Object.hashAll(captions ?? const []);
 }

@@ -259,6 +259,11 @@ class BetterPlayerController {
   set renderedSubtitle(PlayerSubtitle? value) =>
       _subtitleState = _subtitleState.copyWith(renderedSubtitle: value);
 
+  /// Active embedded closed caption text lines emitted by the native engine.
+  List<String> get activeCaptions => _subtitleState.activeCaptions;
+  set activeCaptions(List<String> value) =>
+      _subtitleState = _subtitleState.copyWith(activeCaptions: value);
+
   /// Retrieves the complete list of alternative video tracks parsed from ASMS (HLS/DASH) streams.
   /// Useful for populating a quality selection menu.
   List<PlayerAsmsTrack> get betterPlayerAsmsTracks => _trackState.asmsTracks;
@@ -516,6 +521,13 @@ class BetterPlayerController {
         );
       case VideoEventType.bufferingEnd:
         _postEvent(PlayerEvent(PlayerEventType.bufferingEnd));
+      case VideoEventType.captionUpdate:
+        _subtitleState = _subtitleState.copyWith(
+          activeCaptions: event.captions ?? const [],
+        );
+        for (final listener in List<VoidCallback>.from(_videoListeners)) {
+          listener();
+        }
       default:
 
         ///TODO: Handle when needed

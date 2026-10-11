@@ -13,6 +13,9 @@ class PlayerAsmsSubtitle {
     this.segmentsTime,
     this.segments,
     this.isDefault,
+    this.isClosedCaption = false,
+    this.inStreamId,
+    this.index,
   });
 
   ///Language of the subtitle
@@ -45,4 +48,13 @@ class PlayerAsmsSubtitle {
 
   ///If the subtitle is the default
   final bool? isDefault;
+
+  ///Whether this is an embedded / in-stream closed caption (CEA-608 / CEA-708).
+  final bool isClosedCaption;
+
+  ///In-stream identifier (e.g. 'CC1', 'CC2', 'SERVICE1').
+  final String? inStreamId;
+
+  ///Index of track for native track selection.
+  final int? index;
 }

@@ -106,6 +106,9 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   Future<bool?> isPictureInPictureSupported(int? textureId) async => false;
   @override
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async {}
+
+  @override
+  Future<void> setTextTrack(int? textureId, String? name, int? index) async {}
   @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {}
   @override

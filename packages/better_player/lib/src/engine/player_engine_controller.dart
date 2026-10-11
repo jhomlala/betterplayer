@@ -571,6 +571,10 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     _betterPlayerPlatform.setAudioTrack(_textureId, name, index);
   }
 
+  void setTextTrack(String? name, int? index) {
+    _betterPlayerPlatform.setTextTrack(_textureId, name, index);
+  }
+
   void setMixWithOthers(bool mixWithOthers) {
     _betterPlayerPlatform.setMixWithOthers(_textureId, mixWithOthers);
   }

@@ -28,5 +28,8 @@ interface BetterPlayerCallback {
     fun onChangedSize(width: Int, height: Int, key: String?)
     
     @Keep
+    fun onCues(cues: List<String>) {}
+    
+    @Keep
     fun onError(errorCode: String, errorMessage: String, errorDetails: String)
 }
