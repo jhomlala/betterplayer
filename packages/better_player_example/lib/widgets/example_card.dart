@@ -1,7 +1,7 @@
 import 'package:better_player_example/model/example_item.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Clean, responsive card displaying a demo showcase entry.
+/// Compact, neutral card displaying a demo showcase entry with optional tag chip.
 class ExampleCard extends StatelessWidget {
   const ExampleCard({
     required this.item,
@@ -13,12 +13,8 @@ class ExampleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
     final isSupported = item.isSupportedOnCurrentPlatform;
     final badgeText = item.badgeText ?? (!isSupported ? 'Unsupported' : null);
-    final badgeColor = !isSupported
-        ? (item.badgeColor ?? theme.colorScheme.error)
-        : (item.badgeColor ?? theme.colorScheme.primary);
 
     return Semantics(
       identifier: item.identifier,
@@ -28,11 +24,11 @@ class ExampleCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(8),
           side: BorderSide(
             color: !isSupported
-                ? theme.colorScheme.error.withValues(alpha: 0.4)
-                : theme.colorScheme.outlineVariant.withValues(alpha: 0.7),
+                ? theme.colorScheme.error.withValues(alpha: 0.5)
+                : theme.colorScheme.outlineVariant,
           ),
         ),
         child: InkWell(
@@ -43,18 +39,15 @@ class ExampleCard extends StatelessWidget {
             );
           },
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: !isSupported
-                      ? theme.colorScheme.errorContainer.withValues(alpha: 0.5)
-                      : theme.colorScheme.primaryContainer,
-                  foregroundColor: !isSupported
-                      ? theme.colorScheme.onErrorContainer
-                      : theme.colorScheme.onPrimaryContainer,
-                  child: Icon(item.icon, size: 18),
+                Icon(
+                  item.icon,
+                  size: 20,
+                  color: !isSupported
+                      ? theme.colorScheme.error
+                      : theme.colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -64,7 +57,7 @@ class ExampleCard extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Expanded(
+                          Flexible(
                             child: Text(
                               item.title,
                               style: theme.textTheme.titleSmall?.copyWith(
@@ -75,51 +68,57 @@ class ExampleCard extends StatelessWidget {
                             ),
                           ),
                           if (badgeText != null) ...[
-                            const SizedBox(width: 8),
+                            const SizedBox(width: 6),
                             Container(
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 6,
-                                vertical: 2,
+                                vertical: 1.5,
                               ),
                               decoration: BoxDecoration(
-                                color: isDark
-                                    ? badgeColor.withValues(alpha: 0.2)
-                                    : badgeColor.withValues(alpha: 0.1),
+                                color: !isSupported
+                                    ? theme.colorScheme.errorContainer
+                                          .withValues(alpha: 0.3)
+                                    : theme.colorScheme.surfaceContainerHighest,
                                 borderRadius: BorderRadius.circular(4),
                                 border: Border.all(
-                                  color: isDark
-                                      ? badgeColor.withValues(alpha: 0.4)
-                                      : badgeColor.withValues(alpha: 0.3),
+                                  color: !isSupported
+                                      ? theme.colorScheme.error.withValues(
+                                          alpha: 0.4,
+                                        )
+                                      : theme.colorScheme.outlineVariant,
+                                  width: 0.5,
                                 ),
                               ),
                               child: Text(
                                 badgeText,
                                 style: TextStyle(
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: badgeColor,
+                                  fontWeight: FontWeight.w600,
+                                  color: !isSupported
+                                      ? theme.colorScheme.error
+                                      : theme.colorScheme.primary,
                                 ),
                               ),
                             ),
                           ],
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 3),
                       Text(
                         item.description,
                         style: theme.textTheme.bodySmall?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
-                        maxLines: 2,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 6),
                 Icon(
                   Icons.chevron_right,
-                  size: 20,
+                  size: 18,
                   color: theme.colorScheme.onSurfaceVariant.withValues(
                     alpha: 0.6,
                   ),

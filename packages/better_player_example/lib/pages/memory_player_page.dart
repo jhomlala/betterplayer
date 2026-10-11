@@ -52,24 +52,27 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Memory Video Source')),
-      body: DemoContainer(
-        child: ListView(
-          children: [
-            const DemoHeader(
-              title: 'In-Memory Byte Array Playback',
-              description:
-                  'Streams directly from raw Uint8List byte arrays loaded in RAM '
-                  'without persisting files to disk.',
-              instructions:
-                  'Useful for encrypted memory blocks or dynamically decoded buffers.',
-              icon: Icons.memory_outlined,
-            ),
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer(controller: _betterPlayerController),
-            ),
-            const SizedBox(height: 24),
-          ],
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'In-Memory Byte Array Playback',
+                description:
+                    'Streams directly from raw Uint8List byte arrays loaded in RAM '
+                    'without persisting files to disk.',
+                instructions:
+                    'Useful for encrypted memory blocks or dynamically decoded buffers.',
+                icon: Icons.memory_outlined,
+              ),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

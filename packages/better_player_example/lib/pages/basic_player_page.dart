@@ -19,59 +19,65 @@ class _BasicPlayerPageState extends State<BasicPlayerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Basic Player')),
-      body: DemoContainer(
-        child: ListView(
-          children: [
-            const DemoHeader(
-              title: 'Convenience Factory Methods',
-              description:
-                  'Instantiate players quickly with BetterPlayer.network() and '
-                  'BetterPlayer.file() without manual controller setup.',
-              icon: Icons.flash_on_outlined,
-            ),
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: BetterPlayer.network(Constants.bugBuckBunnyVideoUrl),
-            ),
-            const SizedBox(height: 16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Text(
-                'Local File Playback (BetterPlayer.file)',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Convenience Factory Methods',
+                description:
+                    'Instantiate players quickly with BetterPlayer.network() and '
+                    'BetterPlayer.file() without manual controller setup.',
+                icon: Icons.flash_on_outlined,
+              ),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer.network(Constants.bugBuckBunnyVideoUrl),
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
+                child: Text(
+                  'Local File Playback (BetterPlayer.file)',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-            ),
-            if (kIsWeb)
-              const PlatformNoteCard(
-                title: 'Local Files Unavailable on Web',
-                message:
-                    'Browsers run in a sandbox without direct filesystem access. '
-                    'Use BetterPlayer.network() or memory data sources on Web.',
-                icon: Icons.folder_off_outlined,
-              )
-            else
-              FutureBuilder<String>(
-                future: Utils.getFileUrl(Constants.fileTestVideoUrl),
-                builder: (context, snapshot) {
-                  if (snapshot.data != null && snapshot.data!.isNotEmpty) {
-                    return AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: BetterPlayer.file(snapshot.data!),
-                    );
-                  } else {
-                    return const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(24),
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                },
-              ),
-            const SizedBox(height: 24),
-          ],
+              if (kIsWeb)
+                const PlatformNoteCard(
+                  title: 'Local Files Unavailable on Web',
+                  message:
+                      'Browsers run in a sandbox without direct filesystem access. '
+                      'Use BetterPlayer.network() or memory data sources on Web.',
+                  icon: Icons.folder_off_outlined,
+                )
+              else
+                FutureBuilder<String>(
+                  future: Utils.getFileUrl(Constants.fileTestVideoUrl),
+                  builder: (context, snapshot) {
+                    if (snapshot.data != null && snapshot.data!.isNotEmpty) {
+                      return AspectRatio(
+                        aspectRatio: 16 / 9,
+                        child: BetterPlayer.file(snapshot.data!),
+                      );
+                    } else {
+                      return const Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(24),
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              const SizedBox(height: 24),
+            ],
+          ),
         ),
       ),
     );

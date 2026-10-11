@@ -46,7 +46,7 @@ class CategoryTab extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
-                mainAxisExtent: 108,
+                mainAxisExtent: 80,
                 crossAxisSpacing: 12,
                 mainAxisSpacing: 12,
               ),

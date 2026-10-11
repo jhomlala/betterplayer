@@ -1,11 +1,18 @@
+import 'package:better_player/better_player.dart';
 import 'package:better_player_example/main.dart';
 import 'package:better_player_example/model/example_item.dart';
 import 'package:better_player_example/widgets/platform_note_card.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'helpers/mock_better_player_platform.dart';
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() {
+    BetterPlayerPlatform.instance = MockBetterPlayerPlatform();
+  });
 
   group('WelcomePage Tests', () {
     testWidgets(
@@ -21,7 +28,7 @@ void main() {
         await tester.pump();
 
         // Verify AppBar and Header
-        expect(find.text('Better Player'), findsNWidgets(2));
+        expect(find.text('Better Player'), findsOneWidget);
         expect(find.text('Explore Categories'), findsOneWidget);
 
         // Verify theme popup menu button is present

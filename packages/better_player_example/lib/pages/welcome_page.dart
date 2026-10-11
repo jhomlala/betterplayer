@@ -1,5 +1,4 @@
 import 'package:better_player_example/constants.dart';
-import 'package:better_player_example/main.dart';
 import 'package:better_player_example/model/example_item.dart';
 import 'package:better_player_example/model/tab_destination.dart';
 import 'package:better_player_example/pages/auto_fullscreen_on_rotation_example_page.dart';
@@ -23,7 +22,7 @@ import 'package:better_player_example/pages/memory_player_page.dart';
 import 'package:better_player_example/pages/normal_player_page.dart';
 import 'package:better_player_example/pages/notification_player_page.dart';
 import 'package:better_player_example/pages/overridden_aspect_ratio_page.dart';
-import 'package:better_player_example/pages/overriden_duration_page.dart';
+import 'package:better_player_example/pages/overridden_duration_page.dart';
 import 'package:better_player_example/pages/picture_in_picture_page.dart';
 import 'package:better_player_example/pages/placeholder_until_play_page.dart';
 import 'package:better_player_example/pages/playlist_page.dart';
@@ -36,6 +35,7 @@ import 'package:better_player_example/pages/video_list/video_list_page.dart';
 import 'package:better_player_example/utils/example_io_utils.dart';
 import 'package:better_player_example/widgets/category_tab.dart';
 import 'package:better_player_example/widgets/overview_tab.dart';
+import 'package:better_player_example/widgets/welcome_app_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -97,14 +97,46 @@ class _WelcomePageState extends State<WelcomePage> {
           ),
         ];
 
-        final content = _buildTabContent(
-          _selectedTabIndex,
-          isWideScreen: isWideScreen,
-        );
+        final content = switch (_selectedTabIndex) {
+          0 => OverviewTab(
+            isWideScreen: isWideScreen,
+            onNavigateToTab: _onSelectTab,
+            coreItemsCount: _coreItems.length,
+            streamingItemsCount: _streamingItems.length,
+            advancedItemsCount: _advancedItems.length,
+            featuredItems: [
+              _coreItems[0],
+              _streamingItems[2],
+              _advancedItems[0],
+              _streamingItems[6],
+            ],
+          ),
+          1 => CategoryTab(
+            title: 'Core & UI',
+            description:
+                'Basic and normal configurations, custom controls, and theme variations.',
+            items: _coreItems,
+            isWideScreen: isWideScreen,
+          ),
+          2 => CategoryTab(
+            title: 'Streaming & Protocols',
+            description:
+                'Adaptive bitrates, HLS, DASH, DRM protection, tracks, and subtitles.',
+            items: _streamingItems,
+            isWideScreen: isWideScreen,
+          ),
+          _ => CategoryTab(
+            title: 'Advanced & Feeds',
+            description:
+                'Playlists, video lists, memory loading, PiP, notifications, and caching.',
+            items: _advancedItems,
+            isWideScreen: isWideScreen,
+          ),
+        };
 
         if (isWideScreen) {
           return Scaffold(
-            appBar: _buildAppBar(context),
+            appBar: const WelcomeAppBar(),
             body: Row(
               children: [
                 NavigationRail(
@@ -140,7 +172,7 @@ class _WelcomePageState extends State<WelcomePage> {
         }
 
         return Scaffold(
-          appBar: _buildAppBar(context),
+          appBar: const WelcomeAppBar(),
           body: content,
           bottomNavigationBar: NavigationBar(
             selectedIndex: _selectedTabIndex,
@@ -158,110 +190,6 @@ class _WelcomePageState extends State<WelcomePage> {
         );
       },
     );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    final currentMode = BetterPlayerExample.themeModeOf(context);
-
-    return AppBar(
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SvgPicture.asset(
-            'assets/logo.svg',
-            width: 24,
-            height: 24,
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            'Better Player',
-            style: TextStyle(fontWeight: FontWeight.w700),
-          ),
-        ],
-      ),
-      actions: [
-        PopupMenuButton<ThemeMode>(
-          tooltip: 'Select theme mode',
-          icon: Icon(
-            switch (currentMode) {
-              ThemeMode.light => Icons.light_mode,
-              ThemeMode.dark => Icons.dark_mode,
-              ThemeMode.system => Icons.brightness_auto,
-            },
-          ),
-          initialValue: currentMode,
-          onSelected: (mode) => BetterPlayerExample.setThemeMode(context, mode),
-          itemBuilder: (context) => const [
-            PopupMenuItem(
-              value: ThemeMode.system,
-              child: Row(
-                children: [
-                  Icon(Icons.brightness_auto, size: 20),
-                  SizedBox(width: 10),
-                  Text('System'),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              value: ThemeMode.light,
-              child: Row(
-                children: [
-                  Icon(Icons.light_mode, size: 20),
-                  SizedBox(width: 10),
-                  Text('Light'),
-                ],
-              ),
-            ),
-            PopupMenuItem(
-              value: ThemeMode.dark,
-              child: Row(
-                children: [
-                  Icon(Icons.dark_mode, size: 20),
-                  SizedBox(width: 10),
-                  Text('Dark'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTabContent(int index, {required bool isWideScreen}) {
-    return switch (index) {
-      0 => OverviewTab(
-        isWideScreen: isWideScreen,
-        onNavigateToTab: _onSelectTab,
-        featuredItems: [
-          _coreItems[0],
-          _streamingItems[2],
-          _advancedItems[0],
-          _streamingItems[6],
-        ],
-      ),
-      1 => CategoryTab(
-        title: 'Core & UI',
-        description:
-            'Basic and normal configurations, custom controls, and theme variations.',
-        items: _coreItems,
-        isWideScreen: isWideScreen,
-      ),
-      2 => CategoryTab(
-        title: 'Streaming & Protocols',
-        description:
-            'Adaptive bitrates, HLS, DASH, DRM protection, tracks, and subtitles.',
-        items: _streamingItems,
-        isWideScreen: isWideScreen,
-      ),
-      _ => CategoryTab(
-        title: 'Advanced & Feeds',
-        description:
-            'Playlists, video lists, memory loading, PiP, notifications, and caching.',
-        items: _advancedItems,
-        isWideScreen: isWideScreen,
-      ),
-    };
   }
 
   static final List<ExampleItem> _coreItems = [
@@ -307,7 +235,7 @@ class _WelcomePageState extends State<WelcomePage> {
       title: 'Controller controls',
       description:
           'External UI triggers driving playback via BetterPlayerController.',
-      icon: Icons.gamepad,
+      icon: Icons.tune,
       identifier: 'welcome_page_item_controller_controls',
       pageBuilder: (_) => const ControllerControlsPage(),
     ),
@@ -364,7 +292,7 @@ class _WelcomePageState extends State<WelcomePage> {
       pageBuilder: (_) => const HlsSubtitlesPage(),
     ),
     ExampleItem(
-      title: 'HLS Audio',
+      title: 'HLS audio',
       description:
           'Alternate audio language track switching inside HLS manifest.',
       icon: Icons.audiotrack,
@@ -373,7 +301,7 @@ class _WelcomePageState extends State<WelcomePage> {
       pageBuilder: (_) => const HlsAudioPage(),
     ),
     ExampleItem(
-      title: 'Dash',
+      title: 'DASH',
       description: 'Dynamic Adaptive Streaming over HTTP (MPD) playback.',
       icon: Icons.view_stream,
       identifier: 'welcome_page_item_dash',
@@ -410,7 +338,7 @@ class _WelcomePageState extends State<WelcomePage> {
       pageBuilder: (_) => const ClearKeyPage(),
     ),
     ExampleItem(
-      title: 'RTSP (Android only)',
+      title: 'RTSP',
       description:
           'Real-Time Streaming Protocol playback for security cams and feeds.',
       icon: Icons.videocam,
@@ -442,7 +370,7 @@ class _WelcomePageState extends State<WelcomePage> {
       title: 'Reusable video list',
       description:
           'High-performance scrolling feed recycling player controllers.',
-      icon: Icons.recycling,
+      icon: Icons.dynamic_feed,
       identifier: 'welcome_page_item_reusable_video_list',
       pageBuilder: (_) => const ReusableVideoListPage(),
     ),
@@ -450,7 +378,7 @@ class _WelcomePageState extends State<WelcomePage> {
       title: 'Cache',
       description:
           'Pre-caching and offline playback configuration for network videos.',
-      icon: Icons.save,
+      icon: Icons.cached,
       identifier: 'welcome_page_item_cache',
       supportsWeb: false,
       pageBuilder: (_) => const CachePage(),

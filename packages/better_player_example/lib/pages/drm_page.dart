@@ -97,8 +97,8 @@ class _DrmPageState extends State<DrmPage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('DRM Protected Playback')),
-      body: DemoContainer(
-        child: SingleChildScrollView(
+      body: SingleChildScrollView(
+        child: DemoContainer(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
