@@ -12,7 +12,7 @@ class BetterPlayerFeedPage extends StatefulWidget {
 class _BetterPlayerFeedPageState extends State<BetterPlayerFeedPage> {
   late final BetterPlayerFeedController _feedController;
 
-  final List<PlayerDataSource> _dataSources = [
+  static final List<PlayerDataSource> _dataSources = [
     PlayerDataSource.network(
       Constants.forBiggerBlazesUrl,
       cacheConfiguration: const CacheConfiguration(useCache: true),
@@ -43,7 +43,7 @@ class _BetterPlayerFeedPageState extends State<BetterPlayerFeedPage> {
     ),
   ];
 
-  final List<String> _titles = [
+  static const List<String> _titles = [
     'For Bigger Blazes (Action)',
     'For Bigger Joyrides (Nature)',
     'Elephants Dream (MP4)',
@@ -87,21 +87,8 @@ class _BetterPlayerFeedPageState extends State<BetterPlayerFeedPage> {
             controller: _feedController,
             configuration: PlayerFeedConfiguration(
               placeholderBuilder: (context, index, dataSource) {
-                return ColoredBox(
-                  color: Colors.black,
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const CircularProgressIndicator(color: Colors.white),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Loading ${_titles[index % _titles.length]}...',
-                          style: const TextStyle(color: Colors.white70),
-                        ),
-                      ],
-                    ),
-                  ),
+                return _FeedItemPlaceholder(
+                  title: _titles[index % _titles.length],
                 );
               },
             ),
@@ -110,109 +97,174 @@ class _BetterPlayerFeedPageState extends State<BetterPlayerFeedPage> {
             left: 16,
             bottom: 32,
             right: 80,
-            child: ListenableBuilder(
-              listenable: _feedController,
-              builder: (context, _) {
-                final currentIndex = _feedController.currentIndex;
-                final title = _titles[currentIndex % _titles.length];
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.6),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'Item ${currentIndex + 1} of ${_dataSources.length} • Pool: 3 Slots',
-                        style: const TextStyle(
-                          color: Colors.greenAccent,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 4,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    const Text(
-                      'Swipe up / down. Memory capped by bounded controller pool with distance eviction.',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                );
-              },
+            child: _FeedItemMetaOverlay(
+              feedController: _feedController,
+              titles: _titles,
+              totalItems: _dataSources.length,
             ),
           ),
-          Positioned(
+          const Positioned(
             right: 16,
             bottom: 40,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(
-                    Icons.favorite_border,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  onPressed: () {},
-                ),
-                const Text(
-                  '32.4k',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-                const SizedBox(height: 16),
-                IconButton(
-                  icon: const Icon(
-                    Icons.comment_outlined,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  onPressed: () {},
-                ),
-                const Text(
-                  '412',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-                const SizedBox(height: 16),
-                IconButton(
-                  icon: const Icon(
-                    Icons.share_outlined,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                  onPressed: () {},
-                ),
-                const Text(
-                  'Share',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ],
-            ),
+            child: _FeedSideActionsOverlay(),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _FeedItemPlaceholder extends StatelessWidget {
+  const _FeedItemPlaceholder({
+    required this.title,
+  });
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: Colors.black,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const CircularProgressIndicator(color: Colors.white),
+            const SizedBox(height: 16),
+            Text(
+              'Loading $title...',
+              style: const TextStyle(color: Colors.white70),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FeedItemMetaOverlay extends StatelessWidget {
+  const _FeedItemMetaOverlay({
+    required this.feedController,
+    required this.titles,
+    required this.totalItems,
+  });
+
+  final BetterPlayerFeedController feedController;
+  final List<String> titles;
+  final int totalItems;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: feedController,
+      builder: (context, _) {
+        final currentIndex = feedController.currentIndex;
+        final title = titles[currentIndex % titles.length];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 4,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                'Item ${currentIndex + 1} of $totalItems • Pool: 3 Slots',
+                style: const TextStyle(
+                  color: Colors.greenAccent,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                shadows: [
+                  Shadow(
+                    blurRadius: 4,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 4),
+            const Text(
+              'Swipe up / down. Memory capped by bounded controller pool with distance eviction.',
+              style: TextStyle(
+                color: Colors.white70,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _FeedSideActionsOverlay extends StatelessWidget {
+  const _FeedSideActionsOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _FeedActionButton(
+          icon: Icons.favorite_border,
+          label: '32.4k',
+        ),
+        SizedBox(height: 16),
+        _FeedActionButton(
+          icon: Icons.comment_outlined,
+          label: '412',
+        ),
+        SizedBox(height: 16),
+        _FeedActionButton(
+          icon: Icons.share_outlined,
+          label: 'Share',
+        ),
+      ],
+    );
+  }
+}
+
+class _FeedActionButton extends StatelessWidget {
+  const _FeedActionButton({
+    required this.icon,
+    required this.label,
+  });
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        IconButton(
+          icon: Icon(
+            icon,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {},
+        ),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white, fontSize: 12),
+        ),
+      ],
     );
   }
 }
