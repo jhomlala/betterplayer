@@ -8,10 +8,17 @@ on:
       - 'docs/**'
       - 'package.json'
       - 'package-lock.json'
+      - 'packages/**'
+      - 'pubspec.yaml'
       - '.github/workflows/deploy-docs.yml'
+  workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: deploy-docs
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -32,8 +39,31 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build website
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: Build Flutter Web demo
+        working-directory: packages/better_player_example
+        run: >
+          flutter build web
+          --release
+          --target lib/main.dart
+          --base-href "/betterplayer/demo/"
+          --no-tree-shake-icons
+
+      - name: Build Docusaurus website
         run: npm run build
+
+      - name: Merge demo into docs output
+        run: |
+          mkdir -p docs/build/demo
+          cp -r packages/better_player_example/build/web/. docs/build/demo/
 
       - name: Disable Jekyll
         run: touch ./docs/build/.nojekyll
@@ -43,4 +73,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/build
+
 
