@@ -6,12 +6,26 @@ void main() {
     test('Default values', () {
       final translations = PlayerTranslations();
       expect(translations.languageCode, 'en');
+      expect(translations.overflowMenuAbout, 'About');
+      expect(translations.aboutVersion, 'Version');
+      expect(translations.aboutClose, 'Close');
+      expect(translations.aboutLinkCopied, 'Copied');
+      expect(translations.aboutRepository, 'Repository');
+      expect(translations.aboutHasoft, 'Hasoft.pl');
+      expect(translations.aboutReportIssue, 'Report issue');
     });
 
     test('Polish factory', () {
       final translations = PlayerTranslations.polish();
       expect(translations.languageCode, 'pl');
       expect(translations.generalRetry, 'Spróbuj ponownie');
+      expect(translations.overflowMenuAbout, 'O odtwarzaczu');
+      expect(translations.aboutVersion, 'Wersja');
+      expect(translations.aboutClose, 'Zamknij');
+      expect(translations.aboutLinkCopied, 'Skopiowano');
+      expect(translations.aboutRepository, 'Repozytorium');
+      expect(translations.aboutHasoft, 'Hasoft.pl');
+      expect(translations.aboutReportIssue, 'Zgłoś błąd');
     });
 
     test('Chinese factory', () {
@@ -42,6 +56,10 @@ void main() {
     test('Spanish factory', () {
       final translations = PlayerTranslations.spanish();
       expect(translations.languageCode, 'es');
+      expect(translations.overflowMenuAbout, 'About');
+      expect(translations.aboutVersion, 'Version');
+      expect(translations.aboutClose, 'Close');
+      expect(translations.aboutLinkCopied, 'Copied');
     });
 
     test('Persian factory', () {

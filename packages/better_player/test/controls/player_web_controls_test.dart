@@ -35,11 +35,15 @@ void main() {
     );
   }
 
-  Future<void> setupControls(WidgetTester tester) async {
+  Future<void> setupControls(
+    WidgetTester tester, {
+    List<BetterPlayerExtension>? extensions,
+  }) async {
     mockEngine = MockPlayerEngineController();
     controller = BetterPlayerController(
-      const PlayerConfiguration(
-        controlsConfiguration: PlayerControlsConfiguration(
+      PlayerConfiguration(
+        extensions: extensions ?? const [],
+        controlsConfiguration: const PlayerControlsConfiguration(
           playerTheme: PlayerTheme.web,
         ),
       ),
@@ -240,4 +244,55 @@ void main() {
       expect(controller.videoPlayerValue?.volume, 0.0);
     },
   );
+
+  testWidgets('Web settings menu includes About and opens dialog', (
+    tester,
+  ) async {
+    await setupControls(tester);
+
+    final moreButton = find.bySemanticsLabel(
+      'better_player_material_controls_more_button',
+    );
+    await tester.tap(moreButton);
+    await tester.pumpAndSettle();
+
+    final aboutItem = find.text('About');
+    expect(aboutItem, findsOneWidget);
+
+    await tester.tap(aboutItem);
+    await tester.pumpAndSettle();
+
+    expect(find.byType(AlertDialog), findsOneWidget);
+  });
+
+  testWidgets(
+    'Web settings menu excludes About when branding extension hides it',
+    (tester) async {
+      await setupControls(
+        tester,
+        extensions: [const _WebHidingBrandingExtension()],
+      );
+
+      final moreButton = find.bySemanticsLabel(
+        'better_player_material_controls_more_button',
+      );
+      await tester.tap(moreButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('About'), findsNothing);
+    },
+  );
+}
+
+class _WebHidingBrandingExtension extends PlayerBrandingExtension {
+  const _WebHidingBrandingExtension();
+
+  @override
+  bool get hideAboutMenu => true;
+
+  @override
+  void onAttach(BetterPlayerController controller) {}
+
+  @override
+  void onDetach(BetterPlayerController controller) {}
 }

@@ -40,6 +40,7 @@ const sidebars = {
         'playlist_configuration',
         'translations_configuration',
         'logging_configuration',
+        'about_dialog',
       ],
     },
     {
@@ -66,6 +67,7 @@ const sidebars = {
       items: [
         'enterprise_overview',
         'vast_vmap_ads',
+        'enterprise_hide_about',
       ],
     },
   ],

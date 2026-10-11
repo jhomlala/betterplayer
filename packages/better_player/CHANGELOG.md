@@ -1,3 +1,6 @@
+## Unreleased
+- Added: About item in overflow menu with project links, version, and logo; hideable via PlayerBrandingExtension.
+
 ## 1.23.2
 - Updated: Modernized `better_player_example` with Material 3 responsive layout (NavigationRail on desktop/web, NavigationBar on mobile), unified title branding to Better Player, theme mode switcher, and refreshed demo page headers and descriptions.
 - Fixed: Resolved OS incompatibility issues in `better_player_example`: replaced infinite loading spinner for local files on Web with informative sandbox notice, loaded memory video bytes directly via asset bundle across all platforms, guarded DRM/ClearKey/DASH/RTSP/PiP against unsupported OS environments, and added `PlatformNoteCard` compatibility indicators.

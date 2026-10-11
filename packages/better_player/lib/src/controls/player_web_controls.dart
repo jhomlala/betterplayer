@@ -6,6 +6,7 @@ import 'package:better_player/src/controls/player_cupertino_localizations_delega
 import 'package:better_player/src/controls/player_material_localizations_delegate.dart';
 import 'package:better_player/src/controls/player_material_progress_bar.dart';
 import 'package:better_player/src/controls/player_web_error_widget.dart';
+import 'package:better_player/src/core/player_about_constants.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -14,6 +15,7 @@ enum _PlayerMenuOption {
   quality,
   playbackSpeed,
   audioTracks,
+  about,
 }
 
 class PlayerWebControls extends StatefulWidget {
@@ -372,6 +374,8 @@ class _PlayerWebControlsState
             await _showAudioMenu();
           } else if (value == _PlayerMenuOption.subtitles) {
             await _showSubtitlesMenu();
+          } else if (value == _PlayerMenuOption.about) {
+            showPlayerAboutDialog();
           }
 
           _isMenuOpen = false;
@@ -437,6 +441,20 @@ class _PlayerWebControlsState
                     'Playback speed',
                     '${_latestValue?.speed ?? 1.0}x',
                     Icons.slow_motion_video,
+                    widget.controlsConfiguration,
+                  ),
+                ),
+              ),
+            if (isAboutMenuVisible)
+              PopupMenuItem(
+                value: _PlayerMenuOption.about,
+                child: Semantics(
+                  label: 'better_player_overflow_menu_about',
+                  identifier: 'better_player_overflow_menu_about',
+                  child: _PlayerWebMenuRow(
+                    _betterPlayerController!.translations.overflowMenuAbout,
+                    PlayerAboutConstants.version,
+                    Icons.info_outline,
                     widget.controlsConfiguration,
                   ),
                 ),
@@ -710,12 +728,13 @@ class _PlayerWebMenuRow extends StatelessWidget {
   );
 
   final String title;
-  final String value;
+  final String? value;
   final IconData icon;
   final PlayerControlsConfiguration controlsConfiguration;
 
   @override
   Widget build(BuildContext context) {
+    final valueText = value;
     return Row(
       children: [
         Icon(
@@ -731,17 +750,19 @@ class _PlayerWebMenuRow extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        const SizedBox(width: 16),
-        Flexible(
-          child: Text(
-            value,
-            style: TextStyle(
-              color: controlsConfiguration.textColor,
-              fontSize: 12,
+        if (valueText != null && valueText.isNotEmpty) ...[
+          const SizedBox(width: 16),
+          Flexible(
+            child: Text(
+              valueText,
+              style: TextStyle(
+                color: controlsConfiguration.textColor,
+                fontSize: 12,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
-            overflow: TextOverflow.ellipsis,
           ),
-        ),
+        ],
         const SizedBox(width: 8),
         Icon(
           Icons.chevron_right,

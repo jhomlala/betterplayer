@@ -31,6 +31,7 @@ void main() {
       const config = PlayerControlsConfiguration();
       expect(config.controlsHideTime, const Duration(seconds: 3));
       expect(config.controlsTransitionTime, const Duration(milliseconds: 300));
+      expect(config.aboutIcon, Icons.info_outline);
     });
 
     test('PlayerControlsConfiguration factories', () {
@@ -39,6 +40,17 @@ void main() {
 
       final cupertino = PlayerControlsConfiguration.cupertino();
       expect(cupertino.playIcon, CupertinoIcons.play_arrow_solid);
+      expect(cupertino.aboutIcon, CupertinoIcons.info_circle);
+
+      final withCupertino = const PlayerControlsConfiguration()
+          .withCupertinoIcons();
+      expect(withCupertino.aboutIcon, CupertinoIcons.info_circle);
+
+      const customIcon = Icons.help_outline;
+      final withCustom = const PlayerControlsConfiguration(
+        aboutIcon: customIcon,
+      ).withCupertinoIcons();
+      expect(withCustom.aboutIcon, customIcon);
 
       final theme = PlayerControlsConfiguration.theme(ThemeData.light());
       expect(theme.textColor, ThemeData.light().textTheme.bodySmall?.color);

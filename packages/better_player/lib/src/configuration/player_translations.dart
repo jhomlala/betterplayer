@@ -28,6 +28,13 @@ class PlayerTranslations {
     this.overflowMenuCancelLabel = 'Cancel',
     this.overflowMenuScrimLabel = 'Dismiss',
     this.overflowMenuScrimHint = 'Close',
+    this.overflowMenuAbout = 'About',
+    this.aboutVersion = 'Version',
+    this.aboutClose = 'Close',
+    this.aboutLinkCopied = 'Copied',
+    this.aboutRepository = 'Repository',
+    this.aboutHasoft = 'Hasoft.pl',
+    this.aboutReportIssue = 'Report issue',
   });
 
   factory PlayerTranslations.polish() => PlayerTranslations(
@@ -57,6 +64,12 @@ class PlayerTranslations {
     overflowMenuCancelLabel: 'Anuluj',
     overflowMenuScrimLabel: 'Odrzuć',
     overflowMenuScrimHint: 'Zamknij',
+    overflowMenuAbout: 'O odtwarzaczu',
+    aboutVersion: 'Wersja',
+    aboutClose: 'Zamknij',
+    aboutLinkCopied: 'Skopiowano',
+    aboutRepository: 'Repozytorium',
+    aboutReportIssue: 'Zgłoś błąd',
   );
 
   factory PlayerTranslations.chinese() => PlayerTranslations(
@@ -326,4 +339,11 @@ class PlayerTranslations {
   final String overflowMenuCancelLabel;
   final String overflowMenuScrimLabel;
   final String overflowMenuScrimHint;
+  final String overflowMenuAbout;
+  final String aboutVersion;
+  final String aboutClose;
+  final String aboutLinkCopied;
+  final String aboutRepository;
+  final String aboutHasoft;
+  final String aboutReportIssue;
 }
