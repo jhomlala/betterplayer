@@ -21,10 +21,11 @@ Better Player provides a robust set of features designed for production-ready ap
 *   **Refactored Controls**: Modern, customizable user interface.
 *   **Playlist Support**: Play sequences of videos continuously.
 *   **ListView Integration**: Optimized for video playback within scrollable lists.
-*   **Comprehensive Subtitles**: Support for SRT and WebVTT formats (with HTML tags), HLS segmented subtitles, and multiple subtitle tracks.
+*   **Comprehensive Subtitles**: Support for SRT and WebVTT formats (with HTML tags), TTML, HLS segmented subtitles, and multiple subtitle tracks.
 *   **Adaptive Streaming**: Full support for HLS and DASH, including track, subtitle, and audio track selection.
 *   **Performance & Optimization**: Integrated cache support and alternative resolution selection.
 *   **Advanced Capabilities**: Support for Picture-in-Picture (PiP), DRM (Token, Widevine, FairPlay EZDRM), and custom HTTP headers.
+*   **VAST & VMAP Ads**: Client-side linear video ads (VAST 2.0/3.0/4.x, VMAP) with dual-texture player stacking, tracking beacons, and custom UI overlays (see [VAST & VMAP Ads](vast_vmap_ads.md)).
 *   **Platform Features**: Native notifications and comprehensive BoxFit support.
 *   **macOS Support**: Dedicated desktop playback powered by native AVPlayer, AppKitView, and FFI bindings.
 *   **Windows Support**: Desktop playback powered by libmpv and Direct3D 11 texture sharing.
@@ -41,13 +42,13 @@ This plugin is developed as a community-driven project. If you require a feature
 
 ## Screenshots
 
-| Web & Desktop | Android |
+| Mobile Overview | Native Picture-in-Picture (PiP) |
 |:---:|:---:|
-| ![Web and Desktop](./static/img/screenshots/web_01_overview_dark.png) | ![Android](./static/img/screenshots/android_01_overview.png) |
+| ![Android](./static/img/screenshots/android_01_overview.png) | ![PiP](./static/img/screenshots/android_05_pip.png) |
 
-| Touch & Fullscreen Controls | Native Picture-in-Picture (PiP) |
+| Web & Desktop Overview | Touch & Fullscreen Controls |
 |:---:|:---:|
-| ![Fullscreen](./static/img/screenshots/android_04_fullscreen.png) | ![PiP](./static/img/screenshots/android_05_pip.png) |
+| ![Web and Desktop](./static/img/screenshots/web_01_overview_dark.png) | ![Fullscreen](./static/img/screenshots/android_04_fullscreen.png) |
 
 | Adaptive HLS Quality & Track Switching | Styled Subtitles (WebVTT / TTML / SRT) |
 |:---:|:---:|

@@ -13,6 +13,7 @@ When an AI coding assistant (Cursor, Copilot, etc.) is asked to implement video 
 | **Subtitle Parsing** | ✅ Advanced (WebVTT, TTML, SRT) | ⚠️ Basic (SRT only) | ⚠️ Basic | ✅ Advanced |
 | **Caching/Pre-caching** | ✅ Built-in | ❌ None | ❌ None | ❌ None |
 | **Playlists** | ✅ Built-in | ❌ None | ❌ None | ✅ Built-in |
+| **VAST / VMAP Ads** | ✅ Supported (VAST 2.0-4.x, VMAP) | ❌ None | ❌ None | ❌ None |
 
 ## 📦 Package Overview for AI Agents
 

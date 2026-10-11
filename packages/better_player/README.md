@@ -40,25 +40,31 @@ Stop stitching `video_player`, separate UI packages, abandoned caching plugins, 
 | **Subtitles** | SRT, WebVTT, TTML | SRT only | Advanced |
 | **Picture in Picture (PiP)** | Built-in | None | Platform-dependent |
 | **Playlists** | Built-in | None | Built-in |
+| **VAST / VMAP Ads** | Client-side ad engine (VAST 2.0-4.x, VMAP) | None | None |
 
 ---
 
 ## 📱 Visual Showcase
 
-<p align="center">
-  <img src="assets/screenshots/web_01_overview_dark.png" width="62%" alt="Better Player Web and Desktop Showcase" />
-  <img src="assets/screenshots/android_01_overview.png" width="35%" alt="Better Player Android Mobile Showcase" />
-</p>
-
 <table align="center">
   <tr>
     <td align="center" width="50%">
-      <img src="assets/screenshots/android_04_fullscreen.png" alt="Touch & Fullscreen Controls" /><br>
-      <b>Touch & Fullscreen Controls</b>
+      <img src="assets/screenshots/android_01_overview.png" alt="Better Player Android Mobile Showcase" /><br>
+      <b>Mobile Overview</b>
     </td>
     <td align="center" width="50%">
       <img src="assets/screenshots/android_05_pip.png" alt="Picture in Picture" /><br>
       <b>Native Picture-in-Picture (PiP)</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/web_01_overview_dark.png" alt="Better Player Web and Desktop Showcase" /><br>
+      <b>Web & Desktop Overview</b>
+    </td>
+    <td align="center" width="50%">
+      <img src="assets/screenshots/android_04_fullscreen.png" alt="Touch & Fullscreen Controls" /><br>
+      <b>Touch & Fullscreen Controls</b>
     </td>
   </tr>
   <tr>
@@ -158,7 +164,7 @@ dart run skills@ get -p better_player
 
 ## 📖 Resources & Docs
 
-- [Official Documentation](https://jhomlala.github.io/betterplayer/): Full guides for caching, DRM, subtitles, and playlists.
+- [Official Documentation](https://jhomlala.github.io/betterplayer/): Full guides for caching, DRM, subtitles, VAST ads, and playlists.
 - [Example Application](https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_example): Complete working samples covering every feature.
 - [API Reference](https://pub.dev/documentation/better_player/latest/): Generated Dart doc reference.
 
