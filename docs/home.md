@@ -41,7 +41,15 @@ This plugin is developed as a community-driven project. If you require a feature
 
 ## Screenshots
 
-| | | | | | |
-|:---:|:---:|:---:|:---:|:---:|:---:|
-| ![1](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/1.png) | ![2](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/2.png) | ![3](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/3.png) | ![4](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/4.png) | ![5](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/5.png) | ![6](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/6.png) |
-| ![7](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/7.png) | ![8](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/8.png) | ![9](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/9.png) | ![10](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/10.png) | ![11](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/11.png) | ![12](https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/12.png) |
+<p align="center">
+  <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/web_01_overview_dark.png" width="62%" alt="Better Player Web and Desktop Showcase" />
+  <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/android_01_overview.png" width="35%" alt="Better Player Android Mobile Showcase" />
+</p>
+
+| Touch & Fullscreen Controls | Native Picture-in-Picture (PiP) |
+|:---:|:---:|
+| ![Fullscreen](https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/android_04_fullscreen.png) | ![PiP](https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/android_05_pip.png) |
+
+| Adaptive HLS Quality & Track Switching | Styled Subtitles (WebVTT / TTML / SRT) |
+|:---:|:---:|
+| ![HLS Tracks](https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/web_05_hls_tracks.png) | ![Subtitles](https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/web_04_subtitles.png) |

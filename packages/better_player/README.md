@@ -45,19 +45,32 @@ Stop stitching `video_player`, separate UI packages, abandoned caching plugins, 
 
 ## 📱 Visual Showcase
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/web_01_overview_dark.png" width="62%" alt="Better Player Web and Desktop Showcase" />
+  <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/android_01_overview.png" width="35%" alt="Better Player Android Mobile Showcase" />
+</p>
+
 <table align="center">
-   <tr>
-      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/1.png"></td>
-      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/3.png"></td>
-      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/7.png"></td>
-      <td><img width="200px" src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/9.png"></td>
-   </tr>
-   <tr align="center">
-      <td><b>Default Controls</b></td>
-      <td><b>Settings Menu</b></td>
-      <td><b>Audio Tracks</b></td>
-      <td><b>Event Listener</b></td>
-   </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/android_04_fullscreen.png" alt="Touch & Fullscreen Controls" /><br>
+      <b>Touch & Fullscreen Controls</b>
+    </td>
+    <td align="center" width="50%">
+      <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/android_05_pip.png" alt="Picture in Picture" /><br>
+      <b>Native Picture-in-Picture (PiP)</b>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/web_05_hls_tracks.png" alt="Adaptive HLS Quality Switching" /><br>
+      <b>Adaptive HLS Quality & Track Switching</b>
+    </td>
+    <td align="center" width="50%">
+      <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/web_04_subtitles.png" alt="Advanced Subtitles" /><br>
+      <b>Styled Subtitles (WebVTT, TTML, SRT)</b>
+    </td>
+  </tr>
 </table>
 
 ---
