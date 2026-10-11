@@ -367,7 +367,7 @@ class _WelcomePageState extends State<WelcomePage> {
       pageBuilder: (_) => const ReusableVideoListPage(),
     ),
     ExampleItem(
-      title: 'Video feed (TikTok / Reels)',
+      title: 'Video feed',
       description:
           'High-performance full-screen vertical video feed powered by BetterPlayerFeed and controller pooling.',
       icon: Icons.view_carousel,

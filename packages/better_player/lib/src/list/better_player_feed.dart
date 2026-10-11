@@ -126,7 +126,7 @@ class _BetterPlayerFeedItemState extends State<_BetterPlayerFeedItem> {
 }
 
 /// High-performance scrollable video feed widget using a bounded [BetterPlayerPool].
-/// Supports full-screen TikTok/Reels style vertical feeds and scrolling lists.
+/// Supports full-screen vertical swipe feeds and scrolling lists.
 class BetterPlayerFeed extends StatefulWidget {
   /// Creates a feed widget with the provided [controller].
   const BetterPlayerFeed({

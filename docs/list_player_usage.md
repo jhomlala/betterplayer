@@ -8,7 +8,7 @@ title: List and Feed Video Playback
 Playing multiple videos in scrolling feeds requires strict memory and decoder management. Native video engines (ExoPlayer on Android, AVPlayer on iOS) consume hardware decoders and graphics memory. Allocating a new controller per list item quickly hits OS hardware decoder limits, triggering dropped frames, UI freezes, or Out-of-Memory crashes.
 
 Better Player solves this with two bounded patterns:
-- **`BetterPlayerFeed`**: Turnkey full-screen swipe feed (TikTok / Reels style) with built-in controller pooling, lookahead preloading, audio overlap prevention, and first-frame gating.
+- **`BetterPlayerFeed`**: Turnkey full-screen swipe feed (short-form vertical video style) with built-in controller pooling, lookahead preloading, audio overlap prevention, and first-frame gating.
 - **`BetterPlayerPool`**: Standalone controller recycling engine for custom `ListView` or `GridView` feeds.
 
 > [!NOTE]
@@ -83,7 +83,7 @@ Customizes the `BetterPlayerFeed` widget UI and behavior:
 
 | Parameter | Type | Default | Description |
 |---|---|---|---|
-| `scrollDirection` | `Axis` | `Axis.vertical` | Axis along which the feed scrolls (`Axis.vertical` for TikTok/Reels, `Axis.horizontal` for carousels). |
+| `scrollDirection` | `Axis` | `Axis.vertical` | Axis along which the feed scrolls (`Axis.vertical` for vertical swipe feeds, `Axis.horizontal` for carousels). |
 | `autoPlay` | `bool` | `true` | Whether the focused item automatically begins playback once initialized. |
 | `placeholderBuilder` | `Widget Function(...)` | `null` | Builds the placeholder widget displayed behind the video and before the first frame renders. |
 | `errorBuilder` | `Widget Function(...)` | `null` | Builds the fallback widget displayed if a video fails to load or play. |

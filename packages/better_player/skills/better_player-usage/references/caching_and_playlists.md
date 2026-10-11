@@ -96,7 +96,7 @@ class _PlaylistScreenState extends State<PlaylistScreen> {
 
 ## 3. Video Playback in Scrollable Lists and Feeds
 
-For vertical or horizontal swipe feeds (TikTok / Reels style) and long lists, use **`BetterPlayerFeed`**. It bounds native memory with an internal `BetterPlayerPool` (defaults to 3 controllers) and preloads upcoming items:
+For vertical or horizontal swipe feeds (short-form video feeds) and long lists, use **`BetterPlayerFeed`**. It bounds native memory with an internal `BetterPlayerPool` (defaults to 3 controllers) and preloads upcoming items:
 
 ```dart
 BetterPlayerFeed(
