@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/model/video_list_data.dart';
 import 'package:material_ui/material_ui.dart';

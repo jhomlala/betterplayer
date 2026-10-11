@@ -1,8 +1,18 @@
-﻿import 'package:better_player/better_player.dart';
+// ignore_for_file: deprecated_member_use_from_same_package, deprecated_member_use
+
+import 'package:better_player/better_player.dart';
 import 'package:material_ui/material_ui.dart';
 
-///Special version of Better Player which is used to play video in list view.
+/// Special version of Better Player which is used to play video in list view.
+@Deprecated(
+  'Use BetterPlayerFeed for swipe feeds or BetterPlayerPool for custom list recycling. '
+  'BetterPlayerListVideoPlayer does not pool controllers and can exhaust hardware decoders.',
+)
 class BetterPlayerListVideoPlayer extends StatefulWidget {
+  @Deprecated(
+    'Use BetterPlayerFeed for swipe feeds or BetterPlayerPool for custom list recycling. '
+    'BetterPlayerListVideoPlayer does not pool controllers and can exhaust hardware decoders.',
+  )
   const BetterPlayerListVideoPlayer(
     this.dataSource, {
     this.configuration = const PlayerConfiguration(),

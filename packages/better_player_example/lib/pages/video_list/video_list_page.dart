@@ -48,12 +48,12 @@ class _VideoListPageState extends State<VideoListPage> {
           if (index == 0) {
             return const DemoContainer(
               child: DemoHeader(
-                title: 'Scroll-Triggered Autoplay Feed',
+                title: 'Scroll-Triggered Autoplay Feed (Deprecated)',
                 description:
-                    'Plays video automatically when scrolled past 80% screen visibility, '
-                    'pausing videos outside the viewport.',
+                    'Legacy BetterPlayerListVideoPlayer without pooling. '
+                    'For high-performance feeds and bounded memory, use BetterPlayerFeed or BetterPlayerPool.',
                 instructions:
-                    'Scroll vertically to verify play/pause switching.',
+                    'Scroll vertically to observe un-pooled play/pause switching.',
                 icon: Icons.view_agenda_outlined,
               ),
             );

@@ -22,6 +22,9 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
   final List<String> _videos = [
     Constants.forBiggerBlazesUrl,
     Constants.forBiggerJoyridesVideoUrl,
+    Constants.elephantDreamVideoUrl,
+    Constants.bugBuckBunnyVideoUrl,
+    Constants.phantomVideoUrl,
   ];
   List<VideoListData> dataList = [];
   int value = 0;
@@ -95,6 +98,7 @@ class _ReusableVideoListPageState extends State<ReusableVideoListPage> {
               child: ReusableVideoListWidget(
                 videoListData: videoListData,
                 videoListController: videoListController,
+                index: index - 1,
                 canBuildVideo: _checkCanBuildVideo,
               ),
             );

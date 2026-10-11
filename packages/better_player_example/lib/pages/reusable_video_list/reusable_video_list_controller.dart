@@ -1,44 +1,20 @@
 import 'package:better_player/better_player.dart';
-import 'package:collection/collection.dart' show IterableExtension;
 
+/// Controller coordinating pooled video player instances for a scrolling list.
 class ReusableVideoListController {
-  ReusableVideoListController() {
-    for (var index = 0; index < 3; index++) {
-      _betterPlayerControllerRegistry.add(
-        BetterPlayerController(
-          const PlayerConfiguration(
-            handleLifecycle: false,
-            autoDispose: false,
-          ),
+  /// Creates a controller managing a [BetterPlayerPool].
+  ReusableVideoListController({int poolSize = 3})
+    : pool = BetterPlayerPool(
+        configuration: PlayerPoolConfiguration(
+          poolSize: poolSize,
         ),
       );
-    }
-  }
 
-  final List<BetterPlayerController> _betterPlayerControllerRegistry = [];
-  final List<BetterPlayerController> _usedBetterPlayerControllerRegistry = [];
+  /// Underlying bounded player pool.
+  final BetterPlayerPool pool;
 
-  BetterPlayerController? getBetterPlayerController() {
-    final freeController = _betterPlayerControllerRegistry.firstWhereOrNull(
-      (controller) => !_usedBetterPlayerControllerRegistry.contains(controller),
-    );
-
-    if (freeController != null) {
-      _usedBetterPlayerControllerRegistry.add(freeController);
-    }
-
-    return freeController;
-  }
-
-  void freeBetterPlayerController(
-    BetterPlayerController? betterPlayerController,
-  ) {
-    _usedBetterPlayerControllerRegistry.remove(betterPlayerController);
-  }
-
+  /// Disposes all pooled resources.
   void dispose() {
-    for (final controller in _betterPlayerControllerRegistry) {
-      controller.dispose();
-    }
+    pool.dispose();
   }
 }

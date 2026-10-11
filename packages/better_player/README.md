@@ -41,6 +41,7 @@ Stop stitching `video_player`, separate UI packages, abandoned caching plugins, 
 | **Picture in Picture (PiP)** | Built-in | None | Platform-dependent |
 | **Playlists** | Built-in | None | Built-in |
 | **VAST / VMAP Ads** | Client-side ad engine (VAST 2.0-4.x, VMAP) | None | None |
+| **Video Feeds & Pooling** | Built-in (`BetterPlayerFeed`, `BetterPlayerPool`) | None | None |
 
 ---
 
@@ -125,6 +126,22 @@ final controller = BetterPlayerController(
 );
 
 BetterPlayer(controller: controller);
+```
+
+### 4. High-Performance Video Feeds (TikTok / Reels)
+Render infinite vertical or horizontal swipe feeds using bounded controller pooling and lookahead preloading:
+
+```dart
+BetterPlayerFeed(
+  controller: BetterPlayerFeedController(
+    dataSources: feedSources,
+    poolConfiguration: const PlayerPoolConfiguration(
+      poolSize: 3,
+      preloadForward: 1,
+      preloadBackward: 1,
+    ),
+  ),
+);
 ```
 
 ---
