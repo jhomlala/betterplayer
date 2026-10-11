@@ -66,6 +66,7 @@ const sidebars = {
       items: [
         'enterprise_overview',
         'vast_vmap_ads',
+        'enterprise_hide_about',
       ],
     },
   ],

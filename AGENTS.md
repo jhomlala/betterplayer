@@ -183,7 +183,7 @@ PlayerDataSource dataSource = PlayerDataSource(
   - NEVER artificially sync the versions of the sub-packages to match the core package.
   - Sub-packages should only be bumped incrementally from their *own* current version (e.g., `1.1.0` -> `1.2.0`) based on their own unreleased changes.
 - **Preparation**: When asked to "Prepare a release for version X.Y.Z" (referring to the core package), the AI must:
-  1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml` and `packages/better_player_example/pubspec.yaml`.
+  1. Update `version: X.Y.Z` in `packages/better_player/pubspec.yaml` and `packages/better_player_example/pubspec.yaml`, as well as `PlayerAboutConstants.version` in `packages/better_player/lib/src/core/player_about_constants.dart`.
   2. Evaluate sub-packages (`android`, `ios`, `platform_interface`). If they have changes, bump their versions incrementally (e.g., to `A.B.C`) in their respective `pubspec.yaml` files.
   3. Update `s.version = 'A.B.C'` in `packages/better_player_ios/ios/better_player_ios.podspec` to match the iOS sub-package version.
   4. Update the dependencies in `packages/better_player/pubspec.yaml` to point to the newly bumped `^A.B.C` versions of the sub-packages.

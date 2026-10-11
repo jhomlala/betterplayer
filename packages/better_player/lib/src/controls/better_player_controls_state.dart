@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/controls/player_about_dialog.dart';
 import 'package:better_player/src/controls/player_overflow_menu.dart';
 import 'package:better_player/src/controls/player_selection_list_item_widget.dart';
 import 'package:better_player/src/logging/player_logger.dart';
@@ -65,6 +66,28 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
               .inMilliseconds;
       betterPlayerController!.seekTo(Duration(milliseconds: min(skip, end)));
     }
+  }
+
+  /// Returns true when the About item must appear in the overflow menu.
+  ///
+  /// A [PlayerBrandingExtension] can hide it. Checked on every menu open.
+  bool get isAboutMenuVisible {
+    final branding = betterPlayerController
+        ?.getExtension<PlayerBrandingExtension>();
+    return !(branding?.hideAboutMenu ?? false);
+  }
+
+  /// Opens the About dialog.
+  void showPlayerAboutDialog() {
+    final controller = betterPlayerController;
+    if (controller == null || !mounted) return;
+    PlayerLogger.debug(message: 'showPlayerAboutDialog');
+    PlayerAboutDialog.show(
+      context: context,
+      translations: controller.translations,
+      isCupertino: _isCupertinoTheme,
+      useRootNavigator: controller.betterPlayerConfiguration.useRootNavigator,
+    );
   }
 
   void onShowMoreClicked() {
@@ -167,6 +190,22 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
           ),
         );
       }
+    }
+
+    if (isAboutMenuVisible) {
+      children.add(
+        _PlayerBottomSheetMenuItem(
+          isCupertinoTheme: _isCupertinoTheme,
+          betterPlayerControlsConfiguration: betterPlayerControlsConfiguration,
+          icon: betterPlayerControlsConfiguration.aboutIcon,
+          label: translations.overflowMenuAbout,
+          onTap: () {
+            Navigator.of(context).pop();
+            showPlayerAboutDialog();
+          },
+          semanticsIdentifier: 'better_player_overflow_menu_about',
+        ),
+      );
     }
 
     _showModalBottomSheet(children);

@@ -94,5 +94,107 @@ void main() {
       state.changePlayerControlsNotVisible(false);
       expect(state.controlsNotVisible, false);
     });
+
+    testWidgets('isAboutMenuVisible is true by default', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: MockControlsWidget(controller: controller),
+        ),
+      );
+
+      final state = tester.state<MockControlsState>(
+        find.byType(MockControlsWidget),
+      );
+      expect(state.isAboutMenuVisible, true);
+    });
+
+    testWidgets(
+      'isAboutMenuVisible is false when branding extension hides it',
+      (
+        tester,
+      ) async {
+        final hidingController = BetterPlayerMockController(
+          const PlayerConfiguration(
+            extensions: [_TestHidingBrandingExtension()],
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: MockControlsWidget(controller: hidingController),
+          ),
+        );
+
+        final state = tester.state<MockControlsState>(
+          find.byType(MockControlsWidget),
+        );
+        expect(state.isAboutMenuVisible, false);
+      },
+    );
+
+    testWidgets('onShowMoreClicked includes About and opens dialog', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: MockControlsWidget(controller: controller),
+          ),
+        ),
+      );
+
+      final state = tester.state<MockControlsState>(
+        find.byType(MockControlsWidget),
+      );
+      state.onShowMoreClicked();
+      await tester.pumpAndSettle();
+
+      expect(find.text('About'), findsOneWidget);
+
+      await tester.tap(find.text('About'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsOneWidget);
+    });
+
+    testWidgets(
+      'onShowMoreClicked excludes About when branding extension hides it',
+      (tester) async {
+        final hidingController = BetterPlayerMockController(
+          const PlayerConfiguration(
+            extensions: [_TestHidingBrandingExtension()],
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: MockControlsWidget(controller: hidingController),
+            ),
+          ),
+        );
+
+        final state = tester.state<MockControlsState>(
+          find.byType(MockControlsWidget),
+        );
+        state.onShowMoreClicked();
+        await tester.pumpAndSettle();
+
+        expect(find.text('About'), findsNothing);
+      },
+    );
   });
+}
+
+class _TestHidingBrandingExtension extends PlayerBrandingExtension {
+  const _TestHidingBrandingExtension();
+
+  @override
+  bool get hideAboutMenu => true;
+
+  @override
+  void onAttach(BetterPlayerController controller) {}
+
+  @override
+  void onDetach(BetterPlayerController controller) {}
 }

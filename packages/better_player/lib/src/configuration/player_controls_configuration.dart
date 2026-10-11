@@ -52,6 +52,7 @@ class PlayerControlsConfiguration {
     this.qualitiesIcon = Icons.hd_outlined,
     this.subtitlesIcon = Icons.closed_caption_outlined,
     this.audioTracksIcon = Icons.audiotrack_outlined,
+    this.aboutIcon = Icons.info_outline,
     this.overflowMenuIconsColor = Colors.black,
     this.forwardSkipTimeInMilliseconds = 10000,
     this.backwardSkipTimeInMilliseconds = 10000,
@@ -100,6 +101,7 @@ class PlayerControlsConfiguration {
       qualitiesIcon: CupertinoIcons.slider_horizontal_3,
       subtitlesIcon: CupertinoIcons.captions_bubble,
       audioTracksIcon: CupertinoIcons.music_note_2,
+      aboutIcon: CupertinoIcons.info_circle,
     );
   }
 
@@ -188,6 +190,9 @@ class PlayerControlsConfiguration {
       audioTracksIcon: audioTracksIcon == Icons.audiotrack_outlined
           ? CupertinoIcons.music_note_2
           : audioTracksIcon,
+      aboutIcon: aboutIcon == Icons.info_outline
+          ? CupertinoIcons.info_circle
+          : aboutIcon,
       overflowMenuIconsColor: overflowMenuIconsColor,
       forwardSkipTimeInMilliseconds: forwardSkipTimeInMilliseconds,
       backwardSkipTimeInMilliseconds: backwardSkipTimeInMilliseconds,
@@ -341,6 +346,9 @@ class PlayerControlsConfiguration {
 
   ///Icon of the audios menu item from overflow menu
   final IconData audioTracksIcon;
+
+  ///Icon of the About menu item from overflow menu
+  final IconData aboutIcon;
 
   ///Color of overflow menu icons
   final Color overflowMenuIconsColor;
