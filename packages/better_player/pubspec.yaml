@@ -1,7 +1,7 @@
 name: better_player
 resolution: workspace
 description: Advanced video player for Flutter with HLS, DASH, DRM, subtitles, caching, PiP, playlists, and custom controls.
-version: 1.23.1
+version: 1.23.2
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player
 documentation: https://jhomlala.github.io/betterplayer/
 topics:
@@ -14,6 +14,18 @@ topics:
 screenshots:
   - description: 'Better Player logo'
     path: assets/logo.png
+  - description: 'Overview on web and desktop'
+    path: assets/screenshots/web_01_overview_dark.png
+  - description: 'Overview on Android'
+    path: assets/screenshots/android_01_overview.png
+  - description: 'Fullscreen playback on Android'
+    path: assets/screenshots/android_04_fullscreen.png
+  - description: 'Picture in Picture on Android'
+    path: assets/screenshots/android_05_pip.png
+  - description: 'Styled subtitles'
+    path: assets/screenshots/web_04_subtitles.png
+  - description: 'HLS quality switching'
+    path: assets/screenshots/web_05_hls_tracks.png
 
 environment:
   sdk: "^3.12.0"
@@ -22,7 +34,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  better_player_platform_interface: ^1.3.3
+  better_player_platform_interface: ^1.3.4
   better_player_android: ^1.7.1
   better_player_ios: ^1.6.1
   better_player_macos: ^1.1.1

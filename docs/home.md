@@ -5,7 +5,7 @@ slug: /
 ---
 
 <div style={{textAlign: 'center', marginBottom: '2rem'}}>
-  <img src="./img/logo.png" alt="Better Player Logo" width="120" style={{borderRadius: '1rem', marginBottom: '1rem'}} />
+  <img src="./static/img/logo.png" alt="Better Player Logo" width="120" style={{borderRadius: '1rem', marginBottom: '1rem'}} />
 </div>
 
 # Better Player
@@ -41,15 +41,14 @@ This plugin is developed as a community-driven project. If you require a feature
 
 ## Screenshots
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/web_01_overview_dark.png" width="62%" alt="Better Player Web and Desktop Showcase" />
-  <img src="https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/android_01_overview.png" width="35%" alt="Better Player Android Mobile Showcase" />
-</p>
+| Web & Desktop | Android |
+|:---:|:---:|
+| ![Web and Desktop](./static/img/screenshots/web_01_overview_dark.png) | ![Android](./static/img/screenshots/android_01_overview.png) |
 
 | Touch & Fullscreen Controls | Native Picture-in-Picture (PiP) |
 |:---:|:---:|
-| ![Fullscreen](https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/android_04_fullscreen.png) | ![PiP](https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/android_05_pip.png) |
+| ![Fullscreen](./static/img/screenshots/android_04_fullscreen.png) | ![PiP](./static/img/screenshots/android_05_pip.png) |
 
 | Adaptive HLS Quality & Track Switching | Styled Subtitles (WebVTT / TTML / SRT) |
 |:---:|:---:|
-| ![HLS Tracks](https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/web_05_hls_tracks.png) | ![Subtitles](https://raw.githubusercontent.com/jhomlala/betterplayer/master/docs/assets/screenshots/web_04_subtitles.png) |
+| ![HLS Tracks](./static/img/screenshots/web_05_hls_tracks.png) | ![Subtitles](./static/img/screenshots/web_04_subtitles.png) |
