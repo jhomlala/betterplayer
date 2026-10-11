@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:material_ui/material_ui.dart';
 
 class ResolutionsPage extends StatefulWidget {
@@ -31,23 +33,29 @@ class _ResolutionsPageState extends State<ResolutionsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Resolutions')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Video with different resolutions to select. Click on overflow icon'
-              ' (3 dots in right corner) and select different qualities.',
-              style: TextStyle(fontSize: 16),
-            ),
+      appBar: AppBar(title: const Text('Resolution Switching')),
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Manual Resolution Selection',
+                description:
+                    'Configures multiple video resolution URLs for non-HLS streams '
+                    'allowing manual quality picking in the player overflow menu.',
+                instructions:
+                    'Open the player menu (three dots) > Quality to switch video resolution.',
+                icon: Icons.high_quality_outlined,
+              ),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-        ],
+        ),
       ),
     );
   }

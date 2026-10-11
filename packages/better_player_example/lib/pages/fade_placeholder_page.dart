@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -50,22 +52,29 @@ class _FadePlaceholderPageState extends State<FadePlaceholderPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Fade placeholder player')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Normal player with placeholder which fade.',
-              style: TextStyle(fontSize: 16),
-            ),
+      appBar: AppBar(title: const Text('Fade Placeholder')),
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Animated Crossfade Poster',
+                description:
+                    'Displays custom cover image that smoothly fades out to 0% opacity '
+                    'when playback starts, ensuring seamless visual continuity.',
+                instructions:
+                    'Tap play to watch cover thumbnail crossfade into the video.',
+                icon: Icons.animation_outlined,
+              ),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:material_ui/material_ui.dart';
 
 class OverriddenAspectRatioPage extends StatefulWidget {
@@ -31,22 +33,27 @@ class _OverriddenAspectRatioPageState extends State<OverriddenAspectRatioPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Overridden aspect ratio')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Player with different rotation and fit.',
-              style: TextStyle(fontSize: 16),
-            ),
+      appBar: AppBar(title: const Text('Overridden Aspect Ratio')),
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Dynamic Aspect Ratio Override',
+                description:
+                    'Forces player rendering surface to adopt a specific aspect ratio '
+                    '(1:1 square here) regardless of intrinsic media stream dimensions.',
+                icon: Icons.aspect_ratio_outlined,
+              ),
+              AspectRatio(
+                aspectRatio: 1,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          AspectRatio(
-            aspectRatio: 1,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player_example/constants.dart';
-import 'package:better_player_example/utils.dart';
-import 'package:better_player_example/utils/example_io_utils.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 class MemoryPlayerPage extends StatefulWidget {
@@ -28,40 +28,49 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
 
   Future<void> _setupDataSource() async {
     try {
-      final filePath = await Utils.getFileUrl(Constants.fileTestVideoUrl);
-      final bytes = await ExampleIoUtils.readBytesFromFile(filePath);
+      final byteData = await rootBundle.load('assets/testvideo.mp4');
+      final bytes = byteData.buffer.asUint8List();
       final dataSource = PlayerDataSource(
         DataSourceType.memory,
         '',
         videoExtension: 'mp4',
         bytes: bytes,
       );
-      _betterPlayerController.setupDataSource(dataSource);
+      await _betterPlayerController.setupDataSource(dataSource);
     } catch (e) {
       debugPrint('Failed to load memory data source: $e');
     }
   }
 
   @override
+  void dispose() {
+    _betterPlayerController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Memory player')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Memory player with plays video from bytes list. In this example'
-              'file bytes are read to list and then used in player.',
-              style: TextStyle(fontSize: 16),
+      appBar: AppBar(title: const Text('Memory Video Source')),
+      body: DemoContainer(
+        child: ListView(
+          children: [
+            const DemoHeader(
+              title: 'In-Memory Byte Array Playback',
+              description:
+                  'Streams directly from raw Uint8List byte arrays loaded in RAM '
+                  'without persisting files to disk.',
+              instructions:
+                  'Useful for encrypted memory blocks or dynamically decoded buffers.',
+              icon: Icons.memory_outlined,
             ),
-          ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-        ],
+            AspectRatio(
+              aspectRatio: 16 / 9,
+              child: BetterPlayer(controller: _betterPlayerController),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

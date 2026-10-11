@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:material_ui/material_ui.dart';
 
 class ControllerControlsPage extends StatefulWidget {
@@ -30,47 +32,63 @@ class _ControllerControlsPageState extends State<ControllerControlsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Controller controls')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Control player with BetterPlayerController. You can control all'
-              'aspects of player without using UI of player.',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-          Wrap(
+      appBar: AppBar(title: const Text('Programmatic Controls')),
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TextButton(
-                onPressed: _betterPlayerController.play,
-                child: const Text('Play'),
+              const DemoHeader(
+                title: 'External Controller API',
+                description:
+                    'Drive playback programmatically via BetterPlayerController '
+                    'methods without relying on internal player UI controls.',
+                instructions:
+                    'Use the action buttons below to remotely command playback and UI state.',
+                icon: Icons.tune_outlined,
               ),
-              TextButton(
-                onPressed: _betterPlayerController.pause,
-                child: const Text('Pause'),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
               ),
-              TextButton(
-                child: const Text('Hide controls'),
-                onPressed: () {
-                  _betterPlayerController.setControlsVisibility(false);
-                },
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    FilledButton.icon(
+                      onPressed: _betterPlayerController.play,
+                      icon: const Icon(Icons.play_arrow),
+                      label: const Text('Play'),
+                    ),
+                    FilledButton.tonalIcon(
+                      onPressed: _betterPlayerController.pause,
+                      icon: const Icon(Icons.pause),
+                      label: const Text('Pause'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        _betterPlayerController.setControlsVisibility(false);
+                      },
+                      icon: const Icon(Icons.visibility_off_outlined),
+                      label: const Text('Hide Controls'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        _betterPlayerController.setControlsVisibility(true);
+                      },
+                      icon: const Icon(Icons.visibility_outlined),
+                      label: const Text('Show Controls'),
+                    ),
+                  ],
+                ),
               ),
-              TextButton(
-                child: const Text('Show controls'),
-                onPressed: () {
-                  _betterPlayerController.setControlsVisibility(true);
-                },
-              ),
+              const SizedBox(height: 24),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

@@ -1,5 +1,7 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/widgets/demo_container.dart';
+import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:material_ui/material_ui.dart';
 
 class HlsTracksPage extends StatefulWidget {
@@ -30,23 +32,28 @@ class _HlsTracksPageState extends State<HlsTracksPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('HLS tracks')),
-      body: ListView(
-        children: [
-          const SizedBox(height: 8),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              'Player with HLS stream which loads tracks from HLS.'
-              ' You can choose tracks by using overflow menu (3 dots in right corner).',
-              style: TextStyle(fontSize: 16),
-            ),
+      appBar: AppBar(title: const Text('HLS Track Switching')),
+      body: SingleChildScrollView(
+        child: DemoContainer(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const DemoHeader(
+                title: 'Adaptive Video Bitrate & Tracks',
+                description:
+                    'Plays multi-bitrate HLS master playlist with multiple video resolutions.',
+                instructions:
+                    'Open the overflow menu (three dots) to switch video resolution tracks.',
+                icon: Icons.video_settings_outlined,
+              ),
+              AspectRatio(
+                aspectRatio: 16 / 9,
+                child: BetterPlayer(controller: _betterPlayerController),
+              ),
+              const SizedBox(height: 24),
+            ],
           ),
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: BetterPlayer(controller: _betterPlayerController),
-          ),
-        ],
+        ),
       ),
     );
   }
