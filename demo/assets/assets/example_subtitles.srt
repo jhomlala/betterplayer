@@ -1,0 +1,11 @@
+1
+00:00:00.000 --> 00:00:02.000
+Welcome to Big Buck Bunny!
+
+2
+00:00:02.000 --> 00:00:06.000
+This is an example of external subtitles.
+
+3
+00:00:06.000 --> 00:00:10.000
+Enjoy the video!

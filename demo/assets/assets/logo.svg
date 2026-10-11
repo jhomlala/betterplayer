@@ -1,0 +1,10 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Layer 1: Outer Triangle (Flutter Sky) -->
+  <path d="M178 121L178 391L412 256L178 121Z" fill="#027DFD" fill-opacity="0.8"/>
+
+  <!-- Layer 2: Middle Triangle (Flutter Blue) -->
+  <path d="M204.25 166L204.25 346L360.25 256L204.25 166Z" fill="#0553B1" fill-opacity="0.8"/>
+
+  <!-- Layer 3: Inner Triangle (Flutter Navy) -->
+  <path d="M229.75 211L229.75 301L307.75 256L229.75 211Z" fill="#042B59"/>
+</svg>

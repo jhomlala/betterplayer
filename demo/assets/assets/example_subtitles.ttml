@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tt xml:lang="en-US" xmlns="http://www.w3.org/ns/ttml" xmlns:tts="http://www.w3.org/ns/ttml#styling">
+  <head>
+    <styling>
+      <style xml:id="style.default" tts:fontFamily="Arial" tts:fontSize="100%" tts:color="white" tts:textAlign="center"/>
+      <style xml:id="style.yellow" tts:color="yellow" tts:fontWeight="bold"/>
+    </styling>
+    <layout>
+      <region xml:id="region.bottom" tts:displayAlign="after" tts:textAlign="center"/>
+      <region xml:id="region.top" tts:displayAlign="before" tts:textAlign="center"/>
+    </layout>
+  </head>
+  <body>
+    <div>
+      <p style="style.default" region="region.bottom" begin="00:00:00.000" end="00:00:03.000">
+        Welcome to <span style="style.yellow">TTML</span> Subtitles!
+      </p>
+      <p style="style.default" region="region.top" begin="00:00:03.000" end="00:00:06.500">
+        Top-aligned subtitle with <span tts:fontStyle="italic">italic</span> and <span tts:color="#00FF00">green</span> text.
+      </p>
+      <p style="style.default" region="region.bottom" begin="00:00:06.500" end="00:00:10.000">
+        Multi-line support in TTML<br/>with clean line breaks and styling.
+      </p>
+    </div>
+  </body>
+</tt>
