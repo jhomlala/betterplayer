@@ -104,7 +104,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
                 PlayerSubtitlesSourceType.none);
 
     final List<String> subtitles;
-    Alignment itemAlignment = _configuration!.alignment;
+    var itemAlignment = _configuration!.alignment;
 
     if (isEmbedded) {
       subtitles = controller.activeCaptions;

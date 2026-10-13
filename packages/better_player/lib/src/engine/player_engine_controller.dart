@@ -108,6 +108,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
               event.size!.height > 0) {
             value = value.copyWith(size: event.size);
           }
+        case VideoEventType.captionUpdate:
         case VideoEventType.unknown:
           break;
       }

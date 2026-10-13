@@ -489,10 +489,8 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
       _player.setAudioTrackWithName(name.toNSString(), index: index);
 
   @override
-  void setTextTrack({required String name, required int index}) {
-    // Note: CI Chicken-and-Egg: Un-comment after swiftgen runs on CI/CD:
-    // _player.setTextTrackWithName(name.toNSString(), index: index);
-  }
+  void setTextTrack({required String name, required int index}) =>
+      _player.setTextTrackWithName(name.toNSString(), index: index);
 
   @override
   void enablePictureInPicture(objc.CGRect frame) =>

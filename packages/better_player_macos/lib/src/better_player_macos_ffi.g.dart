@@ -618,6 +618,21 @@ extension BetterPlayer$Methods on BetterPlayer {
     );
   }
 
+  /// Sets the text or caption track by name and index. If index is negative, disables text tracks.
+  /// \param name The name of the track.
+  ///
+  /// \param index The index of the track, or negative to disable.
+  void setTextTrackWithName(objc.NSString name, {required int index}) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = name.ref;
+    _objc_msgSend_1nvl641(
+      _$$ref.pointer,
+      _sel_setTextTrackWithName_index_,
+      _$$ref$1.pointer,
+      index,
+    );
+  }
+
   /// The sink for emitting events to Flutter.
   set callback(BetterPlayerCallback? value) {
     final _$$ref = object$.ref;
@@ -5342,6 +5357,9 @@ late final _sel_setPlayers_ = objc.registerName("setPlayers:");
 late final _sel_setRestoreUserInterfaceForPIPStopCompletionHandler_ = objc
     .registerName("setRestoreUserInterfaceForPIPStopCompletionHandler:");
 late final _sel_setSpeed_ = objc.registerName("setSpeed:");
+late final _sel_setTextTrackWithName_index_ = objc.registerName(
+  "setTextTrackWithName:index:",
+);
 late final _sel_setTrackParametersWithWidth_height_bitrate_ = objc.registerName(
   "setTrackParametersWithWidth:height:bitrate:",
 );

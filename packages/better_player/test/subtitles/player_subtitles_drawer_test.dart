@@ -163,12 +163,12 @@ void main() {
       ),
     );
 
-    expect(find.text('Caption Line 1'), findsOneWidget);
-    expect(find.text('Caption Line 2'), findsOneWidget);
+    expect(find.text('Caption Line 1', findRichText: true), findsNWidgets(2));
+    expect(find.text('Caption Line 2', findRichText: true), findsNWidgets(2));
 
     controller.activeCaptions = [];
     await tester.pump();
-    expect(find.text('Caption Line 1'), findsNothing);
-    expect(find.text('Caption Line 2'), findsNothing);
+    expect(find.text('Caption Line 1', findRichText: true), findsNothing);
+    expect(find.text('Caption Line 2', findRichText: true), findsNothing);
   });
 }
