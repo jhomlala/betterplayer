@@ -434,5 +434,43 @@ void main() {
       calloc.free(seekingProp);
       await player.dispose();
     });
+
+    test('emits captionUpdate on sub-text property change', () async {
+      final bindings = createFakeBindings();
+      final player = MpvPlayer(
+        textureId: 1,
+        handle: fakeHandle,
+        bindings: bindings,
+      );
+
+      final events = <VideoEvent>[];
+      final sub = player.events.listen(events.add);
+
+      final subTextName = 'sub-text'.toNativeUtf8();
+      final textString = 'First line\nSecond line'.toNativeUtf8();
+      final strPtrPtr = calloc<ffi.Pointer<Utf8>>()..value = textString;
+      final subTextProp = calloc<MpvEventProperty>()
+        ..ref.name = subTextName
+        ..ref.format = MpvFormat.string
+        ..ref.data = strPtrPtr.cast();
+
+      eventQueue.add((ptr) {
+        ptr.ref.eventId = MpvEventId.propertyChange;
+        ptr.ref.error = 0;
+        ptr.ref.data = subTextProp.cast();
+      });
+
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(events.length, 1);
+      expect(events.first.eventType, VideoEventType.captionUpdate);
+      expect(events.first.captions, ['First line', 'Second line']);
+
+      calloc.free(subTextName);
+      calloc.free(textString);
+      calloc.free(strPtrPtr);
+      calloc.free(subTextProp);
+      await sub.cancel();
+      await player.dispose();
+    });
   });
 }

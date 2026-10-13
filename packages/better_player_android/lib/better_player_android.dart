@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 // ignore_for_file: avoid_setters_without_getters
 
@@ -40,6 +41,10 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     );
     BetterPlayerApi.Companion.logCallback = jniCallback;
   }
+
+  @visibleForTesting
+  String? Function(JString? str) jStringConverter = (str) =>
+      str?.toDartString();
 
   final Map<int, BetterPlayerWrapper> _players = {};
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
@@ -175,6 +180,24 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
               );
             },
         onError$async: true,
+        onCuesJson: (JString? cuesJson) {
+          final jsonStr = jStringConverter(cuesJson);
+          if (jsonStr == null) return;
+          try {
+            final dynamic decoded = jsonDecode(jsonStr);
+            if (decoded is List) {
+              final cues = decoded.map((e) => e.toString()).toList();
+              tempController.add(
+                VideoEvent(
+                  eventType: VideoEventType.captionUpdate,
+                  key: null,
+                  captions: cues,
+                ),
+              );
+            }
+          } catch (_) {}
+        },
+        onCuesJson$async: true,
       ),
     );
 
@@ -569,8 +592,7 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
 
   @override
   void setTextTrack(String name, int index) {
-    // Note: CI Chicken-and-Egg: Un-comment after jnigen runs on CI/CD:
-    // _player.setTextTrack(name.toJString(), index);
+    _player.setTextTrack(name.toJString(), index);
   }
 
   @override

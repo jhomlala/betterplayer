@@ -315,5 +315,24 @@ void main() {
       await sub1.cancel();
       await sub2.cancel();
     });
+
+    test('onCuesJson emits captionUpdate event with decoded cues', () async {
+      androidPlayer.jStringConverter = (str) => '["Caption 1", "Caption 2"]';
+      await androidPlayer.create();
+      final stream = androidPlayer.videoEventsFor(1);
+      final events = <VideoEvent>[];
+      final sub = stream.listen(events.add);
+
+      final callback =
+          androidPlayer.capturedCallbacks[0] as $BetterPlayerCallback;
+      callback.onCuesJson(null);
+
+      await Future<void>.delayed(Duration.zero);
+      expect(events, hasLength(1));
+      expect(events.first.eventType, VideoEventType.captionUpdate);
+      expect(events.first.captions, ['Caption 1', 'Caption 2']);
+
+      await sub.cancel();
+    });
   });
 }

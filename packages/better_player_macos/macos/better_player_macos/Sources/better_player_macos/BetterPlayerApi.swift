@@ -22,6 +22,8 @@ import AVKit
     func onPipStart()
     @objc(onPipStop)
     func onPipStop()
+    @objc(onCuesWithJsonCues:)
+    func onCues(jsonCues: String)
     @objc(onError:errorMessage:errorDetails:)
     func onError(_ errorCode: String, errorMessage: String, errorDetails: String)
 }
@@ -105,6 +107,7 @@ import AVKit
     @objc public func onBufferingUpdate(jsonRanges: String, key: String?) {}
     @objc public func onPipStart() {}
     @objc public func onPipStop() {}
+    @objc public func onCues(jsonCues: String) {}
     @objc public func onError(_ errorCode: String, errorMessage: String, errorDetails: String) {}
 }
 

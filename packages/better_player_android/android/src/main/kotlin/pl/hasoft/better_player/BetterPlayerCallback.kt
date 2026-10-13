@@ -29,6 +29,9 @@ interface BetterPlayerCallback {
     
     @Keep
     fun onCues(cues: List<String>) {}
+
+    @Keep
+    fun onCuesJson(cuesJson: String) {}
     
     @Keep
     fun onError(errorCode: String, errorMessage: String, errorDetails: String)

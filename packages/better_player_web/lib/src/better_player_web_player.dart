@@ -253,6 +253,75 @@ class BetterPlayerWebPlayer {
         );
       }).toJS,
     );
+
+    void attachCueListener(web.TextTrack track) {
+      track.addEventListener(
+        'cuechange',
+        ((web.Event _) {
+          emitActiveCaptions();
+        }).toJS,
+      );
+    }
+
+    final videoObj = videoElement as JSObject;
+    final textTracksObj = videoObj.getProperty<JSObject?>('textTracks'.toJS);
+    if (textTracksObj != null) {
+      final tracks = videoElement.textTracks;
+      for (var i = 0; i < tracks.length; i++) {
+        final track = tracks[i];
+        attachCueListener(track);
+      }
+
+      tracks.addEventListener(
+        'addtrack',
+        ((web.Event event) {
+          final track = (event as dynamic).track as web.TextTrack?;
+          if (track != null) {
+            attachCueListener(track);
+          }
+        }).toJS,
+      );
+      tracks.addEventListener(
+        'change',
+        ((web.Event _) {
+          emitActiveCaptions();
+        }).toJS,
+      );
+    }
+  }
+
+  @visibleForTesting
+  void emitActiveCaptions() {
+    final captions = <String>[];
+    final videoObj = videoElement as JSObject;
+    final textTracksObj = videoObj.getProperty<JSObject?>('textTracks'.toJS);
+    if (textTracksObj != null) {
+      final textTracks = videoElement.textTracks;
+      for (var i = 0; i < textTracks.length; i++) {
+        final track = textTracks[i];
+        if (track.mode != 'disabled') {
+          final activeCues = track.activeCues;
+          if (activeCues != null) {
+            for (var j = 0; j < activeCues.length; j++) {
+              final cue = activeCues[j];
+              final text = (cue as JSObject)
+                  .getProperty<JSString?>('text'.toJS)
+                  ?.toDart;
+              if (text != null && text.trim().isNotEmpty) {
+                captions.addAll(text.trim().split('\n').map((s) => s.trim()));
+              }
+            }
+          }
+        }
+      }
+    }
+    _eventController.add(
+      VideoEvent(
+        eventType: VideoEventType.captionUpdate,
+        captions: captions,
+        key: _currentKey,
+      ),
+    );
   }
 
   @visibleForTesting

@@ -483,6 +483,12 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
         );
         return jni$_.nullptr;
       }
+      if ($d == r'onCuesJson(Ljava/lang/String;)V') {
+        _$impls[$p]!.onCuesJson(
+          ($a![0] as jni$_.JString?),
+        );
+        return jni$_.nullptr;
+      }
     } catch (e) {
       return jni$_.ProtectedJniExtensions.newDartException(e);
     }
@@ -523,6 +529,7 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
         if ($impl.onChangedSize$async) r'onChangedSize(IILjava/lang/String;)V',
         if ($impl.onError$async)
           r'onError(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V',
+        if ($impl.onCuesJson$async) r'onCuesJson(Ljava/lang/String;)V',
       ],
     );
     final $a = $p.sendPort.nativePort;
@@ -991,6 +998,8 @@ abstract base mixin class $BetterPlayerCallback {
     )
     onError,
     core$_.bool onError$async,
+    void Function(jni$_.JString? string)? onCuesJson,
+    core$_.bool onCuesJson$async,
   }) = _$BetterPlayerCallback;
 
   void onInitialized(
@@ -1026,6 +1035,8 @@ abstract base mixin class $BetterPlayerCallback {
     jni$_.JString string2,
   );
   core$_.bool get onError$async => false;
+  void onCuesJson(jni$_.JString? string) {}
+  core$_.bool get onCuesJson$async => false;
 }
 
 final class _$BetterPlayerCallback with $BetterPlayerCallback {
@@ -1066,6 +1077,8 @@ final class _$BetterPlayerCallback with $BetterPlayerCallback {
     )
     onError,
     this.onError$async = false,
+    void Function(jni$_.JString? string)? onCuesJson,
+    this.onCuesJson$async = false,
   }) : _onInitialized = onInitialized,
        _onCompleted = onCompleted,
        _onPlay = onPlay,
@@ -1077,7 +1090,11 @@ final class _$BetterPlayerCallback with $BetterPlayerCallback {
        _onPipStart = onPipStart,
        _onPipStop = onPipStop,
        _onChangedSize = onChangedSize,
-       _onError = onError;
+       _onError = onError,
+       _onCuesJson = onCuesJson;
+
+  final void Function(jni$_.JString? string)? _onCuesJson;
+  final core$_.bool onCuesJson$async;
 
   final void Function(
     core$_.int j,
@@ -1171,6 +1188,12 @@ final class _$BetterPlayerCallback with $BetterPlayerCallback {
     jni$_.JString string2,
   ) {
     return _onError(string, string1, string2);
+  }
+
+  void onCuesJson(jni$_.JString? string) {
+    if (_onCuesJson != null) {
+      _onCuesJson(string);
+    }
   }
 }
 
@@ -2573,6 +2596,45 @@ extension BetterPlayer$$Methods on BetterPlayer {
     _setAudioTrack(
       _$$selfRef.pointer,
       _id_setAudioTrack.pointer,
+      _$string.pointer,
+      i,
+    ).check();
+  }
+
+  static final _id_setTextTrack = BetterPlayer._class.instanceMethodId(
+    r'setTextTrack',
+    r'(Ljava/lang/String;I)V',
+  );
+
+  static final _setTextTrack =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int32)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+            )
+          >();
+
+  /// from: `public fun setTextTrack(name: kotlin.String, index: kotlin.Int): kotlin.Unit`
+  void setTextTrack(
+    jni$_.JString string,
+    core$_.int i,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    _setTextTrack(
+      _$$selfRef.pointer,
+      _id_setTextTrack.pointer,
       _$string.pointer,
       i,
     ).check();

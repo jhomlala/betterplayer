@@ -72,6 +72,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     _observeProperty(name: 'paused-for-cache', format: MpvFormat.flag);
     _observeProperty(name: 'width', format: MpvFormat.int64);
     _observeProperty(name: 'height', format: MpvFormat.int64);
+    _observeProperty(name: 'sub-text', format: MpvFormat.string);
 
     // Request mpv warnings and errors for logging
     final warnStr = 'warn'.toNativeUtf8();
@@ -279,6 +280,22 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           if (posSecs >= 0) {
             _currentPosition = Duration(milliseconds: (posSecs * 1000).toInt());
           }
+        }
+      case 'sub-text':
+        if (prop.ref.data != ffi.nullptr) {
+          final strPtr = prop.ref.data.cast<ffi.Pointer<Utf8>>().value;
+          final text = strPtr != ffi.nullptr ? strPtr.toDartString() : '';
+          final trimmed = text.trim();
+          final captions = trimmed.isNotEmpty
+              ? trimmed.split('\n').map((s) => s.trim()).toList()
+              : const <String>[];
+          _eventController.add(
+            VideoEvent(
+              eventType: VideoEventType.captionUpdate,
+              captions: captions,
+              key: _currentKey,
+            ),
+          );
         }
     }
   }

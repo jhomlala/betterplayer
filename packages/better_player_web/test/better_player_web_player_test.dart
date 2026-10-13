@@ -889,6 +889,21 @@ void main() {
           await player.disablePictureInPicture();
         }
       });
+
+      test('emitActiveCaptions emits captionUpdate event', () async {
+        await player.initialize(videoElement: web.HTMLVideoElement());
+        final events = <VideoEvent>[];
+        final sub = player.events.listen(events.add);
+
+        player.emitActiveCaptions();
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(events.length, 1);
+        expect(events.first.eventType, VideoEventType.captionUpdate);
+        expect(events.first.captions, isEmpty);
+
+        await sub.cancel();
+      });
     });
   });
 }

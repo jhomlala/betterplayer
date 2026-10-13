@@ -486,6 +486,11 @@ class BetterPlayer(
             override fun onCues(cueGroup: CueGroup) {
                 val cuesList = cueGroup.cues.mapNotNull { it.text?.toString() }
                 callback.onCues(cuesList)
+                val jsonArray = org.json.JSONArray()
+                for (cue in cuesList) {
+                    jsonArray.put(cue)
+                }
+                callback.onCuesJson(jsonArray.toString())
             }
         })
         

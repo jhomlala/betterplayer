@@ -1,5 +1,6 @@
 ## Unreleased
 - Added: `setTextTrack` method on `MpvPlayer` to select or disable subtitle and closed caption tracks via mpv `sid` property (#1066).
+- Added: `sub-text` property observer emitting `captionUpdate` events with active subtitle lines.
 
 ## 1.0.1
 - Added: Better Player logo screenshot and branding metadata for pub.dev package listing.

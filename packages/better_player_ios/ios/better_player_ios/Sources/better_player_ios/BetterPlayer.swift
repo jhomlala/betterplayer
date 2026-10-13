@@ -123,6 +123,7 @@ private var presentationSizeContext = 0
 
     private var pipController: AVPictureInPictureController?
     private var restoreUIOnPipStop: ((Bool) -> Void)?
+    private var legibleOutput: AVPlayerItemLegibleOutput?
 
     // MARK: - Lifecycle
 
@@ -184,6 +185,13 @@ private var presentationSizeContext = 0
             item.addObserver(self, forKeyPath: "playbackBufferEmpty", options: [], context: &playbackBufferEmptyContext)
             item.addObserver(self, forKeyPath: "playbackBufferFull", options: [], context: &playbackBufferFullContext)
             NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime(_:)), name: .AVPlayerItemDidPlayToEndTime, object: item)
+
+            let output = AVPlayerItemLegibleOutput()
+            output.suppressesPlayerRendering = true
+            output.setDelegate(self, queue: DispatchQueue.main)
+            item.add(output)
+            self.legibleOutput = output
+
             observersAdded = true
         }
     }
@@ -198,6 +206,12 @@ private var presentationSizeContext = 0
             player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferEmpty", context: &playbackBufferEmptyContext)
             player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferFull", context: &playbackBufferFullContext)
             NotificationCenter.default.removeObserver(self)
+
+            if let output = legibleOutput {
+                player.currentItem?.remove(output)
+                legibleOutput = nil
+            }
+
             observersAdded = false
         }
     }
@@ -810,6 +824,7 @@ private var presentationSizeContext = 0
                 return
             }
         }
+        BetterPlayerApi.log(2, "setTextTrack: track '\(name)' at index \(index) not found in legible options")
     }
 
     /// Sets whether the audio should mix with others.
@@ -863,5 +878,18 @@ private var presentationSizeContext = 0
         if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
             BetterPlayerApi.players.removeValue(forKey: key)
         }
+    }
+}
+
+// MARK: - AVPlayerItemLegibleOutputPushDelegate
+
+extension BetterPlayer: AVPlayerItemLegibleOutputPushDelegate {
+    public func legibleOutput(_ output: AVPlayerItemLegibleOutput, didOutputAttributedStrings strings: [NSAttributedString], nativeSampleBuffers nativeSamples: [Any], forItemTime itemTime: CMTime) {
+        let texts = strings.map { $0.string }.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: texts, options: []),
+              let jsonString = String(data: jsonData, encoding: .utf8) else {
+            return
+        }
+        callback?.onCues(jsonCues: jsonString)
     }
 }
