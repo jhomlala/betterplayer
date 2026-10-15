@@ -155,6 +155,22 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
           VideoEvent(eventType: VideoEventType.pipStop, key: null),
         );
       },
+      onCuesWithJsonCues_: (objc.NSString jsonCues) {
+        if (currentTextureId == null) return;
+        try {
+          final dynamic decoded = jsonDecode(jsonCues.toDartString());
+          if (decoded is List) {
+            final cues = decoded.map((e) => e.toString()).toList();
+            _eventControllers[currentTextureId]?.add(
+              VideoEvent(
+                eventType: VideoEventType.captionUpdate,
+                key: null,
+                captions: cues,
+              ),
+            );
+          }
+        } catch (_) {}
+      },
       onError_errorMessage_errorDetails_:
           (
             objc.NSString errorCode,
