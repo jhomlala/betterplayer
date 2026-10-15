@@ -374,6 +374,23 @@ extension type AVPictureInPictureController._(objc.ObjCObject object$)
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
 }
 
+/// WARNING: AVPlayerItemLegibleOutput is a stub. To generate bindings for this class, include
+/// AVPlayerItemLegibleOutput in your config's objc-interfaces list.
+///
+/// AVPlayerItemLegibleOutput
+extension type AVPlayerItemLegibleOutput._(objc.ObjCObject object$)
+    implements objc.ObjCObject {
+  /// Constructs a [AVPlayerItemLegibleOutput] that points to the same underlying object as [other].
+  AVPlayerItemLegibleOutput.as(objc.ObjCObject other) : object$ = other {}
+
+  /// Constructs a [AVPlayerItemLegibleOutput] that wraps the given raw object pointer.
+  AVPlayerItemLegibleOutput.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {}
+}
+
 /// A platform view implementation that wraps AVPlayer for video playback.
 /// Handles player initialization, lifecycle, and event reporting to Flutter.
 extension type BetterPlayer._(objc.ObjCObject object$)
@@ -618,21 +635,6 @@ extension BetterPlayer$Methods on BetterPlayer {
     );
   }
 
-  /// Sets the text or caption track by name and index. If index is negative, disables text tracks.
-  /// \param name The name of the track.
-  ///
-  /// \param index The index of the track, or negative to disable.
-  void setTextTrackWithName(objc.NSString name, {required int index}) {
-    final _$$ref = object$.ref;
-    final _$$ref$1 = name.ref;
-    _objc_msgSend_1nvl641(
-      _$$ref.pointer,
-      _sel_setTextTrackWithName_index_,
-      _$$ref$1.pointer,
-      index,
-    );
-  }
-
   /// The sink for emitting events to Flutter.
   set callback(BetterPlayerCallback? value) {
     final _$$ref = object$.ref;
@@ -790,6 +792,21 @@ extension BetterPlayer$Methods on BetterPlayer {
   void setSpeed(double speed) {
     final _$$ref = object$.ref;
     _objc_msgSend_hwm8nu(_$$ref.pointer, _sel_setSpeed_, speed);
+  }
+
+  /// Sets the text or caption track by name and index. If index is negative, disables text tracks.
+  /// \param name The name of the track.
+  ///
+  /// \param index The index of the track, or negative to disable.
+  void setTextTrackWithName(objc.NSString name, {required int index}) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = name.ref;
+    _objc_msgSend_1nvl641(
+      _$$ref.pointer,
+      _sel_setTextTrackWithName_index_,
+      _$$ref$1.pointer,
+      index,
+    );
   }
 
   /// Sets track parameters like bitrate and resolution.
@@ -1090,6 +1107,17 @@ extension BetterPlayerCallback$Methods on BetterPlayerCallback {
     );
   }
 
+  /// onCuesWithJsonCues:
+  void onCuesWithJsonCues(objc.NSString jsonCues) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = jsonCues.ref;
+    _objc_msgSend_xtuoz7(
+      _$$ref.pointer,
+      _sel_onCuesWithJsonCues_,
+      _$$ref$1.pointer,
+    );
+  }
+
   /// onError:errorMessage:errorDetails:
   void onError(
     objc.NSString errorCode, {
@@ -1191,6 +1219,7 @@ interface class BetterPlayerCallback$Builder {
     required void Function(objc.NSString, objc.NSString?)
     onBufferingUpdateWithJsonRanges_key_,
     required void Function(objc.NSString?) onCompletedWithKey_,
+    required void Function(objc.NSString) onCuesWithJsonCues_,
     required void Function(objc.NSString, objc.NSString, objc.NSString)
     onError_errorMessage_errorDetails_,
     required void Function(int, double, double, objc.NSString?)
@@ -1218,6 +1247,10 @@ interface class BetterPlayerCallback$Builder {
     BetterPlayerCallback$Builder.onCompletedWithKey_.implement(
       builder,
       onCompletedWithKey_,
+    );
+    BetterPlayerCallback$Builder.onCuesWithJsonCues_.implement(
+      builder,
+      onCuesWithJsonCues_,
     );
     BetterPlayerCallback$Builder.onError_errorMessage_errorDetails_.implement(
       builder,
@@ -1256,6 +1289,7 @@ interface class BetterPlayerCallback$Builder {
     required void Function(objc.NSString, objc.NSString?)
     onBufferingUpdateWithJsonRanges_key_,
     required void Function(objc.NSString?) onCompletedWithKey_,
+    required void Function(objc.NSString) onCuesWithJsonCues_,
     required void Function(objc.NSString, objc.NSString, objc.NSString)
     onError_errorMessage_errorDetails_,
     required void Function(int, double, double, objc.NSString?)
@@ -1282,6 +1316,10 @@ interface class BetterPlayerCallback$Builder {
     BetterPlayerCallback$Builder.onCompletedWithKey_.implement(
       builder,
       onCompletedWithKey_,
+    );
+    BetterPlayerCallback$Builder.onCuesWithJsonCues_.implement(
+      builder,
+      onCuesWithJsonCues_,
     );
     BetterPlayerCallback$Builder.onError_errorMessage_errorDetails_.implement(
       builder,
@@ -1318,6 +1356,7 @@ interface class BetterPlayerCallback$Builder {
     required void Function(objc.NSString, objc.NSString?)
     onBufferingUpdateWithJsonRanges_key_,
     required void Function(objc.NSString?) onCompletedWithKey_,
+    required void Function(objc.NSString) onCuesWithJsonCues_,
     required void Function(objc.NSString, objc.NSString, objc.NSString)
     onError_errorMessage_errorDetails_,
     required void Function(int, double, double, objc.NSString?)
@@ -1343,6 +1382,10 @@ interface class BetterPlayerCallback$Builder {
     BetterPlayerCallback$Builder.onCompletedWithKey_.implementAsListener(
       builder,
       onCompletedWithKey_,
+    );
+    BetterPlayerCallback$Builder.onCuesWithJsonCues_.implementAsListener(
+      builder,
+      onCuesWithJsonCues_,
     );
     BetterPlayerCallback$Builder.onError_errorMessage_errorDetails_
         .implementAsListener(builder, onError_errorMessage_errorDetails_);
@@ -1389,6 +1432,7 @@ interface class BetterPlayerCallback$Builder {
     required void Function(objc.NSString, objc.NSString?)
     onBufferingUpdateWithJsonRanges_key_,
     required void Function(objc.NSString?) onCompletedWithKey_,
+    required void Function(objc.NSString) onCuesWithJsonCues_,
     required void Function(objc.NSString, objc.NSString, objc.NSString)
     onError_errorMessage_errorDetails_,
     required void Function(int, double, double, objc.NSString?)
@@ -1413,6 +1457,10 @@ interface class BetterPlayerCallback$Builder {
     BetterPlayerCallback$Builder.onCompletedWithKey_.implementAsListener(
       builder,
       onCompletedWithKey_,
+    );
+    BetterPlayerCallback$Builder.onCuesWithJsonCues_.implementAsListener(
+      builder,
+      onCuesWithJsonCues_,
     );
     BetterPlayerCallback$Builder.onError_errorMessage_errorDetails_
         .implementAsListener(builder, onError_errorMessage_errorDetails_);
@@ -1456,6 +1504,7 @@ interface class BetterPlayerCallback$Builder {
     required void Function(objc.NSString, objc.NSString?)
     onBufferingUpdateWithJsonRanges_key_,
     required void Function(objc.NSString?) onCompletedWithKey_,
+    required void Function(objc.NSString) onCuesWithJsonCues_,
     required void Function(objc.NSString, objc.NSString, objc.NSString)
     onError_errorMessage_errorDetails_,
     required void Function(int, double, double, objc.NSString?)
@@ -1481,6 +1530,10 @@ interface class BetterPlayerCallback$Builder {
     BetterPlayerCallback$Builder.onCompletedWithKey_.implementAsBlocking(
       builder,
       onCompletedWithKey_,
+    );
+    BetterPlayerCallback$Builder.onCuesWithJsonCues_.implementAsBlocking(
+      builder,
+      onCuesWithJsonCues_,
     );
     BetterPlayerCallback$Builder.onError_errorMessage_errorDetails_
         .implementAsBlocking(builder, onError_errorMessage_errorDetails_);
@@ -1527,6 +1580,7 @@ interface class BetterPlayerCallback$Builder {
     required void Function(objc.NSString, objc.NSString?)
     onBufferingUpdateWithJsonRanges_key_,
     required void Function(objc.NSString?) onCompletedWithKey_,
+    required void Function(objc.NSString) onCuesWithJsonCues_,
     required void Function(objc.NSString, objc.NSString, objc.NSString)
     onError_errorMessage_errorDetails_,
     required void Function(int, double, double, objc.NSString?)
@@ -1551,6 +1605,10 @@ interface class BetterPlayerCallback$Builder {
     BetterPlayerCallback$Builder.onCompletedWithKey_.implementAsBlocking(
       builder,
       onCompletedWithKey_,
+    );
+    BetterPlayerCallback$Builder.onCuesWithJsonCues_.implementAsBlocking(
+      builder,
+      onCuesWithJsonCues_,
     );
     BetterPlayerCallback$Builder.onError_errorMessage_errorDetails_
         .implementAsBlocking(builder, onError_errorMessage_errorDetails_);
@@ -1604,15 +1662,15 @@ interface class BetterPlayerCallback$Builder {
           isInstanceMethod: true,
         ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.fromFunction(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.fromFunction(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.listener(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.listener(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.blocking(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.blocking(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
       );
@@ -1639,15 +1697,15 @@ interface class BetterPlayerCallback$Builder {
           isInstanceMethod: true,
         ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.fromFunction(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.fromFunction(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.listener(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.listener(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.blocking(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.blocking(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
       );
@@ -1724,16 +1782,51 @@ interface class BetterPlayerCallback$Builder {
           isInstanceMethod: true,
         ),
         (void Function(objc.NSString?) func) =>
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.fromFunction(
+              (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
+            ),
+        (void Function(objc.NSString?) func) =>
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.listener(
+              (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
+            ),
+        (void Function(objc.NSString?) func) =>
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.blocking(
+              (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
+            ),
+      );
+
+  /// onCuesWithJsonCues:
+  static final onCuesWithJsonCues_ =
+      objc.ObjCProtocolListenableMethod<void Function(objc.NSString)>(
+        _protocol_BetterPlayerCallback,
+        _sel_onCuesWithJsonCues_,
+        ffi.Native.addressOf<
+              ffi.NativeFunction<
+                ffi.Void Function(
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                  ffi.Pointer<ffi.Void>,
+                  ffi.Pointer<objc.ObjCObjectImpl>,
+                )
+              >
+            >(_1ni4coe_protocolTrampoline_18v1jvf)
+            .cast(),
+        objc.getProtocolMethodSignature(
+          _protocol_BetterPlayerCallback,
+          _sel_onCuesWithJsonCues_,
+          isRequired: true,
+          isInstanceMethod: true,
+        ),
+        (void Function(objc.NSString) func) =>
             ObjCBlock_ffiVoid_ffiVoid_NSString.fromFunction(
-              (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
+              (ffi.Pointer<ffi.Void> _, objc.NSString arg1) => func(arg1),
             ),
-        (void Function(objc.NSString?) func) =>
+        (void Function(objc.NSString) func) =>
             ObjCBlock_ffiVoid_ffiVoid_NSString.listener(
-              (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
+              (ffi.Pointer<ffi.Void> _, objc.NSString arg1) => func(arg1),
             ),
-        (void Function(objc.NSString?) func) =>
+        (void Function(objc.NSString) func) =>
             ObjCBlock_ffiVoid_ffiVoid_NSString.blocking(
-              (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
+              (ffi.Pointer<ffi.Void> _, objc.NSString arg1) => func(arg1),
             ),
       );
 
@@ -1871,15 +1964,15 @@ interface class BetterPlayerCallback$Builder {
           isInstanceMethod: true,
         ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.fromFunction(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.fromFunction(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.listener(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.listener(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.blocking(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.blocking(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
       );
@@ -1978,15 +2071,15 @@ interface class BetterPlayerCallback$Builder {
           isInstanceMethod: true,
         ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.fromFunction(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.fromFunction(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.listener(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.listener(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
         (void Function(objc.NSString?) func) =>
-            ObjCBlock_ffiVoid_ffiVoid_NSString.blocking(
+            ObjCBlock_ffiVoid_ffiVoid_NSString$1.blocking(
               (ffi.Pointer<ffi.Void> _, objc.NSString? arg1) => func(arg1),
             ),
       );
@@ -3375,8 +3468,207 @@ extension ObjCBlock_ffiVoid_ffiVoid_NSInteger_NSString$CallExtension
   }
 }
 
-/// Construction methods for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString?)>`.
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>`.
 abstract final class ObjCBlock_ffiVoid_ffiVoid_NSString {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>
+  fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<ffi.Void> arg0,
+          ffi.Pointer<objc.ObjCObjectImpl> arg1,
+        )
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>
+  fromFunction(
+    void Function(ffi.Pointer<ffi.Void>, objc.NSString) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>(
+    objc.newClosureBlock(_closureCallable, (
+      ffi.Pointer<ffi.Void> arg0,
+      ffi.Pointer<objc.ObjCObjectImpl> arg1,
+    ) {
+      return fn(
+        arg0,
+        objc.NSString.fromPointer(arg1, retain: true, release: true),
+      );
+    }, keepIsolateAlive),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This block can be invoked from any thread, but only supports void
+  /// functions, and is not run synchronously. Async functions (ie returning
+  /// Future<void>) are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>
+  listener(
+    void Function(ffi.Pointer<ffi.Void>, objc.NSString) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    return objc.ObjCBlock<
+      ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)
+    >(
+      objc.newBlockPort(_1ni4coe_wrapListenerBlock_18v1jvf, (
+        ffi.Pointer<objc.ObjCObjectImpl> rawArgs,
+      ) {
+        final args = _BlockArgs_1t32fdx.fromPointer(
+          rawArgs,
+          retain: false,
+          release: false,
+        );
+
+        fn(args.arg0, args.arg1);
+      }, keepIsolateAlive),
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions (ie returning Future<void>) are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>
+  blocking(
+    void Function(ffi.Pointer<ffi.Void>, objc.NSString) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    return objc.ObjCBlock<
+      ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)
+    >(
+      objc.newBlockingBlockPort(_1ni4coe_wrapBlockingBlock_18v1jvf, (
+        ffi.Pointer<objc.ObjCObjectImpl> rawArgs,
+      ) {
+        final args = _BlockArgs_1t32fdx.fromPointer(
+          rawArgs,
+          retain: false,
+          release: false,
+        );
+
+        fn(args.arg0, args.arg1);
+      }, keepIsolateAlive),
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<ffi.Void> arg0,
+            ffi.Pointer<objc.ObjCObjectImpl> arg1,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(ffi.Pointer<ffi.Void>, ffi.Pointer<objc.ObjCObjectImpl>)
+      >()(arg0, arg1);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> arg0,
+    ffi.Pointer<objc.ObjCObjectImpl> arg1,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          ))(arg0, arg1);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<ffi.Void>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)>`.
+extension ObjCBlock_ffiVoid_ffiVoid_NSString$CallExtension
+    on objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString)> {
+  void call(ffi.Pointer<ffi.Void> arg0, objc.NSString arg1) {
+    final _$$ref = arg1.ref;
+    return ref.pointer.ref.invoke
+        .cast<
+          ffi.NativeFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl> block,
+              ffi.Pointer<ffi.Void> arg0,
+              ffi.Pointer<objc.ObjCObjectImpl> arg1,
+            )
+          >
+        >()
+        .asFunction<
+          void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >()(ref.pointer, arg0, _$$ref.pointer);
+  }
+}
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString?)>`.
+abstract final class ObjCBlock_ffiVoid_ffiVoid_NSString$1 {
   /// Returns a block that wraps the given raw block pointer.
   static objc.ObjCBlock<
     ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString?)
@@ -3564,7 +3856,7 @@ abstract final class ObjCBlock_ffiVoid_ffiVoid_NSString {
 }
 
 /// Call operator for `objc.ObjCBlock<ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString?)>`.
-extension ObjCBlock_ffiVoid_ffiVoid_NSString$CallExtension
+extension ObjCBlock_ffiVoid_ffiVoid_NSString$1$CallExtension
     on
         objc.ObjCBlock<
           ffi.Void Function(ffi.Pointer<ffi.Void>, objc.NSString?)
@@ -4264,6 +4556,45 @@ extension _BlockArgs_1pvysg1$Methods on _BlockArgs_1pvysg1 {
   }
 }
 
+extension type _BlockArgs_1t32fdx._(objc.ObjCObject object$)
+    implements objc.ObjCObject {
+  /// Constructs a [_BlockArgs_1t32fdx] that points to the same underlying object as [other].
+  _BlockArgs_1t32fdx.as(objc.ObjCObject other) : object$ = other {
+    assert(isA(object$));
+  }
+
+  /// Constructs a [_BlockArgs_1t32fdx] that wraps the given raw object pointer.
+  _BlockArgs_1t32fdx.fromPointer(
+    ffi.Pointer<objc.ObjCObjectImpl> other, {
+    bool retain = false,
+    bool release = false,
+  }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    assert(isA(object$));
+  }
+
+  /// Returns whether [obj] is an instance of [_BlockArgs_1t32fdx].
+  static bool isA(objc.ObjCObject? obj) => obj == null
+      ? false
+      : _objc_msgSend_19nvye5(
+          obj.ref.pointer,
+          _sel_isKindOfClass_,
+          _class__BlockArgs_1t32fdx,
+        );
+}
+
+extension _BlockArgs_1t32fdx$Methods on _BlockArgs_1t32fdx {
+  ffi.Pointer<ffi.Void> get arg0 {
+    final _$$ref = object$.ref;
+    return _objc_msgSend_6ex6p5(_$$ref.pointer, _sel_arg0);
+  }
+
+  objc.NSString get arg1 {
+    final _$$ref = object$.ref;
+    final $ret = _objc_msgSend_151sglz(_$$ref.pointer, _sel_arg1);
+    return objc.NSString.fromPointer($ret, retain: true, release: true);
+  }
+}
+
 extension type _BlockArgs_49uf14._(objc.ObjCObject object$)
     implements objc.ObjCObject {
   /// Constructs a [_BlockArgs_49uf14] that points to the same underlying object as [other].
@@ -4562,6 +4893,16 @@ final _class__BlockArgs_1pvysg1 = objc.getClass(
   "_1ni4coe_BlockArgs_1tz5yf",
   () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
     _class__BlockArgs_1pvysg1_raw,
+  ).cast(),
+);
+@ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
+  symbol: 'OBJC_CLASS_\$__1ni4coe_BlockArgs_18v1jvf',
+)
+external ffi.Pointer<objc.ObjCObjectImpl> _class__BlockArgs_1t32fdx_raw;
+final _class__BlockArgs_1t32fdx = objc.getClass(
+  "_1ni4coe_BlockArgs_18v1jvf",
+  () => ffi.Native.addressOf<ffi.Pointer<objc.ObjCObjectImpl>>(
+    _class__BlockArgs_1t32fdx_raw,
   ).cast(),
 );
 @ffi.Native<ffi.Pointer<objc.ObjCObjectImpl>>(
@@ -5286,6 +5627,10 @@ late final _sel_isKindOfClass_ = objc.registerName("isKindOfClass:");
 late final _sel_isPictureInPictureSupported = objc.registerName(
   "isPictureInPictureSupported",
 );
+late final _sel_legibleOutput_didOutputAttributedStrings_nativeSampleBuffers_forItemTime_ =
+    objc.registerName(
+      "legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:",
+    );
 late final _sel_new = objc.registerName("new");
 late final _sel_nextId = objc.registerName("nextId");
 late final _sel_observeValueForKeyPath_ofObject_change_context_ = objc
@@ -5300,6 +5645,7 @@ late final _sel_onBufferingUpdateWithJsonRanges_key_ = objc.registerName(
   "onBufferingUpdateWithJsonRanges:key:",
 );
 late final _sel_onCompletedWithKey_ = objc.registerName("onCompletedWithKey:");
+late final _sel_onCuesWithJsonCues_ = objc.registerName("onCuesWithJsonCues:");
 late final _sel_onError_errorMessage_errorDetails_ = objc.registerName(
   "onError:errorMessage:errorDetails:",
 );
@@ -5368,5 +5714,31 @@ late final _sel_stopPreCacheWithUrl_cacheKey_ = objc.registerName(
   "stopPreCacheWithUrl:cacheKey:",
 );
 late final _sel_view = objc.registerName("view");
+
+/// better_player_macos_Swift_468
+extension better_player_macos_Swift_468 on BetterPlayer {
+  /// legibleOutput:didOutputAttributedStrings:nativeSampleBuffers:forItemTime:
+  void legibleOutput(
+    AVPlayerItemLegibleOutput output, {
+    required objc.NSArray didOutputAttributedStrings,
+    required objc.NSArray nativeSampleBuffers,
+    required objc.ObjCObject forItemTime,
+  }) {
+    final _$$ref = object$.ref;
+    final _$$ref$1 = output.ref;
+    final _$$ref$2 = didOutputAttributedStrings.ref;
+    final _$$ref$3 = nativeSampleBuffers.ref;
+    final _$$ref$4 = forItemTime.ref;
+    _objc_msgSend_mlcr8l(
+      _$$ref.pointer,
+      _sel_legibleOutput_didOutputAttributedStrings_nativeSampleBuffers_forItemTime_,
+      _$$ref$1.pointer,
+      _$$ref$2.pointer,
+      _$$ref$3.pointer,
+      _$$ref$4.pointer,
+    );
+  }
+}
+
 typedef instancetype = ffi.Pointer<objc.ObjCObjectImpl>;
 typedef Dartinstancetype = objc.ObjCObject;
