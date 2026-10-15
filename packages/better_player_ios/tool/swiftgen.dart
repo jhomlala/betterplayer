@@ -3,6 +3,7 @@ import 'package:ffigen/ffigen.dart' as fg;
 import 'package:logging/logging.dart';
 import 'package:swiftgen/swiftgen.dart';
 
+/// iOS FFI binding generator script using swiftgen.
 Future<void> main() async {
   final logger = Logger('swiftgen');
   logger.onRecord.listen((record) {
