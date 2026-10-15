@@ -21,8 +21,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
@@ -42,4 +40,4 @@ jobs:
         with:
           commit_message: "chore: Generate iOS FFI bindings"
           file_pattern: "packages/better_player_ios/lib/src/*.dart packages/better_player_ios/ios/better_player_ios/Sources/better_player_ios_objc/*.m"
-          branch: ${{ github.ref }}
+          branch: ${{ github.head_ref || github.ref_name }}

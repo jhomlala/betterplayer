@@ -21,8 +21,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -55,4 +53,4 @@ jobs:
         with:
           commit_message: "chore: Generate Android FFI bindings"
           file_pattern: "packages/better_player_android/lib/src/*.dart"
-          branch: ${{ github.ref }}
+          branch: ${{ github.head_ref || github.ref_name }}
