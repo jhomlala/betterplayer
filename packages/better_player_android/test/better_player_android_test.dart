@@ -4,7 +4,10 @@ import 'package:better_player_android/src/better_player_android_jni.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jni/jni.dart';
 import 'package:mocktail/mocktail.dart';
+
+class MockJObject extends Mock implements JObject {}
 
 class MockBetterPlayer extends Mock implements BetterPlayerWrapper {
   final int textureId;
@@ -325,7 +328,8 @@ void main() {
 
       final callback =
           androidPlayer.capturedCallbacks[0] as $BetterPlayerCallback;
-      callback.onCuesJson(null);
+      final dummyJString = (MockJObject() as dynamic) as JString;
+      callback.onCuesJson(dummyJString);
 
       await Future<void>.delayed(Duration.zero);
       expect(events, hasLength(1));

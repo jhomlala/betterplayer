@@ -180,7 +180,9 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
               );
             },
         onError$async: true,
-        onCuesJson: (JString? cuesJson) {
+        onCues: (list) {},
+        onCues$async: true,
+        onCuesJson: (cuesJson) {
           final jsonStr = jStringConverter(cuesJson);
           if (jsonStr == null) return;
           try {
