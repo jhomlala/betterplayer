@@ -931,6 +931,20 @@ void main() {
 
         await sub.cancel();
       });
+
+      test(
+        'suppresses native cue rendering via CSS and emits active captions',
+        () async {
+          final video = web.HTMLVideoElement();
+          await player.initialize(videoElement: video);
+
+          final style = web.document.getElementById('better-player-cue-style');
+          expect(style, isNotNull);
+          final text = (style! as web.HTMLStyleElement).textContent;
+          expect(text, contains('::-webkit-media-text-track-container'));
+          expect(text, contains('::cue'));
+        },
+      );
     });
   });
 }

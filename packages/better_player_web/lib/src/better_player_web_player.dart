@@ -58,6 +58,7 @@ class BetterPlayerWebPlayer {
     }
 
     _attachListeners();
+    _suppressNativeCueRendering();
     onLog(message: 'BetterPlayerWebPlayer initialized: $viewId', levelIndex: 1);
   }
 
@@ -655,5 +656,53 @@ class BetterPlayerWebPlayer {
           'BetterPlayer: DrmSecurityLevel.${level.name} is only supported on Android platform.',
         );
     }
+  }
+
+  void _suppressNativeCueRendering() {
+    try {
+      final doc = web.document;
+      final jsDoc = doc as JSObject?;
+      if (jsDoc != null && jsDoc.has('getElementById')) {
+        if (doc.getElementById('better-player-cue-style') == null) {
+          final style = doc.createElement('style') as web.HTMLStyleElement;
+          style.id = 'better-player-cue-style';
+          style.textContent = '''
+video::-webkit-media-text-track-container {
+  display: none !important;
+}
+video::-webkit-media-text-track-display {
+  display: none !important;
+}
+video::-webkit-media-text-track-region {
+  display: none !important;
+}
+video::-webkit-media-text-track-region-container {
+  display: none !important;
+}
+::cue {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: transparent !important;
+  font-size: 0px !important;
+  line-height: 0 !important;
+  text-shadow: none !important;
+}
+video::cue {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: transparent !important;
+  font-size: 0px !important;
+  line-height: 0 !important;
+  text-shadow: none !important;
+}
+''';
+          doc.head?.appendChild(style);
+        }
+      }
+    } catch (_) {}
   }
 }
