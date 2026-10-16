@@ -3,6 +3,8 @@
 - Added: Automatic parsing of `#EXT-X-MEDIA:TYPE=CLOSED-CAPTIONS` tags in HLS playlists to generate `PlayerSubtitlesSourceType.embedded` tracks.
 - Fixed: Prevented black screen on macOS and iOS when playing HLS streams with unresolved initial dimensions by expanding the player view and reacting to dynamic size updates (#1595).
 - Fixed: Anchored secondary overflow menus in `PlayerWebControls` to the settings button instead of the bottom-right viewport boundary.
+- Fixed: Emit controls visibility events to `controlsVisibilityStream` on overlay state changes across Material, Cupertino, Web, and custom controls (#1596).
+- Added: Getter `isControlsVisible` on `BetterPlayerController` to inspect current overlay visibility state.
 
 ## 1.24.0
 - Added: `BetterPlayerFeed` and `BetterPlayerFeedController` for high-performance vertical and horizontal swipe video feeds with PageView integration.

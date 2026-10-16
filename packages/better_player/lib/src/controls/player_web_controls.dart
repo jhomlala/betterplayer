@@ -71,18 +71,28 @@ class _PlayerWebControlsState
     _controlsVisibilitySubscription = _betterPlayerController!
         .controlsVisibilityStream
         .listen((visibility) {
-          if (mounted) {
+          if (mounted && _controlsNotVisible == visibility) {
             setState(() {
               _controlsNotVisible = !visibility;
             });
+            if (!_controlsNotVisible) {
+              cancelAndRestartTimer();
+            }
           }
         });
     _latestValue = _betterPlayerController!.videoPlayerValue;
-    _controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
-    widget.onControlsVisibilityChanged(!_controlsNotVisible);
-    if (_controlsNotVisible) {
-      cancelAndRestartTimer();
+    final showOnInitialize =
+        widget.controlsConfiguration.showControlsOnInitialize ||
+        _betterPlayerController!.controlsAlwaysVisible;
+    _controlsNotVisible = !showOnInitialize;
+    if (showOnInitialize) {
+      _startHideTimer();
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        widget.onControlsVisibilityChanged(showOnInitialize);
+      }
+    });
   }
 
   void _dispose() {
@@ -128,26 +138,40 @@ class _PlayerWebControlsState
     }
   }
 
-  @override
-  void cancelAndRestartTimer() {
-    _hideTimer?.cancel();
-    if (mounted) {
-      setState(() {
-        _controlsNotVisible = false;
-        widget.onControlsVisibilityChanged(true);
-      });
+  void _startHideTimer() {
+    if (_betterPlayerController?.controlsAlwaysVisible == true) {
+      return;
     }
+    _hideTimer?.cancel();
     _hideTimer = Timer(widget.controlsConfiguration.controlsHideTime, () {
       if (_betterPlayerController?.controlsAlwaysVisible == true) {
         return;
       }
       if (mounted && !_isMenuOpen) {
-        setState(() {
-          _controlsNotVisible = true;
+        final wasVisible = !_controlsNotVisible;
+        if (wasVisible) {
+          setState(() {
+            _controlsNotVisible = true;
+          });
           widget.onControlsVisibilityChanged(false);
-        });
+        }
       }
     });
+  }
+
+  @override
+  void cancelAndRestartTimer() {
+    _hideTimer?.cancel();
+    if (mounted) {
+      final wasNotVisible = _controlsNotVisible;
+      setState(() {
+        _controlsNotVisible = false;
+      });
+      if (wasNotVisible) {
+        widget.onControlsVisibilityChanged(true);
+      }
+    }
+    _startHideTimer();
   }
 
   KeyEventResult _onKeyEvent(FocusNode node, KeyEvent event) {
@@ -248,10 +272,12 @@ class _PlayerWebControlsState
                   if (!_betterPlayerController!.controlsAlwaysVisible &&
                       !_isMenuOpen) {
                     _hideTimer?.cancel();
-                    setState(() {
-                      _controlsNotVisible = true;
-                      widget.onControlsVisibilityChanged(false);
-                    });
+                    if (!_controlsNotVisible) {
+                      setState(() {
+                        _controlsNotVisible = true;
+                        widget.onControlsVisibilityChanged(false);
+                      });
+                    }
                   }
                 },
                 child: Focus(

@@ -47,6 +47,7 @@ class _PlayerMaterialControlsState
 
   BetterPlayerController? _betterPlayerController;
   StreamSubscription? _controlsVisibilityStreamSubscription;
+  bool? _lastNotifiedVisibility;
 
   PlayerControlsConfiguration get _controlsConfiguration =>
       widget.controlsConfiguration;
@@ -256,6 +257,7 @@ class _PlayerMaterialControlsState
   }
 
   Future<void> _initialize() async {
+    _lastNotifiedVisibility = null;
     controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
     _betterPlayerController!.addVideoListener(_updateState);
 
@@ -275,9 +277,11 @@ class _PlayerMaterialControlsState
     _controlsVisibilityStreamSubscription = _betterPlayerController!
         .controlsVisibilityStream
         .listen((state) {
-          changePlayerControlsNotVisible(!state);
-          if (!controlsNotVisible) {
-            cancelAndRestartTimer();
+          if (controlsNotVisible == state) {
+            changePlayerControlsNotVisible(!state);
+            if (!controlsNotVisible) {
+              cancelAndRestartTimer();
+            }
           }
         });
   }
@@ -345,7 +349,11 @@ class _PlayerMaterialControlsState
   }
 
   void _onPlayerHide() {
-    _betterPlayerController!.toggleControlsVisibility(!controlsNotVisible);
-    widget.onControlsVisibilityChanged(!controlsNotVisible);
+    final isVisible = !controlsNotVisible;
+    if (_lastNotifiedVisibility == isVisible) {
+      return;
+    }
+    _lastNotifiedVisibility = isVisible;
+    widget.onControlsVisibilityChanged(isVisible);
   }
 }

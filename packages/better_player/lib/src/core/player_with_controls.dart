@@ -10,6 +10,7 @@ import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitles_drawer.dart';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:material_ui/material_ui.dart';
 
 class PlayerWithControls extends StatefulWidget {
@@ -185,7 +186,16 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
   }
 
   void onControlsVisibilityChanged(bool state) {
-    playerVisibilityStreamController.add(state);
+    if (WidgetsBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        playerVisibilityStreamController.add(state);
+        widget.controller?.toggleControlsVisibility(state);
+      });
+    } else {
+      playerVisibilityStreamController.add(state);
+      widget.controller?.toggleControlsVisibility(state);
+    }
   }
 }
 

@@ -34,6 +34,9 @@ class PlayerViewState {
   /// A globally unique key representing the BetterPlayer widget instance in the widget tree.
   final GlobalKey? betterPlayerGlobalKey;
 
+  /// Flag indicating whether the controls overlay is currently visible on the screen.
+  final bool? isControlsVisible;
+
   const PlayerViewState({
     this.isFullScreen = false,
     this.isPlayerVisible = true,
@@ -45,6 +48,7 @@ class PlayerViewState {
     this.overriddenAspectRatio,
     this.overriddenFit,
     this.betterPlayerGlobalKey,
+    this.isControlsVisible,
   });
 
   PlayerViewState copyWith({
@@ -58,6 +62,7 @@ class PlayerViewState {
     double? overriddenAspectRatio,
     BoxFit? overriddenFit,
     GlobalKey? betterPlayerGlobalKey,
+    bool? isControlsVisible,
   }) {
     return PlayerViewState(
       isFullScreen: isFullScreen ?? this.isFullScreen,
@@ -75,6 +80,7 @@ class PlayerViewState {
       overriddenFit: overriddenFit ?? this.overriddenFit,
       betterPlayerGlobalKey:
           betterPlayerGlobalKey ?? this.betterPlayerGlobalKey,
+      isControlsVisible: isControlsVisible ?? this.isControlsVisible,
     );
   }
 }

@@ -48,13 +48,19 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Show or hide controls manually
   void setControlsVisibility(bool isVisible) {
-    _controlsVisibilityStreamController.add(isVisible);
+    _viewState = _viewState.copyWith(isControlsVisible: isVisible);
+    if (!_controlsVisibilityStreamController.isClosed) {
+      _controlsVisibilityStreamController.add(isVisible);
+    }
   }
 
   ///Enable/disable controls (when enabled = false, controls will be always hidden)
   void setControlsEnabled(bool enabled) {
     if (!enabled) {
-      _controlsVisibilityStreamController.add(false);
+      _viewState = _viewState.copyWith(isControlsVisible: false);
+      if (!_controlsVisibilityStreamController.isClosed) {
+        _controlsVisibilityStreamController.add(false);
+      }
     }
     _viewState = _viewState.copyWith(controlsEnabled: enabled);
   }
@@ -62,6 +68,11 @@ extension PlayerViewStateExtension on BetterPlayerController {
   ///Internal method, used to trigger CONTROLS_VISIBLE or CONTROLS_HIDDEN event
   ///once controls state changed.
   void toggleControlsVisibility(bool isVisible) {
+    final visibilityChanged = _viewState.isControlsVisible != isVisible;
+    _viewState = _viewState.copyWith(isControlsVisible: isVisible);
+    if (visibilityChanged && !_controlsVisibilityStreamController.isClosed) {
+      _controlsVisibilityStreamController.add(isVisible);
+    }
     _postEvent(
       isVisible
           ? PlayerEvent(PlayerEventType.controlsVisible)
@@ -73,8 +84,11 @@ extension PlayerViewStateExtension on BetterPlayerController {
   void setControlsAlwaysVisible(bool controlsAlwaysVisible) {
     _viewState = _viewState.copyWith(
       controlsAlwaysVisible: controlsAlwaysVisible,
+      isControlsVisible: controlsAlwaysVisible,
     );
-    _controlsVisibilityStreamController.add(controlsAlwaysVisible);
+    if (!_controlsVisibilityStreamController.isClosed) {
+      _controlsVisibilityStreamController.add(controlsAlwaysVisible);
+    }
   }
 
   ///Check if player can be played/paused automatically

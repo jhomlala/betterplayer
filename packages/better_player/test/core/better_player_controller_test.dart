@@ -393,6 +393,32 @@ void main() {
         expect(controlsHiddenEventCount, 1);
       });
 
+      test(
+        'toggleControlsVisibility updates isControlsVisible and emits to controlsVisibilityStream',
+        () async {
+          final betterPlayerMockController =
+              BetterPlayerTestUtils.setupBetterPlayerMockController();
+          final visibilityEvents = <bool>[];
+          betterPlayerMockController.controlsVisibilityStream.listen(
+            visibilityEvents.add,
+          );
+
+          expect(betterPlayerMockController.isControlsVisible, false);
+
+          betterPlayerMockController.toggleControlsVisibility(true);
+          expect(betterPlayerMockController.isControlsVisible, true);
+
+          // Duplicate call with same state should not emit duplicate stream event
+          betterPlayerMockController.toggleControlsVisibility(true);
+
+          betterPlayerMockController.toggleControlsVisibility(false);
+          expect(betterPlayerMockController.isControlsVisible, false);
+
+          await Future<void>.delayed(const Duration(milliseconds: 100), () {});
+          expect(visibilityEvents, [true, false]);
+        },
+      );
+
       test('postEvent sends events to listeners', () async {
         final betterPlayerMockController =
             BetterPlayerTestUtils.setupBetterPlayerMockController();

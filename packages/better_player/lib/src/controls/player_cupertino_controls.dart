@@ -49,6 +49,7 @@ class _PlayerCupertinoControlsState
 
   BetterPlayerController? _betterPlayerController;
   StreamSubscription? _controlsVisibilityStreamSubscription;
+  bool? _lastNotifiedVisibility;
 
   PlayerControlsConfiguration get _controlsConfiguration =>
       widget.controlsConfiguration;
@@ -263,8 +264,12 @@ class _PlayerCupertinoControlsState
   }
 
   void _onPlayerHide() {
-    _betterPlayerController!.toggleControlsVisibility(!controlsNotVisible);
-    widget.onControlsVisibilityChanged(!controlsNotVisible);
+    final isVisible = !controlsNotVisible;
+    if (_lastNotifiedVisibility == isVisible) {
+      return;
+    }
+    _lastNotifiedVisibility = isVisible;
+    widget.onControlsVisibilityChanged(isVisible);
   }
 
   @override
@@ -275,6 +280,7 @@ class _PlayerCupertinoControlsState
   }
 
   Future<void> _initialize() async {
+    _lastNotifiedVisibility = null;
     controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
     _betterPlayerController!.addVideoListener(_updateState);
 
@@ -293,10 +299,12 @@ class _PlayerCupertinoControlsState
     _controlsVisibilityStreamSubscription = _betterPlayerController!
         .controlsVisibilityStream
         .listen((state) {
-          changePlayerControlsNotVisible(!state);
+          if (controlsNotVisible == state) {
+            changePlayerControlsNotVisible(!state);
 
-          if (!controlsNotVisible) {
-            cancelAndRestartTimer();
+            if (!controlsNotVisible) {
+              cancelAndRestartTimer();
+            }
           }
         });
   }
