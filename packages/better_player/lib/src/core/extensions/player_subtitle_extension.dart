@@ -27,11 +27,14 @@ extension PlayerSubtitleExtension on BetterPlayerController {
     PlayerSubtitlesSource subtitlesSource, {
     bool sourceInitialize = false,
   }) async {
-    _subtitleState = _subtitleState.copyWith(subtitlesSource: subtitlesSource);
-    _subtitleState = _subtitleState.copyWith(subtitlesLines: []);
-    _subtitleState = _subtitleState.copyWith(asmsSegmentsLoaded: []);
-    _subtitleState = _subtitleState.copyWith(asmsSegmentsLoading: false);
-    _subtitleState = _subtitleState.copyWith(activeCaptions: []);
+    _subtitleState = _subtitleState.copyWith(
+      subtitlesSource: subtitlesSource,
+      subtitlesLines: [],
+      asmsSegmentsLoaded: [],
+      asmsSegmentsLoading: false,
+      activeCaptions: [],
+      clearRenderedSubtitle: true,
+    );
 
     if (subtitlesSource.type == PlayerSubtitlesSourceType.embedded) {
       _engine?.setTextTrack(

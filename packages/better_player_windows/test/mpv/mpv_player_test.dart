@@ -472,5 +472,70 @@ void main() {
       await sub.cancel();
       await player.dispose();
     });
+
+    test('emits empty captionUpdate on sub-text nullptr', () async {
+      final bindings = createFakeBindings();
+      final player = MpvPlayer(
+        textureId: 1,
+        handle: fakeHandle,
+        bindings: bindings,
+      );
+
+      final events = <VideoEvent>[];
+      final sub = player.events.listen(events.add);
+
+      final subTextName = 'sub-text'.toNativeUtf8();
+      final subTextProp = calloc<MpvEventProperty>()
+        ..ref.name = subTextName
+        ..ref.format = MpvFormat.none
+        ..ref.data = ffi.nullptr;
+
+      eventQueue.add((ptr) {
+        ptr.ref.eventId = MpvEventId.propertyChange;
+        ptr.ref.error = 0;
+        ptr.ref.data = subTextProp.cast();
+      });
+
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(events.length, 1);
+      expect(events.first.eventType, VideoEventType.captionUpdate);
+      expect(events.first.captions, isEmpty);
+
+      calloc.free(subTextName);
+      calloc.free(subTextProp);
+      await sub.cancel();
+      await player.dispose();
+    });
+
+    test(
+      'setTextTrack maps 0-based index to 1-based sid and handles disable',
+      () async {
+        final bindings = createFakeBindings();
+        final player = MpvPlayer(
+          textureId: 1,
+          handle: fakeHandle,
+          bindings: bindings,
+        );
+
+        final events = <VideoEvent>[];
+        final sub = player.events.listen(events.add);
+
+        expect(propertyStrings['sub-visibility'], 'no');
+
+        await player.setTextTrack(name: 'English', index: 0);
+        expect(propertyStrings['sid'], '1');
+
+        await player.setTextTrack(name: 'Spanish', index: 1);
+        expect(propertyStrings['sid'], '2');
+
+        await player.setTextTrack(name: 'English', index: -1);
+        expect(propertyStrings['sid'], 'no');
+        expect(events.last.eventType, VideoEventType.captionUpdate);
+        expect(events.last.captions, isEmpty);
+
+        await sub.cancel();
+        await player.dispose();
+      },
+    );
   });
 }

@@ -153,12 +153,14 @@ video.m3u8
       expect(subtitles[0].name, 'English CC');
       expect(subtitles[0].language, 'en');
       expect(subtitles[0].isClosedCaption, true);
+      expect(subtitles[0].isDefault, true);
       expect(subtitles[0].inStreamId, 'CC1');
       expect(subtitles[0].index, 0);
 
       expect(subtitles[1].name, 'Spanish CC');
       expect(subtitles[1].language, 'es');
       expect(subtitles[1].isClosedCaption, true);
+      expect(subtitles[1].isDefault, false);
       expect(subtitles[1].inStreamId, 'CC2');
       expect(subtitles[1].index, 1);
     });

@@ -721,38 +721,76 @@ class BetterPlayer(
     fun setTextTrack(name: String, index: Int) {
         BetterPlayerApi.log(0, "setTextTrack: name=$name, index=$index")
         try {
+            if (index < 0) {
+                val builder = trackSelector.parameters.buildUpon()
+                    .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, true)
+                    .clearOverridesOfType(C.TRACK_TYPE_TEXT)
+                val mappedTrackInfo = trackSelector.currentMappedTrackInfo
+                if (mappedTrackInfo != null) {
+                    for (rendererIndex in 0 until mappedTrackInfo.rendererCount) {
+                        if (mappedTrackInfo.getRendererType(rendererIndex) == C.TRACK_TYPE_TEXT) {
+                            builder.setRendererDisabled(rendererIndex, true)
+                        }
+                    }
+                }
+                trackSelector.setParameters(builder)
+                callback.onCues(emptyList())
+                callback.onCuesJson("[]")
+                return
+            }
+
             val mappedTrackInfo = trackSelector.currentMappedTrackInfo ?: return
             for (rendererIndex in 0 until mappedTrackInfo.rendererCount) {
                 if (mappedTrackInfo.getRendererType(rendererIndex) != C.TRACK_TYPE_TEXT) {
                     continue
                 }
-                if (index < 0) {
-                    val builder = trackSelector.parameters.buildUpon()
-                        .setRendererDisabled(rendererIndex, true)
-                        .clearOverridesOfType(C.TRACK_TYPE_TEXT)
-                    trackSelector.setParameters(builder)
-                    return
-                }
                 val trackGroupArray = mappedTrackInfo.getTrackGroups(rendererIndex)
-                for (groupIndex in 0 until trackGroupArray.length) {
-                    val group = trackGroupArray[groupIndex]
-                    for (groupElementIndex in 0 until group.length) {
-                        val format = group.getFormat(groupElementIndex)
-                        val label = format.label ?: format.language ?: ""
-                        if ((name.isNotEmpty() && name == label) || index == groupIndex) {
-                            val builder = trackSelector.parameters.buildUpon()
-                                .setRendererDisabled(rendererIndex, false)
-                                .clearOverridesOfType(C.TRACK_TYPE_TEXT)
-                                .addOverride(
-                                    TrackSelectionOverride(
-                                        group,
-                                        groupElementIndex
-                                    )
-                                )
-                            trackSelector.setParameters(builder)
-                            return
+                var targetOverride: TrackSelectionOverride? = null
+
+                if (name.isNotEmpty()) {
+                    outer@ for (groupIndex in 0 until trackGroupArray.length) {
+                        val group = trackGroupArray[groupIndex]
+                        for (groupElementIndex in 0 until group.length) {
+                            val format = group.getFormat(groupElementIndex)
+                            val label = format.label ?: ""
+                            val lang = format.language ?: ""
+                            val channel = format.accessibilityChannel
+                            val ccId = if (channel != Format.NO_VALUE) "CC$channel" else ""
+                            val serviceId = if (channel != Format.NO_VALUE) "SERVICE$channel" else ""
+                            val matches = (label.isNotEmpty() && name == label) ||
+                                (lang.isNotEmpty() && name.equals(lang, ignoreCase = true)) ||
+                                (ccId.isNotEmpty() && (name.contains(ccId) || name == ccId)) ||
+                                (serviceId.isNotEmpty() && (name.contains(serviceId) || name == serviceId))
+                            if (matches) {
+                                targetOverride = TrackSelectionOverride(group, groupElementIndex)
+                                break@outer
+                            }
                         }
                     }
+                }
+
+                if (targetOverride == null) {
+                    var runningIndex = 0
+                    outer@ for (groupIndex in 0 until trackGroupArray.length) {
+                        val group = trackGroupArray[groupIndex]
+                        for (groupElementIndex in 0 until group.length) {
+                            if (runningIndex == index || groupIndex == index) {
+                                targetOverride = TrackSelectionOverride(group, groupElementIndex)
+                                break@outer
+                            }
+                            runningIndex++
+                        }
+                    }
+                }
+
+                if (targetOverride != null) {
+                    val builder = trackSelector.parameters.buildUpon()
+                        .setTrackTypeDisabled(C.TRACK_TYPE_TEXT, false)
+                        .setRendererDisabled(rendererIndex, false)
+                        .clearOverridesOfType(C.TRACK_TYPE_TEXT)
+                        .addOverride(targetOverride)
+                    trackSelector.setParameters(builder)
+                    return
                 }
             }
         } catch (exception: Exception) {

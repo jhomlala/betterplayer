@@ -75,6 +75,18 @@ void main() {
             'getTextTracks'.toJS,
             (() => <JSObject>[].jsify()! as JSArray).toJS,
           );
+          p.setProperty(
+            'setTextTrackVisibility'.toJS,
+            ((JSBoolean isVisible) {}).toJS,
+          );
+          p.setProperty(
+            'selectTextTrack'.toJS,
+            ((JSObject track) {}).toJS,
+          );
+          p.setProperty(
+            'selectTextLanguage'.toJS,
+            (([JSString? lang, JSString? role, JSBoolean? forced]) {}).toJS,
+          );
           return p;
         }).toJS;
         mockShaka.setProperty('Player'.toJS, mockPlayerConstructor);
@@ -901,6 +913,21 @@ void main() {
         expect(events.length, 1);
         expect(events.first.eventType, VideoEventType.captionUpdate);
         expect(events.first.captions, isEmpty);
+
+        await sub.cancel();
+      });
+
+      test('setTextTrack sets track visibility and handles disable', () async {
+        await player.initialize(videoElement: web.HTMLVideoElement());
+        final events = <VideoEvent>[];
+        final sub = player.events.listen(events.add);
+
+        player.setTextTrack(language: 'en', index: 0);
+
+        player.setTextTrack(language: '', index: -1);
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(events.last.eventType, VideoEventType.captionUpdate);
+        expect(events.last.captions, isEmpty);
 
         await sub.cancel();
       });

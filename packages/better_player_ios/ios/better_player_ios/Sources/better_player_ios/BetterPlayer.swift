@@ -809,20 +809,29 @@ private var presentationSizeContext = 0
         guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) else { return }
         if index < 0 {
             player.currentItem?.select(nil, in: group)
+            callback?.onCues(jsonCues: "[]")
             return
         }
         let options = group.options
+        if !name.isEmpty {
+            for option in options {
+                let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle as (NSCopying & NSObjectProtocol), keySpace: .common)
+                let title = metas.first?.stringValue ?? ""
+                let displayName = option.displayName
+                let lang = option.extendedLanguageTag ?? option.locale?.identifier ?? ""
+                if displayName == name ||
+                    title == name ||
+                    (!title.isEmpty && name.contains(title)) ||
+                    (!displayName.isEmpty && name.contains(displayName)) ||
+                    (!lang.isEmpty && name.lowercased() == lang.lowercased()) {
+                    player.currentItem?.select(option, in: group)
+                    return
+                }
+            }
+        }
         if index < options.count {
             player.currentItem?.select(options[index], in: group)
             return
-        }
-        for trackIndex in 0..<options.count {
-            let option = options[trackIndex]
-            let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle as (NSCopying & NSObjectProtocol), keySpace: .common)
-            if let title = metas.first?.stringValue, title == name {
-                player.currentItem?.select(option, in: group)
-                return
-            }
         }
         BetterPlayerApi.log(2, "setTextTrack: track '\(name)' at index \(index) not found in legible options")
     }

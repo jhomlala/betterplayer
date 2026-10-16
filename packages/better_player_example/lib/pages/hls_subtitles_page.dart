@@ -46,6 +46,16 @@ class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {
     _closedCaptionsController = BetterPlayerController(
       betterPlayerConfiguration,
     );
+    _closedCaptionsController.addEventsListener((event) {
+      if (event.betterPlayerEventType == PlayerEventType.metadataReady) {
+        final cc = _closedCaptionsController.betterPlayerSubtitlesSourceList
+            .where((s) => s.isClosedCaption)
+            .firstOrNull;
+        if (cc != null) {
+          _closedCaptionsController.setupSubtitleSource(cc);
+        }
+      }
+    });
     _closedCaptionsController.setupDataSource(dataSource);
     super.initState();
   }

@@ -25,6 +25,7 @@ class BetterPlayerWebPlayer {
   bool _disposed = false;
   DateTime _lastBufferingUpdate = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastSeekUpdate = DateTime.fromMillisecondsSinceEpoch(0);
+  bool _textTrackEnabled = false;
   @visibleForTesting
   Duration? overriddenDuration;
 
@@ -293,22 +294,24 @@ class BetterPlayerWebPlayer {
   @visibleForTesting
   void emitActiveCaptions() {
     final captions = <String>[];
-    final videoObj = videoElement as JSObject;
-    final textTracksObj = videoObj.getProperty<JSObject?>('textTracks'.toJS);
-    if (textTracksObj != null) {
-      final textTracks = videoElement.textTracks;
-      for (var i = 0; i < textTracks.length; i++) {
-        final track = textTracks[i];
-        if (track.mode != 'disabled') {
-          final activeCues = track.activeCues;
-          if (activeCues != null) {
-            for (var j = 0; j < activeCues.length; j++) {
-              final cue = activeCues[j];
-              final text = (cue as JSObject)
-                  .getProperty<JSString?>('text'.toJS)
-                  ?.toDart;
-              if (text != null && text.trim().isNotEmpty) {
-                captions.addAll(text.trim().split('\n').map((s) => s.trim()));
+    if (_textTrackEnabled) {
+      final videoObj = videoElement as JSObject;
+      final textTracksObj = videoObj.getProperty<JSObject?>('textTracks'.toJS);
+      if (textTracksObj != null) {
+        final textTracks = videoElement.textTracks;
+        for (var i = 0; i < textTracks.length; i++) {
+          final track = textTracks[i];
+          if (track.mode != 'disabled') {
+            final activeCues = track.activeCues;
+            if (activeCues != null) {
+              for (var j = 0; j < activeCues.length; j++) {
+                final cue = activeCues[j];
+                final text = (cue as JSObject)
+                    .getProperty<JSString?>('text'.toJS)
+                    ?.toDart;
+                if (text != null && text.trim().isNotEmpty) {
+                  captions.addAll(text.trim().split('\n').map((s) => s.trim()));
+                }
               }
             }
           }
@@ -561,12 +564,46 @@ class BetterPlayerWebPlayer {
   }
 
   void setTextTrack({String? language, int? index}) {
+    final jsPlayer = _shakaPlayer as JSObject?;
     if (language == null || language.isEmpty || index == null || index < 0) {
-      _shakaPlayer?.setTextTrackVisibility(false.toJS);
+      _textTrackEnabled = false;
+      if (jsPlayer != null && jsPlayer.has('setTextTrackVisibility')) {
+        _shakaPlayer?.setTextTrackVisibility(false.toJS);
+      }
+      emitActiveCaptions();
       return;
     }
-    _shakaPlayer?.setTextTrackVisibility(true.toJS);
-    _shakaPlayer?.selectTextLanguage(language.toJS);
+    _textTrackEnabled = true;
+    if (jsPlayer != null && jsPlayer.has('setTextTrackVisibility')) {
+      _shakaPlayer?.setTextTrackVisibility(true.toJS);
+    }
+
+    if (jsPlayer != null && jsPlayer.has('getTextTracks')) {
+      final tracks = getTextTracks();
+      JSObject? targetTrack;
+      for (final track in tracks) {
+        final label = track.getProperty<JSString?>('label'.toJS)?.toDart ?? '';
+        final lang =
+            track.getProperty<JSString?>('language'.toJS)?.toDart ?? '';
+        if ((label.isNotEmpty &&
+                (label == language || language.contains(label))) ||
+            (lang.isNotEmpty &&
+                language.toLowerCase().contains(lang.toLowerCase()))) {
+          targetTrack = track;
+          break;
+        }
+      }
+      if (targetTrack == null && index < tracks.length) {
+        targetTrack = tracks[index];
+      }
+      if (targetTrack != null && jsPlayer.has('selectTextTrack')) {
+        selectTextTrack(targetTrack);
+        return;
+      }
+    }
+    if (jsPlayer != null && jsPlayer.has('selectTextLanguage')) {
+      _shakaPlayer?.selectTextLanguage(language.toJS);
+    }
   }
 
   List<JSObject> getTextTracks() => _shakaPlayer!.getTextTracks().toDart;

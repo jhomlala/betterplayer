@@ -74,6 +74,9 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     _observeProperty(name: 'height', format: MpvFormat.int64);
     _observeProperty(name: 'sub-text', format: MpvFormat.string);
 
+    // Suppress mpv native OSD subtitles so PlayerSubtitlesDrawer renders them in Flutter.
+    _setPropertyString(name: 'sub-visibility', value: 'no');
+
     // Request mpv warnings and errors for logging
     final warnStr = 'warn'.toNativeUtf8();
     try {
@@ -282,21 +285,24 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           }
         }
       case 'sub-text':
+        final List<String> captions;
         if (prop.ref.data != ffi.nullptr) {
           final strPtr = prop.ref.data.cast<ffi.Pointer<Utf8>>().value;
           final text = strPtr != ffi.nullptr ? strPtr.toDartString() : '';
           final trimmed = text.trim();
-          final captions = trimmed.isNotEmpty
+          captions = trimmed.isNotEmpty
               ? trimmed.split('\n').map((s) => s.trim()).toList()
               : const <String>[];
-          _eventController.add(
-            VideoEvent(
-              eventType: VideoEventType.captionUpdate,
-              captions: captions,
-              key: _currentKey,
-            ),
-          );
+        } else {
+          captions = const <String>[];
         }
+        _eventController.add(
+          VideoEvent(
+            eventType: VideoEventType.captionUpdate,
+            captions: captions,
+            key: _currentKey,
+          ),
+        );
     }
   }
 
@@ -530,10 +536,20 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   @override
   Future<void> setTextTrack({required String name, required int index}) async {
     _log(message: 'setTextTrack: name=$name, index=$index', levelIndex: 0);
+    final disable = index < 0 || name.isEmpty;
     _setPropertyString(
       name: 'sid',
-      value: (index < 0 || name.isEmpty) ? 'no' : '$index',
+      value: disable ? 'no' : '${index + 1}',
     );
+    if (disable) {
+      _eventController.add(
+        VideoEvent(
+          eventType: VideoEventType.captionUpdate,
+          captions: const <String>[],
+          key: _currentKey,
+        ),
+      );
+    }
   }
 
   int _command(List<String> args) {

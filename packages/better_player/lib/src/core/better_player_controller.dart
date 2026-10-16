@@ -443,6 +443,17 @@ class BetterPlayerController {
         hasCurrentDataSourceInitialized: true,
       );
       _postEvent(PlayerEvent(PlayerEventType.initialized));
+      final currentSubtitle = _subtitleState.subtitlesSource;
+      if (currentSubtitle != null) {
+        if (currentSubtitle.type == PlayerSubtitlesSourceType.embedded) {
+          _engine?.setTextTrack(
+            currentSubtitle.name,
+            currentSubtitle.index ?? 0,
+          );
+        } else {
+          _engine?.setTextTrack('', -1);
+        }
+      }
     }
     if (currentVideoPlayerValue.isPip) {
       if (!_viewState.wasInPipMode) {
@@ -526,7 +537,12 @@ class BetterPlayerController {
       case VideoEventType.bufferingEnd:
         _postEvent(PlayerEvent(PlayerEventType.bufferingEnd));
       case VideoEventType.captionUpdate:
-        activeCaptions = event.captions ?? const [];
+        if (_subtitleState.subtitlesSource?.type ==
+            PlayerSubtitlesSourceType.embedded) {
+          activeCaptions = event.captions ?? const [];
+        } else {
+          activeCaptions = const [];
+        }
       default:
 
         ///TODO: Handle when needed

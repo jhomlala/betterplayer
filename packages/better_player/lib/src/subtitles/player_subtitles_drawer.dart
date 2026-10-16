@@ -98,16 +98,16 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
     final controller = widget.betterPlayerController;
     final isEmbedded =
         controller.betterPlayerSubtitlesSource?.type ==
-            PlayerSubtitlesSourceType.embedded ||
-        (controller.activeCaptions.isNotEmpty &&
-            controller.betterPlayerSubtitlesSource?.type !=
-                PlayerSubtitlesSourceType.none);
+        PlayerSubtitlesSourceType.embedded;
 
     final List<String> subtitles;
     var itemAlignment = _configuration!.alignment;
 
     if (isEmbedded) {
       subtitles = controller.activeCaptions;
+      controller.renderedSubtitle = subtitles.isNotEmpty
+          ? PlayerSubtitle.fromData(texts: subtitles)
+          : null;
     } else {
       final subtitle = _getSubtitleAtCurrentPosition();
       controller.renderedSubtitle = subtitle;

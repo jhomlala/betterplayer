@@ -128,11 +128,14 @@ class PlayerHlsUtils {
                 (instreamId != null
                     ? 'Closed Captions ($instreamId)'
                     : 'Closed Captions');
+            final isDefault =
+                ((format.selectionFlags ?? 0) & Util.selectionFlagDefault) != 0;
             subtitles.add(
               PlayerAsmsSubtitle(
                 name: trackName,
                 language: format.language,
                 mimeType: format.sampleMimeType,
+                isDefault: isDefault,
                 isClosedCaption: true,
                 inStreamId: instreamId,
                 index: captionIndex++,
