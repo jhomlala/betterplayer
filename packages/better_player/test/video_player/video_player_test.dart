@@ -68,6 +68,67 @@ void main() {
     });
 
     test(
+      'PlayerEngineController updates size and notifies listeners when changedSize arrives after initial zero size',
+      () async {
+        mockPlatform.initialVideoSize = Size.zero;
+        final controller = PlayerEngineController();
+
+        int? textureId;
+        while (textureId == null) {
+          textureId = controller.textureId;
+          await Future<void>.delayed(const Duration(milliseconds: 10));
+        }
+
+        await controller.setNetworkDataSource('https://example.com/hls.m3u8');
+        expect(controller.value.size, Size.zero);
+        expect(controller.value.initialized, isTrue);
+
+        var notifyCount = 0;
+        controller.addListener(() => notifyCount++);
+
+        mockPlatform.sendEvent(
+          textureId,
+          VideoEvent(
+            eventType: VideoEventType.changedSize,
+            size: const Size(1920, 1080),
+            key: 'https://example.com/hls.m3u8',
+          ),
+        );
+
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        expect(controller.value.size, const Size(1920, 1080));
+        expect(notifyCount, greaterThan(0));
+
+        // Non-positive or null sizes should be ignored
+        for (final invalidSize in [
+          const Size(0, 720),
+          const Size(-100, -100),
+        ]) {
+          mockPlatform.sendEvent(
+            textureId,
+            VideoEvent(
+              eventType: VideoEventType.changedSize,
+              size: invalidSize,
+              key: 'https://example.com/hls.m3u8',
+            ),
+          );
+        }
+        mockPlatform.sendEvent(
+          textureId,
+          VideoEvent(
+            eventType: VideoEventType.changedSize,
+            key: 'https://example.com/hls.m3u8',
+          ),
+        );
+
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+        expect(controller.value.size, const Size(1920, 1080));
+
+        await controller.dispose();
+      },
+    );
+
+    test(
       'PlayerEngineController continues polling position after seekTo while playing',
       () async {
         final controller = PlayerEngineController();

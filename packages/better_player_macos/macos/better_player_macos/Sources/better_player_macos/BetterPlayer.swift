@@ -458,9 +458,21 @@ private var presentationSizeContext = 0
                 if !isInitialized {
                     onReadyToPlay()
                 }
-            }
         } else if context == &presentationSizeContext {
-            onReadyToPlay()
+            if !isInitialized {
+                onReadyToPlay()
+            } else if let item = player.currentItem {
+                let size = item.presentationSize
+                if size.width > 0 && size.height > 0 {
+                    BetterPlayerApi.log(1, "presentationSize changed: \(size.width)x\(size.height)")
+                    callback?.onInitialized(
+                        durationMs: duration(),
+                        width: Double(size.width),
+                        height: Double(size.height),
+                        key: key
+                    )
+                }
+            }
         } else if context == &statusContext {
             if let item = object as? AVPlayerItem {
                 switch item.status {

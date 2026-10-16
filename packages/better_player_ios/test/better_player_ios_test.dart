@@ -4,7 +4,6 @@ import 'package:better_player_ios/better_player_ios.dart';
 import 'package:better_player_ios/src/better_player_ios_ffi.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:ffi/ffi.dart' as pkg_ffi;
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -263,5 +262,139 @@ void main() {
         ),
       ).called(1);
     });
+
+    test(
+      'handleInitialized emits initialized first, changedSize on positive size updates, and ignores non-positive dimensions',
+      () async {
+        final controller = StreamController<VideoEvent>.broadcast();
+        iosPlayer.setEventControllerForTesting(
+          textureId: 1,
+          controller: controller,
+        );
+
+        final events = <VideoEvent>[];
+        final subscription = controller.stream.listen(events.add);
+
+        // 1. Initial zero size emits initialized
+        iosPlayer.handleInitialized(
+          textureId: 1,
+          durationMs: 5000,
+          width: 0,
+          height: 0,
+          key: 'streamKey',
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(events.length, 1);
+        expect(events[0].eventType, VideoEventType.initialized);
+        expect(events[0].size, Size.zero);
+
+        // 2. Duplicate zero or non-positive sizes are ignored
+        for (final dims in [
+          [0.0, 0.0],
+          [0.0, 720.0],
+          [1280.0, 0.0],
+          [-100.0, -100.0],
+        ]) {
+          iosPlayer.handleInitialized(
+            textureId: 1,
+            durationMs: 5000,
+            width: dims[0],
+            height: dims[1],
+            key: 'streamKey',
+          );
+          await Future<void>.delayed(Duration.zero);
+          expect(events.length, 1);
+        }
+
+        // 3. Positive size updates emit changedSize with preserved metadata
+        iosPlayer.handleInitialized(
+          textureId: 1,
+          durationMs: 5000,
+          width: 1920,
+          height: 1080,
+          key: 'streamKey',
+        );
+        await Future<void>.delayed(Duration.zero);
+
+        expect(events.length, 2);
+        expect(events[1].eventType, VideoEventType.changedSize);
+        expect(events[1].size, const Size(1920, 1080));
+        expect(events[1].key, 'streamKey');
+        expect(events[1].duration, const Duration(milliseconds: 5000));
+
+        await subscription.cancel();
+        await controller.close();
+      },
+    );
+
+    test(
+      'setDataSource and dispose reset initialization tracking',
+      () async {
+        final controller = StreamController<VideoEvent>.broadcast();
+        iosPlayer.setEventControllerForTesting(
+          textureId: 1,
+          controller: controller,
+        );
+
+        final events = <VideoEvent>[];
+        final subscription = controller.stream.listen(events.add);
+
+        iosPlayer.handleInitialized(
+          textureId: 1,
+          durationMs: 1000,
+          width: 1920,
+          height: 1080,
+          key: 'key1',
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(events.last.eventType, VideoEventType.initialized);
+
+        // setDataSource resets tracking
+        await iosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://test.com',
+          ),
+        );
+
+        iosPlayer.handleInitialized(
+          textureId: 1,
+          durationMs: 2000,
+          width: 1280,
+          height: 720,
+          key: 'key2',
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(events.length, 2);
+        expect(events.last.eventType, VideoEventType.initialized);
+
+        // dispose resets tracking
+        await iosPlayer.dispose(1);
+        final freshController = StreamController<VideoEvent>.broadcast();
+        iosPlayer.setEventControllerForTesting(
+          textureId: 1,
+          controller: freshController,
+        );
+        final freshEvents = <VideoEvent>[];
+        final freshSub = freshController.stream.listen(freshEvents.add);
+
+        iosPlayer.handleInitialized(
+          textureId: 1,
+          durationMs: 3000,
+          width: 640,
+          height: 360,
+          key: 'key3',
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(freshEvents.length, 1);
+        expect(freshEvents.last.eventType, VideoEventType.initialized);
+
+        await subscription.cancel();
+        await controller.close();
+        await freshSub.cancel();
+        await freshController.close();
+      },
+    );
   });
 }

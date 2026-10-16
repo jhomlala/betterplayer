@@ -355,15 +355,23 @@ class _PlayerVideoFitWidgetState extends State<_PlayerVideoFitWidget> {
   @override
   Widget build(BuildContext context) {
     if (_initialized && _started) {
-      final size = widget.betterPlayerController.videoPlayerValue?.size;
+      final size = widget.betterPlayerController.currentVideoSize;
+      final hasDimensions = (size?.width ?? 0) > 0 && (size?.height ?? 0) > 0;
+      if (!hasDimensions) {
+        return Center(
+          child: SizedBox.expand(
+            child: widget.betterPlayerController.buildVideoPlayerView(),
+          ),
+        );
+      }
       return Center(
         child: ClipRect(
           child: SizedBox.expand(
             child: FittedBox(
               fit: widget.boxFit,
               child: SizedBox(
-                width: size?.width ?? 0,
-                height: size?.height ?? 0,
+                width: size!.width,
+                height: size.height,
                 child: widget.betterPlayerController.buildVideoPlayerView(),
               ),
             ),

@@ -47,10 +47,53 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }
 
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
+  final Map<int, String?> _lastInitializedKeys = {};
+
+  @visibleForTesting
+  void setEventControllerForTesting({
+    required int textureId,
+    required StreamController<VideoEvent> controller,
+  }) {
+    _eventControllers[textureId] = controller;
+  }
+
+  @visibleForTesting
+  void handleInitialized({
+    required int textureId,
+    required int durationMs,
+    required double width,
+    required double height,
+    required String? key,
+  }) {
+    final alreadyInitialized = _lastInitializedKeys.containsKey(textureId);
+    if (alreadyInitialized) {
+      if (width > 0 && height > 0) {
+        _eventControllers[textureId]?.add(
+          VideoEvent(
+            eventType: VideoEventType.changedSize,
+            key: key,
+            duration: Duration(milliseconds: durationMs),
+            size: Size(width, height),
+          ),
+        );
+      }
+      return;
+    }
+    _lastInitializedKeys[textureId] = key;
+    _eventControllers[textureId]?.add(
+      VideoEvent(
+        eventType: VideoEventType.initialized,
+        key: key,
+        duration: Duration(milliseconds: durationMs),
+        size: Size(width, height),
+      ),
+    );
+  }
 
   @override
   Future<void> dispose(int? textureId) async {
     if (textureId == null) return;
+    _lastInitializedKeys.remove(textureId);
     getPlayer(textureId)?.dispose();
     _eventControllers[textureId]?.close();
     _eventControllers.remove(textureId);
@@ -66,13 +109,12 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
       onInitializedWithDurationMs_width_height_key_:
           (int durationMs, double width, double height, objc.NSString? key) {
             if (currentTextureId == null) return;
-            _eventControllers[currentTextureId]?.add(
-              VideoEvent(
-                eventType: VideoEventType.initialized,
-                key: key?.toDartString(),
-                duration: Duration(milliseconds: durationMs),
-                size: Size(width, height),
-              ),
+            handleInitialized(
+              textureId: currentTextureId,
+              durationMs: durationMs,
+              width: width,
+              height: height,
+              key: key?.toDartString(),
             );
           },
       onCompletedWithKey_: (objc.NSString? key) {
@@ -208,6 +250,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
     if (textureId == null) return;
+    _lastInitializedKeys.remove(textureId);
     final player = getPlayer(textureId);
     if (player == null) return;
 
