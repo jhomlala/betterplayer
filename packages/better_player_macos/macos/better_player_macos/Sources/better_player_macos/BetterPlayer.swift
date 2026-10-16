@@ -294,8 +294,7 @@ private var presentationSizeContext = 0
             setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: false, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: nil)
         } else {
             BetterPlayerApi.log(3, "setDataSourceAsset failed: asset not found at \(assetPath)")
-            let error = FlutterError(code: "VideoError", message: "Failed to load video: asset not found at \(assetPath)", details: nil)
-            sendError(error)
+            sendError(code: "VideoError", message: "Failed to load video: asset not found at \(assetPath)")
         }
     }
 
