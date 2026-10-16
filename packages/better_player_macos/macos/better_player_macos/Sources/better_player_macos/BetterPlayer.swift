@@ -43,11 +43,6 @@ private var presentationSizeContext = 0
 /// Handles player initialization, lifecycle, and event reporting to Flutter.
 @objc public class BetterPlayer: NSObject, AVPictureInPictureControllerDelegate {
 
-    private func sendError(_ error: FlutterError) {
-        callback?.onError(error.code, errorMessage: error.message ?? "", errorDetails: (error.details as? String) ?? "")
-    }
-
-
     // MARK: - Properties
 
     public var textureId: Int64 = -1
@@ -379,6 +374,10 @@ private var presentationSizeContext = 0
         startStalledCheck()
     }
 
+    private func sendError(code: String, message: String, details: String = "") {
+        callback?.onError(code, errorMessage: message, errorDetails: details)
+    }
+
     private func startStalledCheck() {
         if let currentItem = player.currentItem {
             if currentItem.isPlaybackLikelyToKeepUp || (availableDuration() - CMTimeGetSeconds(currentItem.currentTime())) > 10.0 {
@@ -387,8 +386,7 @@ private var presentationSizeContext = 0
                 stalledCount += 1
                 if stalledCount > 60 {
                     if callback != nil {
-                        let error = FlutterError(code: "VideoError", message: "Failed to load video: playback stalled", details: nil)
-                        sendError(error)
+                        sendError(code: "VideoError", message: "Failed to load video: playback stalled")
                     }
                     return
                 }
@@ -458,6 +456,7 @@ private var presentationSizeContext = 0
                 if !isInitialized {
                     onReadyToPlay()
                 }
+            }
         } else if context == &presentationSizeContext {
             if !isInitialized {
                 onReadyToPlay()
@@ -484,8 +483,7 @@ private var presentationSizeContext = 0
                         
                         BetterPlayerApi.log(3, "item status failed: \(description), details: \(details)")
                         let message = "Failed to load video: \(description)"
-                        let error = FlutterError(code: "VideoError", message: message, details: details)
-                        sendError(error)
+                        sendError(code: "VideoError", message: message, details: details)
                     }
                 case .unknown:
                     break
