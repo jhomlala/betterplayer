@@ -36,6 +36,9 @@ enum VideoEventType {
   /// The video size has changed.
   changedSize,
 
+  /// Updated closed caption or subtitle cues received from native engine.
+  captionUpdate,
+
   /// An unknown event has been received.
   unknown,
 }

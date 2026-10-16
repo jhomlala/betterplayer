@@ -257,7 +257,19 @@ class BetterPlayerController {
   /// based on the video's current playback position.
   PlayerSubtitle? get renderedSubtitle => _subtitleState.renderedSubtitle;
   set renderedSubtitle(PlayerSubtitle? value) =>
-      _subtitleState = _subtitleState.copyWith(renderedSubtitle: value);
+      _subtitleState = _subtitleState.copyWith(
+        renderedSubtitle: value,
+        clearRenderedSubtitle: value == null,
+      );
+
+  /// Active embedded closed caption text lines emitted by the native engine.
+  List<String> get activeCaptions => _subtitleState.activeCaptions;
+  set activeCaptions(List<String> value) {
+    _subtitleState = _subtitleState.copyWith(activeCaptions: value);
+    for (final listener in List<VoidCallback>.from(_videoListeners)) {
+      listener();
+    }
+  }
 
   /// Retrieves the complete list of alternative video tracks parsed from ASMS (HLS/DASH) streams.
   /// Useful for populating a quality selection menu.
@@ -434,6 +446,17 @@ class BetterPlayerController {
         hasCurrentDataSourceInitialized: true,
       );
       _postEvent(PlayerEvent(PlayerEventType.initialized));
+      final currentSubtitle = _subtitleState.subtitlesSource;
+      if (currentSubtitle != null) {
+        if (currentSubtitle.type == PlayerSubtitlesSourceType.embedded) {
+          _engine?.setTextTrack(
+            currentSubtitle.name,
+            currentSubtitle.index ?? 0,
+          );
+        } else {
+          _engine?.setTextTrack('', -1);
+        }
+      }
     }
     if (currentVideoPlayerValue.isPip) {
       if (!_viewState.wasInPipMode) {
@@ -516,6 +539,13 @@ class BetterPlayerController {
         );
       case VideoEventType.bufferingEnd:
         _postEvent(PlayerEvent(PlayerEventType.bufferingEnd));
+      case VideoEventType.captionUpdate:
+        if (_subtitleState.subtitlesSource?.type ==
+            PlayerSubtitlesSourceType.embedded) {
+          activeCaptions = event.captions ?? const [];
+        } else {
+          activeCaptions = const [];
+        }
       default:
 
         ///TODO: Handle when needed

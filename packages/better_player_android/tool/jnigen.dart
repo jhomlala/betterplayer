@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:jnigen/jnigen.dart';
 
+/// Android JNI binding generator script using jnigen.
 void main(List<String> args) {
   final packageRoot = Platform.script.resolve('../');
 

@@ -38,7 +38,7 @@ Stop stitching `video_player`, separate UI packages, abandoned caching plugins, 
 | **HLS / DASH** | Full native support | Basic | Native |
 | **DRM (Widevine / FairPlay)** | Native support | None | None |
 | **Smart Caching** | Built-in offline cache | None (3rd party needed) | None |
-| **Subtitles** | SRT, WebVTT, TTML | SRT only | Advanced |
+| **Subtitles & Closed Captions** | SRT, WebVTT, TTML, CEA-608 / CEA-708 | SRT only | Advanced |
 | **Picture in Picture (PiP)** | Built-in | None | Platform-dependent |
 | **Playlists** | Built-in | None | Built-in |
 | **VAST / VMAP Ads** | Client-side ad engine (VAST 2.0-4.x, VMAP) | None | None |

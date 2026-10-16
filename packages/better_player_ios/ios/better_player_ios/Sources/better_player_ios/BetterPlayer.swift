@@ -123,6 +123,7 @@ private var presentationSizeContext = 0
 
     private var pipController: AVPictureInPictureController?
     private var restoreUIOnPipStop: ((Bool) -> Void)?
+    private var legibleOutput: AVPlayerItemLegibleOutput?
 
     // MARK: - Lifecycle
 
@@ -184,6 +185,13 @@ private var presentationSizeContext = 0
             item.addObserver(self, forKeyPath: "playbackBufferEmpty", options: [], context: &playbackBufferEmptyContext)
             item.addObserver(self, forKeyPath: "playbackBufferFull", options: [], context: &playbackBufferFullContext)
             NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime(_:)), name: .AVPlayerItemDidPlayToEndTime, object: item)
+
+            let output = AVPlayerItemLegibleOutput()
+            output.suppressesPlayerRendering = true
+            output.setDelegate(self, queue: DispatchQueue.main)
+            item.add(output)
+            self.legibleOutput = output
+
             observersAdded = true
         }
     }
@@ -198,6 +206,12 @@ private var presentationSizeContext = 0
             player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferEmpty", context: &playbackBufferEmptyContext)
             player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferFull", context: &playbackBufferFullContext)
             NotificationCenter.default.removeObserver(self)
+
+            if let output = legibleOutput {
+                player.currentItem?.remove(output)
+                legibleOutput = nil
+            }
+
             observersAdded = false
         }
     }
@@ -786,6 +800,42 @@ private var presentationSizeContext = 0
         }
     }
 
+    /// Sets the text or caption track by name and index. If index is negative, disables text tracks.
+    /// - Parameters:
+    ///   - name: The name of the track.
+    ///   - index: The index of the track, or negative to disable.
+    @objc public func setTextTrack(name: String, index: Int) {
+        BetterPlayerApi.log(0, "setTextTrack: name=\(name), index=\(index)")
+        guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) else { return }
+        if index < 0 {
+            player.currentItem?.select(nil, in: group)
+            callback?.onCues(jsonCues: "[]")
+            return
+        }
+        let options = group.options
+        if !name.isEmpty {
+            for option in options {
+                let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle as (NSCopying & NSObjectProtocol), keySpace: .common)
+                let title = metas.first?.stringValue ?? ""
+                let displayName = option.displayName
+                let lang = option.extendedLanguageTag ?? option.locale?.identifier ?? ""
+                if displayName == name ||
+                    title == name ||
+                    (!title.isEmpty && name.contains(title)) ||
+                    (!displayName.isEmpty && name.contains(displayName)) ||
+                    (!lang.isEmpty && name.lowercased() == lang.lowercased()) {
+                    player.currentItem?.select(option, in: group)
+                    return
+                }
+            }
+        }
+        if index < options.count {
+            player.currentItem?.select(options[index], in: group)
+            return
+        }
+        BetterPlayerApi.log(2, "setTextTrack: track '\(name)' at index \(index) not found in legible options")
+    }
+
     /// Sets whether the audio should mix with others.
     /// - Parameter mixWithOthers: Whether to mix audio.
     @objc public func setMixWithOthers(_ mixWithOthers: Bool) {
@@ -837,5 +887,18 @@ private var presentationSizeContext = 0
         if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
             BetterPlayerApi.players.removeValue(forKey: key)
         }
+    }
+}
+
+// MARK: - AVPlayerItemLegibleOutputPushDelegate
+
+extension BetterPlayer: AVPlayerItemLegibleOutputPushDelegate {
+    public func legibleOutput(_ output: AVPlayerItemLegibleOutput, didOutputAttributedStrings strings: [NSAttributedString], nativeSampleBuffers nativeSamples: [Any], forItemTime itemTime: CMTime) {
+        let texts = strings.map { $0.string }.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        guard let jsonData = try? JSONSerialization.data(withJSONObject: texts, options: []),
+              let jsonString = String(data: jsonData, encoding: .utf8) else {
+            return
+        }
+        callback?.onCues(jsonCues: jsonString)
     }
 }

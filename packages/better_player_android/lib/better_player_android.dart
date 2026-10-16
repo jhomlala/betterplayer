@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 // ignore_for_file: avoid_setters_without_getters
 
@@ -40,6 +41,10 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     );
     BetterPlayerApi.Companion.logCallback = jniCallback;
   }
+
+  @visibleForTesting
+  String? Function(JString? str) jStringConverter = (str) =>
+      str?.toDartString();
 
   final Map<int, BetterPlayerWrapper> _players = {};
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
@@ -175,6 +180,26 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
               );
             },
         onError$async: true,
+        onCues: (list) {},
+        onCues$async: true,
+        onCuesJson: (cuesJson) {
+          final jsonStr = jStringConverter(cuesJson);
+          if (jsonStr == null) return;
+          try {
+            final dynamic decoded = jsonDecode(jsonStr);
+            if (decoded is List) {
+              final cues = decoded.map((e) => e.toString()).toList();
+              tempController.add(
+                VideoEvent(
+                  eventType: VideoEventType.captionUpdate,
+                  key: null,
+                  captions: cues,
+                ),
+              );
+            }
+          } catch (_) {}
+        },
+        onCuesJson$async: true,
       ),
     );
 
@@ -331,6 +356,11 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setTextTrack(int? textureId, String? name, int? index) async {
+    _players[textureId]?.setTextTrack(name ?? '', index ?? 0);
+  }
+
+  @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
     _players[textureId]?.mixWithOthers = mixWithOthers;
   }
@@ -476,6 +506,7 @@ abstract class BetterPlayerWrapper {
   );
   void setTrackParameters(int width, int height, int bitrate);
   void setAudioTrack(String name, int index);
+  void setTextTrack(String name, int index);
   set mixWithOthers(bool mixWithOthers);
   void play();
   void pause();
@@ -560,6 +591,11 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   @override
   void setAudioTrack(String name, int index) =>
       _player.setAudioTrack(name.toJString(), index);
+
+  @override
+  void setTextTrack(String name, int index) {
+    _player.setTextTrack(name.toJString(), index);
+  }
 
   @override
   set mixWithOthers(bool mixWithOthers) =>

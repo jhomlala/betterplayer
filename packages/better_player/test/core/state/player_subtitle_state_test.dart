@@ -14,6 +14,7 @@ void main() {
       expect(state.renderedSubtitle, isNull);
       expect(state.asmsSegmentsLoading, isFalse);
       expect(state.asmsSegmentsLoaded, isEmpty);
+      expect(state.activeCaptions, isEmpty);
     });
 
     test('should allow updating fields', () {
@@ -40,6 +41,7 @@ void main() {
       state = state.copyWith(
         asmsSegmentsLoaded: [...state.asmsSegmentsLoaded, 'segment1'],
       );
+      state = state.copyWith(activeCaptions: ['Line 1', 'Line 2']);
 
       expect(state.subtitlesSourceList, hasLength(1));
       expect(state.subtitlesSource, source);
@@ -47,6 +49,7 @@ void main() {
       expect(state.renderedSubtitle, subtitle);
       expect(state.asmsSegmentsLoading, isTrue);
       expect(state.asmsSegmentsLoaded, contains('segment1'));
+      expect(state.activeCaptions, ['Line 1', 'Line 2']);
     });
   });
 }

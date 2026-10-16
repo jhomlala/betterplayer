@@ -75,6 +75,18 @@ void main() {
             'getTextTracks'.toJS,
             (() => <JSObject>[].jsify()! as JSArray).toJS,
           );
+          p.setProperty(
+            'setTextTrackVisibility'.toJS,
+            ((JSBoolean isVisible) {}).toJS,
+          );
+          p.setProperty(
+            'selectTextTrack'.toJS,
+            ((JSObject track) {}).toJS,
+          );
+          p.setProperty(
+            'selectTextLanguage'.toJS,
+            (([JSString? lang, JSString? role, JSBoolean? forced]) {}).toJS,
+          );
           return p;
         }).toJS;
         mockShaka.setProperty('Player'.toJS, mockPlayerConstructor);
@@ -889,6 +901,50 @@ void main() {
           await player.disablePictureInPicture();
         }
       });
+
+      test('emitActiveCaptions emits captionUpdate event', () async {
+        await player.initialize(videoElement: web.HTMLVideoElement());
+        final events = <VideoEvent>[];
+        final sub = player.events.listen(events.add);
+
+        player.emitActiveCaptions();
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(events.length, 1);
+        expect(events.first.eventType, VideoEventType.captionUpdate);
+        expect(events.first.captions, isEmpty);
+
+        await sub.cancel();
+      });
+
+      test('setTextTrack sets track visibility and handles disable', () async {
+        await player.initialize(videoElement: web.HTMLVideoElement());
+        final events = <VideoEvent>[];
+        final sub = player.events.listen(events.add);
+
+        player.setTextTrack(language: 'en', index: 0);
+
+        player.setTextTrack(language: '', index: -1);
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(events.last.eventType, VideoEventType.captionUpdate);
+        expect(events.last.captions, isEmpty);
+
+        await sub.cancel();
+      });
+
+      test(
+        'suppresses native cue rendering via CSS and emits active captions',
+        () async {
+          final video = web.HTMLVideoElement();
+          await player.initialize(videoElement: video);
+
+          final style = web.document.getElementById('better-player-cue-style');
+          expect(style, isNotNull);
+          final text = (style! as web.HTMLStyleElement).textContent;
+          expect(text, contains('::-webkit-media-text-track-container'));
+          expect(text, contains('::cue'));
+        },
+      );
     });
   });
 }

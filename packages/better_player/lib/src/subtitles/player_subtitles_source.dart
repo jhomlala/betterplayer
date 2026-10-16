@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/asms/player_asms_subtitle_segment.dart';
+import 'package:better_player/src/asms/player_asms_subtitle_segment.dart';
 
 import 'package:better_player/src/subtitles/player_subtitles_source_type.dart';
 
@@ -15,6 +15,9 @@ class PlayerSubtitlesSource {
     this.asmsIsSegmented,
     this.asmsSegmentsTime,
     this.asmsSegments,
+    this.isClosedCaption = false,
+    this.inStreamId,
+    this.index,
   });
 
   ///Source type
@@ -47,6 +50,15 @@ class PlayerSubtitlesSource {
   ///List of segments (start,end,url of the segment). This shouldn't be
   ///configured manually.
   final List<PlayerAsmsSubtitleSegment>? asmsSegments;
+
+  ///Whether this is an embedded / in-stream closed caption (CEA-608 / CEA-708).
+  final bool isClosedCaption;
+
+  ///In-stream identifier (e.g. 'CC1', 'CC2', 'SERVICE1').
+  final String? inStreamId;
+
+  ///Index of track for native track selection.
+  final int? index;
 
   ///Creates list with only one subtitles
   static List<PlayerSubtitlesSource> single({

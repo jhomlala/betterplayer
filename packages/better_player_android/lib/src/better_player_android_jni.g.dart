@@ -373,6 +373,114 @@ final class $BetterPlayerApi$Type$ extends jni$_.JType<BetterPlayerApi> {
   String get signature => r'Lpl/hasoft/better_player/BetterPlayerApi;';
 }
 
+/// from: `pl.hasoft.better_player.BetterPlayerCallback$DefaultImpls`
+extension type BetterPlayerCallback$DefaultImpls._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'pl/hasoft/better_player/BetterPlayerCallback$DefaultImpls',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<BetterPlayerCallback$DefaultImpls> type =
+      $BetterPlayerCallback$DefaultImpls$Type$();
+  static final _id_onCues = _class.staticMethodId(
+    r'onCues',
+    r'(Lpl/hasoft/better_player/BetterPlayerCallback;Ljava/util/List;)V',
+  );
+
+  static final _onCues =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallStaticVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public void onCues(pl.hasoft.better_player.BetterPlayerCallback betterPlayerCallback, java.util.List<java.lang.String> list)`
+  @core$_.Deprecated('This Java method is deprecated.')
+  static void onCues(
+    BetterPlayerCallback betterPlayerCallback,
+    jni$_.JList<jni$_.JString?> list,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$betterPlayerCallback = betterPlayerCallback.reference;
+    final _$list = list.reference;
+    _onCues(
+      _$$classRef.pointer,
+      _id_onCues.pointer,
+      _$betterPlayerCallback.pointer,
+      _$list.pointer,
+    ).check();
+  }
+
+  static final _id_onCuesJson = _class.staticMethodId(
+    r'onCuesJson',
+    r'(Lpl/hasoft/better_player/BetterPlayerCallback;Ljava/lang/String;)V',
+  );
+
+  static final _onCuesJson =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (jni$_.Pointer<jni$_.Void>, jni$_.Pointer<jni$_.Void>)
+                >,
+              )
+            >
+          >('globalEnv_CallStaticVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `static public void onCuesJson(pl.hasoft.better_player.BetterPlayerCallback betterPlayerCallback, java.lang.String string)`
+  @core$_.Deprecated('This Java method is deprecated.')
+  static void onCuesJson(
+    BetterPlayerCallback betterPlayerCallback,
+    jni$_.JString string,
+  ) {
+    final _$$classRef = _class.reference;
+    final _$betterPlayerCallback = betterPlayerCallback.reference;
+    final _$string = string.reference;
+    _onCuesJson(
+      _$$classRef.pointer,
+      _id_onCuesJson.pointer,
+      _$betterPlayerCallback.pointer,
+      _$string.pointer,
+    ).check();
+  }
+}
+
+final class $BetterPlayerCallback$DefaultImpls$Type$
+    extends jni$_.JType<BetterPlayerCallback$DefaultImpls> {
+  @jni$_.internal
+  const $BetterPlayerCallback$DefaultImpls$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature =>
+      r'Lpl/hasoft/better_player/BetterPlayerCallback$DefaultImpls;';
+}
+
 /// from: `pl.hasoft.better_player.BetterPlayerCallback`
 extension type BetterPlayerCallback._(jni$_.JObject _$this)
     implements jni$_.JObject {
@@ -474,6 +582,18 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
         );
         return jni$_.nullptr;
       }
+      if ($d == r'onCues(Ljava/util/List;)V') {
+        _$impls[$p]!.onCues(
+          ($a![0] as jni$_.JList<jni$_.JString>),
+        );
+        return jni$_.nullptr;
+      }
+      if ($d == r'onCuesJson(Ljava/lang/String;)V') {
+        _$impls[$p]!.onCuesJson(
+          ($a![0] as jni$_.JString),
+        );
+        return jni$_.nullptr;
+      }
       if ($d ==
           r'onError(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V') {
         _$impls[$p]!.onError(
@@ -521,6 +641,8 @@ extension type BetterPlayerCallback._(jni$_.JObject _$this)
         if ($impl.onPipStart$async) r'onPipStart()V',
         if ($impl.onPipStop$async) r'onPipStop()V',
         if ($impl.onChangedSize$async) r'onChangedSize(IILjava/lang/String;)V',
+        if ($impl.onCues$async) r'onCues(Ljava/util/List;)V',
+        if ($impl.onCuesJson$async) r'onCuesJson(Ljava/lang/String;)V',
         if ($impl.onError$async)
           r'onError(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V',
       ],
@@ -902,6 +1024,74 @@ extension BetterPlayerCallback$$Methods on BetterPlayerCallback {
     ).check();
   }
 
+  static final _id_onCues = BetterPlayerCallback._class.instanceMethodId(
+    r'onCues',
+    r'(Ljava/util/List;)V',
+  );
+
+  static final _onCues =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun onCues(cues: kotlin.collections.List<kotlin.String>): kotlin.Unit`
+  void onCues(
+    jni$_.JList<jni$_.JString> list,
+  ) {
+    final _$$selfRef = reference;
+    final _$list = list.reference;
+    _onCues(_$$selfRef.pointer, _id_onCues.pointer, _$list.pointer).check();
+  }
+
+  static final _id_onCuesJson = BetterPlayerCallback._class.instanceMethodId(
+    r'onCuesJson',
+    r'(Ljava/lang/String;)V',
+  );
+
+  static final _onCuesJson =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun onCuesJson(cuesJson: kotlin.String): kotlin.Unit`
+  void onCuesJson(
+    jni$_.JString string,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    _onCuesJson(
+      _$$selfRef.pointer,
+      _id_onCuesJson.pointer,
+      _$string.pointer,
+    ).check();
+  }
+
   static final _id_onError = BetterPlayerCallback._class.instanceMethodId(
     r'onError',
     r'(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V',
@@ -984,6 +1174,10 @@ abstract base mixin class $BetterPlayerCallback {
     required void Function(core$_.int i, core$_.int i1, jni$_.JString? string)
     onChangedSize,
     core$_.bool onChangedSize$async,
+    required void Function(jni$_.JList<jni$_.JString> list) onCues,
+    core$_.bool onCues$async,
+    required void Function(jni$_.JString string) onCuesJson,
+    core$_.bool onCuesJson$async,
     required void Function(
       jni$_.JString string,
       jni$_.JString string1,
@@ -1020,6 +1214,10 @@ abstract base mixin class $BetterPlayerCallback {
   core$_.bool get onPipStop$async => false;
   void onChangedSize(core$_.int i, core$_.int i1, jni$_.JString? string);
   core$_.bool get onChangedSize$async => false;
+  void onCues(jni$_.JList<jni$_.JString> list);
+  core$_.bool get onCues$async => false;
+  void onCuesJson(jni$_.JString string);
+  core$_.bool get onCuesJson$async => false;
   void onError(
     jni$_.JString string,
     jni$_.JString string1,
@@ -1059,6 +1257,10 @@ final class _$BetterPlayerCallback with $BetterPlayerCallback {
     required void Function(core$_.int i, core$_.int i1, jni$_.JString? string)
     onChangedSize,
     this.onChangedSize$async = false,
+    required void Function(jni$_.JList<jni$_.JString> list) onCues,
+    this.onCues$async = false,
+    required void Function(jni$_.JString string) onCuesJson,
+    this.onCuesJson$async = false,
     required void Function(
       jni$_.JString string,
       jni$_.JString string1,
@@ -1077,6 +1279,8 @@ final class _$BetterPlayerCallback with $BetterPlayerCallback {
        _onPipStart = onPipStart,
        _onPipStop = onPipStop,
        _onChangedSize = onChangedSize,
+       _onCues = onCues,
+       _onCuesJson = onCuesJson,
        _onError = onError;
 
   final void Function(
@@ -1108,6 +1312,10 @@ final class _$BetterPlayerCallback with $BetterPlayerCallback {
   final void Function(core$_.int i, core$_.int i1, jni$_.JString? string)
   _onChangedSize;
   final core$_.bool onChangedSize$async;
+  final void Function(jni$_.JList<jni$_.JString> list) _onCues;
+  final core$_.bool onCues$async;
+  final void Function(jni$_.JString string) _onCuesJson;
+  final core$_.bool onCuesJson$async;
   final void Function(
     jni$_.JString string,
     jni$_.JString string1,
@@ -1163,6 +1371,14 @@ final class _$BetterPlayerCallback with $BetterPlayerCallback {
 
   void onChangedSize(core$_.int i, core$_.int i1, jni$_.JString? string) {
     return _onChangedSize(i, i1, string);
+  }
+
+  void onCues(jni$_.JList<jni$_.JString> list) {
+    return _onCues(list);
+  }
+
+  void onCuesJson(jni$_.JString string) {
+    return _onCuesJson(string);
   }
 
   void onError(
@@ -2573,6 +2789,45 @@ extension BetterPlayer$$Methods on BetterPlayer {
     _setAudioTrack(
       _$$selfRef.pointer,
       _id_setAudioTrack.pointer,
+      _$string.pointer,
+      i,
+    ).check();
+  }
+
+  static final _id_setTextTrack = BetterPlayer._class.instanceMethodId(
+    r'setTextTrack',
+    r'(Ljava/lang/String;I)V',
+  );
+
+  static final _setTextTrack =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>, jni$_.Int32)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.int,
+            )
+          >();
+
+  /// from: `public fun setTextTrack(name: kotlin.String, index: kotlin.Int): kotlin.Unit`
+  void setTextTrack(
+    jni$_.JString string,
+    core$_.int i,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    _setTextTrack(
+      _$$selfRef.pointer,
+      _id_setTextTrack.pointer,
       _$string.pointer,
       i,
     ).check();

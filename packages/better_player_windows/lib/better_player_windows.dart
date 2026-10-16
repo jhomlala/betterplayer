@@ -233,6 +233,17 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setTextTrack(int? textureId, String? name, int? index) async {
+    _log(
+      message: 'setTextTrack: textureId=$textureId, name=$name, index=$index',
+      levelIndex: 0,
+    );
+    await getPlayer(
+      textureId,
+    )?.setTextTrack(name: name ?? '', index: index ?? 0);
+  }
+
+  @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
     _log(
       message:

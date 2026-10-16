@@ -155,6 +155,22 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
           VideoEvent(eventType: VideoEventType.pipStop, key: null),
         );
       },
+      onCuesWithJsonCues_: (objc.NSString jsonCues) {
+        if (currentTextureId == null) return;
+        try {
+          final dynamic decoded = jsonDecode(jsonCues.toDartString());
+          if (decoded is List) {
+            final cues = decoded.map((e) => e.toString()).toList();
+            _eventControllers[currentTextureId]?.add(
+              VideoEvent(
+                eventType: VideoEventType.captionUpdate,
+                key: null,
+                captions: cues,
+              ),
+            );
+          }
+        } catch (_) {}
+      },
       onError_errorMessage_errorDetails_:
           (
             objc.NSString errorCode,
@@ -320,6 +336,12 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setTextTrack(int? textureId, String? name, int? index) async {
+    if (textureId == null) return;
+    getPlayer(textureId)?.setTextTrack(name ?? '', index: index ?? 0);
+  }
+
+  @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {
     if (textureId == null) return;
     getPlayer(textureId)?.setMixWithOthers(mixWithOthers);
@@ -399,6 +421,7 @@ abstract class BetterPlayerWrapper {
     required int bitrate,
   });
   void setAudioTrack(String name, {required int index});
+  void setTextTrack(String name, {required int index});
   void enablePictureInPicture(objc.CGRect frame);
   void disablePictureInPicture();
   int? absolutePosition();
@@ -479,6 +502,10 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
   @override
   void setAudioTrack(String name, {required int index}) =>
       _player.setAudioTrackWithName(name.toNSString(), index: index);
+
+  @override
+  void setTextTrack(String name, {required int index}) =>
+      _player.setTextTrackWithName(name.toNSString(), index: index);
 
   @override
   void enablePictureInPicture(objc.CGRect frame) =>

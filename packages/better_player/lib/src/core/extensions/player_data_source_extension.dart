@@ -186,7 +186,9 @@ extension PlayerDataSourceExtension on BetterPlayerController {
             subtitlesSourceList: [
               ..._subtitleState.subtitlesSourceList,
               PlayerSubtitlesSource(
-                type: PlayerSubtitlesSourceType.network,
+                type: asmsSubtitle.isClosedCaption
+                    ? PlayerSubtitlesSourceType.embedded
+                    : PlayerSubtitlesSourceType.network,
                 name: asmsSubtitle.name,
                 urls: asmsSubtitle.realUrls,
                 headers: subtitleHeaders.isEmpty ? null : subtitleHeaders,
@@ -194,6 +196,9 @@ extension PlayerDataSourceExtension on BetterPlayerController {
                 asmsSegmentsTime: asmsSubtitle.segmentsTime,
                 asmsSegments: asmsSubtitle.segments,
                 selectedByDefault: asmsSubtitle.isDefault,
+                isClosedCaption: asmsSubtitle.isClosedCaption,
+                inStreamId: asmsSubtitle.inStreamId,
+                index: asmsSubtitle.index,
               ),
             ],
           );

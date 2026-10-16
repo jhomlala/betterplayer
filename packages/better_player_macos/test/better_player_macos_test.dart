@@ -122,6 +122,11 @@ void main() {
           () => mockPlayer.setAudioTrack(name: 'eng', index: 1),
         ).called(1);
 
+        await macosPlayer.setTextTrack(1, 'eng', 1);
+        verify(
+          () => mockPlayer.setTextTrack(name: 'eng', index: 1),
+        ).called(1);
+
         await macosPlayer.setMixWithOthers(1, true);
         verify(
           () => mockPlayer.setMixWithOthers(mixWithOthers: true),

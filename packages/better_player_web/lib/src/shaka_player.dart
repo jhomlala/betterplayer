@@ -51,6 +51,12 @@ extension ShakaPlayerExtension on ShakaPlayer {
   external void removeEventListener(JSString type, JSFunction listener);
   external JSArray<JSObject> getTextTracks();
   external void selectTextTrack(JSObject track);
+  external void setTextTrackVisibility(JSBoolean isVisible);
+  external void selectTextLanguage(
+    JSString language, [
+    JSString role,
+    JSBoolean forced,
+  ]);
   external ShakaNetworkingEngine getNetworkingEngine();
 }
 

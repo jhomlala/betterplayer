@@ -50,6 +50,29 @@ void main() {
       expect(event1 == event3, false);
       expect(event1.hashCode == event2.hashCode, true);
     });
+
+    test('VideoEvent captionUpdate equality', () {
+      final event1 = VideoEvent(
+        eventType: VideoEventType.captionUpdate,
+        key: '1',
+        captions: ['Hello', 'World'],
+      );
+      final event2 = VideoEvent(
+        eventType: VideoEventType.captionUpdate,
+        key: '1',
+        captions: ['Hello', 'World'],
+      );
+      final event3 = VideoEvent(
+        eventType: VideoEventType.captionUpdate,
+        key: '1',
+        captions: ['Different'],
+      );
+
+      expect(event1 == event2, true);
+      expect(event1 == event3, false);
+      expect(event1.hashCode == event2.hashCode, true);
+      expect(event1.captions, ['Hello', 'World']);
+    });
   });
 
   group('DurationRange tests', () {

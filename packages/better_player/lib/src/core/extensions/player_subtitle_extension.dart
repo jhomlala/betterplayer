@@ -27,26 +27,38 @@ extension PlayerSubtitleExtension on BetterPlayerController {
     PlayerSubtitlesSource subtitlesSource, {
     bool sourceInitialize = false,
   }) async {
-    _subtitleState = _subtitleState.copyWith(subtitlesSource: subtitlesSource);
-    _subtitleState = _subtitleState.copyWith(subtitlesLines: []);
-    _subtitleState = _subtitleState.copyWith(asmsSegmentsLoaded: []);
-    _subtitleState = _subtitleState.copyWith(asmsSegmentsLoading: false);
+    _subtitleState = _subtitleState.copyWith(
+      subtitlesSource: subtitlesSource,
+      subtitlesLines: [],
+      asmsSegmentsLoaded: [],
+      asmsSegmentsLoading: false,
+      activeCaptions: [],
+      clearRenderedSubtitle: true,
+    );
 
-    if (subtitlesSource.type != PlayerSubtitlesSourceType.none) {
-      if (subtitlesSource.asmsIsSegmented == true) {
-        await _loadAsmsSubtitlesSegments(
-          _engine?.value.position ?? Duration.zero,
-        );
-      } else {
-        final subtitlesParsed = await PlayerSubtitlesFactory().parseSubtitles(
-          subtitlesSource,
-        );
-        _subtitleState = _subtitleState.copyWith(
-          subtitlesLines: [
-            ..._subtitleState.subtitlesLines,
-            ...subtitlesParsed,
-          ],
-        );
+    if (subtitlesSource.type == PlayerSubtitlesSourceType.embedded) {
+      _engine?.setTextTrack(
+        subtitlesSource.name,
+        subtitlesSource.index ?? 0,
+      );
+    } else {
+      _engine?.setTextTrack('', -1);
+      if (subtitlesSource.type != PlayerSubtitlesSourceType.none) {
+        if (subtitlesSource.asmsIsSegmented == true) {
+          await _loadAsmsSubtitlesSegments(
+            _engine?.value.position ?? Duration.zero,
+          );
+        } else {
+          final subtitlesParsed = await PlayerSubtitlesFactory().parseSubtitles(
+            subtitlesSource,
+          );
+          _subtitleState = _subtitleState.copyWith(
+            subtitlesLines: [
+              ..._subtitleState.subtitlesLines,
+              ...subtitlesParsed,
+            ],
+          );
+        }
       }
     }
 

@@ -108,6 +108,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
               event.size!.height > 0) {
             value = value.copyWith(size: event.size);
           }
+        case VideoEventType.captionUpdate:
         case VideoEventType.unknown:
           break;
       }
@@ -569,6 +570,10 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
 
   void setAudioTrack(String? name, int? index) {
     _betterPlayerPlatform.setAudioTrack(_textureId, name, index);
+  }
+
+  void setTextTrack(String? name, int? index) {
+    _betterPlayerPlatform.setTextTrack(_textureId, name, index);
   }
 
   void setMixWithOthers(bool mixWithOthers) {

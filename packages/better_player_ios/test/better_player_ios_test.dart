@@ -116,6 +116,9 @@ void main() {
         await iosPlayer.setAudioTrack(1, 'eng', 1);
         verify(() => mockPlayer.setAudioTrack('eng', index: 1)).called(1);
 
+        await iosPlayer.setTextTrack(1, 'eng', 1);
+        verify(() => mockPlayer.setTextTrack('eng', index: 1)).called(1);
+
         await iosPlayer.setMixWithOthers(1, true);
         verify(() => mockPlayer.setMixWithOthers(true)).called(1);
 

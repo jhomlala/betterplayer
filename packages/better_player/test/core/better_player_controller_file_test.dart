@@ -68,6 +68,9 @@ void main() {
     when(
       () => mockPlatform.setTrackParameters(any(), any(), any(), any()),
     ).thenAnswer((_) async {});
+    when(
+      () => mockPlatform.setTextTrack(any(), any(), any()),
+    ).thenAnswer((_) async {});
     when(() => mockPlatform.dispose(any())).thenAnswer((_) async {});
   });
 

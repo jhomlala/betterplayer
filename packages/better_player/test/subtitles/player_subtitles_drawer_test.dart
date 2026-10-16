@@ -138,4 +138,69 @@ void main() {
     // Only 1 RichText because outline is disabled
     expect(find.byType(RichText), findsOneWidget);
   });
+
+  testWidgets('Embedded active captions are displayed correctly', (
+    tester,
+  ) async {
+    final embeddedSource = PlayerSubtitlesSource(
+      type: PlayerSubtitlesSourceType.embedded,
+      name: 'English CC',
+      isClosedCaption: true,
+    );
+    await controller.setupSubtitleSource(embeddedSource);
+    controller.activeCaptions = ['Caption Line 1', 'Caption Line 2'];
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(useMaterial3: false),
+        home: Scaffold(
+          body: PlayerSubtitlesDrawer(
+            subtitles: const [],
+            betterPlayerController: controller,
+            playerVisibilityStream: visibilityStreamController.stream,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Caption Line 1', findRichText: true), findsNWidgets(2));
+    expect(find.text('Caption Line 2', findRichText: true), findsNWidgets(2));
+    expect(controller.renderedSubtitle?.texts, [
+      'Caption Line 1',
+      'Caption Line 2',
+    ]);
+
+    controller.activeCaptions = [];
+    await tester.pump();
+    expect(find.text('Caption Line 1', findRichText: true), findsNothing);
+    expect(find.text('Caption Line 2', findRichText: true), findsNothing);
+    expect(controller.renderedSubtitle, isNull);
+  });
+
+  testWidgets(
+    'Active captions are ignored when subtitle source is not embedded',
+    (tester) async {
+      final networkSource = PlayerSubtitlesSource(
+        type: PlayerSubtitlesSourceType.network,
+        name: 'English WebVTT',
+      );
+      await controller.setupSubtitleSource(networkSource);
+      controller.activeCaptions = ['Should Not Show'];
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false),
+          home: Scaffold(
+            body: PlayerSubtitlesDrawer(
+              subtitles: const [],
+              betterPlayerController: controller,
+              playerVisibilityStream: visibilityStreamController.stream,
+            ),
+          ),
+        ),
+      );
+
+      expect(find.text('Should Not Show', findRichText: true), findsNothing);
+    },
+  );
 }

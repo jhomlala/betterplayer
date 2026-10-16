@@ -62,6 +62,12 @@ void main() {
           index: any(named: 'index'),
         ),
       ).thenAnswer((_) async {});
+      when(
+        () => mockPlayer.setTextTrack(
+          name: any(named: 'name'),
+          index: any(named: 'index'),
+        ),
+      ).thenAnswer((_) async {});
       when(() => mockPlayer.setDataSource(any())).thenAnswer((_) async {});
 
       windowsPlatform = BetterPlayerWindows(
@@ -147,6 +153,11 @@ void main() {
       await windowsPlatform.setAudioTrack(42, 'English', 1);
       verify(
         () => mockPlayer.setAudioTrack(name: 'English', index: 1),
+      ).called(1);
+
+      await windowsPlatform.setTextTrack(42, 'English', 1);
+      verify(
+        () => mockPlayer.setTextTrack(name: 'English', index: 1),
       ).called(1);
     });
 

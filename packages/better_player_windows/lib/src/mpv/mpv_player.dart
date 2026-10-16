@@ -23,6 +23,7 @@ abstract class BetterPlayerWindowsPlayer {
     required int bitrate,
   });
   Future<void> setAudioTrack({required String name, required int index});
+  Future<void> setTextTrack({required String name, required int index});
 }
 
 class MpvPlayer implements BetterPlayerWindowsPlayer {
@@ -71,6 +72,10 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     _observeProperty(name: 'paused-for-cache', format: MpvFormat.flag);
     _observeProperty(name: 'width', format: MpvFormat.int64);
     _observeProperty(name: 'height', format: MpvFormat.int64);
+    _observeProperty(name: 'sub-text', format: MpvFormat.string);
+
+    // Suppress mpv native OSD subtitles so PlayerSubtitlesDrawer renders them in Flutter.
+    _setPropertyString(name: 'sub-visibility', value: 'no');
 
     // Request mpv warnings and errors for logging
     final warnStr = 'warn'.toNativeUtf8();
@@ -279,6 +284,25 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
             _currentPosition = Duration(milliseconds: (posSecs * 1000).toInt());
           }
         }
+      case 'sub-text':
+        final List<String> captions;
+        if (prop.ref.data != ffi.nullptr) {
+          final strPtr = prop.ref.data.cast<ffi.Pointer<Utf8>>().value;
+          final text = strPtr != ffi.nullptr ? strPtr.toDartString() : '';
+          final trimmed = text.trim();
+          captions = trimmed.isNotEmpty
+              ? trimmed.split('\n').map((s) => s.trim()).toList()
+              : const <String>[];
+        } else {
+          captions = const <String>[];
+        }
+        _eventController.add(
+          VideoEvent(
+            eventType: VideoEventType.captionUpdate,
+            captions: captions,
+            key: _currentKey,
+          ),
+        );
     }
   }
 
@@ -507,6 +531,25 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   Future<void> setAudioTrack({required String name, required int index}) async {
     _log(message: 'setAudioTrack: name=$name, index=$index', levelIndex: 0);
     _setPropertyString(name: 'aid', value: '$index');
+  }
+
+  @override
+  Future<void> setTextTrack({required String name, required int index}) async {
+    _log(message: 'setTextTrack: name=$name, index=$index', levelIndex: 0);
+    final disable = index < 0 || name.isEmpty;
+    _setPropertyString(
+      name: 'sid',
+      value: disable ? 'no' : '${index + 1}',
+    );
+    if (disable) {
+      _eventController.add(
+        VideoEvent(
+          eventType: VideoEventType.captionUpdate,
+          captions: const <String>[],
+          key: _currentKey,
+        ),
+      );
+    }
   }
 
   int _command(List<String> args) {

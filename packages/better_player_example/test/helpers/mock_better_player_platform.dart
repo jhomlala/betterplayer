@@ -100,6 +100,9 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   Future<void> setAudioTrack(int? textureId, String? name, int? index) async {}
 
   @override
+  Future<void> setTextTrack(int? textureId, String? name, int? index) async {}
+
+  @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {}
 
   @override

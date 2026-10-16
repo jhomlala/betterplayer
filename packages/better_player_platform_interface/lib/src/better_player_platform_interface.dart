@@ -154,6 +154,11 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setAudio() has not been implemented.');
   }
 
+  /// Sets the text/subtitle track (used to select embedded closed captions or subtitles).
+  Future<void> setTextTrack(int? textureId, String? name, int? index) {
+    throw UnimplementedError('setTextTrack() has not been implemented.');
+  }
+
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }

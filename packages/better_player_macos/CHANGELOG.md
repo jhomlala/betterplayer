@@ -1,3 +1,7 @@
+## Unreleased
+- Added: `setTextTrack` method on `BetterPlayer` to select or disable legible media selection group tracks in `AVPlayerItem` (#1066).
+- Added: `AVPlayerItemLegibleOutput` push delegate and `onCues` callback on `BetterPlayerCallback` emitting parsed subtitle cues.
+
 ## 1.1.1
 - Added: Better Player logo screenshot and branding metadata for pub.dev package listing.
 

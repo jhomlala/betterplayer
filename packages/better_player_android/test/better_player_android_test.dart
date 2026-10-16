@@ -4,7 +4,10 @@ import 'package:better_player_android/src/better_player_android_jni.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:jni/jni.dart';
 import 'package:mocktail/mocktail.dart';
+
+class MockJObject extends Mock implements JObject {}
 
 class MockBetterPlayer extends Mock implements BetterPlayerWrapper {
   final int textureId;
@@ -119,6 +122,11 @@ void main() {
         await androidPlayer.setAudioTrack(1, 'eng', 1);
         verify(
           () => androidPlayer.mockPlayer.setAudioTrack(any(), 1),
+        ).called(1);
+
+        await androidPlayer.setTextTrack(1, 'eng', 1);
+        verify(
+          () => androidPlayer.mockPlayer.setTextTrack(any(), 1),
         ).called(1);
 
         await androidPlayer.setMixWithOthers(1, true);
@@ -309,6 +317,26 @@ void main() {
 
       await sub1.cancel();
       await sub2.cancel();
+    });
+
+    test('onCuesJson emits captionUpdate event with decoded cues', () async {
+      androidPlayer.jStringConverter = (str) => '["Caption 1", "Caption 2"]';
+      await androidPlayer.create();
+      final stream = androidPlayer.videoEventsFor(1);
+      final events = <VideoEvent>[];
+      final sub = stream.listen(events.add);
+
+      final callback =
+          androidPlayer.capturedCallbacks[0] as $BetterPlayerCallback;
+      final dummyJString = (MockJObject() as dynamic) as JString;
+      callback.onCuesJson(dummyJString);
+
+      await Future<void>.delayed(Duration.zero);
+      expect(events, hasLength(1));
+      expect(events.first.eventType, VideoEventType.captionUpdate);
+      expect(events.first.captions, ['Caption 1', 'Caption 2']);
+
+      await sub.cancel();
     });
   });
 }
