@@ -257,7 +257,10 @@ class BetterPlayerController {
   /// based on the video's current playback position.
   PlayerSubtitle? get renderedSubtitle => _subtitleState.renderedSubtitle;
   set renderedSubtitle(PlayerSubtitle? value) =>
-      _subtitleState = _subtitleState.copyWith(renderedSubtitle: value);
+      _subtitleState = _subtitleState.copyWith(
+        renderedSubtitle: value,
+        clearRenderedSubtitle: value == null,
+      );
 
   /// Active embedded closed caption text lines emitted by the native engine.
   List<String> get activeCaptions => _subtitleState.activeCaptions;
