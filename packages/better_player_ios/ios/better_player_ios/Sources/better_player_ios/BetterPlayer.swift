@@ -5,7 +5,6 @@ import AVKit
 #if canImport(Flutter)
 import Flutter
 #else
-public protocol FlutterPlatformView {}
 public class FlutterError: NSObject {
     @objc public var code: String
     @objc public var message: String?
@@ -45,12 +44,7 @@ private var presentationSizeContext = 0
 
 /// A platform view implementation that wraps AVPlayer for video playback.
 /// Handles player initialization, lifecycle, and event reporting to Flutter.
-@objc public class BetterPlayer: NSObject, FlutterPlatformView, AVPictureInPictureControllerDelegate {
-
-    private func sendError(_ error: FlutterError) {
-        callback?.onError(error.code, errorMessage: error.message ?? "", errorDetails: (error.details as? String) ?? "")
-    }
-
+@objc public class BetterPlayer: NSObject, AVPictureInPictureControllerDelegate {
 
     // MARK: - Properties
 
@@ -360,6 +354,10 @@ private var presentationSizeContext = 0
         startStalledCheck()
     }
 
+    private func sendError(code: String, message: String, details: String = "") {
+        callback?.onError(code, errorMessage: message, errorDetails: details)
+    }
+
     private func startStalledCheck() {
         if let currentItem = player.currentItem {
             if currentItem.isPlaybackLikelyToKeepUp || (availableDuration() - CMTimeGetSeconds(currentItem.currentTime())) > 10.0 {
@@ -368,8 +366,7 @@ private var presentationSizeContext = 0
                 stalledCount += 1
                 if stalledCount > 60 {
                     if callback != nil {
-                        let error = FlutterError(code: "VideoError", message: "Failed to load video: playback stalled", details: nil)
-                        sendError(error)
+                        sendError(code: "VideoError", message: "Failed to load video: playback stalled")
                     }
                     return
                 }
@@ -441,7 +438,20 @@ private var presentationSizeContext = 0
                 }
             }
         } else if context == &presentationSizeContext {
-            onReadyToPlay()
+            if !isInitialized {
+                onReadyToPlay()
+            } else if let item = player.currentItem {
+                let size = item.presentationSize
+                if size.width > 0 && size.height > 0 {
+                    BetterPlayerApi.log(1, "presentationSize changed: \(size.width)x\(size.height)")
+                    callback?.onInitialized(
+                        durationMs: duration(),
+                        width: Double(size.width),
+                        height: Double(size.height),
+                        key: key
+                    )
+                }
+            }
         } else if context == &statusContext {
             if let item = object as? AVPlayerItem {
                 switch item.status {
@@ -453,8 +463,7 @@ private var presentationSizeContext = 0
                         
                         BetterPlayerApi.log(3, "item status failed: \(description), details: \(details)")
                         let message = "Failed to load video: \(description)"
-                        let error = FlutterError(code: "VideoError", message: message, details: details)
-                        sendError(error)
+                        sendError(code: "VideoError", message: message, details: details)
                     }
                 case .unknown:
                     break
@@ -902,3 +911,7 @@ extension BetterPlayer: AVPlayerItemLegibleOutputPushDelegate {
         callback?.onCues(jsonCues: jsonString)
     }
 }
+
+#if canImport(Flutter)
+extension BetterPlayer: FlutterPlatformView {}
+#endif

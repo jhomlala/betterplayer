@@ -1536,6 +1536,37 @@ void main() {
           expect(controller.betterPlayerAsmsAudioTrack, equals(audioTrack));
         },
       );
+
+      test(
+        'currentVideoSize resolves from runtime size and prefers valid ASMS track dimensions',
+        () {
+          final engineController = MockPlayerEngineController();
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+            playerEngineController: engineController,
+          );
+
+          engineController.value = engineController.value.copyWith(
+            size: Size.zero,
+          );
+          expect(controller.currentVideoSize, Size.zero);
+
+          engineController.value = engineController.value.copyWith(
+            size: const Size(1920, 1080),
+          );
+          expect(controller.currentVideoSize, const Size(1920, 1080));
+
+          controller.setTrack(
+            PlayerAsmsTrack('0', 1280, 720, 2000000, 30, '', ''),
+          );
+          expect(controller.currentVideoSize, const Size(1280, 720));
+
+          controller.setTrack(
+            PlayerAsmsTrack('0', 0, 0, 2000000, 0, '', ''),
+          );
+          expect(controller.currentVideoSize, const Size(1920, 1080));
+        },
+      );
     },
   );
 }

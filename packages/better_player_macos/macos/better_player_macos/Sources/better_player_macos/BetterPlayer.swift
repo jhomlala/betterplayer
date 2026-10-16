@@ -43,11 +43,6 @@ private var presentationSizeContext = 0
 /// Handles player initialization, lifecycle, and event reporting to Flutter.
 @objc public class BetterPlayer: NSObject, AVPictureInPictureControllerDelegate {
 
-    private func sendError(_ error: FlutterError) {
-        callback?.onError(error.code, errorMessage: error.message ?? "", errorDetails: (error.details as? String) ?? "")
-    }
-
-
     // MARK: - Properties
 
     public var textureId: Int64 = -1
@@ -299,8 +294,7 @@ private var presentationSizeContext = 0
             setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: false, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: nil)
         } else {
             BetterPlayerApi.log(3, "setDataSourceAsset failed: asset not found at \(assetPath)")
-            let error = FlutterError(code: "VideoError", message: "Failed to load video: asset not found at \(assetPath)", details: nil)
-            sendError(error)
+            sendError(code: "VideoError", message: "Failed to load video: asset not found at \(assetPath)")
         }
     }
 
@@ -379,6 +373,10 @@ private var presentationSizeContext = 0
         startStalledCheck()
     }
 
+    private func sendError(code: String, message: String, details: String = "") {
+        callback?.onError(code, errorMessage: message, errorDetails: details)
+    }
+
     private func startStalledCheck() {
         if let currentItem = player.currentItem {
             if currentItem.isPlaybackLikelyToKeepUp || (availableDuration() - CMTimeGetSeconds(currentItem.currentTime())) > 10.0 {
@@ -387,8 +385,7 @@ private var presentationSizeContext = 0
                 stalledCount += 1
                 if stalledCount > 60 {
                     if callback != nil {
-                        let error = FlutterError(code: "VideoError", message: "Failed to load video: playback stalled", details: nil)
-                        sendError(error)
+                        sendError(code: "VideoError", message: "Failed to load video: playback stalled")
                     }
                     return
                 }
@@ -460,7 +457,20 @@ private var presentationSizeContext = 0
                 }
             }
         } else if context == &presentationSizeContext {
-            onReadyToPlay()
+            if !isInitialized {
+                onReadyToPlay()
+            } else if let item = player.currentItem {
+                let size = item.presentationSize
+                if size.width > 0 && size.height > 0 {
+                    BetterPlayerApi.log(1, "presentationSize changed: \(size.width)x\(size.height)")
+                    callback?.onInitialized(
+                        durationMs: duration(),
+                        width: Double(size.width),
+                        height: Double(size.height),
+                        key: key
+                    )
+                }
+            }
         } else if context == &statusContext {
             if let item = object as? AVPlayerItem {
                 switch item.status {
@@ -472,8 +482,7 @@ private var presentationSizeContext = 0
                         
                         BetterPlayerApi.log(3, "item status failed: \(description), details: \(details)")
                         let message = "Failed to load video: \(description)"
-                        let error = FlutterError(code: "VideoError", message: message, details: details)
-                        sendError(error)
+                        sendError(code: "VideoError", message: message, details: details)
                     }
                 case .unknown:
                     break

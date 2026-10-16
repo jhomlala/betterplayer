@@ -211,6 +211,150 @@ void main() {
     });
 
     testWidgets(
+      'Expands video player view when video dimensions are unresolved or non-positive',
+      (tester) async {
+        final mockPlayerEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: mockPlayerEngineController,
+        );
+
+        await controller.setupDataSource(PlayerDataSource.network('url'));
+
+        controller.play();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: BetterPlayerControllerProvider(
+              controller: controller,
+              child: PlayerWithControls(controller: controller),
+            ),
+          ),
+        );
+
+        for (final size in [
+          Size.zero,
+          null,
+          const Size(0, 1080),
+          const Size(1920, 0),
+          const Size(-100, -100),
+        ]) {
+          mockPlayerEngineController.value = VideoPlayerValue(
+            duration: const Duration(seconds: 1),
+            size: size,
+          );
+          mockPlayerEngineController.notifyListeners();
+          await tester.pump();
+
+          expect(find.byType(FittedBox), findsNothing);
+        }
+      },
+    );
+
+    testWidgets(
+      'Dynamically transitions from SizedBox.expand to FittedBox when video size transitions from zero to positive',
+      (tester) async {
+        final mockPlayerEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: mockPlayerEngineController,
+        );
+
+        await controller.setupDataSource(PlayerDataSource.network('url'));
+
+        mockPlayerEngineController.value = mockPlayerEngineController.value
+            .copyWith(
+              size: Size.zero,
+              duration: const Duration(seconds: 1),
+            );
+
+        controller.play();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: BetterPlayerControllerProvider(
+              controller: controller,
+              child: PlayerWithControls(controller: controller),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        // Initially zero -> no FittedBox
+        expect(find.byType(FittedBox), findsNothing);
+
+        // Dynamic size resolution arrived from native engine
+        mockPlayerEngineController.value = mockPlayerEngineController.value
+            .copyWith(size: const Size(1920, 1080));
+        mockPlayerEngineController.notifyListeners();
+
+        await tester.pump();
+
+        // Now FittedBox is rendered with matching dimensions
+        expect(find.byType(FittedBox), findsOneWidget);
+        final sizedBox = tester.widget<SizedBox>(
+          find.descendant(
+            of: find.byType(FittedBox),
+            matching: find.byType(SizedBox),
+          ),
+        );
+        expect(sizedBox.width, 1920);
+        expect(sizedBox.height, 1080);
+      },
+    );
+
+    testWidgets(
+      'Re-applies SizedBox.expand if video size resets to zero on data source update',
+      (tester) async {
+        final mockPlayerEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller = BetterPlayerMockController(
+          const PlayerConfiguration(),
+          playerEngineController: mockPlayerEngineController,
+        );
+
+        await controller.setupDataSource(PlayerDataSource.network('url'));
+
+        mockPlayerEngineController.value = mockPlayerEngineController.value
+            .copyWith(
+              size: const Size(1280, 720),
+              duration: const Duration(seconds: 1),
+            );
+
+        controller.play();
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: BetterPlayerControllerProvider(
+              controller: controller,
+              child: PlayerWithControls(controller: controller),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.byType(FittedBox), findsOneWidget);
+
+        // Next source starts with zero size
+        mockPlayerEngineController.value = mockPlayerEngineController.value
+            .copyWith(
+              size: Size.zero,
+              duration: const Duration(seconds: 2),
+            );
+        mockPlayerEngineController.notifyListeners();
+
+        await tester.pump();
+
+        expect(find.byType(FittedBox), findsNothing);
+      },
+    );
+
+    testWidgets(
       'Uses customControlsBuilder by default if provided and playerTheme is null',
       (
         tester,
@@ -345,6 +489,10 @@ void main() {
       (tester) async {
         final mockPlayerEngineController =
             BetterPlayerTestUtils.setupMockPlayerEngineController();
+        mockPlayerEngineController.value = mockPlayerEngineController.value
+            .copyWith(
+              size: const Size(1280, 720),
+            );
         final controller = BetterPlayerMockController(
           const PlayerConfiguration(autoPlay: true),
           playerEngineController: mockPlayerEngineController,

@@ -23,6 +23,7 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
 
   List<DataSource> preCacheCalls = [];
   List<int> preCacheSizeCalls = [];
+  Size initialVideoSize = const Size(1280, 720);
 
   @override
   Future<void> preCache(DataSource dataSource, int preCacheSize) async {
@@ -43,7 +44,7 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
           VideoEvent(
             eventType: VideoEventType.initialized,
             duration: const Duration(seconds: 10),
-            size: const Size(1280, 720),
+            size: initialVideoSize,
             key: dataSource.key,
           ),
         );
