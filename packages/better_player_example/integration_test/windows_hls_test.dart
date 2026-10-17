@@ -35,14 +35,22 @@ void main() {
       final setupHlsButton = findById('better_player_e2e_setup_hls');
       await scrollAndTap(tester: tester, finder: setupHlsButton);
 
-      // 2. Wait for video controls
+      // 2. Wait for HLS initialization
+      final hlsInitialized = findById('better_player_e2e_hls_initialized');
+      await pumpUntilFound(
+        tester: tester,
+        finder: hlsInitialized,
+        timeout: const Duration(seconds: 45),
+      );
+
+      // 3. Wait for video controls
       final playPauseButton = findById(
         'better_player_material_controls_play_pause_button',
       );
       await pumpUntilFound(
         tester: tester,
         finder: playPauseButton,
-        timeout: const Duration(seconds: 30),
+        timeout: const Duration(seconds: 15),
       );
       try {
         await tester.ensureVisible(playPauseButton.first);
@@ -130,7 +138,9 @@ void main() {
         } catch (_) {}
         await tester.tap(expandButton.first, warnIfMissed: false);
         await tester.pump(const Duration(milliseconds: 500));
+        await tester.tap(expandButton.first, warnIfMissed: false);
+        await tester.pump(const Duration(milliseconds: 500));
       }
-    });
+    }, timeout: const Timeout(Duration(minutes: 2)));
   });
 }

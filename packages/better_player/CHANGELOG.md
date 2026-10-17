@@ -5,6 +5,7 @@
 - Fixed: Anchored secondary overflow menus in `PlayerWebControls` to the settings button instead of the bottom-right viewport boundary.
 - Fixed: Emit controls visibility events to `controlsVisibilityStream` on overlay state changes across Material, Cupertino, Web, and custom controls (#1596).
 - Added: Getter `isControlsVisible` on `BetterPlayerController` to inspect current overlay visibility state.
+- Fixed: Guarded keyboard shortcuts against uninitialized playback states and swallowed unhandled async errors during engine transitions in `PlayerWebControls`.
 
 ## 1.24.0
 - Added: `BetterPlayerFeed` and `BetterPlayerFeedController` for high-performance vertical and horizontal swipe video feeds with PageView integration.

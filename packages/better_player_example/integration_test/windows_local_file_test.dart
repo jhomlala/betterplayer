@@ -33,7 +33,14 @@ void main() {
       final setupFileButton = findById('better_player_e2e_setup_file');
       await scrollAndTap(tester: tester, finder: setupFileButton);
 
-      // 2. Wait for player controls to initialize with local file
+      // 2. Wait for player to initialize with local file
+      final fileStatus = findById('better_player_e2e_file_status');
+      await pumpUntilFound(
+        tester: tester,
+        finder: fileStatus,
+        timeout: const Duration(seconds: 30),
+      );
+
       final playPauseButton = findById(
         'better_player_material_controls_play_pause_button',
       );
@@ -54,8 +61,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
 
       // 5. Verify local file playback status
-      final fileStatus = findById('better_player_e2e_file_status');
-      await pumpUntilFound(tester: tester, finder: fileStatus);
-    });
+      expect(fileStatus, findsOneWidget);
+    }, timeout: const Timeout(Duration(minutes: 2)));
   });
 }

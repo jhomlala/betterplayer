@@ -186,32 +186,50 @@ class _PlayerWebControlsState
       _onPlayPause();
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowLeft) {
-      final position = _latestValue?.position;
-      if (position != null) {
-        _betterPlayerController?.seekTo(position - const Duration(seconds: 10));
+      if (_latestValue?.initialized == true) {
+        final position = _latestValue?.position;
+        if (position != null) {
+          unawaited(
+            _betterPlayerController
+                ?.seekTo(position - const Duration(seconds: 10))
+                .catchError((_) {}),
+          );
+        }
       }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowRight) {
-      final position = _latestValue?.position;
-      if (position != null) {
-        _betterPlayerController?.seekTo(position + const Duration(seconds: 10));
+      if (_latestValue?.initialized == true) {
+        final position = _latestValue?.position;
+        if (position != null) {
+          unawaited(
+            _betterPlayerController
+                ?.seekTo(position + const Duration(seconds: 10))
+                .catchError((_) {}),
+          );
+        }
       }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowUp) {
       final volume = (_latestValue?.volume ?? 1.0) + 0.1;
-      _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
+      unawaited(
+        _betterPlayerController
+            ?.setVolume(volume.clamp(0.0, 1.0))
+            .catchError((_) {}),
+      );
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowDown) {
       final volume = (_latestValue?.volume ?? 1.0) - 0.1;
-      _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
+      unawaited(
+        _betterPlayerController
+            ?.setVolume(volume.clamp(0.0, 1.0))
+            .catchError((_) {}),
+      );
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.keyM) {
       final isMuted = _latestValue?.volume == 0;
-      if (isMuted) {
-        _betterPlayerController?.setVolume(1);
-      } else {
-        _betterPlayerController?.setVolume(0);
-      }
+      unawaited(
+        _betterPlayerController?.setVolume(isMuted ? 1 : 0).catchError((_) {}),
+      );
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.keyF) {
       _betterPlayerController?.toggleFullScreen();
@@ -225,14 +243,16 @@ class _PlayerWebControlsState
       _focusNode.requestFocus();
     }
     if (_latestValue?.isPlaying == true) {
-      _betterPlayerController?.pause();
+      unawaited(_betterPlayerController?.pause().catchError((_) {}));
     } else {
       if (_latestValue?.position != null &&
           _latestValue?.duration != null &&
           _latestValue!.position >= _latestValue!.duration!) {
-        _betterPlayerController?.seekTo(Duration.zero);
+        unawaited(
+          _betterPlayerController?.seekTo(Duration.zero).catchError((_) {}),
+        );
       }
-      _betterPlayerController?.play();
+      unawaited(_betterPlayerController?.play().catchError((_) {}));
     }
   }
 

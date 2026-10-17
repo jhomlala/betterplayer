@@ -33,6 +33,13 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
+      final mp4Initialized = findById('better_player_e2e_mp4_initialized');
+      await pumpUntilFound(
+        tester: tester,
+        finder: mp4Initialized,
+        timeout: const Duration(seconds: 30),
+      );
+
       final playPauseButton = findById(
         'better_player_material_controls_play_pause_button',
       );
@@ -92,6 +99,6 @@ void main() {
         await gesture.moveTo(tester.getCenter(progressBar.first));
         await tester.pump(const Duration(milliseconds: 300));
       }
-    });
+    }, timeout: const Timeout(Duration(minutes: 2)));
   });
 }

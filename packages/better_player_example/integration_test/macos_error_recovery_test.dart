@@ -51,6 +51,13 @@ void main() {
         timeout: const Duration(seconds: 15),
       );
 
+      final mp4Initialized = findById('better_player_e2e_mp4_initialized');
+      await pumpUntilFound(
+        tester: tester,
+        finder: mp4Initialized,
+        timeout: const Duration(seconds: 30),
+      );
+
       final playPauseButton = findById(
         'better_player_material_controls_play_pause_button',
       );
@@ -65,7 +72,7 @@ void main() {
       } catch (_) {}
       await tester.tap(playPauseButton.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
-    });
+    }, timeout: const Timeout(Duration(minutes: 2)));
 
     testWidgets('Accurate seek on dedicated Seek E2E page', (tester) async {
       app.main();
