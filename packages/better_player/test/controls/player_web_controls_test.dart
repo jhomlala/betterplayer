@@ -25,6 +25,7 @@ void main() {
 
   Widget wrapWidget(Widget widget) {
     return MaterialApp(
+      theme: ThemeData(useMaterial3: false),
       home: Scaffold(
         body: SizedBox(
           width: 800,
@@ -38,14 +39,17 @@ void main() {
   Future<void> setupControls(
     WidgetTester tester, {
     List<BetterPlayerExtension>? extensions,
+    PlayerControlsConfiguration? controlsConfiguration,
   }) async {
     mockEngine = MockPlayerEngineController();
     controller = BetterPlayerController(
       PlayerConfiguration(
         extensions: extensions ?? const [],
-        controlsConfiguration: const PlayerControlsConfiguration(
-          playerTheme: PlayerTheme.web,
-        ),
+        controlsConfiguration:
+            controlsConfiguration ??
+            const PlayerControlsConfiguration(
+              playerTheme: PlayerTheme.web,
+            ),
       ),
       playerEngineController: mockEngine,
     );
@@ -312,6 +316,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(useMaterial3: false),
           home: Scaffold(
             body: Center(
               child: SizedBox(
@@ -346,6 +351,118 @@ void main() {
 
       expect(speed2xRect.right, lessThan(moreButtonRect.right + 100));
       expect(speed2xRect.right, isNot(closeTo(1920, 50)));
+    },
+  );
+
+  testWidgets(
+    'PlayerControlsConfiguration enable flags hide controls separately',
+    (tester) async {
+      await setupControls(
+        tester,
+        controlsConfiguration: const PlayerControlsConfiguration(
+          playerTheme: PlayerTheme.web,
+          enableFullscreen: false,
+          enableMute: false,
+          enableProgressBar: false,
+          enablePlayPause: false,
+          enablePip: false,
+          enableOverflowMenu: false,
+          enableProgressText: false,
+        ),
+      );
+
+      expect(
+        find.bySemanticsLabel(
+          'better_player_material_controls_play_pause_button',
+        ),
+        findsNothing,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_material_controls_mute_button'),
+        findsNothing,
+      );
+      expect(
+        find.bySemanticsLabel(
+          'better_player_material_controls_fullscreen_button',
+        ),
+        findsNothing,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_material_controls_more_button'),
+        findsNothing,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_material_progress_bar'),
+        findsNothing,
+      );
+      expect(find.byIcon(Icons.picture_in_picture_outlined), findsNothing);
+      expect(find.textContaining('00:00 / 00:10'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'Keyboard shortcuts and gestures are ignored when respective enable flags are false',
+    (tester) async {
+      await setupControls(
+        tester,
+        controlsConfiguration: const PlayerControlsConfiguration(
+          playerTheme: PlayerTheme.web,
+          enableFullscreen: false,
+          enableMute: false,
+          enablePlayPause: false,
+        ),
+      );
+
+      // Tap on the video area does not trigger play/pause
+      await tester.tap(find.byType(PlayerWebControls));
+      await tester.pumpAndSettle();
+      expect(controller.videoPlayerValue?.isPlaying, isFalse);
+
+      // Space key does not trigger play/pause
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pumpAndSettle();
+      expect(controller.videoPlayerValue?.isPlaying, isFalse);
+
+      // Key 'M' does not toggle mute
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyM);
+      await tester.pumpAndSettle();
+      expect(controller.videoPlayerValue?.volume, 1.0);
+
+      // Key 'F' does not toggle fullscreen
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+      await tester.pumpAndSettle();
+      expect(controller.isFullScreen, isFalse);
+
+      // Double tap does not toggle fullscreen
+      await tester.tap(find.byType(PlayerWebControls));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.tap(find.byType(PlayerWebControls));
+      await tester.pumpAndSettle();
+      expect(controller.isFullScreen, isFalse);
+    },
+  );
+
+  testWidgets(
+    'PlayerWebControls is hidden when controlsEnabled is false',
+    (tester) async {
+      await setupControls(tester);
+
+      expect(
+        find.bySemanticsLabel(
+          'better_player_material_controls_play_pause_button',
+        ),
+        findsOneWidget,
+      );
+
+      controller.setControlsEnabled(false);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.bySemanticsLabel(
+          'better_player_material_controls_play_pause_button',
+        ),
+        findsNothing,
+      );
     },
   );
 }
