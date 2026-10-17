@@ -183,7 +183,9 @@ class _PlayerWebControlsState
 
   KeyEventResult _handleVolumeAndSeek(LogicalKeyboardKey key) {
     if (key == LogicalKeyboardKey.space || key == LogicalKeyboardKey.keyK) {
-      _onPlayPause();
+      if (widget.controlsConfiguration.enablePlayPause) {
+        _onPlayPause();
+      }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowLeft) {
       if (_latestValue?.initialized == true) {
@@ -226,13 +228,19 @@ class _PlayerWebControlsState
       );
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.keyM) {
-      final isMuted = _latestValue?.volume == 0;
-      unawaited(
-        _betterPlayerController?.setVolume(isMuted ? 1 : 0).catchError((_) {}),
-      );
+      if (widget.controlsConfiguration.enableMute) {
+        final isMuted = _latestValue?.volume == 0;
+        unawaited(
+          _betterPlayerController
+              ?.setVolume(isMuted ? 1 : 0)
+              .catchError((_) {}),
+        );
+      }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.keyF) {
-      _betterPlayerController?.toggleFullScreen();
+      if (widget.controlsConfiguration.enableFullscreen) {
+        _betterPlayerController?.toggleFullScreen();
+      }
       return KeyEventResult.handled;
     }
     return KeyEventResult.ignored;
@@ -274,7 +282,10 @@ class _PlayerWebControlsState
           type: MaterialType.transparency,
           child: Builder(
             builder: (BuildContext context) {
-              if (_betterPlayerController == null) return const SizedBox();
+              if (_betterPlayerController == null ||
+                  !_betterPlayerController!.controlsEnabled) {
+                return const SizedBox();
+              }
 
               if (_latestValue?.hasError == true || _errorDescription != null) {
                 return ColoredBox(
@@ -310,10 +321,14 @@ class _PlayerWebControlsState
                       GestureDetector(
                         onTap: () {
                           _focusNode.requestFocus();
-                          _onPlayPause();
+                          if (widget.controlsConfiguration.enablePlayPause) {
+                            _onPlayPause();
+                          }
                         },
-                        onDoubleTap: () =>
-                            _betterPlayerController?.toggleFullScreen(),
+                        onDoubleTap:
+                            widget.controlsConfiguration.enableFullscreen
+                            ? () => _betterPlayerController?.toggleFullScreen()
+                            : null,
                         behavior: HitTestBehavior.opaque,
                         child: const SizedBox.expand(),
                       ),
@@ -350,7 +365,10 @@ class _PlayerWebControlsState
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       if (!_betterPlayerController!
-                                          .isLiveStream()) ...[
+                                              .isLiveStream() &&
+                                          widget
+                                              .controlsConfiguration
+                                              .enableProgressBar) ...[
                                         _PlayerWebProgressBar(
                                           controller: _betterPlayerController,
                                           configuration:
@@ -977,98 +995,101 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
       height: widget.configuration.controlBarHeight,
       child: Row(
         children: [
-          Semantics(
-            label: 'better_player_material_controls_play_pause_button',
-            identifier: 'better_player_material_controls_play_pause_button',
-            child: IconButton(
-              tooltip: isPlaying
-                  ? widget.controller!.translations.controlsPauseLabel
-                  : widget.controller!.translations.controlsPlayLabel,
-              icon: Icon(
-                isPlaying
-                    ? widget.configuration.pauseIcon
-                    : widget.configuration.playIcon,
-                color: widget.configuration.iconsColor,
-              ),
-              onPressed: widget.onPlayPause,
-            ),
-          ),
-          MouseRegion(
-            onEnter: (_) => setState(() => _isVolumeHovered = true),
-            onExit: (_) => setState(() => _isVolumeHovered = false),
-            child: Row(
-              children: [
-                Semantics(
-                  label: 'better_player_material_controls_mute_button',
-                  identifier: 'better_player_material_controls_mute_button',
-                  child: IconButton(
-                    tooltip: isMuted
-                        ? widget.controller!.translations.controlsUnmuteLabel
-                        : widget.controller!.translations.controlsMuteLabel,
-                    icon: Icon(
-                      isMuted
-                          ? widget.configuration.unMuteIcon
-                          : widget.configuration.muteIcon,
-                      color: widget.configuration.iconsColor,
-                    ),
-                    onPressed: () {
-                      if (isMuted) {
-                        widget.controller?.setVolume(1);
-                      } else {
-                        widget.controller?.setVolume(0);
-                      }
-                    },
-                  ),
+          if (widget.configuration.enablePlayPause)
+            Semantics(
+              label: 'better_player_material_controls_play_pause_button',
+              identifier: 'better_player_material_controls_play_pause_button',
+              child: IconButton(
+                tooltip: isPlaying
+                    ? widget.controller!.translations.controlsPauseLabel
+                    : widget.controller!.translations.controlsPlayLabel,
+                icon: Icon(
+                  isPlaying
+                      ? widget.configuration.pauseIcon
+                      : widget.configuration.playIcon,
+                  color: widget.configuration.iconsColor,
                 ),
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  width: _isVolumeHovered ? 100.0 : 0.0,
-                  child: ClipRect(
-                    child: OverflowBox(
-                      minWidth: 100,
-                      maxWidth: 100,
-                      minHeight: 40,
-                      maxHeight: 40,
-                      alignment: Alignment.centerLeft,
-                      child: Material(
-                        color: Colors.transparent,
-                        child: SliderTheme(
-                          data: SliderThemeData(
-                            trackHeight: 2,
-                            thumbShape: const RoundSliderThumbShape(
-                              enabledThumbRadius: 6,
+                onPressed: widget.onPlayPause,
+              ),
+            ),
+          if (widget.configuration.enableMute)
+            MouseRegion(
+              onEnter: (_) => setState(() => _isVolumeHovered = true),
+              onExit: (_) => setState(() => _isVolumeHovered = false),
+              child: Row(
+                children: [
+                  Semantics(
+                    label: 'better_player_material_controls_mute_button',
+                    identifier: 'better_player_material_controls_mute_button',
+                    child: IconButton(
+                      tooltip: isMuted
+                          ? widget.controller!.translations.controlsUnmuteLabel
+                          : widget.controller!.translations.controlsMuteLabel,
+                      icon: Icon(
+                        isMuted
+                            ? widget.configuration.unMuteIcon
+                            : widget.configuration.muteIcon,
+                        color: widget.configuration.iconsColor,
+                      ),
+                      onPressed: () {
+                        if (isMuted) {
+                          widget.controller?.setVolume(1);
+                        } else {
+                          widget.controller?.setVolume(0);
+                        }
+                      },
+                    ),
+                  ),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: _isVolumeHovered ? 100.0 : 0.0,
+                    child: ClipRect(
+                      child: OverflowBox(
+                        minWidth: 100,
+                        maxWidth: 100,
+                        minHeight: 40,
+                        maxHeight: 40,
+                        alignment: Alignment.centerLeft,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: SliderTheme(
+                            data: SliderThemeData(
+                              trackHeight: 2,
+                              thumbShape: const RoundSliderThumbShape(
+                                enabledThumbRadius: 6,
+                              ),
+                              overlayShape: const RoundSliderOverlayShape(
+                                overlayRadius: 12,
+                              ),
+                              activeTrackColor: widget.configuration.iconsColor,
+                              inactiveTrackColor: Colors.white24,
+                              thumbColor: widget.configuration.iconsColor,
                             ),
-                            overlayShape: const RoundSliderOverlayShape(
-                              overlayRadius: 12,
+                            child: Slider(
+                              value: latestValue?.volume ?? 1.0,
+                              onChanged: (val) {
+                                widget.controller?.setVolume(val);
+                              },
                             ),
-                            activeTrackColor: widget.configuration.iconsColor,
-                            inactiveTrackColor: Colors.white24,
-                            thumbColor: widget.configuration.iconsColor,
-                          ),
-                          child: Slider(
-                            value: latestValue?.volume ?? 1.0,
-                            onChanged: (val) {
-                              widget.controller?.setVolume(val);
-                            },
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          const SizedBox(width: 8),
-          if (widget.controller?.isLiveStream() == true)
+          if (widget.controller?.isLiveStream() == true) ...[
+            const SizedBox(width: 8),
             Text(
               widget.controller!.translations.controlsLive,
               style: TextStyle(
                 color: widget.configuration.textColor,
                 fontWeight: FontWeight.bold,
               ),
-            )
-          else
+            ),
+          ] else if (widget.configuration.enableProgressText) ...[
+            const SizedBox(width: 8),
             Text(
               '${PlayerUiUtils.formatDuration(latestValue?.position ?? Duration.zero)} / ${PlayerUiUtils.formatDuration(latestValue?.duration ?? Duration.zero)}',
               style: TextStyle(
@@ -1076,8 +1097,10 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
                 fontSize: 14,
               ),
             ),
+          ],
           const Spacer(),
-          if (widget.controller?.isLiveStream() == false)
+          if (widget.configuration.enablePip &&
+              widget.controller?.isLiveStream() == false)
             IconButton(
               icon: Icon(
                 widget.configuration.pipMenuIcon,
@@ -1087,20 +1110,21 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
                 widget.controller!.betterPlayerGlobalKey!,
               ),
             ),
-          widget.settingsMenu,
-          Semantics(
-            label: 'better_player_material_controls_fullscreen_button',
-            identifier: 'better_player_material_controls_fullscreen_button',
-            child: IconButton(
-              icon: Icon(
-                widget.controller?.isFullScreen == true
-                    ? widget.configuration.fullscreenDisableIcon
-                    : widget.configuration.fullscreenEnableIcon,
-                color: widget.configuration.iconsColor,
+          if (widget.configuration.enableOverflowMenu) widget.settingsMenu,
+          if (widget.configuration.enableFullscreen)
+            Semantics(
+              label: 'better_player_material_controls_fullscreen_button',
+              identifier: 'better_player_material_controls_fullscreen_button',
+              child: IconButton(
+                icon: Icon(
+                  widget.controller?.isFullScreen == true
+                      ? widget.configuration.fullscreenDisableIcon
+                      : widget.configuration.fullscreenEnableIcon,
+                  color: widget.configuration.iconsColor,
+                ),
+                onPressed: () => widget.controller?.toggleFullScreen(),
               ),
-              onPressed: () => widget.controller?.toggleFullScreen(),
             ),
-          ),
         ],
       ),
     );
