@@ -406,5 +406,16 @@ void main() {
         await freshController.close();
       },
     );
+
+    test(
+      'dispose cleans up callbacks map and handles null textureId',
+      () async {
+        await macosPlayer.dispose(null);
+        expect(macosPlayer.callbacks.containsKey(1), isFalse);
+
+        await macosPlayer.dispose(1);
+        expect(macosPlayer.callbacks.containsKey(1), isFalse);
+      },
+    );
   });
 }
