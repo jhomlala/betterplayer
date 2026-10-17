@@ -87,6 +87,7 @@ private var presentationSizeContext = 0
 
     private var videoGravity: AVLayerVideoGravity = .resizeAspect
     private weak var playerView: NSView?
+    private weak var observedItem: AVPlayerItem?
 
     /// Reference to the AVPlayerLayer used for Picture-in-Picture.
     public var playerLayerRef: AVPlayerLayer?
@@ -168,47 +169,53 @@ private var presentationSizeContext = 0
     // MARK: - Observers
 
     private func addObservers(_ item: AVPlayerItem) {
-        if !observersAdded {
-            player.addObserver(self, forKeyPath: "rate", options: [], context: nil)
-            item.addObserver(self, forKeyPath: "loadedTimeRanges", options: [], context: &timeRangeContext)
-            item.addObserver(self, forKeyPath: "status", options: [], context: &statusContext)
-            item.addObserver(self, forKeyPath: "presentationSize", options: [], context: &presentationSizeContext)
-            item.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: [], context: &playbackLikelyToKeepUpContext)
-            item.addObserver(self, forKeyPath: "playbackBufferEmpty", options: [], context: &playbackBufferEmptyContext)
-            item.addObserver(self, forKeyPath: "playbackBufferFull", options: [], context: &playbackBufferFullContext)
-            NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime(_:)), name: .AVPlayerItemDidPlayToEndTime, object: item)
+        guard !observersAdded else { return }
 
-            let output = AVPlayerItemLegibleOutput()
-            output.suppressesPlayerRendering = true
-            output.setDelegate(self, queue: DispatchQueue.main)
-            item.add(output)
-            self.legibleOutput = output
+        player.addObserver(self, forKeyPath: "rate", options: [], context: nil)
+        item.addObserver(self, forKeyPath: "loadedTimeRanges", options: [], context: &timeRangeContext)
+        item.addObserver(self, forKeyPath: "status", options: [], context: &statusContext)
+        item.addObserver(self, forKeyPath: "presentationSize", options: [], context: &presentationSizeContext)
+        item.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: [], context: &playbackLikelyToKeepUpContext)
+        item.addObserver(self, forKeyPath: "playbackBufferEmpty", options: [], context: &playbackBufferEmptyContext)
+        item.addObserver(self, forKeyPath: "playbackBufferFull", options: [], context: &playbackBufferFullContext)
+        NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime(_:)), name: .AVPlayerItemDidPlayToEndTime, object: item)
 
-            observersAdded = true
-        }
+        let output = AVPlayerItemLegibleOutput()
+        output.suppressesPlayerRendering = true
+        output.setDelegate(self, queue: DispatchQueue.main)
+        item.add(output)
+        self.legibleOutput = output
+        self.observedItem = item
+
+        observersAdded = true
     }
 
     private func removeObservers() {
-        if observersAdded {
-            player.removeObserver(self, forKeyPath: "rate", context: nil)
-            player.currentItem?.removeObserver(self, forKeyPath: "status", context: &statusContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "presentationSize", context: &presentationSizeContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "loadedTimeRanges", context: &timeRangeContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "playbackLikelyToKeepUp", context: &playbackLikelyToKeepUpContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferEmpty", context: &playbackBufferEmptyContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferFull", context: &playbackBufferFullContext)
-            NotificationCenter.default.removeObserver(self)
+        guard observersAdded else { return }
+        observersAdded = false
+
+        player.removeObserver(self, forKeyPath: "rate", context: nil)
+
+        let itemToRemove = observedItem ?? player.currentItem
+        if let item = itemToRemove {
+            item.removeObserver(self, forKeyPath: "status", context: &statusContext)
+            item.removeObserver(self, forKeyPath: "presentationSize", context: &presentationSizeContext)
+            item.removeObserver(self, forKeyPath: "loadedTimeRanges", context: &timeRangeContext)
+            item.removeObserver(self, forKeyPath: "playbackLikelyToKeepUp", context: &playbackLikelyToKeepUpContext)
+            item.removeObserver(self, forKeyPath: "playbackBufferEmpty", context: &playbackBufferEmptyContext)
+            item.removeObserver(self, forKeyPath: "playbackBufferFull", context: &playbackBufferFullContext)
 
             if let output = legibleOutput {
-                player.currentItem?.remove(output)
+                item.remove(output)
                 legibleOutput = nil
             }
-
-            observersAdded = false
         }
+        NotificationCenter.default.removeObserver(self)
+        observedItem = nil
     }
 
     @objc private func itemDidPlayToEndTime(_ notification: Notification) {
+        guard !disposed else { return }
         if isLooping {
             if let p = notification.object as? AVPlayerItem {
                 p.seek(to: .zero, completionHandler: nil)
@@ -342,7 +349,8 @@ private var presentationSizeContext = 0
         BetterPlayerApi.log(1, "setDataSource: item replaced")
 
         let asset = item.asset
-        asset.loadValuesAsynchronously(forKeys: ["tracks"]) {
+        asset.loadValuesAsynchronously(forKeys: ["tracks"]) { [weak self] in
+            guard let self = self, !self.disposed else { return }
             if asset.statusOfValue(forKey: "tracks", error: nil) == .loaded {
                 let tracks = asset.tracks(withMediaType: .video)
                 if let videoTrack = tracks.first {
@@ -374,10 +382,12 @@ private var presentationSizeContext = 0
     }
 
     private func sendError(code: String, message: String, details: String = "") {
+        guard !disposed else { return }
         callback?.onError(code, errorMessage: message, errorDetails: details)
     }
 
     private func startStalledCheck() {
+        guard !disposed else { return }
         if let currentItem = player.currentItem {
             if currentItem.isPlaybackLikelyToKeepUp || (availableDuration() - CMTimeGetSeconds(currentItem.currentTime())) > 10.0 {
                 play()
@@ -390,7 +400,8 @@ private var presentationSizeContext = 0
                     return
                 }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                    self?.startStalledCheck()
+                    guard let self = self, !self.disposed else { return }
+                    self.startStalledCheck()
                 }
             }
         }
@@ -406,7 +417,10 @@ private var presentationSizeContext = 0
     // MARK: - KVO observeValue
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        guard !disposed, callback != nil else { return }
+
         if keyPath == "rate" {
+            guard !disposed else { return }
             if let pipController = pipController, pipController.isPictureInPictureActive {
                 if let last = lastAvPlayerTimeControlStatus, last == player.timeControlStatus {
                     return
@@ -424,7 +438,7 @@ private var presentationSizeContext = 0
 
             if isPlaying && playerRate > 0 && player.rate > 0 && abs(player.rate - playerRate) > 0.0001 {
                 DispatchQueue.main.async { [weak self] in
-                    guard let self = self, self.isPlaying, self.player.rate > 0,
+                    guard let self = self, !self.disposed, self.isPlaying, self.player.rate > 0,
                           abs(self.player.rate - self.playerRate) > 0.0001 else { return }
                     self.applyPlayerRate()
                 }
@@ -433,9 +447,11 @@ private var presentationSizeContext = 0
             if player.rate == 0 && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, .zero) == 1 && (player.currentItem?.duration ?? .zero).isValid && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, player.currentItem?.duration ?? .zero) == -1 && isPlaying {
                 handleStalled()
             }
+            return
         }
 
         if context == &timeRangeContext {
+            guard !disposed else { return }
             if callback != nil, let item = object as? AVPlayerItem {
                 var values: [[NSNumber]] = []
                 for rangeValue in item.loadedTimeRanges {
@@ -450,6 +466,7 @@ private var presentationSizeContext = 0
                 }
                 if let jsonData = try? JSONSerialization.data(withJSONObject: values, options: []),
                    let jsonString = String(data: jsonData, encoding: .utf8) {
+                    guard !disposed else { return }
                     callback?.onBufferingUpdate(jsonRanges: jsonString, key: key)
                 }
                 if !isInitialized {
@@ -457,12 +474,14 @@ private var presentationSizeContext = 0
                 }
             }
         } else if context == &presentationSizeContext {
+            guard !disposed else { return }
             if !isInitialized {
                 onReadyToPlay()
             } else if let item = player.currentItem {
                 let size = item.presentationSize
                 if size.width > 0 && size.height > 0 {
                     BetterPlayerApi.log(1, "presentationSize changed: \(size.width)x\(size.height)")
+                    guard !disposed else { return }
                     callback?.onInitialized(
                         durationMs: duration(),
                         width: Double(size.width),
@@ -472,6 +491,7 @@ private var presentationSizeContext = 0
                 }
             }
         } else if context == &statusContext {
+            guard !disposed else { return }
             if let item = object as? AVPlayerItem {
                 switch item.status {
                 case .failed:
@@ -493,18 +513,22 @@ private var presentationSizeContext = 0
                 }
             }
         } else if context == &playbackLikelyToKeepUpContext {
+            guard !disposed else { return }
             if player.currentItem?.isPlaybackLikelyToKeepUp == true {
                 BetterPlayerApi.log(1, "playbackLikelyToKeepUp: true")
                 if !isInitialized {
                     onReadyToPlay()
                 }
                 updatePlayingState()
+                guard !disposed else { return }
                 callback?.onBufferingEnd(key: key)
             }
         } else if context == &playbackBufferEmptyContext {
+            guard !disposed else { return }
             BetterPlayerApi.log(1, "playbackBufferEmpty: true")
             callback?.onBufferingStart(key: key)
         } else if context == &playbackBufferFullContext {
+            guard !disposed else { return }
             BetterPlayerApi.log(1, "playbackBufferFull: true")
             callback?.onBufferingEnd(key: key)
         }
@@ -545,7 +569,7 @@ private var presentationSizeContext = 0
             }
             return
         }
-        guard callback != nil, !isInitialized, key != nil else { return }
+        guard !disposed, callback != nil, !isInitialized, key != nil else { return }
         guard let currentItem = player.currentItem else { return }
         guard player.status == .readyToPlay else { return }
 
@@ -595,6 +619,7 @@ private var presentationSizeContext = 0
 
         BetterPlayerApi.log(1, "onInitialized: dur=\(dur)ms, isLive=\(isLive), size=\(width)x\(height)")
 
+        guard !disposed else { return }
         callback?.onInitialized(
             durationMs: dur,
             width: Double(width),
@@ -781,6 +806,7 @@ private var presentationSizeContext = 0
             }
             playerLayerRef = nil
             pipController = nil
+            guard !disposed else { return }
             callback?.onPipStop()
         }
     }
@@ -794,6 +820,7 @@ private var presentationSizeContext = 0
 
     public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
         BetterPlayerApi.log(1, "pictureInPictureControllerDidStartPictureInPicture")
+        guard !disposed else { return }
         callback?.onPipStart()
     }
 
@@ -830,6 +857,7 @@ private var presentationSizeContext = 0
         guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) else { return }
         if index < 0 {
             player.currentItem?.select(nil, in: group)
+            guard !disposed else { return }
             callback?.onCues(jsonCues: "[]")
             return
         }
@@ -877,10 +905,8 @@ private var presentationSizeContext = 0
         BetterPlayerApi.log(1, "clear()")
         isInitialized = false
         isPlaying = false
-        disposed = false
         failedCount = 0
         key = nil
-        guard player.currentItem != nil else { return }
         removeObservers()
         player.currentItem?.asset.cancelLoading()
     }
@@ -895,15 +921,26 @@ private var presentationSizeContext = 0
     /// Disposes the player and cleans up resources.
     @objc public func dispose() {
         BetterPlayerApi.log(1, "dispose()")
+        disposed = true
         pause()
-        disposeSansEventChannel()
+        removeObservers()
+        if let view = playerView as? BetterPlayerView {
+            view.player = nil
+        }
+        player.replaceCurrentItem(with: nil)
+        callback = nil
         disablePictureInPicture()
         setPictureInPicture(false)
-        disposed = true
         
         if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
             BetterPlayerApi.players.removeValue(forKey: key)
         }
+    }
+
+    deinit {
+        removeObservers()
+        player.replaceCurrentItem(with: nil)
+        callback = nil
     }
 }
 
@@ -911,6 +948,7 @@ private var presentationSizeContext = 0
 
 extension BetterPlayer: AVPlayerItemLegibleOutputPushDelegate {
     public func legibleOutput(_ output: AVPlayerItemLegibleOutput, didOutputAttributedStrings strings: [NSAttributedString], nativeSampleBuffers nativeSamples: [Any], forItemTime itemTime: CMTime) {
+        guard !disposed else { return }
         let texts = strings.map { $0.string }.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
         guard let jsonData = try? JSONSerialization.data(withJSONObject: texts, options: []),
               let jsonString = String(data: jsonData, encoding: .utf8) else {

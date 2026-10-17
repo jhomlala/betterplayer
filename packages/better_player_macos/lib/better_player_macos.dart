@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
+import 'dart:io' show Platform;
 
 import 'package:better_player_macos/src/better_player_macos_ffi.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
@@ -42,12 +43,34 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   @visibleForTesting
   Object createCacheManager() => BetterPlayerApi.createCacheManager();
 
+  BetterPlayerMacOS() {
+    _cleanupOrphanedPlayers();
+  }
+
+  void _cleanupOrphanedPlayers() {
+    if (!Platform.isMacOS) return;
+    try {
+      final players = BetterPlayerApi.getPlayers();
+      final map = players.asDart();
+      for (final key in map.keys) {
+        if (key is objc.NSNumber) {
+          final player = BetterPlayerApi.getPlayer(key.longLongValue);
+          player?.dispose();
+        }
+      }
+    } catch (_) {}
+  }
+
   static void registerWith() {
     BetterPlayerPlatform.instance = BetterPlayerMacOS();
   }
 
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
   final Map<int, String?> _lastInitializedKeys = {};
+  final Map<int, BetterPlayerCallback> _callbacks = {};
+
+  @visibleForTesting
+  Map<int, BetterPlayerCallback> get callbacks => _callbacks;
 
   @visibleForTesting
   void setEventControllerForTesting({
@@ -95,6 +118,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
     if (textureId == null) return;
     _lastInitializedKeys.remove(textureId);
     getPlayer(textureId)?.dispose();
+    _callbacks.remove(textureId);
     _eventControllers[textureId]?.close();
     _eventControllers.remove(textureId);
   }
@@ -232,6 +256,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
     );
 
     currentTextureId = BetterPlayerApi.createPlayerWithCallback(callback);
+    _callbacks[currentTextureId] = callback;
 
     _eventControllers[currentTextureId] =
         StreamController<VideoEvent>.broadcast();
