@@ -71,18 +71,28 @@ class _PlayerWebControlsState
     _controlsVisibilitySubscription = _betterPlayerController!
         .controlsVisibilityStream
         .listen((visibility) {
-          if (mounted) {
+          if (mounted && _controlsNotVisible == visibility) {
             setState(() {
               _controlsNotVisible = !visibility;
             });
+            if (!_controlsNotVisible) {
+              cancelAndRestartTimer();
+            }
           }
         });
     _latestValue = _betterPlayerController!.videoPlayerValue;
-    _controlsNotVisible = !_betterPlayerController!.controlsAlwaysVisible;
-    widget.onControlsVisibilityChanged(!_controlsNotVisible);
-    if (_controlsNotVisible) {
-      cancelAndRestartTimer();
+    final showOnInitialize =
+        widget.controlsConfiguration.showControlsOnInitialize ||
+        _betterPlayerController!.controlsAlwaysVisible;
+    _controlsNotVisible = !showOnInitialize;
+    if (showOnInitialize) {
+      _startHideTimer();
     }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        widget.onControlsVisibilityChanged(showOnInitialize);
+      }
+    });
   }
 
   void _dispose() {
@@ -128,26 +138,40 @@ class _PlayerWebControlsState
     }
   }
 
-  @override
-  void cancelAndRestartTimer() {
-    _hideTimer?.cancel();
-    if (mounted) {
-      setState(() {
-        _controlsNotVisible = false;
-        widget.onControlsVisibilityChanged(true);
-      });
+  void _startHideTimer() {
+    if (_betterPlayerController?.controlsAlwaysVisible == true) {
+      return;
     }
+    _hideTimer?.cancel();
     _hideTimer = Timer(widget.controlsConfiguration.controlsHideTime, () {
       if (_betterPlayerController?.controlsAlwaysVisible == true) {
         return;
       }
       if (mounted && !_isMenuOpen) {
-        setState(() {
-          _controlsNotVisible = true;
+        final wasVisible = !_controlsNotVisible;
+        if (wasVisible) {
+          setState(() {
+            _controlsNotVisible = true;
+          });
           widget.onControlsVisibilityChanged(false);
-        });
+        }
       }
     });
+  }
+
+  @override
+  void cancelAndRestartTimer() {
+    _hideTimer?.cancel();
+    if (mounted) {
+      final wasNotVisible = _controlsNotVisible;
+      setState(() {
+        _controlsNotVisible = false;
+      });
+      if (wasNotVisible) {
+        widget.onControlsVisibilityChanged(true);
+      }
+    }
+    _startHideTimer();
   }
 
   KeyEventResult _onKeyEvent(FocusNode node, KeyEvent event) {
@@ -162,32 +186,50 @@ class _PlayerWebControlsState
       _onPlayPause();
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowLeft) {
-      final position = _latestValue?.position;
-      if (position != null) {
-        _betterPlayerController?.seekTo(position - const Duration(seconds: 10));
+      if (_latestValue?.initialized == true) {
+        final position = _latestValue?.position;
+        if (position != null) {
+          unawaited(
+            _betterPlayerController
+                ?.seekTo(position - const Duration(seconds: 10))
+                .catchError((_) {}),
+          );
+        }
       }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowRight) {
-      final position = _latestValue?.position;
-      if (position != null) {
-        _betterPlayerController?.seekTo(position + const Duration(seconds: 10));
+      if (_latestValue?.initialized == true) {
+        final position = _latestValue?.position;
+        if (position != null) {
+          unawaited(
+            _betterPlayerController
+                ?.seekTo(position + const Duration(seconds: 10))
+                .catchError((_) {}),
+          );
+        }
       }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowUp) {
       final volume = (_latestValue?.volume ?? 1.0) + 0.1;
-      _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
+      unawaited(
+        _betterPlayerController
+            ?.setVolume(volume.clamp(0.0, 1.0))
+            .catchError((_) {}),
+      );
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowDown) {
       final volume = (_latestValue?.volume ?? 1.0) - 0.1;
-      _betterPlayerController?.setVolume(volume.clamp(0.0, 1.0));
+      unawaited(
+        _betterPlayerController
+            ?.setVolume(volume.clamp(0.0, 1.0))
+            .catchError((_) {}),
+      );
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.keyM) {
       final isMuted = _latestValue?.volume == 0;
-      if (isMuted) {
-        _betterPlayerController?.setVolume(1);
-      } else {
-        _betterPlayerController?.setVolume(0);
-      }
+      unawaited(
+        _betterPlayerController?.setVolume(isMuted ? 1 : 0).catchError((_) {}),
+      );
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.keyF) {
       _betterPlayerController?.toggleFullScreen();
@@ -201,14 +243,16 @@ class _PlayerWebControlsState
       _focusNode.requestFocus();
     }
     if (_latestValue?.isPlaying == true) {
-      _betterPlayerController?.pause();
+      unawaited(_betterPlayerController?.pause().catchError((_) {}));
     } else {
       if (_latestValue?.position != null &&
           _latestValue?.duration != null &&
           _latestValue!.position >= _latestValue!.duration!) {
-        _betterPlayerController?.seekTo(Duration.zero);
+        unawaited(
+          _betterPlayerController?.seekTo(Duration.zero).catchError((_) {}),
+        );
       }
-      _betterPlayerController?.play();
+      unawaited(_betterPlayerController?.play().catchError((_) {}));
     }
   }
 
@@ -248,10 +292,12 @@ class _PlayerWebControlsState
                   if (!_betterPlayerController!.controlsAlwaysVisible &&
                       !_isMenuOpen) {
                     _hideTimer?.cancel();
-                    setState(() {
-                      _controlsNotVisible = true;
-                      widget.onControlsVisibilityChanged(false);
-                    });
+                    if (!_controlsNotVisible) {
+                      setState(() {
+                        _controlsNotVisible = true;
+                        widget.onControlsVisibilityChanged(false);
+                      });
+                    }
                   }
                 },
                 child: Focus(

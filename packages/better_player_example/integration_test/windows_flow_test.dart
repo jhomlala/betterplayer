@@ -168,7 +168,9 @@ void main() {
         } catch (_) {}
         await tester.tap(expandButton.first, warnIfMissed: false);
         await tester.pump(const Duration(milliseconds: 500));
+        await tester.tap(expandButton.first, warnIfMissed: false);
+        await tester.pump(const Duration(milliseconds: 500));
       }
-    });
+    }, timeout: const Timeout(Duration(minutes: 2)));
   });
 }

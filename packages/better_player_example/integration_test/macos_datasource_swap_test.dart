@@ -31,6 +31,12 @@ void main() {
       // 1. Start with MP4
       final setupMp4Button = findById('better_player_e2e_setup_mp4');
       await scrollAndTap(tester: tester, finder: setupMp4Button);
+      final mp4Initialized = findById('better_player_e2e_mp4_initialized');
+      await pumpUntilFound(
+        tester: tester,
+        finder: mp4Initialized,
+        timeout: const Duration(seconds: 30),
+      );
 
       final playPauseButton = findById(
         'better_player_material_controls_play_pause_button',
@@ -40,10 +46,16 @@ void main() {
       // 2. Swap to HLS
       final setupHlsButton = findById('better_player_e2e_setup_hls');
       await scrollAndTap(tester: tester, finder: setupHlsButton);
+      final hlsInitialized = findById('better_player_e2e_hls_initialized');
+      await pumpUntilFound(
+        tester: tester,
+        finder: hlsInitialized,
+        timeout: const Duration(seconds: 45),
+      );
       await pumpUntilFound(
         tester: tester,
         finder: playPauseButton,
-        timeout: const Duration(seconds: 25),
+        timeout: const Duration(seconds: 15),
       );
       try {
         await tester.ensureVisible(playPauseButton.first);
@@ -56,8 +68,13 @@ void main() {
 
       // 4. Swap back to MP4
       await scrollAndTap(tester: tester, finder: setupMp4Button);
+      await pumpUntilFound(
+        tester: tester,
+        finder: mp4Initialized,
+        timeout: const Duration(seconds: 30),
+      );
       await pumpUntilFound(tester: tester, finder: playPauseButton);
-    });
+    }, timeout: const Timeout(Duration(minutes: 2)));
 
     testWidgets('Visibility cycle, playlist mode, and list player', (
       tester,
@@ -89,6 +106,6 @@ void main() {
 
       final listPlayerStatus = findById('better_player_e2e_list_player_status');
       await pumpUntilFound(tester: tester, finder: listPlayerStatus);
-    });
+    }, timeout: const Timeout(Duration(minutes: 2)));
   });
 }

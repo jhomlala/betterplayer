@@ -61,6 +61,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   bool _isListPlayerMode = false;
   bool _listPlayerVerified = false;
   bool _localFileVerified = false;
+  String? _currentUrl;
+  bool _isDataSourceInitialized = false;
   final Set<PlayerEventType> _emittedEvents = {};
 
   static const Set<PlayerEventType> _requiredCoreEvents = {
@@ -140,6 +142,13 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
           });
         }
       }
+      if (event.betterPlayerEventType == PlayerEventType.initialized) {
+        if (mounted) {
+          setState(() {
+            _isDataSourceInitialized = true;
+          });
+        }
+      }
       if (event.betterPlayerEventType == PlayerEventType.exception) {
         setState(() {
           _errorDescription =
@@ -166,6 +175,12 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     required DataSourceType type,
     DrmConfiguration? drmConfiguration,
   }) {
+    if (mounted) {
+      setState(() {
+        _currentUrl = url;
+        _isDataSourceInitialized = false;
+      });
+    }
     final betterPlayerDataSource = PlayerDataSource(
       type,
       url,
@@ -559,6 +574,22 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   onPressed: () {},
                   child: const Text('Local File Verified'),
                 ),
+              ),
+            if (_isDataSourceInitialized &&
+                _currentUrl == Constants.hlsTestStreamUrl)
+              Semantics(
+                identifier: 'better_player_e2e_hls_initialized',
+                label: 'better_player_e2e_hls_initialized',
+                container: true,
+                child: const Text('HLS Initialized'),
+              ),
+            if (_isDataSourceInitialized &&
+                _currentUrl == Constants.bugBuckBunnyVideoUrl)
+              Semantics(
+                identifier: 'better_player_e2e_mp4_initialized',
+                label: 'better_player_e2e_mp4_initialized',
+                container: true,
+                child: const Text('MP4 Initialized'),
               ),
             const SizedBox(height: 16),
             Wrap(

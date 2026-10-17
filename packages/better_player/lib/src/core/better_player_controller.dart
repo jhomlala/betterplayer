@@ -317,6 +317,9 @@ class BetterPlayerController {
   /// Indicates whether the interactive controls (play/pause, seek bar) are enabled and permitted to be shown.
   bool get controlsEnabled => _viewState.controlsEnabled;
 
+  /// Indicates whether the interactive controls overlay is currently visible on the screen.
+  bool get isControlsVisible => _viewState.isControlsVisible ?? false;
+
   /// Retrieves the unique GlobalKey assigned to this specific BetterPlayer instance.
   /// Helps coordinate deeply nested UI state changes tied to this controller.
   GlobalKey? get betterPlayerGlobalKey => _viewState.betterPlayerGlobalKey;
