@@ -1,4 +1,4 @@
-## Unreleased
+## 1.2.0
 - Added: `setTextTrack` method on `BetterPlayerWebPlayer` using Shaka Player `selectTextLanguage` and `setTextTrackVisibility` for embedded text tracks (#1066).
 - Added: Active `TextTrack` cue change listener emitting `captionUpdate` events with active cues.
 - Fixed: Suppressed duplicate browser native cue rendering via global CSS shadow DOM and cue hiding rules without interrupting active cue event delivery.

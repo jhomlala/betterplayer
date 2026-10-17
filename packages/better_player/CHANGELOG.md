@@ -1,4 +1,4 @@
-## Unreleased
+## 1.25.0
 - Fixed: Respected `PlayerControlsConfiguration` enable flags and `controlsEnabled` state in `PlayerWebControls` on desktop and web (#1599).
 - Added: Embedded CEA-608 and CEA-708 closed caption support decoded by native platform engines and rendered via `PlayerSubtitlesDrawer` (#1066).
 - Added: Automatic parsing of `#EXT-X-MEDIA:TYPE=CLOSED-CAPTIONS` tags in HLS playlists to generate `PlayerSubtitlesSourceType.embedded` tracks.
@@ -7,6 +7,7 @@
 - Fixed: Emit controls visibility events to `controlsVisibilityStream` on overlay state changes across Material, Cupertino, Web, and custom controls (#1596).
 - Added: Getter `isControlsVisible` on `BetterPlayerController` to inspect current overlay visibility state.
 - Fixed: Guarded keyboard shortcuts against uninitialized playback states and swallowed unhandled async errors during engine transitions in `PlayerWebControls`.
+- Updated: Bumped federated packages: `better_player_platform_interface` to `^1.4.0`, `better_player_android` to `^1.8.0`, `better_player_ios` to `^1.7.0`, `better_player_macos` to `^1.2.0`, `better_player_windows` to `^1.1.0`, and `better_player_web` to `^1.2.0`.
 
 ## 1.24.0
 - Added: `BetterPlayerFeed` and `BetterPlayerFeedController` for high-performance vertical and horizontal swipe video feeds with PageView integration.
