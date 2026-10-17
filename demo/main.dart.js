@@ -55966,7 +55966,7 @@ if(n!=null)return new A.a0l(n,s,r,q,p,l)
 else return new A.a0q(s,m.e,r,q,p,l)}}
 A.a_Z.prototype={
 C(a){var s=null,r=this.c,q=r.k3,p=this.d,o=t.p
-return A.aF(s,s,A.bj(A.b([B.ajQ,B.hs,B.aqR,B.mA,A.aV(r.k1+" 1.24.0",s,s,s,s,s,s),B.hs,A.qT(B.mR,A.b([new A.v6("https://github.com/jhomlala/betterplayer",r.k4,"better_player_about_link_github",q,p,s),B.arv,new A.v6("https://hasoft.pl","Hasoft.pl","better_player_about_link_hasoft",q,p,s)],o),B.rf,0,8),new A.v6("https://github.com/jhomlala/betterplayer/issues",r.p1,"better_player_about_link_issues",q,p,s)],o),B.v,B.n,B.aM),!0,s,s,s,s,!1,s,s,s,s,s,"better_player_about_dialog",s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s)}}
+return A.aF(s,s,A.bj(A.b([B.ajQ,B.hs,B.aqR,B.mA,A.aV(r.k1+" 1.25.0",s,s,s,s,s,s),B.hs,A.qT(B.mR,A.b([new A.v6("https://github.com/jhomlala/betterplayer",r.k4,"better_player_about_link_github",q,p,s),B.arv,new A.v6("https://hasoft.pl","Hasoft.pl","better_player_about_link_hasoft",q,p,s)],o),B.rf,0,8),new A.v6("https://github.com/jhomlala/betterplayer/issues",r.p1,"better_player_about_link_issues",q,p,s)],o),B.v,B.n,B.aM),!0,s,s,s,s,!1,s,s,s,s,s,"better_player_about_dialog",s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s,s)}}
 A.zK.prototype={
 C(a){var s,r=null,q="better_player_about_close",p=this.c,o=this.d,n=new A.a_Z(p,o,r),m=A.aV(p.k2,r,r,r,r,r,r)
 p=A.b([new A.va(p),new A.v7(p)],t.a9)
@@ -57460,7 +57460,7 @@ s.toString
 r=i.z
 r=r==null?p:r.x
 j.push(A.k4(A.aF(p,p,new A.rg("Playback speed",A.i(r==null?1:r)+"x",B.a1V,s.d,p),!1,p,p,p,p,!1,p,p,p,p,p,l,p,p,p,p,l,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p),B.Qt,h))
-if(i.ga5N())j.push(A.k4(A.aF(p,p,new A.rg(i.w.r.id,"1.24.0",B.c9,i.a.d,p),!1,p,p,p,p,!1,p,p,p,p,p,k,p,p,p,p,k,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p),B.Qv,h))
+if(i.ga5N())j.push(A.k4(A.aF(p,p,new A.rg(i.w.r.id,"1.25.0",B.c9,i.a.d,p),!1,p,p,p,p,!1,p,p,p,p,p,k,p,p,p,p,k,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p,p),B.Qv,h))
 return j},
 $S:380}
 A.aSL.prototype={
