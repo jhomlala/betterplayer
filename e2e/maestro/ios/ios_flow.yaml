@@ -139,3 +139,9 @@ appId: pl.hasoft.example
     visible:
       id: "better_player_cupertino_controls_play_pause_button"
     timeout: 10000
+- tapOn:
+    id: "better_player_cupertino_controls_expand_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_controls_play_pause_button"
+    timeout: 10000
