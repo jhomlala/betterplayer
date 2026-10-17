@@ -1,4 +1,4 @@
-## Unreleased
+## 1.7.0
 - Added: `setTextTrack` method on `BetterPlayer` to select or disable legible media selection group tracks in `AVPlayerItem` (#1066).
 - Added: `AVPlayerItemLegibleOutput` push delegate and `onCues` callback on `BetterPlayerCallback` emitting parsed subtitle cues.
 - Fixed: Forwarded dynamic presentation size changes to Flutter to resolve black screen on HLS playback with delayed track resolution (#1595).

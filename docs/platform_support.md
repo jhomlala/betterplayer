@@ -15,7 +15,7 @@ The following matrix details the current feature support for Better Player acros
 | **HLS (HTTP Live Streaming)** | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **DASH (Dynamic Adaptive Streaming)**| ✓ | x | x | ✓ | ✓ |
 | **Smooth Streaming** | ✓ | x | x | x | x |
-| **Subtitles (SRT/WebVTT)** | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Subtitles & Captions (SRT/WebVTT/TTML/CEA)** | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **Audio Track Selection** | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **Picture in Picture (PiP)** | ✓ | ✓ | ✓ | x | ✓ |
 | **DRM (Widevine)** | ✓ | x | x | x | ✓ |

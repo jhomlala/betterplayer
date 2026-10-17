@@ -24,3 +24,20 @@ By default, controls will fade out after a period of inactivity. You can force t
 // Controls will remain visible on top of the video
 betterPlayerController.setControlsAlwaysVisible(true);
 ```
+
+## Inspecting and Listening to Visibility
+
+Check whether controls are currently visible using the `isControlsVisible` getter:
+
+```dart
+final bool isVisible = betterPlayerController.isControlsVisible;
+```
+
+To react to visibility changes in real time, listen to `controlsVisibilityStream`:
+
+```dart
+betterPlayerController.controlsVisibilityStream.listen((bool isVisible) {
+  // Sync your custom overlay with the player controls
+});
+```
+

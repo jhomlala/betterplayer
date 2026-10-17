@@ -1,4 +1,4 @@
-## Unreleased
+## 1.1.0
 - Added: `setTextTrack` method on `MpvPlayer` to select or disable subtitle and closed caption tracks via mpv `sid` property (#1066).
 - Added: `sub-text` property observer emitting `captionUpdate` events with active subtitle lines.
 
