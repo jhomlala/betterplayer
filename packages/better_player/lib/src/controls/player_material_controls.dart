@@ -277,11 +277,11 @@ class _PlayerMaterialControlsState
     _controlsVisibilityStreamSubscription = _betterPlayerController!
         .controlsVisibilityStream
         .listen((state) {
-          if (controlsNotVisible == state) {
-            changePlayerControlsNotVisible(!state);
-            if (!controlsNotVisible) {
-              cancelAndRestartTimer();
-            }
+          if (state) {
+            cancelAndRestartTimer();
+          } else {
+            _hideTimer?.cancel();
+            changePlayerControlsNotVisible(true);
           }
         });
   }
