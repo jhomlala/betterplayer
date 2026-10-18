@@ -1,4 +1,4 @@
-## Unreleased
+## 1.26.0
 - Fixed: Resolved web and desktop controls parity issues: enabled Picture in Picture on macOS, prevented PiP null-assertion crashes and premature control disabling, synchronized subtitle positioning and visibility events on `setControlsVisibility(false)`, and rendered `overflowMenuCustomItems` in `PlayerWebControls`.
 - Fixed: Restored player controls and emitted visibility event on `controlsVisibilityStream` when calling `setControlsEnabled(true)` (#1609).
 - Fixed: Prevented control flickering and stream oscillation when using `routePageBuilder` custom overlays by starting the hide timer on mouse exit instead of immediately hiding controls (#1605).
@@ -8,7 +8,7 @@
 - Fixed: Prevented `No MaterialLocalizations found` crash when opening the player about dialog from custom or misconfigured host apps by scoping localizations and styling the dialog with the player's dark cinema theme.
 - Updated: `better_player_example` overview hero player with an initial video placeholder image and persistent playback controls.
 - Added: Migration guide from `media_kit` covering binary size savings, native OS engines, API mapping, and playback controls.
-
+- Updated: Bumped federated packages: `better_player_ios` to `^1.8.0`, `better_player_macos` to `^1.3.0`, `better_player_windows` to `^1.2.0`, and `better_player_web` to `^1.3.0`.
 
 ## 1.25.0
 - Fixed: Respected `PlayerControlsConfiguration` enable flags and `controlsEnabled` state in `PlayerWebControls` on desktop and web (#1599).
