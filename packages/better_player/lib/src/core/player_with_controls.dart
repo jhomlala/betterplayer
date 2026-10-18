@@ -4,7 +4,9 @@ import 'dart:math';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/controls/player_cupertino_controls.dart';
+import 'package:better_player/src/controls/player_cupertino_localizations_delegate.dart';
 import 'package:better_player/src/controls/player_material_controls.dart';
+import 'package:better_player/src/controls/player_material_localizations_delegate.dart';
 import 'package:better_player/src/controls/player_web_controls.dart';
 import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/subtitles/player_subtitles_drawer.dart';
@@ -247,29 +249,41 @@ class PlayerControlsSelectionWidget extends StatelessWidget {
         }
       }
 
+      final Widget controlsWidget;
       if (controlsConfiguration.customControlsBuilder != null &&
           playerTheme == PlayerTheme.custom) {
-        return controlsConfiguration.customControlsBuilder!(
+        controlsWidget = controlsConfiguration.customControlsBuilder!(
           controller,
           onControlsVisibilityChanged,
         );
       } else if (playerTheme == PlayerTheme.material) {
-        return PlayerMaterialControls(
+        controlsWidget = PlayerMaterialControls(
           onControlsVisibilityChanged: onControlsVisibilityChanged,
           controlsConfiguration: controlsConfiguration,
         );
       } else if (playerTheme == PlayerTheme.cupertino) {
-        return PlayerCupertinoControls(
+        controlsWidget = PlayerCupertinoControls(
           onControlsVisibilityChanged: onControlsVisibilityChanged,
           controlsConfiguration: controlsConfiguration,
         );
       } else if (playerTheme == PlayerTheme.web ||
           playerTheme == PlayerTheme.desktop) {
-        return PlayerWebControls(
+        controlsWidget = PlayerWebControls(
           onControlsVisibilityChanged: onControlsVisibilityChanged,
           controlsConfiguration: controlsConfiguration,
         );
+      } else {
+        controlsWidget = const SizedBox();
       }
+
+      return Localizations.override(
+        context: context,
+        delegates: [
+          PlayerMaterialLocalizationsDelegate(controller.translations),
+          PlayerCupertinoLocalizationsDelegate(controller.translations),
+        ],
+        child: controlsWidget,
+      );
     }
 
     return const SizedBox();

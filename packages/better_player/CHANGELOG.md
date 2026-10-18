@@ -3,6 +3,8 @@
 - Fixed: Replaced daisy-chained popup routes in `PlayerWebControls` with an in-place drill-down settings menu on Web, macOS, and Windows.
 - Fixed: Resolved layout and text truncation issues in the web settings menu by adapting width to the longest label, stretching rows to full card width, and bounding height with a sticky header and scrollable option list on compact viewports.
 - Fixed: Localized settings menu category titles and submenu headers via `PlayerTranslations`.
+- Fixed: Prevented `No MaterialLocalizations found` crash when opening the player about dialog from custom or misconfigured host apps by scoping localizations and styling the dialog with the player's dark cinema theme.
+- Updated: `better_player_example` overview hero player with an initial video placeholder image and persistent playback controls.
 
 
 ## 1.25.0

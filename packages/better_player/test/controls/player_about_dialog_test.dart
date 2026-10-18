@@ -44,6 +44,8 @@ void main() {
       await openDialog(tester, isCupertino: false);
 
       expect(find.byType(AlertDialog), findsOneWidget);
+      final alertDialog = tester.widget<AlertDialog>(find.byType(AlertDialog));
+      expect(alertDialog.backgroundColor, const Color(0xFF212121));
       expect(find.text(PlayerAboutConstants.poweredBy), findsOneWidget);
       expect(
         find.text('Version ${PlayerAboutConstants.version}'),
@@ -66,6 +68,10 @@ void main() {
       await openDialog(tester, isCupertino: true);
 
       expect(find.byType(CupertinoAlertDialog), findsOneWidget);
+      final cupertinoTheme = CupertinoTheme.of(
+        tester.element(find.byType(CupertinoAlertDialog)),
+      );
+      expect(cupertinoTheme.brightness, Brightness.dark);
       expect(find.text(PlayerAboutConstants.poweredBy), findsOneWidget);
       expect(
         find.text('Version ${PlayerAboutConstants.version}'),
@@ -144,5 +150,75 @@ void main() {
 
       expect(find.byType(CupertinoAlertDialog), findsOneWidget);
     });
+
+    testWidgets(
+      'Opens Material dialog without throwing when context lacks localizations',
+      (tester) async {
+        await tester.pumpWidget(
+          WidgetsApp(
+            color: const Color(0xFF000000),
+            pageRouteBuilder: <T>(settings, builder) => PageRouteBuilder<T>(
+              settings: settings,
+              pageBuilder: (ctx, _, _) => builder(ctx),
+            ),
+            home: Builder(
+              builder: (context) => TextButton(
+                onPressed: () {
+                  PlayerAboutDialog.show(
+                    context: context,
+                    translations: PlayerTranslations(),
+                    isCupertino: false,
+                    useRootNavigator: false,
+                  );
+                },
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.text('open'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(AlertDialog), findsOneWidget);
+        await tester.tap(find.text('Close'));
+        await tester.pumpAndSettle();
+        expect(find.byType(AlertDialog), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'Opens Cupertino dialog without throwing when context lacks localizations',
+      (tester) async {
+        await tester.pumpWidget(
+          WidgetsApp(
+            color: const Color(0xFF000000),
+            pageRouteBuilder: <T>(settings, builder) => PageRouteBuilder<T>(
+              settings: settings,
+              pageBuilder: (ctx, _, _) => builder(ctx),
+            ),
+            home: Builder(
+              builder: (context) => TextButton(
+                onPressed: () {
+                  PlayerAboutDialog.show(
+                    context: context,
+                    translations: PlayerTranslations(),
+                    isCupertino: true,
+                    useRootNavigator: false,
+                  );
+                },
+                child: const Text('open'),
+              ),
+            ),
+          ),
+        );
+        await tester.tap(find.text('open'));
+        await tester.pumpAndSettle();
+
+        expect(find.byType(CupertinoAlertDialog), findsOneWidget);
+        await tester.tap(find.text('Close'));
+        await tester.pumpAndSettle();
+        expect(find.byType(CupertinoAlertDialog), findsNothing);
+      },
+    );
   });
 }

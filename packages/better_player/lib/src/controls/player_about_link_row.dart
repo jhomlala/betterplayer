@@ -77,7 +77,14 @@ class _PlayerAboutLinkRowState extends State<PlayerAboutLinkRow> {
                     decorationColor: linkColor,
                   ),
                 ),
-                if (_copied) Text(widget.copiedLabel),
+                if (_copied)
+                  Text(
+                    widget.copiedLabel,
+                    style: const TextStyle(
+                      color: Color(0xFF4ADE80),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
               ],
             ),
           ),

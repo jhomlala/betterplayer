@@ -29,7 +29,9 @@ class Constants {
   static const String verticalVideoUrl =
       'https://raw.githubusercontent.com/KazKozDev/auto-vertical-reframe/main/assets/demo_vertical.mp4';
   static String logo = 'logo.svg';
-  static String placeholderUrl = 'https://picsum.photos/id/10/1000/1000';
+  static const String bunnyPlaceholderUrl =
+      'https://raw.githubusercontent.com/jhomlala/betterplayer/master/packages/better_player_example/assets/bunny_placeholder.png';
+  static String placeholderUrl = bunnyPlaceholderUrl;
   static String elephantDreamStreamUrl =
       'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8';
   static String tokenEncodedHlsUrl =

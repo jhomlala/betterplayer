@@ -17,9 +17,18 @@ class _OverviewHeroPlayerState extends State<OverviewHeroPlayer> {
   @override
   void initState() {
     super.initState();
-    const configuration = PlayerConfiguration(
+    final configuration = PlayerConfiguration(
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
+      placeholder: Image.network(
+        Constants.bunnyPlaceholderUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => Image.asset(
+          'assets/bunny_placeholder.png',
+          fit: BoxFit.cover,
+        ),
+      ),
+      showPlaceholderUntilPlay: true,
     );
     final dataSource = PlayerDataSource(
       DataSourceType.network,
@@ -30,6 +39,7 @@ class _OverviewHeroPlayerState extends State<OverviewHeroPlayer> {
       betterPlayerDataSource: dataSource,
     );
     _controller.setVolume(0);
+    _controller.setControlsAlwaysVisible(true);
   }
 
   @override

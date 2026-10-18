@@ -28,19 +28,57 @@ class PlayerAboutDialog extends StatelessWidget {
       isCupertino: isCupertino,
     );
     if (isCupertino) {
-      return showCupertinoDialog<void>(
-        context: context,
-        useRootNavigator: useRootNavigator,
-        barrierDismissible: true,
-        builder: (_) => dialog,
-      );
+      final hasCupertino =
+          Localizations.of<CupertinoLocalizations>(
+            context,
+            CupertinoLocalizations,
+          ) !=
+          null;
+      if (hasCupertino) {
+        return showCupertinoDialog<void>(
+          context: context,
+          useRootNavigator: useRootNavigator,
+          barrierDismissible: true,
+          builder: (_) => dialog,
+        );
+      }
+    } else {
+      final hasMaterial =
+          Localizations.of<MaterialLocalizations>(
+            context,
+            MaterialLocalizations,
+          ) !=
+          null;
+      if (hasMaterial) {
+        return showDialog<void>(
+          context: context,
+          useRootNavigator: useRootNavigator,
+          builder: (_) => dialog,
+        );
+      }
     }
-    return showDialog<void>(
+
+    final themes = InheritedTheme.capture(
+      from: context,
+      to: Navigator.of(context, rootNavigator: useRootNavigator).context,
+    );
+    return showGeneralDialog<void>(
       context: context,
       useRootNavigator: useRootNavigator,
-      builder: (_) => dialog,
+      barrierDismissible: true,
+      barrierLabel: translations.aboutClose,
+      barrierColor: Colors.black54,
+      pageBuilder: (_, _, _) => themes.wrap(dialog),
+      transitionDuration: const Duration(milliseconds: 150),
+      transitionBuilder: (_, animation, _, child) => FadeTransition(
+        opacity: CurvedAnimation(parent: animation, curve: Curves.easeOut),
+        child: child,
+      ),
     );
   }
+
+  static const Color _darkSurfaceColor = Color(0xFF212121);
+  static const Color _darkAccentColor = Color(0xFF60A5FA);
 
   @override
   Widget build(BuildContext context) {
@@ -56,31 +94,56 @@ class PlayerAboutDialog extends StatelessWidget {
         PlayerCupertinoLocalizationsDelegate(translations),
       ],
       child: isCupertino
-          ? CupertinoAlertDialog(
-              content: content,
-              actions: [
-                Semantics(
-                  identifier: 'better_player_about_close',
-                  button: true,
-                  child: CupertinoDialogAction(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: closeLabel,
+          ? CupertinoTheme(
+              data: const CupertinoThemeData(
+                brightness: Brightness.dark,
+                primaryColor: _darkAccentColor,
+              ),
+              child: CupertinoAlertDialog(
+                content: content,
+                actions: [
+                  Semantics(
+                    identifier: 'better_player_about_close',
+                    button: true,
+                    child: CupertinoDialogAction(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: closeLabel,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             )
-          : AlertDialog(
-              content: content,
-              actions: [
-                Semantics(
-                  identifier: 'better_player_about_close',
-                  button: true,
-                  child: TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: closeLabel,
+          : Theme(
+              data: ThemeData.dark().copyWith(
+                colorScheme: const ColorScheme.dark(
+                  surface: _darkSurfaceColor,
+                  primary: _darkAccentColor,
+                ),
+                dialogTheme: const DialogThemeData(
+                  backgroundColor: _darkSurfaceColor,
+                  surfaceTintColor: Colors.transparent,
+                ),
+                textButtonTheme: TextButtonThemeData(
+                  style: TextButton.styleFrom(
+                    foregroundColor: _darkAccentColor,
                   ),
                 ),
-              ],
+              ),
+              child: AlertDialog(
+                backgroundColor: _darkSurfaceColor,
+                surfaceTintColor: Colors.transparent,
+                content: content,
+                actions: [
+                  Semantics(
+                    identifier: 'better_player_about_close',
+                    button: true,
+                    child: TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: closeLabel,
+                    ),
+                  ),
+                ],
+              ),
             ),
     );
   }
