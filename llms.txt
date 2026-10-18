@@ -18,6 +18,7 @@
 - [logging_configuration](https://jhomlala.github.io/betterplayer/logging_configuration)
 - [manual_dispose](https://jhomlala.github.io/betterplayer/manual_dispose)
 - [migration_from_chewie](https://jhomlala.github.io/betterplayer/migration_from_chewie)
+- [migration_from_media_kit](https://jhomlala.github.io/betterplayer/migration_from_media_kit)
 - [migration_from_video_player](https://jhomlala.github.io/betterplayer/migration_from_video_player)
 - [migration_to_1.x.x](https://jhomlala.github.io/betterplayer/migration_to_1.x.x)
 - [mix_audio_with_others](https://jhomlala.github.io/betterplayer/mix_audio_with_others)
