@@ -1554,6 +1554,127 @@ void main() {
         },
       );
 
+      testWidgets(
+        'enablePictureInPicture on macOS invokes engine.enablePictureInPicture with RenderBox coordinates',
+        (tester) async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+          try {
+            final engineController = MockPlayerEngineController()
+              ..isPipSupported = true;
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(),
+              playerEngineController: engineController,
+            );
+            engineController.emitInitialized();
+
+            final key = GlobalKey();
+            await tester.pumpWidget(
+              MaterialApp(
+                home: Scaffold(
+                  body: SizedBox(
+                    key: key,
+                    width: 320,
+                    height: 180,
+                  ),
+                ),
+              ),
+            );
+
+            await controller.enablePictureInPicture(key);
+
+            expect(engineController.enablePipCalled, isTrue);
+            expect(engineController.lastPipWidth, 320.0);
+            expect(engineController.lastPipHeight, 180.0);
+            expect(controller.controlsEnabled, isFalse);
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        },
+      );
+
+      test(
+        'enablePictureInPicture on macOS does not disable controls when RenderBox is null',
+        () async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+          try {
+            final engineController = MockPlayerEngineController()
+              ..isPipSupported = true;
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(),
+              playerEngineController: engineController,
+            );
+            engineController.emitInitialized();
+
+            final unmountedKey = GlobalKey();
+            await controller.enablePictureInPicture(unmountedKey);
+
+            expect(engineController.enablePipCalled, isFalse);
+            expect(controller.controlsEnabled, isTrue);
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        },
+      );
+
+      test(
+        'enablePictureInPicture on iOS does not disable controls when RenderBox is null',
+        () async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+          try {
+            final engineController = MockPlayerEngineController()
+              ..isPipSupported = true;
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(),
+              playerEngineController: engineController,
+            );
+            engineController.emitInitialized();
+
+            final unmountedKey = GlobalKey();
+            await controller.enablePictureInPicture(unmountedKey);
+
+            expect(engineController.enablePipCalled, isFalse);
+            expect(controller.controlsEnabled, isTrue);
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        },
+      );
+
+      test(
+        'enablePictureInPicture on unsupported platform does not disable controls',
+        () async {
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          try {
+            final engineController = MockPlayerEngineController()
+              ..isPipSupported = false;
+            final controller = BetterPlayerMockController(
+              const PlayerConfiguration(),
+              playerEngineController: engineController,
+            );
+            engineController.emitInitialized();
+
+            final key = GlobalKey();
+            await controller.enablePictureInPicture(key);
+
+            expect(engineController.enablePipCalled, isFalse);
+            expect(controller.controlsEnabled, isTrue);
+          } finally {
+            debugDefaultTargetPlatformOverride = null;
+          }
+        },
+      );
+
+      test(
+        'isPictureInPictureSupported returns false when engine is null instead of throwing',
+        () async {
+          final controller = BetterPlayerController(
+            const PlayerConfiguration(),
+          );
+          final isSupported = await controller.isPictureInPictureSupported();
+          expect(isSupported, isFalse);
+        },
+      );
+
       test(
         'setAudioTrack selects track when id is provided even if language is null',
         () {

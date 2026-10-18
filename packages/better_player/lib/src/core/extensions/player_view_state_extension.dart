@@ -224,8 +224,8 @@ extension PlayerViewStateExtension on BetterPlayerController {
   }
 
   ///Enable Picture in Picture (PiP) mode. [betterPlayerGlobalKey] is required
-  ///to open PiP mode in iOS. When device is not supported, PiP mode won't be
-  ///open.
+  ///to open PiP mode in iOS and macOS. When device is not supported, PiP mode
+  ///won't open.
   Future<void>? enablePictureInPicture(GlobalKey betterPlayerGlobalKey) async {
     if (_engine == null) {
       throw StateError('The data source has not been initialized');
@@ -234,67 +234,75 @@ extension PlayerViewStateExtension on BetterPlayerController {
     final isPipSupported =
         (await _engine!.isPictureInPictureSupported()) ?? false;
 
-    if (isPipSupported) {
-      _viewState = _viewState.copyWith(
-        wasInFullScreenBeforePiP: _viewState.isFullScreen,
-      );
-      _viewState = _viewState.copyWith(
-        wasControlsEnabledBeforePiP: _viewState.controlsEnabled,
-      );
-      setControlsEnabled(false);
-      if (defaultTargetPlatform == TargetPlatform.android) {
-        _viewState = _viewState.copyWith(
-          wasInFullScreenBeforePiP: _viewState.isFullScreen,
-        );
-        await _engine?.enablePictureInPicture(
-          left: 0,
-          top: 0,
-          width: 0,
-          height: 0,
-        );
-        _postEvent(PlayerEvent(PlayerEventType.pipStart));
-        enterFullScreen();
-        return;
-      }
-      if (defaultTargetPlatform == TargetPlatform.iOS) {
-        final renderBox =
-            betterPlayerGlobalKey.currentContext!.findRenderObject()
-                as RenderBox?;
-        if (renderBox == null) {
-          PlayerLogger.warning(
-            message:
-                "Can't show PiP. RenderBox is null. Did you provide valid global"
-                ' key?',
-            textureId: textureId,
-          );
-          return;
-        }
-        final position = renderBox.localToGlobal(Offset.zero);
-        return _engine?.enablePictureInPicture(
-          left: position.dx,
-          top: position.dy,
-          width: renderBox.size.width,
-          height: renderBox.size.height,
-        );
-      } else if (kIsWeb) {
-        return _engine?.enablePictureInPicture(
-          left: 0,
-          top: 0,
-          width: 0,
-          height: 0,
-        );
-      } else {
-        PlayerLogger.warning(
-          message: 'Unsupported PiP in current platform.',
-          textureId: textureId,
-        );
-      }
-    } else {
+    if (!isPipSupported) {
       PlayerLogger.warning(
         message:
             "Picture in picture is not supported in this device. If you're "
             "using Android, please check if you're using activity v2 "
             'embedding.',
+        textureId: textureId,
+      );
+      return;
+    }
+
+    if (defaultTargetPlatform == TargetPlatform.android) {
+      _viewState = _viewState.copyWith(
+        wasInFullScreenBeforePiP: _viewState.isFullScreen,
+        wasControlsEnabledBeforePiP: _viewState.controlsEnabled,
+      );
+      setControlsEnabled(false);
+      await _engine?.enablePictureInPicture(
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+      );
+      _postEvent(PlayerEvent(PlayerEventType.pipStart));
+      enterFullScreen();
+      return;
+    }
+
+    if (defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      final renderBox =
+          betterPlayerGlobalKey.currentContext?.findRenderObject()
+              as RenderBox?;
+      if (renderBox == null) {
+        PlayerLogger.warning(
+          message:
+              "Can't show PiP. RenderBox is null. Did you provide valid global"
+              ' key?',
+          textureId: textureId,
+        );
+        return;
+      }
+      _viewState = _viewState.copyWith(
+        wasInFullScreenBeforePiP: _viewState.isFullScreen,
+        wasControlsEnabledBeforePiP: _viewState.controlsEnabled,
+      );
+      setControlsEnabled(false);
+      final position = renderBox.localToGlobal(Offset.zero);
+      return _engine?.enablePictureInPicture(
+        left: position.dx,
+        top: position.dy,
+        width: renderBox.size.width,
+        height: renderBox.size.height,
+      );
+    } else if (kIsWeb) {
+      _viewState = _viewState.copyWith(
+        wasInFullScreenBeforePiP: _viewState.isFullScreen,
+        wasControlsEnabledBeforePiP: _viewState.controlsEnabled,
+      );
+      setControlsEnabled(false);
+      return _engine?.enablePictureInPicture(
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+      );
+    } else {
+      PlayerLogger.warning(
+        message: 'Unsupported PiP in current platform.',
         textureId: textureId,
       );
     }
@@ -319,7 +327,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
   ///Check if picture in picture mode is supported in this device.
   Future<bool> isPictureInPictureSupported() async {
     if (_engine == null) {
-      throw StateError('The data source has not been initialized');
+      return false;
     }
 
     final isPipSupported =

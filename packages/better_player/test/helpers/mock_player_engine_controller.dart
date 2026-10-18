@@ -138,13 +138,25 @@ class MockPlayerEngineController extends PlayerEngineController {
   @override
   Future<bool?> isPictureInPictureSupported() async => isPipSupported;
 
+  bool enablePipCalled = false;
+  double? lastPipTop;
+  double? lastPipLeft;
+  double? lastPipWidth;
+  double? lastPipHeight;
+
   @override
   Future<void> enablePictureInPicture({
     double? top,
     double? left,
     double? width,
     double? height,
-  }) async {}
+  }) async {
+    enablePipCalled = true;
+    lastPipTop = top;
+    lastPipLeft = left;
+    lastPipWidth = width;
+    lastPipHeight = height;
+  }
 
   String? lastTextTrackName;
   int? lastTextTrackIndex;
