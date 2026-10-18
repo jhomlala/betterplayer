@@ -32,6 +32,7 @@ class _PlayerWebControlsState
   VideoPlayerValue? _latestValue;
   String? _errorDescription;
   bool _isMenuOpen = false;
+  bool _isPipSupported = false;
   StreamSubscription<bool>? _controlsVisibilitySubscription;
   final FocusNode _focusNode = FocusNode();
 
@@ -59,6 +60,7 @@ class _PlayerWebControlsState
   void _initialize() {
     _betterPlayerController!.addEventsListener(_onPlayerEvent);
     _betterPlayerController!.addVideoListener(_updateState);
+    _checkPipSupport();
     _controlsVisibilitySubscription = _betterPlayerController!
         .controlsVisibilityStream
         .listen((visibility) {
@@ -73,6 +75,7 @@ class _PlayerWebControlsState
               setState(() {
                 _controlsNotVisible = true;
               });
+              widget.onControlsVisibilityChanged(false);
             }
           }
         });
@@ -89,6 +92,20 @@ class _PlayerWebControlsState
         widget.onControlsVisibilityChanged(showOnInitialize);
       }
     });
+  }
+
+  Future<void> _checkPipSupport() async {
+    try {
+      final supported =
+          await _betterPlayerController?.isPictureInPictureSupported() ?? false;
+      if (mounted && _isPipSupported != supported) {
+        setState(() {
+          _isPipSupported = supported;
+        });
+      }
+    } catch (_) {
+      // Data source may not be initialized yet.
+    }
   }
 
   void _dispose() {
@@ -116,6 +133,7 @@ class _PlayerWebControlsState
         setState(() {
           _errorDescription = null;
         });
+        _checkPipSupport();
       }
 
       _updateState();
@@ -380,6 +398,7 @@ class _PlayerWebControlsState
                                         controller: _betterPlayerController,
                                         configuration:
                                             widget.controlsConfiguration,
+                                        isPipSupported: _isPipSupported,
                                         onPlayPause: _onPlayPause,
                                         onMenuToggle: _onMenuToggle,
                                       ),
@@ -557,12 +576,14 @@ class _PlayerWebBottomBar extends StatefulWidget {
     required this.configuration,
     required this.onPlayPause,
     required this.onMenuToggle,
+    this.isPipSupported = false,
   });
 
   final BetterPlayerController? controller;
   final PlayerControlsConfiguration configuration;
   final VoidCallback onPlayPause;
   final VoidCallback onMenuToggle;
+  final bool isPipSupported;
 
   @override
   State<_PlayerWebBottomBar> createState() => _PlayerWebBottomBarState();
@@ -685,15 +706,29 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
             ),
           ],
           const Spacer(),
-          if (widget.configuration.enablePip &&
-              widget.controller?.isLiveStream() == false)
-            IconButton(
-              icon: Icon(
-                widget.configuration.pipMenuIcon,
-                color: widget.configuration.iconsColor,
-              ),
-              onPressed: () => widget.controller?.enablePictureInPicture(
-                widget.controller!.betterPlayerGlobalKey!,
+          if (widget.isPipSupported &&
+              widget.configuration.enablePip &&
+              widget.controller?.isLiveStream() == false &&
+              widget.controller?.betterPlayerGlobalKey != null)
+            Semantics(
+              label: 'better_player_material_controls_pip_button',
+              identifier: 'better_player_material_controls_pip_button',
+              container: true,
+              button: true,
+              child: IconButton(
+                tooltip:
+                    widget.controller?.translations.controlsPipLabel ??
+                    'Picture in Picture',
+                icon: Icon(
+                  widget.configuration.pipMenuIcon,
+                  color: widget.configuration.iconsColor,
+                ),
+                onPressed: () {
+                  final globalKey = widget.controller?.betterPlayerGlobalKey;
+                  if (globalKey != null) {
+                    widget.controller?.enablePictureInPicture(globalKey);
+                  }
+                },
               ),
             ),
           if (widget.configuration.enableOverflowMenu)

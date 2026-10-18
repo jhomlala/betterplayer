@@ -175,6 +175,38 @@ class PlayerWebSettingsRootView extends StatelessWidget {
                 ),
               ),
             ),
+          if (controlsConfiguration.overflowMenuCustomItems.isNotEmpty)
+            ...controlsConfiguration.overflowMenuCustomItems.map(
+              (customItem) => Semantics(
+                label:
+                    'better_player_overflow_menu_custom_item_${customItem.title.toLowerCase().replaceAll(' ', '_')}',
+                identifier:
+                    'better_player_overflow_menu_custom_item_${customItem.title.toLowerCase().replaceAll(' ', '_')}',
+                container: true,
+                child: Semantics(
+                  container: true,
+                  button: true,
+                  child: InkWell(
+                    onTap: () {
+                      onClose();
+                      customItem.onClicked();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      child: PlayerWebMenuRow(
+                        title: customItem.title,
+                        icon: customItem.icon,
+                        controlsConfiguration: controlsConfiguration,
+                        showChevron: false,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

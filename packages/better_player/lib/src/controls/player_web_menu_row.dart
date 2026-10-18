@@ -9,6 +9,7 @@ class PlayerWebMenuRow extends StatelessWidget {
     required this.icon,
     required this.controlsConfiguration,
     this.value,
+    this.showChevron = true,
     super.key,
   });
 
@@ -23,6 +24,9 @@ class PlayerWebMenuRow extends StatelessWidget {
 
   /// Controls configuration containing colors and styles.
   final PlayerControlsConfiguration controlsConfiguration;
+
+  /// Whether the trailing chevron icon is shown.
+  final bool showChevron;
 
   @override
   Widget build(BuildContext context) {
@@ -61,11 +65,12 @@ class PlayerWebMenuRow extends StatelessWidget {
           ),
           const SizedBox(width: 8),
         ],
-        Icon(
-          Icons.chevron_right,
-          color: controlsConfiguration.iconsColor,
-          size: 16,
-        ),
+        if (showChevron)
+          Icon(
+            Icons.chevron_right,
+            color: controlsConfiguration.iconsColor,
+            size: 16,
+          ),
       ],
     );
   }

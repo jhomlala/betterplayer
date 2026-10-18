@@ -752,6 +752,185 @@ void main() {
       expect(find.text('0.25x'), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'PiP button is hidden when PiP is not supported',
+    (tester) async {
+      await setupControls(
+        tester,
+        controlsConfiguration: const PlayerControlsConfiguration(
+          playerTheme: PlayerTheme.web,
+        ),
+      );
+      // mockEngine.isPipSupported is false by default
+      expect(
+        find.bySemanticsLabel('better_player_material_controls_pip_button'),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets(
+    'PiP button is hidden when betterPlayerGlobalKey is null',
+    (tester) async {
+      mockEngine = MockPlayerEngineController()..isPipSupported = true;
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+          ),
+        ),
+        playerEngineController: mockEngine,
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+      mockEngine.emitInitialized();
+
+      // Render PlayerWebControls directly without BetterPlayer so betterPlayerGlobalKey is null
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayerControllerProvider(
+            controller: controller,
+            child: PlayerWebControls(
+              onControlsVisibilityChanged: (_) {},
+              controlsConfiguration: const PlayerControlsConfiguration(
+                playerTheme: PlayerTheme.web,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.bySemanticsLabel('better_player_material_controls_pip_button'),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets(
+    'PiP button is shown when supported and tapping triggers PiP',
+    (tester) async {
+      mockEngine = MockPlayerEngineController()..isPipSupported = true;
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+          ),
+        ),
+        playerEngineController: mockEngine,
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayer(controller: controller),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      controller.setControlsVisibility(true);
+      controller.setControlsAlwaysVisible(true);
+      await tester.pumpAndSettle();
+
+      final pipButton = find.bySemanticsLabel(
+        'better_player_material_controls_pip_button',
+      );
+      expect(pipButton, findsOneWidget);
+
+      await tester.tap(pipButton);
+      await tester.pumpAndSettle();
+
+      expect(mockEngine.enablePipCalled, isTrue);
+    },
+  );
+
+  testWidgets(
+    'overflowMenuCustomItems are rendered in web settings menu and handle clicks',
+    (tester) async {
+      var clicked = false;
+      final customItem = PlayerOverflowMenuItem(
+        Icons.report,
+        'Report Problem',
+        () => clicked = true,
+      );
+
+      await setupControls(
+        tester,
+        controlsConfiguration: PlayerControlsConfiguration(
+          playerTheme: PlayerTheme.web,
+          overflowMenuCustomItems: [customItem],
+        ),
+      );
+
+      final moreButton = find.bySemanticsLabel(
+        'better_player_material_controls_more_button',
+      );
+      await tester.tap(moreButton);
+      await tester.pumpAndSettle();
+
+      final customFinder = find.bySemanticsLabel(
+        'better_player_overflow_menu_custom_item_report_problem',
+      );
+      expect(customFinder, findsOneWidget);
+      expect(find.text('Report Problem'), findsOneWidget);
+
+      await tester.tap(customFinder);
+      await tester.pumpAndSettle();
+
+      expect(clicked, isTrue);
+      expect(find.byType(PlayerWebSettingsMenu), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'setControlsVisibility(false) fires controlsHiddenEnd event on Web',
+    (tester) async {
+      final events = <PlayerEventType>[];
+
+      mockEngine = MockPlayerEngineController();
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+          ),
+        ),
+        playerEngineController: mockEngine,
+      );
+      controller.addEventsListener((e) => events.add(e.betterPlayerEventType));
+
+      await controller.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayer(controller: controller),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // Make controls visible first
+      controller.setControlsVisibility(true);
+      await tester.pumpAndSettle();
+      events.clear();
+
+      // Programmatically hide controls
+      controller.setControlsVisibility(false);
+      await tester.pumpAndSettle();
+
+      expect(events, contains(PlayerEventType.controlsHiddenEnd));
+      expect(controller.isControlsVisible, isFalse);
+    },
+  );
 }
 
 class _WebHidingBrandingExtension extends PlayerBrandingExtension {
