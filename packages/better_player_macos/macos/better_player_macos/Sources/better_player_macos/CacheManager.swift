@@ -9,6 +9,7 @@ import Cache
 
     /// Stores the last pre-cached `CachingPlayerItem` objects.
     private var preCachedURLs = [String: CachingPlayerItem]()
+    private var lastReportedBytesMap = [String: Int]()
 
     /// Callback for pre-caching completion.
     private var completionHandler: ((_ success: Bool) -> Void)? = nil
@@ -228,16 +229,44 @@ import Cache
 extension CacheManager: CachingPlayerItemDelegate {
 
     func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {
+        let key = playerItem.cacheKey ?? playerItem.url.absoluteString
+        lastReportedBytesMap.removeValue(forKey: key)
         // A track is downloaded. Saving it to the cache asynchronously.
-        storage?.async.setObject(data, forKey: playerItem.cacheKey ?? playerItem.url.absoluteString, completion: { _ in })
+        storage?.async.setObject(data, forKey: key, completion: { _ in })
+        BetterPlayerApi.reportPreCacheProgress(
+            url: playerItem.url.absoluteString,
+            cacheKey: playerItem.cacheKey,
+            progress: 1.0,
+            bytesDownloaded: Int64(data.count),
+            totalBytes: Int64(data.count)
+        )
         self.completionHandler?(true)
     }
 
     func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int) {
-        // Optional: track download progress
+        let total = Int64(bytesExpected)
+        let downloaded = Int64(bytesDownloaded)
+        let progress = total > 0 ? min(max(Double(downloaded) / Double(total), 0.0), 1.0) : -1.0
+
+        let throttleThreshold = max(bytesExpected / 100, 32 * 1024)
+        let key = playerItem.cacheKey ?? playerItem.url.absoluteString
+        let lastReported = lastReportedBytesMap[key] ?? 0
+
+        if bytesDownloaded - lastReported >= throttleThreshold || (bytesExpected > 0 && bytesDownloaded >= bytesExpected) {
+            lastReportedBytesMap[key] = bytesDownloaded
+            BetterPlayerApi.reportPreCacheProgress(
+                url: playerItem.url.absoluteString,
+                cacheKey: playerItem.cacheKey,
+                progress: progress,
+                bytesDownloaded: downloaded,
+                totalBytes: total
+            )
+        }
     }
 
     func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
+        let key = playerItem.cacheKey ?? playerItem.url.absoluteString
+        lastReportedBytesMap.removeValue(forKey: key)
         self.completionHandler?(false)
     }
 }

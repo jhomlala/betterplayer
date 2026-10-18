@@ -275,7 +275,11 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
   }
 
   @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+  Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
     _log(
       message:
           'preCache: url=${dataSource.uri ?? dataSource.asset}, preCacheSize=$preCacheSize '

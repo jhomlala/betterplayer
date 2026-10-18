@@ -15,10 +15,27 @@ class BetterPlayerApi {
         var activity: Activity? = null
         @Keep
         private var _logCallback: BetterPlayerLogCallback? = null
+        @Keep
+        private var _preCacheCallback: BetterPlayerPreCacheCallback? = null
 
         @Keep
         fun setLogCallback(callback: BetterPlayerLogCallback?) {
             _logCallback = callback
+        }
+
+        @Keep
+        fun setPreCacheCallback(callback: BetterPlayerPreCacheCallback?) {
+            _preCacheCallback = callback
+        }
+
+        internal fun reportPreCacheProgress(
+            url: String,
+            cacheKey: String?,
+            progress: Double,
+            bytesDownloaded: Long,
+            totalBytes: Long
+        ) {
+            _preCacheCallback?.onProgress(url, cacheKey, progress, bytesDownloaded, totalBytes)
         }
 
         internal fun log(level: Int, msg: String) {

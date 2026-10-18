@@ -43,9 +43,27 @@ betterPlayerController.clearCache();
 ```
 
 ### Pre-Caching
-You can start downloading a video into the cache before playback begins:
+You can download video data into cache before playback begins. Use the `onProgress` callback to monitor download progress in real time:
+
 ```dart
-betterPlayerController.preCache(_betterPlayerDataSource);
+await betterPlayerController.preCache(
+  _betterPlayerDataSource,
+  onProgress: (PreCacheProgress progress) {
+    print('Progress: ${progress.percent.toStringAsFixed(1)}%');
+    print('Downloaded: ${progress.bytesDownloaded} / ${progress.totalBytes} bytes');
+  },
+);
+```
+
+### Pre-Cache Progress Stream
+You can also monitor all active pre-cache tasks across the application via the broadcast stream:
+
+```dart
+final subscription = betterPlayerController.preCacheProgressStream.listen(
+  (PreCacheProgress progress) {
+    print('${progress.url}: ${progress.percent}%');
+  },
+);
 ```
 
 ### Stop Pre-Caching
@@ -62,4 +80,5 @@ The underlying implementation varies by platform. Android uses ExoPlayer's inter
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Normal Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | x |
 | **Pre-Caching** | ✓ | ✓ | x | ✓ | x | ✓ | x | x | x |
+| **Pre-Cache Progress** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
 | **Stop Caching** | ✓ | ✓ | x | ✓ | x | ✓ | x | x | x |

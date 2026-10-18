@@ -56,12 +56,31 @@ class CacheWorker(
                     maxCacheFileSize,
                     dataSourceFactory
                 )
+                var lastReportedBytes = 0L
                 cacheWriter = CacheWriter(
                     cacheDataSourceFactory.createDataSource(),
                     dataSpec,
                     null
                 ) { _: Long, bytesCached: Long, _: Long ->
-                    val completedData = (bytesCached * 100f / preCacheSize).toDouble()
+                    val completedFraction = if (preCacheSize > 0) {
+                        (bytesCached.toDouble() / preCacheSize.toDouble()).coerceIn(0.0, 1.0)
+                    } else {
+                        0.0
+                    }
+                    val completedData = (completedFraction * 100.0)
+
+                    val throttleThreshold = (preCacheSize / 100).coerceAtLeast(1L)
+                    if (bytesCached - lastReportedBytes >= throttleThreshold || bytesCached >= preCacheSize) {
+                        lastReportedBytes = bytesCached
+                        BetterPlayerApi.reportPreCacheProgress(
+                            url ?: "",
+                            cacheKey,
+                            completedFraction,
+                            bytesCached,
+                            preCacheSize
+                        )
+                    }
+
                     if (completedData >= lastCacheReportIndex * 10) {
                         lastCacheReportIndex += 1
                         Log.d(TAG, "Completed pre cache of $url: ${lastCacheReportIndex * 10}%")

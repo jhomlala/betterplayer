@@ -7,6 +7,10 @@ extension PlayerCacheExtension on BetterPlayerController {
     return PlayerEngineController.clearCache();
   }
 
+  /// Broadcast stream of pre-cache progress events across active downloads.
+  Stream<PreCacheProgress> get preCacheProgressStream =>
+      PlayerEngineController.preCacheProgressStream;
+
   ///PreCache a video. On Android, the future succeeds when
   ///the requested size, specified in
   ///[CacheConfiguration.preCacheSize], is downloaded or when the
@@ -14,7 +18,12 @@ extension PlayerCacheExtension on BetterPlayerController {
   ///On iOS, the whole file will be downloaded, since [maxCacheFileSize] is
   ///currently not supported on iOS. On iOS, the video format must be in this
   ///list: https://github.com/sendyhalim/Swime/blob/master/Sources/MimeType.swift
-  Future<void> preCache(PlayerDataSource betterPlayerDataSource) async {
+  ///
+  ///Optional [onProgress] callback to receive progress updates for this video.
+  Future<void> preCache(
+    PlayerDataSource betterPlayerDataSource, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
     final url = betterPlayerDataSource.url.toLowerCase();
     final videoExtension =
         betterPlayerDataSource.videoExtension?.toLowerCase() ?? '';
@@ -45,10 +54,30 @@ extension PlayerCacheExtension on BetterPlayerController {
       videoExtension: betterPlayerDataSource.videoExtension,
     );
 
-    return PlayerEngineController.preCache(
-      dataSource,
-      cacheConfig.preCacheSize,
-    );
+    StreamSubscription<PreCacheProgress>? progressSubscription;
+    if (onProgress != null) {
+      progressSubscription = PlayerEngineController.preCacheProgressStream
+          .listen((event) {
+            final matchesUrl = event.url == betterPlayerDataSource.url;
+            final matchesKey =
+                cacheConfig.key != null &&
+                cacheConfig.key!.isNotEmpty &&
+                event.cacheKey == cacheConfig.key;
+            if (matchesUrl || matchesKey) {
+              onProgress(event);
+            }
+          });
+    }
+
+    try {
+      await PlayerEngineController.preCache(
+        dataSource,
+        cacheConfig.preCacheSize,
+        onProgress: onProgress,
+      );
+    } finally {
+      await progressSubscription?.cancel();
+    }
   }
 
   ///Stop pre cache for given [betterPlayerDataSource]. If there was no pre

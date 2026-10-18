@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 import 'package:better_player_platform_interface/src/models/data_source.dart';
+import 'package:better_player_platform_interface/src/models/pre_cache_progress.dart';
 import 'package:better_player_platform_interface/src/models/video_event.dart';
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -34,6 +35,22 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     _instance = instance;
   }
 
+  final StreamController<PreCacheProgress> _preCacheProgressController =
+      StreamController<PreCacheProgress>.broadcast();
+
+  /// Stream of pre-cache progress updates across active downloads.
+  Stream<PreCacheProgress> get preCacheProgressStream =>
+      _preCacheProgressController.stream;
+
+  /// Emits a pre-cache progress event on [preCacheProgressStream].
+  @protected
+  @visibleForTesting
+  void emitPreCacheProgress(PreCacheProgress progress) {
+    if (!_preCacheProgressController.isClosed) {
+      _preCacheProgressController.add(progress);
+    }
+  }
+
   /// Clears one video.
   Future<void> dispose(int? textureId) {
     throw UnimplementedError('dispose() has not been implemented.');
@@ -47,7 +64,11 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
   }
 
   /// Pre-caches a video.
-  Future<void> preCache(DataSource dataSource, int preCacheSize) {
+  Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) {
     throw UnimplementedError('preCache() has not been implemented.');
   }
 

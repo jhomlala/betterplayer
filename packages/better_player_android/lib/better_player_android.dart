@@ -315,7 +315,11 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
   }
 
   @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+  Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
     jniPreCache(
       dataSource.uri ?? dataSource.asset ?? '',
       preCacheSize,

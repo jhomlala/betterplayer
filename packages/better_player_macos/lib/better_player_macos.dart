@@ -382,7 +382,11 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }
 
   @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+  Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
     BetterPlayerApi.preCacheWithUrl(
       (dataSource.uri ?? dataSource.asset ?? '').toNSString(),
       cacheKey: dataSource.cacheConfiguration?.key?.toNSString(),

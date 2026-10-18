@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Native pre-cache progress reporting in `CacheManager` via `BetterPlayerPreCacheCallback`.
+
 ## 1.8.0
 - Fixed: Added fallback matching by displayName, language, and index in `setAudioTrack` to support HLS audio tracks lacking common title metadata.
 

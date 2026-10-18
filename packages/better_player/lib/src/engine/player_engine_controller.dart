@@ -584,8 +584,19 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     return _betterPlayerPlatform.clearCache();
   }
 
-  static Future preCache(DataSource dataSource, int preCacheSize) async {
-    return _betterPlayerPlatform.preCache(dataSource, preCacheSize);
+  static Stream<PreCacheProgress> get preCacheProgressStream =>
+      _betterPlayerPlatform.preCacheProgressStream;
+
+  static Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
+    return _betterPlayerPlatform.preCache(
+      dataSource,
+      preCacheSize,
+      onProgress: onProgress,
+    );
   }
 
   static Future stopPreCache(String url, String? cacheKey) async {
