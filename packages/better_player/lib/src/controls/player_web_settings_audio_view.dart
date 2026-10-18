@@ -46,18 +46,21 @@ class PlayerWebSettingsAudioView extends StatelessWidget {
             label: 'better_player_overflow_menu_audio_tracks_default',
             identifier: 'better_player_overflow_menu_audio_tracks_default',
             container: true,
-            button: true,
-            child: InkWell(
-              onTap: onClose,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                child: PlayerWebCheckRow(
-                  title: controller.translations.generalDefault,
-                  isSelected: true,
-                  controlsConfiguration: controlsConfiguration,
+            child: Semantics(
+              container: true,
+              button: true,
+              child: InkWell(
+                onTap: onClose,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  child: PlayerWebCheckRow(
+                    title: controller.translations.generalDefault,
+                    isSelected: true,
+                    controlsConfiguration: controlsConfiguration,
+                  ),
                 ),
               ),
             ),
@@ -83,21 +86,25 @@ class PlayerWebSettingsAudioView extends StatelessWidget {
                   identifier:
                       'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}',
                   container: true,
-                  button: true,
-                  child: InkWell(
-                    onTap: () {
-                      controller.setAudioTrack(t);
-                      onClose();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      child: PlayerWebCheckRow(
-                        title: t.label ?? 'Track ${t.id}',
-                        isSelected: controller.betterPlayerAsmsAudioTrack == t,
-                        controlsConfiguration: controlsConfiguration,
+                  child: Semantics(
+                    container: true,
+                    button: true,
+                    child: InkWell(
+                      onTap: () {
+                        controller.setAudioTrack(t);
+                        onClose();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        child: PlayerWebCheckRow(
+                          title: t.label ?? 'Track ${t.id}',
+                          isSelected:
+                              controller.betterPlayerAsmsAudioTrack == t,
+                          controlsConfiguration: controlsConfiguration,
+                        ),
                       ),
                     ),
                   ),

@@ -48,21 +48,24 @@ class PlayerWebSettingsRootView extends StatelessWidget {
               label: 'better_player_overflow_menu_subtitles',
               identifier: 'better_player_overflow_menu_subtitles',
               container: true,
-              button: true,
-              child: InkWell(
-                onTap: () => onNavigate(PlayerWebSettingsPage.subtitles),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: PlayerWebMenuRow(
-                    title: controller.translations.overflowMenuSubtitles,
-                    value:
-                        controller.betterPlayerSubtitlesSource?.name ??
-                        controller.translations.generalNone,
-                    icon: Icons.subtitles,
-                    controlsConfiguration: controlsConfiguration,
+              child: Semantics(
+                container: true,
+                button: true,
+                child: InkWell(
+                  onTap: () => onNavigate(PlayerWebSettingsPage.subtitles),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    child: PlayerWebMenuRow(
+                      title: controller.translations.overflowMenuSubtitles,
+                      value:
+                          controller.betterPlayerSubtitlesSource?.name ??
+                          controller.translations.generalNone,
+                      icon: Icons.subtitles,
+                      controlsConfiguration: controlsConfiguration,
+                    ),
                   ),
                 ),
               ),
@@ -72,19 +75,22 @@ class PlayerWebSettingsRootView extends StatelessWidget {
               label: 'better_player_overflow_menu_quality',
               identifier: 'better_player_overflow_menu_quality',
               container: true,
-              button: true,
-              child: InkWell(
-                onTap: () => onNavigate(PlayerWebSettingsPage.quality),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: PlayerWebMenuRow(
-                    title: controller.translations.overflowMenuQuality,
-                    value: _getResolutionLabel(),
-                    icon: Icons.tune,
-                    controlsConfiguration: controlsConfiguration,
+              child: Semantics(
+                container: true,
+                button: true,
+                child: InkWell(
+                  onTap: () => onNavigate(PlayerWebSettingsPage.quality),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    child: PlayerWebMenuRow(
+                      title: controller.translations.overflowMenuQuality,
+                      value: _getResolutionLabel(),
+                      icon: Icons.tune,
+                      controlsConfiguration: controlsConfiguration,
+                    ),
                   ),
                 ),
               ),
@@ -94,21 +100,24 @@ class PlayerWebSettingsRootView extends StatelessWidget {
               label: 'better_player_overflow_menu_audio_tracks',
               identifier: 'better_player_overflow_menu_audio_tracks',
               container: true,
-              button: true,
-              child: InkWell(
-                onTap: () => onNavigate(PlayerWebSettingsPage.audioTracks),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: PlayerWebMenuRow(
-                    title: controller.translations.overflowMenuAudioTracks,
-                    value:
-                        controller.betterPlayerAsmsAudioTrack?.label ??
-                        controller.translations.generalDefault,
-                    icon: Icons.language,
-                    controlsConfiguration: controlsConfiguration,
+              child: Semantics(
+                container: true,
+                button: true,
+                child: InkWell(
+                  onTap: () => onNavigate(PlayerWebSettingsPage.audioTracks),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    child: PlayerWebMenuRow(
+                      title: controller.translations.overflowMenuAudioTracks,
+                      value:
+                          controller.betterPlayerAsmsAudioTrack?.label ??
+                          controller.translations.generalDefault,
+                      icon: Icons.language,
+                      controlsConfiguration: controlsConfiguration,
+                    ),
                   ),
                 ),
               ),
@@ -118,19 +127,22 @@ class PlayerWebSettingsRootView extends StatelessWidget {
               label: 'better_player_overflow_menu_playback_speed',
               identifier: 'better_player_overflow_menu_playback_speed',
               container: true,
-              button: true,
-              child: InkWell(
-                onTap: () => onNavigate(PlayerWebSettingsPage.playbackSpeed),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: PlayerWebMenuRow(
-                    title: controller.translations.overflowMenuPlaybackSpeed,
-                    value: '${controller.videoPlayerValue?.speed ?? 1.0}x',
-                    icon: Icons.slow_motion_video,
-                    controlsConfiguration: controlsConfiguration,
+              child: Semantics(
+                container: true,
+                button: true,
+                child: InkWell(
+                  onTap: () => onNavigate(PlayerWebSettingsPage.playbackSpeed),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    child: PlayerWebMenuRow(
+                      title: controller.translations.overflowMenuPlaybackSpeed,
+                      value: '${controller.videoPlayerValue?.speed ?? 1.0}x',
+                      icon: Icons.slow_motion_video,
+                      controlsConfiguration: controlsConfiguration,
+                    ),
                   ),
                 ),
               ),
@@ -140,22 +152,25 @@ class PlayerWebSettingsRootView extends StatelessWidget {
               label: 'better_player_overflow_menu_about',
               identifier: 'better_player_overflow_menu_about',
               container: true,
-              button: true,
-              child: InkWell(
-                onTap: () {
-                  onClose();
-                  onShowAbout();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  child: PlayerWebMenuRow(
-                    title: controller.translations.overflowMenuAbout,
-                    value: PlayerAboutConstants.version,
-                    icon: Icons.info_outline,
-                    controlsConfiguration: controlsConfiguration,
+              child: Semantics(
+                container: true,
+                button: true,
+                child: InkWell(
+                  onTap: () {
+                    onClose();
+                    onShowAbout();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
+                    child: PlayerWebMenuRow(
+                      title: controller.translations.overflowMenuAbout,
+                      value: PlayerAboutConstants.version,
+                      icon: Icons.info_outline,
+                      controlsConfiguration: controlsConfiguration,
+                    ),
                   ),
                 ),
               ),

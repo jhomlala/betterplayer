@@ -271,6 +271,55 @@ void main() {
   });
 
   testWidgets(
+    'Web settings menu options and submenus have semantics labels',
+    (tester) async {
+      await setupControls(tester);
+
+      final moreButton = find.bySemanticsLabel(
+        'better_player_material_controls_more_button',
+      );
+      await tester.tap(moreButton);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_subtitles'),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_quality'),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_audio_tracks'),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_playback_speed'),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_about'),
+        findsOneWidget,
+      );
+
+      // Open playback speed submenu
+      await tester.tap(
+        find.bySemanticsLabel('better_player_overflow_menu_playback_speed'),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_back'),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_speed_2.0'),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
     'Web settings menu excludes About when branding extension hides it',
     (tester) async {
       await setupControls(

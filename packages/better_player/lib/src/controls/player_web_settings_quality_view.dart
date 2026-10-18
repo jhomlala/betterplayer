@@ -59,21 +59,24 @@ class PlayerWebSettingsQualityView extends StatelessWidget {
                     label: identifier,
                     identifier: identifier,
                     container: true,
-                    button: true,
-                    child: InkWell(
-                      onTap: () {
-                        controller.setResolution(entry.value);
-                        onClose();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 10,
-                        ),
-                        child: PlayerWebCheckRow(
-                          title: entry.key,
-                          isSelected: isSelected,
-                          controlsConfiguration: controlsConfiguration,
+                    child: Semantics(
+                      container: true,
+                      button: true,
+                      child: InkWell(
+                        onTap: () {
+                          controller.setResolution(entry.value);
+                          onClose();
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 10,
+                          ),
+                          child: PlayerWebCheckRow(
+                            title: entry.key,
+                            isSelected: isSelected,
+                            controlsConfiguration: controlsConfiguration,
+                          ),
                         ),
                       ),
                     ),
@@ -97,21 +100,24 @@ class PlayerWebSettingsQualityView extends StatelessWidget {
             label: 'better_player_overflow_menu_quality_auto',
             identifier: 'better_player_overflow_menu_quality_auto',
             container: true,
-            button: true,
-            child: InkWell(
-              onTap: () {
-                controller.setTrack(PlayerAsmsTrack.defaultTrack());
-                onClose();
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                child: PlayerWebCheckRow(
-                  title: controller.translations.qualityAuto,
-                  isSelected: true,
-                  controlsConfiguration: controlsConfiguration,
+            child: Semantics(
+              container: true,
+              button: true,
+              child: InkWell(
+                onTap: () {
+                  controller.setTrack(PlayerAsmsTrack.defaultTrack());
+                  onClose();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  child: PlayerWebCheckRow(
+                    title: controller.translations.qualityAuto,
+                    isSelected: true,
+                    controlsConfiguration: controlsConfiguration,
+                  ),
                 ),
               ),
             ),
@@ -137,18 +143,24 @@ class PlayerWebSettingsQualityView extends StatelessWidget {
           label: identifier,
           identifier: identifier,
           container: true,
-          button: true,
-          child: InkWell(
-            onTap: () {
-              controller.setTrack(t);
-              onClose();
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: PlayerWebCheckRow(
-                title: label,
-                isSelected: isSelected,
-                controlsConfiguration: controlsConfiguration,
+          child: Semantics(
+            container: true,
+            button: true,
+            child: InkWell(
+              onTap: () {
+                controller.setTrack(t);
+                onClose();
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                child: PlayerWebCheckRow(
+                  title: label,
+                  isSelected: isSelected,
+                  controlsConfiguration: controlsConfiguration,
+                ),
               ),
             ),
           ),

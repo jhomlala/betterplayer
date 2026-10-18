@@ -78,21 +78,24 @@ class PlayerWebSettingsSubtitlesView extends StatelessWidget {
                   label: identifier,
                   identifier: identifier,
                   container: true,
-                  button: true,
-                  child: InkWell(
-                    onTap: () {
-                      controller.setupSubtitleSource(s);
-                      onClose();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      child: PlayerWebCheckRow(
-                        title: name,
-                        isSelected: isSelected,
-                        controlsConfiguration: controlsConfiguration,
+                  child: Semantics(
+                    container: true,
+                    button: true,
+                    child: InkWell(
+                      onTap: () {
+                        controller.setupSubtitleSource(s);
+                        onClose();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        child: PlayerWebCheckRow(
+                          title: name,
+                          isSelected: isSelected,
+                          controlsConfiguration: controlsConfiguration,
+                        ),
                       ),
                     ),
                   ),

@@ -30,33 +30,39 @@ class PlayerWebSettingsHeader extends StatelessWidget {
           label: 'better_player_overflow_menu_back',
           identifier: 'better_player_overflow_menu_back',
           container: true,
-          button: true,
-          excludeSemantics: true,
-          child: InkWell(
-            onTap: onBack,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.arrow_back,
-                    color: controlsConfiguration.iconsColor,
-                    size: 16,
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: TextStyle(
-                        color: controlsConfiguration.textColor,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                      softWrap: false,
+          child: Semantics(
+            container: true,
+            button: true,
+            excludeSemantics: true,
+            child: InkWell(
+              onTap: onBack,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.arrow_back,
+                      color: controlsConfiguration.iconsColor,
+                      size: 16,
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          color: controlsConfiguration.textColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        softWrap: false,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

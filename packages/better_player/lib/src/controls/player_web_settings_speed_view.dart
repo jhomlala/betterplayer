@@ -56,21 +56,24 @@ class PlayerWebSettingsSpeedView extends StatelessWidget {
                   label: identifier,
                   identifier: identifier,
                   container: true,
-                  button: true,
-                  child: InkWell(
-                    onTap: () {
-                      controller.setSpeed(s);
-                      onClose();
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      child: PlayerWebCheckRow(
-                        title: '${s}x',
-                        isSelected: currentSpeed == s,
-                        controlsConfiguration: controlsConfiguration,
+                  child: Semantics(
+                    container: true,
+                    button: true,
+                    child: InkWell(
+                      onTap: () {
+                        controller.setSpeed(s);
+                        onClose();
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        child: PlayerWebCheckRow(
+                          title: '${s}x',
+                          isSelected: currentSpeed == s,
+                          controlsConfiguration: controlsConfiguration,
+                        ),
                       ),
                     ),
                   ),
