@@ -23,7 +23,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
       BetterPlayerApi.setLogCallback(null);
       return;
     }
-    final ffiFn = BetterPlayerLogCallback$Builder.implement(
+    final ffiFn = BetterPlayerLogCallback$Builder.implementAsListener(
       onLog_message_: (int level, objc.NSString message) {
         callback(
           levelIndex: level,
@@ -48,15 +48,35 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }
 
   void _cleanupOrphanedPlayers() {
-    if (!Platform.isMacOS) return;
+    cleanupOrphanedPlayers();
+  }
+
+  @visibleForTesting
+  void cleanupOrphanedPlayers({Map<Object, Object>? playersOverride}) {
+    if (!Platform.isMacOS && playersOverride == null) return;
     try {
-      final players = BetterPlayerApi.getPlayers();
-      final map = players.asDart();
-      for (final key in map.keys) {
-        if (key is objc.NSNumber) {
-          final player = BetterPlayerApi.getPlayer(key.longLongValue);
-          player?.dispose();
+      if (Platform.isMacOS) {
+        BetterPlayerApi.setLogCallback(null);
+      }
+      final keys = <int>[];
+      if (playersOverride != null) {
+        for (final key in playersOverride.keys) {
+          if (key is num) {
+            keys.add(key.toInt());
+          }
         }
+      } else {
+        final players = BetterPlayerApi.getPlayers();
+        final map = players.toDartMap();
+        for (final key in map.keys) {
+          if (key is num) {
+            keys.add(key.toInt());
+          }
+        }
+      }
+      for (final id in keys) {
+        final player = getPlayer(id);
+        player?.dispose();
       }
     } catch (_) {}
   }
@@ -129,7 +149,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }) async {
     int? currentTextureId;
 
-    final callback = BetterPlayerCallback$Builder.implement(
+    final callback = BetterPlayerCallback$Builder.implementAsListener(
       onInitializedWithDurationMs_width_height_key_:
           (int durationMs, double width, double height, objc.NSString? key) {
             if (currentTextureId == null) return;

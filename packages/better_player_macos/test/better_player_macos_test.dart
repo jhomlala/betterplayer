@@ -417,5 +417,26 @@ void main() {
         expect(macosPlayer.callbacks.containsKey(1), isFalse);
       },
     );
+
+    test(
+      'cleanupOrphanedPlayers disposes players matching numeric keys',
+      () {
+        macosPlayer.cleanupOrphanedPlayers(playersOverride: {1: Object()});
+        verify(() => mockPlayer.dispose()).called(1);
+      },
+    );
+
+    test(
+      'cleanupOrphanedPlayers ignores non-matching or empty player maps',
+      () {
+        macosPlayer.cleanupOrphanedPlayers(playersOverride: {});
+        verifyNever(() => mockPlayer.dispose());
+
+        macosPlayer.cleanupOrphanedPlayers(
+          playersOverride: {'stringKey': Object()},
+        );
+        verifyNever(() => mockPlayer.dispose());
+      },
+    );
   });
 }
