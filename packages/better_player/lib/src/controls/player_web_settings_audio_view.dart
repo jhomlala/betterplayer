@@ -46,6 +46,8 @@ class PlayerWebSettingsAudioView extends StatelessWidget {
             label: 'better_player_overflow_menu_audio_tracks_default',
             identifier: 'better_player_overflow_menu_audio_tracks_default',
             button: true,
+            onTap: onClose,
+            excludeSemantics: true,
             child: InkWell(
               onTap: onClose,
               child: Padding(
@@ -82,6 +84,11 @@ class PlayerWebSettingsAudioView extends StatelessWidget {
                   identifier:
                       'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}',
                   button: true,
+                  onTap: () {
+                    controller.setAudioTrack(t);
+                    onClose();
+                  },
+                  excludeSemantics: true,
                   child: InkWell(
                     onTap: () {
                       controller.setAudioTrack(t);

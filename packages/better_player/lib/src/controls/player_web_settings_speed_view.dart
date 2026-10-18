@@ -56,6 +56,11 @@ class PlayerWebSettingsSpeedView extends StatelessWidget {
                   label: identifier,
                   identifier: identifier,
                   button: true,
+                  onTap: () {
+                    controller.setSpeed(s);
+                    onClose();
+                  },
+                  excludeSemantics: true,
                   child: InkWell(
                     onTap: () {
                       controller.setSpeed(s);

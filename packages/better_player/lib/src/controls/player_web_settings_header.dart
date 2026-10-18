@@ -30,6 +30,7 @@ class PlayerWebSettingsHeader extends StatelessWidget {
           label: 'better_player_overflow_menu_back',
           identifier: 'better_player_overflow_menu_back',
           button: true,
+          onTap: onBack,
           excludeSemantics: true,
           child: InkWell(
             onTap: onBack,

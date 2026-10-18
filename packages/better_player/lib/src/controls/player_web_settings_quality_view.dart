@@ -59,6 +59,11 @@ class PlayerWebSettingsQualityView extends StatelessWidget {
                     label: identifier,
                     identifier: identifier,
                     button: true,
+                    onTap: () {
+                      controller.setResolution(entry.value);
+                      onClose();
+                    },
+                    excludeSemantics: true,
                     child: InkWell(
                       onTap: () {
                         controller.setResolution(entry.value);
@@ -96,6 +101,11 @@ class PlayerWebSettingsQualityView extends StatelessWidget {
             label: 'better_player_overflow_menu_quality_auto',
             identifier: 'better_player_overflow_menu_quality_auto',
             button: true,
+            onTap: () {
+              controller.setTrack(PlayerAsmsTrack.defaultTrack());
+              onClose();
+            },
+            excludeSemantics: true,
             child: InkWell(
               onTap: () {
                 controller.setTrack(PlayerAsmsTrack.defaultTrack());
@@ -135,6 +145,11 @@ class PlayerWebSettingsQualityView extends StatelessWidget {
           label: identifier,
           identifier: identifier,
           button: true,
+          onTap: () {
+            controller.setTrack(t);
+            onClose();
+          },
+          excludeSemantics: true,
           child: InkWell(
             onTap: () {
               controller.setTrack(t);

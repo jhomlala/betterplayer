@@ -78,6 +78,11 @@ class PlayerWebSettingsSubtitlesView extends StatelessWidget {
                   label: identifier,
                   identifier: identifier,
                   button: true,
+                  onTap: () {
+                    controller.setupSubtitleSource(s);
+                    onClose();
+                  },
+                  excludeSemantics: true,
                   child: InkWell(
                     onTap: () {
                       controller.setupSubtitleSource(s);

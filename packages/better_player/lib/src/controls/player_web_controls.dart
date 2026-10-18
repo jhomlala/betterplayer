@@ -392,7 +392,7 @@ class _PlayerWebControlsState
                           ),
                         ),
                       ),
-                      if (_isMenuOpen && !_controlsNotVisible) ...[
+                      if (_isMenuOpen) ...[
                         GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTap: () {
@@ -440,9 +440,13 @@ class _PlayerWebControlsState
   void _onMenuToggle() {
     setState(() {
       _isMenuOpen = !_isMenuOpen;
+      if (_isMenuOpen) {
+        _controlsNotVisible = false;
+      }
     });
     if (_isMenuOpen) {
       _hideTimer?.cancel();
+      widget.onControlsVisibilityChanged(true);
     } else {
       cancelAndRestartTimer();
     }
@@ -697,6 +701,7 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
             Semantics(
               label: 'better_player_material_controls_more_button',
               identifier: 'better_player_material_controls_more_button',
+              button: true,
               child: IconButton(
                 tooltip: 'Settings',
                 icon: Icon(
