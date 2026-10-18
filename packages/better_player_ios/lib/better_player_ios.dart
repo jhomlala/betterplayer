@@ -278,11 +278,19 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
         overriddenDuration: overriddenDuration,
       );
     } else {
+      // Match Android by converting null header values to empty strings.
+      final headers =
+          dataSource.headers?.map(
+            (key, value) => MapEntry(key, value ?? ''),
+          ) ??
+          const <String, String>{};
+
       player.setDataSourceURLString(
         dataSource.uri!,
         key: key,
         certificateUrl: dataSource.drmConfiguration?.certificateUrl,
         licenseUrl: dataSource.drmConfiguration?.licenseUrl,
+        headers: headers,
         useCache: dataSource.cacheConfiguration?.useCache ?? false,
         cacheKey: dataSource.cacheConfiguration?.key,
         cacheManager: cacheManager,
@@ -449,6 +457,7 @@ abstract class BetterPlayerWrapper {
     required Object cacheManager,
     required int overriddenDuration,
     required String? videoExtension,
+    Map<String, String> headers = const {},
   });
   void setDataSourceAsset(
     String asset, {
@@ -495,12 +504,18 @@ class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
     required Object cacheManager,
     required int overriddenDuration,
     required String? videoExtension,
+    Map<String, String> headers = const {},
   }) {
-    _player.setDataSourceURLString(
-      url.toNSString(),
+    // The native string overload discards headers. Use the URL overload.
+    final nativeUrl = objc.NSURL.URLWithString(url.toNSString());
+    if (nativeUrl == null) return;
+
+    _player.setDataSourceURL(
+      nativeUrl,
       key: key?.toNSString(),
       certificateUrl: certificateUrl?.toNSString(),
       licenseUrl: licenseUrl?.toNSString(),
+      headers: headers.toNSDictionary(),
       useCache: useCache,
       cacheKey: cacheKey?.toNSString(),
       cacheManager: cacheManager as CacheManager,

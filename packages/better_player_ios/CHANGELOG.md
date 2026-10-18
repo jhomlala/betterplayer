@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Forwarded data source HTTP headers to native iOS playback, with and without caching (by @by291).
+
 ## 1.8.0
 - Fixed: Added fallback matching by displayName, language, and index in `setAudioTrack` to support HLS audio tracks lacking common title metadata.
 
