@@ -51,7 +51,7 @@ dependencies:
   # media_kit_native_event_loop: ^1.0.4
 
   # Add Better Player:
-  better_player: ^1.25.0
+  better_player: ^1.26.0
 ```
 
 Run `flutter pub get` in your terminal to update dependencies.

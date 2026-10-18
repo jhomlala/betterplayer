@@ -1,4 +1,4 @@
-## Unreleased
+## 1.8.0
 - Fixed: Added fallback matching by displayName, language, and index in `setAudioTrack` to support HLS audio tracks lacking common title metadata.
 
 ## 1.7.0

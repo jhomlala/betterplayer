@@ -1,4 +1,4 @@
-## Unreleased
+## 1.2.0
 - Fixed: Added disposal state guards across player methods and mpv FFI invocations to prevent invalid pointer access after disposal.
 - Fixed: Corrected audio track indexing to map 0-based index to 1-based `aid` property and disable audio with `'no'`.
 - Fixed: Added `hls-bitrate` property configuration in `setTrackParameters`.
