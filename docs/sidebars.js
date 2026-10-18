@@ -22,6 +22,7 @@ const sidebars = {
         'migration_to_1.x.x',
         'migration_from_video_player',
         'migration_from_chewie',
+        'migration_from_media_kit',
       ],
     },
     {

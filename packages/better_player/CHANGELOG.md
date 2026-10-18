@@ -7,6 +7,7 @@
 - Fixed: Localized settings menu category titles and submenu headers via `PlayerTranslations`.
 - Fixed: Prevented `No MaterialLocalizations found` crash when opening the player about dialog from custom or misconfigured host apps by scoping localizations and styling the dialog with the player's dark cinema theme.
 - Updated: `better_player_example` overview hero player with an initial video placeholder image and persistent playback controls.
+- Added: Migration guide from `media_kit` covering binary size savings, native OS engines, API mapping, and playback controls.
 
 
 ## 1.25.0

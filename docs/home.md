@@ -34,6 +34,15 @@ Better Player provides a robust set of features designed for production-ready ap
 *   **Web Support**: Advanced web playback using Shaka Player for HLS, DASH, and DRM.
 *   ... and much more! See the detailed [Platform Support](platform_support.md) matrix.
 
+## Migration Guides
+
+Switching from another package? Follow our step-by-step migration guides:
+
+*   **[Migrating from video_player](migration_from_video_player.md)**: Replace `VideoPlayerController` and remove separate UI packages.
+*   **[Migrating from chewie](migration_from_chewie.md)**: Consolidate your player and controls into a single controller.
+*   **[Migrating from media_kit](migration_from_media_kit.md)**: Reclaim 30-50 MB of mobile app size and switch to native OS media engines.
+*   **[Migrating to 1.x.x](migration_to_1.x.x.md)**: Upgrade from legacy Better Player 0.0.84 to modern federated 1.x.x APIs.
+
 ## Important Information
 
 :::important
