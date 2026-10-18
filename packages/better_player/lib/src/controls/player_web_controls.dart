@@ -6,17 +6,9 @@ import 'package:better_player/src/controls/player_cupertino_localizations_delega
 import 'package:better_player/src/controls/player_material_localizations_delegate.dart';
 import 'package:better_player/src/controls/player_material_progress_bar.dart';
 import 'package:better_player/src/controls/player_web_error_widget.dart';
-import 'package:better_player/src/core/player_about_constants.dart';
+import 'package:better_player/src/controls/player_web_settings_menu.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
-
-enum _PlayerMenuOption {
-  subtitles,
-  quality,
-  playbackSpeed,
-  audioTracks,
-  about,
-}
 
 class PlayerWebControls extends StatefulWidget {
   const PlayerWebControls({
@@ -42,7 +34,6 @@ class _PlayerWebControlsState
   bool _isMenuOpen = false;
   StreamSubscription<bool>? _controlsVisibilitySubscription;
   final FocusNode _focusNode = FocusNode();
-  final GlobalKey _settingsMenuKey = GlobalKey();
 
   @override
   BetterPlayerController? get betterPlayerController => _betterPlayerController;
@@ -321,6 +312,13 @@ class _PlayerWebControlsState
                       GestureDetector(
                         onTap: () {
                           _focusNode.requestFocus();
+                          if (_isMenuOpen) {
+                            setState(() {
+                              _isMenuOpen = false;
+                            });
+                            cancelAndRestartTimer();
+                            return;
+                          }
                           if (widget.controlsConfiguration.enablePlayPause) {
                             _onPlayPause();
                           }
@@ -384,13 +382,7 @@ class _PlayerWebControlsState
                                         configuration:
                                             widget.controlsConfiguration,
                                         onPlayPause: _onPlayPause,
-                                        onMenuToggle: () =>
-                                            setState(() => _isMenuOpen = true),
-                                        onMenuClose: () {
-                                          setState(() => _isMenuOpen = false);
-                                          cancelAndRestartTimer();
-                                        },
-                                        settingsMenu: _buildSettingsMenu(),
+                                        onMenuToggle: _onMenuToggle,
                                       ),
                                     ],
                                   ),
@@ -400,6 +392,40 @@ class _PlayerWebControlsState
                           ),
                         ),
                       ),
+                      if (_isMenuOpen) ...[
+                        GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () {
+                            setState(() {
+                              _isMenuOpen = false;
+                            });
+                            cancelAndRestartTimer();
+                          },
+                          child: const SizedBox.expand(),
+                        ),
+                        Positioned(
+                          top: 8,
+                          right: 16,
+                          bottom:
+                              widget.controlsConfiguration.controlBarHeight + 8,
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: PlayerWebSettingsMenu(
+                              controller: _betterPlayerController!,
+                              controlsConfiguration:
+                                  widget.controlsConfiguration,
+                              isAboutMenuVisible: isAboutMenuVisible,
+                              onClose: () {
+                                setState(() {
+                                  _isMenuOpen = false;
+                                });
+                                cancelAndRestartTimer();
+                              },
+                              onShowAbout: showPlayerAboutDialog,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -411,454 +437,19 @@ class _PlayerWebControlsState
     );
   }
 
-  Widget _buildSettingsMenu() {
-    return Semantics(
-      label: 'better_player_material_controls_more_button',
-      identifier: 'better_player_material_controls_more_button',
-      child: PopupMenuButton<_PlayerMenuOption>(
-        key: _settingsMenuKey,
-        icon: Icon(
-          widget.controlsConfiguration.overflowMenuIcon,
-          color: widget.controlsConfiguration.iconsColor,
-        ),
-        color: const Color(0xFF212121),
-        offset: const Offset(0, -50),
-        tooltip: 'Settings',
-        onOpened: () {
-          _isMenuOpen = true;
-        },
-        onCanceled: () {
-          _isMenuOpen = false;
-          cancelAndRestartTimer();
-        },
-        onSelected: (value) async {
-          if (value == _PlayerMenuOption.playbackSpeed) {
-            await _showSpeedMenu();
-          } else if (value == _PlayerMenuOption.quality) {
-            await _showQualityMenu();
-          } else if (value == _PlayerMenuOption.audioTracks) {
-            await _showAudioMenu();
-          } else if (value == _PlayerMenuOption.subtitles) {
-            await _showSubtitlesMenu();
-          } else if (value == _PlayerMenuOption.about) {
-            showPlayerAboutDialog();
-          }
-
-          _isMenuOpen = false;
-          cancelAndRestartTimer();
-        },
-        itemBuilder: (context) {
-          return [
-            if (widget.controlsConfiguration.enableSubtitles)
-              PopupMenuItem(
-                value: _PlayerMenuOption.subtitles,
-                child: Semantics(
-                  label: 'better_player_overflow_menu_subtitles',
-                  identifier: 'better_player_overflow_menu_subtitles',
-                  child: _PlayerWebMenuRow(
-                    _betterPlayerController!.translations.overflowMenuSubtitles,
-                    _betterPlayerController!
-                            .betterPlayerSubtitlesSource
-                            ?.name ??
-                        _betterPlayerController!.translations.generalNone,
-                    Icons.subtitles,
-                    widget.controlsConfiguration,
-                  ),
-                ),
-              ),
-            if (widget.controlsConfiguration.enableQualities)
-              PopupMenuItem(
-                value: _PlayerMenuOption.quality,
-                child: Semantics(
-                  label: 'better_player_overflow_menu_quality',
-                  identifier: 'better_player_overflow_menu_quality',
-                  child: _PlayerWebMenuRow(
-                    'Resolution',
-                    _getResolutionLabel(),
-                    Icons.tune,
-                    widget.controlsConfiguration,
-                  ),
-                ),
-              ),
-            if (widget.controlsConfiguration.enableAudioTracks)
-              PopupMenuItem(
-                value: _PlayerMenuOption.audioTracks,
-                child: Semantics(
-                  label: 'better_player_overflow_menu_audio_tracks',
-                  identifier: 'better_player_overflow_menu_audio_tracks',
-                  child: _PlayerWebMenuRow(
-                    'Language',
-                    _betterPlayerController!
-                            .betterPlayerAsmsAudioTrack
-                            ?.label ??
-                        _betterPlayerController!.translations.generalDefault,
-                    Icons.language,
-                    widget.controlsConfiguration,
-                  ),
-                ),
-              ),
-            if (widget.controlsConfiguration.enablePlaybackSpeed)
-              PopupMenuItem(
-                value: _PlayerMenuOption.playbackSpeed,
-                child: Semantics(
-                  label: 'better_player_overflow_menu_playback_speed',
-                  identifier: 'better_player_overflow_menu_playback_speed',
-                  child: _PlayerWebMenuRow(
-                    'Playback speed',
-                    '${_latestValue?.speed ?? 1.0}x',
-                    Icons.slow_motion_video,
-                    widget.controlsConfiguration,
-                  ),
-                ),
-              ),
-            if (isAboutMenuVisible)
-              PopupMenuItem(
-                value: _PlayerMenuOption.about,
-                child: Semantics(
-                  label: 'better_player_overflow_menu_about',
-                  identifier: 'better_player_overflow_menu_about',
-                  child: _PlayerWebMenuRow(
-                    _betterPlayerController!.translations.overflowMenuAbout,
-                    PlayerAboutConstants.version,
-                    Icons.info_outline,
-                    widget.controlsConfiguration,
-                  ),
-                ),
-              ),
-          ];
-        },
-      ),
-    );
-  }
-
-  Future<void> _showSpeedMenu() async {
-    final speeds =
-        _betterPlayerController
-            ?.betterPlayerControlsConfiguration
-            .playbackSpeeds ??
-        [0.25, 0.5, 0.75, 1.0, 1.25, 1.5, 1.75, 2.0];
-    final value = await _showSubMenu<double>(
-      speeds
-          .map(
-            (s) => PopupMenuItem<double>(
-              value: s,
-              child: Semantics(
-                label: 'better_player_overflow_menu_speed_$s',
-                identifier: 'better_player_overflow_menu_speed_$s',
-                child: _PlayerWebCheckRow(
-                  '${s}x',
-                  _latestValue?.speed == s,
-                  widget.controlsConfiguration,
-                ),
-              ),
-            ),
-          )
-          .toList(),
-    );
-    if (value != null) _betterPlayerController?.setSpeed(value);
-  }
-
-  String _getResolutionLabel() {
-    final asmsTrack = _betterPlayerController?.betterPlayerAsmsTrack;
-    if (asmsTrack != null) {
-      if ((asmsTrack.width ?? 0) == 0 && (asmsTrack.height ?? 0) == 0) {
-        return _betterPlayerController!.translations.qualityAuto;
+  void _onMenuToggle() {
+    setState(() {
+      _isMenuOpen = !_isMenuOpen;
+      if (_isMenuOpen) {
+        _controlsNotVisible = false;
       }
-      return '${asmsTrack.height}p';
-    }
-    final resolutions =
-        _betterPlayerController?.betterPlayerDataSource?.resolutions;
-    if (resolutions != null && resolutions.isNotEmpty) {
-      final currentUrl = _betterPlayerController?.betterPlayerDataSource?.url;
-      for (final entry in resolutions.entries) {
-        if (entry.value == currentUrl) {
-          return entry.key;
-        }
-      }
-      return resolutions.keys.first;
-    }
-    return _betterPlayerController!.translations.qualityAuto;
-  }
-
-  Future<void> _showQualityMenu() async {
-    final resolutions =
-        _betterPlayerController?.betterPlayerDataSource?.resolutions;
-    if (resolutions != null && resolutions.isNotEmpty) {
-      final currentUrl = _betterPlayerController?.betterPlayerDataSource?.url;
-      final value = await _showSubMenu<String>(
-        resolutions.entries.map((entry) {
-          final isSelected = entry.value == currentUrl;
-          return PopupMenuItem<String>(
-            value: entry.value,
-            child: Semantics(
-              label: 'better_player_overflow_menu_quality_${entry.key}',
-              identifier: 'better_player_overflow_menu_quality_${entry.key}',
-              child: _PlayerWebCheckRow(
-                entry.key,
-                isSelected,
-                widget.controlsConfiguration,
-              ),
-            ),
-          );
-        }).toList(),
-      );
-      if (value != null) {
-        _betterPlayerController?.setResolution(value);
-      }
+    });
+    if (_isMenuOpen) {
+      _hideTimer?.cancel();
+      widget.onControlsVisibilityChanged(true);
     } else {
-      final tracks = _betterPlayerController?.betterPlayerAsmsTracks ?? [];
-      var index = 0;
-      final items = tracks.map((t) {
-        final isAuto = (t.width ?? 0) == 0 && (t.height ?? 0) == 0;
-        final label = isAuto
-            ? _betterPlayerController!.translations.qualityAuto
-            : '${t.height}p';
-        final isSelected = _betterPlayerController?.betterPlayerAsmsTrack == t;
-        final identifier = isAuto
-            ? 'better_player_overflow_menu_quality_auto'
-            : 'better_player_overflow_menu_quality_$index';
-        if (!isAuto) index++;
-        return PopupMenuItem<PlayerAsmsTrack>(
-          value: t,
-          child: Semantics(
-            label: identifier,
-            identifier: identifier,
-            child: _PlayerWebCheckRow(
-              label,
-              isSelected,
-              widget.controlsConfiguration,
-            ),
-          ),
-        );
-      }).toList();
-
-      if (items.isEmpty) {
-        items.add(
-          PopupMenuItem<PlayerAsmsTrack>(
-            value: PlayerAsmsTrack.defaultTrack(),
-            child: Semantics(
-              label: 'better_player_overflow_menu_quality_auto',
-              identifier: 'better_player_overflow_menu_quality_auto',
-              child: _PlayerWebCheckRow(
-                _betterPlayerController!.translations.qualityAuto,
-                true,
-                widget.controlsConfiguration,
-              ),
-            ),
-          ),
-        );
-      }
-
-      final value = await _showSubMenu<PlayerAsmsTrack>(items);
-      if (value != null) {
-        _betterPlayerController?.setTrack(value);
-      }
+      cancelAndRestartTimer();
     }
-  }
-
-  Future<void> _showAudioMenu() async {
-    final tracks = _betterPlayerController?.betterPlayerAsmsAudioTracks ?? [];
-    final items = tracks.map((t) {
-      return PopupMenuItem<PlayerAsmsAudioTrack>(
-        value: t,
-        child: Semantics(
-          label:
-              'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}',
-          identifier:
-              'better_player_overflow_menu_audio_tracks_${t.id ?? 'unknown'}',
-          child: _PlayerWebCheckRow(
-            t.label ?? 'Track ${t.id}',
-            _betterPlayerController?.betterPlayerAsmsAudioTrack == t,
-            widget.controlsConfiguration,
-          ),
-        ),
-      );
-    }).toList();
-
-    if (items.isEmpty) {
-      items.add(
-        PopupMenuItem<PlayerAsmsAudioTrack>(
-          value: PlayerAsmsAudioTrack(
-            id: 0,
-            label: _betterPlayerController!.translations.generalDefault,
-          ),
-          child: Semantics(
-            label: 'better_player_overflow_menu_audio_tracks_default',
-            identifier: 'better_player_overflow_menu_audio_tracks_default',
-            child: _PlayerWebCheckRow(
-              _betterPlayerController!.translations.generalDefault,
-              true,
-              widget.controlsConfiguration,
-            ),
-          ),
-        ),
-      );
-    }
-
-    final value = await _showSubMenu<PlayerAsmsAudioTrack>(items);
-    if (value != null) _betterPlayerController?.setAudioTrack(value);
-  }
-
-  Future<void> _showSubtitlesMenu() async {
-    final subs = _betterPlayerController?.betterPlayerSubtitlesSourceList ?? [];
-    final items = subs.map((s) {
-      return PopupMenuItem<PlayerSubtitlesSource>(
-        value: s,
-        child: Semantics(
-          label:
-              'better_player_overflow_menu_subtitles_${s.type?.name ?? 'none'}',
-          identifier:
-              'better_player_overflow_menu_subtitles_${s.type?.name ?? 'none'}',
-          child: _PlayerWebCheckRow(
-            s.name ?? 'Unknown',
-            _betterPlayerController?.betterPlayerSubtitlesSource == s,
-            widget.controlsConfiguration,
-          ),
-        ),
-      );
-    }).toList();
-
-    if (items.isEmpty) {
-      items.add(
-        PopupMenuItem<PlayerSubtitlesSource>(
-          value: PlayerSubtitlesSource(type: PlayerSubtitlesSourceType.none),
-          child: Semantics(
-            label: 'better_player_overflow_menu_subtitles_none',
-            identifier: 'better_player_overflow_menu_subtitles_none',
-            child: _PlayerWebCheckRow(
-              'None',
-              true,
-              widget.controlsConfiguration,
-            ),
-          ),
-        ),
-      );
-    }
-
-    final value = await _showSubMenu<PlayerSubtitlesSource>(items);
-    if (value != null) _betterPlayerController?.setupSubtitleSource(value);
-  }
-
-  RelativeRect _calculateSubMenuPosition() {
-    final button =
-        _settingsMenuKey.currentContext?.findRenderObject() as RenderBox?;
-    final overlay =
-        Overlay.maybeOf(context)?.context.findRenderObject() as RenderBox?;
-
-    if (button != null && button.hasSize && overlay != null) {
-      const offset = Offset(0, -50);
-      return RelativeRect.fromRect(
-        Rect.fromPoints(
-          button.localToGlobal(offset, ancestor: overlay),
-          button.localToGlobal(
-            button.size.bottomRight(Offset.zero) + offset,
-            ancestor: overlay,
-          ),
-        ),
-        Offset.zero & overlay.size,
-      );
-    }
-    return const RelativeRect.fromLTRB(0, 0, 0, 0);
-  }
-
-  Future<T?> _showSubMenu<T>(List<PopupMenuEntry<T>> items) {
-    return showMenu<T>(
-      context: context,
-      position: _calculateSubMenuPosition(),
-      color: const Color(0xFF212121),
-      items: items,
-    );
-  }
-}
-
-class _PlayerWebCheckRow extends StatelessWidget {
-  const _PlayerWebCheckRow(
-    this.title,
-    this.isSelected,
-    this.controlsConfiguration,
-  );
-
-  final String title;
-  final bool isSelected;
-  final PlayerControlsConfiguration controlsConfiguration;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        if (isSelected)
-          Icon(
-            Icons.check,
-            color: controlsConfiguration.iconsColor,
-            size: 16,
-          )
-        else
-          const SizedBox(width: 16),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(color: controlsConfiguration.textColor),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _PlayerWebMenuRow extends StatelessWidget {
-  const _PlayerWebMenuRow(
-    this.title,
-    this.value,
-    this.icon,
-    this.controlsConfiguration,
-  );
-
-  final String title;
-  final String? value;
-  final IconData icon;
-  final PlayerControlsConfiguration controlsConfiguration;
-
-  @override
-  Widget build(BuildContext context) {
-    final valueText = value;
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: controlsConfiguration.iconsColor,
-          size: 20,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Text(
-            title,
-            style: TextStyle(color: controlsConfiguration.textColor),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
-        if (valueText != null && valueText.isNotEmpty) ...[
-          const SizedBox(width: 16),
-          Flexible(
-            child: Text(
-              valueText,
-              style: TextStyle(
-                color: controlsConfiguration.textColor,
-                fontSize: 12,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-        const SizedBox(width: 8),
-        Icon(
-          Icons.chevron_right,
-          color: controlsConfiguration.iconsColor,
-          size: 16,
-        ),
-      ],
-    );
   }
 }
 
@@ -967,16 +558,12 @@ class _PlayerWebBottomBar extends StatefulWidget {
     required this.configuration,
     required this.onPlayPause,
     required this.onMenuToggle,
-    required this.onMenuClose,
-    required this.settingsMenu,
   });
 
   final BetterPlayerController? controller;
   final PlayerControlsConfiguration configuration;
   final VoidCallback onPlayPause;
   final VoidCallback onMenuToggle;
-  final VoidCallback onMenuClose;
-  final Widget settingsMenu;
 
   @override
   State<_PlayerWebBottomBar> createState() => _PlayerWebBottomBarState();
@@ -1110,7 +697,21 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
                 widget.controller!.betterPlayerGlobalKey!,
               ),
             ),
-          if (widget.configuration.enableOverflowMenu) widget.settingsMenu,
+          if (widget.configuration.enableOverflowMenu)
+            Semantics(
+              label: 'better_player_material_controls_more_button',
+              identifier: 'better_player_material_controls_more_button',
+              container: true,
+              button: true,
+              child: IconButton(
+                tooltip: 'Settings',
+                icon: Icon(
+                  widget.configuration.overflowMenuIcon,
+                  color: widget.configuration.iconsColor,
+                ),
+                onPressed: widget.onMenuToggle,
+              ),
+            ),
           if (widget.configuration.enableFullscreen)
             Semantics(
               label: 'better_player_material_controls_fullscreen_button',

@@ -1,3 +1,8 @@
+## Unreleased
+- Fixed: Replaced daisy-chained popup routes in `PlayerWebControls` with an in-place drill-down settings menu on Web, macOS, and Windows.
+- Fixed: Resolved layout and text truncation issues in the web settings menu by adapting width to the longest label, stretching rows to full card width, and bounding height with a sticky header and scrollable option list on compact viewports.
+- Fixed: Localized settings menu category titles and submenu headers via `PlayerTranslations`.
+
 ## 1.25.0
 - Fixed: Respected `PlayerControlsConfiguration` enable flags and `controlsEnabled` state in `PlayerWebControls` on desktop and web (#1599).
 - Added: Embedded CEA-608 and CEA-708 closed caption support decoded by native platform engines and rendered via `PlayerSubtitlesDrawer` (#1066).
