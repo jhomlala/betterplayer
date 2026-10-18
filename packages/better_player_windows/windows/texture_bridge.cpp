@@ -180,8 +180,13 @@ void TextureBridge::Dispose() {
     texture_id_ = -1;
   }
 
-  if (mpv_render_ && g_mpv.render_context_free) {
-    g_mpv.render_context_free(mpv_render_);
+  if (mpv_render_) {
+    if (g_mpv.render_context_set_update_callback) {
+      g_mpv.render_context_set_update_callback(mpv_render_, nullptr, nullptr);
+    }
+    if (g_mpv.render_context_free) {
+      g_mpv.render_context_free(mpv_render_);
+    }
     mpv_render_ = nullptr;
   }
 

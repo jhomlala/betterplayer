@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:js_interop';
 import 'dart:js_interop_unsafe';
-import 'dart:ui';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_web/src/shaka_player.dart';
+import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:web/web.dart' as web;
 
@@ -26,6 +26,7 @@ class BetterPlayerWebPlayer {
   DateTime _lastBufferingUpdate = DateTime.fromMillisecondsSinceEpoch(0);
   DateTime _lastSeekUpdate = DateTime.fromMillisecondsSinceEpoch(0);
   bool _textTrackEnabled = false;
+  JSFunction? _activeRequestFilter;
   @visibleForTesting
   Duration? overriddenDuration;
 
@@ -175,8 +176,39 @@ class BetterPlayerWebPlayer {
       'error',
       ((web.Event _) {
         onLog(message: 'Event: ERROR on VideoElement', levelIndex: 3);
+        if (!_disposed && !_eventController.isClosed) {
+          _eventController.addError(
+            PlatformException(
+              code: 'VIDEO_ELEMENT_ERROR',
+              message: 'HTMLVideoElement playback error',
+            ),
+          );
+        }
       }).toJS,
     );
+
+    if (_shakaPlayer != null &&
+        (_shakaPlayer! as JSObject).has('addEventListener')) {
+      _shakaPlayer!.addEventListener(
+        'error'.toJS,
+        ((JSObject event) {
+          final detail = event.getProperty<JSObject?>('detail'.toJS);
+          final code = detail?.getProperty<JSAny?>('code'.toJS).dartify();
+          final msg =
+              detail?.getProperty<JSAny?>('message'.toJS).dartify() ??
+              'Shaka Player error (code: $code)';
+          onLog(message: 'Event: SHAKA_ERROR ($code): $msg', levelIndex: 3);
+          if (!_disposed && !_eventController.isClosed) {
+            _eventController.addError(
+              PlatformException(
+                code: 'SHAKA_ERROR_${code ?? "UNKNOWN"}',
+                message: msg.toString(),
+              ),
+            );
+          }
+        }).toJS,
+      );
+    }
 
     videoElement.addEventListener(
       'stalled',
@@ -364,14 +396,34 @@ class BetterPlayerWebPlayer {
       _shakaPlayer!.configure(config);
     }
 
+    _clearRequestFilter();
     if (dataSource.headers != null && dataSource.headers!.isNotEmpty) {
       _attachRequestFilter(dataSource.headers!);
     }
 
-    // Convert data to URI if memory data source is handled outside by better_player_controller
-    // The controller layer sets uri for memory data sources, so uri! should be present.
-    await _shakaPlayer!.load(dataSource.uri!.toJS).toDart;
-    onLog(message: 'BetterPlayerWebPlayer: data source loaded', levelIndex: 1);
+    final uri =
+        dataSource.uri ??
+        (dataSource.asset != null ? 'assets/${dataSource.asset}' : '');
+    try {
+      await _shakaPlayer!.load(uri.toJS).toDart;
+      onLog(
+        message: 'BetterPlayerWebPlayer: data source loaded',
+        levelIndex: 1,
+      );
+    } catch (e) {
+      onLog(
+        message: 'BetterPlayerWebPlayer: failed to load data source: $e',
+        levelIndex: 3,
+      );
+      if (!_disposed && !_eventController.isClosed) {
+        _eventController.addError(
+          PlatformException(
+            code: 'SHAKA_LOAD_ERROR',
+            message: 'Failed to load video: $e',
+          ),
+        );
+      }
+    }
   }
 
   @visibleForTesting
@@ -430,17 +482,32 @@ class BetterPlayerWebPlayer {
         as JSObject;
   }
 
-  void _attachRequestFilter(Map<String, String?> headers) {
-    _shakaPlayer!.getNetworkingEngine().registerRequestFilter(
-      ((JSNumber type, JSObject request) {
-        final requestHeaders = request['headers']! as JSObject;
-        for (final entry in headers.entries) {
-          if (entry.value != null) {
-            requestHeaders[entry.key] = entry.value!.toJS;
-          }
+  void _clearRequestFilter() {
+    if (_activeRequestFilter != null && _shakaPlayer != null) {
+      final jsPlayer = _shakaPlayer! as JSObject;
+      if (jsPlayer.has('getNetworkingEngine')) {
+        final engine = _shakaPlayer!.getNetworkingEngine() as JSObject;
+        if (engine.has('unregisterRequestFilter')) {
+          _shakaPlayer!.getNetworkingEngine().unregisterRequestFilter(
+            _activeRequestFilter!,
+          );
         }
-      }).toJS,
-    );
+      }
+      _activeRequestFilter = null;
+    }
+  }
+
+  void _attachRequestFilter(Map<String, String?> headers) {
+    final filter = ((JSNumber type, JSObject request) {
+      final requestHeaders = request['headers']! as JSObject;
+      for (final entry in headers.entries) {
+        if (entry.value != null) {
+          requestHeaders[entry.key] = entry.value!.toJS;
+        }
+      }
+    }).toJS;
+    _activeRequestFilter = filter;
+    _shakaPlayer!.getNetworkingEngine().registerRequestFilter(filter);
   }
 
   bool? get _isPaused {
@@ -630,6 +697,7 @@ class BetterPlayerWebPlayer {
       return;
     }
     _disposed = true;
+    _clearRequestFilter();
     if (_shakaPlayer != null) {
       await _shakaPlayer!.destroy().toDart;
     }

@@ -800,13 +800,27 @@ private var presentationSizeContext = 0
         BetterPlayerApi.log(0, "setAudioTrack: name=\(name), index=\(index)")
         guard let group = player.currentItem?.asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.audible) else { return }
         let options = group.options
-        for audioTrackIndex in 0..<options.count {
-            let option = options[audioTrackIndex]
-            let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle as (NSCopying & NSObjectProtocol), keySpace: .common)
-            if let title = metas.first?.stringValue, title == name && audioTrackIndex == index {
-                player.currentItem?.select(option, in: group)
+        if !name.isEmpty {
+            for option in options {
+                let metas = AVMetadataItem.metadataItems(from: option.commonMetadata, withKey: AVMetadataKey.commonKeyTitle as (NSCopying & NSObjectProtocol), keySpace: .common)
+                let title = metas.first?.stringValue ?? ""
+                let displayName = option.displayName
+                let lang = option.extendedLanguageTag ?? option.locale?.identifier ?? ""
+                if displayName == name ||
+                    title == name ||
+                    (!title.isEmpty && name.contains(title)) ||
+                    (!displayName.isEmpty && name.contains(displayName)) ||
+                    (!lang.isEmpty && name.lowercased() == lang.lowercased()) {
+                    player.currentItem?.select(option, in: group)
+                    return
+                }
             }
         }
+        if index >= 0 && index < options.count {
+            player.currentItem?.select(options[index], in: group)
+            return
+        }
+        BetterPlayerApi.log(2, "setAudioTrack: track '\(name)' at index \(index) not found in audible options")
     }
 
     /// Sets the text or caption track by name and index. If index is negative, disables text tracks.

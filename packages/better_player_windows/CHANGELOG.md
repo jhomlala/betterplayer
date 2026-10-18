@@ -1,3 +1,10 @@
+## Unreleased
+- Fixed: Added disposal state guards across player methods and mpv FFI invocations to prevent invalid pointer access after disposal.
+- Fixed: Corrected audio track indexing to map 0-based index to 1-based `aid` property and disable audio with `'no'`.
+- Fixed: Added `hls-bitrate` property configuration in `setTrackParameters`.
+- Fixed: Added `seek` and `bufferingUpdate` (from `demuxer-cache-time`) event emissions and use display dimensions `dwidth`/`dheight` for video sizing.
+- Fixed: Cleared mpv render update callback prior to freeing render context in `TextureBridge` to avoid native callback race conditions during shutdown.
+
 ## 1.1.0
 - Added: `setTextTrack` method on `MpvPlayer` to select or disable subtitle and closed caption tracks via mpv `sid` property (#1066).
 - Added: `sub-text` property observer emitting `captionUpdate` events with active subtitle lines.

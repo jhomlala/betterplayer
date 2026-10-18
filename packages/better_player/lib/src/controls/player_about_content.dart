@@ -28,10 +28,16 @@ class PlayerAboutContent extends StatelessWidget {
           const Text(
             PlayerAboutConstants.poweredBy,
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
           ),
           const SizedBox(height: 4),
-          Text('${translations.aboutVersion} ${PlayerAboutConstants.version}'),
+          Text(
+            '${translations.aboutVersion} ${PlayerAboutConstants.version}',
+            style: const TextStyle(color: Colors.white70),
+          ),
           const SizedBox(height: 12),
           Wrap(
             alignment: WrapAlignment.center,
@@ -45,7 +51,10 @@ class PlayerAboutContent extends StatelessWidget {
                 copiedLabel: translations.aboutLinkCopied,
                 isCupertino: isCupertino,
               ),
-              const Text('|'),
+              const Text(
+                '|',
+                style: TextStyle(color: Colors.white38),
+              ),
               PlayerAboutLinkRow(
                 url: PlayerAboutConstants.websiteUrl,
                 label: translations.aboutHasoft,

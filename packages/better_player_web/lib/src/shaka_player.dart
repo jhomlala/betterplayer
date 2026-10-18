@@ -68,4 +68,5 @@ class ShakaNetworkingEngine {}
 
 extension ShakaNetworkingEngineExtension on ShakaNetworkingEngine {
   external void registerRequestFilter(JSFunction filter);
+  external void unregisterRequestFilter(JSFunction filter);
 }
