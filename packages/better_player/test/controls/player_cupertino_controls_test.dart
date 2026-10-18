@@ -1,4 +1,4 @@
-﻿import 'package:better_player/better_player.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/player_with_controls.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -106,5 +106,55 @@ void main() {
       );
     },
     variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
+    'PlayerCupertinoControls hides controls when controlsEnabled is false and restores when true',
+    (tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      const controlsConfiguration = PlayerControlsConfiguration(
+        playerTheme: PlayerTheme.cupertino,
+      );
+      final mockEngine = MockPlayerEngineController();
+      mockEngine.setDuration(const Duration(seconds: 100));
+      mockController = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockEngine,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: controlsConfiguration,
+        ),
+      );
+      await mockController.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayer(
+            controller: mockController,
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 250));
+      await tester.pumpAndSettle();
+      final playIcon =
+          mockController.betterPlayerControlsConfiguration.playIcon;
+      expect(find.byIcon(playIcon), findsOneWidget);
+
+      mockController.setControlsEnabled(false);
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(playIcon), findsNothing);
+
+      mockController.setControlsEnabled(true);
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(playIcon), findsOneWidget);
+    },
   );
 }

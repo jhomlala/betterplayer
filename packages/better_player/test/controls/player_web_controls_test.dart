@@ -493,7 +493,7 @@ void main() {
   );
 
   testWidgets(
-    'PlayerWebControls is hidden when controlsEnabled is false',
+    'PlayerWebControls is hidden when controlsEnabled is false and restored when true',
     (tester) async {
       await setupControls(tester);
 
@@ -512,6 +512,16 @@ void main() {
           'better_player_material_controls_play_pause_button',
         ),
         findsNothing,
+      );
+
+      controller.setControlsEnabled(true);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.bySemanticsLabel(
+          'better_player_material_controls_play_pause_button',
+        ),
+        findsOneWidget,
       );
     },
   );

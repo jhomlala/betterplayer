@@ -157,6 +157,21 @@ class _ControlsActionButtons extends StatelessWidget {
             icon: const Icon(Icons.swap_horiz_outlined),
             label: const Text('Toggle Controls'),
           ),
+          OutlinedButton.icon(
+            onPressed: () {
+              controller.setControlsEnabled(!controller.controlsEnabled);
+            },
+            icon: Icon(
+              controller.controlsEnabled
+                  ? Icons.block_outlined
+                  : Icons.check_circle_outline,
+            ),
+            label: Text(
+              controller.controlsEnabled
+                  ? 'Disable Controls'
+                  : 'Enable Controls',
+            ),
+          ),
         ],
       ),
     );
@@ -220,15 +235,32 @@ class _ControlsVisibilityStatusCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  Chip(
-                    avatar: CircleAvatar(
-                      backgroundColor: statusColor,
-                      radius: 5,
-                    ),
-                    label: Text(
-                      'isControlsVisible: $isVisible',
-                      style: theme.textTheme.bodySmall,
-                    ),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      Chip(
+                        avatar: CircleAvatar(
+                          backgroundColor: controller.controlsEnabled
+                              ? Colors.green
+                              : Colors.red,
+                          radius: 5,
+                        ),
+                        label: Text(
+                          'enabled: ${controller.controlsEnabled}',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                      Chip(
+                        avatar: CircleAvatar(
+                          backgroundColor: statusColor,
+                          radius: 5,
+                        ),
+                        label: Text(
+                          'isControlsVisible: $isVisible',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),

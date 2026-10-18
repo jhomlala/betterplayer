@@ -463,6 +463,67 @@ void main() {
         expect(controller.isControlsVisible, isFalse);
       },
     );
+
+    testWidgets(
+      'calling setControlsEnabled(false) hides controls and setControlsEnabled(true) restores them',
+      (tester) async {
+        final mockPlayerEngineController = MockPlayerEngineController();
+        mockPlayerEngineController.setDuration(const Duration(seconds: 100));
+
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mockPlayerEngineController,
+              configuration: const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.material,
+                  controlsHideTime: Duration(milliseconds: 600),
+                ),
+              ),
+            );
+
+        final events = <bool>[];
+        controller.controlsVisibilityStream.listen(events.add);
+
+        await controller.setupDataSource(
+          PlayerDataSource.network(
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: BetterPlayer(controller: controller),
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+        await tester.pump(const Duration(milliseconds: 250));
+        await tester.pumpAndSettle();
+        expect(controller.isControlsVisible, isTrue);
+
+        // Disable controls
+        controller.setControlsEnabled(false);
+        await tester.pumpAndSettle();
+        expect(controller.controlsEnabled, isFalse);
+        expect(controller.isControlsVisible, isFalse);
+        expect(events.last, isFalse);
+
+        // setControlsVisibility(true) should be ignored when controls are disabled
+        controller.setControlsVisibility(true);
+        await tester.pumpAndSettle();
+        expect(controller.isControlsVisible, isFalse);
+        expect(events.last, isFalse);
+
+        // Re-enable controls
+        controller.setControlsEnabled(true);
+        await tester.pumpAndSettle();
+        expect(controller.controlsEnabled, isTrue);
+        expect(controller.isControlsVisible, isTrue);
+        expect(events.last, isTrue);
+      },
+    );
   });
 }
 

@@ -48,6 +48,9 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Show or hide controls manually
   void setControlsVisibility(bool isVisible) {
+    if (!_viewState.controlsEnabled && isVisible) {
+      return;
+    }
     _viewState = _viewState.copyWith(isControlsVisible: isVisible);
     if (!_controlsVisibilityStreamController.isClosed) {
       _controlsVisibilityStreamController.add(isVisible);
@@ -56,13 +59,13 @@ extension PlayerViewStateExtension on BetterPlayerController {
 
   ///Enable/disable controls (when enabled = false, controls will be always hidden)
   void setControlsEnabled(bool enabled) {
-    if (!enabled) {
-      _viewState = _viewState.copyWith(isControlsVisible: false);
-      if (!_controlsVisibilityStreamController.isClosed) {
-        _controlsVisibilityStreamController.add(false);
-      }
+    _viewState = _viewState.copyWith(
+      controlsEnabled: enabled,
+      isControlsVisible: enabled,
+    );
+    if (!_controlsVisibilityStreamController.isClosed) {
+      _controlsVisibilityStreamController.add(enabled);
     }
-    _viewState = _viewState.copyWith(controlsEnabled: enabled);
   }
 
   ///Internal method, used to trigger CONTROLS_VISIBLE or CONTROLS_HIDDEN event
