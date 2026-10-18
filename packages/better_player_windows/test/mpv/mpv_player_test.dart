@@ -176,26 +176,31 @@ void main() {
       await player.dispose();
     });
 
-    test('setTrackParameters does not distort video aspect ratio', () async {
-      final bindings = createFakeBindings();
-      final player = MpvPlayer(
-        textureId: 1,
-        handle: fakeHandle,
-        bindings: bindings,
-        onLog: ({required message, required levelIndex}) => logs.add(message),
-      );
+    test(
+      'setTrackParameters sets hls-bitrate without distorting video aspect ratio',
+      () async {
+        final bindings = createFakeBindings();
+        final player = MpvPlayer(
+          textureId: 1,
+          handle: fakeHandle,
+          bindings: bindings,
+          onLog: ({required message, required levelIndex}) => logs.add(message),
+        );
 
-      await player.setTrackParameters(width: 1920, height: 1080, bitrate: 5000);
-      expect(propertyStrings.containsKey('video-aspect-override'), isFalse);
-      expect(
-        logs.any(
-          (l) => l.contains('track selection not supported on Windows yet'),
-        ),
-        isTrue,
-      );
+        await player.setTrackParameters(
+          width: 1920,
+          height: 1080,
+          bitrate: 5000,
+        );
+        expect(propertyStrings.containsKey('video-aspect-override'), isFalse);
+        expect(propertyStrings['hls-bitrate'], '5000');
 
-      await player.dispose();
-    });
+        await player.setTrackParameters(width: 0, height: 0, bitrate: 0);
+        expect(propertyStrings['hls-bitrate'], 'max');
+
+        await player.dispose();
+      },
+    );
 
     test('setSpeed clamps to minimum 0.01 to prevent mpv error', () async {
       final bindings = createFakeBindings();
@@ -535,6 +540,140 @@ void main() {
 
         await sub.cancel();
         await player.dispose();
+      },
+    );
+
+    test(
+      'setAudioTrack maps 0-based index to 1-based aid and handles disable',
+      () async {
+        final bindings = createFakeBindings();
+        final player = MpvPlayer(
+          textureId: 1,
+          handle: fakeHandle,
+          bindings: bindings,
+        );
+
+        await player.setAudioTrack(name: 'English', index: 0);
+        expect(propertyStrings['aid'], '1');
+
+        await player.setAudioTrack(name: 'Spanish', index: 1);
+        expect(propertyStrings['aid'], '2');
+
+        await player.setAudioTrack(name: 'None', index: -1);
+        expect(propertyStrings['aid'], 'no');
+
+        await player.setAudioTrack(name: '', index: 0);
+        expect(propertyStrings['aid'], 'no');
+
+        await player.dispose();
+      },
+    );
+
+    test('emits seek event on MpvEventId.seek', () async {
+      final bindings = createFakeBindings();
+      final player = MpvPlayer(
+        textureId: 1,
+        handle: fakeHandle,
+        bindings: bindings,
+      );
+
+      final events = <VideoEvent>[];
+      final sub = player.events.listen(events.add);
+
+      eventQueue.add((ptr) {
+        ptr.ref.eventId = MpvEventId.seek;
+      });
+
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(events.length, 1);
+      expect(events.first.eventType, VideoEventType.seek);
+
+      await sub.cancel();
+      await player.dispose();
+    });
+
+    test(
+      'emits bufferingUpdate event on demuxer-cache-time propertyChange',
+      () async {
+        final bindings = createFakeBindings();
+        final player = MpvPlayer(
+          textureId: 1,
+          handle: fakeHandle,
+          bindings: bindings,
+        );
+
+        final events = <VideoEvent>[];
+        final sub = player.events.listen(events.add);
+
+        final cacheName = 'demuxer-cache-time'.toNativeUtf8();
+        final cacheData = calloc<ffi.Double>()..value = 5.5;
+        final cacheProp = calloc<MpvEventProperty>()
+          ..ref.name = cacheName
+          ..ref.format = MpvFormat.doubleFormat
+          ..ref.data = cacheData.cast();
+
+        eventQueue.add((ptr) {
+          ptr.ref.eventId = MpvEventId.propertyChange;
+          ptr.ref.error = 0;
+          ptr.ref.data = cacheProp.cast();
+        });
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(events.length, 1);
+        expect(events.first.eventType, VideoEventType.bufferingUpdate);
+        expect(events.first.buffered, isNotNull);
+        expect(
+          events.first.buffered!.first.end,
+          const Duration(milliseconds: 5500),
+        );
+
+        calloc.free(cacheName);
+        calloc.free(cacheData);
+        calloc.free(cacheProp);
+        await sub.cancel();
+        await player.dispose();
+      },
+    );
+
+    test(
+      'methods after dispose are guarded and do not crash or invoke commands',
+      () async {
+        final bindings = createFakeBindings();
+        final player = MpvPlayer(
+          textureId: 1,
+          handle: fakeHandle,
+          bindings: bindings,
+        );
+
+        await player.dispose();
+        final cmdCountBefore = executedCommands.length;
+        final propStringCountBefore = propertyStrings.length;
+
+        // None of these should throw or invoke mpv
+        await player.play();
+        await player.pause();
+        await player.setVolume(0.5);
+        await player.setSpeed(1.5);
+        await player.seekTo(const Duration(seconds: 5));
+        await player.setLooping(looping: true);
+        await player.setTrackParameters(
+          width: 1280,
+          height: 720,
+          bitrate: 2000,
+        );
+        await player.setAudioTrack(name: 'English', index: 0);
+        await player.setTextTrack(name: 'English', index: 0);
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/test.mp4',
+          ),
+        );
+        final pos = await player.getPosition();
+        expect(pos, Duration.zero);
+
+        expect(executedCommands.length, cmdCountBefore);
+        expect(propertyStrings.length, propStringCountBefore);
       },
     );
   });

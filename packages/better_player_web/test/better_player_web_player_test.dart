@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_web/src/better_player_web_player.dart';
 import 'package:better_player_web/src/shaka_player.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:web/web.dart' as web;
@@ -68,8 +69,20 @@ void main() {
                 'registerRequestFilter'.toJS,
                 ((JSFunction filter) {}).toJS,
               );
+              engine.setProperty(
+                'unregisterRequestFilter'.toJS,
+                ((JSFunction filter) {}).toJS,
+              );
               return engine;
             }).toJS,
+          );
+          p.setProperty(
+            'addEventListener'.toJS,
+            ((JSString type, JSFunction listener) {}).toJS,
+          );
+          p.setProperty(
+            'removeEventListener'.toJS,
+            ((JSString type, JSFunction listener) {}).toJS,
           );
           p.setProperty(
             'getTextTracks'.toJS,
@@ -546,6 +559,11 @@ void main() {
         ),
       );
 
+      mockNetworkingEngine.setProperty(
+        'unregisterRequestFilter'.toJS,
+        ((JSFunction f) {}).toJS,
+      );
+
       expect(filter, isNotNull);
 
       final mockRequest = JSObject();
@@ -561,6 +579,165 @@ void main() {
 
       final headers = mockRequest.getProperty('headers'.toJS)! as JSObject;
       expect(headers.getProperty('Auth'.toJS).dartify(), 'Bearer test');
+    });
+
+    test('Request filter is unregistered when switching data source', () async {
+      JSFunction? registeredFilter;
+      JSFunction? unregisteredFilter;
+      final mockShaka = JSObject();
+      final mockNetworkingEngine = JSObject();
+      mockNetworkingEngine.setProperty(
+        'registerRequestFilter'.toJS,
+        ((JSFunction f) {
+          registeredFilter = f;
+        }).toJS,
+      );
+      mockNetworkingEngine.setProperty(
+        'unregisterRequestFilter'.toJS,
+        ((JSFunction f) {
+          unregisteredFilter = f;
+        }).toJS,
+      );
+      mockShaka.setProperty(
+        'getNetworkingEngine'.toJS,
+        (() => mockNetworkingEngine).toJS,
+      );
+      mockShaka.setProperty('configure'.toJS, ((JSObject config) {}).toJS);
+      mockShaka.setProperty(
+        'load'.toJS,
+        ((JSString url) => Future<JSAny?>.value().toJS).toJS,
+      );
+
+      player = BetterPlayerWebPlayer(
+        viewId: 'test_view',
+        onLog: ({required String message, int levelIndex = 0}) =>
+            logs.add(message),
+        shakaPlayer: mockShaka as ShakaPlayer,
+      );
+
+      await player.setDataSource(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/1',
+          headers: {'Auth': 'Bearer 1'},
+        ),
+      );
+      expect(registeredFilter, isNotNull);
+
+      final firstFilter = registeredFilter;
+      await player.setDataSource(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/2',
+        ),
+      );
+
+      expect(unregisteredFilter, equals(firstFilter));
+    });
+
+    test(
+      'Video element error event emits PlatformException on events stream',
+      () async {
+        await player.initialize();
+
+        Object? streamError;
+        final sub = player.events.listen(
+          (_) {},
+          onError: (Object e) {
+            streamError = e;
+          },
+        );
+
+        player.videoElement.dispatchEvent(web.Event('error'));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        expect(streamError, isA<PlatformException>());
+        final platformEx = streamError! as PlatformException;
+        expect(platformEx.code, 'VIDEO_ELEMENT_ERROR');
+
+        await sub.cancel();
+      },
+    );
+
+    test(
+      'Shaka error event emits PlatformException on events stream',
+      () async {
+        final mockShaka = JSObject();
+        final listeners = <String, List<JSFunction>>{};
+        mockShaka.setProperty(
+          'addEventListener'.toJS,
+          ((JSString type, JSFunction listener) {
+            listeners.putIfAbsent(type.toDart, () => []).add(listener);
+          }).toJS,
+        );
+        mockShaka.setProperty(
+          'attach'.toJS,
+          (([web.HTMLVideoElement? el]) => Future<JSAny?>.value().toJS).toJS,
+        );
+        mockShaka.setProperty('configure'.toJS, ((JSObject config) {}).toJS);
+
+        player = BetterPlayerWebPlayer(
+          viewId: 'test_view',
+          onLog: ({required String message, int levelIndex = 0}) =>
+              logs.add(message),
+          shakaPlayer: mockShaka as ShakaPlayer,
+        );
+        await player.initialize();
+
+        Object? streamError;
+        final sub = player.events.listen(
+          (_) {},
+          onError: (Object e) {
+            streamError = e;
+          },
+        );
+
+        final errorEvent = JSObject();
+        final detail = JSObject();
+        detail.setProperty('code'.toJS, 1001.toJS);
+        detail.setProperty('message'.toJS, 'Shaka test error'.toJS);
+        errorEvent.setProperty('detail'.toJS, detail);
+
+        for (final l in (listeners['error'] ?? [])) {
+          (l as JSObject).callMethod('call'.toJS, mockShaka, errorEvent);
+        }
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(streamError, isA<PlatformException>());
+        final platformEx = streamError! as PlatformException;
+        expect(platformEx.code, 'SHAKA_ERROR_1001');
+        expect(platformEx.message, 'Shaka test error');
+
+        await sub.cancel();
+      },
+    );
+
+    test('setDataSource handles asset data source safely', () async {
+      String? loadedUrl;
+      final mockShaka = JSObject();
+      mockShaka.setProperty(
+        'load'.toJS,
+        ((JSString url) {
+          loadedUrl = url.toDart;
+          return Future<JSAny?>.value().toJS;
+        }).toJS,
+      );
+
+      player = BetterPlayerWebPlayer(
+        viewId: 'test_view',
+        onLog: ({required String message, int levelIndex = 0}) =>
+            logs.add(message),
+        shakaPlayer: mockShaka as ShakaPlayer,
+      );
+
+      await player.setDataSource(
+        DataSource(
+          sourceType: DataSourceType.asset,
+          asset: 'videos/intro.mp4',
+        ),
+      );
+
+      expect(loadedUrl, 'assets/videos/intro.mp4');
     });
 
     test('Other DOM events emit correct VideoEvents', () async {

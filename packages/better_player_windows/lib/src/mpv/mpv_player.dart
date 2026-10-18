@@ -72,6 +72,12 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     _observeProperty(name: 'paused-for-cache', format: MpvFormat.flag);
     _observeProperty(name: 'width', format: MpvFormat.int64);
     _observeProperty(name: 'height', format: MpvFormat.int64);
+    _observeProperty(name: 'dwidth', format: MpvFormat.int64);
+    _observeProperty(name: 'dheight', format: MpvFormat.int64);
+    _observeProperty(
+      name: 'demuxer-cache-time',
+      format: MpvFormat.doubleFormat,
+    );
     _observeProperty(name: 'sub-text', format: MpvFormat.string);
 
     // Suppress mpv native OSD subtitles so PlayerSubtitlesDrawer renders them in Flutter.
@@ -136,6 +142,18 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       case MpvEventId.propertyChange:
         _onPropertyChange(event.ref.data.cast<MpvEventProperty>());
       case MpvEventId.seek:
+        _completedEmitted = false;
+        final posMs = _getPositionMs();
+        if (posMs > 0) {
+          _currentPosition = Duration(milliseconds: posMs);
+        }
+        _eventController.add(
+          VideoEvent(
+            eventType: VideoEventType.seek,
+            key: _currentKey,
+            position: _currentPosition,
+          ),
+        );
       case MpvEventId.playbackRestart:
         _completedEmitted = false;
         final posMs = _getPositionMs();
@@ -182,8 +200,10 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   void _onFileLoaded() {
     _duration = Duration(milliseconds: _getDurationMs());
-    _width = _getIntProperty('width').toDouble();
-    _height = _getIntProperty('height').toDouble();
+    final dWidth = _getIntProperty('dwidth').toDouble();
+    final dHeight = _getIntProperty('dheight').toDouble();
+    _width = dWidth > 0 ? dWidth : _getIntProperty('width').toDouble();
+    _height = dHeight > 0 ? dHeight : _getIntProperty('height').toDouble();
 
     _log(
       message:
@@ -255,6 +275,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           }
         }
       case 'width':
+      case 'dwidth':
         if (prop.ref.data != ffi.nullptr) {
           final newWidth = prop.ref.data.cast<ffi.Int64>().value.toDouble();
           if (newWidth > 0 && newWidth != _width) {
@@ -263,11 +284,30 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           }
         }
       case 'height':
+      case 'dheight':
         if (prop.ref.data != ffi.nullptr) {
           final newHeight = prop.ref.data.cast<ffi.Int64>().value.toDouble();
           if (newHeight > 0 && newHeight != _height) {
             _height = newHeight;
             _notifyDimensionUpdate();
+          }
+        }
+      case 'demuxer-cache-time':
+        if (prop.ref.data != ffi.nullptr) {
+          final cacheSecs = prop.ref.data.cast<ffi.Double>().value;
+          if (cacheSecs >= 0) {
+            final bufferedEnd =
+                _currentPosition +
+                Duration(milliseconds: (cacheSecs * 1000).toInt());
+            _eventController.add(
+              VideoEvent(
+                eventType: VideoEventType.bufferingUpdate,
+                key: _currentKey,
+                buffered: <DurationRange>[
+                  DurationRange(Duration.zero, bufferedEnd),
+                ],
+              ),
+            );
           }
         }
       case 'duration':
@@ -320,6 +360,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   }
 
   int _getDurationMs() {
+    if (_isDisposed) return 0;
     final ptr = calloc<ffi.Double>();
     final namePtr = 'duration'.toNativeUtf8();
     try {
@@ -340,6 +381,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   }
 
   int _getPositionMs() {
+    if (_isDisposed) return 0;
     final ptr = calloc<ffi.Double>();
     final namePtr = 'time-pos'.toNativeUtf8();
     try {
@@ -360,6 +402,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   }
 
   int _getIntProperty(String name) {
+    if (_isDisposed) return 0;
     final ptr = calloc<ffi.Int64>();
     final namePtr = name.toNativeUtf8();
     try {
@@ -381,8 +424,9 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> dispose() async {
-    _log(message: 'dispose()');
+    if (_isDisposed) return;
     _isDisposed = true;
+    _log(message: 'dispose()');
     _pollingTimer?.cancel();
     _pollingTimer = null;
     await _eventController.close();
@@ -390,6 +434,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> setDataSource(DataSource dataSource) async {
+    if (_isDisposed) return;
     _currentPosition = Duration.zero;
     _currentKey = dataSource.key;
     _completedEmitted = false;
@@ -453,18 +498,21 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> play() async {
+    if (_isDisposed) return;
     _log(message: 'play()');
     _setPropertyFlag(name: 'pause', value: false);
   }
 
   @override
   Future<void> pause() async {
+    if (_isDisposed) return;
     _log(message: 'pause()');
     _setPropertyFlag(name: 'pause', value: true);
   }
 
   @override
   Future<void> setVolume(double volume) async {
+    if (_isDisposed) return;
     _log(message: 'setVolume: $volume', levelIndex: 0);
     _setPropertyDouble(
       name: 'volume',
@@ -474,12 +522,14 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> setSpeed(double speed) async {
+    if (_isDisposed) return;
     _log(message: 'setSpeed: $speed', levelIndex: 0);
     _setPropertyDouble(name: 'speed', value: speed.clamp(0.01, 4.0));
   }
 
   @override
   Future<void> seekTo(Duration position) async {
+    if (_isDisposed) return;
     _log(message: 'seekTo: ${position.inMilliseconds}');
     _currentPosition = position;
     _completedEmitted = false;
@@ -500,6 +550,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<Duration> getPosition() async {
+    if (_isDisposed) return _currentPosition;
     final ms = _getPositionMs();
     if (ms > 0) {
       _currentPosition = Duration(milliseconds: ms);
@@ -509,6 +560,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   @override
   Future<void> setLooping({required bool looping}) async {
+    if (_isDisposed) return;
     _log(message: 'setLooping: $looping');
     _setPropertyString(name: 'loop-file', value: looping ? 'inf' : 'no');
   }
@@ -519,22 +571,33 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     required int height,
     required int bitrate,
   }) async {
+    if (_isDisposed) return;
     _log(
       message:
-          'setTrackParameters: width=$width, height=$height, bitrate=$bitrate '
-          '(track selection not supported on Windows yet)',
+          'setTrackParameters: width=$width, height=$height, bitrate=$bitrate',
       levelIndex: 0,
     );
+    if (bitrate > 0) {
+      _setPropertyString(name: 'hls-bitrate', value: '$bitrate');
+    } else {
+      _setPropertyString(name: 'hls-bitrate', value: 'max');
+    }
   }
 
   @override
   Future<void> setAudioTrack({required String name, required int index}) async {
+    if (_isDisposed) return;
     _log(message: 'setAudioTrack: name=$name, index=$index', levelIndex: 0);
-    _setPropertyString(name: 'aid', value: '$index');
+    final disable = index < 0 || name.isEmpty;
+    _setPropertyString(
+      name: 'aid',
+      value: disable ? 'no' : '${index + 1}',
+    );
   }
 
   @override
   Future<void> setTextTrack({required String name, required int index}) async {
+    if (_isDisposed) return;
     _log(message: 'setTextTrack: name=$name, index=$index', levelIndex: 0);
     final disable = index < 0 || name.isEmpty;
     _setPropertyString(
@@ -553,6 +616,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   }
 
   int _command(List<String> args) {
+    if (_isDisposed) return -1;
     final pointers = calloc<ffi.Pointer<Utf8>>(args.length + 1);
     for (var i = 0; i < args.length; i++) {
       pointers[i] = args[i].toNativeUtf8();
@@ -570,6 +634,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   }
 
   void _setPropertyString({required String name, required String value}) {
+    if (_isDisposed) return;
     final namePtr = name.toNativeUtf8();
     final valuePtr = value.toNativeUtf8();
     try {
@@ -588,6 +653,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   }
 
   void _setPropertyFlag({required String name, required bool value}) {
+    if (_isDisposed) return;
     final namePtr = name.toNativeUtf8();
     final flagPtr = calloc<ffi.Int32>()..value = value ? 1 : 0;
     try {
@@ -611,6 +677,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   }
 
   void _setPropertyDouble({required String name, required double value}) {
+    if (_isDisposed) return;
     final namePtr = name.toNativeUtf8();
     final doublePtr = calloc<ffi.Double>()..value = value;
     try {

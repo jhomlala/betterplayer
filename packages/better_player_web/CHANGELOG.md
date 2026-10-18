@@ -1,3 +1,8 @@
+## Unreleased
+- Fixed: Forward video and Shaka error events as `PlatformException` to the event stream to prevent infinite loading state on 404 and network errors.
+- Fixed: Unregister old HTTP request filters when switching data source and upon player disposal to prevent header leaks across sessions.
+- Fixed: Handle local asset paths with `assets/` prefix fallback and wrap manifest loading in try-catch to report load failures cleanly.
+
 ## 1.2.0
 - Added: `setTextTrack` method on `BetterPlayerWebPlayer` using Shaka Player `selectTextLanguage` and `setTextTrackVisibility` for embedded text tracks (#1066).
 - Added: Active `TextTrack` cue change listener emitting `captionUpdate` events with active cues.
