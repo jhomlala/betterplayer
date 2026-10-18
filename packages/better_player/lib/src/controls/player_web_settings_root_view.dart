@@ -47,9 +47,8 @@ class PlayerWebSettingsRootView extends StatelessWidget {
             Semantics(
               label: 'better_player_overflow_menu_subtitles',
               identifier: 'better_player_overflow_menu_subtitles',
+              container: true,
               button: true,
-              onTap: () => onNavigate(PlayerWebSettingsPage.subtitles),
-              excludeSemantics: true,
               child: InkWell(
                 onTap: () => onNavigate(PlayerWebSettingsPage.subtitles),
                 child: Padding(
@@ -72,9 +71,8 @@ class PlayerWebSettingsRootView extends StatelessWidget {
             Semantics(
               label: 'better_player_overflow_menu_quality',
               identifier: 'better_player_overflow_menu_quality',
+              container: true,
               button: true,
-              onTap: () => onNavigate(PlayerWebSettingsPage.quality),
-              excludeSemantics: true,
               child: InkWell(
                 onTap: () => onNavigate(PlayerWebSettingsPage.quality),
                 child: Padding(
@@ -95,9 +93,8 @@ class PlayerWebSettingsRootView extends StatelessWidget {
             Semantics(
               label: 'better_player_overflow_menu_audio_tracks',
               identifier: 'better_player_overflow_menu_audio_tracks',
+              container: true,
               button: true,
-              onTap: () => onNavigate(PlayerWebSettingsPage.audioTracks),
-              excludeSemantics: true,
               child: InkWell(
                 onTap: () => onNavigate(PlayerWebSettingsPage.audioTracks),
                 child: Padding(
@@ -120,9 +117,8 @@ class PlayerWebSettingsRootView extends StatelessWidget {
             Semantics(
               label: 'better_player_overflow_menu_playback_speed',
               identifier: 'better_player_overflow_menu_playback_speed',
+              container: true,
               button: true,
-              onTap: () => onNavigate(PlayerWebSettingsPage.playbackSpeed),
-              excludeSemantics: true,
               child: InkWell(
                 onTap: () => onNavigate(PlayerWebSettingsPage.playbackSpeed),
                 child: Padding(
@@ -143,12 +139,8 @@ class PlayerWebSettingsRootView extends StatelessWidget {
             Semantics(
               label: 'better_player_overflow_menu_about',
               identifier: 'better_player_overflow_menu_about',
+              container: true,
               button: true,
-              onTap: () {
-                onClose();
-                onShowAbout();
-              },
-              excludeSemantics: true,
               child: InkWell(
                 onTap: () {
                   onClose();

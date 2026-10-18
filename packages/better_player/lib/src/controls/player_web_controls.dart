@@ -701,6 +701,7 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
             Semantics(
               label: 'better_player_material_controls_more_button',
               identifier: 'better_player_material_controls_more_button',
+              container: true,
               button: true,
               child: IconButton(
                 tooltip: 'Settings',
