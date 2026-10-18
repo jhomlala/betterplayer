@@ -258,6 +258,44 @@ extension BetterPlayerApi$Companion$$Methods on BetterPlayerApi$Companion {
     ).check();
   }
 
+  static final _id_set$preCacheCallback = BetterPlayerApi$Companion._class
+      .instanceMethodId(
+        r'setPreCacheCallback',
+        r'(Lpl/hasoft/better_player/BetterPlayerPreCacheCallback;)V',
+      );
+
+  static final _set$preCacheCallback =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Pointer<jni$_.Void>,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+            )
+          >();
+
+  /// from: `public fun setPreCacheCallback(callback: pl.hasoft.better_player.BetterPlayerPreCacheCallback?): kotlin.Unit`
+  set preCacheCallback(
+    BetterPlayerPreCacheCallback? betterPlayerPreCacheCallback,
+  ) {
+    final _$$selfRef = reference;
+    final _$betterPlayerPreCacheCallback =
+        betterPlayerPreCacheCallback?.reference ?? jni$_.jNullReference;
+    _set$preCacheCallback(
+      _$$selfRef.pointer,
+      _id_set$preCacheCallback.pointer,
+      _$betterPlayerPreCacheCallback.pointer,
+    ).check();
+  }
+
   static final _id_createPlayer = BetterPlayerApi$Companion._class.instanceMethodId(
     r'createPlayer',
     r'(Landroid/content/Context;Lpl/hasoft/better_player/BetterPlayerCallback;)Lpl/hasoft/better_player/BetterPlayer;',
@@ -1560,6 +1598,232 @@ final class $BetterPlayerLogCallback$Type$
   @jni$_.internal
   @core$_.override
   String get signature => r'Lpl/hasoft/better_player/BetterPlayerLogCallback;';
+}
+
+/// from: `pl.hasoft.better_player.BetterPlayerPreCacheCallback`
+extension type BetterPlayerPreCacheCallback._(jni$_.JObject _$this)
+    implements jni$_.JObject {
+  static final _class = jni$_.JClass.forName(
+    r'pl/hasoft/better_player/BetterPlayerPreCacheCallback',
+  );
+
+  /// The type which includes information such as the signature of this class.
+  static const jni$_.JType<BetterPlayerPreCacheCallback> type =
+      $BetterPlayerPreCacheCallback$Type$();
+
+  /// Maps a specific port to the implemented interface.
+  static final core$_.Map<core$_.int, $BetterPlayerPreCacheCallback> _$impls =
+      {};
+  static jni$_.JObjectPtr _$invoke(
+    core$_.int port,
+    jni$_.JObjectPtr descriptor,
+    jni$_.JObjectPtr args,
+  ) {
+    return _$invokeMethod(
+      port,
+      jni$_.MethodInvocation.fromAddresses(
+        0,
+        descriptor.address,
+        args.address,
+      ),
+    );
+  }
+
+  static final jni$_.Pointer<
+    jni$_.NativeFunction<
+      jni$_.JObjectPtr Function(jni$_.Int64, jni$_.JObjectPtr, jni$_.JObjectPtr)
+    >
+  >
+  _$invokePointer = jni$_.Pointer.fromFunction(_$invoke);
+
+  static jni$_.Pointer<jni$_.Void> _$invokeMethod(
+    core$_.int $p,
+    jni$_.MethodInvocation $i,
+  ) {
+    try {
+      final $d = $i.methodDescriptor.toDartString(releaseOriginal: true);
+      final $a = $i.args;
+      if ($d == r'onProgress(Ljava/lang/String;Ljava/lang/String;DJJ)V') {
+        _$impls[$p]!.onProgress(
+          ($a![0] as jni$_.JString),
+          ($a![1] as jni$_.JString?),
+          ($a![2] as jni$_.JDouble).toDartDouble(releaseOriginal: true),
+          ($a![3] as jni$_.JLong).toDartInt(releaseOriginal: true),
+          ($a![4] as jni$_.JLong).toDartInt(releaseOriginal: true),
+        );
+        return jni$_.nullptr;
+      }
+    } catch (e) {
+      return jni$_.ProtectedJniExtensions.newDartException(e);
+    }
+    return jni$_.nullptr;
+  }
+
+  static void implementIn(
+    jni$_.JImplementer implementer,
+    $BetterPlayerPreCacheCallback $impl,
+  ) {
+    late final jni$_.RawReceivePort $p;
+    $p = jni$_.RawReceivePort(($m) {
+      if ($m == null) {
+        _$impls.remove($p.sendPort.nativePort);
+        $p.close();
+        return;
+      }
+      final $i = jni$_.MethodInvocation.fromMessage($m);
+      final $r = _$invokeMethod($p.sendPort.nativePort, $i);
+      $i.args?.release();
+      jni$_.ProtectedJniExtensions.returnResult($i.result, $r);
+    });
+    implementer.add(
+      r'pl.hasoft.better_player.BetterPlayerPreCacheCallback',
+      $p,
+      _$invokePointer,
+      [
+        if ($impl.onProgress$async)
+          r'onProgress(Ljava/lang/String;Ljava/lang/String;DJJ)V',
+      ],
+    );
+    final $a = $p.sendPort.nativePort;
+    _$impls[$a] = $impl;
+  }
+
+  factory BetterPlayerPreCacheCallback.implement(
+    $BetterPlayerPreCacheCallback $impl,
+  ) {
+    final $i = jni$_.JImplementer();
+    implementIn($i, $impl);
+    return $i.implement<BetterPlayerPreCacheCallback>();
+  }
+}
+
+extension BetterPlayerPreCacheCallback$$Methods
+    on BetterPlayerPreCacheCallback {
+  static final _id_onProgress = BetterPlayerPreCacheCallback._class
+      .instanceMethodId(
+        r'onProgress',
+        r'(Ljava/lang/String;Ljava/lang/String;DJJ)V',
+      );
+
+  static final _onProgress =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<
+                  (
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Pointer<jni$_.Void>,
+                    jni$_.Double,
+                    jni$_.Int64,
+                    jni$_.Int64,
+                  )
+                >,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.Pointer<jni$_.Void>,
+              core$_.double,
+              core$_.int,
+              core$_.int,
+            )
+          >();
+
+  /// from: `public fun onProgress(url: kotlin.String, cacheKey: kotlin.String?, progress: kotlin.Double, bytesDownloaded: kotlin.Long, totalBytes: kotlin.Long): kotlin.Unit`
+  void onProgress(
+    jni$_.JString string,
+    jni$_.JString? string1,
+    core$_.double d,
+    core$_.int j,
+    core$_.int j1,
+  ) {
+    final _$$selfRef = reference;
+    final _$string = string.reference;
+    final _$string1 = string1?.reference ?? jni$_.jNullReference;
+    _onProgress(
+      _$$selfRef.pointer,
+      _id_onProgress.pointer,
+      _$string.pointer,
+      _$string1.pointer,
+      d,
+      j,
+      j1,
+    ).check();
+  }
+}
+
+abstract base mixin class $BetterPlayerPreCacheCallback {
+  factory $BetterPlayerPreCacheCallback({
+    required void Function(
+      jni$_.JString string,
+      jni$_.JString? string1,
+      core$_.double d,
+      core$_.int j,
+      core$_.int j1,
+    )
+    onProgress,
+    core$_.bool onProgress$async,
+  }) = _$BetterPlayerPreCacheCallback;
+
+  void onProgress(
+    jni$_.JString string,
+    jni$_.JString? string1,
+    core$_.double d,
+    core$_.int j,
+    core$_.int j1,
+  );
+  core$_.bool get onProgress$async => false;
+}
+
+final class _$BetterPlayerPreCacheCallback with $BetterPlayerPreCacheCallback {
+  _$BetterPlayerPreCacheCallback({
+    required void Function(
+      jni$_.JString string,
+      jni$_.JString? string1,
+      core$_.double d,
+      core$_.int j,
+      core$_.int j1,
+    )
+    onProgress,
+    this.onProgress$async = false,
+  }) : _onProgress = onProgress;
+
+  final void Function(
+    jni$_.JString string,
+    jni$_.JString? string1,
+    core$_.double d,
+    core$_.int j,
+    core$_.int j1,
+  )
+  _onProgress;
+  final core$_.bool onProgress$async;
+
+  void onProgress(
+    jni$_.JString string,
+    jni$_.JString? string1,
+    core$_.double d,
+    core$_.int j,
+    core$_.int j1,
+  ) {
+    return _onProgress(string, string1, d, j, j1);
+  }
+}
+
+final class $BetterPlayerPreCacheCallback$Type$
+    extends jni$_.JType<BetterPlayerPreCacheCallback> {
+  @jni$_.internal
+  const $BetterPlayerPreCacheCallback$Type$();
+
+  @jni$_.internal
+  @core$_.override
+  String get signature =>
+      r'Lpl/hasoft/better_player/BetterPlayerPreCacheCallback;';
 }
 
 /// from: `pl.hasoft.better_player.BetterPlayer$Companion`
