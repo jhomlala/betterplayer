@@ -39,7 +39,7 @@ class CacheWorker(
                 url.contains(".m3u", ignoreCase = true) ||
                 url.contains(".mpd", ignoreCase = true)
             ) {
-                BetterPlayerPlugin.log(Log.WARN, TAG, "Pre-caching HLS and DASH streams is not supported.")
+                Log.w(TAG, "Pre-caching HLS and DASH streams is not supported.")
                 return Result.success()
             }
             val headers: MutableMap<String, String> = HashMap()
