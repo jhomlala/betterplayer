@@ -1,5 +1,6 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_web_controls.dart';
+import 'package:better_player/src/controls/player_web_settings_menu.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -463,6 +464,233 @@ void main() {
         ),
         findsNothing,
       );
+    },
+  );
+
+  testWidgets(
+    'Settings menu drill-down and back navigation works for resolution, audio, and subtitles',
+    (tester) async {
+      await setupControls(tester);
+
+      final moreButton = find.bySemanticsLabel(
+        'better_player_material_controls_more_button',
+      );
+      await tester.tap(moreButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PlayerWebSettingsMenu), findsOneWidget);
+
+      // Navigate to Quality (Resolution)
+      final qualityItem = find.text('Quality');
+      expect(qualityItem, findsOneWidget);
+      await tester.tap(qualityItem);
+      await tester.pumpAndSettle();
+
+      final backButton = find.bySemanticsLabel(
+        'better_player_overflow_menu_back',
+      );
+      expect(backButton, findsOneWidget);
+      expect(find.text('Auto'), findsWidgets);
+
+      // Tap back button
+      await tester.tap(backButton);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Playback speed'), findsOneWidget);
+
+      // Navigate to Audio (Language)
+      final audioItem = find.text('Audio');
+      expect(audioItem, findsOneWidget);
+      await tester.tap(audioItem);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_back'),
+        findsOneWidget,
+      );
+      expect(find.text('Default'), findsOneWidget);
+
+      // Tap back button
+      await tester.tap(
+        find.bySemanticsLabel('better_player_overflow_menu_back'),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Playback speed'), findsOneWidget);
+
+      // Navigate to Subtitles
+      final subtitlesItem = find.text('Subtitles');
+      expect(subtitlesItem, findsOneWidget);
+      await tester.tap(subtitlesItem);
+      await tester.pumpAndSettle();
+
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_back'),
+        findsOneWidget,
+      );
+      expect(find.text('None'), findsOneWidget);
+
+      // Tap back button
+      await tester.tap(
+        find.bySemanticsLabel('better_player_overflow_menu_back'),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Playback speed'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'Settings menu allows selecting resolution from resolutions map and closes',
+    (tester) async {
+      mockEngine = MockPlayerEngineController();
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+          ),
+        ),
+        playerEngineController: mockEngine,
+      );
+
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+          qualities: {
+            '720p': 'https://example.com/720.mp4',
+            '1080p': 'https://example.com/1080.mp4',
+          },
+        ),
+      );
+
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      controller.setControlsVisibility(true);
+      controller.setControlsAlwaysVisible(true);
+      await tester.pumpAndSettle();
+
+      final moreButton = find.bySemanticsLabel(
+        'better_player_material_controls_more_button',
+      );
+      await tester.tap(moreButton);
+      await tester.pumpAndSettle();
+
+      final qualityItem = find.text('Quality');
+      await tester.tap(qualityItem);
+      await tester.pumpAndSettle();
+
+      expect(find.text('720p'), findsOneWidget);
+      expect(find.text('1080p'), findsOneWidget);
+
+      await tester.tap(find.text('720p'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PlayerWebSettingsMenu), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'Tapping video area while settings menu is open dismisses menu without toggling playback',
+    (tester) async {
+      await setupControls(tester);
+
+      final moreButton = find.bySemanticsLabel(
+        'better_player_material_controls_more_button',
+      );
+      await tester.tap(moreButton);
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PlayerWebSettingsMenu), findsOneWidget);
+
+      // Tap the background area of the video
+      final controlsRect = tester.getRect(find.byType(PlayerWebControls));
+      await tester.tapAt(controlsRect.topLeft + const Offset(50, 50));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PlayerWebSettingsMenu), findsNothing);
+      expect(controller.videoPlayerValue?.isPlaying, isFalse);
+    },
+  );
+
+  testWidgets(
+    'Playback speed submenu stays within compact player bounds and scrolls',
+    (tester) async {
+      mockEngine = MockPlayerEngineController();
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+          ),
+        ),
+        playerEngineController: mockEngine,
+      );
+
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false),
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 480,
+                height: 270,
+                child: BetterPlayer(controller: controller),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      controller.setControlsVisibility(true);
+      controller.setControlsAlwaysVisible(true);
+      await tester.pumpAndSettle();
+
+      final moreButton = find.bySemanticsLabel(
+        'better_player_material_controls_more_button',
+      );
+      await tester.tap(moreButton);
+      await tester.pumpAndSettle();
+
+      final speedItem = find.text('Playback speed');
+      await tester.tap(speedItem.first);
+      await tester.pumpAndSettle();
+
+      final menuFinder = find.byType(PlayerWebSettingsMenu);
+      expect(menuFinder, findsOneWidget);
+      final menuRect = tester.getRect(menuFinder);
+      final playerRect = tester.getRect(find.byType(PlayerWebControls));
+
+      // Menu must be bounded within player viewport and not overflow off top
+      expect(menuRect.top, greaterThanOrEqualTo(playerRect.top));
+      expect(menuRect.bottom, lessThanOrEqualTo(playerRect.bottom));
+
+      // Header is visible at top
+      expect(
+        find.bySemanticsLabel('better_player_overflow_menu_back'),
+        findsOneWidget,
+      );
+
+      // First options visible
+      expect(find.text('0.25x'), findsOneWidget);
     },
   );
 }
