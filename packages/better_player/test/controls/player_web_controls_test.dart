@@ -931,6 +931,202 @@ void main() {
       expect(controller.isControlsVisible, isFalse);
     },
   );
+
+  testWidgets(
+    'showControlsOnInitialize false keeps controls hidden when autoPlay starts playback',
+    (tester) async {
+      mockEngine = MockPlayerEngineController();
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          aspectRatio: 16 / 9,
+          autoPlay: true,
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+            showControlsOnInitialize: false,
+          ),
+        ),
+        betterPlayerDataSource: PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+        playerEngineController: mockEngine,
+      );
+
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+      await tester.pump();
+
+      // Simulate native engine starting playback (e.g. AVPlayer on macOS)
+      controller.postEvent(PlayerEvent(PlayerEventType.play));
+      await tester.pump(const Duration(milliseconds: 100));
+
+      final animatedOpacity = tester.widget<AnimatedOpacity>(
+        find.descendant(
+          of: find.byType(PlayerWebControls),
+          matching: find.byType(AnimatedOpacity),
+        ),
+      );
+      expect(animatedOpacity.opacity, 0.0);
+      expect(controller.isControlsVisible, isFalse);
+    },
+  );
+
+  testWidgets(
+    'showControlsOnInitialize false keeps controls hidden at start (autoPlay: false)',
+    (tester) async {
+      mockEngine = MockPlayerEngineController();
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          aspectRatio: 16 / 9,
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+            showControlsOnInitialize: false,
+          ),
+        ),
+        playerEngineController: mockEngine,
+      );
+
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final animatedOpacity = tester.widget<AnimatedOpacity>(
+        find.descendant(
+          of: find.byType(PlayerWebControls),
+          matching: find.byType(AnimatedOpacity),
+        ),
+      );
+      expect(animatedOpacity.opacity, 0.0);
+      expect(controller.isControlsVisible, isFalse);
+    },
+  );
+
+  testWidgets(
+    'showControlsOnInitialize false reveals controls on mouse hover',
+    (tester) async {
+      mockEngine = MockPlayerEngineController();
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          aspectRatio: 16 / 9,
+          autoPlay: true,
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+            showControlsOnInitialize: false,
+          ),
+        ),
+        playerEngineController: mockEngine,
+      );
+
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(controller.isControlsVisible, isFalse);
+
+      // Simulate mouse hovering over player
+      final gesture = await tester.createGesture(kind: PointerDeviceKind.mouse);
+      await gesture.addPointer(location: Offset.zero);
+      addTearDown(gesture.removePointer);
+      await tester.pump();
+
+      await gesture.moveTo(tester.getCenter(find.byType(PlayerWebControls)));
+      await tester.pump(const Duration(milliseconds: 350));
+
+      final animatedOpacity = tester.widget<AnimatedOpacity>(
+        find.descendant(
+          of: find.byType(PlayerWebControls),
+          matching: find.byType(AnimatedOpacity),
+        ),
+      );
+      expect(animatedOpacity.opacity, 1.0);
+      expect(controller.isControlsVisible, isTrue);
+    },
+  );
+
+  testWidgets(
+    'showControlsOnInitialize false reveals controls on video finished event',
+    (tester) async {
+      mockEngine = MockPlayerEngineController();
+      controller = BetterPlayerController(
+        const PlayerConfiguration(
+          aspectRatio: 16 / 9,
+          autoPlay: true,
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.web,
+            showControlsOnInitialize: false,
+          ),
+        ),
+        playerEngineController: mockEngine,
+      );
+
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(controller.isControlsVisible, isFalse);
+
+      // Post finished event
+      controller.postEvent(PlayerEvent(PlayerEventType.finished));
+      await tester.pump(const Duration(milliseconds: 350));
+
+      final animatedOpacity = tester.widget<AnimatedOpacity>(
+        find.descendant(
+          of: find.byType(PlayerWebControls),
+          matching: find.byType(AnimatedOpacity),
+        ),
+      );
+      expect(animatedOpacity.opacity, 1.0);
+      expect(controller.isControlsVisible, isTrue);
+    },
+  );
 }
 
 class _WebHidingBrandingExtension extends PlayerBrandingExtension {

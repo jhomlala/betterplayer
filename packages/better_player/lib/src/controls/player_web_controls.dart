@@ -137,8 +137,7 @@ class _PlayerWebControlsState
       }
 
       _updateState();
-      if (event.betterPlayerEventType == PlayerEventType.play ||
-          event.betterPlayerEventType == PlayerEventType.pause) {
+      if (event.betterPlayerEventType == PlayerEventType.finished) {
         cancelAndRestartTimer();
       }
     }
@@ -202,6 +201,7 @@ class _PlayerWebControlsState
       }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowLeft) {
+      cancelAndRestartTimer();
       if (_latestValue?.initialized == true) {
         final position = _latestValue?.position;
         if (position != null) {
@@ -214,6 +214,7 @@ class _PlayerWebControlsState
       }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowRight) {
+      cancelAndRestartTimer();
       if (_latestValue?.initialized == true) {
         final position = _latestValue?.position;
         if (position != null) {
@@ -226,6 +227,7 @@ class _PlayerWebControlsState
       }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowUp) {
+      cancelAndRestartTimer();
       final volume = (_latestValue?.volume ?? 1.0) + 0.1;
       unawaited(
         _betterPlayerController
@@ -234,6 +236,7 @@ class _PlayerWebControlsState
       );
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.arrowDown) {
+      cancelAndRestartTimer();
       final volume = (_latestValue?.volume ?? 1.0) - 0.1;
       unawaited(
         _betterPlayerController
@@ -242,6 +245,7 @@ class _PlayerWebControlsState
       );
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.keyM) {
+      cancelAndRestartTimer();
       if (widget.controlsConfiguration.enableMute) {
         final isMuted = _latestValue?.volume == 0;
         unawaited(
@@ -252,6 +256,7 @@ class _PlayerWebControlsState
       }
       return KeyEventResult.handled;
     } else if (key == LogicalKeyboardKey.keyF) {
+      cancelAndRestartTimer();
       if (widget.controlsConfiguration.enableFullscreen) {
         _betterPlayerController?.toggleFullScreen();
       }
@@ -261,6 +266,7 @@ class _PlayerWebControlsState
   }
 
   void _onPlayPause() {
+    cancelAndRestartTimer();
     if (!_focusNode.hasFocus) {
       _focusNode.requestFocus();
     }
