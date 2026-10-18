@@ -44,6 +44,29 @@ void main() {
       expect(mockPlatform.preCacheCalls, isEmpty);
     });
 
+    test('preCache rejects DASH streams', () async {
+      final dashDataSource = PlayerDataSource(
+        DataSourceType.network,
+        'https://example.com/stream.mpd',
+      );
+
+      await controller.preCache(dashDataSource);
+
+      expect(mockPlatform.preCacheCalls, isEmpty);
+    });
+
+    test('preCache rejects streams with mpd videoExtension', () async {
+      final dashDataSource = PlayerDataSource(
+        DataSourceType.network,
+        'https://example.com/stream?token=123',
+        videoExtension: 'mpd',
+      );
+
+      await controller.preCache(dashDataSource);
+
+      expect(mockPlatform.preCacheCalls, isEmpty);
+    });
+
     test('preCache passes dataSource and size to platform', () async {
       const videoUrl = 'https://example.com/video.mp4';
       final dataSource = PlayerDataSource(

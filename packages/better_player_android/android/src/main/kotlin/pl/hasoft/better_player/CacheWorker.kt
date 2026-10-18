@@ -35,6 +35,13 @@ class CacheWorker(
             val preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0)
             val maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0)
             val maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0)
+            if (url == null || url.contains(".m3u8", ignoreCase = true) ||
+                url.contains(".m3u", ignoreCase = true) ||
+                url.contains(".mpd", ignoreCase = true)
+            ) {
+                BetterPlayerPlugin.log(Log.WARN, TAG, "Pre-caching HLS and DASH streams is not supported.")
+                return Result.success()
+            }
             val headers: MutableMap<String, String> = HashMap()
             for (key in data.keyValueMap.keys) {
                 if (key.contains(BetterPlayerPlugin.HEADER_PARAMETER)) {

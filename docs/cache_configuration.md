@@ -79,6 +79,12 @@ The underlying implementation varies by platform. Android uses ExoPlayer's inter
 | Feature | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS | macOS HLS | macOS non-HLS | Windows HLS | Windows non-HLS | Web |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Normal Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | x |
-| **Pre-Caching** | ✓ | ✓ | x | ✓ | x | ✓ | x | x | x |
+| **Pre-Caching** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
 | **Pre-Cache Progress** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
-| **Stop Caching** | ✓ | ✓ | x | ✓ | x | ✓ | x | x | x |
+| **Stop Caching** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
+
+:::note
+- **Chunked Streams (HLS & DASH)**: Pre-caching operates on progressive media files (MP4, MKV, etc.). Pre-caching HLS (`.m3u8`) and DASH (`.mpd`) is blocked and not supported. Normal caching during active playback still caches HLS segments on Android, iOS, macOS, and Windows.
+- **Windows**: `libmpv` automatically manages demuxer cache and network buffering during active playback. Offline pre-caching is not supported.
+- **Web**: Browsers control media caching directly through HTTP caching headers.
+:::
