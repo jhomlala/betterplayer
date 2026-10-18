@@ -1,6 +1,11 @@
+import 'dart:ui';
+
 import 'package:better_player/better_player.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_test_utils.dart';
 import '../helpers/mock_player_engine_controller.dart';
@@ -303,5 +308,191 @@ void main() {
         expect(controller.isControlsVisible, true);
       },
     );
+
+    testWidgets(
+      'routePageBuilder custom overlay does not flicker or repeatedly toggle visibility stream',
+      (tester) async {
+        VisibilityDetectorController.instance.updateInterval = Duration.zero;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              SystemChannels.platform,
+              (methodCall) async => null,
+            );
+        debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+
+        try {
+          final mockPlayerEngineController = MockPlayerEngineController();
+          mockPlayerEngineController.setDuration(const Duration(seconds: 100));
+
+          final events = <bool>[];
+
+          final controller =
+              BetterPlayerTestUtils.setupBetterPlayerMockController(
+                controller: mockPlayerEngineController,
+                configuration: PlayerConfiguration(
+                  controlsConfiguration: const PlayerControlsConfiguration(
+                    playerTheme: PlayerTheme.web,
+                    controlsHideTime: Duration(milliseconds: 300),
+                  ),
+                  routePageBuilder:
+                      (
+                        context,
+                        animation,
+                        secondaryAnimation,
+                        controllerProvider,
+                      ) {
+                        return AnimatedBuilder(
+                          animation: animation,
+                          builder: (context, child) {
+                            return Material(
+                              child: Stack(
+                                children: <Widget>[
+                                  Positioned.fill(
+                                    child: controllerProvider,
+                                  ),
+                                  _RoutePageBuilderTestTopBar(
+                                    controller: controllerProvider.controller,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                ),
+              );
+
+          controller.controlsVisibilityStream.listen(events.add);
+
+          await controller.setupDataSource(
+            PlayerDataSource.network(
+              BetterPlayerTestUtils.forBiggerBlazesUrl,
+            ),
+          );
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: Scaffold(
+                body: BetterPlayer(controller: controller),
+              ),
+            ),
+          );
+
+          await tester.pumpAndSettle();
+
+          controller.enterFullScreen();
+          await tester.pump();
+          await tester.pump();
+          await tester.pumpAndSettle();
+
+          // Mouse moves over top bar area
+          final gesture = await tester.createGesture(
+            kind: PointerDeviceKind.mouse,
+          );
+          await gesture.addPointer(location: const Offset(100, 20));
+          await tester.pump();
+
+          final countBeforeMoves = events.length;
+
+          // Move pointer across the top bar over several frames
+          for (var i = 1; i <= 5; i++) {
+            await gesture.moveTo(Offset(100, 20.0 + i));
+            await tester.pump();
+          }
+
+          // In the buggy implementation, every movement over the top bar triggered
+          // an exit and immediate re-entry loop emitting false, true, false, true...
+          // With the fix, controls remain stable and do not oscillate.
+          final newEvents = events.sublist(countBeforeMoves);
+          expect(newEvents.where((e) => !e), isEmpty);
+        } finally {
+          debugDefaultTargetPlatformOverride = null;
+        }
+      },
+    );
+
+    testWidgets(
+      'calling setControlsVisibility(true) resets hide timer when controls are already visible',
+      (tester) async {
+        final mockPlayerEngineController = MockPlayerEngineController();
+        mockPlayerEngineController.setDuration(const Duration(seconds: 100));
+
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mockPlayerEngineController,
+              configuration: const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.web,
+                  controlsHideTime: Duration(milliseconds: 600),
+                ),
+              ),
+            );
+
+        await controller.setupDataSource(
+          PlayerDataSource.network(
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
+          ),
+        );
+
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: BetterPlayer(controller: controller),
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+        expect(controller.isControlsVisible, isTrue);
+
+        // Advance 300ms (less than controlsHideTime 600ms)
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(controller.isControlsVisible, isTrue);
+
+        // Reset hide timer by calling setControlsVisibility(true)
+        controller.setControlsVisibility(true);
+        await tester.pump();
+
+        // Advance another 400ms (700ms from start, but only 400ms from reset)
+        await tester.pump(const Duration(milliseconds: 400));
+        expect(controller.isControlsVisible, isTrue);
+
+        // Advance past reset timer expiry (another 300ms -> 700ms from reset)
+        await tester.pump(const Duration(milliseconds: 300));
+        await tester.pumpAndSettle();
+        expect(controller.isControlsVisible, isFalse);
+      },
+    );
   });
+}
+
+class _RoutePageBuilderTestTopBar extends StatelessWidget {
+  const _RoutePageBuilderTestTopBar({required this.controller});
+
+  final BetterPlayerController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<bool>(
+      stream: controller.controlsVisibilityStream,
+      initialData: true,
+      builder: (context, snapshot) {
+        final isVisible = snapshot.data ?? true;
+        return IgnorePointer(
+          ignoring: !isVisible,
+          child: ColoredBox(
+            color: Colors.red,
+            child: Offstage(
+              offstage: !isVisible,
+              child: const SizedBox(
+                height: 50,
+                width: double.infinity,
+                child: Text('Video Title'),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

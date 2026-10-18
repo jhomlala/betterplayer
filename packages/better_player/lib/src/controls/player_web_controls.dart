@@ -71,12 +71,17 @@ class _PlayerWebControlsState
     _controlsVisibilitySubscription = _betterPlayerController!
         .controlsVisibilityStream
         .listen((visibility) {
-          if (mounted && _controlsNotVisible == visibility) {
-            setState(() {
-              _controlsNotVisible = !visibility;
-            });
+          if (!mounted) {
+            return;
+          }
+          if (visibility) {
+            cancelAndRestartTimer();
+          } else {
+            _hideTimer?.cancel();
             if (!_controlsNotVisible) {
-              cancelAndRestartTimer();
+              setState(() {
+                _controlsNotVisible = true;
+              });
             }
           }
         });
@@ -302,13 +307,7 @@ class _PlayerWebControlsState
                 onExit: (_) {
                   if (!_betterPlayerController!.controlsAlwaysVisible &&
                       !_isMenuOpen) {
-                    _hideTimer?.cancel();
-                    if (!_controlsNotVisible) {
-                      setState(() {
-                        _controlsNotVisible = true;
-                        widget.onControlsVisibilityChanged(false);
-                      });
-                    }
+                    _startHideTimer();
                   }
                 },
                 child: Focus(

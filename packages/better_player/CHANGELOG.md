@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Prevented control flickering and stream oscillation when using `routePageBuilder` custom overlays by starting the hide timer on mouse exit instead of immediately hiding controls (#1605).
+
 ## 1.25.0
 - Fixed: Respected `PlayerControlsConfiguration` enable flags and `controlsEnabled` state in `PlayerWebControls` on desktop and web (#1599).
 - Added: Embedded CEA-608 and CEA-708 closed caption support decoded by native platform engines and rendered via `PlayerSubtitlesDrawer` (#1066).
