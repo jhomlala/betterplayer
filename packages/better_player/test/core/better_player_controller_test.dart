@@ -353,19 +353,28 @@ void main() {
       test('setControlsEnabled updates values correctly', () async {
         final betterPlayerMockController =
             BetterPlayerTestUtils.setupBetterPlayerMockController();
-        var hideCalls = 0;
+        final visibilityEvents = <bool>[];
         betterPlayerMockController.controlsVisibilityStream.listen(
-          (event) {
-            hideCalls += 1;
-          },
+          visibilityEvents.add,
         );
         betterPlayerMockController.setControlsEnabled(false);
         betterPlayerMockController.setControlsEnabled(false);
         await Future<void>.delayed(const Duration(milliseconds: 100), () {});
-        expect(hideCalls, 2);
+        expect(visibilityEvents, [false, false]);
         expect(betterPlayerMockController.controlsEnabled, false);
+        expect(betterPlayerMockController.isControlsVisible, false);
+
+        // setControlsVisibility(true) is ignored while controls are disabled
+        betterPlayerMockController.setControlsVisibility(true);
+        await Future<void>.delayed(const Duration(milliseconds: 50), () {});
+        expect(visibilityEvents, [false, false]);
+        expect(betterPlayerMockController.isControlsVisible, false);
+
         betterPlayerMockController.setControlsEnabled(true);
+        await Future<void>.delayed(const Duration(milliseconds: 100), () {});
         expect(betterPlayerMockController.controlsEnabled, true);
+        expect(betterPlayerMockController.isControlsVisible, true);
+        expect(visibilityEvents, [false, false, true]);
       });
 
       test('toggleControlsVisibility sends correct events', () async {

@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
@@ -24,6 +24,9 @@ class PlayerCupertinoMiddleRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
+    if (!controller.controlsEnabled) {
+      return const SizedBox();
+    }
     final isFullScreen = controller.isFullScreen;
     final iconSize = isFullScreen ? 32.0 : 24.0;
     final buttonSize = iconSize + 16.0;
