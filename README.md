@@ -22,6 +22,7 @@
   <a href="https://jhomlala.github.io/betterplayer/demo/"><b>Live Demo</b></a> &bull;
   <a href="https://jhomlala.github.io/betterplayer/migration_from_video_player"><b>Migrating from video_player</b></a> &bull;
   <a href="https://jhomlala.github.io/betterplayer/migration_from_chewie"><b>Migrating from chewie</b></a> &bull;
+  <a href="https://jhomlala.github.io/betterplayer/migration_from_media_kit"><b>Migrating from media_kit</b></a> &bull;
   <a href="https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_example"><b>Example App</b></a>
 </p>
 
@@ -152,6 +153,7 @@ Switching from another package? Follow the step-by-step migration guides:
 
 - [Migrating from video_player](https://jhomlala.github.io/betterplayer/migration_from_video_player): Replace `VideoPlayerController` and remove separate UI packages.
 - [Migrating from chewie](https://jhomlala.github.io/betterplayer/migration_from_chewie): Consolidate your player and controls into a single controller.
+- [Migrating from media_kit](https://jhomlala.github.io/betterplayer/migration_from_media_kit): Reclaim 30-50 MB of mobile app size and switch to native OS media engines.
 
 ---
 
