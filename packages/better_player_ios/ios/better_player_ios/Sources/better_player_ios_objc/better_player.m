@@ -62,6 +62,9 @@ Protocol* _x224me_BetterPlayerCallback(void) { return NSProtocolFromString(@"Bet
 __attribute__((visibility("default"))) __attribute__((used))
 Protocol* _x224me_BetterPlayerLogCallback(void) { return NSProtocolFromString(@"BetterPlayerLogCallback"); }
 
+__attribute__((visibility("default"))) __attribute__((used))
+Protocol* _x224me_BetterPlayerPreCacheCallback(void) { return NSProtocolFromString(@"BetterPlayerPreCacheCallback"); }
+
 __attribute__((visibility("default")))
 @interface _x224me_BlockArgs_1s56lr9 : NSObject
 @property (copy) id block;
@@ -526,6 +529,78 @@ typedef void  (^_ProtocolTrampoline_6)(void * sel, id arg1, id arg2, id arg3);
 __attribute__((visibility("default"))) __attribute__((used))
 void  _x224me_protocolTrampoline_1tz5yf(id target, void * sel, id arg1, id arg2, id arg3) {
   return ((_ProtocolTrampoline_6)((id (*)(id, SEL, SEL))objc_msgSend)(target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1, arg2, arg3);
+}
+
+__attribute__((visibility("default")))
+@interface _x224me_BlockArgs_j0dvbq : NSObject
+@property (copy) id block;
+@property void * arg0;
+@property (strong) id arg1;
+@property (strong) id arg2;
+@property double arg3;
+@property int64_t arg4;
+@property int64_t arg5;
+@end
+@implementation _x224me_BlockArgs_j0dvbq
+@end
+
+typedef void  (^_ListenerTrampoline_8)(void * arg0, id arg1, id arg2, double arg3, int64_t arg4, int64_t arg5);
+__attribute__((visibility("default"))) __attribute__((used))
+_ListenerTrampoline_8 _x224me_wrapListenerBlock_j0dvbq(
+    int64_t port, DOBJC_Context* ctx) NS_RETURNS_RETAINED {
+  __block __weak _ListenerTrampoline_8 weakSelfBlock = nil;
+  _ListenerTrampoline_8 strongSelfBlock = [^void(void * arg0, id arg1, id arg2, double arg3, int64_t arg4, int64_t arg5) {
+    @autoreleasepool {
+      _x224me_BlockArgs_j0dvbq* args = [[_x224me_BlockArgs_j0dvbq alloc] init];
+      args.block = weakSelfBlock;
+      args.arg0 = arg0;
+      args.arg1 = arg1;
+      args.arg2 = arg2;
+      args.arg3 = arg3;
+      args.arg4 = arg4;
+      args.arg5 = arg5;
+      ctx->invokeListenerPortBlock(port, (__bridge_retained void*)args);
+    }
+  } copy];
+  weakSelfBlock = strongSelfBlock;
+  return strongSelfBlock;
+}
+
+typedef void  (^_BlockingTrampoline_8)(void * waiter, void * arg0, id arg1, id arg2, double arg3, int64_t arg4, int64_t arg5);
+__attribute__((visibility("default"))) __attribute__((used))
+_ListenerTrampoline_8 _x224me_wrapBlockingBlock_j0dvbq(int64_t port, DOBJC_Context* ctx,
+    void (*directInvoke)(void*)) NS_RETURNS_RETAINED {
+  BLOCKING_BLOCK_IMPL(ctx, _ListenerTrampoline_8, ^void(void * arg0, id arg1, id arg2, double arg3, int64_t arg4, int64_t arg5), {
+    @autoreleasepool {
+      _x224me_BlockArgs_j0dvbq* args = [[_x224me_BlockArgs_j0dvbq alloc] init];
+      args.block = weakSelfBlock;
+      args.arg0 = arg0;
+      args.arg1 = arg1;
+      args.arg2 = arg2;
+      args.arg3 = arg3;
+      args.arg4 = arg4;
+      args.arg5 = arg5;
+      directInvoke((__bridge_retained void*)args);
+    }
+  }, {
+    @autoreleasepool {
+      _x224me_BlockArgs_j0dvbq* args = [[_x224me_BlockArgs_j0dvbq alloc] init];
+      args.block = weakSelfBlock;
+      args.arg0 = arg0;
+      args.arg1 = arg1;
+      args.arg2 = arg2;
+      args.arg3 = arg3;
+      args.arg4 = arg4;
+      args.arg5 = arg5;
+      ctx->invokeBlockingPortBlock(port, (__bridge_retained void*)args, waiter);
+    }
+  });
+}
+
+typedef void  (^_ProtocolTrampoline_7)(void * sel, id arg1, id arg2, double arg3, int64_t arg4, int64_t arg5);
+__attribute__((visibility("default"))) __attribute__((used))
+void  _x224me_protocolTrampoline_j0dvbq(id target, void * sel, id arg1, id arg2, double arg3, int64_t arg4, int64_t arg5) {
+  return ((_ProtocolTrampoline_7)((id (*)(id, SEL, SEL))objc_msgSend)(target, @selector(getDOBJCDartProtocolMethodForSelector:), sel))(sel, arg1, arg2, arg3, arg4, arg5);
 }
 #undef BLOCKING_BLOCK_IMPL
 

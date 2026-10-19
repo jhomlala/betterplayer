@@ -42,6 +42,9 @@ class TestBetterPlayerMacOS extends BetterPlayerMacOS {
   Object createCacheManager() {
     return mockCacheManager;
   }
+
+  @override
+  void clearLogCallback() {}
 }
 
 void main() {

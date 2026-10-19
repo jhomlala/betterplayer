@@ -28,13 +28,22 @@ class CacheWorker(
     private var cacheWriter: CacheWriter? = null
     private var lastCacheReportIndex = 0
     override fun doWork(): Result {
+        val data = inputData
+        val url = data.getString(BetterPlayerPlugin.URL_PARAMETER)
+        val cacheKey = data.getString(BetterPlayerPlugin.CACHE_KEY_PARAMETER)
+        val preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0)
+        val maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0)
+        val maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0)
+        var lastReportedBytes = 0L
+
         try {
-            val data = inputData
-            val url = data.getString(BetterPlayerPlugin.URL_PARAMETER)
-            val cacheKey = data.getString(BetterPlayerPlugin.CACHE_KEY_PARAMETER)
-            val preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0)
-            val maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0)
-            val maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0)
+            if (url == null || url.contains(".m3u8", ignoreCase = true) ||
+                url.contains(".m3u", ignoreCase = true) ||
+                url.contains(".mpd", ignoreCase = true)
+            ) {
+                Log.w(TAG, "Pre-caching HLS and DASH streams is not supported.")
+                return Result.success()
+            }
             val headers: MutableMap<String, String> = HashMap()
             for (key in data.keyValueMap.keys) {
                 if (key.contains(BetterPlayerPlugin.HEADER_PARAMETER)) {
@@ -61,26 +70,76 @@ class CacheWorker(
                     dataSpec,
                     null
                 ) { _: Long, bytesCached: Long, _: Long ->
-                    val completedData = (bytesCached * 100f / preCacheSize).toDouble()
+                    val completedFraction = if (preCacheSize > 0) {
+                        (bytesCached.toDouble() / preCacheSize.toDouble()).coerceIn(0.0, 1.0)
+                    } else {
+                        0.0
+                    }
+                    val completedData = (completedFraction * 100.0)
+
+                    val throttleThreshold = (preCacheSize / 100).coerceAtLeast(1L)
+                    if (bytesCached - lastReportedBytes >= throttleThreshold || bytesCached >= preCacheSize) {
+                        lastReportedBytes = bytesCached
+                        BetterPlayerApi.reportPreCacheProgress(
+                            url ?: "",
+                            cacheKey,
+                            completedFraction,
+                            bytesCached,
+                            preCacheSize
+                        )
+                    }
+
                     if (completedData >= lastCacheReportIndex * 10) {
                         lastCacheReportIndex += 1
                         Log.d(TAG, "Completed pre cache of $url: ${lastCacheReportIndex * 10}%")
                     }
                 }
                 cacheWriter?.cache()
+                BetterPlayerApi.reportPreCacheProgress(
+                    url ?: "",
+                    cacheKey,
+                    1.0,
+                    if (lastReportedBytes > 0) lastReportedBytes else preCacheSize,
+                    if (lastReportedBytes > 0) lastReportedBytes else preCacheSize
+                )
             } else {
+                BetterPlayerApi.reportPreCacheProgress(
+                    url ?: "",
+                    cacheKey,
+                    -2.0,
+                    0,
+                    -1
+                )
                 return Result.failure()
             }
         } catch (exception: Exception) {
+            if (isStopped) {
+                return Result.success()
+            }
             Log.e(TAG, "Pre cache exception", exception)
             // If it's HttpDataSourceException or EOFException (file smaller than preCacheSize) we can consider it success
             return if (exception is HttpDataSourceException || exception is java.io.EOFException) {
+                BetterPlayerApi.reportPreCacheProgress(
+                    url ?: "",
+                    cacheKey,
+                    1.0,
+                    lastReportedBytes,
+                    lastReportedBytes
+                )
                 Result.success()
             } else {
+                BetterPlayerApi.reportPreCacheProgress(
+                    url ?: "",
+                    cacheKey,
+                    -2.0,
+                    lastReportedBytes,
+                    preCacheSize
+                )
                 Result.failure()
             }
         }
         return Result.success()
+
     }
 
     override fun onStopped() {

@@ -47,6 +47,9 @@ class TestBetterPlayerAndroid extends BetterPlayerAndroid {
   }
 
   @override
+  void ensurePreCacheCallbackConfigured() {}
+
+  @override
   void jniPreCache(
     String dataSource,
     int preCacheSize,

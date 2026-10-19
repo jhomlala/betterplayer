@@ -63,6 +63,7 @@ Future<void> main() async {
           include: (decl) => [
             'BetterPlayerCallback',
             'BetterPlayerLogCallback',
+            'BetterPlayerPreCacheCallback',
           ].contains(decl.originalName),
         ),
       ),
@@ -88,6 +89,10 @@ Future<void> main() async {
       '@protocol(BetterPlayerLogCallback)',
       'NSProtocolFromString(@"BetterPlayerLogCallback")',
     );
+    content = content.replaceAll(
+      '@protocol(BetterPlayerPreCacheCallback)',
+      'NSProtocolFromString(@"BetterPlayerPreCacheCallback")',
+    );
     content += '\nvoid better_player_macos_force_load_symbols(void) {}\n';
     file.writeAsStringSync(content);
 
@@ -105,6 +110,10 @@ Future<void> main() async {
       dartContent = dartContent.replaceAll(
         '"better_player_macos.BetterPlayerLogCallback"',
         '"BetterPlayerLogCallback"',
+      );
+      dartContent = dartContent.replaceAll(
+        '"better_player_macos.BetterPlayerPreCacheCallback"',
+        '"BetterPlayerPreCacheCallback"',
       );
       dartFile.writeAsStringSync(dartContent);
     }

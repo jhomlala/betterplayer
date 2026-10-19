@@ -275,21 +275,23 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
   }
 
   @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+  Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
     _log(
       message:
-          'preCache: url=${dataSource.uri ?? dataSource.asset}, preCacheSize=$preCacheSize '
-          '(network demuxer buffering is handled automatically by mpv)',
-      levelIndex: 0,
+          'preCache is not supported on Windows (demuxer buffering is handled during playback by mpv)',
+      levelIndex: 2,
     );
   }
 
   @override
   Future<void> stopPreCache(String url, String? cacheKey) async {
     _log(
-      message:
-          'stopPreCache: url=$url, cacheKey=$cacheKey (demuxer buffering handles cache)',
-      levelIndex: 0,
+      message: 'stopPreCache is not supported on Windows',
+      levelIndex: 2,
     );
   }
 

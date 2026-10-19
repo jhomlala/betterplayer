@@ -23,12 +23,27 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
 
   List<DataSource> preCacheCalls = [];
   List<int> preCacheSizeCalls = [];
+  void Function(PreCacheProgress progress)? lastPreCacheOnProgress;
+  Future<void> Function(
+    DataSource dataSource,
+    int preCacheSize,
+    void Function(PreCacheProgress progress)? onProgress,
+  )?
+  preCacheHandler;
   Size initialVideoSize = const Size(1280, 720);
 
   @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+  Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
     preCacheCalls.add(dataSource);
     preCacheSizeCalls.add(preCacheSize);
+    lastPreCacheOnProgress = onProgress;
+    if (preCacheHandler != null) {
+      await preCacheHandler!(dataSource, preCacheSize, onProgress);
+    }
   }
 
   @override

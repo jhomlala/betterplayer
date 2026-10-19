@@ -43,10 +43,40 @@ betterPlayerController.clearCache();
 ```
 
 ### Pre-Caching
-You can start downloading a video into the cache before playback begins:
+You can download video data into cache before playback begins. Use the `onProgress` callback to monitor download progress in real time:
+
 ```dart
-betterPlayerController.preCache(_betterPlayerDataSource);
+await betterPlayerController.preCache(
+  _betterPlayerDataSource,
+  onProgress: (PreCacheProgress progress) {
+    print('Progress: ${progress.percent.toStringAsFixed(1)}%');
+    print('Downloaded: ${progress.bytesDownloaded} / ${progress.totalBytes} bytes');
+  },
+);
 ```
+
+### Pre-Cache Progress Stream
+You can also monitor all active pre-cache tasks across the application via the broadcast stream:
+
+```dart
+final subscription = betterPlayerController.preCacheProgressStream.listen(
+  (PreCacheProgress progress) {
+    print('${progress.url}: ${progress.percent}%');
+  },
+);
+```
+
+### PreCacheProgress Properties
+The `PreCacheProgress` model includes:
+* `url`: URL of the video being cached.
+* `cacheKey`: Optional cache key associated with the media.
+* `progress`: Download fraction from `0.0` to `1.0` (or negative on error/indeterminate).
+* `bytesDownloaded`: Number of bytes downloaded so far.
+* `totalBytes`: Total bytes expected (`-1` if indeterminate or unknown).
+* `percent`: Download percentage from `0.0` to `100.0`.
+* `isCompleted`: Indicates whether pre-caching completed successfully (`progress >= 1.0 && error == null`).
+* `hasError`: Indicates whether pre-caching failed (`error != null || progress < -1.5`).
+* `error`: Optional error description when pre-caching fails.
 
 ### Stop Pre-Caching
 To cancel an ongoing pre-caching operation:
@@ -61,5 +91,12 @@ The underlying implementation varies by platform. Android uses ExoPlayer's inter
 | Feature | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS | macOS HLS | macOS non-HLS | Windows HLS | Windows non-HLS | Web |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Normal Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | x |
-| **Pre-Caching** | ✓ | ✓ | x | ✓ | x | ✓ | x | x | x |
-| **Stop Caching** | ✓ | ✓ | x | ✓ | x | ✓ | x | x | x |
+| **Pre-Caching** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
+| **Pre-Cache Progress** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
+| **Stop Caching** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
+
+:::note
+- **Chunked Streams (HLS & DASH)**: Pre-caching operates on progressive media files (MP4, MKV, etc.). Pre-caching HLS (`.m3u8`) and DASH (`.mpd`) is blocked and not supported. Normal caching during active playback still caches HLS segments on Android, iOS, macOS, and Windows.
+- **Windows**: `libmpv` automatically manages demuxer cache and network buffering during active playback. Offline pre-caching is not supported.
+- **Web**: Browsers control media caching directly through HTTP caching headers.
+:::

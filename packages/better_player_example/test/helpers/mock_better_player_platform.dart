@@ -105,6 +105,31 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   @override
   Future<void> setMixWithOthers(int? textureId, bool mixWithOthers) async {}
 
+  List<DataSource> preCacheCalls = [];
+  List<int> preCacheSizeCalls = [];
+  Future<void> Function(
+    DataSource dataSource,
+    int preCacheSize,
+    void Function(PreCacheProgress progress)? onProgress,
+  )?
+  preCacheHandler;
+
+  @override
+  Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
+    preCacheCalls.add(dataSource);
+    preCacheSizeCalls.add(preCacheSize);
+    if (preCacheHandler != null) {
+      await preCacheHandler!(dataSource, preCacheSize, onProgress);
+    }
+  }
+
+  @override
+  Future<void> stopPreCache(String url, String? cacheKey) async {}
+
   @override
   Future<void> clearCache() async {}
 

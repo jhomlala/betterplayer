@@ -9,6 +9,7 @@ import Cache
 
     /// Stores the last pre-cached `CachingPlayerItem` objects.
     private var preCachedURLs = [String: CachingPlayerItem]()
+    private var lastReportedBytesMap = [String: Int]()
 
     /// Callback for pre-caching completion.
     private var completionHandler: ((_ success: Bool) -> Void)? = nil
@@ -84,9 +85,24 @@ import Cache
                     self.preCachedURLs[key] = item
                     item.download()
                 } else {
+                    let downloadedBytes = Int64((try? storage?.object(forKey: key))?.count ?? 0)
+                    BetterPlayerApi.reportPreCacheProgress(
+                        url: url.absoluteString,
+                        cacheKey: cacheKey,
+                        progress: 1.0,
+                        bytesDownloaded: downloadedBytes,
+                        totalBytes: downloadedBytes
+                    )
                     self.completionHandler?(true)
                 }
             } else {
+                BetterPlayerApi.reportPreCacheProgress(
+                    url: url.absoluteString,
+                    cacheKey: cacheKey,
+                    progress: -2.0,
+                    bytesDownloaded: 0,
+                    totalBytes: -1
+                )
                 self.completionHandler?(false)
             }
         } else {
@@ -101,6 +117,7 @@ import Cache
     ///   - completionHandler: Callback when stopping finishes.
     @objc public func stopPreCache(_ url: URL, cacheKey: String?, completionHandler: ((_ success: Bool) -> Void)?) {
         let key: String = cacheKey ?? url.absoluteString
+        lastReportedBytesMap.removeValue(forKey: key)
         if let playerItem = self.preCachedURLs[key] {
             playerItem.stopDownload()
             self.preCachedURLs.removeValue(forKey: key)
@@ -109,6 +126,7 @@ import Cache
         }
         completionHandler?(false)
     }
+
 
     /// Gets a caching player item for normal playback.
     /// - Parameters:
@@ -176,7 +194,8 @@ import Cache
     /// Removes all objects from the cache.
     @objc public func clearCache() {
         try? storage?.removeAll()
-        self.preCachedURLs = [String: CachingPlayerItem]()
+        self.preCachedURLs.removeAll()
+        self.lastReportedBytesMap.removeAll()
     }
 
     // MARK: - Private Helper Methods
@@ -228,16 +247,65 @@ import Cache
 extension CacheManager: CachingPlayerItemDelegate {
 
     func playerItem(_ playerItem: CachingPlayerItem, didFinishDownloadingData data: Data) {
-        // A track is downloaded. Saving it to the cache asynchronously.
-        storage?.async.setObject(data, forKey: playerItem.cacheKey ?? playerItem.url.absoluteString, completion: { _ in })
-        self.completionHandler?(true)
+        DispatchQueue.main.async {
+            let key = playerItem.cacheKey ?? playerItem.url.absoluteString
+            self.lastReportedBytesMap.removeValue(forKey: key)
+            self.preCachedURLs.removeValue(forKey: key)
+            // A track is downloaded. Saving it to the cache asynchronously.
+            self.storage?.async.setObject(data, forKey: key, completion: { _ in })
+            BetterPlayerApi.reportPreCacheProgress(
+                url: playerItem.url.absoluteString,
+                cacheKey: playerItem.cacheKey,
+                progress: 1.0,
+                bytesDownloaded: Int64(data.count),
+                totalBytes: Int64(data.count)
+            )
+            self.completionHandler?(true)
+        }
     }
 
     func playerItem(_ playerItem: CachingPlayerItem, didDownloadBytesSoFar bytesDownloaded: Int, outOf bytesExpected: Int) {
-        // Optional: track download progress
+        DispatchQueue.main.async {
+            let total = Int64(bytesExpected)
+            let downloaded = Int64(bytesDownloaded)
+            let progress = total > 0 ? min(max(Double(downloaded) / Double(total), 0.0), 1.0) : -1.0
+
+            let throttleThreshold = max(bytesExpected / 100, 32 * 1024)
+            let key = playerItem.cacheKey ?? playerItem.url.absoluteString
+            let lastReported = self.lastReportedBytesMap[key] ?? 0
+
+            if bytesDownloaded - lastReported >= throttleThreshold || (bytesExpected > 0 && bytesDownloaded >= bytesExpected) {
+                self.lastReportedBytesMap[key] = bytesDownloaded
+                BetterPlayerApi.reportPreCacheProgress(
+                    url: playerItem.url.absoluteString,
+                    cacheKey: playerItem.cacheKey,
+                    progress: progress,
+                    bytesDownloaded: downloaded,
+                    totalBytes: total
+                )
+            }
+        }
     }
 
     func playerItem(_ playerItem: CachingPlayerItem, downloadingFailedWith error: Error) {
-        self.completionHandler?(false)
+        DispatchQueue.main.async {
+            let key = playerItem.cacheKey ?? playerItem.url.absoluteString
+            self.lastReportedBytesMap.removeValue(forKey: key)
+            self.preCachedURLs.removeValue(forKey: key)
+            let nsError = error as NSError
+            if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                self.completionHandler?(false)
+                return
+            }
+            BetterPlayerApi.reportPreCacheProgress(
+                url: playerItem.url.absoluteString,
+                cacheKey: playerItem.cacheKey,
+                progress: -2.0,
+                bytesDownloaded: 0,
+                totalBytes: -1
+            )
+            self.completionHandler?(false)
+        }
     }
 }
+
