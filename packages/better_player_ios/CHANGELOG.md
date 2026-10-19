@@ -1,4 +1,5 @@
 ## Unreleased
+- Fixed: Forwarded data source HTTP headers to native iOS playback, with and without caching (by @by291).
 - Added: Native pre-cache progress reporting in `CacheManager` via `BetterPlayerPreCacheCallback`.
 
 ## 1.8.0

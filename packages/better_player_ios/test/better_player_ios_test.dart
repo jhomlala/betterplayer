@@ -193,6 +193,42 @@ void main() {
       expect(iosPlayer.setDataSource(1, dataSource), completes);
     });
 
+    for (final useCache in [false, true]) {
+      test('setDataSource forwards headers with useCache=$useCache', () async {
+        const headers = {
+          'Authorization': 'Bearer test-token',
+          'Referer': 'https://example.com/',
+          'User-Agent': 'BetterPlayer/header-test',
+        };
+        await iosPlayer.create();
+
+        await iosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/video.mp4',
+            headers: {...headers, 'X-Empty': null},
+            cacheConfiguration: CacheConfiguration(useCache: useCache),
+          ),
+        );
+
+        verify(
+          () => mockPlayer.setDataSourceURLString(
+            'https://example.com/video.mp4',
+            key: any(named: 'key'),
+            certificateUrl: any(named: 'certificateUrl'),
+            licenseUrl: any(named: 'licenseUrl'),
+            headers: {...headers, 'X-Empty': ''},
+            useCache: useCache,
+            cacheKey: any(named: 'cacheKey'),
+            cacheManager: any(named: 'cacheManager'),
+            overriddenDuration: any(named: 'overriddenDuration'),
+            videoExtension: any(named: 'videoExtension'),
+          ),
+        ).called(1);
+      });
+    }
+
     test(
       'setDataSource successfully delegates network URL to wrapper',
       () async {
