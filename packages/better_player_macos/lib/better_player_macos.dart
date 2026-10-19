@@ -23,7 +23,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
       BetterPlayerApi.setLogCallback(null);
       return;
     }
-    final ffiFn = BetterPlayerLogCallback$Builder.implement(
+    final ffiFn = BetterPlayerLogCallback$Builder.implementAsListener(
       onLog_message_: (int level, objc.NSString message) {
         callback(
           levelIndex: level,
@@ -48,15 +48,40 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }
 
   void _cleanupOrphanedPlayers() {
-    if (!Platform.isMacOS) return;
+    cleanupOrphanedPlayers();
+  }
+
+  @visibleForTesting
+  void clearLogCallback() {
+    if (Platform.isMacOS) {
+      BetterPlayerApi.setLogCallback(null);
+    }
+  }
+
+  @visibleForTesting
+  void cleanupOrphanedPlayers({Map<Object, Object>? playersOverride}) {
+    if (!Platform.isMacOS && playersOverride == null) return;
     try {
-      final players = BetterPlayerApi.getPlayers();
-      final map = players.asDart();
-      for (final key in map.keys) {
-        if (key is objc.NSNumber) {
-          final player = BetterPlayerApi.getPlayer(key.longLongValue);
-          player?.dispose();
+      final keys = <int>[];
+      if (playersOverride != null) {
+        for (final key in playersOverride.keys) {
+          if (key is num) {
+            keys.add(key.toInt());
+          }
         }
+      } else {
+        clearLogCallback();
+        final players = BetterPlayerApi.getPlayers();
+        final map = players.toDartMap();
+        for (final key in map.keys) {
+          if (key is num) {
+            keys.add(key.toInt());
+          }
+        }
+      }
+      for (final id in keys) {
+        final player = getPlayer(id);
+        player?.dispose();
       }
     } catch (_) {}
   }
@@ -129,7 +154,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }) async {
     int? currentTextureId;
 
-    final callback = BetterPlayerCallback$Builder.implement(
+    final callback = BetterPlayerCallback$Builder.implementAsListener(
       onInitializedWithDurationMs_width_height_key_:
           (int durationMs, double width, double height, objc.NSString? key) {
             if (currentTextureId == null) return;
@@ -361,11 +386,52 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
     return Duration(milliseconds: pos ?? 0);
   }
 
+  bool _preCacheCallbackConfigured = false;
+  BetterPlayerPreCacheCallback? _preCacheCallback;
+
+  @visibleForTesting
+  void ensurePreCacheCallbackConfigured() {
+    if (!Platform.isMacOS || _preCacheCallbackConfigured) {
+      return;
+    }
+    _preCacheCallbackConfigured = true;
+    _preCacheCallback =
+        BetterPlayerPreCacheCallback$Builder.implementAsListener(
+          onProgressWithUrl_cacheKey_progress_bytesDownloaded_totalBytes_:
+              (
+                url,
+                cacheKey,
+                progress,
+                bytesDownloaded,
+                totalBytes,
+              ) {
+                emitPreCacheProgress(
+                  PreCacheProgress(
+                    url: url.toDartString(),
+                    progress: progress,
+                    bytesDownloaded: bytesDownloaded,
+                    totalBytes: totalBytes,
+                    cacheKey: cacheKey?.toDartString(),
+                  ),
+                );
+              },
+        );
+    BetterPlayerApi.setPreCacheCallback(_preCacheCallback);
+  }
+
   @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+  Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
+    ensurePreCacheCallbackConfigured();
+    final url = dataSource.uri ?? dataSource.asset ?? '';
+    final cacheKey = dataSource.cacheConfiguration?.key;
+
     BetterPlayerApi.preCacheWithUrl(
-      (dataSource.uri ?? dataSource.asset ?? '').toNSString(),
-      cacheKey: dataSource.cacheConfiguration?.key?.toNSString(),
+      url.toNSString(),
+      cacheKey: cacheKey?.toNSString(),
       videoExtension: dataSource.videoExtension?.toNSString(),
     );
   }

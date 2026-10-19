@@ -8,6 +8,7 @@ export 'package:better_player_platform_interface/src/models/drm_security_level.d
 export 'package:better_player_platform_interface/src/models/drm_type.dart';
 export 'package:better_player_platform_interface/src/models/duration_range.dart';
 export 'package:better_player_platform_interface/src/models/notification_configuration.dart';
+export 'package:better_player_platform_interface/src/models/pre_cache_progress.dart';
 export 'package:better_player_platform_interface/src/models/video_event.dart';
 export 'package:better_player_platform_interface/src/models/video_event_type.dart';
 export 'package:better_player_platform_interface/src/models/video_format.dart';

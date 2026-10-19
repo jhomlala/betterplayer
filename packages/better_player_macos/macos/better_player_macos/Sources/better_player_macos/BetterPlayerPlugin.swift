@@ -11,10 +11,7 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
     
     public static func register(with registrar: FlutterPluginRegistrar) {
         better_player_macos_force_load_symbols()
-        for (_, player) in BetterPlayerApi.players {
-            player.dispose()
-        }
-        BetterPlayerApi.players.removeAll()
+        BetterPlayerApi.cleanUp()
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
     }

@@ -314,8 +314,41 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     return DateTime.fromMillisecondsSinceEpoch(pos);
   }
 
+  BetterPlayerPreCacheCallback? _preCacheCallback;
+  bool _preCacheCallbackConfigured = false;
+
+  @visibleForTesting
+  void ensurePreCacheCallbackConfigured() {
+    if (_preCacheCallbackConfigured) {
+      return;
+    }
+    _preCacheCallbackConfigured = true;
+    _preCacheCallback = BetterPlayerPreCacheCallback.implement(
+      $BetterPlayerPreCacheCallback(
+        onProgress: (url, cacheKey, progress, bytesDownloaded, totalBytes) {
+          emitPreCacheProgress(
+            PreCacheProgress(
+              url: url.toDartString(),
+              progress: progress,
+              bytesDownloaded: bytesDownloaded,
+              totalBytes: totalBytes,
+              cacheKey: cacheKey?.toDartString(),
+            ),
+          );
+        },
+        onProgress$async: true,
+      ),
+    );
+    BetterPlayerApi.Companion.preCacheCallback = _preCacheCallback;
+  }
+
   @override
-  Future<void> preCache(DataSource dataSource, int preCacheSize) async {
+  Future<void> preCache(
+    DataSource dataSource,
+    int preCacheSize, {
+    void Function(PreCacheProgress progress)? onProgress,
+  }) async {
+    ensurePreCacheCallbackConfigured();
     jniPreCache(
       dataSource.uri ?? dataSource.asset ?? '',
       preCacheSize,

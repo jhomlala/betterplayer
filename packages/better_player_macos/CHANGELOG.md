@@ -1,3 +1,7 @@
+## Unreleased
+- Added: Native pre-cache progress reporting in `CacheManager` via `BetterPlayerPreCacheCallback`.
+- Fixed: App crash on hot restart by using asynchronous listener callbacks (`implementAsListener`), resetting the native log callback, safely extracting orphaned player IDs, and clearing callbacks before resource teardown (#1617).
+
 ## 1.3.0
 - Fixed: Added fallback matching by displayName, language, and index in `setAudioTrack` to support HLS audio tracks lacking common title metadata.
 

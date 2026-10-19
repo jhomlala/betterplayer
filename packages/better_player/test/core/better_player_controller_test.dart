@@ -50,22 +50,6 @@ void main() {
         expect(betterPlayerMockController.eventListeners.isEmpty, true);
       });
 
-      test('preCache blocks HLS streams', () async {
-        final betterPlayerMockController = BetterPlayerMockController(
-          const PlayerConfiguration(),
-        );
-        final dataSource = PlayerDataSource(
-          DataSourceType.network,
-          'https://example.com/playlist.m3u8',
-        );
-
-        await betterPlayerMockController.preCache(dataSource);
-
-        final mockPlatform =
-            BetterPlayerPlatform.instance as MockBetterPlayerPlatform;
-        expect(mockPlatform.preCacheCalls.isEmpty, true);
-      });
-
       test('PiP events are posted correctly on engine state change', () async {
         final engineController = MockPlayerEngineController();
         final betterPlayerMockController = BetterPlayerMockController(

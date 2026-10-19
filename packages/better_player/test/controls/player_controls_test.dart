@@ -1,5 +1,7 @@
-﻿import 'package:better_player/better_player.dart';
+import 'package:better_player/better_player.dart';
+import 'package:better_player/src/controls/player_cupertino_controls.dart';
 import 'package:better_player/src/controls/player_cupertino_progress_bar.dart';
+import 'package:better_player/src/controls/player_material_middle_row.dart';
 import 'package:better_player/src/controls/player_material_progress_bar.dart';
 import 'package:better_player/src/core/player_with_controls.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -520,6 +522,97 @@ void main() {
         find.byIcon(Icons.replay),
         findsNothing,
       );
+    },
+  );
+
+  testWidgets(
+    'Material controls keep controls hidden when showControlsOnInitialize is false and autoPlay is true',
+    (tester) async {
+      final mockEngine = MockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockEngine,
+        configuration: const PlayerConfiguration(
+          autoPlay: true,
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
+            showControlsOnInitialize: false,
+          ),
+        ),
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final hitArea = tester.widget<PlayerMaterialHitArea>(
+        find.byType(PlayerMaterialHitArea),
+      );
+      expect(hitArea.controlsNotVisible, isTrue);
+
+      final animatedOpacity = tester.widget<AnimatedOpacity>(
+        find.descendant(
+          of: find.byType(PlayerMaterialHitArea),
+          matching: find.byType(AnimatedOpacity),
+        ),
+      );
+      expect(animatedOpacity.opacity, 0.0);
+    },
+  );
+
+  testWidgets(
+    'Cupertino controls keep controls hidden when showControlsOnInitialize is false and autoPlay is true',
+    (tester) async {
+      final mockEngine = MockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockEngine,
+        configuration: const PlayerConfiguration(
+          autoPlay: true,
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.cupertino,
+            showControlsOnInitialize: false,
+          ),
+        ),
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      mockEngine.setDuration(const Duration(seconds: 10));
+      mockEngine.emitInitialized();
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      final absorbPointer = tester.widget<AbsorbPointer>(
+        find.descendant(
+          of: find.byType(PlayerCupertinoControls),
+          matching: find.byType(AbsorbPointer),
+        ),
+      );
+      expect(absorbPointer.absorbing, isTrue);
     },
   );
 }

@@ -538,7 +538,12 @@ private var presentationSizeContext = 0
 
     /// Updates the player state to match current playing status.
     public func updatePlayingState() {
-        guard isInitialized, key != nil else { return }
+        guard !disposed, isInitialized, key != nil else {
+            if disposed {
+                player.pause()
+            }
+            return
+        }
         if !observersAdded, let current = player.currentItem { addObservers(current) }
         if isPlaying {
             applyPlayerRate()
@@ -934,15 +939,15 @@ private var presentationSizeContext = 0
 
     /// Disposes the player and cleans up resources.
     @objc public func dispose() {
-        BetterPlayerApi.log(1, "dispose()")
         disposed = true
+        callback = nil
+        BetterPlayerApi.log(1, "dispose()")
         pause()
         removeObservers()
         if let view = playerView as? BetterPlayerView {
             view.player = nil
         }
         player.replaceCurrentItem(with: nil)
-        callback = nil
         disablePictureInPicture()
         setPictureInPicture(false)
         
@@ -952,9 +957,10 @@ private var presentationSizeContext = 0
     }
 
     deinit {
+        disposed = true
+        callback = nil
         removeObservers()
         player.replaceCurrentItem(with: nil)
-        callback = nil
     }
 }
 

@@ -33,14 +33,28 @@ import AVKit
     func onLog(_ level: Int, message: String)
 }
 
+@objc(BetterPlayerPreCacheCallback) public protocol BetterPlayerPreCacheCallback {
+    @objc(onProgressWithUrl:cacheKey:progress:bytesDownloaded:totalBytes:)
+    func onProgress(url: String, cacheKey: String?, progress: Double, bytesDownloaded: Int64, totalBytes: Int64)
+}
+
 @objc public class BetterPlayerApi: NSObject {
     @objc public static var players: [Int64: BetterPlayer] = [:]
     @objc public static var nextId: Int64 = 0
 
     private static var _logCallback: BetterPlayerLogCallback? = nil
+    private static var _preCacheCallback: BetterPlayerPreCacheCallback? = nil
 
     @objc public static func setLogCallback(_ callback: BetterPlayerLogCallback?) {
         _logCallback = callback
+    }
+
+    @objc public static func setPreCacheCallback(_ callback: BetterPlayerPreCacheCallback?) {
+        _preCacheCallback = callback
+    }
+
+    public static func reportPreCacheProgress(url: String, cacheKey: String?, progress: Double, bytesDownloaded: Int64, totalBytes: Int64) {
+        _preCacheCallback?.onProgress(url: url, cacheKey: cacheKey, progress: progress, bytesDownloaded: bytesDownloaded, totalBytes: totalBytes)
     }
 
     public static func log(_ level: Int, _ msg: String) {
@@ -73,9 +87,13 @@ import AVKit
     }
 
     @objc public static func preCache(url: String, cacheKey: String?, videoExtension: String?, headers: [String: String]?) {
-        guard let nsurl = URL(string: url) else { return }
+        guard let nsurl = URL(string: url) else {
+            reportPreCacheProgress(url: url, cacheKey: cacheKey, progress: -2.0, bytesDownloaded: 0, totalBytes: -1)
+            return
+        }
         CacheManager.shared.preCacheURL(nsurl, cacheKey: cacheKey, videoExtension: videoExtension, withHeaders: (headers as [NSObject: AnyObject]?) ?? [:], completionHandler: nil as ((Bool) -> Void)?)
     }
+
 
     @objc public static func stopPreCache(url: String, cacheKey: String?) {
         guard let nsurl = URL(string: url) else { return }
@@ -90,8 +108,9 @@ import AVKit
         return AVPictureInPictureController.isPictureInPictureSupported()
     }
 
-    // Reference the dummy class to prevent the linker from stripping it out
+    // Reference the dummy classes to prevent the linker from stripping them out
     @objc public static let _dummyCallback: BetterPlayerCallback = _DummyBetterPlayerCallbackImpl()
+    @objc public static let _dummyPreCacheCallback: BetterPlayerPreCacheCallback = _DummyPreCacheCallbackImpl()
 }
 
 // Dummy class to force the Swift compiler to emit the full Objective-C protocol metadata
@@ -114,3 +133,8 @@ import AVKit
 @objc public class _DummyLogCallbackImpl: NSObject, BetterPlayerLogCallback {
     @objc public func onLog(_ level: Int, message: String) {}
 }
+
+@objc public class _DummyPreCacheCallbackImpl: NSObject, BetterPlayerPreCacheCallback {
+    @objc public func onProgress(url: String, cacheKey: String?, progress: Double, bytesDownloaded: Int64, totalBytes: Int64) {}
+}
+

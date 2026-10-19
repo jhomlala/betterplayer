@@ -1,3 +1,6 @@
+## Unreleased
+- Added: `PreCacheProgress` model, `preCacheProgressStream` broadcast stream, and `onProgress` callback on `BetterPlayerPlatform.preCache`.
+
 ## 1.4.0
 - Added: `captionUpdate` event type and `captions` payload on `VideoEvent` for decoded subtitle and caption cues.
 - Added: `setTextTrack` method to `BetterPlayerPlatform` to select or disable native text and caption tracks.
