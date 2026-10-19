@@ -381,15 +381,52 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
     return Duration(milliseconds: pos ?? 0);
   }
 
+  bool _preCacheCallbackConfigured = false;
+  BetterPlayerPreCacheCallback? _preCacheCallback;
+
+  @visibleForTesting
+  void ensurePreCacheCallbackConfigured() {
+    if (!Platform.isMacOS || _preCacheCallbackConfigured) {
+      return;
+    }
+    _preCacheCallbackConfigured = true;
+    _preCacheCallback =
+        BetterPlayerPreCacheCallback$Builder.implementAsListener(
+          onProgressWithUrl_cacheKey_progress_bytesDownloaded_totalBytes_:
+              (
+                url,
+                cacheKey,
+                progress,
+                bytesDownloaded,
+                totalBytes,
+              ) {
+                emitPreCacheProgress(
+                  PreCacheProgress(
+                    url: url.toDartString(),
+                    progress: progress,
+                    bytesDownloaded: bytesDownloaded,
+                    totalBytes: totalBytes,
+                    cacheKey: cacheKey?.toDartString(),
+                  ),
+                );
+              },
+        );
+    BetterPlayerApi.setPreCacheCallback(_preCacheCallback);
+  }
+
   @override
   Future<void> preCache(
     DataSource dataSource,
     int preCacheSize, {
     void Function(PreCacheProgress progress)? onProgress,
   }) async {
+    ensurePreCacheCallbackConfigured();
+    final url = dataSource.uri ?? dataSource.asset ?? '';
+    final cacheKey = dataSource.cacheConfiguration?.key;
+
     BetterPlayerApi.preCacheWithUrl(
-      (dataSource.uri ?? dataSource.asset ?? '').toNSString(),
-      cacheKey: dataSource.cacheConfiguration?.key?.toNSString(),
+      url.toNSString(),
+      cacheKey: cacheKey?.toNSString(),
       videoExtension: dataSource.videoExtension?.toNSString(),
     );
   }

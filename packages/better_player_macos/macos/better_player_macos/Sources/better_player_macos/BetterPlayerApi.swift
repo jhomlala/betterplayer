@@ -110,6 +110,7 @@ import AVKit
 
     @objc public static func cleanUp() {
         _logCallback = nil
+        _preCacheCallback = nil
         let activePlayers = Array(players.values)
         players.removeAll()
         for player in activePlayers {
@@ -117,8 +118,9 @@ import AVKit
         }
     }
 
-    // Reference the dummy class to prevent the linker from stripping it out
+    // Reference the dummy classes to prevent the linker from stripping them out
     @objc public static let _dummyCallback: BetterPlayerCallback = _DummyBetterPlayerCallbackImpl()
+    @objc public static let _dummyPreCacheCallback: BetterPlayerPreCacheCallback = _DummyPreCacheCallbackImpl()
 }
 
 // Dummy class to force the Swift compiler to emit the full Objective-C protocol metadata
@@ -141,3 +143,8 @@ import AVKit
 @objc public class _DummyLogCallbackImpl: NSObject, BetterPlayerLogCallback {
     @objc public func onLog(_ level: Int, message: String) {}
 }
+
+@objc public class _DummyPreCacheCallbackImpl: NSObject, BetterPlayerPreCacheCallback {
+    @objc public func onProgress(url: String, cacheKey: String?, progress: Double, bytesDownloaded: Int64, totalBytes: Int64) {}
+}
+
