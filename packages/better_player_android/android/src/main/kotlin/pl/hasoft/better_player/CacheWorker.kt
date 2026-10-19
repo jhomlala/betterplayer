@@ -28,13 +28,15 @@ class CacheWorker(
     private var cacheWriter: CacheWriter? = null
     private var lastCacheReportIndex = 0
     override fun doWork(): Result {
+        val data = inputData
+        val url = data.getString(BetterPlayerPlugin.URL_PARAMETER)
+        val cacheKey = data.getString(BetterPlayerPlugin.CACHE_KEY_PARAMETER)
+        val preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0)
+        val maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0)
+        val maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0)
+        var lastReportedBytes = 0L
+
         try {
-            val data = inputData
-            val url = data.getString(BetterPlayerPlugin.URL_PARAMETER)
-            val cacheKey = data.getString(BetterPlayerPlugin.CACHE_KEY_PARAMETER)
-            val preCacheSize = data.getLong(BetterPlayerPlugin.PRE_CACHE_SIZE_PARAMETER, 0)
-            val maxCacheSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_SIZE_PARAMETER, 0)
-            val maxCacheFileSize = data.getLong(BetterPlayerPlugin.MAX_CACHE_FILE_SIZE_PARAMETER, 0)
             if (url == null || url.contains(".m3u8", ignoreCase = true) ||
                 url.contains(".m3u", ignoreCase = true) ||
                 url.contains(".mpd", ignoreCase = true)
@@ -63,7 +65,6 @@ class CacheWorker(
                     maxCacheFileSize,
                     dataSourceFactory
                 )
-                var lastReportedBytes = 0L
                 cacheWriter = CacheWriter(
                     cacheDataSourceFactory.createDataSource(),
                     dataSpec,
@@ -94,19 +95,51 @@ class CacheWorker(
                     }
                 }
                 cacheWriter?.cache()
+                BetterPlayerApi.reportPreCacheProgress(
+                    url ?: "",
+                    cacheKey,
+                    1.0,
+                    if (lastReportedBytes > 0) lastReportedBytes else preCacheSize,
+                    if (lastReportedBytes > 0) lastReportedBytes else preCacheSize
+                )
             } else {
+                BetterPlayerApi.reportPreCacheProgress(
+                    url ?: "",
+                    cacheKey,
+                    -2.0,
+                    0,
+                    -1
+                )
                 return Result.failure()
             }
         } catch (exception: Exception) {
+            if (isStopped) {
+                return Result.success()
+            }
             Log.e(TAG, "Pre cache exception", exception)
             // If it's HttpDataSourceException or EOFException (file smaller than preCacheSize) we can consider it success
             return if (exception is HttpDataSourceException || exception is java.io.EOFException) {
+                BetterPlayerApi.reportPreCacheProgress(
+                    url ?: "",
+                    cacheKey,
+                    1.0,
+                    lastReportedBytes,
+                    lastReportedBytes
+                )
                 Result.success()
             } else {
+                BetterPlayerApi.reportPreCacheProgress(
+                    url ?: "",
+                    cacheKey,
+                    -2.0,
+                    lastReportedBytes,
+                    preCacheSize
+                )
                 Result.failure()
             }
         }
         return Result.success()
+
     }
 
     override fun onStopped() {

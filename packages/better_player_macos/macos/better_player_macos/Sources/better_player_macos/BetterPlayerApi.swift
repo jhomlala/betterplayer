@@ -87,9 +87,13 @@ import AVKit
     }
 
     @objc public static func preCache(url: String, cacheKey: String?, videoExtension: String?, headers: [String: String]?) {
-        guard let nsurl = URL(string: url) else { return }
+        guard let nsurl = URL(string: url) else {
+            reportPreCacheProgress(url: url, cacheKey: cacheKey, progress: -2.0, bytesDownloaded: 0, totalBytes: -1)
+            return
+        }
         CacheManager.shared.preCacheURL(nsurl, cacheKey: cacheKey, videoExtension: videoExtension, withHeaders: (headers as [NSObject: AnyObject]?) ?? [:], completionHandler: nil as ((Bool) -> Void)?)
     }
+
 
     @objc public static func stopPreCache(url: String, cacheKey: String?) {
         guard let nsurl = URL(string: url) else { return }

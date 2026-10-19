@@ -336,13 +336,14 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   }
 
   bool _preCacheCallbackConfigured = false;
+  BetterPlayerPreCacheCallback? _preCacheCallback;
 
   void _ensurePreCacheCallbackConfigured() {
     if (_preCacheCallbackConfigured) {
       return;
     }
     _preCacheCallbackConfigured = true;
-    final ffiCallback =
+    _preCacheCallback =
         BetterPlayerPreCacheCallback$Builder.implementAsListener(
           onProgressWithUrl_cacheKey_progress_bytesDownloaded_totalBytes_:
               (
@@ -363,7 +364,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
                 );
               },
         );
-    BetterPlayerApi.setPreCacheCallback(ffiCallback);
+    BetterPlayerApi.setPreCacheCallback(_preCacheCallback);
   }
 
   @override
@@ -373,9 +374,12 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     void Function(PreCacheProgress progress)? onProgress,
   }) async {
     _ensurePreCacheCallbackConfigured();
+    final url = dataSource.uri ?? dataSource.asset ?? '';
+    final cacheKey = dataSource.cacheConfiguration?.key;
+
     BetterPlayerApi.preCacheWithUrl(
-      (dataSource.uri ?? dataSource.asset ?? '').toNSString(),
-      cacheKey: dataSource.cacheConfiguration?.key?.toNSString(),
+      url.toNSString(),
+      cacheKey: cacheKey?.toNSString(),
       videoExtension: dataSource.videoExtension?.toNSString(),
     );
   }

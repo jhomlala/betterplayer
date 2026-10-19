@@ -80,22 +80,21 @@ class _CachePageState extends State<CachePage> {
             if (mounted) {
               setState(() {
                 _preCacheProgress = progress;
+                if (progress.isCompleted || progress.hasError) {
+                  _isPreCaching = false;
+                }
               });
             }
           },
         )
         .catchError((Object error) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Pre-cache error: $error')),
-            );
-          }
-        })
-        .whenComplete(() {
-          if (mounted) {
             setState(() {
               _isPreCaching = false;
             });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Pre-cache error: $error')),
+            );
           }
         });
   }
@@ -203,6 +202,8 @@ class _CachePageState extends State<CachePage> {
                               Text(
                                 _isPreCaching
                                     ? 'Pre-caching in progress...'
+                                    : (_preCacheProgress?.hasError ?? false)
+                                    ? 'Pre-cache failed'
                                     : 'Pre-cache completed',
                                 style: Theme.of(context).textTheme.titleSmall,
                               ),

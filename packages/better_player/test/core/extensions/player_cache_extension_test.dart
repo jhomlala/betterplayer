@@ -229,5 +229,222 @@ void main() {
         completes,
       );
     });
+
+    test(
+      'onProgress continues receiving events after preCache returns until completed',
+      () async {
+        const videoUrl = 'https://example.com/async-video.mp4';
+        final dataSource = PlayerDataSource(
+          DataSourceType.network,
+          videoUrl,
+        );
+
+        final receivedProgress = <PreCacheProgress>[];
+
+        // preCache returns immediately (simulating native asynchronous work)
+        await controller.preCache(
+          dataSource,
+          onProgress: receivedProgress.add,
+        );
+
+        expect(receivedProgress, isEmpty);
+
+        // Emit first progress event
+        BetterPlayerPlatform.instance.emitPreCacheProgress(
+          const PreCacheProgress(
+            url: videoUrl,
+            totalBytes: 2000,
+            bytesDownloaded: 1000,
+            progress: 0.5,
+          ),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(receivedProgress.length, 1);
+        expect(receivedProgress.first.percent, 50.0);
+
+        // Emit completion event
+        BetterPlayerPlatform.instance.emitPreCacheProgress(
+          const PreCacheProgress(
+            url: videoUrl,
+            totalBytes: 2000,
+            bytesDownloaded: 2000,
+            progress: 1,
+          ),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(receivedProgress.length, 2);
+        expect(receivedProgress.last.isCompleted, isTrue);
+
+        // Subsequent event should be ignored as subscription was closed upon completion
+        BetterPlayerPlatform.instance.emitPreCacheProgress(
+          const PreCacheProgress(
+            url: videoUrl,
+            totalBytes: 2000,
+            bytesDownloaded: 2000,
+            progress: 1,
+          ),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(receivedProgress.length, 2);
+      },
+    );
+
+    test('stopPreCache cancels active onProgress subscription', () async {
+      const videoUrl = 'https://example.com/cancelled-video.mp4';
+      final dataSource = PlayerDataSource(
+        DataSourceType.network,
+        videoUrl,
+      );
+
+      final receivedProgress = <PreCacheProgress>[];
+
+      await controller.preCache(
+        dataSource,
+        onProgress: receivedProgress.add,
+      );
+
+      BetterPlayerPlatform.instance.emitPreCacheProgress(
+        const PreCacheProgress(
+          url: videoUrl,
+          totalBytes: 2000,
+          bytesDownloaded: 500,
+          progress: 0.25,
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(receivedProgress.length, 1);
+
+      await controller.stopPreCache(dataSource);
+
+      // Event emitted after stopPreCache should not reach onProgress
+      BetterPlayerPlatform.instance.emitPreCacheProgress(
+        const PreCacheProgress(
+          url: videoUrl,
+          totalBytes: 2000,
+          bytesDownloaded: 1500,
+          progress: 0.75,
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(receivedProgress.length, 1);
+    });
+
+    test(
+      'error progress event cancels active onProgress subscription',
+      () async {
+        const videoUrl = 'https://example.com/failed-video.mp4';
+        final dataSource = PlayerDataSource(
+          DataSourceType.network,
+          videoUrl,
+        );
+
+        final receivedProgress = <PreCacheProgress>[];
+
+        await controller.preCache(
+          dataSource,
+          onProgress: receivedProgress.add,
+        );
+
+        // Emit error event
+        BetterPlayerPlatform.instance.emitPreCacheProgress(
+          const PreCacheProgress(
+            url: videoUrl,
+            totalBytes: -1,
+            bytesDownloaded: 0,
+            progress: -2,
+            error: 'Network connection failed',
+          ),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(receivedProgress.length, 1);
+        expect(receivedProgress.first.hasError, isTrue);
+
+        // Subsequent event should not reach onProgress
+        BetterPlayerPlatform.instance.emitPreCacheProgress(
+          const PreCacheProgress(
+            url: videoUrl,
+            totalBytes: 2000,
+            bytesDownloaded: 1000,
+            progress: 0.5,
+          ),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(receivedProgress.length, 1);
+      },
+    );
+
+    test('clearCache cancels all active onProgress subscriptions', () async {
+      const videoUrl1 = 'https://example.com/video-1.mp4';
+      const videoUrl2 = 'https://example.com/video-2.mp4';
+
+      final received1 = <PreCacheProgress>[];
+      final received2 = <PreCacheProgress>[];
+
+      await controller.preCache(
+        PlayerDataSource(DataSourceType.network, videoUrl1),
+        onProgress: received1.add,
+      );
+      await controller.preCache(
+        PlayerDataSource(DataSourceType.network, videoUrl2),
+        onProgress: received2.add,
+      );
+
+      await controller.clearCache();
+
+      BetterPlayerPlatform.instance.emitPreCacheProgress(
+        const PreCacheProgress(
+          url: videoUrl1,
+          totalBytes: 2000,
+          bytesDownloaded: 500,
+          progress: 0.25,
+        ),
+      );
+      BetterPlayerPlatform.instance.emitPreCacheProgress(
+        const PreCacheProgress(
+          url: videoUrl2,
+          totalBytes: 2000,
+          bytesDownloaded: 500,
+          progress: 0.25,
+        ),
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(received1, isEmpty);
+      expect(received2, isEmpty);
+    });
+
+    test(
+      'custom cacheKey is correctly tracked and matches progress events',
+      () async {
+        const videoUrl = 'https://example.com/custom-key-video.mp4';
+        const customKey = 'my_custom_cache_key';
+
+        final receivedProgress = <PreCacheProgress>[];
+
+        await controller.preCache(
+          PlayerDataSource(
+            DataSourceType.network,
+            videoUrl,
+            cacheConfiguration: const CacheConfiguration(
+              useCache: true,
+              key: customKey,
+            ),
+          ),
+          onProgress: receivedProgress.add,
+        );
+
+        BetterPlayerPlatform.instance.emitPreCacheProgress(
+          const PreCacheProgress(
+            url: 'https://different-url-same-key.com',
+            cacheKey: customKey,
+            totalBytes: 3000,
+            bytesDownloaded: 1500,
+            progress: 0.5,
+          ),
+        );
+        await Future<void>.delayed(Duration.zero);
+        expect(receivedProgress.length, 1);
+        expect(receivedProgress.first.cacheKey, customKey);
+      },
+    );
   });
 }

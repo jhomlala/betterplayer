@@ -76,5 +76,28 @@ void main() {
       expect(str, contains('750'));
       expect(str, contains('1000'));
     });
+
+    test('negative progress returns 0.0 percent and handles hasError', () {
+      const unknownProgress = PreCacheProgress(
+        url: 'https://example.com/video.mp4',
+        progress: -1,
+        bytesDownloaded: 500,
+        totalBytes: -1,
+      );
+      expect(unknownProgress.percent, 0.0);
+      expect(unknownProgress.isCompleted, isFalse);
+      expect(unknownProgress.hasError, isFalse);
+
+      const errorProgress = PreCacheProgress(
+        url: 'https://example.com/video.mp4',
+        progress: -2,
+        bytesDownloaded: 0,
+        totalBytes: -1,
+        error: 'Network connection failed',
+      );
+      expect(errorProgress.hasError, isTrue);
+      expect(errorProgress.isCompleted, isFalse);
+      expect(errorProgress.error, 'Network connection failed');
+    });
   });
 }

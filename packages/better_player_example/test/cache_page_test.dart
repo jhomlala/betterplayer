@@ -80,7 +80,16 @@ void main() {
         expect(find.text('50.0%'), findsOneWidget);
         expect(find.text('5.00 MB / 10.00 MB'), findsOneWidget);
 
-        // Complete preCache
+        // Complete preCache via progress event
+        BetterPlayerPlatform.instance.emitPreCacheProgress(
+          PreCacheProgress(
+            url: mockPlatform.preCacheCalls.first.uri!,
+            cacheKey: 'testCacheKey',
+            progress: 1,
+            bytesDownloaded: 10 * 1024 * 1024,
+            totalBytes: 10 * 1024 * 1024,
+          ),
+        );
         completer.complete();
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 50)),

@@ -66,6 +66,18 @@ final subscription = betterPlayerController.preCacheProgressStream.listen(
 );
 ```
 
+### PreCacheProgress Properties
+The `PreCacheProgress` model includes:
+* `url`: URL of the video being cached.
+* `cacheKey`: Optional cache key associated with the media.
+* `progress`: Download fraction from `0.0` to `1.0` (or negative on error/indeterminate).
+* `bytesDownloaded`: Number of bytes downloaded so far.
+* `totalBytes`: Total bytes expected (`-1` if indeterminate or unknown).
+* `percent`: Download percentage from `0.0` to `100.0`.
+* `isCompleted`: Indicates whether pre-caching completed successfully (`progress >= 1.0 && error == null`).
+* `hasError`: Indicates whether pre-caching failed (`error != null || progress < -1.5`).
+* `error`: Optional error description when pre-caching fails.
+
 ### Stop Pre-Caching
 To cancel an ongoing pre-caching operation:
 ```dart
