@@ -1,5 +1,4 @@
 // Better Player Swift implementation
-
 import AVFoundation
 import AVKit
 #if canImport(Flutter)
