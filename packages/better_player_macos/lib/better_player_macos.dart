@@ -52,12 +52,16 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }
 
   @visibleForTesting
+  void clearLogCallback() {
+    if (Platform.isMacOS) {
+      BetterPlayerApi.setLogCallback(null);
+    }
+  }
+
+  @visibleForTesting
   void cleanupOrphanedPlayers({Map<Object, Object>? playersOverride}) {
     if (!Platform.isMacOS && playersOverride == null) return;
     try {
-      if (Platform.isMacOS) {
-        BetterPlayerApi.setLogCallback(null);
-      }
       final keys = <int>[];
       if (playersOverride != null) {
         for (final key in playersOverride.keys) {
@@ -66,6 +70,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
           }
         }
       } else {
+        clearLogCallback();
         final players = BetterPlayerApi.getPlayers();
         final map = players.toDartMap();
         for (final key in map.keys) {
