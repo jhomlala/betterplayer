@@ -1,6 +1,7 @@
-## Unreleased
+## 1.27.0
 - Added: Pre-cache download progress tracking with `onProgress` callback parameter on `BetterPlayerController.preCache` and `preCacheProgressStream` broadcast stream.
 - Fixed: Kept controls hidden at startup when `showControlsOnInitialize` is false by preventing playback events from triggering visibility timers in `PlayerWebControls` (#1616).
+- Updated: Bumped federated packages: `better_player_platform_interface` to `^1.5.0`, `better_player_android` to `^1.9.0`, `better_player_ios` to `^1.9.0`, and `better_player_macos` to `^1.4.0`.
 
 ## 1.26.0
 - Fixed: Resolved web and desktop controls parity issues: enabled Picture in Picture on macOS, prevented PiP null-assertion crashes and premature control disabling, synchronized subtitle positioning and visibility events on `setControlsVisibility(false)`, and rendered `overflowMenuCustomItems` in `PlayerWebControls`.

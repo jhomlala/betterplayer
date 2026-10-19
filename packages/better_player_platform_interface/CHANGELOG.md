@@ -1,4 +1,4 @@
-## Unreleased
+## 1.5.0
 - Added: `PreCacheProgress` model, `preCacheProgressStream` broadcast stream, and `onProgress` callback on `BetterPlayerPlatform.preCache`.
 
 ## 1.4.0

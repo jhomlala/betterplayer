@@ -1,4 +1,4 @@
-## Unreleased
+## 1.4.0
 - Added: Native pre-cache progress reporting in `CacheManager` via `BetterPlayerPreCacheCallback`.
 - Fixed: App crash on hot restart by using asynchronous listener callbacks (`implementAsListener`), resetting the native log callback, safely extracting orphaned player IDs, and clearing callbacks before resource teardown (#1617).
 
