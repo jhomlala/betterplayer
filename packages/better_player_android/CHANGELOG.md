@@ -1,4 +1,4 @@
-## Unreleased
+## 1.9.0
 - Added: Native pre-cache progress reporting in `CacheWorker` via `BetterPlayerPreCacheCallback`.
 
 ## 1.8.0

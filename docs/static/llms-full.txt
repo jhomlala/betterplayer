@@ -793,7 +793,7 @@ Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  better_player: ^1.26.0
+  better_player: ^1.27.0
 ```
 
 ## 2. Install Package
@@ -1059,7 +1059,7 @@ dependencies:
   # video_player: ^x.y.z
   
   # Add this line:
-  better_player: ^1.26.0
+  better_player: ^1.27.0
 ```
 
 Run `flutter pub get` in your terminal to fetch the packages.
@@ -1249,7 +1249,7 @@ dependencies:
   # video_player: ^x.y.z
   
   # Add this line:
-  better_player: ^1.26.0
+  better_player: ^1.27.0
 ```
 
 Run `flutter pub get` in your terminal to update dependencies.
