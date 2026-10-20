@@ -200,6 +200,39 @@ class BetterPlayerController {
     return null;
   }
 
+  /// Whether screen capture protection is authorized by a registered [PlayerSecurityExtension].
+  bool get isScreenCaptureProtectionAuthorized =>
+      getExtension<PlayerSecurityExtension>()
+          ?.isScreenCaptureProtectionAuthorized ??
+      false;
+
+  /// Sets operating system screen capture and recording protection.
+  ///
+  /// Requires a registered [PlayerSecurityExtension] that returns true for
+  /// [PlayerSecurityExtension.isScreenCaptureProtectionAuthorized].
+  ///
+  /// When authorized, enables OS-level recording blocks (Android `FLAG_SECURE`,
+  /// macOS window sharing `.none`, Windows `WDA_MONITOR`).
+  Future<void> setScreenCaptureProtection({required bool enabled}) async {
+    final securityExtension = getExtension<PlayerSecurityExtension>();
+    if (securityExtension == null ||
+        !securityExtension.isScreenCaptureProtectionAuthorized) {
+      PlayerLogger.warning(
+        message:
+            'Screen capture protection requires an authorized security extension or active enterprise license.',
+        textureId: _engine?.textureId,
+      );
+      return;
+    }
+    await BetterPlayerPlatform.instance.setScreenCaptureProtection(
+      enabled: enabled,
+    );
+  }
+
+  /// Stream emitting boolean values indicating if OS screen recording or capture is active.
+  Stream<bool> get screenCaptureStream =>
+      BetterPlayerPlatform.instance.screenCaptureStream;
+
   /// Enables automatic display frame rate matching on Android.
   ///
   /// When enabled, ExoPlayer will attempt to match the display's refresh
