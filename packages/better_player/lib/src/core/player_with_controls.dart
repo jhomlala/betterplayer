@@ -162,6 +162,8 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
           ),
           betterPlayerController.betterPlayerConfiguration.overlay ??
               const SizedBox(),
+          for (final extension in betterPlayerController.extensions)
+            if (extension.overlayWidget != null) extension.overlayWidget!,
           if (betterPlayerController.adOverlayWidget != null)
             betterPlayerController.adOverlayWidget!,
           if (!placeholderOnTop)

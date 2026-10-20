@@ -4,6 +4,7 @@ import 'dart:ffi' as ffi;
 import 'package:better_player_macos/better_player_macos.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:ffi/ffi.dart' as pkg_ffi;
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -441,5 +442,33 @@ void main() {
         verifyNever(() => mockPlayer.dispose());
       },
     );
+
+    test('setScreenCaptureProtection invokes method channel', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      final methodCalls = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('better_player_macos'),
+            (MethodCall call) async {
+              methodCalls.add(call);
+              return null;
+            },
+          );
+
+      await macosPlayer.setScreenCaptureProtection(enabled: true);
+      await macosPlayer.setScreenCaptureProtection(enabled: false);
+
+      expect(methodCalls.length, 2);
+      expect(methodCalls[0].method, 'setScreenCaptureProtection');
+      expect(methodCalls[0].arguments, {'enabled': true});
+      expect(methodCalls[1].method, 'setScreenCaptureProtection');
+      expect(methodCalls[1].arguments, {'enabled': false});
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('better_player_macos'),
+            null,
+          );
+    });
   });
 }

@@ -201,6 +201,22 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setupLogCallback() has not been implemented.');
   }
 
+  /// Sets operating system screen capture and recording protection.
+  ///
+  /// When enabled:
+  /// * Android applies `FLAG_SECURE` to the window.
+  /// * macOS sets window sharing type to `.none`.
+  /// * Windows sets window display affinity to `WDA_MONITOR`.
+  /// * iOS detects active recordings and reports state via [screenCaptureStream].
+  Future<void> setScreenCaptureProtection({required bool enabled}) async {
+    // Platform implementations override this method.
+  }
+
+  /// Stream emitting boolean values indicating if OS screen recording or capture is active.
+  Stream<bool> get screenCaptureStream {
+    return const Stream<bool>.empty();
+  }
+
   /// Returns a widget displaying the video with a given textureID.
   Widget buildView(int? textureId) {
     throw UnimplementedError('buildView() has not been implemented.');

@@ -1,26 +1,31 @@
 package pl.hasoft.better_player
 
 import android.app.Activity
-import android.os.Handler
-import android.util.Log
-import android.util.LongSparseArray
-import pl.hasoft.better_player.BetterPlayerCache.releaseCache
+import android.view.WindowManager
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
-import java.lang.Exception
-import java.util.HashMap
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.common.MethodChannel.Result
+import pl.hasoft.better_player.BetterPlayerCache.releaseCache
 
-class BetterPlayerPlugin : FlutterPlugin, ActivityAware {
+class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
     private var activity: Activity? = null
+    private var channel: MethodChannel? = null
 
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         BetterPlayerApi.textureRegistry = binding.textureRegistry
+        channel = MethodChannel(binding.binaryMessenger, "better_player_android")
+        channel?.setMethodCallHandler(this)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {
         BetterPlayerApi.textureRegistry = null
+        channel?.setMethodCallHandler(null)
+        channel = null
         releaseCache()
     }
 
@@ -36,6 +41,31 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware {
     override fun onDetachedFromActivity() {
         activity = null
         BetterPlayerApi.activity = null
+    }
+
+    override fun onMethodCall(call: MethodCall, result: Result) {
+        when (call.method) {
+            "setScreenCaptureProtection" -> {
+                val enabled = call.argument<Boolean>("enabled") ?: false
+                val currentActivity = activity
+                if (currentActivity != null) {
+                    currentActivity.runOnUiThread {
+                        if (enabled) {
+                            currentActivity.window?.setFlags(
+                                WindowManager.LayoutParams.FLAG_SECURE,
+                                WindowManager.LayoutParams.FLAG_SECURE
+                            )
+                        } else {
+                            currentActivity.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                        }
+                        result.success(null)
+                    }
+                } else {
+                    result.success(null)
+                }
+            }
+            else -> result.notImplemented()
+        }
     }
 
     companion object {

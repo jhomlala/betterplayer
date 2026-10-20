@@ -81,6 +81,21 @@ void BetterPlayerWindowsPlugin::HandleMethodCall(
     }
 
     result->Success();
+  } else if (method_call.method_name().compare("setScreenCaptureProtection") == 0) {
+    const auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
+    bool enabled = false;
+    if (arguments) {
+      auto enabled_it = arguments->find(flutter::EncodableValue("enabled"));
+      if (enabled_it != arguments->end() && std::holds_alternative<bool>(enabled_it->second)) {
+        enabled = std::get<bool>(enabled_it->second);
+      }
+    }
+    HWND hwnd = registrar_->GetPlatformWindow();
+    if (hwnd != nullptr) {
+      DWORD affinity = enabled ? WDA_MONITOR : WDA_NONE;
+      SetWindowDisplayAffinity(hwnd, affinity);
+    }
+    result->Success();
   } else {
     result->NotImplemented();
   }

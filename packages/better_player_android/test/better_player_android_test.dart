@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:better_player_android/better_player_android.dart';
 import 'package:better_player_android/src/better_player_android_jni.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:jni/jni.dart';
@@ -285,6 +286,37 @@ void main() {
         await expectLater(androidPlayer.preCache(dataSource, 100), completes);
         await expectLater(androidPlayer.stopPreCache('url', null), completes);
         await expectLater(androidPlayer.clearCache(), completes);
+      },
+    );
+
+    test(
+      'setScreenCaptureProtection invokes method channel correctly',
+      () async {
+        TestWidgetsFlutterBinding.ensureInitialized();
+        final methodCalls = <MethodCall>[];
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              const MethodChannel('better_player_android'),
+              (MethodCall call) async {
+                methodCalls.add(call);
+                return null;
+              },
+            );
+
+        await androidPlayer.setScreenCaptureProtection(enabled: true);
+        await androidPlayer.setScreenCaptureProtection(enabled: false);
+
+        expect(methodCalls.length, 2);
+        expect(methodCalls[0].method, 'setScreenCaptureProtection');
+        expect(methodCalls[0].arguments, {'enabled': true});
+        expect(methodCalls[1].method, 'setScreenCaptureProtection');
+        expect(methodCalls[1].arguments, {'enabled': false});
+
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              const MethodChannel('better_player_android'),
+              null,
+            );
       },
     );
     test('videoEventsFor does not leak events to other players', () async {

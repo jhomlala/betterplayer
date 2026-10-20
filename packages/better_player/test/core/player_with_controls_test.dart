@@ -9,6 +9,18 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../helpers/better_player_mock_controller.dart';
 import '../helpers/better_player_test_utils.dart';
 
+class _TestOverlayExtension extends BetterPlayerExtension {
+  @override
+  Widget? get overlayWidget =>
+      const SizedBox(key: Key('test_extension_overlay'));
+
+  @override
+  void onAttach(BetterPlayerController controller) {}
+
+  @override
+  void onDetach(BetterPlayerController controller) {}
+}
+
 void main() {
   setUpAll(() {
     BetterPlayerTestUtils.setupMockPlatform();
@@ -591,6 +603,36 @@ void main() {
         await tester.pump();
 
         expect(find.byType(PlayerWebControls), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'Renders extension overlayWidget when provided',
+      (tester) async {
+        final mockPlayerEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final ext = _TestOverlayExtension();
+        final controller = BetterPlayerMockController(
+          PlayerConfiguration(
+            extensions: [ext],
+          ),
+          playerEngineController: mockPlayerEngineController,
+        );
+
+        await controller.setupDataSource(PlayerDataSource.network('url'));
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(useMaterial3: false),
+            home: BetterPlayerControllerProvider(
+              controller: controller,
+              child: PlayerWithControls(controller: controller),
+            ),
+          ),
+        );
+        await tester.pump();
+
+        expect(find.byKey(const Key('test_extension_overlay')), findsOneWidget);
       },
     );
   });

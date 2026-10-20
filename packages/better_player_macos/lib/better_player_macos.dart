@@ -449,6 +449,18 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
     BetterPlayerApi.clearCache();
   }
 
+  static const MethodChannel _channel = MethodChannel('better_player_macos');
+
+  @override
+  Future<void> setScreenCaptureProtection({required bool enabled}) async {
+    try {
+      await _channel.invokeMethod<void>(
+        'setScreenCaptureProtection',
+        {'enabled': enabled},
+      );
+    } on PlatformException catch (_) {}
+  }
+
   @override
   Future<void> setTrackParameters(
     int? textureId,

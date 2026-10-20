@@ -4,6 +4,7 @@ import 'package:better_player_ios/better_player_ios.dart';
 import 'package:better_player_ios/src/better_player_ios_ffi.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:ffi/ffi.dart' as pkg_ffi;
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -432,5 +433,58 @@ void main() {
         await freshController.close();
       },
     );
+
+    test('setScreenCaptureProtection invokes method channel', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      final methodCalls = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('better_player_ios'),
+            (MethodCall call) async {
+              methodCalls.add(call);
+              return null;
+            },
+          );
+
+      await iosPlayer.setScreenCaptureProtection(enabled: true);
+      await iosPlayer.setScreenCaptureProtection(enabled: false);
+
+      expect(methodCalls.length, 2);
+      expect(methodCalls[0].method, 'setScreenCaptureProtection');
+      expect(methodCalls[0].arguments, {'enabled': true});
+      expect(methodCalls[1].method, 'setScreenCaptureProtection');
+      expect(methodCalls[1].arguments, {'enabled': false});
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('better_player_ios'),
+            null,
+          );
+    });
+
+    test('screenCaptureStream receives events from event channel', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      final events = <bool>[];
+      final subscription = iosPlayer.screenCaptureStream.listen(events.add);
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            'better_player_ios/screen_capture_stream',
+            const StandardMethodCodec().encodeSuccessEnvelope(true),
+            (data) {},
+          );
+      await pumpEventQueue();
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            'better_player_ios/screen_capture_stream',
+            const StandardMethodCodec().encodeSuccessEnvelope(false),
+            (data) {},
+          );
+      await pumpEventQueue();
+
+      expect(events, [true, false]);
+      await subscription.cancel();
+    });
   });
 }
