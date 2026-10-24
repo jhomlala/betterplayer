@@ -275,6 +275,21 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
   }
 
   @override
+  Future<void> setScreenCaptureProtection({required bool enabled}) async {
+    try {
+      await _channel.invokeMethod<void>(
+        'setScreenCaptureProtection',
+        {'enabled': enabled},
+      );
+    } on PlatformException catch (e) {
+      _log(
+        message: 'Failed to set screen capture protection: ${e.message}',
+        levelIndex: 4,
+      );
+    }
+  }
+
+  @override
   Future<void> preCache(
     DataSource dataSource,
     int preCacheSize, {

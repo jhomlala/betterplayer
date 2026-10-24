@@ -14,6 +14,28 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         BetterPlayerApi.cleanUp()
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
+
+        let channel = FlutterMethodChannel(name: "better_player_macos", binaryMessenger: registrar.messenger)
+        registrar.addMethodCallDelegate(instance, channel: channel)
+    }
+
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        switch call.method {
+        case "setScreenCaptureProtection":
+            guard let args = call.arguments as? [String: Any],
+                  let enabled = args["enabled"] as? Bool else {
+                result(FlutterError(code: "INVALID_ARGS", message: "enabled boolean expected", details: nil))
+                return
+            }
+            DispatchQueue.main.async {
+                for window in NSApplication.shared.windows {
+                    window.sharingType = enabled ? .none : .readWrite
+                }
+                result(nil)
+            }
+        default:
+            result(FlutterMethodNotImplemented)
+        }
     }
 
     public func createArgsCodec() -> (FlutterMessageCodec & NSObjectProtocol) {

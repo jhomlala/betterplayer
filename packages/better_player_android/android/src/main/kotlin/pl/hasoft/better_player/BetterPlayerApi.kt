@@ -43,7 +43,22 @@ class BetterPlayerApi {
             val safe = if (msg.length > 4000) msg.substring(0, 4000) + "…[truncated]" else msg
             cb.onLog(level, safe)
         }
-        
+
+        @Keep
+        fun setScreenCaptureProtection(enabled: Boolean) {
+            val act = activity ?: return
+            act.runOnUiThread {
+                if (enabled) {
+                    act.window?.setFlags(
+                        android.view.WindowManager.LayoutParams.FLAG_SECURE,
+                        android.view.WindowManager.LayoutParams.FLAG_SECURE
+                    )
+                } else {
+                    act.window?.clearFlags(android.view.WindowManager.LayoutParams.FLAG_SECURE)
+                }
+            }
+        }
+
         @Keep
         fun createPlayer(context: Context, callback: BetterPlayerCallback): BetterPlayer? {
             val texture = textureRegistry?.createSurfaceTexture() ?: return null

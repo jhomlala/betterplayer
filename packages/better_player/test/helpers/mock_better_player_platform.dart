@@ -141,6 +141,18 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
     lastLogCallback = callback;
   }
 
+  List<bool> setScreenCaptureProtectionCalls = [];
+  final StreamController<bool> screenCaptureStreamController =
+      StreamController<bool>.broadcast();
+
+  @override
+  Future<void> setScreenCaptureProtection({required bool enabled}) async {
+    setScreenCaptureProtectionCalls.add(enabled);
+  }
+
+  @override
+  Stream<bool> get screenCaptureStream => screenCaptureStreamController.stream;
+
   @override
   Widget buildView(int? textureId) => const SizedBox();
 }

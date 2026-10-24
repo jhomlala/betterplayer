@@ -259,5 +259,36 @@ void main() {
         );
       },
     );
+
+    test(
+      'setScreenCaptureProtection invokes method channel correctly',
+      () async {
+        TestWidgetsFlutterBinding.ensureInitialized();
+        final methodCalls = <MethodCall>[];
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              const MethodChannel('better_player_windows'),
+              (MethodCall call) async {
+                methodCalls.add(call);
+                return null;
+              },
+            );
+
+        await windowsPlatform.setScreenCaptureProtection(enabled: true);
+        await windowsPlatform.setScreenCaptureProtection(enabled: false);
+
+        expect(methodCalls.length, 2);
+        expect(methodCalls[0].method, 'setScreenCaptureProtection');
+        expect(methodCalls[0].arguments, {'enabled': true});
+        expect(methodCalls[1].method, 'setScreenCaptureProtection');
+        expect(methodCalls[1].arguments, {'enabled': false});
+
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(
+              const MethodChannel('better_player_windows'),
+              null,
+            );
+      },
+    );
   });
 }

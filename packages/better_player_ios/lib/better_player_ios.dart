@@ -405,6 +405,31 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     BetterPlayerApi.clearCache();
   }
 
+  static const MethodChannel _channel = MethodChannel('better_player_ios');
+  static const EventChannel _screenCaptureEventChannel = EventChannel(
+    'better_player_ios/screen_capture_stream',
+  );
+
+  Stream<bool>? _screenCaptureStream;
+
+  @override
+  Stream<bool> get screenCaptureStream {
+    _screenCaptureStream ??= _screenCaptureEventChannel
+        .receiveBroadcastStream()
+        .map((event) => event as bool);
+    return _screenCaptureStream!;
+  }
+
+  @override
+  Future<void> setScreenCaptureProtection({required bool enabled}) async {
+    try {
+      await _channel.invokeMethod<void>(
+        'setScreenCaptureProtection',
+        {'enabled': enabled},
+      );
+    } on PlatformException catch (_) {}
+  }
+
   @override
   Future<void> setTrackParameters(
     int? textureId,
