@@ -77,4 +77,19 @@ void main() {
       expect(playlistController.betterPlayerController!.isFullScreen, isTrue);
     },
   );
+
+  test('dispose disposes internal BetterPlayerController', () {
+    BetterPlayerTestUtils.setupMockPlatform();
+
+    final dataSourceList = [
+      PlayerDataSource.network('https://example.com/video1.mp4'),
+    ];
+
+    final playlistController = BetterPlayerPlaylistController(dataSourceList);
+    final innerController = playlistController.betterPlayerController!;
+    expect(innerController.isDisposed, isFalse);
+
+    playlistController.dispose();
+    expect(innerController.isDisposed, isTrue);
+  });
 }

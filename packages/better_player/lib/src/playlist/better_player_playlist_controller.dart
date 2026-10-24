@@ -124,7 +124,7 @@ class BetterPlayerPlaylistController {
       'Index must be greater than 0 and less than size of data source '
       'list - 1',
     );
-    if (index <= _dataSourceLength) {
+    if (index >= 0 && index < _dataSourceLength) {
       _currentDataSourceIndex = index;
       _betterPlayerController!.setupDataSource(
         _betterPlayerDataSourceList[index],
@@ -182,5 +182,7 @@ class BetterPlayerPlaylistController {
   ///Cleanup BetterPlayerPlaylistController
   void dispose() {
     _nextVideoTimeStreamSubscription?.cancel();
+    _betterPlayerController?.removeEventsListener(_handleEvent);
+    _betterPlayerController?.dispose();
   }
 }

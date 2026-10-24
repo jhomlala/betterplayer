@@ -954,6 +954,24 @@ void main() {
         expect(eventCount, 0);
       });
 
+      test(
+        'listener can remove itself within event callback without ConcurrentModificationError',
+        () {
+          final controller =
+              BetterPlayerTestUtils.setupBetterPlayerMockController();
+          late void Function(PlayerEvent) listener;
+          listener = (event) {
+            controller.removeEventsListener(listener);
+          };
+          controller.addEventsListener(listener);
+
+          expect(
+            () => controller.postEvent(PlayerEvent(PlayerEventType.play)),
+            returnsNormally,
+          );
+        },
+      );
+
       test('controllerEventStream emits events', () async {
         final controller =
             BetterPlayerTestUtils.setupBetterPlayerMockController(

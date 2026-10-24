@@ -1,4 +1,5 @@
 import 'package:better_player/better_player.dart';
+import 'package:better_player/src/controls/player_cupertino_controls.dart';
 import 'package:better_player/src/core/player_with_controls.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -155,6 +156,26 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(playIcon), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'PlayerCupertinoControls disposes safely',
+    (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: BetterPlayerControllerProvider(
+              controller: mockController,
+              child: PlayerCupertinoControls(
+                controlsConfiguration: const PlayerControlsConfiguration(),
+                onControlsVisibilityChanged: (_) {},
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpWidget(const SizedBox());
     },
   );
 }
