@@ -1,3 +1,7 @@
+## 1.3.1
+- Fixed: Aligned `BetterPlayerWeb.preCache` method signature with `BetterPlayerPlatform` in `better_player_platform_interface` 1.5.0.
+- Updated: Bumped `better_player_platform_interface` dependency to `^1.5.0`.
+
 ## 1.3.0
 - Fixed: Forward video and Shaka error events as `PlatformException` to the event stream to prevent infinite loading state on 404 and network errors.
 - Fixed: Unregister old HTTP request filters when switching data source and upon player disposal to prevent header leaks across sessions.
