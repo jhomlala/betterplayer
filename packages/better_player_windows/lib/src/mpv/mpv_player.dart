@@ -111,7 +111,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   void _pollEvents() {
     if (_isDisposed) return;
 
-    while (true) {
+    while (!_isDisposed) {
       final event = _bindings.mpvWaitEvent(handle, 0);
       if (event.ref.eventId == MpvEventId.none) {
         break;
