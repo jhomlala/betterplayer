@@ -1,3 +1,7 @@
+## Unreleased
+- Updated: Bumped federated packages: `better_player_windows` to `^1.2.1` and `better_player_web` to `^1.3.1`.
+- Updated: Expanded `cupertino_icons` dependency constraint to support `2.0.0`.
+
 ## 1.27.0
 - Added: Pre-cache download progress tracking with `onProgress` callback parameter on `BetterPlayerController.preCache` and `preCacheProgressStream` broadcast stream.
 - Fixed: Kept controls hidden at startup when `showControlsOnInitialize` is false by preventing playback events from triggering visibility timers in `PlayerWebControls` (#1616).

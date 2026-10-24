@@ -1,3 +1,7 @@
+## 1.2.1
+- Fixed: Aligned `BetterPlayerWindows.preCache` method signature with `BetterPlayerPlatform` in `better_player_platform_interface` 1.5.0.
+- Updated: Bumped `better_player_platform_interface` dependency to `^1.5.0`.
+
 ## 1.2.0
 - Fixed: Added disposal state guards across player methods and mpv FFI invocations to prevent invalid pointer access after disposal.
 - Fixed: Corrected audio track indexing to map 0-based index to 1-based `aid` property and disable audio with `'no'`.
