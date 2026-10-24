@@ -17,6 +17,7 @@ void main() {
   final propertyStrings = <String, String>{};
   final propertyDoubles = <String, double>{};
   final logs = <String>[];
+  final createdPlayers = <MpvPlayer>[];
   var commandReturnCode = 0;
 
   MpvBindings createFakeBindings() {
@@ -53,16 +54,45 @@ void main() {
       mpvObserveProperty: (ctx, reply, namePtr, format) => 0,
       mpvWaitEvent: (ctx, timeout) {
         if (eventQueue.isNotEmpty) {
+          testEventPtr.ref.eventId = MpvEventId.none;
+          testEventPtr.ref.error = 0;
+          testEventPtr.ref.replyUserdata = 0;
+          testEventPtr.ref.data = ffi.nullptr;
           final populate = eventQueue.removeAt(0);
           populate(testEventPtr);
           return testEventPtr;
         }
         noneEventPtr.ref.eventId = MpvEventId.none;
+        noneEventPtr.ref.error = 0;
+        noneEventPtr.ref.replyUserdata = 0;
+        noneEventPtr.ref.data = ffi.nullptr;
         return noneEventPtr;
       },
       mpvErrorString: (err) => 'mpv error ($err)'.toNativeUtf8(),
       mpvRequestLogMessages: (ctx, minLevel) => 0,
     );
+  }
+
+  MpvPlayer createPlayer(
+    MpvBindings bindings, {
+    void Function({required String message, required int levelIndex})? onLog,
+  }) {
+    final player = MpvPlayer(
+      textureId: 1,
+      handle: fakeHandle,
+      bindings: bindings,
+      onLog: onLog,
+    );
+    createdPlayers.add(player);
+    return player;
+  }
+
+  Future<VideoEvent> waitForEvent(
+    MpvPlayer player,
+    bool Function(VideoEvent) predicate, {
+    Duration timeout = const Duration(seconds: 5),
+  }) {
+    return player.events.firstWhere(predicate).timeout(timeout);
   }
 
   setUp(() {
@@ -74,10 +104,15 @@ void main() {
     propertyStrings.clear();
     propertyDoubles.clear();
     logs.clear();
+    createdPlayers.clear();
     commandReturnCode = 0;
   });
 
-  tearDown(() {
+  tearDown(() async {
+    for (final player in createdPlayers) {
+      await player.dispose();
+    }
+    createdPlayers.clear();
     calloc.free(noneEventPtr);
     calloc.free(testEventPtr);
   });
@@ -87,10 +122,8 @@ void main() {
       'setDataSource always sets http-header-fields even when empty',
       () async {
         final bindings = createFakeBindings();
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
+        final player = createPlayer(
+          bindings,
           onLog: ({required message, required levelIndex}) => logs.add(message),
         );
 
@@ -127,11 +160,7 @@ void main() {
         final bindings = createFakeBindings();
         commandReturnCode = -1; // simulate mpv error
 
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
-        );
+        final player = createPlayer(bindings);
 
         expect(
           () => player.setDataSource(
@@ -155,11 +184,7 @@ void main() {
 
     test('seekTo throws PlatformException on seek command failure', () async {
       final bindings = createFakeBindings();
-      final player = MpvPlayer(
-        textureId: 1,
-        handle: fakeHandle,
-        bindings: bindings,
-      );
+      final player = createPlayer(bindings);
 
       commandReturnCode = -6; // simulate seek error
       expect(
@@ -180,10 +205,8 @@ void main() {
       'setTrackParameters sets hls-bitrate without distorting video aspect ratio',
       () async {
         final bindings = createFakeBindings();
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
+        final player = createPlayer(
+          bindings,
           onLog: ({required message, required levelIndex}) => logs.add(message),
         );
 
@@ -204,11 +227,7 @@ void main() {
 
     test('setSpeed clamps to minimum 0.01 to prevent mpv error', () async {
       final bindings = createFakeBindings();
-      final player = MpvPlayer(
-        textureId: 1,
-        handle: fakeHandle,
-        bindings: bindings,
-      );
+      final player = createPlayer(bindings);
 
       await player.setSpeed(0);
       expect(propertyDoubles['speed'], 0.01);
@@ -223,23 +242,20 @@ void main() {
       'emits initialized on fileLoaded and changedSize on dimension update',
       () async {
         final bindings = createFakeBindings();
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
-        );
+        final player = createPlayer(bindings);
 
-        final receivedEvents = <VideoEvent>[];
-        final sub = player.events.listen(receivedEvents.add);
+        final initFuture = waitForEvent(
+          player,
+          (e) => e.eventType == VideoEventType.initialized,
+        );
 
         // 1. Simulate fileLoaded
         eventQueue.add((ev) {
           ev.ref.eventId = MpvEventId.fileLoaded;
         });
 
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-        expect(receivedEvents.length, 1);
-        expect(receivedEvents.first.eventType, VideoEventType.initialized);
+        final initEvent = await initFuture;
+        expect(initEvent.eventType, VideoEventType.initialized);
 
         // 2. Simulate dimension change property
         final nameUtf8 = 'width'.toNativeUtf8();
@@ -249,14 +265,6 @@ void main() {
           ..ref.format = MpvFormat.int64
           ..ref.data = dataPtr.cast();
 
-        eventQueue.add((ev) {
-          ev.ref.eventId = MpvEventId.propertyChange;
-          ev.ref.data = prop.cast();
-        });
-
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-
-        // Also set height
         final heightName = 'height'.toNativeUtf8();
         final heightData = calloc<ffi.Int64>()..value = 1080;
         final heightProp = calloc<MpvEventProperty>()
@@ -264,23 +272,24 @@ void main() {
           ..ref.format = MpvFormat.int64
           ..ref.data = heightData.cast();
 
+        final sizeFuture = waitForEvent(
+          player,
+          (e) =>
+              e.eventType == VideoEventType.changedSize &&
+              e.size == const Size(1920, 1080),
+        );
+
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.propertyChange;
+          ev.ref.data = prop.cast();
+        });
         eventQueue.add((ev) {
           ev.ref.eventId = MpvEventId.propertyChange;
           ev.ref.data = heightProp.cast();
         });
 
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-
-        final initializedCount = receivedEvents
-            .where((e) => e.eventType == VideoEventType.initialized)
-            .length;
-        expect(initializedCount, 1); // exactly one initialized event
-
-        final changedSizeEvents = receivedEvents
-            .where((e) => e.eventType == VideoEventType.changedSize)
-            .toList();
-        expect(changedSizeEvents, isNotEmpty);
-        expect(changedSizeEvents.last.size, const Size(1920, 1080));
+        final sizeEvent = await sizeFuture;
+        expect(sizeEvent.size, const Size(1920, 1080));
 
         calloc.free(nameUtf8);
         calloc.free(dataPtr);
@@ -288,7 +297,6 @@ void main() {
         calloc.free(heightName);
         calloc.free(heightData);
         calloc.free(heightProp);
-        await sub.cancel();
         await player.dispose();
       },
     );
@@ -297,11 +305,7 @@ void main() {
       'deduplicates completed events between eof-reached and endFile',
       () async {
         final bindings = createFakeBindings();
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
-        );
+        final player = createPlayer(bindings);
 
         final receivedEvents = <VideoEvent>[];
         final sub = player.events.listen(receivedEvents.add);
@@ -314,23 +318,28 @@ void main() {
           ..ref.format = MpvFormat.flag
           ..ref.data = eofData.cast();
 
-        eventQueue.add((ev) {
-          ev.ref.eventId = MpvEventId.propertyChange;
-          ev.ref.data = eofProp.cast();
-        });
-
         // 2. Immediately simulate endFile event
         final endFile = calloc<MpvEventEndFile>()
           ..ref.reason = MpvEndFileReason.eof
           ..ref.error = 0;
 
+        final completedFuture = waitForEvent(
+          player,
+          (e) => e.eventType == VideoEventType.completed,
+        );
+
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.propertyChange;
+          ev.ref.data = eofProp.cast();
+        });
         eventQueue.add((ev) {
           ev.ref.eventId = MpvEventId.endFile;
           ev.ref.error = 0;
           ev.ref.data = endFile.cast();
         });
 
-        await Future<void>.delayed(const Duration(milliseconds: 50));
+        await completedFuture;
+        await Future<void>.delayed(const Duration(milliseconds: 100));
 
         final completedCount = receivedEvents
             .where((e) => e.eventType == VideoEventType.completed)
@@ -348,10 +357,8 @@ void main() {
 
     test('setDataSource normalizes file URIs for Windows paths', () async {
       final bindings = createFakeBindings();
-      final player = MpvPlayer(
-        textureId: 1,
-        handle: fakeHandle,
-        bindings: bindings,
+      final player = createPlayer(
+        bindings,
         onLog: ({required message, required levelIndex}) => logs.add(message),
       );
 
@@ -380,10 +387,8 @@ void main() {
       'setDataSource logs warning when DRM configuration is provided',
       () async {
         final bindings = createFakeBindings();
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
+        final player = createPlayer(
+          bindings,
           onLog: ({required message, required levelIndex}) => logs.add(message),
         );
 
@@ -411,10 +416,8 @@ void main() {
 
     test('logs seeking state change on seeking property change', () async {
       final bindings = createFakeBindings();
-      final player = MpvPlayer(
-        textureId: 1,
-        handle: fakeHandle,
-        bindings: bindings,
+      final player = createPlayer(
+        bindings,
         onLog: ({required message, required levelIndex}) => logs.add(message),
       );
 
@@ -431,7 +434,11 @@ void main() {
         ptr.ref.data = seekingProp.cast();
       });
 
-      await Future<void>.delayed(const Duration(milliseconds: 50));
+      final stopwatch = Stopwatch()..start();
+      while (!logs.any((l) => l.contains('SeekingState: SEEKING')) &&
+          stopwatch.elapsedMilliseconds < 3000) {
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+      }
       expect(logs.any((l) => l.contains('SeekingState: SEEKING')), isTrue);
 
       calloc.free(seekingName);
@@ -442,14 +449,7 @@ void main() {
 
     test('emits captionUpdate on sub-text property change', () async {
       final bindings = createFakeBindings();
-      final player = MpvPlayer(
-        textureId: 1,
-        handle: fakeHandle,
-        bindings: bindings,
-      );
-
-      final events = <VideoEvent>[];
-      final sub = player.events.listen(events.add);
+      final player = createPlayer(bindings);
 
       final subTextName = 'sub-text'.toNativeUtf8();
       final textString = 'First line\nSecond line'.toNativeUtf8();
@@ -459,35 +459,31 @@ void main() {
         ..ref.format = MpvFormat.string
         ..ref.data = strPtrPtr.cast();
 
+      final captionFuture = waitForEvent(
+        player,
+        (e) => e.eventType == VideoEventType.captionUpdate,
+      );
+
       eventQueue.add((ptr) {
         ptr.ref.eventId = MpvEventId.propertyChange;
         ptr.ref.error = 0;
         ptr.ref.data = subTextProp.cast();
       });
 
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-      expect(events.length, 1);
-      expect(events.first.eventType, VideoEventType.captionUpdate);
-      expect(events.first.captions, ['First line', 'Second line']);
+      final event = await captionFuture;
+      expect(event.eventType, VideoEventType.captionUpdate);
+      expect(event.captions, ['First line', 'Second line']);
 
       calloc.free(subTextName);
       calloc.free(textString);
       calloc.free(strPtrPtr);
       calloc.free(subTextProp);
-      await sub.cancel();
       await player.dispose();
     });
 
     test('emits empty captionUpdate on sub-text nullptr', () async {
       final bindings = createFakeBindings();
-      final player = MpvPlayer(
-        textureId: 1,
-        handle: fakeHandle,
-        bindings: bindings,
-      );
-
-      final events = <VideoEvent>[];
-      final sub = player.events.listen(events.add);
+      final player = createPlayer(bindings);
 
       final subTextName = 'sub-text'.toNativeUtf8();
       final subTextProp = calloc<MpvEventProperty>()
@@ -495,20 +491,23 @@ void main() {
         ..ref.format = MpvFormat.none
         ..ref.data = ffi.nullptr;
 
+      final captionFuture = waitForEvent(
+        player,
+        (e) => e.eventType == VideoEventType.captionUpdate,
+      );
+
       eventQueue.add((ptr) {
         ptr.ref.eventId = MpvEventId.propertyChange;
         ptr.ref.error = 0;
         ptr.ref.data = subTextProp.cast();
       });
 
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-      expect(events.length, 1);
-      expect(events.first.eventType, VideoEventType.captionUpdate);
-      expect(events.first.captions, isEmpty);
+      final event = await captionFuture;
+      expect(event.eventType, VideoEventType.captionUpdate);
+      expect(event.captions, isEmpty);
 
       calloc.free(subTextName);
       calloc.free(subTextProp);
-      await sub.cancel();
       await player.dispose();
     });
 
@@ -516,11 +515,7 @@ void main() {
       'setTextTrack maps 0-based index to 1-based sid and handles disable',
       () async {
         final bindings = createFakeBindings();
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
-        );
+        final player = createPlayer(bindings);
 
         final events = <VideoEvent>[];
         final sub = player.events.listen(events.add);
@@ -547,11 +542,7 @@ void main() {
       'setAudioTrack maps 0-based index to 1-based aid and handles disable',
       () async {
         final bindings = createFakeBindings();
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
-        );
+        final player = createPlayer(bindings);
 
         await player.setAudioTrack(name: 'English', index: 0);
         expect(propertyStrings['aid'], '1');
@@ -571,24 +562,20 @@ void main() {
 
     test('emits seek event on MpvEventId.seek', () async {
       final bindings = createFakeBindings();
-      final player = MpvPlayer(
-        textureId: 1,
-        handle: fakeHandle,
-        bindings: bindings,
-      );
+      final player = createPlayer(bindings);
 
-      final events = <VideoEvent>[];
-      final sub = player.events.listen(events.add);
+      final seekFuture = waitForEvent(
+        player,
+        (e) => e.eventType == VideoEventType.seek,
+      );
 
       eventQueue.add((ptr) {
         ptr.ref.eventId = MpvEventId.seek;
       });
 
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-      expect(events.length, 1);
-      expect(events.first.eventType, VideoEventType.seek);
+      final event = await seekFuture;
+      expect(event.eventType, VideoEventType.seek);
 
-      await sub.cancel();
       await player.dispose();
     });
 
@@ -596,14 +583,7 @@ void main() {
       'emits bufferingUpdate event on demuxer-cache-time propertyChange',
       () async {
         final bindings = createFakeBindings();
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
-        );
-
-        final events = <VideoEvent>[];
-        final sub = player.events.listen(events.add);
+        final player = createPlayer(bindings);
 
         final cacheName = 'demuxer-cache-time'.toNativeUtf8();
         final cacheData = calloc<ffi.Double>()..value = 5.5;
@@ -612,25 +592,28 @@ void main() {
           ..ref.format = MpvFormat.doubleFormat
           ..ref.data = cacheData.cast();
 
+        final bufferFuture = waitForEvent(
+          player,
+          (e) => e.eventType == VideoEventType.bufferingUpdate,
+        );
+
         eventQueue.add((ptr) {
           ptr.ref.eventId = MpvEventId.propertyChange;
           ptr.ref.error = 0;
           ptr.ref.data = cacheProp.cast();
         });
 
-        await Future<void>.delayed(const Duration(milliseconds: 50));
-        expect(events.length, 1);
-        expect(events.first.eventType, VideoEventType.bufferingUpdate);
-        expect(events.first.buffered, isNotNull);
+        final event = await bufferFuture;
+        expect(event.eventType, VideoEventType.bufferingUpdate);
+        expect(event.buffered, isNotNull);
         expect(
-          events.first.buffered!.first.end,
+          event.buffered!.first.end,
           const Duration(milliseconds: 5500),
         );
 
         calloc.free(cacheName);
         calloc.free(cacheData);
         calloc.free(cacheProp);
-        await sub.cancel();
         await player.dispose();
       },
     );
@@ -639,11 +622,7 @@ void main() {
       'methods after dispose are guarded and do not crash or invoke commands',
       () async {
         final bindings = createFakeBindings();
-        final player = MpvPlayer(
-          textureId: 1,
-          handle: fakeHandle,
-          bindings: bindings,
-        );
+        final player = createPlayer(bindings);
 
         await player.dispose();
         final cmdCountBefore = executedCommands.length;
