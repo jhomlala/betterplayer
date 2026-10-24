@@ -79,6 +79,15 @@ jobs:
 
       - name: Start Simulator Boot
         run: |
+          # Disable macOS application firewall to prevent network socket drops
+          sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off || true
+
+          # Unlock keychain to prevent trustd evaluation hangs
+          security unlock-keychain -p "" ~/Library/Keychains/login.keychain-db || true
+
+          # Block outbound UDP 443 to force fallback from unstable QUIC/HTTP3 to standard TCP TLS
+          echo "block return out proto udp from any to any port 443" | cat /etc/pf.conf - | sudo pfctl -Ef - || true
+
           # Use the first available iPhone simulator
           DEVICE_UUID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F '[()]' '{print $2}')
           if [ -z "$DEVICE_UUID" ]; then
@@ -86,6 +95,11 @@ jobs:
             exit 1
           fi
           echo "DEVICE_UUID=$DEVICE_UUID" >> $GITHUB_ENV
+
+          # Erase stale simulator state before booting
+          xcrun simctl shutdown $DEVICE_UUID || true
+          xcrun simctl erase $DEVICE_UUID || true
+
           echo "Booting device $DEVICE_UUID in background"
           xcrun simctl boot $DEVICE_UUID
 
@@ -98,6 +112,16 @@ jobs:
         run: |
           echo "Waiting for device $DEVICE_UUID to boot..."
           xcrun simctl bootstatus $DEVICE_UUID -b
+
+          echo "Verifying simulator network readiness..."
+          for i in {1..15}; do
+            if xcrun simctl spawn booted curl -sI https://cdn.jsdelivr.net/npm/big-buck-bunny-1080p@0.0.6/video.mp4 | grep -q "HTTP"; then
+              echo "Simulator network is ready"
+              break
+            fi
+            echo "Waiting for simulator network stack ($i/15)..."
+            sleep 2
+          done
 
       - name: Install App
         run: |
