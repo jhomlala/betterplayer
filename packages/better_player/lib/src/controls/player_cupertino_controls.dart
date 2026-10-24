@@ -229,7 +229,7 @@ class _PlayerCupertinoControlsState
   }
 
   void _dispose() {
-    _betterPlayerController!.removeVideoListener(_updateState);
+    _betterPlayerController?.removeVideoListener(_updateState);
     _hideTimer?.cancel();
     _expandCollapseTimer?.cancel();
     _initTimer?.cancel();

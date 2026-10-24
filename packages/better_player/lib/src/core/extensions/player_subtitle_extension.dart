@@ -127,13 +127,14 @@ extension PlayerSubtitleExtension on BetterPlayerController {
           }
         }
       }
-      _subtitleState = _subtitleState.copyWith(asmsSegmentsLoading: false);
     } catch (exception) {
       PlayerLogger.error(
         message: 'Load ASMS subtitle segments failed: $exception',
         textureId: textureId,
         error: exception,
       );
+    } finally {
+      _subtitleState = _subtitleState.copyWith(asmsSegmentsLoading: false);
     }
   }
 }

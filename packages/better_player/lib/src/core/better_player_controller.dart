@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/configuration/player_controller_event.dart';
 import 'package:better_player/src/core/state/player_playback_state.dart';
-import 'package:better_player/src/core/state/player_subtitle_state.dart';
 import 'package:better_player/src/core/state/player_track_state.dart';
 import 'package:better_player/src/core/state/player_view_state.dart';
 import 'package:better_player/src/logging/player_logger.dart';
@@ -128,11 +127,17 @@ class BetterPlayerController {
   /// Used as a safeguard to prevent method calls or stream emissions after teardown.
   bool _disposed = false;
 
+  /// Returns whether this controller has been disposed.
+  bool get isDisposed => _disposed;
+
   /// Tracks visual UI states (fullscreen, PIP, control visibility).
   PlayerViewState _viewState = const PlayerViewState();
 
   /// Tracks subtitle parsing and rendering states.
   PlayerSubtitleState _subtitleState = const PlayerSubtitleState();
+
+  /// Returns the current subtitle state.
+  PlayerSubtitleState get subtitleState => _subtitleState;
 
   /// Tracks available audio and video qualities for HLS/DASH.
   PlayerTrackState _trackState = const PlayerTrackState();

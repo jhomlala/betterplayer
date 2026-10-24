@@ -57,11 +57,47 @@ void main() {
     });
 
     test('PlayerConfiguration copyWith', () {
-      const config = PlayerConfiguration(autoPlay: true);
+      const config = PlayerConfiguration(
+        autoPlay: true,
+        autoDetectFullscreenAspectRatio: true,
+      );
       final copied = config.copyWith(autoPlay: false);
       expect(copied.autoPlay, false);
       expect(copied.looping, false);
+      expect(copied.autoDetectFullscreenAspectRatio, true);
     });
+
+    test(
+      'PlayerDataSource copyWith preserves notificationConfiguration, bufferingConfiguration, and asmsTrackNames',
+      () {
+        const originalNotification = NotificationConfiguration(
+          showNotification: true,
+          title: 'Custom Title',
+          author: 'Custom Author',
+        );
+        const originalBuffering = BufferingConfiguration(
+          minBufferMs: 50000,
+          maxBufferMs: 100000,
+        );
+        final original = PlayerDataSource(
+          DataSourceType.network,
+          'https://example.com/video.mp4',
+          notificationConfiguration: originalNotification,
+          bufferingConfiguration: originalBuffering,
+          asmsTrackNames: const <String>['720p', '1080p'],
+        );
+
+        final copied = original.copyWith(
+          url: 'https://example.com/video_720p.mp4',
+        );
+
+        expect(copied.notificationConfiguration?.showNotification, isTrue);
+        expect(copied.notificationConfiguration?.title, 'Custom Title');
+        expect(copied.bufferingConfiguration.minBufferMs, 50000);
+        expect(copied.bufferingConfiguration.maxBufferMs, 100000);
+        expect(copied.asmsTrackNames, const <String>['720p', '1080p']);
+      },
+    );
   });
 
   group('VideoPlayerValue tests', () {

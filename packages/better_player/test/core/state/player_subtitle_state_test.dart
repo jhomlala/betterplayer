@@ -1,5 +1,4 @@
 import 'package:better_player/better_player.dart';
-import 'package:better_player/src/core/state/player_subtitle_state.dart';
 import 'package:better_player/src/subtitles/player_subtitle.dart';
 import 'package:flutter_test/flutter_test.dart';
 

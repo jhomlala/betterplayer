@@ -19,7 +19,7 @@ extension PlayerEventsExtension on BetterPlayerController {
 
   ///Send player event to all listeners.
   void _postEvent(PlayerEvent betterPlayerEvent) {
-    for (final eventListener in _eventListeners) {
+    for (final eventListener in List.of(_eventListeners)) {
       if (eventListener != null) {
         eventListener(betterPlayerEvent);
       }
