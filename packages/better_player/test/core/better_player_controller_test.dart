@@ -1083,7 +1083,7 @@ void main() {
           expect(exceptionEvent != null, true);
           expect(
             exceptionEvent?.parameters?['exception'],
-            'Exception: RTSP is only supported on Android.',
+            'Exception: RTSP is not supported on this platform.',
           );
           expect(controller.isEngineReady, false);
         } finally {
@@ -1094,6 +1094,62 @@ void main() {
       test('setupDataSource allows RTSP on Android', () async {
         final previousPlatform = debugDefaultTargetPlatformOverride;
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
+        try {
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+          );
+          PlayerEvent? exceptionEvent;
+          controller.addEventsListener((event) {
+            if (event.betterPlayerEventType == PlayerEventType.exception) {
+              exceptionEvent = event;
+            }
+          });
+
+          await controller.setupDataSource(
+            PlayerDataSource.network('rtsp://example.com/video.mp4'),
+          );
+
+          expect(exceptionEvent == null, true);
+          expect(
+            controller.betterPlayerDataSource?.url,
+            'rtsp://example.com/video.mp4',
+          );
+        } finally {
+          debugDefaultTargetPlatformOverride = previousPlatform;
+        }
+      });
+
+      test('setupDataSource allows RTSP on Windows', () async {
+        final previousPlatform = debugDefaultTargetPlatformOverride;
+        debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+        try {
+          final controller = BetterPlayerMockController(
+            const PlayerConfiguration(),
+          );
+          PlayerEvent? exceptionEvent;
+          controller.addEventsListener((event) {
+            if (event.betterPlayerEventType == PlayerEventType.exception) {
+              exceptionEvent = event;
+            }
+          });
+
+          await controller.setupDataSource(
+            PlayerDataSource.network('rtsp://example.com/video.mp4'),
+          );
+
+          expect(exceptionEvent == null, true);
+          expect(
+            controller.betterPlayerDataSource?.url,
+            'rtsp://example.com/video.mp4',
+          );
+        } finally {
+          debugDefaultTargetPlatformOverride = previousPlatform;
+        }
+      });
+
+      test('setupDataSource allows RTSP on Linux', () async {
+        final previousPlatform = debugDefaultTargetPlatformOverride;
+        debugDefaultTargetPlatformOverride = TargetPlatform.linux;
         try {
           final controller = BetterPlayerMockController(
             const PlayerConfiguration(),

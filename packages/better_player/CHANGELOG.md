@@ -1,4 +1,6 @@
 ## Unreleased
+- Fixed: Permitted RTSP data sources on Windows and Linux (`libmpv`), matching Android support.
+- Fixed: Guarded `VideoEventType.seek` echo in `PlayerEngineController` to prevent infinite seek re-trigger loops when seeking from Dart.
 - Fixed: Preserved notification configuration, buffering configuration, and track names in `PlayerDataSource.copyWith` when switching resolutions.
 - Fixed: Rebound video listeners on controller changes in `PlayerMaterialVideoProgressBar`, `PlayerCupertinoVideoProgressBar`, and `PlayerSubtitlesDrawer`.
 - Fixed: Guarded null engine position in `PlayerTrackExtension.setResolution` to prevent runtime crash.

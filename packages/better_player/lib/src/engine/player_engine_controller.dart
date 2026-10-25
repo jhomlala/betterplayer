@@ -97,7 +97,12 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
             _timer?.cancel();
           }
         case VideoEventType.seek:
-          seekTo(event.position);
+          if (_seekPosition == null ||
+              (event.position != null &&
+                  (_seekPosition! - event.position!).inMilliseconds.abs() >
+                      500)) {
+            seekTo(event.position);
+          }
         case VideoEventType.pipStart:
           value = value.copyWith(isPip: true);
         case VideoEventType.pipStop:

@@ -82,6 +82,7 @@ bool TextureBridge::Initialize() {
   g_mpv.set_option_string(mpv_, "keep-open", "yes");
   g_mpv.set_option_string(mpv_, "ao", "wasapi,null");
   g_mpv.set_option_string(mpv_, "audio-fallback-to-null", "yes");
+  g_mpv.set_option_string(mpv_, "hwdec", "auto-safe");
 
   if (g_mpv.initialize(mpv_) < 0) {
     g_mpv.destroy(mpv_);
@@ -171,15 +172,27 @@ const FlutterDesktopPixelBuffer* TextureBridge::CopyPixelBuffer(size_t width, si
 }
 
 void TextureBridge::Dispose() {
-  std::lock_guard<std::mutex> lock(mutex_);
-  if (is_disposed_.load()) return;
-  is_disposed_.store(true);
+  int64_t texture_id_to_unregister = -1;
+  flutter::TextureRegistrar* registrar = nullptr;
 
-  if (texture_id_ >= 0 && texture_registrar_) {
-    texture_registrar_->UnregisterTexture(texture_id_);
-    texture_id_ = -1;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (is_disposed_.load()) return;
+    is_disposed_.store(true);
+
+    if (texture_id_ >= 0 && texture_registrar_) {
+      texture_id_to_unregister = texture_id_;
+      registrar = texture_registrar_;
+      texture_id_ = -1;
+    }
   }
 
+  // Unregister outside of mutex_ to avoid deadlocks with raster thread callbacks
+  if (texture_id_to_unregister >= 0 && registrar) {
+    registrar->UnregisterTexture(texture_id_to_unregister);
+  }
+
+  std::lock_guard<std::mutex> lock(mutex_);
   if (mpv_render_) {
     if (g_mpv.render_context_set_update_callback) {
       g_mpv.render_context_set_update_callback(mpv_render_, nullptr, nullptr);

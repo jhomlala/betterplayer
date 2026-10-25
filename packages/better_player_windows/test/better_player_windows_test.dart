@@ -218,7 +218,7 @@ void main() {
         );
         expect(
           logs.any(
-            (l) => l.contains('BufferingConfiguration is ignored on Windows'),
+            (l) => l.contains('Applying buffering configuration'),
           ),
           isTrue,
         );

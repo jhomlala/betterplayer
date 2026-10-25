@@ -17,12 +17,16 @@ extension PlayerDataSourceExtension on BetterPlayerController {
     _betterPlayerDataSource = betterPlayerDataSource;
     _subtitleState = _subtitleState.copyWith(subtitlesSourceList: []);
 
-    // Note: RTSP is not supported on iOS/Web because AVPlayer and Shaka lack
-    // native RTSP support. If either engine ever gains it, remove the
-    // corresponding condition here.
+    // Note: RTSP is supported on Android, Windows, and Linux via ExoPlayer and libmpv.
+    // It is not supported on iOS/macOS/Web because AVPlayer and Shaka lack native RTSP support.
+    final isRtspSupported =
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.windows ||
+            defaultTargetPlatform == TargetPlatform.linux);
     if (betterPlayerDataSource.url.toLowerCase().startsWith('rtsp://') &&
-        (kIsWeb || defaultTargetPlatform != TargetPlatform.android)) {
-      final exception = Exception('RTSP is only supported on Android.');
+        !isRtspSupported) {
+      final exception = Exception('RTSP is not supported on this platform.');
       PlayerLogger.error(
         message: 'Data source setup failed: $exception',
         textureId: textureId,

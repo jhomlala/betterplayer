@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:ffi' as ffi;
+import 'dart:io';
+
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:better_player_windows/src/mpv/mpv_ffi.dart';
 import 'package:ffi/ffi.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart' as path;
 
 abstract class BetterPlayerWindowsPlayer {
   int get textureId;
@@ -30,15 +33,18 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   MpvPlayer({
     required this.textureId,
     required this.handle,
+    this.bufferingConfiguration,
     MpvBindings? bindings,
     this.onLog,
   }) : _bindings = bindings ?? MpvBindings.instance! {
     _initEventStream();
+    _applyBufferingConfiguration();
   }
 
   @override
   final int textureId;
   final ffi.Pointer<MpvHandle> handle;
+  final BufferingConfiguration? bufferingConfiguration;
   final MpvBindings _bindings;
   final void Function({required String message, required int levelIndex})?
   onLog;
@@ -55,9 +61,24 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
 
   Duration _duration = Duration.zero;
   Duration _currentPosition = Duration.zero;
+  Duration? _overriddenDuration;
   double _width = 0;
   double _height = 0;
   String? _currentKey;
+
+  void _applyBufferingConfiguration() {
+    final config = bufferingConfiguration;
+    if (config == null) return;
+
+    if (config.maxBufferMs > 0) {
+      final bufferSecs = (config.maxBufferMs / 1000.0).clamp(1.0, 120.0);
+      _setPropertyDouble(name: 'demuxer-readahead-secs', value: bufferSecs);
+    }
+    if (config.minBufferMs > 0) {
+      final minSecs = (config.minBufferMs / 1000.0).clamp(0.1, 60.0);
+      _setPropertyDouble(name: 'demuxer-cache-wait', value: minSecs);
+    }
+  }
 
   @override
   Stream<VideoEvent> get events => _eventController.stream;
@@ -144,7 +165,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       case MpvEventId.seek:
         _completedEmitted = false;
         final posMs = _getPositionMs();
-        if (posMs > 0) {
+        if (posMs >= 0) {
           _currentPosition = Duration(milliseconds: posMs);
         }
         _eventController.add(
@@ -157,7 +178,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       case MpvEventId.playbackRestart:
         _completedEmitted = false;
         final posMs = _getPositionMs();
-        if (posMs > 0) {
+        if (posMs >= 0) {
           _currentPosition = Duration(milliseconds: posMs);
         }
       case MpvEventId.endFile:
@@ -199,7 +220,8 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
   }
 
   void _onFileLoaded() {
-    _duration = Duration(milliseconds: _getDurationMs());
+    final rawDuration = Duration(milliseconds: _getDurationMs());
+    _duration = _overriddenDuration ?? rawDuration;
     final dWidth = _getIntProperty('dwidth').toDouble();
     final dHeight = _getIntProperty('dheight').toDouble();
     _width = dWidth > 0 ? dWidth : _getIntProperty('width').toDouble();
@@ -311,6 +333,10 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           }
         }
       case 'duration':
+        if (_overriddenDuration != null) {
+          _duration = _overriddenDuration!;
+          break;
+        }
         if (prop.ref.data != ffi.nullptr) {
           final durSecs = prop.ref.data.cast<ffi.Double>().value;
           if (durSecs > 0) {
@@ -422,6 +448,33 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     }
   }
 
+  String? _getStringProperty(String name) {
+    if (_isDisposed) return null;
+    final namePtr = name.toNativeUtf8();
+    try {
+      final resPtr = _bindings.mpvGetPropertyString(handle, namePtr);
+      if (resPtr != ffi.nullptr) {
+        final str = resPtr.toDartString();
+        _bindings.mpvFree(resPtr.cast());
+        return str;
+      }
+      return null;
+    } finally {
+      calloc.free(namePtr);
+    }
+  }
+
+  static String? _resolveFlutterAssetPath(String asset) {
+    try {
+      final exeDir = path.dirname(Platform.resolvedExecutable);
+      final assetPath = path.join(exeDir, 'data', 'flutter_assets', asset);
+      if (File(assetPath).existsSync()) {
+        return assetPath;
+      }
+    } catch (_) {}
+    return null;
+  }
+
   @override
   Future<void> dispose() async {
     if (_isDisposed) return;
@@ -439,24 +492,42 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     _currentKey = dataSource.key;
     _completedEmitted = false;
     _duration = Duration.zero;
+    _overriddenDuration = dataSource.overriddenDuration;
     _width = 0;
     _height = 0;
 
-    // Configure headers: always set to avoid leaking previous headers
+    // Configure headers: always set to avoid leaking previous headers.
+    // Quote any values containing commas so mpv does not split them into multiple headers.
     if (dataSource.headers != null && dataSource.headers!.isNotEmpty) {
       final headerStrings = dataSource.headers!.entries
-          .map((e) => '${e.key}: ${e.value}')
+          .map((e) {
+            var v = e.value ?? '';
+            if (v.contains(',')) {
+              v = '"$v"';
+            }
+            return '${e.key}: $v';
+          })
           .join(',');
       _setPropertyString(name: 'http-header-fields', value: headerStrings);
     } else {
       _setPropertyString(name: 'http-header-fields', value: '');
     }
 
-    if (dataSource.drmConfiguration != null) {
-      _log(
-        message: 'DRM configuration is not supported on Windows (mpv)',
-        levelIndex: 2,
+    final clearKey = dataSource.drmConfiguration?.clearKey;
+    if (clearKey != null && clearKey.isNotEmpty) {
+      _log(message: 'Configuring ClearKey DRM for stream');
+      _setPropertyString(
+        name: 'demuxer-lavf-o',
+        value: 'decryption_key=$clearKey',
       );
+    } else {
+      _setPropertyString(name: 'demuxer-lavf-o', value: '');
+      if (dataSource.drmConfiguration != null) {
+        _log(
+          message: 'DRM configuration is not supported on Windows (mpv)',
+          levelIndex: 2,
+        );
+      }
     }
 
     // Configure caching parameters: reset to default if caching is not enabled
@@ -473,6 +544,13 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     }
 
     var url = dataSource.uri ?? dataSource.asset ?? '';
+    if (dataSource.sourceType == DataSourceType.asset ||
+        dataSource.asset != null) {
+      final resolved = _resolveFlutterAssetPath(url);
+      if (resolved != null) {
+        url = resolved;
+      }
+    }
     if (url.startsWith('file://')) {
       final stripped = url.substring(7);
       if (stripped.length >= 3 && stripped[0] == '/' && stripped[2] == ':') {
@@ -577,10 +655,44 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           'setTrackParameters: width=$width, height=$height, bitrate=$bitrate',
       levelIndex: 0,
     );
+    if (width == 0 && height == 0 && bitrate == 0) {
+      _setPropertyString(name: 'vid', value: 'auto');
+      _setPropertyString(name: 'hls-bitrate', value: 'max');
+      return;
+    }
+
     if (bitrate > 0) {
       _setPropertyString(name: 'hls-bitrate', value: '$bitrate');
-    } else {
-      _setPropertyString(name: 'hls-bitrate', value: 'max');
+    }
+
+    final count = _getIntProperty('track-list/count');
+    int? matchedTrackId;
+    for (var i = 0; i < count; i++) {
+      final type = _getStringProperty('track-list/$i/type');
+      if (type == 'video') {
+        final trackWidth = _getIntProperty('track-list/$i/demux-w');
+        final trackHeight = _getIntProperty('track-list/$i/demux-h');
+        final trackBitrate = _getIntProperty('track-list/$i/demux-bitrate');
+        final id = _getIntProperty('track-list/$i/id');
+
+        final matchesSize =
+            width > 0 &&
+            height > 0 &&
+            trackWidth == width &&
+            trackHeight == height;
+        final matchesBitrate =
+            bitrate > 0 &&
+            (trackBitrate == bitrate || (trackBitrate - bitrate).abs() < 50000);
+
+        if (matchesSize || matchesBitrate) {
+          matchedTrackId = id;
+          break;
+        }
+      }
+    }
+
+    if (matchedTrackId != null && matchedTrackId > 0) {
+      _setPropertyString(name: 'vid', value: '$matchedTrackId');
     }
   }
 
