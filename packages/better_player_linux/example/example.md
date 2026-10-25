@@ -4,7 +4,7 @@ Below is an example showing how to initialize and use `BetterPlayer` on Linux. F
 
 ```dart
 import 'package:better_player/better_player.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() => runApp(const BetterPlayerExample());
 

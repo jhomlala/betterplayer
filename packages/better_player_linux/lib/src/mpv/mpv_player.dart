@@ -524,7 +524,7 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
       _setPropertyString(name: 'demuxer-lavf-o', value: '');
       if (dataSource.drmConfiguration != null) {
         _log(
-          message: 'DRM configuration is not supported on Windows (mpv)',
+          message: 'DRM configuration is not supported on Linux (mpv)',
           levelIndex: 2,
         );
       }

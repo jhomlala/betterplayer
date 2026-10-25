@@ -333,9 +333,15 @@ class MpvBindings {
 
   static MpvBindings? get instance {
     if (_instance != null) return _instance;
-    final candidates = Platform.isWindows
-        ? const ['mpv-2.dll', 'libmpv-2.dll']
-        : const ['libmpv.so.2', 'libmpv.so.1', 'libmpv.so'];
+    final candidates = Platform.isLinux
+        ? const ['libmpv.so.2', 'libmpv.so.1', 'libmpv.so']
+        : const [
+            'libmpv.so.2',
+            'libmpv.so.1',
+            'libmpv.so',
+            'mpv-2.dll',
+            'libmpv-2.dll',
+          ];
     for (final name in candidates) {
       try {
         final lib = ffi.DynamicLibrary.open(name);

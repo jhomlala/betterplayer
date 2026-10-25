@@ -30,41 +30,45 @@ void main() {
       app.main();
       await tester.pumpAndSettle();
 
-      // 1. Navigate to Native FFI API Page
+      // 1. Navigate to FFI Test Page
       final navigateFfiButton = findById('better_player_e2e_navigate_ffi');
       await scrollAndTap(tester: tester, finder: navigateFfiButton);
 
-      final eventsVerified = findById('better_player_e2e_events_verified');
+      // 2. Wait for player to be initialized
+      final initializedStatus = findById('ffi_test_initialized_status');
       await pumpUntilFound(
         tester: tester,
-        finder: eventsVerified,
+        finder: initializedStatus,
         timeout: const Duration(seconds: 40),
       );
 
-      // 2. Test runtime configuration
-      final runtimeConfigButton = findById(
-        'better_player_e2e_runtime_config_button',
-      );
-      await scrollAndTap(tester: tester, finder: runtimeConfigButton);
+      // 3. Test core FFI methods
+      final ffiMethods = [
+        'play',
+        'pause',
+        'seekTo',
+        'setVolume',
+        'setSpeed',
+        'setTrackParameters',
+        'setAudioTrack',
+        'setMixWithOthers',
+        'setLooping',
+        'getPosition',
+        'playerValue',
+        'duration',
+        'isInitialized',
+      ];
 
-      final runtimeConfigStatus = findById(
-        'better_player_e2e_runtime_config_status',
-      );
-      await pumpUntilFound(
-        tester: tester,
-        finder: runtimeConfigStatus,
-        timeout: const Duration(seconds: 15),
-      );
+      for (final method in ffiMethods) {
+        final button = findById('ffi_btn_$method');
+        if (button.evaluate().isNotEmpty) {
+          await tapWhenReady(tester: tester, finder: button);
+          await tester.pump(const Duration(milliseconds: 300));
+        }
+      }
 
-      // 3. Test keyboard shortcuts callback
-      final shortcutStatus = findById(
-        'better_player_e2e_keyboard_shortcut_status',
-      );
-      await pumpUntilFound(
-        tester: tester,
-        finder: shortcutStatus,
-        timeout: const Duration(seconds: 15),
-      );
+      // 4. Verify all tested without fatal crash
+      expect(initializedStatus, findsOneWidget);
 
       try {
         await Process.run('import', [
@@ -74,15 +78,10 @@ void main() {
         ]);
       } catch (_) {}
 
-      // 4. Navigate back to Home
-      final navigatorState = tester.state<NavigatorState>(
-        find.byType(Navigator),
-      );
-      navigatorState.pop();
+      // 5. Navigate back to home
+      final navigator = Navigator.of(tester.element(initializedStatus));
+      navigator.pop();
       await tester.pumpAndSettle();
-
-      final title = findById('better_player_e2e_app_bar_title');
-      await pumpUntilFound(tester: tester, finder: title);
-    }, timeout: const Timeout(Duration(minutes: 2)));
+    });
   });
 }

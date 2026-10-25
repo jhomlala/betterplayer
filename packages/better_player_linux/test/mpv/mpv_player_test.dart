@@ -382,7 +382,7 @@ void main() {
       },
     );
 
-    test('setDataSource normalizes file URIs for Windows paths', () async {
+    test('setDataSource normalizes file URIs', () async {
       final bindings = createFakeBindings();
       final player = createPlayer(
         bindings,
@@ -432,7 +432,7 @@ void main() {
 
         expect(
           logs.any(
-            (l) => l.contains('DRM configuration is not supported on Windows'),
+            (l) => l.contains('DRM configuration is not supported on Linux'),
           ),
           isTrue,
         );

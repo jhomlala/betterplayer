@@ -239,6 +239,8 @@ void TextureBridge::Dispose() {
 
   // Unregister outside of mutex_ to avoid deadlocks with raster thread callbacks
   if (texture_to_unregister && registrar) {
+    auto* bp_texture = BETTER_PLAYER_TEXTURE(texture_to_unregister);
+    bp_texture->bridge = nullptr;
     fl_texture_registrar_unregister_texture(registrar, FL_TEXTURE(texture_to_unregister));
     g_object_unref(texture_to_unregister);
   }

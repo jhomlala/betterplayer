@@ -61,17 +61,24 @@ static void method_call_cb(FlMethodChannel* channel, FlMethodCall* method_call,
     }
 
     int64_t texture_id = fl_value_get_int(texture_id_value);
+    std::unique_ptr<better_player_linux::TextureBridge> player_to_destroy;
     {
       std::lock_guard<std::mutex> lock(g_players_mutex);
-      g_players.erase(texture_id);
+      auto it = g_players.find(texture_id);
+      if (it != g_players.end()) {
+        player_to_destroy = std::move(it->second);
+        g_players.erase(it);
+      }
     }
 
     fl_method_call_respond_success(method_call, nullptr, nullptr);
   } else if (strcmp(method, "clear") == 0) {
+    std::map<int64_t, std::unique_ptr<better_player_linux::TextureBridge>> players_to_clear;
     {
       std::lock_guard<std::mutex> lock(g_players_mutex);
-      g_players.clear();
+      players_to_clear = std::move(g_players);
     }
+    players_to_clear.clear();
     fl_method_call_respond_success(method_call, nullptr, nullptr);
   } else {
     fl_method_call_respond_not_implemented(method_call, nullptr);
