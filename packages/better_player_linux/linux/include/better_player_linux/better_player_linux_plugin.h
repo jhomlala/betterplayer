@@ -11,12 +11,13 @@ G_BEGIN_DECLS
 #define FLUTTER_PLUGIN_EXPORT
 #endif
 
-typedef struct _BetterPlayerLinuxPlugin BetterPlayerLinuxPlugin;
-typedef struct {
-  GObjectClass parent_class;
-} BetterPlayerLinuxPluginClass;
+G_DECLARE_FINAL_TYPE(BetterPlayerLinuxPlugin, better_player_linux_plugin,
+                     BETTER_PLAYER, LINUX_PLUGIN, GObject)
 
-FLUTTER_PLUGIN_EXPORT GType better_player_linux_plugin_get_type(void);
+#ifndef BETTER_PLAYER_LINUX_PLUGIN
+#define BETTER_PLAYER_LINUX_PLUGIN(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST((obj), better_player_linux_plugin_get_type(), BetterPlayerLinuxPlugin))
+#endif
 
 FLUTTER_PLUGIN_EXPORT void better_player_linux_plugin_register_with_registrar(
     FlPluginRegistrar* registrar);

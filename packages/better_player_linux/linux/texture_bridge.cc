@@ -70,6 +70,11 @@ G_DECLARE_FINAL_TYPE(BetterPlayerTexture,
                      TEXTURE,
                      FlPixelBufferTexture)
 
+#ifndef BETTER_PLAYER_TEXTURE
+#define BETTER_PLAYER_TEXTURE(obj) \
+  (G_TYPE_CHECK_INSTANCE_CAST((obj), better_player_texture_get_type(), BetterPlayerTexture))
+#endif
+
 G_DEFINE_TYPE(BetterPlayerTexture, better_player_texture, fl_pixel_buffer_texture_get_type())
 
 static gboolean better_player_texture_copy_pixels(
