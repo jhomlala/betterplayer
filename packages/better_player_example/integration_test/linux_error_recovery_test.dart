@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:better_player_example/main_e2e.dart' as app;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -61,37 +63,52 @@ void main() {
       final playPauseButton = findById(
         'better_player_material_controls_play_pause_button',
       );
-      await pumpUntilFound(tester: tester, finder: playPauseButton);
-
-      // 3. Verify playback works after recovery
+      await pumpUntilFound(
+        tester: tester,
+        finder: playPauseButton,
+        timeout: const Duration(seconds: 15),
+      );
+      try {
+        await tester.ensureVisible(playPauseButton.first);
+        await tester.pump(const Duration(milliseconds: 200));
+      } catch (_) {}
       await tester.tap(playPauseButton.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
     }, timeout: const Timeout(Duration(minutes: 2)));
 
-    testWidgets('Accurate seek verification', (tester) async {
+    testWidgets('Accurate seek on dedicated Seek E2E page', (tester) async {
       app.main();
       await tester.pumpAndSettle();
 
+      // 1. Navigate to Seek E2E Page
       final navigateSeekButton = findById('better_player_e2e_navigate_seek');
       await scrollAndTap(tester: tester, finder: navigateSeekButton);
 
-      final seekInitialized = findById('seek_test_initialized_status');
+      final seekInitialized = findById('better_player_e2e_seek_initialized');
       await pumpUntilFound(
         tester: tester,
         finder: seekInitialized,
-        timeout: const Duration(seconds: 30),
+        timeout: const Duration(seconds: 25),
       );
 
-      final seekTargets = [10, 30, 60, 5];
-      for (final target in seekTargets) {
-        final seekButton = findById('seek_btn_$target');
-        if (seekButton.evaluate().isNotEmpty) {
-          await tapWhenReady(tester: tester, finder: seekButton);
-          await tester.pump(const Duration(milliseconds: 500));
-        }
-      }
+      // 2. Seek 10s and verify
+      final seek10sButton = findById('better_player_e2e_seek_10s_button');
+      await scrollAndTap(tester: tester, finder: seek10sButton);
 
-      expect(seekInitialized, findsOneWidget);
-    }, timeout: const Timeout(Duration(minutes: 2)));
+      final seek10sVerified = findById('better_player_e2e_seek_10s_verified');
+      await pumpUntilFound(
+        tester: tester,
+        finder: seek10sVerified,
+        timeout: const Duration(seconds: 15),
+      );
+
+      try {
+        await Process.run('import', [
+          '-window',
+          'root',
+          'linux_seek_page.png',
+        ]);
+      } catch (_) {}
+    });
   });
 }

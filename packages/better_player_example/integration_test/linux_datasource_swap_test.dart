@@ -52,9 +52,21 @@ void main() {
         finder: hlsInitialized,
         timeout: const Duration(seconds: 45),
       );
-      await pumpUntilFound(tester: tester, finder: playPauseButton);
+      await pumpUntilFound(
+        tester: tester,
+        finder: playPauseButton,
+        timeout: const Duration(seconds: 15),
+      );
+      try {
+        await tester.ensureVisible(playPauseButton.first);
+        await tester.pump(const Duration(milliseconds: 200));
+      } catch (_) {}
 
-      // 3. Swap back to MP4
+      // 3. Verify it is interactive
+      await tester.tap(playPauseButton.first, warnIfMissed: false);
+      await tester.pump(const Duration(milliseconds: 500));
+
+      // 4. Swap back to MP4
       await scrollAndTap(tester: tester, finder: setupMp4Button);
       await pumpUntilFound(
         tester: tester,
@@ -62,46 +74,38 @@ void main() {
         timeout: const Duration(seconds: 30),
       );
       await pumpUntilFound(tester: tester, finder: playPauseButton);
-
-      // 4. Verify player is responsive after swaps
-      await tester.tap(playPauseButton.first, warnIfMissed: false);
-      await tester.pump(const Duration(milliseconds: 500));
-      await tester.tap(playPauseButton.first, warnIfMissed: false);
-      await tester.pump(const Duration(milliseconds: 500));
     }, timeout: const Timeout(Duration(minutes: 2)));
 
-    testWidgets('List player setup and verification', (tester) async {
+    testWidgets('Visibility cycle, playlist mode, and list player', (
+      tester,
+    ) async {
       app.main();
       await tester.pumpAndSettle();
 
-      final setupListButton = findById('better_player_e2e_setup_list_player');
-      await scrollAndTap(tester: tester, finder: setupListButton);
-
-      final listStatus = findById('better_player_e2e_list_player_status');
-      await pumpUntilFound(
-        tester: tester,
-        finder: listStatus,
-        timeout: const Duration(seconds: 30),
+      // 1. Visibility cycle verification
+      final visibilityCycleButton = findById(
+        'better_player_e2e_visibility_cycle_button',
       );
+      await scrollAndTap(tester: tester, finder: visibilityCycleButton);
 
-      expect(listStatus, findsOneWidget);
-    }, timeout: const Timeout(Duration(minutes: 2)));
+      final visibilityStatus = findById(
+        'better_player_e2e_visibility_callback_status',
+      );
+      await pumpUntilFound(tester: tester, finder: visibilityStatus);
 
-    testWidgets('Playlist mode setup and playback', (tester) async {
-      app.main();
-      await tester.pumpAndSettle();
-
-      final setupPlaylistButton = findById('better_player_e2e_setup_playlist');
-      await scrollAndTap(tester: tester, finder: setupPlaylistButton);
+      // 2. Playlist verification
+      final playlistButton = findById('better_player_e2e_playlist_button');
+      await scrollAndTap(tester: tester, finder: playlistButton);
 
       final playlistStatus = findById('better_player_e2e_playlist_status');
-      await pumpUntilFound(
-        tester: tester,
-        finder: playlistStatus,
-        timeout: const Duration(seconds: 30),
-      );
+      await pumpUntilFound(tester: tester, finder: playlistStatus);
 
-      expect(playlistStatus, findsOneWidget);
+      // 3. List player and mid-initialization disposal verification
+      final listPlayerButton = findById('better_player_e2e_list_player_button');
+      await scrollAndTap(tester: tester, finder: listPlayerButton);
+
+      final listPlayerStatus = findById('better_player_e2e_list_player_status');
+      await pumpUntilFound(tester: tester, finder: listPlayerStatus);
     }, timeout: const Timeout(Duration(minutes: 2)));
   });
 }
