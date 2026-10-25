@@ -822,5 +822,202 @@ void main() {
         expect(event.position, Duration.zero);
       },
     );
+    test(
+      'setAudioTrack resolves non-sequential track id from track-list',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        propertyInts['track-list/count'] = 3;
+        propertyStrings['track-list/0/type'] = 'video';
+        propertyInts['track-list/0/id'] = 1;
+
+        propertyStrings['track-list/1/type'] = 'audio';
+        propertyInts['track-list/1/id'] = 3;
+        propertyStrings['track-list/1/lang'] = 'eng';
+        propertyStrings['track-list/1/title'] = 'English';
+
+        propertyStrings['track-list/2/type'] = 'audio';
+        propertyInts['track-list/2/id'] = 5;
+        propertyStrings['track-list/2/lang'] = 'spa';
+        propertyStrings['track-list/2/title'] = 'Spanish';
+
+        await player.setAudioTrack(name: 'Spanish', index: 1);
+        expect(propertyStrings['aid'], '5');
+      },
+    );
+
+    test(
+      'setTextTrack resolves non-sequential track id from track-list',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        propertyInts['track-list/count'] = 2;
+        propertyStrings['track-list/0/type'] = 'video';
+        propertyInts['track-list/0/id'] = 1;
+
+        propertyStrings['track-list/1/type'] = 'sub';
+        propertyInts['track-list/1/id'] = 4;
+        propertyStrings['track-list/1/lang'] = 'eng';
+        propertyStrings['track-list/1/title'] = 'English';
+
+        await player.setTextTrack(name: 'English', index: 0);
+        expect(propertyStrings['sid'], '4');
+      },
+    );
+    test(
+      'setDataSource handles DataSourceType.asset and passes asset path to loadfile',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.asset,
+            asset: 'assets/test_video.mp4',
+          ),
+        );
+
+        expect(executedCommands.last.first, 'loadfile');
+        expect(executedCommands.last.last.contains('test_video.mp4'), isTrue);
+      },
+    );
+
+    test(
+      'overriddenDuration overrides duration propertyChange event',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/test.mp4',
+            overriddenDuration: const Duration(seconds: 45),
+          ),
+        );
+
+        final durName = 'duration'.toNativeUtf8();
+        final durData = calloc<ffi.Double>()..value = 120.0;
+        final durProp = calloc<MpvEventProperty>()
+          ..ref.name = durName
+          ..ref.format = MpvFormat.doubleFormat
+          ..ref.data = durData.cast();
+
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.propertyChange;
+          ev.ref.data = durProp.cast();
+        });
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        calloc.free(durName);
+        calloc.free(durData);
+        calloc.free(durProp);
+      },
+    );
+
+    test(
+      'playbackRestart with position 0 updates currentPosition without crash',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        propertyDoubles['time-pos'] = 0.0;
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.playbackRestart;
+        });
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        final pos = await player.getPosition();
+        expect(pos, Duration.zero);
+      },
+    );
+
+    test(
+      'endFile ignores audio initialization failure (-14)',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        final events = <VideoEvent>[];
+        var hadError = false;
+        final sub = player.events.listen(
+          events.add,
+          onError: (_) {
+            hadError = true;
+          },
+        );
+
+        final endFileData = calloc<MpvEventEndFile>()
+          ..ref.error = -14
+          ..ref.reason = MpvEndFileReason.error;
+
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.endFile;
+          ev.ref.error = -14;
+          ev.ref.data = endFileData.cast();
+        });
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(hadError, isFalse);
+
+        calloc.free(endFileData);
+        await sub.cancel();
+      },
+    );
+
+    test(
+      'ClearKey DRM resets demuxer-lavf-o when switching to a non-DRM stream',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        // 1. Set ClearKey stream
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/drm.mpd',
+            drmConfiguration: const DrmConfiguration(
+              drmType: DrmType.clearKey,
+              clearKey: 'key123',
+            ),
+          ),
+        );
+        expect(propertyStrings['demuxer-lavf-o'], 'decryption_key=key123');
+
+        // 2. Set non-DRM stream -> resets to empty string
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/clear.mp4',
+          ),
+        );
+        expect(propertyStrings['demuxer-lavf-o'], '');
+      },
+    );
+
+    test(
+      'setAudioTrack matches by language code when index differs',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        propertyInts['track-list/count'] = 2;
+        propertyStrings['track-list/0/type'] = 'audio';
+        propertyInts['track-list/0/id'] = 2;
+        propertyStrings['track-list/0/lang'] = 'eng';
+        propertyStrings['track-list/0/title'] = 'English';
+
+        propertyStrings['track-list/1/type'] = 'audio';
+        propertyInts['track-list/1/id'] = 7;
+        propertyStrings['track-list/1/lang'] = 'fra';
+        propertyStrings['track-list/1/title'] = 'French';
+
+        await player.setAudioTrack(name: 'fra', index: 99);
+        expect(propertyStrings['aid'], '7');
+      },
+    );
   });
 }

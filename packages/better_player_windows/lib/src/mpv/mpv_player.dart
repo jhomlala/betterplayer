@@ -696,14 +696,48 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     }
   }
 
+  int? _resolveTrackId({
+    required String trackType,
+    required String name,
+    required int index,
+  }) {
+    final count = _getIntProperty('track-list/count');
+    var typeIndex = 0;
+    for (var i = 0; i < count; i++) {
+      final type = _getStringProperty('track-list/$i/type');
+      if (type == trackType) {
+        final id = _getIntProperty('track-list/$i/id');
+        final title = _getStringProperty('track-list/$i/title') ?? '';
+        final lang = _getStringProperty('track-list/$i/lang') ?? '';
+        final matchesIndex = typeIndex == index;
+        final matchesName = name.isNotEmpty && (title == name || lang == name);
+
+        if (matchesIndex || matchesName) {
+          return id > 0 ? id : null;
+        }
+        typeIndex++;
+      }
+    }
+    return null;
+  }
+
   @override
   Future<void> setAudioTrack({required String name, required int index}) async {
     if (_isDisposed) return;
     _log(message: 'setAudioTrack: name=$name, index=$index', levelIndex: 0);
     final disable = index < 0 || name.isEmpty;
+    if (disable) {
+      _setPropertyString(name: 'aid', value: 'no');
+      return;
+    }
+    final matchedId = _resolveTrackId(
+      trackType: 'audio',
+      name: name,
+      index: index,
+    );
     _setPropertyString(
       name: 'aid',
-      value: disable ? 'no' : '${index + 1}',
+      value: matchedId != null ? '$matchedId' : '${index + 1}',
     );
   }
 
@@ -712,11 +746,8 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     if (_isDisposed) return;
     _log(message: 'setTextTrack: name=$name, index=$index', levelIndex: 0);
     final disable = index < 0 || name.isEmpty;
-    _setPropertyString(
-      name: 'sid',
-      value: disable ? 'no' : '${index + 1}',
-    );
     if (disable) {
+      _setPropertyString(name: 'sid', value: 'no');
       _eventController.add(
         VideoEvent(
           eventType: VideoEventType.captionUpdate,
@@ -724,7 +755,17 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
           key: _currentKey,
         ),
       );
+      return;
     }
+    final matchedId = _resolveTrackId(
+      trackType: 'sub',
+      name: name,
+      index: index,
+    );
+    _setPropertyString(
+      name: 'sid',
+      value: matchedId != null ? '$matchedId' : '${index + 1}',
+    );
   }
 
   int _command(List<String> args) {

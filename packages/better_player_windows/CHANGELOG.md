@@ -6,8 +6,9 @@
 - Fixed: Quoted HTTP headers containing commas to prevent incorrect mpv header field splitting.
 - Fixed: Supported `bufferingConfiguration` by configuring `demuxer-readahead-secs` and `demuxer-cache-wait`.
 - Fixed: Respected `overriddenDuration` when loading data sources and on property updates.
-- Fixed: Resolved video track selection by matching `demux-w`, `demux-h`, and `demux-bitrate` in `track-list`.
+- Fixed: Resolved video, audio, and subtitle track selection by matching IDs in `track-list`.
 - Fixed: Resolved local asset path resolution for packaged Flutter desktop executables.
+- Added: Supported Linux dynamic library resolution (`libmpv.so.2`, `libmpv.so.1`, `libmpv.so`) in `MpvBindings`.
 
 ## 1.2.1
 - Fixed: Aligned `BetterPlayerWindows.preCache` method signature with `BetterPlayerPlatform` in `better_player_platform_interface` 1.5.0.

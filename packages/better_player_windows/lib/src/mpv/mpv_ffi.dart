@@ -1,4 +1,6 @@
 import 'dart:ffi' as ffi;
+import 'dart:io';
+
 import 'package:ffi/ffi.dart';
 
 // mpv_format enum constants
@@ -331,17 +333,16 @@ class MpvBindings {
 
   static MpvBindings? get instance {
     if (_instance != null) return _instance;
-    try {
-      final lib = ffi.DynamicLibrary.open('mpv-2.dll');
-      return _instance = MpvBindings(lib);
-    } catch (_) {
+    final candidates = Platform.isWindows
+        ? const ['mpv-2.dll', 'libmpv-2.dll']
+        : const ['libmpv.so.2', 'libmpv.so.1', 'libmpv.so'];
+    for (final name in candidates) {
       try {
-        final lib = ffi.DynamicLibrary.open('libmpv-2.dll');
+        final lib = ffi.DynamicLibrary.open(name);
         return _instance = MpvBindings(lib);
-      } catch (_) {
-        return null;
-      }
+      } catch (_) {}
     }
+    return null;
   }
 
   static set instance(MpvBindings? value) {
