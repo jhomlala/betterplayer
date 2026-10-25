@@ -86,17 +86,17 @@ betterPlayerController.stopPreCache(_betterPlayerDataSource);
 
 ## Platform Support
 
-The underlying implementation varies by platform. Android uses ExoPlayer's internal caching mechanism. On iOS and macOS, [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) and local cache storage manage media caching. On Windows, `libmpv` manages demuxer cache and network buffering internally during playback. On Web, fine-grained caching control (`preCache`, `clearCache`) is not currently supported natively by the Shaka Player wrapper.
+The underlying implementation varies by platform. Android uses ExoPlayer's internal caching mechanism. On iOS and macOS, [CachingPlayerItem](https://github.com/neekeetab/CachingPlayerItem) and local cache storage manage media caching. On Windows and Linux, `libmpv` manages demuxer cache and network buffering internally during playback. On Web, fine-grained caching control (`preCache`, `clearCache`) is not currently supported natively by the Shaka Player wrapper.
 
-| Feature | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS | macOS HLS | macOS non-HLS | Windows HLS | Windows non-HLS | Web |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Normal Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | x |
-| **Pre-Caching** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
-| **Pre-Cache Progress** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
-| **Stop Caching** | x | ✓ | x | ✓ | x | ✓ | x | x | x |
+| Feature | Android HLS | Android non-HLS | iOS HLS | iOS non-HLS | macOS HLS | macOS non-HLS | Windows HLS | Windows non-HLS | Linux HLS | Linux non-HLS | Web |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Normal Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | x |
+| **Pre-Caching** | x | ✓ | x | ✓ | x | ✓ | x | x | x | x | x |
+| **Pre-Cache Progress** | x | ✓ | x | ✓ | x | ✓ | x | x | x | x | x |
+| **Stop Caching** | x | ✓ | x | ✓ | x | ✓ | x | x | x | x | x |
 
 :::note
-- **Chunked Streams (HLS & DASH)**: Pre-caching operates on progressive media files (MP4, MKV, etc.). Pre-caching HLS (`.m3u8`) and DASH (`.mpd`) is blocked and not supported. Normal caching during active playback still caches HLS segments on Android, iOS, macOS, and Windows.
-- **Windows**: `libmpv` automatically manages demuxer cache and network buffering during active playback. Offline pre-caching is not supported.
+- **Chunked Streams (HLS & DASH)**: Pre-caching operates on progressive media files (MP4, MKV, etc.). Pre-caching HLS (`.m3u8`) and DASH (`.mpd`) is blocked and not supported. Normal caching during active playback still caches HLS segments on Android, iOS, macOS, Windows, and Linux.
+- **Windows & Linux**: `libmpv` automatically manages demuxer cache and network buffering during active playback. Offline pre-caching is not supported.
 - **Web**: Browsers control media caching directly through HTTP caching headers.
 :::

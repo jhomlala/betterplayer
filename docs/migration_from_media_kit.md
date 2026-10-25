@@ -7,7 +7,7 @@ title: Migrating from media_kit
 
 `media_kit` brings `libmpv` to Flutter, which works well for desktop experimentation. But when you ship to mobile in production, bundling full C/C++ media engines introduces serious trade-offs: 30 to 50 MB of binary bloat per architecture, higher battery consumption from non-native render loops, missing hardware DRM on mobile, and zero built-in offline caching.
 
-**Better Player** uses each platform's native multimedia engine where it matters most: Google Media3 / ExoPlayer on Android, Apple AVPlayer on iOS and macOS, and Shaka Player on Web. (To be completely candid: Better Player also uses `libmpv` on Windows desktop via `better_player_windows`, because `libmpv` is the right tool for Windows. The difference is federated isolation: mobile and Apple platforms remain 100% native). You get native hardware acceleration, system-level DRM (Widevine, FairPlay), offline caching, PiP, and a tiny footprint (~1-2 MB overhead on mobile).
+**Better Player** uses each platform's native multimedia engine where it matters most: Google Media3 / ExoPlayer on Android, Apple AVPlayer on iOS and macOS, and Shaka Player on Web. (To be completely candid: Better Player also uses `libmpv` on Windows and Linux desktop via `better_player_windows` and `better_player_linux`, because `libmpv` is the right tool for those platforms. The difference is federated isolation: mobile and Apple platforms remain 100% native). You get native hardware acceleration, system-level DRM (Widevine, FairPlay), offline caching, PiP, and a tiny footprint (~1-2 MB overhead on mobile).
 
 This guide walks you through migrating from `media_kit` to `better_player`.
 
@@ -19,7 +19,7 @@ This guide walks you through migrating from `media_kit` to `better_player`.
 |---|---|---|
 | **Mobile Binary Size** | **+30 MB to 50 MB** (bundled `libmpv` / FFmpeg binaries) | **~1-2 MB** (uses OS-provided native frameworks) |
 | **Mobile Engine** | `libmpv` rendered to Flutter texture | Native Google Media3 / ExoPlayer & Apple AVPlayer |
-| **Desktop Engines** | `libmpv` on Windows, macOS, Linux | Native AVPlayer on macOS, `libmpv` on Windows |
+| **Desktop Engines** | `libmpv` on Windows, macOS, Linux | Native AVPlayer on macOS, `libmpv` on Windows and Linux |
 | **Battery & Thermals** | Higher draw due to custom C rendering pipeline on mobile | Optimized by OS hardware decoders and power policies |
 | **DRM Support** | None on mobile (no hardware Widevine or FairPlay) | Production Widevine Modular L1/L3 and FairPlay EZDRM |
 | **Offline Caching** | None (requires external proxy or custom downloaders) | Built-in disk cache and pre-caching APIs |
@@ -28,10 +28,10 @@ This guide walks you through migrating from `media_kit` to `better_player`.
 | **Entrypoint Ceremony** | Requires `MediaKit.ensureInitialized()` in `main()` | Zero global initialization boilerplate |
 
 > [!NOTE]
-> **Full disclosure on Windows:**
-> Better Player uses `libmpv` on Windows too (via `better_player_windows`). On Windows desktop, `libmpv` is a proven powerhouse with wide codec coverage and Direct3D 11 texture sharing.
+> **Full disclosure on Windows and Linux:**
+> Better Player uses `libmpv` on Windows and Linux too (via `better_player_windows` and `better_player_linux`). On Windows and Linux desktop, `libmpv` is a proven powerhouse with wide codec coverage and hardware texture sharing.
 >
-> The key difference is federated packaging. In Better Player, `libmpv` is scoped strictly to Windows desktop builds. Your iOS, Android, macOS, and Web builds never touch or bundle `libmpv`. You get the right engine for each platform without burdening your mobile users with 50 MB downloads or battery-heavy software loops.
+> The key difference is federated packaging. In Better Player, `libmpv` is scoped strictly to Windows and Linux desktop builds. Your iOS, Android, macOS, and Web builds never touch or bundle `libmpv`. You get the right engine for each platform without burdening your mobile users with 50 MB downloads or battery-heavy software loops.
 
 ---
 

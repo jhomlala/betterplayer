@@ -31,6 +31,7 @@ Better Player provides a robust set of features designed for production-ready ap
 *   **Platform Features**: Native notifications and comprehensive BoxFit support.
 *   **macOS Support**: Dedicated desktop playback powered by native AVPlayer, AppKitView, and FFI bindings.
 *   **Windows Support**: Desktop playback powered by libmpv and Direct3D 11 texture sharing.
+*   **Linux Support**: Desktop playback powered by libmpv and FlPixelBufferTexture.
 *   **Web Support**: Advanced web playback using Shaka Player for HLS, DASH, and DRM.
 *   ... and much more! See the detailed [Platform Support](platform_support.md) matrix.
 

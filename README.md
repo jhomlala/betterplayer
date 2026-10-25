@@ -144,6 +144,7 @@ Better Player uses a federated architecture. Each platform runs on its native, h
 | **macOS** | `better_player_macos` | Apple AVPlayer | [![pub](https://img.shields.io/pub/v/better_player_macos.svg)](https://pub.dev/packages/better_player_macos) |
 | **Web** | `better_player_web` | Shaka Player / HTML5 | [![pub](https://img.shields.io/pub/v/better_player_web.svg)](https://pub.dev/packages/better_player_web) |
 | **Windows** | `better_player_windows` | libmpv | [![pub](https://img.shields.io/pub/v/better_player_windows.svg)](https://pub.dev/packages/better_player_windows) |
+| **Linux** | `better_player_linux` | libmpv | [![pub](https://img.shields.io/pub/v/better_player_linux.svg)](https://pub.dev/packages/better_player_linux) |
 
 ---
 

@@ -1,0 +1,77 @@
+name: E2E Linux (Integration Tests)
+
+on:
+  push:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_linux/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_linux.yml'
+  pull_request:
+    paths:
+      - 'packages/better_player/**'
+      - 'packages/better_player_linux/**'
+      - 'packages/better_player_platform_interface/**'
+      - 'packages/better_player_example/**'
+      - '.github/workflows/e2e_linux.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  e2e-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Enable Linux Desktop
+        run: flutter config --enable-linux-desktop
+
+      - name: Install System Dependencies
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            libgtk-3-dev \
+            libmpv-dev \
+            xvfb
+
+      - name: Cache pub
+        uses: actions/cache@v4
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: ${{ runner.os }}-pub-
+
+      - name: Get Workspace Dependencies
+        run: flutter pub get
+
+      - name: Run Linux Integration Tests
+        working-directory: packages/better_player_example
+        run: |
+          xvfb-run -a flutter test integration_test/linux_all_tests.dart -d linux --no-pub
+
+      - name: Upload Linux Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-e2e-screenshots
+          path: |
+            packages/better_player_example/*.png
+            *.png
+          if-no-files-found: ignore

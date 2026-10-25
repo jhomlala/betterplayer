@@ -1,3 +1,6 @@
+## 1.29.0
+- Added: Linux platform support via `better_player_linux` powered by `libmpv` and Flutter's `FlPixelBufferTexture`.
+
 ## 1.28.0
 - Fixed: Permitted RTSP data sources on Windows and Linux (`libmpv`), matching Android support.
 - Fixed: Guarded `VideoEventType.seek` echo in `PlayerEngineController` to prevent infinite seek re-trigger loops when seeking from Dart.

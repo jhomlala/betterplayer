@@ -88,3 +88,25 @@ By mocking the **Platform**, you:
 *   Preserve all the library's internal logic and state management.
 *   Only replace the specific layer that attempts to bridge to native code.
 *   Avoid "stubbing" dozens of methods and getters in the controller.
+
+## Desktop & Headless Integration Testing
+
+For integration testing on desktop platforms (Windows, macOS, Linux), Better Player uses Flutter's built-in `package:integration_test`:
+
+### Linux (Headless via `xvfb-run`)
+
+```bash
+xvfb-run -a flutter test integration_test/linux_all_tests.dart -d linux
+```
+
+### Windows
+
+```bash
+flutter test integration_test/windows_all_tests.dart -d windows
+```
+
+### macOS
+
+```bash
+flutter test integration_test/macos_all_tests.dart -d macos
+```

@@ -8,11 +8,13 @@ appId: pl.hasoft.example
 - tapOn:
     id: "better_player_e2e_setup_hls"
 
-# Wait for video area
+# Wait for HLS initialization
 - extendedWaitUntil:
     visible:
-      id: "better_player_cupertino_controls_play_pause_button"
+      id: "better_player_e2e_hls_initialized"
     timeout: 30000
+- assertVisible:
+    id: "better_player_e2e_hls_initialized"
 
 # Play/Pause toggle
 - tapOn:

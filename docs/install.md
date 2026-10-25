@@ -13,7 +13,7 @@ Add `better_player` to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  better_player: ^1.28.0
+  better_player: ^1.29.0
 ```
 
 ## 2. Install Package
@@ -68,6 +68,16 @@ Apply the following settings for Windows support:
 *   **Target OS**: Windows 10 version 1809 (Build 17763) or higher.
 *   **Graphics**: DirectX 11 capable graphics adapter (D3D11 shared texture rendering).
 *   **libmpv Runtime**: The Windows plugin dynamically loads `mpv-2.dll`. Ensure `mpv-2.dll` is located next to your built application executable (`Runner.exe`) or in your system `PATH`.
+
+### Linux Configuration (Required)
+
+Apply the following settings for Linux support:
+
+*   **Target OS**: Any standard Linux distribution with GTK 3.0+ and `glibc` 2.31+.
+*   **libmpv Runtime**: The Linux plugin dynamically loads `libmpv.so.2` (or `libmpv.so.1` / `libmpv.so`). Install `libmpv` via your system package manager:
+    *   Ubuntu/Debian: `sudo apt install libmpv-dev libmpv2`
+    *   Fedora/RHEL: `sudo dnf install mpv-libs-devel`
+    *   Arch Linux: `sudo pacman -S mpv`
 
 ### Web Configuration (Required)
 

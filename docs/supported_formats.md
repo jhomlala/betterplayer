@@ -5,7 +5,7 @@ title: Supported Formats
 
 # Supported Formats & Codecs
 
-Better Player uses the native media players for each platform: **ExoPlayer (Media3)** on Android, **AVPlayer (AVFoundation)** on iOS and macOS, **libmpv** on Windows, and **Shaka Player** on the Web. 
+Better Player uses the native media players for each platform: **ExoPlayer (Media3)** on Android, **AVPlayer (AVFoundation)** on iOS and macOS, **libmpv** on Windows and Linux, and **Shaka Player** on the Web. 
 
 Because we rely on these native engines without applying custom decoding, **Better Player supports whatever formats the underlying platform player supports**.
 
@@ -15,26 +15,26 @@ Here is a comprehensive breakdown of supported formats, streaming protocols, and
 
 ## 1. Streaming Protocols
 
-| Protocol | Android | iOS | macOS | Windows | Web |
-|---|---|---|---|---|---|
-| **HLS (HTTP Live Streaming)** | ✓ | ✓ (Native) | ✓ (Native) | ✓ | ✓ |
-| **MPEG-DASH** | ✓ | x | x | ✓ | ✓ |
-| **SmoothStreaming (MSS)** | ✓ | x | x | x | x |
-| **RTSP** | ✓ | x | x | ✓ | x |
-| **Progressive HTTP (MP4, WebM…)**| ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Low-latency HLS (LL-HLS)** | ✓ | ✓ (iOS 15+) | ✓ (macOS 12+) | ✓ | ✓ |
-| **Low-latency DASH** | ✓ | x | x | ✓ | ✓ |
+| Protocol | Android | iOS | macOS | Windows | Linux | Web |
+|---|---|---|---|---|---|---|
+| **HLS (HTTP Live Streaming)** | ✓ | ✓ (Native) | ✓ (Native) | ✓ | ✓ | ✓ |
+| **MPEG-DASH** | ✓ | x | x | ✓ | ✓ | ✓ |
+| **SmoothStreaming (MSS)** | ✓ | x | x | x | x | x |
+| **RTSP** | ✓ | x | x | ✓ | ✓ | x |
+| **Progressive HTTP (MP4, WebM…)**| ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Low-latency HLS (LL-HLS)** | ✓ | ✓ (iOS 15+) | ✓ (macOS 12+) | ✓ | ✓ | ✓ |
+| **Low-latency DASH** | ✓ | x | x | ✓ | ✓ | ✓ |
 
 > **Note on Apple platforms (iOS & macOS):** Apple platforms are heavily HLS-centric. Apple does not provide native support for DASH or SmoothStreaming in AVFoundation. If you need to support iOS or macOS, HLS is strongly recommended.
 > 
-> **Note on RTSP:** RTSP streaming is supported on Android (via ExoPlayer) and Windows (via libmpv). Native support for RTSP is not available on Apple platforms (`AVPlayer`) or Web, and typically requires server-side proxying (e.g. transmuxing to WebRTC or HLS).
+> **Note on RTSP:** RTSP streaming is supported on Android (via ExoPlayer), Windows (via libmpv), and Linux (via libmpv). Native support for RTSP is not available on Apple platforms (`AVPlayer`) or Web, and typically requires server-side proxying (e.g. transmuxing to WebRTC or HLS).
 
 ---
 
 ## 2. Video Codecs
 
 | Codec | Android | iOS | macOS | Web (Chrome) | Web (Safari) | Web (Firefox) |
-|---|---|---|---|---|---|---|
+|---|---|---|---|---|---|---|---|
 | **H.264 / AVC** | ✓ All devices | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **H.265 / HEVC** | ⚠️ HW only (Android 5+) | ✓ (A9+) | ✓ (Apple Silicon, Intel) | ⚠️ Limited | ✓ (Safari 11+) | x |
 | **VP8** | ✓ | x | x | ✓ | x | ✓ |
@@ -48,42 +48,42 @@ Here is a comprehensive breakdown of supported formats, streaming protocols, and
 
 ## 3. Audio Codecs
 
-| Codec | Android | iOS | macOS | Windows | Web |
-|---|---|---|---|---|---|
-| **AAC-LC** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **AAC-HE v1 / v2** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **MP3** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Opus** | ✓ | ✓ (iOS 11+) | ✓ (macOS 10.13+) | ✓ | ✓ |
-| **Vorbis** | ✓ | x | x | ✓ | ✓ |
-| **FLAC** | ✓ (Android 3.1+) | ✓ | ✓ | ✓ | ✓ |
-| **AC-3 / E-AC-3 (Dolby)** | ⚠️ Passthrough / HW | ✓ | ✓ | ✓ | ⚠️ Browser-dependent|
-| **ALAC** | ✓ | ✓ | ✓ | ✓ | x |
-| **PCM / WAV** | ✓ | ✓ | ✓ | ✓ | ✓ |
+| Codec | Android | iOS | macOS | Windows | Linux | Web |
+|---|---|---|---|---|---|---|
+| **AAC-LC** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **AAC-HE v1 / v2** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **MP3** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Opus** | ✓ | ✓ (iOS 11+) | ✓ (macOS 10.13+) | ✓ | ✓ | ✓ |
+| **Vorbis** | ✓ | x | x | ✓ | ✓ | ✓ |
+| **FLAC** | ✓ (Android 3.1+) | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **AC-3 / E-AC-3 (Dolby)** | ⚠️ Passthrough / HW | ✓ | ✓ | ✓ | ✓ | ⚠️ Browser-dependent|
+| **ALAC** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
+| **PCM / WAV** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 
 ---
 
 ## 4. Container Formats
 
-| Container | Android | iOS | macOS | Windows | Web |
-|---|---|---|---|---|---|
-| **MP4 / M4V** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **fMP4 (Fragmented MP4)** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **WebM** | ✓ | x | x | ✓ | ✓ |
-| **MKV (Matroska)** | ✓ | x | x | ✓ | x |
-| **MPEG-TS (.ts)** | ✓ via HLS | ✓ via HLS | ✓ via HLS | ✓ | ✓ via HLS |
-| **OGG** | ✓ | x | x | ✓ | ✓ |
-| **MOV (QuickTime)** | ⚠️ Limited | ✓ | ✓ | ✓ | x |
+| Container | Android | iOS | macOS | Windows | Linux | Web |
+|---|---|---|---|---|---|---|
+| **MP4 / M4V** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **fMP4 (Fragmented MP4)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **WebM** | ✓ | x | x | ✓ | ✓ | ✓ |
+| **MKV (Matroska)** | ✓ | x | x | ✓ | ✓ | x |
+| **MPEG-TS (.ts)** | ✓ via HLS | ✓ via HLS | ✓ via HLS | ✓ | ✓ | ✓ via HLS |
+| **OGG** | ✓ | x | x | ✓ | ✓ | ✓ |
+| **MOV (QuickTime)** | ⚠️ Limited | ✓ | ✓ | ✓ | ✓ | x |
 
 ---
 
 ## 5. DRM (Digital Rights Management)
 
-| DRM System | Android | iOS | macOS | Windows | Web |
-|---|---|---|---|---|---|
-| **Widevine L1/L3** | ✓ | x | x | x | ✓ (Chrome, Firefox) |
-| **FairPlay (FPS)** | x | ✓ | ✓ | x | ✓ (Safari only) |
-| **PlayReady** | x | x | x | x | ⚠️ (Edge only) |
-| **ClearKey** | ✓ | ✓ (HLS AES-128) | ✓ (HLS AES-128) | x | ✓ |
+| DRM System | Android | iOS | macOS | Windows | Linux | Web |
+|---|---|---|---|---|---|---|
+| **Widevine L1/L3** | ✓ | x | x | x | x | ✓ (Chrome, Firefox) |
+| **FairPlay (FPS)** | x | ✓ | ✓ | x | x | ✓ (Safari only) |
+| **PlayReady** | x | x | x | x | x | ⚠️ (Edge only) |
+| **ClearKey** | ✓ | ✓ (HLS AES-128) | ✓ (HLS AES-128) | x | ✓ | ✓ |
 
 > **Note on Multi-DRM:** To achieve full cross-platform DRM coverage, your backend streaming architecture must provide both **Widevine** (for Android and Chrome/Web) and **FairPlay** (for iOS, macOS, and Safari) in parallel.
 
@@ -105,14 +105,14 @@ These formats are loaded manually via `PlayerSubtitlesSource` and rendered using
 ### Embedded / In-Stream Subtitles & Closed Captions
 These tracks are embedded directly inside the HLS manifest or video stream. Embedded CEA-608 / CEA-708 closed captions are decoded by the underlying platform engine and rendered in Flutter using `PlayerSubtitlesConfiguration`.
 
-| Format | Android | iOS | macOS | Windows | Web (Shaka) |
-|---|---|---|---|---|---|
-| **WebVTT (in HLS / DASH)** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **TTML / DFXP** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CEA-608 (EIA-608)** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **CEA-708** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **SMPTE-TT** | ✓ | x | x | ✓ | ⚠️ |
-| **SubStation Alpha (SSA)** | x | x | x | ✓ | x |
+| Format | Android | iOS | macOS | Windows | Linux | Web (Shaka) |
+|---|---|---|---|---|---|---|
+| **WebVTT (in HLS / DASH)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **TTML / DFXP** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **CEA-608 (EIA-608)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **CEA-708** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **SMPTE-TT** | ✓ | x | x | ✓ | ✓ | ⚠️ |
+| **SubStation Alpha (SSA)** | x | x | x | ✓ | ✓ | x |
 
 > **Customization:** Embedded CEA-608 and CEA-708 closed captions are rendered via `PlayerSubtitlesDrawer` in Flutter, respecting your `PlayerSubtitlesConfiguration` styling (font size, font family, colors, background, and outlines).
 
@@ -122,5 +122,5 @@ These tracks are embedded directly inside the HLS manifest or video stream. Embe
 
 * **Android (ExoPlayer):** [ExoPlayer Supported Formats](https://developer.android.com/media/media3/exoplayer/supported-formats)
 * **iOS & macOS (AVFoundation):** [Apple HTTP Live Streaming Overview](https://developer.apple.com/documentation/http-live-streaming) and [Apple Supported Media Formats](https://developer.apple.com/documentation/technotes/tn3136-iosipados-supported-media-formats)
-* **Windows (libmpv):** [mpv Reference Manual](https://mpv.io/manual/master/)
+* **Windows & Linux (libmpv):** [mpv Reference Manual](https://mpv.io/manual/master/)
 * **Web (Shaka Player):** [Shaka Player Project](https://github.com/shaka-project/shaka-player)

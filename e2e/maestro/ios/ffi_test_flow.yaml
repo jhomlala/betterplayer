@@ -8,7 +8,6 @@ appId: pl.hasoft.example
     element:
       id: "better_player_e2e_navigate_ffi"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "better_player_e2e_navigate_ffi"
 - extendedWaitUntil:
@@ -21,7 +20,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_play"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_play"
 - assertVisible:
@@ -32,7 +30,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_pause"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_pause"
 - assertVisible:
@@ -43,7 +40,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_seekTo"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_seekTo"
 - assertVisible:
@@ -54,7 +50,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_setVolume"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_setVolume"
 - assertVisible:
@@ -65,7 +60,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_setSpeed"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_setSpeed"
 - assertVisible:
@@ -76,7 +70,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_setTrackParameters"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_setTrackParameters"
 - assertVisible:
@@ -87,7 +80,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_setAudioTrack"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_setAudioTrack"
 - assertVisible:
@@ -98,7 +90,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_setMixWithOthers"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_setMixWithOthers"
 - assertVisible:
@@ -109,7 +100,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_setAndroidMatchFrameRate"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_setAndroidMatchFrameRate"
 - assertVisible:
@@ -120,7 +110,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_setLooping"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_setLooping"
 - assertVisible:
@@ -131,7 +120,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_getPosition"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_getPosition"
 - assertVisible:
@@ -142,7 +130,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_getAbsolutePosition"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_getAbsolutePosition"
 - assertVisible:
@@ -153,7 +140,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_playerValue"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_playerValue"
 - assertVisible:
@@ -164,7 +150,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_duration"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_duration"
 - assertVisible:
@@ -175,7 +160,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_isInitialized"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_isInitialized"
 - assertVisible:
@@ -186,7 +170,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_isPictureInPictureSupported"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_isPictureInPictureSupported"
 - assertVisible:
@@ -197,7 +180,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_preCache"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_preCache"
 - assertVisible:
@@ -208,7 +190,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_stopPreCache"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_stopPreCache"
 - assertVisible:
@@ -219,7 +200,6 @@ appId: pl.hasoft.example
     element:
       id: "ffi_test_status_clearCache"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "ffi_test_button_clearCache"
 - assertVisible:
