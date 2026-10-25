@@ -5,7 +5,7 @@ class PlayerAboutConstants {
   const PlayerAboutConstants._();
 
   /// Must equal `version` in `pubspec.yaml`. A test checks this.
-  static const String version = '1.27.0';
+  static const String version = '1.28.0';
 
   static const String poweredBy = 'Powered by Better Player';
   static const String websiteUrl = 'https://hasoft.pl';

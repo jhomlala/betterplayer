@@ -1,4 +1,4 @@
-## Unreleased
+## 1.3.0
 - Fixed: Resolved deadlocks during `TextureBridge::Dispose()` by unregistering textures outside mutex lock.
 - Fixed: Enabled hardware video decoding (`hwdec=auto-safe`) in mpv initialization.
 - Fixed: Resolved orphan player leaks across hot restarts by clearing native players on plugin startup.
