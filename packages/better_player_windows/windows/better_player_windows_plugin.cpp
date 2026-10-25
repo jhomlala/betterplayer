@@ -96,8 +96,15 @@ void BetterPlayerWindowsPlugin::HandleMethodCall(
         enabled = std::get<bool>(enabled_it->second);
       }
     }
-    HWND hwnd = registrar_->GetPlatformWindow();
+    HWND hwnd = nullptr;
+    if (registrar_->GetView()) {
+      hwnd = registrar_->GetView()->GetNativeWindow();
+    }
     if (hwnd != nullptr) {
+      HWND root_hwnd = GetAncestor(hwnd, GA_ROOT);
+      if (root_hwnd != nullptr) {
+        hwnd = root_hwnd;
+      }
       DWORD affinity = enabled ? WDA_MONITOR : WDA_NONE;
       SetWindowDisplayAffinity(hwnd, affinity);
     }
