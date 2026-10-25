@@ -207,6 +207,35 @@ void main() {
     });
 
     test(
+      'setDataSource forwards headers to wrapper',
+      () async {
+        await macosPlayer.create();
+        await macosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://test.com',
+            headers: {'Authorization': 'Bearer token'},
+          ),
+        );
+        verify(
+          () => mockPlayer.setDataSourceURLString(
+            url: 'https://test.com',
+            key: any(named: 'key'),
+            certificateUrl: any(named: 'certificateUrl'),
+            licenseUrl: any(named: 'licenseUrl'),
+            headers: {'Authorization': 'Bearer token'},
+            useCache: any(named: 'useCache'),
+            cacheKey: any(named: 'cacheKey'),
+            cacheManager: any(named: 'cacheManager'),
+            overriddenDuration: any(named: 'overriddenDuration'),
+            videoExtension: any(named: 'videoExtension'),
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
       'setDataSource successfully delegates network URL to wrapper',
       () async {
         await macosPlayer.create();
@@ -224,6 +253,7 @@ void main() {
             certificateUrl: any(named: 'certificateUrl'),
             licenseUrl: any(named: 'licenseUrl'),
             useCache: any(named: 'useCache'),
+            headers: any(named: 'headers'),
             cacheKey: any(named: 'cacheKey'),
             cacheManager: any(named: 'cacheManager'),
             overriddenDuration: any(named: 'overriddenDuration'),
@@ -251,6 +281,7 @@ void main() {
             certificateUrl: any(named: 'certificateUrl'),
             licenseUrl: any(named: 'licenseUrl'),
             useCache: any(named: 'useCache'),
+            headers: any(named: 'headers'),
             cacheKey: any(named: 'cacheKey'),
             cacheManager: any(named: 'cacheManager'),
             overriddenDuration: any(named: 'overriddenDuration'),

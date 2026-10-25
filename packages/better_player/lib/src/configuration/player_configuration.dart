@@ -198,6 +198,7 @@ class PlayerConfiguration {
     Function(double visibilityFraction)? playerVisibilityChangedBehavior,
     List<PlayerTranslations>? translations,
     bool? autoDetectFullscreenDeviceOrientation,
+    bool? autoDetectFullscreenAspectRatio,
     bool? handleLifecycle,
     bool? autoDispose,
     bool? expandToFill,
@@ -242,6 +243,9 @@ class PlayerConfiguration {
       autoDetectFullscreenDeviceOrientation:
           autoDetectFullscreenDeviceOrientation ??
           this.autoDetectFullscreenDeviceOrientation,
+      autoDetectFullscreenAspectRatio:
+          autoDetectFullscreenAspectRatio ??
+          this.autoDetectFullscreenAspectRatio,
       handleLifecycle: handleLifecycle ?? this.handleLifecycle,
       autoDispose: autoDispose ?? this.autoDispose,
       expandToFill: expandToFill ?? this.expandToFill,

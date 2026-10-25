@@ -7,9 +7,11 @@ import '../helpers/better_player_mock_controller.dart';
 class MockControlsWidget extends StatefulWidget {
   const MockControlsWidget({
     required this.controller,
+    this.customValue,
     super.key,
   });
   final BetterPlayerController controller;
+  final VideoPlayerValue? customValue;
 
   @override
   MockControlsState createState() => MockControlsState();
@@ -24,7 +26,8 @@ class MockControlsState extends BetterPlayerControlsState<MockControlsWidget> {
       widget.controller.betterPlayerControlsConfiguration;
 
   @override
-  VideoPlayerValue? get latestValue => widget.controller.videoPlayerValue;
+  VideoPlayerValue? get latestValue =>
+      widget.customValue ?? widget.controller.videoPlayerValue;
 
   @override
   void cancelAndRestartTimer() {}
@@ -181,6 +184,29 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('About'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'skipForward does not throw when latestValue has null duration (e.g. live stream)',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: MockControlsWidget(
+                controller: controller,
+                customValue: VideoPlayerValue(
+                  duration: null,
+                ),
+              ),
+            ),
+          ),
+        );
+
+        final state = tester.state<MockControlsState>(
+          find.byType(MockControlsWidget),
+        );
+        expect(state.skipForward, returnsNormally);
       },
     );
   });

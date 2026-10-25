@@ -56,6 +56,15 @@ class _VideoProgressBarState extends State<PlayerCupertinoVideoProgressBar> {
   }
 
   @override
+  void didUpdateWidget(PlayerCupertinoVideoProgressBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.betterPlayerController != widget.betterPlayerController) {
+      oldWidget.betterPlayerController?.removeVideoListener(listener);
+      widget.betterPlayerController?.addVideoListener(listener);
+    }
+  }
+
+  @override
   void deactivate() {
     betterPlayerController?.removeVideoListener(listener);
     _cancelUpdateBlockTimer();

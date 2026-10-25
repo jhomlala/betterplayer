@@ -59,6 +59,10 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
         widget.betterPlayerSubtitlesConfiguration) {
       _updateConfiguration();
     }
+    if (oldWidget.betterPlayerController != widget.betterPlayerController) {
+      oldWidget.betterPlayerController.removeVideoListener(_updateState);
+      widget.betterPlayerController.addVideoListener(_updateState);
+    }
   }
 
   void _updateConfiguration() {

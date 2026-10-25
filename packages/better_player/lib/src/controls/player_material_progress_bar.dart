@@ -52,6 +52,15 @@ class _VideoProgressBarState extends State<PlayerMaterialVideoProgressBar> {
   }
 
   @override
+  void didUpdateWidget(PlayerMaterialVideoProgressBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.betterPlayerController != widget.betterPlayerController) {
+      oldWidget.betterPlayerController?.removeVideoListener(listener);
+      widget.betterPlayerController?.addVideoListener(listener);
+    }
+  }
+
+  @override
   void deactivate() {
     betterPlayerController?.removeVideoListener(listener);
     _cancelUpdateBlockTimer();

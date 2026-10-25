@@ -840,6 +840,31 @@ void main() {
         );
       });
 
+      test(
+        'setResolution does not throw when engine position is null',
+        () async {
+          final mockPlayerEngineController =
+              _NullPositionPlayerEngineController();
+          final controller =
+              BetterPlayerTestUtils.setupBetterPlayerMockController(
+                controller: mockPlayerEngineController,
+              );
+
+          await controller.setupDataSource(
+            PlayerDataSource.network('https://example.com/video_720p.mp4'),
+          );
+
+          await expectLater(
+            controller.setResolution('https://example.com/video_1080p.mp4'),
+            completes,
+          );
+          expect(
+            controller.betterPlayerDataSource?.url,
+            'https://example.com/video_1080p.mp4',
+          );
+        },
+      );
+
       test('onPlayerVisibilityChanged handles play/pause', () async {
         final controller =
             BetterPlayerTestUtils.setupBetterPlayerMockController(
@@ -953,6 +978,24 @@ void main() {
         controller.postEvent(PlayerEvent(PlayerEventType.play));
         expect(eventCount, 0);
       });
+
+      test(
+        'listener can remove itself within event callback without ConcurrentModificationError',
+        () {
+          final controller =
+              BetterPlayerTestUtils.setupBetterPlayerMockController();
+          late void Function(PlayerEvent) listener;
+          listener = (event) {
+            controller.removeEventsListener(listener);
+          };
+          controller.addEventsListener(listener);
+
+          expect(
+            () => controller.postEvent(PlayerEvent(PlayerEventType.play)),
+            returnsNormally,
+          );
+        },
+      );
 
       test('controllerEventStream emits events', () async {
         final controller =
@@ -1709,6 +1752,11 @@ void main() {
       );
     },
   );
+}
+
+class _NullPositionPlayerEngineController extends MockPlayerEngineController {
+  @override
+  Future<Duration?> get position async => null;
 }
 
 class _MockIOSBetterPlayerPlatform extends MockBetterPlayerPlatform {

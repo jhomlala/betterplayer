@@ -210,15 +210,14 @@ class PlayerDataSource {
     bool? useAsmsAudioTracks,
     Map<String, String>? resolutions,
     CacheConfiguration? cacheConfiguration,
-    NotificationConfiguration? notificationConfiguration =
-        const NotificationConfiguration(showNotification: false),
+    NotificationConfiguration? notificationConfiguration,
     Duration? overriddenDuration,
     VideoFormat? videoFormat,
     String? videoExtension,
     DrmConfiguration? drmConfiguration,
     Widget? placeholder,
-    BufferingConfiguration? bufferingConfiguration =
-        const BufferingConfiguration(),
+    BufferingConfiguration? bufferingConfiguration,
+    List<String>? asmsTrackNames,
   }) {
     return PlayerDataSource(
       type ?? this.type,
@@ -241,6 +240,7 @@ class PlayerDataSource {
       placeholder: placeholder ?? this.placeholder,
       bufferingConfiguration:
           bufferingConfiguration ?? this.bufferingConfiguration,
+      asmsTrackNames: asmsTrackNames ?? this.asmsTrackNames,
     );
   }
 }
