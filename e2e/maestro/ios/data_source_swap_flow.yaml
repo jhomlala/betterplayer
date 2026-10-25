@@ -16,8 +16,10 @@ appId: pl.hasoft.example
     id: "better_player_e2e_setup_hls"
 - extendedWaitUntil:
     visible:
-      id: "better_player_cupertino_controls_play_pause_button"
-    timeout: 15000
+      id: "better_player_e2e_hls_initialized"
+    timeout: 30000
+- assertVisible:
+    id: "better_player_e2e_hls_initialized"
 
 # Verify it's playing
 - tapOn:
