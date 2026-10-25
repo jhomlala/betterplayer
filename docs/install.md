@@ -69,6 +69,16 @@ Apply the following settings for Windows support:
 *   **Graphics**: DirectX 11 capable graphics adapter (D3D11 shared texture rendering).
 *   **libmpv Runtime**: The Windows plugin dynamically loads `mpv-2.dll`. Ensure `mpv-2.dll` is located next to your built application executable (`Runner.exe`) or in your system `PATH`.
 
+### Linux Configuration (Required)
+
+Apply the following settings for Linux support:
+
+*   **Target OS**: Any standard Linux distribution with GTK 3.0+ and `glibc` 2.31+.
+*   **libmpv Runtime**: The Linux plugin dynamically loads `libmpv.so.2` (or `libmpv.so.1` / `libmpv.so`). Install `libmpv` via your system package manager:
+    *   Ubuntu/Debian: `sudo apt install libmpv-dev libmpv2`
+    *   Fedora/RHEL: `sudo dnf install mpv-libs-devel`
+    *   Arch Linux: `sudo pacman -S mpv`
+
 ### Web Configuration (Required)
 
 To use Better Player on the web, you must include the Shaka Player library in your `web/index.html` file before the closing `</body>` tag:

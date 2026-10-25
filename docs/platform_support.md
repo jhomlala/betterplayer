@@ -5,27 +5,27 @@ title: Platform Support
 
 # Platform Support
 
-Better Player strives to provide a consistent and powerful playback experience across all supported platforms. However, due to underlying native video engine limitations, not all features are equally available across Android, iOS, and Web.
+Better Player strives to provide a consistent and powerful playback experience across all supported platforms. However, due to underlying native video engine limitations, not all features are equally available across Android, iOS, macOS, Windows, Linux, and Web.
 
 The following matrix details the current feature support for Better Player across platforms:
 
-| Feature | Android | iOS | macOS | Windows | Web |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Basic Playback (MP4/WebM)** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **HLS (HTTP Live Streaming)** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **DASH (Dynamic Adaptive Streaming)**| ✓ | x | x | ✓ | ✓ |
-| **Smooth Streaming** | ✓ | x | x | x | x |
-| **Subtitles & Captions (SRT/WebVTT/TTML/CEA)** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Audio Track Selection** | ✓ | ✓ | ✓ | ✓ | ✓ |
-| **Picture in Picture (PiP)** | ✓ | ✓ | ✓ | x | ✓ |
-| **DRM (Widevine)** | ✓ | x | x | x | ✓ |
-| **DRM (FairPlay)** | x | ✓ | ✓ | x | ✓ |
-| **DRM (ClearKey)** | ✓ | ✓ | ✓ | x | ✓ |
-| **Caching (Normal)** | ✓ | ✓ | ✓ | ✓ | x |
-| **Pre-caching & Stop Caching** | ✓ | ✓ | ✓ | ✓ | x |
-| **Background Audio / Notifications** | ✓ | ✓ | x | x | x |
-| **Mix Audio with Others** | ✓ | ✓ | ✓ | ✓ | x |
-| **Auto Frame Rate (AFR)** | ✓ | x | x | x | x |
+| Feature | Android | iOS | macOS | Windows | Linux | Web |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Basic Playback (MP4/WebM)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **HLS (HTTP Live Streaming)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **DASH (Dynamic Adaptive Streaming)**| ✓ | x | x | ✓ | ✓ | ✓ |
+| **Smooth Streaming** | ✓ | x | x | x | x | x |
+| **Subtitles & Captions (SRT/WebVTT/TTML/CEA)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Audio Track Selection** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
+| **Picture in Picture (PiP)** | ✓ | ✓ | ✓ | x | x | ✓ |
+| **DRM (Widevine)** | ✓ | x | x | x | x | ✓ |
+| **DRM (FairPlay)** | x | ✓ | ✓ | x | x | ✓ |
+| **DRM (ClearKey)** | ✓ | ✓ | ✓ | x | ✓ | ✓ |
+| **Caching (Normal)** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
+| **Pre-caching & Stop Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
+| **Background Audio / Notifications** | ✓ | ✓ | x | x | x | x |
+| **Mix Audio with Others** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
+| **Auto Frame Rate (AFR)** | ✓ | x | x | x | x | x |
 
 ## Platform Specific Details
 
@@ -50,6 +50,12 @@ The following matrix details the current feature support for Better Player acros
 ### Windows
 * Windows desktop playback is powered by `libmpv` and FFmpeg.
 * Direct3D 11 hardware-accelerated video rendering via Flutter's `TextureRegistrar`.
+* Native support for HLS (`.m3u8`), MPEG-DASH (`.mpd`), RTSP, and progressive video.
+* Direct Dart FFI bindings for low-overhead playback controls.
+
+### Linux
+* Linux desktop playback is powered by `libmpv` and FFmpeg.
+* Hardware-accelerated video rendering via Flutter's `FlPixelBufferTexture` on GTK.
 * Native support for HLS (`.m3u8`), MPEG-DASH (`.mpd`), RTSP, and progressive video.
 * Direct Dart FFI bindings for low-overhead playback controls.
 

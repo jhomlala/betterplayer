@@ -1,0 +1,6 @@
+# Native binary downloads and build artifacts
+linux/libs/
+*.so
+*.so.*
+*.o
+*.a

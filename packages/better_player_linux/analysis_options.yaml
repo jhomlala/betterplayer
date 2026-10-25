@@ -1,0 +1,58 @@
+include: package:very_good_analysis/analysis_options.yaml
+
+analyzer:
+  errors:
+    undefined_lint: ignore
+    strict_raw_type: ignore
+    inference_failure_on_function_return_type: ignore
+    non_nullable_equals_parameter: ignore
+    unreachable_switch_default: ignore
+    unused_import: ignore
+    deprecated_member_use: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - "linux/**"
+    - "**/*.g.dart"
+
+linter:
+  rules:
+    public_member_api_docs: false
+    lines_longer_than_80_chars: false
+    avoid_catches_without_on_clauses: false
+    use_setters_to_change_properties: false
+    document_ignores: false
+    missing_whitespace_between_adjacent_strings: false
+    close_sinks: true
+    sort_constructors_first: false
+    avoid_classes_with_only_static_members: false
+    avoid_void_async: false
+    avoid_positional_boolean_parameters: false
+    avoid_function_literals_in_foreach_calls: false
+    prefer_constructors_over_static_methods: false
+    sort_unnamed_constructors_first: false
+    sized_box_for_whitespace: false
+    library_private_types_in_public_api: false
+    unawaited_futures: false
+    discarded_futures: false
+    avoid_types_on_closure_parameters: false
+    no_literal_bool_comparisons: false
+    unnecessary_ignore: false
+    cascade_invocations: false
+    use_named_constants: false
+    parameter_assignments: false
+    avoid_dynamic_calls: false
+    avoid_equals_and_hash_code_on_mutable_classes: false
+    flutter_style_todos: false
+    comment_references: false
+    prefer_asserts_with_message: false
+    prefer_null_aware_method_calls: false
+    no_default_cases: false
+    avoid_unnecessary_containers: false
+    unnecessary_const: false
+    use_build_context_synchronously: false
+    sort_pub_dependencies: false
