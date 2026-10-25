@@ -1,4 +1,4 @@
-## Unreleased
+## 1.28.0
 - Fixed: Permitted RTSP data sources on Windows and Linux (`libmpv`), matching Android support.
 - Fixed: Guarded `VideoEventType.seek` echo in `PlayerEngineController` to prevent infinite seek re-trigger loops when seeking from Dart.
 - Fixed: Preserved notification configuration, buffering configuration, and track names in `PlayerDataSource.copyWith` when switching resolutions.
@@ -7,7 +7,7 @@
 - Fixed: Prevented permanent HLS subtitle lockup on network errors by resetting `asmsSegmentsLoading` in a `finally` block.
 - Fixed: Resolved runtime exceptions in controls and event handling: guarded null duration in `skipForward`, safeguarded teardown in `PlayerCupertinoControls`, and eliminated `ConcurrentModificationError` during event dispatch.
 - Fixed: Prevented `RangeError` on invalid index in `BetterPlayerPlaylistController.setupDataSource` and disposed internal `BetterPlayerController` on teardown.
-- Updated: Bumped federated packages: `better_player_windows` to `^1.2.1` and `better_player_web` to `^1.3.1`.
+- Updated: Bumped federated packages: `better_player_macos` to `^1.4.1`, `better_player_web` to `^1.3.1`, and `better_player_windows` to `^1.3.0`.
 - Updated: Bumped `cupertino_icons` dependency constraint to `^2.0.0`.
 
 ## 1.27.0

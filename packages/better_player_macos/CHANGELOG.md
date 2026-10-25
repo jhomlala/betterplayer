@@ -1,4 +1,4 @@
-## Unreleased
+## 1.4.1
 - Fixed: Forwarded HTTP headers from `DataSource` to native wrapper in `setDataSource` to support authenticated network streams.
 
 ## 1.4.0
