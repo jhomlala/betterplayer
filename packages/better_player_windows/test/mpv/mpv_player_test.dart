@@ -16,6 +16,7 @@ void main() {
   final executedCommands = <List<String>>[];
   final propertyStrings = <String, String>{};
   final propertyDoubles = <String, double>{};
+  final propertyInts = <String, int>{};
   final logs = <String>[];
   final createdPlayers = <MpvPlayer>[];
   var commandReturnCode = 0;
@@ -47,9 +48,31 @@ void main() {
         propertyStrings[namePtr.toDartString()] = valPtr.toDartString();
         return 0;
       },
-      mpvGetProperty: (ctx, namePtr, format, dataPtr) => 0,
-      mpvGetPropertyString: (ctx, namePtr) => ffi.nullptr,
-      mpvFree: (ptr) {},
+      mpvGetProperty: (ctx, namePtr, format, dataPtr) {
+        final name = namePtr.toDartString();
+        if (format == MpvFormat.int64 && dataPtr != ffi.nullptr) {
+          dataPtr.cast<ffi.Int64>().value = propertyInts[name] ?? 0;
+          return 0;
+        }
+        if (format == MpvFormat.doubleFormat && dataPtr != ffi.nullptr) {
+          dataPtr.cast<ffi.Double>().value = propertyDoubles[name] ?? 0.0;
+          return 0;
+        }
+        return 0;
+      },
+      mpvGetPropertyString: (ctx, namePtr) {
+        final name = namePtr.toDartString();
+        final val = propertyStrings[name];
+        if (val != null) {
+          return val.toNativeUtf8();
+        }
+        return ffi.nullptr;
+      },
+      mpvFree: (ptr) {
+        if (ptr != ffi.nullptr) {
+          calloc.free(ptr);
+        }
+      },
       mpvSetOptionString: (ctx, namePtr, valPtr) => 0,
       mpvObserveProperty: (ctx, reply, namePtr, format) => 0,
       mpvWaitEvent: (ctx, timeout) {
@@ -75,11 +98,13 @@ void main() {
 
   MpvPlayer createPlayer(
     MpvBindings bindings, {
+    BufferingConfiguration? bufferingConfiguration,
     void Function({required String message, required int levelIndex})? onLog,
   }) {
     final player = MpvPlayer(
       textureId: 1,
       handle: fakeHandle,
+      bufferingConfiguration: bufferingConfiguration,
       bindings: bindings,
       onLog: onLog,
     );
@@ -103,6 +128,7 @@ void main() {
     executedCommands.clear();
     propertyStrings.clear();
     propertyDoubles.clear();
+    propertyInts.clear();
     logs.clear();
     createdPlayers.clear();
     commandReturnCode = 0;
@@ -653,6 +679,344 @@ void main() {
 
         expect(executedCommands.length, cmdCountBefore);
         expect(propertyStrings.length, propStringCountBefore);
+      },
+    );
+    test('setDataSource configures ClearKey decryption_key on mpv', () async {
+      final bindings = createFakeBindings();
+      final player = createPlayer(bindings);
+
+      await player.setDataSource(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/clearkey.mpd',
+          drmConfiguration: const DrmConfiguration(
+            drmType: DrmType.clearKey,
+            clearKey: 'deadbeef12345678',
+          ),
+        ),
+      );
+
+      expect(
+        propertyStrings['demuxer-lavf-o'],
+        'decryption_key=deadbeef12345678',
+      );
+    });
+
+    test('headers containing commas are quoted in http-header-fields', () async {
+      final bindings = createFakeBindings();
+      final player = createPlayer(bindings);
+
+      await player.setDataSource(
+        DataSource(
+          sourceType: DataSourceType.network,
+          uri: 'https://example.com/test.mp4',
+          headers: {
+            'Accept': 'text/html,application/xhtml+xml',
+            'User-Agent': 'Flutter,BetterPlayer',
+          },
+        ),
+      );
+
+      expect(
+        propertyStrings['http-header-fields'],
+        'Accept: "text/html,application/xhtml+xml",User-Agent: "Flutter,BetterPlayer"',
+      );
+    });
+
+    test(
+      'bufferingConfiguration sets demuxer-readahead-secs and demuxer-cache-wait',
+      () async {
+        final bindings = createFakeBindings();
+        createPlayer(
+          bindings,
+          bufferingConfiguration: const BufferingConfiguration(
+            minBufferMs: 2000,
+            maxBufferMs: 30000,
+          ),
+        );
+
+        expect(propertyDoubles['demuxer-readahead-secs'], 30.0);
+        expect(propertyDoubles['demuxer-cache-wait'], 2.0);
+      },
+    );
+
+    test(
+      'overriddenDuration overrides raw duration on fileLoaded event',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        final eventFuture = waitForEvent(
+          player,
+          (e) =>
+              e.eventType == VideoEventType.initialized &&
+              e.duration == const Duration(seconds: 45),
+        );
+
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/test.mp4',
+            overriddenDuration: const Duration(seconds: 45),
+          ),
+        );
+
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.fileLoaded;
+        });
+
+        final event = await eventFuture;
+        expect(event.duration, const Duration(seconds: 45));
+      },
+    );
+
+    test(
+      'setTrackParameters sets vid when matching track is found in track-list',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        propertyInts['track-list/count'] = 2;
+        propertyStrings['track-list/0/type'] = 'video';
+        propertyInts['track-list/0/id'] = 1;
+        propertyInts['track-list/0/demux-w'] = 1280;
+        propertyInts['track-list/0/demux-h'] = 720;
+        propertyInts['track-list/0/demux-bitrate'] = 2500000;
+
+        propertyStrings['track-list/1/type'] = 'video';
+        propertyInts['track-list/1/id'] = 2;
+        propertyInts['track-list/1/demux-w'] = 1920;
+        propertyInts['track-list/1/demux-h'] = 1080;
+        propertyInts['track-list/1/demux-bitrate'] = 5000000;
+
+        await player.setTrackParameters(
+          width: 1920,
+          height: 1080,
+          bitrate: 5000000,
+        );
+        expect(propertyStrings['vid'], '2');
+
+        await player.setTrackParameters(width: 0, height: 0, bitrate: 0);
+        expect(propertyStrings['vid'], 'auto');
+        expect(propertyStrings['hls-bitrate'], 'max');
+      },
+    );
+
+    test(
+      'MpvEventId.seek with position 0 emits seek event with Duration.zero',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        final eventFuture = waitForEvent(
+          player,
+          (e) => e.eventType == VideoEventType.seek,
+        );
+
+        propertyDoubles['time-pos'] = 0.0;
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.seek;
+        });
+
+        final event = await eventFuture;
+        expect(event.position, Duration.zero);
+      },
+    );
+    test(
+      'setAudioTrack resolves non-sequential track id from track-list',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        propertyInts['track-list/count'] = 3;
+        propertyStrings['track-list/0/type'] = 'video';
+        propertyInts['track-list/0/id'] = 1;
+
+        propertyStrings['track-list/1/type'] = 'audio';
+        propertyInts['track-list/1/id'] = 3;
+        propertyStrings['track-list/1/lang'] = 'eng';
+        propertyStrings['track-list/1/title'] = 'English';
+
+        propertyStrings['track-list/2/type'] = 'audio';
+        propertyInts['track-list/2/id'] = 5;
+        propertyStrings['track-list/2/lang'] = 'spa';
+        propertyStrings['track-list/2/title'] = 'Spanish';
+
+        await player.setAudioTrack(name: 'Spanish', index: 1);
+        expect(propertyStrings['aid'], '5');
+      },
+    );
+
+    test(
+      'setTextTrack resolves non-sequential track id from track-list',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        propertyInts['track-list/count'] = 2;
+        propertyStrings['track-list/0/type'] = 'video';
+        propertyInts['track-list/0/id'] = 1;
+
+        propertyStrings['track-list/1/type'] = 'sub';
+        propertyInts['track-list/1/id'] = 4;
+        propertyStrings['track-list/1/lang'] = 'eng';
+        propertyStrings['track-list/1/title'] = 'English';
+
+        await player.setTextTrack(name: 'English', index: 0);
+        expect(propertyStrings['sid'], '4');
+      },
+    );
+    test(
+      'setDataSource handles DataSourceType.asset and passes asset path to loadfile',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.asset,
+            asset: 'assets/test_video.mp4',
+          ),
+        );
+
+        expect(executedCommands.last.first, 'loadfile');
+        expect(executedCommands.last.last.contains('test_video.mp4'), isTrue);
+      },
+    );
+
+    test(
+      'overriddenDuration overrides duration propertyChange event',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/test.mp4',
+            overriddenDuration: const Duration(seconds: 45),
+          ),
+        );
+
+        final durName = 'duration'.toNativeUtf8();
+        final durData = calloc<ffi.Double>()..value = 120.0;
+        final durProp = calloc<MpvEventProperty>()
+          ..ref.name = durName
+          ..ref.format = MpvFormat.doubleFormat
+          ..ref.data = durData.cast();
+
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.propertyChange;
+          ev.ref.data = durProp.cast();
+        });
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+
+        calloc.free(durName);
+        calloc.free(durData);
+        calloc.free(durProp);
+      },
+    );
+
+    test(
+      'playbackRestart with position 0 updates currentPosition without crash',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        propertyDoubles['time-pos'] = 0.0;
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.playbackRestart;
+        });
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        final pos = await player.getPosition();
+        expect(pos, Duration.zero);
+      },
+    );
+
+    test(
+      'endFile ignores audio initialization failure (-14)',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        final events = <VideoEvent>[];
+        var hadError = false;
+        final sub = player.events.listen(
+          events.add,
+          onError: (_) {
+            hadError = true;
+          },
+        );
+
+        final endFileData = calloc<MpvEventEndFile>()
+          ..ref.error = -14
+          ..ref.reason = MpvEndFileReason.error;
+
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.endFile;
+          ev.ref.error = -14;
+          ev.ref.data = endFileData.cast();
+        });
+
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(hadError, isFalse);
+
+        calloc.free(endFileData);
+        await sub.cancel();
+      },
+    );
+
+    test(
+      'ClearKey DRM resets demuxer-lavf-o when switching to a non-DRM stream',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        // 1. Set ClearKey stream
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/drm.mpd',
+            drmConfiguration: const DrmConfiguration(
+              drmType: DrmType.clearKey,
+              clearKey: 'key123',
+            ),
+          ),
+        );
+        expect(propertyStrings['demuxer-lavf-o'], 'decryption_key=key123');
+
+        // 2. Set non-DRM stream -> resets to empty string
+        await player.setDataSource(
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/clear.mp4',
+          ),
+        );
+        expect(propertyStrings['demuxer-lavf-o'], '');
+      },
+    );
+
+    test(
+      'setAudioTrack matches by language code when index differs',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        propertyInts['track-list/count'] = 2;
+        propertyStrings['track-list/0/type'] = 'audio';
+        propertyInts['track-list/0/id'] = 2;
+        propertyStrings['track-list/0/lang'] = 'eng';
+        propertyStrings['track-list/0/title'] = 'English';
+
+        propertyStrings['track-list/1/type'] = 'audio';
+        propertyInts['track-list/1/id'] = 7;
+        propertyStrings['track-list/1/lang'] = 'fra';
+        propertyStrings['track-list/1/title'] = 'French';
+
+        await player.setAudioTrack(name: 'fra', index: 99);
+        expect(propertyStrings['aid'], '7');
       },
     );
   });

@@ -15,7 +15,6 @@ import 'package:better_player_example/pages/dash_page.dart';
 import 'package:better_player_example/pages/drm_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/fade_placeholder_page.dart';
-import 'package:better_player_example/pages/ffi_test_page.dart';
 import 'package:better_player_example/pages/hls_audio_page.dart';
 import 'package:better_player_example/pages/hls_subtitles_page.dart';
 import 'package:better_player_example/pages/hls_tracks_page.dart';
@@ -479,14 +478,6 @@ class _WelcomePageState extends State<WelcomePage> {
       },
       supportsWeb: false,
       pageBuilder: (_) => const NotificationPlayerPage(),
-    ),
-    ExampleItem(
-      title: 'FFI Interop Test',
-      description: 'Direct native engine bindings and high-speed FFI calls.',
-      icon: Icons.code,
-      identifier: 'welcome_page_item_ffi_test',
-      badgeText: 'FFI',
-      pageBuilder: (_) => const FFITestPage(),
     ),
   ];
 

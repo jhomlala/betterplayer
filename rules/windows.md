@@ -17,13 +17,13 @@ Windows desktop playback is powered by `libmpv`:
 
 ---
 
-## Video Rendering: Direct3D 11 (`flutter::GpuBufferTexture`)
+## Video Rendering: PixelBufferTexture with Hardware Acceleration
 
 Flutter Windows does not support native `PlatformView` embedding in the widget tree. Instead, `better_player_windows` uses Flutter's `TextureRegistrar`:
 
-* **Direct3D 11 Shared Surfaces**: `TextureBridge` creates an `ID3D11Texture2D` shared surface and exposes it to Flutter's GPU compositor via `flutter::GpuBufferTexture`.
-* **Zero Frame Copying**: Frames are rendered directly by `mpv_render_context` into the GPU surface without copying pixel buffers across CPU/GPU boundaries.
-* **Fallback**: Supports software WARP rasterization if hardware acceleration is unavailable.
+* **Pixel Buffer Texture**: `TextureBridge` registers a `flutter::PixelBufferTexture` with `flutter::TextureRegistrar` to stream frames into Flutter's compositor.
+* **Hardware Decoding (`hwdec=auto-safe`)**: `mpv` enables GPU video decoding (DXVA2 or D3D11VA via FFmpeg) when supported by the hardware, falling back to software decoding when necessary.
+* **Thread Safety**: Texture unregistration during disposal executes outside mutex locks to prevent deadlocks between the platform and raster threads.
 
 ---
 

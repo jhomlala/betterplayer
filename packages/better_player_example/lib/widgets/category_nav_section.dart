@@ -38,7 +38,7 @@ class CategoryNavSection extends StatelessWidget {
       (
         title: 'Advanced & Feeds',
         subtitle:
-            '$advancedItemsCount demos: feeds, caching, PiP, notifications, and FFI',
+            '$advancedItemsCount demos: feeds, caching, PiP, and notifications',
         icon: Icons.tune_outlined,
         tabIndex: 3,
       ),

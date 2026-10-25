@@ -18,6 +18,11 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
     WindowsPlayerFactory? playerFactory,
   }) : _channel = channel ?? const MethodChannel('better_player_windows') {
     _playerFactory = playerFactory ?? _defaultPlayerFactory;
+    _cleanupOrphanedPlayers();
+  }
+
+  void _cleanupOrphanedPlayers() {
+    _channel.invokeMethod<void>('clear').catchError((_) {});
   }
 
   static void registerWith() {
@@ -68,6 +73,7 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
     return MpvPlayer(
       textureId: textureId,
       handle: handle,
+      bufferingConfiguration: bufferingConfiguration,
       onLog: _log,
     );
   }
@@ -91,7 +97,7 @@ class BetterPlayerWindows extends BetterPlayerPlatform {
       if (bufferingConfiguration != null) {
         _log(
           message:
-              'BufferingConfiguration is ignored on Windows (managed by mpv)',
+              'Applying buffering configuration: min=${bufferingConfiguration.minBufferMs}ms, max=${bufferingConfiguration.maxBufferMs}ms',
           levelIndex: 0,
         );
       }
