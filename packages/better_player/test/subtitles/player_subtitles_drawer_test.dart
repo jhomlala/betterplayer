@@ -203,4 +203,66 @@ void main() {
       expect(find.text('Should Not Show', findRichText: true), findsNothing);
     },
   );
+
+  testWidgets(
+    'PlayerSubtitlesDrawer rebinds listeners when controller changes',
+    (tester) async {
+      final controller1 = _SubtitlesListenerTrackingController();
+      final controller2 = _SubtitlesListenerTrackingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false),
+          home: Scaffold(
+            body: PlayerSubtitlesDrawer(
+              subtitles: const [],
+              betterPlayerController: controller1,
+              playerVisibilityStream: visibilityStreamController.stream,
+            ),
+          ),
+        ),
+      );
+
+      expect(controller1.addListenerCalls, 1);
+      expect(controller1.removeListenerCalls, 0);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(useMaterial3: false),
+          home: Scaffold(
+            body: PlayerSubtitlesDrawer(
+              subtitles: const [],
+              betterPlayerController: controller2,
+              playerVisibilityStream: visibilityStreamController.stream,
+            ),
+          ),
+        ),
+      );
+
+      expect(controller1.removeListenerCalls, 1);
+      expect(controller2.addListenerCalls, 1);
+
+      controller1.dispose();
+      controller2.dispose();
+    },
+  );
+}
+
+class _SubtitlesListenerTrackingController extends BetterPlayerController {
+  _SubtitlesListenerTrackingController() : super(const PlayerConfiguration());
+
+  int addListenerCalls = 0;
+  int removeListenerCalls = 0;
+
+  @override
+  void addVideoListener(VoidCallback listener) {
+    addListenerCalls++;
+    super.addVideoListener(listener);
+  }
+
+  @override
+  void removeVideoListener(VoidCallback listener) {
+    removeListenerCalls++;
+    super.removeVideoListener(listener);
+  }
 }

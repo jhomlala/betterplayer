@@ -1,5 +1,7 @@
 ## Unreleased
 - Fixed: Preserved notification configuration, buffering configuration, and track names in `PlayerDataSource.copyWith` when switching resolutions.
+- Fixed: Rebound video listeners on controller changes in `PlayerMaterialVideoProgressBar`, `PlayerCupertinoVideoProgressBar`, and `PlayerSubtitlesDrawer`.
+- Fixed: Guarded null engine position in `PlayerTrackExtension.setResolution` to prevent runtime crash.
 - Fixed: Prevented permanent HLS subtitle lockup on network errors by resetting `asmsSegmentsLoading` in a `finally` block.
 - Fixed: Resolved runtime exceptions in controls and event handling: guarded null duration in `skipForward`, safeguarded teardown in `PlayerCupertinoControls`, and eliminated `ConcurrentModificationError` during event dispatch.
 - Fixed: Prevented `RangeError` on invalid index in `BetterPlayerPlaylistController.setupDataSource` and disposed internal `BetterPlayerController` on teardown.

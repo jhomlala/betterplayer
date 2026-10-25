@@ -615,6 +615,66 @@ void main() {
       expect(absorbPointer.absorbing, isTrue);
     },
   );
+
+  testWidgets(
+    'PlayerMaterialVideoProgressBar rebinds listeners when controller changes',
+    (tester) async {
+      final controller1 = _ListenerTrackingController();
+      final controller2 = _ListenerTrackingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PlayerMaterialVideoProgressBar(controller1),
+          ),
+        ),
+      );
+
+      expect(controller1.addListenerCalls, 1);
+      expect(controller1.removeListenerCalls, 0);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PlayerMaterialVideoProgressBar(controller2),
+          ),
+        ),
+      );
+
+      expect(controller1.removeListenerCalls, 1);
+      expect(controller2.addListenerCalls, 1);
+    },
+  );
+
+  testWidgets(
+    'PlayerCupertinoVideoProgressBar rebinds listeners when controller changes',
+    (tester) async {
+      final controller1 = _ListenerTrackingController();
+      final controller2 = _ListenerTrackingController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PlayerCupertinoVideoProgressBar(controller1),
+          ),
+        ),
+      );
+
+      expect(controller1.addListenerCalls, 1);
+      expect(controller1.removeListenerCalls, 0);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PlayerCupertinoVideoProgressBar(controller2),
+          ),
+        ),
+      );
+
+      expect(controller1.removeListenerCalls, 1);
+      expect(controller2.addListenerCalls, 1);
+    },
+  );
 }
 
 ///Wrap widget with material app to handle all features like navigation and
@@ -624,4 +684,23 @@ Widget _wrapWidget(Widget widget) {
     theme: ThemeData(useMaterial3: false),
     home: widget,
   );
+}
+
+class _ListenerTrackingController extends BetterPlayerMockController {
+  _ListenerTrackingController() : super(const PlayerConfiguration());
+
+  int addListenerCalls = 0;
+  int removeListenerCalls = 0;
+
+  @override
+  void addVideoListener(VoidCallback listener) {
+    addListenerCalls++;
+    super.addVideoListener(listener);
+  }
+
+  @override
+  void removeVideoListener(VoidCallback listener) {
+    removeListenerCalls++;
+    super.removeVideoListener(listener);
+  }
 }
