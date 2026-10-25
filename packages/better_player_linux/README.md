@@ -12,7 +12,7 @@ This package is a federated plugin implementation. Do not depend on it directly.
 
 ```yaml
 dependencies:
-  better_player: ^1.28.0
+  better_player: ^1.29.0
 ```
 
 ## Requirements

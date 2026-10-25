@@ -60,7 +60,6 @@ appId: pl.hasoft.example
     element:
       id: "better_player_e2e_list_player_button"
     direction: DOWN
-    centerElement: true
 - tapOn:
     id: "better_player_e2e_list_player_button"
 - extendedWaitUntil:

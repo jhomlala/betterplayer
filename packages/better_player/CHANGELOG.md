@@ -1,4 +1,4 @@
-## Unreleased
+## 1.29.0
 - Added: Linux platform support via `better_player_linux` powered by `libmpv` and Flutter's `FlPixelBufferTexture`.
 
 ## 1.28.0

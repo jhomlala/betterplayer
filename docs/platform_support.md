@@ -20,7 +20,7 @@ The following matrix details the current feature support for Better Player acros
 | **Picture in Picture (PiP)** | ✓ | ✓ | ✓ | x | x | ✓ |
 | **DRM (Widevine)** | ✓ | x | x | x | x | ✓ |
 | **DRM (FairPlay)** | x | ✓ | ✓ | x | x | ✓ |
-| **DRM (ClearKey)** | ✓ | ✓ | ✓ | x | ✓ | ✓ |
+| **DRM (ClearKey)** | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ |
 | **Caching (Normal)** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
 | **Pre-caching & Stop Caching** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
 | **Background Audio / Notifications** | ✓ | ✓ | x | x | x | x |
