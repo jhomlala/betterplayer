@@ -345,6 +345,7 @@ class _FFITestPageState extends State<FFITestPage> {
           const SizedBox(width: 16),
           Semantics(
             identifier: 'ffi_test_status_$name',
+            label: 'ffi_test_status_$name',
             container: true,
             child: Text(
               status,
