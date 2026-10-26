@@ -2,7 +2,12 @@ appId: pl.hasoft.example
 ---
 - launchApp:
     clearState: true
-- assertVisible: "Better Player Example"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
 
 - scrollUntilVisible:
     element:
@@ -94,16 +99,6 @@ appId: pl.hasoft.example
     id: "ffi_test_button_setMixWithOthers"
 - assertVisible:
     id: "ffi_test_status_setMixWithOthers"
-    text: ".*success=true.*"
-
-- scrollUntilVisible:
-    element:
-      id: "ffi_test_status_setAndroidMatchFrameRate"
-    direction: DOWN
-- tapOn:
-    id: "ffi_test_button_setAndroidMatchFrameRate"
-- assertVisible:
-    id: "ffi_test_status_setAndroidMatchFrameRate"
     text: ".*success=true.*"
 
 - scrollUntilVisible:

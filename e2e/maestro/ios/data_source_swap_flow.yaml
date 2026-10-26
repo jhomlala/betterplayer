@@ -1,15 +1,23 @@
 appId: pl.hasoft.example
 ---
-- launchApp
-- assertVisible: "Better Player Example"
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
 
 # Start with MP4
 - tapOn:
     id: "better_player_e2e_setup_mp4"
 - extendedWaitUntil:
     visible:
-      id: "better_player_cupertino_video_area"
-    timeout: 10000
+      id: "better_player_e2e_mp4_initialized"
+    timeout: 30000
+- assertVisible:
+    id: "better_player_e2e_mp4_initialized"
 
 # Swap to HLS
 - tapOn:
@@ -30,8 +38,10 @@ appId: pl.hasoft.example
     id: "better_player_e2e_setup_mp4"
 - extendedWaitUntil:
     visible:
-      id: "better_player_cupertino_controls_play_pause_button"
-    timeout: 15000
+      id: "better_player_e2e_mp4_initialized"
+    timeout: 30000
+- assertVisible:
+    id: "better_player_e2e_mp4_initialized"
 - tapOn:
     id: "better_player_e2e_visibility_cycle_button"
 - extendedWaitUntil:

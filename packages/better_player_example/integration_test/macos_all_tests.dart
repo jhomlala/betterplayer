@@ -6,6 +6,8 @@ import 'macos_error_recovery_test.dart' as error_recovery_test;
 import 'macos_ffi_test.dart' as ffi_test;
 import 'macos_flow_test.dart' as flow_test;
 import 'macos_hls_test.dart' as hls_test;
+import 'macos_local_file_test.dart' as local_file_test;
+import 'macos_shortcuts_test.dart' as shortcuts_test;
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -16,5 +18,7 @@ void main() {
     datasource_swap_test.main();
     error_recovery_test.main();
     ffi_test.main();
+    shortcuts_test.main();
+    local_file_test.main();
   });
 }

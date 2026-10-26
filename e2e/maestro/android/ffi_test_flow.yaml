@@ -2,6 +2,12 @@ appId: pl.hasoft.example
 ---
 - launchApp:
     clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
 - scrollUntilVisible:
     element:
       id: "better_player_e2e_navigate_ffi"

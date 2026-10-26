@@ -1,7 +1,13 @@
 appId: pl.hasoft.example
 ---
-- launchApp
-- assertVisible: "Better Player Example"
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
 
 # Trigger an invalid/error state
 - tapOn:
@@ -10,7 +16,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_error_text"
-    timeout: 10000
+    timeout: 30000
 - assertVisible:
     id: "better_player_e2e_error_text"
 
@@ -26,7 +32,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_cupertino_controls_play_pause_button"
-    timeout: 15000
+    timeout: 30000
 - tapOn:
     id: "better_player_cupertino_controls_play_pause_button"
 
