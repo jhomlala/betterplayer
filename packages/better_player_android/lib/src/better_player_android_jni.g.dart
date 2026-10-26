@@ -296,6 +296,41 @@ extension BetterPlayerApi$Companion$$Methods on BetterPlayerApi$Companion {
     ).check();
   }
 
+  static final _id_set$screenCaptureProtection = BetterPlayerApi$Companion
+      ._class
+      .instanceMethodId(
+        r'setScreenCaptureProtection',
+        r'(Z)V',
+      );
+
+  static final _set$screenCaptureProtection =
+      jni$_.ProtectedJniExtensions.lookup<
+            jni$_.NativeFunction<
+              jni$_.JThrowablePtr Function(
+                jni$_.Pointer<jni$_.Void>,
+                jni$_.JMethodIDPtr,
+                jni$_.VarArgs<(jni$_.Int32,)>,
+              )
+            >
+          >('globalEnv_CallVoidMethod')
+          .asFunction<
+            jni$_.JThrowablePtr Function(
+              jni$_.Pointer<jni$_.Void>,
+              jni$_.JMethodIDPtr,
+              core$_.int,
+            )
+          >();
+
+  /// from: `public fun setScreenCaptureProtection(enabled: kotlin.Boolean): kotlin.Unit`
+  set screenCaptureProtection(core$_.bool z) {
+    final _$$selfRef = reference;
+    _set$screenCaptureProtection(
+      _$$selfRef.pointer,
+      _id_set$screenCaptureProtection.pointer,
+      z ? 1 : 0,
+    ).check();
+  }
+
   static final _id_createPlayer = BetterPlayerApi$Companion._class.instanceMethodId(
     r'createPlayer',
     r'(Landroid/content/Context;Lpl/hasoft/better_player/BetterPlayerCallback;)Lpl/hasoft/better_player/BetterPlayer;',

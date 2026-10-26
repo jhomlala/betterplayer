@@ -28,6 +28,7 @@ Better Player provides a robust set of features designed for production-ready ap
 *   **Performance & Optimization**: Integrated cache support and alternative resolution selection.
 *   **Advanced Capabilities**: Support for Picture-in-Picture (PiP), DRM (Token, Widevine, FairPlay EZDRM), and custom HTTP headers.
 *   **VAST & VMAP Ads**: Client-side linear video ads (VAST 2.0/3.0/4.x, VMAP) with dual-texture player stacking, tracking beacons, and custom UI overlays (see [VAST & VMAP Ads](vast_vmap_ads.md)).
+*   **Dynamic Watermarking & Screen Shield**: Forensic viewer overlays and native OS screen capture protection across Android, iOS, macOS, and Windows (see [Dynamic Watermarking & Screen Shield](enterprise_watermarking.md)).
 *   **Platform Features**: Native notifications and comprehensive BoxFit support.
 *   **macOS Support**: Dedicated desktop playback powered by native AVPlayer, AppKitView, and FFI bindings.
 *   **Windows Support**: Desktop playback powered by libmpv and Direct3D 11 texture sharing.
