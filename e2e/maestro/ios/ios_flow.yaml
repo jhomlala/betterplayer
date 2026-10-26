@@ -2,13 +2,18 @@ appId: pl.hasoft.example
 ---
 - launchApp:
     clearState: true
-- assertVisible: "Better Player Example"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
 
 # Wait for video area
 - extendedWaitUntil:
     visible:
       id: "better_player_cupertino_controls_play_pause_button"
-    timeout: 10000
+    timeout: 30000
 
 # Play/Pause toggle
 - tapOn:

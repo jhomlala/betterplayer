@@ -1,0 +1,38 @@
+appId: pl.hasoft.example
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
+
+# Switch to local file playback (DataSourceType.file)
+- tapOn:
+    id: "better_player_e2e_setup_file"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_file_status"
+    timeout: 30000
+- assertVisible:
+    id: "better_player_e2e_file_status"
+
+# Verify controls and playback on local file
+- extendedWaitUntil:
+    visible:
+      id: "better_player_material_controls_play_pause_button"
+    timeout: 15000
+- tapOn:
+    id: "better_player_material_controls_play_pause_button"
+- tapOn:
+    id: "better_player_material_controls_play_pause_button"
+
+# Seek within local file
+- extendedWaitUntil:
+    visible:
+      id: "better_player_material_progress_bar"
+    timeout: 10000
+- tapOn:
+    id: "better_player_material_progress_bar"
