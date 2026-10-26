@@ -68,6 +68,7 @@ const sidebars = {
         'enterprise_overview',
         'vast_vmap_ads',
         'enterprise_telemetry_metrics',
+        'enterprise_watermarking',
         'enterprise_hide_about',
       ],
     },

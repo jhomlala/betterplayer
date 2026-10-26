@@ -43,6 +43,8 @@ Stop stitching `video_player`, separate UI packages, abandoned caching plugins, 
 | **Picture in Picture (PiP)** | Built-in | None | Platform-dependent |
 | **Playlists** | Built-in | None | Built-in |
 | **VAST / VMAP Ads** | Client-side ad engine (VAST 2.0-4.x, VMAP) | None | None |
+| **Telemetry & QoE** | Real-time video metrics, offline retention & cloud export | None | None |
+| **Watermarking & Screen Shield** | Dynamic forensic overlays & native OS screen capture protection | None | None |
 | **Video Feeds & Pooling** | Built-in (`BetterPlayerFeed`, `BetterPlayerPool`) | None | None |
 
 ---
