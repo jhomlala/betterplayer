@@ -16,8 +16,8 @@ void main() {
     }) async {
       final effectiveTranslations = translations ?? PlayerTranslations();
       final home = Builder(
-        builder: (context) => TextButton(
-          onPressed: () {
+        builder: (context) => GestureDetector(
+          onTap: () {
             PlayerAboutDialog.show(
               context: context,
               translations: effectiveTranslations,
@@ -31,7 +31,10 @@ void main() {
 
       final widget = useCupertinoApp
           ? CupertinoApp(home: home)
-          : MaterialApp(home: Scaffold(body: home));
+          : MaterialApp(
+              theme: ThemeData(splashFactory: InkRipple.splashFactory),
+              home: Scaffold(body: home),
+            );
 
       await tester.pumpWidget(widget);
       await tester.tap(find.text('open'));
@@ -162,8 +165,8 @@ void main() {
               pageBuilder: (ctx, _, _) => builder(ctx),
             ),
             home: Builder(
-              builder: (context) => TextButton(
-                onPressed: () {
+              builder: (context) => GestureDetector(
+                onTap: () {
                   PlayerAboutDialog.show(
                     context: context,
                     translations: PlayerTranslations(),
@@ -197,8 +200,8 @@ void main() {
               pageBuilder: (ctx, _, _) => builder(ctx),
             ),
             home: Builder(
-              builder: (context) => TextButton(
-                onPressed: () {
+              builder: (context) => GestureDetector(
+                onTap: () {
                   PlayerAboutDialog.show(
                     context: context,
                     translations: PlayerTranslations(),

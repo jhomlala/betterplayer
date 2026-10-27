@@ -6,7 +6,7 @@ homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_p
 documentation: https://jhomlala.github.io/betterplayer/
 topics:
   - video
-  - player
+  - video-player
   - media
   - streaming
   - hls

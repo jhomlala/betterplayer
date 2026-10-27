@@ -1,3 +1,8 @@
+## Unreleased
+- Updated: Migration documentation and README to detail upgrading from `better_player_plus` and legacy forks to Better Player 1.x.
+- Updated: `pubspec.yaml` topic tagging to include standard `video-player` category on pub.dev.
+- Updated: `llms.txt` with guidelines and code snippets for AI coding agents.
+
 ## 1.29.0
 - Added: Linux platform support via `better_player_linux` powered by `libmpv` and Flutter's `FlPixelBufferTexture`.
 

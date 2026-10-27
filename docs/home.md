@@ -12,7 +12,7 @@ import useBaseUrl from '@docusaurus/useBaseUrl';
 
 # Better Player
 
-Better Player is an advanced video player plugin for Flutter, built upon the foundation of [Chewie](https://github.com/fluttercommunity/chewie). It enhances the original concepts by addressing common bugs, providing extensive configuration options, and offering solutions for advanced video playback use cases.
+Better Player is the complete, production-grade video player for Flutter. It provides native OS performance, multi-platform support (Android, iOS, macOS, Windows, Linux, Web), and built-in commercial streaming features including HLS/DASH adaptive bitrate switching, Widevine and FairPlay DRM, offline caching, VAST/VMAP advertising, and short-form video feeds.
 
 ## Key Features
 
@@ -43,7 +43,7 @@ Switching from another package? Follow our step-by-step migration guides:
 *   **[Migrating from video_player](migration_from_video_player.md)**: Replace `VideoPlayerController` and remove separate UI packages.
 *   **[Migrating from chewie](migration_from_chewie.md)**: Consolidate your player and controls into a single controller.
 *   **[Migrating from media_kit](migration_from_media_kit.md)**: Reclaim 30-50 MB of mobile app size and switch to native OS media engines.
-*   **[Migrating to 1.x.x](migration_to_1.x.x.md)**: Upgrade from legacy Better Player 0.0.84 to modern federated 1.x.x APIs.
+*   **[Migrating to 1.x.x (from 0.0.84 & better_player_plus)](migration_to_1.x.x.md)**: Upgrade from legacy 0.0.84 or community forks (`better_player_plus`, `better_player_enhanced`) using automated `dart fix`.
 
 ## Important Information
 
