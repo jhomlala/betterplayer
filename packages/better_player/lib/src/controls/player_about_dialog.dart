@@ -126,6 +126,7 @@ class PlayerAboutDialog extends StatelessWidget {
                 textButtonTheme: TextButtonThemeData(
                   style: TextButton.styleFrom(
                     foregroundColor: _darkAccentColor,
+                    splashFactory: InkRipple.splashFactory,
                   ),
                 ),
               ),

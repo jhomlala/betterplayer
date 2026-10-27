@@ -3,9 +3,10 @@ resolution: workspace
 description: The macOS implementation of the better_player plugin, providing video playback using AVPlayer, AppKit, and FFI for Flutter desktop apps.
 version: 1.4.1
 homepage: https://github.com/jhomlala/betterplayer/tree/master/packages/better_player_macos
+documentation: https://jhomlala.github.io/betterplayer/
 topics:
   - video
-  - player
+  - video-player
   - macos
   - avplayer
   - streaming

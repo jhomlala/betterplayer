@@ -140,6 +140,7 @@ void main() {
     ) async {
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(splashFactory: InkRipple.splashFactory),
           home: Scaffold(
             body: MockControlsWidget(controller: controller),
           ),
@@ -171,6 +172,7 @@ void main() {
 
         await tester.pumpWidget(
           MaterialApp(
+            theme: ThemeData(splashFactory: InkRipple.splashFactory),
             home: Scaffold(
               body: MockControlsWidget(controller: hidingController),
             ),
@@ -192,6 +194,7 @@ void main() {
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
+            theme: ThemeData(splashFactory: InkRipple.splashFactory),
             home: Scaffold(
               body: MockControlsWidget(
                 controller: controller,

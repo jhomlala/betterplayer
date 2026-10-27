@@ -20,6 +20,7 @@
 <p align="center">
   <a href="https://jhomlala.github.io/betterplayer/"><b>Documentation</b></a> &bull;
   <a href="https://jhomlala.github.io/betterplayer/demo/"><b>Live Demo</b></a> &bull;
+  <a href="https://jhomlala.github.io/betterplayer/migration_to_1.x.x"><b>Migrating to 1.x (from 0.0.x / better_player_plus)</b></a> &bull;
   <a href="https://jhomlala.github.io/betterplayer/migration_from_video_player"><b>Migrating from video_player</b></a> &bull;
   <a href="https://jhomlala.github.io/betterplayer/migration_from_chewie"><b>Migrating from chewie</b></a> &bull;
   <a href="https://jhomlala.github.io/betterplayer/migration_from_media_kit"><b>Migrating from media_kit</b></a> &bull;
@@ -153,6 +154,7 @@ Better Player uses a federated architecture. Each platform runs on its native, h
 
 Switching from another package? Follow the step-by-step migration guides:
 
+- [Migrating to 1.x.x (from 0.0.84 and better_player_plus)](https://jhomlala.github.io/betterplayer/migration_to_1.x.x): Upgrade from legacy 0.0.84 or community forks (`better_player_plus`, `better_player_enhanced`) using automated `dart fix`.
 - [Migrating from video_player](https://jhomlala.github.io/betterplayer/migration_from_video_player): Replace `VideoPlayerController` and remove separate UI packages.
 - [Migrating from chewie](https://jhomlala.github.io/betterplayer/migration_from_chewie): Consolidate your player and controls into a single controller.
 - [Migrating from media_kit](https://jhomlala.github.io/betterplayer/migration_from_media_kit): Reclaim 30-50 MB of mobile app size and switch to native OS media engines.

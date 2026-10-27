@@ -1,0 +1,22 @@
+User-agent: *
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://jhomlala.github.io/betterplayer/sitemap.xml
+# LLMs & AI Assistants Context:
+# https://jhomlala.github.io/betterplayer/llms.txt
+# https://jhomlala.github.io/betterplayer/llms-full.txt

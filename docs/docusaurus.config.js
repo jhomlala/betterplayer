@@ -46,8 +46,8 @@ const config = {
         respectPrefersColorScheme: false,
       },
       metadata: [
-        {name: 'keywords', content: 'flutter, video player, flutter video player, streaming, hls, dash, drm, chewie, better player'},
-        {name: 'description', content: 'Advanced video player for Flutter with support for HLS, DASH, DRM, caching, subtitles, custom controls, and more.'},
+        {name: 'keywords', content: 'flutter, video player, flutter video player, streaming, hls, dash, drm, widevine, fairplay, better player, better_player, better_player_plus, chewie, media_kit, video caching, video feed, reels, vast ads, shaka player, exoplayer, media3, avplayer'},
+        {name: 'description', content: 'The complete, production-grade video player for Flutter with HLS, DASH, DRM (Widevine & FairPlay), caching, PiP, VAST ads, and short-form video feeds across mobile, desktop, and web.'},
       ],
       image: 'https://raw.githubusercontent.com/jhomlala/betterplayer/master/assets/media/1.png',
       navbar: {

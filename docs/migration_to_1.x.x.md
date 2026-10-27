@@ -1,12 +1,61 @@
 ---
 id: migration_to_1.x.x
-title: Migrating to v1.x.x
+title: Migrating to v1.x.x (from 0.0.84 & better_player_plus)
 ---
 
-# Migrating from 0.0.84 to Better Player 1.x.x
+# Migrating to Better Player 1.x.x
 
 Better Player 1.x.x introduces a **federated plugin architecture** and a significantly cleaner public API. 
-The package was split into smaller specialized packages, and redundant `BetterPlayer` prefixes were removed from model names.
+This guide covers upgrading from **Better Player 0.0.84** or migrating from community forks including **`better_player_plus`**, **`better_player_enhanced`**, and **`river_player`**.
+
+---
+
+## Migrating from `better_player_plus` & Community Forks
+
+Community forks like `better_player_plus` originated as temporary patches for Better Player `0.0.84`. Because those forks preserved the legacy `0.0.84` API, they share the same class names (`BetterPlayerConfiguration`, `BetterPlayerDataSource`, etc.) and the same limitations (legacy MethodChannels, mobile-only platforms, and no video feed pooling).
+
+### Feature Comparison: `better_player` 1.x vs `better_player_plus`
+
+| Feature | `better_player_plus` | `better_player` 1.x |
+|---|:---:|:---:|
+| **Platform Coverage** | Mobile only (Android & iOS) | **6 Platforms** (Android, iOS, macOS, Windows, Linux, Web) |
+| **Native Architecture** | Legacy MethodChannels | **Direct JNI & native Swift/AppKit FFI** |
+| **Android Engine** | Legacy ExoPlayer | **AndroidX Media3 (1.11+)** with AGP 8+ namespace |
+| **Web Engine** | Basic HTML5 Video | **Shaka Player** (HLS, DASH, and DRM on web) |
+| **Short-form Video Feeds** | Manual / prone to OOM crashes | **Built-in `BetterPlayerFeed` & `BetterPlayerPool`** |
+| **Video Monetization** | None | **Client-side VAST 2.0-4.x & VMAP linear ads** |
+| **Content Protection** | Basic DRM (Mobile only) | **Widevine, FairPlay, ClearKey, Watermarking & Screen Shield** |
+| **Telemetry & QoE** | None | **Real-time video metrics, offline retention & cloud export** |
+| **Automated Migration** | None | **Automated `dart fix --apply`** |
+
+### 3-Step Migration from `better_player_plus`
+
+#### Step 1: Update `pubspec.yaml`
+Replace `better_player_plus` (or any legacy fork) with `better_player`:
+
+```yaml
+dependencies:
+  # Remove:
+  # better_player_plus: ^x.y.z
+  
+  # Add:
+  better_player: ^1.29.0
+```
+
+Run `flutter pub get`.
+
+#### Step 2: Update Dart imports
+Search and replace across your project:
+- Replace `package:better_player_plus/better_player_plus.dart` with `package:better_player/better_player.dart`.
+
+#### Step 3: Run `dart fix`
+Run automated migration in your terminal to rename all legacy `BetterPlayer*` classes to the clean 1.x `Player*` naming:
+
+```bash
+dart fix --apply
+```
+
+---
 
 ## Version History & Key Architecture Changes
 - **v1.17.x**: Standardized internal widget and utility naming under the `Player*` prefix (including exported `PlayerAsmsUtils` and `PlayerUiUtils`).
