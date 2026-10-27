@@ -1,3 +1,7 @@
+## 1.10.0
+- Added: Window screen capture and recording protection via Android `FLAG_SECURE` window flag.
+- Updated: Dependency `better_player_platform_interface` to `^1.6.0`.
+
 ## 1.9.0
 - Added: Native pre-cache progress reporting in `CacheWorker` via `BetterPlayerPreCacheCallback`.
 

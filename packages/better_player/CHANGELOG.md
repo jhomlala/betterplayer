@@ -1,7 +1,8 @@
-## Unreleased
+## 1.30.0
+- Added: Screen capture protection hooks and dynamic watermark overlay slot via `PlayerSecurityExtension` and `BetterPlayerExtension` interface (#1622).
+- Added: Screen capture and recording protection across platforms (Android `FLAG_SECURE`, iOS `UIScreen` capture guard, macOS `NSWindow.sharingState`, and Windows `SetWindowDisplayAffinity`).
 - Updated: Migration documentation and README to detail upgrading from `better_player_plus` and legacy forks to Better Player 1.x.
-- Updated: `pubspec.yaml` topic tagging to include standard `video-player` category on pub.dev.
-- Updated: `llms.txt` with guidelines and code snippets for AI coding agents.
+- Updated: Bumped federated sub-packages: `better_player_platform_interface` to `^1.6.0`, `better_player_android` to `^1.10.0`, `better_player_ios` to `^1.10.0`, `better_player_macos` to `^1.5.0`, and `better_player_windows` to `^1.4.0`.
 
 ## 1.29.0
 - Added: Linux platform support via `better_player_linux` powered by `libmpv` and Flutter's `FlPixelBufferTexture`.

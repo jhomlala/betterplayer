@@ -1,3 +1,7 @@
+## 1.4.0
+- Added: Window screen capture protection via Win32 `SetWindowDisplayAffinity` (`WDA_EXCLUDEFROMCAPTURE`).
+- Updated: Dependency `better_player_platform_interface` to `^1.6.0`.
+
 ## 1.3.0
 - Fixed: Resolved deadlocks during `TextureBridge::Dispose()` by unregistering textures outside mutex lock.
 - Fixed: Enabled hardware video decoding (`hwdec=auto-safe`) in mpv initialization.

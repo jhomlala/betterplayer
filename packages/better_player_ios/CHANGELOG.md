@@ -1,3 +1,7 @@
+## 1.10.0
+- Added: Screen capture and recording protection via secure text field view hierarchy and `UIScreen.capturedDidChangeNotification`.
+- Updated: Dependency `better_player_platform_interface` to `^1.6.0`.
+
 ## 1.9.0
 - Fixed: Forwarded data source HTTP headers to native iOS playback, with and without caching (by @by291).
 - Added: Native pre-cache progress reporting in `CacheManager` via `BetterPlayerPreCacheCallback`.
