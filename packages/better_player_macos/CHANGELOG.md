@@ -1,3 +1,7 @@
+## 1.5.0
+- Added: Screen capture and window recording protection via `NSWindow.sharingState`.
+- Updated: Dependency `better_player_platform_interface` to `^1.6.0`.
+
 ## 1.4.1
 - Fixed: Forwarded HTTP headers from `DataSource` to native wrapper in `setDataSource` to support authenticated network streams.
 

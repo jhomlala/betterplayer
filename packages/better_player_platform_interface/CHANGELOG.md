@@ -1,3 +1,6 @@
+## 1.6.0
+- Added: `setScreenCaptureProtection` method to `BetterPlayerPlatform` to toggle native window/screen capture prevention.
+
 ## 1.5.0
 - Added: `PreCacheProgress` model, `preCacheProgressStream` broadcast stream, and `onProgress` callback on `BetterPlayerPlatform.preCache`.
 

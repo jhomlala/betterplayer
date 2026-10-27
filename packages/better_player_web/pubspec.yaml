@@ -24,7 +24,7 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  better_player_platform_interface: ^1.5.0
+  better_player_platform_interface: ^1.6.0
   web: ^1.1.1
   meta: ^1.11.0
 
