@@ -1,3 +1,6 @@
+## Unreleased
+- Added: W3C Remote Playback API and WebKit AirPlay picker support (`showExternalPlaybackPicker`) and connection state stream.
+
 ## 1.3.1
 - Fixed: Aligned `BetterPlayerWeb.preCache` method signature with `BetterPlayerPlatform` in `better_player_platform_interface` 1.5.0.
 - Updated: Bumped `better_player_platform_interface` dependency to `^1.5.0`.

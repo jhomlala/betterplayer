@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:material_ui/material_ui.dart';
@@ -44,6 +44,11 @@ class PlayerMaterialTopBar extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        if (controlsConfiguration.enableAirPlay)
+                          _PlayerMaterialAirPlayButton(
+                            controller: controller,
+                            controlsConfiguration: controlsConfiguration,
+                          ),
                         if (controlsConfiguration.enablePip)
                           _PlayerMaterialPipButtonWrapper(
                             controller: controller,
@@ -173,6 +178,53 @@ class _PlayerMaterialMoreButton extends StatelessWidget {
         child: Icon(
           controlsConfiguration.overflowMenuIcon,
           color: controlsConfiguration.iconsColor,
+        ),
+      ),
+    );
+  }
+}
+
+class _PlayerMaterialAirPlayButton extends StatelessWidget {
+  const _PlayerMaterialAirPlayButton({
+    required this.controller,
+    required this.controlsConfiguration,
+  });
+
+  final BetterPlayerController controller;
+  final PlayerControlsConfiguration controlsConfiguration;
+
+  @override
+  Widget build(BuildContext context) {
+    final isCasting = controller.isCasting;
+    final isAirPlayActive = controller.isAirPlayActive;
+    final isActive = isCasting || isAirPlayActive;
+
+    final IconData icon;
+    if (isCasting) {
+      icon = isActive
+          ? controlsConfiguration.castConnectedIcon
+          : controlsConfiguration.castIcon;
+    } else {
+      icon = isActive
+          ? controlsConfiguration.airPlayActiveIcon
+          : controlsConfiguration.airPlayIcon;
+    }
+
+    final label = isCasting
+        ? controller.translations.controlsCastLabel
+        : controller.translations.controlsAirPlayLabel;
+
+    return PlayerMaterialClickableWidget(
+      onTap: controller.showExternalPlaybackPicker,
+      semanticsLabel: label,
+      semanticsIdentifier: 'better_player_material_controls_airplay_button',
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Icon(
+          icon,
+          color: isActive
+              ? Theme.of(context).colorScheme.primary
+              : controlsConfiguration.iconsColor,
         ),
       ),
     );

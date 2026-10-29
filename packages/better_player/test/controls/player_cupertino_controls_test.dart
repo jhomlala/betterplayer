@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../helpers/better_player_mock_controller.dart';
 import '../helpers/better_player_test_utils.dart';
+import '../helpers/mock_better_player_platform.dart';
 import '../helpers/mock_method_channel.dart';
 import '../helpers/mock_player_engine_controller.dart';
 
@@ -176,6 +177,49 @@ void main() {
         ),
       );
       await tester.pumpWidget(const SizedBox());
+    },
+  );
+
+  testWidgets(
+    'Cupertino controls show AirPlay button and trigger picker on tap',
+    (tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final mockPlatform = MockBetterPlayerPlatform();
+      BetterPlayerPlatform.instance = mockPlatform;
+
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: MockPlayerEngineController(),
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.cupertino,
+            airPlayIcon: CupertinoIcons.tv,
+          ),
+        ),
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+      );
+
+      await tester.pumpWidget(
+        wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      controller.setControlsAlwaysVisible(true);
+      await tester.pumpAndSettle();
+
+      final airPlayFinder = find.byIcon(CupertinoIcons.tv);
+      expect(airPlayFinder, findsOneWidget);
+
+      await tester.tap(airPlayFinder);
+      await tester.pump();
+      expect(mockPlatform.showExternalPlaybackPickerCalls.length, 1);
     },
   );
 }

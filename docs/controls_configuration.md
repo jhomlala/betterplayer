@@ -36,6 +36,7 @@ Better Player automatically uses Material `Icons` on Android, Windows, and Linux
 *   `fullscreenEnableIcon`, `fullscreenDisableIcon`
 *   `skipBackIcon`, `skipForwardIcon`
 *   `overflowMenuIcon`, `pipMenuIcon`, `playbackSpeedIcon`, `subtitlesIcon`, `qualitiesIcon`, `audioTracksIcon`
+*   `airPlayIcon`, `airPlayActiveIcon`, `castIcon`, `castConnectedIcon`
 
 ## Functional Toggles
 

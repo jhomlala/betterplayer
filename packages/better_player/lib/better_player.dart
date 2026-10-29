@@ -23,6 +23,7 @@ export 'src/core/better_player_controller.dart';
 export 'src/core/better_player_controller_provider.dart';
 export 'src/core/better_player_extension.dart';
 export 'src/core/player_branding_extension.dart';
+export 'src/core/player_cast_extension.dart';
 export 'src/core/player_event_constants.dart';
 export 'src/core/player_security_extension.dart';
 export 'src/core/player_ui_utils.dart';

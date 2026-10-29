@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:js_interop';
 
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
@@ -22,6 +23,13 @@ void main() {
       mockPlayer = MockBetterPlayerWebPlayer();
 
       when(() => mockPlayer.initialize()).thenAnswer((_) async {});
+      when(
+        () => mockPlayer.externalPlaybackEvents,
+      ).thenAnswer((_) => const Stream.empty());
+      when(() => mockPlayer.isExternalPlaybackActive).thenReturn(false);
+      when(
+        () => mockPlayer.showExternalPlaybackPicker(),
+      ).thenAnswer((_) async {});
       // Return a dummy JSObject cast to HTMLVideoElement to avoid DOM calls
       when(
         () => mockPlayer.videoElement,
@@ -195,6 +203,36 @@ void main() {
 
       expect(lastLevel, 1);
       expect(lastMessage, contains('Log callback wired up for web'));
+    });
+
+    test(
+      'showExternalPlaybackPicker calls player.showExternalPlaybackPicker',
+      () async {
+        final id = await plugin.create();
+        await plugin.showExternalPlaybackPicker(textureId: id);
+        verify(() => mockPlayer.showExternalPlaybackPicker()).called(1);
+      },
+    );
+
+    test('externalPlaybackStream emits boolean changes', () async {
+      final extController = StreamController<bool>.broadcast();
+      when(
+        () => mockPlayer.externalPlaybackEvents,
+      ).thenAnswer((_) => extController.stream);
+      when(() => mockPlayer.isExternalPlaybackActive).thenReturn(true);
+
+      final events = <bool>[];
+      final subscription = plugin.externalPlaybackStream.listen(events.add);
+
+      final id = await plugin.create();
+      expect(id, 0);
+
+      extController.add(true);
+      await pumpEventQueue();
+
+      expect(events, [true]);
+      await subscription.cancel();
+      await extController.close();
     });
   });
 }

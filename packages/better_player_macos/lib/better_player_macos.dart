@@ -457,6 +457,29 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
   }
 
   static const MethodChannel _channel = MethodChannel('better_player_macos');
+  static const EventChannel _externalPlaybackEventChannel = EventChannel(
+    'better_player_macos/external_playback_stream',
+  );
+
+  Stream<bool>? _externalPlaybackStream;
+
+  @override
+  Stream<bool> get externalPlaybackStream {
+    _externalPlaybackStream ??= _externalPlaybackEventChannel
+        .receiveBroadcastStream()
+        .map((event) => event as bool);
+    return _externalPlaybackStream!;
+  }
+
+  @override
+  Future<void> showExternalPlaybackPicker({required int? textureId}) async {
+    try {
+      await _channel.invokeMethod<void>(
+        'showExternalPlaybackPicker',
+        {'textureId': textureId},
+      );
+    } on PlatformException catch (_) {}
+  }
 
   @override
   Future<void> setScreenCaptureProtection({required bool enabled}) async {

@@ -712,6 +712,11 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
             ),
           ],
           const Spacer(),
+          if (widget.configuration.enableAirPlay)
+            _PlayerWebAirPlayButton(
+              controller: widget.controller,
+              configuration: widget.configuration,
+            ),
           if (widget.isPipSupported &&
               widget.configuration.enablePip &&
               widget.controller?.isLiveStream() == false &&
@@ -767,6 +772,56 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _PlayerWebAirPlayButton extends StatelessWidget {
+  const _PlayerWebAirPlayButton({
+    required this.controller,
+    required this.configuration,
+  });
+
+  final BetterPlayerController? controller;
+  final PlayerControlsConfiguration configuration;
+
+  @override
+  Widget build(BuildContext context) {
+    if (controller == null) return const SizedBox();
+    final isCasting = controller!.isCasting;
+    final isAirPlayActive = controller!.isAirPlayActive;
+    final isActive = isCasting || isAirPlayActive;
+
+    final IconData icon;
+    if (isCasting) {
+      icon = isActive
+          ? configuration.castConnectedIcon
+          : configuration.castIcon;
+    } else {
+      icon = isActive
+          ? configuration.airPlayActiveIcon
+          : configuration.airPlayIcon;
+    }
+
+    final label = isCasting
+        ? controller!.translations.controlsCastLabel
+        : controller!.translations.controlsAirPlayLabel;
+
+    return Semantics(
+      label: 'better_player_web_controls_airplay_button',
+      identifier: 'better_player_web_controls_airplay_button',
+      container: true,
+      button: true,
+      child: IconButton(
+        tooltip: label,
+        icon: Icon(
+          icon,
+          color: isActive
+              ? Theme.of(context).colorScheme.primary
+              : configuration.iconsColor,
+        ),
+        onPressed: controller!.showExternalPlaybackPicker,
       ),
     );
   }

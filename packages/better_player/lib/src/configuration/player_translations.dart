@@ -25,6 +25,8 @@ class PlayerTranslations {
     this.progressBarLabel = 'Video progress',
     this.overflowMenuLabel = 'More options',
     this.controlsPipLabel = 'Picture-in-Picture',
+    this.controlsAirPlayLabel = 'AirPlay',
+    this.controlsCastLabel = 'Cast',
     this.overflowMenuCancelLabel = 'Cancel',
     this.overflowMenuScrimLabel = 'Dismiss',
     this.overflowMenuScrimHint = 'Close',
@@ -61,6 +63,7 @@ class PlayerTranslations {
     progressBarLabel: 'Pasek postępu',
     overflowMenuLabel: 'Więcej opcji',
     controlsPipLabel: 'Obraz w obrazie',
+    controlsCastLabel: 'Przesyłaj',
     overflowMenuCancelLabel: 'Anuluj',
     overflowMenuScrimLabel: 'Odrzuć',
     overflowMenuScrimHint: 'Zamknij',
@@ -97,6 +100,7 @@ class PlayerTranslations {
     progressBarLabel: '視頻進度',
     overflowMenuLabel: '更多選項',
     controlsPipLabel: '畫中畫',
+    controlsCastLabel: '投放',
     overflowMenuCancelLabel: '取消',
     overflowMenuScrimLabel: '關閉',
     overflowMenuScrimHint: '關閉',
@@ -127,6 +131,7 @@ class PlayerTranslations {
     progressBarLabel: 'वीडियो प्रगति',
     overflowMenuLabel: 'अधिक विकल्प',
     controlsPipLabel: 'पिक्चर-इन-पिक्चर',
+    controlsCastLabel: 'कास्ट करें',
     overflowMenuCancelLabel: 'रद्द करें',
     overflowMenuScrimLabel: 'खारिज करें',
     overflowMenuScrimHint: 'बंद करें',
@@ -157,6 +162,7 @@ class PlayerTranslations {
     progressBarLabel: 'تقدم الفيديو',
     overflowMenuLabel: 'المزيد من الخيارات',
     controlsPipLabel: 'صورة داخل صورة',
+    controlsCastLabel: 'بث',
     overflowMenuCancelLabel: 'إلغاء',
     overflowMenuScrimLabel: 'رفض',
     overflowMenuScrimHint: 'إغلاق',
@@ -187,6 +193,7 @@ class PlayerTranslations {
     progressBarLabel: 'Video İlerlemesi',
     overflowMenuLabel: 'Daha Fazla Seçenek',
     controlsPipLabel: 'Resim içinde Resim',
+    controlsCastLabel: 'Yayınla',
     overflowMenuCancelLabel: 'İptal',
     overflowMenuScrimLabel: 'Kapat',
     overflowMenuScrimHint: 'Kapat',
@@ -217,6 +224,7 @@ class PlayerTranslations {
     progressBarLabel: 'Tiến trình video',
     overflowMenuLabel: 'Thêm tùy chọn',
     controlsPipLabel: 'Hình trong hình',
+    controlsCastLabel: 'Truyền',
     overflowMenuCancelLabel: 'Hủy',
     overflowMenuScrimLabel: 'Đóng',
     overflowMenuScrimHint: 'Đóng',
@@ -246,6 +254,7 @@ class PlayerTranslations {
     progressBarLabel: 'Barra de progreso',
     overflowMenuLabel: 'Menú de opciones',
     controlsPipLabel: 'Imagen en imagen',
+    controlsCastLabel: 'Transmitir',
     overflowMenuCancelLabel: 'Cancelar',
     overflowMenuScrimLabel: 'Cerrar',
     overflowMenuScrimHint: 'Cerrar',
@@ -276,6 +285,7 @@ class PlayerTranslations {
     progressBarLabel: 'پیشرفت ویدیو',
     overflowMenuLabel: 'گزینه‌های بیشتر',
     controlsPipLabel: 'تصویر در تصویر',
+    controlsCastLabel: 'ارسال تصویر',
     overflowMenuCancelLabel: 'لغو',
     overflowMenuScrimLabel: 'بستن',
     overflowMenuScrimHint: 'بستن',
@@ -305,6 +315,7 @@ class PlayerTranslations {
     controlsSkipBackwardLabel: 'Retroceder',
     progressBarLabel: 'Progresso do vídeo',
     overflowMenuLabel: 'Mais opções',
+    controlsCastLabel: 'Transmitir',
     overflowMenuCancelLabel: 'Cancelar',
     overflowMenuScrimLabel: 'Fechar',
     overflowMenuScrimHint: 'Fechar',
@@ -336,6 +347,8 @@ class PlayerTranslations {
   final String progressBarLabel;
   final String overflowMenuLabel;
   final String controlsPipLabel;
+  final String controlsAirPlayLabel;
+  final String controlsCastLabel;
   final String overflowMenuCancelLabel;
   final String overflowMenuScrimLabel;
   final String overflowMenuScrimHint;
