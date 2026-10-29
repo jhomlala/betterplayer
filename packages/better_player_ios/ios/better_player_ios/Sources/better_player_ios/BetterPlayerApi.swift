@@ -108,6 +108,16 @@ import AVKit
         return AVPictureInPictureController.isPictureInPictureSupported()
     }
 
+    @objc public static func cleanUp() {
+        _logCallback = nil
+        _preCacheCallback = nil
+        let activePlayers = Array(players.values)
+        players.removeAll()
+        for player in activePlayers {
+            player.dispose()
+        }
+    }
+
     // Reference the dummy classes to prevent the linker from stripping them out
     @objc public static let _dummyCallback: BetterPlayerCallback = _DummyBetterPlayerCallbackImpl()
     @objc public static let _dummyPreCacheCallback: BetterPlayerPreCacheCallback = _DummyPreCacheCallbackImpl()

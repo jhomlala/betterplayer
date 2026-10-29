@@ -1,3 +1,7 @@
+## Unreleased
+- Fixed: Resolved black screen on iOS Simulator by returning stable `FlutterPlatformView` instances per platform view ID, skipping `AVMutableVideoComposition` for unrotated videos, and resolving video track dimensions before presentation size checks (#1632).
+- Fixed: App crash on hot restart by using asynchronous listener callbacks (`implementAsListener`), dispatching KVO observer updates to the main thread, tracking `observedItem` for observer removal, and cleaning up orphaned native players on initialization (#1632).
+
 ## 1.10.0
 - Added: Screen capture and recording protection via secure text field view hierarchy and `UIScreen.capturedDidChangeNotification`.
 - Updated: Dependency `better_player_platform_interface` to `^1.6.0`.

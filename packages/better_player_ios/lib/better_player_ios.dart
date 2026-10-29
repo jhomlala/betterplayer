@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi' as ffi;
+import 'dart:io' show Platform;
 
 import 'package:better_player_ios/src/better_player_ios_ffi.g.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
@@ -10,6 +11,12 @@ import 'package:flutter/widgets.dart';
 import 'package:objective_c/objective_c.dart' as objc;
 
 class BetterPlayerIOS extends BetterPlayerPlatform {
+  BetterPlayerIOS() {
+    _cleanupOrphanedPlayers();
+  }
+
+  BetterPlayerLogCallback? _logCallback;
+
   @override
   Future<void> setupLogCallback(
     void Function({
@@ -19,10 +26,11 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     callback,
   ) async {
     if (callback == null) {
+      _logCallback = null;
       BetterPlayerApi.setLogCallback(null);
       return;
     }
-    final ffiFn = BetterPlayerLogCallback$Builder.implement(
+    _logCallback = BetterPlayerLogCallback$Builder.implementAsListener(
       onLog_message_: (int level, objc.NSString message) {
         callback(
           levelIndex: level,
@@ -30,7 +38,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
         );
       },
     );
-    BetterPlayerApi.setLogCallback(ffiFn);
+    BetterPlayerApi.setLogCallback(_logCallback);
   }
 
   @visibleForTesting
@@ -41,12 +49,62 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
 
   @visibleForTesting
   Object createCacheManager() => BetterPlayerApi.createCacheManager();
+
   static void registerWith() {
-    BetterPlayerPlatform.instance = BetterPlayerIOS();
+    final instance = BetterPlayerIOS();
+    BetterPlayerPlatform.instance = instance;
+    instance._cleanupOrphanedPlayers();
+  }
+
+  void _cleanupOrphanedPlayers() {
+    cleanupOrphanedPlayers();
+  }
+
+  @visibleForTesting
+  void clearCallbacks() {
+    _logCallback = null;
+    _preCacheCallback = null;
+    _preCacheCallbackConfigured = false;
+    if (Platform.isIOS) {
+      BetterPlayerApi.setLogCallback(null);
+      BetterPlayerApi.setPreCacheCallback(null);
+    }
+  }
+
+  @visibleForTesting
+  void cleanupOrphanedPlayers({Map<Object, Object>? playersOverride}) {
+    if (!Platform.isIOS && playersOverride == null) return;
+    try {
+      final keys = <int>[];
+      if (playersOverride != null) {
+        for (final key in playersOverride.keys) {
+          if (key is num) {
+            keys.add(key.toInt());
+          }
+        }
+      } else {
+        clearCallbacks();
+        final players = BetterPlayerApi.getPlayers();
+        final map = players.toDartMap();
+        for (final key in map.keys) {
+          if (key is num) {
+            keys.add(key.toInt());
+          }
+        }
+      }
+      for (final id in keys) {
+        final player = getPlayer(id);
+        player?.dispose();
+      }
+    } catch (_) {}
   }
 
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
   final Map<int, String?> _lastInitializedKeys = {};
+  final Map<int, BetterPlayerCallback> _callbacks = {};
+
+  @visibleForTesting
+  Map<int, BetterPlayerCallback> get callbacks => _callbacks;
 
   @visibleForTesting
   void setEventControllerForTesting({
@@ -94,6 +152,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     if (textureId == null) return;
     _lastInitializedKeys.remove(textureId);
     getPlayer(textureId)?.dispose();
+    _callbacks.remove(textureId);
     _eventControllers[textureId]?.close();
     _eventControllers.remove(textureId);
   }
@@ -104,7 +163,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
   }) async {
     int? currentTextureId;
 
-    final callback = BetterPlayerCallback$Builder.implement(
+    final callback = BetterPlayerCallback$Builder.implementAsListener(
       onInitializedWithDurationMs_width_height_key_:
           (int durationMs, double width, double height, objc.NSString? key) {
             if (currentTextureId == null) return;
@@ -231,6 +290,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     );
 
     currentTextureId = BetterPlayerApi.createPlayerWithCallback(callback);
+    _callbacks[currentTextureId] = callback;
 
     _eventControllers[currentTextureId] =
         StreamController<VideoEvent>.broadcast();

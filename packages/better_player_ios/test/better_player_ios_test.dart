@@ -83,6 +83,7 @@ void main() {
       await iosPlayer.dispose(1);
 
       verify(() => mockPlayer.dispose()).called(1);
+      expect(iosPlayer.callbacks.containsKey(1), isFalse);
     });
 
     test('create stores streams and returns textureId', () async {
@@ -486,5 +487,26 @@ void main() {
       expect(events, [true, false]);
       await subscription.cancel();
     });
+
+    test(
+      'cleanupOrphanedPlayers disposes players matching numeric keys',
+      () {
+        iosPlayer.cleanupOrphanedPlayers(playersOverride: {1: Object()});
+        verify(() => mockPlayer.dispose()).called(1);
+      },
+    );
+
+    test(
+      'cleanupOrphanedPlayers ignores non-matching or empty player maps',
+      () {
+        iosPlayer.cleanupOrphanedPlayers(playersOverride: {});
+        verifyNever(() => mockPlayer.dispose());
+
+        iosPlayer.cleanupOrphanedPlayers(
+          playersOverride: {'stringKey': Object()},
+        );
+        verifyNever(() => mockPlayer.dispose());
+      },
+    );
   });
 }
