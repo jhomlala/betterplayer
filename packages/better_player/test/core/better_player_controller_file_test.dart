@@ -43,6 +43,9 @@ void main() {
     when(
       () => mockPlatform.videoEventsFor(any()),
     ).thenAnswer((_) => eventController.stream);
+    when(
+      () => mockPlatform.externalPlaybackStream,
+    ).thenAnswer((_) => const Stream.empty());
     when(() => mockPlatform.setDataSource(any(), any())).thenAnswer((
       invocation,
     ) async {

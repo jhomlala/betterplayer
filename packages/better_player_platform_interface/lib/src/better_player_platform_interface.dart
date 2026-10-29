@@ -217,6 +217,18 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     return const Stream<bool>.empty();
   }
 
+  /// Displays the native external playback (AirPlay / Cast) route picker.
+  ///
+  /// Supported on iOS, macOS, and Web.
+  Future<void> showExternalPlaybackPicker({required int? textureId}) async {
+    // Platform implementations override this method.
+  }
+
+  /// Stream emitting boolean values indicating if external playback (AirPlay / Cast) is active.
+  Stream<bool> get externalPlaybackStream {
+    return const Stream<bool>.empty();
+  }
+
   /// Returns a widget displaying the video with a given textureID.
   Widget buildView(int? textureId) {
     throw UnimplementedError('buildView() has not been implemented.');

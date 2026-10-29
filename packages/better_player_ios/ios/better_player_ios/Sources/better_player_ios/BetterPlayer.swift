@@ -29,6 +29,7 @@ public typealias FlutterResult = (Any?) -> Void
 }
 public class BetterPlayerView: UIView {
     public var player: AVPlayer?
+    public func showRoutePicker() {}
 }
 #endif
 import Foundation
@@ -40,6 +41,7 @@ private var playbackLikelyToKeepUpContext = 0
 private var playbackBufferEmptyContext = 0
 private var playbackBufferFullContext = 0
 private var presentationSizeContext = 0
+private var externalPlaybackActiveContext = 0
 
 /// A platform view implementation that wraps AVPlayer for video playback.
 /// Handles player initialization, lifecycle, and event reporting to Flutter.
@@ -88,7 +90,7 @@ private var presentationSizeContext = 0
     public private(set) var failedCount: Int = 0
 
     private var videoGravity: AVLayerVideoGravity = .resizeAspect
-    private weak var playerView: UIView?
+    public weak var playerView: UIView?
 
     /// Reference to the AVPlayerLayer used for Picture-in-Picture.
     public var playerLayerRef: AVPlayerLayer?
@@ -125,6 +127,8 @@ private var presentationSizeContext = 0
         super.init()
         self.player.actionAtItemEnd = .none
         self.player.appliesMediaSelectionCriteriaAutomatically = false
+        self.player.allowsExternalPlayback = true
+        self.player.usesExternalPlaybackWhileExternalScreenIsActive = true
         if #available(iOS 10.0, *) {
             self.player.automaticallyWaitsToMinimizeStalling = false
         }
@@ -171,6 +175,7 @@ private var presentationSizeContext = 0
     private func addObservers(_ item: AVPlayerItem) {
         if !observersAdded {
             player.addObserver(self, forKeyPath: "rate", options: [], context: nil)
+            player.addObserver(self, forKeyPath: "externalPlaybackActive", options: [.new], context: &externalPlaybackActiveContext)
             item.addObserver(self, forKeyPath: "loadedTimeRanges", options: [], context: &timeRangeContext)
             item.addObserver(self, forKeyPath: "status", options: [], context: &statusContext)
             item.addObserver(self, forKeyPath: "presentationSize", options: [], context: &presentationSizeContext)
@@ -192,6 +197,7 @@ private var presentationSizeContext = 0
     private func removeObservers() {
         if observersAdded {
             player.removeObserver(self, forKeyPath: "rate", context: nil)
+            player.removeObserver(self, forKeyPath: "externalPlaybackActive", context: &externalPlaybackActiveContext)
             player.currentItem?.removeObserver(self, forKeyPath: "status", context: &statusContext)
             player.currentItem?.removeObserver(self, forKeyPath: "presentationSize", context: &presentationSizeContext)
             player.currentItem?.removeObserver(self, forKeyPath: "loadedTimeRanges", context: &timeRangeContext)
@@ -484,6 +490,8 @@ private var presentationSizeContext = 0
         } else if context == &playbackBufferEmptyContext {
             BetterPlayerApi.log(1, "playbackBufferEmpty: true")
             callback?.onBufferingStart(key: key)
+        } else if context == &externalPlaybackActiveContext {
+            BetterPlayerPlugin.notifyExternalPlaybackChanged(player.isExternalPlaybackActive)
         } else if context == &playbackBufferFullContext {
             BetterPlayerApi.log(1, "playbackBufferFull: true")
             callback?.onBufferingEnd(key: key)
@@ -908,6 +916,7 @@ private var presentationSizeContext = 0
         
         if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
             BetterPlayerApi.players.removeValue(forKey: key)
+            BetterPlayerPlugin.notifyExternalPlaybackChanged(BetterPlayerPlugin.isAnyExternalPlaybackActive())
         }
     }
 }

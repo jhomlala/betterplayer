@@ -28,6 +28,20 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
 
   // Map from textureId (we use int counter) to player instance
   final Map<int, BetterPlayerWebPlayer> _players = {};
+  final StreamController<bool> _externalPlaybackController =
+      StreamController<bool>.broadcast();
+
+  @override
+  Stream<bool> get externalPlaybackStream => _externalPlaybackController.stream;
+
+  @override
+  Future<void> showExternalPlaybackPicker({required int? textureId}) async {
+    if (textureId == null) return;
+    try {
+      await _getPlayer(textureId).showExternalPlaybackPicker();
+    } catch (_) {}
+  }
+
   int _nextId = 0;
 
   void Function({required int levelIndex, required String message})?
@@ -57,6 +71,10 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     });
 
     _players[id] = player;
+    player.externalPlaybackEvents.listen((_) {
+      final anyActive = _players.values.any((p) => p.isExternalPlaybackActive);
+      _externalPlaybackController.add(anyActive);
+    });
     _log(message: 'Player created: $id', levelIndex: 1);
     return id;
   }
@@ -65,6 +83,8 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
   Future<void> dispose(int? textureId) async {
     await _getPlayer(textureId).dispose();
     _players.remove(textureId);
+    final anyActive = _players.values.any((p) => p.isExternalPlaybackActive);
+    _externalPlaybackController.add(anyActive);
     _log(message: 'Player disposed: $textureId', levelIndex: 1);
   }
 

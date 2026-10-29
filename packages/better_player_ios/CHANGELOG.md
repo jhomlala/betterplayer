@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Native AirPlay route picker integration (`AVRoutePickerView`) and `externalPlaybackActive` KVO stream.
+
 ## 1.10.0
 - Added: Screen capture and recording protection via secure text field view hierarchy and `UIScreen.capturedDidChangeNotification`.
 - Updated: Dependency `better_player_platform_interface` to `^1.6.0`.

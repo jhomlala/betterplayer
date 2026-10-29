@@ -164,6 +164,21 @@ class BetterPlayerController {
     if (_engine != null) {
       _engine!.addListener(_onVideoPlayerChanged);
     }
+    try {
+      _externalPlaybackSubscription = BetterPlayerPlatform
+          .instance
+          .externalPlaybackStream
+          .listen((isActive) {
+            if (_disposed) return;
+            _isAirPlayActive = isActive;
+            for (final listener in List<VoidCallback>.from(_videoListeners)) {
+              listener();
+            }
+            postEvent(PlayerEvent(PlayerEventType.externalPlaybackChanged));
+          });
+    } catch (_) {
+      _externalPlaybackSubscription = null;
+    }
     if (betterPlayerDataSource != null) {
       setupDataSource(betterPlayerDataSource);
     }
@@ -180,13 +195,31 @@ class BetterPlayerController {
     if (!_extensions.contains(extension)) {
       _extensions.add(extension);
       extension.onAttach(this);
+      if (extension is PlayerCastExtension) {
+        _castSubscription?.cancel();
+        _castSubscription = extension.castingStream.listen((_) {
+          if (_disposed) return;
+          for (final listener in List<VoidCallback>.from(_videoListeners)) {
+            listener();
+          }
+          postEvent(PlayerEvent(PlayerEventType.externalPlaybackChanged));
+        });
+      }
     }
   }
 
   /// Unregisters and detaches an extension from this controller.
   void unregisterExtension(BetterPlayerExtension extension) {
     if (_extensions.remove(extension)) {
+      if (extension is PlayerCastExtension) {
+        _castSubscription?.cancel();
+        _castSubscription = null;
+      }
       extension.onDetach(this);
+      for (final listener in List<VoidCallback>.from(_videoListeners)) {
+        listener();
+      }
+      postEvent(PlayerEvent(PlayerEventType.externalPlaybackChanged));
     }
   }
 
@@ -226,6 +259,39 @@ class BetterPlayerController {
     }
     await BetterPlayerPlatform.instance.setScreenCaptureProtection(
       enabled: enabled,
+    );
+  }
+
+  bool _isAirPlayActive = false;
+  StreamSubscription<bool>? _externalPlaybackSubscription;
+  StreamSubscription<bool>? _castSubscription;
+
+  /// Whether native external playback (such as AirPlay or wireless screen) is active.
+  bool get isAirPlayActive => _isAirPlayActive;
+
+  /// Whether video currently casts to a receiver via a registered [PlayerCastExtension].
+  bool get isCasting => getExtension<PlayerCastExtension>()?.isCasting ?? false;
+
+  /// Whether any external playback (AirPlay or Cast extension) is active.
+  bool get isExternalPlaybackActive => _isAirPlayActive || isCasting;
+
+  /// Shows the external playback picker dialog.
+  ///
+  /// If a [PlayerCastExtension] is registered, invokes its cast picker.
+  /// Otherwise invokes the native system route picker (e.g. AirPlay).
+  Future<void> showExternalPlaybackPicker() async {
+    final castExtension = getExtension<PlayerCastExtension>();
+    if (castExtension != null) {
+      await castExtension.showCastPicker();
+      return;
+    }
+    await showAirPlayPicker();
+  }
+
+  /// Displays the native AirPlay route picker.
+  Future<void> showAirPlayPicker() async {
+    await BetterPlayerPlatform.instance.showExternalPlaybackPicker(
+      textureId: _engine?.textureId,
     );
   }
 
@@ -621,6 +687,8 @@ class BetterPlayerController {
       _nextVideoTimeStreamController.close();
       _controlsVisibilityStreamController.close();
       _videoEventStreamSubscription?.cancel();
+      _externalPlaybackSubscription?.cancel();
+      _castSubscription?.cancel();
       _controllerEventStreamController.close();
 
       ///Delete files async

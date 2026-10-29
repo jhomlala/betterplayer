@@ -59,6 +59,15 @@ class PlayerCupertinoTopBar extends StatelessWidget {
             else
               const SizedBox(),
             const SizedBox(width: 8),
+            if (controlsConfiguration.enableAirPlay) ...[
+              _PlayerCupertinoAirPlayButton(
+                controlsConfiguration: controlsConfiguration,
+                barHeight: barHeight,
+                iconSize: iconSize,
+                iconColor: iconColor,
+              ),
+              const SizedBox(width: 8),
+            ],
             if (controlsConfiguration.enablePip)
               _PlayerCupertinoPipButton(
                 controlsConfiguration: controlsConfiguration,
@@ -130,6 +139,61 @@ class _PlayerCupertinoExpandButton extends StatelessWidget {
               ? controlsConfiguration.fullscreenDisableIcon
               : controlsConfiguration.fullscreenEnableIcon,
           iconColor: iconColor,
+          iconSize: iconSize,
+        ),
+      ),
+    );
+  }
+}
+
+class _PlayerCupertinoAirPlayButton extends StatelessWidget {
+  const _PlayerCupertinoAirPlayButton({
+    required this.controlsConfiguration,
+    required this.barHeight,
+    required this.iconSize,
+    required this.iconColor,
+  });
+
+  final PlayerControlsConfiguration controlsConfiguration;
+  final double barHeight;
+  final double iconSize;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final controller = BetterPlayerController.of(context);
+    final isCasting = controller.isCasting;
+    final isAirPlayActive = controller.isAirPlayActive;
+    final isActive = isCasting || isAirPlayActive;
+
+    final IconData icon;
+    if (isCasting) {
+      icon = isActive
+          ? controlsConfiguration.castConnectedIcon
+          : controlsConfiguration.castIcon;
+    } else {
+      icon = isActive
+          ? controlsConfiguration.airPlayActiveIcon
+          : controlsConfiguration.airPlayIcon;
+    }
+
+    final label = isCasting
+        ? controller.translations.controlsCastLabel
+        : controller.translations.controlsAirPlayLabel;
+
+    return Semantics(
+      label: label,
+      identifier: 'better_player_cupertino_controls_airplay_button',
+      button: true,
+      container: true,
+      child: GestureDetector(
+        onTap: controller.showExternalPlaybackPicker,
+        child: _PlayerCupertinoGlassButton(
+          barHeight: barHeight,
+          icon: icon,
+          iconColor: isActive
+              ? Theme.of(context).colorScheme.primary
+              : iconColor,
           iconSize: iconSize,
         ),
       ),

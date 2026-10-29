@@ -1,3 +1,10 @@
+## Unreleased
+- Added: Native AirPlay route picker and active playback tracking on iOS and macOS.
+- Added: Remote Playback API and Safari WebKit playback target picker support on Web.
+- Added: `PlayerCastExtension` plugin architecture to support pluggable casting backends without inflating core package size.
+- Added: AirPlay route picker button to Material, Cupertino, and Web player top bars.
+- Added: `PlayerEventType.externalPlaybackChanged`, `BetterPlayerController.isAirPlayActive`, `BetterPlayerController.isCasting`, `BetterPlayerController.showAirPlayPicker()`, and `PlayerControlsConfiguration.enableAirPlay`.
+
 ## 1.30.0
 - Added: Screen capture protection hooks and dynamic watermark overlay slot via `PlayerSecurityExtension` and `BetterPlayerExtension` interface (#1622).
 - Added: Screen capture and recording protection across platforms (Android `FLAG_SECURE`, iOS `UIScreen` capture guard, macOS `NSWindow.sharingState`, and Windows `SetWindowDisplayAffinity`).

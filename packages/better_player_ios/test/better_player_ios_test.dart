@@ -486,5 +486,55 @@ void main() {
       expect(events, [true, false]);
       await subscription.cancel();
     });
+
+    test('showExternalPlaybackPicker invokes channel method', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      final methodCalls = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('better_player_ios'),
+            (MethodCall call) async {
+              methodCalls.add(call);
+              return null;
+            },
+          );
+
+      await iosPlayer.showExternalPlaybackPicker(textureId: 42);
+
+      expect(methodCalls.length, 1);
+      expect(methodCalls[0].method, 'showExternalPlaybackPicker');
+      expect(methodCalls[0].arguments, {'textureId': 42});
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('better_player_ios'),
+            null,
+          );
+    });
+
+    test('externalPlaybackStream receives events from event channel', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      final events = <bool>[];
+      final subscription = iosPlayer.externalPlaybackStream.listen(events.add);
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            'better_player_ios/external_playback_stream',
+            const StandardMethodCodec().encodeSuccessEnvelope(true),
+            (data) {},
+          );
+      await pumpEventQueue();
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            'better_player_ios/external_playback_stream',
+            const StandardMethodCodec().encodeSuccessEnvelope(false),
+            (data) {},
+          );
+      await pumpEventQueue();
+
+      expect(events, [true, false]);
+      await subscription.cancel();
+    });
   });
 }

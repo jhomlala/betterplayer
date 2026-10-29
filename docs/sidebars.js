@@ -48,6 +48,7 @@ const sidebars = {
       label: 'Advanced Features',
       items: [
         'events',
+        'airplay_and_casting',
         'player_behavior_on_visibility_change',
         'resolutions_of_video',
         'custom_element_in_overflow_menu',

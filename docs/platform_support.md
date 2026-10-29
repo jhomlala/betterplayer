@@ -26,6 +26,7 @@ The following matrix details the current feature support for Better Player acros
 | **Background Audio / Notifications** | ✓ | ✓ | x | x | x | x |
 | **Mix Audio with Others** | ✓ | ✓ | ✓ | ✓ | ✓ | x |
 | **Auto Frame Rate (AFR)** | ✓ | x | x | x | x | x |
+| **AirPlay / Remote Playback** | x | ✓ | ✓ | x | x | ✓ |
 
 ## Platform Specific Details
 

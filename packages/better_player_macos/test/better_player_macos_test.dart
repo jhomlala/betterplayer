@@ -501,5 +501,63 @@ void main() {
             null,
           );
     });
+
+    test('showExternalPlaybackPicker invokes method channel', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      final methodCalls = <MethodCall>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('better_player_macos'),
+            (MethodCall call) async {
+              methodCalls.add(call);
+              return null;
+            },
+          );
+
+      await macosPlayer.showExternalPlaybackPicker(textureId: 42);
+
+      expect(methodCalls.length, 1);
+      expect(methodCalls[0].method, 'showExternalPlaybackPicker');
+      expect(methodCalls[0].arguments, {'textureId': 42});
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('better_player_macos'),
+            null,
+          );
+    });
+
+    test('externalPlaybackStream receives events from event channel', () async {
+      TestWidgetsFlutterBinding.ensureInitialized();
+      final events = <bool>[];
+      final subscription = macosPlayer.externalPlaybackStream.listen(
+        events.add,
+      );
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            'better_player_macos/external_playback_stream',
+            const StandardMethodCodec().encodeSuccessEnvelope(true),
+            (data) {},
+          );
+      await pumpEventQueue();
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .handlePlatformMessage(
+            'better_player_macos/external_playback_stream',
+            const StandardMethodCodec().encodeSuccessEnvelope(false),
+            (data) {},
+          );
+      await pumpEventQueue();
+
+      expect(events, [true, false]);
+      await subscription.cancel();
+
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            const MethodChannel('better_player_macos'),
+            null,
+          );
+    });
   });
 }
