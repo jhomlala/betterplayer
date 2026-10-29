@@ -956,6 +956,11 @@ extension type BetterPlayerApi._(objc.ObjCObject object$)
     return BetterPlayerApi.fromPointer($ret, retain: false, release: true);
   }
 
+  /// cleanUp
+  static void cleanUp() {
+    _objc_msgSend_1pl9qdv(_class_BetterPlayerApi, _sel_cleanUp);
+  }
+
   /// clearCache
   static void clearCache() {
     _objc_msgSend_1pl9qdv(_class_BetterPlayerApi, _sel_clearCache);
@@ -6428,6 +6433,7 @@ late final _sel_arg3 = objc.registerName("arg3");
 late final _sel_arg4 = objc.registerName("arg4");
 late final _sel_arg5 = objc.registerName("arg5");
 late final _sel_callback = objc.registerName("callback");
+late final _sel_cleanUp = objc.registerName("cleanUp");
 late final _sel_clear = objc.registerName("clear");
 late final _sel_clearCache = objc.registerName("clearCache");
 late final _sel_conformsToProtocol_ = objc.registerName("conformsToProtocol:");
