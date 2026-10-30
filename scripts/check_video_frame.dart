@@ -18,8 +18,8 @@ void main(List<String> args) {
   }
   var failed = false;
   for (final path in args) {
-    final file = File(path);
-    if (!file.existsSync()) {
+    final file = _resolveFile(path);
+    if (file == null) {
       stderr.writeln('$path: file does not exist');
       failed = true;
       continue;
@@ -27,12 +27,47 @@ void main(List<String> args) {
     final ratio = brightRatio(file.readAsBytesSync());
     final ok = ratio >= _minBrightRatio;
     stdout.writeln(
-      '$path: bright pixel ratio ${ratio.toStringAsFixed(3)} '
+      '${file.path}: bright pixel ratio ${ratio.toStringAsFixed(3)} '
       '(${ok ? 'ok' : 'BLACK'})',
     );
     failed = failed || !ok;
   }
   exit(failed ? 1 : 0);
+}
+
+File? _resolveFile(String path) {
+  final direct = File(path);
+  if (direct.existsSync()) {
+    return direct;
+  }
+  final filename = path.contains('/') || path.contains(r'\')
+      ? path.split(RegExp(r'[/\\]')).last
+      : path;
+
+  final home =
+      Platform.environment['HOME'] ?? Platform.environment['USERPROFILE'] ?? '';
+  if (home.isNotEmpty) {
+    final maestroDir = Directory('$home/.maestro/tests');
+    if (maestroDir.existsSync()) {
+      try {
+        for (final entity in maestroDir.listSync(recursive: true)) {
+          if (entity is File && entity.path.endsWith(filename)) {
+            return entity;
+          }
+        }
+      } catch (_) {}
+    }
+  }
+
+  try {
+    for (final entity in Directory.current.listSync(recursive: true)) {
+      if (entity is File && entity.path.endsWith(filename)) {
+        return entity;
+      }
+    }
+  } catch (_) {}
+
+  return null;
 }
 
 /// Share of sampled center pixels brighter than [_lumaMin].

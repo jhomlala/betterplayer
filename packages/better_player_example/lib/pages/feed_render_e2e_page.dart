@@ -111,6 +111,25 @@ class _FeedRenderE2EPageState extends State<FeedRenderE2EPage> {
               },
             ),
           ),
+          Positioned(
+            top: 48,
+            right: 8,
+            child: Semantics(
+              identifier: 'better_player_e2e_feed_next_button',
+              label: 'Next',
+              button: true,
+              container: true,
+              child: ElevatedButton(
+                onPressed: () {
+                  _feedController.pageController.nextPage(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                  );
+                },
+                child: const Text('Next'),
+              ),
+            ),
+          ),
         ],
       ),
     );

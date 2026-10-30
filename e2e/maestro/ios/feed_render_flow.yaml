@@ -23,9 +23,9 @@ appId: pl.hasoft.example
     timeout: 3000
 - takeScreenshot: feed_render_item_0
 
-# Scroll to the pooled, preloaded second item.
-- swipe:
-    direction: UP
+# Advance to the pooled, preloaded second item.
+- tapOn:
+    id: "better_player_e2e_feed_next_button"
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_feed_render_status_playing_1"
