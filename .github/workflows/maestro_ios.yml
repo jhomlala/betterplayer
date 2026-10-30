@@ -131,9 +131,16 @@ jobs:
           cd better_player
           maestro test e2e/maestro/ios/
 
+      - name: Check video frames are not black (#1632)
+        run: |
+          cd better_player
+          dart scripts/check_video_frame.dart feed_render_item_0.png feed_render_item_1.png
+
       - name: Upload Maestro Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: maestro-ios-debug-artifacts
-          path: ~/.maestro/tests/
+          path: |
+            ~/.maestro/tests/
+            better_player/feed_render_item_*.png
