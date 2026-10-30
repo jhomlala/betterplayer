@@ -22,7 +22,9 @@ class _FeedRenderE2EPageState extends State<FeedRenderE2EPage> {
     _feedController = BetterPlayerFeedController(
       dataSources: [
         PlayerDataSource.network(Constants.exampleResolutionsUrls['LOW']!),
-        PlayerDataSource.network(Constants.exampleResolutionsUrls['MEDIUM']!),
+        PlayerDataSource.network(
+          'https://test-videos.co.uk/vids/jellyfish/mp4/h264/360/Jellyfish_360_10s_1MB.mp4',
+        ),
       ],
       poolConfiguration: const PlayerPoolConfiguration(
         playerConfiguration: PlayerConfiguration(
@@ -50,8 +52,11 @@ class _FeedRenderE2EPageState extends State<FeedRenderE2EPage> {
         _playingIndex.value = index;
       }
       controller.addEventsListener((event) {
-        if (event.betterPlayerEventType == PlayerEventType.play) {
-          _playingIndex.value = index;
+        if (event.betterPlayerEventType == PlayerEventType.play ||
+            event.betterPlayerEventType == PlayerEventType.progress) {
+          if (controller.isPlaying() ?? false) {
+            _playingIndex.value = index;
+          }
         }
       });
     }
@@ -120,11 +125,15 @@ class _FeedRenderE2EPageState extends State<FeedRenderE2EPage> {
               button: true,
               container: true,
               child: ElevatedButton(
-                onPressed: () {
-                  _feedController.pageController.nextPage(
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                  );
+                onPressed: () async {
+                  if (_feedController.pageController.hasClients) {
+                    _feedController.pageController.animateToPage(
+                      1,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+                  await _feedController.onIndexChanged(1);
                 },
                 child: const Text('Next'),
               ),
