@@ -52,8 +52,9 @@ class _FeedRenderE2EPageState extends State<FeedRenderE2EPage> {
         _playingIndex.value = index;
       }
       controller.addEventsListener((event) {
-        if (event.betterPlayerEventType == PlayerEventType.play ||
-            event.betterPlayerEventType == PlayerEventType.progress) {
+        if (event.betterPlayerEventType == PlayerEventType.play) {
+          _playingIndex.value = index;
+        } else if (event.betterPlayerEventType == PlayerEventType.progress) {
           if (controller.isPlaying() ?? false) {
             _playingIndex.value = index;
           }

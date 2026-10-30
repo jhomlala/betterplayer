@@ -20,7 +20,7 @@ env:
 
 jobs:
   maestro:
-    runs-on: macos-14
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,7 +55,7 @@ jobs:
           path: |
             better_player/packages/better_player_example/ios/.swiftpm
             better_player/packages/better_player_example/ios/SourcePackages
-          key: ${{ runner.os }}-spm-${{ hashFiles('better_player/packages/better_player_ios/ios/better_player.podspec') }}
+          key: ${{ runner.os }}-spm-${{ hashFiles('better_player/packages/better_player_ios/ios/better_player_ios.podspec') }}
           restore-keys: |
             ${{ runner.os }}-spm-
 
@@ -80,6 +80,15 @@ jobs:
 
       - name: Start Simulator Boot
         run: |
+          # Disable macOS application firewall to prevent network socket drops
+          sudo /usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off || true
+
+          # Unlock keychain to prevent trustd evaluation hangs
+          security unlock-keychain -p "" ~/Library/Keychains/login.keychain-db || true
+
+          # Block outbound UDP 443 to force fallback from unstable QUIC/HTTP3 to standard TCP TLS
+          echo "block return out proto udp from any to any port 443" | cat /etc/pf.conf - | sudo pfctl -Ef - || true
+
           # Use the first available iPhone simulator
           DEVICE_UUID=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F '[()]' '{print $2}')
           if [ -z "$DEVICE_UUID" ]; then
