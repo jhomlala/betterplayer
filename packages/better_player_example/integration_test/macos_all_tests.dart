@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+import 'macos_completion_replay_test.dart' as completion_replay_test;
 import 'macos_datasource_swap_test.dart' as datasource_swap_test;
 import 'macos_error_recovery_test.dart' as error_recovery_test;
 import 'macos_feed_render_test.dart' as feed_render_test;
@@ -22,5 +23,6 @@ void main() {
     shortcuts_test.main();
     local_file_test.main();
     feed_render_test.main();
+    completion_replay_test.main();
   });
 }

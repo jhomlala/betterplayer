@@ -1,0 +1,46 @@
+appId: pl.hasoft.example
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+- assertVisible:
+    id: "better_player_e2e_app_bar_title"
+
+# Wait for initial MP4 playback ready
+- extendedWaitUntil:
+    visible:
+      id: "better_player_cupertino_controls_play_pause_button"
+    timeout: 30000
+- assertVisible:
+    id: "better_player_cupertino_controls_play_pause_button"
+
+# Seek near end to trigger EOF and natural finished event
+- scrollUntilVisible:
+    element:
+      id: "better_player_e2e_seek_to_end_button"
+    direction: DOWN
+- tapOn:
+    id: "better_player_e2e_seek_to_end_button"
+
+# Wait for video completion
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_finished_status"
+    timeout: 30000
+- assertVisible:
+    id: "better_player_e2e_finished_status"
+
+# Tap replay button in Cupertino controls
+- tapOn:
+    id: "better_player_cupertino_controls_play_pause_button"
+
+# Wait for playback restart from replay
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_replayed_status"
+    timeout: 20000
+- assertVisible:
+    id: "better_player_e2e_replayed_status"
