@@ -88,7 +88,6 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       aspectRatio: 16 / 9,
       fit: BoxFit.contain,
       autoPlay: true,
-      looping: true,
       handleLifecycle: false,
       playerVisibilityChangedBehavior: (visibilityFraction) {
         if (mounted) {
