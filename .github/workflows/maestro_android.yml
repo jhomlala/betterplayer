@@ -5,6 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -88,9 +89,15 @@ jobs:
           emulator-options: -no-window -gpu swiftshader -noaudio -no-boot-anim -memory 4096 -cache-size 2048 -accel on
           script: count=0; until adb shell pm list packages > /dev/null 2>&1 || [ $count -ge 30 ]; do echo "Waiting for package manager ($count/30)..."; sleep 5; count=$((count+1)); done; adb root || true; adb wait-for-device; adb shell "setprop llk.enable 0; stop llkd || true"; adb shell input keyevent 82; adb install packages/better_player_example/build/app/outputs/flutter-apk/app-debug.apk; maestro test e2e/maestro/android/
 
+      - name: Check video frames are not black (#1632)
+        run: |
+          dart scripts/check_video_frame.dart feed_render_item_0.png feed_render_item_1.png
+
       - name: Upload Maestro Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: maestro-android-debug-artifacts
-          path: ~/.maestro/tests/
+          path: |
+            ~/.maestro/tests/
+            feed_render_item_*.png

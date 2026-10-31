@@ -3,6 +3,7 @@ import 'package:integration_test/integration_test.dart';
 
 import 'windows_datasource_swap_test.dart' as datasource_swap_test;
 import 'windows_error_recovery_test.dart' as error_recovery_test;
+import 'windows_feed_render_test.dart' as feed_render_test;
 import 'windows_ffi_test.dart' as ffi_test;
 import 'windows_flow_test.dart' as flow_test;
 import 'windows_hls_test.dart' as hls_test;
@@ -20,5 +21,6 @@ void main() {
     ffi_test.main();
     shortcuts_test.main();
     local_file_test.main();
+    feed_render_test.main();
   });
 }
