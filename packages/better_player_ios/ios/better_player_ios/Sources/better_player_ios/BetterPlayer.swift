@@ -28,7 +28,9 @@ public typealias FlutterResult = (Any?) -> Void
     @objc public func clearCache() {}
 }
 public class BetterPlayerView: UIView {
+    public var onWindowChanged: ((BetterPlayerView) -> Void)?
     public var player: AVPlayer?
+    public var playerLayer: AVPlayerLayer { return layer as! AVPlayerLayer }
 }
 #endif
 import Foundation
@@ -89,6 +91,8 @@ private var presentationSizeContext = 0
 
     private var videoGravity: AVLayerVideoGravity = .resizeAspect
     private weak var playerView: UIView?
+    private let attachedViews = NSHashTable<BetterPlayerView>.weakObjects()
+    private weak var observedItem: AVPlayerItem?
 
     /// Reference to the AVPlayerLayer used for Picture-in-Picture.
     public var playerLayerRef: AVPlayerLayer?
@@ -140,14 +144,51 @@ private var presentationSizeContext = 0
 
     /// Returns the view to be displayed in Flutter.
     @objc public func view() -> UIView {
+        if let existing = self.playerView {
+            return existing
+        }
         let playerView = BetterPlayerView(frame: .zero)
-        playerView.player = player
-        if let playerLayer = playerView.layer as? AVPlayerLayer {
+        attachPlayerView(playerView)
+        return playerView
+    }
+
+    /// Attaches a platform view to this player instance.
+    public func attachPlayerView(_ view: BetterPlayerView) {
+        view.onWindowChanged = { [weak self] changedView in
+            self?.handlePlayerViewWindowChanged(changedView)
+        }
+        attachedViews.add(view)
+        if let existing = self.playerView as? BetterPlayerView, existing !== view {
+            existing.player = nil
+        }
+        view.player = player
+        if let playerLayer = view.layer as? AVPlayerLayer {
             playerLayer.videoGravity = self.videoGravity
         }
+        self.playerView = view
+    }
 
-        self.playerView = playerView
-        return playerView
+    private func handlePlayerViewWindowChanged(_ changedView: BetterPlayerView) {
+        guard !disposed else { return }
+        if changedView.window != nil {
+            if let existing = self.playerView as? BetterPlayerView, existing !== changedView {
+                existing.player = nil
+            }
+            changedView.player = player
+            if let playerLayer = changedView.layer as? AVPlayerLayer {
+                playerLayer.videoGravity = self.videoGravity
+            }
+            self.playerView = changedView
+        } else if self.playerView === changedView {
+            if let mountedView = attachedViews.allObjects.last(where: { $0 !== changedView && $0.window != nil }) {
+                changedView.player = nil
+                mountedView.player = player
+                if let playerLayer = mountedView.layer as? AVPlayerLayer {
+                    playerLayer.videoGravity = self.videoGravity
+                }
+                self.playerView = mountedView
+            }
+        }
     }
 
     // MARK: - Aspect Ratio Handling
@@ -169,47 +210,53 @@ private var presentationSizeContext = 0
     // MARK: - Observers
 
     private func addObservers(_ item: AVPlayerItem) {
-        if !observersAdded {
-            player.addObserver(self, forKeyPath: "rate", options: [], context: nil)
-            item.addObserver(self, forKeyPath: "loadedTimeRanges", options: [], context: &timeRangeContext)
-            item.addObserver(self, forKeyPath: "status", options: [], context: &statusContext)
-            item.addObserver(self, forKeyPath: "presentationSize", options: [], context: &presentationSizeContext)
-            item.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: [], context: &playbackLikelyToKeepUpContext)
-            item.addObserver(self, forKeyPath: "playbackBufferEmpty", options: [], context: &playbackBufferEmptyContext)
-            item.addObserver(self, forKeyPath: "playbackBufferFull", options: [], context: &playbackBufferFullContext)
-            NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime(_:)), name: .AVPlayerItemDidPlayToEndTime, object: item)
+        guard !observersAdded else { return }
 
-            let output = AVPlayerItemLegibleOutput()
-            output.suppressesPlayerRendering = true
-            output.setDelegate(self, queue: DispatchQueue.main)
-            item.add(output)
-            self.legibleOutput = output
+        player.addObserver(self, forKeyPath: "rate", options: [], context: nil)
+        item.addObserver(self, forKeyPath: "loadedTimeRanges", options: [], context: &timeRangeContext)
+        item.addObserver(self, forKeyPath: "status", options: [], context: &statusContext)
+        item.addObserver(self, forKeyPath: "presentationSize", options: [], context: &presentationSizeContext)
+        item.addObserver(self, forKeyPath: "playbackLikelyToKeepUp", options: [], context: &playbackLikelyToKeepUpContext)
+        item.addObserver(self, forKeyPath: "playbackBufferEmpty", options: [], context: &playbackBufferEmptyContext)
+        item.addObserver(self, forKeyPath: "playbackBufferFull", options: [], context: &playbackBufferFullContext)
+        NotificationCenter.default.addObserver(self, selector: #selector(itemDidPlayToEndTime(_:)), name: .AVPlayerItemDidPlayToEndTime, object: item)
 
-            observersAdded = true
-        }
+        let output = AVPlayerItemLegibleOutput()
+        output.suppressesPlayerRendering = true
+        output.setDelegate(self, queue: DispatchQueue.main)
+        item.add(output)
+        self.legibleOutput = output
+        self.observedItem = item
+
+        observersAdded = true
     }
 
     private func removeObservers() {
-        if observersAdded {
-            player.removeObserver(self, forKeyPath: "rate", context: nil)
-            player.currentItem?.removeObserver(self, forKeyPath: "status", context: &statusContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "presentationSize", context: &presentationSizeContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "loadedTimeRanges", context: &timeRangeContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "playbackLikelyToKeepUp", context: &playbackLikelyToKeepUpContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferEmpty", context: &playbackBufferEmptyContext)
-            player.currentItem?.removeObserver(self, forKeyPath: "playbackBufferFull", context: &playbackBufferFullContext)
-            NotificationCenter.default.removeObserver(self)
+        guard observersAdded else { return }
+        observersAdded = false
+
+        player.removeObserver(self, forKeyPath: "rate", context: nil)
+
+        let itemToRemove = observedItem ?? player.currentItem
+        if let item = itemToRemove {
+            item.removeObserver(self, forKeyPath: "status", context: &statusContext)
+            item.removeObserver(self, forKeyPath: "presentationSize", context: &presentationSizeContext)
+            item.removeObserver(self, forKeyPath: "loadedTimeRanges", context: &timeRangeContext)
+            item.removeObserver(self, forKeyPath: "playbackLikelyToKeepUp", context: &playbackLikelyToKeepUpContext)
+            item.removeObserver(self, forKeyPath: "playbackBufferEmpty", context: &playbackBufferEmptyContext)
+            item.removeObserver(self, forKeyPath: "playbackBufferFull", context: &playbackBufferFullContext)
 
             if let output = legibleOutput {
-                player.currentItem?.remove(output)
+                item.remove(output)
                 legibleOutput = nil
             }
-
-            observersAdded = false
         }
+        NotificationCenter.default.removeObserver(self)
+        observedItem = nil
     }
 
     @objc private func itemDidPlayToEndTime(_ notification: Notification) {
+        guard !disposed else { return }
         if isLooping {
             if let p = notification.object as? AVPlayerItem {
                 p.seek(to: .zero, completionHandler: nil)
@@ -232,9 +279,17 @@ private var presentationSizeContext = 0
 
     private func getVideoComposition(transform: CGAffineTransform, asset: AVAsset, videoTrack: AVAssetTrack) -> AVMutableVideoComposition {
         let instruction = AVMutableVideoCompositionInstruction()
-        instruction.timeRange = CMTimeRangeMake(start: .zero, duration: asset.duration)
+        let duration: CMTime
+        if CMTIME_IS_VALID(asset.duration) && !CMTIME_IS_INDEFINITE(asset.duration) && asset.duration.seconds > 0 {
+            duration = asset.duration
+        } else if let item = player.currentItem, CMTIME_IS_VALID(item.duration) && !CMTIME_IS_INDEFINITE(item.duration) && item.duration.seconds > 0 {
+            duration = item.duration
+        } else {
+            duration = CMTime(seconds: 86400 * 365, preferredTimescale: 600)
+        }
+        instruction.timeRange = CMTimeRangeMake(start: .zero, duration: duration)
         let layerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrack)
-        layerInstruction.setTransform(preferredTransform, at: .zero)
+        layerInstruction.setTransform(transform, at: .zero)
 
         let videoComposition = AVMutableVideoComposition()
         instruction.layerInstructions = [layerInstruction]
@@ -242,7 +297,7 @@ private var presentationSizeContext = 0
 
         var width = videoTrack.naturalSize.width
         var height = videoTrack.naturalSize.height
-        let rotationDegrees = Int(round(radiansToDegrees(atan2(preferredTransform.b, preferredTransform.a))))
+        let rotationDegrees = Int(round(radiansToDegrees(atan2(transform.b, transform.a))))
         if rotationDegrees == 90 || rotationDegrees == 270 {
             width = videoTrack.naturalSize.height
             height = videoTrack.naturalSize.width
@@ -277,9 +332,25 @@ private var presentationSizeContext = 0
     /// Sets the data source from an asset path.
     @objc public func setDataSourceAsset(_ assetPath: String, key: String?, certificateUrl: String?, licenseUrl: String?, cacheKey: String?, cacheManager: CacheManager, overriddenDuration: Int) {
         BetterPlayerApi.log(1, "setDataSourceAsset: \(assetPath)")
-        if let path = Bundle.main.path(forResource: assetPath, ofType: nil) {
+        var resolvedPath: String? = Bundle.main.path(forResource: assetPath, ofType: nil)
+        if resolvedPath == nil {
+            resolvedPath = Bundle.main.path(forResource: assetPath, ofType: nil, inDirectory: "flutter_assets")
+        }
+        if resolvedPath == nil {
+            if let frameworkBundle = Bundle(identifier: "io.flutter.flutter.app") ?? Bundle(for: BetterPlayer.self) as Bundle? {
+                resolvedPath = frameworkBundle.path(forResource: assetPath, ofType: nil, inDirectory: "flutter_assets")
+            }
+        }
+        if resolvedPath == nil {
+            resolvedPath = Bundle.main.path(forResource: "flutter_assets/\(assetPath)", ofType: nil)
+        }
+
+        if let path = resolvedPath {
             let url = URL(fileURLWithPath: path)
             setDataSourceURL(url, key: key, certificateUrl: certificateUrl, licenseUrl: licenseUrl, headers: [:], useCache: false, cacheKey: cacheKey, cacheManager: cacheManager, overriddenDuration: overriddenDuration, videoExtension: nil)
+        } else {
+            BetterPlayerApi.log(3, "setDataSourceAsset failed: asset not found at \(assetPath)")
+            sendError(code: "VideoError", message: "Failed to load video: asset not found at \(assetPath)")
         }
     }
 
@@ -327,16 +398,36 @@ private var presentationSizeContext = 0
         BetterPlayerApi.log(1, "setDataSource: item replaced")
 
         let asset = item.asset
-        asset.loadValuesAsynchronously(forKeys: ["tracks"]) {
+        asset.loadValuesAsynchronously(forKeys: ["tracks", "duration"]) { [weak self] in
+            guard let self = self, !self.disposed else { return }
             if asset.statusOfValue(forKey: "tracks", error: nil) == .loaded {
                 let tracks = asset.tracks(withMediaType: .video)
                 if let videoTrack = tracks.first {
-                    videoTrack.loadValuesAsynchronously(forKeys: ["preferredTransform"]) { [weak self] in
-                        guard let self = self, !self.disposed else { return }
-                        if videoTrack.statusOfValue(forKey: "preferredTransform", error: nil) == .loaded {
-                            self.preferredTransform = self.fixTransform(videoTrack)
-                            let videoComposition = self.getVideoComposition(transform: self.preferredTransform, asset: asset, videoTrack: videoTrack)
-                            item.videoComposition = videoComposition
+                    videoTrack.loadValuesAsynchronously(forKeys: ["preferredTransform", "naturalSize", "nominalFrameRate"]) { [weak self] in
+                        DispatchQueue.main.async {
+                            guard let self = self, !self.disposed, self.player.currentItem === item else { return }
+                            if videoTrack.statusOfValue(forKey: "preferredTransform", error: nil) == .loaded {
+                                let fixedTransform = self.fixTransform(videoTrack)
+                                self.preferredTransform = fixedTransform
+                                let rotationDegrees = Int(round(self.radiansToDegrees(atan2(fixedTransform.b, fixedTransform.a)))) % 360
+                                // Only apply videoComposition if the video actually has rotation metadata,
+                                // allowing normal videos to stay on zero-copy hardware presentation pipeline
+                                // and preventing black screen issues in iOS simulator.
+                                if !fixedTransform.isIdentity && (rotationDegrees == 90 || rotationDegrees == 180 || rotationDegrees == 270) {
+                                    let videoComposition = self.getVideoComposition(transform: fixedTransform, asset: asset, videoTrack: videoTrack)
+                                    item.videoComposition = videoComposition
+                                }
+                            }
+                            if !self.isInitialized {
+                                self.onReadyToPlay()
+                            }
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self, !self.disposed, self.player.currentItem === item else { return }
+                        if !self.isInitialized {
+                            self.onReadyToPlay()
                         }
                     }
                 }
@@ -354,10 +445,12 @@ private var presentationSizeContext = 0
     }
 
     private func sendError(code: String, message: String, details: String = "") {
+        guard !disposed else { return }
         callback?.onError(code, errorMessage: message, errorDetails: details)
     }
 
     private func startStalledCheck() {
+        guard !disposed else { return }
         if let currentItem = player.currentItem {
             if currentItem.isPlaybackLikelyToKeepUp || (availableDuration() - CMTimeGetSeconds(currentItem.currentTime())) > 10.0 {
                 play()
@@ -369,12 +462,13 @@ private var presentationSizeContext = 0
                     }
                     return
                 }
-                perform(#selector(startStalledCheckObjC), with: nil, afterDelay: 1)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+                    guard let self = self, !self.disposed else { return }
+                    self.startStalledCheck()
+                }
             }
         }
     }
-
-    @objc private func startStalledCheckObjC() { startStalledCheck() }
 
     private func availableDuration() -> TimeInterval {
         guard let timeRange = player.currentItem?.loadedTimeRanges.first?.timeRangeValue else { return 0 }
@@ -386,7 +480,17 @@ private var presentationSizeContext = 0
     // MARK: - KVO observeValue
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if !Thread.isMainThread {
+            let observedObject = object as AnyObject?
+            DispatchQueue.main.async { [weak self] in
+                self?.observeValue(forKeyPath: keyPath, of: observedObject, change: nil, context: context)
+            }
+            return
+        }
+        guard !disposed, callback != nil else { return }
+
         if keyPath == "rate" {
+            guard !disposed else { return }
             if #available(iOS 10.0, *), let pipController = pipController, pipController.isPictureInPictureActive {
                 if let last = lastAvPlayerTimeControlStatus, last == player.timeControlStatus {
                     return
@@ -404,7 +508,7 @@ private var presentationSizeContext = 0
 
             if isPlaying && playerRate > 0 && player.rate > 0 && abs(player.rate - playerRate) > 0.0001 {
                 DispatchQueue.main.async { [weak self] in
-                    guard let self = self, self.isPlaying, self.player.rate > 0,
+                    guard let self = self, !self.disposed, self.isPlaying, self.player.rate > 0,
                           abs(self.player.rate - self.playerRate) > 0.0001 else { return }
                     self.applyPlayerRate()
                 }
@@ -413,9 +517,11 @@ private var presentationSizeContext = 0
             if player.rate == 0 && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, .zero) == 1 && (player.currentItem?.duration ?? .zero).isValid && CMTimeCompare(player.currentItem?.currentTime() ?? .zero, player.currentItem?.duration ?? .zero) == -1 && isPlaying {
                 handleStalled()
             }
+            return
         }
 
         if context == &timeRangeContext {
+            guard !disposed else { return }
             if callback != nil, let item = object as? AVPlayerItem {
                 var values: [[NSNumber]] = []
                 for rangeValue in item.loadedTimeRanges {
@@ -430,6 +536,7 @@ private var presentationSizeContext = 0
                 }
                 if let jsonData = try? JSONSerialization.data(withJSONObject: values, options: []),
                    let jsonString = String(data: jsonData, encoding: .utf8) {
+                    guard !disposed else { return }
                     callback?.onBufferingUpdate(jsonRanges: jsonString, key: key)
                 }
                 if !isInitialized {
@@ -437,12 +544,14 @@ private var presentationSizeContext = 0
                 }
             }
         } else if context == &presentationSizeContext {
+            guard !disposed else { return }
             if !isInitialized {
                 onReadyToPlay()
             } else if let item = player.currentItem {
                 let size = item.presentationSize
                 if size.width > 0 && size.height > 0 {
                     BetterPlayerApi.log(1, "presentationSize changed: \(size.width)x\(size.height)")
+                    guard !disposed else { return }
                     callback?.onInitialized(
                         durationMs: duration(),
                         width: Double(size.width),
@@ -452,6 +561,7 @@ private var presentationSizeContext = 0
                 }
             }
         } else if context == &statusContext {
+            guard !disposed else { return }
             if let item = object as? AVPlayerItem {
                 switch item.status {
                 case .failed:
@@ -473,18 +583,22 @@ private var presentationSizeContext = 0
                 }
             }
         } else if context == &playbackLikelyToKeepUpContext {
+            guard !disposed else { return }
             if player.currentItem?.isPlaybackLikelyToKeepUp == true {
                 BetterPlayerApi.log(1, "playbackLikelyToKeepUp: true")
                 if !isInitialized {
                     onReadyToPlay()
                 }
                 updatePlayingState()
+                guard !disposed else { return }
                 callback?.onBufferingEnd(key: key)
             }
         } else if context == &playbackBufferEmptyContext {
+            guard !disposed else { return }
             BetterPlayerApi.log(1, "playbackBufferEmpty: true")
             callback?.onBufferingStart(key: key)
         } else if context == &playbackBufferFullContext {
+            guard !disposed else { return }
             BetterPlayerApi.log(1, "playbackBufferFull: true")
             callback?.onBufferingEnd(key: key)
         }
@@ -494,7 +608,12 @@ private var presentationSizeContext = 0
 
     /// Updates the player state to match current playing status.
     public func updatePlayingState() {
-        guard isInitialized, key != nil else { return }
+        guard !disposed, isInitialized, key != nil else {
+            if disposed {
+                player.pause()
+            }
+            return
+        }
         if !observersAdded, let current = player.currentItem { addObservers(current) }
         if isPlaying {
             applyPlayerRate()
@@ -519,16 +638,31 @@ private var presentationSizeContext = 0
     }
 
     @objc public func onReadyToPlay() {
-        guard callback != nil, !isInitialized, key != nil else { return }
+        if !Thread.isMainThread {
+            DispatchQueue.main.async { [weak self] in
+                self?.onReadyToPlay()
+            }
+            return
+        }
+        guard !disposed, callback != nil, !isInitialized, key != nil else { return }
         guard let currentItem = player.currentItem else { return }
-        guard player.status == .readyToPlay else { return }
+        guard player.status == .readyToPlay, currentItem.status == .readyToPlay else { return }
 
         let size = currentItem.presentationSize
         var width = size.width
         var height = size.height
 
         let asset = currentItem.asset
-        let onlyAudio = asset.tracks(withMediaType: .video).count == 0
+        let videoTracks = asset.tracks(withMediaType: .video)
+        let onlyAudio = videoTracks.isEmpty
+
+        if let track = currentItem.tracks.first(where: { $0.assetTrack?.mediaType == .video })?.assetTrack ?? videoTracks.first {
+            let naturalSize = track.naturalSize
+            let prefTrans = track.preferredTransform
+            let realSize = naturalSize.applying(prefTrans)
+            width = abs(realSize.width) != 0 ? abs(realSize.width) : width
+            height = abs(realSize.height) != 0 ? abs(realSize.height) : height
+        }
 
         if !onlyAudio && height == .zero && width == .zero {
             return
@@ -548,14 +682,6 @@ private var presentationSizeContext = 0
             return
         }
 
-        if let track = currentItem.tracks.first?.assetTrack {
-            let naturalSize = track.naturalSize
-            let prefTrans = track.preferredTransform
-            let realSize = naturalSize.applying(prefTrans)
-            width = abs(realSize.width) != 0 ? abs(realSize.width) : width
-            height = abs(realSize.height) != 0 ? abs(realSize.height) : height
-        }
-
         let durMs = BetterPlayerTimeUtils.cmTimeToMillis(assetDuration)
         if overriddenDuration > 0 && durMs > Int64(overriddenDuration) {
             currentItem.forwardPlaybackEndTime = CMTimeMake(
@@ -569,6 +695,7 @@ private var presentationSizeContext = 0
 
         BetterPlayerApi.log(1, "onInitialized: dur=\(dur)ms, isLive=\(isLive), size=\(width)x\(height)")
 
+        guard !disposed else { return }
         callback?.onInitialized(
             durationMs: dur,
             width: Double(width),
@@ -882,10 +1009,8 @@ private var presentationSizeContext = 0
         BetterPlayerApi.log(1, "clear()")
         isInitialized = false
         isPlaying = false
-        disposed = false
         failedCount = 0
         key = nil
-        guard player.currentItem != nil else { return }
         removeObservers()
         player.currentItem?.asset.cancelLoading()
     }
@@ -899,16 +1024,35 @@ private var presentationSizeContext = 0
 
     /// Disposes the player and cleans up resources.
     @objc public func dispose() {
+        disposed = true
+        callback = nil
         BetterPlayerApi.log(1, "dispose()")
         pause()
-        disposeSansEventChannel()
+        removeObservers()
+        for view in attachedViews.allObjects {
+            view.onWindowChanged = nil
+            view.player = nil
+        }
+        attachedViews.removeAllObjects()
+        if let view = playerView as? BetterPlayerView {
+            view.onWindowChanged = nil
+            view.player = nil
+        }
+        playerView = nil
+        player.replaceCurrentItem(with: nil)
         disablePictureInPicture()
         setPictureInPicture(false)
-        disposed = true
         
         if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
             BetterPlayerApi.players.removeValue(forKey: key)
         }
+    }
+
+    deinit {
+        disposed = true
+        callback = nil
+        removeObservers()
+        player.replaceCurrentItem(with: nil)
     }
 }
 
@@ -916,6 +1060,7 @@ private var presentationSizeContext = 0
 
 extension BetterPlayer: AVPlayerItemLegibleOutputPushDelegate {
     public func legibleOutput(_ output: AVPlayerItemLegibleOutput, didOutputAttributedStrings strings: [NSAttributedString], nativeSampleBuffers nativeSamples: [Any], forItemTime itemTime: CMTime) {
+        guard !disposed else { return }
         let texts = strings.map { $0.string }.filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
         guard let jsonData = try? JSONSerialization.data(withJSONObject: texts, options: []),
               let jsonString = String(data: jsonData, encoding: .utf8) else {

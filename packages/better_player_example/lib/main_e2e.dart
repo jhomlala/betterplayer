@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player_example/constants.dart';
+import 'package:better_player_example/pages/feed_render_e2e_page.dart';
 import 'package:better_player_example/pages/ffi_test_page.dart';
 import 'package:better_player_example/pages/seek_e2e_page.dart';
 import 'package:better_player_example/utils/example_io_utils.dart';
@@ -731,6 +732,25 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                       }
                     },
                     child: const Text('Seek Test'),
+                  ),
+                ),
+                Semantics(
+                  identifier: 'better_player_e2e_navigate_feed_render',
+                  label: 'better_player_e2e_navigate_feed_render',
+                  container: true,
+                  button: true,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      await _betterPlayerController.pause();
+                      if (context.mounted) {
+                        await Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (context) => const FeedRenderE2EPage(),
+                          ),
+                        );
+                      }
+                    },
+                    child: const Text('Feed Render Test'),
                   ),
                 ),
               ],

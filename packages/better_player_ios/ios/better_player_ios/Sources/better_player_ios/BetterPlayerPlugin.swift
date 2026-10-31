@@ -16,6 +16,7 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         better_player_ios_force_load_symbols()
+        BetterPlayerApi.cleanUp()
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
 
@@ -47,9 +48,24 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         guard let dict = args as? [String: Any],
               let textureId = (dict["textureId"] as? NSNumber)?.int64Value,
               let player = BetterPlayerApi.players[textureId] else {
-            return BetterPlayer()
+            return BetterPlayerPlatformView(frame: frame, player: nil)
         }
-        return player
+        return BetterPlayerPlatformView(frame: frame, player: player)
+    }
+}
+
+public final class BetterPlayerPlatformView: NSObject, FlutterPlatformView {
+    private let playerView: BetterPlayerView
+
+    public init(frame: CGRect, player: BetterPlayer?) {
+        let view = BetterPlayerView(frame: frame)
+        self.playerView = view
+        super.init()
+        player?.attachPlayerView(view)
+    }
+
+    public func view() -> UIView {
+        return playerView
     }
 }
 
