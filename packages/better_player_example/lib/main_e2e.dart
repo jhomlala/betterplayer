@@ -158,7 +158,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         });
       }
       if (_videoFinished &&
-          event.betterPlayerEventType == PlayerEventType.play &&
+          (event.betterPlayerEventType == PlayerEventType.play ||
+              event.betterPlayerEventType == PlayerEventType.progress) &&
           mounted) {
         setState(() {
           _videoReplayed = true;

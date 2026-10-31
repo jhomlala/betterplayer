@@ -17,24 +17,21 @@ test('web video completion and replay flow', async ({ page }) => {
     '[aria-label^="better_player_e2e_seek_to_end_button"], [flt-semantics-identifier="better_player_e2e_seek_to_end_button"]'
   );
   await expect(seekToEndButton).toBeVisible({ timeout: 10000 });
+  await seekToEndButton.click({ force: true });
 
   // Wait for finished status
   const finishedStatus = page.locator(
     '[aria-label^="better_player_e2e_finished_status"], [flt-semantics-identifier="better_player_e2e_finished_status"]'
   );
-  await expect(async () => {
-    if (await finishedStatus.first().isVisible()) return;
-    await seekToEndButton.click({ force: true });
-    await expect(finishedStatus.first()).toBeVisible({ timeout: 4000 });
-  }).toPass({ timeout: 35000, intervals: [2000] });
+  await expect(finishedStatus.first()).toBeVisible({ timeout: 30000 });
 
   // Tap replay button in controls
+  await expect(playPause).toBeVisible({ timeout: 10000 });
+  await playPause.click({ force: true });
+
+  // Wait for replayed status
   const replayedStatus = page.locator(
     '[aria-label^="better_player_e2e_replayed_status"], [flt-semantics-identifier="better_player_e2e_replayed_status"]'
   );
-  await expect(async () => {
-    if (await replayedStatus.first().isVisible()) return;
-    await playPause.click({ force: true });
-    await expect(replayedStatus.first()).toBeVisible({ timeout: 3000 });
-  }).toPass({ timeout: 20000, intervals: [1000] });
+  await expect(replayedStatus.first()).toBeVisible({ timeout: 20000 });
 });

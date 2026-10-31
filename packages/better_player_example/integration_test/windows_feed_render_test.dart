@@ -48,6 +48,10 @@ void main() {
         timeout: const Duration(seconds: 60),
       );
 
+      // Wait a moment for frames to decode and render
+      await Future<void>.delayed(const Duration(seconds: 2));
+      await tester.pump(const Duration(seconds: 1));
+
       // Capture screenshot if nircmd is available
       try {
         await Process.run('nircmd', [
@@ -71,6 +75,10 @@ void main() {
         finder: playing1Status,
         timeout: const Duration(seconds: 60),
       );
+
+      // Wait a moment for frames to decode and render
+      await Future<void>.delayed(const Duration(seconds: 2));
+      await tester.pump(const Duration(seconds: 1));
 
       // Capture screenshot if nircmd is available
       try {
