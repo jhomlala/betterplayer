@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Prevented seek echo loop in `PlayerEngineController` on platform seek events.
+
 ## 1.30.0
 - Added: Screen capture protection hooks and dynamic watermark overlay slot via `PlayerSecurityExtension` and `BetterPlayerExtension` interface (#1622).
 - Added: Screen capture and recording protection across platforms (Android `FLAG_SECURE`, iOS `UIScreen` capture guard, macOS `NSWindow.sharingState`, and Windows `SetWindowDisplayAffinity`).
