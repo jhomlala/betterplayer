@@ -62,6 +62,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   bool _isListPlayerMode = false;
   bool _listPlayerVerified = false;
   bool _localFileVerified = false;
+  bool _videoFinished = false;
+  bool _videoReplayed = false;
   String? _currentUrl;
   bool _isDataSourceInitialized = false;
   final Set<PlayerEventType> _emittedEvents = {};
@@ -150,6 +152,19 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
           });
         }
       }
+      if (event.betterPlayerEventType == PlayerEventType.finished && mounted) {
+        setState(() {
+          _videoFinished = true;
+        });
+      }
+      if (_videoFinished &&
+          (event.betterPlayerEventType == PlayerEventType.play ||
+              event.betterPlayerEventType == PlayerEventType.progress) &&
+          mounted) {
+        setState(() {
+          _videoReplayed = true;
+        });
+      }
       if (event.betterPlayerEventType == PlayerEventType.exception) {
         setState(() {
           _errorDescription =
@@ -180,6 +195,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       setState(() {
         _currentUrl = url;
         _isDataSourceInitialized = false;
+        _videoFinished = false;
+        _videoReplayed = false;
       });
     }
     final betterPlayerDataSource = PlayerDataSource(
@@ -206,7 +223,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
             ]
           : null,
     );
-    _betterPlayerController.setupDataSource(betterPlayerDataSource);
+    _betterPlayerController
+      ..setupDataSource(betterPlayerDataSource)
+      ..setLooping(true);
   }
 
   void _applyRuntimeControlsConfiguration() {
@@ -398,6 +417,35 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     }
   }
 
+  Future<void> _seekToEndForReplayTest() async {
+    if (mounted) {
+      setState(() {
+        _videoFinished = false;
+        _videoReplayed = false;
+      });
+    }
+    await _betterPlayerController.setLooping(false);
+    var duration =
+        _betterPlayerController.videoPlayerValue?.duration ??
+        _betterPlayerController.duration;
+    for (
+      var i = 0;
+      i < 20 && (duration == null || duration == Duration.zero);
+      i++
+    ) {
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      duration =
+          _betterPlayerController.videoPlayerValue?.duration ??
+          _betterPlayerController.duration;
+    }
+    if (duration != null && duration > const Duration(seconds: 2)) {
+      await _betterPlayerController.seekTo(
+        duration - const Duration(milliseconds: 600),
+      );
+      await _betterPlayerController.play();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -576,6 +624,24 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   child: const Text('Local File Verified'),
                 ),
               ),
+            if (_videoFinished)
+              Semantics(
+                identifier: 'better_player_e2e_finished_status',
+                label: 'better_player_e2e_finished_status',
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Video Finished'),
+                ),
+              ),
+            if (_videoReplayed)
+              Semantics(
+                identifier: 'better_player_e2e_replayed_status',
+                label: 'better_player_e2e_replayed_status',
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Video Replayed'),
+                ),
+              ),
             if (_isDataSourceInitialized &&
                 _currentUrl == Constants.hlsTestStreamUrl)
               Semantics(
@@ -617,6 +683,16 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   child: ElevatedButton(
                     onPressed: _setupLocalFileDataSource,
                     child: const Text('Local File'),
+                  ),
+                ),
+                Semantics(
+                  identifier: 'better_player_e2e_seek_to_end_button',
+                  label: 'better_player_e2e_seek_to_end_button',
+                  container: true,
+                  button: true,
+                  child: ElevatedButton(
+                    onPressed: _seekToEndForReplayTest,
+                    child: const Text('Seek To End'),
                   ),
                 ),
                 Semantics(

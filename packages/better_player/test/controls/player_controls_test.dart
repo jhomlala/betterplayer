@@ -526,6 +526,52 @@ void main() {
   );
 
   testWidgets(
+    'Material controls show replay button when video is finished and tapping it seeks to zero and plays',
+    (tester) async {
+      final mockEngine = MockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockEngine,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
+          ),
+        ),
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      // Mock video finished
+      mockEngine.setDuration(const Duration(seconds: 10));
+      await mockEngine.seekTo(const Duration(seconds: 10));
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(
+        find.byIcon(Icons.replay),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byIcon(Icons.replay));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(mockEngine.value.position, Duration.zero);
+      expect(mockEngine.value.isPlaying, isTrue);
+    },
+  );
+
+  testWidgets(
     'Material controls keep controls hidden when showControlsOnInitialize is false and autoPlay is true',
     (tester) async {
       final mockEngine = MockPlayerEngineController();

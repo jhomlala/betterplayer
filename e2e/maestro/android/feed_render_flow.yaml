@@ -1,0 +1,35 @@
+appId: pl.hasoft.example
+---
+# Regression for #1632: pooled feed must render video pixels, not only audio.
+# Screenshots are checked for black frames by scripts/check_video_frame.dart.
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_app_bar_title"
+    timeout: 60000
+
+- scrollUntilVisible:
+    element:
+      id: "better_player_e2e_navigate_feed_render"
+    direction: DOWN
+- tapOn:
+    id: "better_player_e2e_navigate_feed_render"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_feed_render_status_playing_0"
+    timeout: 60000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: feed_render_item_0
+
+# Advance to the pooled, preloaded second item.
+- tapOn:
+    id: "better_player_e2e_feed_next_button"
+- extendedWaitUntil:
+    visible:
+      id: "better_player_e2e_feed_render_status_playing_1"
+    timeout: 60000
+- waitForAnimationToEnd:
+    timeout: 3000
+- takeScreenshot: feed_render_item_1

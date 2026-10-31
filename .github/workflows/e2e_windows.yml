@@ -98,6 +98,16 @@ jobs:
         working-directory: packages/better_player_example
         run: flutter test integration_test/windows_all_tests.dart -d windows --no-pub
 
+      - name: Check video frames are not black (#1632)
+        if: always()
+        shell: pwsh
+        run: |
+          if (Test-Path "feed_render_item_0.png") {
+            dart scripts/check_video_frame.dart feed_render_item_0.png feed_render_item_1.png
+          } elseif (Test-Path "packages/better_player_example/feed_render_item_0.png") {
+            dart scripts/check_video_frame.dart packages/better_player_example/feed_render_item_0.png packages/better_player_example/feed_render_item_1.png
+          }
+
       - name: Upload Windows Screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -106,4 +116,5 @@ jobs:
           path: |
             packages/better_player_example/*.png
             *.png
+            feed_render_item_*.png
           if-no-files-found: ignore
