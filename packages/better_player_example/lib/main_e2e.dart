@@ -420,9 +420,18 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       });
     }
     await _betterPlayerController.setLooping(false);
-    var duration = _betterPlayerController.videoPlayerValue?.duration;
-    if (duration == null || duration == Duration.zero) {
-      duration = _betterPlayerController.duration;
+    var duration =
+        _betterPlayerController.videoPlayerValue?.duration ??
+        _betterPlayerController.duration;
+    for (
+      var i = 0;
+      i < 20 && (duration == null || duration == Duration.zero);
+      i++
+    ) {
+      await Future<void>.delayed(const Duration(milliseconds: 200));
+      duration =
+          _betterPlayerController.videoPlayerValue?.duration ??
+          _betterPlayerController.duration;
     }
     if (duration != null && duration > const Duration(seconds: 2)) {
       await _betterPlayerController.seekTo(
