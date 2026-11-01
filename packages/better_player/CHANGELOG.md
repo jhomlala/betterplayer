@@ -1,5 +1,12 @@
 ## Unreleased
+- Added: End-to-end seek tests across Windows, Linux, macOS integration tests, Playwright (Web), and Maestro (iOS & Android).
+- Added: Unit test coverage for `PlayerPoolLease` eviction listeners, release callbacks, and lifecycle states.
+- Fixed: Resolved preload-to-active race condition, busy slot eviction, and uninitialized engine state errors in `BetterPlayerPool` and `BetterPlayerFeedController`.
+- Fixed: Triggered deferred autoplay on initialization, cleared evicted lease notifiers, and preserved external `PageController` lifecycle in `BetterPlayerFeedController`.
+- Fixed: Cleaned up pooled controller listeners on feed index changes and page disposal in E2E feed tests.
+- Fixed: Corrected feed controller snippet syntax in documentation.
 - Fixed: Prevented seek echo loop in `PlayerEngineController` on platform seek events.
+- Fixed: Added retry backoff to ASMS playlist downloads in `PlayerAsmsUtils` to handle transient network drops.
 
 ## 1.30.0
 - Added: Screen capture protection hooks and dynamic watermark overlay slot via `PlayerSecurityExtension` and `BetterPlayerExtension` interface (#1622).

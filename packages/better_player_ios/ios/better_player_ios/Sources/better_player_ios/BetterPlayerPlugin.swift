@@ -16,6 +16,7 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         better_player_ios_force_load_symbols()
+        setScreenCaptureProtection(enabled: false)
         BetterPlayerApi.cleanUp()
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
@@ -29,9 +30,47 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
         eventChannel.setStreamHandler(screenCaptureStreamHandler)
     }
 
+    private static var secureTextField: UITextField?
+
+    public static func setScreenCaptureProtection(enabled: Bool) {
+        DispatchQueue.main.async {
+            guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }) ?? UIApplication.shared.windows.first else {
+                return
+            }
+            if enabled {
+                guard secureTextField == nil else { return }
+                let field = UITextField()
+                field.isSecureTextEntry = true
+                field.isUserInteractionEnabled = false
+                window.addSubview(field)
+                field.centerYAnchor.constraint(equalTo: window.centerYAnchor).isActive = true
+                field.centerXAnchor.constraint(equalTo: window.centerXAnchor).isActive = true
+                window.layer.superlayer?.addSublayer(field.layer)
+                field.layer.sublayers?.first?.addSublayer(window.layer)
+                secureTextField = field
+            } else {
+                guard let field = secureTextField else { return }
+                field.isSecureTextEntry = false
+                if let superlayer = field.layer.superlayer {
+                    superlayer.addSublayer(window.layer)
+                }
+                field.layer.sublayers?.first?.sublayers?.removeAll(where: { $0 === window.layer })
+                field.layer.removeFromSuperlayer()
+                field.removeFromSuperview()
+                secureTextField = nil
+            }
+        }
+    }
+
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
         case "setScreenCaptureProtection":
+            guard let args = call.arguments as? [String: Any],
+                  let enabled = args["enabled"] as? Bool else {
+                result(FlutterError(code: "INVALID_ARGS", message: "enabled boolean expected", details: nil))
+                return
+            }
+            BetterPlayerPlugin.setScreenCaptureProtection(enabled: enabled)
             result(nil)
         case "isScreenCaptured":
             result(UIScreen.main.isCaptured)

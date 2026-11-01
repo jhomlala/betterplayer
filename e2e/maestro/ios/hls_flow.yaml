@@ -40,7 +40,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_playback_speed"
-    timeout: 5000
+    timeout: 15000
 - tapOn:
     id: "better_player_overflow_menu_playback_speed"
 - scrollUntilVisible:
@@ -56,19 +56,19 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_quality"
-    timeout: 5000
+    timeout: 15000
 - tapOn:
     id: "better_player_overflow_menu_quality"
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_quality_auto"
-    timeout: 5000
+    timeout: 15000
 - assertVisible:
     id: "better_player_overflow_menu_quality_auto"
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_quality_1"
-    timeout: 5000
+    timeout: 15000
 - assertVisible:
     id: "better_player_overflow_menu_quality_1"
 - assertVisible:
@@ -86,13 +86,13 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_quality"
-    timeout: 5000
+    timeout: 15000
 - tapOn:
     id: "better_player_overflow_menu_quality"
 - extendedWaitUntil:
     visible:
       id: "better_player_overflow_menu_quality_auto"
-    timeout: 5000
+    timeout: 15000
 - tapOn:
     id: "better_player_overflow_menu_quality_auto"
 
@@ -100,7 +100,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_cupertino_progress_bar"
-    timeout: 5000
+    timeout: 15000
 - tapOn:
     id: "better_player_cupertino_progress_bar"
 

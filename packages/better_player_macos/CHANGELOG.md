@@ -1,3 +1,7 @@
+## Unreleased
+- Fixed: Dispatched KVO observer updates and asynchronous video track loading to the main thread, guarded invalid asset durations in `getVideoComposition`, and kept observers attached after playback completion.
+- Fixed: Reset window screen capture protection (`sharingType = .readWrite`) on plugin registration across hot restarts.
+
 ## 1.5.0
 - Added: Screen capture and window recording protection via `NSWindow.sharingState`.
 - Updated: Dependency `better_player_platform_interface` to `^1.6.0`.

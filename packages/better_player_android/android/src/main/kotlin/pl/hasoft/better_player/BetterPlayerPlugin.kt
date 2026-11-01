@@ -34,9 +34,15 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         BetterPlayerApi.activity = binding.activity
     }
 
-    override fun onDetachedFromActivityForConfigChanges() {}
+    override fun onDetachedFromActivityForConfigChanges() {
+        activity = null
+        BetterPlayerApi.activity = null
+    }
 
-    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {}
+    override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        activity = binding.activity
+        BetterPlayerApi.activity = binding.activity
+    }
 
     override fun onDetachedFromActivity() {
         activity = null
@@ -47,22 +53,8 @@ class BetterPlayerPlugin : FlutterPlugin, ActivityAware, MethodCallHandler {
         when (call.method) {
             "setScreenCaptureProtection" -> {
                 val enabled = call.argument<Boolean>("enabled") ?: false
-                val currentActivity = activity
-                if (currentActivity != null) {
-                    currentActivity.runOnUiThread {
-                        if (enabled) {
-                            currentActivity.window?.setFlags(
-                                WindowManager.LayoutParams.FLAG_SECURE,
-                                WindowManager.LayoutParams.FLAG_SECURE
-                            )
-                        } else {
-                            currentActivity.window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
-                        }
-                        result.success(null)
-                    }
-                } else {
-                    result.success(null)
-                }
+                BetterPlayerApi.setScreenCaptureProtection(enabled)
+                result.success(null)
             }
             else -> result.notImplemented()
         }

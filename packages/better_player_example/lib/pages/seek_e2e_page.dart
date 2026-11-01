@@ -15,6 +15,7 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
   bool _isPlaying = false;
   bool _isInitialized = false;
   bool _seek10sVerified = false;
+  int _retryCount = 0;
 
   @override
   void initState() {
@@ -40,7 +41,28 @@ class _SeekE2EPageState extends State<SeekE2EPage> {
       if (event.betterPlayerEventType == PlayerEventType.initialized) {
         setState(() {
           _isInitialized = true;
+          _retryCount = 0;
         });
+      }
+      if (event.betterPlayerEventType == PlayerEventType.exception) {
+        final err =
+            event.parameters?['exception']?.toString() ??
+            _betterPlayerController.videoPlayerValue?.errorDescription;
+        if (err != null &&
+            (err.contains('TLS') || err.contains('-1200')) &&
+            _retryCount < 3) {
+          _retryCount++;
+          Future<void>.delayed(const Duration(seconds: 1), () {
+            if (mounted) {
+              _betterPlayerController.setupDataSource(
+                PlayerDataSource(
+                  DataSourceType.network,
+                  Constants.bugBuckBunnyVideoUrl,
+                ),
+              );
+            }
+          });
+        }
       }
       if (event.betterPlayerEventType == PlayerEventType.progress ||
           event.betterPlayerEventType == PlayerEventType.play ||

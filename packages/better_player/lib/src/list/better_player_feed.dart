@@ -64,7 +64,7 @@ class _BetterPlayerFeedItemState extends State<_BetterPlayerFeedItem> {
 
       if (lease != null) {
         lease.controller.addEventsListener(_onPlayerEvent);
-        if (lease.controller.isVideoInitialized() ?? false) {
+        if (lease.controller.videoPlayerValue?.initialized ?? false) {
           _firstFrameRendered = true;
         }
       }

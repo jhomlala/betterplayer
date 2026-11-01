@@ -1,3 +1,11 @@
+## Unreleased
+- Fixed: Restricted `MpvEventId.endFile` completion events to `MpvEndFileReason.eof`, restarted playback from `0.0` when `play()` is called after EOF, and preserved position on `time-pos` property query errors.
+- Fixed: Queried native video display dimensions (`dwidth`/`dheight`) in `CopyPixelBuffer` to avoid black frames prior to first decode and unnecessary CPU scaling.
+- Fixed: Eliminated deadlocks during `dispose`, `clear`, and plugin destruction by releasing mutex prior to tearing down player instances.
+- Fixed: Guarded zero or negative video frame dimensions in `CopyPixelBuffer` to prevent allocating temporary frame buffers before first frame presentation.
+- Fixed: Awaited pending native player cleanup during startup in `create()` to prevent race conditions with newly initialized players.
+- Fixed: Removed Linux shared library lookup candidates from Windows `mpv_ffi` bindings.
+
 ## 1.4.0
 - Added: Window screen capture protection via Win32 `SetWindowDisplayAffinity` (`WDA_EXCLUDEFROMCAPTURE`).
 - Updated: Dependency `better_player_platform_interface` to `^1.6.0`.
@@ -12,7 +20,6 @@
 - Fixed: Respected `overriddenDuration` when loading data sources and on property updates.
 - Fixed: Resolved video, audio, and subtitle track selection by matching IDs in `track-list`.
 - Fixed: Resolved local asset path resolution for packaged Flutter desktop executables.
-- Added: Supported Linux dynamic library resolution (`libmpv.so.2`, `libmpv.so.1`, `libmpv.so`) in `MpvBindings`.
 
 ## 1.2.1
 - Fixed: Aligned `BetterPlayerWindows.preCache` method signature with `BetterPlayerPlatform` in `better_player_platform_interface` 1.5.0.

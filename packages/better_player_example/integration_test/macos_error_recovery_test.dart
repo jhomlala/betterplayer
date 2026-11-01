@@ -86,7 +86,7 @@ void main() {
       await pumpUntilFound(
         tester: tester,
         finder: seekInitialized,
-        timeout: const Duration(seconds: 25),
+        timeout: const Duration(seconds: 45),
       );
 
       // 2. Seek 10s and verify

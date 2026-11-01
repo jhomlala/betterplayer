@@ -149,5 +149,80 @@ void main() {
       pool.onAppForeground();
       pool.dispose();
     });
+
+    test('Eviction notifies registered lease eviction listeners', () async {
+      final pool = BetterPlayerPool(
+        configuration: const PlayerPoolConfiguration(poolSize: 2),
+      );
+
+      final lease0 = await pool.acquire(
+        itemId: 'item_0',
+        index: 0,
+        dataSource: PlayerDataSource.network('https://example.com/0.mp4'),
+      );
+      final lease1 = await pool.acquire(
+        itemId: 'item_1',
+        index: 1,
+        dataSource: PlayerDataSource.network('https://example.com/1.mp4'),
+      );
+
+      var evictedNotified = false;
+      lease0.addEvictionListener(() {
+        evictedNotified = true;
+      });
+
+      pool.setActiveIndex(1);
+      final lease2 = await pool.acquire(
+        itemId: 'item_2',
+        index: 2,
+        dataSource: PlayerDataSource.network('https://example.com/2.mp4'),
+      );
+
+      expect(evictedNotified, isTrue);
+      expect(lease0.isValid, isFalse);
+      expect(lease1.isValid, isTrue);
+      expect(lease2.isValid, isTrue);
+
+      pool.dispose();
+    });
+
+    test(
+      'Acquiring an item while preloading cancels preload pause and returns active lease',
+      () async {
+        final pool = BetterPlayerPool(
+          configuration: const PlayerPoolConfiguration(
+            poolSize: 2,
+          ),
+        );
+
+        final dataSources = [
+          PlayerDataSource.network('https://example.com/0.mp4'),
+          PlayerDataSource.network('https://example.com/1.mp4'),
+        ];
+
+        await pool.acquire(
+          itemId: 'item_0',
+          index: 0,
+          dataSource: dataSources[0],
+        );
+
+        pool.updatePreloads(
+          currentIndex: 0,
+          dataSources: dataSources,
+          idGetter: (i) => 'item_$i',
+        );
+
+        final lease1 = await pool.acquire(
+          itemId: 'item_1',
+          index: 1,
+          dataSource: dataSources[1],
+        );
+
+        expect(lease1.itemId, 'item_1');
+        expect(lease1.isValid, isTrue);
+
+        pool.dispose();
+      },
+    );
   });
 }

@@ -35,8 +35,11 @@ BetterPlayerWindowsPlugin::BetterPlayerWindowsPlugin(
     : registrar_(registrar), channel_(std::move(channel)) {}
 
 BetterPlayerWindowsPlugin::~BetterPlayerWindowsPlugin() {
-  std::lock_guard<std::mutex> lock(mutex_);
-  players_.clear();
+  std::map<int64_t, std::unique_ptr<TextureBridge>> players;
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    players = std::move(players_);
+  }
 }
 
 void BetterPlayerWindowsPlugin::HandleMethodCall(
@@ -75,17 +78,25 @@ void BetterPlayerWindowsPlugin::HandleMethodCall(
     }
 
     int64_t texture_id = texture_id_it->second.LongValue();
+    std::unique_ptr<TextureBridge> player_to_destroy;
     {
       std::lock_guard<std::mutex> lock(mutex_);
-      players_.erase(texture_id);
+      auto it = players_.find(texture_id);
+      if (it != players_.end()) {
+        player_to_destroy = std::move(it->second);
+        players_.erase(it);
+      }
     }
+    player_to_destroy.reset();
 
     result->Success();
   } else if (method_call.method_name().compare("clear") == 0) {
+    std::map<int64_t, std::unique_ptr<TextureBridge>> players_to_clear;
     {
       std::lock_guard<std::mutex> lock(mutex_);
-      players_.clear();
+      players_to_clear = std::move(players_);
     }
+    players_to_clear.clear();
     result->Success();
   } else if (method_call.method_name().compare("setScreenCaptureProtection") == 0) {
     const auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());

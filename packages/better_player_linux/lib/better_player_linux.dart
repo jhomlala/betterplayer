@@ -21,8 +21,13 @@ class BetterPlayerLinux extends BetterPlayerPlatform {
     _cleanupOrphanedPlayers();
   }
 
+  Future<void>? _cleanupFuture;
+
   void _cleanupOrphanedPlayers() {
-    _channel.invokeMethod<void>('clear').catchError((_) {});
+    _cleanupFuture = _channel
+        .invokeMethod<void>('clear')
+        .catchError((_) {})
+        .whenComplete(() => _cleanupFuture = null);
   }
 
   static void registerWith() {
@@ -94,6 +99,9 @@ class BetterPlayerLinux extends BetterPlayerPlatform {
     BufferingConfiguration? bufferingConfiguration,
   }) async {
     try {
+      if (_cleanupFuture != null) {
+        await _cleanupFuture;
+      }
       if (bufferingConfiguration != null) {
         _log(
           message:

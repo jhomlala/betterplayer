@@ -59,13 +59,16 @@ File? _resolveFile(String path) {
     }
   }
 
-  try {
-    for (final entity in Directory.current.listSync(recursive: true)) {
-      if (entity is File && entity.path.endsWith(filename)) {
-        return entity;
-      }
+  final candidates = [
+    File(filename),
+    File('packages/better_player_example/$filename'),
+    File('e2e/playwright/$filename'),
+  ];
+  for (final candidate in candidates) {
+    if (candidate.existsSync()) {
+      return candidate;
     }
-  } catch (_) {}
+  }
 
   return null;
 }

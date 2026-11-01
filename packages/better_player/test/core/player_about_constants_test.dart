@@ -6,14 +6,18 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('PlayerAboutConstants', () {
     test('version matches pubspec.yaml', () {
-      var file = File('pubspec.yaml');
-      if (!file.existsSync() ||
-          !RegExp(
-            '^version:',
-            multiLine: true,
-          ).hasMatch(file.readAsStringSync())) {
-        file = File('packages/better_player/pubspec.yaml');
-      }
+      final candidates = [
+        File('packages/better_player/pubspec.yaml'),
+        File('pubspec.yaml'),
+      ];
+      final file = candidates.firstWhere(
+        (f) =>
+            f.existsSync() &&
+            RegExp(
+              '^version:',
+              multiLine: true,
+            ).hasMatch(f.readAsStringSync()),
+      );
       final pubspec = file.readAsStringSync();
       final match = RegExp(
         r'^version:\s*(\S+)',

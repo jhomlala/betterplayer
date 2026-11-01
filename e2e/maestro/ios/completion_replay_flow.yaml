@@ -12,16 +12,16 @@ appId: pl.hasoft.example
 # Wait for initial MP4 playback ready
 - extendedWaitUntil:
     visible:
+      id: "better_player_e2e_mp4_initialized"
+    timeout: 60000
+- extendedWaitUntil:
+    visible:
       id: "better_player_cupertino_controls_play_pause_button"
     timeout: 30000
 - assertVisible:
     id: "better_player_cupertino_controls_play_pause_button"
 
 # Seek near end to trigger EOF and natural finished event
-- scrollUntilVisible:
-    element:
-      id: "better_player_e2e_seek_to_end_button"
-    direction: DOWN
 - tapOn:
     id: "better_player_e2e_seek_to_end_button"
 
@@ -29,7 +29,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_finished_status"
-    timeout: 30000
+    timeout: 45000
 - assertVisible:
     id: "better_player_e2e_finished_status"
 

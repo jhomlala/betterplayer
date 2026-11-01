@@ -221,9 +221,9 @@ private var presentationSizeContext = 0
                 p.seek(to: .zero, completionHandler: nil)
             }
         } else {
+            isPlaying = false
             if callback != nil {
                 callback?.onCompleted(key: key)
-                removeObservers()
             }
         }
     }
@@ -238,9 +238,17 @@ private var presentationSizeContext = 0
 
     private func getVideoComposition(transform: CGAffineTransform, asset: AVAsset, videoTrack: AVAssetTrack) -> AVMutableVideoComposition {
         let instruction = AVMutableVideoCompositionInstruction()
-        instruction.timeRange = CMTimeRangeMake(start: .zero, duration: asset.duration)
+        let duration: CMTime
+        if CMTIME_IS_VALID(asset.duration) && !CMTIME_IS_INDEFINITE(asset.duration) && asset.duration.seconds > 0 {
+            duration = asset.duration
+        } else if let item = player.currentItem, CMTIME_IS_VALID(item.duration) && !CMTIME_IS_INDEFINITE(item.duration) && item.duration.seconds > 0 {
+            duration = item.duration
+        } else {
+            duration = CMTime(seconds: 86400 * 365, preferredTimescale: 600)
+        }
+        instruction.timeRange = CMTimeRangeMake(start: .zero, duration: duration)
         let layerInstruction = AVMutableVideoCompositionLayerInstruction(assetTrack: videoTrack)
-        layerInstruction.setTransform(preferredTransform, at: .zero)
+        layerInstruction.setTransform(transform, at: .zero)
 
         let videoComposition = AVMutableVideoComposition()
         instruction.layerInstructions = [layerInstruction]
@@ -248,7 +256,7 @@ private var presentationSizeContext = 0
 
         var width = videoTrack.naturalSize.width
         var height = videoTrack.naturalSize.height
-        let rotationDegrees = Int(round(radiansToDegrees(atan2(preferredTransform.b, preferredTransform.a))))
+        let rotationDegrees = Int(round(radiansToDegrees(atan2(transform.b, transform.a))))
         if rotationDegrees == 90 || rotationDegrees == 270 {
             width = videoTrack.naturalSize.height
             height = videoTrack.naturalSize.width
@@ -349,22 +357,35 @@ private var presentationSizeContext = 0
         BetterPlayerApi.log(1, "setDataSource: item replaced")
 
         let asset = item.asset
-        asset.loadValuesAsynchronously(forKeys: ["tracks"]) { [weak self] in
+        asset.loadValuesAsynchronously(forKeys: ["tracks", "duration"]) { [weak self] in
             guard let self = self, !self.disposed else { return }
             if asset.statusOfValue(forKey: "tracks", error: nil) == .loaded {
                 let tracks = asset.tracks(withMediaType: .video)
                 if let videoTrack = tracks.first {
-                    videoTrack.loadValuesAsynchronously(forKeys: ["preferredTransform"]) { [weak self] in
-                        guard let self = self, !self.disposed else { return }
-                        if videoTrack.statusOfValue(forKey: "preferredTransform", error: nil) == .loaded {
-                            let fixedTransform = self.fixTransform(videoTrack)
-                            self.preferredTransform = fixedTransform
-                            // Only apply videoComposition if the video actually has rotation/transform metadata,
-                            // allowing normal videos to stay on zero-copy hardware presentation pipeline.
-                            if !fixedTransform.isIdentity {
-                                let videoComposition = self.getVideoComposition(transform: fixedTransform, asset: asset, videoTrack: videoTrack)
-                                item.videoComposition = videoComposition
+                    videoTrack.loadValuesAsynchronously(forKeys: ["preferredTransform", "naturalSize", "nominalFrameRate"]) { [weak self] in
+                        DispatchQueue.main.async {
+                            guard let self = self, !self.disposed, self.player.currentItem === item else { return }
+                            if videoTrack.statusOfValue(forKey: "preferredTransform", error: nil) == .loaded {
+                                let fixedTransform = self.fixTransform(videoTrack)
+                                self.preferredTransform = fixedTransform
+                                let rotationDegrees = Int(round(self.radiansToDegrees(atan2(fixedTransform.b, fixedTransform.a)))) % 360
+                                // Only apply videoComposition if the video actually has rotation metadata,
+                                // allowing normal videos to stay on zero-copy hardware presentation pipeline.
+                                if !fixedTransform.isIdentity && (rotationDegrees == 90 || rotationDegrees == 180 || rotationDegrees == 270) {
+                                    let videoComposition = self.getVideoComposition(transform: fixedTransform, asset: asset, videoTrack: videoTrack)
+                                    item.videoComposition = videoComposition
+                                }
                             }
+                            if !self.isInitialized {
+                                self.onReadyToPlay()
+                            }
+                        }
+                    }
+                } else {
+                    DispatchQueue.main.async { [weak self] in
+                        guard let self = self, !self.disposed, self.player.currentItem === item else { return }
+                        if !self.isInitialized {
+                            self.onReadyToPlay()
                         }
                     }
                 }
@@ -417,6 +438,13 @@ private var presentationSizeContext = 0
     // MARK: - KVO observeValue
 
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if !Thread.isMainThread {
+            let observedObject = object as AnyObject?
+            DispatchQueue.main.async { [weak self] in
+                self?.observeValue(forKeyPath: keyPath, of: observedObject, change: nil, context: context)
+            }
+            return
+        }
         guard !disposed, callback != nil else { return }
 
         if keyPath == "rate" {
@@ -576,14 +604,23 @@ private var presentationSizeContext = 0
         }
         guard !disposed, callback != nil, !isInitialized, key != nil else { return }
         guard let currentItem = player.currentItem else { return }
-        guard player.status == .readyToPlay else { return }
+        guard player.status == .readyToPlay, currentItem.status == .readyToPlay else { return }
 
         let size = currentItem.presentationSize
         var width = size.width
         var height = size.height
 
         let asset = currentItem.asset
-        let onlyAudio = asset.tracks(withMediaType: .video).count == 0
+        let videoTracks = asset.tracks(withMediaType: .video)
+        let onlyAudio = videoTracks.isEmpty
+
+        if let track = currentItem.tracks.first(where: { $0.assetTrack?.mediaType == .video })?.assetTrack ?? videoTracks.first {
+            let naturalSize = track.naturalSize
+            let prefTrans = track.preferredTransform
+            let realSize = naturalSize.applying(prefTrans)
+            width = abs(realSize.width) != 0 ? abs(realSize.width) : width
+            height = abs(realSize.height) != 0 ? abs(realSize.height) : height
+        }
 
         if !onlyAudio && height == .zero && width == .zero {
             return
@@ -601,14 +638,6 @@ private var presentationSizeContext = 0
         // where Dart receives 0ms for a static file.
         if !isLive && dur <= 0 {
             return
-        }
-
-        if let track = currentItem.tracks.first?.assetTrack {
-            let naturalSize = track.naturalSize
-            let prefTrans = track.preferredTransform
-            let realSize = naturalSize.applying(prefTrans)
-            width = abs(realSize.width) != 0 ? abs(realSize.width) : width
-            height = abs(realSize.height) != 0 ? abs(realSize.height) : height
         }
 
         let durMs = BetterPlayerTimeUtils.cmTimeToMillis(assetDuration)
