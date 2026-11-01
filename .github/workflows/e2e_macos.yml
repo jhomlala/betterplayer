@@ -54,3 +54,21 @@ jobs:
       - name: Run macOS Integration Tests
         working-directory: packages/better_player_example
         run: flutter test integration_test/macos_all_tests.dart -d macos --no-pub
+
+      - name: Check video frames are not black (#1632)
+        if: always()
+        run: |
+          if [ -f "feed_render_item_0.png" ]; then
+            dart scripts/check_video_frame.dart feed_render_item_0.png feed_render_item_1.png
+          fi
+
+      - name: Upload macOS Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-e2e-screenshots
+          path: |
+            packages/better_player_example/*.png
+            *.png
+            feed_render_item_*.png
+          if-no-files-found: ignore

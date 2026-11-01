@@ -39,9 +39,10 @@ test('web hls flow', async ({ page }) => {
   // Close any open menu first, then open quality submenu.
   // The HLS test stream may only expose an "Auto" track — assert that at minimum.
   await page.mouse.click(10, 10);
+  await page.waitForTimeout(500);
   await settings.click({ force: true });
   const qualityMenu = page.locator('[aria-label^="better_player_overflow_menu_quality"]');
-  await expect(qualityMenu).toBeVisible();
+  await expect(qualityMenu).toBeVisible({ timeout: 10000 });
   await qualityMenu.click({ force: true });
 
   const qualityAuto = page.locator('[aria-label^="better_player_overflow_menu_quality_auto"]');

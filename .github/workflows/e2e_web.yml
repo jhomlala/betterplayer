@@ -5,6 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -51,10 +52,17 @@ jobs:
       - name: Run Playwright tests
         run: cd e2e/playwright && npx playwright test
 
+      - name: Check video frames are not black (#1632)
+        run: |
+          dart scripts/check_video_frame.dart e2e/playwright/feed_render_item_0.png e2e/playwright/feed_render_item_1.png || dart scripts/check_video_frame.dart feed_render_item_0.png feed_render_item_1.png
+
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-web-report
-          path: e2e/playwright/playwright-report/
+          path: |
+            e2e/playwright/playwright-report/
+            e2e/playwright/feed_render_item_*.png
+            feed_render_item_*.png
           retention-days: 14

@@ -47,6 +47,7 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
+            imagemagick \
             libgtk-3-dev \
             libmpv-dev \
             xvfb
@@ -66,6 +67,15 @@ jobs:
         run: |
           xvfb-run -a flutter test integration_test/linux_all_tests.dart -d linux --no-pub
 
+      - name: Check video frames are not black (#1632)
+        if: always()
+        run: |
+          if [ -f "feed_render_item_0.png" ]; then
+            dart scripts/check_video_frame.dart feed_render_item_0.png feed_render_item_1.png
+          elif [ -f "packages/better_player_example/feed_render_item_0.png" ]; then
+            dart scripts/check_video_frame.dart packages/better_player_example/feed_render_item_0.png packages/better_player_example/feed_render_item_1.png
+          fi
+
       - name: Upload Linux Screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -74,4 +84,5 @@ jobs:
           path: |
             packages/better_player_example/*.png
             *.png
+            feed_render_item_*.png
           if-no-files-found: ignore
