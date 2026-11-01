@@ -14,6 +14,18 @@ class _FFITestPageState extends State<FFITestPage> {
   final Map<String, bool?> _results = {};
   bool _isInitialized = false;
   String? _errorMessage;
+  int _retryCount = 0;
+
+  void _setupDataSource() {
+    final betterPlayerDataSource = PlayerDataSource(
+      DataSourceType.network,
+      Constants.bugBuckBunnyVideoUrl,
+    );
+    debugPrint(
+      'FFI TEST PAGE: Setting up data source: ${betterPlayerDataSource.url} (attempt ${_retryCount + 1})',
+    );
+    _betterPlayerController.setupDataSource(betterPlayerDataSource);
+  }
 
   @override
   void initState() {
@@ -38,9 +50,18 @@ class _FFITestPageState extends State<FFITestPage> {
         final error =
             event.parameters?['exception']?.toString() ?? 'Unknown error';
         debugPrint('FFI TEST PAGE: EXCEPTION: $error');
-        setState(() {
-          _errorMessage = error;
-        });
+        if (!_isInitialized && _retryCount < 3) {
+          _retryCount++;
+          Future<void>.delayed(const Duration(seconds: 2), () {
+            if (mounted && !_isInitialized) {
+              _setupDataSource();
+            }
+          });
+        } else {
+          setState(() {
+            _errorMessage = error;
+          });
+        }
       }
     });
 
@@ -54,14 +75,7 @@ class _FFITestPageState extends State<FFITestPage> {
         });
       }
 
-      final betterPlayerDataSource = PlayerDataSource(
-        DataSourceType.network,
-        Constants.bugBuckBunnyVideoUrl,
-      );
-      debugPrint(
-        'FFI TEST PAGE: Setting up data source: ${betterPlayerDataSource.url}',
-      );
-      _betterPlayerController.setupDataSource(betterPlayerDataSource);
+      _setupDataSource();
     });
   }
 

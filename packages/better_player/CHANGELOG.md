@@ -1,7 +1,7 @@
 ## Unreleased
 - Added: End-to-end seek tests across Windows, Linux, macOS integration tests, Playwright (Web), and Maestro (iOS & Android).
 - Added: Unit test coverage for `PlayerPoolLease` eviction listeners, release callbacks, and lifecycle states.
-- Fixed: Resolved preload-to-active race condition and busy slot eviction in `BetterPlayerPool`.
+- Fixed: Resolved preload-to-active race condition, busy slot eviction, and uninitialized engine state errors in `BetterPlayerPool` and `BetterPlayerFeedController`.
 - Fixed: Triggered deferred autoplay on initialization, cleared evicted lease notifiers, and preserved external `PageController` lifecycle in `BetterPlayerFeedController`.
 - Fixed: Cleaned up pooled controller listeners on feed index changes and page disposal in E2E feed tests.
 - Fixed: Corrected feed controller snippet syntax in documentation.

@@ -292,7 +292,7 @@ class BetterPlayerPool {
   void _resetSlot(_PlayerPoolSlot slot) {
     if (slot.currentSourceUrl != null) {
       try {
-        if (slot.controller.isVideoInitialized() ?? false) {
+        if (slot.controller.videoPlayerValue?.initialized ?? false) {
           unawaited(slot.controller.pause().catchError((_) {}));
           unawaited(slot.controller.setVolume(1).catchError((_) {}));
         }
@@ -366,7 +366,7 @@ class BetterPlayerPool {
           await slot.controller.setVolume(0);
           await slot.controller.play();
         } else {
-          if (slot.controller.isVideoInitialized() ?? false) {
+          if (slot.controller.videoPlayerValue?.initialized ?? false) {
             await slot.controller.pause();
           }
         }
@@ -431,7 +431,7 @@ class BetterPlayerPool {
     for (final slot in _slots) {
       if (slot.currentSourceUrl != null) {
         try {
-          if (slot.controller.isVideoInitialized() ?? false) {
+          if (slot.controller.videoPlayerValue?.initialized ?? false) {
             unawaited(slot.controller.pause().catchError((_) {}));
           }
         } catch (_) {}

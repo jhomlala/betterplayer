@@ -12,6 +12,10 @@ appId: pl.hasoft.example
 # Wait for initial MP4 playback ready
 - extendedWaitUntil:
     visible:
+      id: "better_player_e2e_mp4_initialized"
+    timeout: 60000
+- extendedWaitUntil:
+    visible:
       id: "better_player_material_controls_play_pause_button"
     timeout: 30000
 - assertVisible:

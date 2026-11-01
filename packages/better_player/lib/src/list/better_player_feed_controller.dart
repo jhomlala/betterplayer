@@ -84,7 +84,7 @@ class BetterPlayerFeedController extends ChangeNotifier {
     if (previousIndex != index) {
       final prevLease = _leaseNotifiers[previousIndex]?.value;
       if (prevLease != null &&
-          (prevLease.controller.isVideoInitialized() ?? false)) {
+          (prevLease.controller.videoPlayerValue?.initialized ?? false)) {
         unawaited(prevLease.controller.pause().catchError((_) {}));
       }
     }
@@ -126,26 +126,25 @@ class BetterPlayerFeedController extends ChangeNotifier {
     required PlayerPoolLease lease,
     required int index,
   }) {
-    if (lease.controller.isVideoInitialized() ?? false) {
-      unawaited(lease.controller.setVolume(1));
-      unawaited(lease.controller.play());
-      return;
-    }
+    unawaited(lease.controller.setVolume(1));
+    unawaited(lease.controller.play());
 
-    late final void Function(PlayerEvent) initListener;
-    initListener = (event) {
-      if (event.betterPlayerEventType == PlayerEventType.initialized) {
-        lease.controller.removeEventsListener(initListener);
-        if (!_isDisposed && _currentIndex == index && lease.isValid) {
-          unawaited(lease.controller.setVolume(1));
-          unawaited(lease.controller.play());
+    if (!(lease.controller.videoPlayerValue?.initialized ?? false)) {
+      late final void Function(PlayerEvent) initListener;
+      initListener = (event) {
+        if (event.betterPlayerEventType == PlayerEventType.initialized) {
+          lease.controller.removeEventsListener(initListener);
+          if (!_isDisposed && _currentIndex == index && lease.isValid) {
+            unawaited(lease.controller.setVolume(1));
+            unawaited(lease.controller.play());
+          }
         }
-      }
-    };
-    lease.addEvictionListener(() {
-      lease.controller.removeEventsListener(initListener);
-    });
-    lease.controller.addEventsListener(initListener);
+      };
+      lease.addEvictionListener(() {
+        lease.controller.removeEventsListener(initListener);
+      });
+      lease.controller.addEventsListener(initListener);
+    }
   }
 
   /// Appends more data sources to the feed (for infinite pagination).

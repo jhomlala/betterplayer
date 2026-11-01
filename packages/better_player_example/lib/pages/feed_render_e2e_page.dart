@@ -62,14 +62,14 @@ class _FeedRenderE2EPageState extends State<FeedRenderE2EPage> {
     void bindController(BetterPlayerController controller) {
       if (!mounted) return;
       _currentController = controller;
-      if (controller.isPlaying() ?? false) {
+      if (controller.videoPlayerValue?.isPlaying ?? false) {
         _playingIndex.value = index;
       }
       void onEvent(PlayerEvent event) {
         if (!mounted) return;
         if (event.betterPlayerEventType == PlayerEventType.play ||
             (event.betterPlayerEventType == PlayerEventType.progress &&
-                (controller.isPlaying() ?? false))) {
+                (controller.videoPlayerValue?.isPlaying ?? false))) {
           _playingIndex.value = index;
         }
       }
