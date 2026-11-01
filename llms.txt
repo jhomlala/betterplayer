@@ -51,10 +51,12 @@ final dataSource = PlayerDataSource(
 ```dart
 final feedController = BetterPlayerFeedController(
   dataSources: videoDataSources,
-  configuration: const PlayerFeedConfiguration(
-    preloadAhead: 2,
-    preloadBehind: 1,
-    poolConfiguration: PlayerPoolConfiguration(poolSize: 4),
+  poolConfiguration: const PlayerPoolConfiguration(
+    poolSize: 4,
+    playerConfiguration: PlayerConfiguration(
+      looping: true,
+      fit: BoxFit.contain,
+    ),
   ),
 );
 
