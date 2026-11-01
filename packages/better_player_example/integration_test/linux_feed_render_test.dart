@@ -49,7 +49,7 @@ void main() {
       );
 
       // Wait a moment for frames to decode and render
-      await Future<void>.delayed(const Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(seconds: 4));
       await tester.pump(const Duration(seconds: 1));
 
       // Capture screenshot if import is available
@@ -78,7 +78,7 @@ void main() {
       );
 
       // Wait a moment for frames to decode and render
-      await Future<void>.delayed(const Duration(seconds: 2));
+      await Future<void>.delayed(const Duration(seconds: 4));
       await tester.pump(const Duration(seconds: 1));
 
       // Capture screenshot if import is available
