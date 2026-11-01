@@ -16,6 +16,7 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
 
     public static func register(with registrar: FlutterPluginRegistrar) {
         better_player_ios_force_load_symbols()
+        setScreenCaptureProtection(enabled: false)
         BetterPlayerApi.cleanUp()
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
