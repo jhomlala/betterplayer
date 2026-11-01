@@ -1,4 +1,6 @@
 ## Unreleased
+- Fixed: Implemented secure screen capture and recording protection on window layer using `UITextField.isSecureTextEntry` hierarchy.
+- Fixed: Ensured screen capture protection is disabled on plugin cleanup.
 - Fixed: Resolved black screen on iOS Simulator by returning stable `FlutterPlatformView` instances per platform view ID, skipping `AVMutableVideoComposition` for unrotated videos, and resolving video track dimensions before presentation size checks (#1632).
 - Fixed: App crash on hot restart by using asynchronous listener callbacks (`implementAsListener`), dispatching KVO observer updates to the main thread, tracking `observedItem` for observer removal, and cleaning up orphaned native players on initialization (#1632).
 

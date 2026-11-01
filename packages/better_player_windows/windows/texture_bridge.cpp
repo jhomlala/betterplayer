@@ -140,8 +140,11 @@ const FlutterDesktopPixelBuffer* TextureBridge::CopyPixelBuffer(size_t width, si
       g_mpv.get_property(mpv_, "dwidth", MPV_FORMAT_INT64, &dw);
       g_mpv.get_property(mpv_, "dheight", MPV_FORMAT_INT64, &dh);
     }
-    width = dw > 0 ? static_cast<size_t>(dw) : 1280;
-    height = dh > 0 ? static_cast<size_t>(dh) : 720;
+    if (dw <= 0 || dh <= 0) {
+      return nullptr;
+    }
+    width = static_cast<size_t>(dw);
+    height = static_cast<size_t>(dh);
   }
 
   size_t required_bytes = width * height * 4;

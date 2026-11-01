@@ -40,42 +40,63 @@ class _FeedRenderE2EPageState extends State<FeedRenderE2EPage> {
     _onFeedChanged();
   }
 
+  BetterPlayerController? _currentController;
+  void Function(PlayerEvent)? _currentEventListener;
+  VoidCallback? _pendingNotifierCleanup;
+
+  void _cleanupFeedListeners() {
+    if (_currentController != null && _currentEventListener != null) {
+      _currentController!.removeEventsListener(_currentEventListener!);
+      _currentController = null;
+      _currentEventListener = null;
+    }
+    _pendingNotifierCleanup?.call();
+    _pendingNotifierCleanup = null;
+  }
+
   void _onFeedChanged() {
+    _cleanupFeedListeners();
     final index = _feedController.currentIndex;
     final notifier = _feedController.getLeaseNotifier(index);
-    void markWhenPlaying() {
-      final controller = notifier.value?.controller;
-      if (controller == null) {
-        return;
-      }
+
+    void bindController(BetterPlayerController controller) {
+      if (!mounted) return;
+      _currentController = controller;
       if (controller.isPlaying() ?? false) {
         _playingIndex.value = index;
       }
-      controller.addEventsListener((event) {
-        if (event.betterPlayerEventType == PlayerEventType.play) {
+      void onEvent(PlayerEvent event) {
+        if (!mounted) return;
+        if (event.betterPlayerEventType == PlayerEventType.play ||
+            (event.betterPlayerEventType == PlayerEventType.progress &&
+                (controller.isPlaying() ?? false))) {
           _playingIndex.value = index;
-        } else if (event.betterPlayerEventType == PlayerEventType.progress) {
-          if (controller.isPlaying() ?? false) {
-            _playingIndex.value = index;
-          }
         }
-      });
-    }
-
-    if (notifier.value != null) {
-      markWhenPlaying();
-    } else {
-      void once() {
-        notifier.removeListener(once);
-        markWhenPlaying();
       }
 
-      notifier.addListener(once);
+      _currentEventListener = onEvent;
+      controller.addEventsListener(onEvent);
+    }
+
+    if (notifier.value?.controller != null) {
+      bindController(notifier.value!.controller);
+    } else {
+      void onNotifier() {
+        if (notifier.value?.controller != null) {
+          notifier.removeListener(onNotifier);
+          _pendingNotifierCleanup = null;
+          bindController(notifier.value!.controller);
+        }
+      }
+
+      _pendingNotifierCleanup = () => notifier.removeListener(onNotifier);
+      notifier.addListener(onNotifier);
     }
   }
 
   @override
   void dispose() {
+    _cleanupFeedListeners();
     _feedController
       ..removeListener(_onFeedChanged)
       ..dispose();

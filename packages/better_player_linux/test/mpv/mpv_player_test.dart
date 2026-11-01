@@ -389,23 +389,13 @@ void main() {
         onLog: ({required message, required levelIndex}) => logs.add(message),
       );
 
-      // 1. file:///C:/path/to/video.mp4 -> C:/path/to/video.mp4
       await player.setDataSource(
         DataSource(
           sourceType: DataSourceType.file,
-          uri: 'file:///C:/path/to/video.mp4',
+          uri: 'file:///home/user/video.mp4',
         ),
       );
-      expect(executedCommands.last, ['loadfile', 'C:/path/to/video.mp4']);
-
-      // 2. file://C:\path\to\video.mp4 -> C:\path\to\video.mp4
-      await player.setDataSource(
-        DataSource(
-          sourceType: DataSourceType.file,
-          uri: r'file://C:\path\to\video.mp4',
-        ),
-      );
-      expect(executedCommands.last, ['loadfile', r'C:\path\to\video.mp4']);
+      expect(executedCommands.last, ['loadfile', '/home/user/video.mp4']);
 
       await player.dispose();
     });

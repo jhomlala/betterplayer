@@ -191,8 +191,11 @@ gboolean TextureBridge::CopyPixels(const uint8_t** out_buffer, uint32_t* width, 
       g_mpv.get_property(mpv_, "dwidth", MPV_FORMAT_INT64, &dw);
       g_mpv.get_property(mpv_, "dheight", MPV_FORMAT_INT64, &dh);
     }
-    w = dw > 0 ? static_cast<size_t>(dw) : 1280;
-    h = dh > 0 ? static_cast<size_t>(dh) : 720;
+    if (dw <= 0 || dh <= 0) {
+      return FALSE;
+    }
+    w = static_cast<size_t>(dw);
+    h = static_cast<size_t>(dh);
   }
 
   size_t required_bytes = w * h * 4;

@@ -552,11 +552,10 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
       }
     }
     if (url.startsWith('file://')) {
-      final stripped = url.substring(7);
-      if (stripped.length >= 3 && stripped[0] == '/' && stripped[2] == ':') {
-        url = stripped.substring(1);
-      } else {
-        url = stripped;
+      try {
+        url = Uri.parse(url).toFilePath(windows: false);
+      } catch (_) {
+        url = url.substring(7);
       }
     }
     _log(message: 'setDataSource: $url');

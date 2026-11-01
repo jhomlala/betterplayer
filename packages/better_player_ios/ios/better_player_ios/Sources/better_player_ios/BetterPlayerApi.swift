@@ -109,6 +109,7 @@ import AVKit
     }
 
     @objc public static func cleanUp() {
+        BetterPlayerPlugin.setScreenCaptureProtection(enabled: false)
         _logCallback = nil
         _preCacheCallback = nil
         let activePlayers = Array(players.values)

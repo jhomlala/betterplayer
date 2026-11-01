@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Synchronized `BetterPlayerApi.activity` during activity configuration changes and removed duplicated screen capture protection logic.
+
 ## 1.10.0
 - Added: Window screen capture and recording protection via Android `FLAG_SECURE` window flag.
 - Updated: Dependency `better_player_platform_interface` to `^1.6.0`.
