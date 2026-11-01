@@ -578,9 +578,254 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                   ),
                 ),
               ),
-            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: [
+                  if (_isDataSourceInitialized &&
+                      _currentUrl == Constants.bugBuckBunnyVideoUrl)
+                    Semantics(
+                      identifier: 'better_player_e2e_mp4_initialized',
+                      label: 'better_player_e2e_mp4_initialized',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.green),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'MP4 Initialized',
+                          style: TextStyle(fontSize: 10, color: Colors.green),
+                        ),
+                      ),
+                    ),
+                  if (_isDataSourceInitialized &&
+                      _currentUrl == Constants.hlsTestStreamUrl &&
+                      _betterPlayerController.betterPlayerAsmsTracks.isNotEmpty)
+                    Semantics(
+                      identifier: 'better_player_e2e_hls_initialized',
+                      label: 'better_player_e2e_hls_initialized',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.green),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'HLS Initialized',
+                          style: TextStyle(fontSize: 10, color: Colors.green),
+                        ),
+                      ),
+                    ),
+                  if (_allCoreEventsVerified)
+                    Semantics(
+                      identifier: 'better_player_e2e_events_verified',
+                      label: 'better_player_e2e_events_verified',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Core Events Verified',
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
+                      ),
+                    ),
+                  if (_keyboardShortcutVerified)
+                    Semantics(
+                      identifier: 'better_player_e2e_keyboard_shortcut_status',
+                      label: 'better_player_e2e_keyboard_shortcut_status',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Keyboard Shortcut Verified',
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
+                      ),
+                    ),
+                  if (_runtimeConfigUpdated)
+                    Semantics(
+                      identifier: 'better_player_e2e_runtime_config_status',
+                      label: 'better_player_e2e_runtime_config_status',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Runtime Config Updated',
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
+                      ),
+                    ),
+                  if (_visibilityCallbackFired)
+                    Semantics(
+                      identifier:
+                          'better_player_e2e_visibility_callback_status',
+                      label: 'better_player_e2e_visibility_callback_status',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Visibility Callback Fired',
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
+                      ),
+                    ),
+                  if (_playlistVerified)
+                    Semantics(
+                      identifier: 'better_player_e2e_playlist_status',
+                      label: 'better_player_e2e_playlist_status',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Playlist Verified',
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
+                      ),
+                    ),
+                  if (_listPlayerVerified)
+                    Semantics(
+                      identifier: 'better_player_e2e_list_player_status',
+                      label: 'better_player_e2e_list_player_status',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'List Player Verified',
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
+                      ),
+                    ),
+                  if (_localFileVerified)
+                    Semantics(
+                      identifier: 'better_player_e2e_file_status',
+                      label: 'better_player_e2e_file_status',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.blue),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Local File Verified',
+                          style: TextStyle(fontSize: 10, color: Colors.blue),
+                        ),
+                      ),
+                    ),
+                  if (_videoFinished)
+                    Semantics(
+                      identifier: 'better_player_e2e_finished_status',
+                      label: 'better_player_e2e_finished_status',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.green),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Video Finished',
+                          style: TextStyle(fontSize: 10, color: Colors.green),
+                        ),
+                      ),
+                    ),
+                  if (_videoReplayed)
+                    Semantics(
+                      identifier: 'better_player_e2e_replayed_status',
+                      label: 'better_player_e2e_replayed_status',
+                      container: true,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          border: Border.all(color: Colors.green),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'Video Replayed',
+                          style: TextStyle(fontSize: 10, color: Colors.green),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
             Wrap(
               spacing: 8,
+              runSpacing: 4,
               children: [
                 Semantics(
                   identifier: 'better_player_e2e_setup_mp4',
@@ -751,106 +996,6 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
-            if (_allCoreEventsVerified)
-              Semantics(
-                identifier: 'better_player_e2e_events_verified',
-                label: 'better_player_e2e_events_verified',
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Core Events Verified'),
-                ),
-              ),
-            if (_keyboardShortcutVerified)
-              Semantics(
-                identifier: 'better_player_e2e_keyboard_shortcut_status',
-                label: 'better_player_e2e_keyboard_shortcut_status',
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Keyboard Shortcut Verified'),
-                ),
-              ),
-            if (_runtimeConfigUpdated)
-              Semantics(
-                identifier: 'better_player_e2e_runtime_config_status',
-                label: 'better_player_e2e_runtime_config_status',
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Runtime Config Updated'),
-                ),
-              ),
-            if (_visibilityCallbackFired)
-              Semantics(
-                identifier: 'better_player_e2e_visibility_callback_status',
-                label: 'better_player_e2e_visibility_callback_status',
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Visibility Callback Fired'),
-                ),
-              ),
-            if (_playlistVerified)
-              Semantics(
-                identifier: 'better_player_e2e_playlist_status',
-                label: 'better_player_e2e_playlist_status',
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Playlist Verified'),
-                ),
-              ),
-            if (_listPlayerVerified)
-              Semantics(
-                identifier: 'better_player_e2e_list_player_status',
-                label: 'better_player_e2e_list_player_status',
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('List Player Verified'),
-                ),
-              ),
-            if (_localFileVerified)
-              Semantics(
-                identifier: 'better_player_e2e_file_status',
-                label: 'better_player_e2e_file_status',
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Local File Verified'),
-                ),
-              ),
-            if (_videoFinished)
-              Semantics(
-                identifier: 'better_player_e2e_finished_status',
-                label: 'better_player_e2e_finished_status',
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Video Finished'),
-                ),
-              ),
-            if (_videoReplayed)
-              Semantics(
-                identifier: 'better_player_e2e_replayed_status',
-                label: 'better_player_e2e_replayed_status',
-                child: ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Video Replayed'),
-                ),
-              ),
-            if (_isDataSourceInitialized &&
-                _currentUrl == Constants.hlsTestStreamUrl &&
-                _betterPlayerController.betterPlayerAsmsTracks.isNotEmpty)
-              Semantics(
-                identifier: 'better_player_e2e_hls_initialized',
-                label: 'better_player_e2e_hls_initialized',
-                container: true,
-                child: const Text('HLS Initialized'),
-              ),
-            if (_isDataSourceInitialized &&
-                _currentUrl == Constants.bugBuckBunnyVideoUrl)
-              Semantics(
-                identifier: 'better_player_e2e_mp4_initialized',
-                label: 'better_player_e2e_mp4_initialized',
-                container: true,
-                child: const Text('MP4 Initialized'),
-              ),
-            if (!kIsWeb) const SizedBox(height: 200),
           ],
         ),
       ),

@@ -34,10 +34,6 @@ appId: pl.hasoft.example
     id: "better_player_e2e_finished_status"
 
 # Tap replay button in Cupertino controls
-- scrollUntilVisible:
-    element:
-      id: "better_player_cupertino_controls_play_pause_button"
-    direction: UP
 - tapOn:
     id: "better_player_cupertino_controls_play_pause_button"
 
