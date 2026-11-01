@@ -1,4 +1,4 @@
-## Unreleased
+## 1.10.1
 - Fixed: Synchronized `BetterPlayerApi.activity` during activity configuration changes and removed duplicated screen capture protection logic.
 
 ## 1.10.0
