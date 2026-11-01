@@ -59,7 +59,8 @@ class PlayerCupertinoTopBar extends StatelessWidget {
             else
               const SizedBox(),
             const SizedBox(width: 8),
-            if (controlsConfiguration.enableAirPlay) ...[
+            if (controlsConfiguration.enableAirPlay &&
+                controller.isExternalPlaybackSupported) ...[
               _PlayerCupertinoAirPlayButton(
                 controlsConfiguration: controlsConfiguration,
                 barHeight: barHeight,
@@ -162,6 +163,9 @@ class _PlayerCupertinoAirPlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = BetterPlayerController.of(context);
+    if (!controller.isExternalPlaybackSupported) {
+      return const SizedBox();
+    }
     final hasCast = controller.hasCastExtension;
     final isCasting = controller.isCasting;
     final isAirPlayActive = controller.isAirPlayActive;

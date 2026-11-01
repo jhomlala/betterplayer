@@ -282,6 +282,18 @@ class BetterPlayerController {
   /// Whether any external playback (AirPlay or Cast extension) is active.
   bool get isExternalPlaybackActive => _isAirPlayActive || isCasting;
 
+  /// Whether external playback (AirPlay, Cast, or Remote Playback) is supported
+  /// on the current platform or via a registered [PlayerCastExtension].
+  bool get isExternalPlaybackSupported {
+    if (hasCastExtension) return true;
+    if (kIsWeb ||
+        betterPlayerControlsConfiguration.playerTheme == PlayerTheme.web) {
+      return true;
+    }
+    return defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS;
+  }
+
   /// Shows the external playback picker dialog.
   ///
   /// If a [PlayerCastExtension] is registered, invokes its cast picker.

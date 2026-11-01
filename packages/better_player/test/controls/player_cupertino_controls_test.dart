@@ -2,6 +2,7 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_cupertino_controls.dart';
 import 'package:better_player/src/core/player_with_controls.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -181,45 +182,96 @@ void main() {
   );
 
   testWidgets(
-    'Cupertino controls show AirPlay button and trigger picker on tap',
+    'Cupertino controls show AirPlay button and trigger picker on tap on supported platform',
     (tester) async {
       tester.view.physicalSize = const Size(1024, 768);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final mockPlatform = MockBetterPlayerPlatform();
-      BetterPlayerPlatform.instance = mockPlatform;
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        final mockPlatform = MockBetterPlayerPlatform();
+        BetterPlayerPlatform.instance = mockPlatform;
 
-      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: MockPlayerEngineController(),
-        configuration: const PlayerConfiguration(
-          controlsConfiguration: PlayerControlsConfiguration(
-            playerTheme: PlayerTheme.cupertino,
-            airPlayIcon: CupertinoIcons.tv,
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: MockPlayerEngineController(),
+              configuration: const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.cupertino,
+                  airPlayIcon: CupertinoIcons.tv,
+                ),
+              ),
+            );
+        await controller.setupDataSource(
+          PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+        );
+
+        await tester.pumpWidget(
+          wrapWidget(
+            BetterPlayer(
+              controller: controller,
+            ),
           ),
-        ),
-      );
-      await controller.setupDataSource(
-        PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
-      );
+        );
+        controller.setControlsAlwaysVisible(true);
+        await tester.pumpAndSettle();
 
-      await tester.pumpWidget(
-        wrapWidget(
-          BetterPlayer(
-            controller: controller,
+        final airPlayFinder = find.byIcon(CupertinoIcons.tv);
+        expect(airPlayFinder, findsOneWidget);
+
+        await tester.tap(airPlayFinder);
+        await tester.pump();
+        expect(mockPlatform.showExternalPlaybackPickerCalls.length, 1);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    },
+  );
+
+  testWidgets(
+    'Cupertino controls hide AirPlay button on unsupported platform without CastExtension',
+    (tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        final mockPlatform = MockBetterPlayerPlatform();
+        BetterPlayerPlatform.instance = mockPlatform;
+
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: MockPlayerEngineController(),
+              configuration: const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.cupertino,
+                  airPlayIcon: CupertinoIcons.tv,
+                ),
+              ),
+            );
+        await controller.setupDataSource(
+          PlayerDataSource.network(BetterPlayerTestUtils.forBiggerBlazesUrl),
+        );
+
+        await tester.pumpWidget(
+          wrapWidget(
+            BetterPlayer(
+              controller: controller,
+            ),
           ),
-        ),
-      );
-      controller.setControlsAlwaysVisible(true);
-      await tester.pumpAndSettle();
+        );
+        controller.setControlsAlwaysVisible(true);
+        await tester.pumpAndSettle();
 
-      final airPlayFinder = find.byIcon(CupertinoIcons.tv);
-      expect(airPlayFinder, findsOneWidget);
-
-      await tester.tap(airPlayFinder);
-      await tester.pump();
-      expect(mockPlatform.showExternalPlaybackPickerCalls.length, 1);
+        final airPlayFinder = find.byIcon(CupertinoIcons.tv);
+        expect(airPlayFinder, findsNothing);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
     },
   );
 }

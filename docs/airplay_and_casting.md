@@ -23,7 +23,7 @@ final configuration = PlayerConfiguration(
 );
 ```
 
-Set `enableAirPlay: false` to hide the button.
+Set `enableAirPlay: false` to hide the button. On platforms without native AirPlay (Android, Windows, Linux), the button stays hidden automatically unless a `PlayerCastExtension` is registered.
 
 ### Programmatic Control
 

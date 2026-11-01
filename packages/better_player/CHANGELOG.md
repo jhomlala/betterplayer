@@ -1,5 +1,5 @@
 ## Unreleased
-- Added: Native AirPlay and Remote Playback support across iOS, macOS, and Web with top-bar route picker controls, `PlayerControlsConfiguration.enableAirPlay`, `BetterPlayerController.showAirPlayPicker()`, and `PlayerEventType.externalPlaybackChanged`.
+- Added: Native AirPlay and Remote Playback support across iOS, macOS, and Web with top-bar route picker controls, `PlayerControlsConfiguration.enableAirPlay`, `BetterPlayerController.showAirPlayPicker()`, `BetterPlayerController.isExternalPlaybackSupported`, and `PlayerEventType.externalPlaybackChanged`.
 - Added: `PlayerCastExtension` interface to integrate third-party casting backends without increasing core package size.
 
 ## 1.31.0

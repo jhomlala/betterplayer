@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -189,6 +190,57 @@ void main() {
 
         expect(mockPlatform.showExternalPlaybackPickerCalls.length, 1);
         controller.dispose(forceDispose: true);
+      },
+    );
+
+    test(
+      'isExternalPlaybackSupported returns correct values across platforms',
+      () {
+        final controller = BetterPlayerController(const PlayerConfiguration());
+
+        final prev = debugDefaultTargetPlatformOverride;
+        try {
+          debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+          expect(controller.isExternalPlaybackSupported, isTrue);
+
+          debugDefaultTargetPlatformOverride = TargetPlatform.macOS;
+          expect(controller.isExternalPlaybackSupported, isTrue);
+
+          debugDefaultTargetPlatformOverride = TargetPlatform.android;
+          expect(controller.isExternalPlaybackSupported, isFalse);
+
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          expect(controller.isExternalPlaybackSupported, isFalse);
+
+          debugDefaultTargetPlatformOverride = TargetPlatform.linux;
+          expect(controller.isExternalPlaybackSupported, isFalse);
+        } finally {
+          debugDefaultTargetPlatformOverride = prev;
+          controller.dispose(forceDispose: true);
+        }
+      },
+    );
+
+    test(
+      'isExternalPlaybackSupported returns true on unsupported platform when CastExtension is present',
+      () {
+        final castExt = _ActiveCastExtension();
+        final controller = BetterPlayerController(
+          PlayerConfiguration(extensions: [castExt]),
+        );
+
+        final prev = debugDefaultTargetPlatformOverride;
+        try {
+          debugDefaultTargetPlatformOverride = TargetPlatform.android;
+          expect(controller.isExternalPlaybackSupported, isTrue);
+
+          debugDefaultTargetPlatformOverride = TargetPlatform.windows;
+          expect(controller.isExternalPlaybackSupported, isTrue);
+        } finally {
+          debugDefaultTargetPlatformOverride = prev;
+          controller.dispose(forceDispose: true);
+          castExt.dispose();
+        }
       },
     );
   });

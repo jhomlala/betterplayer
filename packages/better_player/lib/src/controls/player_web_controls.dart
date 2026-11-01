@@ -712,7 +712,8 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
             ),
           ],
           const Spacer(),
-          if (widget.configuration.enableAirPlay)
+          if (widget.configuration.enableAirPlay &&
+              (widget.controller?.isExternalPlaybackSupported ?? false))
             _PlayerWebAirPlayButton(
               controller: widget.controller,
               configuration: widget.configuration,
@@ -789,6 +790,7 @@ class _PlayerWebAirPlayButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (controller == null) return const SizedBox();
+    if (!controller!.isExternalPlaybackSupported) return const SizedBox();
     final hasCast = controller!.hasCastExtension;
     final isCasting = controller!.isCasting;
     final isAirPlayActive = controller!.isAirPlayActive;

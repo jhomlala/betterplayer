@@ -44,7 +44,8 @@ class PlayerMaterialTopBar extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        if (controlsConfiguration.enableAirPlay)
+                        if (controlsConfiguration.enableAirPlay &&
+                            controller.isExternalPlaybackSupported)
                           _PlayerMaterialAirPlayButton(
                             controller: controller,
                             controlsConfiguration: controlsConfiguration,
@@ -195,6 +196,9 @@ class _PlayerMaterialAirPlayButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!controller.isExternalPlaybackSupported) {
+      return const SizedBox();
+    }
     final hasCast = controller.hasCastExtension;
     final isCasting = controller.isCasting;
     final isAirPlayActive = controller.isAirPlayActive;

@@ -51,7 +51,7 @@ Enable or disable specific UI features:
 *   **`enableOverflowMenu`**: Toggle the overflow menu (contains speed, subtitles, etc.).
 *   **`enablePlaybackSpeed`**, `enableSubtitles`, `enableQualities`, `enableAudioTracks`: Toggles for specific overflow menu items.
 *   **`enablePip`**: Enable the Picture-in-Picture (PiP) button.
-*   **`enableAirPlay`**: Show or hide the AirPlay and Cast button.
+*   **`enableAirPlay`**: Show or hide the AirPlay and Cast button. On platforms without native route picking (Android, Windows, Linux), the button stays hidden automatically unless a `PlayerCastExtension` is attached.
 *   **`enableRetry`**: Toggle the retry button on error.
 *   **`enableReplay`**: Show/hide the replay button when the video ends.
 

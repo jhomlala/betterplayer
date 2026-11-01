@@ -6,6 +6,7 @@ import 'package:better_player/src/controls/player_cupertino_progress_bar.dart';
 import 'package:better_player/src/controls/player_material_middle_row.dart';
 import 'package:better_player/src/controls/player_material_progress_bar.dart';
 import 'package:better_player/src/core/player_with_controls.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -726,48 +727,98 @@ void main() {
   );
 
   testWidgets(
-    'Material controls show AirPlay button and trigger picker on tap',
+    'Material controls show AirPlay button and trigger picker on tap on supported platform',
     (tester) async {
       tester.view.physicalSize = const Size(1024, 768);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      final mockEngineController =
-          BetterPlayerTestUtils.setupMockPlayerEngineController();
-      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
-        controller: mockEngineController,
-        configuration: const PlayerConfiguration(
-          controlsConfiguration: PlayerControlsConfiguration(
-            playerTheme: PlayerTheme.material,
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        final mockEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mockEngineController,
+              configuration: const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.material,
+                ),
+              ),
+            );
+        await controller.setupDataSource(
+          PlayerDataSource.network(
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
           ),
-        ),
-      );
-      await controller.setupDataSource(
-        PlayerDataSource.network(
-          BetterPlayerTestUtils.forBiggerBlazesUrl,
-        ),
-      );
+        );
 
-      await tester.pumpWidget(
-        _wrapWidget(
-          BetterPlayer(
-            controller: controller,
+        await tester.pumpWidget(
+          _wrapWidget(
+            BetterPlayer(
+              controller: controller,
+            ),
           ),
-        ),
-      );
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 300));
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
 
-      final buttonFinder = find.byIcon(Icons.airplay_outlined);
-      expect(buttonFinder, findsOneWidget);
+        final buttonFinder = find.byIcon(Icons.airplay_outlined);
+        expect(buttonFinder, findsOneWidget);
 
-      final mockPlatform =
-          BetterPlayerPlatform.instance as MockBetterPlayerPlatform;
-      mockPlatform.showExternalPlaybackPickerCalls.clear();
+        final mockPlatform =
+            BetterPlayerPlatform.instance as MockBetterPlayerPlatform;
+        mockPlatform.showExternalPlaybackPickerCalls.clear();
 
-      await tester.tap(buttonFinder);
-      await tester.pump();
-      expect(mockPlatform.showExternalPlaybackPickerCalls.length, 1);
+        await tester.tap(buttonFinder);
+        await tester.pump();
+        expect(mockPlatform.showExternalPlaybackPickerCalls.length, 1);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    },
+  );
+
+  testWidgets(
+    'Material controls hide AirPlay button on unsupported platform without CastExtension',
+    (tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        final mockEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mockEngineController,
+              configuration: const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.material,
+                ),
+              ),
+            );
+        await controller.setupDataSource(
+          PlayerDataSource.network(
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWidget(
+            BetterPlayer(
+              controller: controller,
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.byIcon(Icons.airplay_outlined), findsNothing);
+        expect(find.byIcon(Icons.cast_outlined), findsNothing);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
     },
   );
 
