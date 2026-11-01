@@ -1,4 +1,4 @@
-## Unreleased
+## 1.4.1
 - Fixed: Restricted `MpvEventId.endFile` completion events to `MpvEndFileReason.eof`, restarted playback from `0.0` when `play()` is called after EOF, and preserved position on `time-pos` property query errors.
 - Fixed: Queried native video display dimensions (`dwidth`/`dheight`) in `CopyPixelBuffer` to avoid black frames prior to first decode and unnecessary CPU scaling.
 - Fixed: Eliminated deadlocks during `dispose`, `clear`, and plugin destruction by releasing mutex prior to tearing down player instances.

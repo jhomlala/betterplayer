@@ -1,4 +1,4 @@
-## Unreleased
+## 1.5.1
 - Fixed: Dispatched KVO observer updates and asynchronous video track loading to the main thread, guarded invalid asset durations in `getVideoComposition`, and kept observers attached after playback completion.
 - Fixed: Reset window screen capture protection (`sharingType = .readWrite`) on plugin registration across hot restarts.
 
