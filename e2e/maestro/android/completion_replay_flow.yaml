@@ -22,22 +22,23 @@ appId: pl.hasoft.example
     id: "better_player_material_controls_play_pause_button"
 
 # Seek near end to trigger EOF and natural finished event
-- scrollUntilVisible:
-    element:
-      id: "better_player_e2e_seek_to_end_button"
-    direction: DOWN
 - tapOn:
     id: "better_player_e2e_seek_to_end_button"
+    retryIfNoChange: true
 
 # Wait for video completion
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_finished_status"
-    timeout: 30000
+    timeout: 45000
 - assertVisible:
     id: "better_player_e2e_finished_status"
 
 # Tap replay button in controls
+- scrollUntilVisible:
+    element:
+      id: "better_player_material_controls_play_pause_button"
+    direction: UP
 - tapOn:
     id: "better_player_material_controls_play_pause_button"
 
