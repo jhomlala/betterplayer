@@ -66,6 +66,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
   bool _videoReplayed = false;
   String? _currentUrl;
   bool _isDataSourceInitialized = false;
+  int _mp4RetryCount = 0;
   final Set<PlayerEventType> _emittedEvents = {};
 
   static const Set<PlayerEventType> _requiredCoreEvents = {
@@ -131,7 +132,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
       }
       if (_betterPlayerController.betterPlayerDataSource?.type ==
               DataSourceType.file &&
-          event.betterPlayerEventType == PlayerEventType.play &&
+          (event.betterPlayerEventType == PlayerEventType.play ||
+              event.betterPlayerEventType == PlayerEventType.initialized) &&
           mounted) {
         setState(() {
           _localFileVerified = true;
@@ -149,6 +151,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         if (mounted) {
           setState(() {
             _isDataSourceInitialized = true;
+            _mp4RetryCount = 0;
           });
         }
       }
@@ -166,11 +169,26 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         });
       }
       if (event.betterPlayerEventType == PlayerEventType.exception) {
+        final err =
+            event.parameters?['exception']?.toString() ??
+            _betterPlayerController.videoPlayerValue?.errorDescription;
         setState(() {
-          _errorDescription =
-              event.parameters?['exception']?.toString() ??
-              _betterPlayerController.videoPlayerValue?.errorDescription;
+          _errorDescription = err;
         });
+        if (err != null &&
+            (err.contains('TLS') || err.contains('-1200')) &&
+            _currentUrl == Constants.bugBuckBunnyVideoUrl &&
+            _mp4RetryCount < 3) {
+          _mp4RetryCount++;
+          Future<void>.delayed(const Duration(seconds: 1), () {
+            if (mounted && _currentUrl == Constants.bugBuckBunnyVideoUrl) {
+              _setupDataSource(
+                url: Constants.bugBuckBunnyVideoUrl,
+                type: DataSourceType.network,
+              );
+            }
+          });
+        }
       } else if (event.betterPlayerEventType ==
           PlayerEventType.setupDataSource) {
         setState(() {
@@ -194,6 +212,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
     if (mounted) {
       setState(() {
         _currentUrl = url;
+        _errorDescription = null;
+        _localFileVerified = false;
         _isDataSourceInitialized = false;
         _videoFinished = false;
         _videoReplayed = false;
@@ -407,11 +427,6 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         url: filePath,
         type: DataSourceType.file,
       );
-      if (mounted) {
-        setState(() {
-          _localFileVerified = true;
-        });
-      }
     } catch (e) {
       debugPrint('Failed to setup local file: $e');
     }

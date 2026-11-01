@@ -15,7 +15,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_mp4_initialized"
-    timeout: 30000
+    timeout: 45000
 - assertVisible:
     id: "better_player_e2e_mp4_initialized"
 
@@ -25,7 +25,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_hls_initialized"
-    timeout: 30000
+    timeout: 45000
 - assertVisible:
     id: "better_player_e2e_hls_initialized"
 
@@ -39,7 +39,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_mp4_initialized"
-    timeout: 30000
+    timeout: 45000
 - assertVisible:
     id: "better_player_e2e_mp4_initialized"
 - tapOn:
@@ -47,7 +47,7 @@ appId: pl.hasoft.example
 - extendedWaitUntil:
     visible:
       id: "better_player_e2e_visibility_callback_status"
-    timeout: 5000
+    timeout: 10000
 - assertVisible:
     id: "better_player_e2e_visibility_callback_status"
 
