@@ -1122,6 +1122,178 @@ void main() {
           expect(text, contains('::cue'));
         },
       );
+
+      test(
+        'remote playback events update isExternalPlaybackActive and stream',
+        () async {
+          final mockVideo = JSObject();
+          final mockBuffered = JSObject();
+          mockBuffered.setProperty('length'.toJS, 0.toJS);
+          mockVideo.setProperty('buffered'.toJS, mockBuffered);
+          mockVideo.setProperty('style'.toJS, JSObject());
+          mockVideo.setProperty(
+            'setAttribute'.toJS,
+            ((JSString name, JSString value) {}).toJS,
+          );
+          final listeners = <String, JSFunction>{};
+          mockVideo.setProperty(
+            'addEventListener'.toJS,
+            ((JSString type, JSFunction listener) {
+              listeners[type.toDart] = listener;
+            }).toJS,
+          );
+          mockVideo.setProperty('currentTime'.toJS, 0.0.toJS);
+          mockVideo.setProperty('videoWidth'.toJS, 0.toJS);
+          mockVideo.setProperty('videoHeight'.toJS, 0.toJS);
+          mockVideo.setProperty('duration'.toJS, 0.0.toJS);
+
+          final mockRemote = JSObject();
+          mockRemote.setProperty('state'.toJS, 'disconnected'.toJS);
+          final remoteListeners = <String, JSFunction>{};
+          mockRemote.setProperty(
+            'addEventListener'.toJS,
+            ((JSString type, JSFunction listener) {
+              remoteListeners[type.toDart] = listener;
+            }).toJS,
+          );
+          mockVideo.setProperty('remote'.toJS, mockRemote);
+
+          final p = BetterPlayerWebPlayer(
+            viewId: 'test_remote_view',
+            onLog: ({required String message, int levelIndex = 0}) {},
+          );
+          p.videoElement = mockVideo as web.HTMLVideoElement;
+
+          final events = <bool>[];
+          final sub = p.externalPlaybackEvents.listen(events.add);
+
+          await p.initialize(videoElement: p.videoElement);
+          expect(p.isExternalPlaybackActive, isFalse);
+
+          // Simulate remote connect event
+          final connectListener = remoteListeners['connect'];
+          expect(connectListener, isNotNull);
+          connectListener!.callAsFunction(null, web.Event('connect'));
+          expect(p.isExternalPlaybackActive, isTrue);
+
+          // Simulate remote disconnect event
+          final disconnectListener = remoteListeners['disconnect'];
+          expect(disconnectListener, isNotNull);
+          disconnectListener!.callAsFunction(null, web.Event('disconnect'));
+          expect(p.isExternalPlaybackActive, isFalse);
+
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+          expect(events, [true, false]);
+          await sub.cancel();
+          await p.dispose();
+        },
+      );
+
+      test(
+        'webkitCurrentPlaybackTargetIsWireless listener emits state changes',
+        () async {
+          final mockVideo = JSObject();
+          final mockBuffered = JSObject();
+          mockBuffered.setProperty('length'.toJS, 0.toJS);
+          mockVideo.setProperty('buffered'.toJS, mockBuffered);
+          mockVideo.setProperty('style'.toJS, JSObject());
+          mockVideo.setProperty(
+            'setAttribute'.toJS,
+            ((JSString name, JSString value) {}).toJS,
+          );
+          final listeners = <String, JSFunction>{};
+          mockVideo.setProperty(
+            'addEventListener'.toJS,
+            ((JSString type, JSFunction listener) {
+              listeners[type.toDart] = listener;
+            }).toJS,
+          );
+          mockVideo.setProperty('currentTime'.toJS, 0.0.toJS);
+          mockVideo.setProperty('videoWidth'.toJS, 0.toJS);
+          mockVideo.setProperty('videoHeight'.toJS, 0.toJS);
+          mockVideo.setProperty('duration'.toJS, 0.0.toJS);
+          mockVideo.setProperty(
+            'webkitCurrentPlaybackTargetIsWireless'.toJS,
+            false.toJS,
+          );
+
+          final p = BetterPlayerWebPlayer(
+            viewId: 'test_webkit_wireless_view',
+            onLog: ({required String message, int levelIndex = 0}) {},
+          );
+          p.videoElement = mockVideo as web.HTMLVideoElement;
+
+          final events = <bool>[];
+          final sub = p.externalPlaybackEvents.listen(events.add);
+
+          await p.initialize(videoElement: p.videoElement);
+          expect(p.isExternalPlaybackActive, isFalse);
+
+          final wirelessListener =
+              listeners['webkitcurrentplaybacktargetiswirelesschanged'];
+          expect(wirelessListener, isNotNull);
+
+          mockVideo.setProperty(
+            'webkitCurrentPlaybackTargetIsWireless'.toJS,
+            true.toJS,
+          );
+          wirelessListener!.callAsFunction(
+            null,
+            web.Event('webkitcurrentplaybacktargetiswirelesschanged'),
+          );
+          expect(p.isExternalPlaybackActive, isTrue);
+
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+          expect(events, [true]);
+          await sub.cancel();
+          await p.dispose();
+        },
+      );
+
+      test(
+        'showExternalPlaybackPicker prompts remote or invokes webkit picker',
+        () async {
+          final mockVideo = JSObject();
+          var promptCalled = false;
+          var webkitPickerCalled = false;
+
+          final mockRemote = JSObject();
+          mockRemote.setProperty(
+            'prompt'.toJS,
+            (() {
+              promptCalled = true;
+              return Future<JSAny?>.value().toJS;
+            }).toJS,
+          );
+          mockVideo.setProperty('remote'.toJS, mockRemote);
+          mockVideo.setProperty(
+            'webkitShowPlaybackTargetPicker'.toJS,
+            (() {
+              webkitPickerCalled = true;
+            }).toJS,
+          );
+
+          final p = BetterPlayerWebPlayer(
+            viewId: 'test_picker_view',
+            onLog: ({required String message, int levelIndex = 0}) {},
+          );
+          p.videoElement = mockVideo as web.HTMLVideoElement;
+
+          await p.showExternalPlaybackPicker();
+          expect(promptCalled, isTrue);
+
+          final mockVideo2 = JSObject();
+          mockVideo2.setProperty(
+            'webkitShowPlaybackTargetPicker'.toJS,
+            (() {
+              webkitPickerCalled = true;
+            }).toJS,
+          );
+          p.videoElement = mockVideo2 as web.HTMLVideoElement;
+          await p.showExternalPlaybackPicker();
+          expect(webkitPickerCalled, isTrue);
+        },
+      );
     });
   });
 }

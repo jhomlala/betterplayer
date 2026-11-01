@@ -25,6 +25,7 @@ You can listen for the following `PlayerEventType` values:
 *   `setupDataSource`: A new data source is being configured.
 *   `bufferingStart`, `bufferingUpdate`, `bufferingEnd`: The player's buffering status has changed.
 *   `changedPlaylistItem`: The current item in a playlist has changed.
+*   `externalPlaybackChanged`: AirPlay, Remote Playback, or external route connection status has changed.
 
 ## Adding an Event Listener
 

@@ -71,6 +71,7 @@ BetterPlayerFeed(controller: feedController);
 - [Migrating from media_kit](https://jhomlala.github.io/betterplayer/migration_from_media_kit)
 
 ## Documentation Pages
+- [airplay_and_casting](https://jhomlala.github.io/betterplayer/airplay_and_casting)
 - [buffering_configuration](https://jhomlala.github.io/betterplayer/buffering_configuration)
 - [cache_configuration](https://jhomlala.github.io/betterplayer/cache_configuration)
 - [controls_configuration](https://jhomlala.github.io/betterplayer/controls_configuration)

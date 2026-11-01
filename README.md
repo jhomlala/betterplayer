@@ -47,6 +47,7 @@ Stop stitching `video_player`, separate UI packages, abandoned caching plugins, 
 | **Telemetry & QoE** | Real-time video metrics, offline retention & cloud export | None | None |
 | **Watermarking & Screen Shield** | Dynamic forensic overlays & native OS screen capture protection | None | None |
 | **Video Feeds & Pooling** | Built-in (`BetterPlayerFeed`, `BetterPlayerPool`) | None | None |
+| **AirPlay & Remote Playback** | Native AirPlay (iOS/macOS) & Remote Playback (Web) | None (3rd party needed) | None |
 
 ---
 

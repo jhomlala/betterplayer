@@ -712,6 +712,11 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
             ),
           ],
           const Spacer(),
+          if (widget.configuration.enableAirPlay)
+            _PlayerWebAirPlayButton(
+              controller: widget.controller,
+              configuration: widget.configuration,
+            ),
           if (widget.isPipSupported &&
               widget.configuration.enablePip &&
               widget.controller?.isLiveStream() == false &&
@@ -767,6 +772,57 @@ class _PlayerWebBottomBarState extends State<_PlayerWebBottomBar> {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _PlayerWebAirPlayButton extends StatelessWidget {
+  const _PlayerWebAirPlayButton({
+    required this.controller,
+    required this.configuration,
+  });
+
+  final BetterPlayerController? controller;
+  final PlayerControlsConfiguration configuration;
+
+  @override
+  Widget build(BuildContext context) {
+    if (controller == null) return const SizedBox();
+    final hasCast = controller!.hasCastExtension;
+    final isCasting = controller!.isCasting;
+    final isAirPlayActive = controller!.isAirPlayActive;
+    final isActive = hasCast ? isCasting : isAirPlayActive;
+
+    final IconData icon;
+    if (hasCast) {
+      icon = isCasting
+          ? configuration.castConnectedIcon
+          : configuration.castIcon;
+    } else {
+      icon = isAirPlayActive
+          ? configuration.airPlayActiveIcon
+          : configuration.airPlayIcon;
+    }
+
+    final label = hasCast
+        ? controller!.translations.controlsCastLabel
+        : controller!.translations.controlsAirPlayLabel;
+
+    return Semantics(
+      label: 'better_player_web_controls_airplay_button',
+      identifier: 'better_player_web_controls_airplay_button',
+      container: true,
+      button: true,
+      child: IconButton(
+        tooltip: label,
+        icon: Icon(
+          icon,
+          color: isActive
+              ? Theme.of(context).colorScheme.primary
+              : configuration.iconsColor,
+        ),
+        onPressed: controller!.showExternalPlaybackPicker,
       ),
     );
   }

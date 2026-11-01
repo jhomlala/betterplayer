@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../helpers/better_player_test_utils.dart';
+import '../helpers/mock_better_player_platform.dart';
 import '../helpers/mock_method_channel.dart';
 import '../helpers/mock_player_engine_controller.dart';
 
@@ -418,6 +419,7 @@ void main() {
           enablePip: false,
           enableOverflowMenu: false,
           enableProgressText: false,
+          enableAirPlay: false,
         ),
       );
 
@@ -446,6 +448,35 @@ void main() {
         findsNothing,
       );
       expect(find.byIcon(Icons.picture_in_picture_outlined), findsNothing);
+      expect(
+        find.bySemanticsLabel('better_player_web_controls_airplay_button'),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets(
+    'Web controls show AirPlay button and trigger picker on tap',
+    (tester) async {
+      await setupControls(
+        tester,
+        controlsConfiguration: const PlayerControlsConfiguration(
+          playerTheme: PlayerTheme.web,
+        ),
+      );
+
+      final airPlayFinder = find.bySemanticsLabel(
+        'better_player_web_controls_airplay_button',
+      );
+      expect(airPlayFinder, findsOneWidget);
+
+      final mockPlatform =
+          BetterPlayerPlatform.instance as MockBetterPlayerPlatform;
+      mockPlatform.showExternalPlaybackPickerCalls.clear();
+
+      await tester.tap(airPlayFinder);
+      await tester.pump();
+      expect(mockPlatform.showExternalPlaybackPickerCalls.length, 1);
       expect(find.textContaining('00:00 / 00:10'), findsNothing);
     },
   );

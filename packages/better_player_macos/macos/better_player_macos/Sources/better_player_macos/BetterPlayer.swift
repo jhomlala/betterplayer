@@ -38,6 +38,7 @@ private var playbackLikelyToKeepUpContext = 0
 private var playbackBufferEmptyContext = 0
 private var playbackBufferFullContext = 0
 private var presentationSizeContext = 0
+private var externalPlaybackActiveContext = 0
 
 /// A platform view implementation that wraps AVPlayer for video playback.
 /// Handles player initialization, lifecycle, and event reporting to Flutter.
@@ -86,7 +87,7 @@ private var presentationSizeContext = 0
     public private(set) var failedCount: Int = 0
 
     private var videoGravity: AVLayerVideoGravity = .resizeAspect
-    private weak var playerView: NSView?
+    public weak var playerView: NSView?
     private weak var observedItem: AVPlayerItem?
 
     /// Reference to the AVPlayerLayer used for Picture-in-Picture.
@@ -124,6 +125,7 @@ private var presentationSizeContext = 0
         super.init()
         self.player.actionAtItemEnd = .none
         self.player.appliesMediaSelectionCriteriaAutomatically = false
+        self.player.allowsExternalPlayback = true
         if #available(macOS 10.12, *) {
             self.player.automaticallyWaitsToMinimizeStalling = false
         }
@@ -172,6 +174,7 @@ private var presentationSizeContext = 0
         guard !observersAdded else { return }
 
         player.addObserver(self, forKeyPath: "rate", options: [], context: nil)
+        player.addObserver(self, forKeyPath: "externalPlaybackActive", options: [.new], context: &externalPlaybackActiveContext)
         item.addObserver(self, forKeyPath: "loadedTimeRanges", options: [], context: &timeRangeContext)
         item.addObserver(self, forKeyPath: "status", options: [], context: &statusContext)
         item.addObserver(self, forKeyPath: "presentationSize", options: [], context: &presentationSizeContext)
@@ -195,6 +198,7 @@ private var presentationSizeContext = 0
         observersAdded = false
 
         player.removeObserver(self, forKeyPath: "rate", context: nil)
+        player.removeObserver(self, forKeyPath: "externalPlaybackActive", context: &externalPlaybackActiveContext)
 
         let itemToRemove = observedItem ?? player.currentItem
         if let item = itemToRemove {
@@ -555,6 +559,9 @@ private var presentationSizeContext = 0
             guard !disposed else { return }
             BetterPlayerApi.log(1, "playbackBufferEmpty: true")
             callback?.onBufferingStart(key: key)
+        } else if context == &externalPlaybackActiveContext {
+            guard !disposed else { return }
+            BetterPlayerApi.notifyExternalPlaybackChanged()
         } else if context == &playbackBufferFullContext {
             guard !disposed else { return }
             BetterPlayerApi.log(1, "playbackBufferFull: true")
@@ -982,6 +989,7 @@ private var presentationSizeContext = 0
         
         if let key = BetterPlayerApi.players.first(where: { $0.value === self })?.key {
             BetterPlayerApi.players.removeValue(forKey: key)
+            BetterPlayerApi.notifyExternalPlaybackChanged()
         }
     }
 
