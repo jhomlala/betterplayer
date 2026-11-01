@@ -6,6 +6,7 @@
 - Fixed: Cleaned up pooled controller listeners on feed index changes and page disposal in E2E feed tests.
 - Fixed: Corrected feed controller snippet syntax in documentation.
 - Fixed: Prevented seek echo loop in `PlayerEngineController` on platform seek events.
+- Fixed: Added retry backoff to ASMS playlist downloads in `PlayerAsmsUtils` to handle transient network drops.
 
 ## 1.30.0
 - Added: Screen capture protection hooks and dynamic watermark overlay slot via `PlayerSecurityExtension` and `BetterPlayerExtension` interface (#1622).

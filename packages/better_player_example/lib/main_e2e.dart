@@ -643,7 +643,8 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
                 ),
               ),
             if (_isDataSourceInitialized &&
-                _currentUrl == Constants.hlsTestStreamUrl)
+                _currentUrl == Constants.hlsTestStreamUrl &&
+                _betterPlayerController.betterPlayerAsmsTracks.isNotEmpty)
               Semantics(
                 identifier: 'better_player_e2e_hls_initialized',
                 label: 'better_player_e2e_hls_initialized',

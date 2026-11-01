@@ -58,36 +58,46 @@ class PlayerAsmsUtils {
     String url, [
     Map<String, String?>? headers,
   ]) async {
-    try {
-      final nonNullHeaders = <String, String>{};
-      if (headers != null) {
-        headers.forEach((key, value) {
-          if (value != null) {
-            nonNullHeaders[key] = value;
-          }
-        });
-      }
-
-      final response = await _httpClient.get(
-        Uri.parse(url),
-        headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
-      );
-
-      if (response.statusCode >= 200 && response.statusCode < 300) {
-        final effectiveUrl = response.request?.url.toString() ?? url;
-        return (data: response.body, effectiveUrl: effectiveUrl);
-      } else {
-        PlayerLogger.error(
-          message: 'GetDataFromUrl failed: HTTP status ${response.statusCode}',
-        );
-        return (data: null, effectiveUrl: url);
-      }
-    } catch (exception) {
-      PlayerLogger.error(
-        message: 'GetDataFromUrl failed: $exception',
-        error: exception,
-      );
-      return (data: null, effectiveUrl: url);
+    final nonNullHeaders = <String, String>{};
+    if (headers != null) {
+      headers.forEach((key, value) {
+        if (value != null) {
+          nonNullHeaders[key] = value;
+        }
+      });
     }
+
+    const maxRetries = 3;
+    for (var attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        final response = await _httpClient.get(
+          Uri.parse(url),
+          headers: nonNullHeaders.isEmpty ? null : nonNullHeaders,
+        );
+
+        if (response.statusCode >= 200 && response.statusCode < 300) {
+          final effectiveUrl = response.request?.url.toString() ?? url;
+          return (data: response.body, effectiveUrl: effectiveUrl);
+        } else {
+          PlayerLogger.warning(
+            message:
+                'GetDataFromUrl attempt $attempt failed: HTTP ${response.statusCode}',
+          );
+        }
+      } catch (exception) {
+        PlayerLogger.warning(
+          message:
+              'GetDataFromUrl attempt $attempt failed with exception: $exception',
+        );
+      }
+      if (attempt < maxRetries) {
+        await Future<void>.delayed(Duration(milliseconds: 500 * attempt));
+      }
+    }
+
+    PlayerLogger.error(
+      message: 'GetDataFromUrl failed after $maxRetries attempts for $url',
+    );
+    return (data: null, effectiveUrl: url);
   }
 }
