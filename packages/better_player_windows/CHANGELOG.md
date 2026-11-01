@@ -1,4 +1,6 @@
 ## Unreleased
+- Fixed: Restricted `MpvEventId.endFile` completion events to `MpvEndFileReason.eof`, restarted playback from `0.0` when `play()` is called after EOF, and preserved position on `time-pos` property query errors.
+- Fixed: Queried native video display dimensions (`dwidth`/`dheight`) in `CopyPixelBuffer` to avoid black frames prior to first decode and unnecessary CPU scaling.
 - Fixed: Eliminated deadlocks during `dispose`, `clear`, and plugin destruction by releasing mutex prior to tearing down player instances.
 - Fixed: Guarded zero or negative video frame dimensions in `CopyPixelBuffer` to prevent allocating temporary frame buffers before first frame presentation.
 - Fixed: Awaited pending native player cleanup during startup in `create()` to prevent race conditions with newly initialized players.

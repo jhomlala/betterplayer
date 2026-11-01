@@ -136,5 +136,62 @@ void main() {
 
       feedController.dispose();
     });
+
+    test(
+      'Evicted slot clears lease notifier value on feed controller',
+      () async {
+        final dataSources = [
+          PlayerDataSource.network('https://example.com/1.mp4'),
+          PlayerDataSource.network('https://example.com/2.mp4'),
+          PlayerDataSource.network('https://example.com/3.mp4'),
+        ];
+
+        final feedController = BetterPlayerFeedController(
+          dataSources: dataSources,
+          poolConfiguration: const PlayerPoolConfiguration(
+            poolSize: 2,
+            preloadForward: 0,
+            preloadBackward: 0,
+          ),
+        );
+
+        await feedController.onIndexChanged(0);
+        expect(feedController.getLeaseNotifier(0).value, isNotNull);
+
+        await feedController.onIndexChanged(1);
+        expect(feedController.getLeaseNotifier(0).value, isNotNull);
+        expect(feedController.getLeaseNotifier(1).value, isNotNull);
+
+        await feedController.onIndexChanged(2);
+        expect(feedController.getLeaseNotifier(0).value, isNull);
+        expect(feedController.getLeaseNotifier(1).value, isNotNull);
+        expect(feedController.getLeaseNotifier(2).value, isNotNull);
+
+        feedController.dispose();
+      },
+    );
+
+    test(
+      'Externally provided PageController is not disposed by feed controller',
+      () {
+        final externalPageController = PageController();
+        final feedController = BetterPlayerFeedController(
+          dataSources: [
+            PlayerDataSource.network('https://example.com/1.mp4'),
+          ],
+          pageController: externalPageController,
+          poolConfiguration: const PlayerPoolConfiguration(poolSize: 2),
+        );
+
+        feedController.dispose();
+
+        // Calling addListener on a disposed ChangeNotifier throws FlutterError.
+        void noop() {}
+        externalPageController
+          ..addListener(noop)
+          ..removeListener(noop)
+          ..dispose();
+      },
+    );
   });
 }

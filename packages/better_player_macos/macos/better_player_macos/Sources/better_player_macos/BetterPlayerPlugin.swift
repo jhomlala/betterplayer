@@ -12,6 +12,11 @@ public class BetterPlayerPlugin: NSObject, FlutterPlugin, FlutterPlatformViewFac
     public static func register(with registrar: FlutterPluginRegistrar) {
         better_player_macos_force_load_symbols()
         BetterPlayerApi.cleanUp()
+        DispatchQueue.main.async {
+            for window in NSApplication.shared.windows {
+                window.sharingType = .readWrite
+            }
+        }
         let instance = BetterPlayerPlugin()
         registrar.register(instance, withId: "better_player_view")
 

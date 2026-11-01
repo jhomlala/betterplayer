@@ -1,4 +1,6 @@
 ## Unreleased
+- Fixed: Resolved preload-to-active race condition and busy slot eviction in `BetterPlayerPool`.
+- Fixed: Triggered deferred autoplay on initialization, cleared evicted lease notifiers, and preserved external `PageController` lifecycle in `BetterPlayerFeedController`.
 - Fixed: Cleaned up pooled controller listeners on feed index changes and page disposal in E2E feed tests.
 - Fixed: Corrected feed controller snippet syntax in documentation.
 - Fixed: Prevented seek echo loop in `PlayerEngineController` on platform seek events.

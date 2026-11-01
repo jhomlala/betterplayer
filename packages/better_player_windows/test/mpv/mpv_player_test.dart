@@ -1019,5 +1019,80 @@ void main() {
         expect(propertyStrings['aid'], '7');
       },
     );
+
+    test(
+      'endFile with non-eof reason (stop or redirect) does not emit completed',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        final receivedEvents = <VideoEvent>[];
+        final sub = player.events.listen(receivedEvents.add);
+
+        final stopEndFile = calloc<MpvEventEndFile>()
+          ..ref.reason = MpvEndFileReason.stop
+          ..ref.error = 0;
+        final redirectEndFile = calloc<MpvEventEndFile>()
+          ..ref.reason = MpvEndFileReason.redirect
+          ..ref.error = 0;
+
+        eventQueue
+          ..add((ev) {
+            ev.ref.eventId = MpvEventId.endFile;
+            ev.ref.error = 0;
+            ev.ref.data = stopEndFile.cast();
+          })
+          ..add((ev) {
+            ev.ref.eventId = MpvEventId.endFile;
+            ev.ref.error = 0;
+            ev.ref.data = redirectEndFile.cast();
+          });
+
+        await Future<void>.delayed(const Duration(milliseconds: 80));
+
+        expect(
+          receivedEvents.where((e) => e.eventType == VideoEventType.completed),
+          isEmpty,
+        );
+
+        calloc.free(stopEndFile);
+        calloc.free(redirectEndFile);
+        await sub.cancel();
+      },
+    );
+
+    test(
+      'play() after completion seeks to 0.0 before unpausing',
+      () async {
+        final bindings = createFakeBindings();
+        final player = createPlayer(bindings);
+
+        final endFile = calloc<MpvEventEndFile>()
+          ..ref.reason = MpvEndFileReason.eof
+          ..ref.error = 0;
+
+        final completedFuture = waitForEvent(
+          player,
+          (e) => e.eventType == VideoEventType.completed,
+        );
+
+        eventQueue.add((ev) {
+          ev.ref.eventId = MpvEventId.endFile;
+          ev.ref.error = 0;
+          ev.ref.data = endFile.cast();
+        });
+
+        await completedFuture;
+        executedCommands.clear();
+
+        await player.play();
+        expect(
+          executedCommands,
+          contains(equals(['seek', '0.0', 'absolute+exact'])),
+        );
+
+        calloc.free(endFile);
+      },
+    );
   });
 }

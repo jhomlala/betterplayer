@@ -209,7 +209,9 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
                   'Failed to load video: $errorStr (reason: $reason, code: $errorCode)',
             ),
           );
-        } else if (!_completedEmitted) {
+        } else if ((endFileData == ffi.nullptr ||
+                reason == MpvEndFileReason.eof) &&
+            !_completedEmitted) {
           _completedEmitted = true;
           _log(message: 'PlaybackState: ENDED');
           _eventController.add(
@@ -407,7 +409,7 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
   }
 
   int _getPositionMs() {
-    if (_isDisposed) return 0;
+    if (_isDisposed) return -1;
     final ptr = calloc<ffi.Double>();
     final namePtr = 'time-pos'.toNativeUtf8();
     try {
@@ -417,10 +419,10 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
         MpvFormat.doubleFormat,
         ptr.cast(),
       );
-      if (res >= 0) {
+      if (res >= 0 && ptr.value >= 0) {
         return (ptr.value * 1000).toInt();
       }
-      return 0;
+      return -1;
     } finally {
       calloc.free(ptr);
       calloc.free(namePtr);
@@ -577,6 +579,11 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
   Future<void> play() async {
     if (_isDisposed) return;
     _log(message: 'play()');
+    if (_completedEmitted) {
+      _completedEmitted = false;
+      _currentPosition = Duration.zero;
+      _command(['seek', '0.0', 'absolute+exact']);
+    }
     _setPropertyFlag(name: 'pause', value: false);
   }
 
@@ -629,7 +636,7 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
   Future<Duration> getPosition() async {
     if (_isDisposed) return _currentPosition;
     final ms = _getPositionMs();
-    if (ms > 0) {
+    if (ms >= 0) {
       _currentPosition = Duration(milliseconds: ms);
     }
     return _currentPosition;

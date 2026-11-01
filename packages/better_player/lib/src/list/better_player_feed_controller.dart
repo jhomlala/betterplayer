@@ -23,6 +23,7 @@ class BetterPlayerFeedController extends ChangeNotifier {
            ),
        _ownsPool = pool == null,
        _pageController = pageController ?? PageController(),
+       _ownsPageController = pageController == null,
        _idGetter = idGetter ?? ((index) => 'item_$index') {
     _initNotifiers();
   }
@@ -31,6 +32,7 @@ class BetterPlayerFeedController extends ChangeNotifier {
   final BetterPlayerPool _pool;
   final bool _ownsPool;
   final PageController _pageController;
+  final bool _ownsPageController;
   final String Function(int index) _idGetter;
 
   int _currentIndex = 0;
@@ -98,11 +100,16 @@ class BetterPlayerFeedController extends ChangeNotifier {
         dataSource: activeDataSource,
       );
 
-      if (!_isDisposed && _currentIndex == index) {
-        getLeaseNotifier(index).value = lease;
-        if (autoPlay && (lease.controller.isVideoInitialized() ?? false)) {
-          unawaited(lease.controller.setVolume(1));
-          unawaited(lease.controller.play());
+      if (!_isDisposed && _currentIndex == index && lease.isValid) {
+        final notifier = getLeaseNotifier(index);
+        notifier.value = lease;
+        lease.addEvictionListener(() {
+          if (notifier.value == lease) {
+            notifier.value = null;
+          }
+        });
+        if (autoPlay) {
+          _startLeasePlayback(lease: lease, index: index);
         }
       }
     } catch (_) {}
@@ -113,6 +120,32 @@ class BetterPlayerFeedController extends ChangeNotifier {
       dataSources: _dataSources,
       idGetter: _idGetter,
     );
+  }
+
+  void _startLeasePlayback({
+    required PlayerPoolLease lease,
+    required int index,
+  }) {
+    if (lease.controller.isVideoInitialized() ?? false) {
+      unawaited(lease.controller.setVolume(1));
+      unawaited(lease.controller.play());
+      return;
+    }
+
+    late final void Function(PlayerEvent) initListener;
+    initListener = (event) {
+      if (event.betterPlayerEventType == PlayerEventType.initialized) {
+        lease.controller.removeEventsListener(initListener);
+        if (!_isDisposed && _currentIndex == index && lease.isValid) {
+          unawaited(lease.controller.setVolume(1));
+          unawaited(lease.controller.play());
+        }
+      }
+    };
+    lease.addEvictionListener(() {
+      lease.controller.removeEventsListener(initListener);
+    });
+    lease.controller.addEventsListener(initListener);
   }
 
   /// Appends more data sources to the feed (for infinite pagination).
@@ -145,7 +178,9 @@ class BetterPlayerFeedController extends ChangeNotifier {
     if (_ownsPool) {
       _pool.dispose();
     }
-    _pageController.dispose();
+    if (_ownsPageController) {
+      _pageController.dispose();
+    }
     super.dispose();
   }
 }

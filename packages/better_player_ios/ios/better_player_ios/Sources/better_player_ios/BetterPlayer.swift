@@ -262,9 +262,9 @@ private var presentationSizeContext = 0
                 p.seek(to: .zero, completionHandler: nil)
             }
         } else {
+            isPlaying = false
             if callback != nil {
                 callback?.onCompleted(key: key)
-                removeObservers()
             }
         }
     }

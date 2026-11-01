@@ -19,6 +19,8 @@ class _PlayerPoolSlot {
   int? currentIndex;
   String? currentSourceUrl;
   PlayerPoolLease? currentLease;
+  Future<PlayerPoolLease>? bindingFuture;
+  bool isPreloading = false;
   bool isBusy = false;
 
   bool get isFree => currentItemId == null && !isBusy;
@@ -112,11 +114,16 @@ class BetterPlayerPool {
       throw StateError('BetterPlayerPool has been disposed');
     }
 
-    // 1. Check if item already holds an active slot.
+    // 1. Check if item already holds an active or preloading slot.
     for (final slot in _slots) {
       if (slot.currentItemId == itemId && slot.currentLease != null) {
         slot.currentIndex = index;
-        return slot.currentLease!;
+        slot.isPreloading = false;
+        final lease = slot.currentLease!;
+        if (slot.bindingFuture != null) {
+          await slot.bindingFuture;
+        }
+        return lease;
       }
     }
 
@@ -131,7 +138,7 @@ class BetterPlayerPool {
       );
     }
 
-    // 3. Evict slot furthest from active index.
+    // 3. Evict non-busy slot furthest from active index.
     final evictionCandidate = _findFurthestSlot(targetIndex: index);
     if (evictionCandidate != null) {
       _evictSlot(evictionCandidate);
@@ -257,6 +264,9 @@ class BetterPlayerPool {
     var maxDistance = -1;
 
     for (final slot in _slots) {
+      if (slot.isBusy) {
+        continue;
+      }
       final slotIndex = slot.currentIndex;
       if (slotIndex == null) {
         return slot;
@@ -295,6 +305,8 @@ class BetterPlayerPool {
     slot.currentIndex = null;
     slot.currentSourceUrl = null;
     slot.currentLease = null;
+    slot.bindingFuture = null;
+    slot.isPreloading = false;
     slot.isBusy = false;
   }
 
@@ -304,8 +316,27 @@ class BetterPlayerPool {
     required int index,
     required PlayerDataSource dataSource,
     bool isPreload = false,
+  }) {
+    final future = _performBindSlot(
+      slot: slot,
+      itemId: itemId,
+      index: index,
+      dataSource: dataSource,
+      isPreload: isPreload,
+    );
+    slot.bindingFuture = future;
+    return future;
+  }
+
+  Future<PlayerPoolLease> _performBindSlot({
+    required _PlayerPoolSlot slot,
+    required String itemId,
+    required int index,
+    required PlayerDataSource dataSource,
+    required bool isPreload,
   }) async {
     slot.isBusy = true;
+    slot.isPreloading = isPreload;
     slot.currentItemId = itemId;
     slot.currentIndex = index;
 
@@ -330,7 +361,7 @@ class BetterPlayerPool {
         }
       }
 
-      if (isPreload) {
+      if (slot.isPreloading && slot.currentLease == lease) {
         if (configuration.preloadMode == PlayerPreloadMode.muted) {
           await slot.controller.setVolume(0);
           await slot.controller.play();
@@ -343,12 +374,18 @@ class BetterPlayerPool {
 
       return lease;
     } finally {
-      slot.isBusy = false;
+      if (slot.currentLease == lease) {
+        slot.isBusy = false;
+        slot.bindingFuture = null;
+      }
+      if (!_isDisposed) {
+        _processPendingRequests();
+      }
     }
   }
 
   void _processPendingRequests() {
-    if (_pendingRequests.isEmpty) {
+    if (_isDisposed || _pendingRequests.isEmpty) {
       return;
     }
 
@@ -357,6 +394,26 @@ class BetterPlayerPool {
       final nextRequest = _pendingRequests.removeAt(0);
       _bindSlot(
             slot: freeSlot,
+            itemId: nextRequest.itemId,
+            index: nextRequest.index,
+            dataSource: nextRequest.dataSource,
+          )
+          .then(nextRequest.completer.complete)
+          .catchError(
+            nextRequest.completer.completeError,
+          );
+      return;
+    }
+
+    final nextRequest = _pendingRequests.first;
+    final evictionCandidate = _findFurthestSlot(
+      targetIndex: nextRequest.index,
+    );
+    if (evictionCandidate != null) {
+      _pendingRequests.removeAt(0);
+      _evictSlot(evictionCandidate);
+      _bindSlot(
+            slot: evictionCandidate,
             itemId: nextRequest.itemId,
             index: nextRequest.index,
             dataSource: nextRequest.dataSource,
