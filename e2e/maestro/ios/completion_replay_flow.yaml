@@ -24,7 +24,6 @@ appId: pl.hasoft.example
 # Seek near end to trigger EOF and natural finished event
 - tapOn:
     id: "better_player_e2e_seek_to_end_button"
-    retryIfNoChange: true
 
 # Wait for video completion
 - extendedWaitUntil:
