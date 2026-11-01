@@ -12,6 +12,7 @@ import 'package:better_player_example/pages/controls_always_visible_page.dart';
 import 'package:better_player_example/pages/controls_configuration_page.dart';
 import 'package:better_player_example/pages/custom_controls/change_player_theme_page.dart';
 import 'package:better_player_example/pages/dash_page.dart';
+import 'package:better_player_example/pages/download_page.dart';
 import 'package:better_player_example/pages/drm_page.dart';
 import 'package:better_player_example/pages/event_listener_page.dart';
 import 'package:better_player_example/pages/fade_placeholder_page.dart';
@@ -381,6 +382,16 @@ class _WelcomePageState extends State<WelcomePage> {
       identifier: 'welcome_page_item_cache',
       supportsWeb: false,
       pageBuilder: (_) => const CachePage(),
+    ),
+    ExampleItem(
+      title: 'Downloads',
+      description:
+          'Downloads every segment of a DASH or HLS stream for offline '
+          'playback.',
+      icon: Icons.download_for_offline_outlined,
+      identifier: 'welcome_page_item_downloads',
+      supportsWeb: false,
+      pageBuilder: (_) => const DownloadPage(),
     ),
     ExampleItem(
       title: 'Event listener',
