@@ -9,6 +9,7 @@ import 'linux_ffi_test.dart' as ffi_test;
 import 'linux_flow_test.dart' as flow_test;
 import 'linux_hls_test.dart' as hls_test;
 import 'linux_local_file_test.dart' as local_file_test;
+import 'linux_seek_test.dart' as seek_test;
 import 'linux_shortcuts_test.dart' as shortcuts_test;
 
 void main() {
@@ -24,5 +25,6 @@ void main() {
     local_file_test.main();
     feed_render_test.main();
     completion_replay_test.main();
+    seek_test.main();
   });
 }
