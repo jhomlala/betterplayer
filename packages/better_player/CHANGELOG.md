@@ -1,3 +1,7 @@
+## Unreleased
+- Added: Unit test coverage for `PlayerEngineController`, `PlayerClosedCaption`, and all core controller extensions (`PlayerDataSourceExtension`, `PlayerEventsExtension`, `PlayerPlaybackExtension`, `PlayerPlaylistExtension`, `PlayerSubtitleExtension`, `PlayerTrackExtension`, `PlayerTranslationsExtension`, `PlayerViewStateExtension`).
+- Updated: Stricter static analysis in `analysis_options.yaml` by re-enabling `unawaited_futures`, `discarded_futures`, `avoid_void_async`, `avoid_positional_boolean_parameters`, `use_build_context_synchronously`, `no_literal_bool_comparisons`, `unnecessary_const`, `unnecessary_ignore`, and `sort_pub_dependencies`.
+
 ## 1.32.0
 - Added: Native AirPlay and Remote Playback support across iOS, macOS, and Web with top-bar route picker controls, `PlayerControlsConfiguration.enableAirPlay`, `BetterPlayerController.showAirPlayPicker()`, `BetterPlayerController.isExternalPlaybackSupported`, and `PlayerEventType.externalPlaybackChanged`.
 - Added: `PlayerCastExtension` interface to integrate third-party casting backends without increasing core package size.
