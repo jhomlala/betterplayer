@@ -823,178 +823,176 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
               ),
             ),
             const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 4,
-              children: [
-                Semantics(
-                  identifier: 'better_player_e2e_setup_mp4',
-                  label: 'better_player_e2e_setup_mp4',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: () => _setupDataSource(
-                      url: Constants.bugBuckBunnyVideoUrl,
-                      type: DataSourceType.network,
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 8,
+                runSpacing: 4,
+                children: [
+                  Semantics(
+                    identifier: 'better_player_e2e_setup_mp4',
+                    label: 'better_player_e2e_setup_mp4',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: () => _setupDataSource(
+                        url: Constants.bugBuckBunnyVideoUrl,
+                        type: DataSourceType.network,
+                      ),
+                      child: const Text('MP4'),
                     ),
-                    child: const Text('MP4'),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_setup_file',
-                  label: 'better_player_e2e_setup_file',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: _setupLocalFileDataSource,
-                    child: const Text('Local File'),
-                  ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_seek_to_end_button',
-                  label: 'better_player_e2e_seek_to_end_button',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: _seekToEndForReplayTest,
-                    child: const Text('Seek To End'),
-                  ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_setup_hls',
-                  label: 'better_player_e2e_setup_hls',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: () => _setupDataSource(
-                      url: Constants.hlsTestStreamUrl,
-                      type: DataSourceType.network,
+                  Semantics(
+                    identifier: 'better_player_e2e_setup_file',
+                    label: 'better_player_e2e_setup_file',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: _setupLocalFileDataSource,
+                      child: const Text('Local File'),
                     ),
-                    child: const Text('HLS'),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_setup_error',
-                  label: 'better_player_e2e_setup_error',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: () => _setupDataSource(
-                      url:
-                          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/404.mp4',
-                      type: DataSourceType.network,
+                  Semantics(
+                    identifier: 'better_player_e2e_seek_to_end_button',
+                    label: 'better_player_e2e_seek_to_end_button',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: _seekToEndForReplayTest,
+                      child: const Text('Seek To End'),
                     ),
-                    child: const Text('Invalid'),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_runtime_config_button',
-                  label: 'better_player_e2e_runtime_config_button',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: _applyRuntimeControlsConfiguration,
-                    child: const Text('Runtime Config'),
+                  Semantics(
+                    identifier: 'better_player_e2e_setup_hls',
+                    label: 'better_player_e2e_setup_hls',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: () => _setupDataSource(
+                        url: Constants.hlsTestStreamUrl,
+                        type: DataSourceType.network,
+                      ),
+                      child: const Text('HLS'),
+                    ),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_toggle_theme_button',
-                  label: 'better_player_e2e_toggle_theme_button',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: _toggleAlternateControlsTheme,
-                    child: const Text('Toggle Theme'),
+                  Semantics(
+                    identifier: 'better_player_e2e_setup_error',
+                    label: 'better_player_e2e_setup_error',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: () => _setupDataSource(
+                        url:
+                            'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/404.mp4',
+                        type: DataSourceType.network,
+                      ),
+                      child: const Text('Invalid'),
+                    ),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_visibility_cycle_button',
-                  label: 'better_player_e2e_visibility_cycle_button',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: _triggerVisibilityCycle,
-                    child: const Text('Visibility Cycle'),
+                  Semantics(
+                    identifier: 'better_player_e2e_runtime_config_button',
+                    label: 'better_player_e2e_runtime_config_button',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: _applyRuntimeControlsConfiguration,
+                      child: const Text('Runtime Config'),
+                    ),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_playlist_button',
-                  label: 'better_player_e2e_playlist_button',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: _runPlaylistTest,
-                    child: const Text('Playlist Test'),
+                  Semantics(
+                    identifier: 'better_player_e2e_toggle_theme_button',
+                    label: 'better_player_e2e_toggle_theme_button',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: _toggleAlternateControlsTheme,
+                      child: const Text('Toggle Theme'),
+                    ),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_list_player_button',
-                  label: 'better_player_e2e_list_player_button',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: _runListAndDisposeTest,
-                    child: const Text('List Player Test'),
+                  Semantics(
+                    identifier: 'better_player_e2e_visibility_cycle_button',
+                    label: 'better_player_e2e_visibility_cycle_button',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: _triggerVisibilityCycle,
+                      child: const Text('Visibility Cycle'),
+                    ),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_navigate_ffi',
-                  label: 'better_player_e2e_navigate_ffi',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await _betterPlayerController.pause();
-                      if (context.mounted) {
-                        await Navigator.of(context).push(
+                  Semantics(
+                    identifier: 'better_player_e2e_playlist_button',
+                    label: 'better_player_e2e_playlist_button',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: _runPlaylistTest,
+                      child: const Text('Playlist Test'),
+                    ),
+                  ),
+                  Semantics(
+                    identifier: 'better_player_e2e_list_player_button',
+                    label: 'better_player_e2e_list_player_button',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: _runListAndDisposeTest,
+                      child: const Text('List Player Test'),
+                    ),
+                  ),
+                  Semantics(
+                    identifier: 'better_player_e2e_navigate_ffi',
+                    label: 'better_player_e2e_navigate_ffi',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        unawaited(_betterPlayerController.pause());
+                        Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (context) => const FFITestPage(),
                           ),
                         );
-                      }
-                    },
-                    child: const Text('FFI Test'),
+                      },
+                      child: const Text('FFI Test'),
+                    ),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_navigate_seek',
-                  label: 'better_player_e2e_navigate_seek',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await _betterPlayerController.pause();
-                      if (context.mounted) {
-                        await Navigator.of(context).push(
+                  Semantics(
+                    identifier: 'better_player_e2e_navigate_seek',
+                    label: 'better_player_e2e_navigate_seek',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        unawaited(_betterPlayerController.pause());
+                        Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (context) => const SeekE2EPage(),
                           ),
                         );
-                      }
-                    },
-                    child: const Text('Seek Test'),
+                      },
+                      child: const Text('Seek Test'),
+                    ),
                   ),
-                ),
-                Semantics(
-                  identifier: 'better_player_e2e_navigate_feed_render',
-                  label: 'better_player_e2e_navigate_feed_render',
-                  container: true,
-                  button: true,
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      await _betterPlayerController.pause();
-                      if (context.mounted) {
-                        await Navigator.of(context).push(
+                  Semantics(
+                    identifier: 'better_player_e2e_navigate_feed_render',
+                    label: 'better_player_e2e_navigate_feed_render',
+                    container: true,
+                    button: true,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        unawaited(_betterPlayerController.pause());
+                        Navigator.of(context).push(
                           MaterialPageRoute<void>(
                             builder: (context) => const FeedRenderE2EPage(),
                           ),
                         );
-                      }
-                    },
-                    child: const Text('Feed Render Test'),
+                      },
+                      child: const Text('Feed Render Test'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),

@@ -44,6 +44,20 @@ import AVKit
 
     private static var _logCallback: BetterPlayerLogCallback? = nil
     private static var _preCacheCallback: BetterPlayerPreCacheCallback? = nil
+    public static var onExternalPlaybackChanged: ((Bool) -> Void)? = nil
+
+    public static func isAnyExternalPlaybackActive() -> Bool {
+        for (_, player) in players {
+            if player.player.isExternalPlaybackActive {
+                return true
+            }
+        }
+        return false
+    }
+
+    public static func notifyExternalPlaybackChanged() {
+        onExternalPlaybackChanged?(isAnyExternalPlaybackActive())
+    }
 
     @objc public static func setLogCallback(_ callback: BetterPlayerLogCallback?) {
         _logCallback = callback
@@ -116,6 +130,7 @@ import AVKit
         for player in activePlayers {
             player.dispose()
         }
+        notifyExternalPlaybackChanged()
     }
 
     // Reference the dummy classes to prevent the linker from stripping them out

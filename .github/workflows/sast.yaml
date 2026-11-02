@@ -21,22 +21,22 @@ jobs:
         shell: bash
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Ensure base branch exists locally
+        run: |
+          if [ "${{ github.ref_name }}" != "${{ github.event.repository.default_branch }}" ]; then
+            git branch -f "${{ github.event.repository.default_branch }}" "origin/${{ github.event.repository.default_branch }}" || true
+          fi
+
       - name: TruffleHog OSS
-        id: trufflehog
         uses: trufflesecurity/trufflehog@main
-        continue-on-error: true
         with:
           path: ./
-          base: "${{ github.event.repository.default_branch }}"
+          base: ${{ github.ref_name != github.event.repository.default_branch && github.event.repository.default_branch || '' }}
           extra_args: --results=verified,unknown
-
-      - name: Scan Results Status
-        if: steps.trufflehog.outcome == 'failure'
-        run: exit 1
 
   semgrep:
     name: Semgrep
@@ -50,4 +50,4 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - run: semgrep scan --config auto
+      - run: semgrep scan --config auto --error

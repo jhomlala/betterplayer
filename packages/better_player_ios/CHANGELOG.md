@@ -1,3 +1,6 @@
+## Unreleased
+- Added: Native AirPlay route picker (`AVRoutePickerView`) and `externalPlaybackActive` KVO state stream.
+
 ## 1.10.1
 - Fixed: Kept KVO and legible output observers attached on playback completion and updated `isPlaying` state so replay and post-completion seeks remain functional.
 - Fixed: Implemented secure screen capture and recording protection on window layer using `UITextField.isSecureTextEntry` hierarchy.

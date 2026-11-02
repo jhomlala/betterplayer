@@ -153,6 +153,19 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   @override
   Stream<bool> get screenCaptureStream => screenCaptureStreamController.stream;
 
+  final List<int?> showExternalPlaybackPickerCalls = [];
+  final StreamController<bool> externalPlaybackStreamController =
+      StreamController<bool>.broadcast();
+
+  @override
+  Future<void> showExternalPlaybackPicker({required int? textureId}) async {
+    showExternalPlaybackPickerCalls.add(textureId);
+  }
+
+  @override
+  Stream<bool> get externalPlaybackStream =>
+      externalPlaybackStreamController.stream;
+
   @override
   Widget buildView(int? textureId) => const SizedBox();
 }

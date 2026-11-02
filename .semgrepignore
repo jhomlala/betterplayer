@@ -1,0 +1,21 @@
+# Dependencies, build output, and tool cache
+**/build/
+**/.dart_tool/
+**/.gradle/
+**/Pods/
+**/.idea/
+**/.vscode/
+coverage/
+
+# Documentation and maintenance scripts
+doc/
+docs/
+scripts/
+
+# CI / GitHub Actions workflows
+# (Auto-rules flag standard @v4 action tags and curl-pipe-shell)
+.github/
+
+# Example app sample test DRM vectors and web shell
+packages/better_player_example/lib/constants.dart
+packages/better_player_example/web/index.html

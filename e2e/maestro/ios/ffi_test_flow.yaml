@@ -17,6 +17,10 @@ appId: pl.hasoft.example
     id: "better_player_e2e_navigate_ffi"
 - extendedWaitUntil:
     visible:
+      id: "ffi_test_page_title"
+    timeout: 30000
+- extendedWaitUntil:
+    visible:
       id: "ffi_test_initialized_status"
       text: ".*initialized=true.*"
     timeout: 60000

@@ -113,6 +113,9 @@ PlayerDataSource dataSource = PlayerDataSource(
     - Filenames MUST match the primary class they declare (`Player*` -> `player_*.dart`, `BetterPlayer*` -> `better_player_*.dart`).
     - **One Model or Class per File**: Every class, model, or enum MUST live in its own dedicated file matching its snake_case name (e.g., `VastAd` -> `vast_ad.dart`). NEVER bundle multiple models or classes into a single file (such as `*_models.dart`).
   - **Material UI Imports**: ALWAYS use `package:material_ui/material_ui.dart` for Material widgets, theming, and icons across the project and example app. DO NOT replace it with `package:flutter/material.dart`. The repository uses Flutter's official modular `material_ui` package.
+  - **No Unwired or Placeholder Fields**: NEVER add unused or "future-proof" fields to models, configurations, or requests. Every public field or parameter MUST be wired end-to-end and covered by tests in the same change.
+  - **Deterministic Persistent IDs**: NEVER use Dart's `Object.hashCode` or `String.hashCode` for persistent cache keys, file names, or native database IDs (Dart randomizes string hash codes per process run). Use the raw key/URL or a deterministic hash.
+  - **No Em Dashes in Prose or Comments**: NEVER use Unicode em dashes (`—`) or double hyphens (`--`) in documentation, changelogs, PR/issue comments, or docstrings. Use a comma, colon, or parentheses instead.
 
 ## Testing
 - **Async Operations**: Always `await` asynchronous calls in tests (e.g., `setupDataSource`, `play`, `pause`, `seekTo`).
@@ -153,7 +156,8 @@ PlayerDataSource dataSource = PlayerDataSource(
 - **Rules Reference**: ALWAYS follow the guidelines in rules/linux.md when working with `better_player_linux` or implementing Linux E2E tests.
 
 ## Architecture
-- **Plugin-First Principle**: When working on new features or refactoring existing code, prioritize a **plugin-based architecture**. The goal is to keep the core library lean and extend functionality via plugins rather than purely working within the core.
+- **Plugin-First Principle (Dart Extensions vs Federated Packages)**: Keep the core player lean by building high-level Dart features (like ads, analytics, or overlays) as modular components. However, **NEVER create new standalone native Flutter plugin packages** in `packages/` (e.g. `better_player_downloader`) that duplicate or depend on `:better_player_android` or `better_player_ios`. Native playback, caching, DRM, and media engine features MUST live inside the existing federated platform packages (`better_player_android`, `better_player_ios`, `better_player_macos`, `better_player_windows`, `better_player_linux`, `better_player_web`) and `better_player_platform_interface`.
+- **FFI/JNI Over MethodChannel & Polling**: Native communication on Android and iOS/macOS uses `jnigen` and `swiftgen` FFI bindings (`BetterPlayerApi`). Do NOT introduce new `MethodChannel` bridges for native features, and NEVER use `Timer.periodic` in Dart to poll native state or progress; push updates from native via callbacks instead.
 - **Proactive Refactoring**: This is a legacy plugin that requires significant effort to align its architecture with modern best practices (e.g., modularization, separation of concerns). Be proactive when refactoring; don't just fix the immediate issue if you see an opportunity to improve the underlying structure and ensure it follows current Android, iOS, and Flutter standards.
 
 ## GitHub Issues (Bugs & Features)

@@ -44,6 +44,11 @@ class PlayerControlsConfiguration {
     this.enableSubtitles = true,
     this.enableQualities = true,
     this.enablePip = true,
+    this.enableAirPlay = true,
+    this.airPlayIcon = Icons.airplay_outlined,
+    this.airPlayActiveIcon = Icons.airplay,
+    this.castIcon = Icons.cast_outlined,
+    this.castConnectedIcon = Icons.cast_connected_outlined,
     this.enableRetry = true,
     this.overflowMenuCustomItems = const [],
     this.overflowMenuIcon = Icons.more_vert_outlined,
@@ -170,6 +175,15 @@ class PlayerControlsConfiguration {
       enableSubtitles: enableSubtitles,
       enableQualities: enableQualities,
       enablePip: enablePip,
+      enableAirPlay: enableAirPlay,
+      airPlayIcon: airPlayIcon == Icons.airplay_outlined
+          ? CupertinoIcons.tv
+          : airPlayIcon,
+      airPlayActiveIcon: airPlayActiveIcon == Icons.airplay
+          ? CupertinoIcons.tv_fill
+          : airPlayActiveIcon,
+      castIcon: castIcon,
+      castConnectedIcon: castConnectedIcon,
       enableRetry: enableRetry,
       overflowMenuCustomItems: overflowMenuCustomItems,
       overflowMenuIcon: overflowMenuIcon == Icons.more_vert_outlined
@@ -319,6 +333,21 @@ class PlayerControlsConfiguration {
 
   ///Flag used to show/hide PiP mode
   final bool enablePip;
+
+  ///Flag used to show/hide AirPlay/Cast external playback button
+  final bool enableAirPlay;
+
+  ///Icon of AirPlay when inactive
+  final IconData airPlayIcon;
+
+  ///Icon of AirPlay when active
+  final IconData airPlayActiveIcon;
+
+  ///Icon of Cast when disconnected
+  final IconData castIcon;
+
+  ///Icon of Cast when connected
+  final IconData castConnectedIcon;
 
   ///Flag used to enable/disable retry feature
   final bool enableRetry;

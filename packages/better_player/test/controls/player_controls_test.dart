@@ -1,15 +1,19 @@
+import 'dart:async';
+
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_cupertino_controls.dart';
 import 'package:better_player/src/controls/player_cupertino_progress_bar.dart';
 import 'package:better_player/src/controls/player_material_middle_row.dart';
 import 'package:better_player/src/controls/player_material_progress_bar.dart';
 import 'package:better_player/src/core/player_with_controls.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_mock_controller.dart';
 import '../helpers/better_player_test_utils.dart';
+import '../helpers/mock_better_player_platform.dart';
 import '../helpers/mock_player_engine_controller.dart';
 
 void main() {
@@ -721,6 +725,199 @@ void main() {
       expect(controller2.addListenerCalls, 1);
     },
   );
+
+  testWidgets(
+    'Material controls show AirPlay button and trigger picker on tap on supported platform',
+    (tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        final mockEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mockEngineController,
+              configuration: const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.material,
+                ),
+              ),
+            );
+        await controller.setupDataSource(
+          PlayerDataSource.network(
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWidget(
+            BetterPlayer(
+              controller: controller,
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        final buttonFinder = find.byIcon(Icons.airplay_outlined);
+        expect(buttonFinder, findsOneWidget);
+
+        final mockPlatform =
+            BetterPlayerPlatform.instance as MockBetterPlayerPlatform;
+        mockPlatform.showExternalPlaybackPickerCalls.clear();
+
+        await tester.tap(buttonFinder);
+        await tester.pump();
+        expect(mockPlatform.showExternalPlaybackPickerCalls.length, 1);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    },
+  );
+
+  testWidgets(
+    'Material controls hide AirPlay button on unsupported platform without CastExtension',
+    (tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      try {
+        final mockEngineController =
+            BetterPlayerTestUtils.setupMockPlayerEngineController();
+        final controller =
+            BetterPlayerTestUtils.setupBetterPlayerMockController(
+              controller: mockEngineController,
+              configuration: const PlayerConfiguration(
+                controlsConfiguration: PlayerControlsConfiguration(
+                  playerTheme: PlayerTheme.material,
+                ),
+              ),
+            );
+        await controller.setupDataSource(
+          PlayerDataSource.network(
+            BetterPlayerTestUtils.forBiggerBlazesUrl,
+          ),
+        );
+
+        await tester.pumpWidget(
+          _wrapWidget(
+            BetterPlayer(
+              controller: controller,
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+
+        expect(find.byIcon(Icons.airplay_outlined), findsNothing);
+        expect(find.byIcon(Icons.cast_outlined), findsNothing);
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    },
+  );
+
+  testWidgets(
+    'Material controls hide AirPlay button when enableAirPlay is false',
+    (tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final mockEngineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockEngineController,
+        configuration: const PlayerConfiguration(
+          controlsConfiguration: PlayerControlsConfiguration(
+            enableAirPlay: false,
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final buttonFinder = find.byIcon(Icons.airplay_outlined);
+      expect(buttonFinder, findsNothing);
+    },
+  );
+
+  testWidgets(
+    'Material controls display castIcon when CastExtension is attached and updates to connected',
+    (tester) async {
+      tester.view.physicalSize = const Size(1024, 768);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final castExt = _TestCastExtension();
+      final mockEngineController =
+          BetterPlayerTestUtils.setupMockPlayerEngineController();
+      final controller = BetterPlayerTestUtils.setupBetterPlayerMockController(
+        controller: mockEngineController,
+        configuration: PlayerConfiguration(
+          extensions: [castExt],
+          controlsConfiguration: const PlayerControlsConfiguration(
+            playerTheme: PlayerTheme.material,
+          ),
+        ),
+      );
+      await controller.setupDataSource(
+        PlayerDataSource.network(
+          BetterPlayerTestUtils.forBiggerBlazesUrl,
+        ),
+      );
+
+      await tester.pumpWidget(
+        _wrapWidget(
+          BetterPlayer(
+            controller: controller,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(find.byIcon(Icons.cast_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.cast_connected_outlined), findsNothing);
+
+      castExt.setCasting(true);
+      await tester.pump();
+
+      expect(find.byIcon(Icons.cast_connected_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.cast_outlined), findsNothing);
+    },
+  );
+}
+
+class _TestCastExtension extends PlayerCastExtension {
+  bool _casting = false;
+  final _streamController = StreamController<bool>.broadcast();
+
+  @override
+  bool get isCasting => _casting;
+
+  @override
+  Stream<bool> get castingStream => _streamController.stream;
+
+  @override
+  Future<void> showCastPicker() async {}
+
+  void setCasting(bool val) {
+    _casting = val;
+    _streamController.add(val);
+  }
 }
 
 ///Wrap widget with material app to handle all features like navigation and

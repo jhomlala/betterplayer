@@ -1,3 +1,6 @@
+## Unreleased
+- Added: `showExternalPlaybackPicker` and `externalPlaybackStream` to `BetterPlayerPlatform` for native AirPlay, Cast, and Remote Playback routing.
+
 ## 1.6.0
 - Added: `setScreenCaptureProtection` method to `BetterPlayerPlatform` to toggle native window/screen capture prevention.
 

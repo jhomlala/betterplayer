@@ -30,6 +30,13 @@ class BetterPlayerWebPlayer {
   @visibleForTesting
   Duration? overriddenDuration;
 
+  final StreamController<bool> _externalPlaybackController =
+      StreamController<bool>.broadcast();
+  bool _isExternalPlaybackActive = false;
+
+  bool get isExternalPlaybackActive => _isExternalPlaybackActive;
+  Stream<bool> get externalPlaybackEvents => _externalPlaybackController.stream;
+
   Stream<VideoEvent> get events => _eventController.stream;
 
   Future<void> initialize({web.HTMLVideoElement? videoElement}) async {
@@ -94,7 +101,70 @@ class BetterPlayerWebPlayer {
     _shakaPlayer?.configure(defaultConfig);
   }
 
+  void _emitExternalPlaybackState(bool isActive) {
+    if (_disposed || _externalPlaybackController.isClosed) return;
+    _isExternalPlaybackActive = isActive;
+    _externalPlaybackController.add(isActive);
+  }
+
+  void _attachExternalPlaybackListeners() {
+    final jsVideo = videoElement as JSObject;
+    _attachRemotePlaybackListeners(jsVideo);
+    _attachWebkitPlaybackTargetListeners(jsVideo);
+  }
+
+  void _attachRemotePlaybackListeners(JSObject jsVideo) {
+    if (!jsVideo.has('remote')) return;
+    final remote = jsVideo['remote'] as JSObject?;
+    if (remote == null) return;
+
+    if (remote.has('state')) {
+      final state = (remote['state'] as JSString?)?.toDart;
+      if (state == 'connected') {
+        _isExternalPlaybackActive = true;
+      }
+    }
+    if (!remote.has('addEventListener')) return;
+
+    remote.callMethod(
+      'addEventListener'.toJS,
+      'connect'.toJS,
+      ((web.Event _) => _emitExternalPlaybackState(true)).toJS,
+    );
+    remote.callMethod(
+      'addEventListener'.toJS,
+      'disconnect'.toJS,
+      ((web.Event _) => _emitExternalPlaybackState(false)).toJS,
+    );
+  }
+
+  void _attachWebkitPlaybackTargetListeners(JSObject jsVideo) {
+    if (jsVideo.has('webkitCurrentPlaybackTargetIsWireless')) {
+      final wireless =
+          (jsVideo['webkitCurrentPlaybackTargetIsWireless'] as JSBoolean?)
+              ?.toDart ==
+          true;
+      if (wireless) {
+        _isExternalPlaybackActive = true;
+      }
+    }
+    if (!jsVideo.has('addEventListener')) return;
+
+    videoElement.addEventListener(
+      'webkitcurrentplaybacktargetiswirelesschanged',
+      ((web.Event _) {
+        final wireless =
+            jsVideo.has('webkitCurrentPlaybackTargetIsWireless') &&
+            (jsVideo['webkitCurrentPlaybackTargetIsWireless'] as JSBoolean?)
+                    ?.toDart ==
+                true;
+        _emitExternalPlaybackState(wireless);
+      }).toJS,
+    );
+  }
+
   void _attachListeners() {
+    _attachExternalPlaybackListeners();
     videoElement.addEventListener(
       'loadedmetadata',
       ((web.Event _) {
@@ -702,7 +772,29 @@ class BetterPlayerWebPlayer {
       await _shakaPlayer!.destroy().toDart;
     }
     await _eventController.close();
+    await _externalPlaybackController.close();
     onLog(message: 'BetterPlayerWebPlayer disposed: $viewId', levelIndex: 1);
+  }
+
+  Future<void> showExternalPlaybackPicker() async {
+    final jsVideo = videoElement as JSObject;
+    if (jsVideo.has('remote')) {
+      final remote = jsVideo['remote'] as JSObject?;
+      if (remote != null && remote.has('prompt')) {
+        try {
+          final promptResult = remote.callMethod('prompt'.toJS);
+          if (promptResult != null && promptResult.isA<JSPromise<JSAny?>>()) {
+            await (promptResult as JSPromise<JSAny?>).toDart;
+            return;
+          }
+        } catch (_) {}
+      }
+    }
+    if (jsVideo.has('webkitShowPlaybackTargetPicker')) {
+      try {
+        jsVideo.callMethod('webkitShowPlaybackTargetPicker'.toJS);
+      } catch (_) {}
+    }
   }
 
   String? _mapDrmSecurityLevel(DrmSecurityLevel? level) {
