@@ -1,5 +1,6 @@
-## Unreleased
+## 1.11.0
 - Added: Native AirPlay route picker (`AVRoutePickerView`) and `externalPlaybackActive` KVO state stream.
+- Updated: Bumped `better_player_platform_interface` dependency to `^1.7.0`.
 
 ## 1.10.1
 - Fixed: Kept KVO and legible output observers attached on playback completion and updated `isPlaying` state so replay and post-completion seeks remain functional.

@@ -1,4 +1,4 @@
-## Unreleased
+## 1.7.0
 - Added: `showExternalPlaybackPicker` and `externalPlaybackStream` to `BetterPlayerPlatform` for native AirPlay, Cast, and Remote Playback routing.
 
 ## 1.6.0

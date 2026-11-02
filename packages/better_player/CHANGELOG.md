@@ -1,6 +1,7 @@
-## Unreleased
+## 1.32.0
 - Added: Native AirPlay and Remote Playback support across iOS, macOS, and Web with top-bar route picker controls, `PlayerControlsConfiguration.enableAirPlay`, `BetterPlayerController.showAirPlayPicker()`, `BetterPlayerController.isExternalPlaybackSupported`, and `PlayerEventType.externalPlaybackChanged`.
 - Added: `PlayerCastExtension` interface to integrate third-party casting backends without increasing core package size.
+- Updated: Bumped federated sub-packages: `better_player_platform_interface` to `^1.7.0`, `better_player_ios` to `^1.11.0`, `better_player_macos` to `^1.6.0`, and `better_player_web` to `^1.4.0`.
 
 ## 1.31.0
 - Added: End-to-end seek tests across Windows, Linux, macOS integration tests, Playwright (Web), and Maestro (iOS & Android).
