@@ -102,7 +102,7 @@ class _PlayerWebControlsState
           _isPipSupported = supported;
         });
       }
-    } catch (_) {
+    } on Exception catch (_) {
       // Data source may not be initialized yet.
     }
   }

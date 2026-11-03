@@ -1,4 +1,6 @@
-﻿import 'package:better_player/better_player.dart';
+import 'dart:async';
+
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/core/player_with_controls.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -38,10 +40,12 @@ void main() {
     tester,
   ) async {
     const placeholder = Text('DataSource Placeholder');
-    mockController.setupDataSource(
-      PlayerDataSource.network(
-        'url',
-        placeholder: placeholder,
+    unawaited(
+      mockController.setupDataSource(
+        PlayerDataSource.network(
+          'url',
+          placeholder: placeholder,
+        ),
       ),
     );
 

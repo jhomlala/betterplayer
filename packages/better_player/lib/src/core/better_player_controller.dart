@@ -58,7 +58,7 @@ class BetterPlayerController {
             }
             postEvent(PlayerEvent(PlayerEventType.externalPlaybackChanged));
           });
-    } catch (_) {
+    } on Object catch (_) {
       _externalPlaybackSubscription = null;
     }
     if (betterPlayerDataSource != null) {
@@ -603,7 +603,7 @@ class BetterPlayerController {
     }
 
     if (_subtitleState.subtitlesSource?.asmsIsSegmented == true) {
-      _loadAsmsSubtitlesSegments(currentVideoPlayerValue.position);
+      unawaited(_loadAsmsSubtitlesSegments(currentVideoPlayerValue.position));
     }
 
     final now = DateTime.now().millisecondsSinceEpoch;

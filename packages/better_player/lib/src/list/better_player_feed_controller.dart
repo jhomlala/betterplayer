@@ -112,7 +112,7 @@ class BetterPlayerFeedController extends ChangeNotifier {
           _startLeasePlayback(lease: lease, index: index);
         }
       }
-    } catch (_) {}
+    } on Object catch (_) {}
 
     // Update lookahead/lookbehind preloads
     _pool.updatePreloads(

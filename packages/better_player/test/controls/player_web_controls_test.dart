@@ -172,7 +172,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Simulate engine volume change
-    controller.setVolume(0);
+    await controller.setVolume(0);
     await tester.pumpAndSettle();
     expect(controller.videoPlayerValue?.volume, 0.0);
 
@@ -180,7 +180,7 @@ void main() {
     await tester.pumpAndSettle();
 
     // Simulate engine volume change
-    controller.setVolume(1);
+    await controller.setVolume(1);
     await tester.pumpAndSettle();
     expect(controller.videoPlayerValue?.volume, 1.0);
   });

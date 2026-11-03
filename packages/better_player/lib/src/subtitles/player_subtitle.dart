@@ -22,7 +22,7 @@ class PlayerSubtitle {
         );
       }
       return PlayerSubtitle._();
-    } catch (exception) {
+    } on Object {
       PlayerLogger.error(message: 'Failed to parse subtitle line: $value');
       return PlayerSubtitle._();
     }
@@ -72,7 +72,7 @@ class PlayerSubtitle {
         texts: texts,
         alignment: alignment,
       );
-    } catch (exception) {
+    } on Object {
       PlayerLogger.error(message: 'Failed to parse subtitle line: $scanner');
       return PlayerSubtitle._();
     }
@@ -123,7 +123,7 @@ class PlayerSubtitle {
         texts: texts,
         alignment: alignment,
       );
-    } catch (exception) {
+    } on Object {
       PlayerLogger.error(message: 'Failed to parse subtitle line: $scanner');
       return PlayerSubtitle._();
     }
@@ -151,7 +151,7 @@ class PlayerSubtitle {
         }
       }
       return null;
-    } catch (exception) {
+    } on Object {
       PlayerLogger.error(message: 'Failed to parse cue settings: $settings');
       return null;
     }
@@ -189,7 +189,7 @@ class PlayerSubtitle {
         milliseconds: int.tryParse(secsAndMillsSplit[1])!,
       );
       return result;
-    } catch (exception) {
+    } on Object {
       PlayerLogger.warning(message: 'Failed to process value: $value');
       return Duration.zero;
     }

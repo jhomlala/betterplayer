@@ -53,9 +53,9 @@ void main() {
       Timer.run(() {
         if (!eventController.isClosed) {
           eventController.add(
-            VideoEvent(
+            const VideoEvent(
               eventType: VideoEventType.initialized,
-              duration: const Duration(seconds: 10),
+              duration: Duration(seconds: 10),
               key: null,
             ),
           );

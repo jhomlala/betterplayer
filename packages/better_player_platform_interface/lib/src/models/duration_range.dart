@@ -1,9 +1,12 @@
+import 'package:meta/meta.dart';
+
 /// Describes a discrete segment of time within a video using a [start] and
 /// [end] [Duration].
+@immutable
 class DurationRange {
   /// Trusts that the given [start] and [end] are actually in order. They should
   /// both be non-null.
-  DurationRange(this.start, this.end);
+  const DurationRange(this.start, this.end);
 
   /// The beginning of the segment described relative to the beginning of the
   /// entire video. Should be shorter than or equal to [end].
@@ -49,6 +52,7 @@ class DurationRange {
   }
 
   @override
+  // Diagnostic ignore reason: intentional string representation containing runtimeType.
   // ignore: no_runtimetype_tostring
   String toString() => '$runtimeType(start: $start, end: $end)';
 

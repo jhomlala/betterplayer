@@ -9,6 +9,4 @@ linter:
   rules:
     discarded_futures: false
     cascade_invocations: false
-    avoid_catches_without_on_clauses: false
-    unawaited_futures: false
     avoid_positional_boolean_parameters: false

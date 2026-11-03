@@ -33,9 +33,12 @@ class DataSource {
     this.drmConfiguration,
     this.overriddenDuration,
     this.videoExtension,
-  }) : assert(uri == null || asset == null);
+  }) : assert(
+         uri == null || asset == null,
+         'Cannot provide both uri and asset',
+       );
 
-  /// Describes the type of data source this [PlayerEngineController]
+  /// Describes the type of data source this `PlayerEngineController`
   /// is constructed with.
   ///
   /// The way in which the video was originally loaded.
@@ -56,7 +59,9 @@ class DataSource {
 
   /// **Android only**. String representation of a formatHint.
   String? get rawFormalHint {
-    switch (formatHint) {
+    final hint = formatHint;
+    if (hint == null) return null;
+    switch (hint) {
       case VideoFormat.ss:
         return 'ss';
       case VideoFormat.hls:
@@ -65,8 +70,6 @@ class DataSource {
         return 'dash';
       case VideoFormat.other:
         return 'other';
-      default:
-        return null;
     }
   }
 

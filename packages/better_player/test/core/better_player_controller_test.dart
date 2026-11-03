@@ -300,7 +300,7 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController(
               controller: mockPlayerEngineController,
             );
-        mockPlayerEngineController.setNetworkDataSource(
+        await mockPlayerEngineController.setNetworkDataSource(
           BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
         );
         expect(mockPlayerEngineController.isLoopingState, false);
@@ -470,7 +470,7 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController(
               controller: mockPlayerEngineController,
             );
-        mockPlayerEngineController.setNetworkDataSource(
+        await mockPlayerEngineController.setNetworkDataSource(
           BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
         );
         await betterPlayerMockController.setVolume(1);
@@ -512,7 +512,7 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController(
               controller: mockPlayerEngineController,
             );
-        mockPlayerEngineController.setNetworkDataSource(
+        await mockPlayerEngineController.setNetworkDataSource(
           BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
         );
         await betterPlayerMockController.setSpeed(1.1);

@@ -35,9 +35,9 @@ void main() {
 
       mockPlatform.sendEvent(
         textureId,
-        VideoEvent(
+        const VideoEvent(
           eventType: VideoEventType.changedSize,
-          size: const Size(1920, 1080),
+          size: Size(1920, 1080),
           key: 'https://example.com/video.mp4',
         ),
       );
@@ -47,7 +47,7 @@ void main() {
 
       mockPlatform.sendEvent(
         textureId,
-        VideoEvent(
+        const VideoEvent(
           eventType: VideoEventType.changedSize,
           size: Size.zero,
           key: 'https://example.com/video.mp4',
@@ -81,9 +81,9 @@ void main() {
 
         mockPlatform.sendEvent(
           textureId,
-          VideoEvent(
+          const VideoEvent(
             eventType: VideoEventType.changedSize,
-            size: const Size(1920, 1080),
+            size: Size(1920, 1080),
             key: 'https://example.com/hls.m3u8',
           ),
         );
@@ -107,7 +107,7 @@ void main() {
         }
         mockPlatform.sendEvent(
           textureId,
-          VideoEvent(
+          const VideoEvent(
             eventType: VideoEventType.changedSize,
             key: 'https://example.com/hls.m3u8',
           ),
@@ -206,7 +206,7 @@ void main() {
       await controller.setNetworkDataSource('https://example.com/video.mp4');
 
       final testRanges = [
-        DurationRange(Duration.zero, const Duration(seconds: 15)),
+        const DurationRange(Duration.zero, Duration(seconds: 15)),
       ];
 
       mockPlatform.sendEvent(
@@ -241,7 +241,7 @@ void main() {
 
         mockPlatform.sendEvent(
           textureId,
-          VideoEvent(
+          const VideoEvent(
             eventType: VideoEventType.completed,
             key: 'https://example.com/video.mp4',
           ),

@@ -128,7 +128,7 @@ class PlayerTtmlParser {
       }
 
       return cues;
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Failed to parse TTML content: $exception',
         error: exception,

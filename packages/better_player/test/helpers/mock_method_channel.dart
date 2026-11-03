@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -39,14 +40,16 @@ class MockMethodChannel {
     final eventChannel = MethodChannel('better_player_channel/videoEvents$id');
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(eventChannel, (methodCall) async {
-          TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-              .handlePlatformMessage(
-                'better_player_channel/videoEvents$id',
-                const StandardMethodCodec().encodeSuccessEnvelope(
-                  _getInitResult(),
+          unawaited(
+            TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+                .handlePlatformMessage(
+                  'better_player_channel/videoEvents$id',
+                  const StandardMethodCodec().encodeSuccessEnvelope(
+                    _getInitResult(),
+                  ),
+                  (data) {},
                 ),
-                (data) {},
-              );
+          );
           return null;
         });
 

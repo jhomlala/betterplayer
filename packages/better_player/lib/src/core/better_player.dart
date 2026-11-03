@@ -92,7 +92,7 @@ class _BetterPlayerState extends State<BetterPlayer>
         final contextLocale = Localizations.localeOf(context);
         locale = contextLocale;
       }
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Failed to get locale: $exception',
         textureId: widget.controller.textureId,
@@ -108,7 +108,7 @@ class _BetterPlayerState extends State<BetterPlayer>
     ///full screen is on, then full screen route must be pop and return to normal
     ///state.
     if (_isFullScreen) {
-      WakelockPlus.disable();
+      unawaited(WakelockPlus.disable());
       _navigatorState.maybePop();
       SystemChrome.setEnabledSystemUIMode(
         SystemUiMode.manual,
@@ -238,7 +238,7 @@ class _BetterPlayerState extends State<BetterPlayer>
     }
 
     if (!_betterPlayerConfiguration.allowedScreenSleep) {
-      WakelockPlus.enable();
+      await WakelockPlus.enable();
     }
 
     await navigator.push(route);
@@ -247,7 +247,7 @@ class _BetterPlayerState extends State<BetterPlayer>
 
     // The wakelock plugins checks whether it needs to perform an action internally,
     // so we do not need to check Wakelock.isEnabled.
-    WakelockPlus.disable();
+    await WakelockPlus.disable();
 
     await SystemChrome.setEnabledSystemUIMode(
       SystemUiMode.manual,

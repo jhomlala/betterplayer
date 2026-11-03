@@ -127,7 +127,7 @@ extension PlayerSubtitleExtension on BetterPlayerController {
           }
         }
       }
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Load ASMS subtitle segments failed: $exception',
         textureId: textureId,

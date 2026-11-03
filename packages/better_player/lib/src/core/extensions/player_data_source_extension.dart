@@ -102,7 +102,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
         message: 'Data source setup complete: ${betterPlayerDataSource.url}',
         textureId: textureId,
       );
-    } catch (exception) {
+    } on Object catch (exception) {
       if (_disposed ||
           !identical(_betterPlayerDataSource, betterPlayerDataSource)) {
         return;
@@ -376,8 +376,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
           'startAt=${betterPlayerConfiguration.startAt}',
       textureId: textureId,
     );
-    setLooping(betterPlayerConfiguration.looping);
-    _videoEventStreamSubscription?.cancel();
+    await setLooping(betterPlayerConfiguration.looping);
+    await _videoEventStreamSubscription?.cancel();
     _videoEventStreamSubscription = null;
 
     _videoEventStreamSubscription = _engine?.videoEventStreamController.stream
@@ -423,7 +423,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
     final startAt = betterPlayerConfiguration.startAt;
     if (startAt != null) {
-      seekTo(startAt);
+      await seekTo(startAt);
     }
   }
 

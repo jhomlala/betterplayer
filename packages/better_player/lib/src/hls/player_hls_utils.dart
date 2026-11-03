@@ -32,7 +32,7 @@ class PlayerHlsUtils {
       tracks = list[0] as List<PlayerAsmsTrack>;
       subtitles = list[1] as List<PlayerAsmsSubtitle>;
       audios = list[2] as List<PlayerAsmsAudioTrack>;
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Exception on hls parse: $exception',
         error: exception,
@@ -81,7 +81,7 @@ class PlayerHlsUtils {
       if (tracks.isNotEmpty) {
         tracks.insert(0, PlayerAsmsTrack.defaultTrack());
       }
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Exception on parseTracks: $exception',
         error: exception,
@@ -144,7 +144,7 @@ class PlayerHlsUtils {
           }
         }
       }
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Exception on parseSubtitles: $exception',
         error: exception,
@@ -230,7 +230,7 @@ class PlayerHlsUtils {
         segments: asmsSegments,
         isDefault: isDefault,
       );
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Failed to process subtitles playlist: $exception',
         error: exception,

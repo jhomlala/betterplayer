@@ -129,10 +129,10 @@ extension PlayerViewStateExtension on BetterPlayerController {
           wasPlayingBeforePause:
               _playbackState.wasPlayingBeforePause || isPlaying()!,
         );
-        pause();
+        unawaited(pause());
       } else {
         if (_playbackState.wasPlayingBeforePause && !isPlaying()!) {
-          play();
+          unawaited(play());
         }
       }
     }

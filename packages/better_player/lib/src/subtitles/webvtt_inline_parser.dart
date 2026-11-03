@@ -140,7 +140,7 @@ class WebVttInlineParser {
           hex = 'FF$hex';
         }
         return Color(int.parse(hex, radix: 16));
-      } catch (_) {
+      } on FormatException catch (_) {
         return null;
       }
     }

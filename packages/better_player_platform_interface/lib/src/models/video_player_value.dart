@@ -10,7 +10,7 @@ class VideoPlayerValue {
   VideoPlayerValue({
     required this.duration,
     this.size,
-    this.position = const Duration(),
+    this.position = Duration.zero,
     this.absolutePosition,
     this.buffered = const <DurationRange>[],
     this.isPlaying = false,
@@ -63,7 +63,7 @@ class VideoPlayerValue {
 
   /// A description of the error if present.
   ///
-  /// If [hasError] is false this is [null].
+  /// If [hasError] is false this is `null`.
   final String? errorDescription;
 
   /// The [size] of the currently loaded video.
@@ -81,7 +81,7 @@ class VideoPlayerValue {
   /// [errorDescription] should have information about the problem.
   bool get hasError => errorDescription != null;
 
-  /// Returns [size.width] / [size.height] when size is non-null, or `1.0.` when
+  /// Returns `size.width` / `size.height` when size is non-null, or `1.0.` when
   /// size is null or the aspect ratio would be less than or equal to 0.0.
   double get aspectRatio {
     if (size == null) {
@@ -128,6 +128,7 @@ class VideoPlayerValue {
 
   @override
   String toString() {
+    // Diagnostic ignore reason: intentional string representation containing runtimeType.
     // ignore: no_runtimetype_tostring
     return '$runtimeType('
         'duration: $duration, '

@@ -49,7 +49,7 @@ class PlayerSubtitlesFactory {
         }
       }
       return subtitles;
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Failed to read subtitles from file: $exception',
         error: exception,
@@ -83,7 +83,7 @@ class PlayerSubtitlesFactory {
         message: 'Parsed total subtitles: ${subtitles.length}',
       );
       return subtitles;
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Failed to read subtitles from network: $exception',
         error: exception,
@@ -97,7 +97,7 @@ class PlayerSubtitlesFactory {
   ) {
     try {
       return _parseString(source.content!);
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Failed to read subtitles from memory: $exception',
         error: exception,
@@ -224,7 +224,7 @@ class PlayerSubtitlesFactory {
       }
 
       return localDuration;
-    } catch (exception) {
+    } on Object {
       PlayerLogger.error(message: 'Failed to parse X-TIMESTAMP-MAP: $line');
       return Duration.zero;
     }

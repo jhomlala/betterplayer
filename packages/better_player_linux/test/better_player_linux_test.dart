@@ -165,7 +165,7 @@ void main() {
       await linuxPlatform.create();
       final stream = linuxPlatform.videoEventsFor(42);
 
-      final expectedEvent = VideoEvent(
+      const expectedEvent = VideoEvent(
         eventType: VideoEventType.play,
         key: 'test',
       );

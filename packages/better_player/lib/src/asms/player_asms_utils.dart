@@ -81,7 +81,7 @@ class PlayerAsmsUtils {
                 'GetDataFromUrl attempt $attempt failed: HTTP ${response.statusCode}',
           );
         }
-      } catch (exception) {
+      } on Exception catch (exception) {
         PlayerLogger.warning(
           message:
               'GetDataFromUrl attempt $attempt failed with exception: $exception',
