@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_cupertino_localizations_delegate.dart';
@@ -103,7 +102,7 @@ class _PlayerWebControlsState
           _isPipSupported = supported;
         });
       }
-    } catch (_) {
+    } on Exception catch (_) {
       // Data source may not be initialized yet.
     }
   }
@@ -301,7 +300,7 @@ class _PlayerWebControlsState
         child: Material(
           type: MaterialType.transparency,
           child: Builder(
-            builder: (BuildContext context) {
+            builder: (context) {
               if (_betterPlayerController == null ||
                   !_betterPlayerController!.controlsEnabled) {
                 return const SizedBox();

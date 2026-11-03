@@ -300,7 +300,7 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController(
               controller: mockPlayerEngineController,
             );
-        mockPlayerEngineController.setNetworkDataSource(
+        await mockPlayerEngineController.setNetworkDataSource(
           BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
         );
         expect(mockPlayerEngineController.isLoopingState, false);
@@ -470,7 +470,7 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController(
               controller: mockPlayerEngineController,
             );
-        mockPlayerEngineController.setNetworkDataSource(
+        await mockPlayerEngineController.setNetworkDataSource(
           BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
         );
         await betterPlayerMockController.setVolume(1);
@@ -512,7 +512,7 @@ void main() {
             BetterPlayerTestUtils.setupBetterPlayerMockController(
               controller: mockPlayerEngineController,
             );
-        mockPlayerEngineController.setNetworkDataSource(
+        await mockPlayerEngineController.setNetworkDataSource(
           BetterPlayerTestUtils.bugBuckBunnyVideoUrl,
         );
         await betterPlayerMockController.setSpeed(1.1);
@@ -737,7 +737,7 @@ void main() {
         PlayerEvent? lastEvent;
         controller.addEventsListener((event) => lastEvent = event);
 
-        final track = PlayerAsmsTrack(
+        const track = PlayerAsmsTrack(
           '1',
           1920,
           1080,
@@ -1796,12 +1796,12 @@ void main() {
           expect(controller.currentVideoSize, const Size(1920, 1080));
 
           controller.setTrack(
-            PlayerAsmsTrack('0', 1280, 720, 2000000, 30, '', ''),
+            const PlayerAsmsTrack('0', 1280, 720, 2000000, 30, '', ''),
           );
           expect(controller.currentVideoSize, const Size(1280, 720));
 
           controller.setTrack(
-            PlayerAsmsTrack('0', 0, 0, 2000000, 0, '', ''),
+            const PlayerAsmsTrack('0', 0, 0, 2000000, 0, '', ''),
           );
           expect(controller.currentVideoSize, const Size(1920, 1080));
         },

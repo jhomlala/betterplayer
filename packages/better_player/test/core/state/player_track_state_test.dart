@@ -16,7 +16,7 @@ void main() {
     test('should allow updating fields', () {
       var state = const PlayerTrackState();
 
-      final videoTrack = PlayerAsmsTrack(
+      const videoTrack = PlayerAsmsTrack(
         '1',
         1080,
         1920,

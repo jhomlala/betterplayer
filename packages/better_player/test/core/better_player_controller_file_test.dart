@@ -23,7 +23,7 @@ void main() {
     // Mock path_provider
     const MethodChannel(
       'plugins.flutter.io/path_provider',
-    ).setMockMethodCallHandler((MethodCall methodCall) async {
+    ).setMockMethodCallHandler((methodCall) async {
       return '.'; // Return current directory as temp dir for tests
     });
   });
@@ -53,9 +53,9 @@ void main() {
       Timer.run(() {
         if (!eventController.isClosed) {
           eventController.add(
-            VideoEvent(
+            const VideoEvent(
               eventType: VideoEventType.initialized,
-              duration: const Duration(seconds: 10),
+              duration: Duration(seconds: 10),
               key: null,
             ),
           );

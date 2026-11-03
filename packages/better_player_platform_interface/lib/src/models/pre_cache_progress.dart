@@ -1,4 +1,7 @@
+import 'package:meta/meta.dart';
+
 /// Represents the progress of an ongoing pre-cache operation.
+@immutable
 class PreCacheProgress {
   const PreCacheProgress({
     required this.url,

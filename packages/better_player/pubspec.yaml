@@ -32,34 +32,34 @@ environment:
   flutter: ">=3.47.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
-  better_player_platform_interface: ^1.7.0
   better_player_android: ^1.10.1
   better_player_ios: ^1.11.0
-  better_player_macos: ^1.6.0
-  better_player_windows: ^1.4.1
   better_player_linux: ^1.0.1
+  better_player_macos: ^1.6.0
+  better_player_platform_interface: ^1.7.0
   better_player_web: ^1.4.0
-  material_ui: ^1.1.0
-  cupertino_ui: ^1.0.1
-  cupertino_icons: ^2.0.0
-  wakelock_plus: ^1.7.0
-  meta: ^1.19.0
-  visibility_detector: ^0.4.0+2
-  path_provider: ^2.1.6
+  better_player_windows: ^1.4.1
   collection: ^1.19.1
-  xml: ^7.0.1
+  cupertino_icons: ^2.0.0
+  cupertino_ui: ^1.0.1
+  flutter:
+    sdk: flutter
   http: ^1.2.0
+  material_ui: ^1.1.0
+  meta: ^1.19.0
+  path_provider: ^2.1.6
+  visibility_detector: ^0.4.0+2
+  wakelock_plus: ^1.7.0
+  xml: ^7.0.1
 
 dev_dependencies:
   flutter_localizations:
     sdk: flutter
-  very_good_analysis: ^10.3.0
   flutter_test:
     sdk: flutter
   mocktail: ^1.0.4
   plugin_platform_interface: ^2.1.8
+  very_good_analysis: ^10.3.0
 
 flutter:
   plugin:

@@ -1,7 +1,10 @@
+import 'package:better_player/better_player.dart' show BetterPlayerController;
 import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/configuration/player_event.dart';
 import 'package:better_player/src/configuration/player_translations.dart';
 import 'package:better_player/src/core/better_player.dart';
+import 'package:better_player/src/core/better_player_controller.dart'
+    show BetterPlayerController;
 import 'package:better_player/src/core/better_player_extension.dart';
 import 'package:better_player/src/logging/player_logger_configuration.dart';
 import 'package:better_player/src/subtitles/player_subtitles_configuration.dart';

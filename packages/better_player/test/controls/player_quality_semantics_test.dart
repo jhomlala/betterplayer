@@ -21,11 +21,11 @@ class BetterPlayerMockControllerWithTracks extends BetterPlayerMockController {
   @override
   PlayerDataSource? get betterPlayerDataSource => _dataSource;
 
-  void setTracks(List<PlayerAsmsTrack> tracks) {
+  set betterPlayerAsmsTracks(List<PlayerAsmsTrack> tracks) {
     _tracks = tracks;
   }
 
-  void setDataSource(PlayerDataSource dataSource) {
+  set betterPlayerDataSource(PlayerDataSource? dataSource) {
     _dataSource = dataSource;
   }
 }
@@ -79,11 +79,13 @@ void main() {
     testWidgets(
       'Auto track has correct semantics identifier when fields are 0',
       (tester) async {
-        controller.setTracks([
+        controller.betterPlayerAsmsTracks = [
           PlayerAsmsTrack.defaultTrack(), // 0, 0, 0
-          PlayerAsmsTrack('', 1920, 1080, 5000000, 30, '', ''),
-        ]);
-        controller.setDataSource(PlayerDataSource.network('url.m3u8'));
+          const PlayerAsmsTrack('', 1920, 1080, 5000000, 30, '', ''),
+        ];
+        controller.betterPlayerDataSource = PlayerDataSource.network(
+          'url.m3u8',
+        );
 
         await tester.pumpWidget(
           MaterialApp(
@@ -122,10 +124,12 @@ void main() {
     testWidgets(
       'Auto track has correct semantics identifier when fields are null',
       (tester) async {
-        controller.setTracks([
-          PlayerAsmsTrack('', null, null, null, null, '', ''),
-        ]);
-        controller.setDataSource(PlayerDataSource.network('url.m3u8'));
+        controller.betterPlayerAsmsTracks = [
+          const PlayerAsmsTrack('', null, null, null, null, '', ''),
+        ];
+        controller.betterPlayerDataSource = PlayerDataSource.network(
+          'url.m3u8',
+        );
 
         await tester.pumpWidget(
           MaterialApp(
@@ -162,11 +166,11 @@ void main() {
     testWidgets('Non-auto track has index-based semantics identifier', (
       tester,
     ) async {
-      controller.setTracks([
+      controller.betterPlayerAsmsTracks = [
         PlayerAsmsTrack.defaultTrack(),
-        PlayerAsmsTrack('', 1920, 1080, 5000000, 30, '', ''),
-      ]);
-      controller.setDataSource(PlayerDataSource.network('url.m3u8'));
+        const PlayerAsmsTrack('', 1920, 1080, 5000000, 30, '', ''),
+      ];
+      controller.betterPlayerDataSource = PlayerDataSource.network('url.m3u8');
 
       await tester.pumpWidget(
         MaterialApp(
@@ -202,8 +206,10 @@ void main() {
     testWidgets(
       'Non-ASMS (normal MP4) resolution has quality_auto identifier when children empty',
       (tester) async {
-        controller.setTracks([]);
-        controller.setDataSource(PlayerDataSource.network('video.mp4'));
+        controller.betterPlayerAsmsTracks = [];
+        controller.betterPlayerDataSource = PlayerDataSource.network(
+          'video.mp4',
+        );
 
         await tester.pumpWidget(
           MaterialApp(
@@ -241,15 +247,13 @@ void main() {
     testWidgets(
       'Non-ASMS (normal MP4) with multiple resolutions has index-based semantics identifier',
       (tester) async {
-        controller.setTracks([]);
-        controller.setDataSource(
-          PlayerDataSource.network(
-            'video.mp4',
-            qualities: {
-              'LOW': 'low.mp4',
-              'HIGH': 'high.mp4',
-            },
-          ),
+        controller.betterPlayerAsmsTracks = [];
+        controller.betterPlayerDataSource = PlayerDataSource.network(
+          'video.mp4',
+          qualities: {
+            'LOW': 'low.mp4',
+            'HIGH': 'high.mp4',
+          },
         );
 
         await tester.pumpWidget(

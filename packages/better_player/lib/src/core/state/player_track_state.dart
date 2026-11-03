@@ -4,6 +4,13 @@ import 'package:flutter/foundation.dart';
 /// Tracks the audio and video quality selections available via ASMS formats.
 @immutable
 class PlayerTrackState {
+  const PlayerTrackState({
+    this.asmsTracks = const [],
+    this.asmsTrack,
+    this.asmsAudioTracks = const [],
+    this.asmsAudioTrack,
+  });
+
   /// Complete list of alternative video tracks (resolutions, bitrates) parsed from ASMS streams.
   final List<PlayerAsmsTrack> asmsTracks;
 
@@ -15,13 +22,6 @@ class PlayerTrackState {
 
   /// The currently active audio track selection.
   final PlayerAsmsAudioTrack? asmsAudioTrack;
-
-  const PlayerTrackState({
-    this.asmsTracks = const [],
-    this.asmsTrack,
-    this.asmsAudioTracks = const [],
-    this.asmsAudioTrack,
-  });
 
   PlayerTrackState copyWith({
     List<PlayerAsmsTrack>? asmsTracks,

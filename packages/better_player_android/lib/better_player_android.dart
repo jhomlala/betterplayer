@@ -100,13 +100,13 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         onCompleted$async: true,
         onPlay: () {
           tempController.add(
-            VideoEvent(eventType: VideoEventType.play, key: null),
+            const VideoEvent(eventType: VideoEventType.play, key: null),
           );
         },
         onPlay$async: true,
         onPause: () {
           tempController.add(
-            VideoEvent(eventType: VideoEventType.pause, key: null),
+            const VideoEvent(eventType: VideoEventType.pause, key: null),
           );
         },
         onPause$async: true,
@@ -122,13 +122,16 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         onSeek$async: true,
         onBufferingStart: () {
           tempController.add(
-            VideoEvent(eventType: VideoEventType.bufferingStart, key: null),
+            const VideoEvent(
+              eventType: VideoEventType.bufferingStart,
+              key: null,
+            ),
           );
         },
         onBufferingStart$async: true,
         onBufferingEnd: () {
           tempController.add(
-            VideoEvent(eventType: VideoEventType.bufferingEnd, key: null),
+            const VideoEvent(eventType: VideoEventType.bufferingEnd, key: null),
           );
         },
         onBufferingEnd$async: true,
@@ -149,13 +152,13 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
         onBufferingUpdate$async: true,
         onPipStart: () {
           tempController.add(
-            VideoEvent(eventType: VideoEventType.pipStart, key: null),
+            const VideoEvent(eventType: VideoEventType.pipStart, key: null),
           );
         },
         onPipStart$async: true,
         onPipStop: () {
           tempController.add(
-            VideoEvent(eventType: VideoEventType.pipStop, key: null),
+            const VideoEvent(eventType: VideoEventType.pipStop, key: null),
           );
         },
         onPipStop$async: true,

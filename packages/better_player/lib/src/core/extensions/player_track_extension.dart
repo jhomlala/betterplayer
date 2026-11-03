@@ -54,7 +54,7 @@ extension PlayerTrackExtension on BetterPlayerController {
       await seekTo(position);
     }
     if (wasPlayingBeforeChange) {
-      play();
+      await play();
     }
     _postEvent(
       PlayerEvent(

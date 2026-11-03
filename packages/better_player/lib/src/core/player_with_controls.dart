@@ -20,7 +20,7 @@ class PlayerWithControls extends StatefulWidget {
   final BetterPlayerController? controller;
 
   @override
-  _PlayerWithControlsState createState() => _PlayerWithControlsState();
+  State<PlayerWithControls> createState() => _PlayerWithControlsState();
 }
 
 class _PlayerWithControlsState extends State<PlayerWithControls> {
@@ -35,7 +35,7 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
 
   bool _initialized = false;
 
-  StreamSubscription? _controllerEventSubscription;
+  StreamSubscription<PlayerControllerEvent>? _controllerEventSubscription;
 
   @override
   void initState() {
@@ -125,7 +125,7 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
     }
   }
 
-  Container _buildPlayerWithControls(
+  Widget _buildPlayerWithControls(
     BetterPlayerController betterPlayerController,
     BuildContext context,
   ) {
@@ -140,52 +140,49 @@ class _PlayerWithControlsState extends State<PlayerWithControls> {
       rotation = 0;
     }
     if (betterPlayerController.betterPlayerDataSource == null) {
-      return Container();
+      return const SizedBox();
     }
     _initialized = true;
 
     final placeholderOnTop =
         betterPlayerController.betterPlayerConfiguration.placeholderOnTop;
-    // ignore: avoid_unnecessary_containers
-    return Container(
-      child: Stack(
-        fit: StackFit.passthrough,
-        children: <Widget>[
-          if (placeholderOnTop)
-            PlayerPlaceholder(controller: betterPlayerController),
-          Transform.rotate(
-            angle: rotation * pi / 180,
-            child: _PlayerVideoFitWidget(
-              betterPlayerController,
-              betterPlayerController.getFit(),
+    return Stack(
+      fit: StackFit.passthrough,
+      children: <Widget>[
+        if (placeholderOnTop)
+          PlayerPlaceholder(controller: betterPlayerController),
+        Transform.rotate(
+          angle: rotation * pi / 180,
+          child: _PlayerVideoFitWidget(
+            betterPlayerController,
+            betterPlayerController.getFit(),
+          ),
+        ),
+        betterPlayerController.betterPlayerConfiguration.overlay ??
+            const SizedBox(),
+        for (final extension in betterPlayerController.extensions)
+          if (extension.overlayWidget != null) extension.overlayWidget!,
+        if (betterPlayerController.adOverlayWidget != null)
+          betterPlayerController.adOverlayWidget!,
+        if (!placeholderOnTop)
+          PlayerPlaceholder(controller: betterPlayerController),
+        if (!betterPlayerController.isAdPlaying)
+          PlayerControlsSelectionWidget(
+            controller: betterPlayerController,
+            onControlsVisibilityChanged: onControlsVisibilityChanged,
+          ),
+        // IgnorePointer is required so that the subtitles layer (which expands to fill the screen)
+        // doesn't block touch events from reaching the video controls below it.
+        if (!betterPlayerController.isAdPlaying)
+          IgnorePointer(
+            child: PlayerSubtitlesDrawer(
+              betterPlayerController: betterPlayerController,
+              betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
+              subtitles: betterPlayerController.subtitlesLines,
+              playerVisibilityStream: playerVisibilityStreamController.stream,
             ),
           ),
-          betterPlayerController.betterPlayerConfiguration.overlay ??
-              const SizedBox(),
-          for (final extension in betterPlayerController.extensions)
-            if (extension.overlayWidget != null) extension.overlayWidget!,
-          if (betterPlayerController.adOverlayWidget != null)
-            betterPlayerController.adOverlayWidget!,
-          if (!placeholderOnTop)
-            PlayerPlaceholder(controller: betterPlayerController),
-          if (!betterPlayerController.isAdPlaying)
-            PlayerControlsSelectionWidget(
-              controller: betterPlayerController,
-              onControlsVisibilityChanged: onControlsVisibilityChanged,
-            ),
-          // IgnorePointer is required so that the subtitles layer (which expands to fill the screen)
-          // doesn't block touch events from reaching the video controls below it.
-          if (!betterPlayerController.isAdPlaying)
-            IgnorePointer(
-              child: PlayerSubtitlesDrawer(
-                betterPlayerController: betterPlayerController,
-                betterPlayerSubtitlesConfiguration: subtitlesConfiguration,
-                subtitles: betterPlayerController.subtitlesLines,
-                playerVisibilityStream: playerVisibilityStreamController.stream,
-              ),
-            ),
-        ],
-      ),
+      ],
     );
   }
 
@@ -306,7 +303,7 @@ class _PlayerVideoFitWidget extends StatefulWidget {
 class _PlayerVideoFitWidgetState extends State<_PlayerVideoFitWidget> {
   bool _initialized = false;
   bool _started = false;
-  StreamSubscription? _controllerEventSubscription;
+  StreamSubscription<PlayerControllerEvent>? _controllerEventSubscription;
 
   @override
   void initState() {
@@ -361,7 +358,12 @@ class _PlayerVideoFitWidgetState extends State<_PlayerVideoFitWidget> {
               widget.betterPlayerController.videoPlayerValue?.initialized ??
               false;
         });
-      default:
+      case PlayerControllerEvent.openFullscreen:
+      case PlayerControllerEvent.hideFullscreen:
+      case PlayerControllerEvent.changeSubtitles:
+      case PlayerControllerEvent.changeControlsConfiguration:
+      case PlayerControllerEvent.changeSubtitlesConfiguration:
+      case PlayerControllerEvent.adStateChanged:
         break;
     }
   }

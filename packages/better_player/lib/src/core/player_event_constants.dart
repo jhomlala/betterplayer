@@ -1,3 +1,6 @@
+import 'package:better_player/better_player.dart'
+    show PlayerDataSource, PlayerEvent;
+
 /// Constants used as keys for parameters passed within [PlayerEvent].
 class PlayerEventConstants {
   /// Parameter key used to pass the duration of the media.

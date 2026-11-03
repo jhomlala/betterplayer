@@ -1,5 +1,8 @@
+import 'package:meta/meta.dart';
+
+@immutable
 class VariantInfo {
-  VariantInfo({
+  const VariantInfo({
     this.bitrate,
     this.videoGroupId,
     this.audioGroupId,
@@ -27,7 +30,7 @@ class VariantInfo {
   final String? captionGroupId;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other is VariantInfo) {
       return other.bitrate == bitrate &&
           other.videoGroupId == videoGroupId &&

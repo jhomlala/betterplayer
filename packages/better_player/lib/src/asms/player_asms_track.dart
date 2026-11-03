@@ -1,6 +1,9 @@
+import 'package:meta/meta.dart';
+
 /// Represents HLS / DASH track which can be played within player
+@immutable
 class PlayerAsmsTrack {
-  PlayerAsmsTrack(
+  const PlayerAsmsTrack(
     this.id,
     this.width,
     this.height,
@@ -11,7 +14,7 @@ class PlayerAsmsTrack {
   );
 
   factory PlayerAsmsTrack.defaultTrack() {
-    return PlayerAsmsTrack('', 0, 0, 0, 0, '', '');
+    return const PlayerAsmsTrack('', 0, 0, 0, 0, '', '');
   }
 
   ///Id of the track
@@ -40,7 +43,7 @@ class PlayerAsmsTrack {
       Object.hash(id, width, height, bitrate, frameRate, codecs, mimeType);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return other is PlayerAsmsTrack &&
         id == other.id &&
         width == other.width &&

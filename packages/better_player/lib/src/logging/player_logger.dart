@@ -42,7 +42,7 @@ class PlayerLogger {
           shouldRegisterNative ? onNativeLog : null,
         );
         _nativeCallbackRegistered = shouldRegisterNative;
-      } catch (e) {
+      } on Object {
         // Native logging not implemented on this platform yet
       }
     }
@@ -190,7 +190,7 @@ class PlayerLogger {
           return caller.replaceAll(_anonymousClosureRegExp, '');
         }
       }
-    } catch (_) {
+    } on Exception catch (_) {
       // Fallback to null if parsing fails
     }
     return null;

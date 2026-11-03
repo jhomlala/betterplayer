@@ -2,7 +2,7 @@ part of '../better_player_controller.dart';
 
 extension PlayerDataSourceExtension on BetterPlayerController {
   ///Setup new data source in Better Player.
-  Future setupDataSource(PlayerDataSource betterPlayerDataSource) async {
+  Future<void> setupDataSource(PlayerDataSource betterPlayerDataSource) async {
     PlayerLogger.info(
       message: 'setupDataSource starting',
       textureId: textureId,
@@ -102,7 +102,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
         message: 'Data source setup complete: ${betterPlayerDataSource.url}',
         textureId: textureId,
       );
-    } catch (exception) {
+    } on Object catch (exception) {
       if (_disposed ||
           !identical(_betterPlayerDataSource, betterPlayerDataSource)) {
         return;
@@ -223,7 +223,7 @@ extension PlayerDataSourceExtension on BetterPlayerController {
   }
 
   ///Internal method which invokes _engine source setup.
-  Future _setupDataSource(PlayerDataSource betterPlayerDataSource) async {
+  Future<void> _setupDataSource(PlayerDataSource betterPlayerDataSource) async {
     switch (betterPlayerDataSource.type) {
       case DataSourceType.network:
         await _engine?.setNetworkDataSource(
@@ -348,10 +348,8 @@ extension PlayerDataSourceExtension on BetterPlayerController {
           }
         }
 
-      default:
-        throw UnimplementedError(
-          '${betterPlayerDataSource.type} is not implemented',
-        );
+      case DataSourceType.asset:
+        throw UnimplementedError('DataSourceType.asset is not implemented');
     }
     await _initializeVideo();
   }
@@ -371,15 +369,15 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
   ///Initializes video based on configuration. Invoke actions which need to be
   ///run on player start.
-  Future _initializeVideo() async {
+  Future<void> _initializeVideo() async {
     PlayerLogger.info(
       message:
           'Initializing video: autoPlay=${betterPlayerConfiguration.autoPlay}, '
           'startAt=${betterPlayerConfiguration.startAt}',
       textureId: textureId,
     );
-    setLooping(betterPlayerConfiguration.looping);
-    _videoEventStreamSubscription?.cancel();
+    await setLooping(betterPlayerConfiguration.looping);
+    await _videoEventStreamSubscription?.cancel();
     _videoEventStreamSubscription = null;
 
     _videoEventStreamSubscription = _engine?.videoEventStreamController.stream
@@ -425,12 +423,12 @@ extension PlayerDataSourceExtension on BetterPlayerController {
 
     final startAt = betterPlayerConfiguration.startAt;
     if (startAt != null) {
-      seekTo(startAt);
+      await seekTo(startAt);
     }
   }
 
   ///Retry data source if playback failed.
-  Future retryDataSource() async {
+  Future<void> retryDataSource() async {
     PlayerLogger.warning(
       message: 'Retrying data source',
       textureId: textureId,

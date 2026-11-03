@@ -1,5 +1,7 @@
+import 'package:better_player/better_player.dart' show BetterPlayerFeed;
 import 'package:better_player/src/configuration/player_data_source.dart';
-import 'package:better_player/src/core/better_player_controller.dart';
+import 'package:better_player/src/list/better_player_feed.dart'
+    show BetterPlayerFeed;
 import 'package:material_ui/material_ui.dart';
 
 /// Configuration for [BetterPlayerFeed].

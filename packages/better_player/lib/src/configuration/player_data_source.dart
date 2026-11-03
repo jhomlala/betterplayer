@@ -95,7 +95,8 @@ class PlayerDataSource {
       useAsmsTracks: useAsmsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration =
+      notificationConfiguration:
+          notificationConfiguration ??
           const NotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,
@@ -126,7 +127,8 @@ class PlayerDataSource {
       useAsmsTracks: useAsmsTracks,
       resolutions: qualities,
       cacheConfiguration: cacheConfiguration,
-      notificationConfiguration: notificationConfiguration =
+      notificationConfiguration:
+          notificationConfiguration ??
           const NotificationConfiguration(showNotification: false),
       overriddenDuration: overriddenDuration,
       placeholder: placeholder,

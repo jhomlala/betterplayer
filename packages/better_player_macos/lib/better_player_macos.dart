@@ -238,13 +238,13 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
       onPipStart: () {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
-          VideoEvent(eventType: VideoEventType.pipStart, key: null),
+          const VideoEvent(eventType: VideoEventType.pipStart, key: null),
         );
       },
       onPipStop: () {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
-          VideoEvent(eventType: VideoEventType.pipStop, key: null),
+          const VideoEvent(eventType: VideoEventType.pipStop, key: null),
         );
       },
       onCuesWithJsonCues_: (objc.NSString jsonCues) {

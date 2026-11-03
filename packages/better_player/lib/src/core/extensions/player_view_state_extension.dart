@@ -129,10 +129,10 @@ extension PlayerViewStateExtension on BetterPlayerController {
           wasPlayingBeforePause:
               _playbackState.wasPlayingBeforePause || isPlaying()!,
         );
-        pause();
+        unawaited(pause());
       } else {
-        if (_playbackState.wasPlayingBeforePause == true && !isPlaying()!) {
-          play();
+        if (_playbackState.wasPlayingBeforePause && !isPlaying()!) {
+          unawaited(play());
         }
       }
     }
@@ -159,7 +159,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
         appLifecycleState: appLifecycleState,
       );
       if (appLifecycleState == AppLifecycleState.resumed) {
-        if (_playbackState.wasPlayingBeforePause == true &&
+        if (_playbackState.wasPlayingBeforePause &&
             _viewState.isPlayerVisible &&
             isEngineReady) {
           play();
@@ -187,9 +187,9 @@ extension PlayerViewStateExtension on BetterPlayerController {
   }
 
   ///Get aspect ratio used in current video. Returns the first non-null value
-  ///from the following priority order: [_viewState.overriddenAspectRatio] ->
+  ///from the following priority order: `overriddenAspectRatio` ->
   ///[PlayerConfiguration.aspectRatio] -> the video player's actual aspect
-  ///ratio ([_engine.value.aspectRatio]).
+  ///ratio (`aspectRatio`).
   ///If the video player is not initialized or the video size is not yet
   ///available, it returns null unless an override or configuration is set.
   double? getAspectRatio() {
@@ -217,7 +217,7 @@ extension PlayerViewStateExtension on BetterPlayerController {
   }
 
   ///Get fit used in current video. If fit is null, then fit from
-  ///PlayerConfiguration will be used. Otherwise [_viewState.overriddenFit] will be
+  ///PlayerConfiguration will be used. Otherwise `overriddenFit` will be
   ///used.
   BoxFit getFit() {
     return _viewState.overriddenFit ?? betterPlayerConfiguration.fit;

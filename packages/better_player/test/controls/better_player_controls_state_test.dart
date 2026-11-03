@@ -70,7 +70,7 @@ void main() {
         duration: const Duration(seconds: 10),
         position: const Duration(seconds: 5),
         buffered: [
-          DurationRange(Duration.zero, const Duration(seconds: 6)),
+          const DurationRange(Duration.zero, Duration(seconds: 6)),
         ],
         isBuffering: true,
         isPlaying: true,

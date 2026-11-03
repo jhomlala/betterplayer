@@ -4,6 +4,7 @@ import 'package:better_player_platform_interface/src/models/video_event_type.dar
 import 'package:flutter/foundation.dart';
 
 /// Event emitted from the platform implementation.
+@immutable
 class VideoEvent {
   /// Creates an instance of [VideoEvent].
   ///
@@ -11,7 +12,7 @@ class VideoEvent {
   ///
   /// Depending on the [eventType], the [duration], [size] and [buffered]
   /// arguments can be null.
-  VideoEvent({
+  const VideoEvent({
     required this.eventType,
     required this.key,
     this.duration,

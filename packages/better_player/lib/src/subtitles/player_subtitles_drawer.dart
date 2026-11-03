@@ -20,7 +20,7 @@ class PlayerSubtitlesDrawer extends StatefulWidget {
   final Stream<bool> playerVisibilityStream;
 
   @override
-  _PlayerSubtitlesDrawerState createState() => _PlayerSubtitlesDrawerState();
+  State<PlayerSubtitlesDrawer> createState() => _PlayerSubtitlesDrawerState();
 }
 
 class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
@@ -31,7 +31,7 @@ class _PlayerSubtitlesDrawerState extends State<PlayerSubtitlesDrawer> {
   bool _playerVisible = false;
 
   ///Stream used to detect if play controls are visible or not
-  late StreamSubscription _visibilityStreamSubscription;
+  late StreamSubscription<bool> _visibilityStreamSubscription;
 
   @override
   void initState() {

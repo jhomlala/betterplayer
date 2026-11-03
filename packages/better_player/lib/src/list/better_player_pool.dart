@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:better_player/src/configuration/player_configuration.dart';
 import 'package:better_player/src/configuration/player_data_source.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player/src/list/player_pool_configuration.dart';
@@ -296,7 +295,7 @@ class BetterPlayerPool {
           unawaited(slot.controller.pause().catchError((_) {}));
           unawaited(slot.controller.setVolume(1).catchError((_) {}));
         }
-      } catch (e) {
+      } on Object catch (e) {
         PlayerLogger.warning(message: 'Error resetting pooled controller: $e');
       }
     }
@@ -354,7 +353,7 @@ class BetterPlayerPool {
         slot.currentSourceUrl = dataSource.url;
         try {
           await slot.controller.setupDataSource(dataSource);
-        } catch (e) {
+        } on Object catch (e) {
           PlayerLogger.error(
             message: 'Error setting up data source in pool: $e',
           );
@@ -434,7 +433,7 @@ class BetterPlayerPool {
           if (slot.controller.videoPlayerValue?.initialized ?? false) {
             unawaited(slot.controller.pause().catchError((_) {}));
           }
-        } catch (_) {}
+        } on Object catch (_) {}
       }
     }
   }
@@ -463,7 +462,7 @@ class BetterPlayerPool {
     for (final slot in _slots) {
       try {
         slot.controller.dispose(forceDispose: true);
-      } catch (_) {}
+      } on Object catch (_) {}
     }
     _slots.clear();
   }

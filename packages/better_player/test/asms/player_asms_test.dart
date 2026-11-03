@@ -26,7 +26,7 @@ void main() {
     });
 
     test('PlayerAsmsTrack equality', () {
-      final track1 = PlayerAsmsTrack(
+      const track1 = PlayerAsmsTrack(
         '1',
         1920,
         1080,
@@ -35,7 +35,7 @@ void main() {
         'avc1',
         'video/mp4',
       );
-      final track2 = PlayerAsmsTrack(
+      const track2 = PlayerAsmsTrack(
         '1',
         1920,
         1080,
@@ -44,7 +44,7 @@ void main() {
         'avc1',
         'video/mp4',
       );
-      final track3 = PlayerAsmsTrack(
+      const track3 = PlayerAsmsTrack(
         '2',
         1280,
         720,

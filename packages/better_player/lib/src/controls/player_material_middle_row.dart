@@ -1,4 +1,4 @@
-﻿import 'package:better_player/src/configuration/player_controls_configuration.dart';
+import 'package:better_player/src/configuration/player_controls_configuration.dart';
 import 'package:better_player/src/controls/player_clickable_widget.dart';
 import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
@@ -29,19 +29,17 @@ class PlayerMaterialHitArea extends StatelessWidget {
     if (!controller.controlsEnabled) {
       return const SizedBox();
     }
-    return Container(
-      child: Center(
-        child: AnimatedOpacity(
-          opacity: controlsNotVisible ? 0.0 : 1.0,
-          duration: controlsConfiguration.controlsTransitionTime,
-          child: PlayerMaterialMiddleRow(
-            controlsConfiguration: controlsConfiguration,
-            onSkipBack: onSkipBack,
-            onSkipForward: onSkipForward,
-            onReplay: onReplay,
-            latestValue: latestValue,
-            isVideoFinished: isVideoFinished,
-          ),
+    return Center(
+      child: AnimatedOpacity(
+        opacity: controlsNotVisible ? 0.0 : 1.0,
+        duration: controlsConfiguration.controlsTransitionTime,
+        child: PlayerMaterialMiddleRow(
+          controlsConfiguration: controlsConfiguration,
+          onSkipBack: onSkipBack,
+          onSkipForward: onSkipForward,
+          onReplay: onReplay,
+          latestValue: latestValue,
+          isVideoFinished: isVideoFinished,
         ),
       ),
     );

@@ -1,4 +1,5 @@
-// ignore_for_file: deprecated_member_use_from_same_package, deprecated_member_use
+// Deprecated legacy class maintained for backwards compatibility.
+// ignore_for_file: deprecated_member_use_from_same_package
 
 import 'package:better_player/better_player.dart';
 import 'package:material_ui/material_ui.dart';
@@ -47,7 +48,7 @@ class BetterPlayerListVideoPlayer extends StatefulWidget {
   betterPlayerListVideoPlayerController;
 
   @override
-  _BetterPlayerListVideoPlayerState createState() =>
+  State<BetterPlayerListVideoPlayer> createState() =>
       _BetterPlayerListVideoPlayerState();
 }
 
@@ -101,11 +102,11 @@ class _BetterPlayerListVideoPlayerState
     final initialized = _betterPlayerController!.isVideoInitialized();
     if (visibleFraction >= widget.playFraction) {
       if (widget.autoPlay && initialized! && !isPlaying! && !_isDisposing) {
-        _betterPlayerController!.play();
+        await _betterPlayerController!.play();
       }
     } else {
       if (widget.autoPause && initialized! && isPlaying! && !_isDisposing) {
-        _betterPlayerController!.pause();
+        await _betterPlayerController!.pause();
       }
     }
   }

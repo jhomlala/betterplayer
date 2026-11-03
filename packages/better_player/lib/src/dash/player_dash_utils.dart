@@ -45,7 +45,7 @@ class PlayerDashUtils {
           }
         }
       }
-    } catch (exception) {
+    } on Object catch (exception) {
       PlayerLogger.error(
         message: 'Exception on dash parse: $exception',
         error: exception,

@@ -8,7 +8,7 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
 
   @override
   Future<void> dispose(int? textureId) async {
-    _eventControllers[textureId]?.close();
+    await _eventControllers[textureId]?.close();
     _eventControllers.remove(textureId);
   }
 
@@ -53,17 +53,19 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
     if (textureId != null) {
       // Use microtask to avoid blocking and ensure listener is ready
-      Future.microtask(() {
-        sendEvent(
-          textureId,
-          VideoEvent(
-            eventType: VideoEventType.initialized,
-            duration: const Duration(seconds: 10),
-            size: initialVideoSize,
-            key: dataSource.key,
-          ),
-        );
-      });
+      unawaited(
+        Future.microtask(() {
+          sendEvent(
+            textureId,
+            VideoEvent(
+              eventType: VideoEventType.initialized,
+              duration: const Duration(seconds: 10),
+              size: initialVideoSize,
+              key: dataSource.key,
+            ),
+          );
+        }),
+      );
     }
   }
 

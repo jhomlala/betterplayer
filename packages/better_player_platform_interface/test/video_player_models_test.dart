@@ -42,9 +42,9 @@ void main() {
 
   group('VideoEvent tests', () {
     test('VideoEvent equality', () {
-      final event1 = VideoEvent(eventType: VideoEventType.play, key: '1');
-      final event2 = VideoEvent(eventType: VideoEventType.play, key: '1');
-      final event3 = VideoEvent(eventType: VideoEventType.pause, key: '1');
+      const event1 = VideoEvent(eventType: VideoEventType.play, key: '1');
+      const event2 = VideoEvent(eventType: VideoEventType.play, key: '1');
+      const event3 = VideoEvent(eventType: VideoEventType.pause, key: '1');
 
       expect(event1 == event2, true);
       expect(event1 == event3, false);
@@ -52,17 +52,17 @@ void main() {
     });
 
     test('VideoEvent captionUpdate equality', () {
-      final event1 = VideoEvent(
+      const event1 = VideoEvent(
         eventType: VideoEventType.captionUpdate,
         key: '1',
         captions: ['Hello', 'World'],
       );
-      final event2 = VideoEvent(
+      const event2 = VideoEvent(
         eventType: VideoEventType.captionUpdate,
         key: '1',
         captions: ['Hello', 'World'],
       );
-      final event3 = VideoEvent(
+      const event3 = VideoEvent(
         eventType: VideoEventType.captionUpdate,
         key: '1',
         captions: ['Different'],
@@ -77,9 +77,9 @@ void main() {
 
   group('DurationRange tests', () {
     test('DurationRange fractions', () {
-      final range = DurationRange(
-        const Duration(seconds: 2),
-        const Duration(seconds: 8),
+      const range = DurationRange(
+        Duration(seconds: 2),
+        Duration(seconds: 8),
       );
       const total = Duration(seconds: 10);
       expect(range.startFraction(total), 0.2);
@@ -87,22 +87,22 @@ void main() {
     });
 
     test('DurationRange fractions return 0 when duration is zero', () {
-      final range = DurationRange(
-        const Duration(seconds: 2),
-        const Duration(seconds: 8),
+      const range = DurationRange(
+        Duration(seconds: 2),
+        Duration(seconds: 8),
       );
       expect(range.startFraction(Duration.zero), 0);
       expect(range.endFraction(Duration.zero), 0);
     });
 
     test('DurationRange equality', () {
-      final range1 = DurationRange(
-        const Duration(seconds: 1),
-        const Duration(seconds: 2),
+      const range1 = DurationRange(
+        Duration(seconds: 1),
+        Duration(seconds: 2),
       );
-      final range2 = DurationRange(
-        const Duration(seconds: 1),
-        const Duration(seconds: 2),
+      const range2 = DurationRange(
+        Duration(seconds: 1),
+        Duration(seconds: 2),
       );
       expect(range1 == range2, true);
       expect(range1.hashCode == range2.hashCode, true);

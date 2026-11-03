@@ -179,7 +179,7 @@ void main() {
           );
 
       // We need to trigger play for the fit widget to show (it depends on _started)
-      controller.play();
+      await controller.play();
 
       await tester.pumpWidget(
         MaterialApp(
@@ -234,7 +234,7 @@ void main() {
 
         await controller.setupDataSource(PlayerDataSource.network('url'));
 
-        controller.play();
+        await controller.play();
 
         await tester.pumpWidget(
           MaterialApp(
@@ -283,7 +283,7 @@ void main() {
               duration: const Duration(seconds: 1),
             );
 
-        controller.play();
+        await controller.play();
 
         await tester.pumpWidget(
           MaterialApp(
@@ -337,7 +337,7 @@ void main() {
               duration: const Duration(seconds: 1),
             );
 
-        controller.play();
+        await controller.play();
 
         await tester.pumpWidget(
           MaterialApp(
