@@ -1,5 +1,4 @@
 import 'dart:ffi' as ffi;
-import 'dart:io';
 
 import 'package:ffi/ffi.dart';
 
@@ -325,7 +324,9 @@ class MpvBindings {
       if (ptr != ffi.nullptr) {
         return ptr.toDartString();
       }
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
     return 'Error $error';
   }
 
@@ -338,7 +339,9 @@ class MpvBindings {
       try {
         final lib = ffi.DynamicLibrary.open(name);
         return _instance = MpvBindings(lib);
-      } catch (_) {}
+      } on Object {
+        // Ignored.
+      }
     }
     return null;
   }

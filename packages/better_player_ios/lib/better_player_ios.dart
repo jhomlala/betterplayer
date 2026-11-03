@@ -31,7 +31,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
       return;
     }
     _logCallback = BetterPlayerLogCallback$Builder.implementAsListener(
-      onLog_message_: (int level, objc.NSString message) {
+      onLog_message_: (level, message) {
         callback(
           levelIndex: level,
           message: message.toDartString(),
@@ -96,7 +96,9 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
         final player = getPlayer(id);
         player?.dispose();
       }
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
   }
 
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
@@ -153,7 +155,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
     _lastInitializedKeys.remove(textureId);
     getPlayer(textureId)?.dispose();
     _callbacks.remove(textureId);
-    _eventControllers[textureId]?.close();
+    unawaited(_eventControllers[textureId]?.close());
     _eventControllers.remove(textureId);
   }
 
@@ -165,7 +167,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
 
     final callback = BetterPlayerCallback$Builder.implementAsListener(
       onInitializedWithDurationMs_width_height_key_:
-          (int durationMs, double width, double height, objc.NSString? key) {
+          (durationMs, width, height, key) {
             if (currentTextureId == null) return;
             handleInitialized(
               textureId: currentTextureId,
@@ -175,7 +177,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
               key: key?.toDartString(),
             );
           },
-      onCompletedWithKey_: (objc.NSString? key) {
+      onCompletedWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
@@ -184,19 +186,19 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
           ),
         );
       },
-      onPlayWithKey_: (objc.NSString? key) {
+      onPlayWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(eventType: VideoEventType.play, key: key?.toDartString()),
         );
       },
-      onPauseWithKey_: (objc.NSString? key) {
+      onPauseWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(eventType: VideoEventType.pause, key: key?.toDartString()),
         );
       },
-      onSeekWithPositionMs_key_: (int positionMs, objc.NSString? key) {
+      onSeekWithPositionMs_key_: (positionMs, key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
@@ -206,7 +208,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
           ),
         );
       },
-      onBufferingStartWithKey_: (objc.NSString? key) {
+      onBufferingStartWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
@@ -215,7 +217,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
           ),
         );
       },
-      onBufferingEndWithKey_: (objc.NSString? key) {
+      onBufferingEndWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
@@ -224,26 +226,24 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
           ),
         );
       },
-      onBufferingUpdateWithJsonRanges_key_:
-          (objc.NSString jsonRanges, objc.NSString? key) {
-            if (currentTextureId == null) return;
-            final decoded =
-                jsonDecode(jsonRanges.toDartString()) as List<dynamic>;
-            final buffered = decoded.map<DurationRange>((dynamic value) {
-              final range = value as List<dynamic>;
-              return DurationRange(
-                Duration(milliseconds: (range[0] as num).toInt()),
-                Duration(milliseconds: (range[1] as num).toInt()),
-              );
-            }).toList();
-            _eventControllers[currentTextureId]?.add(
-              VideoEvent(
-                eventType: VideoEventType.bufferingUpdate,
-                key: key?.toDartString(),
-                buffered: buffered,
-              ),
-            );
-          },
+      onBufferingUpdateWithJsonRanges_key_: (jsonRanges, key) {
+        if (currentTextureId == null) return;
+        final decoded = jsonDecode(jsonRanges.toDartString()) as List<dynamic>;
+        final buffered = decoded.map<DurationRange>((dynamic value) {
+          final range = value as List<dynamic>;
+          return DurationRange(
+            Duration(milliseconds: (range[0] as num).toInt()),
+            Duration(milliseconds: (range[1] as num).toInt()),
+          );
+        }).toList();
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(
+            eventType: VideoEventType.bufferingUpdate,
+            key: key?.toDartString(),
+            buffered: buffered,
+          ),
+        );
+      },
       onPipStart: () {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
@@ -256,7 +256,7 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
           const VideoEvent(eventType: VideoEventType.pipStop, key: null),
         );
       },
-      onCuesWithJsonCues_: (objc.NSString jsonCues) {
+      onCuesWithJsonCues_: (jsonCues) {
         if (currentTextureId == null) return;
         try {
           final dynamic decoded = jsonDecode(jsonCues.toDartString());
@@ -270,13 +270,15 @@ class BetterPlayerIOS extends BetterPlayerPlatform {
               ),
             );
           }
-        } catch (_) {}
+        } on Object {
+          // Ignored malformed cue payload.
+        }
       },
       onError_errorMessage_errorDetails_:
           (
-            objc.NSString errorCode,
-            objc.NSString errorMessage,
-            objc.NSString errorDetails,
+            errorCode,
+            errorMessage,
+            errorDetails,
           ) {
             if (currentTextureId == null) return;
             _eventControllers[currentTextureId]?.addError(
@@ -635,9 +637,9 @@ abstract class BetterPlayerWrapper {
 }
 
 class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
-  final BetterPlayer _player;
-
   NativeBetterPlayerWrapper(this._player);
+
+  final BetterPlayer _player;
 
   @override
   void dispose() => _player.dispose();

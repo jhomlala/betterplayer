@@ -2,13 +2,13 @@ part of '../better_player_controller.dart';
 
 extension PlayerEventsExtension on BetterPlayerController {
   ///Add event listener which listens to player events.
-  void addEventsListener(Function(PlayerEvent) eventListener) {
+  void addEventsListener(void Function(PlayerEvent) eventListener) {
     _eventListeners.add(eventListener);
   }
 
   ///Remove event listener. This method should be called once you're disposing
   ///Better Player.
-  void removeEventsListener(Function(PlayerEvent) eventListener) {
+  void removeEventsListener(void Function(PlayerEvent) eventListener) {
     _eventListeners.remove(eventListener);
   }
 

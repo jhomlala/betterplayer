@@ -108,7 +108,7 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
     final warnStr = 'warn'.toNativeUtf8();
     try {
       _bindings.mpvRequestLogMessages(handle, warnStr);
-    } catch (_) {
+    } on Object {
       // mpvRequestLogMessages might not be implemented in mock bindings
     } finally {
       calloc.free(warnStr);
@@ -473,7 +473,9 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
       if (File(assetPath).existsSync()) {
         return assetPath;
       }
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
     return null;
   }
 
@@ -556,7 +558,7 @@ class MpvPlayer implements BetterPlayerLinuxPlayer {
     if (url.startsWith('file://')) {
       try {
         url = Uri.parse(url).toFilePath(windows: false);
-      } catch (_) {
+      } on Object {
         url = url.substring(7);
       }
     }

@@ -16,7 +16,7 @@ class PlayerWebControls extends StatefulWidget {
     super.key,
   });
 
-  final Function(bool visbility) onControlsVisibilityChanged;
+  final void Function(bool visbility) onControlsVisibilityChanged;
   final PlayerControlsConfiguration controlsConfiguration;
 
   @override

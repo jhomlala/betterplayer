@@ -26,7 +26,7 @@ class PlayerCupertinoControls extends StatefulWidget {
   });
 
   ///Callback used to send information if player bar is hidden or not
-  final Function(bool visbility) onControlsVisibilityChanged;
+  final void Function(bool visbility) onControlsVisibilityChanged;
 
   ///Controls config
   final PlayerControlsConfiguration controlsConfiguration;

@@ -28,6 +28,8 @@ void main() {
     try {
       better_player_web_test.main();
       better_player_web_player_test.main();
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
   });
 }

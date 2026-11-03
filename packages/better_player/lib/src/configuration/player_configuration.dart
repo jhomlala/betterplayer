@@ -114,7 +114,7 @@ class PlayerConfiguration {
   final BetterPlayerRoutePageBuilder? routePageBuilder;
 
   /// Defines a event listener where video player events will be send
-  final Function(PlayerEvent)? eventListener;
+  final void Function(PlayerEvent)? eventListener;
 
   ///Defines subtitles configuration
   final PlayerSubtitlesConfiguration subtitlesConfiguration;
@@ -131,7 +131,8 @@ class PlayerConfiguration {
   final double rotation;
 
   ///Defines function which will react on player visibility changed
-  final Function(double visibilityFraction)? playerVisibilityChangedBehavior;
+  final void Function(double visibilityFraction)?
+  playerVisibilityChangedBehavior;
 
   ///Defines translations used in player. If null, then default english translations
   ///will be used.
@@ -193,12 +194,12 @@ class PlayerConfiguration {
     List<SystemUiOverlay>? systemOverlaysAfterFullScreen,
     List<DeviceOrientation>? deviceOrientationsAfterFullScreen,
     BetterPlayerRoutePageBuilder? routePageBuilder,
-    Function(PlayerEvent)? eventListener,
+    void Function(PlayerEvent)? eventListener,
     PlayerSubtitlesConfiguration? subtitlesConfiguration,
     PlayerControlsConfiguration? controlsConfiguration,
     BoxFit? fit,
     double? rotation,
-    Function(double visibilityFraction)? playerVisibilityChangedBehavior,
+    void Function(double visibilityFraction)? playerVisibilityChangedBehavior,
     List<PlayerTranslations>? translations,
     bool? autoDetectFullscreenDeviceOrientation,
     bool? autoDetectFullscreenAspectRatio,

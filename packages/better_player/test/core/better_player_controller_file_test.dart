@@ -21,11 +21,11 @@ void main() {
     registerFallbackValue(DataSource(sourceType: DataSourceType.network));
 
     // Mock path_provider
-    const MethodChannel(
-      'plugins.flutter.io/path_provider',
-    ).setMockMethodCallHandler((methodCall) async {
-      return '.'; // Return current directory as temp dir for tests
-    });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+          const MethodChannel('plugins.flutter.io/path_provider'),
+          (methodCall) async => '.',
+        );
   });
 
   setUp(() {

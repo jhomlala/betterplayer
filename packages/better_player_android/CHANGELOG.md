@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Modernized `analysis_options.yaml` to inherit root options and resolved static analysis lints.
+
 ## 1.10.1
 - Fixed: Synchronized `BetterPlayerApi.activity` during activity configuration changes and removed duplicated screen capture protection logic.
 

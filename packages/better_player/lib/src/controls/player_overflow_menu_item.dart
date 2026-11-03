@@ -12,5 +12,5 @@ class PlayerOverflowMenuItem {
   final String title;
 
   ///Callback when item is clicked
-  final Function() onClicked;
+  final void Function() onClicked;
 }

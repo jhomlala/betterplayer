@@ -480,7 +480,7 @@ class BetterPlayerWebPlayer {
         message: 'BetterPlayerWebPlayer: data source loaded',
         levelIndex: 1,
       );
-    } catch (e) {
+    } on Object catch (e) {
       onLog(
         message: 'BetterPlayerWebPlayer: failed to load data source: $e',
         levelIndex: 3,
@@ -589,7 +589,9 @@ class BetterPlayerWebPlayer {
           return val.toDart;
         }
       }
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
     return null;
   }
 
@@ -605,7 +607,7 @@ class BetterPlayerWebPlayer {
         );
         return null;
       });
-    } catch (e) {
+    } on Object catch (e) {
       onLog(
         message:
             'BetterPlayerWebPlayer: videoElement.play() threw exception: $e',
@@ -644,7 +646,7 @@ class BetterPlayerWebPlayer {
       if (jsNum == null) return null;
       final ms = jsNum.toDartInt;
       return DateTime.fromMillisecondsSinceEpoch(ms);
-    } catch (_) {
+    } on Object {
       return null;
     }
   }
@@ -787,13 +789,17 @@ class BetterPlayerWebPlayer {
             await (promptResult as JSPromise<JSAny?>).toDart;
             return;
           }
-        } catch (_) {}
+        } on Object {
+          // Ignored.
+        }
       }
     }
     if (jsVideo.has('webkitShowPlaybackTargetPicker')) {
       try {
         jsVideo.callMethod('webkitShowPlaybackTargetPicker'.toJS);
-      } catch (_) {}
+      } on Object {
+        // Ignored.
+      }
     }
   }
 
@@ -863,6 +869,8 @@ video::cue {
           doc.head?.appendChild(style);
         }
       }
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
   }
 }
