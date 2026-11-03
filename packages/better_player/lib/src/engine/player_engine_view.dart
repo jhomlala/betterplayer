@@ -14,7 +14,7 @@ class PlayerEngineView extends StatefulWidget {
   final PlayerEngineController? controller;
 
   @override
-  _PlayerEngineViewState createState() => _PlayerEngineViewState();
+  State<PlayerEngineView> createState() => _PlayerEngineViewState();
 }
 
 class _PlayerEngineViewState extends State<PlayerEngineView> {

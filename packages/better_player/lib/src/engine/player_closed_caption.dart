@@ -8,7 +8,7 @@ import 'package:material_ui/material_ui.dart';
 /// caption.
 ///
 /// Note: in order to have closed captions, you need to specify a
-/// [PlayerEngineController.closedCaptionFile].
+/// `closedCaptionFile`.
 ///
 /// Usage:
 ///
@@ -20,7 +20,7 @@ import 'package:material_ui/material_ui.dart';
 /// ```
 class PlayerClosedCaption extends StatelessWidget {
   /// Creates a a new closed caption, designed to be used with
-  /// [VideoPlayerValue.caption].
+  /// `caption`.
   ///
   /// If [text] is null, nothing will be displayed.
   const PlayerClosedCaption({super.key, this.text, this.textStyle});

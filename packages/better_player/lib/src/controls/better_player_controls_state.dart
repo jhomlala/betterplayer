@@ -39,7 +39,7 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
   void skipBack() {
     if (latestValue != null) {
       cancelAndRestartTimer();
-      final beginning = const Duration().inMilliseconds;
+      final beginning = Duration.zero.inMilliseconds;
       final skip =
           (latestValue!.position -
                   Duration(
@@ -571,14 +571,6 @@ abstract class BetterPlayerControlsState<T extends StatefulWidget>
 }
 
 class _PlayerBottomSheetMenuItem extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-  final bool isSelected;
-  final IconData? icon;
-  final String? semanticsIdentifier;
-  final bool isCupertinoTheme;
-  final PlayerControlsConfiguration betterPlayerControlsConfiguration;
-
   const _PlayerBottomSheetMenuItem({
     required this.label,
     required this.onTap,
@@ -588,6 +580,13 @@ class _PlayerBottomSheetMenuItem extends StatelessWidget {
     this.icon,
     this.semanticsIdentifier,
   });
+  final String label;
+  final VoidCallback onTap;
+  final bool isSelected;
+  final IconData? icon;
+  final String? semanticsIdentifier;
+  final bool isCupertinoTheme;
+  final PlayerControlsConfiguration betterPlayerControlsConfiguration;
 
   @override
   Widget build(BuildContext context) {

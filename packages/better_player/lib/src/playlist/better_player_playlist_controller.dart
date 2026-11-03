@@ -31,7 +31,7 @@ class BetterPlayerPlaylistController {
   int _currentDataSourceIndex = 0;
 
   ///Next video change listener subscription
-  StreamSubscription? _nextVideoTimeStreamSubscription;
+  StreamSubscription<int?>? _nextVideoTimeStreamSubscription;
 
   ///Flag that determines whenever player is changing video
   bool _changingToNextVideo = false;

@@ -1,4 +1,3 @@
-﻿import 'package:better_player/src/core/better_player_controller.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:material_ui/material_ui.dart';
 

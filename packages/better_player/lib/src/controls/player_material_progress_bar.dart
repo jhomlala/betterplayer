@@ -22,7 +22,7 @@ class PlayerMaterialVideoProgressBar extends StatefulWidget {
   final Function()? onTapDown;
 
   @override
-  _VideoProgressBarState createState() {
+  State<PlayerMaterialVideoProgressBar> createState() {
     return _VideoProgressBarState();
   }
 }
@@ -93,9 +93,7 @@ class _VideoProgressBarState extends State<PlayerMaterialVideoProgressBar> {
           _isDragging = true;
         });
 
-        if (widget.onDragStart != null) {
-          widget.onDragStart!();
-        }
+        widget.onDragStart?.call();
       },
       onHorizontalDragUpdate: (details) {
         final videoPlayerValue = betterPlayerController?.videoPlayerValue;
@@ -107,9 +105,7 @@ class _VideoProgressBarState extends State<PlayerMaterialVideoProgressBar> {
 
         seekToRelativePosition(details.globalPosition);
 
-        if (widget.onDragUpdate != null) {
-          widget.onDragUpdate!();
-        }
+        widget.onDragUpdate?.call();
       },
       onHorizontalDragEnd: (details) {
         if (!enableProgressBarDrag) {
@@ -126,9 +122,7 @@ class _VideoProgressBarState extends State<PlayerMaterialVideoProgressBar> {
           _isDragging = false;
         });
 
-        if (widget.onDragEnd != null) {
-          widget.onDragEnd!();
-        }
+        widget.onDragEnd?.call();
       },
       onHorizontalDragCancel: () {
         setState(() {
@@ -144,9 +138,7 @@ class _VideoProgressBarState extends State<PlayerMaterialVideoProgressBar> {
         }
         seekToRelativePosition(details.globalPosition);
         _setupUpdateBlockTimer();
-        if (widget.onTapDown != null) {
-          widget.onTapDown!();
-        }
+        widget.onTapDown?.call();
       },
       child: Semantics(
         label:

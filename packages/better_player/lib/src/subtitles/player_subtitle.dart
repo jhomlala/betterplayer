@@ -5,21 +5,19 @@ import 'package:material_ui/material_ui.dart';
 class PlayerSubtitle {
   factory PlayerSubtitle({
     required String value,
-    required bool isWebVTT,
     Duration timestampOffset = Duration.zero,
   }) {
     try {
       final scanner = value.split('\n');
       if (scanner.length == 2) {
-        return _handle2LinesSubtitles(
+        return PlayerSubtitle._handle2LinesSubtitles(
           scanner: scanner,
           timestampOffset: timestampOffset,
         );
       }
       if (scanner.length > 2) {
-        return _handle3LinesAndMoreSubtitles(
+        return PlayerSubtitle._handle3LinesAndMoreSubtitles(
           scanner: scanner,
-          isWebVTT: isWebVTT,
           timestampOffset: timestampOffset,
         );
       }
@@ -45,14 +43,8 @@ class PlayerSubtitle {
     this.texts,
     this.alignment,
   });
-  static const String timerSeparator = ' --> ';
-  final int? index;
-  final Duration? start;
-  final Duration? end;
-  final List<String>? texts;
-  final Alignment? alignment;
 
-  static PlayerSubtitle _handle2LinesSubtitles({
+  factory PlayerSubtitle._handle2LinesSubtitles({
     required List<String> scanner,
     required Duration timestampOffset,
   }) {
@@ -86,9 +78,8 @@ class PlayerSubtitle {
     }
   }
 
-  static PlayerSubtitle _handle3LinesAndMoreSubtitles({
+  factory PlayerSubtitle._handle3LinesAndMoreSubtitles({
     required List<String> scanner,
-    required bool isWebVTT,
     required Duration timestampOffset,
   }) {
     try {
@@ -138,6 +129,13 @@ class PlayerSubtitle {
     }
   }
 
+  final int? index;
+  final Duration? start;
+  final Duration? end;
+  final List<String>? texts;
+  final Alignment? alignment;
+  static const String timerSeparator = ' --> ';
+
   static Alignment? _parseCueSettings(String settings) {
     try {
       // Example: align:start line:0% position:20%
@@ -175,13 +173,13 @@ class PlayerSubtitle {
       if (component.length == 2) {
         component.insert(0, '00');
       } else if (component.length != 3) {
-        return const Duration();
+        return Duration.zero;
       }
 
       final secsAndMillisSplitChar = component[2].contains(',') ? ',' : '.';
       final secsAndMillsSplit = component[2].split(secsAndMillisSplitChar);
       if (secsAndMillsSplit.length != 2) {
-        return const Duration();
+        return Duration.zero;
       }
 
       final result = Duration(
@@ -193,7 +191,7 @@ class PlayerSubtitle {
       return result;
     } catch (exception) {
       PlayerLogger.warning(message: 'Failed to process value: $value');
-      return const Duration();
+      return Duration.zero;
     }
   }
 

@@ -1,6 +1,5 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_cupertino_controls.dart';
-import 'package:better_player/src/core/player_with_controls.dart';
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';

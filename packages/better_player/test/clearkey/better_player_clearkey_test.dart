@@ -9,13 +9,15 @@ void main() {
         '86aa0fde062e557b9893d56784d1664d': '397669d0234a90098f9a2e6399a9a3b6',
       };
       final jsonKey = BetterPlayerClearKeyUtils.generateKey(keys);
-      final decoded = jsonDecode(jsonKey);
+      final decoded = jsonDecode(jsonKey) as Map<String, dynamic>;
+      final keysList = (decoded['keys'] as List<dynamic>)
+          .cast<Map<String, dynamic>>();
 
       expect(decoded['type'], 'temporary');
-      expect(decoded['keys'].length, 1);
-      expect(decoded['keys'][0]['kty'], 'oct');
-      expect(decoded['keys'][0]['kid'], 'hqoP3gYuVXuYk9VnhNFmTQ');
-      expect(decoded['keys'][0]['k'], 'OXZp0CNKkAmPmi5jmamjtg');
+      expect(keysList.length, 1);
+      expect(keysList[0]['kty'], 'oct');
+      expect(keysList[0]['kid'], 'hqoP3gYuVXuYk9VnhNFmTQ');
+      expect(keysList[0]['k'], 'OXZp0CNKkAmPmi5jmamjtg');
     });
 
     test('generateKey with multiple keys', () {
@@ -25,9 +27,10 @@ void main() {
         'aabbccddeeff0011': '1100ffee99887766',
       };
       final jsonKey = BetterPlayerClearKeyUtils.generateKey(hexKeys);
-      final decoded = jsonDecode(jsonKey);
+      final decoded = jsonDecode(jsonKey) as Map<String, dynamic>;
+      final keysList = decoded['keys'] as List<dynamic>;
 
-      expect(decoded['keys'].length, 2);
+      expect(keysList.length, 2);
     });
   });
 }

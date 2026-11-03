@@ -27,6 +27,45 @@ part 'extensions/player_view_state_extension.dart';
 /// Class used to control overall Better Player behavior. Main class to change
 /// state of Better Player and orchestrate its subsystems (subtitles, caching, analytics, etc).
 class BetterPlayerController {
+  /// Construct BetterPlayerController
+  BetterPlayerController(
+    this.betterPlayerConfiguration, {
+    this.betterPlayerPlaylistConfiguration,
+    PlayerDataSource? betterPlayerDataSource,
+    @visibleForTesting PlayerEngineController? playerEngineController,
+  }) : _engine = playerEngineController {
+    PlayerLogger.setup(betterPlayerConfiguration.playerLogConfiguration);
+    PlayerLogger.info(message: 'Created', textureId: textureId);
+    _betterPlayerControlsConfiguration = _resolveControlsConfiguration(
+      betterPlayerConfiguration.controlsConfiguration,
+    );
+    _betterPlayerSubtitlesConfiguration =
+        betterPlayerConfiguration.subtitlesConfiguration;
+    _eventListeners.add(eventListener);
+    betterPlayerConfiguration.extensions.forEach(registerExtension);
+    if (_engine != null) {
+      _engine!.addListener(_onVideoPlayerChanged);
+    }
+    try {
+      _externalPlaybackSubscription = BetterPlayerPlatform
+          .instance
+          .externalPlaybackStream
+          .listen((isActive) {
+            if (_disposed) return;
+            _isAirPlayActive = isActive;
+            for (final listener in List<VoidCallback>.from(_videoListeners)) {
+              listener();
+            }
+            postEvent(PlayerEvent(PlayerEventType.externalPlaybackChanged));
+          });
+    } catch (_) {
+      _externalPlaybackSubscription = null;
+    }
+    if (betterPlayerDataSource != null) {
+      setupDataSource(betterPlayerDataSource);
+    }
+  }
+
   /// General configuration used to initialize this controller instance.
   /// This dictates UI properties, error handling, layout behaviors, and overall player traits.
   final PlayerConfiguration betterPlayerConfiguration;
@@ -144,45 +183,6 @@ class BetterPlayerController {
 
   /// Tracks low-level engine playback states (initialization, buffering).
   PlayerPlaybackState _playbackState = const PlayerPlaybackState();
-
-  /// Construct BetterPlayerController
-  BetterPlayerController(
-    this.betterPlayerConfiguration, {
-    this.betterPlayerPlaylistConfiguration,
-    PlayerDataSource? betterPlayerDataSource,
-    @visibleForTesting PlayerEngineController? playerEngineController,
-  }) : _engine = playerEngineController {
-    PlayerLogger.setup(betterPlayerConfiguration.playerLogConfiguration);
-    PlayerLogger.info(message: 'Created', textureId: textureId);
-    _betterPlayerControlsConfiguration = _resolveControlsConfiguration(
-      betterPlayerConfiguration.controlsConfiguration,
-    );
-    _betterPlayerSubtitlesConfiguration =
-        betterPlayerConfiguration.subtitlesConfiguration;
-    _eventListeners.add(eventListener);
-    betterPlayerConfiguration.extensions.forEach(registerExtension);
-    if (_engine != null) {
-      _engine!.addListener(_onVideoPlayerChanged);
-    }
-    try {
-      _externalPlaybackSubscription = BetterPlayerPlatform
-          .instance
-          .externalPlaybackStream
-          .listen((isActive) {
-            if (_disposed) return;
-            _isAirPlayActive = isActive;
-            for (final listener in List<VoidCallback>.from(_videoListeners)) {
-              listener();
-            }
-            postEvent(PlayerEvent(PlayerEventType.externalPlaybackChanged));
-          });
-    } catch (_) {
-      _externalPlaybackSubscription = null;
-    }
-    if (betterPlayerDataSource != null) {
-      setupDataSource(betterPlayerDataSource);
-    }
-  }
 
   final List<BetterPlayerExtension> _extensions = [];
 
@@ -321,7 +321,7 @@ class BetterPlayerController {
   /// Enables automatic display frame rate matching on Android.
   ///
   /// When enabled, ExoPlayer will attempt to match the display's refresh
-  /// rate to the video's frame rate using [C.VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS].
+  /// rate to the video's frame rate using `C.VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS`.
   ///
   /// ⚠️ Hardware-dependent. Some Android TV devices may flicker or
   /// briefly black out during frame rate transitions.
@@ -672,9 +672,9 @@ class BetterPlayerController {
         } else {
           activeCaptions = const [];
         }
-      default:
-
-        ///TODO: Handle when needed
+      case VideoEventType.initialized:
+      case VideoEventType.changedSize:
+      case VideoEventType.unknown:
         break;
     }
   }

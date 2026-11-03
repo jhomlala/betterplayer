@@ -1,5 +1,3 @@
-﻿import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 
 /// Stub implementation of IO utils for unsupported platforms.

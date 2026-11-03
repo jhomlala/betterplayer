@@ -30,6 +30,7 @@ class BetterPlayerListVideoPlayerController {
     }
   }
 
+  // Preserves existing public API method instead of setter.
   // ignore: use_setters_to_change_properties
   void setBetterPlayerController(
     BetterPlayerController? betterPlayerController,

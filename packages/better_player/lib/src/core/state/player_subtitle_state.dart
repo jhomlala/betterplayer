@@ -5,6 +5,16 @@ import 'package:flutter/foundation.dart';
 /// Tracks the subtitle configurations, parsing status, and rendered lines.
 @immutable
 class PlayerSubtitleState {
+  const PlayerSubtitleState({
+    this.subtitlesSourceList = const [],
+    this.subtitlesSource,
+    this.subtitlesLines = const [],
+    this.renderedSubtitle,
+    this.asmsSegmentsLoading = false,
+    this.asmsSegmentsLoaded = const [],
+    this.activeCaptions = const [],
+  });
+
   /// Complete list of all available subtitle sources for the current media.
   final List<PlayerSubtitlesSource> subtitlesSourceList;
 
@@ -25,16 +35,6 @@ class PlayerSubtitleState {
 
   /// Active embedded closed caption text lines emitted by the native engine.
   final List<String> activeCaptions;
-
-  const PlayerSubtitleState({
-    this.subtitlesSourceList = const [],
-    this.subtitlesSource,
-    this.subtitlesLines = const [],
-    this.renderedSubtitle,
-    this.asmsSegmentsLoading = false,
-    this.asmsSegmentsLoaded = const [],
-    this.activeCaptions = const [],
-  });
 
   PlayerSubtitleState copyWith({
     List<PlayerSubtitlesSource>? subtitlesSourceList,

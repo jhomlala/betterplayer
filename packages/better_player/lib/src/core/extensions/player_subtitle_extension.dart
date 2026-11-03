@@ -75,7 +75,7 @@ extension PlayerSubtitleExtension on BetterPlayerController {
   ///is multiplied by 5 to increase window of duration.
   ///Segments are also cached, so same segment won't load twice. Only one
   ///pack of segments can be load at given time.
-  Future _loadAsmsSubtitlesSegments(Duration position) async {
+  Future<void> _loadAsmsSubtitlesSegments(Duration position) async {
     try {
       if (_subtitleState.asmsSegmentsLoading) {
         return;

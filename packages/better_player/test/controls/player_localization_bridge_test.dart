@@ -1,6 +1,4 @@
-﻿import 'package:better_player/better_player.dart';
-import 'package:better_player/src/controls/player_cupertino_controls.dart';
-import 'package:better_player/src/controls/player_material_controls.dart';
+import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_video_area_semantics.dart';
 import 'package:cupertino_ui/cupertino_ui.dart' as cupertino_ui;
 import 'package:flutter/material.dart';

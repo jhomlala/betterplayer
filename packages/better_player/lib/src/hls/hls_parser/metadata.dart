@@ -1,13 +1,15 @@
 import 'package:better_player/src/hls/hls_parser/hls_track_metadata_entry.dart';
 import 'package:collection/collection.dart';
+import 'package:meta/meta.dart';
 
+@immutable
 class Metadata {
-  Metadata(this.list);
+  const Metadata(this.list);
 
   final List<HlsTrackMetadataEntry> list;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other is Metadata) {
       return const ListEquality<HlsTrackMetadataEntry>().equals(
         other.list,

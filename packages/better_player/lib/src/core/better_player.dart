@@ -37,7 +37,7 @@ class BetterPlayer extends StatefulWidget {
   final BetterPlayerController controller;
 
   @override
-  _BetterPlayerState createState() {
+  State<BetterPlayer> createState() {
     return _BetterPlayerState();
   }
 }
@@ -56,7 +56,7 @@ class _BetterPlayerState extends State<BetterPlayer>
   bool _initialized = false;
 
   ///Subscription for controller events
-  StreamSubscription? _controllerEventSubscription;
+  StreamSubscription<PlayerControllerEvent>? _controllerEventSubscription;
 
   late GlobalKey _betterPlayerGlobalKey;
 
@@ -146,7 +146,11 @@ class _BetterPlayerState extends State<BetterPlayer>
         onFullScreenChanged();
       case PlayerControllerEvent.setupDataSource:
         break;
-      default:
+      case PlayerControllerEvent.changeSubtitles:
+      case PlayerControllerEvent.play:
+      case PlayerControllerEvent.changeControlsConfiguration:
+      case PlayerControllerEvent.changeSubtitlesConfiguration:
+      case PlayerControllerEvent.adStateChanged:
         setState(() {});
     }
   }
@@ -174,6 +178,7 @@ class _BetterPlayerState extends State<BetterPlayer>
   }
 
   Future<dynamic> _pushFullScreenWidget(BuildContext context) async {
+    final navigator = Navigator.of(context, rootNavigator: true);
     final TransitionRoute<void> route = PageRouteBuilder<void>(
       settings: const RouteSettings(),
       pageBuilder: (context, animation, secondaryAnimation) {
@@ -236,7 +241,7 @@ class _BetterPlayerState extends State<BetterPlayer>
       WakelockPlus.enable();
     }
 
-    await Navigator.of(context, rootNavigator: true).push(route);
+    await navigator.push(route);
     _isFullScreen = false;
     widget.controller.exitFullScreen();
 

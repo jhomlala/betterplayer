@@ -9,6 +9,13 @@ class PlayerLoggerConfiguration {
     this.outputs = const [ConsoleLogOutput()],
   });
 
+  /// Sensible default: debug verbosity in debug mode, info in profile/release.
+  static const PlayerLoggerConfiguration defaultConfig =
+      PlayerLoggerConfiguration(
+        logLevel: kDebugMode ? PlayerLogLevel.debug : PlayerLogLevel.info,
+        printCallerInfo: false,
+      );
+
   /// Minimum level that gets routed to outputs.
   /// Use PlayerLogLevel.none to silence all logs.
   final PlayerLogLevel logLevel;
@@ -19,10 +26,4 @@ class PlayerLoggerConfiguration {
 
   /// The chain of outputs to write to. Defaults to ConsoleLogOutput.
   final List<PlayerLogOutput> outputs;
-
-  /// Sensible default: debug verbosity in debug mode, info in profile/release.
-  static PlayerLoggerConfiguration get defaultConfig =>
-      const PlayerLoggerConfiguration(
-        logLevel: kDebugMode ? PlayerLogLevel.debug : PlayerLogLevel.info,
-      );
 }

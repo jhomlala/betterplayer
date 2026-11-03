@@ -43,13 +43,14 @@ class HlsMediaPlaylist extends HlsPlaylist {
         ? segments.last.relativeStartTimeUs ?? 0 + segments.last.durationUs!
         : null;
 
-    if (startOffsetUs != null && startOffsetUs < 0) {
-      startOffsetUs = durationUs ?? 0 + startOffsetUs;
+    var effectiveStartOffsetUs = startOffsetUs;
+    if (effectiveStartOffsetUs != null && effectiveStartOffsetUs < 0) {
+      effectiveStartOffsetUs = durationUs ?? 0 + effectiveStartOffsetUs;
     }
 
     return HlsMediaPlaylist._(
       playlistType: playlistType,
-      startOffsetUs: startOffsetUs,
+      startOffsetUs: effectiveStartOffsetUs,
       startTimeUs: startTimeUs,
       hasDiscontinuitySequence: hasDiscontinuitySequence,
       discontinuitySequence: discontinuitySequence,

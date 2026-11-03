@@ -48,7 +48,7 @@ class _PlayerCupertinoControlsState
   bool _wasLoading = false;
 
   BetterPlayerController? _betterPlayerController;
-  StreamSubscription? _controlsVisibilityStreamSubscription;
+  StreamSubscription<bool>? _controlsVisibilityStreamSubscription;
   bool? _lastNotifiedVisibility;
 
   PlayerControlsConfiguration get _controlsConfiguration =>
@@ -76,7 +76,7 @@ class _PlayerCupertinoControlsState
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Builder(
-          builder: (BuildContext context) {
+          builder: (context) {
             _betterPlayerController = BetterPlayerController.of(context);
 
             if (_latestValue?.hasError == true) {
@@ -343,7 +343,7 @@ class _PlayerCupertinoControlsState
         }
       } else {
         if (isFinished) {
-          _betterPlayerController!.seekTo(const Duration());
+          _betterPlayerController!.seekTo(Duration.zero);
         }
         _betterPlayerController!.play();
         _betterPlayerController!.cancelNextVideoTimer();

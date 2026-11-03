@@ -44,15 +44,18 @@ class ConsoleLogOutput extends PlayerLogOutput {
   void onLog(PlayerLogRecord record) {
     final message = formatMessage(record);
     if (usePrint) {
+      // Console logger explicitly routes output to standard print.
       // ignore: avoid_print
       print(
         '[$_name/${record.tag}] [${record.level.name.toUpperCase()}] $message',
       );
       if (record.error != null) {
+        // Console logger explicitly routes error output to standard print.
         // ignore: avoid_print
         print('Error: ${record.error}');
       }
       if (record.stackTrace != null) {
+        // Console logger explicitly routes stack traces to standard print.
         // ignore: avoid_print
         print('StackTrace: ${record.stackTrace}');
       }

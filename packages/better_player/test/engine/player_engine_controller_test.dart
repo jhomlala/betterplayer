@@ -49,7 +49,7 @@ void main() {
         textureId,
         VideoEvent(
           eventType: VideoEventType.changedSize,
-          size: const Size(0, 0),
+          size: Size.zero,
           key: 'https://example.com/video.mp4',
         ),
       );

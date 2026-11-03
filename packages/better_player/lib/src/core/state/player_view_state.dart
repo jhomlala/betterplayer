@@ -3,6 +3,20 @@ import 'package:flutter/widgets.dart';
 /// Tracks the visual state and UI configurations of the Better Player.
 @immutable
 class PlayerViewState {
+  const PlayerViewState({
+    this.isFullScreen = false,
+    this.isPlayerVisible = true,
+    this.controlsAlwaysVisible = false,
+    this.controlsEnabled = true,
+    this.wasInPipMode = false,
+    this.wasInFullScreenBeforePiP = false,
+    this.wasControlsEnabledBeforePiP = false,
+    this.overriddenAspectRatio,
+    this.overriddenFit,
+    this.betterPlayerGlobalKey,
+    this.isControlsVisible,
+  });
+
   /// Flag indicating whether the player is currently taking up the entire screen.
   final bool isFullScreen;
 
@@ -36,20 +50,6 @@ class PlayerViewState {
 
   /// Flag indicating whether the controls overlay is currently visible on the screen.
   final bool? isControlsVisible;
-
-  const PlayerViewState({
-    this.isFullScreen = false,
-    this.isPlayerVisible = true,
-    this.controlsAlwaysVisible = false,
-    this.controlsEnabled = true,
-    this.wasInPipMode = false,
-    this.wasInFullScreenBeforePiP = false,
-    this.wasControlsEnabledBeforePiP = false,
-    this.overriddenAspectRatio,
-    this.overriddenFit,
-    this.betterPlayerGlobalKey,
-    this.isControlsVisible,
-  });
 
   PlayerViewState copyWith({
     bool? isFullScreen,

@@ -250,7 +250,7 @@ class HlsPlaylistParser {
       } else if (line.startsWith(tagStreamInf)) {
         noClosedCaptions |= line.contains(
           attrClosedCaptionsNone,
-        ); // TODO: Revisit
+        ); // TODO(jhomlala): Revisit.
         final bitrateString = _parseStringAttr(
           source: line,
           pattern: regexpBandwidth,
@@ -366,13 +366,16 @@ class HlsPlaylistParser {
       }
     }
 
-    // TODO: Don't deduplicate variants by URL.
+    // TODO(jhomlala): Don't deduplicate variants by URL.
     final deduplicatedVariants = <Variant>[];
     final urlsInDeduplicatedVariants = <Uri>{};
     for (var i = 0; i < variants.length; i++) {
       final variant = variants[i];
       if (urlsInDeduplicatedVariants.add(variant.url)) {
-        assert(variant.format.metadata == null);
+        assert(
+          variant.format.metadata == null,
+          'Expected variant metadata to be null',
+        );
         final hlsMetadataEntry = HlsTrackMetadataEntry(
           variantInfos: urlToVariantInfos[variant.url],
         );
@@ -415,7 +418,7 @@ class HlsPlaylistParser {
       final entry = HlsTrackMetadataEntry(
         groupId: groupId,
         name: name,
-        variantInfos: <VariantInfo>[],
+        variantInfos: const <VariantInfo>[],
       );
       final metadata = Metadata([entry]);
 

@@ -1,7 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:meta/meta.dart';
+
+@immutable
 class SchemeData {
-  SchemeData({
+  const SchemeData({
     required this.mimeType, //    @required this.uuid,
     this.licenseServerUrl,
     this.data,
@@ -33,7 +36,7 @@ class SchemeData {
   );
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other is SchemeData) {
       return other.mimeType == mimeType &&
           other.licenseServerUrl == licenseServerUrl &&

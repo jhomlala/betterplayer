@@ -1,5 +1,3 @@
-﻿import 'dart:typed_data';
-
 import 'package:meta/meta.dart';
 
 /// Web implementation of IO utils.

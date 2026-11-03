@@ -4,6 +4,15 @@ import 'package:flutter/widgets.dart';
 /// Tracks the low-level playback and lifecycle state of the media player.
 @immutable
 class PlayerPlaybackState {
+  const PlayerPlaybackState({
+    this.hasCurrentDataSourceStarted = false,
+    this.hasCurrentDataSourceInitialized = false,
+    this.appLifecycleState = AppLifecycleState.resumed,
+    this.wasPlayingBeforePause = false,
+    this.videoPlayerValueOnError,
+    this.lastPositionSelection = 0,
+  });
+
   /// Flag indicating whether the current data source has begun playback at least once.
   final bool hasCurrentDataSourceStarted;
 
@@ -25,15 +34,6 @@ class PlayerPlaybackState {
   /// Caches the system timestamp of the last time a 'progress' event was fired.
   /// Used for throttling UI updates.
   final int lastPositionSelection;
-
-  const PlayerPlaybackState({
-    this.hasCurrentDataSourceStarted = false,
-    this.hasCurrentDataSourceInitialized = false,
-    this.appLifecycleState = AppLifecycleState.resumed,
-    this.wasPlayingBeforePause = false,
-    this.videoPlayerValueOnError,
-    this.lastPositionSelection = 0,
-  });
 
   PlayerPlaybackState copyWith({
     bool? hasCurrentDataSourceStarted,

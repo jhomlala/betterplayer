@@ -54,7 +54,7 @@ void main() {
     test('setTrack throws StateError when engine is null', () {
       expect(
         () => controller.setTrack(
-          PlayerAsmsTrack('1', 1920, 1080, 5000000, null, null, null),
+          const PlayerAsmsTrack('1', 1920, 1080, 5000000, null, null, null),
         ),
         throwsStateError,
       );
@@ -122,7 +122,7 @@ void main() {
       final events = <PlayerEvent>[];
       controller.addEventsListener(events.add);
 
-      final track = PlayerAsmsTrack(
+      const track = PlayerAsmsTrack(
         'hd',
         1920,
         1080,

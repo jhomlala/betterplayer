@@ -24,7 +24,9 @@ class PlayerSubtitlesFactory {
         return _parseSubtitlesFromNetwork(source);
       case PlayerSubtitlesSourceType.memory:
         return _parseSubtitlesFromMemory(source);
-      default:
+      case PlayerSubtitlesSourceType.embedded:
+      case PlayerSubtitlesSourceType.none:
+      case null:
         return [];
     }
   }
@@ -123,13 +125,11 @@ class PlayerSubtitlesFactory {
     var timestampOffset = Duration.zero;
     final lines = content.split('\n');
     final cueLines = <String>[];
-    var isWebVTT = false;
     var inSkipBlock = false;
 
     for (final line in lines) {
       final trimmedLine = line.trim();
       if (trimmedLine.startsWith('WEBVTT')) {
-        isWebVTT = true;
         continue;
       }
       if (trimmedLine.startsWith('X-TIMESTAMP-MAP=')) {
@@ -171,7 +171,6 @@ class PlayerSubtitlesFactory {
 
       final subtitle = PlayerSubtitle(
         value: cleanComponent,
-        isWebVTT: isWebVTT,
         timestampOffset: timestampOffset,
       );
       if (subtitle.start != null &&

@@ -23,7 +23,7 @@ void main() {
     // Mock path_provider
     const MethodChannel(
       'plugins.flutter.io/path_provider',
-    ).setMockMethodCallHandler((MethodCall methodCall) async {
+    ).setMockMethodCallHandler((methodCall) async {
       return '.'; // Return current directory as temp dir for tests
     });
   });

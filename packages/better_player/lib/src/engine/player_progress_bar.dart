@@ -151,7 +151,7 @@ class PlayerProgressIndicator extends StatefulWidget {
   final EdgeInsets padding;
 
   @override
-  _PlayerProgressIndicatorState createState() =>
+  State<PlayerProgressIndicator> createState() =>
       _PlayerProgressIndicatorState();
 }
 

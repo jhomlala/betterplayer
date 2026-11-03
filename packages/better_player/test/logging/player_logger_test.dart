@@ -5,7 +5,6 @@ import 'package:better_player/src/logging/player_logger.dart';
 import 'package:better_player/src/logging/player_logger_configuration.dart';
 import 'package:better_player_platform_interface/better_player_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:meta/meta.dart';
 
 import '../helpers/mock_better_player_platform.dart';
 

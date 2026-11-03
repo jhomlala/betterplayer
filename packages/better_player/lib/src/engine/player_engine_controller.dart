@@ -17,7 +17,7 @@ BetterPlayerPlatform get _betterPlayerPlatform => BetterPlayerPlatform.instance;
 ///
 /// Instances must be initialized with initialize.
 ///
-/// The video is displayed in a Flutter app by creating a [VideoPlayer] widget.
+/// The video is displayed in a Flutter app by creating a `PlayerEngineView` widget.
 ///
 /// To reclaim the resources used by the player call [dispose].
 ///
@@ -49,7 +49,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   /// The id of a texture that hasn't been initialized is null.
   int? get textureId => _textureId;
 
-  /// Attempts to open the given [dataSource] and load metadata about the video.
+  /// Attempts to initialize the platform player and create the texture and load metadata about the video.
   Future<void> _create() async {
     _textureId = await _betterPlayerPlatform.create(
       bufferingConfiguration: bufferingConfiguration,
@@ -394,7 +394,6 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
       }
       final newPosition = await position;
       final newAbsolutePosition = await absolutePosition;
-      // ignore: invariant_booleans
       if (_isDisposed) {
         return;
       }
@@ -440,10 +439,10 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     return _betterPlayerPlatform.getAbsolutePosition(_textureId);
   }
 
-  /// Sets the video's current timestamp to be at [moment]. The next
-  /// time the video is played it will resume from the given [moment].
+  /// Sets the video's current timestamp to be at [position]. The next
+  /// time the video is played it will resume from the given [position].
   ///
-  /// If [moment] is outside of the video's full range it will be automatically
+  /// If [position] is outside of the video's full range it will be automatically
   /// and silently clamped.
   Future<void> seekTo(Duration? position) async {
     _timer?.cancel();
@@ -457,8 +456,8 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
         positionToSeek = value.duration;
       }
     }
-    if (position != null && position < const Duration()) {
-      positionToSeek = const Duration();
+    if (position != null && position < Duration.zero) {
+      positionToSeek = Duration.zero;
     }
     _seekPosition = positionToSeek;
 
@@ -473,7 +472,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     }
   }
 
-  /// Sets the audio volume of [this].
+  /// Sets the audio volume of this player.
   ///
   /// [volume] indicates a value between 0.0 (silent) and 1.0 (full volume) on a
   /// linear scale.
@@ -485,7 +484,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     await _applyVolume();
   }
 
-  /// Sets the speed of [this].
+  /// Sets the speed of this player.
   ///
   /// [speed] indicates a value between 0.0 and 2.0 on a linear scale.
   Future<void> setSpeed(double speed) async {
@@ -504,7 +503,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     }
   }
 
-  /// Sets the video track parameters of [this]
+  /// Sets the video track parameters of this player.
   ///
   /// [width] specifies width of the selected track
   /// [height] specifies height of the selected track
@@ -583,7 +582,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     _betterPlayerPlatform.setMixWithOthers(_textureId, mixWithOthers);
   }
 
-  static Future clearCache() async {
+  static Future<void> clearCache() async {
     return _betterPlayerPlatform.clearCache();
   }
 
@@ -602,7 +601,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     );
   }
 
-  static Future stopPreCache(String url, String? cacheKey) async {
+  static Future<void> stopPreCache(String url, String? cacheKey) async {
     return _betterPlayerPlatform.stopPreCache(url, cacheKey);
   }
 }

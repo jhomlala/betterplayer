@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'dart:typed_data';
 
 ///ClearKey helper class to generate the key
@@ -11,15 +10,19 @@ class BetterPlayerClearKeyUtils {
     Map<String, String> keys, {
     String type = 'temporary',
   }) {
-    final Map keyMap = <String, dynamic>{'type': type};
-    keyMap['keys'] = <Map<String, String>>[];
-    keys.forEach(
-      (key, value) => keyMap['keys'].add({
+    final keyList = <Map<String, String>>[];
+    for (final entry in keys.entries) {
+      keyList.add({
         'kty': 'oct',
-        'kid': _base64(key),
-        'k': _base64(value),
-      }),
-    );
+        'kid': _base64(entry.key),
+        'k': _base64(entry.value),
+      });
+    }
+
+    final keyMap = <String, dynamic>{
+      'type': type,
+      'keys': keyList,
+    };
 
     return jsonEncode(keyMap);
   }

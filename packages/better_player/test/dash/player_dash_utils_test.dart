@@ -1,4 +1,3 @@
-import 'package:better_player/better_player.dart';
 import 'package:better_player/src/dash/player_dash_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 

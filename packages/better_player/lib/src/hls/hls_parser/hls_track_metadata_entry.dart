@@ -1,8 +1,10 @@
 import 'package:better_player/src/hls/hls_parser/variant_info.dart';
 import 'package:collection/collection.dart';
+import 'package:meta/meta.dart';
 
+@immutable
 class HlsTrackMetadataEntry {
-  HlsTrackMetadataEntry({this.groupId, this.name, this.variantInfos});
+  const HlsTrackMetadataEntry({this.groupId, this.name, this.variantInfos});
 
   /// The GROUP-ID value of this track, if the track is derived from an EXT-X-MEDIA tag. Null if the
   /// track is not derived from an EXT-X-MEDIA TAG.
@@ -16,7 +18,7 @@ class HlsTrackMetadataEntry {
   final List<VariantInfo>? variantInfos;
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other is HlsTrackMetadataEntry) {
       return other.groupId == groupId &&
           other.name == name &&

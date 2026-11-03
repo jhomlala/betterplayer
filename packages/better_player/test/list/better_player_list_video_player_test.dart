@@ -1,4 +1,5 @@
-// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package
+// Tests deprecated legacy class for backwards compatibility.
+// ignore_for_file: deprecated_member_use_from_same_package
 
 import 'package:better_player/better_player.dart';
 import 'package:flutter_test/flutter_test.dart';
