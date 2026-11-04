@@ -8,7 +8,7 @@ class CustomControlsWidget extends StatefulWidget {
     this.onControlsVisibilityChanged,
   });
   final BetterPlayerController? controller;
-  final Function(bool visbility)? onControlsVisibilityChanged;
+  final void Function(bool visibility)? onControlsVisibilityChanged;
 
   @override
   State<CustomControlsWidget> createState() => _CustomControlsWidgetState();

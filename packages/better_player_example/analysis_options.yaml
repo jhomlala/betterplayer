@@ -26,3 +26,4 @@ linter:
     avoid_print: false
     strict_raw_type: false
     inference_failure_on_function_return_type: false
+    avoid_positional_boolean_parameters: false
