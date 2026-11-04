@@ -1,4 +1,4 @@
-## Unreleased
+## 1.33.0
 - Added: Feed error handling with `PlayerFeedConfiguration.errorBuilder`, localized `PlayerFeedErrorView`, and `BetterPlayerFeedController.retry`.
 - Added: Feed list mutation methods on `BetterPlayerFeedController` (`insertDataSources`, `removeAt`, `replaceAt`, `replaceAll`) with stable item identifiers and `PageView` reactivity.
 - Added: Dynamic slot recycling and index shifting support in `BetterPlayerPool` via `releaseItem` and `reindex`.
@@ -8,6 +8,7 @@
 - Updated: Replaced legacy `package:flutter/material.dart` and `cupertino.dart` imports with `package:material_ui` and `package:cupertino_ui` across controls and test suites.
 - Updated: Aligned `packages/better_player` analysis options with root `analysis_options.yaml`, enabling strict lint rules including `unawaited_futures`, `avoid_catches_without_on_clauses`, and typed function callbacks while resolving issues across controls, HLS parsing, data sources, and tests.
 - Updated: Resolved static analysis lints and enabled stricter rules across example app and platform packages.
+- Updated: Bumped federated sub-packages: `better_player_platform_interface` to `^1.7.1`, `better_player_android` to `^1.11.0`, `better_player_ios` to `^1.11.1`, `better_player_linux` to `^1.0.2`, `better_player_macos` to `^1.6.1`, `better_player_web` to `^1.4.1`, and `better_player_windows` to `^1.4.2`.
 
 ## 1.32.0
 - Added: Native AirPlay and Remote Playback support across iOS, macOS, and Web with top-bar route picker controls, `PlayerControlsConfiguration.enableAirPlay`, `BetterPlayerController.showAirPlayPicker()`, `BetterPlayerController.isExternalPlaybackSupported`, and `PlayerEventType.externalPlaybackChanged`.
