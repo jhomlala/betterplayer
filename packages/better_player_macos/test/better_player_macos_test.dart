@@ -309,6 +309,142 @@ void main() {
     });
 
     test(
+      'setDataSource forwards FairPlay DRM certificate and license URLs to wrapper',
+      () async {
+        await macosPlayer.create();
+        const certUrl = 'https://fps.ezdrm.com/demo/cert.der';
+        const licUrl = 'https://fps.ezdrm.com/api/licenses/';
+        await macosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/fairplay.m3u8',
+            drmConfiguration: const DrmConfiguration(
+              drmType: DrmType.fairplay,
+              certificateUrl: certUrl,
+              licenseUrl: licUrl,
+            ),
+          ),
+        );
+
+        verify(
+          () => mockPlayer.setDataSourceURLString(
+            url: 'https://example.com/fairplay.m3u8',
+            key: any(named: 'key'),
+            certificateUrl: certUrl,
+            licenseUrl: licUrl,
+            useCache: any(named: 'useCache'),
+            cacheKey: any(named: 'cacheKey'),
+            cacheManager: any(named: 'cacheManager'),
+            overriddenDuration: any(named: 'overriddenDuration'),
+            videoExtension: any(named: 'videoExtension'),
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
+      'setDataSource with non-EZDRM custom FairPlay license URL forwards custom URL',
+      () async {
+        await macosPlayer.create();
+        const certUrl = 'https://license.custom-ksm.com/cert.der';
+        const licUrl = 'https://license.custom-ksm.com/fairplay/license';
+        await macosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/fairplay.m3u8',
+            drmConfiguration: const DrmConfiguration(
+              drmType: DrmType.fairplay,
+              certificateUrl: certUrl,
+              licenseUrl: licUrl,
+            ),
+          ),
+        );
+
+        verify(
+          () => mockPlayer.setDataSourceURLString(
+            url: 'https://example.com/fairplay.m3u8',
+            key: any(named: 'key'),
+            certificateUrl: certUrl,
+            licenseUrl: licUrl,
+            useCache: any(named: 'useCache'),
+            cacheKey: any(named: 'cacheKey'),
+            cacheManager: any(named: 'cacheManager'),
+            overriddenDuration: any(named: 'overriddenDuration'),
+            videoExtension: any(named: 'videoExtension'),
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
+      'setDataSource with FairPlay DRM and custom HTTP headers forwards both',
+      () async {
+        await macosPlayer.create();
+        const certUrl = 'https://fps.ezdrm.com/demo.cer';
+        const licUrl = 'https://fps.ezdrm.com/api/licenses/';
+        const headers = {'X-Custom-Auth': 'secret-token'};
+        await macosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/protected.m3u8',
+            headers: headers,
+            drmConfiguration: const DrmConfiguration(
+              drmType: DrmType.fairplay,
+              certificateUrl: certUrl,
+              licenseUrl: licUrl,
+            ),
+          ),
+        );
+
+        verify(
+          () => mockPlayer.setDataSourceURLString(
+            url: 'https://example.com/protected.m3u8',
+            key: any(named: 'key'),
+            certificateUrl: certUrl,
+            licenseUrl: licUrl,
+            headers: headers,
+            useCache: any(named: 'useCache'),
+            cacheKey: any(named: 'cacheKey'),
+            cacheManager: any(named: 'cacheManager'),
+            overriddenDuration: any(named: 'overriddenDuration'),
+            videoExtension: any(named: 'videoExtension'),
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
+      'setDataSource with null drmConfiguration passes null certificate and license URLs',
+      () async {
+        await macosPlayer.create();
+        await macosPlayer.setDataSource(
+          1,
+          DataSource(
+            sourceType: DataSourceType.network,
+            uri: 'https://example.com/clear.m3u8',
+          ),
+        );
+
+        verify(
+          () => mockPlayer.setDataSourceURLString(
+            url: 'https://example.com/clear.m3u8',
+            key: any(named: 'key'),
+            certificateUrl: null,
+            licenseUrl: null,
+            useCache: any(named: 'useCache'),
+            cacheKey: any(named: 'cacheKey'),
+            cacheManager: any(named: 'cacheManager'),
+            overriddenDuration: any(named: 'overriddenDuration'),
+            videoExtension: any(named: 'videoExtension'),
+          ),
+        ).called(1);
+      },
+    );
+
+    test(
       'handleInitialized emits initialized first, changedSize on positive size updates, and ignores non-positive dimensions',
       () async {
         final controller = StreamController<VideoEvent>.broadcast();

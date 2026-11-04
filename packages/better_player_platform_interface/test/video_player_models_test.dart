@@ -110,15 +110,60 @@ void main() {
   });
 
   group('DrmConfiguration tests', () {
-    test('DrmConfiguration initialization', () {
+    test('DrmConfiguration default values are null', () {
+      const config = DrmConfiguration();
+      expect(config.drmType, null);
+      expect(config.token, null);
+      expect(config.licenseUrl, null);
+      expect(config.certificateUrl, null);
+      expect(config.headers, null);
+      expect(config.clearKey, null);
+      expect(config.drmSecurityLevel, null);
+    });
+
+    test('DrmConfiguration FairPlay initialization', () {
       const config = DrmConfiguration(
-        drmType: DrmType.widevine,
-        licenseUrl: 'https://license.com',
-        drmSecurityLevel: DrmSecurityLevel.l1,
+        drmType: DrmType.fairplay,
+        certificateUrl: 'https://fps.ezdrm.com/demo.cer',
+        licenseUrl: 'https://fps.ezdrm.com/api/licenses/',
       );
-      expect(config.drmType, DrmType.widevine);
-      expect(config.licenseUrl, 'https://license.com');
-      expect(config.drmSecurityLevel, DrmSecurityLevel.l1);
+      expect(config.drmType, DrmType.fairplay);
+      expect(config.certificateUrl, 'https://fps.ezdrm.com/demo.cer');
+      expect(config.licenseUrl, 'https://fps.ezdrm.com/api/licenses/');
+    });
+
+    test(
+      'DrmConfiguration Widevine initialization with headers and security level',
+      () {
+        const config = DrmConfiguration(
+          drmType: DrmType.widevine,
+          licenseUrl: 'https://license.com',
+          headers: {'Authorization': 'Bearer token'},
+          drmSecurityLevel: DrmSecurityLevel.l1,
+        );
+        expect(config.drmType, DrmType.widevine);
+        expect(config.licenseUrl, 'https://license.com');
+        expect(config.headers, {'Authorization': 'Bearer token'});
+        expect(config.drmSecurityLevel, DrmSecurityLevel.l1);
+      },
+    );
+
+    test('DrmConfiguration ClearKey initialization', () {
+      const config = DrmConfiguration(
+        drmType: DrmType.clearKey,
+        clearKey: '{"keys":[{"k":"abc","kid":"def"}]}',
+      );
+      expect(config.drmType, DrmType.clearKey);
+      expect(config.clearKey, '{"keys":[{"k":"abc","kid":"def"}]}');
+    });
+
+    test('DrmConfiguration Token initialization', () {
+      const config = DrmConfiguration(
+        drmType: DrmType.token,
+        token: 'Bearer test_token',
+      );
+      expect(config.drmType, DrmType.token);
+      expect(config.token, 'Bearer test_token');
     });
   });
 }
