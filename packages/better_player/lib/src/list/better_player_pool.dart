@@ -115,10 +115,16 @@ class BetterPlayerPool {
 
     // 1. Check if item already holds an active or preloading slot.
     for (final slot in _slots) {
-      if (slot.currentItemId == itemId && slot.currentLease != null) {
+      if (slot.currentItemId == itemId &&
+          slot.currentLease != null &&
+          !slot.currentLease!.hasError) {
         slot.currentIndex = index;
+        final wasPreload = slot.isPreloading;
         slot.isPreloading = false;
         final lease = slot.currentLease!;
+        if (wasPreload) {
+          lease.wasPreloaded = true;
+        }
         if (slot.bindingFuture != null) {
           await slot.bindingFuture;
         }
@@ -173,6 +179,51 @@ class BetterPlayerPool {
         _resetSlot(slot);
         _processPendingRequests();
         break;
+      }
+    }
+  }
+
+  /// Releases any lease or pending request associated with [itemId].
+  void releaseItem({required String itemId}) {
+    if (_isDisposed) {
+      return;
+    }
+
+    _pendingRequests.removeWhere((req) {
+      if (req.itemId == itemId) {
+        if (!req.completer.isCompleted) {
+          req.completer.completeError(
+            StateError('Item $itemId was released before acquiring lease'),
+          );
+        }
+        return true;
+      }
+      return false;
+    });
+
+    for (final slot in _slots) {
+      if (slot.currentItemId == itemId) {
+        final currentLease = slot.currentLease;
+        if (currentLease != null) {
+          currentLease.markEvicted();
+        }
+        _resetSlot(slot);
+        _processPendingRequests();
+        break;
+      }
+    }
+  }
+
+  /// Updates the pool index tracking for all occupied slots based on [indexById].
+  void reindex({required Map<String, int> indexById}) {
+    if (_isDisposed) {
+      return;
+    }
+
+    for (final slot in _slots) {
+      final itemId = slot.currentItemId;
+      if (itemId != null && indexById.containsKey(itemId)) {
+        slot.currentIndex = indexById[itemId];
       }
     }
   }
@@ -350,13 +401,36 @@ class BetterPlayerPool {
     try {
       // Setup data source if different from current URL
       if (slot.currentSourceUrl != dataSource.url) {
-        slot.currentSourceUrl = dataSource.url;
         try {
           await slot.controller.setupDataSource(dataSource);
+          if (slot.currentLease != lease) {
+            return lease;
+          }
+          if (slot.controller.videoPlayerValue?.hasError ?? false) {
+            final error =
+                slot.controller.videoPlayerValue?.errorDescription ??
+                'Data source setup failed';
+            slot.currentSourceUrl = null;
+            lease.errorMessage = error;
+            PlayerLogger.error(
+              message: 'Error setting up data source in pool: $error',
+            );
+            if (isPreload) {
+              _resetSlot(slot);
+            }
+            return lease;
+          }
+          slot.currentSourceUrl = dataSource.url;
         } on Object catch (e) {
+          slot.currentSourceUrl = null;
+          lease.errorMessage = e.toString();
           PlayerLogger.error(
             message: 'Error setting up data source in pool: $e',
           );
+          if (isPreload) {
+            _resetSlot(slot);
+          }
+          return lease;
         }
       }
 

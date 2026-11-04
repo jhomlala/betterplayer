@@ -103,10 +103,49 @@ Coordinates data sources and leases for the feed widget:
 
 #### Methods
 
-- **`appendDataSources(List<PlayerDataSource> newSources)`**: Appends more media sources to the feed for infinite pagination.
+- **`insertDataSources({required int index, required List<PlayerDataSource> dataSources, List<String>? ids})`**: Inserts media sources at `index` with optional stable IDs.
+- **`appendDataSources(List<PlayerDataSource> newSources, {List<String>? ids})`**: Appends more media sources to the feed for pagination.
+- **`removeAt({required int index})`**: Removes the media source at `index` and updates active leases.
+- **`replaceAt({required int index, required PlayerDataSource dataSource, String? id})`**: Replaces the media source at `index`.
+- **`replaceAll({required List<PlayerDataSource> dataSources, List<String>? ids, int initialIndex = 0})`**: Replaces all sources in the feed, resets to `initialIndex`, and rebinds.
+- **`retry({required int index})`**: Retries loading and binding a failed feed item.
 - **`onIndexChanged(int index)`**: Triggers leasing, preloading, and distance-based recycling for a newly focused index.
 - **`getLeaseNotifier(int index)`**: Returns a `ValueNotifier<PlayerPoolLease?>` for a specific index to observe lease bindings.
 - **`dispose()`**: Releases all leases and disposes owned pool controllers and `PageController`.
+
+### Error Handling & Retries
+
+When a feed item fails to initialize or play, `BetterPlayerFeed` automatically presents an error state:
+- If `errorBuilder` is configured on `PlayerFeedConfiguration`, the custom error widget is rendered.
+- Otherwise, the built-in `PlayerFeedErrorView` displays a localized warning and a retry button.
+
+Call `feedController.retry(index: index)` to retry loading a failed item.
+
+### Feed Quality of Experience (QoE) Metrics
+
+`BetterPlayerFeedController.metricsStream` emits `PlayerFeedItemMetrics` snapshots whenever the user navigates away from an item, on playback errors, or when the controller is disposed.
+
+```dart
+final subscription = feedController.metricsStream.listen((metrics) {
+  PlayerLogger.info(
+    message: 'Feed item ${metrics.itemId} metrics: '
+        'TTFF: ${metrics.timeToFirstFrame?.inMilliseconds} ms, '
+        'preloaded: ${metrics.wasPreloaded}, '
+        'rebuffers: ${metrics.rebufferCount} (${metrics.rebufferDuration.inMilliseconds} ms), '
+        'error: ${metrics.errorMessage}',
+  );
+});
+```
+
+| Metric Field | Type | Description |
+|---|---|---|
+| `itemId` | `String` | Stable unique identifier of the feed entry. |
+| `index` | `int` | Position index of the item when metrics were captured. |
+| `wasPreloaded` | `bool` | True if the pool preloaded the media before it was focused. |
+| `timeToFirstFrame` | `Duration?` | Elapsed duration from focus until first frame initialization. |
+| `rebufferCount` | `int` | Number of rebuffering stalls experienced during active viewing. |
+| `rebufferDuration` | `Duration` | Total time spent waiting for media buffering. |
+| `errorMessage` | `String?` | Error description if media loading or playback failed. |
 
 ---
 
@@ -146,6 +185,8 @@ lease.release();
 
 - **`acquire({required String itemId, required int index, required PlayerDataSource dataSource})`**: Acquires a leased controller. If all slots are occupied, evicts the slot furthest from `activeIndex`.
 - **`release(PlayerPoolLease lease)`**: Returns a lease to the pool and makes the slot available.
+- **`releaseItem({required String itemId})`**: Releases any lease or pending request associated with `itemId`.
+- **`reindex({required Map<String, int> indexById})`**: Updates slot index tracking when list items shift after insertions or deletions.
 - **`setActiveIndex(int index)`**: Sets the current focal index to guide distance-based eviction.
 - **`updatePreloads({required int currentIndex, required List<PlayerDataSource> dataSources, required String Function(int index) idGetter})`**: Preloads lookahead and lookbehind items into idle slots.
 - **`onAppBackground()`**: Pauses all active pooled playback safely when app enters background.

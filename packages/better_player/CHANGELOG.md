@@ -1,4 +1,9 @@
 ## Unreleased
+- Added: Feed error handling with `PlayerFeedConfiguration.errorBuilder`, localized `PlayerFeedErrorView`, and `BetterPlayerFeedController.retry`.
+- Added: Feed list mutation methods on `BetterPlayerFeedController` (`insertDataSources`, `removeAt`, `replaceAt`, `replaceAll`) with stable item identifiers and `PageView` reactivity.
+- Added: Dynamic slot recycling and index shifting support in `BetterPlayerPool` via `releaseItem` and `reindex`.
+- Added: Quality of Experience (QoE) telemetry on `BetterPlayerFeedController.metricsStream` tracking time to first frame, preloading state, rebuffering stalls, and errors.
+- Fixed: Pooled feed slots no longer stay broken after a failed data source setup, with slots recovering cleanly on retry.
 - Added: Unit test coverage for `PlayerEngineController`, `PlayerClosedCaption`, and all core controller extensions (`PlayerDataSourceExtension`, `PlayerEventsExtension`, `PlayerPlaybackExtension`, `PlayerPlaylistExtension`, `PlayerSubtitleExtension`, `PlayerTrackExtension`, `PlayerTranslationsExtension`, `PlayerViewStateExtension`).
 - Updated: Replaced legacy `package:flutter/material.dart` and `cupertino.dart` imports with `package:material_ui` and `package:cupertino_ui` across controls and test suites.
 - Updated: Aligned `packages/better_player` analysis options with root `analysis_options.yaml`, enabling strict lint rules including `unawaited_futures`, `avoid_catches_without_on_clauses`, and typed function callbacks while resolving issues across controls, HLS parsing, data sources, and tests.
