@@ -1,6 +1,8 @@
 ## Unreleased
 - Added: Unit test coverage for `PlayerEngineController`, `PlayerClosedCaption`, and all core controller extensions (`PlayerDataSourceExtension`, `PlayerEventsExtension`, `PlayerPlaybackExtension`, `PlayerPlaylistExtension`, `PlayerSubtitleExtension`, `PlayerTrackExtension`, `PlayerTranslationsExtension`, `PlayerViewStateExtension`).
-- Updated: Aligned `packages/better_player` analysis options with root `analysis_options.yaml`, enabling strict lint rules including `unawaited_futures` and `avoid_catches_without_on_clauses` while resolving issues across controls, HLS parsing, data sources, and tests.
+- Updated: Replaced legacy `package:flutter/material.dart` and `cupertino.dart` imports with `package:material_ui` and `package:cupertino_ui` across controls and test suites.
+- Updated: Aligned `packages/better_player` analysis options with root `analysis_options.yaml`, enabling strict lint rules including `unawaited_futures`, `avoid_catches_without_on_clauses`, and typed function callbacks while resolving issues across controls, HLS parsing, data sources, and tests.
+- Updated: Resolved static analysis lints and enabled stricter rules across example app and platform packages.
 
 ## 1.32.0
 - Added: Native AirPlay and Remote Playback support across iOS, macOS, and Web with top-bar route picker controls, `PlayerControlsConfiguration.enableAirPlay`, `BetterPlayerController.showAirPlayPicker()`, `BetterPlayerController.isExternalPlaybackSupported`, and `PlayerEventType.externalPlaybackChanged`.

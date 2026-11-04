@@ -11,6 +11,10 @@ import 'package:flutter/widgets.dart';
 import 'package:objective_c/objective_c.dart' as objc;
 
 class BetterPlayerMacOS extends BetterPlayerPlatform {
+  BetterPlayerMacOS() {
+    _cleanupOrphanedPlayers();
+  }
+
   @override
   Future<void> setupLogCallback(
     void Function({
@@ -24,7 +28,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
       return;
     }
     final ffiFn = BetterPlayerLogCallback$Builder.implementAsListener(
-      onLog_message_: (int level, objc.NSString message) {
+      onLog_message_: (level, message) {
         callback(
           levelIndex: level,
           message: message.toDartString(),
@@ -42,10 +46,6 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
 
   @visibleForTesting
   Object createCacheManager() => BetterPlayerApi.createCacheManager();
-
-  BetterPlayerMacOS() {
-    _cleanupOrphanedPlayers();
-  }
 
   void _cleanupOrphanedPlayers() {
     cleanupOrphanedPlayers();
@@ -83,7 +83,9 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
         final player = getPlayer(id);
         player?.dispose();
       }
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
   }
 
   static void registerWith() {
@@ -144,7 +146,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
     _lastInitializedKeys.remove(textureId);
     getPlayer(textureId)?.dispose();
     _callbacks.remove(textureId);
-    _eventControllers[textureId]?.close();
+    unawaited(_eventControllers[textureId]?.close());
     _eventControllers.remove(textureId);
   }
 
@@ -156,7 +158,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
 
     final callback = BetterPlayerCallback$Builder.implementAsListener(
       onInitializedWithDurationMs_width_height_key_:
-          (int durationMs, double width, double height, objc.NSString? key) {
+          (durationMs, width, height, key) {
             if (currentTextureId == null) return;
             handleInitialized(
               textureId: currentTextureId,
@@ -166,7 +168,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
               key: key?.toDartString(),
             );
           },
-      onCompletedWithKey_: (objc.NSString? key) {
+      onCompletedWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
@@ -175,19 +177,19 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
           ),
         );
       },
-      onPlayWithKey_: (objc.NSString? key) {
+      onPlayWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(eventType: VideoEventType.play, key: key?.toDartString()),
         );
       },
-      onPauseWithKey_: (objc.NSString? key) {
+      onPauseWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(eventType: VideoEventType.pause, key: key?.toDartString()),
         );
       },
-      onSeekWithPositionMs_key_: (int positionMs, objc.NSString? key) {
+      onSeekWithPositionMs_key_: (positionMs, key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
@@ -197,7 +199,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
           ),
         );
       },
-      onBufferingStartWithKey_: (objc.NSString? key) {
+      onBufferingStartWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
@@ -206,7 +208,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
           ),
         );
       },
-      onBufferingEndWithKey_: (objc.NSString? key) {
+      onBufferingEndWithKey_: (key) {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
           VideoEvent(
@@ -215,26 +217,24 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
           ),
         );
       },
-      onBufferingUpdateWithJsonRanges_key_:
-          (objc.NSString jsonRanges, objc.NSString? key) {
-            if (currentTextureId == null) return;
-            final decoded =
-                jsonDecode(jsonRanges.toDartString()) as List<dynamic>;
-            final buffered = decoded.map<DurationRange>((dynamic value) {
-              final range = value as List<dynamic>;
-              return DurationRange(
-                Duration(milliseconds: (range[0] as num).toInt()),
-                Duration(milliseconds: (range[1] as num).toInt()),
-              );
-            }).toList();
-            _eventControllers[currentTextureId]?.add(
-              VideoEvent(
-                eventType: VideoEventType.bufferingUpdate,
-                key: key?.toDartString(),
-                buffered: buffered,
-              ),
-            );
-          },
+      onBufferingUpdateWithJsonRanges_key_: (jsonRanges, key) {
+        if (currentTextureId == null) return;
+        final decoded = jsonDecode(jsonRanges.toDartString()) as List<dynamic>;
+        final buffered = decoded.map<DurationRange>((dynamic value) {
+          final range = value as List<dynamic>;
+          return DurationRange(
+            Duration(milliseconds: (range[0] as num).toInt()),
+            Duration(milliseconds: (range[1] as num).toInt()),
+          );
+        }).toList();
+        _eventControllers[currentTextureId]?.add(
+          VideoEvent(
+            eventType: VideoEventType.bufferingUpdate,
+            key: key?.toDartString(),
+            buffered: buffered,
+          ),
+        );
+      },
       onPipStart: () {
         if (currentTextureId == null) return;
         _eventControllers[currentTextureId]?.add(
@@ -247,7 +247,7 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
           const VideoEvent(eventType: VideoEventType.pipStop, key: null),
         );
       },
-      onCuesWithJsonCues_: (objc.NSString jsonCues) {
+      onCuesWithJsonCues_: (jsonCues) {
         if (currentTextureId == null) return;
         try {
           final dynamic decoded = jsonDecode(jsonCues.toDartString());
@@ -261,13 +261,15 @@ class BetterPlayerMacOS extends BetterPlayerPlatform {
               ),
             );
           }
-        } catch (_) {}
+        } on Object {
+          // Ignored malformed cue payload.
+        }
       },
       onError_errorMessage_errorDetails_:
           (
-            objc.NSString errorCode,
-            objc.NSString errorMessage,
-            objc.NSString errorDetails,
+            errorCode,
+            errorMessage,
+            errorDetails,
           ) {
             if (currentTextureId == null) return;
             _eventControllers[currentTextureId]?.addError(
@@ -612,9 +614,9 @@ abstract class BetterPlayerWrapper {
 }
 
 class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
-  final BetterPlayer _player;
-
   NativeBetterPlayerWrapper(this._player);
+
+  final BetterPlayer _player;
 
   @override
   void dispose() => _player.dispose();

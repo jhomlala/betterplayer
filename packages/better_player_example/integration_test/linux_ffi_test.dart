@@ -76,7 +76,9 @@ void main() {
           'root',
           'linux_ffi_page.png',
         ]);
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
 
       // 5. Navigate back to home
       final navigator = Navigator.of(tester.element(initializedStatus));

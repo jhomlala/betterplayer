@@ -8,7 +8,7 @@ class OverriddenAspectRatioPage extends StatefulWidget {
   const OverriddenAspectRatioPage({super.key});
 
   @override
-  _OverriddenAspectRatioPageState createState() =>
+  State<OverriddenAspectRatioPage> createState() =>
       _OverriddenAspectRatioPageState();
 }
 

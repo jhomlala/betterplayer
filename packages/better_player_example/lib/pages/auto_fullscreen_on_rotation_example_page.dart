@@ -10,7 +10,7 @@ class AutoFullscreenOnRotationExamplePage extends StatefulWidget {
   const AutoFullscreenOnRotationExamplePage({super.key});
 
   @override
-  _AutoFullscreenOnRotationExamplePageState createState() =>
+  State<AutoFullscreenOnRotationExamplePage> createState() =>
       _AutoFullscreenOnRotationExamplePageState();
 }
 

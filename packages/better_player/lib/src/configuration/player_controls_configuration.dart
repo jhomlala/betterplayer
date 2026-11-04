@@ -298,7 +298,7 @@ class PlayerControlsConfiguration {
   /// NOTE: This will only be used if [playerTheme] is set to [PlayerTheme.custom].
   final Widget Function(
     BetterPlayerController controller,
-    Function(bool) onPlayerVisibilityChanged,
+    void Function(bool) onPlayerVisibilityChanged,
   )?
   customControlsBuilder;
 

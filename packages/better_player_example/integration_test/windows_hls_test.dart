@@ -55,7 +55,9 @@ void main() {
       try {
         await tester.ensureVisible(playPauseButton.first);
         await tester.pump(const Duration(milliseconds: 200));
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
 
       // 3. Play/Pause toggle
       await tester.tap(playPauseButton.first, warnIfMissed: false);
@@ -122,7 +124,9 @@ void main() {
         try {
           await tester.ensureVisible(progressBar.first);
           await tester.pump(const Duration(milliseconds: 200));
-        } catch (_) {}
+        } on Object catch (_) {
+          // Ignored.
+        }
         await tester.tap(progressBar.first, warnIfMissed: false);
         await tester.pump(const Duration(milliseconds: 500));
       }
@@ -135,7 +139,9 @@ void main() {
         try {
           await tester.ensureVisible(expandButton.first);
           await tester.pump(const Duration(milliseconds: 200));
-        } catch (_) {}
+        } on Object catch (_) {
+          // Ignored.
+        }
         await tester.tap(expandButton.first, warnIfMissed: false);
         await tester.pump(const Duration(milliseconds: 500));
         await tester.tap(expandButton.first, warnIfMissed: false);

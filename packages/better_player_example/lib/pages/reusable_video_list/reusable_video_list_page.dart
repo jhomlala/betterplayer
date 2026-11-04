@@ -12,7 +12,7 @@ class ReusableVideoListPage extends StatefulWidget {
   const ReusableVideoListPage({super.key});
 
   @override
-  _ReusableVideoListPageState createState() => _ReusableVideoListPageState();
+  State<ReusableVideoListPage> createState() => _ReusableVideoListPageState();
 }
 
 class _ReusableVideoListPageState extends State<ReusableVideoListPage> {

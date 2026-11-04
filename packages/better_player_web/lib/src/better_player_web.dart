@@ -40,7 +40,9 @@ class BetterPlayerWeb extends BetterPlayerPlatform {
     if (textureId == null) return;
     try {
       await _getPlayer(textureId).showExternalPlaybackPicker();
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
   }
 
   int _nextId = 0;

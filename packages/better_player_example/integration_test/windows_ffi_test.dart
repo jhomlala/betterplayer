@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:better_player_example/main_e2e.dart' as app;
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'test_utils.dart';
 
@@ -75,7 +75,9 @@ void main() {
           'savescreenshot',
           'windows_ffi_page.png',
         ]);
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
 
       // 5. Navigate back to home
       final navigator = Navigator.of(tester.element(initializedStatus));

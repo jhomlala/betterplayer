@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+// Internal setters bind to JNI companion properties without requiring getters.
 // ignore_for_file: avoid_setters_without_getters
 
 import 'package:better_player_android/src/better_player_android_jni.g.dart';
@@ -30,7 +31,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     }
     final jniCallback = BetterPlayerLogCallback.implement(
       $BetterPlayerLogCallback(
-        onLog: (int level, JString message) {
+        onLog: (level, message) {
           callback(
             levelIndex: level,
             message: message.toDartString(),
@@ -62,11 +63,16 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
     _players.remove(textureId);
 
     try {
-      _callbacks[textureId]?.release();
-    } catch (_) {}
+      final callback = _callbacks[textureId];
+      if (callback is JObject) {
+        callback.release();
+      }
+    } on Object {
+      // Ignored.
+    }
     _callbacks.remove(textureId);
 
-    _eventControllers[textureId]?.close();
+    unawaited(_eventControllers[textureId]?.close());
     _eventControllers.remove(textureId);
   }
 
@@ -78,7 +84,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
 
     final callback = buildCallback(
       $BetterPlayerCallback(
-        onInitialized: (int durationMs, int width, int height, JString? key) {
+        onInitialized: (durationMs, width, height, key) {
           tempController.add(
             VideoEvent(
               eventType: VideoEventType.initialized,
@@ -89,7 +95,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
           );
         },
         onInitialized$async: true,
-        onCompleted: (JString? key) {
+        onCompleted: (key) {
           tempController.add(
             VideoEvent(
               eventType: VideoEventType.completed,
@@ -110,7 +116,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
           );
         },
         onPause$async: true,
-        onSeek: (int positionMs) {
+        onSeek: (positionMs) {
           tempController.add(
             VideoEvent(
               eventType: VideoEventType.seek,
@@ -135,7 +141,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
           );
         },
         onBufferingEnd$async: true,
-        onBufferingUpdate: (int bufferedMs) {
+        onBufferingUpdate: (bufferedMs) {
           tempController.add(
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
@@ -162,7 +168,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
           );
         },
         onPipStop$async: true,
-        onChangedSize: (int width, int height, JString? key) {
+        onChangedSize: (width, height, key) {
           tempController.add(
             VideoEvent(
               eventType: VideoEventType.changedSize,
@@ -172,16 +178,15 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
           );
         },
         onChangedSize$async: true,
-        onError:
-            (JString errorCode, JString errorMessage, JString errorDetails) {
-              tempController.addError(
-                PlatformException(
-                  code: errorCode.toDartString(),
-                  message: errorMessage.toDartString(),
-                  details: errorDetails.toDartString(),
-                ),
-              );
-            },
+        onError: (errorCode, errorMessage, errorDetails) {
+          tempController.addError(
+            PlatformException(
+              code: errorCode.toDartString(),
+              message: errorMessage.toDartString(),
+              details: errorDetails.toDartString(),
+            ),
+          );
+        },
         onError$async: true,
         onCues: (list) {},
         onCues$async: true,
@@ -200,7 +205,9 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
                 ),
               );
             }
-          } catch (_) {}
+          } on Object {
+            // Ignored.
+          }
         },
         onCuesJson$async: true,
       ),
@@ -419,7 +426,7 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
       return BetterPlayer.Companion.isPictureInPictureSupported(
         androidApplicationContext as Context,
       );
-    } catch (e) {
+    } on Object {
       return false;
     }
   }
@@ -569,9 +576,9 @@ abstract class BetterPlayerWrapper {
 }
 
 class NativeBetterPlayerWrapper implements BetterPlayerWrapper {
-  final BetterPlayer _player;
-
   NativeBetterPlayerWrapper(this._player);
+
+  final BetterPlayer _player;
 
   BetterPlayer get internalPlayer => _player;
 

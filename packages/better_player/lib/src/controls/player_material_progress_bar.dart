@@ -16,10 +16,10 @@ class PlayerMaterialVideoProgressBar extends StatefulWidget {
 
   final BetterPlayerController? betterPlayerController;
   final PlayerProgressColors colors;
-  final Function()? onDragStart;
-  final Function()? onDragEnd;
-  final Function()? onDragUpdate;
-  final Function()? onTapDown;
+  final VoidCallback? onDragStart;
+  final VoidCallback? onDragEnd;
+  final VoidCallback? onDragUpdate;
+  final VoidCallback? onTapDown;
 
   @override
   State<PlayerMaterialVideoProgressBar> createState() {

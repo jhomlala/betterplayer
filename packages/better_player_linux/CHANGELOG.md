@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Modernized `analysis_options.yaml` to inherit root options and resolved static analysis lints.
+
 ## 1.0.1
 - Fixed: Restricted `MpvEventId.endFile` completion events to `MpvEndFileReason.eof`, restarted playback from `0.0` when `play()` is called after EOF, and preserved position on `time-pos` property query errors.
 - Fixed: Normalized local file URLs with `toFilePath()` to prevent invalid file paths on Linux.

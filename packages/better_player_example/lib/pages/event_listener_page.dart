@@ -10,7 +10,7 @@ class EventListenerPage extends StatefulWidget {
   const EventListenerPage({super.key});
 
   @override
-  _EventListenerPageState createState() => _EventListenerPageState();
+  State<EventListenerPage> createState() => _EventListenerPageState();
 }
 
 class _EventListenerPageState extends State<EventListenerPage> {

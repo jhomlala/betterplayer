@@ -158,7 +158,7 @@ void main() {
 
       // Test Increase gesture (swipe up)
       final id = tester.getSemantics(progressBarFinder).id;
-      tester.binding.pipelineOwner.semanticsOwner!.performAction(
+      tester.binding.renderViews.first.owner!.semanticsOwner!.performAction(
         id,
         SemanticsAction.increase,
       );
@@ -171,7 +171,7 @@ void main() {
       );
 
       // Test Decrease gesture (swipe down)
-      tester.binding.pipelineOwner.semanticsOwner!.performAction(
+      tester.binding.renderViews.first.owner!.semanticsOwner!.performAction(
         id,
         SemanticsAction.decrease,
       );

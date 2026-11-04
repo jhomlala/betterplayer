@@ -1,3 +1,6 @@
+## Unreleased
+- Updated: Modernized `analysis_options.yaml` to inherit root options and resolved static analysis lints.
+
 ## 1.4.0
 - Added: W3C Remote Playback API and WebKit AirPlay picker support (`showExternalPlaybackPicker`) and connection state stream.
 - Updated: Bumped `better_player_platform_interface` dependency to `^1.7.0`.

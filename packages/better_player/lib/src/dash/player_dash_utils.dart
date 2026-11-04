@@ -146,7 +146,10 @@ class PlayerDashUtils {
             .findElements('Representation')
             .firstOrNull
             ?.getAttribute('mimeType');
-    var url = node.getElement('Representation')?.getElement('BaseURL')?.text;
+    var url = node
+        .getElement('Representation')
+        ?.getElement('BaseURL')
+        ?.innerText;
     if (url?.contains('http') == false) {
       final masterPlaylistUri = Uri.parse(masterPlaylistUrl);
       url = masterPlaylistUri.resolve(url!).toString();

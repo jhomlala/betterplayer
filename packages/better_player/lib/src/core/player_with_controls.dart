@@ -226,7 +226,7 @@ class PlayerControlsSelectionWidget extends StatelessWidget {
   });
 
   final BetterPlayerController controller;
-  final Function(bool) onControlsVisibilityChanged;
+  final void Function(bool) onControlsVisibilityChanged;
 
   @override
   Widget build(BuildContext context) {

@@ -11,9 +11,9 @@ void main() {
       backgroundColor: const Color(0xFF000004),
     );
 
-    expect(colors.playedPaint.color.value, const Color(0xFF000001).value);
-    expect(colors.bufferedPaint.color.value, const Color(0xFF000002).value);
-    expect(colors.handlePaint.color.value, const Color(0xFF000003).value);
-    expect(colors.backgroundPaint.color.value, const Color(0xFF000004).value);
+    expect(colors.playedPaint.color.toARGB32(), 0xFF000001);
+    expect(colors.bufferedPaint.color.toARGB32(), 0xFF000002);
+    expect(colors.handlePaint.color.toARGB32(), 0xFF000003);
+    expect(colors.backgroundPaint.color.toARGB32(), 0xFF000004);
   });
 }

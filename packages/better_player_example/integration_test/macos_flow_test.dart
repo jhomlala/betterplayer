@@ -134,7 +134,9 @@ void main() {
         try {
           await tester.ensureVisible(progressBar.first);
           await tester.pump(const Duration(milliseconds: 200));
-        } catch (_) {}
+        } on Object catch (_) {
+          // Ignored.
+        }
         await tester.tap(progressBar.first, warnIfMissed: false);
         await tester.pump(const Duration(milliseconds: 500));
       }
@@ -147,7 +149,9 @@ void main() {
         try {
           await tester.ensureVisible(expandButton.first);
           await tester.pump(const Duration(milliseconds: 200));
-        } catch (_) {}
+        } on Object catch (_) {
+          // Ignored.
+        }
         await tester.tap(expandButton.first, warnIfMissed: false);
         await tester.pump(const Duration(milliseconds: 500));
         await tester.tap(expandButton.first, warnIfMissed: false);

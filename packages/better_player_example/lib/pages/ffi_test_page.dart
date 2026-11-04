@@ -6,7 +6,7 @@ class FFITestPage extends StatefulWidget {
   const FFITestPage({super.key});
 
   @override
-  _FFITestPageState createState() => _FFITestPageState();
+  State<FFITestPage> createState() => _FFITestPageState();
 }
 
 class _FFITestPageState extends State<FFITestPage> {
@@ -94,7 +94,7 @@ class _FFITestPageState extends State<FFITestPage> {
       setState(() {
         _results[name] = true;
       });
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('FFI Test Error ($name): $e');
       setState(() {
         _results[name] = false;

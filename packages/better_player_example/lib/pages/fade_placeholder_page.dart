@@ -9,7 +9,7 @@ class FadePlaceholderPage extends StatefulWidget {
   const FadePlaceholderPage({super.key});
 
   @override
-  _FadePlaceholderPageState createState() => _FadePlaceholderPageState();
+  State<FadePlaceholderPage> createState() => _FadePlaceholderPageState();
 }
 
 class _FadePlaceholderPageState extends State<FadePlaceholderPage> {

@@ -15,13 +15,13 @@ class MockBetterPlayer extends Mock implements BetterPlayerWrapper {}
 class MockCacheManager extends Mock {}
 
 class TestBetterPlayerMacOS extends BetterPlayerMacOS {
-  final MockBetterPlayer mockPlayer;
-  final MockCacheManager mockCacheManager;
-
   TestBetterPlayerMacOS({
     required this.mockPlayer,
     required this.mockCacheManager,
   });
+
+  final MockBetterPlayer mockPlayer;
+  final MockCacheManager mockCacheManager;
 
   @override
   Future<int?> create({BufferingConfiguration? bufferingConfiguration}) async {
@@ -480,7 +480,7 @@ void main() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
             const MethodChannel('better_player_macos'),
-            (MethodCall call) async {
+            (call) async {
               methodCalls.add(call);
               return null;
             },
@@ -508,7 +508,7 @@ void main() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(
             const MethodChannel('better_player_macos'),
-            (MethodCall call) async {
+            (call) async {
               methodCalls.add(call);
               return null;
             },
@@ -534,7 +534,7 @@ void main() {
         events.add,
       );
 
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .handlePlatformMessage(
             'better_player_macos/external_playback_stream',
             const StandardMethodCodec().encodeSuccessEnvelope(true),
@@ -542,7 +542,7 @@ void main() {
           );
       await pumpEventQueue();
 
-      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      await TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .handlePlatformMessage(
             'better_player_macos/external_playback_stream',
             const StandardMethodCodec().encodeSuccessEnvelope(false),

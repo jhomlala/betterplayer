@@ -98,7 +98,7 @@ class BetterPlayerController {
 
   /// List of active event listeners that have subscribed to the player's event stream.
   /// Listeners will receive real-time updates for state changes, buffering, and user interactions.
-  final List<Function(PlayerEvent)?> _eventListeners = [];
+  final List<void Function(PlayerEvent)?> _eventListeners = [];
 
   /// List of internal callbacks for low-level video player changes.
   /// Triggers whenever the internal engine reports a state change (initialization, buffering, completion).
@@ -345,13 +345,14 @@ class BetterPlayerController {
 
   /// Exposes a read-only list of all currently active event listeners subscribed to the player.
   /// Used primarily for debugging or routing global event streams without modifying active subscriptions.
-  List<Function(PlayerEvent)?> get eventListeners => _eventListeners.length <= 1
-      ? const <Function(PlayerEvent)>[]
+  List<void Function(PlayerEvent)?> get eventListeners =>
+      _eventListeners.length <= 1
+      ? const <void Function(PlayerEvent)>[]
       : _eventListeners.sublist(1);
 
   /// Retrieves the primary global event listener defined within the configuration.
   /// This listener receives every state change and interaction event emitted by the player.
-  Function(PlayerEvent)? get eventListener =>
+  void Function(PlayerEvent)? get eventListener =>
       betterPlayerConfiguration.eventListener;
 
   /// Returns true if the player is currently rendered in full screen mode, false otherwise.

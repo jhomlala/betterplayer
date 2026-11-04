@@ -111,7 +111,7 @@ void main() {
       logLevels = [];
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) {
+        onLog: ({required message, levelIndex = 0}) {
           logs.add(message);
           logLevels.add(levelIndex);
         },
@@ -176,7 +176,7 @@ void main() {
 
         final p = BetterPlayerWebPlayer(
           viewId: 'test_attach_view',
-          onLog: ({required String message, int levelIndex = 0}) {},
+          onLog: ({required message, levelIndex = 0}) {},
           shakaPlayer: mockShaka as ShakaPlayer,
         );
         await p.initialize();
@@ -343,7 +343,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) {
+        onLog: ({required message, levelIndex = 0}) {
           logs.add(message);
         },
         shakaPlayer: mockShaka as ShakaPlayer,
@@ -364,7 +364,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) {
+        onLog: ({required message, levelIndex = 0}) {
           logs.add(message);
         },
         shakaPlayer: mockShaka as ShakaPlayer,
@@ -400,8 +400,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) =>
-            logs.add(message),
+        onLog: ({required message, levelIndex = 0}) => logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -424,8 +423,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) =>
-            logs.add(message),
+        onLog: ({required message, levelIndex = 0}) => logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -496,8 +494,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) =>
-            logs.add(message),
+        onLog: ({required message, levelIndex = 0}) => logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -546,8 +543,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) =>
-            logs.add(message),
+        onLog: ({required message, levelIndex = 0}) => logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -610,8 +606,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) =>
-            logs.add(message),
+        onLog: ({required message, levelIndex = 0}) => logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -678,8 +673,7 @@ void main() {
 
         player = BetterPlayerWebPlayer(
           viewId: 'test_view',
-          onLog: ({required String message, int levelIndex = 0}) =>
-              logs.add(message),
+          onLog: ({required message, levelIndex = 0}) => logs.add(message),
           shakaPlayer: mockShaka as ShakaPlayer,
         );
         await player.initialize();
@@ -725,8 +719,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) =>
-            logs.add(message),
+        onLog: ({required message, levelIndex = 0}) => logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -892,8 +885,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) =>
-            logs.add(message),
+        onLog: ({required message, levelIndex = 0}) => logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -923,8 +915,7 @@ void main() {
 
       player = BetterPlayerWebPlayer(
         viewId: 'test_view',
-        onLog: ({required String message, int levelIndex = 0}) =>
-            logs.add(message),
+        onLog: ({required message, levelIndex = 0}) => logs.add(message),
         shakaPlayer: mockShaka as ShakaPlayer,
       );
 
@@ -1160,7 +1151,7 @@ void main() {
 
           final p = BetterPlayerWebPlayer(
             viewId: 'test_remote_view',
-            onLog: ({required String message, int levelIndex = 0}) {},
+            onLog: ({required message, levelIndex = 0}) {},
           );
           p.videoElement = mockVideo as web.HTMLVideoElement;
 
@@ -1219,7 +1210,7 @@ void main() {
 
           final p = BetterPlayerWebPlayer(
             viewId: 'test_webkit_wireless_view',
-            onLog: ({required String message, int levelIndex = 0}) {},
+            onLog: ({required message, levelIndex = 0}) {},
           );
           p.videoElement = mockVideo as web.HTMLVideoElement;
 
@@ -1275,7 +1266,7 @@ void main() {
 
           final p = BetterPlayerWebPlayer(
             viewId: 'test_picker_view',
-            onLog: ({required String message, int levelIndex = 0}) {},
+            onLog: ({required message, levelIndex = 0}) {},
           );
           p.videoElement = mockVideo as web.HTMLVideoElement;
 

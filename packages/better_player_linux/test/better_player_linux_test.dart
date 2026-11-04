@@ -170,7 +170,7 @@ void main() {
         key: 'test',
       );
 
-      expectLater(stream, emits(expectedEvent));
+      unawaited(expectLater(stream, emits(expectedEvent)));
       eventController.add(expectedEvent);
     });
 
@@ -179,8 +179,8 @@ void main() {
       int? loggedLevel;
 
       await linuxPlatform.setupLogCallback(({
-        required int levelIndex,
-        required String message,
+        required levelIndex,
+        required message,
       }) {
         loggedLevel = levelIndex;
         loggedMessage = message;
@@ -207,8 +207,8 @@ void main() {
       () async {
         final logs = <String>[];
         await linuxPlatform.setupLogCallback(({
-          required int levelIndex,
-          required String message,
+          required levelIndex,
+          required message,
         }) {
           logs.add(message);
         });

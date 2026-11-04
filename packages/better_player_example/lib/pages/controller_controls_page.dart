@@ -10,7 +10,7 @@ class ControllerControlsPage extends StatefulWidget {
   const ControllerControlsPage({super.key});
 
   @override
-  _ControllerControlsPageState createState() => _ControllerControlsPageState();
+  State<ControllerControlsPage> createState() => _ControllerControlsPageState();
 }
 
 class _ControllerControlsPageState extends State<ControllerControlsPage> {

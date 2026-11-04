@@ -71,7 +71,9 @@ void main() {
       try {
         await tester.ensureVisible(playPauseButton.first);
         await tester.pump(const Duration(milliseconds: 200));
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
       await tester.tap(playPauseButton.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 500));
     }, timeout: const Timeout(Duration(minutes: 2)));
@@ -107,7 +109,9 @@ void main() {
           'savescreenshot',
           'windows_seek_page.png',
         ]);
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
     });
   });
 }

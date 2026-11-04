@@ -1,3 +1,4 @@
+// Suppresses deprecated member use diagnostics for end-to-end testing harness.
 // ignore_for_file: deprecated_member_use
 
 import 'dart:async';
@@ -8,12 +9,13 @@ import 'package:better_player_example/pages/feed_render_e2e_page.dart';
 import 'package:better_player_example/pages/ffi_test_page.dart';
 import 'package:better_player_example/pages/seek_e2e_page.dart';
 import 'package:better_player_example/utils/example_io_utils.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:material_ui/material_ui.dart' as m3;
+import 'package:flutter_localizations/flutter_localizations.dart'
+    hide GlobalCupertinoLocalizations, GlobalMaterialLocalizations;
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,8 +32,9 @@ class BetterPlayerE2EApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       localizationsDelegates: [
-        ...GlobalMaterialLocalizations.delegates,
-        m3.GlobalMaterialLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
       ],
       home: E2EPlayerPage(),
     );
@@ -42,7 +45,7 @@ class E2EPlayerPage extends StatefulWidget {
   const E2EPlayerPage({super.key});
 
   @override
-  _E2EPlayerPageState createState() => _E2EPlayerPageState();
+  State<E2EPlayerPage> createState() => _E2EPlayerPageState();
 }
 
 class _E2EPlayerPageState extends State<E2EPlayerPage> {
@@ -404,7 +407,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
           _listVideoPlayerController.seekTo(const Duration(seconds: 2));
         }
         _listVideoPlayerController.setMixWithOthers(true);
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
       if (mounted) {
         setState(() {
           _listPlayerVerified = true;
@@ -427,7 +432,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         url: filePath,
         type: DataSourceType.file,
       );
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('Failed to setup local file: $e');
     }
   }

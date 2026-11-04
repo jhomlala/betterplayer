@@ -508,7 +508,9 @@ class _WelcomePageState extends State<WelcomePage> {
         path: ttmlPath,
         content: ttmlContent,
       );
-    } catch (_) {}
+    } on Object catch (_) {
+      // Ignored.
+    }
   }
 
   Future<void> _saveAssetVideoToFile() async {
@@ -521,7 +523,9 @@ class _WelcomePageState extends State<WelcomePage> {
         path: path,
         bytes: content.buffer.asUint8List(),
       );
-    } catch (_) {}
+    } on Object catch (_) {
+      // Ignored.
+    }
   }
 
   Future<void> _saveAssetEncryptVideoToFile() async {
@@ -534,7 +538,9 @@ class _WelcomePageState extends State<WelcomePage> {
         path: path,
         bytes: content.buffer.asUint8List(),
       );
-    } catch (_) {}
+    } on Object catch (_) {
+      // Ignored.
+    }
   }
 
   Future<void> _saveLogoToFile() async {
@@ -547,6 +553,8 @@ class _WelcomePageState extends State<WelcomePage> {
         path: path,
         bytes: content.buffer.asUint8List(),
       );
-    } catch (_) {}
+    } on Object catch (_) {
+      // Ignored.
+    }
   }
 }

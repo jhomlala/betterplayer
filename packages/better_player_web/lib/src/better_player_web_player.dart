@@ -12,6 +12,7 @@ class BetterPlayerWebPlayer {
     required this.viewId,
     required this.onLog,
     @visibleForTesting ShakaPlayer? shakaPlayer,
+    // Visible for testing parameter assigns directly to private backing field.
     // ignore: prefer_initializing_formals
   }) : _shakaPlayer = shakaPlayer;
 
@@ -480,7 +481,7 @@ class BetterPlayerWebPlayer {
         message: 'BetterPlayerWebPlayer: data source loaded',
         levelIndex: 1,
       );
-    } catch (e) {
+    } on Object catch (e) {
       onLog(
         message: 'BetterPlayerWebPlayer: failed to load data source: $e',
         levelIndex: 3,
@@ -589,7 +590,9 @@ class BetterPlayerWebPlayer {
           return val.toDart;
         }
       }
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
     return null;
   }
 
@@ -605,7 +608,7 @@ class BetterPlayerWebPlayer {
         );
         return null;
       });
-    } catch (e) {
+    } on Object catch (e) {
       onLog(
         message:
             'BetterPlayerWebPlayer: videoElement.play() threw exception: $e',
@@ -619,8 +622,16 @@ class BetterPlayerWebPlayer {
     videoElement.pause();
   }
 
+  // Setter syntax is avoided to allow mocking in Mocktail unit tests.
+  // ignore: use_setters_to_change_properties
   void setVolume(double volume) => videoElement.volume = volume;
+
+  // Setter syntax is avoided to allow mocking in Mocktail unit tests.
+  // ignore: use_setters_to_change_properties
   void setSpeed(double speed) => videoElement.playbackRate = speed;
+
+  // Setter syntax is avoided to allow mocking in Mocktail unit tests.
+  // ignore: use_setters_to_change_properties
   void setLooping(bool looping) => videoElement.loop = looping;
 
   void seekTo(Duration position) {
@@ -644,7 +655,7 @@ class BetterPlayerWebPlayer {
       if (jsNum == null) return null;
       final ms = jsNum.toDartInt;
       return DateTime.fromMillisecondsSinceEpoch(ms);
-    } catch (_) {
+    } on Object {
       return null;
     }
   }
@@ -787,13 +798,17 @@ class BetterPlayerWebPlayer {
             await (promptResult as JSPromise<JSAny?>).toDart;
             return;
           }
-        } catch (_) {}
+        } on Object {
+          // Ignored.
+        }
       }
     }
     if (jsVideo.has('webkitShowPlaybackTargetPicker')) {
       try {
         jsVideo.callMethod('webkitShowPlaybackTargetPicker'.toJS);
-      } catch (_) {}
+      } on Object {
+        // Ignored.
+      }
     }
   }
 
@@ -863,6 +878,8 @@ video::cue {
           doc.head?.appendChild(style);
         }
       }
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
   }
 }

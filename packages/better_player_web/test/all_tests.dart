@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'better_player_web_player_test.dart' as better_player_web_player_test;
 import 'better_player_web_test.dart' as better_player_web_test;
@@ -6,18 +6,16 @@ import 'better_player_web_test.dart' as better_player_web_test;
 void main() {
   // Simple app to trigger test execution
   runApp(
-    const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 20),
-              Text('Running Web Tests...'),
-              Text('Check console for results.'),
-            ],
-          ),
+    const Directionality(
+      textDirection: TextDirection.ltr,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Running Web Tests...'),
+            SizedBox(height: 20),
+            Text('Check console for results.'),
+          ],
         ),
       ),
     ),
@@ -28,6 +26,8 @@ void main() {
     try {
       better_player_web_test.main();
       better_player_web_player_test.main();
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
   });
 }

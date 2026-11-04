@@ -11,7 +11,7 @@ class PlaylistPage extends StatefulWidget {
   const PlaylistPage({super.key});
 
   @override
-  _PlaylistPageState createState() => _PlaylistPageState();
+  State<PlaylistPage> createState() => _PlaylistPageState();
 }
 
 class _PlaylistPageState extends State<PlaylistPage> {

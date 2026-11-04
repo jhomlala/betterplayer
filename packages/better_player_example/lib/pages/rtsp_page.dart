@@ -9,7 +9,7 @@ class RtspPage extends StatefulWidget {
   const RtspPage({super.key});
 
   @override
-  _RtspPageState createState() => _RtspPageState();
+  State<RtspPage> createState() => _RtspPageState();
 }
 
 class _RtspPageState extends State<RtspPage> {

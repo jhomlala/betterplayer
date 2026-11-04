@@ -1,6 +1,6 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 Finder findById(String id) {
   return find.byWidgetPredicate(
@@ -70,7 +70,9 @@ Future<void> tapWhenReady({
   try {
     await tester.ensureVisible(finder.first);
     await tester.pump(const Duration(milliseconds: 200));
-  } catch (_) {}
+  } on Object catch (_) {
+    // Ignored.
+  }
   await tester.tap(finder.first, warnIfMissed: false);
   await tester.pump(const Duration(milliseconds: 300));
 }
@@ -87,7 +89,9 @@ Future<void> scrollAndTap({
       try {
         await tester.ensureVisible(finder.first);
         await tester.pump(const Duration(milliseconds: 200));
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
       await tester.tap(finder.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 300));
       return;

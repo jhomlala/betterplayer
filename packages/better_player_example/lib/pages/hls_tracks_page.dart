@@ -8,7 +8,7 @@ class HlsTracksPage extends StatefulWidget {
   const HlsTracksPage({super.key});
 
   @override
-  _HlsTracksPageState createState() => _HlsTracksPageState();
+  State<HlsTracksPage> createState() => _HlsTracksPageState();
 }
 
 class _HlsTracksPageState extends State<HlsTracksPage> {

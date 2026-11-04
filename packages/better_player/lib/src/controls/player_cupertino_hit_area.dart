@@ -15,7 +15,7 @@ class PlayerCupertinoHitArea extends StatelessWidget {
   final bool controlsNotVisible;
   final VoidCallback onCancelAndRestartTimer;
   final VoidCallback onHideTimerCancel;
-  final Function(bool) onChangePlayerControlsNotVisible;
+  final void Function(bool) onChangePlayerControlsNotVisible;
 
   @override
   Widget build(BuildContext context) {

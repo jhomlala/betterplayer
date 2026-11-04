@@ -75,7 +75,7 @@ class _ReusableVideoListWidgetState extends State<ReusableVideoListWidget> {
       if (widget.videoListData.wasPlaying ?? true) {
         await lease.controller.play();
       }
-    } catch (_) {
+    } on Object catch (_) {
       if (mounted) {
         setState(() {
           _isLoading = false;

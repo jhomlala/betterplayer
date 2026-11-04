@@ -8,7 +8,7 @@ class MemoryPlayerPage extends StatefulWidget {
   const MemoryPlayerPage({super.key});
 
   @override
-  _MemoryPlayerPageState createState() => _MemoryPlayerPageState();
+  State<MemoryPlayerPage> createState() => _MemoryPlayerPageState();
 }
 
 class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
@@ -37,7 +37,7 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
         bytes: bytes,
       );
       await _betterPlayerController.setupDataSource(dataSource);
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('Failed to load memory data source: $e');
     }
   }

@@ -11,8 +11,8 @@ import 'package:mocktail/mocktail.dart';
 class MockJObject extends Mock implements JObject {}
 
 class MockBetterPlayer extends Mock implements BetterPlayerWrapper {
-  final int textureId;
   MockBetterPlayer(this.textureId);
+  final int textureId;
 }
 
 class TestBetterPlayerAndroid extends BetterPlayerAndroid {
@@ -297,7 +297,7 @@ void main() {
         TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
             .setMockMethodCallHandler(
               const MethodChannel('better_player_android'),
-              (MethodCall call) async {
+              (call) async {
                 methodCalls.add(call);
                 return null;
               },
@@ -332,12 +332,8 @@ void main() {
       final sub1 = stream1.listen(events1.add);
       final sub2 = stream2.listen(events2.add);
 
-      // Extract the captured JNI callbacks
-      final callback2 =
-          androidPlayer.capturedCallbacks[1] as $BetterPlayerCallback;
-
       // Fire an event on player 2's callback
-      callback2.onPlay();
+      (androidPlayer.capturedCallbacks[1] as $BetterPlayerCallback).onPlay();
 
       // Wait a tick for streams to propagate
       await Future<void>.delayed(Duration.zero);

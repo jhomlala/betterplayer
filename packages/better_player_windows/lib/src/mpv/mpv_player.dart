@@ -108,7 +108,7 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
     final warnStr = 'warn'.toNativeUtf8();
     try {
       _bindings.mpvRequestLogMessages(handle, warnStr);
-    } catch (_) {
+    } on Object {
       // mpvRequestLogMessages might not be implemented in mock bindings
     } finally {
       calloc.free(warnStr);
@@ -473,7 +473,9 @@ class MpvPlayer implements BetterPlayerWindowsPlayer {
       if (File(assetPath).existsSync()) {
         return assetPath;
       }
-    } catch (_) {}
+    } on Object {
+      // Ignored.
+    }
     return null;
   }
 

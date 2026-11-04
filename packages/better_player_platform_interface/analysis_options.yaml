@@ -1,10 +1,5 @@
 include: ../../analysis_options.yaml
 
-analyzer:
-  errors:
-    deprecated_member_use: ignore
-    inference_failure_on_function_return_type: ignore
-
 linter:
   rules:
     avoid_positional_boolean_parameters: false

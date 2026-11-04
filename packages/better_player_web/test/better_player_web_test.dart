@@ -157,8 +157,8 @@ void main() {
       int? lastLevel;
       String? lastMessage;
       await plugin.setupLogCallback(({
-        required int levelIndex,
-        required String message,
+        required levelIndex,
+        required message,
       }) {
         lastLevel = levelIndex;
         lastMessage = message;
@@ -194,8 +194,8 @@ void main() {
       int? lastLevel;
       String? lastMessage;
       await plugin.setupLogCallback(({
-        required int levelIndex,
-        required String message,
+        required levelIndex,
+        required message,
       }) {
         lastLevel = levelIndex;
         lastMessage = message;

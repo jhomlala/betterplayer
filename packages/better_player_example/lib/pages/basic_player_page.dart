@@ -11,7 +11,7 @@ class BasicPlayerPage extends StatefulWidget {
   const BasicPlayerPage({super.key});
 
   @override
-  _BasicPlayerPageState createState() => _BasicPlayerPageState();
+  State<BasicPlayerPage> createState() => _BasicPlayerPageState();
 }
 
 class _BasicPlayerPageState extends State<BasicPlayerPage> {

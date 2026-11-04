@@ -8,10 +8,10 @@ class CustomControlsWidget extends StatefulWidget {
     this.onControlsVisibilityChanged,
   });
   final BetterPlayerController? controller;
-  final Function(bool visbility)? onControlsVisibilityChanged;
+  final void Function(bool visibility)? onControlsVisibilityChanged;
 
   @override
-  _CustomControlsWidgetState createState() => _CustomControlsWidgetState();
+  State<CustomControlsWidget> createState() => _CustomControlsWidgetState();
 }
 
 class _CustomControlsWidgetState extends State<CustomControlsWidget> {
@@ -81,7 +81,7 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                                       .controller!
                                       .videoPlayerValue!
                                       .duration!) {
-                                widget.controller!.seekTo(const Duration());
+                                widget.controller!.seekTo(Duration.zero);
                               } else {
                                 widget.controller!.seekTo(rewindDuration);
                               }
@@ -124,7 +124,7 @@ class _CustomControlsWidgetState extends State<CustomControlsWidget> {
                                       .controller!
                                       .videoPlayerValue!
                                       .duration!) {
-                                widget.controller!.seekTo(const Duration());
+                                widget.controller!.seekTo(Duration.zero);
                                 widget.controller!.pause();
                               } else {
                                 widget.controller!.seekTo(forwardDuration);

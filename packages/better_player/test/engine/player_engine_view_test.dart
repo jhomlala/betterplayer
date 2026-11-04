@@ -1,6 +1,6 @@
 import 'package:better_player/src/engine/player_engine_view.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../helpers/mock_player_engine_controller.dart';
 

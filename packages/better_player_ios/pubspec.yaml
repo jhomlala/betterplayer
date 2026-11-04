@@ -19,21 +19,21 @@ environment:
   flutter: ">=3.47.0"
 
 dependencies:
-  objective_c: ^9.5.0
+  better_player_platform_interface: ^1.7.0
   ffi: ^2.1.3
   flutter:
     sdk: flutter
-  better_player_platform_interface: ^1.7.0
+  objective_c: ^9.5.0
 
 dev_dependencies:
   ffigen: ^21.0.0
   flutter_test:
     sdk: flutter
+  logging: any
+  mocktail: ^1.0.5
   swiftgen: ^0.1.3
   very_good_analysis: ^10.3.0
 
-  logging: any
-  mocktail: ^1.0.5
 flutter:
   plugin:
     implements: better_player
@@ -41,4 +41,3 @@ flutter:
       ios:
         pluginClass: BetterPlayerPlugin
         dartPluginClass: BetterPlayerIOS
-
