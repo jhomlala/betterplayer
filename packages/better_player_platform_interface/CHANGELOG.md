@@ -1,4 +1,4 @@
-## Unreleased
+## 1.7.1
 - Updated: Aligned analysis options with root `analysis_options.yaml` and resolved linter warnings across models and tests.
 
 ## 1.7.0

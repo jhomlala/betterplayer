@@ -1,4 +1,4 @@
-## Unreleased
+## 1.11.0
 - Updated: Modernized `analysis_options.yaml` to inherit root options and resolved static analysis lints.
 
 ## 1.10.1
