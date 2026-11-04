@@ -92,6 +92,12 @@ PlayerDataSource _fairplayDataSource = PlayerDataSource(
 );
 ```
 
+#### FairPlay License Server Resolution
+
+*   **EZDRM**: When `licenseUrl` is omitted or points to an `ezdrm.com` domain, Better Player appends `/<assetId>?customdata=<assetId>` to match EZDRM endpoints.
+*   **Standard FairPlay KSM**: For non-EZDRM license servers (such as Axinom, BuyDRM, or an Apple Reference Server), Better Player sends the SPC payload directly to `licenseUrl` via HTTP POST without modifying the path.
+*   **Proxied EZDRM**: If you proxy EZDRM requests through a custom backend domain, provide the complete license acquisition URL.
+
 ---
 
 ### ClearKey DRM (Android)

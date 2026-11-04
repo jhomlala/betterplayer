@@ -4,7 +4,7 @@ import AVFoundation
 import Foundation
 
 /// A delegate for AVAssetResourceLoader that handles FairPlay DRM license requests.
-@objc public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoaderDelegate {
+public class BetterPlayerEzDrmAssetsLoaderDelegate: NSObject, AVAssetResourceLoaderDelegate {
 
     /// The URL for the application's DRM certificate.
     public let certificateURL: URL
@@ -15,12 +15,14 @@ import Foundation
     private let defaultLicenseServerURL = URL(string: "https://fps.ezdrm.com/api/licenses/")!
     private let certificateLock = NSLock()
     private var cachedCertificate: Data?
+    private var isFetchingCertificate = false
+    private var pendingCertificateCompletions: [(Result<Data, Error>) -> Void] = []
 
     /// Initializes a new instance of the loader delegate.
     /// - Parameters:
     ///   - certificateURL: The URL for the DRM certificate.
     ///   - licenseURL: The optional URL for the license server.
-    @objc public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) {
+    public init(_ certificateURL: URL, withLicenseURL licenseURL: URL?) {
         self.certificateURL = certificateURL
         self.licenseURL = licenseURL
         super.init()
@@ -31,20 +33,19 @@ import Foundation
     private func extractAssetId(from url: URL) -> String {
         let urlString = url.absoluteString
 
-        let pathComponents = url.pathComponents.filter { $0 != "/" && !$0.isEmpty }
-        if let last = pathComponents.last, !last.isEmpty {
-            return last
-        }
-
-        if let host = url.host, !host.isEmpty {
-            return host
-        }
-
+        // Preserve legacy EZDRM behavior for GUIDs (36 characters).
         if urlString.count >= 36 {
             let startIndex = urlString.index(urlString.endIndex, offsetBy: -36)
             return String(urlString[startIndex...])
         }
 
+        // Check path components without lowercasing host.
+        let pathComponents = url.pathComponents.filter { $0 != "/" && !$0.isEmpty }
+        if let last = pathComponents.last, !last.isEmpty {
+            return last
+        }
+
+        // Fallback: strip skd:// scheme without host transformation.
         if urlString.hasPrefix("skd://") {
             return String(urlString.dropFirst(6))
         }
@@ -72,28 +73,47 @@ import Foundation
             completion(.success(cached))
             return
         }
+
+        pendingCertificateCompletions.append(completion)
+        if isFetchingCertificate {
+            certificateLock.unlock()
+            return
+        }
+        isFetchingCertificate = true
         certificateLock.unlock()
+
+        let completeAll: (Result<Data, Error>) -> Void = { [weak self] result in
+            guard let self = self else { return }
+            self.certificateLock.lock()
+            let callbacks = self.pendingCertificateCompletions
+            self.pendingCertificateCompletions.removeAll()
+            self.isFetchingCertificate = false
+            if case .success(let data) = result {
+                self.cachedCertificate = data
+            }
+            self.certificateLock.unlock()
+
+            for callback in callbacks {
+                callback(result)
+            }
+        }
 
         if certificateURL.isFileURL {
             DispatchQueue.global(qos: .userInitiated).async { [weak self] in
                 guard let self = self else { return }
                 do {
                     let data = try Data(contentsOf: self.certificateURL)
-                    self.certificateLock.lock()
-                    self.cachedCertificate = data
-                    self.certificateLock.unlock()
-                    completion(.success(data))
+                    completeAll(.success(data))
                 } catch {
-                    completion(.failure(error))
+                    completeAll(.failure(error))
                 }
             }
             return
         }
 
-        let task = URLSession.shared.dataTask(with: certificateURL) { [weak self] data, response, error in
-            guard let self = self else { return }
+        let task = URLSession.shared.dataTask(with: certificateURL) { data, response, error in
             if let error = error {
-                completion(.failure(error))
+                completeAll(.failure(error))
                 return
             }
             if let httpResponse = response as? HTTPURLResponse, !(200...299).contains(httpResponse.statusCode) {
@@ -104,7 +124,7 @@ import Foundation
                         NSLocalizedDescriptionKey: "Failed to download DRM certificate. HTTP status: \(httpResponse.statusCode)"
                     ]
                 )
-                completion(.failure(statusError))
+                completeAll(.failure(statusError))
                 return
             }
             guard let data = data, !data.isEmpty else {
@@ -113,13 +133,10 @@ import Foundation
                     code: -1,
                     userInfo: [NSLocalizedDescriptionKey: "DRM certificate data is empty"]
                 )
-                completion(.failure(emptyError))
+                completeAll(.failure(emptyError))
                 return
             }
-            self.certificateLock.lock()
-            self.cachedCertificate = data
-            self.certificateLock.unlock()
-            completion(.success(data))
+            completeAll(.success(data))
         }
         task.resume()
     }
@@ -208,8 +225,7 @@ import Foundation
             return
         }
 
-        fetchContentKey(ksmURL: ksmURL, spc: spcData) { [weak self] result in
-            guard let _ = self else { return }
+        fetchContentKey(ksmURL: ksmURL, spc: spcData) { [loadingRequest] result in
             guard !loadingRequest.isCancelled else { return }
 
             switch result {
@@ -231,9 +247,17 @@ import Foundation
 
         let assetId = extractAssetId(from: assetURI)
 
-        fetchCertificate { [weak self] certResult in
-            guard let self = self else { return }
+        fetchCertificate { [weak self, loadingRequest] certResult in
             guard !loadingRequest.isCancelled else { return }
+
+            guard let self = self else {
+                loadingRequest.finishLoading(with: NSError(
+                    domain: "BetterPlayerFairPlay",
+                    code: -1,
+                    userInfo: [NSLocalizedDescriptionKey: "Resource loader delegate was deallocated before certificate could be loaded"]
+                ))
+                return
+            }
 
             switch certResult {
             case .failure(let error):
