@@ -1,3 +1,6 @@
+## Unreleased
+- Fixed: Resolved FairPlay key loading thread deadlocks by removing blocking `DispatchSemaphore`, made `assetId` strictly local per request to prevent race conditions, added certificate caching, and scoped EZDRM URL query paths to EZDRM domains only.
+
 ## 1.6.1
 - Updated: Modernized `analysis_options.yaml` to inherit root options and resolved static analysis lints.
 
