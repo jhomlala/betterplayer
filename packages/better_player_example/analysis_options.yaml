@@ -1,10 +1,6 @@
 include: package:very_good_analysis/analysis_options.yaml
 
 analyzer:
-  errors:
-    undefined_lint: ignore
-    strict_raw_type: ignore
-    inference_failure_on_function_return_type: ignore
   exclude:
     - build/**
     - android/**
@@ -18,12 +14,8 @@ linter:
   rules:
     public_member_api_docs: false
     lines_longer_than_80_chars: false
-    avoid_catches_without_on_clauses: false
-    use_setters_to_change_properties: false
     unawaited_futures: false
     discarded_futures: false
     cascade_invocations: false
     avoid_print: false
-    strict_raw_type: false
-    inference_failure_on_function_return_type: false
     avoid_positional_boolean_parameters: false

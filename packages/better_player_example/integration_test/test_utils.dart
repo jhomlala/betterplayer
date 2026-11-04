@@ -70,7 +70,9 @@ Future<void> tapWhenReady({
   try {
     await tester.ensureVisible(finder.first);
     await tester.pump(const Duration(milliseconds: 200));
-  } catch (_) {}
+  } on Object catch (_) {
+    // Ignored.
+  }
   await tester.tap(finder.first, warnIfMissed: false);
   await tester.pump(const Duration(milliseconds: 300));
 }
@@ -87,7 +89,9 @@ Future<void> scrollAndTap({
       try {
         await tester.ensureVisible(finder.first);
         await tester.pump(const Duration(milliseconds: 200));
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
       await tester.tap(finder.first, warnIfMissed: false);
       await tester.pump(const Duration(milliseconds: 300));
       return;

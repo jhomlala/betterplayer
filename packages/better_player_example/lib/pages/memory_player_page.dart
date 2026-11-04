@@ -37,7 +37,7 @@ class _MemoryPlayerPageState extends State<MemoryPlayerPage> {
         bytes: bytes,
       );
       await _betterPlayerController.setupDataSource(dataSource);
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('Failed to load memory data source: $e');
     }
   }

@@ -407,7 +407,9 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
           _listVideoPlayerController.seekTo(const Duration(seconds: 2));
         }
         _listVideoPlayerController.setMixWithOthers(true);
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
       if (mounted) {
         setState(() {
           _listPlayerVerified = true;
@@ -430,7 +432,7 @@ class _E2EPlayerPageState extends State<E2EPlayerPage> {
         url: filePath,
         type: DataSourceType.file,
       );
-    } catch (e) {
+    } on Object catch (e) {
       debugPrint('Failed to setup local file: $e');
     }
   }

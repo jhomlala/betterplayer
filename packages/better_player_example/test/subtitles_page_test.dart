@@ -19,7 +19,7 @@ void main() {
           ttmlContent = await rootBundle.loadString(
             'assets/example_subtitles.ttml',
           );
-        } catch (_) {
+        } on Object catch (_) {
           ttmlContent = await File(
             'packages/better_player_example/assets/example_subtitles.ttml',
           ).readAsString();

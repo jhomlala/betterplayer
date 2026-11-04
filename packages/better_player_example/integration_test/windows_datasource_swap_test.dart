@@ -60,7 +60,9 @@ void main() {
       try {
         await tester.ensureVisible(playPauseButton.first);
         await tester.pump(const Duration(milliseconds: 200));
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
 
       // 3. Verify it is interactive
       await tester.tap(playPauseButton.first, warnIfMissed: false);

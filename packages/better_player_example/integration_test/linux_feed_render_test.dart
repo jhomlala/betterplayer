@@ -59,7 +59,9 @@ void main() {
           'root',
           'feed_render_item_0.png',
         ]);
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
 
       // 3. Advance to the pooled, preloaded second item
       final nextButton = findById('better_player_e2e_feed_next_button');
@@ -88,7 +90,9 @@ void main() {
           'root',
           'feed_render_item_1.png',
         ]);
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
     });
   });
 }

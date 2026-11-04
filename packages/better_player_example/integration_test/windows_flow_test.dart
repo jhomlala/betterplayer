@@ -42,7 +42,7 @@ void main() {
           'savescreenshot',
           'windows_flow_playback.png',
         ]);
-      } catch (e) {
+      } on Object catch (e) {
         debugPrint('Screenshot error: $e');
       }
 
@@ -140,7 +140,9 @@ void main() {
           'savescreenshot',
           'windows_material_controls.png',
         ]);
-      } catch (_) {}
+      } on Object catch (_) {
+        // Ignored.
+      }
 
       await scrollAndTap(tester: tester, finder: toggleThemeButton);
       await pumpUntilNotFound(tester: tester, finder: materialVideoArea);
@@ -152,7 +154,9 @@ void main() {
         try {
           await tester.ensureVisible(progressBar.first);
           await tester.pump(const Duration(milliseconds: 200));
-        } catch (_) {}
+        } on Object catch (_) {
+          // Ignored.
+        }
         await tester.tap(progressBar.first, warnIfMissed: false);
         await tester.pump(const Duration(milliseconds: 500));
       }
@@ -165,7 +169,9 @@ void main() {
         try {
           await tester.ensureVisible(expandButton.first);
           await tester.pump(const Duration(milliseconds: 200));
-        } catch (_) {}
+        } on Object catch (_) {
+          // Ignored.
+        }
         await tester.tap(expandButton.first, warnIfMissed: false);
         await tester.pump(const Duration(milliseconds: 500));
         await tester.tap(expandButton.first, warnIfMissed: false);
