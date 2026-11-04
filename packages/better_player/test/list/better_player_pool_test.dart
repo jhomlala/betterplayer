@@ -2,6 +2,7 @@ import 'package:better_player/better_player.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/better_player_test_utils.dart';
+import '../helpers/mock_better_player_platform.dart';
 import '../helpers/mock_method_channel.dart';
 
 void main() {
@@ -224,5 +225,178 @@ void main() {
         pool.dispose();
       },
     );
+
+    test('retries setupDataSource after a failed bind', () async {
+      final mockPlatform = MockBetterPlayerPlatform();
+      BetterPlayerPlatform.instance = mockPlatform;
+
+      final pool = BetterPlayerPool(
+        configuration: const PlayerPoolConfiguration(poolSize: 2),
+      );
+      final dataSource = PlayerDataSource.network(
+        'https://example.com/fail-then-succeed.mp4',
+      );
+
+      mockPlatform.setDataSourceFailuresRemaining = 1;
+      final lease1 = await pool.acquire(
+        itemId: 'item_fail',
+        index: 0,
+        dataSource: dataSource,
+      );
+
+      expect(lease1.hasError, isTrue);
+      expect(mockPlatform.setDataSourceCallCount, 1);
+
+      lease1.release();
+
+      final lease2 = await pool.acquire(
+        itemId: 'item_fail',
+        index: 0,
+        dataSource: dataSource,
+      );
+
+      expect(mockPlatform.setDataSourceCallCount, 2);
+      expect(lease2.hasError, isFalse);
+      expect(lease2.isValid, isTrue);
+
+      pool.dispose();
+    });
+
+    test('lease reports hasError after a failed bind', () async {
+      final mockPlatform = MockBetterPlayerPlatform();
+      BetterPlayerPlatform.instance = mockPlatform;
+
+      final pool = BetterPlayerPool(
+        configuration: const PlayerPoolConfiguration(poolSize: 2),
+      );
+      final dataSource = PlayerDataSource.network(
+        'https://example.com/fail.mp4',
+      );
+
+      mockPlatform.setDataSourceFailuresRemaining = 1;
+      final lease = await pool.acquire(
+        itemId: 'item_fail',
+        index: 0,
+        dataSource: dataSource,
+      );
+
+      expect(lease.hasError, isTrue);
+      expect(lease.errorMessage, isNotNull);
+      expect(lease.errorMessage, contains('Simulated setDataSource failure'));
+
+      pool.dispose();
+    });
+
+    test('preload failure does not leak isBusy', () async {
+      final mockPlatform = MockBetterPlayerPlatform();
+      BetterPlayerPlatform.instance = mockPlatform;
+
+      final pool = BetterPlayerPool(
+        configuration: const PlayerPoolConfiguration(
+          poolSize: 2,
+        ),
+      );
+
+      final dataSources = [
+        PlayerDataSource.network('https://example.com/0.mp4'),
+        PlayerDataSource.network('https://example.com/1.mp4'),
+      ];
+
+      // Item 0 succeeds
+      final lease0 = await pool.acquire(
+        itemId: 'item_0',
+        index: 0,
+        dataSource: dataSources[0],
+      );
+      expect(lease0.isValid, isTrue);
+
+      // Preload for item 1 fails
+      mockPlatform.setDataSourceFailuresRemaining = 1;
+      pool.updatePreloads(
+        currentIndex: 0,
+        dataSources: dataSources,
+        idGetter: (i) => 'item_$i',
+      );
+
+      // Allow async preload bind to finish
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+
+      // Slot should not be stuck in isBusy; acquiring another item or item 1 succeeds
+      mockPlatform.setDataSourceFailuresRemaining = 0;
+      final lease1 = await pool.acquire(
+        itemId: 'item_1',
+        index: 1,
+        dataSource: dataSources[1],
+      );
+      expect(lease1.isValid, isTrue);
+      expect(lease1.hasError, isFalse);
+
+      pool.dispose();
+    });
+
+    test(
+      'releaseItem releases occupied slot and marks lease evicted',
+      () async {
+        final pool = BetterPlayerPool(
+          configuration: const PlayerPoolConfiguration(poolSize: 2),
+        );
+
+        final lease = await pool.acquire(
+          itemId: 'video_a',
+          index: 0,
+          dataSource: PlayerDataSource.network('https://example.com/a.mp4'),
+        );
+
+        expect(pool.leasedCount, 1);
+        expect(lease.isValid, isTrue);
+
+        pool.releaseItem(itemId: 'video_a');
+
+        expect(pool.leasedCount, 0);
+        expect(lease.isValid, isFalse);
+
+        pool.dispose();
+      },
+    );
+
+    test('reindex updates slot indices for distance-based eviction', () async {
+      final pool = BetterPlayerPool(
+        configuration: const PlayerPoolConfiguration(
+          poolSize: 2,
+          preloadForward: 0,
+          preloadBackward: 0,
+        ),
+      );
+
+      final leaseA = await pool.acquire(
+        itemId: 'video_a',
+        index: 0,
+        dataSource: PlayerDataSource.network('https://example.com/a.mp4'),
+      );
+      final leaseB = await pool.acquire(
+        itemId: 'video_b',
+        index: 1,
+        dataSource: PlayerDataSource.network('https://example.com/b.mp4'),
+      );
+
+      expect(leaseA.isValid, isTrue);
+      expect(leaseB.isValid, isTrue);
+
+      // Reindex so that video_a moves far away to index 100
+      pool.reindex(indexById: {'video_a': 100, 'video_b': 1});
+      pool.setActiveIndex(0);
+
+      // Acquiring a third item should evict video_a (distance 100 vs distance 1)
+      await pool.acquire(
+        itemId: 'video_c',
+        index: 2,
+        dataSource: PlayerDataSource.network('https://example.com/c.mp4'),
+      );
+
+      expect(leaseA.isValid, isFalse);
+      expect(leaseB.isValid, isTrue);
+
+      pool.dispose();
+    });
   });
 }

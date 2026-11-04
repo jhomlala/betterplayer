@@ -30,6 +30,15 @@ class PlayerPoolLease {
 
   bool _isReleased = false;
 
+  /// Error message if binding or setting up the data source failed.
+  String? errorMessage;
+
+  /// Whether this item was bound and ready as a preload before being focused.
+  bool wasPreloaded = false;
+
+  /// Whether this lease encountered a failure.
+  bool get hasError => errorMessage != null;
+
   /// Whether this lease is currently valid and still assigned to the item.
   bool get isValid => !_isReleased;
 

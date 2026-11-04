@@ -6,6 +6,12 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
   final Map<int, StreamController<VideoEvent>> _eventControllers = {};
   int _nextTextureId = 1;
 
+  /// Injected number of failures for [setDataSource].
+  int setDataSourceFailuresRemaining = 0;
+
+  /// Total number of calls to [setDataSource].
+  int setDataSourceCallCount = 0;
+
   @override
   Future<void> dispose(int? textureId) async {
     await _eventControllers[textureId]?.close();
@@ -51,6 +57,11 @@ class MockBetterPlayerPlatform extends BetterPlayerPlatform {
 
   @override
   Future<void> setDataSource(int? textureId, DataSource dataSource) async {
+    setDataSourceCallCount++;
+    if (setDataSourceFailuresRemaining > 0) {
+      setDataSourceFailuresRemaining--;
+      throw Exception('Simulated setDataSource failure');
+    }
     if (textureId != null) {
       // Use microtask to avoid blocking and ensure listener is ready
       unawaited(

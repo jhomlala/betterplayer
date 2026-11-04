@@ -37,6 +37,8 @@ class PlayerTranslations {
     this.aboutRepository = 'Repository',
     this.aboutHasoft = 'Hasoft.pl',
     this.aboutReportIssue = 'Report issue',
+    this.feedDefaultError = "Video can't be played",
+    this.feedRetry = 'Retry',
   });
 
   factory PlayerTranslations.polish() => PlayerTranslations(
@@ -73,6 +75,8 @@ class PlayerTranslations {
     aboutLinkCopied: 'Skopiowano',
     aboutRepository: 'Repozytorium',
     aboutReportIssue: 'Zgłoś błąd',
+    feedDefaultError: 'Video nie może zostać odtworzone',
+    feedRetry: 'Spróbuj ponownie',
   );
 
   factory PlayerTranslations.chinese() => PlayerTranslations(
@@ -104,6 +108,8 @@ class PlayerTranslations {
     overflowMenuCancelLabel: '取消',
     overflowMenuScrimLabel: '關閉',
     overflowMenuScrimHint: '關閉',
+    feedDefaultError: '无法播放视频',
+    feedRetry: '重試',
   );
 
   factory PlayerTranslations.hindi() => PlayerTranslations(
@@ -135,6 +141,8 @@ class PlayerTranslations {
     overflowMenuCancelLabel: 'रद्द करें',
     overflowMenuScrimLabel: 'खारिज करें',
     overflowMenuScrimHint: 'बंद करें',
+    feedDefaultError: 'वीडियो नहीं चलाया जा सकता',
+    feedRetry: 'पुनः प्रयास करें',
   );
 
   factory PlayerTranslations.arabic() => PlayerTranslations(
@@ -166,6 +174,8 @@ class PlayerTranslations {
     overflowMenuCancelLabel: 'إلغاء',
     overflowMenuScrimLabel: 'رفض',
     overflowMenuScrimHint: 'إغلاق',
+    feedDefaultError: 'لا يمكن تشغيل الفيديو',
+    feedRetry: 'اعادة المحاوله',
   );
 
   factory PlayerTranslations.turkish() => PlayerTranslations(
@@ -197,6 +207,8 @@ class PlayerTranslations {
     overflowMenuCancelLabel: 'İptal',
     overflowMenuScrimLabel: 'Kapat',
     overflowMenuScrimHint: 'Kapat',
+    feedDefaultError: 'Video oynatılamıyor',
+    feedRetry: 'Tekrar Dene',
   );
 
   factory PlayerTranslations.vietnamese() => PlayerTranslations(
@@ -228,6 +240,8 @@ class PlayerTranslations {
     overflowMenuCancelLabel: 'Hủy',
     overflowMenuScrimLabel: 'Đóng',
     overflowMenuScrimHint: 'Đóng',
+    feedDefaultError: 'Không thể phát video',
+    feedRetry: 'Thử lại ngay',
   );
 
   factory PlayerTranslations.spanish() => PlayerTranslations(
@@ -258,6 +272,8 @@ class PlayerTranslations {
     overflowMenuCancelLabel: 'Cancelar',
     overflowMenuScrimLabel: 'Cerrar',
     overflowMenuScrimHint: 'Cerrar',
+    feedDefaultError: 'No se puede reproducir el video',
+    feedRetry: 'Reintentar',
   );
 
   factory PlayerTranslations.persian() => PlayerTranslations(
@@ -289,6 +305,8 @@ class PlayerTranslations {
     overflowMenuCancelLabel: 'لغو',
     overflowMenuScrimLabel: 'بستن',
     overflowMenuScrimHint: 'بستن',
+    feedDefaultError: 'ویدیو نمیتواند پخش شود',
+    feedRetry: 'تلاش دوباره',
   );
 
   factory PlayerTranslations.portuguese() => PlayerTranslations(
@@ -319,6 +337,8 @@ class PlayerTranslations {
     overflowMenuCancelLabel: 'Cancelar',
     overflowMenuScrimLabel: 'Fechar',
     overflowMenuScrimHint: 'Fechar',
+    feedDefaultError: 'Não foi possível reproduzir o vídeo',
+    feedRetry: 'Tentar novamente',
   );
 
   final String languageCode;
@@ -359,4 +379,10 @@ class PlayerTranslations {
   final String aboutRepository;
   final String aboutHasoft;
   final String aboutReportIssue;
+
+  /// Error message shown when a feed video cannot be played.
+  final String feedDefaultError;
+
+  /// Label for the retry button on a failed feed video.
+  final String feedRetry;
 }
