@@ -218,6 +218,8 @@ Swiftgen and jnigen bindings are automatically generated on CI/CD (or triggered 
 3. **Swift Setter Clashes**: Similarly in Swift, an `@objc public static var callback` creates an Objective-C setter `setCallback:`. Defining a manual `@objc public static func setCallback()` will cause a selector conflict. Use `private static var _callback`.
 4. **JNI Auto-Setters**: `jnigen` automatically maps Kotlin `setX(...)` functions to Dart setter properties. For example, `setLogCallback(callback)` in Kotlin becomes `Api.Companion.logCallback = callback;` in Dart.
 5. **Swiftgen Allow-Lists**: Don't forget to explicitly add new Swift protocols to the `protocols:` allow-list inside `swiftgen.dart`. If you forget, it will only generate a stub class without the required Builder implementation.
+6. **jnigen Metadata Mismatch**: `dart run tool/jnigen.dart` in `better_player_android` fails with `KotlinClassMetadata.readStrict` / `FormatException` when the Gradle classpath uses a Kotlin version newer than the summarizer supports. Run `flutter build apk --config-only` in `example_ffi` and put the JDK on `PATH` first; if the metadata error persists, regenerate on CI.
+7. **Downloads Use the Method Channel**: `PlayerDownloadChannel` carries the download calls and their events. A pigeon callback for downloads needs a new `jnigen` run in CI, so the download API stays on the channel until that binding exists. `docs/downloads.md` records this limit.
 
 ## GitHub Workflows
 When asked to fetch or analyze Pull Request comments, agents should utilize the `scripts/fetch_pr_comments.dart` utility.

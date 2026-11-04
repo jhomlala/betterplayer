@@ -34,6 +34,7 @@ const sidebars = {
         'controls_configuration',
         'subtitles_configuration',
         'cache_configuration',
+        'downloads',
         'buffering_configuration',
         'notification_configuration',
         'picture_in_picture_configuration',

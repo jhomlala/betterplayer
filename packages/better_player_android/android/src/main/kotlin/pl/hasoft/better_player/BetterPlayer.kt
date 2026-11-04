@@ -52,6 +52,7 @@ import androidx.work.WorkManager
 import pl.hasoft.better_player.DataSourceUtils.getDataSourceFactory
 import pl.hasoft.better_player.DataSourceUtils.getUserAgent
 import pl.hasoft.better_player.DataSourceUtils.isHTTP
+import pl.hasoft.better_player.download.PlayerDownloadPlayback
 import io.flutter.view.TextureRegistry.SurfaceTextureEntry
 import java.io.File
 import java.util.*
@@ -197,7 +198,9 @@ class BetterPlayer(
         }
         if (isHTTP(uri)) {
             dataSourceFactory = getDataSourceFactory(userAgent, headers)
-            if (useCache && maxCacheSize > 0 && maxCacheFileSize > 0) {
+            if (PlayerDownloadPlayback.isDownloaded(context, uri.toString())) {
+                dataSourceFactory = PlayerDownloadPlayback.wrap(context, dataSourceFactory)
+            } else if (useCache && maxCacheSize > 0 && maxCacheFileSize > 0) {
                 dataSourceFactory = CacheDataSourceFactory(
                     context,
                     maxCacheSize,

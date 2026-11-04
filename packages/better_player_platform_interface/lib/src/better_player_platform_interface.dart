@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:better_player_platform_interface/src/better_player_download_callback.dart';
 import 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 import 'package:better_player_platform_interface/src/models/data_source.dart';
+import 'package:better_player_platform_interface/src/models/download_progress.dart';
 import 'package:better_player_platform_interface/src/models/pre_cache_progress.dart';
 import 'package:better_player_platform_interface/src/models/video_event.dart';
 import 'package:flutter/widgets.dart';
@@ -49,6 +51,58 @@ abstract class BetterPlayerPlatform extends PlatformInterface {
     if (!_preCacheProgressController.isClosed) {
       _preCacheProgressController.add(progress);
     }
+  }
+
+  final StreamController<DownloadProgress> _downloadProgressController =
+      StreamController<DownloadProgress>.broadcast();
+
+  /// Stream of state changes of the media downloads.
+  Stream<DownloadProgress> get downloadProgressStream =>
+      _downloadProgressController.stream;
+
+  /// Emits a download state event on [downloadProgressStream].
+  @protected
+  @visibleForTesting
+  void emitDownloadProgress(DownloadProgress progress) {
+    if (!_downloadProgressController.isClosed) {
+      _downloadProgressController.add(progress);
+    }
+    _downloadCallback?.onDownloadState(
+      progress.url,
+      progress.state,
+      progress.error,
+    );
+  }
+
+  BetterPlayerDownloadCallback? _downloadCallback;
+
+  /// Sets the receiver of the download state changes.
+  ///
+  /// Pass `null` to stop the calls. [downloadProgressStream] keeps its
+  /// subscribers.
+  // The method name is part of the documented API, and a setter would hide
+  // the fact that `null` disables the callback.
+  // ignore: use_setters_to_change_properties
+  void setDownloadCallback(BetterPlayerDownloadCallback? callback) {
+    _downloadCallback = callback;
+  }
+
+  /// Starts an offline download of [dataSource].
+  ///
+  /// [maxVideoHeight] limits the video resolution. The highest resolution that
+  /// the device supports is the default.
+  Future<void> startDownload(DataSource dataSource, {int? maxVideoHeight}) {
+    throw UnimplementedError('startDownload() has not been implemented.');
+  }
+
+  /// Stops the download of [url] and keeps the downloaded data.
+  Future<void> stopDownload(String url) {
+    throw UnimplementedError('stopDownload() has not been implemented.');
+  }
+
+  /// Deletes the download of [url] and its stored data.
+  Future<void> deleteDownload(String url) {
+    throw UnimplementedError('deleteDownload() has not been implemented.');
   }
 
   /// Clears one video.

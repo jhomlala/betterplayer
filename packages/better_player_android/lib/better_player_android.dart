@@ -374,6 +374,83 @@ class BetterPlayerAndroid extends BetterPlayerPlatform {
 
   static const MethodChannel _channel = MethodChannel('better_player_android');
 
+  bool _downloadHandlerConfigured = false;
+
+  @visibleForTesting
+  void ensureDownloadHandlerConfigured() {
+    if (_downloadHandlerConfigured) {
+      return;
+    }
+    _downloadHandlerConfigured = true;
+    _channel.setMethodCallHandler(_handleDownloadCall);
+  }
+
+  Future<void> _handleDownloadCall(MethodCall call) async {
+    if (call.method != 'downloadProgress') {
+      return;
+    }
+    final arguments = call.arguments as Map<Object?, Object?>;
+    emitDownloadProgress(
+      DownloadProgress(
+        url: arguments['url'] as String? ?? '',
+        state: _downloadStateOf(arguments['state'] as int? ?? 0),
+        bytesDownloaded: arguments['bytesDownloaded'] as int? ?? 0,
+        totalBytes: _knownLength(arguments['totalBytes'] as int?),
+        error: arguments['error'] as String?,
+      ),
+    );
+  }
+
+  static int _knownLength(int? value) {
+    if (value == null || value < 0) {
+      return 0;
+    }
+    return value;
+  }
+
+  /// Maps a Media3 `Download.STATE_*` value to [DownloadState].
+  static DownloadState _downloadStateOf(int state) {
+    switch (state) {
+      case 1:
+        return DownloadState.paused;
+      case 2:
+        return DownloadState.downloading;
+      case 3:
+        return DownloadState.completed;
+      case 4:
+        return DownloadState.failed;
+      default:
+        return DownloadState.queued;
+    }
+  }
+
+  @override
+  Future<void> startDownload(
+    DataSource dataSource, {
+    int? maxVideoHeight,
+  }) async {
+    ensureDownloadHandlerConfigured();
+    await _channel.invokeMethod<bool>('startDownload', <String, Object?>{
+      'url': dataSource.uri ?? '',
+      'headers': dataSource.headers,
+      'maxVideoHeight': maxVideoHeight,
+    });
+  }
+
+  @override
+  Future<void> stopDownload(String url) async {
+    await _channel.invokeMethod<bool>('stopDownload', <String, Object?>{
+      'url': url,
+    });
+  }
+
+  @override
+  Future<void> deleteDownload(String url) async {
+    await _channel.invokeMethod<bool>('deleteDownload', <String, Object?>{
+      'url': url,
+    });
+  }
+
   @override
   Future<void> setScreenCaptureProtection({required bool enabled}) async {
     try {

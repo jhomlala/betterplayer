@@ -1,5 +1,6 @@
 ## Unreleased
 - Updated: Aligned analysis options with root `analysis_options.yaml` and resolved linter warnings across models and tests.
+- Added: `DownloadState`, `DownloadProgress`, `downloadProgressStream`, `BetterPlayerDownloadCallback`, and the `startDownload`, `stopDownload`, and `deleteDownload` methods on `BetterPlayerPlatform` for offline stream downloads.
 
 ## 1.7.0
 - Added: `showExternalPlaybackPicker` and `externalPlaybackStream` to `BetterPlayerPlatform` for native AirPlay, Cast, and Remote Playback routing.

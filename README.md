@@ -134,6 +134,26 @@ final controller = BetterPlayerController(
 BetterPlayer(controller: controller);
 ```
 
+### 4. Offline Downloads (DASH & HLS)
+
+Store a DASH or HLS stream on the device. The same URL plays without a
+network when the download completes:
+
+```dart
+final dataSource = PlayerDataSource(
+  DataSourceType.network,
+  "https://example.com/stream.mpd",
+);
+
+await controller.startDownload(dataSource, maxVideoHeight: 720);
+controller.downloadProgressStream.listen((progress) {
+  print('${progress.state} ${progress.bytesDownloaded}');
+});
+```
+
+`stopDownload(url)` pauses a download, and `deleteDownload(url)` removes it.
+See the [downloads guide](https://jhomlala.github.io/betterplayer/docs/downloads).
+
 ---
 
 ## 🌐 Platform Packages
