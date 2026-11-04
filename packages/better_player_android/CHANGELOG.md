@@ -1,3 +1,8 @@
+## Unreleased
+- Added: DASH and HLS offline downloads with a dedicated Media3 `DownloadService`, a separate download cache, and playback from the stored segments once the download completes (#600).
+- Added: `foregroundServiceType="dataSync"` service declaration and `FOREGROUND_SERVICE_DATA_SYNC` permission for downloads on Android 14 and later.
+- Added: Free space check before a download starts. The call fails with `download_no_space` when the device has less than 100 MB free.
+
 ## 1.10.1
 - Fixed: Synchronized `BetterPlayerApi.activity` during activity configuration changes and removed duplicated screen capture protection logic.
 

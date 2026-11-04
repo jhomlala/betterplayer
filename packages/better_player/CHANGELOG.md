@@ -1,5 +1,6 @@
 ## Unreleased
 - Added: Unit test coverage for `PlayerEngineController`, `PlayerClosedCaption`, and all core controller extensions (`PlayerDataSourceExtension`, `PlayerEventsExtension`, `PlayerPlaybackExtension`, `PlayerPlaylistExtension`, `PlayerSubtitleExtension`, `PlayerTrackExtension`, `PlayerTranslationsExtension`, `PlayerViewStateExtension`).
+- Added: Offline DASH and HLS downloads via `BetterPlayerController.startDownload`, `stopDownload`, `deleteDownload`, `downloadProgressStream`, and `setDownloadCallback` (#600).
 - Updated: Aligned `packages/better_player` analysis options with root `analysis_options.yaml`, enabling strict lint rules including `unawaited_futures` and `avoid_catches_without_on_clauses` while resolving issues across controls, HLS parsing, data sources, and tests.
 
 ## 1.32.0

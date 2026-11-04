@@ -604,4 +604,33 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
   static Future<void> stopPreCache(String url, String? cacheKey) async {
     return _betterPlayerPlatform.stopPreCache(url, cacheKey);
   }
+
+  static Stream<DownloadProgress> get downloadProgressStream =>
+      _betterPlayerPlatform.downloadProgressStream;
+
+  /// Sets the receiver of the download state changes.
+  ///
+  /// Pass `null` to stop the calls. [downloadProgressStream] keeps its
+  /// subscribers.
+  static void setDownloadCallback(BetterPlayerDownloadCallback? callback) {
+    _betterPlayerPlatform.setDownloadCallback(callback);
+  }
+
+  static Future<void> startDownload(
+    DataSource dataSource, {
+    int? maxVideoHeight,
+  }) {
+    return _betterPlayerPlatform.startDownload(
+      dataSource,
+      maxVideoHeight: maxVideoHeight,
+    );
+  }
+
+  static Future<void> stopDownload(String url) {
+    return _betterPlayerPlatform.stopDownload(url);
+  }
+
+  static Future<void> deleteDownload(String url) {
+    return _betterPlayerPlatform.deleteDownload(url);
+  }
 }

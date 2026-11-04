@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="better_player_download_channel_name">Downloads</string>
+    <string name="better_player_download_channel_description">Keeps media downloads running in the background.</string>
+    <string name="better_player_download_no_space">Not enough free space to start the download.</string>
+</resources>

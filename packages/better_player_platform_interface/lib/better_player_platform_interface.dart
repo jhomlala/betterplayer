@@ -1,8 +1,11 @@
+export 'package:better_player_platform_interface/src/better_player_download_callback.dart';
 export 'package:better_player_platform_interface/src/better_player_platform_interface.dart';
 export 'package:better_player_platform_interface/src/models/buffering_configuration.dart';
 export 'package:better_player_platform_interface/src/models/cache_configuration.dart';
 export 'package:better_player_platform_interface/src/models/data_source.dart';
 export 'package:better_player_platform_interface/src/models/data_source_type.dart';
+export 'package:better_player_platform_interface/src/models/download_progress.dart';
+export 'package:better_player_platform_interface/src/models/download_state.dart';
 export 'package:better_player_platform_interface/src/models/drm_configuration.dart';
 export 'package:better_player_platform_interface/src/models/drm_security_level.dart';
 export 'package:better_player_platform_interface/src/models/drm_type.dart';

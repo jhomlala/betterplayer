@@ -16,6 +16,7 @@ import 'package:material_ui/material_ui.dart';
 
 part 'extensions/player_cache_extension.dart';
 part 'extensions/player_data_source_extension.dart';
+part 'extensions/player_download_extension.dart';
 part 'extensions/player_events_extension.dart';
 part 'extensions/player_playback_extension.dart';
 part 'extensions/player_playlist_extension.dart';

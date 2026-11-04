@@ -1,11 +1,11 @@
 import 'dart:async';
 
 import 'package:better_player/better_player.dart';
-import 'package:better_player_downloader/better_player_downloader.dart';
 import 'package:better_player_example/constants.dart';
 import 'package:better_player_example/widgets/demo_container.dart';
 import 'package:better_player_example/widgets/demo_header.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
 class DownloadPage extends StatefulWidget {
@@ -16,11 +16,10 @@ class DownloadPage extends StatefulWidget {
 }
 
 class _DownloadPageState extends State<DownloadPage> {
-  final _request = DownloadRequest(url: Constants.dashBigBuckBunnyUrl);
-  static const _pollInterval = Duration(milliseconds: 500);
+  String _url = Constants.dashBigBuckBunnyUrl;
 
   late final BetterPlayerController _controller;
-  Timer? _poll;
+  late final StreamSubscription<DownloadProgress> _subscription;
   DownloadProgress? _progress;
   String? _error;
 
@@ -30,70 +29,60 @@ class _DownloadPageState extends State<DownloadPage> {
     _controller = BetterPlayerController(
       const PlayerConfiguration(aspectRatio: 16 / 9, fit: BoxFit.contain),
     );
-    _watchProgress();
+    _subscription = _controller.downloadProgressStream.listen((progress) {
+      if (progress.url == _url) {
+        setState(() => _progress = progress);
+      }
+    });
   }
 
   @override
   void dispose() {
-    _poll?.cancel();
+    _subscription.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   Future<void> _startDownload() async {
     setState(() => _error = null);
-    final result = await BetterPlayerDownloader.startDownload(_request);
-    if (!mounted) {
-      return;
-    }
-    switch (result) {
-      case DownloadErr(:final message):
-        setState(() => _error = message);
-      case DownloadRequiresNativeService():
-        setState(() => _error = 'Native download service is not available.');
-      case DownloadOk():
-        _watchProgress();
+    try {
+      await _controller.startDownload(
+        PlayerDataSource(DataSourceType.network, _url),
+      );
+    } on PlatformException catch (error) {
+      if (!mounted) {
+        return;
+      }
+      setState(() => _error = error.message);
     }
   }
 
-  Future<void> _deleteDownload() async {
-    final deleted = await BetterPlayerDownloader.deleteDownload(_request);
-    if (!mounted) {
+  void _selectUrl(String url) {
+    if (url == _url) {
       return;
     }
     setState(() {
+      _url = url;
       _progress = null;
-      _error = deleted ? null : 'No download to delete.';
+      _error = null;
     });
   }
 
-  void _watchProgress() {
-    _poll?.cancel();
-    _poll = Timer.periodic(_pollInterval, (timer) async {
-      final progress = await BetterPlayerDownloader.downloadProgress(_request);
-      if (!mounted) {
-        timer.cancel();
-        return;
-      }
-      setState(() => _progress = progress);
-      if (progress != null &&
-          (progress.state == DownloadState.completed ||
-              progress.state == DownloadState.failed)) {
-        timer.cancel();
-      }
-    });
+  Future<void> _stopDownload() async {
+    await _controller.stopDownload(_url);
+  }
+
+  Future<void> _deleteDownload() async {
+    await _controller.deleteDownload(_url);
+    if (!mounted) {
+      return;
+    }
+    setState(() => _progress = null);
   }
 
   void _play() {
     _controller.setupDataSource(
-      PlayerDataSource(
-        DataSourceType.network,
-        Constants.dashBigBuckBunnyUrl,
-        cacheConfiguration: const CacheConfiguration(
-          useCache: true,
-          preCacheSize: 3 * 1024 * 1024 * 1024,
-        ),
-      ),
+      PlayerDataSource(DataSourceType.network, _url),
     );
   }
 
@@ -110,10 +99,12 @@ class _DownloadPageState extends State<DownloadPage> {
       return 'Not started';
     }
     switch (progress.state) {
-      case DownloadState.notStarted:
-        return 'Not started';
-      case DownloadState.inProgress:
+      case DownloadState.queued:
+        return 'Queued';
+      case DownloadState.downloading:
         return 'Downloading';
+      case DownloadState.paused:
+        return 'Paused';
       case DownloadState.completed:
         return 'Completed';
       case DownloadState.failed:
@@ -126,6 +117,9 @@ class _DownloadPageState extends State<DownloadPage> {
     if (progress == null) {
       return const Text('No download record.');
     }
+    if (!progress.hasTotalBytes) {
+      return Text('${_sizeLabel(progress.bytesDownloaded)} stored');
+    }
     return Text(
       '${_sizeLabel(progress.bytesDownloaded)} / '
       '${_sizeLabel(progress.totalBytes)}',
@@ -135,6 +129,7 @@ class _DownloadPageState extends State<DownloadPage> {
   @override
   Widget build(BuildContext context) {
     final progress = _progress;
+    final error = _error ?? progress?.error;
     return Scaffold(
       appBar: AppBar(title: const Text('Stream Downloads')),
       body: SingleChildScrollView(
@@ -145,8 +140,8 @@ class _DownloadPageState extends State<DownloadPage> {
               const DemoHeader(
                 title: 'DASH & HLS Downloads',
                 description:
-                    'Downloads every segment of a DASH or HLS stream into the '
-                    'player cache, so the same URL plays without a network.',
+                    'Downloads one video track of a DASH or HLS stream, so the '
+                    'same URL plays without a network.',
                 instructions:
                     'Start the download, wait for completion, then enable '
                     'airplane mode and press Play.',
@@ -157,6 +152,25 @@ class _DownloadPageState extends State<DownloadPage> {
                 child: BetterPlayer(controller: _controller),
               ),
               const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SegmentedButton<String>(
+                  segments: [
+                    ButtonSegment(
+                      value: Constants.dashBigBuckBunnyUrl,
+                      label: const Text('DASH'),
+                    ),
+                    const ButtonSegment(
+                      value: Constants.hlsTestStreamUrl,
+                      label: Text('HLS'),
+                    ),
+                  ],
+                  selected: {_url},
+                  onSelectionChanged: (selection) =>
+                      _selectUrl(selection.first),
+                ),
+              ),
+              const SizedBox(height: 8),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Wrap(
@@ -173,6 +187,11 @@ class _DownloadPageState extends State<DownloadPage> {
                         onPressed: _startDownload,
                         icon: const Icon(Icons.download),
                         label: const Text('Start Download'),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: _stopDownload,
+                        icon: const Icon(Icons.pause),
+                        label: const Text('Stop Download'),
                       ),
                       OutlinedButton.icon(
                         onPressed: _deleteDownload,
@@ -197,29 +216,25 @@ class _DownloadPageState extends State<DownloadPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                _statusLabel(),
-                                style: Theme.of(context).textTheme.titleSmall,
-                              ),
-                              Text(
-                                '${progress?.percent ?? 0}%',
-                                style: Theme.of(context).textTheme.labelLarge,
-                              ),
-                            ],
+                          Text(
+                            _statusLabel(),
+                            style: Theme.of(context).textTheme.titleSmall,
                           ),
                           const SizedBox(height: 8),
                           LinearProgressIndicator(
-                            value: (progress?.percent ?? 0) / 100,
+                            value:
+                                progress != null &&
+                                    progress.isActive &&
+                                    !progress.hasTotalBytes
+                                ? null
+                                : progress?.fraction,
                           ),
                           const SizedBox(height: 8),
                           _sizeText(),
-                          if (_error != null) ...[
+                          if (error != null) ...[
                             const SizedBox(height: 8),
                             Text(
-                              _error!,
+                              error,
                               style: TextStyle(
                                 color: Theme.of(context).colorScheme.error,
                               ),
