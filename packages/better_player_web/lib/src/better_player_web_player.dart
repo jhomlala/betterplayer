@@ -12,6 +12,7 @@ class BetterPlayerWebPlayer {
     required this.viewId,
     required this.onLog,
     @visibleForTesting ShakaPlayer? shakaPlayer,
+    // Visible for testing parameter assigns directly to private backing field.
     // ignore: prefer_initializing_formals
   }) : _shakaPlayer = shakaPlayer;
 
@@ -621,8 +622,16 @@ class BetterPlayerWebPlayer {
     videoElement.pause();
   }
 
+  // Setter syntax is avoided to allow mocking in Mocktail unit tests.
+  // ignore: use_setters_to_change_properties
   void setVolume(double volume) => videoElement.volume = volume;
+
+  // Setter syntax is avoided to allow mocking in Mocktail unit tests.
+  // ignore: use_setters_to_change_properties
   void setSpeed(double speed) => videoElement.playbackRate = speed;
+
+  // Setter syntax is avoided to allow mocking in Mocktail unit tests.
+  // ignore: use_setters_to_change_properties
   void setLooping(bool looping) => videoElement.loop = looping;
 
   void seekTo(Duration position) {

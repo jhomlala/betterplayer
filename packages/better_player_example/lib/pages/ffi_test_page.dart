@@ -6,7 +6,7 @@ class FFITestPage extends StatefulWidget {
   const FFITestPage({super.key});
 
   @override
-  _FFITestPageState createState() => _FFITestPageState();
+  State<FFITestPage> createState() => _FFITestPageState();
 }
 
 class _FFITestPageState extends State<FFITestPage> {

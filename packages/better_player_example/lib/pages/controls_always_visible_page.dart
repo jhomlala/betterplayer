@@ -8,7 +8,7 @@ class ControlsAlwaysVisiblePage extends StatefulWidget {
   const ControlsAlwaysVisiblePage({super.key});
 
   @override
-  _ControlsAlwaysVisiblePageState createState() =>
+  State<ControlsAlwaysVisiblePage> createState() =>
       _ControlsAlwaysVisiblePageState();
 }
 

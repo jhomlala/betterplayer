@@ -8,7 +8,7 @@ class HlsSubtitlesPage extends StatefulWidget {
   const HlsSubtitlesPage({super.key});
 
   @override
-  _HlsSubtitlesPageState createState() => _HlsSubtitlesPageState();
+  State<HlsSubtitlesPage> createState() => _HlsSubtitlesPageState();
 }
 
 class _HlsSubtitlesPageState extends State<HlsSubtitlesPage> {

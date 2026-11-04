@@ -10,7 +10,7 @@ class DrmPage extends StatefulWidget {
   const DrmPage({super.key});
 
   @override
-  _DrmPageState createState() => _DrmPageState();
+  State<DrmPage> createState() => _DrmPageState();
 }
 
 class _DrmPageState extends State<DrmPage> {

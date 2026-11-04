@@ -8,7 +8,7 @@ class HlsAudioPage extends StatefulWidget {
   const HlsAudioPage({super.key});
 
   @override
-  _HlsAudioPageState createState() => _HlsAudioPageState();
+  State<HlsAudioPage> createState() => _HlsAudioPageState();
 }
 
 class _HlsAudioPageState extends State<HlsAudioPage> {

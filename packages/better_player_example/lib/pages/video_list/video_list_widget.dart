@@ -1,3 +1,4 @@
+// Suppresses deprecated member use diagnostics for legacy video list example.
 // ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package
 
 import 'package:better_player/better_player.dart';
@@ -18,7 +19,7 @@ class VideoListWidget extends StatefulWidget {
   final VideoListData? videoListData;
 
   @override
-  _VideoListWidgetState createState() => _VideoListWidgetState();
+  State<VideoListWidget> createState() => _VideoListWidgetState();
 }
 
 class _VideoListWidgetState extends State<VideoListWidget> {

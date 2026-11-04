@@ -1,3 +1,4 @@
+// Suppresses deprecated member use diagnostics for legacy video list example.
 // ignore_for_file: deprecated_member_use_from_same_package
 
 import 'dart:math';
@@ -27,7 +28,7 @@ class VideoListPage extends StatefulWidget {
   const VideoListPage({super.key});
 
   @override
-  _VideoListPageState createState() => _VideoListPageState();
+  State<VideoListPage> createState() => _VideoListPageState();
 }
 
 class _VideoListPageState extends State<VideoListPage> {

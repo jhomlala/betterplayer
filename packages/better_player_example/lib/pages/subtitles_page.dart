@@ -11,7 +11,7 @@ class SubtitlesPage extends StatefulWidget {
   const SubtitlesPage({super.key});
 
   @override
-  _SubtitlesPageState createState() => _SubtitlesPageState();
+  State<SubtitlesPage> createState() => _SubtitlesPageState();
 }
 
 class _SubtitlesPageState extends State<SubtitlesPage> {

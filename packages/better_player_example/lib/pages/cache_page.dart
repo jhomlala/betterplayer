@@ -9,7 +9,7 @@ class CachePage extends StatefulWidget {
   const CachePage({super.key});
 
   @override
-  _CachePageState createState() => _CachePageState();
+  State<CachePage> createState() => _CachePageState();
 }
 
 class _CachePageState extends State<CachePage> {

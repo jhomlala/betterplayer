@@ -10,6 +10,4 @@ linter:
   rules:
     avoid_positional_boolean_parameters: false
     cascade_invocations: false
-    document_ignores: false
     discarded_futures: false
-    library_private_types_in_public_api: false

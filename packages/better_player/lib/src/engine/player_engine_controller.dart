@@ -54,7 +54,7 @@ class PlayerEngineController extends ValueNotifier<VideoPlayerValue> {
     _textureId = await _betterPlayerPlatform.create(
       bufferingConfiguration: bufferingConfiguration,
     );
-    _creatingCompleter.complete(null);
+    _creatingCompleter.complete();
     if (_isDisposed) {
       return;
     }

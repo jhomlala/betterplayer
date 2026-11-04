@@ -10,16 +10,16 @@ environment:
 dependencies:
   better_player:
     path: ../better_player
+  collection: ^1.19.1
+  cupertino_ui: ^1.0.1
   flutter:
     sdk: flutter
-  material_ui: ^1.1.0
-  cupertino_ui: ^1.0.1
   flutter_localizations:
     sdk: flutter
+  flutter_svg: ^2.3.0
+  material_ui: ^1.1.0
   path_provider: ^2.1.6
   visibility_detector: ^0.4.0+2
-  collection: ^1.19.1
-  flutter_svg: ^2.3.0
 
 dev_dependencies:
   flutter_test:

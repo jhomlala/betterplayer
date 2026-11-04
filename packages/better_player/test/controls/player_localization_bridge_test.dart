@@ -1,10 +1,10 @@
 import 'package:better_player/better_player.dart';
 import 'package:better_player/src/controls/player_video_area_semantics.dart';
-import 'package:cupertino_ui/cupertino_ui.dart' as cupertino_ui;
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'
+    hide GlobalCupertinoLocalizations, GlobalMaterialLocalizations;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:material_ui/material_ui.dart' as material_ui;
+import 'package:material_ui/material_ui.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../helpers/better_player_test_utils.dart';
@@ -32,7 +32,7 @@ void main() {
               ),
             );
 
-        late material_ui.MaterialLocalizations materialLoc;
+        late MaterialLocalizations materialLoc;
         await controller.setupDataSource(
           PlayerDataSource.network(
             BetterPlayerTestUtils.forBiggerBlazesUrl,
@@ -59,7 +59,7 @@ void main() {
         final context = tester.element(
           find.byType(PlayerVideoAreaSemantics).first,
         );
-        materialLoc = material_ui.MaterialLocalizations.of(context);
+        materialLoc = MaterialLocalizations.of(context);
 
         expect(
           materialLoc.cancelButtonLabel,
@@ -88,7 +88,7 @@ void main() {
               ),
             );
 
-        late cupertino_ui.CupertinoLocalizations cupertinoLoc;
+        late CupertinoLocalizations cupertinoLoc;
         await controller.setupDataSource(
           PlayerDataSource.network(
             BetterPlayerTestUtils.forBiggerBlazesUrl,
@@ -115,7 +115,7 @@ void main() {
         final context = tester.element(
           find.byType(PlayerVideoAreaSemantics).first,
         );
-        cupertinoLoc = cupertino_ui.CupertinoLocalizations.of(context);
+        cupertinoLoc = CupertinoLocalizations.of(context);
 
         expect(
           cupertinoLoc.cancelButtonLabel,

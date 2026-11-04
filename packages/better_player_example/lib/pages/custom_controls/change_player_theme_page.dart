@@ -9,7 +9,7 @@ class ChangePlayerThemePage extends StatefulWidget {
   const ChangePlayerThemePage({super.key});
 
   @override
-  _ChangePlayerThemePageState createState() => _ChangePlayerThemePageState();
+  State<ChangePlayerThemePage> createState() => _ChangePlayerThemePageState();
 }
 
 class _ChangePlayerThemePageState extends State<ChangePlayerThemePage> {

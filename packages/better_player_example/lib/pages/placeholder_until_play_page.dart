@@ -9,7 +9,7 @@ class PlaceholderUntilPlayPage extends StatefulWidget {
   const PlaceholderUntilPlayPage({super.key});
 
   @override
-  _PlaceholderUntilPlayPageState createState() =>
+  State<PlaceholderUntilPlayPage> createState() =>
       _PlaceholderUntilPlayPageState();
 }
 

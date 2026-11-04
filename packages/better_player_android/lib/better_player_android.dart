@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+// Internal setters bind to JNI companion properties without requiring getters.
 // ignore_for_file: avoid_setters_without_getters
 
 import 'package:better_player_android/src/better_player_android_jni.g.dart';

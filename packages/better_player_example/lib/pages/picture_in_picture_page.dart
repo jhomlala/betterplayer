@@ -10,7 +10,7 @@ class PictureInPicturePage extends StatefulWidget {
   const PictureInPicturePage({super.key});
 
   @override
-  _PictureInPicturePageState createState() => _PictureInPicturePageState();
+  State<PictureInPicturePage> createState() => _PictureInPicturePageState();
 }
 
 class _PictureInPicturePageState extends State<PictureInPicturePage> {
