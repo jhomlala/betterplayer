@@ -12,7 +12,7 @@ import Cache
     private var lastReportedBytesMap = [String: Int]()
 
     /// Callbacks for pre-caching completion keyed by cache key.
-    private var completionHandlers = [String: (_ success: Bool) -> Void]()
+    private var completionHandlers = [String: (Bool) -> Void]()
 
     /// Configuration for disk cache.
     private var diskConfig = DiskConfig(
