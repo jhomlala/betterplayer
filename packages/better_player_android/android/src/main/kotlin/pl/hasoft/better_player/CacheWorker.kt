@@ -117,8 +117,9 @@ class CacheWorker(
                 return Result.success()
             }
             Log.e(TAG, "Pre cache exception", exception)
-            // If it's HttpDataSourceException or EOFException (file smaller than preCacheSize) we can consider it success
-            return if (exception is HttpDataSourceException || exception is java.io.EOFException) {
+            // If it's EOFException (file smaller than preCacheSize) we can consider it success
+            val isEof = exception is java.io.EOFException || exception.cause is java.io.EOFException
+            return if (isEof && lastReportedBytes > 0) {
                 BetterPlayerApi.reportPreCacheProgress(
                     url ?: "",
                     cacheKey,

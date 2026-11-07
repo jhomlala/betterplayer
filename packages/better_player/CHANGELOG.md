@@ -1,3 +1,7 @@
+## Unreleased
+- Fixed: BetterPlayerPool active index protection during slot eviction, failed lease slot reuse, and concurrent bind state tracking.
+- Updated: Removed unused onProgress parameter in PlayerEngineController.preCache.
+
 ## 1.33.0
 - Added: Feed error handling with `PlayerFeedConfiguration.errorBuilder`, localized `PlayerFeedErrorView`, and `BetterPlayerFeedController.retry`.
 - Added: Feed list mutation methods on `BetterPlayerFeedController` (`insertDataSources`, `removeAt`, `replaceAt`, `replaceAll`) with stable item identifiers and `PageView` reactivity.
